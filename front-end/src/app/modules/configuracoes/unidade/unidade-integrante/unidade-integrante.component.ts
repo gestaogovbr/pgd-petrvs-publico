@@ -1,4 +1,4 @@
-import { Component, Injector, ViewChild } from '@angular/core';
+import { Component, Injector, Input, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
@@ -16,11 +16,12 @@ import { LookupItem } from 'src/app/services/lookup.service';
 })
 export class UnidadeIntegranteComponent extends PageFrameBase {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
+  @Input() public unidadeId: string = "";
 
   public integranteDao: UnidadeIntegranteDaoService;
   public usuarioDao: UsuarioDaoService;
   public items: IntegranteConsolidado[] = [];
-  public unidadeId: string = "";
+  
   public unidade?: Unidade;
 
   constructor(public injector: Injector) {
@@ -36,7 +37,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
 
   ngOnInit() {
     super.ngOnInit();
-    this.unidadeId = this.urlParams!.get("idUnidade") as string;
+    this.unidadeId = this.urlParams?.has("idUnidade") ? this.urlParams!.get("idUnidade") : this.metadata?.idUnidade || this.unidadeId;
   }
 
   ngAfterViewInit() {
@@ -54,7 +55,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     this.grid!.loading = true;
     try {
       let result = await this.integranteDao!.loadIntegrantes(this.unidadeId, "");
-      this.items = result.integrantes;
+      this.items = result.integrantes.filter(x => x.atribuicoes.length > 0);
       this.unidade = result.unidade;
     } finally {
       this.grid!.loading = false;

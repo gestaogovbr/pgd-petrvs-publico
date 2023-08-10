@@ -13,7 +13,7 @@
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "importHelpers": true,
-    "target": "es6",
+    "target": "ES2022",
     "module": "es2020",
     "skipLibCheck": true,
     "lib": [
@@ -23,7 +23,8 @@
     "types": [
       "google.accounts"
     ],
-    "allowJs": true
+    "allowJs": true,
+    "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

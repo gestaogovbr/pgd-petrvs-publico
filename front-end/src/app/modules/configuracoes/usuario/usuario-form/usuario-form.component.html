@@ -3,7 +3,7 @@
         <tab key="PRINCIPAL" label="Principal">
             <div class="row">
                 <div class="form-group col-md-3 text-center">
-                    <profile-picture [url]="form!.controls.url_foto?.value" class="mt-5" [size]="150"></profile-picture>
+                    <profile-picture [url]="form!.controls.url_foto.value" class="mt-5" [size]="150"></profile-picture>
                     <!--img [src]="form!.controls.url_foto?.value" onerror="this.src='./assets/images/profile.jpg'" width="150" height="150" class="rounded-circle mt-5"//-->
                 </div>
                 <div class="form-group col-md-9">
@@ -13,11 +13,12 @@
                         <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAIL') ? 'true' : undefined" [size]="5" label="E-mail" controlName="email" textCase="lower"></input-text>
                     </div>
                     <div class="row">
-                        <input-text [size]="12" label="Nome" controlName="nome"></input-text>
+                        <input-text [size]="8" label="Nome" controlName="nome"></input-text>
+                        <input-text [size]="4" label="Apelido" controlName="apelido"></input-text>
                     </div>
                     <div class="row">
-                        <input-text [size]="6" label="Apelido" controlName="apelido"></input-text>
-                        <input-select [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_PERFIL') ? 'true' : undefined" [size]="6" label="Perfil" controlName="perfil_id" [dao]="perfilDao"></input-select>
+                        <input-select [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_PERFIL') ? 'true' : undefined" [size]="4" label="Perfil" controlName="perfil_id" [dao]="perfilDao"></input-select>
+                        <input-search #lotacao label="Lotação" [size]="8" [emptyValue]="null" [control]="formLotacao!.controls.unidade_lotacao_id" controlName="unidade_lotacao_id" [dao]="unidadeDao" labelInfo="Unidade de lotação do Usuário"></input-search>
                     </div>
                     <div class="row">
                         <input-select [size]="4" label="UF" icon="bi bi-flag" controlName="uf" [items]="lookup.UF"></input-select>
@@ -32,8 +33,8 @@
                 <input-editor [label]="'Texto complementar ' + lex.translate('Plano de Trabalho')" controlName="texto_complementar_plano" [dataset]="planoDataset"></input-editor>
             </div>
         </tab>
-<!--         <tab key="UNIDADES" [label]="lex.translate('Unidades')">
-            <usuario-integrante #usuarioIntegrante [usuarioId]="entity?.id"></usuario-integrante>
-        </tab> -->
+        <tab key="ATRIBUICOES" [label]="lex.translate('Atribuições')">
+            <usuario-integrante #unidadesIntegrantes noPersist [entity]="entity" [entity_id]="entity?.id"></usuario-integrante>
+        </tab>
     </tabs>
 </editable-form>

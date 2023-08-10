@@ -4,8 +4,7 @@ import { Md5 } from 'ts-md5/dist/md5';
 import { LookupItem } from './lookup.service';
 import { Usuario } from '../models/usuario.model';
 import * as moment from 'moment';
-import { DaoBaseService } from '../dao/dao-base.service';
-import { MaskApplierService } from 'ngx-mask';
+import { NgxMaskService } from 'ngx-mask';
 import { DOCUMENT } from '@angular/common';
 import { AbstractControl, FormControl } from '@angular/forms';
 import { AuthService } from './auth.service';
@@ -28,12 +27,12 @@ export class UtilService {
   public static readonly ISO8601_FORMAT = "YYYY-MM-DDTHH:mm:ss";
   public static readonly TIME_VALIDATE = /^(([01][0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?)|(24:00(:00)?)$/;
 
-  public maskService: MaskApplierService;
+  public maskService: NgxMaskService;
   public auth: AuthService;
   private renderer: Renderer2;
 
   constructor(public injector: Injector, @Inject(DOCUMENT) private document: Document, rendererFactory: RendererFactory2) {
-    this.maskService = injector.get<MaskApplierService>(MaskApplierService);
+    this.maskService = injector.get<NgxMaskService>(NgxMaskService);
     this.auth = injector.get<AuthService>(AuthService);
     this.maskService.thousandSeparator = ".";
     this.renderer = rendererFactory.createRenderer(null, null);

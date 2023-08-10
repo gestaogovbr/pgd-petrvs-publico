@@ -11,6 +11,7 @@ import { Usuario } from './usuario.model';
 import { BadgeButton } from '../components/badge/badge.component';
 import { Documento } from './documento.model';
 import { AtividadePausa } from './atividade-pausa.model';
+import { Status } from './status.model';
 
 export type AtividadeStatus = "CONCLUIDO" | "INICIADO" | "LANCADO";
 
@@ -44,6 +45,8 @@ export class Atividade extends Base implements HasComentarios {
     public unidade?: Unidade;
     public documento_requisicao?: Documento;
     public documento_entrega?: Documento;
+    public statusAtual?: Status;
+    public statusHistorico: Status[] = [];                             // Mudanças de status sofridas pela atividade (histórico)
 
     public numero: number = 0; /* Numero da atividade */
     public descricao: string = ""; /* Assunto da atividade */

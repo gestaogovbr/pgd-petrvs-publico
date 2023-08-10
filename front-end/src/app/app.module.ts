@@ -1,7 +1,7 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ChartsModule } from 'ng2-charts';
+import { NgChartsModule } from 'ng2-charts';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -36,7 +36,7 @@ import { TesteFormComponent } from './modules/teste/teste-form/teste-form.compon
     ReactiveFormsModule,
     ComponentsModule,
     AppRoutingModule,
-    ChartsModule,
+    NgChartsModule,
     UteisModule,
     LogModule,
     RotinaModule,

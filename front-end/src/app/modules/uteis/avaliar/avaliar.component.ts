@@ -1,7 +1,6 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormGroup } from '@angular/forms';
+import { AbstractControl, UntypedFormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
-import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Atividade } from 'src/app/models/atividade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
@@ -9,7 +8,6 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { SelectItem } from 'src/app/components/input/input-base';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { TipoAvaliacaoDaoService } from 'src/app/dao/tipo-avaliacao-dao.service';
-import { Atividade } from 'src/app/models/atividade.model';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { CalendarService, Efemerides } from 'src/app/services/calendar.service';
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
@@ -19,8 +17,8 @@ import { InputMultitoggleComponent } from 'src/app/components/input/input-multit
 
 @Component({
   selector: 'app-atividade-form-avaliar',
-  templateUrl: './atividade-form-avaliar.component.html',
-  styleUrls: ['./atividade-form-avaliar.component.scss']
+  templateUrl: './avaliar.component.html',
+  styleUrls: ['./avaliar.component.scss']
 })
 export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoService> implements OnInit {
   @ViewChild('atividade', { static: false }) public atividade?: InputSearchComponent;
@@ -34,7 +32,7 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
   public tiposJustificativas: LookupItem[] = [];
   public tipoAvaliacao?: LookupItem; 
   public allPages: ListenerAllPagesService;
-  public form: FormGroup;
+  public form: UntypedFormGroup;
   public efemerides?: Efemerides;
   public modalWidth: number = 900;
   public complexidades: LookupItem[] = [];
@@ -83,7 +81,7 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
     return result;
   }
 
-  public async loadData(entity: Atividade, form: FormGroup) {
+  public async loadData(entity: Atividade, form: UntypedFormGroup) {
     let formValue = Object.assign({}, form.value);
     formValue = this.util.fillForm(formValue, entity);
     this.atrasado = !!entity.metadados?.atrasado;
@@ -105,7 +103,7 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
     form.patchValue(formValue);
   }
 
-  public async initializeData(form: FormGroup) {
+  public async initializeData(form: UntypedFormGroup) {
     const results = await Promise.all([
       this.dao!.getAtividade(this.urlParams!.get("id")!),
       this.tipoAvaliacaoDao.query({join: ["tipos_avaliacoes_justificativas.tipo_justificativa"]}).asPromise()

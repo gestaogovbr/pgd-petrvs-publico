@@ -14,7 +14,7 @@
             <div class="row">
                 <input-search #cidade [size]="4" controlName="cidade_id" [dao]="cidadeDao"></input-search>
                 <input-search #unidade_pai [size]="4" [label]="lex.translate('Unidade') + ' pai'" controlName="unidade_pai_id" [where]="[['entidade_id', '==', form.controls.entidade_id.value]]" [dao]="dao!"></input-search>
-                <input-search #entidade [size]="4" [disabled] controlName="entidade_id" [dao]="entidadeDao"></input-search>
+                <input-search #entidade [size]="4" disabled controlName="entidade_id" [dao]="entidadeDao"></input-search>
             </div>
         </tab>
         <tab key="CONFIGURACOES" label="Configurações">
@@ -51,7 +51,7 @@
             <calendar-expediente #expediente [disabled]="form!.controls.usar_expediente_entidade.value ? 'true' : undefined" [expedienteDisabled]="entity?.entidade?.expediente" [control]="form!.controls.expediente"></calendar-expediente>
         </tab>
         <tab *ngIf="entity" key="NOTIFICACOES" label="Notificações">
-            <notificacoes-config #notificacoes [unidadeId]="entity?.id?.length ? entity!.id : 'ADD'" [entity]="entity!" [disabled]="formDisabled"></notificacoes-config>
+            <notificacoes-config #notificacoes [unidadeId]="entity.id.length ? entity!.id : 'ADD'" [entity]="entity!" [disabled]="formDisabled"></notificacoes-config>
             <!--div class="row">
                 <div class="col-md-6">
                     <separator transparent title="Meios de notificação"></separator>

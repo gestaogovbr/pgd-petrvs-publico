@@ -1,6 +1,6 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
-import { CalendarOptions, EventInput } from '@fullcalendar/angular';
+import { CalendarOptions, EventInput } from '@fullcalendar/core';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GanttTaskStatus, GanttResourceUnity, GanttResourceType, GanttProject, GanttAssignment, GanttTask, GanttResource, GanttRole } from 'src/app/components/gantt/gantt-models';
 import { ProjetoDaoService } from 'src/app/dao/projeto-dao.service';
@@ -19,6 +19,9 @@ import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { DndDropEvent, DropEffect } from 'ngx-drag-drop';
 import { ProjetoService } from '../projeto.service';
 import { ComponentColor } from 'src/app/components/component-base';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
+
 
 export type TarefaTotaisFilhos = {
   custo: number;
@@ -77,7 +80,8 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
   }
   public calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
-    events: []
+    events: [],
+    plugins: [dayGridPlugin, interactionPlugin]
   };
 
   constructor(public injector: Injector) {

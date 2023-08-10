@@ -1,6 +1,6 @@
 import { Component, Input, ViewChild } from '@angular/core';
-import { ChartOptions, ChartType, ChartDataSets, ChartConfiguration, ChartData } from 'chart.js';
-import { BaseChartDirective, Label } from 'ng2-charts';
+import { ChartOptions, ChartType, ChartData } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
 
 @Component({
   selector: 'bar-chart',
@@ -18,7 +18,9 @@ export class BarChartComponent {
   @Input() heightAreaChart: number = 150; */
   @Input() opcoesGrafico: ChartOptions = {};
   //@Input() dadosGrafico: ChartDataSets[] = [];
-  @Input() dadosGrafico: ChartData = {};
+  @Input() dadosGrafico: ChartData = {
+    datasets: []
+  };
   @Input() tipoGrafico: ChartType = 'bar';
   @Input() pluginsGrafico: Array<any> = [];
   @Input() labelsX: string[] = [];

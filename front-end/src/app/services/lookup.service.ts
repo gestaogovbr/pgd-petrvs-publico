@@ -529,7 +529,7 @@ export class LookupService {
   ];
 
   public PLANO_ENTREGA_STATUS: LookupItem[] = [
-    { key: "INCLUINDO", value: "Incluindo", icon: "bi bi-pencil-square", color: "secondary" },
+    { key: "INCLUIDO", value: "Incluído", icon: "bi bi-pencil-square", color: "secondary" },
     { key: "HOMOLOGANDO", value: "Aguardando homologação", icon: "bi bi-clock", color: "warning" },
     { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success" },
     { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-clipboard2-check", color: "primary" },

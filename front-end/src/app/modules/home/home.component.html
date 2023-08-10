@@ -113,11 +113,11 @@
     <div class="row mt-4">
         <div class="col-6">
             <h5>Horas dos Planos</h5>
-            <bar-chart tipoGrafico="horizontalBar" [dadosGrafico]="dadosPlanos" [opcoesGrafico]="opcoesGraficoPlano"></bar-chart>
+            <bar-chart tipoGrafico="bar" [dadosGrafico]="dadosPlanos" [opcoesGrafico]="opcoesGraficoPlano"></bar-chart>
         </div>
         <div class="col-6">
-            <h5>{{ 'Horas ' + lex.translate('Atividade') }}</h5>
-            <bar-chart tipoGrafico="horizontalBar" [dadosGrafico]="dadosAtividades" [opcoesGrafico]="opcoesGraficoAtividades"></bar-chart>
+            <h5>{{ 'Horas ' + lex.noun('Atividade',true,true) }}</h5>
+            <bar-chart tipoGrafico="bar" [dadosGrafico]="dadosAtividades" [opcoesGrafico]="opcoesGraficoAtividades"></bar-chart>
         </div>
     </div>
 

@@ -1,10 +1,13 @@
 import { Component, Injector, Input, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
+import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
+import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
+import { Unidade } from 'src/app/models/unidade.model';
 import { Usuario } from 'src/app/models/usuario.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { LookupItem } from 'src/app/services/lookup.service';
@@ -16,33 +19,41 @@ import { LookupItem } from 'src/app/services/lookup.service';
 })
 export class UsuarioIntegranteComponent extends PageFrameBase {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
-  @Input() public usuarioId?: string;
+  @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
+  @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
+  @Input() set entity(value: Usuario | undefined) { super.entity = value; } get entity(): Usuario | undefined { return super.entity; }
+  @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
+  @Input() public entity_id?: string;
 
+  public items: IntegranteConsolidado[] = [];
   public integranteDao: UnidadeIntegranteDaoService;
   public unidadeDao: UnidadeDaoService;
   public usuario?: Usuario;
-  public items: IntegranteConsolidado[] = [];
+  public novoIntegrante?: IntegranteConsolidado;
 
   constructor(public injector: Injector) {
     super(injector);
+    this.dao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.form = this.fh.FormBuilder({
-      unidade_id: {default: ""},
-      atribuicoes: {default: undefined},
-      atribuicao: {default: ""}
+      usuario_id: { default: "" },
+      unidade_id: { default: "" },
+      atribuicoes: { default: undefined },
+      atribuicao: { default: "" },
+      _status: { default: "" }
     }, this.cdRef, this.validate);
   }
 
   ngOnInit() {
     super.ngOnInit();
-    this.usuarioId = this.urlParams?.has("idUsuario") ? this.urlParams!.get("idUsuario") : this.metadata?.idUsuario || this.usuarioId;
+    this.entity = this.metadata?.entity || this.entity;
+    this.entity_id = this.metadata?.entity_id || this.entity_id;
   }
 
-  ngAfterViewInit() {
-    (async () => {
-      await this.loadData({}, this.form);
-    })();
+  public async initializeData(form: FormGroup) {
+    form.patchValue(new Usuario());
+    await this.loadData(this.entity!, form);
   }
 
   /**
@@ -50,11 +61,13 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
    * @param entity 
    * @param form 
    */
-  public async loadData(entity: IIndexable, form?: FormGroup | undefined) {
+  public async loadData(entity: IIndexable, form: FormGroup) {
+    let formValue = Object.assign({}, form.value);
+    form.patchValue(this.util.fillForm(formValue, entity));
     this.grid!.loading = true;
     try {
-      let result = await this.integranteDao!.loadIntegrantes("", this.usuarioId!);
-      this.items = result.integrantes;
+      let result = await this.integranteDao!.loadIntegrantes("", this.entity!.id);
+      this.items = result.integrantes.filter(x => x.atribuicoes.length > 0);
       this.usuario = result.usuario;
     } finally {
       this.grid!.loading = false;
@@ -64,10 +77,10 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if(["unidade_id"].includes(controlName) && !control.value?.length) {
+    if (["unidade_id"].includes(controlName) && !control.value?.length) {
       result = "Obrigatório";
     }
-    if(controlName == "atribuicoes" && !control.value?.length) {
+    if (controlName == "atribuicoes" && !control.value?.length) {
       result = "Obrigatório ao menos uma atribuição!";
     }
     return result;
@@ -77,7 +90,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     let result = undefined;
     const value = this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, this.form!.controls.atribuicao.value);
     const key = this.form!.controls.atribuicao.value;
-    if(value?.length && this.util.validateLookupItem(this.form!.controls.atribuicao.value, key)) {
+    if (value?.length && this.util.validateLookupItem(this.form!.controls.atribuicao.value, key)) {
       const icon = this.lookup.getIcon(this.lookup.UNIDADE_INTEGRANTE_TIPO, this.form!.controls.atribuicao.value);
       const color = this.lookup.getColor(this.lookup.UNIDADE_INTEGRANTE_TIPO, this.form!.controls.atribuicao.value);
       result = {
@@ -91,48 +104,90 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     return result;
   };
 
+  /**
+   * Método chamado para inserir uma atribuição no grid, seja este componente persistente ou não.
+   * @returns 
+   */
   public async addAtribuicao() {
-    return Object.assign({}, {usuario_id: this.usuarioId, _status: "ADD", unidade_id: "", atribuicao: ""}) as IIndexable;
+    return Object.assign(new IntegranteConsolidado(), {
+      _status: this.isNoPersist ? "ADD" : "",
+      id: this.dao!.generateUuid(),   // ainda não sei pra que esse id nesse momento
+      atribuicoes: []
+      //usuario_id: this.entity?.id
+    }) as IIndexable;
   }
 
+  /**
+   * Método utilizado durante a inclusão/alteração de uma atribuição no grid, seja este componente persistente ou não
+   * @param form 
+   * @param row 
+   */
   public async loadAtribuicao(form: FormGroup, row: any) {
+    form.controls.atribuicoes.setValue(this.converterAtribuicoes(row.atribuicoes));
     form.controls.unidade_id.setValue(row.id);
-    form.controls.atribuicoes.setValue(row.atribuicoes.map((x: string) => Object.assign({}, {
-      key: x,
-      value: this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, x),
-      icon: this.lookup.getIcon(this.lookup.UNIDADE_INTEGRANTE_TIPO, x),
-      color: this.lookup.getColor(this.lookup.UNIDADE_INTEGRANTE_TIPO, x)
-    })));
     form.controls.atribuicao.setValue("");
   }
 
+  /**
+   * Método chamado para a exclusão de uma atribuição do grid, seja este componente persistente ou não. 
+   * @param row 
+   * @returns 
+   */
   public async removeAtribuicao(row: any) {
     let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
-    if(confirm) {
+    if (confirm) {
       this.loading = true;
       try {
-        await this.integranteDao.saveIntegrante(row.id, this.usuario!.id, []);
-        await this.loadData({}, this.form);
+        this.isNoPersist ? Object.assign(row, { _status: "DELETE" }) : this.integranteDao.saveIntegrante(row.id, this.usuario!.id, []);
+        //await this.loadData({}, this.form);
       } finally {
         this.loading = false;
       }
-      return true;
+      return this.isNoPersist ? false : true; // (*3)
     } else {
       return false;
     }
   }
 
+  /**
+ * Método chamado no salvamento de uma atribuição do usuário, seja este componente persistente ou não.
+ * @param form 
+ * @param row 
+ * @returns 
+ */
   public async saveAtribuicao(form: FormGroup, row: any) {
-    if(form!.controls.atribuicoes.value.length) {
-      this.loading = true;
-      try {
-        await this.integranteDao.saveIntegrante(form!.controls.unidade_id.value, this.usuario!.id, form!.controls.atribuicoes.value.map((x: LookupItem) => x.key));
-        await this.loadData({}, this.form);
-      } finally {
-        this.loading = false;
+    this.loading = true;
+    try {
+      let novasAtribuicoes = form!.controls.atribuicoes.value.map((x: LookupItem) => x.key);
+      let novoIntegrante = Object.assign(new IntegranteConsolidado(), {
+        id: form!.controls.unidade_id.value,
+        atribuicoes: novasAtribuicoes,
+        unidade_codigo: (this.unidade?.searchObj as Unidade).codigo,
+        unidade_sigla: (this.unidade?.searchObj as Unidade).sigla,
+        unidade_nome: (this.unidade?.searchObj as Unidade).nome
+      });
+      if (!this.isNoPersist) {
+        await this.integranteDao.saveIntegrante(form!.controls.unidade_id.value, this.usuario!.id, novasAtribuicoes);
+        if (this.grid?.adding) this.grid!.items[this.grid!.items.length - 1].id = '';  // (*4)
+      } else {
+        novoIntegrante = Object.assign(novoIntegrante, { _status:  novoIntegrante._status == "ADD" ? "ADD" : "EDIT" });
       }
+    } catch (e: any) {
+      this.error(e.message ? e.message : e.toString() || e);
+    } finally {
+      await this.loadAtribuicao(form, row);
+      this.loading = false;
     }
-    return undefined;
+    return this.novoIntegrante;
+  }
+
+  public converterAtribuicoes(atribuicoes: string[]): LookupItem[] {
+    return atribuicoes.map((x: string) => Object.assign({}, {
+      key: x,
+      value: this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, x),
+      icon: this.lookup.getIcon(this.lookup.UNIDADE_INTEGRANTE_TIPO, x),
+      color: this.lookup.getColor(this.lookup.UNIDADE_INTEGRANTE_TIPO, x)
+    }))
   }
 
 }

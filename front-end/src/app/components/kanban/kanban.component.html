@@ -1,31 +1,45 @@
-<lib-angular-double-scrollbars #doubleScrollbar class="d-block mt-2" doubleScrollBarHorizontal='always'>
-    <div #kanbanContainer class="kanban d-flex flex-column flex-md-row flex-nowrap justify-content-start text-dark mt-2" 
-        style="min-height: 410px;" 
-        [dndDropzone]="['swimlane']" 
-        [dndHorizontal]="true" 
-        [dndDisableIf]="!dragSwimlanes" 
-        dndEffectAllowed="move" 
-        (dndDrop)="onSwimlaneDrop($event)">
-        <swimlane placeholder dndPlaceholderRef [kanban]="this"></swimlane>
-        <swimlane *ngFor="let docker of dockers; let key = index" [key]="'SL' + key" [kanban]="this" [docker]="docker">
-            <docker [key]="key" 
-                [editable]="key > 0 ? 'true' : undefined" 
-                [collapse]="docker.collapse" 
-                [editing]="!!docker.editing" 
-                [title]="docker.title || ''" 
-                [editTemplate]="dockerEditTemplate" 
-                [toggle]="dockerToggle" 
-                [edit]="dockerEdit" 
-                [save]="dockerSave" 
-                [delete]="dockerDelete" 
-                [cancel]="dockerCancel" 
-                [colorStyle]="dockerColorStyle ? dockerColorStyle(docker) : undefined" 
-                [dragged]="dockerDragged" 
-                [drop]="dockerDrop" 
-                [labels]="docker.labels" 
-                [menu]="docker.menu || []" 
-                [cards]="docker.cards || []"></docker>
-        </swimlane>
-        <ng-content></ng-content>
-    </div>
-</lib-angular-double-scrollbars>
+<double-scrollbar
+  #doubleScrollbar
+  class="d-block mt-2"
+  doubleScrollBarHorizontal="always"
+>
+  <div
+    #kanbanContainer
+    class="kanban d-flex flex-column flex-md-row flex-nowrap justify-content-start text-dark mt-2"
+    style="min-height: 410px"
+    [dndDropzone]="['swimlane']"
+    [dndHorizontal]="true"
+    [dndDisableIf]="!dragSwimlanes"
+    dndEffectAllowed="move"
+    (dndDrop)="onSwimlaneDrop($event)"
+  >
+    <swimlane placeholder dndPlaceholderRef [kanban]="this"></swimlane>
+    <swimlane
+      *ngFor="let docker of dockers; let key = index"
+      [key]="'SL' + key"
+      [kanban]="this"
+      [docker]="docker"
+    >
+      <docker
+        [key]="key"
+        [editable]="key > 0 ? 'true' : undefined"
+        [collapse]="docker.collapse"
+        [editing]="!!docker.editing"
+        [title]="docker.title || ''"
+        [editTemplate]="dockerEditTemplate"
+        [toggle]="dockerToggle"
+        [edit]="dockerEdit"
+        [save]="dockerSave"
+        [delete]="dockerDelete"
+        [cancel]="dockerCancel"
+        [colorStyle]="dockerColorStyle ? dockerColorStyle(docker) : undefined"
+        [dragged]="dockerDragged"
+        [drop]="dockerDrop"
+        [labels]="docker.labels"
+        [menu]="docker.menu || []"
+        [cards]="docker.cards || []"
+      ></docker>
+    </swimlane>
+    <ng-content></ng-content>
+  </div>
+</double-scrollbar>

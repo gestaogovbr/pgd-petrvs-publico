@@ -8,11 +8,10 @@ import { NavigateService } from 'src/app/services/navigate.service';
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
 import { GlobalsService } from 'src/app/services/globals.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
-import { Chart, ChartData } from 'chart.js';
+import { Chart, ChartData, ChartOptions } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { UtilService } from 'src/app/services/util.service';
 import { FormControl, FormGroup } from '@angular/forms';
-import { ChartDataSets, ChartOptions } from 'chart.js';
 
 @Component({
   selector: 'app-home',
@@ -68,22 +67,8 @@ export class HomeComponent implements OnInit {
   public data_inicial: Date;
   public data_final: Date;
 
-  public: ChartDataSets[] = [];
+  public: ChartData[] = [];
   public opcoesGraficoPlano: ChartOptions = {
-    scales: {
-      xAxes: [{
-        labels: ['Horas ' + this.lex.translate("do Plano de Trabalho")],
-        display: true,
-        ticks: {
-          beginAtZero: true
-        }
-      }],
-      yAxes: [{
-        ticks: {
-          beginAtZero: true
-        }
-      }]
-    },
     plugins: {
       datalabels: {
         display: false,
@@ -102,20 +87,6 @@ export class HomeComponent implements OnInit {
   };
 
   public opcoesGraficoAtividades: ChartOptions = {
-    scales: {
-      xAxes: [{
-        labels: ['Total de horas ' + this.lex.translate("das atividades")],
-        display: true,
-        ticks: {
-          beginAtZero: true
-        }
-      }],
-      yAxes: [{
-        ticks: {
-          beginAtZero: true
-        }
-      }]
-    },
     plugins: {
       datalabels: {
         display: false,
@@ -133,8 +104,12 @@ export class HomeComponent implements OnInit {
     responsive: true
   };
 
-  public dadosPlanos: ChartData = {};
-  public dadosAtividades: ChartData = {};
+  public dadosPlanos: ChartData = {
+    datasets: []
+  };
+  public dadosAtividades: ChartData = {
+    datasets: []
+  };
 
   constructor(
     public auth: AuthService,
@@ -164,7 +139,6 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    Chart.plugins.register(ChartDataLabels);
     if (this.gb.isEmbedded) {
       this.allPages.visibilidadeMenuSei(!this.auth.usuario!.config.ocultar_menu_sei);
     }

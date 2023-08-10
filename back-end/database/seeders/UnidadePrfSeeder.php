@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Unidade;
-use Carbon\Carbon;
 
 class UnidadePrfSeeder extends Seeder
 {
