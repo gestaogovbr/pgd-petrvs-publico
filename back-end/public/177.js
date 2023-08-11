@@ -48,10 +48,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   PlanoEntrega: () => (/* binding */ PlanoEntrega)
 /* harmony export */ });
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
+/* harmony import */ var _status_model__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./status.model */ 12971);
+
 
 class PlanoEntrega extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
   constructor(data) {
     super();
+    this.statusAtual = new _status_model__WEBPACK_IMPORTED_MODULE_1__.Status();
     this.entregas = []; // Entregas que compõem o plano de entregas
     this.statusHistorico = []; // Mudanças de status sofridas pelo plano de entregas (histórico)
     this.inicio = new Date(); // Data inicio do plano de entrega
@@ -63,6 +66,29 @@ class PlanoEntrega extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
     this.planejamento_id = null;
     this.cadeia_valor_id = null;
     this.programa_id = null;
+    this.initialization(data);
+  }
+}
+
+/***/ }),
+
+/***/ 12971:
+/*!****************************************!*\
+  !*** ./src/app/models/status.model.ts ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Status: () => (/* binding */ Status)
+/* harmony export */ });
+/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
+
+class Status extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
+  constructor(data) {
+    super();
+    this.codigo = ""; /* Nome do status */
+    this.justificativa = ""; /* Justificativa da mudança para o status atual */
     this.initialization(data);
   }
 }
