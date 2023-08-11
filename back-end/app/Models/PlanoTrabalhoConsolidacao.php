@@ -30,11 +30,7 @@ class PlanoTrabalhoConsolidacao extends ModelBase
     // Has
     public function statusHistorico() { return $this->hasMany(Status::class, "plano_trabalho_consolidacao_id"); }
     public function ocorrencias() { return $this->hasMany(PlanoTrabalhoConsolidacaoOcorrencia::class, 'plano_trabalho_consolidacao_id'); } 
-<<<<<<< HEAD
     public function atividades() { return $this->hasMany(PlanoTrabalhoConsolidacaoAtividade::class, 'plano_trabalho_consolidacao_id'); } 
-=======
-    public function atividades() { return $this->hasMany(PlanoTrabalhoConsolidacaoAtividade::class, 'plano_trabalho_consolidacao_id'); 
->>>>>>> remotes/origin/develop
     // Belongs
     public function statusAtual() { return $this->belongsTo(Status::class, "status_id"); }
     public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class); }

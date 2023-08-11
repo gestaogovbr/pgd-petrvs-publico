@@ -215,6 +215,7 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalho')->group(function () 
     Route::post('cancelar-avaliacao', [PlanoTrabalhoController::class, 'cancelarAvaliacao']);
     Route::post('arquivar', [PlanoTrabalhoController::class, 'arquivar']);
     Route::post('metadados-plano', [PlanoTrabalhoController::class, 'metadadosPlano']);
+    Route::post('get-by-usuario', [PlanoTrabalhoController::class, 'getByUsuario']);
 });
 Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoEntrega')->group(function () { defaultRoutes(PlanoTrabalhoEntregaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoConsolidacao')->group(function () {
@@ -263,6 +264,7 @@ Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
     Route::post('unificar', [UnidadeController::class, 'unificar']);
     Route::post('dashboards', [UnidadeController::class, 'dashboards']);
     Route::post('inativo', [UnidadeController::class, 'inativo']);
+    Route::post('lotados', [UnidadeController::class, 'lotados']);
 });
 Route::middleware(['auth:sanctum'])->prefix('UnidadeIntegrante')->group(function () {
     Route::post('load-integrantes', [UnidadeIntegranteController::class, 'loadIntegrantes']);

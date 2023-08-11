@@ -9,6 +9,7 @@ import { PlanoTrabalhoEntrega } from './plano-trabalho-entrega.model';
 import { Documento, HasDocumentos } from './documento.model';
 import { Atividade } from './atividade.model';
 import { Status } from './status.model';
+import { PlanoTrabalhoConsolidacao } from './plano-trabalho-consolidacao.model';
 
 export type PlanoMetadados = {
   concluido: boolean
@@ -34,6 +35,7 @@ export class PlanoTrabalho extends Base implements HasDocumentos {
     public documentos: Documento[] = [];
     public atividades: Atividade[] = [];
     public statusHistorico: Status[] = [];  // Mudanças de status sofridas pelo plano de trabalho (histórico)
+    public consolidacoes: PlanoTrabalhoConsolidacao[] = [];
     
     public programa_id: string = "";
     public usuario_id: string = "";

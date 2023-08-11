@@ -10,6 +10,10 @@ import { LookupService } from '../services/lookup.service';
 import { TemplateDataset } from '../modules/uteis/templates/template.service';
 import { PlanoTrabalhoEntregaDaoService } from './plano-trabalho-entrega-dao.service';
 
+export type PlanoTrabalhoByUsuario = {
+  planos: PlanoTrabalho[]
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -47,10 +51,24 @@ export class PlanoTrabalhoDaoService extends DaoBaseService<PlanoTrabalho> {
     ], deeps);
   }
 
-  public metadadosPlano(plano_trabalho_id: string, inicioPeriodo: string | null, fimPeriodo: string | null): Promise<MetadadosPlano> {
+  public metadadosPlano(planoTrabalhoId: string, inicioPeriodo: string | null, fimPeriodo: string | null): Promise<MetadadosPlano> {
     return new Promise<MetadadosPlano>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/metadados-plano', {plano_trabalho_id, inicioPeriodo, fimPeriodo}).subscribe(response => {
+      this.server.post('api/' + this.collection + '/metadados-plano', {plano_trabalho_id: planoTrabalhoId, inicioPeriodo, fimPeriodo}).subscribe(response => {
         resolve(response?.metadadosPlano || []);
+      }, error => reject(error));
+    });
+  }
+
+  public getByUsuario(usuarioId: string, arquivados: boolean) {
+    return new Promise<PlanoTrabalhoByUsuario>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/get-by-usuario', {usuario_id: usuarioId, arquivados}).subscribe(response => {
+        if(response?.error) {
+          reject(response?.error);
+        } else {
+          let dados = response?.dados as PlanoTrabalhoByUsuario;
+          dados.planos = dados.planos.map(x => new PlanoTrabalho(x));
+          resolve(dados);
+        }
       }, error => reject(error));
     });
   }

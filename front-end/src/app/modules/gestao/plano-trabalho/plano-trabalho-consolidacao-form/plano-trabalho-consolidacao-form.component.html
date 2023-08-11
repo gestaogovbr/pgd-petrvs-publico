@@ -6,9 +6,9 @@
                     <!--span *ngIf="row?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row?.length}}</span//-->
                 </ng-template>
                 <ng-template let-row="row" #columnExpandedConsolidacao>
-                    <grid [items]="row.atividades" noHeader [form]="formAtividade" [hasDelete]="true" 
-                        [add]="addAtividade.bind(this)" [load]="loadAtividade.bind(this)" 
-                        [remove]="removeAtividade.bind(this)" [save]="saveAtividade.bind(this)" editable>
+                    <grid [items]="row.atividades" #gridAtividade noHeader [form]="formAtividade" [hasDelete]="true" 
+                        [add]="addAtividade.bind(this, row.entrega)" [load]="loadAtividade.bind(this)" 
+                        [remove]="removeAtividade.bind(this, row.atividades)" [save]="saveAtividade.bind(this)" editable>
                         <columns>
                             <column [template]="columnAtividade" [editTemplate]="columnAtividadeEdit">
                                 <ng-template let-row="row" #columnAtividade>
@@ -77,7 +77,7 @@
     </grid>
 </separator>
 <separator [title]="lex.translate('Ocorrências')">
-    <grid [items]="itemsOcorrencias" [form]="formOcorrencia" [hasDelete]="true" 
+    <grid [items]="itemsOcorrencias" #gridOcorrencia [form]="formOcorrencia" [hasDelete]="true" 
         [add]="addOcorrencia.bind(this)" [load]="loadOcorrencia.bind(this)" 
         [remove]="removeOcorrencia.bind(this)" [save]="saveOcorrencia.bind(this)" editable>
         <columns>
@@ -89,7 +89,7 @@
     </grid>
 </separator>
 <separator [title]="lex.translate('Afastamentos')">
-    <grid [items]="itemsAfastamentos">
+    <grid [items]="itemsAfastamentos" #gridAfastamento>
         <columns>
             <column title="Início" type="datetime" field="data_inicio"></column>
             <column title="Fim" type="datetime" field="data_fim"></column>

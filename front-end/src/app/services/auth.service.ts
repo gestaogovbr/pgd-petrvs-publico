@@ -344,6 +344,14 @@ export class AuthService {
   }
 
   /**
+   * Retorna a unidade onde o usuário é gestor
+   * @returns 
+   */
+  public unidadeGestor(): Unidade | undefined {
+    return this.unidades?.find(x => this.isGestorUnidade(x));
+  }
+
+  /**
    * Informa se a unidade repassada como parâmetro é a lotação do usuário logado. Se nenhuma unidade for repassada, 
    * será adotada a unidade selecionada pelo servidor na homepage.
    * @param pUnidade 

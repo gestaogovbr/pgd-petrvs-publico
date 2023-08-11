@@ -284,6 +284,23 @@ class PlanoTrabalhoService extends ServiceBase
     }
   }
 
+
+  /** 
+   * Retorna os planos de trabalho de um usuário (validando se ele tem acesso a esse plano)
+   * 
+   * @param   string  $usuario_id  O ID do Usuário
+   * @param   string  $arquivadas  Se o resultado deve incluir os planos arquivados
+   * @return  array
+   */
+  public function getByUsuario($usuarioId, $arquivadas) {
+      // TODO: validar permissoes
+      $query = PlanoTrabalho::with(["unidade:id,sigla,nome", "programa:id,nome", "tipoModalidade:id,nome"])->where("usuario_id", $usuarioId);
+      if(!$arquivadas) $query->whereNull("data_arquivamento");
+      return [
+        "planos" => $query->all()
+      ];
+  }
+
   /** 
    * Retorna um array com os dados de um Plano de Trabalho. Método criado para atender ao Relatório de Força de Trabalho - Servidor.
    * Os cálculos das horas levam em consideração sempre os tempos pactuados - uma alteração conceitual introduzida nos Relatórios de Força de Trabalho.

@@ -2,7 +2,6 @@ import { ChangeDetectorRef, Component, Injector, Input, ViewChild } from '@angul
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { InputLevelItem } from 'src/app/components/input/input-level/input-level.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { PlanoTrabalhoConsolidacaoDaoService } from 'src/app/dao/plano-trabalho-consolidacao-dao.service';
 import { PlanoTrabalhoConsolidacaoAtividadeDaoService } from 'src/app/dao/plano-trabalho-consolidacao-atividade-dao.service';
@@ -32,7 +31,9 @@ export type ConsolidacaoEntrega = {
 })
 export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
+  @ViewChild('gridAtividade', { static: false }) public gridAtividade?: GridComponent;
+  @ViewChild('gridOcorrencia', { static: false }) public gridOcorrencia?: GridComponent;
+  @ViewChild('gridAfastamento', { static: false }) public gridAfastamento?: GridComponent;
   @Input() cdRef: ChangeDetectorRef;
   @Input() planoTrabalho?: PlanoTrabalho;
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
@@ -40,6 +41,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   @Input() set entity(value: PlanoTrabalhoConsolidacao | undefined) { super.entity = value; } get entity(): PlanoTrabalhoConsolidacao | undefined { return super.entity; }
 
   public consolidacaoAtividadeDao: PlanoTrabalhoConsolidacaoAtividadeDaoService;
+  public consolidacaoOcorrenciaDao: PlanoTrabalhoConsolidacaoOcorrenciaDaoService;
   public ocorrenciaDao: PlanoTrabalhoConsolidacaoOcorrenciaDaoService;
   public formAtividade: FormGroup;
   public formOcorrencia: FormGroup;
@@ -56,6 +58,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
     this.dao = injector.get<PlanoTrabalhoConsolidacaoDaoService>(PlanoTrabalhoConsolidacaoDaoService);
     this.consolidacaoAtividadeDao = injector.get<PlanoTrabalhoConsolidacaoAtividadeDaoService>(PlanoTrabalhoConsolidacaoAtividadeDaoService);
+    this.consolidacaoOcorrenciaDao = injector.get<PlanoTrabalhoConsolidacaoOcorrenciaDaoService>(PlanoTrabalhoConsolidacaoOcorrenciaDaoService);
     this.ocorrenciaDao = injector.get<PlanoTrabalhoConsolidacaoOcorrenciaDaoService>(PlanoTrabalhoConsolidacaoOcorrenciaDaoService);
     this.tipoAtividadeDao = injector.get<TipoAtividadeDaoService>(TipoAtividadeDaoService);
     this.planoTrabalhoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
@@ -100,19 +103,29 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   }
 
   public async loadData(entity: IIndexable, form?: FormGroup) {
-    let dados = await this.dao!.dadosConsolidacao(entity.id);
-    this.itemsEntregas = dados.entregas.map(x => {
-      return {
-        entrega: x,
-        atividades: [
-          ...dados.atividades.filter(y => y.plano_trabalho_entrega_id == x.id),
-          ...dados.consolidaoAtividades.filter(y => y.plano_trabalho_entrega_id == x.id)
-        ]
-      };
-    });
-    this.itemsOcorrencias = dados.ocorrencias;
-    this.itemsAfastamentos = dados.afastamentos;
+    this.gridAtividade!.loading = true;
+    this.gridOcorrencia!.loading = true;
+    this.gridAfastamento!.loading = true;
     this.cdRef.detectChanges();
+    try {
+      let dados = await this.dao!.dadosConsolidacao(entity.id);
+      this.itemsEntregas = dados.entregas.map(x => {
+        return {
+          entrega: x,
+          atividades: [
+            ...dados.atividades.filter(y => y.plano_trabalho_entrega_id == x.id),
+            ...dados.consolidaoAtividades.filter(y => y.plano_trabalho_entrega_id == x.id)
+          ]
+        };
+      });
+      this.itemsOcorrencias = dados.ocorrencias;
+      this.itemsAfastamentos = dados.afastamentos;
+    } finally {
+      this.gridAtividade!.loading = false;
+      this.gridOcorrencia!.loading = false;
+      this.gridAfastamento!.loading = false;
+      this.cdRef.detectChanges();
+    }
   }
 
   public get hasEsforco(): boolean {
@@ -126,57 +139,50 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   /***************************************************************************************
   * Atividades 
   ****************************************************************************************/
-  public async addAtividade() {
+  public async addAtividade(entrega: PlanoTrabalhoEntrega) {
     return new PlanoTrabalhoConsolidacaoAtividade({
       id: this.dao!.generateUuid(),
-      plano_trabalho_consolidacao_id: this.entity!.id
+      plano_trabalho_consolidacao_id: this.entity!.id,
+      plano_trabalho_entrega_id: entrega.id
     });
   }
 
   public async loadAtividade(form: FormGroup, row: any) {
-    
-    
-    /*form.controls.nivel.setValue(this.getSequencia(this.grid?.getMetadata(row), row));
-    form.controls.sequencia.setValue(row.sequencia);
-    form.controls.nome.setValue(row.nome);
-    this.cdRef.detectChanges();*/
+    this.formAtividade.patchValue({
+      esforco: row.esforco,
+      realizado: row.realizado,
+      descricao: row.descricao
+    });    
+    this.cdRef.detectChanges();
   }
 
-  public async removeAtividade(row: any) {
-    /*let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir o item ?");
+  public async removeAtividade(atividades: (Atividade | PlanoTrabalhoConsolidacaoAtividade)[], row: any) {
+    let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir o item ?");
     if (confirm) {
-        let processo = row as CadeiaValorProcesso;
-        let filhos = this.items.filter(x => x.processo_pai_id == processo.id) || [];
-        filhos.forEach(x => this.removeProcesso(x));
-        this.items.splice(this.items.findIndex(x => x.id == processo.id), 1);
-        if (!this.isNoPersist)  await this.processosDao?.delete(row);
+      try {
+        let atividade = row as PlanoTrabalhoConsolidacaoAtividade;
+        await this.consolidacaoAtividadeDao?.delete(atividade);
+        atividades.splice(atividades.findIndex(x => x.id == atividade.id), 1);
         return true;
-      
+      } catch {
+        return false;
+      }
     } else {
       return false;
-    }*/
+    }
   }
 
   public async saveAtividade(form: FormGroup, row: any) {
-    /*let result = undefined;
-    this.form!.markAllAsTouched();
-    if (this.form!.valid) {
-      let niveis = form.controls.nivel.value.split(".");
-      let parents = this.processos(niveis.slice(0, niveis.length - 1));
-      let parentId = parents?.length ? parents[parents.length - 1].id : null;
-      let sequencia = niveis[niveis.length - 1] * 1;
-      /* Atualiza o indice a partir sa sequencia atual para os irmão que tem sequencia maior * /
-      this.items.filter(x => x.processo_pai_id == parentId && x.sequencia >= sequencia).forEach(x => x.sequencia++);
+    let result = undefined;
+    this.formAtividade.markAllAsTouched();
+    if (this.formAtividade!.valid) {
       row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
-      row.sequencia = sequencia;
-      row.cadeia_valor_id = this.entity?.id;
-      row.sequencia = sequencia;
-      row.processo_pai_id = parentId;
-      row.nome = form.controls.nome.value;
-      result = row;
-      if (!this.isNoPersist) result = await this.processosDao?.save(row);
+      row.esforco = form.controls.esforco.value;
+      row.realizado = form.controls.esforco.value;
+      row.descricao = form.controls.descricao.value;
+      result = await this.consolidacaoAtividadeDao?.save(row);
     }
-    return result;*/
+    return result;
   }
 
   public atividadeDynamicButtons(row: any): ToolbarButton[] {
@@ -189,56 +195,47 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   * Ocorrências 
   ****************************************************************************************/
   public async addOcorrencia() {
-    return new PlanoTrabalhoConsolidacaoAtividade({
-      id: this.dao!.generateUuid(),
+    return new PlanoTrabalhoConsolidacaoOcorrencia({
       plano_trabalho_consolidacao_id: this.entity!.id
     });
   }
 
   public async loadOcorrencia(form: FormGroup, row: any) {
-    
-    
-    /*form.controls.nivel.setValue(this.getSequencia(this.grid?.getMetadata(row), row));
-    form.controls.sequencia.setValue(row.sequencia);
-    form.controls.nome.setValue(row.nome);
-    this.cdRef.detectChanges();*/
+    this.formAtividade.patchValue({
+      data_inicio: row.data_inicio,
+      data_fim: row.data_fim,
+      descricao: row.descricao
+    });
+    this.cdRef.detectChanges();
   }
 
   public async removeOcorrencia(row: any) {
-    /*let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir o item ?");
+    let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir o item ?");
     if (confirm) {
-        let processo = row as CadeiaValorProcesso;
-        let filhos = this.items.filter(x => x.processo_pai_id == processo.id) || [];
-        filhos.forEach(x => this.removeProcesso(x));
-        this.items.splice(this.items.findIndex(x => x.id == processo.id), 1);
-        if (!this.isNoPersist)  await this.processosDao?.delete(row);
+      try {
+        let ocorrencia = row as PlanoTrabalhoConsolidacaoOcorrencia;
+        await this.consolidacaoOcorrenciaDao?.delete(ocorrencia);
+        this.itemsOcorrencias.splice(this.itemsOcorrencias.findIndex(x => x.id == ocorrencia.id), 1);
         return true;
-      
+      } catch {
+        return false;
+      }
     } else {
       return false;
-    }*/
+    }
   }
 
   public async saveOcorrencia(form: FormGroup, row: any) {
-    /*let result = undefined;
-    this.form!.markAllAsTouched();
-    if (this.form!.valid) {
-      let niveis = form.controls.nivel.value.split(".");
-      let parents = this.processos(niveis.slice(0, niveis.length - 1));
-      let parentId = parents?.length ? parents[parents.length - 1].id : null;
-      let sequencia = niveis[niveis.length - 1] * 1;
-      /* Atualiza o indice a partir sa sequencia atual para os irmão que tem sequencia maior * /
-      this.items.filter(x => x.processo_pai_id == parentId && x.sequencia >= sequencia).forEach(x => x.sequencia++);
+    let result = undefined;
+    this.formOcorrencia.markAllAsTouched();
+    if (this.formOcorrencia!.valid) {
       row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
-      row.sequencia = sequencia;
-      row.cadeia_valor_id = this.entity?.id;
-      row.sequencia = sequencia;
-      row.processo_pai_id = parentId;
-      row.nome = form.controls.nome.value;
-      result = row;
-      if (!this.isNoPersist) result = await this.processosDao?.save(row);
+      row.data_inicio = form.controls.data_inicio.value;
+      row.data_fim = form.controls.data_fim.value;
+      row.descricao = form.controls.descricao.value;
+      result = await this.consolidacaoOcorrenciaDao?.save(row);
     }
-    return result;*/
+    return result;
   }
 
   public ocorrenciaDynamicButtons(row: any): ToolbarButton[] {
@@ -246,6 +243,4 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     //result.push({ hint: "Adicionar filho", icon: "bi bi-plus-circle", onClick: this.addChildProcesso.bind(this) });
     return result;
   }  
-
-
 }

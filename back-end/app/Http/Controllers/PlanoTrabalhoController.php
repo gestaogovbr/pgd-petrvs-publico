@@ -26,6 +26,22 @@ class PlanoTrabalhoController extends ControllerBase {
         }
     }
 
+    
+    public function getByUsuario(Request $request) {
+        try {
+            $data = $request->validate([
+                'usuario_id' => ['required'],
+                'arquivadas' => ['required']
+            ]);
+            return response()->json([
+                'success' => true,
+                'dados' => $this->service->getByUsuario($data["usuario_id"], $data["arquivadas"])
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
     public function metadadosPlano(Request $request) {
         try {
             $this->checkPermissions('QUERY', $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));

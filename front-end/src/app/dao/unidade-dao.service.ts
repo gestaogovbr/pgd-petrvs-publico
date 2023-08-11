@@ -7,6 +7,7 @@ import { EntidadeDaoService } from './entidade-dao.service';
 import { UsuarioDaoService } from './usuario-dao.service';
 import { PlanoEntregaDaoService } from './plano-entrega-dao.service';
 import { TemplateDataset } from '../modules/uteis/templates/template.service';
+import { Usuario } from '../models/usuario.model';
 
 export type UnidadeDashboard = {
   sigla: string,                                    // nome da Unidade
@@ -97,6 +98,14 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
     return new Promise<Unidade[]>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/subordinadas', { unidade_id }).subscribe(response => {
         resolve(response?.subordinadas || []);
+      }, error => reject(error));
+    });
+  }
+
+  public lotados(unidade_id: string): Promise<Usuario[]>{
+    return new Promise<Usuario[]>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/lotados', { unidade_id }).subscribe(response => {
+        resolve(response?.usuarios || []);
       }, error => reject(error));
     });
   }
