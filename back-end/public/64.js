@@ -20,7 +20,7 @@ class MateriaDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0__.D
   constructor(injector) {
     super("Materia", injector);
     this.injector = injector;
-    this.searchFields = ["nome"]; //, "titulo"];
+    this.searchFields = ["nome"];
   }
 }
 _class = MateriaDaoService;
@@ -3505,7 +3505,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/modules/base/page-form-base */ 1184);
 /* harmony import */ var src_app_models_grupo_especializado_model__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/models/grupo-especializado.model */ 39834);
-/* harmony import */ var src_app_dao_grupo_epecializado_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/grupo-epecializado-dao.service */ 40463);
+/* harmony import */ var src_app_dao_grupo_especializado_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/grupo-especializado-dao.service */ 51353);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ 51197);
 /* harmony import */ var _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../components/input/input-switch/input-switch.component */ 88820);
 /* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ 92392);
@@ -3521,7 +3521,7 @@ var _class;
 class GrupoEspecializadoFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_1__.PageFormBase {
   //public tipoCursoDao ?: TipoCursoDaoService;
   constructor(injector) {
-    super(injector, src_app_models_grupo_especializado_model__WEBPACK_IMPORTED_MODULE_2__.GrupoEspecializado, src_app_dao_grupo_epecializado_dao_service__WEBPACK_IMPORTED_MODULE_3__.GrupoEspecializadoDaoService);
+    super(injector, src_app_models_grupo_especializado_model__WEBPACK_IMPORTED_MODULE_2__.GrupoEspecializado, src_app_dao_grupo_especializado_dao_service__WEBPACK_IMPORTED_MODULE_3__.GrupoEspecializadoDaoService);
     this.injector = injector;
     this.titulos = [];
     this.validate = (control, controlName) => {
@@ -3616,7 +3616,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../components/grid/grid.component */ 73150);
 /* harmony import */ var src_app_modules_base_page_list_base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/modules/base/page-list-base */ 78509);
 /* harmony import */ var src_app_models_grupo_especializado_model__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/models/grupo-especializado.model */ 39834);
-/* harmony import */ var src_app_dao_grupo_epecializado_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/grupo-epecializado-dao.service */ 40463);
+/* harmony import */ var src_app_dao_grupo_especializado_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/grupo-especializado-dao.service */ 51353);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/core */ 51197);
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/common */ 89650);
 /* harmony import */ var _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../components/grid/columns/columns.component */ 57224);
@@ -3646,7 +3646,7 @@ function GrupoEspecializadoListComponent_toolbar_1_Template(rf, ctx) {
 }
 class GrupoEspecializadoListComponent extends src_app_modules_base_page_list_base__WEBPACK_IMPORTED_MODULE_1__.PageListBase {
   constructor(injector) {
-    super(injector, src_app_models_grupo_especializado_model__WEBPACK_IMPORTED_MODULE_2__.GrupoEspecializado, src_app_dao_grupo_epecializado_dao_service__WEBPACK_IMPORTED_MODULE_3__.GrupoEspecializadoDaoService);
+    super(injector, src_app_models_grupo_especializado_model__WEBPACK_IMPORTED_MODULE_2__.GrupoEspecializado, src_app_dao_grupo_especializado_dao_service__WEBPACK_IMPORTED_MODULE_3__.GrupoEspecializadoDaoService);
     this.injector = injector;
     this.filterWhere = filter => {
       let result = [];

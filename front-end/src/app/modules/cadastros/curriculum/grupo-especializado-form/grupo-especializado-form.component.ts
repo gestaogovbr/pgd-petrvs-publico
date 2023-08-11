@@ -5,7 +5,7 @@ import { IIndexable } from 'src/app/models/base.model';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { GrupoEspecializado } from 'src/app/models/grupo-especializado.model';
-import { GrupoEspecializadoDaoService } from 'src/app/dao/grupo-epecializado-dao.service';
+import { GrupoEspecializadoDaoService } from 'src/app/dao/grupo-especializado-dao.service';
 
 
 @Component({

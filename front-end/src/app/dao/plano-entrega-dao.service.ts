@@ -144,23 +144,5 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
     });
   }
 
-  /**
- * Informa se o plano de entregas repassado como parâmetro está ativo, ou seja: é um plano válido (não foi deletado, não foi cancelado,
- * não foi arquivado) e possui o status ATIVO.
- * @param planoEntrega 
- * @returns 
- */
-  public isAtivo(planoEntrega: PlanoEntrega): boolean {
-    return this.isValido(planoEntrega) && planoEntrega.status == 'ATIVO';
-  }
-
-  /**
-   * Informa se o plano de entregas repassado como parâmetro é válido, ou seja, não foi deletado, não foi cancelado nem foi arquivado.
-   * @param planoEntrega 
-   * @returns 
-   */
-  public isValido(planoEntrega: PlanoEntrega): boolean {
-    return !planoEntrega.deleted_at && !planoEntrega.data_cancelamento && !planoEntrega.data_arquivamento;
-  }
 }
 

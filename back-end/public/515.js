@@ -1046,7 +1046,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_models_currriculum_model__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/models/currriculum.model */ 70156);
 /* harmony import */ var src_app_dao_funcao_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/funcao-dao.service */ 37598);
 /* harmony import */ var src_app_dao_centro_treinamento_dao_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/dao/centro-treinamento-dao.service */ 57565);
-/* harmony import */ var src_app_dao_grupo_epecializado_dao_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/dao/grupo-epecializado-dao.service */ 40463);
+/* harmony import */ var src_app_dao_grupo_especializado_dao_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/dao/grupo-especializado-dao.service */ 51353);
 /* harmony import */ var src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/dao/unidade-dao.service */ 81214);
 /* harmony import */ var src_app_models_currriculum_profissional_model__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! src/app/models/currriculum-profissional.model */ 46722);
 /* harmony import */ var src_app_dao_curriculum_profissional_dao_service__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! src/app/dao/curriculum-profissional-dao.service */ 60978);
@@ -1149,7 +1149,7 @@ class CurriculumProfissionalFormComponent extends src_app_modules_base_page_form
     this.lotacaoDao = injector.get(src_app_dao_unidade_integrante_dao_service__WEBPACK_IMPORTED_MODULE_10__.UnidadeIntegranteDaoService);
     this.ctDao = injector.get(src_app_dao_centro_treinamento_dao_service__WEBPACK_IMPORTED_MODULE_4__.CentroTreinamentoDaoService);
     this.funcaoDao = injector.get(src_app_dao_funcao_dao_service__WEBPACK_IMPORTED_MODULE_3__.FuncaoDaoService);
-    this.grupoDao = injector.get(src_app_dao_grupo_epecializado_dao_service__WEBPACK_IMPORTED_MODULE_5__.GrupoEspecializadoDaoService);
+    this.grupoDao = injector.get(src_app_dao_grupo_especializado_dao_service__WEBPACK_IMPORTED_MODULE_5__.GrupoEspecializadoDaoService);
     this.unidadeDao = injector.get(src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_6__.UnidadeDaoService);
     this.form = this.fh.FormBuilder({
       radioDocenciaFora: {

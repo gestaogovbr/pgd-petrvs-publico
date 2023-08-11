@@ -2072,7 +2072,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_30__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_30__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_30__["ɵɵproperty"]("label", ctx.lex.translate("Plano de trabalho"))("size", 4)("control", ctx.form.controls.plano_trabalho_id)("items", ctx.planosTrabalhos)("labelInfo", ctx.lex.translate("Plano de trabalho"));
       _angular_core__WEBPACK_IMPORTED_MODULE_30__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_30__["ɵɵproperty"]("label", ctx.lex.translate("Entrega") + ctx.lex.translate("plano de trabalho"))("size", 4)("control", ctx.form.controls.plano_trabalho_entrega_id)("items", ctx.entregas)("labelInfo", ctx.lex.translate("Entrega") + ctx.lex.translate("plano de trabalho") + " que a " + ctx.lex.translate("atividade") + " \u00E9 referente");
+      _angular_core__WEBPACK_IMPORTED_MODULE_30__["ɵɵproperty"]("label", ctx.lex.translate("Entrega") + " " + ctx.lex.translate("plano de trabalho"))("size", 4)("control", ctx.form.controls.plano_trabalho_entrega_id)("items", ctx.entregas)("labelInfo", ctx.lex.translate("Entrega") + ctx.lex.translate("plano de trabalho") + " que a " + ctx.lex.translate("atividade") + " \u00E9 referente");
       _angular_core__WEBPACK_IMPORTED_MODULE_30__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_30__["ɵɵproperty"]("ngIf", !(_r3 == null ? null : _r3.selectedItem == null ? null : _r3.selectedItem.data == null ? null : _r3.selectedItem.data.tipo_modalidade == null ? null : _r3.selectedItem.data.tipo_modalidade.atividade_esforco))("ngIfElse", _r6);
       _angular_core__WEBPACK_IMPORTED_MODULE_30__["ɵɵadvance"](3);

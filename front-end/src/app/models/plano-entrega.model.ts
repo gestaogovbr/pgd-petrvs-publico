@@ -33,7 +33,7 @@ export class PlanoEntrega extends Base {
   public fim: Date | null = null;                                   // Data fim do plano de entrega
   public nome: string = "";                                         // Nome do plano de entrega
   public numero?: number;                                           // Número do plano de entrega (Gerado pelo sistema)
-  public status: string = 'INCLUIDO';                               // Status do plano de entrega
+  //public status: string = 'INCLUIDO';                               // Status do plano de entrega
   public data_cancelamento?: Date | null;
   public data_arquivamento?: Date | null;
   public metadados: PlanoEntregaMetadados | undefined = undefined;  // Campo virtual contendo informações calculadas pelo servidor

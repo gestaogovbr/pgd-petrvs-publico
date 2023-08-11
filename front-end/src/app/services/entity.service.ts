@@ -50,7 +50,7 @@ import { AreaConhecimentoDaoService } from '../dao/area-conhecimento-dao.service
 import { TipoCursoDaoService } from '../dao/tipo-curso-dao.service';
 import { CentroTreinamentoDaoService } from '../dao/centro-treinamento-dao.service';
 import { FuncaoDaoService } from '../dao/funcao-dao.service';
-import { GrupoEspecializadoDaoService } from '../dao/grupo-epecializado-dao.service';
+import { GrupoEspecializadoDaoService } from '../dao/grupo-especializado-dao.service';
 import { PlanoEntregaEntregaObjetivoDaoService } from '../dao/plano-entrega-entrega-objetivo-dao.service';
 import { PlanoEntregaEntregaProcessoDaoService } from '../dao/plano-entrega-entrega-processo-dao.service';
 import { CursoDaoService } from '../dao/curso-dao.service';
