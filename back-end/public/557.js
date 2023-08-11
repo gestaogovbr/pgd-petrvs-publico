@@ -32,55 +32,6 @@ class AtividadeTarefa extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
 
 /***/ }),
 
-/***/ 73101:
-/*!*******************************************!*\
-  !*** ./src/app/models/atividade.model.ts ***!
-  \*******************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Atividade: () => (/* binding */ Atividade)
-/* harmony export */ });
-/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
-
-class Atividade extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
-  constructor(data) {
-    super();
-    this.statusHistorico = []; // Mudanças de status sofridas pela atividade (histórico)
-    this.numero = 0; /* Numero da atividade */
-    this.descricao = null; /* Assunto da atividade */
-    this.data_distribuicao = new Date(); /* Data de cadastro da atividade */
-    this.tempo_planejado = 0.0; /* Diferença entre data_distribuicao e prazo_entrega em horas (úteis ou corridas, configurada na unidade) */
-    this.carga_horaria = 0.0; /* Carga horária diária (vinda do plano de trabalho) */
-    this.prazo_entrega = new Date(); /* Data estipulada para entrega da atividade */
-    this.data_inicio = null; /* Data em que o usuário iniciou a atividade */
-    this.data_entrega = null; /* Data da entrega */
-    this.esforco = 0.0; /* Tempo calculado a partir da atividade e utilizando o fator_complexidade */
-    this.tempo_despendido = null; /* Calculado no fim da atividade, sendo o tempo líquido (considerando pausas) */
-    this.data_arquivamento = null; /* Data de arquivamento da atividade */
-    this.etiquetas = []; /* Etiquetas */
-    this.checklist = []; /* Checklist */
-    this.prioridade = null; /* Nível de prioridade */
-    this.progresso = 0; /* Progresso a execução da atividade */
-    this.metadados = undefined; /* Campo virtual contendo informações calculadas pelo servidor */
-    this.comentarios = []; /* Comentarios da atividade */
-    this.pausas = []; /* Pausas da atividade */
-    this.tarefas = []; /* Tarefas da atividade */
-    this.plano_trabalho_id = null;
-    this.plano_trabalho_entrega_id = null;
-    this.tipo_atividade_id = null;
-    this.demandante_id = "";
-    this.usuario_id = null;
-    this.unidade_id = "";
-    this.documento_requisicao_id = null;
-    this.documento_entrega_id = null;
-    this.initialization(data);
-  }
-}
-
-/***/ }),
-
 /***/ 94180:
 /*!*****************************************************************!*\
   !*** ./src/app/modules/gestao/atividade/atividade-list-base.ts ***!

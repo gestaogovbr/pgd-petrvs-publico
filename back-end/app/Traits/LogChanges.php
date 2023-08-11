@@ -44,7 +44,7 @@ trait LogChanges
                 'row_id' => $model->attributesToArray()["id"],
                 'type' => $action,
                 'delta' => $delta
-            ]);
+            ])->save();
         }
     }
 
@@ -57,7 +57,7 @@ trait LogChanges
                 'row_id' => $id,
                 'type' => $action,
                 'delta' => gettype($delta) == "string" ? $delta : json_encode($delta)
-            ]);
+            ])->save();
         }
     }
 }

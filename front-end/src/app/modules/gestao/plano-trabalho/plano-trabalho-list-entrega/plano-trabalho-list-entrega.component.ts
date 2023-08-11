@@ -16,7 +16,6 @@ import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
 import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { PlanoTrabalhoService } from '../plano-trabalho.service';
-import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
 
 @Component({
   selector: 'plano-trabalho-list-entrega',
@@ -60,7 +59,6 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   public entregasOutraUnidade: LookupItem[] = [];
   public entregasCatalogo: LookupItem[] = [];
   public planoEntregaOutraUnidade?: PlanoEntrega | null;
-  public novaEntrega?: PlanoTrabalhoEntrega;
 
   private _disabled: boolean = false;
   private _entregasDoPlanoEntrega: LookupItem[] = [];
@@ -121,6 +119,8 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     this.totalForcaTrabalho = Math.round(this.somaForcaTrabalho(this.entity?.entregas) * 100) / 100;
     this.entregasCatalogo = await this.carregarEntregasCatalogo();
     this.entregasMesmaUnidade = this.carregarEntregasMesmaUnidade();
+    this.entity!._metadata.idPlanoEntregas = this.entregasMesmaUnidade[0]?.data.plano_entrega_id;
+    this.entity!._metadata.novaEntrega = undefined;
   }
 
   /**
@@ -192,30 +192,27 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
    * @returns 
    */
   public async saveEntrega(form: FormGroup, row: any) {
-    this.novaEntrega = row as PlanoTrabalhoEntrega;
-    this.novaEntrega.entrega_id = this.form?.controls.entrega_id.value ?? null;
-    this.novaEntrega.plano_entrega_entrega_id = this.form?.controls.plano_entrega_entrega_id.value;
-    this.novaEntrega.descricao = this.form?.controls.descricao.value;
-    this.novaEntrega.forca_trabalho = this.form?.controls.forca_trabalho.value;
+    this.entity!._metadata.novaEntrega = row as PlanoTrabalhoEntrega;
+    this.entity!._metadata.novaEntrega.entrega_id = this.form?.controls.entrega_id.value ?? null;
+    this.entity!._metadata.novaEntrega.plano_entrega_entrega_id = this.form?.controls.plano_entrega_entrega_id.value;
+    this.entity!._metadata.novaEntrega.descricao = this.form?.controls.descricao.value;
+    this.entity!._metadata.novaEntrega.forca_trabalho = this.form?.controls.forca_trabalho.value;
     this.loading = true;
     try {
       if (!this.isNoPersist) {
-        this.novaEntrega = await (this.dao as PlanoTrabalhoEntregaDaoService).save(this.novaEntrega, this.join);
+        this.entity!._metadata.novaEntrega = await (this.dao as PlanoTrabalhoEntregaDaoService).save(this.entity!._metadata.novaEntrega, this.join);
         if (this.grid?.adding) this.grid!.items[this.grid!.items.length - 1].id = '';  // (*4)
       }
     } catch (e: any) {
       this.error(e.message ? e.message : e.toString() || e);
     } finally {
-      row.objeto = this.entregaCatalogo?.selectedItem?.data || this.entregaMesmaUnidade?.selectedItem?.data || this.entregaOutraUnidade?.selectedItem?.data; // (*)
-      /*this.novaEntrega.entrega = this.entregaCatalogo?.selectedItem?.data;
-      this.novaEntrega.plano_entrega_entrega = new PlanoEntregaEntrega([
-        entrega: this.entregaMesmaUnidade?.selectedItem?.data
-      ]);*/
+      this.entity!._metadata.novaEntrega.entrega = this.entregaCatalogo?.selectedItem?.data || null;
+      this.entity!._metadata.novaEntrega.plano_entrega_entrega = this.entregaMesmaUnidade?.selectedItem?.data || this.entregaOutraUnidade?.selectedItem?.data || null;
       row.forca_trabalho = this.form?.controls.forca_trabalho.value * 1;
       this.totalForcaTrabalho = Math.round(this.somaForcaTrabalho(this.entity?.entregas) * 100) / 100;
       this.loading = false;
     }
-    return this.novaEntrega;
+    return this.entity!._metadata.novaEntrega;
   }
 
   /**
@@ -234,8 +231,8 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   public carregarEntregasMesmaUnidade(): LookupItem[] {
     if (!this.entity?.id?.length) return this.entregasDoPlanoEntrega; // (*5)
     let entregasPlanoEntrega = this.entity?.plano_entrega?.entregas || [];
-    let result = entregasPlanoEntrega.map(epe => Object.assign({}, { key: epe.id, value: epe.entrega?.nome || epe.descricao, data: epe }));
-    return result;
+    //let result = entregasPlanoEntrega.map(epe => Object.assign({}, { key: epe.id, value: epe.entrega?.nome || epe.descricao, data: epe }));
+    return entregasPlanoEntrega.map(epe => Object.assign({}, { key: epe.id, value: epe.entrega?.nome || epe.descricao, data: epe }));
   }
 
   /**
@@ -330,7 +327,7 @@ Filtra as entregas da mesma unidade do plano de trabalho excluindo a entrega que
 já existe no grid.
 
 (*2)  let cont = this.entity?.entregas?.filter(e => !e.entrega_id && !!e.plano_entrega_entrega_id && e.id != this.grid?.editing?.id).map(e => e.plano_entrega_entrega_id).reduce((acc, id) => { if(id === control.value) return acc + 1; else return acc; }, 0) || 0;
-Idem à obs 1, em relação às entregas de outras unidades.
+Idem a obs 1, em relação às entregas de outras unidades.
 
 (*3)  return this.isNoPersist ? false : true;
 Após confirmada a remoção pelo usuário, a entrega é setada com _status = "DELETE" e é excluída da tela e sua confirmação é retornada para o método onDeleteItem() do gridComponent, que a excluirá também dos items do grid.
@@ -346,35 +343,34 @@ na própria entity. No entanto, quando o plano de trabalho (entity) ainda não e
 selecionado no inputSelectComponent, e portanto elas serão lidas na variável que reflete essa escolha (this.entregasPlanoEntrega), e essa reflexão ocorre por causa do bind @Input() set/get entregasPlanoEntrega.
 
 
-----------------------+--------------------------------------+----------------------------+--------+--------+------------------------------------
-ID do Plano           |       Pode ser que a 'row'           |  Características           | Possui | inputs | entrega_id 
-de Trabalho           |                                      |                            | objeto | search | plano_entrega_entrega_id
-----------------------+--------------------------------------+----------------------------+--------+--------+-------------------------------------
-                      | - Já tenha vindo do banco (TIPO I)   |                            |   NÃO  | nenhum | um dos dois
-                      |   (foi carregada junto com o Plano)  |                            |        |        |
-                      |--------------------------------------+----------------------------+--------+--------+--------------------------------------
-  EXISTE              | - Tenho sido salva agora no banco    |                            |   SIM  | um dos | um dos dois
-  - Então o Grid é    |   (TIPO II)                          |                            |        | três   |
-    Persistente       |--------------------------------------+----------------------------+--------+--------+------------------------------------
-                      | - Esteja sendo criada agora          | addEntrega loadEntrega     |   NÃO  | um dos | nenhum
-                      |                                      |                            |        | três   |
-                      |--------------------------------------+----------------------------+--------+--------+-----------------------------------     
-                      | - Seja do TIPO I e esteja sendo      | loadEntrega                |   NÃO  | um dos | um dos dois
-                      |   editada agora                      |                            |        | três   |
-                      +--------------------------------------+----------------------------+--------+--------+------------------------------------
-                      | - Seja do TIPO II e esteja sendo     | loadEntrega                |   SIM  | um dos | um dos dois
-                      |   editada agora                      |                            |        | três   |
-----------------------+--------------------------------------+----------------------------+--------+--------+-----------------------------------------
-  NÃO                 | - Já exista nos itens do grid        |                            |   SIM  | nenhum | um dos dois
-  EXISTE              |   (foi salva agora, não no banco)    | Possui _status == "ADD"    |        |        |
-  - Então o Grid é    |--------------------------------------+----------------------------+--------+--------+---------------------------------------
-    Não-persistente   | - Esteja sendo criada agora          | Possui _status == "ADD"    |   NÃO  | um dos | nenhum
-                      |                                      | addEntrega loadEntrega     |        | três   |
-                      |--------------------------------------+----------------------------+--------+--------+---------------------------------------
-                      | - Tenha acabado de ser criada e      | Possui _status == "ADD"    |   SIM  | um dos | um dos dois
-                      |   já está sendo editada              | loadEntrega                |        | três   |
-------------------------------------------------------------------------------------------+--------+--------+--------------------------------------
+----------------------+--------------------------------------+----------------------------+--------+------------------------------------
+ID do Plano           |       Pode ser que a 'row'           |  Características           | inputs | entrega_id 
+de Trabalho           |                                      |                            | search | plano_entrega_entrega_id
+----------------------+--------------------------------------+----------------------------+--------+------------------------------------
+                      | - Já tenha vindo do banco (TIPO I)   |                            | nenhum | um dos dois
+                      |   (foi carregada junto com o Plano)  |                            |        |
+                      |--------------------------------------+----------------------------+--------+------------------------------------
+  EXISTE              | - Tenho sido salva agora no banco    |                            | um dos | um dos dois
+  - Então o Grid é    |   (TIPO II)                          |                            | três   |
+    Persistente       |--------------------------------------+----------------------------+--------+------------------------------------
+                      | - Esteja sendo criada agora          | addEntrega loadEntrega     | um dos | nenhum
+                      |                                      |                            | três   |
+                      |--------------------------------------+----------------------------+--------+------------------------------------     
+                      | - Seja do TIPO I e esteja sendo      | loadEntrega                | um dos | um dos dois
+                      |   editada agora                      |                            | três   |
+                      +--------------------------------------+----------------------------+--------+------------------------------------
+                      | - Seja do TIPO II e esteja sendo     | loadEntrega                | um dos | um dos dois
+                      |   editada agora                      |                            | três   |
+----------------------+--------------------------------------+----------------------------+--------+------------------------------------
+  NÃO                 | - Já exista nos itens do grid        |                            | nenhum | um dos dois
+  EXISTE              |   (foi salva agora, não no banco)    | Possui _status == "ADD"    |        |
+  - Então o Grid é    |--------------------------------------+----------------------------+--------+------------------------------------
+    Não-persistente   | - Esteja sendo criada agora          | Possui _status == "ADD"    | um dos | nenhum
+                      |                                      | addEntrega loadEntrega     | três   |
+                      |--------------------------------------+----------------------------+--------+------------------------------------
+                      | - Tenha acabado de ser criada e      | Possui _status == "ADD"    | um dos | um dos dois
+                      |   já está sendo editada              | loadEntrega                | três   |
+------------------------------------------------------------------------------------------+--------+------------------------------------
 (*) O ADD é inserido pelo método addEntrega e só sai quando persiste no banco e volta
-(*) O objeto é inserido pelo método saveEntrega e permanece mesmo depois de persistida no banco
 
 */

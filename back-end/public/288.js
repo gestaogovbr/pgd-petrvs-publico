@@ -842,33 +842,22 @@ class CadeiaValorListProcessosComponent extends src_app_modules_base_page_frame_
     this.cdRef.detectChanges();
     this.sortProcessos();
   }
-  addProcesso() {
+  addChildProcesso(row, metadata, index) {
     var _this = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let processo = new src_app_models_cadeia_valor_processo_model__WEBPACK_IMPORTED_MODULE_5__.CadeiaValorProcesso({
         id: _this.dao.generateUuid(),
-        sequencia: _this.items.filter(x => !x.processo_pai_id).length + 1,
-        nome: ""
-      });
-      return processo;
-    })();
-  }
-  addChildProcesso(row, metadata, index) {
-    var _this2 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      let processo = new src_app_models_cadeia_valor_processo_model__WEBPACK_IMPORTED_MODULE_5__.CadeiaValorProcesso({
-        id: _this2.dao.generateUuid(),
         processo_pai_id: row.id,
-        sequencia: _this2.items.filter(x => x.processo_pai_id == row.id).length + 1,
+        sequencia: _this.items.filter(x => x.processo_pai_id == row.id).length + 1,
         nome: ""
       });
-      _this2.items.push(processo);
-      _this2.grid.setMetadata(processo, {
-        nivel: _this2.getSequencia({}, processo)
+      _this.items.push(processo);
+      _this.grid.setMetadata(processo, {
+        nivel: _this.getSequencia({}, processo)
       });
-      _this2.sortProcessos();
-      _this2.grid.adding = true;
-      yield _this2.grid.edit(processo);
+      _this.sortProcessos();
+      _this.grid.adding = true;
+      yield _this.grid.edit(processo);
       return undefined;
     })();
   }
@@ -894,6 +883,24 @@ class CadeiaValorListProcessosComponent extends src_app_modules_base_page_frame_
   getNivelSequencia(metadata) {
     return 10 * (metadata.nivel.match(/\./g) || []).length;
   }
+  sortProcessos() {
+    this.items.sort((a, b) => {
+      const sa = (this.grid.getMetadata(a)?.nivel || "").split(".").map(x => ("000" + x).substr(-3)).join(".");
+      const sb = (this.grid.getMetadata(b)?.nivel || "").split(".").map(x => ("000" + x).substr(-3)).join(".");
+      return sa < sb ? -1 : sa > sb ? 1 : 0;
+    });
+  }
+  addProcesso() {
+    var _this2 = this;
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      let processo = new src_app_models_cadeia_valor_processo_model__WEBPACK_IMPORTED_MODULE_5__.CadeiaValorProcesso({
+        id: _this2.dao.generateUuid(),
+        sequencia: _this2.items.filter(x => !x.processo_pai_id).length + 1,
+        nome: ""
+      });
+      return processo;
+    })();
+  }
   loadProcesso(form, row) {
     var _this3 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
@@ -902,13 +909,6 @@ class CadeiaValorListProcessosComponent extends src_app_modules_base_page_frame_
       form.controls.nome.setValue(row.nome);
       _this3.cdRef.detectChanges();
     })();
-  }
-  sortProcessos() {
-    this.items.sort((a, b) => {
-      const sa = (this.grid.getMetadata(a)?.nivel || "").split(".").map(x => ("000" + x).substr(-3)).join(".");
-      const sb = (this.grid.getMetadata(b)?.nivel || "").split(".").map(x => ("000" + x).substr(-3)).join(".");
-      return sa < sb ? -1 : sa > sb ? 1 : 0;
-    });
   }
   removeProcesso(row) {
     var _this4 = this;

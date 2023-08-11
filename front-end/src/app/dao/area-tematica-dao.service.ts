@@ -9,7 +9,6 @@ export class AreaTematicaDaoService extends DaoBaseService<AreaTematica>{
  
   constructor(protected injector: Injector) { 
     super("AreaTematica", injector);
-    //this.searchFields = ["nome_area", "ativo"];
     this.searchFields = ["nome"];
   }  
 }

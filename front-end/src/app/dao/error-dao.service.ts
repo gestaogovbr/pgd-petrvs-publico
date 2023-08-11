@@ -10,7 +10,6 @@ export class ErrorDaoService extends DaoBaseService<Error> {
 
   constructor(protected injector: Injector) {
     super("Error", injector);
-    //this.searchFields = ["type", "date_time", "user_id", "row_id", "table_name"];
   }
 
   public showResponsaveis(): Promise<LookupItem[]> {

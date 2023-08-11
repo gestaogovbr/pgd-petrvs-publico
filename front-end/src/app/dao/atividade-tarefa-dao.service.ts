@@ -9,7 +9,6 @@ export class AtividadeTarefaDaoService extends DaoBaseService<AtividadeTarefa> {
 
   constructor(protected injector: Injector) { 
     super("AtividadeTarefa", injector);
-    //this.searchFields = ["nome"];
   }
 }
 
