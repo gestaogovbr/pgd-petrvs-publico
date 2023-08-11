@@ -46,10 +46,6 @@ class PlanoEntregaService extends ServiceBase
         try {
             DB::beginTransaction();
             $planoEntrega = PlanoEntrega::find($data["id"]);
-        /*  $this->update([
-                "id" => $planoEntrega->id,
-                "status" => 'AVALIADO',
-            ], $unidade, false); */
             $this->status->atualizaStatus('PLANO_ENTREGA',$planoEntrega->id,'AVALIADO','A avaliação do plano de entregas foi realizada nesta data.');
             DB::commit();
         } catch (Throwable $e) {
@@ -97,10 +93,6 @@ class PlanoEntregaService extends ServiceBase
         try {
             DB::beginTransaction();
             $planoEntrega = PlanoEntrega::find($data["id"]);
-        /*  $this->update([
-                "id" => $planoEntrega->id,
-                "status" => 'CONCLUIDO',
-            ], $unidade, false); */
             $this->status->atualizaStatus('PLANO_ENTREGA',$planoEntrega->id,'CONCLUIDO','A avaliação do plano de entregas foi cancelada nesta data.');
             DB::commit();
         } catch (Throwable $e) {
@@ -114,10 +106,6 @@ class PlanoEntregaService extends ServiceBase
         try {
             DB::beginTransaction();
             $planoEntrega = PlanoEntrega::find($data["id"]);
-        /*  $this->update([
-                "id" => $planoEntrega->id,
-                "status" => 'ATIVO',
-            ], $unidade, false); */
             $this->status->atualizaStatus('PLANO_ENTREGA',$planoEntrega->id,'ATIVO','A conclusão do plano de entregas foi cancelada nesta data.');
             DB::commit();
         } catch (Throwable $e) {
@@ -131,10 +119,6 @@ class PlanoEntregaService extends ServiceBase
         try {
             DB::beginTransaction();
             $planoEntrega = PlanoEntrega::find($data["id"]);
-      /*    $this->update([
-                "id" => $planoEntrega->id,
-                "status" => 'HOMOLOGANDO',
-            ], $unidade, false); */
             $this->status->atualizaStatus('PLANO_ENTREGA',$planoEntrega->id,'HOMOLOGANDO','A homologação do plano de entregas foi cancelada nesta data.');
             DB::commit();
         } catch (Throwable $e) {
@@ -148,10 +132,6 @@ class PlanoEntregaService extends ServiceBase
         try {
             DB::beginTransaction();
             $planoEntrega = PlanoEntrega::find($data["id"]);
-        /*     $this->update([
-                "id" => $planoEntrega->id,
-                "status" => 'CONCLUIDO',
-            ], $unidade, false); */
             $this->status->atualizaStatus('PLANO_ENTREGA',$planoEntrega->id,'CONCLUIDO','O plano de entregas foi concluído nesta data.');
             DB::commit();
         } catch (Throwable $e) {
@@ -175,10 +155,6 @@ class PlanoEntregaService extends ServiceBase
         try {
             DB::beginTransaction();
             $planoEntrega = PlanoEntrega::find($data["id"]);
-        /*     $this->update([
-                "id" => $planoEntrega->id,
-                "status" => 'ATIVO',
-            ], $unidade, false); */
             $this->status->atualizaStatus('PLANO_ENTREGA',$planoEntrega->id,'ATIVO','O plano de entregas foi homologado nesta data.');
             DB::commit();
         } catch (Throwable $e) {
@@ -213,10 +189,6 @@ class PlanoEntregaService extends ServiceBase
         try {
             DB::beginTransaction();
             $planoEntrega = PlanoEntrega::find($data["id"]);
-        /*     $this->update([
-                "id" => $planoEntrega->id,
-                "status" => 'HOMOLOGANDO',
-            ], $unidade, false); */
             $this->status->atualizaStatus($planoEntrega,'HOMOLOGANDO','O plano de entregas foi liberado para homologação nesta data.');
             DB::commit();
         } catch (Throwable $e) {
@@ -275,11 +247,7 @@ class PlanoEntregaService extends ServiceBase
         try {
             DB::beginTransaction();
             $planoEntrega = PlanoEntrega::find($data["id"]);
-        /*     $this->update([
-                "id" => $planoEntrega->id,
-                "status" => 'ATIVO',
-            ], $unidade, false); */
-            $this->status->atualizaStatus('PLANO_ENTREGA', $planoEntrega->id, 'ATIVO', 'O plano de entregas foi reativado nesta data.');
+            $this->status->atualizaStatus($planoEntrega, 'ATIVO', 'O plano de entregas foi reativado nesta data.');
             DB::commit();
         } catch (Throwable $e) {
             DB::rollback();
@@ -292,11 +260,7 @@ class PlanoEntregaService extends ServiceBase
         try {
             DB::beginTransaction();
             $planoEntrega = PlanoEntrega::find($data["id"]);
-        /*     $this->update([
-                "id" => $planoEntrega->id,
-                "status" => 'INCLUIDO',
-            ], $unidade, false); */
-            $this->status->atualizaStatus('PLANO_ENTREGA', $planoEntrega->id, 'INCLUIDO', 'O plano de entregas foi retirado de homologação nesta data.');
+            $this->status->atualizaStatus($planoEntrega, 'INCLUIDO', 'O plano de entregas foi retirado de homologação nesta data.');
             DB::commit();
         } catch (Throwable $e) {
             DB::rollback();
@@ -309,11 +273,7 @@ class PlanoEntregaService extends ServiceBase
         try {
             DB::beginTransaction();
             $planoEntrega = PlanoEntrega::find($data["id"]);
-        /*     $this->update([
-                "id" => $planoEntrega->id,
-                "status" => 'SUSPENSO',
-            ], $unidade, false); */
-            $this->status->atualizaStatus('PLANO_ENTREGA', $planoEntrega->id, 'SUSPENSO', 'O plano de entregas foi suspenso nesta data.');
+            $this->status->atualizaStatus($planoEntrega, 'SUSPENSO', 'O plano de entregas foi suspenso nesta data.');
             DB::commit();
         } catch (Throwable $e) {
             DB::rollback();
