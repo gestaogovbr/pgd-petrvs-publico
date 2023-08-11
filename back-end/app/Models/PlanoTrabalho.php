@@ -27,6 +27,7 @@ class PlanoTrabalho extends ModelBase
         'forma_contagem_carga_horaria', /* enum('DIA','SEMANA','MES'); NOT NULL; DEFAULT: 'DIA'; */// Forma de contagem padrão da carga horária
         'programa_id', /* char(36); NOT NULL; */
         'usuario_id', /* char(36); NOT NULL; */
+        'status_id',
         'criacao_usuario_id', /* char(36); */
         'unidade_id', /* char(36); NOT NULL; */
         'documento_id', /* char(36); */

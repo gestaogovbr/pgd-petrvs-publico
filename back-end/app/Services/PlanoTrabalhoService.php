@@ -80,6 +80,10 @@ class PlanoTrabalhoService extends ServiceBase
     $data["where"] = $where;
   }
 
+  public function afterStore($planoTrabalho, $action){
+    if($action == "INSERT") { $this->status->atualizaStatus($planoTrabalho, 'INCLUIDO', 'O plano de trabalho foi criado nesta data.'); }
+}
+
   public function validateStore($data, $unidade, $action)
   {
     $unidade_id = $data["unidade_id"];

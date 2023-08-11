@@ -19,7 +19,7 @@ class PlanoEntregaService extends ServiceBase
     public $statusQuery = "";
 
     public function afterStore($planoEntrega, $action){
-        if($action == "INSERT") { $this->status->atualizaStatus('PLANO_ENTREGA', $planoEntrega->id, 'INCLUIDO', 'O plano de entregas foi criado nesta data.'); }
+        if($action == "INSERT") { $this->status->atualizaStatus($planoEntrega, 'INCLUIDO', 'O plano de entregas foi criado nesta data.'); }
     }
 
     public function arquivar($data, $unidade) {
@@ -217,7 +217,7 @@ class PlanoEntregaService extends ServiceBase
                 "id" => $planoEntrega->id,
                 "status" => 'HOMOLOGANDO',
             ], $unidade, false); */
-            $this->status->atualizaStatus('PLANO_ENTREGA',$planoEntrega->id,'HOMOLOGANDO','O plano de entregas foi liberado para homologação nesta data.');
+            $this->status->atualizaStatus($planoEntrega,'HOMOLOGANDO','O plano de entregas foi liberado para homologação nesta data.');
             DB::commit();
         } catch (Throwable $e) {
             DB::rollback();

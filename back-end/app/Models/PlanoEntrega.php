@@ -27,6 +27,7 @@ class PlanoEntrega extends ModelBase
         'data_arquivamento', /* datetime; */// Data de arquivamento do plano de entregas
         'programa_id', /* char(36); NOT NULL; */
         'criacao_usuario_id', /* char(36); NOT NULL; */
+        'status_id', 
         'inicio', /* datetime; NOT NULL; */// Data inicial do plano de entregas
         'fim', /* datetime; */// Data final do plano de entregas
         //'deleted_at', /* timestamp; */
