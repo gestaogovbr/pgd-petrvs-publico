@@ -122,7 +122,7 @@ class PlanoTrabalhoService extends ServiceBase
       /* Valida se o novo período data_inicio e data_fim é compatível com os lançamentos já realizados nas consolidações */
       $maxInicio = $this->dataFinalMinimaConsolidacao($plano);
       $minFim = $this->dataFinalMinimaConsolidacao($plano);
-      if (strtotime($data["data_inicio"]) > strtotime($maxInicio)) {
+      if (strtotime($data["data_inicio_vigencia"]) > strtotime($maxInicio)) {
         throw new ServerException("ValidatePlano", "Data de início do plano é maior que a da primeira consolidação avaliada; ou com entregas; ou com ocorrências.");
       }
       if (strtotime($data["data_fim"]) < strtotime($minFim)) {
@@ -143,7 +143,7 @@ class PlanoTrabalhoService extends ServiceBase
 
   public function extraStore($plano, $unidade, $action)
   {
-    /* Atualiza as consolidações conforme o programa do plano e o período de data_inicio e data_fim */
+    /* Atualiza as consolidações conforme o programa do plano e o período de data_inicio_vigencia e data_fim_vigencia */
     $this->atualizaConsolidacoes($plano);
     /* Restaura o documento_id */
     if(!empty($this->documentoId) && !empty(Documento::find($this->documentoId))) {
@@ -160,9 +160,9 @@ class PlanoTrabalhoService extends ServiceBase
     }
   }
 
-  /* Será a data_inicio, ou a data_fim do último período CONCLUIDO ou AVALIADO, ou a data_fim da última ocorrência, ou data_inicio do último perído com entregas. O que for maior. */
+  /* Será a data_inicio_vigencia, ou a data_fim do último período CONCLUIDO ou AVALIADO, ou a data_fim da última ocorrência, ou data_inicio do último perído com entregas. O que for maior. */
   public function dataFinalMinimaConsolidacao($plano) {
-    $result = strtotime($plano->data_inicio);
+    $result = strtotime($plano->data_inicio_vigencia);
     foreach($plano->consolidacoes as $consolidacao) {
       $data = strtotime($consolidacao->status->codigo != "INCLUINDO" ? $consolidacao->data_fim : 
         ($consolidacao->ocorrencias()->count() ? $consolidacao->ocorrencias()->max('data_fim') :
@@ -172,9 +172,9 @@ class PlanoTrabalhoService extends ServiceBase
     return date('Y-m-d', $result);
   }
 
-  /* Será a data_fim, ou a data_inicio do primeiro período CONCLUIDO ou AVALIADO, ou a data_inicio da primeira ocorrência, ou data_fim do primeiro perído com entregas. O que for maior. */
+  /* Será a data_fim_vigencia, ou a data_inicio do primeiro período CONCLUIDO ou AVALIADO, ou a data_inicio da primeira ocorrência, ou data_fim do primeiro perído com entregas. O que for maior. */
   public function dataInicialMaximaConsolidacao($plano) {
-    $result = strtotime($plano->data_fim);
+    $result = strtotime($plano->data_fim_vigencia);
     foreach($plano->consolidacoes as $consolidacao) {
       $data = strtotime($consolidacao->status->codigo != "INCLUINDO" ? $consolidacao->data_inicio : 
         ($consolidacao->ocorrencias()->count() ? $consolidacao->ocorrencias()->min('data_inicio') :
@@ -211,15 +211,15 @@ class PlanoTrabalhoService extends ServiceBase
     $existentes = $plano->consolidacoes->all();
     $ocorrencias = array_reduce($existentes, fn($carry, $item) => array_merge($carry, $item->ocorrencias->all()), []);
     $merged = [];
-    $dataInicio = $plano->data_inicio;
-    while(strtotime($dataInicio) <= strtotime($plano->data_fim)) {
-      $dataFim = date("Y-m-d", min(strtotime($this->proxDataConsolidacao($dataInicio, $plano->programa)), strtotime($plano->data_fim)));
+    $dataInicio = $plano->data_inicio_vigencia;
+    while(strtotime($dataInicio) <= strtotime($plano->data_fim_vigencia)) {
+      $dataFim = date("Y-m-d", min(strtotime($this->proxDataConsolidacao($dataInicio, $plano->programa)), strtotime($plano->data_fim_vigencia)));
       $intersecaoOcorrencias = array_filter($ocorrencias, fn($o) => strtotime($dataInicio) <= strtotime($o->data_fim) && strtotime($dataFim) >= strtotime($o->data_inicio));
       $maxDataFimOcorrencia = count($intersecaoOcorrencias) ? max(array_map(fn($item) => strtotime($item->data_fim), $intersecaoOcorrencias)) : strtotime($dataFim);
       /* Caso exista uma ocorrência que faça interseção no período e tenha data_fim maior que a calculada, a data_fim irá crescer */
       $dataFim = $maxDataFimOcorrencia > strtotime($dataFim) ? date("Y-m-d", $maxDataFimOcorrencia) : $dataFim;
-      $igual = array_filter($existentes, fn($c) => $c->data_inicio == $dataInicio && $c->data_fim == $dataFim)[0];
-      $intersecao = array_filter($existentes, fn($c) => $c->status->codigo != "INCLUINDO" && strtotime($dataInicio) <= strtotime($c->data_fim) && strtotime($dataFim) >= strtotime($c->data_inicio))[0];
+      $igual = array_filter($existentes, fn($c) => $c->data_inicio == $dataInicio && $c->data_fim == $dataFim)[0] ?? null;
+      $intersecao = array_filter($existentes, fn($c) => $c->status->codigo != "INCLUINDO" && strtotime($dataInicio) <= strtotime($c->data_fim) && strtotime($dataFim) >= strtotime($c->data_inicio))[0] ?? null;
       if(!empty($igual)) { /* Períodos iguais, utiliza o já existente */
         $merged[] = $igual;
         $existentes = array_filter($existentes, fn($e) => $e->id !== $igual->id);
@@ -255,7 +255,7 @@ class PlanoTrabalhoService extends ServiceBase
     foreach($existentes as $anterior) {
       /* Realoca ocorrencias */
       foreach($anterior->ocorrencias as $ocorrencia) {
-        $consolidacao = array_filter($merged, fn($item) => $item->data_inicio <= $ocorrencia->data_inicio && $ocorrencia->data_inicio <= $item->data_fim)[0];
+        $consolidacao = array_filter($merged, fn($item) => $item->data_inicio <= $ocorrencia->data_inicio && $ocorrencia->data_inicio <= $item->data_fim)[0] ?? null;
         if(empty($consolidacao)) throw new ServerException("ValidatePlano", "Erro ao realocar ocorrência para novo período: " . $ocorrencia->data_inicio);
         $ocorrencia->plano_trabalho_consolidacao_id = $consolidacao->id;
         $ocorrencia->save();        
@@ -263,7 +263,7 @@ class PlanoTrabalhoService extends ServiceBase
       /* Realoca entregas */
       foreach($anterior->entregas as $entrega) {
         /* Utiliza a data_inicio da própria consolidação onde a entrega estava como referência para o novo local */
-        $consolidacao = array_filter($merged, fn($item) => $item->data_inicio <= $anterior->data_inicio && $anterior->data_inicio <= $item->data_fim)[0];
+        $consolidacao = array_filter($merged, fn($item) => $item->data_inicio <= $anterior->data_inicio && $anterior->data_inicio <= $item->data_fim)[0] ?? null;
         if(empty($consolidacao)) throw new ServerException("ValidatePlano", "Erro ao realocar entregas para novo período: " . $anterior->data_inicio);
         $entrega->plano_trabalho_consolidacao_id = $consolidacao->id;
         $entrega->save();
@@ -286,6 +286,23 @@ class PlanoTrabalhoService extends ServiceBase
         $consolidacoes[$i-1]->save();
       }
     }
+  }
+
+
+  /** 
+   * Retorna os planos de trabalho de um usuário (validando se ele tem acesso a esse plano)
+   * 
+   * @param   string  $usuario_id  O ID do Usuário
+   * @param   string  $arquivadas  Se o resultado deve incluir os planos arquivados
+   * @return  array
+   */
+  public function getByUsuario($usuarioId, $arquivados) {
+      // TODO: validar permissoes
+      $query = PlanoTrabalho::with(["unidade:id,sigla,nome", "programa:id,nome", "tipoModalidade:id,nome", "consolidacoes"])->where("usuario_id", $usuarioId);
+      if(!$arquivados) $query->whereNull("data_arquivamento");
+      return [
+        "planos" => $query->get()->all()
+      ];
   }
 
   /** 

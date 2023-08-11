@@ -75,12 +75,12 @@ export class PlanoTrabalhoService {
         Se row não vier do banco, ela passou pelo método saveEntrega() e lá um desses objetos, escolhido em um dos 3 inputSearch, foi anexado à variável this.novaEntrega, que originalmente é vazia. Sendo assim,
         quando necessário, os dados serão lidos em this.novaEntrega.entrega ou em this.novaEntrega.plano_entrega_entrega. */
     let plano = planoTrabalho || planoTrabalhoEntrega.plano_trabalho;
-    if (!!planoTrabalhoEntrega.entrega_id?.length) return { titulo: 'Catálogo', cor: 'secondary', nome: !!plano?._metadata.novaEntrega?.entrega?.id?.length ? plano._metadata.novaEntrega?.entrega?.nome || "Desconhecido" : planoTrabalhoEntrega.entrega?.nome || "Desconhecido1" };
+    if (!!planoTrabalhoEntrega.entrega_id?.length) return { titulo: 'Catálogo', cor: 'secondary', nome: !!plano?._metadata?.novaEntrega?.entrega?.id?.length ? plano._metadata?.novaEntrega?.entrega?.nome || "Desconhecido" : planoTrabalhoEntrega.entrega?.nome || "Desconhecido1" };
     let IdDoPlanoEntregaDoPlanoTrabalho: string, IdDoPlanoEntregaDaEntrega: string, badge: string, nome: string, cor: string;
     IdDoPlanoEntregaDoPlanoTrabalho = plano?.plano_entrega_id || plano?._metadata.idPlanoEntregas || 'Desconhecido2';
-    IdDoPlanoEntregaDaEntrega = !!plano?._metadata.novaEntrega?.plano_entrega_entrega?.id.length ? plano?._metadata.novaEntrega?.plano_entrega_entrega?.plano_entrega_id || "Desconhecido3" : planoTrabalhoEntrega.plano_entrega_entrega?.plano_entrega_id || "Desconhecido4";
+    IdDoPlanoEntregaDaEntrega = !!plano?._metadata?.novaEntrega?.plano_entrega_entrega?.id.length ? plano?._metadata?.novaEntrega?.plano_entrega_entrega?.plano_entrega_id || "Desconhecido3" : planoTrabalhoEntrega.plano_entrega_entrega?.plano_entrega_id || "Desconhecido4";
     [badge, cor] = IdDoPlanoEntregaDoPlanoTrabalho == IdDoPlanoEntregaDaEntrega ? ['Mesma unidade', 'success'] : ['Outra unidade', 'primary'];
-    nome = !!plano?._metadata.novaEntrega?.plano_entrega_entrega?.id.length ? plano?._metadata.novaEntrega?.plano_entrega_entrega?.entrega?.nome || "Desconhecido5" : planoTrabalhoEntrega.plano_entrega_entrega?.entrega?.nome || "Desconhecido6";
+    nome = !!plano?._metadata?.novaEntrega?.plano_entrega_entrega?.id.length ? plano?._metadata?.novaEntrega?.plano_entrega_entrega?.entrega?.nome || "Desconhecido5" : planoTrabalhoEntrega.plano_entrega_entrega?.entrega?.nome || "Desconhecido6";
     return { titulo: badge, cor: cor, nome: nome };
   }
 

@@ -119,6 +119,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     this.totalForcaTrabalho = Math.round(this.somaForcaTrabalho(this.entity?.entregas) * 100) / 100;
     this.entregasCatalogo = await this.carregarEntregasCatalogo();
     this.entregasMesmaUnidade = this.carregarEntregasMesmaUnidade();
+    this.entity!._metadata = this.entity!._metadata || {};
     this.entity!._metadata.idPlanoEntregas = this.entregasMesmaUnidade[0]?.data.plano_entrega_id;
     this.entity!._metadata.novaEntrega = undefined;
   }
@@ -192,6 +193,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
    * @returns 
    */
   public async saveEntrega(form: FormGroup, row: any) {
+    this.entity!._metadata = this.entity!._metadata || {};
     this.entity!._metadata.novaEntrega = row as PlanoTrabalhoEntrega;
     this.entity!._metadata.novaEntrega.entrega_id = this.form?.controls.entrega_id.value ?? null;
     this.entity!._metadata.novaEntrega.plano_entrega_entrega_id = this.form?.controls.plano_entrega_entrega_id.value;

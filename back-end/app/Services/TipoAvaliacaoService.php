@@ -4,5 +4,4 @@ namespace App\Services;
 
 use App\Services\ServiceBase;
 
-class TipoAvaliacaoService extends ServiceBase {
-}
+class TipoAvaliacaoService extends ServiceBase {}

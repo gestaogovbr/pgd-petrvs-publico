@@ -196,7 +196,10 @@ const maskConfigFunction: () => Partial<IConfig> = () => {
     SidePanelComponent,
     DocumentPreviewComponent,
     InputLevelComponent,
-    ActionButtonComponent
+    ActionButtonComponent,
+    AccordionComponent,
+    SectionComponent,
+    CollapseCardComponent
   ],
   providers: [
     { 

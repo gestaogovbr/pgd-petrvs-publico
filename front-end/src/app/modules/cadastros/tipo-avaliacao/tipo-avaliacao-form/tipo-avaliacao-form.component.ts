@@ -29,7 +29,7 @@ export class TipoAvaliacaoFormComponent extends PageFormBase<TipoAvaliacao, Tipo
   constructor(public injector: Injector) {
     super(injector, TipoAvaliacao, TipoAvaliacaoDaoService);
     this.tipoJustificativaDao = injector.get<TipoJustificativaDaoService>(TipoJustificativaDaoService);
-    this.join = ["tipos_avaliacoes_notas.justificativas.tipo_justificativa"];
+    this.join = ["notas.justificativas.tipo_justificativa"];
     this.form = this.fh.FormBuilder({
       nome: {default: ""},
       tipo: {default: "QUANTITATIVO"},

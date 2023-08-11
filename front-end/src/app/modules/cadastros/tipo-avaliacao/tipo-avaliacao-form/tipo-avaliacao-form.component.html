@@ -2,7 +2,7 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form> (submit)="onSaveData()" (cancel)="onCancel()">-->
     <div class="row">
         <input-text [size]="8" label="Título" controlName="nome"></input-text>
-        <input-select [size]="4" #tipo controlName="tipo" [items]="lookup.TIPO_AVALIACAO_TIPO"></input-select>
+        <input-select [size]="4" label="Tipo da nota" #tipo controlName="tipo" [items]="lookup.TIPO_AVALIACAO_TIPO"></input-select>
     </div>
     <separator title="Notas">
         <grid #grid [control]="form!.controls.notas" [form]="formNota!" [hasDelete]="true"
@@ -52,14 +52,14 @@
                         </div>
                     </ng-template>
                 </column>
-                <column title="Justificativas" [template]="columnJustificativas" [editTemplate]="editJustificativas">
+                <column [title]="lex.translate('Tipos de justificativa')" [template]="columnJustificativas" [editTemplate]="editJustificativas">
                     <ng-template let-row="row" #columnJustificativas>
                         <div class="one-per-line">
                             <badge *ngFor="let justificativa of row.justificativas" color="light" [label]="justificativa.tipo_justificativa.nome"></badge>
                         </div>
                     </ng-template>
                     <ng-template let-row="row" #editJustificativas>
-                        <input-multiselect [size]="12" [canEdit]="true" [addItemControl]="justificativa" [control]="formNota.controls.justificativas" [label]="lex.translate('Tipo de justificativa')">
+                        <input-multiselect [size]="12" [canEdit]="true" [addItemControl]="justificativa" [control]="formNota.controls.justificativas">
                             <input-select [size]="12" #justificativa [control]="formNota.controls.tipo_justificativa_id" [dao]="tipoJustificativaDao" [addRoute]="{route: ['cadastros', 'tipo-justificativa', 'new']}"></input-select>
                         </input-multiselect>
                     </ng-template>

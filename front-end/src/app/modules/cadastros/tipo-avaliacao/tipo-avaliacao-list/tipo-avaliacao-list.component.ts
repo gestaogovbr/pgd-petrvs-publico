@@ -2,6 +2,7 @@ import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { TipoAvaliacaoDaoService } from 'src/app/dao/tipo-avaliacao-dao.service';
+import { TipoAvaliacaoNota } from 'src/app/models/tipo-avaliacao-nota';
 import { TipoAvaliacao } from 'src/app/models/tipo-avaliacao.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
@@ -53,6 +54,10 @@ export class TipoAvaliacaoListComponent extends PageListBase<TipoAvaliacao, Tipo
     }
 
     return result;
+  }
+
+  public getNotasText(notas: TipoAvaliacaoNota[]) {
+    return notas.map(x => x.nota).join(", ");
   }
 }
 

@@ -23,7 +23,7 @@ export type SeiKeys = {id_processo: number, numero_processo: string, id_document
   templateUrl: './procedimento-trabalhar.component.html',
   styleUrls: ['./procedimento-trabalhar.component.scss']
 })
-export class ProcedimentoTrabalharComponent extends ListenerBase implements OnInit {
+export class ProcedimentoTrabalharComponent extends ListenerBase {
 
   public tipoDocumentoDao: TipoDocumentoDaoService;
   public dao: EntidadeDaoService;
@@ -32,10 +32,6 @@ export class ProcedimentoTrabalharComponent extends ListenerBase implements OnIn
     super(injector, "procedimento_trabalhar");
     this.dao = injector.get<EntidadeDaoService>(EntidadeDaoService);
     this.tipoDocumentoDao = injector.get<TipoDocumentoDaoService>(TipoDocumentoDaoService);
-  }
-
-  ngOnInit(): void {
-    super.ngOnInit();
   }
 
   public async loadToolbarButtons(buttons: string[]) {
