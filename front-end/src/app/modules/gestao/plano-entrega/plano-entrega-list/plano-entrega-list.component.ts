@@ -9,6 +9,7 @@ import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
+import { PlanoEntregaService } from '../plano-entrega.service';
 
 @Component({
   selector: 'plano-entrega-list',
@@ -21,9 +22,9 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   public showFilter: boolean = true;
   public linha?: PlanoEntrega;
   public unidadeDao: UnidadeDaoService;
-  public planoEntregaDao: PlanoEntregaDaoService;
   public planejamentoDao: PlanejamentoDaoService;
   public cadeiaValorDao: CadeiaValorDaoService;
+  public planoEntregaService: PlanoEntregaService;
   public unidadeSelecionada: Unidade;
   public habilitarAdesaoToolbar: boolean = false;
   public toolbarButtons: ToolbarButton[] = [];
@@ -50,9 +51,9 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   constructor(public injector: Injector) {
     super(injector, PlanoEntrega, PlanoEntregaDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
-    this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
     this.planejamentoDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
+    this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
     this.unidadeSelecionada = this.auth.unidade!;
     /* Inicializações */
     this.title = this.lex.translate('Planos de Entregas');
@@ -124,11 +125,11 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   }
 
   public planosEntregasAtivosUnidadePai(): PlanoEntrega[] {
-    return this.auth.unidade?.unidade?.planos_entrega?.filter(x => this.planoEntregaDao.isAtivo(x)) || [];
+    return this.auth.unidade?.unidade?.planos_entrega?.filter(x => this.planoEntregaService.isAtivo(x)) || [];
   }
 
   public planosEntregasAtivosUnidadeSelecionada(): PlanoEntrega[] {
-    return this.auth?.unidade?.planos_entrega?.filter(x => this.planoEntregaDao.isAtivo(x)) || [];
+    return this.auth?.unidade?.planos_entrega?.filter(x => this.planoEntregaService.isAtivo(x)) || [];
   }
 
   public filterClear(filter: FormGroup) {
@@ -268,7 +269,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
           - o plano precisa estar com o status ATIVO, a unidade do plano precisa ser a unidade de lotação principal do usuário logado, e ele possuir a capacidade "MOD_PENT_EDT_ATV_HOMOL" ou "MOD_PENT_EDT_ATV_ATV"; 
          */
         let b_alt1 = ['INCLUIDO', 'HOMOLOGANDO'].includes(this.situacaoPlano(planoEntrega)) && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoPrincipal(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_EDT")));
-        let b_alt2 = this.planoEntregaDao.isValido(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_EDT_FLH") && (this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id) || this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', planoEntrega.unidade!.unidade_pai_id!));
+        let b_alt2 = this.planoEntregaService.isValido(planoEntrega) && this.auth.hasPermissionTo("MOD_PENT_EDT_FLH") && (this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id) || this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', planoEntrega.unidade!.unidade_pai_id!));
         let b_alt3 = this.situacaoPlano(planoEntrega) == 'ATIVO' && this.auth.isLotacaoPrincipal(planoEntrega.unidade) && this.auth.hasPermissionTo(["MOD_PENT_EDT_ATV_HOMOL","MOD_PENT_EDT_ATV_ATV"]);
         return b_alt1 || b_alt2 || b_alt3;
       case this.BOTAO_ARQUIVAR:
@@ -554,7 +555,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     if (planoEntrega.deleted_at) return "EXCLUIDO";
     else if (planoEntrega.data_cancelamento) return "CANCELADO";
     else if (planoEntrega.data_arquivamento) return "ARQUIVADO";
-    else return planoEntrega.statusAtual!.nome;
+    else return planoEntrega.statusAtual!.codigo;
   }
 
 }

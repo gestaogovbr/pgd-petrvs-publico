@@ -849,4 +849,25 @@ usuarios u LEFT JOIN integracao_servidores s ON (u.cpf = s.cpf) ".
         //          SE A UNIDADE NÃO FOR LOCALIZADA, GERAR MENSAGEM DE ERRO
         //      SE FOREM DIFERENTES, GERAR MENSAGEM DE ERRO.
 
+                CASOS POSSÍVEIS
+                                         SIAPE                        PETRVS
+                SERVIDOR         LOTACAO       CHEFIA        LOTACAO         CHEFIA
+                   S1               A            A              A               A                   10/01
+                   S1               A            A              B               B                   11/01
+                   S1                            =              NADA           NADA                 12/02 INTEGRACAO
+
+    CENARIO 1      S1               B            B                                                  13/01 DESIGNACAO NO SIAPE (FOI DESIGNADO S1)
+                   S1                            !=             B               B                   14/01 INTEGRAÇÃO
+
+    CENARIO 2      S2               B            B                                                  15/01 DESIGNACAO NO SIAPE (FOI DESIGNADA OUTRA PESSOA - S2)
+CASO 1: S1/S2      S1
+CASO 2: S2/S1
+
+
+
+OK CENARIO 1: A NOMEAÇÃO DE S1 PARA A UNIDADE B FOI EFETIVADA.
+CENÁRIO 2: NO LUGAR DE S1, FOI NOMEADO S2 PARA A UNIDADE B.
+CENÁRIO 3: S2, QUE HAVIA SIDO DESIGNADO CHEFE DA UNIDADE, TEVE SUA DESIGNAÇÃO CANCELADA.
+CENÁRIO 4: O CHEFE DA UNIDADE B FOI DISPENSADO, MAS NINGUÉM FOI DESIGNADO.
+
 */

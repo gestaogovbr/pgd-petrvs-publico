@@ -37,7 +37,7 @@
     fim
     data_cancelamento
     data_arquivamento
-    status ('INCLUINDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO', 'AVALIADO', 'SUSPENSO')
+    status ('INCLUIDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO', 'AVALIADO', 'SUSPENSO')
     (id/created_at/updated_at/deleted_at)
         unidade_id (*)
         cadeia_valor_id
@@ -49,7 +49,7 @@
 ## REGRAS DE NEGÓCIO APLICADAS AOS PLANOS DE ENTREGAS
 
 1. PLANOS DE ENTREGA PRÓPRIOS
-    1. (RN_PENT_1_1) Quando um Plano de Entregas próprio é criado adquire automaticamente o status INCLUINDO;
+    1. (RN_PENT_1_1) Quando um Plano de Entregas próprio é criado adquire automaticamente o status INCLUIDO;
     2. (RN_PENT_1_2) O gestor de uma unidade e o gestor da sua unidade-pai, podem iniciar a elaboração de Planos de Entrega para a sua unidade;
     3. (RN_PENT_1_3) O chefe da unidade-pai pode homologar e, se possuir a capacidade "MOD_PENT_EDT_FLH", alterar o plano de entregas antes/depois de homologá-lo;
     4. (RN_PENT_1_4) Para ir para o status HOMOLOGANDO o Plano de Entregas deve ter ao menos uma entrega;
@@ -83,7 +83,7 @@
         4. a unidade não possua plano de entrega com o status ATIVO no mesmo período do plano ao qual está sendo feita a adesão;
    2. (RN_PENT_4_2) ALTERAR
         1. o usuário precisa possuir também a capacidade "MOD_PENT_QQR_UND"; ou
-        2. o plano precisa estar com o status INCLUINDO ou HOMOLOGANDO, e o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação e ele possuir a capacidade "MOD_PENT_EDT"; ou
+        2. o plano precisa estar com o status INCLUIDO ou HOMOLOGANDO, e o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação e ele possuir a capacidade "MOD_PENT_EDT"; ou
         3. o plano precisa ser válido, o usuário logado precisa possuir a capacidade "MOD_PENT_EDT_FLH", e ser gestor da unidade-pai da unidade do plano ou possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a unidade-pai da unidade do plano; (RN_PENT_1_3); ou
         4. o plano precisa estar com o status ATIVO, a unidade do plano ser a unidade de lotação do usuário logado, e ele possuir a capacidade "MOD_PENT_EDT_ATV_HOMOL" ou "MOD_PENT_EDT_ATV_ATV".
    3. (RN_PENT_4_3) ARQUIVAR
@@ -102,7 +102,7 @@
    9. (RN_PENT_4_9) CONSULTAR
         1. todos os participantes podem visualizar todos os planos de entrega;
    10. (RN_PENT_4_10) EXCLUIR
-        1. o plano precisa estar com o status INCLUINDO ou HOMOLOGANDO; e
+        1. o plano precisa estar com o status INCLUIDO ou HOMOLOGANDO; e
         2. o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação e ele possuir a capacidade "MOD_PENT_EXCL";
         3. se o plano não atender às condições acima, o usuário deve ser informado das razões pelas quais o plano não foi excluído;
    11. (RN_PENT_4_11) HOMOLOGAR
@@ -112,7 +112,7 @@
         2. o usuário logado precisa ser gestor da unidade do plano, ou gestor da sua unidade-pai; ou
         3. o usuário precisa possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a unidade-pai da unidade do plano e possuir a capacidade "MOD_PENT_EDT_FLH";
    13. (RN_PENT_4_13) LIBERAR PARA HOMOLOGAÇÃO
-        1. o plano precisa estar com o status INCLUINDO e o usuário logado precisa ser gestor da unidade do plano;
+        1. o plano precisa estar com o status INCLUIDO e o usuário logado precisa ser gestor da unidade do plano;
    14. (RN_PENT_4_14) RETIRAR DE HOMOLOGAÇÃO
         1. o plano precisa estar com o status HOMOLOGANDO, e o usuário logado precisa ser gestor da unidade do plano;
    15. (RN_PENT_4_15) REATIVAR
@@ -155,7 +155,7 @@
 ## FLUXO DOS PLANOS DE ENTREGAS  
 
 ~~~text  
-* Estando no status "INCLUINDO"
+* Estando no status "INCLUIDO"
         padrão: 
             - se o usuário logado for gestor da unidade do plano de entregas, ou esta for sua unidade de lotação e ele possuir a capacidade "MOD_PENT_LIB_HOMOL", exibir o botão 'Liberar para homologação' 
             (vai para HOMOLOGANDO)
@@ -170,7 +170,7 @@
             - se o usuário logado for um usuário comum, exibir o 'botão Consultar'
         outras opções:
             - se for um plano próprio: se o usuário logado for gestor da unidade ou esta ser sua unidade de lotação e ele possuir a capacidade "MOD_PENT_RET_HOMOL", exibir o botão 'Retirar de Homologação' 
-            (volta para o status "INCLUINDO") 
+            (volta para o status "INCLUIDO") 
             - se for um plano vinculado: se o usuário logado for gestor da unidade ou esta ser sua unidade de lotação e ele possuir a capacidade "MOD_PENT_EXCL", exibir o botão 'Excluir'
 
 * Estando no status "ATIVO"

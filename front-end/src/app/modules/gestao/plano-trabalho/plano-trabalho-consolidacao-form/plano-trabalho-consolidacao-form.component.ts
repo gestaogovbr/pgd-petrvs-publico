@@ -96,7 +96,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       result = "Obrigatório";
     } else if(['data_inicio', 'data_fim'].includes(controlName) && !this.util.isDataValid(control.value)) {
       result = "Inválido";
-    } else if(controlName == 'data_fim' && control.value.getTime() < this.formOcorrencia.controls.data_inicio.value.getTime()) {
+    } else if(controlName == 'data_fim' && control.value.getTime() < this.formOcorrencia?.controls.data_inicio.value.getTime()) {
         result = "Menor que início";
     } 
     return result;

@@ -543,7 +543,7 @@ class ProcedimentoTrabalharComponent extends _listener_base__WEBPACK_IMPORTED_MO
       if (selected) {
         let processo = yield _this7.execute("getProcessoKeys", []);
         _this7.go.navigate({
-          route: ['gestao', 'plano', 'termo']
+          route: ['gestao', 'plano-trabalho', 'termo']
         }, {
           metadata: {
             plano: selected,

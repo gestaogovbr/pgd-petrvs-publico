@@ -30,6 +30,7 @@ class Programa extends ModelBase
         'periodicidade_valor',
         'dias_tolerancia_consolidacao',
         'tipo_documento_tcr_id', /* char(36); */
+        'tipo_avaliacao_id',
         'documento_id', /* char(36); */
         'unidade_id', /* char(36); NOT NULL; */
         'template_tcr_id', /* char(36); */

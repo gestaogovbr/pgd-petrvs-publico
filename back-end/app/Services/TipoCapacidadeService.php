@@ -271,6 +271,7 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_PTR_INCL_SEM_LOT", "Permite incluir planos de trabalho para usuários não lotado na unidade do plano"], //só no back
                 ["MOD_PTR_INTSC_DATA", "Permite incluir planos de trabalho para usuários que já possuem planos no período de mesma modalidade"], //só no back
                 /* Capacidades relacionadas a consolidação */ 
+                ["MOD_PTR_CSLD", "Módulo de consolidações do Plano de Trabalho"],
                 ["MOD_PTR_CSLD_EDT", "Permite editar a consolidação do planos de trabalho"],
                 ["MOD_PTR_CSLD_EXCL", "Permite excluir a consolidação do planos de trabalho"],
                 ["MOD_PTR_CSLD_INCL", "Permite incluir a consolidação do planos de trabalho"],
@@ -314,6 +315,7 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_PENT_SUSP", "Permite suspender planos de entregas da sua unidade de lotação principal"], //só aqui
                 ["MOD_PENT_REATIVAR", "Permite reativar planos de entregas suspensos, desde que sejam da sua unidade de lotação principal"], //só aqui
                 ["MOD_PENT_ARQ", "Permite arquivar planos de entregas da sua unidade de lotação principal"],
+                ["MOD_PENT_QQR_UND", "Permite realizar as operações em qualquer unidade, independente de onde esteja lotado ou seja gestor"],
                 //["MOD_PENT_DESARQ", "Permite desarquivar planos de entregas"], //só aqui
                 //["MOD_PENT_TOD_SUP", "Permite visualizar todas as unidades superiores"], //só aqui
                 //["MOD_PENT_IMD_SUP", "Permite visualizar somente a unidade imediatamente superior"], //só aqui

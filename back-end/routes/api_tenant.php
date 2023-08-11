@@ -25,6 +25,7 @@ use App\Http\Controllers\PlanoEntregaController;
 use App\Http\Controllers\PlanoEntregaEntregaController;
 use App\Http\Controllers\PetrvsController;
 use App\Http\Controllers\DocumentoController;
+use App\Http\Controllers\TipoAvaliacaoController;
 use App\Http\Controllers\TipoDocumentoController;
 use App\Http\Controllers\TipoProcessoController;
 use App\Http\Controllers\TipoJustificativaController;

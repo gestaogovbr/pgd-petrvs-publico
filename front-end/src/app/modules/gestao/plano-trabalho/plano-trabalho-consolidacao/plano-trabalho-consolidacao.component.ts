@@ -24,6 +24,9 @@ export class PlanoTrabalhoConsolidacaoComponent extends PageFrameBase {
   constructor(public injector: Injector) {
     super(injector);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    this.form = this.fh.FormBuilder({
+      arquivados: { default: false }
+    });
   }
 
   ngAfterViewInit() {

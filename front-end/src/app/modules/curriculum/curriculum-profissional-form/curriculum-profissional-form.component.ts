@@ -10,7 +10,7 @@ import { InputSelectComponent } from 'src/app/components/input/input-select/inpu
 import { InputSwitchComponent } from 'src/app/components/input/input-switch/input-switch.component';
 import { FuncaoDaoService } from 'src/app/dao/funcao-dao.service';
 import { CentroTreinamentoDaoService } from 'src/app/dao/centro-treinamento-dao.service';
-import { GrupoEspecializadoDaoService } from 'src/app/dao/grupo-epecializado-dao.service';
+import { GrupoEspecializadoDaoService } from 'src/app/dao/grupo-especializado-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { controllers } from 'chart.js';
 import { InputRadioComponent } from 'src/app/components/input/input-radio/input-radio.component';

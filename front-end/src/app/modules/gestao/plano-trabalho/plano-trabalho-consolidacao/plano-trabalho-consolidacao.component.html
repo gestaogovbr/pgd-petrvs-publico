@@ -27,6 +27,7 @@
     </tab>
     <tab key="USUARIO" [icon]="entityService.getIcon('Usuario')" [label]="lex.translate('Usuário')" [template]="tabUsuario">
         <ng-template #tabUsuario>
+            <separator [control]="this.form!.controls.arquivados" [title]="'Mostrar ' + lex.translate('Planos de trabalho') + ' arquivados?'"></separator>
             <plano-trabalho-list-accordeon [usuarioId]="auth.usuario!.id"></plano-trabalho-list-accordeon>
         </ng-template>
     </tab>
