@@ -9,7 +9,7 @@ use App\Models\PlanoTrabalhoEntrega;
 
 class PlanoTrabalhoConsolidacaoAtividade extends ModelBase
 {
-    protected $table = 'planos_trabalhos_consolidacoes_atividades';
+    protected $table = 'plan_trab_consolidacoes_atividades';
 
     protected $with = [];
 
