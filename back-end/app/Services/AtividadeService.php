@@ -52,6 +52,7 @@ class AtividadeService extends ServiceBase
             }
         }
     }
+
     public function validateStore($data, $unidade, $action) {
         $unidade = Unidade::find($data["unidade_id"]);
         if(!$this->usuarioService->hasLotacao($data["unidade_id"])) {
@@ -322,6 +323,7 @@ class AtividadeService extends ServiceBase
     public function afterStore($entity, $action) {
         if($action == ServiceBase::ACTION_INSERT) {
             $this->notificacoesService->send("ATV_DISTRIBUICAO", ["atividade" => $entity]);
+            $this->status->atualizaStatus($entity, 'LANCADO', 'A atividae foi criada nesta data.');
         } else {
             $this->notificacoesService->send("ATV_MODIFICACAO", ["atividade" => $entity]);
         }

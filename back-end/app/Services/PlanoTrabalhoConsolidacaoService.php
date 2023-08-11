@@ -83,6 +83,10 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     return $result;
   }
 
+  public function afterStore($planoTrabalhoConsolidacao, $action){
+    if($action == "INSERT") { $this->status->atualizaStatus($planoTrabalhoConsolidacao, 'INCLUIDO', 'A consolidação do plano de trabalho foi criada nesta data.'); }
+}
+
   /** 
    * Retorna um array com todas as atividades em andamento de um determinado Plano de Trabalho, cujas data de início ou data de entrega estejam
    * dentro do período estabelecido. Uma atividade é considerada em andamento se o seu campo data_inicio não é nulo e seu campo data_entrega é nulo. 

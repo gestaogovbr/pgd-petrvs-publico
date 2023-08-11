@@ -762,7 +762,7 @@ class PlanoTrabalhoService {
    * Método retorna um badge de acordo com o tipo de entrega recebida no parâmetro 'planoTrabalhoEntrega': entrega associada a uma entrega do catálogo, entrega associada a uma entrega
    * da mesma unidade, ou entrega associada a uma entrega de outra unidade.
    * @param planoTrabalhoEntrega  Entrega do Plano de Trabalho cujo tipo será analisado.
-   * @param planoTrabalho         Plano de Trabalho ao qual pertence a entrega a ser analisada.
+   * @param planoTrabalho         Plano de Trabalho ao qual pertence a entrega a ser analisada. Se não for informado, o método tentará obtê-lo diretamente da própria entrega recebida.
    * @returns
    */
   tipoEntrega(planoTrabalhoEntrega, planoTrabalho) {
