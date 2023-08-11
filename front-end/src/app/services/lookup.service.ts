@@ -470,7 +470,7 @@ export class LookupService {
   ];
 
   public CONSOLIDACAO_STATUS: LookupItem[] = [
-    { key: "INCLUINDO", value: "Incluindo", icon: "bi bi-pencil-square", color: "secondary" },
+    { key: "INCLUIDO", value: "Incluido", icon: "bi bi-pencil-square", color: "secondary" },
     { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-clipboard2-check", color: "primary" },
     { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info" }
   ];

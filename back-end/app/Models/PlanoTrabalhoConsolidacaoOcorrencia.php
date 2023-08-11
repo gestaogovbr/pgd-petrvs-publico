@@ -7,7 +7,7 @@ use App\Models\PlanoTrabalhoConsolidacao;
 
 class PlanoTrabalhoConsolidacaoOcorrencia extends ModelBase
 {
-    protected $table = 'plan_trab_consolidacoes_ocorrencias';
+    protected $table = 'planos_trabalhos_consolidacoes_ocorrencias';
 
     protected $with = [];
 

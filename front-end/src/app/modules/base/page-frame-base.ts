@@ -30,7 +30,7 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
     if (this._entity != value) {
       this._entity = value;
       this.fakeControl.setValue(this.entityToControl(value));
-      this.loadData(value, this.form!);
+      if(this.viewInit) this.loadData(value, this.form!);
     }
   }
   public get entity(): any {

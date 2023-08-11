@@ -198,7 +198,7 @@ class UnidadeService extends ServiceBase
     */
     public function lotados($unidade_id): array {
         // TODO: fazer validacao
-        return Unidade::find($unidade_id)?->lotados->map(fn($integrante) => $integrante->usuario) ?? [];
+        return Unidade::find($unidade_id)?->lotados->map(fn($integrante) => $integrante->usuario)->all() ?? [];
     }
 
     /** 

@@ -32,7 +32,7 @@ class PlanoEntregaService extends ServiceBase
                     "data_arquivamento" => $data["arquivar"] ? Carbon::now() : null
                 ], $unidade, false);
             } else {
-                throw new ServerException("ValidatePlano", "Plano de Entrega não encontrado!");
+                throw new ServerException("ValidatePlanoTrabalho", "Plano de Entrega não encontrado!");
             }
             DB::commit();
         } catch (Throwable $e) {
@@ -333,8 +333,8 @@ class PlanoEntregaService extends ServiceBase
         if(!$this->verificaDuracaoPlano($dataOrEntity) || !$this->verificaDatasEntregas($dataOrEntity)) throw new Exception("O prazo das datas não satisfaz a duração estipulada no programa.");
         if($action == "EDIT") {
             $planoEntrega = PlanoEntrega::find($dataOrEntity["id"]);
-            if($dataOrEntity["unidade_id"] != $planoEntrega->unidade_id) throw new ServerException("ValidatePlano", "Depois de criado um Plano de Entregas, não é possível alterar a sua Unidade.");
-            if($dataOrEntity["programa_id"] != $planoEntrega->programa_id) throw new ServerException("ValidatePlano", "Depois de criado um Plano de Entregas, não é possível alterar o seu Programa.");
+            if($dataOrEntity["unidade_id"] != $planoEntrega->unidade_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Entregas, não é possível alterar a sua Unidade.");
+            if($dataOrEntity["programa_id"] != $planoEntrega->programa_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Entregas, não é possível alterar o seu Programa.");
              /* (RN_PENT_3_9)
                 Após criado um plano de entregas, os seguintes campos não poderão mais ser alterados: unidade_id, programa_id;
              */

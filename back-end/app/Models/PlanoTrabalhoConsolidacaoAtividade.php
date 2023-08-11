@@ -9,15 +9,17 @@ use App\Models\PlanoTrabalhoEntrega;
 
 class PlanoTrabalhoConsolidacaoAtividade extends ModelBase
 {
-    protected $table = 'plan_trab_consolidacoes_atividades';
+    protected $table = 'planos_trabalhos_consolidacoes_atividades';
 
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'meta', /* json; NOT NULL; */// Meta para a entrega
+        'esforco', /* json; NOT NULL; */// Meta para a entrega
         'realizado', /* json; */// Valor realizado da meta
-        'consolidacao_id', /* char(36); NOT NULL; */
-        'entrega_id', /* char(36); NOT NULL; */
+        'descricao', /* json; */// Valor realizado da meta
+        'plano_trabalho_consolidacao_id', /* char(36); NOT NULL; */
+        'plano_trabalho_entrega_id', /* char(36); NOT NULL; */
+        'tipo_atividade_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */
     ];
 
