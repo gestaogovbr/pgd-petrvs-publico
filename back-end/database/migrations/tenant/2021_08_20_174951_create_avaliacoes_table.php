@@ -27,10 +27,10 @@ class CreateAvaliacoesTable extends Migration
             $table->json('justificativas')->default(new Expression('(JSON_ARRAY())'))->comment("Justificativas");
             // Chaves estrangeiras:
             $table->foreignUuid('avaliador_id')->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->comment('Usuário');
-            $table->foreignUuid('plano_trabalho_consolidacao_id')->constrained("plan_trab_consolidacoes")->onDelete('restrict')->onUpdate('cascade')->comment('Usuário');
+            $table->foreignUuid('plano_trabalho_consolidacao_id')->constrained("planos_trabalhos_consolidacoes")->onDelete('restrict')->onUpdate('cascade')->comment('Usuário');
             $table->foreignUuid('tipo_avaliacao_id')->constrained('tipos_avaliacoes')->onDelete('restrict')->onUpdate('cascade')->comment('Tipo de avaliação');
         });
-        Schema::table('plan_trab_consolidacoes', function (Blueprint $table) {
+        Schema::table('planos_trabalhos_consolidacoes', function (Blueprint $table) {
             $table->foreignUuid('avaliacao_id')->nullable()->constrained("avaliacoes")->onDelete('restrict')->onUpdate('cascade')->comment("Usuário que realizou a avaliação da consolidação");
         });
     }
@@ -42,7 +42,7 @@ class CreateAvaliacoesTable extends Migration
      */
     public function down()
     {
-        Schema::table('plan_trab_consolidacoes', function (Blueprint $table) {
+        Schema::table('planos_trabalhos_consolidacoes', function (Blueprint $table) {
             $table->dropConstrainedForeignId('avaliacao_id');
         });
         Schema::dropIfExists('avaliacoes');

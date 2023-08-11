@@ -27,7 +27,7 @@ export class ColumnExpandComponent extends ComponentBase implements OnInit {
   @Input() set expanded(value: boolean) {
     if(this._expanded != value) {
       this._expanded = value;
-      this.grid!.expandedIds[this.row.id] = value;
+      if(this.viewInit) this.grid!.expandedIds[this.row.id] = value;
     }
   }
   get expanded(): boolean {

@@ -25,7 +25,7 @@ class CreateStatusTable extends Migration
             //Chaves estrangeiras
             $table->foreignUuid('plano_entrega_id')->nullable()->constrained("planos_entregas")->onDelete('restrict')->onUpdate('cascade')->comment("Plano de Entregas ao qual se refere o status");
             $table->foreignUuid('plano_trabalho_id')->nullable()->constrained("planos_trabalhos")->onDelete('restrict')->onUpdate('cascade')->comment("Plano de Trabalho ao qual se refere o status");
-            $table->foreignUuid('plano_trabalho_consolidacao_id')->nullable()->constrained("plan_trab_consolidacoes")->onDelete('restrict')->onUpdate('cascade')->comment("Consolidação do Plano de Trabalho à qual se refere o status");
+            $table->foreignUuid('plano_trabalho_consolidacao_id')->nullable()->constrained("planos_trabalhos_consolidacoes")->onDelete('restrict')->onUpdate('cascade')->comment("Consolidação do Plano de Trabalho à qual se refere o status");
             $table->foreignUuid('atividade_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Atividade à qual se refere o status");
             $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Usuário que realizou a mudança de status");
         });
@@ -36,7 +36,7 @@ class CreateStatusTable extends Migration
         Schema::table('planos_trabalhos', function (Blueprint $table) {
             $table->foreignUuid('status_id')->nullable()->constrained("status")->onDelete('restrict')->onUpdate('cascade')->comment("Status atual do Plano de Trabalho");
         });
-        Schema::table('plan_trab_consolidacoes', function (Blueprint $table) {
+        Schema::table('planos_trabalhos_consolidacoes', function (Blueprint $table) {
             $table->foreignUuid('status_id')->nullable()->constrained("status")->onDelete('restrict')->onUpdate('cascade')->comment("Status atual da Consolidação do Plano de Trabalho");
         });
         Schema::table('atividades', function (Blueprint $table) {
@@ -56,7 +56,7 @@ class CreateStatusTable extends Migration
         Schema::table('atividades', function (Blueprint $table) {
             $table->dropConstrainedForeignId('status_id');
         });
-        Schema::table('plan_trab_consolidacoes', function (Blueprint $table) {
+        Schema::table('planos_trabalhos_consolidacoes', function (Blueprint $table) {
             $table->dropConstrainedForeignId('status_id');
         });
         Schema::table('planos_trabalhos', function (Blueprint $table) {

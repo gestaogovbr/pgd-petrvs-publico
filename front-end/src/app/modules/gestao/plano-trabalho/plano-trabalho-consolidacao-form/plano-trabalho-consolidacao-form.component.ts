@@ -20,6 +20,7 @@ import { TipoAtividadeDaoService } from 'src/app/dao/tipo-atividade-dao.service'
 import { PlanoEntregaService } from '../../plano-entrega/plano-entrega.service';
 
 export type ConsolidacaoEntrega = {
+  id: string,
   entrega: PlanoTrabalhoEntrega,
   atividades: (Atividade | PlanoTrabalhoConsolidacaoAtividade)[]
 };
@@ -31,9 +32,7 @@ export type ConsolidacaoEntrega = {
 })
 export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  @ViewChild('gridAtividade', { static: false }) public gridAtividade?: GridComponent;
-  @ViewChild('gridOcorrencia', { static: false }) public gridOcorrencia?: GridComponent;
-  @ViewChild('gridAfastamento', { static: false }) public gridAfastamento?: GridComponent;
+  @ViewChild('gridEntregas', { static: false }) public gridEntregas?: GridComponent;
   @Input() cdRef: ChangeDetectorRef;
   @Input() planoTrabalho?: PlanoTrabalho;
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
@@ -66,7 +65,8 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     this.formAtividade = this.fh.FormBuilder({
       esforco: { default: 0 },
       realizado: { default: null },
-      descricao: { default: "" }
+      descricao: { default: "" },
+      tipo_atividade: {default: null}
     }, this.cdRef, this.validateEntrega);
     this.formOcorrencia = this.fh.FormBuilder({
       data_inicio: { default: new Date() },
@@ -102,15 +102,18 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     return result;
   }
 
+  public isAtividade(row: Atividade | PlanoTrabalhoConsolidacaoAtividade) {
+    return row instanceof Atividade;
+  }
+
   public async loadData(entity: IIndexable, form?: FormGroup) {
-    this.gridAtividade!.loading = true;
-    this.gridOcorrencia!.loading = true;
-    this.gridAfastamento!.loading = true;
+    this.gridEntregas!.loading = true;
     this.cdRef.detectChanges();
     try {
       let dados = await this.dao!.dadosConsolidacao(entity.id);
       this.itemsEntregas = dados.entregas.map(x => {
         return {
+          id: x.id,
           entrega: x,
           atividades: [
             ...dados.atividades.filter(y => y.plano_trabalho_entrega_id == x.id),
@@ -121,19 +124,17 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       this.itemsOcorrencias = dados.ocorrencias;
       this.itemsAfastamentos = dados.afastamentos;
     } finally {
-      this.gridAtividade!.loading = false;
-      this.gridOcorrencia!.loading = false;
-      this.gridAfastamento!.loading = false;
+      this.gridEntregas!.loading = false;
       this.cdRef.detectChanges();
     }
   }
 
   public get hasEsforco(): boolean {
-    return true;
+    return !!this.planoTrabalho?.tipo_modalidade?.atividade_esforco;
   }
   
   public get hasRealizado(): boolean {
-    return true;
+    return false;
   }
   
   /***************************************************************************************
@@ -187,6 +188,10 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
 
   public atividadeDynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
+    if(row instanceof PlanoTrabalhoConsolidacaoAtividade) {
+      result.push(Object.assign({}, this.gridEntregas!.BUTTON_EDIT, {}));
+      result.push(Object.assign({}, this.gridEntregas!.BUTTON_DELETE, {}));
+    }
     //result.push({ hint: "Adicionar filho", icon: "bi bi-plus-circle", onClick: this.addChildProcesso.bind(this) });
     return result;
   }  

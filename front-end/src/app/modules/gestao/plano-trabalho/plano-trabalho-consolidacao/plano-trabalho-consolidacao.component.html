@@ -1,7 +1,7 @@
 <tabs right #tabs [title]="isModal ? '' : title">
     <tab key="UNIDADE" *ngIf="unidade" [icon]="entityService.getIcon('Unidade')" [label]="lex.translate('Unidade')" [template]="tabUnidade">
-        <h2>{{unidade.sigla}} - {{unidade.nome}}</h2>
         <ng-template #tabUnidade>
+            <h5>{{unidade.sigla}} - {{unidade.nome}}</h5>
             <div *ngIf="loading" class="d-flex justify-content-center my-2">
                 <div class="spinner-border" role="status">
                     <span class="visually-hidden"></span>

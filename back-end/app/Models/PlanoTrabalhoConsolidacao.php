@@ -10,7 +10,7 @@ use App\Models\Status;
 
 class PlanoTrabalhoConsolidacao extends ModelBase
 {
-    protected $table = 'plan_trab_consolidacoes';
+    protected $table = 'planos_trabalhos_consolidacoes';
 
     protected $with = ["status"];
 

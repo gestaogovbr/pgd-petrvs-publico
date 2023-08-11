@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePlanTrabConsolidOcorrTable extends Migration
+class CreatePlanosTrabalhosConsolidacoesOcorrenciasTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreatePlanTrabConsolidOcorrTable extends Migration
      */
     public function up()
     {
-        Schema::create('plan_trab_consolid_ocorr', function (Blueprint $table) {
+        Schema::create('planos_trabalhos_consolidacoes_ocorrencias', function (Blueprint $table) {
             // Configurações:
             $table->uuid('id');
             $table->primary('id');
@@ -23,8 +23,9 @@ class CreatePlanTrabConsolidOcorrTable extends Migration
             $table->dateTime('data_inicio')->comment("Data inicial da consolidacão");
             $table->dateTime('data_fim')->comment("Data final da consolidação");
             $table->text('descricao')->comment("Descrição da ocorrência");
+            $table->uuid('plano_trabalho_consolidacao_id')->comment("Consolidação do Plano de Trabalho à qual está associada esta entrega");
             // Chaves estrangeiras:
-            $table->foreignUuid('plano_trabalho_consolidacao_id')->constrained("plan_trab_consolidacoes")->onDelete('restrict')->onUpdate('cascade')->comment("Consolidação do Plano de Trabalho à qual está associada esta entrega");
+            $table->foreign('plano_trabalho_consolidacao_id', 'fk_plan_trab_cons_id_plan_trab_cons_ocor_id')->references('id')->on("planos_trabalhos_consolidacoes")->onDelete('restrict')->onUpdate('cascade')->comment("Consolidação do Plano de Trabalho à qual está associada esta entrega");
         });
     }
 
@@ -35,6 +36,6 @@ class CreatePlanTrabConsolidOcorrTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('plan_trab_consolid_ocorr');
+        Schema::dropIfExists('planos_trabalhos_consolidacoes_ocorrencias');
     }
 }

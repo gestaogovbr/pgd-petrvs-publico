@@ -1,6 +1,8 @@
-<grid [items]="items" #grid [form]="form!" [hasDelete]="true" 
-    [add]="addConsolidacao.bind(this)" [load]="loadConsolidacao.bind(this)" 
-    [remove]="removeConsolidacao.bind(this)" [save]="saveConsolidacao.bind(this)" editable>
+<grid [items]="items" #grid [form]="form!" [hasDelete]="true" [minHeight]="0"
+    [add]="addConsolidacao.bind(this)" [hasAdd]="true" [hasEdit]="false" [hasDelete]="false" editable>
+<!--
+    [load]="loadConsolidacao.bind(this)" [remove]="removeConsolidacao.bind(this)" [save]="saveConsolidacao.bind(this)" 
+-->
     <columns>
         <column type="expand" icon="entityService.getIcon('PlanoTrabalhoConsolidacao')" [align]="'center'" [hint]="lex.translate('Consolidação')" [template]="columnConsolidacao" [expandTemplate]="columnExpandedConsolidacao">
             <ng-template let-row="row" #columnConsolidacao>

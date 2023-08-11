@@ -10,6 +10,7 @@ export class CollapseCardComponent extends ComponentBase implements OnInit {
   @Input() title?: string;
   @Input() data?: any;
   @Input() icon?: string;
+  @Input() collapsed: boolean = true;
   @Input() color?: ComponentColor;
   @Input() template?: TemplateRef<unknown>;
   @Input() titleTemplate?: TemplateRef<unknown>;
@@ -22,6 +23,11 @@ export class CollapseCardComponent extends ComponentBase implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  public onHeaderClick() {
+    this.collapsed = !this.collapsed;
+    this.cdRef.detectChanges();
   }
 
   public get style(): string | undefined {
