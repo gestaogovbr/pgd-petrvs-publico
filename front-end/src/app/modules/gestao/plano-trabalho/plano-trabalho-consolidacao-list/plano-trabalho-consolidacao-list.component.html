@@ -1,11 +1,10 @@
-<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
-    [selectable]="selectable" (select)="onSelect($event)"
-    [hasAdd]="auth.hasPermissionTo('MOD_PTR_CSLD_INCL')"
-    [hasEdit]="auth.hasPermissionTo('MOD_PTR_CSLD_EDT')">
-    <toolbar *ngIf="!selectable"></toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed"></filter>
+<grid [items]="items" #grid [form]="form!" [hasDelete]="true" [minHeight]="0"
+    [add]="addConsolidacao.bind(this)" [hasAdd]="true" [hasEdit]="false" [hasDelete]="false" editable>
+<!--
+    [load]="loadConsolidacao.bind(this)" [remove]="removeConsolidacao.bind(this)" [save]="saveConsolidacao.bind(this)" 
+-->
     <columns>
-        <column *ngIf="!selectable" type="expand" icon="entityService.getIcon('PlanoTrabalhoConsolidacao')" [align]="'center'" [hint]="lex.translate('Consolidação')" [template]="columnConsolidacao" [expandTemplate]="columnExpandedConsolidacao">
+        <column type="expand" icon="entityService.getIcon('PlanoTrabalhoConsolidacao')" [align]="'center'" [hint]="lex.translate('Consolidação')" [template]="columnConsolidacao" [expandTemplate]="columnExpandedConsolidacao">
             <ng-template let-row="row" #columnConsolidacao>
                 <!--span *ngIf="row?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row?.length}}</span//-->
             </ng-template>
@@ -32,7 +31,6 @@
                 <badge [color]="lookup.getColor(lookup.CONSOLIDACAO_STATUS, row.status.codigo)" [icon]="lookup.getIcon(lookup.CONSOLIDACAO_STATUS, row.status.codigo)" [label]="lookup.getValue(lookup.CONSOLIDACAO_STATUS, row.status.codigo)"></badge>
             </ng-template>
         </column>
-        <column *ngIf="!selectable" type="options" [onEdit]="edit" [options]="options"></column>
+        <column type="options" [dynamicButtons]="dynamicButtons"></column>
     </columns>
-    <pagination [rows]="rowsLimit"></pagination>
 </grid>

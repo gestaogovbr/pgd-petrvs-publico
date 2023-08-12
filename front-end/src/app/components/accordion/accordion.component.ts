@@ -25,8 +25,18 @@ export class AccordionComponent extends ComponentBase implements OnInit {
   get active(): any {
     return this._active;
   }
+  @Input() set loading(value: any) {
+    if(this._loading != value) {
+      this._loading = value;
+      this.cdRef.detectChanges();
+    }
+  }
+  get loading(): any {
+    return this._loading;
+  }
 
   private _active: any = undefined;
+  private _loading: boolean = false;
 
   constructor(public injector: Injector) {
     super(injector);

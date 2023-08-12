@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePlanTrabConsolidacoesTable extends Migration
+class CreatePlanosTrabalhosConsolidacoesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreatePlanTrabConsolidacoesTable extends Migration
      */
     public function up()
     {
-        Schema::create('plan_trab_consolidacoes', function (Blueprint $table) {
+        Schema::create('planos_trabalhos_consolidacoes', function (Blueprint $table) {
             // Configurações:
             $table->uuid('id');
             $table->primary('id');
@@ -36,6 +36,6 @@ class CreatePlanTrabConsolidacoesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('plan_trab_consolidacoes');
+        Schema::dropIfExists('planos_trabalhos_consolidacoes');
     }
 }

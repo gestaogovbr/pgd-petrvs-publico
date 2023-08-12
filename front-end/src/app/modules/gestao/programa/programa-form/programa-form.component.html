@@ -12,14 +12,14 @@
         <input-text [size]="6" label="Título" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome"></input-text>
         <input-text [size]="6" label="Normativa" icon="bi bi-blockquote-left" controlName="normativa" [control]="form!.controls.normativa" labelInfo="Normativa que regula o Programa"></input-text>
     </div>
-    <separator [title]="lex.translate('Consolidação') + lex.translate('do Plano de trablaho')">
+    <separator [title]="lex.translate('Consolidação') + lex.translate(' do Plano de trablaho')">
         <input-select [size]="6" label="Periodicidade" controlName="periodicidade_consolidacao" [control]="form!.controls.periodicidade_consolidacao" [items]="lookup.PERIODICIDADE_CONSOLIDACAO" labelInfo="Período para avaliação do plano de trabalho"></input-select>
         <input-select *ngIf="['SEMANAL', 'QUINZENAL'].includes(form!.controls.periodicidade_consolidacao.value)" [size]="3" label="Dia da semana" controlName="periodicidade_valor" [control]="form!.controls.periodicidade_valor" [items]="lookup.DIA_SEMANA" labelInfo="Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do mês para o restante"></input-select>
         <input-number *ngIf="['MENSAL', 'BIMESTRAL', 'TRIMESTRAL', 'SEMESTRAL'].includes(form!.controls.periodicidade_consolidacao.value)" [size]="3" label="Dia do mês" controlName="periodicidade_valor" [control]="form!.controls.periodicidade_valor" labelInfo="Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do mês para o restante"></input-number>
         <input-number *ngIf="['DIAS'].includes(form!.controls.periodicidade_consolidacao.value)" [size]="3" label="Qtd. de Dias" controlName="periodicidade_valor" [control]="form!.controls.periodicidade_valor" labelInfo="Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do mês para o restante"></input-number>
         <input-number [size]="3" label="Tolerância" controlName="dias_tolerancia_consolidacao" [control]="form!.controls.dias_tolerancia_consolidacao" labelInfo="Dias de tolerância para o lançamento do registro das atividades na consolidação, após esses dias será liberado automaticamente para avaliação"></input-number>
     </separator>
-    <separator title="Configurações">
+    <separator [title]="'Configurações ' + lex.translate('do Plano de trabalho')">
         <input-switch label="Se o termo é obrigatório" [size]="12" controlName="termo_obrigatorio" scale="small" labelPosition="right"></input-switch>
         <input-search [label]="'Template ' + lex.translate('termo')" [size]="12" detailsButton labelInfo="Template do termo utilizado no plano de trabalho" controlName="template_tcr_id" [dao]="templateDao" [where]="[['especie', '==', 'TCR']]" [selectRoute]="templateService.selectRoute('TCR')" (details)="templateService.details($event)"></input-search>
         <input-search [label]="'Tipo de documento ' + lex.translate('termo')" [size]="12" #tipoDocumento controlName="tipo_documento_tcr_id" [dao]="tipoDocumentoDao" labelInfo="Tipo de documento utilizado para exportar o termo para o SEI/SUPER"></input-search>

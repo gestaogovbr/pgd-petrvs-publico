@@ -1,12 +1,11 @@
 <div class="card border-primary m-3">
-    <div class="card-header">
+    <div class="card-header" role="button" (click)="onHeaderClick()">
         <i *ngIf="icon" [class]="icon"></i> {{title || ""}}
         <ng-container *ngIf="titleTemplate" [ngTemplateOutlet]="titleTemplate" [ngTemplateOutletContext]="{data: data}"></ng-container>
+        <i [class]="'collapse-card-toggle-icon ' + (collapsed ? 'bi bi-chevron-down' : 'bi bi-chevron-up')" ></i>
     </div>
-    <div class="card-body text-primary">
+    <div *ngIf="!collapsed" class="card-body text-primary">
         <ng-container *ngIf="template" [ngTemplateOutlet]="template" [ngTemplateOutletContext]="{data: data}"></ng-container>
         <ng-content></ng-content>
     </div>
 </div>
-
-  

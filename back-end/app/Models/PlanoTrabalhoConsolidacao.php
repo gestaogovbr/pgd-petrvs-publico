@@ -10,7 +10,7 @@ use App\Models\Status;
 
 class PlanoTrabalhoConsolidacao extends ModelBase
 {
-    protected $table = 'plan_trab_consolidacoes';
+    protected $table = 'planos_trabalhos_consolidacoes';
 
     protected $with = ["status"];
 
@@ -31,7 +31,6 @@ class PlanoTrabalhoConsolidacao extends ModelBase
     public function statusHistorico() { return $this->hasMany(Status::class, "plano_trabalho_consolidacao_id"); }
     public function ocorrencias() { return $this->hasMany(PlanoTrabalhoConsolidacaoOcorrencia::class, 'plano_trabalho_consolidacao_id'); } 
     public function atividades() { return $this->hasMany(PlanoTrabalhoConsolidacaoAtividade::class, 'plano_trabalho_consolidacao_id'); } 
-
     // Belongs
     public function statusAtual() { return $this->belongsTo(Status::class, "status_id"); }
     public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class); }

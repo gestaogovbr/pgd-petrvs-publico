@@ -191,6 +191,17 @@ class UnidadeService extends ServiceBase
     }
 
     /** 
+     * Retorna os usuários lotados na unidade
+     * 
+     * @param string $unidade_id    O ID de uma Unidade.
+     * @return array    
+    */
+    public function lotados($unidade_id): array {
+        // TODO: fazer validacao
+        return Unidade::find($unidade_id)?->lotados->map(fn($integrante) => $integrante->usuario)->all() ?? [];
+    }
+
+    /** 
      * Retorna os dados acerca dos Planos de Trabalho de uma Unidade, associados a um determinado Programa,
      * que se encontrem dentro da vigência. 
      * 

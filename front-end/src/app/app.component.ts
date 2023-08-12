@@ -192,7 +192,7 @@ export class AppComponent {
       menu: [
         this.menuSchema.ATIVIDADES,
         this.menuSchema.AFASTAMENTOS,
-        this.menuSchema.CONSOLIDACOES
+        Object.assign({}, this.menuSchema.CONSOLIDACOES, {params: {tab: "USUARIO"}})
       ].sort(this.orderMenu)
     }, {
       name: "Gerenciamento",
@@ -222,7 +222,7 @@ export class AppComponent {
     this.menuExecucao = [
       this.menuSchema.PLANOS_TRABALHOS,
       this.menuSchema.ATIVIDADES,
-      this.menuSchema.CONSOLIDACOES,
+      Object.assign({}, this.menuSchema.CONSOLIDACOES, {params: {tab: "UNIDADE"}}),
       this.menuSchema.AFASTAMENTOS
     ];
 
@@ -418,10 +418,7 @@ export class AppComponent {
 
   public menuItemClass(baseClass: string, item: any) {
     let routeUrl = this.go.getRouteUrl().replace(/^\//, "");
-
     if(item.menu?.find((x: any) => !x)) console.log(item);
-
-
     return baseClass + (item.route?.join("/") == routeUrl || item.menu?.find((x: any) => x?.route?.join("/") == routeUrl) ? " fw-bold" : "");
   }
 
@@ -434,7 +431,7 @@ export class AppComponent {
   }
 
   public openModule(item: any) {
-    if(item.route) this.go.navigate({route: item.route}, item.metadata || {root: true});
+    if(item.route) this.go.navigate({route: item.route, params: item.params}, item.metadata || {root: true});
   }
 
   public get unidades(): any[] {
@@ -450,7 +447,6 @@ export class AppComponent {
   }
 
   public onCollapseContainerClick() {
-    //this.auth.usuario!.config.ocultar_container_petrvs = !this.auth.usuario!.config.ocultar_container_petrvs;
     this.auth.usuarioConfig = { ocultar_container_petrvs: !this.auth.usuario!.config.ocultar_container_petrvs };
     this.cdRef.detectChanges();
   }

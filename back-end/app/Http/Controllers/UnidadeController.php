@@ -53,6 +53,20 @@ class UnidadeController extends ControllerBase {
         }
     }
 
+    public function lotados(Request $request) {
+        try {
+            $data = $request->validate([
+                'unidade_id' => ['required']
+            ]);
+            return response()->json([
+                'success' => true,
+                'usuarios' => $this->service->lotados($data["unidade_id"])
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
     public function metadadosArea(Request $request) {
         try {
             $data = $request->validate([

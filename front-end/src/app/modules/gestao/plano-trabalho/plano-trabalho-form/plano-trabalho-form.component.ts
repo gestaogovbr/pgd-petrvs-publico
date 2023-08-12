@@ -208,9 +208,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     if(['data_inicio_vigencia', 'data_fim_vigencia'].includes(controlName) && !this.util.isDataValid(control.value)) {
       result = "Inválido";
     } else if(this.programa && controlName == 'data_inicio_vigencia' && (control.value as Date).getTime() < this.programa!.data_inicio_vigencia.getTime()) {
-        result = "Menor que programa";
+      result = "Menor que programa";
     } else if(this.programa && controlName == 'data_fim_vigencia' && (control.value as Date).getTime() > this.programa!.data_fim_vigencia.getTime()) {
-        result = "Maior que programa";
+      result = "Maior que programa";
     } 
 
     return result;
