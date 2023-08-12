@@ -177,15 +177,15 @@ class ProgramaFormComponent extends src_app_modules_base_page_form_base__WEBPACK
       } else if (['data_inicio_vigencia', 'data_fim_vigencia'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
         result = "Inválido";
       } else if (controlName == "periodicidade_valor") {
-        if (['SEMANAL', 'QUINZENAL'].includes(this.form.controls.periodicidade_consolidacao.value) && control.value > 6) result = "Inválido";
-        if (['MENSAL', 'BIMESTRAL', 'TRIMESTRAL', 'SEMESTRAL'].includes(this.form.controls.periodicidade_consolidacao.value) && control.value > 31) result = "Máximo 31";
-        if (['DIAS'].includes(this.form.controls.periodicidade_consolidacao.value) && control.value < 0) result = "Inválido";
+        if (['SEMANAL', 'QUINZENAL'].includes(this.form?.controls.periodicidade_consolidacao.value) && control.value > 6) result = "Inválido";
+        if (['MENSAL', 'BIMESTRAL', 'TRIMESTRAL', 'SEMESTRAL'].includes(this.form?.controls.periodicidade_consolidacao.value) && control.value > 31) result = "Máximo 31";
+        if (['DIAS'].includes(this.form?.controls.periodicidade_consolidacao.value) && control.value < 0) result = "Inválido";
       }
       return result;
     };
     this.formValidation = form => {
       let result = null;
-      if (this.form.controls.data_fim_vigencia.value && this.form.controls.data_inicio_vigencia.value > this.form.controls.data_fim_vigencia.value) {
+      if (this.form?.controls.data_fim_vigencia.value && this.form?.controls.data_inicio_vigencia.value > this.form?.controls.data_fim_vigencia.value) {
         result = "A data do fim não pode ser anterior à data do inicio!";
       }
       return result;
