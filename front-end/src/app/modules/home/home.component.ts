@@ -12,7 +12,6 @@ import { Chart, ChartData, ChartOptions } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { UtilService } from 'src/app/services/util.service';
 import { FormControl, FormGroup } from '@angular/forms';
-
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',

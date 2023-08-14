@@ -1,7 +1,7 @@
 <input-container [labelPosition]="labelPosition" [labelClass]="labelClass" [controlName]="controlName" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
     <div class="input-group">
         <span *ngIf="prefix" class="input-group-text">{{prefix}}</span>
-        <input *ngIf="viewInit" #inputElement [type]="isNumbers ? 'number' : isPassword ? 'password' : 'text'" class="form-control" [attr.min]="minValue" [attr.max]="maxValue" [attr.step]="stepValue"
+        <input *ngIf="viewInit" #inputElement [type]="isNumbers ? 'number' : isPassword ? 'password' : 'text'" class="form-control {{hostClass}}" [attr.min]="minValue" [attr.max]="maxValue" [attr.step]="stepValue"
             [class.text-uppercase]="textCase == 'upper'" [class.text-lowercase]="textCase == 'lower'" [class.text-end]="isNumbers || isRight" (change)="onChange($event)" (keyup)="onKeyUp($event)"
             [formControl]="formControl" [id]="generatedId(controlName)" [class.is-invalid]="isInvalid()" [mask]="maskFormat" [dropSpecialCharacters]="maskDropSpecialCharacters" (keydown.enter)="onEnterKeyDown($event)"
             [specialCharacters]="maskSpecialCharacters" [readonly]="isDisabled" [attr.placeholder]="placeholder?.length ? placeholder : undefined" [attr.value]="control ? undefined : value" [attr.maxlength]="maxLength ? maxLength : undefined">

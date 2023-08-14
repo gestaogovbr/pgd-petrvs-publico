@@ -4,15 +4,15 @@ const defaultExtensionOptionsConfig = { /* Configuração utilizada para acessas
     api_url: webBrowser?.runtime?.getURL ? webBrowser.runtime.getURL("") : "",
     suporte_url: "https://suporte.prf.gov.br",
     entidade: "PRF",
-    logo_url: "logo-login-prf.png",
+    logo_url: "logo_vertical.png",
     versao: "1.0.0",
     login: {
         google_client_id: "",
         gsuit: true,
         azure: true,
-        institucional: false,
+        institucional: true,
         firebase: false,
-        user_password: false
+        user_password: true
     }
 };
 //@ts-ignore
@@ -31,15 +31,15 @@ export const environment = {
     https: HTTPS,
     suporte: global?.suporte_url || "https://suporte.prf.gov.br",
     entidade: global?.entidade || "PRF",
-    images: { login: global?.logo_url || "logo-login-prf.png" },
+    images: { login: global?.logo_url || "logo_vertical.png" },
     versao: global?.versao || "1.0.0",
     login: global?.login || {
         google_client_id: global?.google_client_id || "",
         gsuit: true,
         azure: true,
-        institucional: false,
+        institucional: true,
         firebase: false,
-        user_password: false,
+        user_password: true,
         login_unico: true
     }
 };
