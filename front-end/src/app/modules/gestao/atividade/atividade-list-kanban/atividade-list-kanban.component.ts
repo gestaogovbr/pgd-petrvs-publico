@@ -322,7 +322,7 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
       rows?.forEach(row => {
         const atividade: Atividade = row as Atividade;
         let status = atividade.metadados?.suspenso ? "SUSPENSO" : this.lookup.ATIVIDADE_STATUS.find(x => x.key == atividade.metadados?.status)?.key;
-        switch(status || "LANCADO") {
+        switch(status || "INCLUIDO") {
           case "SUSPENSO": this.putCard(this.cards[this.PAUSADO], atividade); break;
           case "INICIADO": this.putCard(this.cards[this.INICIADO], atividade); break;
           case "CONCLUIDO": this.putCard(this.cards[this.CONCLUIDO], atividade); break;
