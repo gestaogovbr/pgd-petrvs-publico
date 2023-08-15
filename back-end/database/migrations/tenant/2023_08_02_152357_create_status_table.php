@@ -20,7 +20,7 @@ class CreateStatusTable extends Migration
             $table->timestamps();
             $table->softDeletes();
             // Campos:
-            $table->enum('codigo', ['ATIVO', 'AVALIADO', 'CANCELADO', 'CONCLUIDO', 'HOMOLOGANDO', 'INCLUIDO', 'INICIADO', 'LANCADO', 'RECORRIDO', 'SUSPENSO'])->comment("Status do artefato (plano de entregas, plano de trabalho ou atividade)");
+            $table->enum('codigo', ['ATIVO', 'AVALIADO', 'CANCELADO', 'CONCLUIDO', 'HOMOLOGANDO', 'INCLUIDO', 'INICIADO', 'RECORRIDO', 'SUSPENSO'])->comment("Status do artefato (plano de entregas, plano de trabalho ou atividade)");
             $table->text('justificativa')->comment("Justificativa da mudança para este status");
             //Chaves estrangeiras
             $table->foreignUuid('plano_entrega_id')->nullable()->constrained("planos_entregas")->onDelete('restrict')->onUpdate('cascade')->comment("Plano de Entregas ao qual se refere o status");

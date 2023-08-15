@@ -131,7 +131,7 @@ class AtividadeService extends ServiceBase
                     array_push($where, ["data_entrega", "==", null]);
                 } else if($condition[2] == "CONCLUIDO") {
                     array_push($where, ["data_entrega", "!=", null]);
-                } else if($condition[2] == "LANCADO") {
+                } else if($condition[2] == "INCLUIDO") {
                     array_push($where, ["data_inicio", "==", null]);
                 } else if($condition[2] == "ARQUIVADO") {
                     array_push($where, ["data_arquivamento", "!=", null]);
@@ -249,7 +249,7 @@ class AtividadeService extends ServiceBase
         $result["suspenso"] = $suspenso;
         $result["atrasado"] = !$result["concluido"] && strtotime($atividade->prazo_entrega) < strtotime($hora);
         $result["tempo_atraso"] = $result["atrasado"] ? $this->calendarioService->tempoAtraso($atividade->prazo_entrega, $hora, $atividade->carga_horaria) : 0;
-        $result["status"] = ($result["concluido"] ? "CONCLUIDO" : ($result["iniciado"] ? "INICIADO" : "LANCADO"));
+        $result["status"] = ($result["concluido"] ? "CONCLUIDO" : ($result["iniciado"] ? "INICIADO" : "INCLUIDO"));
         return $result;
     }
 
@@ -323,7 +323,7 @@ class AtividadeService extends ServiceBase
     public function afterStore($entity, $action) {
         if($action == ServiceBase::ACTION_INSERT) {
             $this->notificacoesService->send("ATV_DISTRIBUICAO", ["atividade" => $entity]);
-            $this->status->atualizaStatus($entity, 'LANCADO', 'A atividae foi criada nesta data.');
+            $this->status->atualizaStatus($entity, 'INCLUIDO', 'A atividae foi criada nesta data.');
         } else {
             $this->notificacoesService->send("ATV_MODIFICACAO", ["atividade" => $entity]);
         }

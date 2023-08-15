@@ -13,7 +13,7 @@ import { Documento } from './documento.model';
 import { AtividadePausa } from './atividade-pausa.model';
 import { Status } from './status.model';
 
-export type AtividadeStatus = "CONCLUIDO" | "INICIADO" | "LANCADO";
+export type AtividadeStatus = "CONCLUIDO" | "INICIADO" | "INCLUIDO";
 
 export type AtividadeMetadados = {
     atrasado: boolean,

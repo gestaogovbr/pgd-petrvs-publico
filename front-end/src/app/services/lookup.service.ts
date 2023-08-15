@@ -84,11 +84,11 @@ export class LookupService {
     { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-check-circle", color: "primary" },
     { key: "NAOCONCLUIDO", value: "Não concluído", icon: "bi bi-play-circle", color: "info" },
     { key: "INICIADO", value: "Iniciado", icon: "bi bi-play-circle", color: "info" },
-    { key: "LANCADO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" }
+    { key: "INCLUIDO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" }
   ];
 
   public ATIVIDADE_STATUS_COM_ARQUIVADAS: LookupItem[] = [
-    { key: "LANCADO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" },
+    { key: "INCLUIDO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" },
     { key: "INICIADO", value: "Iniciado", icon: "bi bi-play-circle", color: "info" },
     { key: "NAOCONCLUIDO", value: "Não concluído", icon: "bi bi-play-circle", color: "info" },
     { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-check-circle", color: "primary" },

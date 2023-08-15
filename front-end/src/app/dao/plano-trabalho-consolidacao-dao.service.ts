@@ -3,14 +3,12 @@ import { DaoBaseService } from './dao-base.service';
 import { TemplateDataset } from '../modules/uteis/templates/template.service';
 import { PlanoTrabalhoConsolidacao } from '../models/plano-trabalho-consolidacao.model';
 import { Atividade } from '../models/atividade.model';
-import { PlanoTrabalhoConsolidacaoAtividade } from '../models/plano-trabalho-consolidacao-atividade.model';
 import { PlanoTrabalhoEntrega } from '../models/plano-trabalho-entrega.model';
 import { Afastamento } from '../models/afastamento.model';
 import { PlanoTrabalhoConsolidacaoOcorrencia } from '../models/plano-trabalho-consolidacao-ocorrencia.model';
 
 export type ConsolidacaoDados = {
   atividades: Atividade[],
-  consolidaoAtividades: PlanoTrabalhoConsolidacaoAtividade[],
   ocorrencias: PlanoTrabalhoConsolidacaoOcorrencia[],
   entregas: PlanoTrabalhoEntrega[],
   afastamentos: Afastamento[]
@@ -38,7 +36,6 @@ export class PlanoTrabalhoConsolidacaoDaoService extends DaoBaseService<PlanoTra
           let dados = response?.dados as ConsolidacaoDados;
           dados.afastamentos = dados.afastamentos.map(x => new Afastamento(x));
           dados.atividades = dados.atividades.map(x => new Atividade(x));
-          dados.consolidaoAtividades = dados.consolidaoAtividades.map(x => new PlanoTrabalhoConsolidacaoAtividade(x));
           dados.entregas = dados.entregas.map(x => new PlanoTrabalhoEntrega(x));
           dados.ocorrencias = dados.ocorrencias.map(x => new PlanoTrabalhoConsolidacaoOcorrencia(x));
           resolve(dados);

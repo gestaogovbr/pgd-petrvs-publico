@@ -112,14 +112,17 @@ class PlanoTrabalhoService extends ServiceBase
     }
     if($action == "EDIT") {
       $plano = PlanoTrabalho::find($data["id"]);
-      if($data["unidade_id"] != $plano->unidade_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Trabalho, não é possível alterar a sua Unidade.");
-      if($data["programa_id"] != $plano->programa_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Trabalho, não é possível alterar o seu Programa.");
-      if($data["plano_entrega_id"] != $plano->plano_entrega_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Trabalho, não é possível alterar o seu Plano de Entregas.");
       /*  (RN_PTR_1)
           Após criado um plano de trabalho, o seu plano de entregas não pode mais ser alterado. Em consequência dessa regra, os seguintes campos 
           não poderão mais ser alterados: plano_entrega_id, unidade_id, programa_id;
       */
-      /* Valida se o novo período data_inicio e data_fim é compatível com os lançamentos já realizados nas consolidações */
+      if($data["unidade_id"] != $plano->unidade_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Trabalho, não é possível alterar a sua Unidade.");
+      if($data["programa_id"] != $plano->programa_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Trabalho, não é possível alterar o seu Programa.");
+      if($data["plano_entrega_id"] != $plano->plano_entrega_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Trabalho, não é possível alterar o seu Plano de Entregas.");
+      /* (RN_CSLD_2) 
+          O plano de trabalho somente poderá ser alterado: se a nova data de início não for superior a algum perído já CONCLUIDO ou AVALIADO, ou até o limite da primeira ocorrência ou atividade já lançados; 
+          e se a nova data de fim não for inferior a algum perído já CONCLUIDO ou AVALIADO, ou até o limite da última ocorrência ou atividade já lançados;
+      */
       $maxInicio = $this->dataFinalMinimaConsolidacao($plano);
       $minFim = $this->dataFinalMinimaConsolidacao($plano);
       $dataInicioVigencia = date("Y-m-d", strtotime($data["data_inicio_vigencia"])); /* Transforma de datetime para date */
@@ -145,7 +148,7 @@ class PlanoTrabalhoService extends ServiceBase
 
   public function extraStore($plano, $unidade, $action)
   {
-    /* Atualiza as consolidações conforme o programa do plano e o período de data_inicio_vigencia e data_fim_vigencia */
+    /* (RN_CSLD_1) Inclui ou atualiza as consolidações com base no período do plano de trabalho */
     $this->atualizaConsolidacoes($plano);
     /* Restaura o documento_id */
     if(!empty($this->documentoId) && !empty(Documento::find($this->documentoId))) {
@@ -209,6 +212,13 @@ class PlanoTrabalhoService extends ServiceBase
     return date("Y-m-d", strtotime($anoMesDia . " + " . $days . " days"));
   }
 
+
+  /**
+   * (RN_CSLD_1) Inclui ou atualiza as consolidações com base no período do plano de trabalho
+   *
+   * @param   string  $usuario_id
+   * @return  Illuminate\Database\Eloquent\Collection      
+   */
   public function atualizaConsolidacoes($plano) {
     $existentes = $plano->consolidacoes->all();
     $ocorrencias = array_reduce($existentes, fn($carry, $item) => array_merge($carry, $item->ocorrencias->all()), []);
@@ -220,19 +230,19 @@ class PlanoTrabalhoService extends ServiceBase
       $dataFim = date("Y-m-d", min(strtotime($this->proxDataConsolidacao($dataInicio, $plano->programa)), strtotime($dataFimVigencia)));
       $intersecaoOcorrencias = array_filter($ocorrencias, fn($o) => strtotime($dataInicio) <= strtotime($o->data_fim) && strtotime($dataFim) >= strtotime($o->data_inicio));
       $maxDataFimOcorrencia = count($intersecaoOcorrencias) ? max(array_map(fn($item) => strtotime($item->data_fim), $intersecaoOcorrencias)) : strtotime($dataFim);
-      /* Caso exista uma ocorrência que faça interseção no período e tenha data_fim maior que a calculada, a data_fim irá crescer */
+      /* (RN_CSLD_3) Caso exista uma ocorrência que faça interseção no período e tenha data_fim maior que a calculada, a data_fim do período irá crescer */
       $dataFim = $maxDataFimOcorrencia > strtotime($dataFim) ? date("Y-m-d", $maxDataFimOcorrencia) : $dataFim;
       $igual = array_filter($existentes, fn($c) => $c->data_inicio == $dataInicio && $c->data_fim == $dataFim)[0] ?? null;
       $intersecao = array_filter($existentes, fn($c) => $c->status->codigo != "INCLUIDO" && strtotime($dataInicio) <= strtotime($c->data_fim) && strtotime($dataFim) >= strtotime($c->data_inicio))[0] ?? null;
-      if(!empty($igual)) { /* Períodos iguais, utiliza o já existente */
+      if(!empty($igual)) { /* (RN_CSLD_4) Caso exista períodos iguais, o período existente será mantido (para este perído nada será feito, manterá a mesma ID) */
         $merged[] = $igual;
         $existentes = array_filter($existentes, fn($e) => $e->id !== $igual->id);
         $dataInicio = date("Y-m-d", strtotime($igual->data_fim . ' + 1 days'));
-      } else if(!empty($intersecao)) { /* Há intersecao com consolidação já concluída ou avaliada */
+      } else if(!empty($intersecao)) { /* Se houver intersecção do período gerado com um existente que esteja com status CONCLUIDO ou AVALIADO */
         $existentes = array_filter($existentes, fn($e) => $e->id !== $igual->id);
-        if($intersecao->data_inicio == $dataInicio) {
+        if($intersecao->data_inicio == $dataInicio) { /* (RN_CSLD_5) Se as datas de início forem iguais o periodo existente será mantido */
           $dataInicio = date("Y-m-d", strtotime($intersecao->data_fim . ' + 1 days'));
-        } else {
+        } else { /* (RN_CSLD_6) Se as datas de início forem diferente, então será criado um novo perído entre o novo início e o início do período CONCLUIDO/AVALIADO, e o período CONCLUIDO/AVALIADO será mantido */
           $novo = new PlanoTrabalhoConsolidacao([
             'data_inicio' => $dataInicio,
             'data_fim' => date("Y-m-d", strtotime($intersecao->data_inicio . ' - 1 days')), 
@@ -255,7 +265,7 @@ class PlanoTrabalhoService extends ServiceBase
         $dataInicio = date("Y-m-d", strtotime($dataFim . ' + 1 days'));
       }
     }
-    /* Transfere as entregas e as ocorrências para os novos períodos de consolidação */
+    /* (RN_CSLD_7) Ocorrências e Atividades devem ser transferiadas para os novos perídos */
     foreach($existentes as $anterior) {
       /* Realoca ocorrencias */
       foreach($anterior->ocorrencias as $ocorrencia) {
@@ -263,14 +273,6 @@ class PlanoTrabalhoService extends ServiceBase
         if(empty($consolidacao)) throw new ServerException("ValidatePlanoTrabalho", "Erro ao realocar ocorrência para novo período: " . $ocorrencia->data_inicio);
         $ocorrencia->plano_trabalho_consolidacao_id = $consolidacao->id;
         $ocorrencia->save();        
-      }
-      /* Realoca entregas */
-      foreach($anterior->atividades as $atividade) {
-        /* Utiliza a data_inicio da própria consolidação onde a entrega estava como referência para o novo local */
-        $consolidacao = array_filter($merged, fn($item) => strtotime($item->data_inicio) <= strtotime($anterior->data_inicio) && strtotime($anterior->data_inicio) <= strtotime($item->data_fim))[0] ?? null;
-        if(empty($consolidacao)) throw new ServerException("ValidatePlanoTrabalho", "Erro ao realocar entregas para novo período: " . $anterior->data_inicio);
-        $atividade->plano_trabalho_consolidacao_id = $consolidacao->id;
-        $atividade->save();
       }
       /* Remove o registro da consolidação completamente vazio */
       $anterior->delete();

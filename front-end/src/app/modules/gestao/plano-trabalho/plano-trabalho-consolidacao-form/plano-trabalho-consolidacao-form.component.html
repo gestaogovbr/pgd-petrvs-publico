@@ -11,7 +11,7 @@
                         <columns>
                             <column [title]="lex.translate('Atividade')" [template]="columnAtividade" [editTemplate]="columnAtividadeEdit">
                                 <ng-template let-row="row" #columnAtividade>
-                                    <div *ngIf="isAtividade(row); else consolidacaoAtividade" class="row">
+                                    <div class="row">
                                         <div class="col-md-3 one-per-line">
                                             <small class="micro-text fw-ligh">#{{row.numero}}</small><br>
                                             <badge color="success" label="TODO"></badge>
@@ -33,18 +33,6 @@
                                             <span class="micro-text fw-ligh atividade-descricao">{{row.descricao}}</span>
                                         </div>
                                     </div>
-                                    <ng-template #consolidacaoAtividade>
-                                        <div class="row">
-                                            <div *ngIf="hasEsforco || hasRealizado" class="col-md-4 one-per-line">
-                                                <badge *ngIf="hasEsforco" icon="bi bi-stopwatch" [hint]="lex.translate('Esforço')" color="light" [label]="util.decimalToTimerFormated(row.esforco, true)"></badge>
-                                                <badge *ngIf="hasRealizado" [hint]="lex.translate('Realizado')" color="light" [label]="planoEntregaService.getValorRealizado(row)"></badge>
-                                            </div>
-                                            <div [class]="hasEsforco || hasRealizado ? 'col-md-8' : 'col-md-12'">
-                                                <small *ngIf="row.atividade" class="atividade-atividade"><strong>{{row.tipo_atividade.nome || ""}}</strong><br></small>
-                                                <span class="micro-text fw-ligh atividade-descricao">{{row.descricao}}</span>
-                                            </div>
-                                        </div>
-                                    </ng-template>
                                 </ng-template>
                                 <ng-template let-row="row" #columnAtividadeEdit>
                                     <div class="row">
