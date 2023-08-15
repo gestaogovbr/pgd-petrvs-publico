@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\PlanoTrabalho;
-use App\Models\PlanoTrabalhoConsolidacaoAtividade;
 use App\Models\Entrega;
 use App\Models\Atividade;
 use App\Models\PlanoEntregaEntrega;
@@ -28,7 +27,6 @@ class PlanoTrabalhoEntrega extends ModelBase
 
     // Has
     public function atividades() { return $this->hasMany(Atividade::class); } 
-    public function atividadesConsolidacao() { return $this->hasMany(PlanoTrabalhoConsolidacaoAtividade::class, 'entrega_id'); } 
     // Belongs
     public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class); }
     public function planoEntregaEntrega() { return $this->belongsTo(PlanoEntregaEntrega::class); }    //nullable

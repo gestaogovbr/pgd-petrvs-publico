@@ -21,7 +21,6 @@ use App\Http\Controllers\ProgramaParticipanteController;
 use App\Http\Controllers\PlanejamentoController;
 use App\Http\Controllers\PlanejamentoObjetivoController;
 use App\Http\Controllers\PlanoTrabalhoController;
-use App\Http\Controllers\PlanoTrabalhoConsolidacaoAtividadeController;
 use App\Http\Controllers\PlanoEntregaController;
 use App\Http\Controllers\PlanoEntregaEntregaController;
 use App\Http\Controllers\PetrvsController;
@@ -225,7 +224,6 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoConsolidacao')->group(
     defaultRoutes(PlanoTrabalhoConsolidacaoController::class);
     Route::post('consolidacao-dados', [PlanoTrabalhoConsolidacaoController::class, 'consolidacaoDados']);
 });
-Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoConsolidacaoAtividade')->group(function () { defaultRoutes(PlanoTrabalhoConsolidacaoAtividadeController::class); });
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
     defaultRoutes(PlanoEntregaController::class);
     Route::post('liberar-homologacao', [PlanoEntregaController::class, 'liberarHomologacao']);

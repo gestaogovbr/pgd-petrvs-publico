@@ -2,7 +2,6 @@
 
 namespace App\Models;
 use App\Models\ModelBase;
-use App\Models\TipoAvaliacao;
 use App\Models\TipoJustificativa;
 
 class TipoAvaliacaoJustificativa extends ModelBase

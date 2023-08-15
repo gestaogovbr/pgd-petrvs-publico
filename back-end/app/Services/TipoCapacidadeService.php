@@ -270,11 +270,16 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_PTR_USERS_INCL", "Permite incluir planos de trabalho de usuários fora da lotação"], //só no back
                 ["MOD_PTR_INCL_SEM_LOT", "Permite incluir planos de trabalho para usuários não lotado na unidade do plano"], //só no back
                 ["MOD_PTR_INTSC_DATA", "Permite incluir planos de trabalho para usuários que já possuem planos no período de mesma modalidade"], //só no back
-                /* Capacidades relacionadas a consolidação */ 
-                ["MOD_PTR_CSLD", "Módulo de consolidações do Plano de Trabalho"],
+            ]
+        ],
+        [
+            "codigo"=> "MOD_PTR_CSLD", //ok
+            "descricao"=> "Módulo de consolidações do Plano de Trabalho",
+            "capacidades"=> [
                 ["MOD_PTR_CSLD_EDT", "Permite editar a consolidação do planos de trabalho"],
                 ["MOD_PTR_CSLD_EXCL", "Permite excluir a consolidação do planos de trabalho"],
                 ["MOD_PTR_CSLD_INCL", "Permite incluir a consolidação do planos de trabalho"],
+                ["MOD_PTR_CSLD_DES_CONCL", "Permite desfazer conclusão da consolidação do planos de trabalho"],
             ]
         ],
         [

@@ -4,13 +4,11 @@ import { EditableFormComponent } from 'src/app/components/editable-form/editable
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { PlanoTrabalhoConsolidacaoDaoService } from 'src/app/dao/plano-trabalho-consolidacao-dao.service';
-import { PlanoTrabalhoConsolidacaoAtividadeDaoService } from 'src/app/dao/plano-trabalho-consolidacao-atividade-dao.service';
 import { PlanoTrabalhoConsolidacaoOcorrenciaDaoService } from 'src/app/dao/plano-trabalho-consolidacao-ocorrencia-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { PlanoTrabalhoConsolidacao } from 'src/app/models/plano-trabalho-consolidacao.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { Atividade } from 'src/app/models/atividade.model';
-import { PlanoTrabalhoConsolidacaoAtividade } from 'src/app/models/plano-trabalho-consolidacao-atividade.model';
 import { PlanoTrabalhoConsolidacaoOcorrencia } from 'src/app/models/plano-trabalho-consolidacao-ocorrencia.model';
 import { Afastamento } from 'src/app/models/afastamento.model';
 import { PlanoTrabalhoEntrega } from 'src/app/models/plano-trabalho-entrega.model';
@@ -18,11 +16,12 @@ import { PlanoTrabalhoService } from '../plano-trabalho.service';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { TipoAtividadeDaoService } from 'src/app/dao/tipo-atividade-dao.service';
 import { PlanoEntregaService } from '../../plano-entrega/plano-entrega.service';
+import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 
 export type ConsolidacaoEntrega = {
   id: string,
   entrega: PlanoTrabalhoEntrega,
-  atividades: (Atividade | PlanoTrabalhoConsolidacaoAtividade)[]
+  atividades: Atividade[]
 };
 
 @Component({
@@ -39,12 +38,12 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: PlanoTrabalhoConsolidacao | undefined) { super.entity = value; } get entity(): PlanoTrabalhoConsolidacao | undefined { return super.entity; }
 
-  public consolidacaoAtividadeDao: PlanoTrabalhoConsolidacaoAtividadeDaoService;
   public consolidacaoOcorrenciaDao: PlanoTrabalhoConsolidacaoOcorrenciaDaoService;
   public ocorrenciaDao: PlanoTrabalhoConsolidacaoOcorrenciaDaoService;
   public formAtividade: FormGroup;
   public formOcorrencia: FormGroup;
   public dao: PlanoTrabalhoConsolidacaoDaoService;
+  public atividadeDao: AtividadeDaoService;
   public tipoAtividadeDao: TipoAtividadeDaoService;
   public planoTrabalhoService: PlanoTrabalhoService;
   public planoEntregaService: PlanoEntregaService;
@@ -56,8 +55,8 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     super(injector);
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
     this.dao = injector.get<PlanoTrabalhoConsolidacaoDaoService>(PlanoTrabalhoConsolidacaoDaoService);
-    this.consolidacaoAtividadeDao = injector.get<PlanoTrabalhoConsolidacaoAtividadeDaoService>(PlanoTrabalhoConsolidacaoAtividadeDaoService);
     this.consolidacaoOcorrenciaDao = injector.get<PlanoTrabalhoConsolidacaoOcorrenciaDaoService>(PlanoTrabalhoConsolidacaoOcorrenciaDaoService);
+    this.atividadeDao = injector.get<AtividadeDaoService>(AtividadeDaoService);
     this.ocorrenciaDao = injector.get<PlanoTrabalhoConsolidacaoOcorrenciaDaoService>(PlanoTrabalhoConsolidacaoOcorrenciaDaoService);
     this.tipoAtividadeDao = injector.get<TipoAtividadeDaoService>(TipoAtividadeDaoService);
     this.planoTrabalhoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
@@ -102,10 +101,6 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     return result;
   }
 
-  public isAtividade(row: Atividade | PlanoTrabalhoConsolidacaoAtividade) {
-    return row instanceof Atividade;
-  }
-
   public async loadData(entity: IIndexable, form?: FormGroup) {
     this.gridEntregas!.loading = true;
     this.cdRef.detectChanges();
@@ -115,10 +110,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
         return {
           id: x.id,
           entrega: x,
-          atividades: [
-            ...dados.atividades.filter(y => y.plano_trabalho_entrega_id == x.id),
-            ...dados.consolidaoAtividades.filter(y => y.plano_trabalho_entrega_id == x.id)
-          ]
+          atividades: dados.atividades.filter(y => y.plano_trabalho_entrega_id == x.id)
         };
       });
       this.itemsOcorrencias = dados.ocorrencias;
@@ -141,7 +133,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   * Atividades 
   ****************************************************************************************/
   public async addAtividade(entrega: PlanoTrabalhoEntrega) {
-    return new PlanoTrabalhoConsolidacaoAtividade({
+    return new Atividade({
       id: this.dao!.generateUuid(),
       plano_trabalho_consolidacao_id: this.entity!.id,
       plano_trabalho_entrega_id: entrega.id
@@ -153,16 +145,16 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       esforco: row.esforco,
       realizado: row.realizado,
       descricao: row.descricao
-    });    
+    });
     this.cdRef.detectChanges();
   }
 
-  public async removeAtividade(atividades: (Atividade | PlanoTrabalhoConsolidacaoAtividade)[], row: any) {
+  public async removeAtividade(atividades: Atividade[], row: any) {
     let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir o item ?");
     if (confirm) {
       try {
-        let atividade = row as PlanoTrabalhoConsolidacaoAtividade;
-        await this.consolidacaoAtividadeDao?.delete(atividade);
+        let atividade = row as Atividade;
+        await this.atividadeDao?.delete(atividade);
         atividades.splice(atividades.findIndex(x => x.id == atividade.id), 1);
         return true;
       } catch {
@@ -181,18 +173,15 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       row.esforco = form.controls.esforco.value;
       row.realizado = form.controls.esforco.value;
       row.descricao = form.controls.descricao.value;
-      result = await this.consolidacaoAtividadeDao?.save(row);
+      result = await this.atividadeDao?.save(row);
     }
     return result;
   }
 
   public atividadeDynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
-    if(row instanceof PlanoTrabalhoConsolidacaoAtividade) {
-      result.push(Object.assign({}, this.gridEntregas!.BUTTON_EDIT, {}));
-      result.push(Object.assign({}, this.gridEntregas!.BUTTON_DELETE, {}));
-    }
-    //result.push({ hint: "Adicionar filho", icon: "bi bi-plus-circle", onClick: this.addChildProcesso.bind(this) });
+    result.push(Object.assign({}, this.gridEntregas!.BUTTON_EDIT, {}));
+    result.push(Object.assign({}, this.gridEntregas!.BUTTON_DELETE, {}));
     return result;
   }  
 
