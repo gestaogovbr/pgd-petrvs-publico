@@ -841,7 +841,7 @@ usuarios u LEFT JOIN integracao_servidores s ON (u.cpf = s.cpf) ".
         //              VERIFICAR SE JÁ EXISTE NA TABELA INTEGRACAO_CHEFIAS UM REGISTRO COM codigo_siape,id_usuario,tipo_funcao
         //              SE AINDA NÃO EXISTIR O REGISTRO
         //                  CRIA UM REGISTRO INFORMANDO GESTOR/SUBSTITUTO_SIAPE E GESTOR/GESTOR SUBSTITUTO_PETRVS COM O id_usuario
-        //                  CHAMA O MÉTODO saveIntegrante(id_unidade,id_usuario,['gestor/gestor_substituto']) PARA ATUALIZAR O GESTOR/SUBSTITUTO NO PETRVS
+        //                  CHAMA O MÉTODO saveIntegrante(id_unidade,id_usuario,['gestor/gestor_substituto' => 'ADD']) PARA ATUALIZAR O GESTOR/SUBSTITUTO NO PETRVS
         //              SE JÁ EXISTIR O REGISTRO
         //                  VERIFICAR SE O ID_USUARIO DO GESTOR/SUBSTITUTO_SIAPE É IGUAL AO id_usuario
         //                  SE FOR IGUAL, NÃO FAZER NADA

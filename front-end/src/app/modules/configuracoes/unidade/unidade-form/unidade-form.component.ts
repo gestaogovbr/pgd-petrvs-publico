@@ -151,8 +151,8 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       let apagarGestorSubstituto = !this.formGestor!.controls.gestor_substituto_id?.value && !!this.entity?.gestor_substituto?.id.length;
       this.dao?.save(unidade, ["gestor.gestor:id","gestor_substituto.gestor_substituto:id"]).then(async unidade => {
         this.entity = unidade;
-        if(salvarGestor) await this.integranteDao.saveIntegrante(this.entity.id, this.formGestor!.controls.gestor_id!.value, ["GESTOR"]);
-        if(salvarGestorSubstituto) await this.integranteDao.saveIntegrante(this.entity.id, this.formGestor!.controls.gestor_substituto_id!.value, ["GESTOR_SUBSTITUTO"]);
+        if(salvarGestor) await this.integranteDao.saveIntegrante([{'unidade_id': this.entity.id, 'usuario_id': this.formGestor!.controls.gestor_id!.value, 'atribuicoes': ["GESTOR"]}]);
+        if(salvarGestorSubstituto) await this.integranteDao.saveIntegrante([{'unidade_id': this.entity.id, 'usuario_id': this.formGestor!.controls.gestor_substituto_id!.value, 'atribuicoes': ["GESTOR_SUBSTITUTO"]}]);
         if(apagarGestor) await this.integranteAtribuicaoDao.delete(this.entity?.gestor!.gestor!.id);
         if(apagarGestorSubstituto) await this.integranteAtribuicaoDao.delete(this.entity?.gestor_substituto!.gestor_substituto!.id);
         resolve(true);

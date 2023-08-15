@@ -62,7 +62,7 @@ export class PlanoEntregaService {
    * @returns 
    */
   public isAtivo(planoEntrega: PlanoEntrega): boolean {
-    return this.isValido(planoEntrega) && planoEntrega.statusAtual?.codigo == 'ATIVO';
+    return this.isValido(planoEntrega) && planoEntrega.status_atual?.codigo == 'ATIVO';
   }
 
   /**
@@ -71,7 +71,7 @@ export class PlanoEntregaService {
    * @returns 
    */
   public isValido(planoEntrega: PlanoEntrega): boolean {
-    return !planoEntrega.deleted_at && planoEntrega.statusAtual?.codigo != 'CANCELADO' && !planoEntrega.data_arquivamento;
+    return !planoEntrega.deleted_at && planoEntrega.status_atual?.codigo != 'CANCELADO' && !planoEntrega.data_arquivamento;
   }
 
 }

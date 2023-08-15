@@ -12,7 +12,6 @@ export class IntegranteConsolidado {
     public unidade_sigla?: string;
     public unidade_codigo?: string;
     public atribuicoes: string[] = [];
-    public _status?: string;
 };
 
 export class UnidadeIntegrante extends Base {

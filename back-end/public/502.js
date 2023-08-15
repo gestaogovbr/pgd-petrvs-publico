@@ -281,8 +281,16 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
       this.dao?.save(unidade, ["gestor.gestor:id", "gestor_substituto.gestor_substituto:id"]).then( /*#__PURE__*/function () {
         var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (unidade) {
           _this2.entity = unidade;
-          if (salvarGestor) yield _this2.integranteDao.saveIntegrante(_this2.entity.id, _this2.formGestor.controls.gestor_id.value, ["GESTOR"]);
-          if (salvarGestorSubstituto) yield _this2.integranteDao.saveIntegrante(_this2.entity.id, _this2.formGestor.controls.gestor_substituto_id.value, ["GESTOR_SUBSTITUTO"]);
+          if (salvarGestor) yield _this2.integranteDao.saveIntegrante([{
+            'unidade_id': _this2.entity.id,
+            'usuario_id': _this2.formGestor.controls.gestor_id.value,
+            'atribuicoes': ["GESTOR"]
+          }]);
+          if (salvarGestorSubstituto) yield _this2.integranteDao.saveIntegrante([{
+            'unidade_id': _this2.entity.id,
+            'usuario_id': _this2.formGestor.controls.gestor_substituto_id.value,
+            'atribuicoes': ["GESTOR_SUBSTITUTO"]
+          }]);
           if (apagarGestor) yield _this2.integranteAtribuicaoDao.delete(_this2.entity?.gestor.gestor.id);
           if (apagarGestorSubstituto) yield _this2.integranteAtribuicaoDao.delete(_this2.entity?.gestor_substituto.gestor_substituto.id);
           resolve(true);
@@ -629,7 +637,11 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
       if (confirm) {
         _this5.loading = true;
         try {
-          yield _this5.integranteDao.saveIntegrante(_this5.unidade.id, row.id, []);
+          yield _this5.integranteDao.saveIntegrante([{
+            'unidade_id': _this5.unidade.id,
+            'usuario_id': row.id,
+            'atribuicoes': []
+          }]);
           yield _this5.loadData({}, _this5.form);
         } finally {
           _this5.loading = false;
@@ -646,7 +658,11 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
       if (form.controls.atribuicoes.value.length) {
         _this6.loading = true;
         try {
-          yield _this6.integranteDao.saveIntegrante(_this6.unidade.id, form.controls.usuario_id.value, form.controls.atribuicoes.value.map(x => x.key));
+          yield _this6.integranteDao.saveIntegrante([{
+            'unidade_id': _this6.unidade.id,
+            'usuario_id': form.controls.usuario_id.value,
+            'atribuicoes': form.controls.atribuicoes.value.map(x => x.key)
+          }]);
           yield _this6.loadData({}, _this6.form);
         } finally {
           _this6.loading = false;

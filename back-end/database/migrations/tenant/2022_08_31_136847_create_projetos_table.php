@@ -58,13 +58,13 @@ class CreateProjetosTable extends Migration
             $table->foreignUuid('projeto_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Projeto");
         });
         // Cria sequencia projeto_numero
-        Schema::table('sequence', function (Blueprint $table) {
-            $table->integer('projeto_numero')->default(1)->comment("Sequência numerica do Projeto");
+        Schema::table('sequences', function (Blueprint $table) {
+            $table->integer('projeto_numero')->default(0)->comment("Sequência numerica do Projeto");
         });
         DB::unprepared('
             CREATE PROCEDURE sequence_projeto_numero() BEGIN
-                UPDATE sequence SET projeto_numero = GREATEST(IFNULL((SELECT MAX(numero) FROM projetos), 1), projeto_numero + 1);
-                SELECT projeto_numero AS number FROM sequence;
+                UPDATE sequences SET projeto_numero = GREATEST(IFNULL((SELECT MAX(numero) FROM projetos), 1), projeto_numero + 1);
+                SELECT projeto_numero AS number FROM sequences;
             END
         ');
     }
@@ -81,7 +81,7 @@ class CreateProjetosTable extends Migration
             $table->dropConstrainedForeignId('projeto_id');
         });
         DB::unprepared('DROP PROCEDURE IF EXISTS sequence_projeto_numero');
-        Schema::table('sequence', function (Blueprint $table) {
+        Schema::table('sequences', function (Blueprint $table) {
             $table->dropColumn('projeto_numero');
         });
         Schema::dropIfExists('projetos');

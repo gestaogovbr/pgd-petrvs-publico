@@ -29,13 +29,13 @@ class CreateNotificacoesTable extends Migration
             $table->foreignUuid('remetente_id')->nullable()->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->comment("Rementente, caso a notificação permita");
         });
         // Cria sequencia notificacao_numero
-        Schema::table('sequence', function (Blueprint $table) {
-            $table->integer('notificacao_numero')->default(1)->comment("Sequencia numeria do número da notificação");
+        Schema::table('sequences', function (Blueprint $table) {
+            $table->integer('notificacao_numero')->default(0)->comment("Sequencia numeria do número da notificação");
         });
         DB::unprepared('
             CREATE PROCEDURE sequence_notificacao_numero() BEGIN
-                UPDATE sequence SET notificacao_numero = notificacao_numero + 1;
-                SELECT notificacao_numero AS number FROM sequence;
+                UPDATE sequences SET notificacao_numero = notificacao_numero + 1;
+                SELECT notificacao_numero AS number FROM sequences;
             END
         ');
     }
@@ -48,7 +48,7 @@ class CreateNotificacoesTable extends Migration
     public function down()
     {
         DB::unprepared('DROP PROCEDURE IF EXISTS sequence_notificacao_numero');
-        Schema::table('sequence', function (Blueprint $table) {
+        Schema::table('sequences', function (Blueprint $table) {
             $table->dropColumn('notificacao_numero');
         });
         Schema::dropIfExists('notificacoes');

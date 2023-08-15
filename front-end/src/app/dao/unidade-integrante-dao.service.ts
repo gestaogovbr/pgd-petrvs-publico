@@ -3,11 +3,18 @@ import { DaoBaseService } from './dao-base.service';
 import { UnidadeIntegrante, IntegranteConsolidado } from '../models/unidade-integrante.model';
 import { Unidade } from '../models/unidade.model';
 import { Usuario } from '../models/usuario.model';
+import { TypeAtribuicao } from '../models/base.model';
 
 export type LoadIntegrantesResult = {
   integrantes: IntegranteConsolidado[],
   unidade?: Unidade,
   usuario?: Usuario
+}
+//export type ItemAtribuicao = {[key in TypeAtribuicao]?: EntityStatus};
+export type Vinculo = {
+    ['unidade_id']: string,
+    ['usuario_id']: string,
+    ['atribuicoes']: TypeAtribuicao[]
 }
 
 @Injectable({
@@ -32,9 +39,9 @@ export class UnidadeIntegranteDaoService extends DaoBaseService<UnidadeIntegrant
     });
   }
 
-  public saveIntegrante(unidade_id: string, usuario_id: string, atribuicoes: string[]): Promise<IntegranteConsolidado> {
-    return new Promise<IntegranteConsolidado>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/save-integrante', {unidade_id, usuario_id, atribuicoes}).subscribe(response => {
+  public saveIntegrante(vinculos: Vinculo[]): Promise<Vinculo[]> {
+    return new Promise<Vinculo[]>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/save-integrante', {vinculos}).subscribe(response => {
         resolve(response?.data || null);
       }, 
       error => reject(error));
