@@ -73,15 +73,11 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     if(!this.formLotacao?.controls.unidade_lotacao_id.value?.length) {
       return "É obrigatória a definição da unidade de lotação do servidor!";
     };
-/*     if(!form?.controls.atribuicoes?.value?.length || form?.controls.atribuicoes.value.filter((u: { nome: string; unidade_id: string }) => u.nome == "LOTADO")) {
-      return "Obrigatório ao menos a unidade de lotação do usuário!";
-    } else {
-      const erros_atribuicoes = []
-      form?.controls.atribuicoes.value?.forEach((atribuicao: { nome: string; unidade_id: string }) => {
-        if(atribuicao.unidade_id == '') erros_atribuicoes.push({ atribuicao: atribuicao, erro: 'Falta unidade_id'})
-      });
-      if (erros_atribuicoes.length) return "Salve a unidade antes de salvar o usuário"
-    } */
+    const erros_atribuicoes = [];
+    form?.controls.atribuicoes.value?.forEach((atribuicao: { nome: string; unidade_id: string }) => {
+      if(atribuicao.unidade_id == '') erros_atribuicoes.push({ atribuicao: atribuicao, erro: 'Falta unidade_id'})
+    });
+    if(erros_atribuicoes.length) return "Salve a unidade antes de salvar o usuário"
     return undefined;
   } 
 
@@ -95,7 +91,6 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     this.entity = new Usuario();
     this.loadData(this.entity, form); 
   }
-
   
   public saveData(form: IIndexable): Promise<boolean> {      
     return new Promise<boolean>((resolve, reject) => {
@@ -105,7 +100,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
       //usuario.unidades_integrante = usuario.atribuicoes.filter((x: { _status: any; unidade_id: string; nome: string; }) => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.unidade_id?.length && x.nome?.length);
       usuario.unidades_integrante = this.unidadesIntegrantes?.grid?.items.filter((x: any) => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.unidade_id?.length && x.nome?.length);
       this.dao?.save(usuario).then(async usuario => {
-        if(this.formLotacao.controls.unidade_lotacao_id.value != usuario.lotacao?.unidade_id) this.integranteDao.saveIntegrante(this.formLotacao!.controls.unidade_lotacao_id!.value, usuario.id, ["LOTADO"]);
+        //if(this.formLotacao.controls.unidade_lotacao_id.value != usuario.lotacao?.unidade_id) this.integranteDao.saveIntegrante([{'unidade_id': this.formLotacao!.controls.unidade_lotacao_id!.value, 'usuario_id': usuario.id, 'atribuicoes': ["LOTADO"]}]);
         resolve(true);
       });
     });
@@ -113,6 +108,10 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
 
   public titleEdit = (entity: Usuario): string => {
     return "Editando " + this.lex.translate("Usuário") + ': ' + (entity?.matricula || "") + ' - ' + (entity?.apelido || "");
+  }
+
+  public onLotacaoChange(){
+    //this.unidadesIntegrantes?.items.splice(this.unidadesIntegrantes?.items.indexOf(),1);
   }
 
 }

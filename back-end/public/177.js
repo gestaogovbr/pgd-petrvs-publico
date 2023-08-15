@@ -54,7 +54,7 @@ __webpack_require__.r(__webpack_exports__);
 class PlanoEntrega extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
   constructor(data) {
     super();
-    this.statusAtual = new _status_model__WEBPACK_IMPORTED_MODULE_1__.Status();
+    this.status_atual = new _status_model__WEBPACK_IMPORTED_MODULE_1__.Status();
     this.entregas = []; // Entregas que compõem o plano de entregas
     this.statusHistorico = []; // Mudanças de status sofridas pelo plano de entregas (histórico)
     this.inicio = new Date(); // Data inicio do plano de entrega
@@ -2634,7 +2634,7 @@ function PlanoEntregaListComponent_ng_template_37_Template(rf, ctx) {
   if (rf & 2) {
     const row_r45 = ctx.row;
     const ctx_r20 = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("color", ctx_r20.lookup.getColor(ctx_r20.lookup.PLANO_ENTREGA_STATUS, row_r45.statusAtual.codigo))("icon", ctx_r20.lookup.getIcon(ctx_r20.lookup.PLANO_ENTREGA_STATUS, row_r45.statusAtual.codigo))("label", ctx_r20.lookup.getValue(ctx_r20.lookup.PLANO_ENTREGA_STATUS, row_r45.statusAtual.codigo));
+    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("color", ctx_r20.lookup.getColor(ctx_r20.lookup.PLANO_ENTREGA_STATUS, row_r45.status_atual.codigo))("icon", ctx_r20.lookup.getIcon(ctx_r20.lookup.PLANO_ENTREGA_STATUS, row_r45.status_atual.codigo))("label", ctx_r20.lookup.getValue(ctx_r20.lookup.PLANO_ENTREGA_STATUS, row_r45.status_atual.codigo));
     _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("ngIf", row_r45.data_cancelamento);
   }
@@ -3266,7 +3266,7 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
     this.checaBotaoAderirToolbar();
   }
   situacaoPlano(planoEntrega) {
-    if (planoEntrega.deleted_at) return "EXCLUIDO";else if (planoEntrega.data_cancelamento) return "CANCELADO";else if (planoEntrega.data_arquivamento) return "ARQUIVADO";else return planoEntrega.statusAtual.codigo;
+    if (planoEntrega.deleted_at) return "EXCLUIDO";else if (planoEntrega.data_arquivamento) return "ARQUIVADO";else return planoEntrega.status_atual.codigo;
   }
 }
 _class = PlanoEntregaListComponent;

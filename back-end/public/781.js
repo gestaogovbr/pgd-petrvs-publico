@@ -103,15 +103,14 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
         return "É obrigatória a definição da unidade de lotação do servidor!";
       }
       ;
-      /*     if(!form?.controls.atribuicoes?.value?.length || form?.controls.atribuicoes.value.filter((u: { nome: string; unidade_id: string }) => u.nome == "LOTADO")) {
-            return "Obrigatório ao menos a unidade de lotação do usuário!";
-          } else {
-            const erros_atribuicoes = []
-            form?.controls.atribuicoes.value?.forEach((atribuicao: { nome: string; unidade_id: string }) => {
-              if(atribuicao.unidade_id == '') erros_atribuicoes.push({ atribuicao: atribuicao, erro: 'Falta unidade_id'})
-            });
-            if (erros_atribuicoes.length) return "Salve a unidade antes de salvar o usuário"
-          } */
+      const erros_atribuicoes = [];
+      form?.controls.atribuicoes.value?.forEach(atribuicao => {
+        if (atribuicao.unidade_id == '') erros_atribuicoes.push({
+          atribuicao: atribuicao,
+          erro: 'Falta unidade_id'
+        });
+      });
+      if (erros_atribuicoes.length) return "Salve a unidade antes de salvar o usuário";
       return undefined;
     };
     this.titleEdit = entity => {
@@ -177,7 +176,6 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
     this.loadData(this.entity, form);
   }
   saveData(form) {
-    var _this = this;
     return new Promise((resolve, reject) => {
       this.unidadesIntegrantes.grid.confirm();
       let usuario = this.util.fill(new src_app_models_usuario_model__WEBPACK_IMPORTED_MODULE_6__.Usuario(), this.entity);
@@ -186,7 +184,7 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
       usuario.unidades_integrante = this.unidadesIntegrantes?.grid?.items.filter(x => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.unidade_id?.length && x.nome?.length);
       this.dao?.save(usuario).then( /*#__PURE__*/function () {
         var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (usuario) {
-          if (_this.formLotacao.controls.unidade_lotacao_id.value != usuario.lotacao?.unidade_id) _this.integranteDao.saveIntegrante(_this.formLotacao.controls.unidade_lotacao_id.value, usuario.id, ["LOTADO"]);
+          //if(this.formLotacao.controls.unidade_lotacao_id.value != usuario.lotacao?.unidade_id) this.integranteDao.saveIntegrante([{'unidade_id': this.formLotacao!.controls.unidade_lotacao_id!.value, 'usuario_id': usuario.id, 'atribuicoes': ["LOTADO"]}]);
           resolve(true);
         });
         return function (_x) {
@@ -194,6 +192,9 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
         };
       }());
     });
+  }
+  onLotacaoChange() {
+    //this.unidadesIntegrantes?.items.splice(this.unidadesIntegrantes?.items.indexOf(),1);
   }
 }
 _class = UsuarioFormComponent;
@@ -219,7 +220,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵInheritDefinitionFeature"]],
   decls: 28,
   vars: 32,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], [1, "form-group", "col-md-3", "text-center"], [1, "mt-5", 3, "url", "size"], [1, "form-group", "col-md-9"], ["label", "CPF", "controlName", "cpf", 3, "disabled", "size", "maskFormat"], ["label", "Matr\u00EDcula", "controlName", "matricula", 3, "disabled", "size"], ["label", "E-mail", "controlName", "email", "textCase", "lower", 3, "disabled", "size"], ["label", "Nome", "controlName", "nome", 3, "size"], ["label", "Apelido", "controlName", "apelido", 3, "size"], ["label", "Perfil", "controlName", "perfil_id", 3, "disabled", "size", "dao"], ["label", "Lota\u00E7\u00E3o", "controlName", "unidade_lotacao_id", "labelInfo", "Unidade de lota\u00E7\u00E3o do Usu\u00E1rio", 3, "size", "emptyValue", "control", "dao"], ["lotacao", ""], ["label", "UF", "icon", "bi bi-flag", "controlName", "uf", 3, "size", "items"], ["label", "Sexo", "controlName", "sexo", 3, "size", "items"], ["label", "Telefone", "controlName", "telefone", 3, "size", "maskFormat"], ["key", "CONFIGURACOES", "label", "Configura\u00E7\u00F5es"], ["controlName", "texto_complementar_plano", 3, "label", "dataset"], ["key", "ATRIBUICOES", 3, "label"], ["noPersist", "", 3, "entity", "entity_id"], ["unidadesIntegrantes", ""]],
+  consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], [1, "form-group", "col-md-3", "text-center"], [1, "mt-5", 3, "url", "size"], [1, "form-group", "col-md-9"], ["label", "CPF", "controlName", "cpf", 3, "disabled", "size", "maskFormat"], ["label", "Matr\u00EDcula", "controlName", "matricula", 3, "disabled", "size"], ["label", "E-mail", "controlName", "email", "textCase", "lower", 3, "disabled", "size"], ["label", "Nome", "controlName", "nome", 3, "size"], ["label", "Apelido", "controlName", "apelido", 3, "size"], ["label", "Perfil", "controlName", "perfil_id", 3, "disabled", "size", "dao"], ["label", "Lota\u00E7\u00E3o", "controlName", "unidade_lotacao_id", "labelInfo", "Unidade de lota\u00E7\u00E3o do Usu\u00E1rio", 3, "size", "emptyValue", "control", "dao", "change"], ["lotacao", ""], ["label", "UF", "icon", "bi bi-flag", "controlName", "uf", 3, "size", "items"], ["label", "Sexo", "controlName", "sexo", 3, "size", "items"], ["label", "Telefone", "controlName", "telefone", 3, "size", "maskFormat"], ["key", "CONFIGURACOES", "label", "Configura\u00E7\u00F5es"], ["controlName", "texto_complementar_plano", 3, "label", "dataset"], ["key", "ATRIBUICOES", 3, "label"], ["noPersist", "", 3, "entity", "entity_id"], ["unidadesIntegrantes", ""]],
   template: function UsuarioFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](0, "editable-form", 0);
@@ -238,8 +239,12 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](12, "input-text", 10)(13, "input-text", 11);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](14, "div", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](15, "input-select", 12)(16, "input-search", 13, 14);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](15, "input-select", 12);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](16, "input-search", 13, 14);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵlistener"]("change", function UsuarioFormComponent_Template_input_search_change_16_listener() {
+        return ctx.onLotacaoChange();
+      });
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]()();
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](18, "div", 3);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](19, "input-select", 15)(20, "input-radio", 16)(21, "input-text", 17);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]()()()();
@@ -374,7 +379,8 @@ function UsuarioIntegranteComponent_ng_template_7_Template(rf, ctx) {
   }
   if (rf & 2) {
     const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵproperty"]("size", 12)("control", ctx_r5.form.controls.unidade_id)("dao", ctx_r5.unidadeDao);
+    const _r0 = _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵreference"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵproperty"]("disabled", (_r0 == null ? null : _r0.editing) && !(_r0 == null ? null : _r0.adding) ? "true" : undefined)("size", 12)("control", ctx_r5.form.controls.unidade_id)("dao", ctx_r5.unidadeDao);
   }
 }
 function UsuarioIntegranteComponent_ng_template_10_div_0_Template(rf, ctx) {
@@ -407,9 +413,9 @@ function UsuarioIntegranteComponent_ng_template_12_Template(rf, ctx) {
   }
   if (rf & 2) {
     const ctx_r9 = _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵproperty"]("size", 8)("addItemHandle", ctx_r9.addItemHandle.bind(ctx_r9));
+    _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵproperty"]("size", 8)("addItemHandle", ctx_r9.addItemHandle.bind(ctx_r9))("deleteItemHandle", ctx_r9.deleteItemHandle.bind(ctx_r9));
     _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵproperty"]("size", 12)("items", ctx_r9.lookup.UNIDADE_INTEGRANTE_TIPO);
+    _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵproperty"]("size", 12)("items", ctx_r9.tiposAtribuicao);
   }
 }
 class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_7__.PageFrameBase {
@@ -435,6 +441,7 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
     super(injector);
     this.injector = injector;
     this.items = [];
+    this.tiposAtribuicao = [];
     this.validate = (control, controlName) => {
       let result = null;
       if (["unidade_id"].includes(controlName) && !control.value?.length) {
@@ -470,6 +477,7 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
     super.ngOnInit();
     this.entity = this.metadata?.entity || this.entity;
     this.entity_id = this.metadata?.entity_id || this.entity_id;
+    this.tiposAtribuicao = this.isNoPersist ? this.lookup.UNIDADE_INTEGRANTE_TIPO.filter(atribuicao => atribuicao.key != "LOTADO") : this.lookup.UNIDADE_INTEGRANTE_TIPO;
   }
   initializeData(form) {
     var _this = this;
@@ -516,6 +524,9 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
     }
     return result;
   }
+  deleteItemHandle(row) {
+    return !this.isNoPersist || this.isNoPersist && row.key != "LOTADO";
+  }
   /**
    * Método chamado para inserir uma atribuição no grid, seja este componente persistente ou não.
    * @returns
@@ -558,7 +569,11 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
         try {
           _this5.isNoPersist ? Object.assign(row, {
             _status: "DELETE"
-          }) : _this5.integranteDao.saveIntegrante(row.id, _this5.usuario.id, []);
+          }) : _this5.integranteDao.saveIntegrante([{
+            'unidade_id': row.id,
+            'usuario_id': _this5.usuario.id,
+            'atribuicoes': []
+          }]);
           //await this.loadData({}, this.form);
         } finally {
           _this5.loading = false;
@@ -579,30 +594,33 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
     var _this6 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this6.loading = true;
+      let novoIntegrante = new src_app_models_unidade_integrante_model__WEBPACK_IMPORTED_MODULE_5__.IntegranteConsolidado();
       try {
         let novasAtribuicoes = form.controls.atribuicoes.value.map(x => x.key);
-        let novoIntegrante = Object.assign(new src_app_models_unidade_integrante_model__WEBPACK_IMPORTED_MODULE_5__.IntegranteConsolidado(), {
-          id: form.controls.unidade_id.value,
-          atribuicoes: novasAtribuicoes,
-          unidade_codigo: (_this6.unidade?.searchObj).codigo,
-          unidade_sigla: (_this6.unidade?.searchObj).sigla,
-          unidade_nome: (_this6.unidade?.searchObj).nome
-        });
         if (!_this6.isNoPersist) {
-          yield _this6.integranteDao.saveIntegrante(form.controls.unidade_id.value, _this6.usuario.id, novasAtribuicoes);
+          let $result = yield _this6.integranteDao.saveIntegrante([{
+            'unidade_id': form.controls.unidade_id.value,
+            'usuario_id': _this6.usuario.id,
+            'atribuicoes': novasAtribuicoes
+          }]);
+          novoIntegrante = Object.assign(novoIntegrante, {
+            id: form.controls.unidade_id.value,
+            atribuicoes: $result[0].atribuicoes,
+            unidade_codigo: (_this6.unidade?.searchObj).codigo,
+            unidade_sigla: (_this6.unidade?.searchObj).sigla,
+            unidade_nome: (_this6.unidade?.searchObj).nome
+          });
           if (_this6.grid?.adding) _this6.grid.items[_this6.grid.items.length - 1].id = ''; // (*4)
         } else {
-          novoIntegrante = Object.assign(novoIntegrante, {
-            _status: novoIntegrante._status == "ADD" ? "ADD" : "EDIT"
-          });
+          //novoIntegrante = Object.assign(novoIntegrante, { _status:  novoIntegrante._status == "ADD" ? "ADD" : "EDIT" });
+          yield _this6.loadAtribuicao(form, row);
         }
       } catch (e) {
         _this6.error(e.message ? e.message : e.toString() || e);
       } finally {
-        yield _this6.loadAtribuicao(form, row);
         _this6.loading = false;
       }
-      return _this6.novoIntegrante;
+      return novoIntegrante;
     })();
   }
   converterAtribuicoes(atribuicoes) {
@@ -641,18 +659,18 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵInheritDefinitionFeature"]],
   decls: 15,
   vars: 15,
-  consts: [["editable", "", 3, "items", "minHeight", "form", "hasDelete", "add", "load", "remove", "save"], ["grid", ""], [4, "ngIf"], [3, "title", "template", "editTemplate"], ["columnUnidade", ""], ["editUnidade", ""], ["columnAtribuicao", ""], ["editAtribuicao", ""], ["type", "options"], ["label", "", "icon", "", "controlName", "unidade_id", 3, "size", "control", "dao"], ["unidade", ""], [4, "ngFor", "ngForOf"], [3, "color", "icon", "label"], ["controlName", "atribuicoes", 3, "size", "addItemHandle"], ["label", "", "icon", "fas fa-sign-out-alt", "controlName", "atribuicao", 3, "size", "items"]],
+  consts: [["editable", "", 3, "items", "minHeight", "form", "hasDelete", "add", "load", "remove", "save"], ["grid", ""], [4, "ngIf"], [3, "title", "template", "editTemplate"], ["columnUnidade", ""], ["editUnidade", ""], ["columnAtribuicao", ""], ["editAtribuicao", ""], ["type", "options"], ["label", "", "icon", "", "controlName", "unidade_id", 3, "disabled", "size", "control", "dao"], ["unidade", ""], [4, "ngFor", "ngForOf"], [3, "color", "icon", "label"], ["controlName", "atribuicoes", 3, "size", "addItemHandle", "deleteItemHandle"], ["label", "", "icon", "fas fa-sign-out-alt", "controlName", "atribuicao", 3, "size", "items"]],
   template: function UsuarioIntegranteComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵelementStart"](0, "grid", 0, 1);
       _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵtemplate"](2, UsuarioIntegranteComponent_span_2_Template, 3, 1, "span", 2);
       _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵelementStart"](3, "columns")(4, "column", 3);
       _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵtemplate"](5, UsuarioIntegranteComponent_ng_template_5_Template, 7, 3, "ng-template", null, 4, _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵtemplateRefExtractor"]);
-      _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵtemplate"](7, UsuarioIntegranteComponent_ng_template_7_Template, 2, 3, "ng-template", null, 5, _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵtemplate"](7, UsuarioIntegranteComponent_ng_template_7_Template, 2, 4, "ng-template", null, 5, _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵelementStart"](9, "column", 3);
       _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵtemplate"](10, UsuarioIntegranteComponent_ng_template_10_Template, 1, 1, "ng-template", null, 6, _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵtemplateRefExtractor"]);
-      _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵtemplate"](12, UsuarioIntegranteComponent_ng_template_12_Template, 2, 4, "ng-template", null, 7, _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵtemplate"](12, UsuarioIntegranteComponent_ng_template_12_Template, 2, 5, "ng-template", null, 7, _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵelement"](14, "column", 8);
       _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵelementEnd"]()();
@@ -814,8 +832,8 @@ class UsuarioListComponent extends src_app_modules_base_page_list_base__WEBPACK_
     // Testa se o usuário possui permissão para gerenciar as suas unidades-integrantes
     if (this.auth.hasPermissionTo("MOD_UND_INTG")) {
       this.options.push({
-        icon: "bi bi-houses",
-        label: "Unidades",
+        icon: "bi bi-list-task",
+        label: "Atribuições",
         onClick: usuario => {
           this.go.navigate({
             route: ['configuracoes', 'usuario', usuario.id, 'integrante']

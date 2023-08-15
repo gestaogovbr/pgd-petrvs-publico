@@ -20,9 +20,9 @@ class TipoModalidade extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
     this.plano_trabalho_assinatura_participante = 1; /* Exigir assinatura do usuário no plano de trabalho */
     this.plano_trabalho_assinatura_gestor_unidade = 0; /* Exigir assinatura do gestor da unidade */
     this.plano_trabalho_assinatura_gestor_entidade = 0; /* Exigir assinatura do gestor da entidade */
-    this.plano_trabalho_calcula_horas = 0; /* Se o plano de trabalho calcula horas (considerando a carga horaria e os dias) */
-    this.atividade_tempo_despendido = 0; /* Se calcula tempo despendido na atividade */
-    this.atividade_esforco = 0; /* Se utiliza esforço (tempo para execução) na atividade */
+    this.plano_trabalho_calcula_horas = false; /* Se o plano de trabalho calcula horas (considerando a carga horaria e os dias) */
+    this.atividade_tempo_despendido = false; /* Se calcula tempo despendido na atividade */
+    this.atividade_esforco = false; /* Se utiliza esforço (tempo para execução) na atividade */
     this.initialization(data);
   }
 }

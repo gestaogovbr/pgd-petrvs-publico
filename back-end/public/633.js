@@ -296,9 +296,9 @@ function TipoAvaliacaoFormComponent_ng_template_32_Template(rf, ctx) {
   if (rf & 2) {
     const _r38 = _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵreference"](2);
     const ctx_r21 = _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 12)("canEdit", true)("addItemControl", _r38)("control", ctx_r21.formNota.controls.justificativas)("label", ctx_r21.lex.translate("Tipo de justificativa"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 12)("canEdit", true)("addItemControl", _r38)("control", ctx_r21.formNota.controls.justificativas);
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 12)("control", ctx_r21.formNota.controls.tipo_justificativa_id)("dao", ctx_r21.tipoJustificativaDao)("addRoute", _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵpureFunction1"](10, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵpureFunction0"](9, _c0)));
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 12)("control", ctx_r21.formNota.controls.tipo_justificativa_id)("dao", ctx_r21.tipoJustificativaDao)("addRoute", _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵpureFunction1"](9, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵpureFunction0"](8, _c0)));
   }
 }
 class TipoAvaliacaoFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_4__.PageFormBase {
@@ -325,7 +325,7 @@ class TipoAvaliacaoFormComponent extends src_app_modules_base_page_form_base__WE
       return "Editando " + this.lex.translate("Tipo de Avaliação") + ': ' + (entity?.nome || "");
     };
     this.tipoJustificativaDao = injector.get(src_app_dao_tipo_justificativa_dao_service__WEBPACK_IMPORTED_MODULE_5__.TipoJustificativaDaoService);
-    this.join = ["tipos_avaliacoes_notas.justificativas.tipo_justificativa"];
+    this.join = ["notas.justificativas.tipo_justificativa"];
     this.form = this.fh.FormBuilder({
       nome: {
         default: ""
@@ -448,8 +448,8 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵInheritDefinitionFeature"]],
   decls: 35,
-  vars: 23,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "T\u00EDtulo", "controlName", "nome", 3, "size"], ["controlName", "tipo", 3, "size", "items"], ["tipo", ""], ["title", "Notas"], ["editable", "", 3, "control", "form", "hasDelete", "add", "load", "remove", "save"], ["grid", ""], ["title", "Nota", 3, "template", "editTemplate"], ["columnNota", ""], ["editNota", ""], ["title", "Descri\u00E7\u00E3o/Icone/Cor", 3, "template", "editTemplate"], ["columnDescricao", ""], ["editDescricao", ""], ["title", "Pergunta motivacional", 3, "template", "editTemplate"], ["columnPergunta", ""], ["editPergunta", ""], ["title", "Configura\u00E7\u00F5es", 3, "template", "editTemplate"], ["columnConfiguracoes", ""], ["editConfiguracoes", ""], ["title", "Justificativas", 3, "template", "editTemplate"], ["columnJustificativas", ""], ["editJustificativas", ""], ["type", "options"], [3, "control", 4, "ngIf"], [3, "control"], [3, "label", "icon", "color"], ["placeholder", "Descri\u00E7\u00E3o", 3, "control"], ["icon", "fas fa-sign-out-alt", 3, "size", "control", "items"], [3, "size", "control"], [1, "one-per-line"], ["color", "success", "icon", "bi bi-check", "label", "Aprova", "hint", "Se para esta nota ser\u00E1 considerado como aprovado, quando aplic\u00E1vel", 4, "ngIf"], ["color", "warning", "icon", "bi bi-patch-question", "label", "Justifica", "hint", "Se para esta nota ser\u00E1 obrigat\u00F3rio uma justificativa", 4, "ngIf"], ["color", "success", "icon", "bi bi-check", "label", "Aprova", "hint", "Se para esta nota ser\u00E1 considerado como aprovado, quando aplic\u00E1vel"], ["color", "warning", "icon", "bi bi-patch-question", "label", "Justifica", "hint", "Se para esta nota ser\u00E1 obrigat\u00F3rio uma justificativa"], ["scale", "small", "labelPosition", "right", "label", "Aprova?", "labelInfo", "Se para esta nota ser\u00E1 considerado como aprovado, quando aplic\u00E1vel", 3, "size", "control"], ["scale", "small", "labelPosition", "right", "label", "Justifica?", "labelInfo", "Se para esta nota ser\u00E1 obrigat\u00F3rio uma justificativa", 3, "size", "control"], ["color", "light", 3, "label", 4, "ngFor", "ngForOf"], ["color", "light", 3, "label"], [3, "size", "canEdit", "addItemControl", "control", "label"], [3, "size", "control", "dao", "addRoute"], ["justificativa", ""]],
+  vars: 24,
+  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "T\u00EDtulo", "controlName", "nome", 3, "size"], ["label", "Tipo da nota", "controlName", "tipo", 3, "size", "items"], ["tipo", ""], ["title", "Notas"], ["editable", "", 3, "control", "form", "hasDelete", "add", "load", "remove", "save"], ["grid", ""], ["title", "Nota", 3, "template", "editTemplate"], ["columnNota", ""], ["editNota", ""], ["title", "Descri\u00E7\u00E3o/Icone/Cor", 3, "template", "editTemplate"], ["columnDescricao", ""], ["editDescricao", ""], ["title", "Pergunta motivacional", 3, "template", "editTemplate"], ["columnPergunta", ""], ["editPergunta", ""], ["title", "Configura\u00E7\u00F5es", 3, "template", "editTemplate"], ["columnConfiguracoes", ""], ["editConfiguracoes", ""], [3, "title", "template", "editTemplate"], ["columnJustificativas", ""], ["editJustificativas", ""], ["type", "options"], [3, "control", 4, "ngIf"], [3, "control"], [3, "label", "icon", "color"], ["placeholder", "Descri\u00E7\u00E3o", 3, "control"], ["icon", "fas fa-sign-out-alt", 3, "size", "control", "items"], [3, "size", "control"], [1, "one-per-line"], ["color", "success", "icon", "bi bi-check", "label", "Aprova", "hint", "Se para esta nota ser\u00E1 considerado como aprovado, quando aplic\u00E1vel", 4, "ngIf"], ["color", "warning", "icon", "bi bi-patch-question", "label", "Justifica", "hint", "Se para esta nota ser\u00E1 obrigat\u00F3rio uma justificativa", 4, "ngIf"], ["color", "success", "icon", "bi bi-check", "label", "Aprova", "hint", "Se para esta nota ser\u00E1 considerado como aprovado, quando aplic\u00E1vel"], ["color", "warning", "icon", "bi bi-patch-question", "label", "Justifica", "hint", "Se para esta nota ser\u00E1 obrigat\u00F3rio uma justificativa"], ["scale", "small", "labelPosition", "right", "label", "Aprova?", "labelInfo", "Se para esta nota ser\u00E1 considerado como aprovado, quando aplic\u00E1vel", 3, "size", "control"], ["scale", "small", "labelPosition", "right", "label", "Justifica?", "labelInfo", "Se para esta nota ser\u00E1 obrigat\u00F3rio uma justificativa", 3, "size", "control"], ["color", "light", 3, "label", 4, "ngFor", "ngForOf"], ["color", "light", 3, "label"], [3, "size", "canEdit", "addItemControl", "control"], [3, "size", "control", "dao", "addRoute"], ["justificativa", ""]],
   template: function TipoAvaliacaoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelementStart"](0, "editable-form", 0);
@@ -479,7 +479,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelementStart"](29, "column", 20);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵtemplate"](30, TipoAvaliacaoFormComponent_ng_template_30_Template, 2, 1, "ng-template", null, 21, _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵtemplateRefExtractor"]);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵtemplate"](32, TipoAvaliacaoFormComponent_ng_template_32_Template, 3, 12, "ng-template", null, 22, _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵtemplate"](32, TipoAvaliacaoFormComponent_ng_template_32_Template, 3, 11, "ng-template", null, 22, _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelement"](34, "column", 23);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelementEnd"]()()()();
@@ -511,7 +511,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](5);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("template", _r14)("editTemplate", _r16);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("template", _r18)("editTemplate", _r20);
+      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("title", ctx.lex.translate("Tipos de justificativa"))("template", _r18)("editTemplate", _r20);
     }
   },
   dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_21__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_21__.NgIf, _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_9__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_10__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_11__.ColumnComponent, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_12__.InputSwitchComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_13__.InputTextComponent, _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_14__.InputSelectComponent, _components_input_input_color_input_color_component__WEBPACK_IMPORTED_MODULE_15__.InputColorComponent, _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_16__.InputMultiselectComponent, _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_17__.SeparatorComponent, _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_18__.BadgeComponent, _components_input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_19__.InputNumberComponent],
@@ -558,29 +558,47 @@ var _class;
 
 
 
+function TipoAvaliacaoListComponent_toolbar_1_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "toolbar");
+  }
+}
 function TipoAvaliacaoListComponent_ng_template_7_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](0);
   }
   if (rf & 2) {
-    const row_r4 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate1"](" ", row_r4.nome, " ");
+    const row_r5 = ctx.row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate1"](" ", row_r5.nome, " ");
   }
 }
-function TipoAvaliacaoListComponent_ng_template_10_tr_12_badge_9_Template(rf, ctx) {
+function TipoAvaliacaoListComponent_ng_template_10_div_0_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "badge", 16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "div");
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
+  }
+  if (rf & 2) {
+    const row_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]().row;
+    const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate1"](" ", ctx_r7.getNotasText(row_r6.notas), " ");
   }
 }
-function TipoAvaliacaoListComponent_ng_template_10_tr_12_badge_10_Template(rf, ctx) {
+function TipoAvaliacaoListComponent_ng_template_10_ng_template_1_tr_12_badge_9_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "badge", 17);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "badge", 19);
   }
 }
-function TipoAvaliacaoListComponent_ng_template_10_tr_12_Template(rf, ctx) {
+function TipoAvaliacaoListComponent_ng_template_10_ng_template_1_tr_12_badge_10_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "badge", 20);
+  }
+}
+function TipoAvaliacaoListComponent_ng_template_10_ng_template_1_tr_12_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "tr")(1, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](2, "badge", 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](2, "badge", 16);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](3, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](4);
@@ -589,45 +607,56 @@ function TipoAvaliacaoListComponent_ng_template_10_tr_12_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](7);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()();
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](8, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](9, TipoAvaliacaoListComponent_ng_template_10_tr_12_badge_9_Template, 1, 0, "badge", 14);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](10, TipoAvaliacaoListComponent_ng_template_10_tr_12_badge_10_Template, 1, 0, "badge", 15);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](9, TipoAvaliacaoListComponent_ng_template_10_ng_template_1_tr_12_badge_9_Template, 1, 0, "badge", 17);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](10, TipoAvaliacaoListComponent_ng_template_10_ng_template_1_tr_12_badge_10_Template, 1, 0, "badge", 18);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()();
   }
   if (rf & 2) {
-    const nota_r7 = ctx.$implicit;
+    const nota_r12 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("label", nota_r7.nota)("icon", nota_r7.icon)("color", nota_r7.cor);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("label", nota_r12.nota)("icon", nota_r12.icon)("color", nota_r12.cor);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate1"](" ", nota_r7.descricao, "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate1"](" ", nota_r12.descricao, "");
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate"](nota_r7.pergunta);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate"](nota_r12.pergunta);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", nota_r7.aprova);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", nota_r12.aprova);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", nota_r7.justifica);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", nota_r12.justifica);
   }
 }
-function TipoAvaliacaoListComponent_ng_template_10_Template(rf, ctx) {
+function TipoAvaliacaoListComponent_ng_template_10_ng_template_1_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "table", 10)(1, "thead")(2, "tr")(3, "th", 11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "table", 13)(1, "thead")(2, "tr")(3, "th", 14);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](4, "Nota");
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](5, "th", 11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](5, "th", 14);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](6, "Descri\u00E7\u00E3o");
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](7, "br");
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](8, "Pergunta motivacional");
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](9, "th", 11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](9, "th", 14);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](10, "Op\u00E7\u00F5es");
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()()();
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](11, "tbody");
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](12, TipoAvaliacaoListComponent_ng_template_10_tr_12_Template, 11, 7, "tr", 12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](12, TipoAvaliacaoListComponent_ng_template_10_ng_template_1_tr_12_Template, 11, 7, "tr", 15);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()();
   }
   if (rf & 2) {
-    const row_r5 = ctx.row;
+    const row_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]().row;
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngForOf", row_r5.notas);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngForOf", row_r6.notas);
+  }
+}
+function TipoAvaliacaoListComponent_ng_template_10_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](0, TipoAvaliacaoListComponent_ng_template_10_div_0_Template, 2, 1, "div", 11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](1, TipoAvaliacaoListComponent_ng_template_10_ng_template_1_Template, 13, 1, "ng-template", null, 12, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
+  }
+  if (rf & 2) {
+    const _r8 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵreference"](2);
+    const ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", ctx_r4.selectable)("ngIfElse", _r8);
   }
 }
 class TipoAvaliacaoListComponent extends src_app_modules_base_page_list_base__WEBPACK_IMPORTED_MODULE_3__.PageListBase {
@@ -671,6 +700,9 @@ class TipoAvaliacaoListComponent extends src_app_modules_base_page_list_base__WE
     filter.controls.nome.setValue("");
     super.filterClear(filter);
   }
+  getNotasText(notas) {
+    return notas.map(x => x.nota).join(", ");
+  }
 }
 _class = TipoAvaliacaoListComponent;
 _class.ɵfac = function TipoAvaliacaoListComponent_Factory(t) {
@@ -690,38 +722,43 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵInheritDefinitionFeature"]],
   decls: 14,
-  vars: 22,
-  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "hasAdd", "hasEdit"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["controlName", "nome", "placeholder", "Nome...", 3, "size", "label", "control"], ["title", "Nome", 3, "template"], ["columnNome", ""], ["title", "Notas", 3, "template"], ["columnNotas", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"], [1, "table"], ["scope", "col"], [4, "ngFor", "ngForOf"], [3, "label", "icon", "color"], ["icon", "bi bi-hand-thumbs-up", "color", "success", "label", "Aprova", 4, "ngIf"], ["icon", "bi bi-patch-question", "color", "primary", "label", "Justifica", 4, "ngIf"], ["icon", "bi bi-hand-thumbs-up", "color", "success", "label", "Aprova"], ["icon", "bi bi-patch-question", "color", "primary", "label", "Justifica"]],
+  vars: 24,
+  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["controlName", "nome", "placeholder", "Nome...", 3, "size", "label", "control"], ["title", "Nome", 3, "template"], ["columnNome", ""], ["title", "Notas", 3, "template"], ["columnNotas", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"], [4, "ngIf", "ngIfElse"], ["tabelaNotas", ""], [1, "table"], ["scope", "col"], [4, "ngFor", "ngForOf"], [3, "label", "icon", "color"], ["icon", "bi bi-hand-thumbs-up", "color", "success", "label", "Aprova", 4, "ngIf"], ["icon", "bi bi-patch-question", "color", "primary", "label", "Justifica", 4, "ngIf"], ["icon", "bi bi-hand-thumbs-up", "color", "success", "label", "Aprova"], ["icon", "bi bi-patch-question", "color", "primary", "label", "Justifica"]],
   template: function TipoAvaliacaoListComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "grid", 0);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](1, "toolbar");
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](2, "filter", 1)(3, "div", 2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](4, "input-text", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵlistener"]("select", function TipoAvaliacaoListComponent_Template_grid_select_0_listener($event) {
+        return ctx.onSelect($event);
+      });
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](1, TipoAvaliacaoListComponent_toolbar_1_Template, 1, 0, "toolbar", 1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](2, "filter", 2)(3, "div", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](4, "input-text", 4);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](5, "columns")(6, "column", 4);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](7, TipoAvaliacaoListComponent_ng_template_7_Template, 1, 1, "ng-template", null, 5, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](5, "columns")(6, "column", 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](7, TipoAvaliacaoListComponent_ng_template_7_Template, 1, 1, "ng-template", null, 6, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](9, "column", 6);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](10, TipoAvaliacaoListComponent_ng_template_10_Template, 13, 1, "ng-template", null, 7, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](9, "column", 7);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](10, TipoAvaliacaoListComponent_ng_template_10_Template, 3, 2, "ng-template", null, 8, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](12, "column", 8);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](12, "column", 9);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](13, "pagination", 9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](13, "pagination", 10);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
     }
     if (rf & 2) {
-      const _r0 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵreference"](8);
-      const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵreference"](11);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("hasAdd", ctx.auth.hasPermissionTo("MOD_TIPO_AVAL_INCL"))("hasEdit", ctx.auth.hasPermissionTo("MOD_TIPO_AVAL_EDT"));
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
+      const _r1 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵreference"](8);
+      const _r3 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵreference"](11);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("selectable", ctx.selectable)("hasAdd", ctx.auth.hasPermissionTo("MOD_TIPO_AVAL_INCL"))("hasEdit", ctx.auth.hasPermissionTo("MOD_TIPO_AVAL_EDT"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", !ctx.selectable);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 12)("label", "Nome " + ctx.lex.translate("tipo de avalia\u00E7\u00E3o"))("control", ctx.filter.controls.nome);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("template", _r0);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("template", _r1);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("template", _r2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("template", _r3);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("onEdit", ctx.edit)("options", ctx.options);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);

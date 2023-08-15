@@ -4,6 +4,8 @@ export interface IIndexable {
 
 export type EntityStatus = "ADD" | "EDIT" | "DELETE";
 
+export type TypeAtribuicao = "LOTADO" | "GESTOR" | "GESTOR_SUBSTITUTO" | "COLABORADOR" | "AVALIADOR_PLANO_ENTREGA" | "AVALIADOR_PLANO_TRABALHO" | "HOMOLOGADOR_PLANO_ENTREGA";
+
 export abstract class Base implements IIndexable {
     public id: string = "";
     public created_at: Date = new Date();

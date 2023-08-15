@@ -22,7 +22,7 @@ export class PlanoTrabalho extends Base implements HasDocumentos {
     public usuario?: Usuario;
     public programa?: Programa;
     public documento?: Documento;
-    public statusAtual?: Status;
+    public status_atual?: Status;
 
     public carga_horaria: number = 0; //Carga horária diária do usuário
     public tempo_total: number = 0; //Horas úteis de trabalho no período de data_inicio_vigencia à data_fim_vigencia considerando carga_horaria, feriados, fins de semana

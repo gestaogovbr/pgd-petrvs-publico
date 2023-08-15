@@ -57,6 +57,7 @@ export class AppComponent {
   public menuPonto: any;
   public menuRaioX: any;
   public menuExecucao: any;
+  public menuAvaliacao: any;
   public menuAdministrador: any;
   public menuDev: any;
   private _menu: any;
@@ -129,6 +130,9 @@ export class AppComponent {
       /* Relatórios */
       FORCAS_TRABALHOS_SERVIDORES: { name: "Força de Trabalho - Servidor", permition: 'MOD_PTR_CONS', route: ['relatorios', 'forca-de-trabalho', 'servidor'], icon: this.entity.getIcon('RelatorioServidor') },
       FORCAS_TRABALHOS_AREAS: { name: "Força de Trabalho - Área", permition: 'MOD_PTR_CONS', route: ['relatorios', 'forca-de-trabalho', 'area'], icon: this.entity.getIcon('RelatorioArea') },
+      /* Avaliações */
+      AVALIACAO_CONSOLIDACAO_PLANO_TRABALHO: { name: "Consolidações (Plano de Trabalho)", permition: '', route: [], icon: this.entity.getIcon('PlanoTrabalho') },
+      AVALIACAO_PLANO_ENTREGAS: { name: "Plano de Entregas", permition: '', route: [], icon: this.entity.getIcon('PlanoEntrega') },
       /* CONFIGURAÇÕES */
       PREFERENCIAS: { name: "Preferências", permition: '', route: ['configuracoes', 'preferencia'], metadata: { root: true, modal: true }, icon: this.entity.getIcon('Preferencia') },
       ENTIDADES: { name: this.lex.translate("Entidades"), permition: 'MOD_CFG_ENTD', route: ['configuracoes', 'entidade'], icon: this.entity.getIcon('Entidade') },
@@ -195,6 +199,14 @@ export class AppComponent {
         Object.assign({}, this.menuSchema.CONSOLIDACOES, {params: {tab: "USUARIO"}})
       ].sort(this.orderMenu)
     }, {
+      name: "Avaliação",
+      permition: "MENU_GESTAO_ACESSO",
+      id: "navbarDropdownGestaoAvaliacao",
+      menu: [
+        this.menuSchema.AVALIACAO_CONSOLIDACAO_PLANO_TRABALHO,
+        this.menuSchema.AVALIACAO_PLANO_ENTREGAS      
+      ].sort(this.orderMenu)
+    }, {
       name: "Gerenciamento",
       permition: "MENU_CONFIG_ACESSO",
       id: "navbarDropdownGestaoGerencial",
@@ -214,6 +226,7 @@ export class AppComponent {
         this.menuSchema.TIPOS_AVALIACOES,
         this.menuSchema.TIPOS_ATIVIDADES,
         this.menuSchema.TIPOS_JUSTIFICATIVAS,
+        this.menuSchema.TIPOS_MODALIDADES,
         this.menuSchema.TIPOS_MOTIVOS_AFASTAMENTOS,
         this.menuSchema.TIPOS_TAREFAS
       ].sort(this.orderMenu)
@@ -224,6 +237,10 @@ export class AppComponent {
       this.menuSchema.ATIVIDADES,
       Object.assign({}, this.menuSchema.CONSOLIDACOES, {params: {tab: "UNIDADE"}}),
       this.menuSchema.AFASTAMENTOS
+    ];
+
+    this.menuAvaliacao = [
+      this.menuSchema.AVALIACAO_CONSOLIDACAO_PLANO_TRABALHO
     ];
 
     this.menuAdministrador = [{
@@ -364,8 +381,9 @@ export class AppComponent {
 
 
   this.menuContexto = [
-      { key: "EXECUCAO", icon: "bi bi-person-check", name: "Execução (PGD)", menu: this.menuExecucao },
-      { key: "GESTAO", icon: "bi bi-people-fill", name: "Gestão (PGD)", menu: this.menuGestao },
+      { key: "EXECUCAO", icon: "bi bi-person-check", name: "Participante (PGD)", menu: this.menuExecucao },
+      { key: "AVALIACAO", icon: "bi bi-question-square", name: "Avaliador (PGD)", menu: this.menuAvaliacao },
+      { key: "GESTAO", icon: "bi bi-people-fill", name: "Gestor (PGD)", menu: this.menuGestao },
       { key: "ADMINISTRADOR", icon: "bi bi-emoji-sunglasses", name: "Administrador", menu: this.menuAdministrador },
       { key: "DEV", icon: "bi bi-braces", name: "Desenvolvedor", menu: this.menuDev },
       { key: "PONTO", icon: "bi bi-stopwatch", name: "Ponto eletrônico", menu: this.menuPonto },
@@ -397,6 +415,7 @@ export class AppComponent {
     switch (this.contexto.key) {
       case "GESTAO": return this.menuGestao;
       case "EXECUCAO": return this.menuExecucao;
+      case "AVALIACAO": return this.menuAvaliacao;
       case "ADMINISTRADOR": return this.menuAdministrador;
       case "DEV": return this.menuDev;
       case "PONTO": return this.menuPonto;

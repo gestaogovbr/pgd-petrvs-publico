@@ -41,14 +41,14 @@ class CreatePlanosTrabalhosTable extends Migration
             //Criada na tabela 'status' devido à referência cruzada
             //$table->foreignUuid('status_id')->constrained("status")->onDelete('restrict')->onUpdate('cascade')->comment("Status atual do Plano de Trabalho");
         });
-        // Cria na tabela 'sequence' o campo plano_trabalho_numero
-        Schema::table('sequence', function (Blueprint $table) {
-            $table->integer('plano_trabalho_numero')->default(1)->comment("Sequencia numérica do plano de trabalho");
+        // Cria na tabela 'sequences' o campo plano_trabalho_numero
+        Schema::table('sequences', function (Blueprint $table) {
+            $table->integer('plano_trabalho_numero')->default(0)->comment("Sequencia numérica do plano de trabalho");
         });
         DB::unprepared('
             CREATE PROCEDURE sequence_plano_trabalho_numero() BEGIN
-                UPDATE sequence SET plano_trabalho_numero = plano_trabalho_numero + 1;
-                SELECT plano_trabalho_numero AS number FROM sequence;
+                UPDATE sequences SET plano_trabalho_numero = plano_trabalho_numero + 1;
+                SELECT plano_trabalho_numero AS number FROM sequences;
             END
         ');
     }
@@ -61,7 +61,7 @@ class CreatePlanosTrabalhosTable extends Migration
     public function down()
     {
         DB::unprepared('DROP PROCEDURE IF EXISTS sequence_plano_trabalho_numero');
-        Schema::table('sequence', function (Blueprint $table) {
+        Schema::table('sequences', function (Blueprint $table) {
             $table->dropColumn('plano_trabalho_numero');
         });
         Schema::dropIfExists('planos_trabalhos');
