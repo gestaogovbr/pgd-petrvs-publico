@@ -36,7 +36,9 @@
 .btn-google {
     color: #545454;
     background-color: #ffffff;
-    box-shadow: 0 1px 2px 1px #ddd
+    box-shadow: 0 1px 2px 1px #ddd;
+    max-width: 320px;
+    width: 100%;
 }
 
 .btn-md {
@@ -227,4 +229,23 @@ a.br-button {
   text-decoration: none !important;
 }
 
-/*# sourceMappingURL=button.css.map*/
+
+.bg-holder {
+  position: absolute;
+  width: 100%;
+  min-height: 100%;
+  top: 0;
+  left: 0;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  will-change: transform,opacity,filter;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+
+.login-logo {
+  height: 150px;
+}
