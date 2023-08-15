@@ -49,13 +49,13 @@ class CreateAtividadesTable extends Migration
             //$table->foreignUuid('status_id')->constrained("status")->onDelete('restrict')->onUpdate('cascade')->comment("Status atual da Atividade");
         });
         // Cria sequencia atividade_numero
-        Schema::table('sequence', function (Blueprint $table) {
-            $table->integer('atividade_numero')->default(1)->comment("Sequencia numeria do número da atividade");
+        Schema::table('sequences', function (Blueprint $table) {
+            $table->integer('atividade_numero')->default(0)->comment("Sequencia numeria do número da atividade");
         });
         DB::unprepared('
             CREATE PROCEDURE sequence_atividade_numero() BEGIN
-                UPDATE sequence SET atividade_numero = atividade_numero + 1;
-                SELECT atividade_numero AS number FROM sequence;
+                UPDATE sequences SET atividade_numero = atividade_numero + 1;
+                SELECT atividade_numero AS number FROM sequences;
             END
         ');
         // Cria a chave estrangeira na tabela 'documentos' devido à referência cruzada com 'atividades'
@@ -76,7 +76,7 @@ class CreateAtividadesTable extends Migration
             $table->dropConstrainedForeignId('atividade_id');
         });
         DB::unprepared('DROP PROCEDURE IF EXISTS sequence_atividade_numero');
-        Schema::table('sequence', function (Blueprint $table) {
+        Schema::table('sequences', function (Blueprint $table) {
             $table->dropColumn('atividade_numero');
         });
         Schema::dropIfExists('atividades');

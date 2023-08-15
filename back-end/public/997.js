@@ -1,44 +1,6 @@
 "use strict";
 (self["webpackChunkpetrvs"] = self["webpackChunkpetrvs"] || []).push([[997],{
 
-/***/ 20762:
-/*!************************************************!*\
-  !*** ./src/app/models/plano-trabalho.model.ts ***!
-  \************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   PlanoTrabalho: () => (/* binding */ PlanoTrabalho)
-/* harmony export */ });
-/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
-
-class PlanoTrabalho extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
-  constructor(data) {
-    super();
-    this.carga_horaria = 0; //Carga horária diária do usuário
-    this.tempo_total = 0; //Horas úteis de trabalho no período de data_inicio_vigencia à data_fim_vigencia considerando carga_horaria, feriados, fins de semana
-    this.tempo_proporcional = 0; //tempo_total menos os afastamentos
-    this.data_inicio_vigencia = new Date(); //Inicio do plano
-    this.data_fim_vigencia = new Date(); //Fim do plano
-    this.forma_contagem_carga_horaria = "DIA"; // Forma de contagem padrão da carga horária
-    this.metadados = undefined; /* Campo virtual contendo informações calculadas pelo servidor */
-    this.entregas = []; /* Entregas vinculadas ao Plano de Trabalho*/
-    this.documentos = [];
-    this.atividades = [];
-    this.statusHistorico = []; // Mudanças de status sofridas pelo plano de trabalho (histórico)
-    this.programa_id = "";
-    this.usuario_id = "";
-    this.unidade_id = "";
-    this.tipo_modalidade_id = "";
-    this.plano_entrega_id = "";
-    this.documento_id = "";
-    this.initialization(data);
-  }
-}
-
-/***/ }),
-
 /***/ 89997:
 /*!****************************************************************************************************!*\
   !*** ./src/app/modules/gestao/plano-trabalho/plano-trabalho-list/plano-trabalho-list.component.ts ***!
@@ -773,13 +735,13 @@ class PlanoTrabalhoService {
     if (!!planoTrabalhoEntrega.entrega_id?.length) return {
       titulo: 'Catálogo',
       cor: 'secondary',
-      nome: !!plano?._metadata.novaEntrega?.entrega?.id?.length ? plano._metadata.novaEntrega?.entrega?.nome || "Desconhecido" : planoTrabalhoEntrega.entrega?.nome || "Desconhecido1"
+      nome: !!plano?._metadata?.novaEntrega?.entrega?.id?.length ? plano._metadata?.novaEntrega?.entrega?.nome || "Desconhecido" : planoTrabalhoEntrega.entrega?.nome || "Desconhecido1"
     };
     let IdDoPlanoEntregaDoPlanoTrabalho, IdDoPlanoEntregaDaEntrega, badge, nome, cor;
     IdDoPlanoEntregaDoPlanoTrabalho = plano?.plano_entrega_id || plano?._metadata.idPlanoEntregas || 'Desconhecido2';
-    IdDoPlanoEntregaDaEntrega = !!plano?._metadata.novaEntrega?.plano_entrega_entrega?.id.length ? plano?._metadata.novaEntrega?.plano_entrega_entrega?.plano_entrega_id || "Desconhecido3" : planoTrabalhoEntrega.plano_entrega_entrega?.plano_entrega_id || "Desconhecido4";
+    IdDoPlanoEntregaDaEntrega = !!plano?._metadata?.novaEntrega?.plano_entrega_entrega?.id.length ? plano?._metadata?.novaEntrega?.plano_entrega_entrega?.plano_entrega_id || "Desconhecido3" : planoTrabalhoEntrega.plano_entrega_entrega?.plano_entrega_id || "Desconhecido4";
     [badge, cor] = IdDoPlanoEntregaDoPlanoTrabalho == IdDoPlanoEntregaDaEntrega ? ['Mesma unidade', 'success'] : ['Outra unidade', 'primary'];
-    nome = !!plano?._metadata.novaEntrega?.plano_entrega_entrega?.id.length ? plano?._metadata.novaEntrega?.plano_entrega_entrega?.entrega?.nome || "Desconhecido5" : planoTrabalhoEntrega.plano_entrega_entrega?.entrega?.nome || "Desconhecido6";
+    nome = !!plano?._metadata?.novaEntrega?.plano_entrega_entrega?.id.length ? plano?._metadata?.novaEntrega?.plano_entrega_entrega?.entrega?.nome || "Desconhecido5" : planoTrabalhoEntrega.plano_entrega_entrega?.entrega?.nome || "Desconhecido6";
     return {
       titulo: badge,
       cor: cor,

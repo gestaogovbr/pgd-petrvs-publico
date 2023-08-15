@@ -19,7 +19,7 @@ export type PlanoEntregaMetadados = {
 }
 export class PlanoEntrega extends Base {
   public unidade?: Unidade;
-  public statusAtual?: Status = new Status();
+  public status_atual?: Status = new Status();
   public planejamento?: Planejamento;
   public cadeia_valor?: CadeiaValor;
   public programa?: Programa;

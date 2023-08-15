@@ -103,7 +103,7 @@ class PlanoEntregaService {
    * @returns
    */
   isAtivo(planoEntrega) {
-    return this.isValido(planoEntrega) && planoEntrega.statusAtual?.codigo == 'ATIVO';
+    return this.isValido(planoEntrega) && planoEntrega.status_atual?.codigo == 'ATIVO';
   }
   /**
    * Informa se o plano de entregas repassado como parâmetro é válido, ou seja, não foi deletado, não foi cancelado nem foi arquivado.
@@ -111,7 +111,7 @@ class PlanoEntregaService {
    * @returns
    */
   isValido(planoEntrega) {
-    return !planoEntrega.deleted_at && planoEntrega.statusAtual?.codigo != 'CANCELADO' && !planoEntrega.data_arquivamento;
+    return !planoEntrega.deleted_at && planoEntrega.status_atual?.codigo != 'CANCELADO' && !planoEntrega.data_arquivamento;
   }
 }
 _class = PlanoEntregaService;

@@ -36,14 +36,14 @@ class CreatePlanosEntregas extends Migration
             //Criada na tabela 'status' devido à referência cruzada
             //$table->foreignUuid('status_id')->constrained("status")->onDelete('restrict')->onUpdate('cascade')->comment("Status atual do Plano de Entregas");
         });
-        // Cria na tabela 'sequence' o campo plano_entrega_numero
-        Schema::table('sequence', function (Blueprint $table) {
-            $table->integer('plano_entrega_numero')->default(1)->comment("Sequencia numérica do plano de entregas");
+        // Cria na tabela 'sequences' o campo plano_entrega_numero
+        Schema::table('sequences', function (Blueprint $table) {
+            $table->integer('plano_entrega_numero')->default(0)->comment("Sequencia numérica do plano de entregas");
         });
         DB::unprepared('
             CREATE PROCEDURE sequence_plano_entrega_numero() BEGIN
-                UPDATE sequence SET plano_entrega_numero = plano_entrega_numero + 1;
-                SELECT plano_entrega_numero AS number FROM sequence;
+                UPDATE sequences SET plano_entrega_numero = plano_entrega_numero + 1;
+                SELECT plano_entrega_numero AS number FROM sequences;
             END
         ');
     }
@@ -56,7 +56,7 @@ class CreatePlanosEntregas extends Migration
     public function down()
     {
         DB::unprepared('DROP PROCEDURE IF EXISTS sequence_plano_entrega_numero');
-        Schema::table('sequence', function (Blueprint $table) {
+        Schema::table('sequences', function (Blueprint $table) {
             $table->dropColumn('plano_entrega_numero');
         });
         Schema::dropIfExists('planos_entregas');

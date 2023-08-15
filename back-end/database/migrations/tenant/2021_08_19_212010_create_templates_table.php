@@ -32,13 +32,13 @@ class CreateTemplatesTable extends Migration
             $table->foreignUuid('unidade_id')->nullable()->constrained('unidades')->onDelete('restrict')->onUpdate('cascade')->comment('Unidade');
         });
         // Cria sequencia template_numero
-        Schema::table('sequence', function (Blueprint $table) {
-            $table->integer('template_numero')->default(1)->comment("Sequencia numeria do número do template");
+        Schema::table('sequences', function (Blueprint $table) {
+            $table->integer('template_numero')->default(0)->comment("Sequencia numeria do número do template");
         });
         DB::unprepared('
             CREATE PROCEDURE sequence_template_numero() BEGIN
-                UPDATE sequence SET template_numero = template_numero + 1;
-                SELECT template_numero AS number FROM sequence;
+                UPDATE sequences SET template_numero = template_numero + 1;
+                SELECT template_numero AS number FROM sequences;
             END
         ');
     }
@@ -51,7 +51,7 @@ class CreateTemplatesTable extends Migration
     public function down()
     {
         DB::unprepared('DROP PROCEDURE IF EXISTS sequence_template_numero');
-        Schema::table('sequence', function (Blueprint $table) {
+        Schema::table('sequences', function (Blueprint $table) {
             $table->dropColumn('template_numero');
         });
         Schema::dropIfExists('templates');

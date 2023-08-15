@@ -4,7 +4,6 @@
             <div class="row">
                 <div class="form-group col-md-3 text-center">
                     <profile-picture [url]="form!.controls.url_foto.value" class="mt-5" [size]="150"></profile-picture>
-                    <!--img [src]="form!.controls.url_foto?.value" onerror="this.src='./assets/images/profile.jpg'" width="150" height="150" class="rounded-circle mt-5"//-->
                 </div>
                 <div class="form-group col-md-9">
                     <div class="row">
@@ -18,7 +17,7 @@
                     </div>
                     <div class="row">
                         <input-select [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_PERFIL') ? 'true' : undefined" [size]="4" label="Perfil" controlName="perfil_id" [dao]="perfilDao"></input-select>
-                        <input-search #lotacao label="Lotação" [size]="8" [emptyValue]="null" [control]="formLotacao!.controls.unidade_lotacao_id" controlName="unidade_lotacao_id" [dao]="unidadeDao" labelInfo="Unidade de lotação do Usuário"></input-search>
+                        <input-search #lotacao label="Lotação" [size]="8" [emptyValue]="null" [control]="formLotacao!.controls.unidade_lotacao_id" controlName="unidade_lotacao_id" [dao]="unidadeDao" labelInfo="Unidade de lotação do Usuário" (change)="onLotacaoChange()"></input-search>
                     </div>
                     <div class="row">
                         <input-select [size]="4" label="UF" icon="bi bi-flag" controlName="uf" [items]="lookup.UF"></input-select>

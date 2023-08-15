@@ -45,7 +45,7 @@ export class Atividade extends Base implements HasComentarios {
     public unidade?: Unidade;
     public documento_requisicao?: Documento;
     public documento_entrega?: Documento;
-    public statusAtual?: Status;
+    public status_atual?: Status;
     public statusHistorico: Status[] = [];                             // Mudanças de status sofridas pela atividade (histórico)
 
     public numero: number = 0; /* Numero da atividade */

@@ -10,7 +10,7 @@ class UpdateModelCommand extends Command
 {
     protected $ignoreTables = [
         "changes",
-        "sequence",
+        "sequences",
         "migrations",
         "traffic",
         "errors",

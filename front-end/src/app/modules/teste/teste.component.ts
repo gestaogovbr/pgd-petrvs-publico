@@ -9,7 +9,6 @@ import * as moment from 'moment';
 import { CardItem } from 'src/app/components/kanban/docker/docker.component';
 import { GanttAssignment, GanttProject, GanttResource, GanttTask } from 'src/app/components/gantt/gantt-models';
 import { CalendarOptions } from '@fullcalendar/core';
-//import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { Expediente } from 'src/app/models/expediente.model';
 import { Feriado } from 'src/app/models/feriado.model';
 import { Afastamento } from 'src/app/models/afastamento.model';

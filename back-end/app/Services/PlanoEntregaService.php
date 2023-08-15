@@ -222,19 +222,16 @@ class PlanoEntregaService extends ServiceBase
         //  (RI_PENT_5) Garante que, se não for especificado um status, só retornarão os planos de entrega não cancelados. (vide método proxyRows)
         $result = $this->extractWhere($data, "status");
         $this->statusQuery = empty($result) ? "" : $result[2]; 
-        $data["with"][] = "status_atual:id,codigo";
+        $data["with"][] = "statusAtual:id,codigo";
     }
 
     public function proxyRows($rows){
-        foreach($rows as $row){ 
-            $row->statusAtual = Status::where('plano_entrega_id', $row->id)->first();
-            $row->metadados = $this->metadados($row);
-        }
+        foreach($rows as $row){ $row->metadados = $this->metadados($row); }
         //  (RI_PENT_5) Por padrão, os planos de entregas retornados na listagem do grid são os que não foram arquivados nem cancelados.
         //  O não-arquivamento é tratado no método proxyQuery e o não-cancelamento é tratado lá e aqui.
         $rows = $rows->filter(function($r) {
             return $this->statusQuery == "" ? $r->statusAtual->codigo != "CANCELADO" : $r->statusAtual->codigo == $this->statusQuery; 
-        });
+        })->values();
         return $rows;
     }
 
