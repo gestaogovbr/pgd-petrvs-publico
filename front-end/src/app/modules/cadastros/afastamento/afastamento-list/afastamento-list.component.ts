@@ -22,12 +22,10 @@ export class AfastamentoListComponent extends PageListBase<Afastamento, Afastame
 
   constructor(public injector: Injector) {
     super(injector, Afastamento, AfastamentoDaoService);
-
+    /* Inicializações */
     this.join = ["tipo_motivo_afastamento:id, nome", "usuario: id, nome"];
     this.tipoMotivoAfastamentoDao = injector.get<TipoMotivoAfastamentoDaoService>(TipoMotivoAfastamentoDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
-
-    /* Inicializações */
     this.title = this.lex.translate("Afastamentos");
     this.code = "MOD_AFT";
     this.filter = this.fh.FormBuilder({
@@ -37,33 +35,11 @@ export class AfastamentoListComponent extends PageListBase<Afastamento, Afastame
       usuario_id: {default: ""},
       tipo_motivo_afastamento_id: {default: ""}
     });
-    // Testa se o usuário possui permissão para exibir dados do afastamento
-    if (this.auth.hasPermissionTo("MOD_AFT_CONS")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir o afastamento
-    if (this.auth.hasPermissionTo("MOD_AFT_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
+    this.addOption(this.OPTION_INFORMACOES);
+    this.addOption(this.OPTION_EXCLUIR, "MOD_AFT_EXCL");
   }
 
-  /*public filterClear(filter: FormGroup) {
-    filter.controls.data_inicio.setValue("");
-    filter.controls.data_fim.setValue("");
-    filter.controls.usuario_id.setValue("");
-    filter.controls.tipo_motivo_afastamento_id.setValue("");
-    super.filterClear(filter);
-  }*/
-
-  public filtro(){
+  public filtro() {
     this.listagemInicial = false;
   }
 
@@ -73,9 +49,9 @@ export class AfastamentoListComponent extends PageListBase<Afastamento, Afastame
     if(form.usuario_id?.length && form.tipo_motivo_afastamento_id?.length) {
       result.push(["usuario_id", "==", form.usuario_id]);
       result.push(["tipo_motivo_afastamento_id", "==", form.tipo_motivo_afastamento_id]);
-    } else if(form.usuario_id?.length) {
+    } else if (form.usuario_id?.length) {
       result.push(["usuario_id", "==", form.usuario_id]);
-    } else if(form.tipo_motivo_afastamento_id?.length) {
+    } else if (form.tipo_motivo_afastamento_id?.length) {
       result.push(["tipo_motivo_afastamento_id", "==", form.tipo_motivo_afastamento_id]);
     } else if(this.dao?.validDateTime(form.data_inicio) && this.dao?.validDateTime(form.data_fim) && !this.listagemInicial) {
       result.push(this.dao?.intersectionWhere("data_inicio", "data_fim", this.util.startOfDay(form.data_inicio), this.util.startOfDay(form.data_fim)));

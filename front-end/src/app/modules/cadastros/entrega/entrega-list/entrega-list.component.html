@@ -18,7 +18,13 @@
             </ng-template>
         </column>
         <column [title]="lex.translate('Tipo do indicador')" type="select" field="tipo_indicador" [items]="lookup.TIPO_INDICADOR"></column>
-        <column  title="Qualitativos" field="form!.controls.lista_qualitativos.key"></column>
+        <column title="Qualitativos" [template]="columnQualitativos">
+            <ng-template let-row="row" #columnQualitativos>
+                <div class="one-per-line">
+                    <badge *ngFor="let qualitativo of row.lista_qualitativos" color="light" icon="bi bi-check2-square" [label]="qualitativo.value"></badge>
+                </div>                
+            </ng-template>
+        </column>
         <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>

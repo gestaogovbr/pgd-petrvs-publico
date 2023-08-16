@@ -48,7 +48,7 @@
                     <documentos-badge [documento]="row.documento_requisicao"></documentos-badge>
                 </span>
                 <div class="one-per-line">
-                    <badge *ngFor="let status of getStatus(row)" [data]="status" [color]="status.color" [icon]="status.icon" [label]="status.label" [click]="status.data?.filter ? onStatusClick.bind(this) : undefined"></badge>
+                    <badge *ngFor="let status of atividadeService.getStatus(row)" [data]="status" [color]="status.color" [icon]="status.icon" [label]="status.label" [click]="status.data?.filter ? onStatusClick.bind(this) : undefined"></badge>
                 </div>
             </ng-template>
         </column>
@@ -74,7 +74,7 @@
             </ng-template>
             <ng-template let-row="row" #columnTempos>
                 <div class="one-per-line">
-                    <badge *ngFor="let tempo of temposAtividade(row)" [badge]="tempo"></badge>
+                    <badge *ngFor="let tempo of atividadeService.temposAtividade(row, extra, onDespendidoClick.bind(this))" [badge]="tempo"></badge>
                 </div>
             </ng-template>
         </column>

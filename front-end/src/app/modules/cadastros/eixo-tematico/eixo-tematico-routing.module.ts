@@ -7,9 +7,9 @@ import { EixoTematicoListComponent } from './eixo-tematico-list/eixo-tematico-li
 
 const routes: Routes = [
   { path: '', component: EixoTematicoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Eixos Temáticos" } },
-  { path: 'new', component: EixoTematicoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Eixo Temático", modal: true } },
-  { path: ':id/edit', component: EixoTematicoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de Eixo Temático", modal: true } },
-  { path: ':id/consult', component: EixoTematicoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Eixo Temático", modal: true } }
+  { path: 'new', component: EixoTematicoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Incluir Eixo Temático", modal: true } },
+  { path: ':id/edit', component: EixoTematicoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Editar Eixo Temático", modal: true } },
+  { path: ':id/consult', component: EixoTematicoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar Eixo Temático", modal: true } }
 ];
 
 @NgModule({

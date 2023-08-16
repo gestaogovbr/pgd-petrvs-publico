@@ -35,7 +35,7 @@ class ProjetoService extends ServiceBase {
         $historico = new ProjetoHistorico([
             'data_modificacao' => now(),
             'linha_base' => false,
-            'completo' => $action == self::ACTION_INSERT,
+            'completo' => $action == ServiceBase::ACTION_INSERT,
             'delta' => json_encode($delta),
             'projeto_id' => $entity->id,
             'usuario_id' => parent::loggedUser()->id
