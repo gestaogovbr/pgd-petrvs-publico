@@ -28,6 +28,7 @@ class CreateUsuariosTable extends Migration
             $table->string('matricula', 10)->nullable()->comment("Matrícula funcional do usuário");
             $table->string('apelido', 100)->comment("Apelido/Nome de guerra/Nome social");
             $table->string('telefone', 50)->nullable()->comment("Telefone do usuário");
+            $table->date('data_nascimento')->nullable()->comment("Data de nascimento do servidor");
             $table->string('id_google', 50)->nullable()->comment('Id associado com o usuário do login do google');
             $table->string('url_foto', 255)->nullable()->comment('URL da foto do usuário (temporário)');
             $table->longText('texto_complementar_plano')->nullable()->comment("Campo de mensagem adicional do plano de trabalho");
@@ -39,7 +40,7 @@ class CreateUsuariosTable extends Migration
             $table->char('uf', 2)->nullable()->comment("UF do usuário");
             $table->timestamp('email_verified_at')->nullable()->comment("Data de verificação do e-mail do usuário");
             $table->enum('sexo', ["MASCULINO", "FEMININO"])->nullable()->comment("Sexo do usuário");
-            $table->enum("vinculacao", ["SERVIDOR_EFETIVO", "SERVIDOR_COMISSIONADO", "EMPREGADO", "CONTRATADO_TEMPORARIO"])->default("SERVIDOR_EFETIVO")->comment("Vínculo do usuário com a administração");
+            $table->enum("situacao_funcional", ["SERVIDOR_EFETIVO", "SERVIDOR_COMISSIONADO", "EMPREGADO", "CONTRATADO_TEMPORARIO"])->default("SERVIDOR_EFETIVO")->comment("Vínculo do usuário com a administração");
             $table->json('config')->nullable()->comment("Configurações do usuário");
             $table->json('notificacoes')->nullable()->comment("Configurações das notificações (Se envia e-mail, whatsapp, tipos, templates)");
             $table->json('metadados')->nullable()->comment("Metadados do usuário");

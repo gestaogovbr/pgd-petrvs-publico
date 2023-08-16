@@ -84,7 +84,64 @@ class UsuarioSeeder extends Seeder
                 'cpf' => '05178506138',
                 'apelido' => 'Pablorgds',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
-            ]
+            ],
+            [
+                'email' => 'henrique.felipe100@gmail.com',
+                'nome' => 'Henrique Felipe Alves',
+                'cpf' => '40921185898',
+                'apelido' => 'Henrique',
+                'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+            ],
+            [
+                'email' => 'guibitar@gmail.com',
+                'nome' => 'Guilherme Bitar',
+                'cpf' => '01914276167',
+                'apelido' => 'Guilherme',
+                'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+            ],
+            [
+                'email' => 'alexdiasprojetos@gmail.com',
+                'nome' => 'Alex Dias Ferreira',
+                'cpf' => '94577536153',
+                'apelido' => 'Alex',
+                'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+            ],
+            [
+                'email' => 'karinahellen.eng@gmail.com',
+                'nome' => 'Karina Silva',
+                'cpf' => '94577536153',
+                'apelido' => 'Karina',
+                'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+            ],
+            [
+                'email' => 'cimei.teixeira@gmail.com',
+                'nome' => 'Cimei Teixeira',
+                'cpf' => '48321770100',
+                'apelido' => 'Cimei',
+                'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+            ],
+            [
+                'email' => 'diogo.paiva@prf.gov.br',
+                'nome' => 'Diogo Paiva',
+                'cpf' => '01710713526',
+                'apelido' => 'Paiva',
+                'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+            ],
+            [
+                'email' => 'marco.coelho@firstbps.com.br',
+                'nome' => 'Marco Coelho',
+                'cpf' => '03400125954',
+                'apelido' => 'Marco',
+                'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+            ],
+            [
+                'email' => 'jonatas.Ferreira@prf.gov.br',
+                'nome' => 'Jonata Cunha',
+                'cpf' => '09741166702',
+                'apelido' => 'Jonata',
+                'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+            ],
+
         ];
 
         $unidade_pai = Unidade::first();

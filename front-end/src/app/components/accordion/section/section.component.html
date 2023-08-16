@@ -1,0 +1,15 @@
+<div class="accordion-item">
+    <h2 class="accordion-header">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            <ng-container *ngIf="titleTemplate" [ngTemplateOutlet]="titleTemplate" [ngTemplateOutletContext]="{item: item, data: data, accordion: accordion}"></ng-container>
+        </button>
+    </h2>
+    <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+        <div *ngIf="loading" class="d-flex justify-content-center my-2">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden"></span>
+            </div>
+        </div>
+        <ng-container *ngIf="template && (!load || !loading)" [ngTemplateOutlet]="template" [ngTemplateOutletContext]="{item: item, data: data, accordion: accordion}"></ng-container>
+    </div>
+</div>

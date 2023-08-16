@@ -18,8 +18,8 @@ class PlanoEntregaEntrega extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'inicio', /* datetime; NOT NULL; */// Data inicial da entrega
-        'fim', /* datetime; */// Data final da entrega
+        'data_inicio', /* datetime; NOT NULL; */// Data inicial da entrega
+        'data_fim', /* datetime; */// Data final da entrega
         'descricao', /* varchar(256); NOT NULL; */// Descrição da entrega
         'homologado', /* tinyint; NOT NULL; */// Se a entrega foi ou não homologada
         'meta', /* json; NOT NULL; */// Meta para a entrega

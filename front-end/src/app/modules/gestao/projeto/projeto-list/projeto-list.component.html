@@ -36,8 +36,8 @@
             </column>
             <column title="Datas" [template]="columnDatas">
                 <ng-template let-row="row" #columnDatas>
-                    <badge color="light" icon="bi bi-box-arrow-right" [label]="util.getDateTimeFormatted(row.inicio)" hint="Data de início"></badge><br>
-                    <badge color="light" icon="bi bi-box-arrow-in-right" [label]="util.getDateTimeFormatted(row.termino)" hint="Data de término"></badge>
+                    <badge color="light" icon="bi bi-box-arrow-right" [label]="util.getDateTimeFormatted(row.data_inicio)" hint="Data de início"></badge><br>
+                    <badge color="light" icon="bi bi-box-arrow-in-right" [label]="util.getDateTimeFormatted(row.data_fim)" hint="Data de término"></badge>
                 </ng-template>
             </column>
             <column title="Custo" [template]="columnCusto">

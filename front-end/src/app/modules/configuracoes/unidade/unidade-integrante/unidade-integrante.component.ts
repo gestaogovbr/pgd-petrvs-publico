@@ -118,7 +118,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     if(confirm) {
       this.loading = true;
       try {
-        await this.integranteDao.saveIntegrante(this.unidade!.id, row.id, []);
+        await this.integranteDao.saveIntegrante([{'unidade_id': this.unidade!.id, 'usuario_id': row.id, 'atribuicoes': []}]);
         await this.loadData({}, this.form);
       } finally {
         this.loading = false;
@@ -133,7 +133,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     if(form!.controls.atribuicoes.value.length) {
       this.loading = true;
       try {
-        await this.integranteDao.saveIntegrante(this.unidade!.id, form!.controls.usuario_id.value, form!.controls.atribuicoes.value.map((x: LookupItem) => x.key));
+        await this.integranteDao.saveIntegrante([{'unidade_id': this.unidade!.id, 'usuario_id': form!.controls.usuario_id.value, 'atribuicoes': form!.controls.atribuicoes.value.map((x: LookupItem) => x.key)}]);
         await this.loadData({}, this.form);
       } finally {
         this.loading = false;

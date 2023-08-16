@@ -1,9 +1,9 @@
 <div *ngIf="!!query && isType('pages')" class="d-flex flex-row-reverse">
     <div class="btn-group float-right" role="group" aria-label="Paginação">
-        <button type="button" [id]="generatedId('_grid_anterior')" class="btn btn-outline-info" (click)="paginaAnterior()" [disabled]="!query?.enablePrior"><i
+        <button type="button" [id]="generatedId('_grid_anterior')" class="btn btn-outline-info" (click)="paginaAnterior()" [disabled]="!query.enablePrior"><i
                 class="bi-arrow-left-circle"></i> ANTERIOR</button>
         <button type="button" [id]="generatedId('_grid_proxima')" class="btn btn-outline-info" (click)="proximaPagina()"
-            [disabled]="!query?.enableNext">PRÓXIMA <i class="bi-arrow-right-circle"></i></button>
+            [disabled]="!query.enableNext">PRÓXIMA <i class="bi-arrow-right-circle"></i></button>
     </div>
 </div>
 <div *ngIf="isType('infinity')" class="search-results" infiniteScroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScroll()"></div>

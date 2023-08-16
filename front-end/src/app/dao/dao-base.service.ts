@@ -230,11 +230,9 @@ export class DaoBaseService<T extends Base> {
         .subscribe(response => {
           resolve(response.data ? this.getRow(response.data) : null);
         }, error => {
-          //console.log("ERROR{getById}", error);
           resolve(null);
         });
       } else {
-        //console.log("ID em branco");
         resolve(null);
       }
     });
@@ -378,13 +376,6 @@ export class DaoBaseService<T extends Base> {
     context.rows = [];
     return this.contextQuery(context).asPromise();
   }
-
-  /*public hasSetter(data: IIndexable, key: string): boolean {
-    let prop = Object.getOwnPropertyDescriptor(data, key);
-    let has = !!prop && ((!!prop.writable && !prop.get) || !!prop.set);
-    if(!has) console.log(data, key);
-    return has;
-  }*/
 
   public prepareToSave(data: any): any {
     if(data instanceof Date) {

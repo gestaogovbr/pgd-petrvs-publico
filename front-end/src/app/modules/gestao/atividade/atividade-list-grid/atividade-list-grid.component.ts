@@ -171,7 +171,7 @@ export class AtividadeListGridComponent extends AtividadeListBase {
       result.push(["tipo_processo_id", "==", form.tipo_processo_id]);
     }
     if (form.data_filtro?.length) {
-      const field = form.data_filtro == "DISTRIBUICAO" ? "data_distribuicao" : form.data_filtro == "PRAZO" ? "prazo_entrega" : "data_entrega";
+      const field = form.data_filtro == "DISTRIBUICAO" ? "data_distribuicao" : form.data_filtro == "PRAZO" ? "data_estipulada_entrega" : "data_entrega";
       if (form.data_inicio) {
         result.push([field, ">=", form.data_inicio]);
       }

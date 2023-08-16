@@ -258,7 +258,7 @@ async function findUser(phone: string) {
 async function findSession(user: any) {
   if(user) {
     const result = await axios.post(environment.NOTIFICACOES_SERVER_API_URL + "/session", { usuario_id: user.id }, { headers: { Authorization: environment.NOTIFICACOES_WHATSAPP_AUTHORIZATION } });
-    //const session = await query("SELECT * FROM notificacoes_whatsapp WHERE usuario_id = :usuarioId AND DATE_ADD(ultima_interacao, INTERVAL :minutes MINUTE) > NOW() AND finalizacao IS NULL", {usuarioId: user.id, minutes: SESSION_TIMEOUT});
+    //const session = await query("SELECT * FROM notificacoes_whatsapp WHERE usuario_id = :usuarioId AND DATE_ADD(data_ultima_interacao, INTERVAL :minutes MINUTE) > NOW() AND data_fim_sessao IS NULL", {usuarioId: user.id, minutes: SESSION_TIMEOUT});
     return result?.status ? result.session : undefined;
   } else {
     return undefined;

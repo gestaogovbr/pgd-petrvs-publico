@@ -82,7 +82,7 @@ export class PlanejamentoMapaComponent extends PageFrameBase {
   }
 
   public async loadData(entity: IIndexable, form?: FormGroup) {
-    this.query = this.dao!.query({ where: [["data_arquivamento", "==", null]], orderBy: [["inicio", "desc"]] }) as QueryContext<Planejamento>;
+    this.query = this.dao!.query({ where: [["data_arquivamento", "==", null]], orderBy: [["data_inicio", "desc"]] }) as QueryContext<Planejamento>;
     this.query!.asPromise().then(planejamentos => {
       this.planejamentos = planejamentos.map(x => Object.assign({} as LookupItem, {
         key: x.id,

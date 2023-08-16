@@ -2,6 +2,6 @@
 <ng-container *ngIf="!column.template" [class]="getClass()">
     <i *ngIf="hasIcon()" [class]="getIcon()"></i>{{getColumnText()}}
 </ng-container>
-<span class="d-block text-center">
+<span *ngIf="toggleable" class="d-block text-center">
     <i [class]="getExpandIcon()" [id]="grid?.getId('_' + index + '_' + row.id) + '_expand'" role="button" (click)="onExpand($event)"></i>
 </span>

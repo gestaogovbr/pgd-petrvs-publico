@@ -4,7 +4,7 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { GrupoEspecializado } from 'src/app/models/grupo-especializado.model';
-import { GrupoEspecializadoDaoService } from 'src/app/dao/grupo-epecializado-dao.service';
+import { GrupoEspecializadoDaoService } from 'src/app/dao/grupo-especializado-dao.service';
 
 @Component({
   selector: 'grupo-especializado-list',

@@ -32,7 +32,7 @@
     </div//-->
 </editable-form>
 <br><br>
-{{form?.controls?.editor?.value || ""}}
+{{form.controls.editor.value || ""}}
 
 <!--map [items]="mapa">
     <strong></strong>
@@ -69,7 +69,7 @@
 <div class="row">
     <input-select [size]="2" label="Forma" controlName="forma" [control]="form!.controls.forma" [items]="lookup.DIA_HORA_CORRIDOS_OU_UTEIS"></input-select>
     <input-number number label="Carga" [size]="1" [control]="form!.controls.carga_horaria"></input-number>
-    <input-datetime [date]="isHoras() ? undefined : 'true'" [size]="3" label="Início" controlName="inicio" [control]="form!.controls.inicio"></input-datetime>
+    <input-datetime [date]="isHoras() ? undefined : 'true'" [size]="3" label="Início" controlName="data_inicio" [control]="form!.controls.data_inicio"></input-datetime>
     <input-datetime [date]="isHoras() ? undefined : 'true'" [size]="3" label="Fim" controlName="fim" [control]="form!.controls.fim"></input-datetime>
     <input-timer onlyHours label="Tempo" [size]="3" icon="bi bi-clock" controlName="tempo" [control]="form!.controls.tempo"></input-timer>
 </div>
@@ -81,8 +81,8 @@
         <input-text [size]="5" label="Nome" controlName="nome" [control]="form!.controls.nome"></input-text>
     </input-multiselect>
     <input-multiselect controlName="multiselect" label="Afastamentos" [size]="6" [control]="form!.controls.afastamentos" [addItemHandle]="addAfastamentoHandle.bind(this)">
-        <input-datetime [size]="4" label="Início" [control]="form!.controls.inicio_afastamento"></input-datetime>
-        <input-datetime [size]="4" label="Fim" [control]="form!.controls.fim_afastamento"></input-datetime>
+        <input-datetime [size]="4" label="Início" [control]="form!.controls.data_inicio_afastamento"></input-datetime>
+        <input-datetime [size]="4" label="Fim" [control]="form!.controls.data_fim_afastamento"></input-datetime>
         <input-text [size]="4" label="Observacao" [control]="form!.controls.observacao"></input-text>
     </input-multiselect>
 </div>

@@ -151,7 +151,7 @@ export class CadeiaValorMapaComponent extends PageFrameBase {
   }
 
   public async loadData(entity: IIndexable, form?: FormGroup) {
-    this.query = this.dao!.query({ where: [["data_arquivamento", "==", null]], orderBy: [["inicio", "desc"]], join: this.join }) as QueryContext<CadeiaValor>;
+    this.query = this.dao!.query({ where: [["data_arquivamento", "==", null]], orderBy: [["data_inicio", "desc"]], join: this.join }) as QueryContext<CadeiaValor>;
     this.query!.asPromise().then(cadeiasValor => {
       let cadeiaValorId = this.form!.controls.cadeia_valor_id.value;
       this.form!.controls.cadeia_valor_id.setValue(null);

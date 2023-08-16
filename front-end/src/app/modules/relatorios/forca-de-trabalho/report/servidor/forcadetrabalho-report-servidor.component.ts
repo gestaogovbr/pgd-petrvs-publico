@@ -245,8 +245,8 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
 
   public async prepararParaRelatorio(plano: PlanoTrabalho){
       if(this.buscaPorPeriodo){
-        this.parametros.data_inicio = this.parametros.data_inicio || this.plano?.data_inicio_vigencia; 
-        this.parametros.data_fim = this.parametros.data_fim || this.util.minDate(new Date(), this.plano?.data_fim_vigencia); 
+        this.parametros.data_inicio = this.parametros.data_inicio || this.plano?.data_inicio; 
+        this.parametros.data_fim = this.parametros.data_fim || this.util.minDate(new Date(), this.plano?.data_fim); 
       }
       let $metadados: MetadadosPlano = await this.planoDao.metadadosPlano(plano!.id, this.buscaPorPeriodo ? this.parametros.data_inicio : null, this.buscaPorPeriodo ? this.parametros.data_fim : null);
       if (!Array.isArray($metadados.atividadesNaoIniciadas)) $metadados.atividadesNaoIniciadas = [$metadados.atividadesNaoIniciadas];
@@ -263,7 +263,7 @@ export class ForcaDeTrabalhoReportServidorComponent extends PageReportBase<Usuar
       this.planoRelatorio = {
           'plano': plano!,
           'extras': $metadados,
-          'descricaoPlano': (plano!.tipo_modalidade!.nome || "") + " - " + this.dao!.getDateFormatted(plano!.data_inicio_vigencia) + " a " + this.dao!.getDateFormatted(plano!.data_fim_vigencia) + " (" + plano!.unidade!.sigla + ")",
+          'descricaoPlano': (plano!.tipo_modalidade!.nome || "") + " - " + this.dao!.getDateFormatted(plano!.data_inicio) + " a " + this.dao!.getDateFormatted(plano!.data_fim) + " (" + plano!.unidade!.sigla + ")",
           'statusPlano': $metadados.concluido ? (plano.atividades.length ? 'CONCLUÍDO - estatísticas CONCLUSIVAS' : 'VAZIO - nenhuma atividade foi cadastrada neste Plano') : 'EM ANDAMENTO - estatísticas sujeitas a alterações',
           'horasDisponiveisPlano': $horasUteisLiquidasPlano - $metadados.horasUteisDecorridas,
           'horasUteisLiquidasPlano': $horasUteisLiquidasPlano,

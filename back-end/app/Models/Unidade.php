@@ -43,7 +43,7 @@ class Unidade extends ModelBase
         'notificacoes', /* json; */// Configurações das notificações (Se envia e-mail, whatsapp, tipos, templates)
         'expediente', /* json; */// Configuração de expediente da unidade
         'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho
-        'inativo', /* datetime; */// Se a unidade está ou não inativa
+        'data_inativacao', /* datetime; */// Data em que a unidade foi inativada, se for o caso
         'instituidora',
         'checklist', /* json; */// Nome dos checklist
         'unidade_pai_id', /* char(36); */

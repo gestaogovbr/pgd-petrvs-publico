@@ -8,6 +8,14 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link href="assets/css/bootstrap-load-fonts.css" rel="stylesheet" type="text/css"> 
   <link href="assets/css/fontawesome-load-fonts.css" rel="stylesheet" type="text/css"> 
+
+
+
+  <link rel="preconnect" href="https://fonts.cdnfonts.com">
+  <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin="">
+  <link href="https://fonts.cdnfonts.com/css/rawline" rel="stylesheet">
+
+
   <script>
     /* 
     JavaScript contendo variáveis de ambiente para a aplicação de front-end. 
@@ -26,5 +34,5 @@
 <link rel="stylesheet" href="styles.css"></head>
 <body>
   <app-root></app-root>
-<script src="runtime.js" defer></script><script src="polyfills.js" defer></script><script src="scripts.js" defer></script><script src="vendor.js" defer></script><script src="main.js" defer></script></body>
+<script src="runtime.js" type="module"></script><script src="polyfills.js" type="module"></script><script src="scripts.js" defer></script><script src="main.js" type="module"></script></body>
 </html>

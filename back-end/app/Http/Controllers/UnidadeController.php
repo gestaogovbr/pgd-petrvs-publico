@@ -53,6 +53,20 @@ class UnidadeController extends ControllerBase {
         }
     }
 
+    public function lotados(Request $request) {
+        try {
+            $data = $request->validate([
+                'unidade_id' => ['required']
+            ]);
+            return response()->json([
+                'success' => true,
+                'usuarios' => $this->service->lotados($data["unidade_id"])
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
     public function metadadosArea(Request $request) {
         try {
             $data = $request->validate([
@@ -101,10 +115,10 @@ class UnidadeController extends ControllerBase {
             if (!parent::loggedUser()->hasPermissionTo('MOD_UND_INATV')) throw new ServerException("ValidateUnidade", "Usuário precisa ter capacidade MOD_UND_INATV");
             $data = $request->validate([
                 'id' => ['required'],
-                'inativo' => ['required']
+                'data_inativacao' => ['required']
             ]);
             return response()->json([
-                'success' => $this->service->inativo($data["id"], $data["inativo"])
+                'success' => $this->service->inativo($data["id"], $data["data_inativacao"])
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);

@@ -1,18 +1,71 @@
 <!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form> (submit)="onSaveData()" (cancel)="onCancel()">-->
     <div class="row">
-        <input-text [size]="4" label="Título" controlName="nome"></input-text>
-        <input-rate [size]="6" label="Nota" icon="bi bi-question-octagon" controlName="nota_atribuida"></input-rate>
-        <input-radio [size]="2" [label]="'Aceita ' + lex.translate('Entrega') + '?'" icon="bi bi-hexagon" controlName="aceita_entrega" [items]="lookup.SIMNAO"></input-radio>
+        <input-text [size]="8" label="Título" controlName="nome"></input-text>
+        <input-select [size]="4" label="Tipo da nota" #tipo controlName="tipo" [items]="lookup.TIPO_AVALIACAO_TIPO"></input-select>
     </div>
-    <div class="row">
-        <input-text [size]="6" label="Pergunta Motivacional" controlName="pergunta"></input-text>
-        <input-select [size]="3" label="Ícone" icon="fas fa-sign-out-alt" controlName="icone" [items]="lookup.ICONES"></input-select>
-        <input-color [size]="3" label="Cor" controlName="cor"></input-color>
-    </div>
-    <div class="row">
-        <input-multiselect [size]="12" [canEdit]="true" [addItemControl]="justificativa" controlName="justificativas" [label]="lex.translate('Justificativa')" [items]="justificativasLista">
-            <input-select [size]="12" #justificativa controlName="justificativa_id" [dao]="tipoJustificativaDao" [addRoute]="{route: ['cadastros', 'tipo-justificativa', 'new']}"></input-select>
-        </input-multiselect>
-    </div>
+    <separator title="Notas">
+        <grid #grid [control]="form!.controls.notas" [form]="formNota!" [hasDelete]="true"
+            [add]="addNota.bind(this)"
+            [load]="loadNota.bind(this)"
+            [remove]="removeNota.bind(this)"
+            [save]="saveNota.bind(this)" editable>
+            <columns>
+                <column title="Nota" [template]="columnNota" [editTemplate]="editNota">
+                    <ng-template let-row="row" #columnNota>
+                        <strong>{{ row.nota }}</strong>
+                    </ng-template>
+                    <ng-template let-row="row" #editNota>
+                        <input-number *ngIf="form!.controls.tipo.value == 'QUANTITATIVO'" [control]="formNota!.controls.nota"></input-number>
+                        <input-text *ngIf="form!.controls.tipo.value == 'QUALITATIVO'" [control]="formNota!.controls.nota"></input-text>
+                    </ng-template>
+                </column>
+                <column title="Descrição/Icone/Cor" [template]="columnDescricao" [editTemplate]="editDescricao">
+                    <ng-template let-row="row" #columnDescricao>
+                        <badge [label]="row.descricao" [icon]="row.icone" [color]="row.cor"></badge>
+                    </ng-template>
+                    <ng-template let-row="row" #editDescricao>
+                        <input-text [control]="formNota!.controls.descricao" placeholder="Descrição"></input-text>
+                        <input-select [size]="6" icon="fas fa-sign-out-alt" [control]="formNota.controls.icone" [items]="lookup.ICONES"></input-select>
+                        <input-color [size]="6" [control]="formNota.controls.cor"></input-color>
+                    </ng-template>
+                </column>
+                <column title="Pergunta motivacional" [template]="columnPergunta" [editTemplate]="editPergunta">
+                    <ng-template let-row="row" #columnPergunta>
+                        <strong>{{ row.pergunta }}</strong>
+                    </ng-template>
+                    <ng-template let-row="row" #editPergunta>
+                        <input-text [control]="formNota!.controls.pergunta"></input-text>
+                    </ng-template>
+                </column>
+                <column title="Configurações" [template]="columnConfiguracoes" [editTemplate]="editConfiguracoes">
+                    <ng-template let-row="row" #columnConfiguracoes>
+                        <div class="one-per-line">
+                            <badge *ngIf="row.aprova" color="success" icon="bi bi-check" label="Aprova" hint="Se para esta nota será considerado como aprovado, quando aplicável"></badge>
+                            <badge *ngIf="row.justifica" color="warning" icon="bi bi-patch-question" label="Justifica" hint="Se para esta nota será obrigatório uma justificativa"></badge>
+                        </div>
+                    </ng-template>
+                    <ng-template let-row="row" #editConfiguracoes>
+                        <div class="row">
+                            <input-switch [size]="12" scale="small" labelPosition="right" [control]="formNota!.controls.aprova" label="Aprova?" labelInfo="Se para esta nota será considerado como aprovado, quando aplicável"></input-switch>
+                            <input-switch [size]="12" scale="small" labelPosition="right" [control]="formNota!.controls.justifica" label="Justifica?" labelInfo="Se para esta nota será obrigatório uma justificativa"></input-switch>
+                        </div>
+                    </ng-template>
+                </column>
+                <column [title]="lex.translate('Tipos de justificativa')" [template]="columnJustificativas" [editTemplate]="editJustificativas">
+                    <ng-template let-row="row" #columnJustificativas>
+                        <div class="one-per-line">
+                            <badge *ngFor="let justificativa of row.justificativas" color="light" [label]="justificativa.tipo_justificativa.nome"></badge>
+                        </div>
+                    </ng-template>
+                    <ng-template let-row="row" #editJustificativas>
+                        <input-multiselect [size]="12" [canEdit]="true" [addItemControl]="justificativa" [control]="formNota.controls.justificativas">
+                            <input-select [size]="12" #justificativa [control]="formNota.controls.tipo_justificativa_id" [dao]="tipoJustificativaDao" [addRoute]="{route: ['cadastros', 'tipo-justificativa', 'new']}"></input-select>
+                        </input-multiselect>
+                    </ng-template>
+                </column>
+                <column type="options"></column>
+            </columns>
+        </grid>
+    </separator>
 </editable-form>

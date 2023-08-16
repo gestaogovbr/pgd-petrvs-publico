@@ -46,12 +46,12 @@ export class ProjetoService {
     let minData: Date | null = null;
     let maxData: Date | null = null;
     for(let tarefa of projeto.tarefas || []) {
-      minData = (!minData && tarefa.inicio) || (tarefa.inicio && minData && tarefa.inicio.getTime() < minData.getTime()) ? tarefa.inicio : minData;
-      maxData = (!maxData && tarefa.inicio) || (tarefa.termino && maxData && tarefa.termino?.getTime() > maxData.getTime()) ? tarefa.termino : maxData;
+      minData = (!minData && tarefa.data_inicio) || (tarefa.data_inicio && minData && tarefa.data_inicio.getTime() < minData.getTime()) ? tarefa.data_inicio : minData;
+      maxData = (!maxData && tarefa.data_inicio) || (tarefa.data_fim && maxData && tarefa.data_fim?.getTime() > maxData.getTime()) ? tarefa.data_fim : maxData;
     }
     if(projeto.calcula_intervalo) {
-      projeto.inicio = minData || maxData || new Date();
-      projeto.termino = maxData || projeto.inicio;
+      projeto.data_inicio = minData || maxData || new Date();
+      projeto.data_fim = maxData || projeto.data_inicio;
     }
   }
 }

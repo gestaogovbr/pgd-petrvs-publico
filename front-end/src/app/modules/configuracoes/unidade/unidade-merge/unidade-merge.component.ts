@@ -57,11 +57,11 @@ export class UnidadeMergeComponent extends PageFrameBase {
     (this.dao as UnidadeDaoService).mesmaSigla().then(unidades => {
       let destinos: Unidade[] = [];
       destinos = unidades.reduce((acumulador, valor) => {
-        if(!valor.inativo && !acumulador.find(x => x.sigla == valor.sigla)) acumulador.push(valor);
+        if(!valor.data_inativacao && !acumulador.find(x => x.sigla == valor.sigla)) acumulador.push(valor);
         return acumulador; 
       }, destinos);
       let destinosIds = destinos.map(x => x.id);
-      let origens = unidades.filter(x => !destinosIds.includes(x.id) && !!x.inativo);
+      let origens = unidades.filter(x => !destinosIds.includes(x.id) && !!x.data_inativacao);
       let origensIds = origens.map(x => x.id);
       this.items = [];
       for(let origem of origens) {

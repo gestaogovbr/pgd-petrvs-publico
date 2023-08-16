@@ -13,6 +13,16 @@ import { QueryOptions } from 'src/app/dao/query-options';
 
 @Injectable()
 export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> extends PageBase implements OnInit {
+  /* Constantes */
+  public OPTION_INFORMACOES: ToolbarButton =  {
+    icon: "bi bi-info-circle",
+    label: "Informações",
+  };
+  public OPTION_EXCLUIR: ToolbarButton = {
+    icon: "bi bi-trash",
+    label: "Excluir",
+  };
+
   /* Poderá utilizar o componente Grid ou ser genérico, mas precisa fornecer o QueryContext */
   public grid?: GridComponent;
   public query?: QueryContext<M>;
@@ -56,6 +66,8 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
   constructor(public injector: Injector, mType: Type<M>, dType: Type<D>) {
     super(injector);
     this.dao = injector.get<D>(dType);
+    this.OPTION_INFORMACOES.onClick = this.consult.bind(this);
+    this.OPTION_EXCLUIR.onClick = this.delete.bind(this);
   }
 
   public saveUsuarioConfig(config?: any) {
@@ -67,6 +79,10 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
       orderBy: this.orderBy
     }
     super.saveUsuarioConfig(Object.assign(filter, order, config || {}));
+  }
+
+  public addOption(button: ToolbarButton, capacidade?: string) {
+    if (!capacidade || this.auth.hasPermissionTo(capacidade)) this.options.push(button);
   }
 
   public filterSubmit(filter: FormGroup): QueryOptions | undefined {
@@ -171,7 +187,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
     }
   }
 
-  public  consult = async (doc: M) => {
+  public consult = async (doc: M) => {
     this.go.navigate({route: [...this.go.currentOrDefault.route, doc.id, "consult"]});
   }
 

@@ -25,7 +25,7 @@ export type DocumentoLink = {
 export interface HasDocumentos {
     documentos: Documento[];
     documento?: Documento;
-    documento_id?: string;
+    documento_id: string | null;
     id: string;
 };
 

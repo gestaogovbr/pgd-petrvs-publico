@@ -23,8 +23,8 @@ export class CadeiaValorFormComponent extends PageFormBase<CadeiaValor, CadeiaVa
     this.join = ['processos'];
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
-      inicio: { default: new Date() },
-      fim: { default: null },
+      data_inicio: { default: new Date() },
+      data_fim: { default: null },
       moveFilhos: { default: false }
     }, this.cdRef, this.validate);
   }
@@ -34,10 +34,10 @@ export class CadeiaValorFormComponent extends PageFormBase<CadeiaValor, CadeiaVa
     if (['nome'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
-    if (['inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+    if (['data_inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
     }
-    if (controlName == 'fim' && control.value && !this.dao?.validDateTime(control.value)) {
+    if (controlName == 'data_fim' && control.value && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
     }
     return result;
@@ -45,7 +45,7 @@ export class CadeiaValorFormComponent extends PageFormBase<CadeiaValor, CadeiaVa
 
   public formValidation = (form?: FormGroup) => {
     let result = null;
-    if (this.form!.controls.fim.value && this.form!.controls.inicio.value > this.form!.controls.fim.value) {
+    if (this.form!.controls.data_fim.value && this.form!.controls.data_inicio.value > this.form!.controls.data_fim.value) {
       return "A data do início não pode ser maior que a data do fim!";
     }
     return result;

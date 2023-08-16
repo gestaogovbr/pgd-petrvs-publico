@@ -72,7 +72,7 @@ export class LookupService {
     { key: 'ATIVIDADE', value: "Atividade", icon: "bi bi-envelope-exclamation" }
   ];
 
-  public USUARIO_VINCULACAO: LookupItem[] = [
+  public USUARIO_SITUACAO_FUNCIONAL: LookupItem[] = [
     { key: "SERVIDOR_EFETIVO", value: "Servidor público cargo efetivo" },
     { key: "SERVIDOR_COMISSIONADO", value: "Servidor público cargo em comissão" },
     { key: "EMPREGADO", value: "Empregado público" },
@@ -84,11 +84,11 @@ export class LookupService {
     { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-check-circle", color: "primary" },
     { key: "NAOCONCLUIDO", value: "Não concluído", icon: "bi bi-play-circle", color: "info" },
     { key: "INICIADO", value: "Iniciado", icon: "bi bi-play-circle", color: "info" },
-    { key: "LANCADO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" }
+    { key: "INCLUIDO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" }
   ];
 
   public ATIVIDADE_STATUS_COM_ARQUIVADAS: LookupItem[] = [
-    { key: "LANCADO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" },
+    { key: "INCLUIDO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" },
     { key: "INICIADO", value: "Iniciado", icon: "bi bi-play-circle", color: "info" },
     { key: "NAOCONCLUIDO", value: "Não concluído", icon: "bi bi-play-circle", color: "info" },
     { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-check-circle", color: "primary" },
@@ -469,6 +469,27 @@ export class LookupService {
     { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "bg-danger" }
   ];
 
+  public CONSOLIDACAO_STATUS: LookupItem[] = [
+    { key: "INCLUIDO", value: "Incluido", icon: "bi bi-pencil-square", color: "secondary" },
+    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-clipboard2-check", color: "primary" },
+    { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info" }
+  ];
+
+  public PERIODICIDADE_CONSOLIDACAO: LookupItem[] = [
+    { key: "DIAS", value: "Dias" },
+    { key: "SEMANAL", value: "Semanal" },
+    { key: "QUINZENAL", value: "Quinzenal" },
+    { key: "MENSAL", value: "Mensal" },
+    { key: "BIMESTRAL", value: "Bimestral" },
+    { key: "TRIMESTRAL", value: "Trimestral" },
+    { key: "SEMESTRAL", value: "Semestral" }
+  ];
+
+  public TIPO_AVALIACAO_TIPO: LookupItem[] = [
+    { key: "QUALITATIVO", value: "Qualitativo (conceitual)" },
+    { key: "QUANTITATIVO", value: "Quantitativo (valor)" }
+  ];
+  
   public ADESAO_STATUS: LookupItem[] = [
     { key: "SOLICITADO", value: "Solicitado", color: "bg-primary" },
     { key: "HOMOLOGADO", value: "Homologado", color: "bg-success" },
@@ -508,7 +529,7 @@ export class LookupService {
   ];
 
   public PLANO_ENTREGA_STATUS: LookupItem[] = [
-    { key: "INCLUINDO", value: "Incluindo", icon: "bi bi-pencil-square", color: "secondary" },
+    { key: "INCLUIDO", value: "Incluído", icon: "bi bi-pencil-square", color: "secondary" },
     { key: "HOMOLOGANDO", value: "Aguardando homologação", icon: "bi bi-clock", color: "warning" },
     { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success" },
     { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-clipboard2-check", color: "primary" },

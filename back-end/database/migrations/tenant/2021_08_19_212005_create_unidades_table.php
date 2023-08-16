@@ -30,7 +30,7 @@ class CreateUnidadesTable extends Migration
             $table->tinyInteger("atividades_avaliacao_automatico")->default(0)->comment("");
             $table->integer("planos_prazo_comparecimento")->default(10)->comment("");
             $table->string('planos_tipo_prazo_comparecimento')->default('DIAS')->comment("");
-            $table->dateTime('inativo')->nullable()->comment("Se a unidade está ou não inativa");
+            $table->dateTime('data_inativacao')->nullable()->comment("Data em que a unidade foi inativada, se for o caso");
             $table->set("distribuicao_forma_contagem_prazos", ["HORAS_CORRIDAS", "DIAS_CORRIDOS", "HORAS_UTEIS", "DIAS_UTEIS"])->default("DIAS_UTEIS")->comment("Forma da contagem de prazo");
             $table->set("entrega_forma_contagem_prazos", ["HORAS_CORRIDAS", "HORAS_UTEIS"])->default("HORAS_UTEIS")->comment("Forma da contagem de horas para entrega");
             $table->tinyInteger("autoedicao_subordinadas")->default(1)->comment("");

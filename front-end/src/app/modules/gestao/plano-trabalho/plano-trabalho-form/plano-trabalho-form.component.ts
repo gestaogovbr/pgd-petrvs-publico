@@ -102,8 +102,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       carga_horaria: {default: ""},
       tempo_total: {default: ""},
       tempo_proporcional: {default: ""},
-      data_inicio_vigencia: {default: new Date()},
-      data_fim_vigencia: {default: new Date()},
+      data_inicio: {default: new Date()},
+      data_fim: {default: new Date()},
       usuario_id: {default: ""},
       plano_entrega_id: {default: ""},
       documento_id: {default: null},
@@ -205,14 +205,12 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     if(['carga_horaria'].indexOf(controlName) >= 0 && !control.value) {
       result = "Valor não pode ser zero.";
     } 
-    if(['data_inicio_vigencia', 'data_fim_vigencia'].includes(controlName)) {
-      if(!this.util.isDataValid(control.value)) {
-        result = "Inválido";
-      }
-    } else if(this.programa && controlName == 'data_inicio_vigencia' && (control.value as Date).getTime() < this.programa!.data_inicio_vigencia.getTime()) {
-        result = "Menor que programa";
-    } else if(this.programa && controlName == 'data_fim_vigencia' && (control.value as Date).getTime() > this.programa!.data_fim_vigencia.getTime()) {
-        result = "Maior que programa";
+    if(['data_inicio', 'data_fim'].includes(controlName) && !this.util.isDataValid(control.value)) {
+      result = "Inválido";
+    } else if(this.programa && controlName == 'data_inicio' && (control.value as Date).getTime() < this.programa!.data_inicio.getTime()) {
+      result = "Menor que programa";
+    } else if(this.programa && controlName == 'data_fim' && (control.value as Date).getTime() > this.programa!.data_fim.getTime()) {
+      result = "Maior que programa";
     } 
 
     return result;
@@ -237,8 +235,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   public onPlanoEntregaSelect(selected: SelectItem) {
     let planoEntrega = selected.entity as PlanoEntrega;
     this.updateEntregas(planoEntrega);
-    this.form?.controls.data_inicio_vigencia.updateValueAndValidity();
-    this.form?.controls.data_fim_vigencia.updateValueAndValidity();
+    this.form?.controls.data_inicio.updateValueAndValidity();
+    this.form?.controls.data_fim.updateValueAndValidity();
     this.programa = planoEntrega?.programa as Programa;
     this.unidade = planoEntrega?.unidade as Unidade;
     this.form!.controls.forma_contagem_carga_horaria.setValue(this.unidade?.entidade?.forma_contagem_carga_horaria || "DIA");
@@ -266,8 +264,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public calculaTempos() {
-    const inicio = this.form?.controls.data_inicio_vigencia.value;
-    const fim = this.form?.controls.data_fim_vigencia.value;
+    const inicio = this.form?.controls.data_inicio.value;
+    const fim = this.form?.controls.data_fim.value;
     const carga = this.form?.controls.carga_horaria.value || 8;
     const usuario = this.usuario?.searchObj as Usuario;
     if(usuario && this.unidade && this.util.isDataValid(inicio) && this.util.isDataValid(fim)) {
@@ -470,7 +468,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     documento.plano_trabalho_id = this.entity!.id;
     documento.especie = "TCR";
     documento._status = "ADD";
-    this.go.navigate({route: ['gestao', 'plano', 'termo']}, {metadata: {documento: documento, plano_trabalho: this.entity}, modalClose: (modalResult) => {
+    this.go.navigate({route: ['gestao', 'plano-trabalho', 'termo']}, {metadata: {documento: documento, plano_trabalho: this.entity}, modalClose: (modalResult) => {
       if(modalResult) {
         (async () => {
           let documentos = (this.form!.controls.documentos.value || []) as Documento[];

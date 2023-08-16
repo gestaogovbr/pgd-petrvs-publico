@@ -71,7 +71,7 @@
     <!--strong>[HAP] Horas de afastamentos e/ou pausas:</strong> {{util.decimalToTimerFormated(efemerides?.horasAfastamentosPausas, true)}}<br /-->
     <strong>[HA] Afastamento(s) ({{efemerides?.afastamentos?.length}}):</strong><br>
     <span *ngFor="let afastamento of efemerides!.afastamentos">
-        De {{util.getDateTimeFormatted(afastamento.inicio_afastamento)}} até {{util.getDateTimeFormatted(afastamento.fim_afastamento)}} - {{afastamento.observacoes}}<br>
+        De {{util.getDateTimeFormatted(afastamento.data_inicio)}} até {{util.getDateTimeFormatted(afastamento.data_fim)}} - {{afastamento.observacoes}}<br>
     </span>
     <strong>[HP] Pausa(s) ({{efemerides?.pausas?.length}}):</strong><br>
     <span *ngFor="let pausa of efemerides!.pausas">

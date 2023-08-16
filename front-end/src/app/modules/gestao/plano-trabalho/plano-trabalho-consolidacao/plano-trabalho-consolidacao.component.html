@@ -1,0 +1,34 @@
+<tabs right #tabs [title]="isModal ? '' : title">
+    <tab key="UNIDADE" *ngIf="unidade" [icon]="entityService.getIcon('Unidade')" [label]="lex.translate('Unidade')" [template]="tabUnidade">
+        <ng-template #tabUnidade>
+            <h5>{{unidade.sigla}} - {{unidade.nome}}</h5>
+            <div *ngIf="loading" class="d-flex justify-content-center my-2">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden"></span>
+                </div>
+            </div>
+            <collapse-card *ngFor="let usuario of usuarios" [data]="usuario" [titleTemplate]="usuarioCardTitle" [template]="usuarioCard">
+                <ng-template let-data="data" #usuarioCardTitle>
+                    <div class="row">
+                        <div class="col-2">
+                            <profile-picture [url]="data.url_foto" [size]="40" [hint]="data.nome"></profile-picture>
+                        </div>
+                        <div class="col-10">
+                            <strong>{{data.nome || ""}}</strong><br>
+                            <small>{{data.apelido || ""}}</small>
+                        </div>
+                    </div>
+                </ng-template>
+                <ng-template let-data="data" #usuarioCard>
+                    <plano-trabalho-list-accordeon [usuarioId]="data.id"></plano-trabalho-list-accordeon>
+                </ng-template>
+            </collapse-card>
+        </ng-template>
+    </tab>
+    <tab key="USUARIO" [icon]="entityService.getIcon('Usuario')" [label]="lex.translate('Usuário')" [template]="tabUsuario">
+        <ng-template #tabUsuario>
+            <separator [control]="this.form!.controls.arquivados" [title]="'Mostrar ' + lex.translate('Planos de trabalho') + ' arquivados?'"></separator>
+            <plano-trabalho-list-accordeon [usuarioId]="auth.usuario!.id"></plano-trabalho-list-accordeon>
+        </ng-template>
+    </tab>
+</tabs>

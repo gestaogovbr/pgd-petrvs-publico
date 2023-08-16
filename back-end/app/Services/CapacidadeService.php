@@ -720,7 +720,6 @@ class CapacidadeService extends ServiceBase {
         ["MOD_DMD_ATV_RESP", 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
         ["MOD_DMD_ATV_TP_PCT", 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
         ["MOD_DMD_ATV_TP_PLJ", 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
-        ["MOD_DMD_ATV_FORA_PL_TRB", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
         ["MOD_DMD_CONCL", 'Usuário Nível 1', 'Usuário Nível 2', 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
         ["MOD_DMD_CONCL_ATV", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],
         ["MOD_DMD_CONCL_CMPLX", 'Usuário Nível 3', 'Usuário Nível 4', 'Usuário Nível 5', 'Administrador', 'Desenvolvedor'],

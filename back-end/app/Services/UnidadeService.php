@@ -85,12 +85,12 @@ class UnidadeService extends ServiceBase
         return ServiceBase::toIso8601($dateTime);
     }
 
-    public function inativo($id, $inativo) {
+    public function inativo($id, $data_inativacao) {
         DB::beginTransaction();
         try {
             $unidade = Unidade::find($id);
             if(empty($unidade)) throw new Exception("Unidade não encontrada");
-            $unidade->inativo = $inativo ? date("Y-m-d H:i:s") : null;
+            $unidade->data_inativacao = $data_inativacao ? date("Y-m-d H:i:s") : null;
             $unidade->save();
             DB::commit();
         } catch (Throwable $e) {
@@ -191,6 +191,17 @@ class UnidadeService extends ServiceBase
     }
 
     /** 
+     * Retorna os usuários lotados na unidade
+     * 
+     * @param string $unidade_id    O ID de uma Unidade.
+     * @return array    
+    */
+    public function lotados($unidade_id): array {
+        // TODO: fazer validacao
+        return Unidade::find($unidade_id)?->lotados->map(fn($integrante) => $integrante->usuario)->all() ?? [];
+    }
+
+    /** 
      * Retorna os dados acerca dos Planos de Trabalho de uma Unidade, associados a um determinado Programa,
      * que se encontrem dentro da vigência. 
      * 
@@ -202,7 +213,7 @@ class UnidadeService extends ServiceBase
         $unidade = Unidade::where('id', $unidade_id)->with(['planosTrabalho', 'planosTrabalho.atividades', 'planosTrabalho.tipoModalidade'])->first();
         $metadadosPlanosTrabalho = [];
         foreach ($unidade['planosTrabalho']->toArray() as $plano) {
-            if (($plano['programa_id'] == $programa_id) && ($this->calendarioService->between(new DateTime(), $plano['data_inicio_vigencia'], $plano['data_fim_vigencia']))) {
+            if (($plano['programa_id'] == $programa_id) && ($this->calendarioService->between(new DateTime(), $plano['data_inicio'], $plano['data_fim']))) {
                 array_push($metadadosPlanosTrabalho, $this->planoService->metadadosPlano($plano['id']));
             };
         }

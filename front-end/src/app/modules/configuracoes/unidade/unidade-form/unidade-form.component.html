@@ -23,14 +23,6 @@
                 <input-select [size]="4" [label]="'Contagem ' + lex.translate('Prazo de Entrega')" controlName="entrega_forma_contagem_prazos" [items]="lookup.HORAS_CORRIDAS_OU_UTEIS" labelInfo="A forma da contagem dos prazos na entrega da demanda (data da entrega e tempo despendido)"></input-select>
                 <input-radio [size]="4" label="Arquivamento automático" controlName="atividades_arquivamento_automatico" [items]="lookup.SIMNAO" labelInfo="Se após a avaliação, arquivará automaticamente a atividade."></input-radio>
             </div>
-            <!--separator title="Expediente">
-                <div class="row">
-                    <input-switch [size]="2" label="24hs" controlName="expediente24" [control]="form!.controls.expediente24" (change)="onExpediente24Change($event)" labelInfo="Se o expediente é de 24hs ou é um perído, se for período será informado início e fim"></input-switch>
-                    <input-datetime time [size]="4" label="Início" [disabled]="is24hrs" controlName="horario_trabalho_inicio" [control]="form!.controls.horario_trabalho_inicio" labelInfo="Horário do início da Jornada de Trabalho"></input-datetime>
-                    <input-datetime time [size]="4" label="Final" [disabled]="is24hrs" controlName="horario_trabalho_fim" [control]="form!.controls.horario_trabalho_fim" labelInfo="Horário do Final da Jornada de Trabalho"></input-datetime>
-                    <input-datetime time noIcon [size]="2" label="Dur. Intervalo" controlName="horario_trabalho_intervalo" [control]="form!.controls.horario_trabalho_intervalo" labelInfo="Duração do intervalo realizado dentro da jornada de trabalho (quantidade de horas, ex.: horário de almoço de duas horas será 02:00). Para fins de computo de jornada de trabalho na ausência do plano de trabalho."></input-datetime>
-                </div>
-            </separator//-->
             <separator></separator>
             <div clss="row">
                 <input-multiselect label="Etiquetas" multiselectStyle="inline" [maxItemWidth]="250" controlName="etiquetas" [size]="12" [addItemHandle]="addItemHandle.bind(this)">
@@ -51,7 +43,7 @@
             <calendar-expediente #expediente [disabled]="form!.controls.usar_expediente_entidade.value ? 'true' : undefined" [expedienteDisabled]="entity?.entidade?.expediente" [control]="form!.controls.expediente"></calendar-expediente>
         </tab>
         <tab *ngIf="entity" key="NOTIFICACOES" label="Notificações">
-            <notificacoes-config #notificacoes [unidadeId]="entity?.id?.length ? entity!.id : 'ADD'" [entity]="entity!" [disabled]="formDisabled"></notificacoes-config>
+            <notificacoes-config #notificacoes [unidadeId]="entity.id.length ? entity!.id : 'ADD'" [entity]="entity!" [disabled]="formDisabled"></notificacoes-config>
             <!--div class="row">
                 <div class="col-md-6">
                     <separator transparent title="Meios de notificação"></separator>

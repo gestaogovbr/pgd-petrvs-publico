@@ -16,8 +16,8 @@ class Planejamento extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'inicio', /* datetime; NOT NULL; */// Data de inicio do planejamento institucional
-        'fim', /* datetime; */// Data do fim do planejamento institucional
+        'data_inicio', /* datetime; NOT NULL; */// Data de inicio do planejamento institucional
+        'data_fim', /* datetime; */// Data do fim do planejamento institucional
         'nome', /* varchar(256); NOT NULL; */// Nome do planejamento institucional
         'missao', /* text; NOT NULL; */// Missão da entidade/unidade
         'visao', /* text; NOT NULL; */// Visão da entidade/unidade

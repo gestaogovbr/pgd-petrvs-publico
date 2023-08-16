@@ -6,14 +6,14 @@
         <div class="row">
             <input-search #unidade [size]="4" controlName="unidade_id" [dao]="unidadeDao"></input-search>
             <input-search #entrega [size]="4" controlName="entrega_id" [dao]="entregaDao"></input-search>
-            <input-datetime [size]="2" date noIcon label="Início" controlName="inicio" [control]="filter!.controls.inicio" labelInfo="Data de início do planejamento institucional"></input-datetime>
-            <input-datetime [size]="2" date noIcon label="Fim" controlName="fim" [control]="filter!.controls.fim" labelInfo="Data do fim do planejamento institucional"></input-datetime>
+            <input-datetime [size]="2" date noIcon label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" labelInfo="Data de início do planejamento institucional"></input-datetime>
+            <input-datetime [size]="2" date noIcon label="Fim" controlName="data_fim" [control]="filter!.controls.data_fim" labelInfo="Data do fim do planejamento institucional"></input-datetime>
         </div>
     </filter>
     <columns>
         <column title="Entrega" [template]="columnEntrega">
             <ng-template let-row="row" #columnEntrega>
-                <p><b>Data:</b> {{util.getDateFormatted(row.inicio)}} - {{util.getDateFormatted(row.fim)}}</p>
+                <p><b>Data:</b> {{util.getDateFormatted(row.data_inicio)}} - {{util.getDateFormatted(row.data_fim)}}</p>
                 <p><b>Cliente:</b> {{row.cliente}}</p>
                 <p>{{row.descricao}}</p>
                 <badge icon="bi bi-list-columns-reverse" color="light" [label]="row.plano_entrega.unidade.sigla" [hint]="lex.translate('plano de entrega')"></badge>

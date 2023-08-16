@@ -3,7 +3,7 @@
     [hasAdd]="auth.hasPermissionTo('MOD_CID_INCL')"
     [hasEdit]="auth.hasPermissionTo('MOD_CID_EDT')">
     <toolbar *ngIf="!selectable"></toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-text [size]="12" [label]="lex.translate('Cidade')" controlName="nome"
                 [control]="filter!.controls.nome" [placeholder]="'Nome ' + lex.translate('da cidade') + '...'"></input-text>

@@ -22,10 +22,16 @@ class CreateAvaliacoesTable extends Migration
             $table->softDeletes();
             // Campos:
             $table->json('nota')->comment("Nota da avaliação");
+            $table->text('comentarios')->nullable()->comment("Comentário referente à avaliação, pelo avaliador");
+            $table->text('recurso')->nullable()->comment("Recurso contra a nota atribuída, pelo avaliado");
             $table->json('justificativas')->default(new Expression('(JSON_ARRAY())'))->comment("Justificativas");
             // Chaves estrangeiras:
-            $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment('Usuário');
+            $table->foreignUuid('avaliador_id')->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->comment('Usuário');
+            $table->foreignUuid('plano_trabalho_consolidacao_id')->constrained("planos_trabalhos_consolidacoes")->onDelete('restrict')->onUpdate('cascade')->comment('Usuário');
             $table->foreignUuid('tipo_avaliacao_id')->constrained('tipos_avaliacoes')->onDelete('restrict')->onUpdate('cascade')->comment('Tipo de avaliação');
+        });
+        Schema::table('planos_trabalhos_consolidacoes', function (Blueprint $table) {
+            $table->foreignUuid('avaliacao_id')->nullable()->constrained("avaliacoes")->onDelete('restrict')->onUpdate('cascade')->comment("Usuário que realizou a avaliação da consolidação");
         });
     }
 
@@ -36,6 +42,9 @@ class CreateAvaliacoesTable extends Migration
      */
     public function down()
     {
+        Schema::table('planos_trabalhos_consolidacoes', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('avaliacao_id');
+        });
         Schema::dropIfExists('avaliacoes');
     }
 }

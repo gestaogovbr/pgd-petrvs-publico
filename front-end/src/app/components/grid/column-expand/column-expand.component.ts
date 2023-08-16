@@ -23,18 +23,19 @@ export class ColumnExpandComponent extends ComponentBase implements OnInit {
   @Input() row: any = undefined;
   @Input() grid?: GridComponent;
   @Input() index: number = 0;
+  @Input() toggleable: boolean = true;
+  @Input() set expanded(value: boolean) {
+    if(this._expanded != value) {
+      this._expanded = value;
+      if(this.viewInit) this.grid!.expandedIds[this.row.id] = value;
+    }
+  }
+  get expanded(): boolean {
+    return this._expanded;
+  }
 
   public lookup: LookupService;
   public saving: boolean = false;
-  public set expanded(value: boolean) {
-    if(this._expanded != value) {
-      this._expanded = value;
-      this.grid!.expandedIds[this.row.id] = value;
-    }
-  }
-  public get expanded(): boolean {
-    return this._expanded;
-  }
 
   private _expanded: boolean = false;
 

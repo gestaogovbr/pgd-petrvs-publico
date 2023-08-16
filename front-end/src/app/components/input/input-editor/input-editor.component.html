@@ -116,12 +116,9 @@
         </tab>
     </tabs>
 </ng-template>
-<<<<<<< 48122e9d2a3c5f0901c3e48a833cd3aa12a03e39
-{{JSON.stringify(toolbar)}}
+
 <input-container [labelPosition]="labelPosition" [controlName]="controlName" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
-=======
-<input-container [labelPosition]="labelPosition" [labelClass]="labelClass" [controlName]="controlName" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
->>>>>>> 6d280c376f3f90342fa65622ecf4f2670547bafb
+
     <!--toolbar *ngIf="hasToolbar" [buttons]="toolbarButtons"></toolbar//-->
     <editor #editor *ngIf="viewInit" [disabled]="isDisabled" [(ngModel)]="value" [ngModelOptions]="{standalone: true}" [init]="editorConfig" [plugins]="plugins" [toolbar]="toolbar"></editor>
 </input-container>

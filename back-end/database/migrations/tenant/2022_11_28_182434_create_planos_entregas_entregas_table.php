@@ -23,8 +23,8 @@ class CreatePlanosEntregasEntregasTable extends Migration
             $table->tinyInteger('homologado')->comment("Se a entrega foi ou não homologada");
             $table->decimal('progresso_esperado', 5, 2)->nullable()->default(0)->comment("Percentual esperado de progresso do Plano de Entregas");
             $table->decimal('progresso_realizado', 5, 2)->nullable()->default(0)->comment("Percentual realizado de progresso do Plano de Entregas");
-            $table->dateTime('inicio')->comment("Data inicial da entrega");
-            $table->dateTime('fim')->nullable()->comment("Data final da entrega");
+            $table->dateTime('data_inicio')->comment("Data inicial da entrega");
+            $table->dateTime('data_fim')->nullable()->comment("Data final da entrega");
             $table->string("descricao", 256)->comment("Descrição da entrega");
             $table->string('destinatario')->nullable()->comment("Destinatário da entrega");
             $table->json("meta")->comment("Meta para a entrega");

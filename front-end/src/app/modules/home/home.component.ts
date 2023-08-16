@@ -12,11 +12,6 @@ import { Chart, ChartData, ChartOptions } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { UtilService } from 'src/app/services/util.service';
 import { FormControl, FormGroup } from '@angular/forms';
-<<<<<<< 48122e9d2a3c5f0901c3e48a833cd3aa12a03e39
-=======
-import { ChartDataSets, ChartOptions } from 'chart.js';
->>>>>>> 6d280c376f3f90342fa65622ecf4f2670547bafb
-
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -27,8 +22,8 @@ export class HomeComponent implements OnInit {
   public formSearch: FormGroup;
   public dashUsuario: UsuarioDashboard = {
     planos: [{
-      data_inicio_vigencia: new Date,
-      data_fim_vigencia: new Date,
+      data_inicio: new Date,
+      data_fim: new Date,
       horas_alocadas: 0,
       horas_consolidadas: 0,
       progresso: 0,
@@ -57,8 +52,8 @@ export class HomeComponent implements OnInit {
         nome: '',
         foto: '',
         planos: [{
-          data_inicio_vigencia: new Date,
-          data_fim_vigencia: new Date,
+          data_inicio: new Date,
+          data_fim: new Date,
           horas_alocadas: 0,
           horas_consolidadas: 0,
           progresso: 0,
@@ -73,24 +68,6 @@ export class HomeComponent implements OnInit {
 
   public: ChartData[] = [];
   public opcoesGraficoPlano: ChartOptions = {
-<<<<<<< 48122e9d2a3c5f0901c3e48a833cd3aa12a03e39
-
-=======
-    scales: {
-      xAxes: [{
-        labels: ['Horas ' + this.lex.translate("do Plano de Trabalho")],
-        display: true,
-        ticks: {
-          beginAtZero: true
-        }
-      }],
-      yAxes: [{
-        ticks: {
-          beginAtZero: true
-        }
-      }]
-    },
->>>>>>> 6d280c376f3f90342fa65622ecf4f2670547bafb
     plugins: {
       datalabels: {
         display: false,
@@ -109,24 +86,6 @@ export class HomeComponent implements OnInit {
   };
 
   public opcoesGraficoAtividades: ChartOptions = {
-<<<<<<< 48122e9d2a3c5f0901c3e48a833cd3aa12a03e39
-    
-=======
-    scales: {
-      xAxes: [{
-        labels: ['Total de horas ' + this.lex.translate("das atividades")],
-        display: true,
-        ticks: {
-          beginAtZero: true
-        }
-      }],
-      yAxes: [{
-        ticks: {
-          beginAtZero: true
-        }
-      }]
-    },
->>>>>>> 6d280c376f3f90342fa65622ecf4f2670547bafb
     plugins: {
       datalabels: {
         display: false,

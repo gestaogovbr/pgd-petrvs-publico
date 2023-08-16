@@ -54,8 +54,8 @@ class UsuarioService extends ServiceBase
 
             //$horas_alocadas = $plano->demandas->sum('tempo_pactuado');
             $result['planos'][] = [
-                'data_inicio_vigencia' => $plano['data_inicio_vigencia'],
-                'data_fim_vigencia' => $plano['data_fim_vigencia'],
+                'data_inicio' => $plano['data_inicio'],
+                'data_fim' => $plano['data_fim'],
                 'total_horas' => $plano['tempo_total'],
         /*                 'horas_alocadas' => $horas_alocadas,
                 'horas_consolidadas' => $total_consolidadas,
@@ -123,8 +123,8 @@ class UsuarioService extends ServiceBase
             foreach ($planosTrabalhoAtivos as $plano) {
                 //$horas_alocadas = $plano->atividades->sum('tempo_pactuado');
                 $planos[] = [
-                    'data_inicio_vigencia' => $plano['data_inicio_vigencia'],
-                    'data_fim_vigencia' => $plano['data_fim_vigencia'],
+                    'data_inicio' => $plano['data_inicio'],
+                    'data_fim' => $plano['data_fim'],
                     'total_horas' => $plano['tempo_total'],
                     //'horas_alocadas' => $horas_alocadas,
                     //'horas_consolidadas' => $total_consolidadas,
@@ -242,7 +242,7 @@ class UsuarioService extends ServiceBase
             $result = $planos;
         } else {
             foreach ($planos as $plano) {
-                if (CalendarioService::between($plano['data_inicio_vigencia'], $inicioPeriodo, $fimPeriodo) || CalendarioService::between($plano['data_fim_vigencia'], $inicioPeriodo, $fimPeriodo)) array_push($result, $plano);
+                if (CalendarioService::between($plano['data_inicio'], $inicioPeriodo, $fimPeriodo) || CalendarioService::between($plano['data_fim'], $inicioPeriodo, $fimPeriodo)) array_push($result, $plano);
             }
         }
         return $result;

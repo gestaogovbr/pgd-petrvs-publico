@@ -50,7 +50,6 @@ export class LexicalService {
     "pela unidade gestora": {single: "pela Unidade Gestora", plural: "pelas Unidades Gestoras", female: true},
     "perfil": {single: "perfil", plural: "perfis", female: false},
     "planejamento institucional": {single: "planejamento institucional", plural: "planejamentos institucionais", female: false},
-    "plano": {single: "plano", plural: "planos", female: false},
     "plano de trabalho": {single: "plano de trabalho", plural: "planos de trabalho", female: false},
     "plano de entrega": {single: "plano de entrega", plural: "planos de entrega", female: false},
     "ponto de controle": {single: "ponto de controle", plural: "pontos de controle", female: false},

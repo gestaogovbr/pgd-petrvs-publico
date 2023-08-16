@@ -117,6 +117,10 @@
                   "maximumError": "50kb"
                 }
               ]
+            },
+            "dev": {
+              "optimization": false,
+              "sourceMap": true
             }
           }
         },
@@ -129,6 +133,9 @@
           "configurations": {
             "production": {
               "browserTarget": "petrvs:build:production"
+            },
+            "dev": {
+              "browserTarget": "petrvs:build:dev"
             }
           }
         },

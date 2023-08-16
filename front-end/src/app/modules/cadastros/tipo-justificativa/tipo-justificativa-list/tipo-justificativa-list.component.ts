@@ -20,7 +20,7 @@ export class TipoJustificativaListComponent extends PageListBase<TipoJustificati
     this.code="MOD_TIPO_JUST";
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}
-    });
+    }); 
     // Testa se o usuário possui permissão para exibir dados do tipo de justificativa
     if (this.auth.hasPermissionTo("MOD_TIPO_JUST_CONS")) {
       this.options.push({

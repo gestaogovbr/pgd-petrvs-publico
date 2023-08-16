@@ -25,6 +25,7 @@ use App\Http\Controllers\PlanoEntregaController;
 use App\Http\Controllers\PlanoEntregaEntregaController;
 use App\Http\Controllers\PetrvsController;
 use App\Http\Controllers\DocumentoController;
+use App\Http\Controllers\TipoAvaliacaoController;
 use App\Http\Controllers\TipoDocumentoController;
 use App\Http\Controllers\TipoProcessoController;
 use App\Http\Controllers\TipoJustificativaController;
@@ -54,6 +55,7 @@ use App\Http\Controllers\GrupoEspecializadoController;
 use App\Http\Controllers\CargoController;
 use App\Http\Controllers\NotificacaoController;
 use App\Http\Controllers\PlanoTrabalhoEntregaController;
+use App\Http\Controllers\PlanoTrabalhoConsolidacaoController;
 use App\Http\Controllers\UnidadeIntegranteController;
 use App\Http\Controllers\UnidadeIntegranteAtribuicaoController;
 use App\Http\Controllers\MateriaController;
@@ -214,12 +216,14 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalho')->group(function () 
     Route::post('avaliar', [PlanoTrabalhoController::class, 'avaliar']);
     Route::post('cancelar-avaliacao', [PlanoTrabalhoController::class, 'cancelarAvaliacao']);
     Route::post('arquivar', [PlanoTrabalhoController::class, 'arquivar']);
-    Route::post('metadadosPlano', [PlanoTrabalhoController::class, 'metadadosPlano']);
+    Route::post('metadados-plano', [PlanoTrabalhoController::class, 'metadadosPlano']);
+    Route::post('get-by-usuario', [PlanoTrabalhoController::class, 'getByUsuario']);
 });
-Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoEntrega')->group(function () {
-    defaultRoutes(PlanoTrabalhoEntregaController::class);
+Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoEntrega')->group(function () { defaultRoutes(PlanoTrabalhoEntregaController::class); });
+Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoConsolidacao')->group(function () {
+    defaultRoutes(PlanoTrabalhoConsolidacaoController::class);
+    Route::post('consolidacao-dados', [PlanoTrabalhoConsolidacaoController::class, 'consolidacaoDados']);
 });
-
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
     defaultRoutes(PlanoEntregaController::class);
     Route::post('liberar-homologacao', [PlanoEntregaController::class, 'liberarHomologacao']);
@@ -262,6 +266,7 @@ Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
     Route::post('unificar', [UnidadeController::class, 'unificar']);
     Route::post('dashboards', [UnidadeController::class, 'dashboards']);
     Route::post('inativo', [UnidadeController::class, 'inativo']);
+    Route::post('lotados', [UnidadeController::class, 'lotados']);
 });
 Route::middleware(['auth:sanctum'])->prefix('UnidadeIntegrante')->group(function () {
     Route::post('load-integrantes', [UnidadeIntegranteController::class, 'loadIntegrantes']);

@@ -46,18 +46,9 @@
                 <span class="text-nowrap">
                     <small class="micro-text fw-ligh">#{{row.numero}}</small>
                     <documentos-badge [documento]="row.documento_requisicao"></documentos-badge>
-                    <!--span class="badge bg-light text-dark" [attr.role]="row.numero_processo?.length ? 'button' : undefined" data-bs-toggle="tooltip" data-bs-placement="top" (click)="onProcessoClick(row)" [title]="allPages.getButtonTitle(row.numero_processo, row.numero_requisicao)">
-                        <i [class]="'bi ' + (row.numero_processo?.length ? 'bi bi-folder-symlink' : 'bi bi-x-lg')"></i>
-                        {{row.numero_processo?.length ? row.numero_processo : "Não processual"}}
-                        <small *ngIf="row.numero_requisicao?.length"><br>Sei nº {{row.numero_requisicao}}</small>
-                    </span//-->
                 </span>
                 <div class="one-per-line">
-                    <badge *ngFor="let status of getStatus(row)" [data]="status" [color]="status.color" [icon]="status.icon" [label]="status.label" [click]="status.data?.filter ? onStatusClick.bind(this) : undefined"></badge>
-                    <!--span *ngFor="let status of getStatus(row)" [class]="status.class" [attr.role]="status.filter ? 'button' : undefined" (click)="onStatusClick(status)">
-                        <i [class]="status.icon"></i>
-                        {{status.text}}
-                    </span/-->
+                    <badge *ngFor="let status of atividadeService.getStatus(row)" [data]="status" [color]="status.color" [icon]="status.icon" [label]="status.label" [click]="status.data?.filter ? onStatusClick.bind(this) : undefined"></badge>
                 </div>
             </ng-template>
         </column>
@@ -78,12 +69,12 @@
             <ng-template let-header="header" #titleTempos>
                 Tempos
                 <order by="data_distribuicao" [header]="header">Distribuição</order><br>
-                <order by="prazo_entrega" [header]="header">Prazo</order>
+                <order by="data_estipulada_entrega" [header]="header">Prazo</order>
                 <order by="data_entrega" [header]="header">Entrega</order>
             </ng-template>
             <ng-template let-row="row" #columnTempos>
                 <div class="one-per-line">
-                    <badge *ngFor="let tempo of temposAtividade(row)" [badge]="tempo"></badge>
+                    <badge *ngFor="let tempo of atividadeService.temposAtividade(row, extra, onDespendidoClick.bind(this))" [badge]="tempo"></badge>
                 </div>
             </ng-template>
         </column>

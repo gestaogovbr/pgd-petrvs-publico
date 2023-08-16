@@ -2,6 +2,7 @@ import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { TipoAvaliacaoDaoService } from 'src/app/dao/tipo-avaliacao-dao.service';
+import { TipoAvaliacaoNota } from 'src/app/models/tipo-avaliacao-nota';
 import { TipoAvaliacao } from 'src/app/models/tipo-avaliacao.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
@@ -19,14 +20,7 @@ export class TipoAvaliacaoListComponent extends PageListBase<TipoAvaliacao, Tipo
     this.title = this.lex.translate("Tipos de Avaliação");
     this.code="MOD_TIPO_AVAL";
     this.filter = this.fh.FormBuilder({
-      nome: {default: ""},
-      nota_atribuida: {default: ""},
-      aceita_entrega: {default: ""},
-      pergunta: {default: ""},
-      icone: {default: ""},
-      cor: {default: ""},
-      data_inicio: {default: ""},
-      data_fim: {default: ""},
+      nome: {default: ""}
     });
     // Testa se o usuário possui permissão para exibir dados do tipo de avaliação
     if (this.auth.hasPermissionTo("MOD_TIPO_AVAL_CONS")) {
@@ -60,6 +54,10 @@ export class TipoAvaliacaoListComponent extends PageListBase<TipoAvaliacao, Tipo
     }
 
     return result;
+  }
+
+  public getNotasText(notas: TipoAvaliacaoNota[]) {
+    return notas.map(x => x.nota).join(", ");
   }
 }
 

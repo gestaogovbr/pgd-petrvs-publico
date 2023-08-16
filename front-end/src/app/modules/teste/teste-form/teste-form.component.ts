@@ -87,7 +87,7 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
     this.atividadeDao = injector.get<AtividadeDaoService>(AtividadeDaoService);
     this.tipoMotivoAfastamentoDao = injector.get<TipoMotivoAfastamentoDaoService>(TipoMotivoAfastamentoDaoService);
     this.form = this.fh.FormBuilder({
-      inicio: {default: new Date('2023-01-01 09:00:00 -03:00')},
+      data_inicio: {default: new Date('2023-01-01 09:00:00 -03:00')},
       tipo_calculo: {default: 1},
       datafim_fimoutempo: {default: new Date('2023-02-15 09:00:00 -03:00')},
       tempo_fimoutempo: {default: 0}, 
@@ -96,8 +96,8 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
       tipo: {default: "DISTRIBUICAO"},
       atividade_id: {default: ""},
       usuario_id: {default: ""},
-      inicio_afastamento: {default: ""},
-      fim_afastamento: {default: ""},
+      data_inicio_afastamento: {default: ""},
+      data_fim_afastamento: {default: ""},
       tipo_motivo_afastamento_id: {default: ""},
       incluir_pausas: { default: false },
       incluir_afastamentos: { default: false }
@@ -204,8 +204,8 @@ export class TesteFormComponent extends PageFormBase<Usuario, UsuarioDaoService>
   public preparaParaExibicao() {
     this.efemeridesBackEnd!.inicio = new Date(this.efemeridesBackEnd!.inicio);
     this.efemeridesBackEnd!.fim = new Date(this.efemeridesBackEnd!.fim);
-    this.efemeridesBackEnd?.afastamentos.forEach(x => x.inicio_afastamento = new Date(x.inicio_afastamento));
-    this.efemeridesBackEnd?.afastamentos.forEach(x => x.fim_afastamento = new Date(x.fim_afastamento));
+    this.efemeridesBackEnd?.afastamentos.forEach(x => x.data_inicio = new Date(x.data_inicio));
+    this.efemeridesBackEnd?.afastamentos.forEach(x => x.data_fim = new Date(x.data_fim));
     this.efemeridesBackEnd?.diasDetalhes.forEach(d => d.intervalos = Object.values(d.intervalos));
     let a = 1;
   }

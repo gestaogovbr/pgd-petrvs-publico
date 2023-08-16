@@ -4,6 +4,7 @@ import { EditableFormComponent } from 'src/app/components/editable-form/editable
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 import { TemplateDaoService } from 'src/app/dao/template-dao.service';
+import { TipoAvaliacaoDaoService } from 'src/app/dao/tipo-avaliacao-dao.service';
 import { TipoDocumentoDaoService } from 'src/app/dao/tipo-documento-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
@@ -23,6 +24,7 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
 
   public templateDao: TemplateDaoService;
   public tipoDocumentoDao: TipoDocumentoDaoService;
+  public tipoAvaliacaoDao: TipoAvaliacaoDaoService;
   public unidadeDao: UnidadeDaoService;
   public templateService: TemplateService;
 
@@ -31,6 +33,7 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.templateDao = injector.get<TemplateDaoService>(TemplateDaoService);
     this.tipoDocumentoDao = injector.get<TipoDocumentoDaoService>(TipoDocumentoDaoService);
+    this.tipoAvaliacaoDao = injector.get<TipoAvaliacaoDaoService>(TipoAvaliacaoDaoService);
     this.templateService = injector.get<TemplateService>(TemplateService);
     this.modalWidth = 600;
     this.form = this.fh.FormBuilder({
@@ -38,12 +41,16 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
       nome: {default: ""},
       normativa: {default: ""},
       config: {default: null},
-      data_inicio_vigencia: {default: new Date()},
-      data_fim_vigencia: {default: new Date()},
+      data_inicio: {default: new Date()},
+      data_fim: {default: new Date()},
       termo_obrigatorio: {default: false},
       template_tcr_id: {default: null},
+      tipo_avaliacao_id: {default: ""},
       tipo_documento_tcr_id: {default: null},
-      prazo_execucao: {default: 365}
+      prazo_max_plano_entrega: {default: 365},
+      periodicidade_consolidacao: {default: 'MENSAL'},
+      periodicidade_valor: {default: 1},
+      dias_tolerancia_consolidacao: {default: 10}
     }, this.cdRef, this.validate);
     this.join = ["unidade"];
   }
@@ -51,19 +58,22 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
 
-    if(['nome', 'unidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if(['nome', 'unidade_id', 'tipo_avaliacao_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    } else if(controlName == "prazo_execucao" && parseInt(control.value || 0) > 99999) {
+    } else if(controlName == "prazo_max_plano_entrega" && parseInt(control.value || 0) > 99999) {
       result = "Inválido";
-    } else if(['data_inicio_vigencia', 'data_fim_vigencia'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+    } else if(['data_inicio', 'data_fim'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
+    } else if(controlName == "periodicidade_valor") {
+      if(['SEMANAL', 'QUINZENAL'].includes(this.form?.controls.periodicidade_consolidacao.value) && control.value > 6) result = "Inválido";
+      if(['MENSAL', 'BIMESTRAL', 'TRIMESTRAL', 'SEMESTRAL'].includes(this.form?.controls.periodicidade_consolidacao.value) && control.value > 31) result = "Máximo 31";
+      if(['DIAS'].includes(this.form?.controls.periodicidade_consolidacao.value) && control.value < 0) result = "Inválido";
     }
-
     return result;
   }
   public formValidation = (form?: FormGroup) => {
     let result = null;
-    if(this.form!.controls.data_fim_vigencia.value && this.form!.controls.data_inicio_vigencia.value > this.form!.controls.data_fim_vigencia.value) {
+    if(this.form?.controls.data_fim.value && this.form?.controls.data_inicio.value > this.form?.controls.data_fim.value) {
       result = "A data do fim não pode ser anterior à data do inicio!";
     }
     return result;
@@ -91,5 +101,6 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
   public titleEdit = (entity: Programa): string => {
     return "Editando " + this.lex.translate("Programa") + ': ' + (entity?.nome || "");
   }
+
 }
 

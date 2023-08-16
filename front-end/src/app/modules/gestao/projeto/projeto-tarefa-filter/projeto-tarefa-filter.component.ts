@@ -43,7 +43,7 @@ export class ProjetoTarefaFilterComponent extends PageBase {
         this.grid?.setMultiselectSelectedItems(this.tarefas.filter(tarefa => 
           (this.form.controls.usuario_id?.value?.length && tarefa.alocacoes?.find(x => x.recurso?.usuario_id == this.form.controls.usuario_id?.value)) ||
           (this.form.controls.unidade_id?.value?.length && tarefa.alocacoes?.find(x => x.recurso?.unidade_id == this.form.controls.unidade_id?.value))
-          //(this.util.isDataValid(this.form.controls.inicio?.value) && tarefa.inicio.getTime() )
+          //(this.util.isDataValid(this.form.controls.data_inicio?.value) && tarefa.data_inicio.getTime() )
         ));
       }
     },
@@ -72,8 +72,8 @@ export class ProjetoTarefaFilterComponent extends PageBase {
     this.form = this.fh.FormBuilder({
       usuario_id: {default: null},
       unidade_id: {default: null},
-      inicio: {default: null},
-      fim: {default: null}
+      data_inicio: {default: null},
+      data_fim: {default: null}
     });
   }
 
@@ -93,8 +93,8 @@ export class ProjetoTarefaFilterComponent extends PageBase {
       index: 0,
       nome: this._projeto?.nome || "PROJETO",
       descricao: this.projeto?.descricao || "",
-      inicio: this._projeto?.inicio || new Date(),
-      termino: this._projeto?.termino || new Date()
+      data_inicio: this._projeto?.data_inicio || new Date(),
+      data_fim: this._projeto?.data_fim || new Date()
     })];
     this.tarefas.push(...(this._projeto?.tarefas?.sort((a, b) => a.indice < b.indice ? -1 : 1) || []));
     this.cdRef.detectChanges();

@@ -930,7 +930,7 @@ usuarios u LEFT JOIN integracao_servidores s ON (u.cpf = s.cpf) ".
         //              VERIFICAR SE JÁ EXISTE NA TABELA INTEGRACAO_CHEFIAS UM REGISTRO COM codigo_siape,id_usuario,tipo_funcao
         //              SE AINDA NÃO EXISTIR O REGISTRO
         //                  CRIA UM REGISTRO INFORMANDO GESTOR/SUBSTITUTO_SIAPE E GESTOR/GESTOR SUBSTITUTO_PETRVS COM O id_usuario
-        //                  CHAMA O MÉTODO saveIntegrante(id_unidade,id_usuario,['gestor/gestor_substituto']) PARA ATUALIZAR O GESTOR/SUBSTITUTO NO PETRVS
+        //                  CHAMA O MÉTODO saveIntegrante(id_unidade,id_usuario,['gestor/gestor_substituto' => 'ADD']) PARA ATUALIZAR O GESTOR/SUBSTITUTO NO PETRVS
         //              SE JÁ EXISTIR O REGISTRO
         //                  VERIFICAR SE O ID_USUARIO DO GESTOR/SUBSTITUTO_SIAPE É IGUAL AO id_usuario
         //                  SE FOR IGUAL, NÃO FAZER NADA
@@ -943,5 +943,25 @@ usuarios u LEFT JOIN integracao_servidores s ON (u.cpf = s.cpf) ".
         // 1 - Se chefe_siape na integracaoservidores é igual a chefe_siape na integracaochefia (não faz nada). Permanece chefe_petrvs sem alteração.
         // 2 - Se chefe_siape mudou na integracaoservidores então chefe_siape na integraochefia é atualizado e chefe_petrvs também é atualizado.
         // 3 - 
+                CASOS POSSÍVEIS
+                                         SIAPE                        PETRVS
+                SERVIDOR         LOTACAO       CHEFIA        LOTACAO         CHEFIA
+                   S1               A            A              A               A                   10/01
+                   S1               A            A              B               B                   11/01
+                   S1                            =              NADA           NADA                 12/02 INTEGRACAO
+
+    CENARIO 1      S1               B            B                                                  13/01 DESIGNACAO NO SIAPE (FOI DESIGNADO S1)
+                   S1                            !=             B               B                   14/01 INTEGRAÇÃO
+
+    CENARIO 2      S2               B            B                                                  15/01 DESIGNACAO NO SIAPE (FOI DESIGNADA OUTRA PESSOA - S2)
+CASO 1: S1/S2      S1
+CASO 2: S2/S1
+
+
+
+OK CENARIO 1: A NOMEAÇÃO DE S1 PARA A UNIDADE B FOI EFETIVADA.
+CENÁRIO 2: NO LUGAR DE S1, FOI NOMEADO S2 PARA A UNIDADE B.
+CENÁRIO 3: S2, QUE HAVIA SIDO DESIGNADO CHEFE DA UNIDADE, TEVE SUA DESIGNAÇÃO CANCELADA.
+CENÁRIO 4: O CHEFE DA UNIDADE B FOI DISPENSADO, MAS NINGUÉM FOI DESIGNADO.
 
 */

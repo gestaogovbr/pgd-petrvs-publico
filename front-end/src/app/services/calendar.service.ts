@@ -232,7 +232,7 @@ export class CalendarService {
       let periodos: TimeInterval[] = [];
       for (let afastamento of (afastamentos || [])) {
         /* calcula a intersecção entre start e end e o inicio e fim do afastamento */
-        const intervalo = this.util.intersection([{ start, end }, { start: afastamento.inicio_afastamento.getTime(), end: afastamento.fim_afastamento.getTime() }]) as TimeInterval;
+        const intervalo = this.util.intersection([{ start, end }, { start: afastamento.data_inicio.getTime(), end: afastamento.data_fim.getTime() }]) as TimeInterval;
         if (intervalo && intervalo.start != intervalo.end) {
           /* Caso tenha uma intersecção, adiciona o período para retorno e insere em result.afastamentos */
           periodos.push(intervalo);

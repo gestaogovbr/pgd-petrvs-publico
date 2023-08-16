@@ -22,7 +22,6 @@ class CreateTiposAvaliacoesTable extends Migration
             // Campos:
             $table->string('nome', 256)->comment("Nome do tipo de avaliação");
             $table->set('tipo', ['QUALITATIVO', 'QUANTITATIVO'])->comment("Se a nota será um número ou um conceito");
-            $table->json('notas')->comment("Notas");
         });
     }
 

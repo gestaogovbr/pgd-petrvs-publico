@@ -14,7 +14,6 @@ class UnidadeIntegranteAtribuicaoService extends ServiceBase {
             $vinculo = UnidadeIntegrante::find($data["unidade_integrante_id"]);
             $unidadeLotacao = $vinculo->usuario->lotacao->unidade;
             if(!empty($unidadeLotacao) && $unidadeLotacao->id != $unidade->id) {
-                //UnidadeIntegranteAtribuicao::where('unidade_integrante_id', $vinculo->id)->where('atribuicao', 'LOTADO')->first()->delete();
                 $vinculo->usuario->lotacao->lotado->delete();
             }
         }

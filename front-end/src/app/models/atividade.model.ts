@@ -11,8 +11,9 @@ import { Usuario } from './usuario.model';
 import { BadgeButton } from '../components/badge/badge.component';
 import { Documento } from './documento.model';
 import { AtividadePausa } from './atividade-pausa.model';
+import { Status } from './status.model';
 
-export type AtividadeStatus = "CONCLUIDO" | "INICIADO" | "LANCADO";
+export type AtividadeStatus = "CONCLUIDO" | "INICIADO" | "INCLUIDO";
 
 export type AtividadeMetadados = {
     atrasado: boolean,
@@ -44,13 +45,15 @@ export class Atividade extends Base implements HasComentarios {
     public unidade?: Unidade;
     public documento_requisicao?: Documento;
     public documento_entrega?: Documento;
+    public status_atual?: Status;
+    public statusHistorico: Status[] = [];                             // Mudanças de status sofridas pela atividade (histórico)
 
     public numero: number = 0; /* Numero da atividade */
-    public descricao: string | null = null; /* Assunto da atividade */
+    public descricao: string = ""; /* Assunto da atividade */
     public data_distribuicao: Date = new Date(); /* Data de cadastro da atividade */
-    public tempo_planejado: number = 0.0; /* Diferença entre data_distribuicao e prazo_entrega em horas (úteis ou corridas, configurada na unidade) */
+    public tempo_planejado: number = 0.0; /* Diferença entre data_distribuicao e data_estipulada_entrega em horas (úteis ou corridas, configurada na unidade) */
     public carga_horaria: number = 0.0; /* Carga horária diária (vinda do plano de trabalho) */
-    public prazo_entrega: Date = new Date(); /* Data estipulada para entrega da atividade */
+    public data_estipulada_entrega: Date = new Date(); /* Data estipulada para entrega da atividade */
     public data_inicio: Date | null = null; /* Data em que o usuário iniciou a atividade */
     public data_entrega: Date | null = null; /* Data da entrega */
     public esforco: number = 0.0; /* Tempo calculado a partir da atividade e utilizando o fator_complexidade */

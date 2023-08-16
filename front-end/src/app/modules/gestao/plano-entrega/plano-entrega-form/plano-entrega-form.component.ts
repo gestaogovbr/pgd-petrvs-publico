@@ -38,13 +38,12 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
     this.planejamentoInstitucionalDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
-    this.join = ["entregas.entrega", "unidade", "entregas.unidade"];
+    this.join = ["entregas.entrega", "unidade", "entregas.unidade", "status_atual:id,nome"];
     this.modalWidth = 1200;
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
-      inicio: { default: new Date() },
-      fim: { default: new Date() },
-      status: { default: 'INCLUINDO' },
+      data_inicio: { default: new Date() },
+      data_fim: { default: new Date() },
       unidade_id: { default: "" },
       plano_entrega_id: { default: null },
       planejamento_id: { default: null },
@@ -59,18 +58,18 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     if (['nome', 'unidade_id', 'programa_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
-    if(['inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+    if(['data_inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
     }
-    if(['fim'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)){
+    if(['data_fim'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)){
       result = "Inválido";
     }
     return result;
   }
 
   public formValidation = (form?: FormGroup) => {
-    const inicio = this.form?.controls.inicio.value;
-    const fim = this.form?.controls.fim.value;
+    const inicio = this.form?.controls.data_inicio.value;
+    const fim = this.form?.controls.data_fim.value;
     const programa = this.programa?.selectedItem?.entity as Programa; 
     if(!programa) {
       return "Obrigatório selecionar o programa";
@@ -84,10 +83,10 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
       const diffTime = Math.abs(inicio - fim);
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       const entregas = this.form!.controls.entregas.value || [];
-      if (programa.prazo_execucao > 0 && diffDays > programa.prazo_execucao) return "A data de início e término" + this.lex.translate("do Plano de Entrega") + " deve respeitar o período previsto no " + this.lex.translate("Programa");
+      if (programa.prazo_max_plano_entrega > 0 && diffDays > programa.prazo_max_plano_entrega) return "A data de início e término" + this.lex.translate("do Plano de Entrega") + " deve respeitar o período previsto no " + this.lex.translate("Programa");
       for(let entrega of entregas) {
-        if(entrega.inicio < inicio) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data inicial anterior à " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(inicio);
-        if(entrega.fim > fim) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data fim posterior à " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(fim);
+        if(entrega.data_inicio < inicio) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data inicial anterior à " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(inicio);
+        if(entrega.data_fim > fim) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data fim posterior à " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(fim);
       }
     }
     return undefined;

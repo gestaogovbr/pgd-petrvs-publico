@@ -14,8 +14,8 @@
                 </div>
                 <separator title="Especificação das Entregas"></separator>
                 <div class="row">
-                    <input-datetime date [size]="6" label="Início" controlName="inicio" [labelInfo]="'Início ' + lex.translate('Plano de Entregas')"></input-datetime>
-                    <input-datetime date [size]="6" label="Fim" controlName="fim" [labelInfo]="'Fim ' + lex.translate('Plano de Entregas') + '(Estimativa Inicial)'"></input-datetime>
+                    <input-datetime date [size]="6" label="Início" controlName="data_inicio" [labelInfo]="'Início ' + lex.translate('Plano de Entregas')"></input-datetime>
+                    <input-datetime date [size]="6" label="Fim" controlName="data_fim" [labelInfo]="'Fim ' + lex.translate('Plano de Entregas') + '(Estimativa Inicial)'"></input-datetime>
                 </div>
                 <div class="row">
                     <input-search [size]="6" #unidade label="Demandante" controlName="unidade_id" [dao]="unidadeDao"></input-search>
@@ -31,8 +31,8 @@
                     <input-select *ngIf="checkTipoIndicador(['QUALITATIVO'])" [size]="6" label="Realizado" (change)="onRealizadoChange($event)" controlName="realizado" [items]="itensQualitativo"></input-select>
                 </div>
                 <div class="row">
-                    <input-number [size]="6" label="Progresso Esperado" controlName="progresso_esperado" sufix="%"></input-number>
-                    <input-number [size]="6" label="Progresso Realizado" [stepValue]="0.01" controlName="progresso_realizado" sufix="%" disabled></input-number>
+                    <input-number [size]="6" [decimals]="2" label="Progresso Esperado" controlName="progresso_esperado" sufix="%"></input-number>
+                    <input-number [size]="6" [decimals]="2" label="Progresso Realizado" [stepValue]="0.01" controlName="progresso_realizado" sufix="%" disabled></input-number>
                 </div>
             </div>
         </tab>

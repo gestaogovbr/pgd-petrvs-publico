@@ -12,19 +12,19 @@
             <div class="row">
                 <input-search label="Responsável" [size]="4" [emptyValue]="null" #usuario controlName="usuario_id" [dao]="usuarioDao" [join]="usuarioJoin" labelInfo="Responsável pela execução" (select)="onUsuarioSelect($event)" (change)="onUsuarioChange($event)"></input-search>
                 <input-select [label]="lex.translate('Plano de trabalho')" [size]="4" controlName="plano_trabalho_id" #planoTrabalho [control]="form!.controls.plano_trabalho_id" [items]="planosTrabalhos" (change)="onPlanoTrabalhoChange($event)" [labelInfo]="lex.translate('Plano de trabalho')"></input-select>
-                <input-select [label]="lex.translate('Entrega') + lex.translate('plano de trabalho')" [size]="4" controlName="plano_trabalho_entrega_id" #entrega [control]="form!.controls.plano_trabalho_entrega_id" [items]="entregas" [labelInfo]="lex.translate('Entrega') + lex.translate('plano de trabalho') + ' que a ' + lex.translate('atividade') + ' é referente'"></input-select>
+                <input-select [label]="lex.translate('Entrega') + ' ' + lex.translate('plano de trabalho')" [size]="4" controlName="plano_trabalho_entrega_id" #entrega [control]="form!.controls.plano_trabalho_entrega_id" [items]="entregas" [labelInfo]="lex.translate('Entrega') + lex.translate('plano de trabalho') + ' que a ' + lex.translate('atividade') + ' é referente'"></input-select>
             </div>
             <div *ngIf="!planoTrabalho?.selectedItem?.data?.tipo_modalidade?.atividade_esforco; else comEsforco" class="row">
                 <input-datetime noIcon [size]="4" [label]="lex.translate('Data de distribuição')" controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" (change)="onDataDistribuicaoChange($event)" labelInfo="Data de inclusão/distribuição/lançamento"></input-datetime>
                 <input-number [size]="4" [decimals]="2" label="Progresso" disabled sufix="%" icon="bi bi-clock" controlName="progresso" labelInfo="Progresso de execução (% Concluído)"></input-number>
-                <input-datetime noIcon  [size]="4" [label]="lex.translate('Prazo de entrega')" controlName="prazo_entrega" [control]="form!.controls.prazo_entrega" (change)="onPrazoEntregaChange($event)" labelInfo="Data estipulada para entrega da atividade"></input-datetime>
+                <input-datetime noIcon  [size]="4" [label]="lex.translate('Prazo de entrega')" controlName="data_estipulada_entrega" [control]="form!.controls.data_estipulada_entrega" (change)="onPrazoEntregaChange($event)" labelInfo="Data estipulada para entrega da atividade"></input-datetime>
             </div>
             <ng-template #comEsforco>
                 <div class="row">
                     <input-datetime noIcon [size]="3" [label]="lex.translate('Data de distribuição')" controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" (change)="onDataDistribuicaoChange($event)" labelInfo="Data de inclusão/distribuição/lançamento"></input-datetime>
                     <input-timer [size]="3" [label]="lex.translate('Esforço')" icon="bi bi-stopwatch" onlyHours controlName="esforco" [control]="form!.controls.esforco" labelInfo="Tempo estimado de execução"></input-timer>
                     <input-number [size]="3" [decimals]="2" label="Progresso" disabled sufix="%" icon="bi bi-clock" controlName="progresso" labelInfo="Progresso de execução (% Concluído)"></input-number>
-                    <input-datetime noIcon  [size]="3" [label]="lex.translate('Prazo de entrega')" controlName="prazo_entrega" [control]="form!.controls.prazo_entrega" (change)="onPrazoEntregaChange($event)" labelInfo="Data estipulada para entrega da atividade"></input-datetime>
+                    <input-datetime noIcon  [size]="3" [label]="lex.translate('Prazo de entrega')" controlName="data_estipulada_entrega" [control]="form!.controls.data_estipulada_entrega" (change)="onPrazoEntregaChange($event)" labelInfo="Data estipulada para entrega da atividade"></input-datetime>
                 </div>
             </ng-template>
             <separator *ngIf="form!.controls.data_entrega.value" title="Conclusão">
