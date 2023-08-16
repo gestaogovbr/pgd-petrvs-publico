@@ -14,12 +14,7 @@ import { ComentarioService } from 'src/app/services/comentario.service';
 import { BadgeButton } from 'src/app/components/badge/badge.component';
 import { TipoAtividadeDaoService } from 'src/app/dao/tipo-atividade-dao.service';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
-
-export type ExtraAtividade = {
-  planos_trabalho: { [plano_id: string]: PlanoTrabalho },
-  afastamentos: { [usuario_id: string]: Afastamento[] },
-  feriados?: { [unidade_id: string]: FeriadoList }
-}
+import { AtividadeService, ExtraAtividade } from './atividade.service';
 
 export abstract class AtividadeListBase extends PageListBase<Atividade, AtividadeDaoService> {
   public calendarEfemerides?: TemplateRef<any>;
@@ -28,6 +23,7 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
   public tipoAtividadeDao: TipoAtividadeDaoService;
   public tipoProcessoDao: TipoProcessoDaoService;
   public allPages: ListenerAllPagesService;
+  public atividadeService: AtividadeService;
   public calendar: CalendarService;
   public comentario: ComentarioService;
   public extra: ExtraAtividade;
@@ -52,28 +48,13 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
     this.tipoAtividadeDao = injector.get<TipoAtividadeDaoService>(TipoAtividadeDaoService);
     this.tipoProcessoDao = injector.get<TipoProcessoDaoService>(TipoProcessoDaoService);
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
+    this.atividadeService = injector.get<AtividadeService>(AtividadeService);
     this.calendar = injector.get<CalendarService>(CalendarService);
     this.comentario = injector.get<ComentarioService>(ComentarioService);
     this.join = ["tipo_atividade", "demandante", "pausas", "usuario", "unidade", "comentarios.usuario", "tarefas.tarefa", "tarefas.comentarios.usuario"];
     /* Inicializações */
     this.extra = { planos_trabalho: {}, afastamentos: {} };
   }
-
-  /*public orderComentarios(comentarios?: Comentario[]) {
-    let ordered = comentarios?.sort((a: Comentario, b: Comentario) => {
-      if(a.path == b.path) { /* Situação 1: Paths iguais 
-        return a.data_hora.getTime() < b.data_hora.getTime() ? -1 : 1;
-      } else { /* Situação 2: Paths diferentes, deverá ser encontrado o menor nível comum entre eles para poder comparar 
-        let pathA = a.path.split("/");
-        let pathB = b.path.split("/");
-        let common = this.util.commonBegin(pathA, pathB);
-        let dataHoraA = (comentarios.find(x => x.id == (pathA[common.length] || a.id)) || a).data_hora.getTime();
-        let dataHoraB = (comentarios.find(x => x.id == (pathB[common.length] || b.id)) || b).data_hora.getTime();
-        return dataHoraA == dataHoraB ? 0 : (dataHoraA < dataHoraB ? -1 : 1);
-      }
-    }) || [];
-    return ordered;
-  }*/
 
   public onGridLoad(rows?: any[]) {
     /* Ordena os comentários */
@@ -121,33 +102,6 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
       this.efemerides = this.calendar.calculaDataTempoUnidade(row.data_inicio!, this.auth.hora, cargaHoraria, row.unidade!, "ENTREGA", row.pausas, afastamentos);
       this.dialog.template({ title: "Cálculos do tempo despendido" }, this.calendarEfemerides!, []);
     }
-  }
-
-  public temposAtividade(row: Atividade): BadgeButton[] {
-    /* Atualiza somente a cada mudança de minuto da unidade atual */
-    if (row.metadados && row.metadados.extra?.lastUpdate != this.auth.unidadeHora) {
-      let planoTrabalho = this.extra?.planos_trabalho[row.plano_trabalho_id!];
-      let tempos: BadgeButton[] = [
-        { color: "light", hint: this.lex.translate("Data de distribuição"), icon: "bi bi-file-earmark-plus", label: this.dao!.getDateTimeFormatted(row.data_distribuicao) },
-        { color: "light", hint: this.lex.translate("Prazo de entrega"), icon: "bi bi-calendar-check", label: this.dao!.getDateTimeFormatted(row.prazo_entrega) }
-      ];
-      if (planoTrabalho?.tipo_modalidade?.atividade_esforco) tempos.push({ color: "light", hint: this.lex.translate("Esforço"), icon: "bi bi-stopwatch", label: (row.esforco ? this.util.decimalToTimerFormated(row.esforco, true) + " " + this.lex.translate("esforço") : "Sem " + this.lex.translate("esforço"))});
-      if (row.metadados.concluido) tempos.push({ color: "light", hint: "Data de entrega realizada", icon: "bi bi-check-circle", label: this.dao!.getDateTimeFormatted(row.data_entrega) });
-      if (row.metadados.iniciado && !!planoTrabalho?.tipo_modalidade?.atividade_tempo_despendido) {
-        const cargaHoraria = planoTrabalho?.carga_horaria || 0;
-        const afastamentos = this.extra?.afastamentos[row.usuario_id!] || [];
-        const despendido = row.metadados.concluido ? (row.tempo_despendido || 0) : this.calendar.horasUteis(row.data_inicio!, this.auth.hora, cargaHoraria, row.unidade!, "ENTREGA", row.pausas, afastamentos);
-        tempos.push({ color: (despendido > row.esforco ? "warning" : "light"), hint: "Tempo despendido", icon: "bi bi-hourglass-split", label: this.util.decimalToTimerFormated(despendido, true) + " despendido", click: !row.metadados.concluido ? this.onDespendidoClick.bind(this) : undefined, data: row });
-      }
-      if (!row.metadados.concluido && row.prazo_entrega.getTime() < this.auth.hora.getTime()) {
-        const atrasado = this.calendar.horasAtraso(row.prazo_entrega, row.unidade!);
-        tempos.push({ color: "danger", hint: "Tempo de atraso", icon: "bi bi-alarm", label: this.util.decimalToTimerFormated(atrasado, true) + " atrasado" });
-      }
-      row.metadados.extra = row.metadados.extra || {};
-      row.metadados.extra.lastUpdate = this.auth.unidadeHora;
-      row.metadados.extra.tempos = tempos;
-    }
-    return row.metadados?.extra?.tempos || [];
   }
 
   public desarquivar(atividade: Atividade) {
@@ -268,52 +222,25 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
     });
   }
 
-  /*public cancelarAvaliacao(atividade: Atividade) {
-    const self = this;
-    this.dialog.confirm("Cancelar avaliacao ?", "Deseja realmente cancelar a avaliacao?").then(confirm => {
-      if (confirm) {
-        this.dao!.cancelarAvaliacao(atividade.id).then(function () {
-          (self.grid?.query || self.query!).refreshId(atividade.id);
-          self.dialog.alert("Sucesso", "Cancelado com sucesso!");
-        }).catch(function (error) {
-          self.dialog.alert("Erro", "Erro ao cancelar avaliacao: " + error?.message ? error?.message : error);
-        });
-      }
-    });
-  }*/
-
   public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let atividade: Atividade = row as Atividade;
     const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || this.auth.usuario?.id == atividade.unidade?.gestor_substituto?.id;
-    //const isAvaliador = isGestor || (this.extra.avaliadores[atividade.unidade_id] || []).includes(this.auth.usuario?.id || ""); //|| atividade.unidade
-    //const isDemandante = this.auth.usuario?.id == atividade.demandante_id;
     const isResponsavel = this.auth.usuario?.id == atividade.usuario_id;
     const BOTAO_ALTERAR_AVALIACAO = { hint: "Alterar avaliação", icon: "bi bi-check-all", color: "btn-outline-danger", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'avaliar'] }, this.modalRefreshId(atividade)) };
     const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'consult'] }, { modal: true }) };
     const BOTAO_INICIAR = { hint: "Iniciar", icon: "bi bi-play-circle", color: "btn-outline-secondary", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'iniciar'] }, this.modalRefreshId(atividade)) };
-    //const BOTAO_AVALIAR = { hint: "Avaliar", icon: "bi bi-star-half", color: "btn-outline-success", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'avaliar'] }, this.modalRefreshId(atividade)) };
     const BOTAO_REINICIAR = { hint: "Reiniciar", icon: "bi bi-play-circle", color: "btn-outline-secondary", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'pausar'], params: { reiniciar: true } }, this.modalRefreshId(atividade)) };
     const BOTAO_CONCLUIR = { hint: "Concluir", icon: "bi bi-check", color: "btn-outline-success", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'concluir'] }, this.modalRefreshId(atividade)) };
     const BOTAO_ARQUIVAR = { hint: "Arquivar", icon: "bi bi-inboxes", onClick: this.arquivar.bind(this) };
     const BOTAO_DESARQUIVAR = { hint: "Desarquivar", icon: "bi bi-reply", onClick: this.desarquivar.bind(this) };
     const BOTAO_ALTERAR_CONCLUSAO = { hint: "Alterar conclusão", icon: "bi bi-check-circle", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'concluir'] }, this.modalRefreshId(atividade)) };
 
-    /*if (atividade.metadados?.avaliado) { /* Arquivado *
-      if (isAvaliador || this.auth.hasPermissionTo('MOD_DMD_USERS_AVAL')) { /* Usuário logado é gestor da Unidade ou substituto*
-        result.push(BOTAO_ALTERAR_AVALIACAO);
-      } else if (atividade.metadados?.arquivado && (isGestor || isResponsavel)) { //Somente se gestor ou com capacidade para essa operação
-        result.push(BOTAO_DESARQUIVAR);
-      }
-    } else*/ 
     if (!atividade.metadados?.iniciado) { /* Não iniciado */
       if (isResponsavel || (atividade.usuario_id == null) || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) { /* Usuário da atividade é o mesmo logado */
         result.push(BOTAO_INICIAR);
       }
     } else if (atividade.metadados?.concluido) { /* Concluído */
-      /*if (isAvaliador || this.auth.hasPermissionTo('MOD_DMD_USERS_AVAL')) { /* Usuário logado é gestor da Unidade ou substituto * /
-          result.push(BOTAO_AVALIAR);
-      }*/
       if (isGestor || isResponsavel) {
         result.push(atividade.metadados?.arquivado ? BOTAO_DESARQUIVAR : BOTAO_ARQUIVAR);
       } else if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT_CONCL')) {
@@ -333,23 +260,6 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
     if(!result.length) result.push(BOTAO_INFORMACOES);
     return result;
   }
-
-  public getStatus(row: any): BadgeButton[] {
-    const atividade: Atividade = row as Atividade;
-    const status = this.lookup.ATIVIDADE_STATUS.find(x => x.key == atividade.metadados?.status) || { key: "DESCONHECIDO", value: "Desconhecido", icon: "bi bi-question-circle", color: "light" };
-    let result: BadgeButton[] = [{ data: {status: status.key, filter: true}, label: status.value, icon: status.icon!, color: status.color! }];
-    if (atividade.metadados?.atrasado) result.push({ data: {status: "ATRASADO", filter: false}, label: "Atrasado", icon: "bi bi-alarm", color: "danger" });
-    if (atividade.metadados?.suspenso) result.push({ data: {status: "SUSPENSO", filter: false}, label: "Suspenso", icon: "bi bi-pause-circle", color: "danger" });
-    if (atividade.metadados?.arquivado) result.push({ data: {status: "ARQUIVADO", filter: false}, label: "Arquivado", icon: "bi bi-inboxes", color: "danger" });
-    if (atividade.metadados && JSON.stringify(atividade.metadados._status) != JSON.stringify(result)) atividade.metadados._status = result;
-    return atividade.metadados?._status || result;
-  }
-
-  /*public getEtiquetaStyle(etiqueta: any) {
-    const bgColor = etiqueta.color || "#000000";
-    const txtColor = this.util.contrastColor(bgColor);
-    return `background-color: ${bgColor}; color: ${txtColor};`;
-  }*/
 
   public onEtiquetaConfigClick() {
     this.go.navigate({ route: ["configuracoes", "preferencia", "usuario", this.auth.usuario!.id], params: { etiquetas: true } }, {

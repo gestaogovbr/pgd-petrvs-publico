@@ -19,7 +19,7 @@ class PlanoEntregaService extends ServiceBase
     public $statusQuery = "";
 
     public function afterStore($planoEntrega, $action){
-        if($action == "INSERT") { $this->status->atualizaStatus($planoEntrega, 'INCLUIDO', 'O plano de entregas foi criado nesta data.'); }
+        if($action == ServiceBase::ACTION_INSERT) { $this->status->atualizaStatus($planoEntrega, 'INCLUIDO', 'O plano de entregas foi criado nesta data.'); }
     }
 
     public function arquivar($data, $unidade) {
@@ -236,7 +236,7 @@ class PlanoEntregaService extends ServiceBase
     }
 
     public function proxyStore(&$data, $unidade, $action){
-        if($action == "INSERT") { $data["criacao_usuario_id"] = parent::loggedUser()->id; }
+        if($action == ServiceBase::ACTION_INSERT) { $data["criacao_usuario_id"] = parent::loggedUser()->id; }
         return $data;
     }
 
@@ -288,7 +288,7 @@ class PlanoEntregaService extends ServiceBase
     public function validateStore($dataOrEntity, $unidade, $action)
     {
         if(!$this->verificaDuracaoPlano($dataOrEntity) || !$this->verificaDatasEntregas($dataOrEntity)) throw new Exception("O prazo das datas não satisfaz a duração estipulada no programa.");
-        if($action == "EDIT") {
+        if($action == ServiceBase::ACTION_EDIT) {
             $planoEntrega = PlanoEntrega::find($dataOrEntity["id"]);
             if($dataOrEntity["unidade_id"] != $planoEntrega->unidade_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Entregas, não é possível alterar a sua Unidade.");
             if($dataOrEntity["programa_id"] != $planoEntrega->programa_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Entregas, não é possível alterar o seu Programa.");

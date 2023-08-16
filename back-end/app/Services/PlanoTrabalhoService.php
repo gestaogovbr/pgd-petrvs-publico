@@ -81,7 +81,7 @@ class PlanoTrabalhoService extends ServiceBase
   }
 
   public function afterStore($planoTrabalho, $action){
-    if($action == "INSERT") { $this->status->atualizaStatus($planoTrabalho, 'INCLUIDO', 'O plano de trabalho foi criado nesta data.'); }
+    if($action == ServiceBase::ACTION_INSERT) { $this->status->atualizaStatus($planoTrabalho, 'INCLUIDO', 'O plano de trabalho foi criado nesta data.'); }
 }
 
   public function validateStore($data, $unidade, $action)
@@ -110,7 +110,7 @@ class PlanoTrabalhoService extends ServiceBase
         throw new ServerException("ValidatePlanoTrabalho", "O plano de trabalho #" . $plano->numero . " (" . UtilService::getDateTimeFormatted($plano->data_inicio_vigencia) . " à " . UtilService::getDateTimeFormatted($plano->data_fim_vigencia) . ") possui período conflitante para a mesma modalidade (MOD_PTR_INTSC_DATA)");
       }
     }
-    if($action == "EDIT") {
+    if($action == ServiceBase::ACTION_EDIT) {
       $plano = PlanoTrabalho::find($data["id"]);
       /*  (RN_PTR_1)
           Após criado um plano de trabalho, o seu plano de entregas não pode mais ser alterado. Em consequência dessa regra, os seguintes campos 
