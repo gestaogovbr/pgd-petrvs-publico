@@ -22,8 +22,8 @@ export class HomeComponent implements OnInit {
   public formSearch: FormGroup;
   public dashUsuario: UsuarioDashboard = {
     planos: [{
-      data_inicio_vigencia: new Date,
-      data_fim_vigencia: new Date,
+      data_inicio: new Date,
+      data_fim: new Date,
       horas_alocadas: 0,
       horas_consolidadas: 0,
       progresso: 0,
@@ -52,8 +52,8 @@ export class HomeComponent implements OnInit {
         nome: '',
         foto: '',
         planos: [{
-          data_inicio_vigencia: new Date,
-          data_fim_vigencia: new Date,
+          data_inicio: new Date,
+          data_fim: new Date,
           horas_alocadas: 0,
           horas_consolidadas: 0,
           progresso: 0,

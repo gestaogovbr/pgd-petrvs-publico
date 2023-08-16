@@ -32,12 +32,12 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     $consolidacao = PlanoTrabalhoConsolidacao::with(['ocorrencias', 'atividades', 'planoTrabalho.entregas.entrega'])->find($id);
     $planoTrabalho = $consolidacao->planoTrabalho;
     $atividades = Atividade::with(['demandante', 'usuario', 'tipoAtividade'])->
-      where('prazo_entrega', '>=', $consolidacao->data_inicio)->
+      where('data_estipulada_entrega', '>=', $consolidacao->data_inicio)->
       where('data_distribuicao', '<=', $consolidacao->data_fim)->
       where('usuario_id', $planoTrabalho->usuario_id)->get();
     $afastamentos = Afastamento::with(['tipoMotivoAfastamento'])->
-      where("fim_afastamento", ">=", $consolidacao->data_inicio)->
-      where('inicio_afastamento', '<=', $consolidacao->data_fim)->
+      where("data_fim", ">=", $consolidacao->data_inicio)->
+      where('data_inicio', '<=', $consolidacao->data_fim)->
       where('usuario_id', $planoTrabalho->usuario_id)->get();
     return [
       'atividades' => $atividades,

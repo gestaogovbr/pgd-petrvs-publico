@@ -25,8 +25,8 @@ class CreateProgramasTable extends Migration
             $table->integer('prazo_max_plano_entrega')->comment("Limite máximo de dias corridos para o plano de entregas (Zero para não limitar)");
             $table->tinyInteger('termo_obrigatorio')->default(0)->comment("Se o termo é ou não obrigatório");
             $table->json('config')->nullable()->comment("Configurações do programa");
-            $table->dateTime('data_inicio_vigencia')->comment("Inicio da vigência do programa");
-            $table->dateTime('data_fim_vigencia')->comment("Fim da vigência do programa");
+            $table->dateTime('data_inicio')->comment("Inicio da vigência do programa");
+            $table->dateTime('data_fim')->comment("Fim da vigência do programa");
             $table->enum('periodicidade_consolidacao', ["DIAS", "SEMANAL", "QUINZENAL", "MENSAL", "BIMESTRAL", "TRIMESTRAL", "SEMESTRAL"])->default("MENSAL")->comment("Período para avaliação do plano de trabalho");
             $table->integer('periodicidade_valor')->default("1")->comment("Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do mês para o restante");
             $table->integer('dias_tolerancia_consolidacao')->default("10")->comment("Dias de tolerância para o lançamento do registro das atividades na consolidação, após esses dias será liberado automaticamente para avaliação");

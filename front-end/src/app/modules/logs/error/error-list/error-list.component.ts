@@ -32,8 +32,8 @@ export class ErrorListComponent extends PageListBase<Error, ErrorDaoService> {
     this.filter = this.fh.FormBuilder({
       type: {default: ""},
       responsavel_id: {default: ""},
-      inicio: {default: null},
-      fim: {default: null}
+      data_inicio: {default: null},
+      data_fim: {default: null}
     });
     this.orderBy = [['date_time', 'desc']];
   }
@@ -48,8 +48,8 @@ export class ErrorListComponent extends PageListBase<Error, ErrorDaoService> {
 
   public filterClear(filter: FormGroup) {
     filter.controls.responsavel_id.setValue("");
-    filter.controls.inicio.setValue("");
-    filter.controls.fim.setValue("");
+    filter.controls.data_inicio.setValue("");
+    filter.controls.data_fim.setValue("");
     filter.controls.type.setValue("");
   }
 
@@ -60,11 +60,11 @@ export class ErrorListComponent extends PageListBase<Error, ErrorDaoService> {
     if(form.responsavel_id?.length){
       result.push(["user_id", "==", form.responsavel_id == "null" ? null : form.responsavel_id]);
     };
-    if(form.inicio){
-      result.push(["date_time", ">=", form.inicio]);
+    if(form.data_inicio){
+      result.push(["date_time", ">=", form.data_inicio]);
     };
-    if(form.fim){
-      result.push(["date_time", "<=", form.fim]);
+    if(form.data_fim){
+      result.push(["date_time", "<=", form.data_fim]);
     };
     if(form.type?.length){
       result.push(["type", "==", form.type]);

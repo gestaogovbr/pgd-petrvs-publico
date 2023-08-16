@@ -40,8 +40,8 @@ export class FeriadoFormComponent extends PageFormBase<Feriado, FeriadoDaoServic
       cidade_id: {default: null},
       uf: {default: null},
       entidade_id: {default: null},
-      data_inicio_vigencia: {default: new Date()},
-      data_fim_vigencia: {default: new Date()}
+      data_inicio: {default: new Date()},
+      data_fim: {default: new Date()}
     }, this.cdRef, this.validate);
     this.join = ["cidade", "entidade"];
   }

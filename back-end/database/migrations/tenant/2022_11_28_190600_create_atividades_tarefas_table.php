@@ -21,7 +21,7 @@ class CreateAtividadesTarefasTable extends Migration
             $table->softDeletes();
             // Campos:
             $table->text('descricao')->nullable()->comment("Descrição da tarefa");
-            $table->dateTime('data_hora')->comment("Data hora do lançamento da tarefa");
+            $table->dateTime('data_lancamento')->comment("Data hora do lançamento da tarefa");
             $table->float('tempo_estimado')->comment("Tempo estimado para a execução da tarefa (Horas decimais)");
             $table->tinyInteger('concluido')->default(0)->comment("Se a tarefa foi concluída");
             // Chaves estrangeiras:

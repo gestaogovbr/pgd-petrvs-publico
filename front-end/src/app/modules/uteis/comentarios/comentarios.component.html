@@ -18,7 +18,7 @@
                                     {{row.usuario?.nome || "Desconhecido"}}
                                     <span>{{lookup.getValue(lookup.COMENTARIO_TIPO, row.tipo)}}</span>
                                     <span>{{lookup.getValue(lookup.COMENTARIO_PRIVACIDADE, row.privacidade)}}</span>
-                                    <span>{{util.getDateTimeFormatted(row.data_hora)}}</span>
+                                    <span>{{util.getDateTimeFormatted(row.comentario)}}</span>
                                 </h6>
                                 <p class="fw-light">{{row.texto}}</p>
                             </td>

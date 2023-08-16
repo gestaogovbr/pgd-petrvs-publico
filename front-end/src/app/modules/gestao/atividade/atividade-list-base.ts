@@ -38,7 +38,6 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
     { key: "DISTRIBUICAO", value: "Distribuição", icon: "bi bi-file-earmark-plus", color: "badge rounded-pill bg-warning text-dark" },
     { key: "PRAZO", value: "Prazo", icon: "bi bi-calendar-check", color: "badge rounded-pill bg-info text-dark" },
     { key: "CONCLUSAO", value: "Conclusão", icon: "bi bi-check-circle", color: "badge rounded-pill bg-info text-dark" }
-    //{ key: "AVALIACAO", value: "Avaliação", icon: "bi bi-star-half", color: "badge rounded-pill bg-success" }
   ];
 
   constructor(public injector: Injector) {
@@ -103,6 +102,33 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
       this.dialog.template({ title: "Cálculos do tempo despendido" }, this.calendarEfemerides!, []);
     }
   }
+
+/*   public temposAtividade(row: Atividade): BadgeButton[] {
+    // Atualiza somente a cada mudança de minuto da unidade atual
+    if (row.metadados && row.metadados.extra?.lastUpdate != this.auth.unidadeHora) {
+      let planoTrabalho = this.extra?.planos_trabalho[row.plano_trabalho_id!];
+      let tempos: BadgeButton[] = [
+        { color: "light", hint: this.lex.translate("Data de distribuição"), icon: "bi bi-file-earmark-plus", label: this.dao!.getDateTimeFormatted(row.data_distribuicao) },
+        { color: "light", hint: this.lex.translate("Prazo de entrega"), icon: "bi bi-calendar-check", label: this.dao!.getDateTimeFormatted(row.data_estipulada_entrega) }
+      ];
+      if (planoTrabalho?.tipo_modalidade?.atividade_esforco) tempos.push({ color: "light", hint: this.lex.translate("Esforço"), icon: "bi bi-stopwatch", label: (row.esforco ? this.util.decimalToTimerFormated(row.esforco, true) + " " + this.lex.translate("esforço") : "Sem " + this.lex.translate("esforço"))});
+      if (row.metadados.concluido) tempos.push({ color: "light", hint: "Data de entrega realizada", icon: "bi bi-check-circle", label: this.dao!.getDateTimeFormatted(row.data_entrega) });
+      if (row.metadados.iniciado && !!planoTrabalho?.tipo_modalidade?.atividade_tempo_despendido) {
+        const cargaHoraria = planoTrabalho?.carga_horaria || 0;
+        const afastamentos = this.extra?.afastamentos[row.usuario_id!] || [];
+        const despendido = row.metadados.concluido ? (row.tempo_despendido || 0) : this.calendar.horasUteis(row.data_inicio!, this.auth.hora, cargaHoraria, row.unidade!, "ENTREGA", row.pausas, afastamentos);
+        tempos.push({ color: (despendido > row.esforco ? "warning" : "light"), hint: "Tempo despendido", icon: "bi bi-hourglass-split", label: this.util.decimalToTimerFormated(despendido, true) + " despendido", click: !row.metadados.concluido ? this.onDespendidoClick.bind(this) : undefined, data: row });
+      }
+      if (!row.metadados.concluido && row.data_estipulada_entrega.getTime() < this.auth.hora.getTime()) {
+        const atrasado = this.calendar.horasAtraso(row.data_estipulada_entrega, row.unidade!);
+        tempos.push({ color: "danger", hint: "Tempo de atraso", icon: "bi bi-alarm", label: this.util.decimalToTimerFormated(atrasado, true) + " atrasado" });
+      }
+      row.metadados.extra = row.metadados.extra || {};
+      row.metadados.extra.lastUpdate = this.auth.unidadeHora;
+      row.metadados.extra.tempos = tempos;
+    }
+    return row.metadados?.extra?.tempos || [];
+  } */
 
   public desarquivar(atividade: Atividade) {
     this.dao!.arquivar(atividade.id, false).then(() => {

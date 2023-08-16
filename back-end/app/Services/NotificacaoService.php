@@ -51,7 +51,7 @@ class NotificacaoService extends ServiceBase
     {
         try {
             $usuario = $this->findByPhone($data);
-            $session = NotificacaoWhatsapp::where("usuario_id", $data["usuario_id"])->whereRaw("DATE_ADD(ultima_interacao, INTERVAL 30 MINUTE) > NOW() && finalizacao IS NULL")->first();
+            $session = NotificacaoWhatsapp::where("usuario_id", $data["usuario_id"])->whereRaw("DATE_ADD(data_ultima_interacao, INTERVAL 30 MINUTE) > NOW() && data_fim_sessao IS NULL")->first();
             return [
                 "usuario" => $usuario,
                 "session" => isset($session) ? $session->atual : null

@@ -45,8 +45,8 @@ class Planejamento extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
   constructor(data) {
     super();
     this.data_arquivamento = null; /* Data de arquivamento */
-    this.inicio = new Date(); /* Data de início do planejamento */
-    this.fim = null; /* Data do fim do planejamento */
+    this.data_inicio = new Date(); /* Data de início do planejamento */
+    this.data_fim = null; /* Data final do planejamento */
     this.nome = ""; /* Nome do planejamento institucional */
     this.missao = ""; /* Missão da Instituição/Unidade */
     this.visao = ""; /* Visão da Instituição/Unidade */
@@ -376,16 +376,16 @@ class PlanejamentoFormComponent extends src_app_modules_base_page_form_base__WEB
       if (['nome', 'missao', 'visao'].indexOf(controlName) >= 0 && !control.value?.length) {
         result = "Obrigatório";
       }
-      if (['inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+      if (['data_inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
         result = "Inválido";
       }
-      if (controlName == 'fim' && control.value && !this.dao?.validDateTime(control.value)) {
+      if (controlName == 'data_fim' && control.value && !this.dao?.validDateTime(control.value)) {
         result = "Inválido";
       }
       return result;
     };
     this.formValidation = form => {
-      if (this.form.controls.fim.value && this.form.controls.inicio.value > this.form.controls.fim.value) return "A data do início não pode ser maior que a data do fim!";
+      if (this.form.controls.data_fim.value && this.form.controls.data_inicio.value > this.form.controls.data_fim.value) return "A data do início não pode ser maior que a data do fim!";
       if (this.form.controls.valores.value.length == 0) return "É obrigatória a inclusão de ao menos um valor institucional!";
       if (this.isPlanejamentoUNEXEC() && !this.form.controls.planejamento_superior_id.value?.length) return "Quando o Planejamento é de uma Unidade Executora, é obrigatória a definição do Planejamento superior ao qual ele será vinculado!";
       return undefined;
@@ -409,10 +409,10 @@ class PlanejamentoFormComponent extends src_app_modules_base_page_form_base__WEB
       planejamento_superior_id: {
         default: null
       },
-      inicio: {
+      data_inicio: {
         default: new Date()
       },
-      fim: {
+      data_fim: {
         default: null
       },
       missao: {
@@ -540,7 +540,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵInheritDefinitionFeature"]],
   decls: 22,
   vars: 30,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "DADOS", "label", "Dados"], [1, "row"], ["label", "Nome do Planejamento Institucional", "controlName", "nome", 3, "size", "icon", "control"], ["controlName", "unidade_id", 3, "size", "disabled", "control", "dao", "selectParams", "change"], ["date", "", "label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "inicio", "labelInfo", "In\u00EDcio do Planejamento Institucional", 3, "size", "control"], ["date", "", "label", "Fim", "icon", "bi bi-calendar-date", "controlName", "fim", "labelInfo", "Fim do Planejamento Institucional", 3, "size", "control"], ["class", "row", 4, "ngIf"], [1, "col-md-6"], ["label", "Miss\u00E3o", "controlName", "missao", 3, "size", "rows", "control"], ["label", "Vis\u00E3o", "controlName", "visao", 3, "size", "rows", "control"], ["label", "Valores", "controlName", "valores", 3, "size", "addItemHandle"], ["label", "Valor Institucional", "icon", "far fa-edit", "controlName", "valor_texto", 3, "control"], ["key", "OBJETIVOS", "label", "Objetivos"], ["noPersist", "", 3, "entity", "disabled"], ["objetivos", ""], ["label", "Selecione o Planejamento Superior vinculado", "controlName", "planejamento_superior_id", 3, "items", "control", "icon", "change"]],
+  consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "DADOS", "label", "Dados"], [1, "row"], ["label", "Nome do Planejamento Institucional", "controlName", "nome", 3, "size", "icon", "control"], ["controlName", "unidade_id", 3, "size", "disabled", "control", "dao", "selectParams", "change"], ["date", "", "label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio", "labelInfo", "In\u00EDcio do Planejamento Institucional", 3, "size", "control"], ["date", "", "label", "Fim", "icon", "bi bi-calendar-date", "controlName", "data_fim", "labelInfo", "Fim do Planejamento Institucional", 3, "size", "control"], ["class", "row", 4, "ngIf"], [1, "col-md-6"], ["label", "Miss\u00E3o", "controlName", "missao", 3, "size", "rows", "control"], ["label", "Vis\u00E3o", "controlName", "visao", 3, "size", "rows", "control"], ["label", "Valores", "controlName", "valores", 3, "size", "addItemHandle"], ["label", "Valor Institucional", "icon", "far fa-edit", "controlName", "valor_texto", 3, "control"], ["key", "OBJETIVOS", "label", "Objetivos"], ["noPersist", "", 3, "entity", "disabled"], ["objetivos", ""], ["label", "Selecione o Planejamento Superior vinculado", "controlName", "planejamento_superior_id", 3, "items", "control", "icon", "change"]],
   template: function PlanejamentoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementStart"](0, "editable-form", 0);
@@ -577,9 +577,9 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("size", 6)("disabled", ctx.hasPermissionToUNEX ? undefined : "true")("control", ctx.form.controls.unidade_id)("dao", ctx.unidadeDao)("selectParams", _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵpureFunction1"](28, _c2, _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵpureFunction0"](27, _c1)));
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("size", 3)("control", ctx.form.controls.inicio);
+      _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("size", 3)("control", ctx.form.controls.data_inicio);
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("size", 3)("control", ctx.form.controls.fim);
+      _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("size", 3)("control", ctx.form.controls.data_fim);
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("ngIf", ctx.form.controls.unidade_id.value);
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵadvance"](3);
@@ -1312,7 +1312,7 @@ function PlanejamentoListComponent_ng_template_2_ng_template_17_Template(rf, ctx
     const row_r24 = ctx.row;
     const ctx_r10 = _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵnextContext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵtextInterpolate1"](" ", ctx_r10.dao.getDateFormatted(row_r24.inicio), "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵtextInterpolate1"](" ", ctx_r10.dao.getDateFormatted(row_r24.data_inicio), "");
   }
 }
 function PlanejamentoListComponent_ng_template_2_ng_template_20_Template(rf, ctx) {
@@ -1325,7 +1325,7 @@ function PlanejamentoListComponent_ng_template_2_ng_template_20_Template(rf, ctx
     const row_r25 = ctx.row;
     const ctx_r12 = _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵnextContext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵtextInterpolate1"](" ", ctx_r12.dao.getDateFormatted(row_r25.fim), "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵtextInterpolate1"](" ", ctx_r12.dao.getDateFormatted(row_r25.data_fim), "");
   }
 }
 function PlanejamentoListComponent_ng_template_2_ng_template_23_Template(rf, ctx) {
@@ -1399,9 +1399,9 @@ function PlanejamentoListComponent_ng_template_2_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("size", 4)("label", ctx_r1.lex.translate("Unidade"))("disabled", ctx_r1.unidade_disabled)("dao", ctx_r1.unidadeDao);
     _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("size", 3)("control", ctx_r1.filter.controls.inicio)("labelInfo", "Data de in\u00EDcio do" + ctx_r1.lex.translate("Planejamento Institucional"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("size", 3)("control", ctx_r1.filter.controls.data_inicio)("labelInfo", "Data de in\u00EDcio do" + ctx_r1.lex.translate("Planejamento Institucional"));
     _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("size", 3)("control", ctx_r1.filter.controls.fim)("labelInfo", "Data do fim do " + ctx_r1.lex.translate("Planejamento Institucional"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("size", 3)("control", ctx_r1.filter.controls.data_fim)("labelInfo", "Data do fim do " + ctx_r1.lex.translate("Planejamento Institucional"));
     _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("ngIf", !ctx_r1.selectable);
     _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](1);
@@ -1439,11 +1439,11 @@ class PlanejamentoListComponent extends src_app_modules_base_page_list_base__WEB
       if (form.nome?.length) {
         result.push(["nome", "like", "%" + form.nome + "%"]);
       }
-      if (form.inicio) {
-        result.push(["inicio", ">=", form.inicio]);
+      if (form.data_inicio) {
+        result.push(["data_inicio", ">=", form.data_inicio]);
       }
-      if (form.fim) {
-        result.push(["fim", "<=", form.fim]);
+      if (form.data_fim) {
+        result.push(["data_fim", "<=", form.data_fim]);
       }
       return result;
     };
@@ -1452,10 +1452,10 @@ class PlanejamentoListComponent extends src_app_modules_base_page_list_base__WEB
     this.code = "MOD_PLAN_INST";
     this.title = this.lex.translate('Planejamentos Institucionais');
     this.filter = this.fh.FormBuilder({
-      inicio: {
+      data_inicio: {
         default: null
       },
-      fim: {
+      data_fim: {
         default: null
       },
       nome: {
@@ -1509,8 +1509,8 @@ class PlanejamentoListComponent extends src_app_modules_base_page_list_base__WEB
   }
   filterClear(filter) {
     filter.controls.nome.setValue("");
-    filter.controls.inicio.setValue(null);
-    filter.controls.fim.setValue(null);
+    filter.controls.data_inicio.setValue(null);
+    filter.controls.data_fim.setValue(null);
     filter.controls.unidade_id.setValue(null);
     filter.controls.so_entidade.setValue(false);
     super.filterClear(filter);
@@ -1551,7 +1551,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵInheritDefinitionFeature"]],
   decls: 7,
   vars: 4,
-  consts: [["right", "", 3, "title", "select"], ["key", "TABELA", "icon", "bi bi-table", "label", "Lista", 3, "template"], ["lista", ""], ["key", "MAPA", "icon", "bi bi-card-heading", "label", "Mapa", 3, "template"], ["mapa", ""], [3, "dao", "add", "orderBy", "join", "init", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["controlName", "nome", 3, "size", "label", "control", "placeholder"], ["controlName", "so_entidade", 3, "size", "label", "control", "change"], ["controlName", "unidade_id", 3, "size", "label", "disabled", "dao"], ["unidade", ""], ["date", "", "label", "In\u00EDcio", "controlName", "inicio", 3, "size", "control", "labelInfo"], ["date", "", "label", "Fim", "controlName", "fim", 3, "size", "control", "labelInfo"], ["type", "expand", "icon", "bi bi-bullseye", 3, "align", "hint", "template", "expandTemplate", 4, "ngIf"], ["title", "Nome", "orderBy", "nome", 3, "template"], ["columnNome", ""], ["title", "In\u00EDcio", 3, "template"], ["columnInicio", ""], ["title", "Fim", 3, "template"], ["columnFim", ""], ["title", "Unidade", 3, "template"], ["columnUnidade", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"], ["type", "expand", "icon", "bi bi-bullseye", 3, "align", "hint", "template", "expandTemplate"], ["columnObjetivos", ""], ["columnExpandedObjetivos", ""], ["class", "badge rounded-pill bg-light text-dark", 4, "ngIf"], [1, "badge", "rounded-pill", "bg-light", "text-dark"], [1, "bi", "bi-bullseye"], [3, "entity", "eixos"], [1, "text-break", "w-100"]],
+  consts: [["right", "", 3, "title", "select"], ["key", "TABELA", "icon", "bi bi-table", "label", "Lista", 3, "template"], ["lista", ""], ["key", "MAPA", "icon", "bi bi-card-heading", "label", "Mapa", 3, "template"], ["mapa", ""], [3, "dao", "add", "orderBy", "join", "init", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["controlName", "nome", 3, "size", "label", "control", "placeholder"], ["controlName", "so_entidade", 3, "size", "label", "control", "change"], ["controlName", "unidade_id", 3, "size", "label", "disabled", "dao"], ["unidade", ""], ["date", "", "label", "In\u00EDcio", "controlName", "data_inicio", 3, "size", "control", "labelInfo"], ["date", "", "label", "Fim", "controlName", "data_fim", 3, "size", "control", "labelInfo"], ["type", "expand", "icon", "bi bi-bullseye", 3, "align", "hint", "template", "expandTemplate", 4, "ngIf"], ["title", "Nome", "orderBy", "nome", 3, "template"], ["columnNome", ""], ["title", "In\u00EDcio", 3, "template"], ["columnInicio", ""], ["title", "Fim", 3, "template"], ["columnFim", ""], ["title", "Unidade", 3, "template"], ["columnUnidade", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"], ["type", "expand", "icon", "bi bi-bullseye", 3, "align", "hint", "template", "expandTemplate"], ["columnObjetivos", ""], ["columnExpandedObjetivos", ""], ["class", "badge rounded-pill bg-light text-dark", 4, "ngIf"], [1, "badge", "rounded-pill", "bg-light", "text-dark"], [1, "bi", "bi-bullseye"], [3, "entity", "eixos"], [1, "text-break", "w-100"]],
   template: function PlanejamentoListComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelementStart"](0, "tabs", 0)(1, "tab", 1);
@@ -1888,7 +1888,7 @@ class PlanejamentoMapaComponent extends src_app_modules_base_page_frame_base__WE
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this.query = _this.dao.query({
         where: [["data_arquivamento", "==", null]],
-        orderBy: [["inicio", "desc"]]
+        orderBy: [["data_inicio", "desc"]]
       });
       _this.query.asPromise().then(planejamentos => {
         _this.planejamentos = planejamentos.map(x => Object.assign({}, {

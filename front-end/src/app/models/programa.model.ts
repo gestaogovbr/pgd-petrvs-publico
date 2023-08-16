@@ -15,8 +15,8 @@ export class Programa extends Base {
     public nome: string = ""; /* Nome do programa */
     public normativa: string = ""; /* Normativa que regula o programa */
     public config: string | null = null; /* Configuração extra de programa */
-    public data_inicio_vigencia: Date = new Date(); /* Data de início vigencia */
-    public data_fim_vigencia: Date = new Date(); /* Data de fim vigencia */
+    public data_inicio: Date = new Date(); /* Data de início vigência */
+    public data_fim: Date = new Date(); /* Data de fim vigência */
     public termo_obrigatorio: boolean = false; /* tinyint; NOT NULL; */
     public prazo_max_plano_entrega: number = 365; /*Limite máximo de dias corridos para o plano de entregas (Zero para não limitar) */
     public periodicidade_consolidacao: ProgramaPeriodicidadeConsolidacao = 'MENSAL'; /* Período para avaliação do plano de trabalho */

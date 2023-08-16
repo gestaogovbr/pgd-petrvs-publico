@@ -21,7 +21,7 @@ export class AtividadeFormPausarComponent extends PageFormBase<Atividade, Ativid
   constructor(public injector: Injector) {
     super(injector, Atividade, AtividadeDaoService);
     this.form = this.fh.FormBuilder({
-      inicio: {default: undefined},
+      data_inicio: {default: undefined},
       data: {default: new Date()}
     }, this.cdRef, this.validate);
   }
@@ -36,7 +36,7 @@ export class AtividadeFormPausarComponent extends PageFormBase<Atividade, Ativid
       } else if(!this.util.isDataValid(control.value)) {
         result = "Obrigatório";
       } else if(pausado && this.entity && (control.value as Date).getTime() < this.entity!.data_inicio!.getTime()) {
-        result = "Menor que inicio!";
+        result = "Menor que início!";
       } 
     }
 

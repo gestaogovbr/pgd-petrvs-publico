@@ -24,11 +24,11 @@
                 </div>
                 <div class="row">
                     <input-search disabled [size]="9" label="Planejamento Institucional" controlName="planejamento_id" [dao]="planejamentoInstitucionalDao"></input-search>
-                    <input-datetime disabled [size]="3" controlName="inicio" label="Início" [labelInfo]="'Início ' + lex.translate('Plano de Entrega')"></input-datetime>
+                    <input-datetime disabled [size]="3" controlName="data_inicio" label="Início" [labelInfo]="'Início ' + lex.translate('Plano de Entrega')"></input-datetime>
                 </div>
                 <div class="row">
                     <input-search disabled [size]="9" label="Cadeia de Valor" controlName="cadeia_valor_id" [dao]="cadeiaValorDao"></input-search>
-                    <input-datetime disabled [size]="3" controlName="fim" label="Fim" [labelInfo]="'Fim ' + lex.translate('Plano de Entrega')"></input-datetime>
+                    <input-datetime disabled [size]="3" controlName="data_fim" label="Fim" [labelInfo]="'Fim ' + lex.translate('Plano de Entrega')"></input-datetime>
                 </div>
             </separator>
         </div>

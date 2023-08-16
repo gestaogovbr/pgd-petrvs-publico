@@ -19,7 +19,7 @@ class AtividadeTarefa extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
     this.documento = null; /* Documento de entrga */
     this.comentarios = []; /* Comentarios da tarefa */
     this.descricao = null; /* Descrição da tarefa */
-    this.data_hora = new Date(); /* Data hora do lançamento da tarefa */
+    this.data_lancamento = new Date(); /* Data hora do lançamento da tarefa */
     this.tempo_estimado = 0; /* Tempo estimado para a execução da tarefa (Horas decimais) */
     this.concluido = false; /* Se a tarefa foi concluída */
     this.documento_id = null; /* Documento de entrga */
@@ -86,10 +86,7 @@ class AtividadeListBase extends src_app_modules_base_page_list_base__WEBPACK_IMP
       value: "Conclusão",
       icon: "bi bi-check-circle",
       color: "badge rounded-pill bg-info text-dark"
-    }
-    //{ key: "AVALIACAO", value: "Avaliação", icon: "bi bi-star-half", color: "badge rounded-pill bg-success" }
-    ];
-
+    }];
     this.unidadeDao = injector.get(src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_2__.UnidadeDaoService);
     this.usuarioDao = injector.get(src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_1__.UsuarioDaoService);
     this.tipoAtividadeDao = injector.get(src_app_dao_tipo_atividade_dao_service__WEBPACK_IMPORTED_MODULE_9__.TipoAtividadeDaoService);
@@ -104,21 +101,6 @@ class AtividadeListBase extends src_app_modules_base_page_list_base__WEBPACK_IMP
       afastamentos: {}
     };
   }
-  /*public orderComentarios(comentarios?: Comentario[]) {
-    let ordered = comentarios?.sort((a: Comentario, b: Comentario) => {
-      if(a.path == b.path) { /* Situação 1: Paths iguais
-        return a.data_hora.getTime() < b.data_hora.getTime() ? -1 : 1;
-      } else { /* Situação 2: Paths diferentes, deverá ser encontrado o menor nível comum entre eles para poder comparar
-        let pathA = a.path.split("/");
-        let pathB = b.path.split("/");
-        let common = this.util.commonBegin(pathA, pathB);
-        let dataHoraA = (comentarios.find(x => x.id == (pathA[common.length] || a.id)) || a).data_hora.getTime();
-        let dataHoraB = (comentarios.find(x => x.id == (pathB[common.length] || b.id)) || b).data_hora.getTime();
-        return dataHoraA == dataHoraB ? 0 : (dataHoraA < dataHoraB ? -1 : 1);
-      }
-    }) || [];
-    return ordered;
-  }*/
   onGridLoad(rows) {
     /* Ordena os comentários */
     rows?.forEach(atividade => {
@@ -178,7 +160,7 @@ class AtividadeListBase extends src_app_modules_base_page_list_base__WEBPACK_IMP
         color: "light",
         hint: this.lex.translate("Prazo de entrega"),
         icon: "bi bi-calendar-check",
-        label: this.dao.getDateTimeFormatted(row.prazo_entrega)
+        label: this.dao.getDateTimeFormatted(row.data_estipulada_entrega)
       }];
       if (planoTrabalho?.tipo_modalidade?.atividade_esforco) tempos.push({
         color: "light",
@@ -205,8 +187,8 @@ class AtividadeListBase extends src_app_modules_base_page_list_base__WEBPACK_IMP
           data: row
         });
       }
-      if (!row.metadados.concluido && row.prazo_entrega.getTime() < this.auth.hora.getTime()) {
-        const atrasado = this.calendar.horasAtraso(row.prazo_entrega, row.unidade);
+      if (!row.metadados.concluido && row.data_estipulada_entrega.getTime() < this.auth.hora.getTime()) {
+        const atrasado = this.calendar.horasAtraso(row.data_estipulada_entrega, row.unidade);
         tempos.push({
           color: "danger",
           hint: "Tempo de atraso",
@@ -1103,7 +1085,7 @@ class AtividadeListGridComponent extends _atividade_list_base__WEBPACK_IMPORTED_
         result.push(["tipo_processo_id", "==", form.tipo_processo_id]);
       }
       if (form.data_filtro?.length) {
-        const field = form.data_filtro == "DISTRIBUICAO" ? "data_distribuicao" : form.data_filtro == "PRAZO" ? "prazo_entrega" : "data_entrega";
+        const field = form.data_filtro == "DISTRIBUICAO" ? "data_distribuicao" : form.data_filtro == "PRAZO" ? "data_estipulada_entrega" : "data_entrega";
         if (form.data_inicio) {
           result.push([field, ">=", form.data_inicio]);
         }
@@ -1308,7 +1290,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefi
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵInheritDefinitionFeature"]],
   decls: 52,
   vars: 76,
-  consts: [["calendarEfemerides", ""], [3, "dao", "add", "form", "hasEdit", "hasDelete", "orderBy", "groupBy", "join", "loadList", "selectable", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Minhas", "controlName", "atribuidas_para_mim", 3, "size", "control", "change"], ["label", "Usu\u00E1rio", "controlName", "usuario_id", 3, "size", "disabled", "dao"], ["usuario", ""], ["label", "Atual", "controlName", "somente_unidade_atual", "labelInfo", "Somente as atividades da unidade selecionada", 3, "size", "control", "change"], ["label", "Unidade", "controlName", "unidade_id", 3, "size", "disabled", "dao"], ["unidade", ""], ["label", "Sub.", "controlName", "unidades_subordinadas", "labelInfo", "Incluir as unidades subordinadas", 3, "size", "control"], ["label", "#ID", "controlName", "numero", "maskFormat", "999999", 3, "size", "control", "labelInfo"], ["maskFormat", "00000.000000/0000-00", "controlName", "numero_processo", "labelInfo", "Pesquisa no documento de requisi\u00E7\u00E3o, conclus\u00E3o e nos documentos das tarefas", 3, "size", "label", "control"], ["label", "Status", "itemTodos", "- Todos -", "controlName", "status", 3, "size", "valueTodos", "disabled", "control", "items"], ["noForm", "", "noBox", "", "label", "Etiquetas", "controlName", "etiquetas", 3, "size", "control"], ["label", "Arq.", "controlName", "arquivadas", "labelInfo", "Listar tamb\u00E9m atividades arquivadas", 3, "size", "control"], ["controlName", "tipo_atividade_id", 3, "size", "label", "dao"], ["controlName", "tipo_processo_id", 3, "size", "label", "dao"], ["label", "Data", "itemTodos", "- Todos -", "controlName", "data_filtro", 3, "size", "valueTodos", "control", "items"], ["noIcon", "", "label", "In\u00EDcio", "controlName", "data_inicio", "labelInfo", "Data in\u00EDcio do per\u00EDodo", 3, "size", "disabled", "control"], ["noIcon", "", "label", "Fim", "controlName", "data_fim", "labelInfo", "Data fim do per\u00EDodo", 3, "size", "disabled", "control"], ["type", "expand", "icon", "bi bi-boxes", 3, "align", "hint", "template", "expandTemplate", 4, "ngIf"], [3, "titleTemplate", "template"], ["titleIdNumeroStatus", ""], ["columnNumero", ""], ["titleUnResponsavelDemandante", ""], ["columnPessoas", ""], ["titleTempos", ""], ["columnTempos", ""], [3, "title", "editTemplate", "template", "edit", "save"], ["columnProgressoEtiquetasChecklist", ""], ["columnProgressoEtiquetasChecklistEdit", ""], [3, "title", "template"], ["columnTitulo", ""], ["type", "options", 3, "onEdit", "onDelete", "dynamicOptions", "dynamicButtons", 4, "ngIf"], [3, "rows"], [3, "efemerides"], ["labelPosition", "left", "label", "Agrupar por Un.", "controlName", "agrupar", 3, "size", "control", "change"], ["type", "expand", "icon", "bi bi-boxes", 3, "align", "hint", "template", "expandTemplate"], ["columnTarefas", ""], ["columnExpandedTarefas", ""], ["class", "badge rounded-pill bg-light text-dark", 4, "ngIf"], [1, "badge", "rounded-pill", "bg-light", "text-dark"], [1, "bi", "bi-boxes"], ["persist", "", 3, "selectable", "editable", "atividade"], ["by", "numero", 3, "header"], [1, "text-nowrap"], [1, "micro-text", "fw-ligh"], [3, "documento"], [1, "one-per-line"], [3, "data", "color", "icon", "label", "click", 4, "ngFor", "ngForOf"], [3, "data", "color", "icon", "label", "click"], ["by", "usuario.nome", 3, "header"], ["by", "demandante.nome", 3, "header"], ["icon", "bi bi-briefcase", "color", "light", 3, "label"], ["color", "light", 3, "icon", "label", "hint"], ["icon", "bi bi-cursor", "color", "light", 3, "label", "hint"], ["by", "data_distribuicao", 3, "header"], ["by", "prazo_entrega", 3, "header"], ["by", "data_entrega", 3, "header"], [3, "badge", 4, "ngFor", "ngForOf"], [3, "badge"], ["color", "success", 3, "value"], [3, "lookup", "click", 4, "ngFor", "ngForOf"], ["small", "", "title", "Checklist", 4, "ngIf"], [3, "lookup", "click"], ["small", "", "title", "Checklist"], [4, "ngFor", "ngForOf"], ["class", "bi bi-check-circle", 4, "ngIf"], [1, "bi", "bi-check-circle"], ["label", "Progresso", "sufix", "%", "icon", "bi bi-clock", "controlName", "progresso", "labelInfo", "Progresso de execu\u00E7\u00E3o (% Conclu\u00EDdo)", 3, "size", "decimals", "control"], ["controlName", "etiquetas", 3, "size", "control", "addItemHandle"], ["controlName", "etiqueta", "nullable", "", "itemNull", "- Selecione -", "detailsButton", "", "detailsButtonIcon", "bi bi-tools", 3, "size", "control", "items", "details"], ["etiqueta", ""], ["scale", "small", 3, "size", "source", "path"], ["class", "atividade-atividade", 4, "ngIf"], [1, "micro-text", "fw-ligh", "atividade-descricao"], ["origem", "ATIVIDADE", 3, "entity", "selectable", "grid"], [1, "atividade-atividade"], ["type", "options", 3, "onEdit", "onDelete", "dynamicOptions", "dynamicButtons"]],
+  consts: [["calendarEfemerides", ""], [3, "dao", "add", "form", "hasEdit", "hasDelete", "orderBy", "groupBy", "join", "loadList", "selectable", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Minhas", "controlName", "atribuidas_para_mim", 3, "size", "control", "change"], ["label", "Usu\u00E1rio", "controlName", "usuario_id", 3, "size", "disabled", "dao"], ["usuario", ""], ["label", "Atual", "controlName", "somente_unidade_atual", "labelInfo", "Somente as atividades da unidade selecionada", 3, "size", "control", "change"], ["label", "Unidade", "controlName", "unidade_id", 3, "size", "disabled", "dao"], ["unidade", ""], ["label", "Sub.", "controlName", "unidades_subordinadas", "labelInfo", "Incluir as unidades subordinadas", 3, "size", "control"], ["label", "#ID", "controlName", "numero", "maskFormat", "999999", 3, "size", "control", "labelInfo"], ["maskFormat", "00000.000000/0000-00", "controlName", "numero_processo", "labelInfo", "Pesquisa no documento de requisi\u00E7\u00E3o, conclus\u00E3o e nos documentos das tarefas", 3, "size", "label", "control"], ["label", "Status", "itemTodos", "- Todos -", "controlName", "status", 3, "size", "valueTodos", "disabled", "control", "items"], ["noForm", "", "noBox", "", "label", "Etiquetas", "controlName", "etiquetas", 3, "size", "control"], ["label", "Arq.", "controlName", "arquivadas", "labelInfo", "Listar tamb\u00E9m atividades arquivadas", 3, "size", "control"], ["controlName", "tipo_atividade_id", 3, "size", "label", "dao"], ["controlName", "tipo_processo_id", 3, "size", "label", "dao"], ["label", "Data", "itemTodos", "- Todos -", "controlName", "data_filtro", 3, "size", "valueTodos", "control", "items"], ["noIcon", "", "label", "In\u00EDcio", "controlName", "data_inicio", "labelInfo", "Data in\u00EDcio do per\u00EDodo", 3, "size", "disabled", "control"], ["noIcon", "", "label", "Fim", "controlName", "data_fim", "labelInfo", "Data fim do per\u00EDodo", 3, "size", "disabled", "control"], ["type", "expand", "icon", "bi bi-boxes", 3, "align", "hint", "template", "expandTemplate", 4, "ngIf"], [3, "titleTemplate", "template"], ["titleIdNumeroStatus", ""], ["columnNumero", ""], ["titleUnResponsavelDemandante", ""], ["columnPessoas", ""], ["titleTempos", ""], ["columnTempos", ""], [3, "title", "editTemplate", "template", "edit", "save"], ["columnProgressoEtiquetasChecklist", ""], ["columnProgressoEtiquetasChecklistEdit", ""], [3, "title", "template"], ["columnTitulo", ""], ["type", "options", 3, "onEdit", "onDelete", "dynamicOptions", "dynamicButtons", 4, "ngIf"], [3, "rows"], [3, "efemerides"], ["labelPosition", "left", "label", "Agrupar por Un.", "controlName", "agrupar", 3, "size", "control", "change"], ["type", "expand", "icon", "bi bi-boxes", 3, "align", "hint", "template", "expandTemplate"], ["columnTarefas", ""], ["columnExpandedTarefas", ""], ["class", "badge rounded-pill bg-light text-dark", 4, "ngIf"], [1, "badge", "rounded-pill", "bg-light", "text-dark"], [1, "bi", "bi-boxes"], ["persist", "", 3, "selectable", "editable", "atividade"], ["by", "numero", 3, "header"], [1, "text-nowrap"], [1, "micro-text", "fw-ligh"], [3, "documento"], [1, "one-per-line"], [3, "data", "color", "icon", "label", "click", 4, "ngFor", "ngForOf"], [3, "data", "color", "icon", "label", "click"], ["by", "usuario.nome", 3, "header"], ["by", "demandante.nome", 3, "header"], ["icon", "bi bi-briefcase", "color", "light", 3, "label"], ["color", "light", 3, "icon", "label", "hint"], ["icon", "bi bi-cursor", "color", "light", 3, "label", "hint"], ["by", "data_distribuicao", 3, "header"], ["by", "data_estipulada_entrega", 3, "header"], ["by", "data_entrega", 3, "header"], [3, "badge", 4, "ngFor", "ngForOf"], [3, "badge"], ["color", "success", 3, "value"], [3, "lookup", "click", 4, "ngFor", "ngForOf"], ["small", "", "title", "Checklist", 4, "ngIf"], [3, "lookup", "click"], ["small", "", "title", "Checklist"], [4, "ngFor", "ngForOf"], ["class", "bi bi-check-circle", 4, "ngIf"], [1, "bi", "bi-check-circle"], ["label", "Progresso", "sufix", "%", "icon", "bi bi-clock", "controlName", "progresso", "labelInfo", "Progresso de execu\u00E7\u00E3o (% Conclu\u00EDdo)", 3, "size", "decimals", "control"], ["controlName", "etiquetas", 3, "size", "control", "addItemHandle"], ["controlName", "etiqueta", "nullable", "", "itemNull", "- Selecione -", "detailsButton", "", "detailsButtonIcon", "bi bi-tools", 3, "size", "control", "items", "details"], ["etiqueta", ""], ["scale", "small", 3, "size", "source", "path"], ["class", "atividade-atividade", 4, "ngIf"], [1, "micro-text", "fw-ligh", "atividade-descricao"], ["origem", "ATIVIDADE", 3, "entity", "selectable", "grid"], [1, "atividade-atividade"], ["type", "options", 3, "onEdit", "onDelete", "dynamicOptions", "dynamicButtons"]],
   template: function AtividadeListGridComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtemplate"](0, AtividadeListGridComponent_ng_template_0_Template, 1, 1, "ng-template", null, 0, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtemplateRefExtractor"]);

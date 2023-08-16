@@ -59,7 +59,7 @@ class Usuario extends Authenticatable
         'config', /* json; */// Configurações do usuário
         'notificacoes', /* json; */// Configurações das notificações (Se envia e-mail, whatsapp, tipos, templates)
         'id_google', /* varchar(50); */// Id associado com o usuário do login do google
-        'vinculacao', /* enum('SERVIDOR_EFETIVO','SERVIDOR_COMISSIONADO','EMPREGADO','CONTRATADO_TEMPORARIO'); NOT NULL; DEFAULT: 'SERVIDOR_EFETIVO'; */// Vínculo do usuário com a administração
+        'situacao_funcional', /* enum('SERVIDOR_EFETIVO','SERVIDOR_COMISSIONADO','EMPREGADO','CONTRATADO_TEMPORARIO'); NOT NULL; DEFAULT: 'SERVIDOR_EFETIVO'; */// Vínculo do usuário com a administração
         'perfil_id', /* char(36); */
         'uf', /* char(2); */// UF do usuário
         'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho

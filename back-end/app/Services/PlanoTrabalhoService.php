@@ -30,7 +30,7 @@ class PlanoTrabalhoService extends ServiceBase
    */
   public function planosAtivos($usuario_id): Collection
   {
-    return PlanoTrabalho::where("usuario_id", $usuario_id)->where("data_inicio_vigencia", "<=", now())->where("data_fim_vigencia", ">=", now())->get();
+    return PlanoTrabalho::where("usuario_id", $usuario_id)->where("data_inicio", "<=", now())->where("data_fim", ">=", now())->get();
     // adicionar no gitlab para considerar o fuso horário
   }
 
@@ -45,8 +45,8 @@ class PlanoTrabalhoService extends ServiceBase
   public function planosAtivosPorData($data_inicial, $data_final, $usuario_id): Collection
   {
     return PlanoTrabalho::where("usuario_id", $usuario_id)
-      ->where("data_inicio_vigencia", "<=", $data_final)
-      ->where("data_fim_vigencia", ">=", $data_inicial)->get();
+      ->where("data_inicio", "<=", $data_final)
+      ->where("data_fim", ">=", $data_inicial)->get();
   }
 
   public function proxyQuery($query, &$data)
@@ -58,19 +58,19 @@ class PlanoTrabalhoService extends ServiceBase
         $dataFim = $this->getFilterValue($data["where"], "data_filtro_fim");
         switch ($condition[2]) {
           case "VIGENTE":
-            $where[] = ["data_inicio_vigencia", "<=", $dataFim];
-            $where[] = ["data_fim_vigencia", ">=", $dataInicio];
+            $where[] = ["data_inicio", "<=", $dataFim];
+            $where[] = ["data_fim", ">=", $dataInicio];
             break;
           case "NAOVIGENTE":;
-            $where[] = ["OR", ["data_inicio_vigencia", ">", $dataFim], ["data_fim_vigencia", "<", $dataInicio]];
+            $where[] = ["OR", ["data_inicio", ">", $dataFim], ["data_fim", "<", $dataInicio]];
             break;
           case "INICIAM":;
-            $where[] = ["data_inicio_vigencia", ">=", $dataInicio];
-            $where[] = ["data_inicio_vigencia", "<=", $dataFim];
+            $where[] = ["data_inicio", ">=", $dataInicio];
+            $where[] = ["data_inicio", "<=", $dataFim];
             break;
           case "FINALIZAM":;
-            $where[] = ["data_fim_vigencia", ">=", $dataInicio];
-            $where[] = ["data_fim_vigencia", "<=", $dataFim];
+            $where[] = ["data_fim", ">=", $dataInicio];
+            $where[] = ["data_fim", "<=", $dataFim];
             break;
         }
       } else if (!(is_array($condition) && in_array($condition[0], ["data_filtro_inicio", "data_filtro_fim"]))) {
@@ -104,10 +104,10 @@ class PlanoTrabalhoService extends ServiceBase
     $planos = PlanoTrabalho::where("usuario_id", $data["usuario_id"])->where("usuario_id", $data["unidade_id"])->where("tipo_modalidade_id", $data["tipo_modalidade_id"])->get();
     foreach ($planos as $plano) {
       if (
-        UtilService::intersect($plano->data_inicio_vigencia, $plano->data_fim_vigencia, $data["data_inicio_vigencia"], $data["data_fim_vigencia"]) &&
+        UtilService::intersect($plano->data_inicio, $plano->data_fim, $data["data_inicio"], $data["data_fim"]) &&
         UtilService::valueOrNull($data, "id") != $plano->id && !parent::loggedUser()->hasPermissionTo('MOD_PTR_INTSC_DATA')
       ) {
-        throw new ServerException("ValidatePlanoTrabalho", "O plano de trabalho #" . $plano->numero . " (" . UtilService::getDateTimeFormatted($plano->data_inicio_vigencia) . " à " . UtilService::getDateTimeFormatted($plano->data_fim_vigencia) . ") possui período conflitante para a mesma modalidade (MOD_PTR_INTSC_DATA)");
+        throw new ServerException("ValidatePlanoTrabalho", "O plano de trabalho #" . $plano->numero . " (" . UtilService::getDateTimeFormatted($plano->data_inicio) . " à " . UtilService::getDateTimeFormatted($plano->data_fim) . ") possui período conflitante para a mesma modalidade (MOD_PTR_INTSC_DATA)");
       }
     }
     if($action == ServiceBase::ACTION_EDIT) {
@@ -120,18 +120,18 @@ class PlanoTrabalhoService extends ServiceBase
       if($data["programa_id"] != $plano->programa_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Trabalho, não é possível alterar o seu Programa.");
       if($data["plano_entrega_id"] != $plano->plano_entrega_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Trabalho, não é possível alterar o seu Plano de Entregas.");
       /* (RN_CSLD_2) 
-          O plano de trabalho somente poderá ser alterado: se a nova data de início não for superior a algum perído já CONCLUIDO ou AVALIADO, ou até o limite da primeira ocorrência ou atividade já lançados; 
-          e se a nova data de fim não for inferior a algum perído já CONCLUIDO ou AVALIADO, ou até o limite da última ocorrência ou atividade já lançados;
+          O plano de trabalho somente poderá ser alterado: se a nova data de início não for superior a algum período já CONCLUIDO ou AVALIADO, ou até o limite da primeira ocorrência ou atividade já lançados; 
+          e se a nova data de final não for inferior a algum período já CONCLUIDO ou AVALIADO, ou até o limite da última ocorrência ou atividade já lançados;
       */
       $maxInicio = $this->dataFinalMinimaConsolidacao($plano);
       $minFim = $this->dataFinalMinimaConsolidacao($plano);
-      $dataInicioVigencia = date("Y-m-d", strtotime($data["data_inicio_vigencia"])); /* Transforma de datetime para date */
-      $dataFimVigencia = date("Y-m-d", strtotime($data["data_fim_vigencia"])); /* Transforma de datetime para date */
+      $dataInicioVigencia = date("Y-m-d", strtotime($data["data_inicio"])); /* Transforma de datetime para date */
+      $dataFimVigencia = date("Y-m-d", strtotime($data["data_fim"])); /* Transforma de datetime para date */
       if (strtotime($dataInicioVigencia) > strtotime($maxInicio)) {
         throw new ServerException("ValidatePlanoTrabalho", "Data de início do plano é maior que a da primeira consolidação avaliada; ou com entregas; ou com ocorrências.");
       }
       if (strtotime($dataFimVigencia) < strtotime($minFim)) {
-        throw new ServerException("ValidatePlanoTrabalho", "Data de fim do plano é menor que a da última consolidação avaliada; ou com entregas; ou com ocorrências");
+        throw new ServerException("ValidatePlanoTrabalho", "Data final do plano é menor que a da última consolidação avaliada; ou com entregas; ou com ocorrências");
       }
     }
   }
@@ -165,9 +165,9 @@ class PlanoTrabalhoService extends ServiceBase
     }
   }
 
-  /* Será a data_inicio_vigencia, ou a data_fim do último período CONCLUIDO ou AVALIADO, ou a data_fim da última ocorrência, ou data_inicio do último perído com entregas. O que for maior. */
+  /* Será a data_inicio, ou a data_fim do último período CONCLUIDO ou AVALIADO, ou a data_fim da última ocorrência, ou data_inicio do último perído com entregas. O que for maior. */
   public function dataFinalMinimaConsolidacao($plano) {
-    $result = strtotime($plano->data_inicio_vigencia);
+    $result = strtotime($plano->data_inicio);
     foreach($plano->consolidacoes as $consolidacao) {
       $data = strtotime($consolidacao->status->codigo != "INCLUIDO" ? $consolidacao->data_fim : 
         ($consolidacao->ocorrencias()->count() ? $consolidacao->ocorrencias()->max('data_fim') :
@@ -177,9 +177,9 @@ class PlanoTrabalhoService extends ServiceBase
     return date('Y-m-d', $result);
   }
 
-  /* Será a data_fim_vigencia, ou a data_inicio do primeiro período CONCLUIDO ou AVALIADO, ou a data_inicio da primeira ocorrência, ou data_fim do primeiro perído com entregas. O que for maior. */
+  /* Será a data_fim, ou a data_inicio do primeiro período CONCLUIDO ou AVALIADO, ou a data_inicio da primeira ocorrência, ou data_fim do primeiro período com entregas. O que for maior. */
   public function dataInicialMaximaConsolidacao($plano) {
-    $result = strtotime($plano->data_fim_vigencia);
+    $result = strtotime($plano->data_fim);
     foreach($plano->consolidacoes as $consolidacao) {
       $data = strtotime($consolidacao->status->codigo != "INCLUIDO" ? $consolidacao->data_inicio : 
         ($consolidacao->ocorrencias()->count() ? $consolidacao->ocorrencias()->min('data_inicio') :
@@ -223,8 +223,8 @@ class PlanoTrabalhoService extends ServiceBase
     $existentes = $plano->consolidacoes->all();
     $ocorrencias = array_reduce($existentes, fn($carry, $item) => array_merge($carry, $item->ocorrencias->all()), []);
     $merged = [];
-    $dataInicioVigencia = date("Y-m-d", strtotime($plano->data_inicio_vigencia)); /* Transforma de datetime para date */
-    $dataFimVigencia = date("Y-m-d", strtotime($plano->data_fim_vigencia)); /* Transforma de datetime para date */
+    $dataInicioVigencia = date("Y-m-d", strtotime($plano->data_inicio)); /* Transforma de datetime para date */
+    $dataFimVigencia = date("Y-m-d", strtotime($plano->data_fim)); /* Transforma de datetime para date */
     $dataInicio = $dataInicioVigencia;
     while(strtotime($dataInicio) <= strtotime($dataFimVigencia)) {
       $dataFim = date("Y-m-d", min(strtotime($this->proxDataConsolidacao($dataInicio, $plano->programa)), strtotime($dataFimVigencia)));
@@ -277,11 +277,11 @@ class PlanoTrabalhoService extends ServiceBase
       /* Remove o registro da consolidação completamente vazio */
       $anterior->delete();
     }
-    /* Refaz todas as datas fim das consolidações considerando sempre data_inicio da próxima - 1 dia */  
+    /* Refaz todas as datas finais das consolidações considerando sempre data_inicio da próxima - 1 dia */  
     $this->atualizaDataFimConsolidacoes($plano->id);
   }
 
-  /* Refaz todas as datas fim das consolidações considerando sempre data_inicio da próxima - 1 dia */
+  /* Refaz todas as datas finais das consolidações considerando sempre data_inicio da próxima - 1 dia */
   public function atualizaDataFimConsolidacoes($planoId) {
     $plano = PlanoTrabalho::find($planoId);
     $consolidacoes = $plano?->consolidacoes?->all() ?? [];
@@ -368,8 +368,8 @@ class PlanoTrabalhoService extends ServiceBase
         "tempoTotalPrevistoNoPeriodo" => 0, 
       ]
     ];
-    $inicioPlano = new DateTime($plano['data_inicio_vigencia']);
-    $fimPlano = new DateTime($plano['data_fim_vigencia'], $inicioPlano->getTimezone());
+    $inicioPlano = new DateTime($plano['data_inicio']);
+    $fimPlano = new DateTime($plano['data_fim'], $inicioPlano->getTimezone());
     $unidadePlano = Unidade::find($plano['unidade_id'])->first();
     $afastamentosUsuario = Afastamento::where('usuario_id', $plano['usuario_id'])->get()->toArray();
     // Cálculo das horas úteis totais de afastamento
@@ -394,7 +394,7 @@ class PlanoTrabalhoService extends ServiceBase
     /* Média das avaliações das atividades já avaliadas */
     //$result['mediaAvaliacoes'] = (count($result['atividadesAvaliadas']) == 0) ? null : $this->utilService->avg(array_map(fn ($d) => $d['avaliacao']['nota_atribuida'], $result['atividadesAvaliadas']));
     /* Cálculo das estatísticas limitadas pelo período estabelecido, se houver um. */
-    if($inicioPeriodo){ // se for solicitada a análise de um determinado período, obrigatoriamente serão fornecidos as datas de inicio e fim desse período
+    if($inicioPeriodo){ // se for solicitada a análise de um determinado período, obrigatoriamente serão fornecidos as datas inicial e final desse período
       $result['noPeriodo']['atividadesDistribuidas'] = $this->atividadesDistribuidas($plano, $inicioPeriodo, $fimPeriodo);
       $result['noPeriodo']['atividadesNaoIniciadas'] = $this->atividadesNaoIniciadas($plano, $inicioPeriodo, $fimPeriodo);
       $result['noPeriodo']['atividadesEmAndamento'] = $this->atividadesEmAndamento($plano, $inicioPeriodo, $fimPeriodo);
@@ -424,7 +424,7 @@ class PlanoTrabalhoService extends ServiceBase
   }
 
   /** 
-   * Retorna um array com todas as atividades de um determinado Plano de Trabalho, cujas datas de distribuição ou de prazo_entrega estejam
+   * Retorna um array com todas as atividades de um determinado Plano de Trabalho, cujas datas de distribuição ou de data_estipulada_entrega estejam
    * dentro do período estabelecido. 
    * 
    * @param   Plano   $plano          Plano de Trabalho a ser pesquisado.

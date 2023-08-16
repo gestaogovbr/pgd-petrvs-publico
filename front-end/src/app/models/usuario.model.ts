@@ -21,7 +21,7 @@ import { Projeto } from './projeto.model';
 import { UnidadeIntegrante } from './unidade-integrante.model';
 import { Unidade } from './unidade.model';
 
-export type UsuarioVinculacao = "SERVIDOR_EFETIVO" | "SERVIDOR_COMISSIONADO" | "EMPREGADO" | "CONTRATADO_TEMPORARIO";
+export type UsuarioSituacaoFuncional = "SERVIDOR_EFETIVO" | "SERVIDOR_COMISSIONADO" | "EMPREGADO" | "CONTRATADO_TEMPORARIO";
 
 export class UsuarioConfig {
     etiquetas: LookupItem[] = [];
@@ -72,13 +72,14 @@ export class Usuario extends Base implements HasNotificacao {
     public matricula: string | null = null; /* Matrícula do usuário */
     public apelido: string = ""; /* Apelido / Nome de Guerra / Nome funcional */
     public telefone: string | null = null; /* Telefone */
+    public data_nascimento?: Date | null = null; /* Data de nascimento do Usuário */
     public uf: string = "AC"; /* UF - Setar a primeira do LIST */
     public sexo: string | null = null; /* Sexo */
     public config: UsuarioConfig & IIndexable = new UsuarioConfig(); /*UsuarioConfig = new UsuarioConfig();*/ /* Configurações diversas */
     public notificacoes: NotificacoesConfig = new NotificacoesConfig();
     public id_google: string | null = null; /* ID do usuário google */
     public url_foto: string | null = null; /* URL da foto do usuário (temporário) */
-    public vinculacao: UsuarioVinculacao = "SERVIDOR_EFETIVO";
+    public situacao_funcional: UsuarioSituacaoFuncional = "SERVIDOR_EFETIVO";
     public texto_complementar_plano: string | null = ""; // Mensagem adicional para o plano de trabalho
 
     public perfil_id: number = 0; /* ID do perfil - Setar o primeiro do list*/

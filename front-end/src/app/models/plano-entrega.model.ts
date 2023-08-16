@@ -29,8 +29,8 @@ export class PlanoEntrega extends Base {
   public entregas: PlanoEntregaEntrega[] = [];                      // Entregas que compõem o plano de entregas
   public statusHistorico: Status[] = [];                             // Mudanças de status sofridas pelo plano de entregas (histórico)
 
-  public inicio: Date = new Date();                                 // Data inicio do plano de entrega
-  public fim: Date | null = null;                                   // Data fim do plano de entrega
+  public data_inicio: Date = new Date();                                 // Data inicial do plano de entrega
+  public data_fim: Date | null = null;                                   // Data final do plano de entrega
   public nome: string = "";                                         // Nome do plano de entrega
   public numero?: number;                                           // Número do plano de entrega (Gerado pelo sistema)
   //public status: string = 'INCLUIDO';                               // Status do plano de entrega

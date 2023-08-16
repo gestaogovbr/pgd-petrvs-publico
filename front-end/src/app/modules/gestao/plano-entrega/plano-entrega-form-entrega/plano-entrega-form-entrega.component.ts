@@ -76,8 +76,8 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.modalWidth = 600;
     this.form = this.fh.FormBuilder({
       descricao: { default: "" },
-      inicio: { default: new Date() },
-      fim: { default: new Date() },
+      data_inicio: { default: new Date() },
+      data_fim: { default: new Date() },
       meta: { default: 100 },
       realizado: { default: null },
       plano_entrega_id: { default: "" },
@@ -131,17 +131,17 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       result = "O demandante é obrigatório";
     } else if (['entrega_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "A entrega é obrigatória";
-    } else if (['inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+    } else if (['data_inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
-    } else if (['fim'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+    } else if (['data_fim'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
     }
     return result;
   }
 
   public formValidation = (form?: FormGroup) => {
-    let inicio = this.form?.controls.inicio.value;
-    let fim = this.form?.controls.fim.value;
+    let inicio = this.form?.controls.data_inicio.value;
+    let fim = this.form?.controls.data_fim.value;
     if(this.gridObjetivos?.editing) {
       this.tabs!.active = "OBJETIVOS" ;
       return "Salve ou cancele o registro atual em edição";
@@ -156,10 +156,10 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       return "Data de fim inválida";
     } else if(inicio > fim) {
       return "A data do fim não pode ser anterior à data do fim!";
-    } else if(this.planoEntrega && inicio < this.planoEntrega.inicio) {
-      return "Data de inicio menor que a data de inicio" + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(this.planoEntrega.inicio);
-    } else if(this.planoEntrega && this.planoEntrega.fim && fim > this.planoEntrega.fim) {
-      return "Data de fim maior que a data de fim" + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(this.planoEntrega.fim);
+    } else if(this.planoEntrega && inicio < this.planoEntrega.data_inicio) {
+      return "Data de inicio menor que a data de inicio" + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(this.planoEntrega.data_inicio);
+    } else if(this.planoEntrega && this.planoEntrega.data_fim && fim > this.planoEntrega.data_fim) {
+      return "Data de fim maior que a data de fim" + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(this.planoEntrega.data_fim);
     }
     return undefined;
   }

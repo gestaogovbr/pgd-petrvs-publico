@@ -17,7 +17,7 @@ class AtividadeTarefa extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'descricao', /* text; */// Descrição da tarefa
-        'data_hora', /* datetime; NOT NULL; */// Data hora do lançamento da tarefa
+        'data_lancamento', /* datetime; NOT NULL; */// Data hora do lançamento da tarefa
         'tempo_estimado', /* double(8,2); NOT NULL; */// Tempo estimado para a execução da tarefa (Horas decimais)
         'concluido', /* tinyint; NOT NULL; */// Se a tarefa foi concluída
         'documento_id', /* char(36); */

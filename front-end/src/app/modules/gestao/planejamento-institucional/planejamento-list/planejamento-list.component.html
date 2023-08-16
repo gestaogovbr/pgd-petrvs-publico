@@ -14,8 +14,8 @@
                     <div class="row">
                         <input-switch [size]="2" [label]="'Só da '+ lex.translate('Entidade')" controlName="so_entidade" [control]="filter!.controls.so_entidade" (change)="onSoEntidadeChange($event)"></input-switch>
                         <input-search #unidade [size]="4" [label]="lex.translate('Unidade')" [disabled]="unidade_disabled" controlName="unidade_id" [dao]="unidadeDao"></input-search>
-                        <input-datetime [size]="3" date label="Início" controlName="inicio" [control]="filter!.controls.inicio" [labelInfo]="'Data de início do' +lex.translate('Planejamento Institucional')"></input-datetime>
-                        <input-datetime [size]="3" date label="Fim" controlName="fim" [control]="filter!.controls.fim" [labelInfo]="'Data do fim do '+lex.translate('Planejamento Institucional')"></input-datetime>
+                        <input-datetime [size]="3" date label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" [labelInfo]="'Data de início do' +lex.translate('Planejamento Institucional')"></input-datetime>
+                        <input-datetime [size]="3" date label="Fim" controlName="data_fim" [control]="filter!.controls.data_fim" [labelInfo]="'Data do fim do '+lex.translate('Planejamento Institucional')"></input-datetime>
                     </div>
                 </filter>
                 <columns>
@@ -34,12 +34,12 @@
                     </column>
                     <column title="Início" [template]="columnInicio">
                         <ng-template let-row="row" #columnInicio>
-                            <span> {{dao!.getDateFormatted(row.inicio)}}</span>
+                            <span> {{dao!.getDateFormatted(row.data_inicio)}}</span>
                         </ng-template>
                     </column>
                     <column title="Fim" [template]="columnFim">
                         <ng-template let-row="row" #columnFim>
-                            <span> {{dao!.getDateFormatted(row.fim)}}</span>
+                            <span> {{dao!.getDateFormatted(row.data_fim)}}</span>
                         </ng-template>
                     </column>
                     <column title="Unidade" [template]="columnUnidade">

@@ -29,11 +29,11 @@ export class AfastamentoListComponent extends PageListBase<Afastamento, Afastame
     this.title = this.lex.translate("Afastamentos");
     this.code = "MOD_AFT";
     this.filter = this.fh.FormBuilder({
-      observacoes: { default: "" },
-      inicio_afastamento: { default: new Date() },
-      fim_afastamento: { default: new Date() },
-      usuario_id: { default: "" },
-      tipo_motivo_afastamento_id: { default: "" }
+      observacoes: {default: ""},
+      data_inicio: {default: new Date()},
+      data_fim: {default: new Date()},
+      usuario_id: {default: ""},
+      tipo_motivo_afastamento_id: {default: ""}
     });
     this.addOption(this.OPTION_INFORMACOES);
     this.addOption(this.OPTION_EXCLUIR, "MOD_AFT_EXCL");
@@ -46,15 +46,15 @@ export class AfastamentoListComponent extends PageListBase<Afastamento, Afastame
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
-    if (form.usuario_id?.length && form.tipo_motivo_afastamento_id?.length) {
+    if(form.usuario_id?.length && form.tipo_motivo_afastamento_id?.length) {
       result.push(["usuario_id", "==", form.usuario_id]);
       result.push(["tipo_motivo_afastamento_id", "==", form.tipo_motivo_afastamento_id]);
     } else if (form.usuario_id?.length) {
       result.push(["usuario_id", "==", form.usuario_id]);
     } else if (form.tipo_motivo_afastamento_id?.length) {
       result.push(["tipo_motivo_afastamento_id", "==", form.tipo_motivo_afastamento_id]);
-    } else if (this.dao?.validDateTime(form.inicio_afastamento) && this.dao?.validDateTime(form.fim_afastamento) && !this.listagemInicial) {
-      result.push(this.dao?.intersectionWhere("inicio_afastamento", "fim_afastamento", this.util.startOfDay(form.inicio_afastamento), this.util.startOfDay(form.fim_afastamento)));
+    } else if(this.dao?.validDateTime(form.data_inicio) && this.dao?.validDateTime(form.data_fim) && !this.listagemInicial) {
+      result.push(this.dao?.intersectionWhere("data_inicio", "data_fim", this.util.startOfDay(form.data_inicio), this.util.startOfDay(form.data_fim)));
     }
     return result;
   }

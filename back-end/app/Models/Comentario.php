@@ -19,7 +19,7 @@ class Comentario extends ModelBase
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'texto', /* text; NOT NULL; */// Texto do comentário
         'path', /* text; */// Path dos ids dos comentários
-        'data_hora', /* datetime; NOT NULL; */// Data e horário que foi feito o comentário
+        'data_comentario', /* datetime; NOT NULL; */// Data e horário que foi feito o comentário
         'tipo', /* enum('COMENTARIO','TECNICO','GERENCIAL','AVALIACAO','TAREFA','ATIVIDADE'); NOT NULL; DEFAULT: 'COMENTARIO'; */// Tipo do comentário
         'privacidade', /* enum('PUBLICO','PRIVADO'); NOT NULL; DEFAULT: 'PUBLICO'; */// Nível de acesso ao comentário
         'usuario_id', /* char(36); NOT NULL; */

@@ -49,7 +49,7 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
       plano_trabalho_id: {default: undefined},
       plano_trabalho_entrega_id: {default: undefined},
       data_distribuicao: {default: new Date()},
-      prazo_entrega: {default: new Date()},
+      data_estipulada_entrega: {default: new Date()},
       carga_horaria: {default: 0},
       tempo_planejado: {default: 0},
       esforco: {default: 0},
@@ -87,7 +87,7 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
     this.planosTrabalhos = planosTrabalhos.filter(x => x.unidade_id == this.entity!.unidade_id).map(x => {
       return {
         key: x.id,
-        value: (x.tipo_modalidade?.nome || "") + " - " + this.dao!.getDateFormatted(x.data_inicio_vigencia)+ " à " + this.dao!.getDateFormatted(x.data_fim_vigencia),
+        value: (x.tipo_modalidade?.nome || "") + " - " + this.dao!.getDateFormatted(x.data_inicio)+ " à " + this.dao!.getDateFormatted(x.data_fim),
         data: x
       };
     });
@@ -103,15 +103,8 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
       if(this.entity) {
         const planoTrabalho = this.planoTrabalho?.selectedItem?.data as PlanoTrabalho;
         const planoTrabalhoEntregaId = this.form.controls.plano_trabalho_entrega_id.value;
-        /*if(plano && this.form!.controls.unidade_id.value != plano.unidade_id) {
-          const unidade = await this.unidadeDao.getById(plano.unidade_id);
-          if(unidade) {
-            await this.unidade?.loadSearch(unidade);
-            await this.auth.selecionaUnidade(unidade.id);
-          }
-        }*/
         const cargaHoraria = planoTrabalho?.carga_horaria || this.calendar.expedienteMedio(this.entity!.unidade);
-        const tempo_planejado = this.calendar.horasUteis(this.form.controls.data_distribuicao.value, this.form.controls.prazo_entrega.value, cargaHoraria, this.entity!.unidade!, "DISTRIBUICAO");
+        const tempo_planejado = this.calendar.horasUteis(this.form.controls.data_distribuicao.value, this.form.controls.data_estipulada_entrega.value, cargaHoraria, this.entity!.unidade!, "DISTRIBUICAO");
         this.form.controls.carga_horaria.setValue(cargaHoraria);
         this.form.controls.tempo_planejado.setValue(tempo_planejado);
         this.form.controls.esforco.setValue(this.form.controls.esforco.value || this.entity?.tipo_atividade?.esforco || 0);

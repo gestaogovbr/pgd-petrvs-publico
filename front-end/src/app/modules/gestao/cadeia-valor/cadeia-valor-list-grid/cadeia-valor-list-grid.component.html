@@ -6,8 +6,8 @@
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-text [size]="6" label="Nome" icon="bi bi-textarea-t" controlName="nome" [control]="filter!.controls.nome" [labelInfo]="'Nome ' + lex.translate('cadeia de valor')"></input-text>
-            <input-datetime [size]="3" date label="Início" icon="bi bi-calendar-date" controlName="inicio" [control]="filter!.controls.inicio" [labelInfo]="'Início ' + lex.translate('cadeia de valor')"></input-datetime>
-            <input-datetime [size]="3" date label="Fim" icon="bi bi-calendar-date" controlName="fim" [control]="filter!.controls.fim" [labelInfo]="'Fim ' + lex.translate('cadeia de valor')"></input-datetime>
+            <input-datetime [size]="3" date label="Início" icon="bi bi-calendar-date" controlName="data_inicio" [control]="filter!.controls.data_inicio" [labelInfo]="'Início ' + lex.translate('cadeia de valor')"></input-datetime>
+            <input-datetime [size]="3" date label="Fim" icon="bi bi-calendar-date" controlName="data_fim" [control]="filter!.controls.data_fim" [labelInfo]="'Fim ' + lex.translate('cadeia de valor')"></input-datetime>
         </div>
     </filter>
     <columns>
@@ -26,12 +26,12 @@
         </column>
         <column title="Início" [template]="columnInicio">
             <ng-template let-row="row" #columnInicio>
-                <span>{{dao!.getDateFormatted(row.inicio)}}</span>
+                <span>{{dao!.getDateFormatted(row.data_inicio)}}</span>
             </ng-template>
         </column>
         <column title="Fim" [template]="columnFim">
             <ng-template let-row="row" #columnFim>
-                <span>{{dao!.getDateFormatted(row.fim)}}</span>
+                <span>{{dao!.getDateFormatted(row.data_fim)}}</span>
             </ng-template>
         </column>
         <column *ngIf="!selectable" type="options" [onEdit]="edit" [options]="options"></column>

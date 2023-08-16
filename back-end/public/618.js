@@ -44,8 +44,8 @@ class Programa extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
     this.nome = ""; /* Nome do programa */
     this.normativa = ""; /* Normativa que regula o programa */
     this.config = null; /* Configuração extra de programa */
-    this.data_inicio_vigencia = new Date(); /* Data de início vigencia */
-    this.data_fim_vigencia = new Date(); /* Data de fim vigencia */
+    this.data_inicio = new Date(); /* Data de início vigência */
+    this.data_fim = new Date(); /* Data de fim vigência */
     this.termo_obrigatorio = false; /* tinyint; NOT NULL; */
     this.prazo_max_plano_entrega = 365; /*Limite máximo de dias corridos para o plano de entregas (Zero para não limitar) */
     this.periodicidade_consolidacao = 'MENSAL'; /* Período para avaliação do plano de trabalho */
@@ -174,7 +174,7 @@ class ProgramaFormComponent extends src_app_modules_base_page_form_base__WEBPACK
         result = "Obrigatório";
       } else if (controlName == "prazo_max_plano_entrega" && parseInt(control.value || 0) > 99999) {
         result = "Inválido";
-      } else if (['data_inicio_vigencia', 'data_fim_vigencia'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+      } else if (['data_inicio', 'data_fim'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
         result = "Inválido";
       } else if (controlName == "periodicidade_valor") {
         if (['SEMANAL', 'QUINZENAL'].includes(this.form?.controls.periodicidade_consolidacao.value) && control.value > 6) result = "Inválido";
@@ -185,7 +185,7 @@ class ProgramaFormComponent extends src_app_modules_base_page_form_base__WEBPACK
     };
     this.formValidation = form => {
       let result = null;
-      if (this.form?.controls.data_fim_vigencia.value && this.form?.controls.data_inicio_vigencia.value > this.form?.controls.data_fim_vigencia.value) {
+      if (this.form?.controls.data_fim.value && this.form?.controls.data_inicio.value > this.form?.controls.data_fim.value) {
         result = "A data do fim não pode ser anterior à data do inicio!";
       }
       return result;
@@ -212,10 +212,10 @@ class ProgramaFormComponent extends src_app_modules_base_page_form_base__WEBPACK
       config: {
         default: null
       },
-      data_inicio_vigencia: {
+      data_inicio: {
         default: new Date()
       },
-      data_fim_vigencia: {
+      data_fim: {
         default: new Date()
       },
       termo_obrigatorio: {
@@ -284,7 +284,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵInheritDefinitionFeature"]],
   decls: 24,
   vars: 49,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "unidade_id", 3, "size", "dao", "selectParams"], ["unidade", ""], ["date", "", "label", "Data de In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio_vigencia", "labelInfo", "Data de in\u00EDcio da vig\u00EAncia do programa de gest\u00E3o na unidade instituidora", 3, "size", "control"], ["date", "", "label", "Data de Fim", "icon", "bi bi-calendar-date", "controlName", "data_fim_vigencia", "labelInfo", "Data de fim da vig\u00EAncia do programa de gest\u00E3o na unidade instituidora", 3, "size", "control"], ["label", "Vig\u00EAncia M\u00E1x P.E.", "icon", "bi bi-blockquote-left", "controlName", "prazo_max_plano_entrega", "labelInfo", "Limite m\u00E1ximo de dias corridos para a dura\u00E7\u00E3o do plano de entregas a partir da sua data de cria\u00E7\u00E3o (Zero para n\u00E3o limitar)", 3, "size", "maxValue", "control"], ["label", "T\u00EDtulo", "icon", "bi bi-textarea-t", "controlName", "nome", 3, "size", "control"], ["label", "Normativa", "icon", "bi bi-blockquote-left", "controlName", "normativa", "labelInfo", "Normativa que regula o Programa", 3, "size", "control"], [3, "title"], ["label", "Periodicidade", "controlName", "periodicidade_consolidacao", "labelInfo", "Per\u00EDodo para avalia\u00E7\u00E3o do plano de trabalho", 3, "size", "control", "items"], ["label", "Dia da semana", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", "items", 4, "ngIf"], ["label", "Dia do m\u00EAs", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", 4, "ngIf"], ["label", "Qtd. de Dias", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", 4, "ngIf"], ["label", "Toler\u00E2ncia", "controlName", "dias_tolerancia_consolidacao", "labelInfo", "Dias de toler\u00E2ncia para o lan\u00E7amento do registro das atividades na consolida\u00E7\u00E3o, ap\u00F3s esses dias ser\u00E1 liberado automaticamente para avalia\u00E7\u00E3o", 3, "size", "control"], ["label", "Se o termo \u00E9 obrigat\u00F3rio", "controlName", "termo_obrigatorio", "scale", "small", "labelPosition", "right", 3, "size"], ["detailsButton", "", "labelInfo", "Template do termo utilizado no plano de trabalho", "controlName", "template_tcr_id", 3, "label", "size", "dao", "where", "selectRoute", "details"], ["controlName", "tipo_documento_tcr_id", "labelInfo", "Tipo de documento utilizado para exportar o termo para o SEI/SUPER", 3, "label", "size", "dao"], ["tipoDocumento", ""], ["controlName", "tipo_avaliacao_id", 3, "label", "size", "dao", "labelInfo"], ["tipoAvaliacao", ""], ["label", "Dia da semana", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", "items"], ["label", "Dia do m\u00EAs", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control"], ["label", "Qtd. de Dias", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control"]],
+  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "unidade_id", 3, "size", "dao", "selectParams"], ["unidade", ""], ["date", "", "label", "Data de In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio", "labelInfo", "Data de in\u00EDcio da vig\u00EAncia do programa de gest\u00E3o na unidade instituidora", 3, "size", "control"], ["date", "", "label", "Data de Fim", "icon", "bi bi-calendar-date", "controlName", "data_fim", "labelInfo", "Data de fim da vig\u00EAncia do programa de gest\u00E3o na unidade instituidora", 3, "size", "control"], ["label", "Vig\u00EAncia M\u00E1x P.E.", "icon", "bi bi-blockquote-left", "controlName", "prazo_max_plano_entrega", "labelInfo", "Limite m\u00E1ximo de dias corridos para a dura\u00E7\u00E3o do plano de entregas a partir da sua data de cria\u00E7\u00E3o (Zero para n\u00E3o limitar)", 3, "size", "maxValue", "control"], ["label", "T\u00EDtulo", "icon", "bi bi-textarea-t", "controlName", "nome", 3, "size", "control"], ["label", "Normativa", "icon", "bi bi-blockquote-left", "controlName", "normativa", "labelInfo", "Normativa que regula o Programa", 3, "size", "control"], [3, "title"], ["label", "Periodicidade", "controlName", "periodicidade_consolidacao", "labelInfo", "Per\u00EDodo para avalia\u00E7\u00E3o do plano de trabalho", 3, "size", "control", "items"], ["label", "Dia da semana", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", "items", 4, "ngIf"], ["label", "Dia do m\u00EAs", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", 4, "ngIf"], ["label", "Qtd. de Dias", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", 4, "ngIf"], ["label", "Toler\u00E2ncia", "controlName", "dias_tolerancia_consolidacao", "labelInfo", "Dias de toler\u00E2ncia para o lan\u00E7amento do registro das atividades na consolida\u00E7\u00E3o, ap\u00F3s esses dias ser\u00E1 liberado automaticamente para avalia\u00E7\u00E3o", 3, "size", "control"], ["label", "Se o termo \u00E9 obrigat\u00F3rio", "controlName", "termo_obrigatorio", "scale", "small", "labelPosition", "right", 3, "size"], ["detailsButton", "", "labelInfo", "Template do termo utilizado no plano de trabalho", "controlName", "template_tcr_id", 3, "label", "size", "dao", "where", "selectRoute", "details"], ["controlName", "tipo_documento_tcr_id", "labelInfo", "Tipo de documento utilizado para exportar o termo para o SEI/SUPER", 3, "label", "size", "dao"], ["tipoDocumento", ""], ["controlName", "tipo_avaliacao_id", 3, "label", "size", "dao", "labelInfo"], ["tipoAvaliacao", ""], ["label", "Dia da semana", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", "items"], ["label", "Dia do m\u00EAs", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control"], ["label", "Qtd. de Dias", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control"]],
   template: function ProgramaFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementStart"](0, "editable-form", 0);
@@ -324,9 +324,9 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("size", 12)("dao", ctx.unidadeDao)("selectParams", _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵpureFunction1"](41, _c2, _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵpureFunction0"](40, _c1)));
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.data_inicio_vigencia);
+      _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.data_inicio);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.data_fim_vigencia);
+      _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.data_fim);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("size", 4)("maxValue", 365)("control", ctx.form.controls.prazo_max_plano_entrega);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](2);
@@ -452,7 +452,7 @@ function ProgramaListComponent_ng_template_13_Template(rf, ctx) {
     const row_r11 = ctx.row;
     const ctx_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate1"](" ", ctx_r6.dao.getDateFormatted(row_r11.data_inicio_vigencia), "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate1"](" ", ctx_r6.dao.getDateFormatted(row_r11.data_inicio), "");
   }
 }
 function ProgramaListComponent_ng_template_16_Template(rf, ctx) {
@@ -465,7 +465,7 @@ function ProgramaListComponent_ng_template_16_Template(rf, ctx) {
     const row_r12 = ctx.row;
     const ctx_r8 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate1"](" ", ctx_r8.dao.getDateFormatted(row_r12.data_fim_vigencia), "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate1"](" ", ctx_r8.dao.getDateFormatted(row_r12.data_fim), "");
   }
 }
 class ProgramaListComponent extends src_app_modules_base_page_list_base__WEBPACK_IMPORTED_MODULE_3__.PageListBase {

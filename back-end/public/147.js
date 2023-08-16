@@ -121,10 +121,10 @@ class FeriadoFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
       entidade_id: {
         default: null
       },
-      data_inicio_vigencia: {
+      data_inicio: {
         default: new Date()
       },
-      data_fim_vigencia: {
+      data_fim: {
         default: new Date()
       }
     }, this.cdRef, this.validate);

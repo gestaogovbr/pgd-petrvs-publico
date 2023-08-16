@@ -12,8 +12,8 @@ class ProjetoFase extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'inicio', /* datetime; */// Inicio (opcional)
-        'termino', /* datetime; */// Termino (opcional)
+        'data_inicio', /* datetime; */// Inicio (opcional)
+        'data_fim', /* datetime; */// Fim (opcional)
         'cor', /* varchar(100); NOT NULL; */// Código da cor em formato hex
         'nome', /* varchar(100); NOT NULL; */// Nome
         'descricao', /* varchar(256); NOT NULL; */// Descrição

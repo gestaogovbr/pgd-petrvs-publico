@@ -218,7 +218,7 @@ class AtividadeController extends ControllerBase
         try {
             $data = $request->validate([
                 'id' => ['required'],
-                'prazo_entrega' => ['required']
+                'data_estipulada_entrega' => ['required']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([

@@ -41,8 +41,8 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
         unidade_id: {default: null},
         entidade_id: {default: null},
         planejamento_superior_id: {default: null},
-        inicio: {default: new Date()},
-        fim: {default: null},
+        data_inicio: {default: new Date()},
+        data_fim: {default: null},
         missao: {default: ""},
         visao: {default: ""},
         valores: { default: []},
@@ -55,17 +55,17 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
       if(['nome','missao','visao'].indexOf(controlName) >= 0 && !control.value?.length) {
         result = "Obrigatório";
       }
-      if(['inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+      if(['data_inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
         result = "Inválido";
       }
-      if(controlName == 'fim' && control.value && !this.dao?.validDateTime(control.value)){
+      if(controlName == 'data_fim' && control.value && !this.dao?.validDateTime(control.value)){
         result = "Inválido";
       }
       return result;
     }
   
     public formValidation = (form?: FormGroup) => {
-      if(this.form!.controls.fim.value && this.form!.controls.inicio.value > this.form!.controls.fim.value) return "A data do início não pode ser maior que a data do fim!";
+      if(this.form!.controls.data_fim.value && this.form!.controls.data_inicio.value > this.form!.controls.data_fim.value) return "A data do início não pode ser maior que a data do fim!";
       if(this.form!.controls.valores.value.length == 0) return "É obrigatória a inclusão de ao menos um valor institucional!";
       if(this.isPlanejamentoUNEXEC() && !this.form.controls.planejamento_superior_id.value?.length) return "Quando o Planejamento é de uma Unidade Executora, é obrigatória a definição do Planejamento superior ao qual ele será vinculado!";
       return undefined;

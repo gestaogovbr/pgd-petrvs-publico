@@ -53,7 +53,7 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
     // Testa se o usuário possui permissão para exibir dados da unidade
     if (this.auth.hasPermissionTo("MOD_UND_CONS")) result.push({ icon: "bi bi-info-circle", label: "Informações", onClick: this.consult.bind(this) });
     // Testa se o usuário possui permissão de inativar a unidade
-    if (this.auth.hasPermissionTo("MOD_UND_INATV")) result.push({icon: unidade.inativo ? "bi bi-check-circle" : "bi bi-x-circle", label: unidade.inativo ? 'Reativar' : 'Inativar', onClick: async (unidade: Unidade) => await this.inativo(unidade, !unidade.inativo)});
+    if (this.auth.hasPermissionTo("MOD_UND_INATV")) result.push({icon: unidade.data_inativacao ? "bi bi-check-circle" : "bi bi-x-circle", label: unidade.data_inativacao ? 'Reativar' : 'Inativar', onClick: async (unidade: Unidade) => await this.inativo(unidade, !unidade.data_inativacao)});
     // Testa se o usuário possui permissão para gerenciar integrantes da unidade
     if (this.auth.hasPermissionTo("MOD_UND_INTG")) result.push({icon: "bi bi-people", label: "Integrantes", onClick: (unidade: Unidade) => this.go.navigate({ route: ['configuracoes', 'unidade', 'NOPERSIST', unidade.id, 'integrante'] })});
     // Testa se o usuário possui permissão para excluir unidade

@@ -7,8 +7,8 @@
                 </div>
                 <div class="row">
                     <input-search [size]="6" [disabled]="hasPermissionToUNEX ? undefined : 'true'" controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" [selectParams]="{filter: {instituidora: true}}" (change)="onUnidadeChange($event)"></input-search>
-                    <input-datetime date [size]="3" label="Início" icon="bi bi-calendar-date" controlName="inicio" [control]="form!.controls.inicio" labelInfo="Início do Planejamento Institucional"></input-datetime>
-                    <input-datetime date [size]="3" label="Fim" icon="bi bi-calendar-date" controlName="fim" [control]="form!.controls.fim" labelInfo="Fim do Planejamento Institucional"></input-datetime>
+                    <input-datetime date [size]="3" label="Início" icon="bi bi-calendar-date" controlName="data_inicio" [control]="form!.controls.data_inicio" labelInfo="Início do Planejamento Institucional"></input-datetime>
+                    <input-datetime date [size]="3" label="Fim" icon="bi bi-calendar-date" controlName="data_fim" [control]="form!.controls.data_fim" labelInfo="Fim do Planejamento Institucional"></input-datetime>
                 </div>
                 <div *ngIf="form!.controls.unidade_id.value" class="row">
                     <input-select [items]="planejamentosSuperiores" label="Selecione o Planejamento Superior vinculado" controlName="planejamento_superior_id" [control]="form!.controls.planejamento_superior_id" (change)="onPlanejamentoChange($event)" [icon]="entityService.getIcon('Planejamento')"></input-select>

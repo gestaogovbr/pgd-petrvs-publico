@@ -14,6 +14,7 @@ import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.se
 import { InputButtonComponent } from 'src/app/components/input/input-button/input-button.component';
 import { TipoAvaliacao } from 'src/app/models/tipo-avaliacao.model';
 import { InputMultitoggleComponent } from 'src/app/components/input/input-multitoggle/input-multitoggle.component';
+import { Avaliacao } from 'src/app/models/avaliacao.model';
 
 @Component({
   selector: 'app-atividade-form-avaliar',
@@ -54,7 +55,7 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
       fator_complexidade: {default: 1},
       data_distribuicao: {default: null},
       tempo_pactuado: {default: 0},
-      prazo_entrega: {default: null},
+      data_estipulada_entrega: {default: null},
       diferenca_prazo_entrega: {default: 0},
       data_inicio: {default: null},
       tempo_despendido: {default: 0},
@@ -86,17 +87,17 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
     formValue = this.util.fillForm(formValue, entity);
     this.atrasado = !!entity.metadados?.atrasado;
     formValue.diferenca_prazo_entrega = this.atrasado ? 
-      this.calendar.horasAtraso(formValue.prazo_entrega, entity.unidade!) :
-      this.calendar.horasAdiantado(formValue.data_entrega, formValue.prazo_entrega, entity.plano!.carga_horaria, entity.unidade!);
-    await this.atividade!.loadSearch(entity.atividade || formValue.atividade_id);
+      this.calendar.horasAtraso(formValue.data_estipulada_entrega, entity.unidade!) :
+      this.calendar.horasAdiantado(formValue.data_entrega, formValue.data_estipulada_entrega, entity.plano_trabalho!.carga_horaria, entity.unidade!);
+    await this.atividade!.loadSearch(entity.tipo_atividade || formValue.atividade_id);
     if(entity.unidade_id != this.auth.unidade!.id) {
       await this.auth.selecionaUnidade(entity.unidade_id);
     }
-    if(entity.avaliacao) {
+/*     if(entity.avaliacao) {
       formValue.nota_atribuida = entity.avaliacao.nota_atribuida;
       formValue.justificativas = entity.avaliacao.justificativas;
       formValue.tipo_avaliacao_id = entity.avaliacao.tipo_avaliacao_id;
-    }
+    } */
     formValue.comentario_avaliacao = (entity.comentarios || []).find(x => x.tipo == "AVALIACAO")?.texto || "";
     this.form.controls.nota_atribuida.setValue(formValue.nota_atribuida);
     this.onNotaChange(new Event('change'));
@@ -119,7 +120,7 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
   }
 
   public onNotaChange(event: Event) {
-    const nota = this.form.controls.nota_atribuida.value;
+/*     const nota = this.form.controls.nota_atribuida.value;
     const tipoAvaliacao = this.tiposAvaliacoes.find(x => x.nota_atribuida == nota);
     if(tipoAvaliacao) {
       this.tipoAvaliacao = {
@@ -140,7 +141,7 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
         }
       })
     }
-    this.cdRef.detectChanges();  
+    this.cdRef.detectChanges();  */ 
   }
 
   public onComplexidadeChange(event: Event) {
@@ -150,7 +151,7 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
       /* Carrega tempo pactuado */
       const fator = form.fator_complexidade || 1;
       const fator_ganho_produtivade = 1 - ((this.entity?.plano?.ganho_produtividade || 0) / 100);
-      this.form.controls.tempo_pactuado.setValue((atividade?.tempo_pactuado || 0) * fator * fator_ganho_produtivade || 0);
+      //this.form.controls.tempo_pactuado.setValue((atividade?.tempo_pactuado || 0) * fator * fator_ganho_produtivade || 0);
       this.form.controls.produtividade.setValue(this.entity?.plano?.tipo_modalidade?.calcula_tempo_despendido ? this.calendar.produtividade(this.form.controls.tempo_pactuado.value, form.tempo_despendido) : 0);
     }
   }
@@ -159,17 +160,17 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
     const atividade: Atividade | undefined = item.entity as Atividade;
     if(atividade) {
       /* Carrega complexidades */
-      this.complexidades = atividade.complexidade?.map(x => {
+/*       this.complexidades = atividade.complexidade?.map(x => {
         return {
           key: x.fator,
           value: x.grau + ' (Fator: ' + x.fator + ')'
         };
-      }) || [];
+      }) || []; */
       /* Atualiza fator de complexidade */
-      if(!atividade.complexidade?.find(x => x.fator == this.form.controls.fator_complexidade.value)) this.form.controls.fator_complexidade.setValue(1);
+      //if(!atividade.complexidade?.find(x => x.fator == this.form.controls.fator_complexidade.value)) this.form.controls.fator_complexidade.setValue(1);
       this.onComplexidadeChange(new Event("change")); 
       /* Calcula o tempo despendido mínimo */
-      this.despendidoMinimo = (atividade.tempo_minimo / 100) * (this.entity?.tempo_despendido || 0);
+      //this.despendidoMinimo = (atividade.tempo_minimo / 100) * (this.entity?.tempo_despendido || 0);
     } else {
       this.form.controls.tempo_pactuado.setValue(0);
       this.complexidades = [];
@@ -182,7 +183,7 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
       const form = this.form!.value;
       const avaliacao = {
         atividade_id: this.entity?.id,
-        atividade_id: form.atividade_id,
+        //atividade_id: form.atividade_id,
         tipo_avaliacao_id: this.tipoAvaliacao!.key,
         fator_complexidade: form.fator_complexidade,
         tempo_pactuado: form.tempo_pactuado,
@@ -192,7 +193,7 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
         comentario_avaliacao: form.comentario_avaliacao, 
         justificativas: form.justificativas || [] //this.justificativas?.items?.map(x => x.key) || []
       };
-      this.dao!.avaliar(avaliacao).then(saved => resolve(saved)).catch(reject);
+      //this.dao!.avaliar(avaliacao).then(saved => resolve(saved)).catch(reject);
     });
   }
 }
