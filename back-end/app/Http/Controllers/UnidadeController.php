@@ -115,10 +115,10 @@ class UnidadeController extends ControllerBase {
             if (!parent::loggedUser()->hasPermissionTo('MOD_UND_INATV')) throw new ServerException("ValidateUnidade", "Usuário precisa ter capacidade MOD_UND_INATV");
             $data = $request->validate([
                 'id' => ['required'],
-                'inativo' => ['required']
+                'data_inativacao' => ['required']
             ]);
             return response()->json([
-                'success' => $this->service->inativo($data["id"], $data["inativo"])
+                'success' => $this->service->inativo($data["id"], $data["data_inativacao"])
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);

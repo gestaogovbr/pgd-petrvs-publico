@@ -83,7 +83,7 @@ class PlanoEntregaService extends ServiceBase
         $result["unidadePaiUnidadePlanoEhLotacao"] = !empty($planoEntrega['unidade']['unidade_id']) && $this->usuario->isLotacao($planoEntrega['unidade']['unidade_id']);
         $result["unidadePlanoEhAlgumaLotacaoUsuario"] = in_array($planoEntrega['unidade_id'], array_map(fn($u) => $u['id'], $this->usuario->loggedUser()->unidades->toArray()));
         $result["unidadePlanoEhPaiAlgumaLotacaoUsuario"] = $this->usuario->loggedUser()->unidades->map(fn($u) => $u->id)->map(fn($ul) => Unidade::find($ul)->unidade_id)->contains($planoEntrega['unidade_id']);
-        $result["unidadePlanoPossuiPlanoAtivoMesmoPeriodoPlanoPai"] = !!array_filter($planoEntrega['unidade']['planosEntrega'], fn($p) => $this->isPlano('ATIVO',$p) && UtilService::intersect($planoEntrega['inicio'], $planoEntrega['fim'], $planoEntregaPai->inicio, $planoEntregaPai->fim));
+        $result["unidadePlanoPossuiPlanoAtivoMesmoPeriodoPlanoPai"] = !!array_filter($planoEntrega['unidade']['planosEntrega'], fn($p) => $this->isPlano('ATIVO',$p) && UtilService::intersect($planoEntrega['data_inicio'], $planoEntrega['data_fim'], $planoEntregaPai->data_inicio, $planoEntregaPai->data_fim));
         $result["lotadoLinhaAscendenteUnidadePlano"] = $this->usuario->isLotadoNaLinhaAscendente($planoEntrega['unidade_id']);
         $result["unidadePlanoEstahLinhaAscendenteAlgumaLotacaoUsuario"] = in_array($planoEntrega['unidade_id'], array_values(array_unique(array_reduce(array_map(fn($ul) => $this->unidade->linhaAscendente($ul), array_map(fn($u) => $u['id'], $this->usuario->loggedUser()->unidades->toArray())), 'array_merge', array()))));
         return $result;
@@ -306,8 +306,8 @@ class PlanoEntregaService extends ServiceBase
         $result = true;
         $programa = Programa::find($planoEntrega["programa_id"]);
         if ($programa->prazo_max_plano_entrega > 0) {
-            $dataInicio = new DateTime($planoEntrega["inicio"]);
-            $dataFim = new DateTime($planoEntrega["fim"]);
+            $dataInicio = new DateTime($planoEntrega["data_inicio"]);
+            $dataFim = new DateTime($planoEntrega["data_fim"]);
             $diff = $dataInicio->diff($dataFim);
             if ($diff->days > $programa->prazo_max_plano_entrega) {
                 $result = false;
@@ -317,17 +317,17 @@ class PlanoEntregaService extends ServiceBase
     }
 
     /**
-     * Verifica se as datas de início e fim das entregas do plano de entrega se encaixam na duração do Programa de gestão (true para caso esteja tudo ok)
+     * Verifica se as datas de início e final das entregas do plano de entrega se encaixam na duração do Programa de gestão (true para caso esteja tudo ok)
      */
     public function verificaDatasEntregas($planoEntrega)
     {
         $result = true;
-        $dataInicio = new DateTime($planoEntrega["inicio"]);
-        $dataFim = new DateTime($planoEntrega["fim"]);
+        $dataInicio = new DateTime($planoEntrega["data_inicio"]);
+        $dataFim = new DateTime($planoEntrega["data_fim"]);
         if ($planoEntrega["entregas"]) {
             foreach ($planoEntrega["entregas"] as $entrega) {
-                $entregaInicio = new DateTime($entrega["inicio"]);
-                $entregaFim = new DateTime($entrega["fim"]);
+                $entregaInicio = new DateTime($entrega["data_inicio"]);
+                $entregaFim = new DateTime($entrega["data_fim"]);
                 $result = $result && ($dataInicio <= $entregaInicio) && ($dataFim >= $entregaFim);
             }
         }

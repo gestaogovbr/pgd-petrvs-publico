@@ -22,7 +22,7 @@ class CreateAnexosTable extends Migration
             // Campos:
             $table->string('nome', 256)->comment("Nome do arquivo com extensão");
             $table->string('descricao', 256)->comment("Descrição do anexo");
-            $table->dateTime('data_hora')->comment("Data e horário que foi feito o comentário");
+            $table->dateTime('data_comentario')->comment("Data e horário que foi feito o comentário");
             $table->string('path', 256)->nullable()->comment("Path relativo do arquivo");
             $table->text('base64')->nullable()->comment("Arquivo em formato base64");
             // Chaves estrangeiras:

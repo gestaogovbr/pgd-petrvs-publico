@@ -22,11 +22,11 @@ class CreatePlanosTrabalhosTable extends Migration
             $table->softDeletes();
             // Campos:
             $table->double('carga_horaria', 8, 2)->default(0.00)->comment("Carga horária diária do usuário");
-            $table->double('tempo_total', 8, 2)->default(0.00)->comment("Horas úteis de trabalho no período de data_inicio_vigencia à data_fim_vigencia considerando carga_horaria, feriados, fins de semana");
+            $table->double('tempo_total', 8, 2)->default(0.00)->comment("Horas úteis de trabalho no período de data_inicio à data_fim considerando carga_horaria, feriados, fins de semana");
             $table->double('tempo_proporcional', 8, 2)->default(0.00)->comment("tempo_total menos os afastamentos");
             $table->integer('numero')->default(0)->unique()->comment("Número do plano de trabalho (Gerado pelo sistema)");
-            $table->dateTime('data_inicio_vigencia')->comment("Inicio do plano de trabalho");
-            $table->dateTime('data_fim_vigencia')->comment("Fim do plano de trabalho");
+            $table->dateTime('data_inicio')->comment("Inicio do plano de trabalho");
+            $table->dateTime('data_fim')->comment("Fim do plano de trabalho");
             $table->dateTime('data_arquivamento')->nullable()->comment("Data de arquivamento do plano de trabalho");
             $table->enum('forma_contagem_carga_horaria', ["DIA", "SEMANA", "MES"])->default("DIA")->comment("Forma de contagem padrão da carga horária");
             // Chaves estrangeiras:

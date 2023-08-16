@@ -21,9 +21,9 @@ class CreateNotificacoesWhatsappTable extends Migration
             $table->timestamps();
             $table->softDeletes();
             // Campos:
-            $table->dateTime('data_hora')->useCurrent()->comment("Data hora do início da sessão");
-            $table->dateTime('finalizacao')->nullable()->comment("Data hora da finalizacao da sessão (utilizado posteriormente para alertar o usuário que seu atendimento acabou)");
-            $table->dateTime('ultima_interacao')->useCurrent()->comment("Data hora utilizada para fazer o controle do tempo de sessão");
+            $table->dateTime('data_inicio_sessao')->useCurrent()->comment("Data hora do início da sessão");
+            $table->dateTime('data_fim_sessao')->nullable()->comment("Data hora do final da sessão (utilizado posteriormente para alertar o usuário que seu atendimento acabou)");
+            $table->dateTime('data_ultima_interacao')->useCurrent()->comment("Data hora utilizada para fazer o controle do tempo de sessão");
             $table->json('interacoes')->default(new Expression('(JSON_ARRAY())'))->comment("Interações (histórico do campo atual)");
             $table->tinyInteger('atual')->default(0)->comment("Informações da posição atual no menu");
             // Chaves estrangeiras:

@@ -21,8 +21,8 @@ class Programa extends ModelBase
         'nome', /* varchar(255); NOT NULL; */// Nome do programa
         'normativa', /* varchar(255); */// Normativa que regula o programa de gestão
         'config', /* json; */// Configurações do programa
-        'data_inicio_vigencia', /* datetime; NOT NULL; */// Inicio da vigência do programa
-        'data_fim_vigencia', /* datetime; NOT NULL; */// Fim da vigência do programa
+        'data_inicio', /* datetime; NOT NULL; */// Inicio da vigência do programa
+        'data_fim', /* datetime; NOT NULL; */// Fim da vigência do programa
         'prazo_max_plano_entrega', /* int; NOT NULL; */// Limite máximo de dias corridos para o plano de entregas (Zero para não limitar)
         'periodo_avaliacao', /* enum('SEMANAL','QUINZENAL','MENSAL','BIMESTRAL','TRIMESTRAL','SEMESTRAL'); NOT NULL; DEFAULT: 'MENSAL'; */// Período para avaliação do plano de trabalho
         'termo_obrigatorio', /* tinyint; NOT NULL; */// Se o termo é ou não obrigatório

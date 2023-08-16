@@ -19,7 +19,7 @@ class CreateSequencesTable extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
-        DB::table('sequences')->insert([]);
+        //DB::table('sequences')->insert([]);
     }
 
     /**

@@ -26,10 +26,10 @@ class Projeto extends ModelBase
         'descricao', /* varchar(256); NOT NULL; */// Descrição do projeto
         'finalidade', /* varchar(256); NOT NULL; */// Descrição do projeto
         'status', /* enum('PLANEJADO','INICIADO','CONCLUIDO','SUSPENSO','CANCELADO'); NOT NULL; */// Status do projeto
-        'inicio', /* datetime; NOT NULL; */// Inicio do projeto
-        'termino', /* datetime; NOT NULL; */// Fim do projeto
-        'inicio_baseline', /* datetime; */// Inicio do projeto (Baseline)
-        'termino_baseline', /* datetime; */// Fim do projeto (Baseline)
+        'data_inicio', /* datetime; NOT NULL; */// Inicio do projeto
+        'data_fim', /* datetime; NOT NULL; */// Fim do projeto
+        'data_inicio_baseline', /* datetime; */// Inicio do projeto (Baseline)
+        'data_fim_baseline', /* datetime; */// Fim do projeto (Baseline)
         'calcula_custos', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se o projeto calcula custos
         'tempo_corrido', /* tinyint; NOT NULL; */// Se o tempo é corrido ou usa a configuração de fins de semana, feriados e horário do expediente (quando usar horas)
         'usa_horas', /* tinyint; NOT NULL; DEFAULT: '1'; */// Se usa horas nas datas

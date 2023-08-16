@@ -23,8 +23,8 @@ class CreatePlanejamentosTable extends Migration
             $table->string('nome', 256)->comment("Nome do planejamento institucional");
             $table->text('missao')->comment("Missão da entidade/unidade");
             $table->text('visao')->comment("Visão da entidade/unidade");
-            $table->dateTime('inicio')->comment("Data de inicio do planejamento institucional");
-            $table->dateTime('fim')->nullable()->comment("Data do fim do planejamento institucional");
+            $table->dateTime('data_inicio')->comment("Data de início do planejamento institucional");
+            $table->dateTime('data_fim')->nullable()->comment("Data final do planejamento institucional");
             $table->dateTime('data_arquivamento')->nullable()->comment("Data de arquivamento do planejamento institucional");
             $table->json('valores')->comment("Valores da entidade/unidade");
             // Chaves estrangeiras:

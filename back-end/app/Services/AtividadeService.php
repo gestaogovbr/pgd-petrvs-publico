@@ -198,10 +198,10 @@ class AtividadeService extends ServiceBase
             if(empty($row->data_entrega)) { /* Somente as que não estiverem concluídas */
                 if(!empty($row->plano_trabalho_id)) $planosTrabalhos[$row->plano_trabalho_id] = true;
                 $tomorrow = Carbon::now()->add(1, "days")->format(ServiceBase::ISO8601_FORMAT);
-                $afastamentos[$row->usuario_id] = empty($afastamentos[$row->usuario_id]) ? [$row->data_distribuicao, $row->prazo_entrega] : $afastamentos[$row->usuario_id];
+                $afastamentos[$row->usuario_id] = empty($afastamentos[$row->usuario_id]) ? [$row->data_distribuicao, $row->data_estipulada_entrega] : $afastamentos[$row->usuario_id];
                 $afastamentos[$row->usuario_id] = [
                     UtilService::minDate($afastamentos[$row->usuario_id][0], $row->data_distribuicao),
-                    UtilService::maxDate($afastamentos[$row->usuario_id][1], $row->prazo_entrega, $tomorrow),
+                    UtilService::maxDate($afastamentos[$row->usuario_id][1], $row->data_estipulada_entrega, $tomorrow),
                 ];
             }
             if(empty($result['feriados'][$row->unidade_id])) $result['feriados'][$row->unidade_id] = $this->calendarioService->feriadosCadastrados($row->unidade_id);
@@ -216,8 +216,8 @@ class AtividadeService extends ServiceBase
             foreach($afastamentos as $usuario_id => $periodo) {
                 $afastamentosQuery->orWhere(function($query) use ($usuario_id, $periodo) {
                     $query->where("usuario_id", $usuario_id);
-                    $query->where("inicio_afastamento", "<=", $periodo[1]);
-                    $query->where("fim_afastamento", ">=", $periodo[0]);
+                    $query->where("data_inicio", "<=", $periodo[1]);
+                    $query->where("data_fim", ">=", $periodo[0]);
                 });
             }
             $list = $afastamentosQuery->get();
@@ -247,8 +247,8 @@ class AtividadeService extends ServiceBase
             $suspenso = $suspenso || empty($pausa->data_fim);
         }
         $result["suspenso"] = $suspenso;
-        $result["atrasado"] = !$result["concluido"] && strtotime($atividade->prazo_entrega) < strtotime($hora);
-        $result["tempo_atraso"] = $result["atrasado"] ? $this->calendarioService->tempoAtraso($atividade->prazo_entrega, $hora, $atividade->carga_horaria) : 0;
+        $result["atrasado"] = !$result["concluido"] && strtotime($atividade->data_estipulada_entrega) < strtotime($hora);
+        $result["tempo_atraso"] = $result["atrasado"] ? $this->calendarioService->tempoAtraso($atividade->data_estipulada_entrega, $hora, $atividade->carga_horaria) : 0;
         $result["status"] = ($result["concluido"] ? "CONCLUIDO" : ($result["iniciado"] ? "INICIADO" : "INCLUIDO"));
         return $result;
     }
@@ -285,7 +285,7 @@ class AtividadeService extends ServiceBase
         if ($inicioPeriodo == null && $fimPeriodo == null) return true;
         if(UtilService::intersection([
                     new Interval(['start' => strtotime($inicioPeriodo), 'end' => strtotime($fimPeriodo)]),
-                    new Interval(['start' => strtotime($atividade['data_distribuicao']), 'end' => $atividade['data_entrega'] ? UtilService::maxDate(strtotime($atividade['prazo_entrega']),strtotime($atividade['data_entrega'])) : strtotime($atividade['prazo_entrega'])])
+                    new Interval(['start' => strtotime($atividade['data_distribuicao']), 'end' => $atividade['data_entrega'] ? UtilService::maxDate(strtotime($atividade['data_estipulada_entrega']),strtotime($atividade['data_entrega'])) : strtotime($atividade['data_estipulada_entrega'])])
             ])) return true;
         return false;
     }
@@ -304,8 +304,8 @@ class AtividadeService extends ServiceBase
                     if(strtolower($with) == "usuario.afastamentos") {
                         $join["usuario.afastamentos"] = function ($query) use ($atividade, $util) {
                             $tomorrow = Carbon::now()->add(1, "days")->format(ServiceBase::ISO8601_FORMAT);
-                            $query->where("fim_afastamento", ">=", $atividade->data_distribuicao);
-                            $query->where("inicio_afastamento", "<=", UtilService::maxDate($atividade->prazo_entrega, $atividade->data_entrega, $tomorrow));
+                            $query->where("data_fim", ">=", $atividade->data_distribuicao);
+                            $query->where("data_inicio", "<=", UtilService::maxDate($atividade->data_estipulada_entrega, $atividade->data_entrega, $tomorrow));
                         };
                     } else {
                         array_push($join, $with);
@@ -419,7 +419,7 @@ class AtividadeService extends ServiceBase
                 $comentarioService->store([
                     "texto" => $descricaoTecnica,
                     "path" => null,
-                    "data_hora" => $unidadeService->hora($unidade->id),
+                    "data_comentario" => $unidadeService->hora($unidade->id),
                     "tipo" => "TECNICO",
                     "privacidade" => "PUBLICO",
                     "usuario_id" => parent::loggedUser()->id,
@@ -622,7 +622,7 @@ class AtividadeService extends ServiceBase
             if(!empty($atividade)) {
                 $this->update([
                     "id" => $atividade->id,
-                    "prazo_entrega" => $data["prazo_entrega"]
+                    "data_estipulada_entrega" => $data["data_estipulada_entrega"]
                 ], $unidade, false);
             } else {
                 throw new ServerException("ValidateAtividade", "Atividade não encontrada!");

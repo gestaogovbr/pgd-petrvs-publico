@@ -14,8 +14,8 @@ class Afastamento extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'observacoes', /* text; */// Observação sobre o afastamento
-        'inicio_afastamento', /* datetime; NOT NULL; */// Inicio do afastamento
-        'fim_afastamento', /* datetime; NOT NULL; */// Fim do afastamento
+        'data_inicio', /* datetime; NOT NULL; */// Inicio do afastamento
+        'data_fim', /* datetime; NOT NULL; */// Fim do afastamento
         'usuario_id', /* char(36); NOT NULL; */
         'tipo_motivo_afastamento_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */

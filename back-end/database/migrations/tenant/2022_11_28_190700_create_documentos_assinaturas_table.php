@@ -20,7 +20,7 @@ class CreateDocumentosAssinaturasTable extends Migration
             $table->timestamps();
             $table->softDeletes();
             // Campos:
-            $table->dateTime('data_hora')->useCurrent()->comment("Data hora da assinatura");
+            $table->dateTime('data_assinatura')->useCurrent()->comment("Data hora da assinatura");
             $table->text('assinatura')->comment("Hash da assinatura");
             // Chaves estrangeiras:
             $table->foreignUuid('documento_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Documento");

@@ -20,8 +20,8 @@ class CreateCadeiasValores extends Migration
             $table->timestamps();
             $table->softDeletes();
             // Campos:
-            $table->dateTime('inicio')->comment("Data de inicio da cadeia de valores");
-            $table->dateTime('fim')->nullable()->comment("Data do fim da cadeia de valores");
+            $table->dateTime('data_inicio')->comment("Data de início da cadeia de valores");
+            $table->dateTime('data_fim')->nullable()->comment("Data final da cadeia de valores");
             $table->dateTime('data_arquivamento')->nullable()->comment("Data de arquivamento da cadeia de valores");
             $table->string('nome', 256)->comment("Nome da cadeia de valores");
             // Chaves estrangeiras:

@@ -304,7 +304,7 @@ class CalendarioService
         ];
     }
 
-    public function tempoAtraso($prazo_entrega, $referencia, $carga_horaria) {
+    public function tempoAtraso($data_estipulada_entrega, $referencia, $carga_horaria) {
         // Refazer esse método para considerar os fds e os feriados e fastamentos
         return 100;
         //$this->timerToDecimal();
@@ -405,8 +405,8 @@ class CalendarioService
             $periodos = [];
             foreach(($afastamentos ?? []) as $afastamento) {
                 /* calcula a intersecção entre start e end e o inicio e fim do afastamento */
-                $a = UtilService::asTimestamp($afastamento['inicio_afastamento']);
-                $b = UtilService::asTimestamp($afastamento['fim_afastamento']);
+                $a = UtilService::asTimestamp($afastamento['data_inicio']);
+                $b = UtilService::asTimestamp($afastamento['data_fim']);
                 $intervalo = UtilService::intersection([new Interval(['start' => $start, 'end' => $end]), new Interval(['start' => $a, 'end' => $b])]);
                 if($intervalo && $intervalo->start != $intervalo->end) {
                     /* Caso tenha uma intersecção, adiciona o período para retorno e insere em $result->afastamentos */
