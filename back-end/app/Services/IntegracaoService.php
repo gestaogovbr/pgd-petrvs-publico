@@ -525,7 +525,7 @@ class IntegracaoService extends ServiceBase {
                     // Incluir todos servidores da integracao_servidor caso tabela usuarios 
                     // esteja vazia (seed inicial do órgão) e auto_incluir esteja ativado
                     
-                    $this->autoIncluir = true;
+                    $this->autoIncluir = false;
 
                     if($this->autoIncluir){
                         $vinculos_isr = IntegracaoServidor::all();
@@ -554,7 +554,6 @@ class IntegracaoService extends ServiceBase {
 
                         }
                     } else {
-                    // Exercício atual
                         foreach ($vinculos as $v) {
                             // $lotacao_atual = DB::select("SELECT codigo_servo_exercicio from integracao_servidores where cpf = (SELECT cpf from usuarios where id = :usuario_id)", $v->usuario_id);
                             //if (!empty($v->lotado()) && $v->unidade->codigo != $lotacao_atual) {
@@ -563,9 +562,6 @@ class IntegracaoService extends ServiceBase {
                             continue;
                         }
                     };
-
-                    // Gestores
-                    $unidades = IntegracaoUnidade::all();
 
                     // IntegracaoChefia::truncate();
                     // foreach($unidades as $u){
@@ -669,9 +665,24 @@ class IntegracaoService extends ServiceBase {
                 LogError::newError("Erro ao importar servidores", $e);
                 $this->result["servidores"]['Resultado'] = 'ERRO: '. $e->getMessage();
             }
-        }
+        };
+
 
         // Atualização dos Gestores
+
+        // Selecionas todas as unidades registradas no PETRVS (Ativas - tabelas unidades).
+        $unidades_petrvs = Unidade::distinct($this->codigo);
+
+        // Seleciona todos os usuarios petrvs que possuem funções registradas na tabela usuarios;
+        $usuarios_petrvs = Usuario::where("funcoes", "!=", "")->count();
+
+        // Seleciona todas as unidades que não possuem chefe registrado no PETRVS.
+        // $unidades_petrvs_sem_gestor = $unidades_petrvs->where($this->id, "!=", UnidadeIntegrante::where($gestores_petrvs->codigo);
+
+        foreach ($gestores_petrvs as $gp) {
+            continue;
+        };
+
         // Os gestores só são atualizadas quando as Unidades E os Servidores são atualizados e AMBOS com sucesso.
         if(!empty($inputs["gestores"]) && !$inputs["gestores"]){
             $this->result["gestores"]['Resultado'] = 'Os gestores não foram atualizados, conforme solicitado!';
