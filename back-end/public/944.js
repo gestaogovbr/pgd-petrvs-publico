@@ -2121,7 +2121,7 @@ function AtividadeListKanbanComponent_ng_template_17_ng_container_15_Template(rf
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("documento", card_r11.data.documento_requisicao);
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("ngForOf", ctx_r13.getStatus(card_r11.data));
+    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("ngForOf", ctx_r13.atividadeService.getStatus(card_r11.data));
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("ngForOf", card_r11.data.etiquetas);
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](1);
