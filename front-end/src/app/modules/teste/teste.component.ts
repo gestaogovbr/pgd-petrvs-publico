@@ -143,14 +143,14 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
       label: "Calcular data fim",
       onClick: () => {
         let form = this.form.value;
-        this.efemerides = this.calendar.calculaDataTempo(form.inicio, form.tempo, form.forma, form.carga_horaria, this.expediente, form.feriados.map((x: LookupItem) => x.data), [], form.afastamentos.map((x: LookupItem) => x.data));
+        this.efemerides = this.calendar.calculaDataTempo(form.data_inicio, form.tempo, form.forma, form.carga_horaria, this.expediente, form.feriados.map((x: LookupItem) => x.data), [], form.afastamentos.map((x: LookupItem) => x.data));
       }
     },
     {
       label: "Calcular tempo",
       onClick: () => {
         let form = this.form.value;
-        this.efemerides = this.calendar.calculaDataTempo(form.inicio, form.fim, form.forma, form.carga_horaria, this.expediente, form.feriados.map((x: LookupItem) => x.data), [], form.afastamentos.map((x: LookupItem) => x.data));
+        this.efemerides = this.calendar.calculaDataTempo(form.data_inicio, form.data_fim, form.forma, form.carga_horaria, this.expediente, form.feriados.map((x: LookupItem) => x.data), [], form.afastamentos.map((x: LookupItem) => x.data));
       }
     }
   ];
@@ -225,14 +225,14 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
       tempo: { default: 0 },
       feriados: { default: [] },
       afastamentos: { default: [] },
-      inicio: { default: new Date() },
-      fim: { default: new Date() },
+      data_inicio: { default: new Date() },
+      data_fim: { default: new Date() },
       carga_horaria: { default: 24 },
       dia: { default: 0 },
       mes: { default: 0 },
       ano: { default: 0 },
-      inicio_afastamento: { default: new Date() },
-      fim_afastamento: { default: new Date() },
+      data_inicio_afastamento: { default: new Date() },
+      data_fim_afastamento: { default: new Date() },
       observacao: { default: "" },
       nome: { default: "" },
       rate: { default: 2 },
@@ -432,12 +432,12 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
     let afastamento = new Afastamento({
       id: this.util.md5(),
       observacoes: form.observacao,
-      inicio_afastamento: form.inicio_afastamento,
-      fim_afastamento: form.fim_afastamento
+      data_inicio: form.data_inicio_afastamento,
+      data_fim: form.data_fim_afastamento
     });
     return {
       key: afastamento.id,
-      value: this.util.getDateTimeFormatted(afastamento.inicio_afastamento) + " até " + this.util.getDateTimeFormatted(afastamento.fim_afastamento) + " - " + afastamento.observacoes,
+      value: this.util.getDateTimeFormatted(afastamento.data_inicio) + " até " + this.util.getDateTimeFormatted(afastamento.data_fim) + " - " + afastamento.observacoes,
       data: afastamento
     };
   };

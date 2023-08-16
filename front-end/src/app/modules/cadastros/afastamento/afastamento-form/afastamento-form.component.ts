@@ -31,8 +31,8 @@ export class AfastamentoFormComponent extends PageFormBase<Afastamento, Afastame
 
     this.form = this.fh.FormBuilder({
       observacoes: {default: ""},
-      inicio_afastamento: {default: new Date()},
-      fim_afastamento: {default: new Date()},
+      data_inicio: {default: new Date()},
+      data_fim: {default: new Date()},
       usuario_id: {default: ""},
       tipo_motivo_afastamento_id: {default: ""}
     }, this.cdRef, this.validate);
@@ -51,7 +51,7 @@ export class AfastamentoFormComponent extends PageFormBase<Afastamento, Afastame
 
     if(['usuario_id', 'tipo_motivo_afastamento_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    } else if(['inicio_afastamento', 'fim_afastamento'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+    } else if(['data_inicio', 'data_fim'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
     }
 
@@ -76,9 +76,9 @@ export class AfastamentoFormComponent extends PageFormBase<Afastamento, Afastame
       let afastamento = this.util.fill(new Afastamento(), this.entity!);
       afastamento = this.util.fillForm(afastamento, this.form!.value);
       if (!this.isHoras()){
-        afastamento.inicio_afastamento.setHours(0,0,0);
-        afastamento.fim_afastamento.setHours(23,59,0);
-        afastamento.fim_afastamento.setDate(afastamento.fim_afastamento.getDate());
+        afastamento.data_inicio.setHours(0,0,0);
+        afastamento.data_fim.setHours(23,59,0);
+        afastamento.data_fim.setDate(afastamento.data_fim.getDate());
       }
       resolve(afastamento);
     });

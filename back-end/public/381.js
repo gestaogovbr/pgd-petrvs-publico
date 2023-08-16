@@ -1141,21 +1141,21 @@ class ProjetoTarefa extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
     this.path = ""; /* Path dos nós pais */
     this.nome = ""; /* Nome da tarefa */
     this.descricao = ""; /* Descricao da tarefa */
-    this.inicio = new Date(); /* Inicio da tarefa */
-    this.termino = new Date(); /* Fim da tarefa */
-    this.inicio_baseline = null; /* Inicio do projeto (Baseline) */
-    this.termino_baseline = null; /* Fim do projeto (Baseline) */
+    this.data_inicio = new Date(); /* Início da tarefa */
+    this.data_fim = new Date(); /* Final da tarefa */
+    this.data_inicio_baseline = null; /* Início do projeto (Baseline) */
+    this.data_fim_baseline = null; /* Final do projeto (Baseline) */
     this.duracao = 0.00; /* Duração da atividade. Se a duração for 0 e sintéfico for falso então irá se comportar apenas como um grupo */
     this.progresso = 0.00; /* Percentual de progresso da tarefa */
-    this.inicio_marco = false; /* Se o inicio é um marco */
-    this.termino_marco = false; /* Se o termino é um marco */
+    this.inicio_marco = false; /* Se o início é um marco */
+    this.termino_marco = false; /* Se o término é um marco */
     this.tem_filhos = false; /* Se é um registro sintético (resumo) */
     this.agrupador = false; /* Se é apenas um registro para agrupar tarefas filhas (somente se tem_filhos e não possui progresso) */
     this.soma_progresso_filhos = true; /* Se o progresso é calculado pela média do progresso dos filhos ou lançado manual (somente se tem_filhos) */
     this.status = "PLANEJADO"; /* Status */
     this.contraido = false; /* Se esta contraído */
     this.custo = 0.00; /* Custo: Será a soma dos recursos, sou a soma dos filhos caso temFilhos e sintetico */
-    this.calcula_intervalo = true; /* Se calcula o inicio e termino automaticamente pelos filhos (somente se tem_filhos) */
+    this.calcula_intervalo = true; /* Se calcula o início e término automaticamente pelos filhos (somente se tem_filhos) */
     this.aloca_proprios_recursos = true; /* Se possui recursos próprios (somente se tem_filhos) */
     this.soma_recusos_alocados_filhos = true; /* Mostra o somatório dos recursos filhos (somente se tem_filhos) */
     this.custos_proprios = true; /* Se possui custos próprios (somente se tem_filhos) */
@@ -1194,16 +1194,16 @@ class Projeto extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
     this.descricao = ""; /* Descrição do projeto */
     this.finalidade = ""; /* Descrição do projeto */
     this.status = 'PLANEJADO'; /* Status do projeto */
-    this.inicio = new Date(); /* Inicio do projeto */
-    this.termino = new Date(); /* Fim do projeto */
-    this.inicio_baseline = new Date(); /* Inicio do projeto (Baseline) */
-    this.termino_baseline = new Date(); /* Fim do projeto (Baseline) */
+    this.data_inicio = new Date(); /* Início do projeto */
+    this.data_fim = new Date(); /* Final do projeto */
+    this.data_inicio_baseline = new Date(); /* Início do projeto (Baseline) */
+    this.data_fim_baseline = new Date(); /* Final do projeto (Baseline) */
     this.custo = 0; /* Custo do projeto */
     this.calcula_custos = true; /* Se o projeto calcula custos */
     this.tempo_corrido = false; /* Se o tempo é corrido ou usa a configuração de fins de semana, feriados e horário do expediente (quando usar horas) */
     this.usa_horas = false; /* Se usa horas nas datas */
     this.usa_baseline = true; /* Se usa baseline */
-    this.calcula_intervalo = true; /* Se o termino é calculado automaticamente pelas tarefas */
+    this.calcula_intervalo = true; /* Se o término é calculado automaticamente pelas tarefas */
     this.agrupador = false; /* Se é apenas um registro para agrupar tarefas filhas (somente se tem_filhos e não possui progresso) */
     this.soma_progresso_filhos = true; /* Se o progresso é calculado pela média do progresso dos filhos ou lançado manual (somente se tem_filhos) */
     this.aloca_proprios_recursos = true; /* Se possui recursos próprios */
@@ -1840,7 +1840,7 @@ function ProjetoFormFasesComponent_ng_template_15_Template(rf, ctx) {
     const row_r20 = ctx.row;
     const ctx_r9 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtextInterpolate"](ctx_r9.util.getDateFormatted(row_r20.inicio));
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtextInterpolate"](ctx_r9.util.getDateFormatted(row_r20.data_inicio));
   }
 }
 function ProjetoFormFasesComponent_ng_template_17_Template(rf, ctx) {
@@ -1849,7 +1849,7 @@ function ProjetoFormFasesComponent_ng_template_17_Template(rf, ctx) {
   }
   if (rf & 2) {
     const ctx_r11 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 12)("control", ctx_r11.form.controls.inicio);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 12)("control", ctx_r11.form.controls.data_inicio);
   }
 }
 function ProjetoFormFasesComponent_ng_template_20_Template(rf, ctx) {
@@ -1862,7 +1862,7 @@ function ProjetoFormFasesComponent_ng_template_20_Template(rf, ctx) {
     const row_r22 = ctx.row;
     const ctx_r13 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtextInterpolate"](ctx_r13.util.getDateFormatted(row_r22.termino));
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtextInterpolate"](ctx_r13.util.getDateFormatted(row_r22.data_fim));
   }
 }
 function ProjetoFormFasesComponent_ng_template_22_Template(rf, ctx) {
@@ -1871,7 +1871,7 @@ function ProjetoFormFasesComponent_ng_template_22_Template(rf, ctx) {
   }
   if (rf & 2) {
     const ctx_r15 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 12)("control", ctx_r15.form.controls.termino);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 12)("control", ctx_r15.form.controls.data_fim);
   }
 }
 class ProjetoFormFasesComponent extends src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_5__.PageFrameBase {
@@ -1911,10 +1911,10 @@ class ProjetoFormFasesComponent extends src_app_modules_base_page_frame_base__WE
       cor: {
         default: ""
       },
-      inicio: {
+      data_inicio: {
         default: null
       },
-      termino: {
+      data_fim: {
         default: null
       }
     }, this.cdRef, this.validate);
@@ -1944,8 +1944,8 @@ class ProjetoFormFasesComponent extends src_app_modules_base_page_frame_base__WE
         nome: "",
         descricao: "",
         cor: _this2.randomColor,
-        inicio: null,
-        termino: null
+        data_inicio: null,
+        data_fim: null
       };
     })();
   }
@@ -1955,8 +1955,8 @@ class ProjetoFormFasesComponent extends src_app_modules_base_page_frame_base__WE
       form.controls.nome.setValue(row.nome);
       form.controls.descricao.setValue(row.descricao);
       form.controls.cor.setValue(row.cor);
-      form.controls.inicio.setValue(row.inicio);
-      form.controls.termino.setValue(row.termino);
+      form.controls.data_inicio.setValue(row.data_inicio);
+      form.controls.data_fim.setValue(row.data_fim);
       _this3.cdRef.detectChanges();
     })();
   }
@@ -1975,8 +1975,8 @@ class ProjetoFormFasesComponent extends src_app_modules_base_page_frame_base__WE
         row.nome = form.controls.nome.value;
         row.descricao = form.controls.descricao.value;
         row.cor = form.controls.cor.value;
-        row.inicio = form.controls.inicio.value;
-        row.termino = form.controls.termino.value;
+        row.data_inicio = form.controls.data_inicio.value;
+        row.data_fim = form.controls.data_fim.value;
         result = row;
         _this4.cdRef.detectChanges();
       }
@@ -2010,7 +2010,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵInheritDefinitionFeature"]],
   decls: 25,
   vars: 17,
-  consts: [["noButtons", "", 3, "form", "disabled"], [1, "row"], ["editable", "", 3, "items", "form", "hasDelete", "add", "load", "remove", "save"], ["title", "Nome", 3, "template", "editTemplate"], ["faseNome", ""], ["editFaseNome", ""], ["title", "Descri\u00E7\u00E3o", 3, "template", "editTemplate"], ["faseDescricao", ""], ["editFaseDescricao", ""], ["title", "In\u00EDcio", 3, "template", "editTemplate"], ["faseInicio", ""], ["editFaseInicio", ""], ["title", "Termino", 3, "template", "editTemplate"], ["faseTermino", ""], ["editFaseTermino", ""], ["type", "options"], [3, "color", "label"], ["controlName", "nome", 3, "size", "control"], ["controlName", "cor", 3, "size", "control"], [1, "d-block"], ["controlName", "descricao", 3, "size", "control"], ["date", "", "controlName", "inicio", 3, "size", "control"], ["date", "", "controlName", "termino", 3, "size", "control"]],
+  consts: [["noButtons", "", 3, "form", "disabled"], [1, "row"], ["editable", "", 3, "items", "form", "hasDelete", "add", "load", "remove", "save"], ["title", "Nome", 3, "template", "editTemplate"], ["faseNome", ""], ["editFaseNome", ""], ["title", "Descri\u00E7\u00E3o", 3, "template", "editTemplate"], ["faseDescricao", ""], ["editFaseDescricao", ""], ["title", "In\u00EDcio", 3, "template", "editTemplate"], ["faseInicio", ""], ["editFaseInicio", ""], ["title", "T\u00E9rmino", 3, "template", "editTemplate"], ["faseTermino", ""], ["editFaseTermino", ""], ["type", "options"], [3, "color", "label"], ["controlName", "nome", 3, "size", "control"], ["controlName", "cor", 3, "size", "control"], [1, "d-block"], ["controlName", "descricao", 3, "size", "control"], ["date", "", "controlName", "data_inicio", 3, "size", "control"], ["date", "", "controlName", "data_fim", 3, "size", "control"]],
   template: function ProjetoFormFasesComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "editable-form", 0)(1, "div", 1)(2, "grid", 2)(3, "columns")(4, "column", 3);
@@ -2150,7 +2150,7 @@ class ProjetoFormPrincipalComponent extends src_app_modules_base_page_frame_base
     this.validate = (control, controlName) => {
       let result = null;
       let form = this.form?.value || {};
-      if (controlName == "nome" && !control.value?.length || form.usa_baseline && ["inicio_baseline", "termino_baseline"].includes(controlName) && !this.util.isDataValid(control.value) || ["inicio", "termino"].includes(controlName) && !this.util.isDataValid(control.value)) {
+      if (controlName == "nome" && !control.value?.length || form.usa_baseline && ["data_inicio_baseline", "data_fim_baseline"].includes(controlName) && !this.util.isDataValid(control.value) || ["data_inicio", "data_fim"].includes(controlName) && !this.util.isDataValid(control.value)) {
         result = "Obrigatório";
       }
       return result;
@@ -2175,19 +2175,19 @@ class ProjetoFormPrincipalComponent extends src_app_modules_base_page_frame_base
       finalidade: {
         default: ""
       },
-      inicio: {
+      data_inicio: {
         default: new Date()
       },
-      termino: {
+      data_fim: {
         default: new Date()
       },
       duracao: {
         default: 0
       },
-      inicio_baseline: {
+      data_inicio_baseline: {
         default: new Date()
       },
-      termino_baseline: {
+      data_fim_baseline: {
         default: new Date()
       },
       progresso: {
@@ -2284,11 +2284,11 @@ class ProjetoFormPrincipalComponent extends src_app_modules_base_page_frame_base
   }
   onUsaBaselineChange() {
     if (this.form.controls.usa_baseline.value) {
-      if (!this.util.isDataValid(this.form.controls.inicio_baseline.value)) this.form.controls.inicio_baseline.setValue(this.form.controls.inicio.value);
-      if (!this.util.isDataValid(this.form.controls.termino_baseline.value)) this.form.controls.inicio_baseline.setValue(this.form.controls.termino.value);
+      if (!this.util.isDataValid(this.form.controls.data_inicio_baseline.value)) this.form.controls.data_inicio_baseline.setValue(this.form.controls.data_inicio.value);
+      if (!this.util.isDataValid(this.form.controls.data_fim_baseline.value)) this.form.controls.data_fim_baseline.setValue(this.form.controls.data_fim.value);
     } else {
-      this.form.controls.inicio_baseline.setValue(null);
-      this.form.controls.termino_baseline.setValue(null);
+      this.form.controls.data_inicio_baseline.setValue(null);
+      this.form.controls.data_fim_baseline.setValue(null);
     }
   }
   get intervaloAutomatico() {
@@ -2332,7 +2332,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵInheritDefinitionFeature"]],
   decls: 40,
   vars: 48,
-  consts: [[3, "form", "noButtons", "disabled", "submit", "cancel"], [1, "row"], ["label", "Nome", "controlName", "nome", "labelInfo", "Nome do projeto", 3, "size"], ["label", "Fase", "icon", "bi bi-puzzle", "controlName", "fase_id", 3, "size", "items"], ["label", "Status", "icon", "bi bi-arrow-up-right-circle", "controlName", "status", 3, "size", "items"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", 3, "size", "rows"], ["label", "Finalidade", "controlName", "finalidade", 3, "size", "rows"], [1, "col-md-4"], ["title", "Usa Baseline (planejado)?", "labelInfo", "Se o utiliza baseline no projeto (planejamento inicial)", 3, "control", "change"], ["noIcon", "", "label", "In\u00EDcio planejado", "icon", "bi bi-calendar-date", "controlName", "inicio_baseline", 3, "date", "size", "disabled"], ["noIcon", "", "label", "T\u00E9rmino planejado", "icon", "bi bi-calendar-date", "controlName", "termino_baseline", 3, "date", "size", "disabled"], [1, "col-md-6"], ["title", "Cronograma autom\u00E1tico?", "transparent", "", "labelInfo", "Se o per\u00EDodo do projeto ser\u00E1 calculado automaticamente pelas tarefas", 3, "control", "change"], ["noIcon", "", "label", "In\u00EDcio real", "icon", "bi bi-calendar-date", "controlName", "inicio", 3, "date", "size", "disabled"], ["noIcon", "", "label", "T\u00E9rmino real", "icon", "bi bi-calendar-date", "controlName", "termino", 3, "date", "size", "disabled"], ["daysOrHours", "", "label", "Dura\u00E7\u00E3o", "controlName", "duracao", "labelInfo", "Se o projeto ser\u00E1 calculado em horas ou dias", 3, "size", "unit", "disabled", "control", "unitChange"], [1, "col-md-2"], ["title", "Autom\u00E1tico?", "labelInfo", "Se o progresso ser\u00E1 calculado automaticamente pela soma dos progressos das tarefas", 3, "control", "change"], ["label", "Progresso", "sufix", "%", "icon", "bi bi-clock", "controlName", "progresso", "labelInfo", "Progresso do projeto (% Conclu\u00EDdo)", 3, "decimals", "size", "disabled"], ["title", "Configura\u00E7\u00F5es", "collapse", "", "transparent", "", 3, "collapsed"], ["label", "Tempo corrido", "scale", "small", "labelPosition", "right", "controlName", "tempo_corrido", "labelInfo", "Se o calculo do tempo \u00E9 cont\u00EDnuo, sem considerar fins de semana e feriados", 3, "size"], ["label", "Usa horas", "scale", "small", "labelPosition", "right", "controlName", "usa_horas", "labelInfo", "Se utiliza as datas com horas (todos os calculos mudam de dias para horas)", 3, "size"], ["label", "Intervalo autom\u00E1tico", "scale", "small", "labelPosition", "right", "controlName", "calcula_intervalo", "labelInfo", "Se o intervalo entre a data de inicio e t\u00E9rmino s\u00E3o calculados automaticamente utilizando as tarefas", 3, "size"], ["label", "Progresso autom\u00E1tico", "scale", "small", "labelPosition", "right", "controlName", "soma_progresso_filhos", "labelInfo", "Se o progresso \u00E9 calculado automaticamente pela soma dos processos das tarefas", 3, "size"], ["label", "Agrupador", "scale", "small", "labelPosition", "right", "controlName", "agrupador", "labelInfo", "Se o projeto agrupa as tarefas dentro dele", 3, "size"], ["label", "Usa custo", "scale", "small", "labelPosition", "right", "controlName", "calcula_custos", "labelInfo", "Se o projeto gerencia custos", 3, "size"], ["label", "Aloca recursos no projeto", "scale", "small", "labelPosition", "right", "controlName", "aloca_proprios_recursos", "labelInfo", "Se o projeto aloca recursos nele pr\u00F3prio, independente das tarefas", 3, "size"], ["label", "Soma aloca\u00E7\u00F5es autom\u00E1tico", "scale", "small", "labelPosition", "right", "controlName", "soma_recusos_alocados_filhos", "labelInfo", "Se os recursos das tarefas totalizam no projeto", 3, "size"], ["label", "Possui custos no projeto", "scale", "small", "labelPosition", "right", "controlName", "custos_proprios", "labelInfo", "Se o projeto possui custos pr\u00F3prios, independente das tarefas", 3, "size"], ["label", "Soma custos autom\u00E1tico", "scale", "small", "labelPosition", "right", "controlName", "soma_custos_filhos", "labelInfo", "Se os custos das tarefas totalizam no projeto", 3, "size"], ["label", "Utiliza baseline", "scale", "small", "labelPosition", "right", "controlName", "usa_baseline", "labelInfo", "Utiliza baseline (planejamento inicial)", 3, "size"], ["title", "Expediente", "collapse", "", "transparent", "", 3, "collapsed", 4, "ngIf"], ["title", "Expediente", "collapse", "", "transparent", "", 3, "collapsed"], ["label", "Usar do escrit\u00F3rio:", "labelPosition", "right", "controlName", "usar_escritorio", "labelInfo", "Aloca recursos no projeto", 3, "size"], ["hostClass", "p-0", "label", "", "icon", "", "disabled", "", "controlName", "escritorio_id", 3, "size", "dao"], ["escritorio", ""], ["expediente", ""]],
+  consts: [[3, "form", "noButtons", "disabled", "submit", "cancel"], [1, "row"], ["label", "Nome", "controlName", "nome", "labelInfo", "Nome do projeto", 3, "size"], ["label", "Fase", "icon", "bi bi-puzzle", "controlName", "fase_id", 3, "size", "items"], ["label", "Status", "icon", "bi bi-arrow-up-right-circle", "controlName", "status", 3, "size", "items"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", 3, "size", "rows"], ["label", "Finalidade", "controlName", "finalidade", 3, "size", "rows"], [1, "col-md-4"], ["title", "Usa Baseline (planejado)?", "labelInfo", "Se o utiliza baseline no projeto (planejamento inicial)", 3, "control", "change"], ["noIcon", "", "label", "In\u00EDcio planejado", "icon", "bi bi-calendar-date", "controlName", "data_inicio_baseline", 3, "date", "size", "disabled"], ["noIcon", "", "label", "T\u00E9rmino planejado", "icon", "bi bi-calendar-date", "controlName", "data_fim_baseline", 3, "date", "size", "disabled"], [1, "col-md-6"], ["title", "Cronograma autom\u00E1tico?", "transparent", "", "labelInfo", "Se o per\u00EDodo do projeto ser\u00E1 calculado automaticamente pelas tarefas", 3, "control", "change"], ["noIcon", "", "label", "In\u00EDcio real", "icon", "bi bi-calendar-date", "controlName", "data_inicio", 3, "date", "size", "disabled"], ["noIcon", "", "label", "T\u00E9rmino real", "icon", "bi bi-calendar-date", "controlName", "data_fim", 3, "date", "size", "disabled"], ["daysOrHours", "", "label", "Dura\u00E7\u00E3o", "controlName", "duracao", "labelInfo", "Se o projeto ser\u00E1 calculado em horas ou dias", 3, "size", "unit", "disabled", "control", "unitChange"], [1, "col-md-2"], ["title", "Autom\u00E1tico?", "labelInfo", "Se o progresso ser\u00E1 calculado automaticamente pela soma dos progressos das tarefas", 3, "control", "change"], ["label", "Progresso", "sufix", "%", "icon", "bi bi-clock", "controlName", "progresso", "labelInfo", "Progresso do projeto (% Conclu\u00EDdo)", 3, "decimals", "size", "disabled"], ["title", "Configura\u00E7\u00F5es", "collapse", "", "transparent", "", 3, "collapsed"], ["label", "Tempo corrido", "scale", "small", "labelPosition", "right", "controlName", "tempo_corrido", "labelInfo", "Se o calculo do tempo \u00E9 cont\u00EDnuo, sem considerar fins de semana e feriados", 3, "size"], ["label", "Usa horas", "scale", "small", "labelPosition", "right", "controlName", "usa_horas", "labelInfo", "Se utiliza as datas com horas (todos os calculos mudam de dias para horas)", 3, "size"], ["label", "Intervalo autom\u00E1tico", "scale", "small", "labelPosition", "right", "controlName", "calcula_intervalo", "labelInfo", "Se o intervalo entre a data de inicio e t\u00E9rmino s\u00E3o calculados automaticamente utilizando as tarefas", 3, "size"], ["label", "Progresso autom\u00E1tico", "scale", "small", "labelPosition", "right", "controlName", "soma_progresso_filhos", "labelInfo", "Se o progresso \u00E9 calculado automaticamente pela soma dos processos das tarefas", 3, "size"], ["label", "Agrupador", "scale", "small", "labelPosition", "right", "controlName", "agrupador", "labelInfo", "Se o projeto agrupa as tarefas dentro dele", 3, "size"], ["label", "Usa custo", "scale", "small", "labelPosition", "right", "controlName", "calcula_custos", "labelInfo", "Se o projeto gerencia custos", 3, "size"], ["label", "Aloca recursos no projeto", "scale", "small", "labelPosition", "right", "controlName", "aloca_proprios_recursos", "labelInfo", "Se o projeto aloca recursos nele pr\u00F3prio, independente das tarefas", 3, "size"], ["label", "Soma aloca\u00E7\u00F5es autom\u00E1tico", "scale", "small", "labelPosition", "right", "controlName", "soma_recusos_alocados_filhos", "labelInfo", "Se os recursos das tarefas totalizam no projeto", 3, "size"], ["label", "Possui custos no projeto", "scale", "small", "labelPosition", "right", "controlName", "custos_proprios", "labelInfo", "Se o projeto possui custos pr\u00F3prios, independente das tarefas", 3, "size"], ["label", "Soma custos autom\u00E1tico", "scale", "small", "labelPosition", "right", "controlName", "soma_custos_filhos", "labelInfo", "Se os custos das tarefas totalizam no projeto", 3, "size"], ["label", "Utiliza baseline", "scale", "small", "labelPosition", "right", "controlName", "usa_baseline", "labelInfo", "Utiliza baseline (planejamento inicial)", 3, "size"], ["title", "Expediente", "collapse", "", "transparent", "", 3, "collapsed", 4, "ngIf"], ["title", "Expediente", "collapse", "", "transparent", "", 3, "collapsed"], ["label", "Usar do escrit\u00F3rio:", "labelPosition", "right", "controlName", "usar_escritorio", "labelInfo", "Aloca recursos no projeto", 3, "size"], ["hostClass", "p-0", "label", "", "icon", "", "disabled", "", "controlName", "escritorio_id", 3, "size", "dao"], ["escritorio", ""], ["expediente", ""]],
   template: function ProjetoFormPrincipalComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementStart"](0, "editable-form", 0);
@@ -3670,9 +3670,9 @@ function ProjetoListComponent_ng_template_23_Template(rf, ctx) {
   if (rf & 2) {
     const row_r22 = ctx.row;
     const ctx_r9 = _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("label", ctx_r9.util.getDateTimeFormatted(row_r22.inicio));
+    _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("label", ctx_r9.util.getDateTimeFormatted(row_r22.data_inicio));
     _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("label", ctx_r9.util.getDateTimeFormatted(row_r22.termino));
+    _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("label", ctx_r9.util.getDateTimeFormatted(row_r22.data_fim));
   }
 }
 function ProjetoListComponent_ng_template_26_badge_0_Template(rf, ctx) {
@@ -3748,10 +3748,10 @@ class ProjetoListComponent extends src_app_modules_base_page_list_base__WEBPACK_
         result.push(["nome", "like", "%" + form.nome + "%"]);
       } else if (form.status) {
         result.push(["status", "==", form.status]);
-      } else if (form.inicio?.length) {
-        result.push(["termino", ">=", form.inicio]);
-      } else if (form.termino?.length) {
-        result.push(["inicio", "=<", form.termino]);
+      } else if (form.data_inicio?.length) {
+        result.push(["data_fim", ">=", form.data_inicio]);
+      } else if (form.data_fim?.length) {
+        result.push(["data_inicio", "=<", form.data_fim]);
       }
       return result;
     };
@@ -3769,10 +3769,10 @@ class ProjetoListComponent extends src_app_modules_base_page_list_base__WEBPACK_
       status: {
         default: null
       },
-      inicio: {
+      data_inicio: {
         default: null
       },
-      termino: {
+      data_fim: {
         default: null
       }
     });
@@ -3780,8 +3780,8 @@ class ProjetoListComponent extends src_app_modules_base_page_list_base__WEBPACK_
   filterClear(filter) {
     filter.controls.nome.setValue("");
     filter.controls.status.setValue(null);
-    filter.controls.inicio.setValue(null);
-    filter.controls.termino.setValue(null);
+    filter.controls.data_inicio.setValue(null);
+    filter.controls.data_fim.setValue(null);
     super.filterClear(filter);
   }
   getEnvolvidos(projeto, metadata) {
@@ -4630,8 +4630,8 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
     (tarefas || []).forEach(tarefa => {
       if (!tarefa.agrupador) {
         result.push({
-          start: tarefa.inicio,
-          end: tarefa.termino,
+          start: tarefa.data_inicio,
+          end: tarefa.data_fim,
           title: tarefa.nome
           //color?
         });
@@ -4681,8 +4681,8 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
         description: tarefa.descricao,
         extra: tarefa,
         progress: tarefa.progresso,
-        start: tarefa.inicio,
-        end: tarefa.termino,
+        start: tarefa.data_inicio,
+        end: tarefa.data_fim,
         duration: tarefa.duracao,
         startIsMilestone: tarefa.inicio_marco,
         endIsMilestone: tarefa.termino_marco,
@@ -4752,8 +4752,8 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
         description: projeto.descricao,
         extra: projeto,
         progress: projeto.progresso,
-        start: projeto.inicio,
-        end: projeto.termino,
+        start: projeto.data_inicio,
+        end: projeto.data_fim,
         duration: projeto.duracao,
         startIsMilestone: false,
         endIsMilestone: false,
@@ -4861,8 +4861,8 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
     const updateTotals = (origem, totais) => {
       if (origem.soma_progresso_filhos) origem.progresso = totais.progresso;
       if (origem.calcula_intervalo) {
-        origem.inicio = totais.inicio || origem.inicio;
-        origem.termino = totais.termino || origem.termino;
+        origem.data_inicio = totais.data_inicio || origem.data_inicio;
+        origem.data_fim = totais.data_fim || origem.data_fim;
         origem.duracao = totais.duracao || origem.duracao;
       }
     };
@@ -4871,8 +4871,8 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
         custo: 0,
         progresso: 0,
         duracao: 0,
-        inicio: null,
-        termino: null
+        data_inicio: null,
+        data_fim: null
       };
       /* Adiciona caso não exista, ou atualiza caso já exista (A exclusão de tarefas que não existem mais será feita utilizando tasksIds) */
       this.util.mergeArrayOfObject(projeto.tarefas, tasks, "id", false, (action, dst, src) => {
@@ -4887,8 +4887,8 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
             descricao: src.description,
             documento_id: origem.documento_id,
             documento: origem.documento,
-            inicio: src.start,
-            termino: src.end,
+            data_inicio: src.start,
+            data_fim: src.end,
             duracao: src.duration,
             progresso: src.progress,
             inicio_marco: src.startIsMilestone,
@@ -4911,8 +4911,8 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
             path: path,
             nome: src.name,
             descricao: src.description,
-            inicio: src.start,
-            termino: src.end,
+            data_inicio: src.start,
+            data_fim: src.end,
             duracao: src.duration,
             progresso: src.progress,
             inicio_marco: src.startIsMilestone,
@@ -4940,8 +4940,8 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
         /* Calculos feitos para serem retornados, que são utilizados logo aqui acima */
         if (pai.soma_progresso_filhos) result.progresso += src.progress || 0;
         if (pai.calcula_intervalo) {
-          result.inicio = !result.inicio || src.start.getTime() < result.inicio.getTime() ? src.start : result.inicio;
-          result.termino = !result.termino || src.end.getTime() > result.termino.getTime() ? src.end : result.termino;
+          result.data_inicio = !result.data_inicio || src.start.getTime() < result.data_inicio.getTime() ? src.start : result.data_inicio;
+          result.data_fim = !result.data_fim || src.end.getTime() > result.data_fim.getTime() ? src.end : result.data_fim;
         }
         //if(pai.soma_recusos_alocados_filhos)  /* Não precisa fazer nada, vai ser concatenado somente para exibição no toGantt */
         if (pai.soma_custos_filhos) result.custo += tarefa.custo;
@@ -4960,8 +4960,8 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
     Object.assign(projeto, {
       nome: root.name,
       descricao: root.description,
-      inicio: root.start,
-      termino: root.end,
+      data_inicio: root.start,
+      data_fim: root.end,
       duracao: root.duration,
       progresso: root.progress,
       regras: fromGanttRules(project.roles),
@@ -5602,7 +5602,7 @@ class ProjetoTarefaFilterComponent extends src_app_modules_base_page_base__WEBPA
       label: "Selecionar",
       onClick: (...args) => {
         this.grid?.setMultiselectSelectedItems(this.tarefas.filter(tarefa => this.form.controls.usuario_id?.value?.length && tarefa.alocacoes?.find(x => x.recurso?.usuario_id == this.form.controls.usuario_id?.value) || this.form.controls.unidade_id?.value?.length && tarefa.alocacoes?.find(x => x.recurso?.unidade_id == this.form.controls.unidade_id?.value)
-        //(this.util.isDataValid(this.form.controls.inicio?.value) && tarefa.inicio.getTime() )
+        //(this.util.isDataValid(this.form.controls.data_inicio?.value) && tarefa.data_inicio.getTime() )
         ));
       }
     }, {
@@ -5628,10 +5628,10 @@ class ProjetoTarefaFilterComponent extends src_app_modules_base_page_base__WEBPA
       unidade_id: {
         default: null
       },
-      inicio: {
+      data_inicio: {
         default: null
       },
-      fim: {
+      data_fim: {
         default: null
       }
     });
@@ -5650,8 +5650,8 @@ class ProjetoTarefaFilterComponent extends src_app_modules_base_page_base__WEBPA
       index: 0,
       nome: this._projeto?.nome || "PROJETO",
       descricao: this.projeto?.descricao || "",
-      inicio: this._projeto?.inicio || new Date(),
-      termino: this._projeto?.termino || new Date()
+      data_inicio: this._projeto?.data_inicio || new Date(),
+      data_fim: this._projeto?.data_fim || new Date()
     })];
     this.tarefas.push(...(this._projeto?.tarefas?.sort((a, b) => a.indice < b.indice ? -1 : 1) || []));
     this.cdRef.detectChanges();
@@ -5685,7 +5685,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵInheritDefinitionFeature"]],
   decls: 17,
   vars: 13,
-  consts: [[3, "form", "buttons", "disabled"], [1, "row"], ["controlName", "usuario_id", 3, "size", "dao"], ["usuario", ""], ["controlName", "unidade_id", 3, "size", "dao"], ["unidade", ""], ["date", "", "label", "In\u00EDcio", "controlName", "inicio", "labelInfo", "Data de in\u00EDcio da tarefa", 3, "size"], ["date", "", "label", "Fim", "controlName", "fim", "labelInfo", "Data fim da tarefa", 3, "size"], ["multiselect", "", 3, "items", "multiselectChange"], ["title", "Tarefa", 3, "template"], ["columnTarefa", ""], ["title", "Recursos", 3, "template"], ["columnRecursos", ""], [3, "url", "hint", 4, "ngFor", "ngForOf"], [3, "url", "hint"]],
+  consts: [[3, "form", "buttons", "disabled"], [1, "row"], ["controlName", "usuario_id", 3, "size", "dao"], ["usuario", ""], ["controlName", "unidade_id", 3, "size", "dao"], ["unidade", ""], ["date", "", "label", "In\u00EDcio", "controlName", "data_inicio", "labelInfo", "Data de in\u00EDcio da tarefa", 3, "size"], ["date", "", "label", "Fim", "controlName", "data_fim", "labelInfo", "Data fim da tarefa", 3, "size"], ["multiselect", "", 3, "items", "multiselectChange"], ["title", "Tarefa", 3, "template"], ["columnTarefa", ""], ["title", "Recursos", 3, "template"], ["columnRecursos", ""], [3, "url", "hint", 4, "ngFor", "ngForOf"], [3, "url", "hint"]],
   template: function ProjetoTarefaFilterComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "editable-form", 0)(1, "div", 1);
@@ -5911,7 +5911,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵInheritDefinitionFeature"]],
   decls: 43,
   vars: 47,
-  consts: [[3, "form", "noButtons", "disabled", "submit", "cancel"], [1, "row"], ["label", "Pai", "controlName", "tem_filhos", "labelInfo", "Se possui filhos, se \u00E9 uma tarefa sint\u00E9tica (resumo)", 3, "size"], ["controlName", "tipo", 3, "size", "label", "control", "items"], ["icon", "bi bi-arrow-up-right-circle", "controlName", "status_tarefa", 3, "size", "label", "items"], ["label", "Nome", "controlName", "nome", "labelInfo", "Nome da tarefa", 3, "size"], ["displayOnlySelected", "", "controlName", "atividade_id", 3, "size", "dao", "displayTemplate"], ["atividade", ""], ["displayAtividade", ""], ["controlName", "numero_processo", "labelInfo", "N\u00FAmero do processo, com a formata\u00E7\u00E3o de origem", 3, "label", "size", "control", "disabled"], ["procRequisicao", ""], ["controlName", "numero_documento", "labelInfo", "Numero do documento de requisi\u00E7\u00E3o, caso seja o Sei \u00E9 o numero Sei", 3, "label", "size", "control", "disabled"], ["docRequisicao", ""], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", 3, "size", "rows"], ["title", "Cronograma e progresso"], ["label", "Marco", "controlName", "marco_inicio", "labelInfo", "Marco in\u00EDcio", 3, "size"], ["label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "inicio", 3, "date", "size"], ["label", "Marco", "controlName", "marco_termino", "labelInfo", "Marco t\u00E9rmino", 3, "size"], ["label", "T\u00E9rmino", "icon", "bi bi-calendar-date", "controlName", "termino", 3, "date", "size"], ["date", "", "label", "In\u00EDcio realizado", "icon", "bi bi-calendar-date", "controlName", "inicio_realizado", 3, "size"], ["date", "", "label", "T\u00E9rmino realizado", "icon", "bi bi-calendar-date", "controlName", "termino_relizado", 3, "size"], ["number", "", "prefix", "R$", "icon", "bi bi-clock", "controlName", "custo", "labelInfo", "Custo associado \u00E0 tarefa", 3, "label", "size"], ["number", "", "label", "Progresso", "sufix", "%", "icon", "bi bi-clock", "controlName", "progresso", "labelInfo", "Progresso do projeto (% Conclu\u00EDdo)", 3, "size"], ["title", "Configura\u00E7\u00F5es"], ["label", "Possui custos pr\u00F3prios", "scale", "small", "labelPosition", "right", "controlName", "ten_filhos", "labelInfo", "Define se a tarefa tem custos pr[oprios associados", 3, "size"], ["label", "Aloca recursos no projeto", "scale", "small", "labelPosition", "right", "controlName", "aloca_recursos_proprios", "labelInfo", "Aloca recursos pr\u00F3prios da tarefa", 3, "size"], ["scale", "small", "labelPosition", "right", "controlName", "possui_custos_proprios", "labelInfo", "Define se a tarefa tem custos pr[oprios associados", 3, "label", "size"], ["scale", "small", "labelPosition", "right", "controlName", "calcula_intervalo", "labelInfo", "Calculo intervalo de execu\u00E7\u00E3o da tarefa", 3, "label", "size"], ["label", "Contra\u00EDda", "scale", "small", "labelPosition", "right", "controlName", "contraido", "labelInfo", "Define se a tarefa tem custos pr[oprios associados", 3, "size"], ["label", "Agrupadora", "scale", "small", "labelPosition", "right", "controlName", "agrupador", "labelInfo", "A tarefa tem fun\u00E7\u00E3o agrupadora", 3, "size"], ["label", "Soma progresso das filhas", "scale", "small", "labelPosition", "right", "controlName", "soma_progresso_filhos", "labelInfo", "Calcula o progresso das tarefas filhas", 3, "size"], ["scale", "small", "labelPosition", "right", "controlName", "soma_recursos_alocados_filhos", "labelInfo", "Soma recursos das tarefas filhas", 3, "label", "size"]],
+  consts: [[3, "form", "noButtons", "disabled", "submit", "cancel"], [1, "row"], ["label", "Pai", "controlName", "tem_filhos", "labelInfo", "Se possui filhos, se \u00E9 uma tarefa sint\u00E9tica (resumo)", 3, "size"], ["controlName", "tipo", 3, "size", "label", "control", "items"], ["icon", "bi bi-arrow-up-right-circle", "controlName", "status_tarefa", 3, "size", "label", "items"], ["label", "Nome", "controlName", "nome", "labelInfo", "Nome da tarefa", 3, "size"], ["displayOnlySelected", "", "controlName", "atividade_id", 3, "size", "dao", "displayTemplate"], ["atividade", ""], ["displayAtividade", ""], ["controlName", "numero_processo", "labelInfo", "N\u00FAmero do processo, com a formata\u00E7\u00E3o de origem", 3, "label", "size", "control", "disabled"], ["procRequisicao", ""], ["controlName", "numero_documento", "labelInfo", "Numero do documento de requisi\u00E7\u00E3o, caso seja o Sei \u00E9 o numero Sei", 3, "label", "size", "control", "disabled"], ["docRequisicao", ""], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", 3, "size", "rows"], ["title", "Cronograma e progresso"], ["label", "Marco", "controlName", "marco_inicio", "labelInfo", "Marco in\u00EDcio", 3, "size"], ["label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio", 3, "date", "size"], ["label", "Marco", "controlName", "marco_termino", "labelInfo", "Marco t\u00E9rmino", 3, "size"], ["label", "T\u00E9rmino", "icon", "bi bi-calendar-date", "controlName", "data_fim", 3, "date", "size"], ["date", "", "label", "In\u00EDcio realizado", "icon", "bi bi-calendar-date", "controlName", "inicio_realizado", 3, "size"], ["date", "", "label", "T\u00E9rmino realizado", "icon", "bi bi-calendar-date", "controlName", "termino_relizado", 3, "size"], ["number", "", "prefix", "R$", "icon", "bi bi-clock", "controlName", "custo", "labelInfo", "Custo associado \u00E0 tarefa", 3, "label", "size"], ["number", "", "label", "Progresso", "sufix", "%", "icon", "bi bi-clock", "controlName", "progresso", "labelInfo", "Progresso do projeto (% Conclu\u00EDdo)", 3, "size"], ["title", "Configura\u00E7\u00F5es"], ["label", "Possui custos pr\u00F3prios", "scale", "small", "labelPosition", "right", "controlName", "ten_filhos", "labelInfo", "Define se a tarefa tem custos pr[oprios associados", 3, "size"], ["label", "Aloca recursos no projeto", "scale", "small", "labelPosition", "right", "controlName", "aloca_recursos_proprios", "labelInfo", "Aloca recursos pr\u00F3prios da tarefa", 3, "size"], ["scale", "small", "labelPosition", "right", "controlName", "possui_custos_proprios", "labelInfo", "Define se a tarefa tem custos pr[oprios associados", 3, "label", "size"], ["scale", "small", "labelPosition", "right", "controlName", "calcula_intervalo", "labelInfo", "Calculo intervalo de execu\u00E7\u00E3o da tarefa", 3, "label", "size"], ["label", "Contra\u00EDda", "scale", "small", "labelPosition", "right", "controlName", "contraido", "labelInfo", "Define se a tarefa tem custos pr[oprios associados", 3, "size"], ["label", "Agrupadora", "scale", "small", "labelPosition", "right", "controlName", "agrupador", "labelInfo", "A tarefa tem fun\u00E7\u00E3o agrupadora", 3, "size"], ["label", "Soma progresso das filhas", "scale", "small", "labelPosition", "right", "controlName", "soma_progresso_filhos", "labelInfo", "Calcula o progresso das tarefas filhas", 3, "size"], ["scale", "small", "labelPosition", "right", "controlName", "soma_recursos_alocados_filhos", "labelInfo", "Soma recursos das tarefas filhas", 3, "label", "size"]],
   template: function ProjetoTarefaFormPrincipalComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](0, "editable-form", 0);
@@ -6198,12 +6198,12 @@ class ProjetoService {
     let minData = null;
     let maxData = null;
     for (let tarefa of projeto.tarefas || []) {
-      minData = !minData && tarefa.inicio || tarefa.inicio && minData && tarefa.inicio.getTime() < minData.getTime() ? tarefa.inicio : minData;
-      maxData = !maxData && tarefa.inicio || tarefa.termino && maxData && tarefa.termino?.getTime() > maxData.getTime() ? tarefa.termino : maxData;
+      minData = !minData && tarefa.data_inicio || tarefa.data_inicio && minData && tarefa.data_inicio.getTime() < minData.getTime() ? tarefa.data_inicio : minData;
+      maxData = !maxData && tarefa.data_inicio || tarefa.data_fim && maxData && tarefa.data_fim?.getTime() > maxData.getTime() ? tarefa.data_fim : maxData;
     }
     if (projeto.calcula_intervalo) {
-      projeto.inicio = minData || maxData || new Date();
-      projeto.termino = maxData || projeto.inicio;
+      projeto.data_inicio = minData || maxData || new Date();
+      projeto.data_fim = maxData || projeto.data_inicio;
     }
   }
 }

@@ -30,8 +30,8 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
     this.code = "MOD_PLAN_INST";
     this.title = this.lex.translate('Planejamentos Institucionais');
     this.filter = this.fh.FormBuilder({
-      inicio: {default: null},
-      fim: {default: null},
+      data_inicio: {default: null},
+      data_fim: {default: null},
       nome: {default: ""},
       unidade_id: {default: null},
       so_entidade: { default: false },
@@ -82,8 +82,8 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
 
   public filterClear(filter: FormGroup) {
     filter.controls.nome.setValue("");
-    filter.controls.inicio.setValue(null);
-    filter.controls.fim.setValue(null);
+    filter.controls.data_inicio.setValue(null);
+    filter.controls.data_fim.setValue(null);
     filter.controls.unidade_id.setValue(null);
     filter.controls.so_entidade.setValue(false);
     super.filterClear(filter);
@@ -102,11 +102,11 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
     if(form.nome?.length) {
       result.push(["nome", "like", "%" + form.nome + "%"]);
     }
-    if(form.inicio) {
-      result.push(["inicio", ">=", form.inicio]);
+    if(form.data_inicio) {
+      result.push(["data_inicio", ">=", form.data_inicio]);
     }
-    if(form.fim) {
-      result.push(["fim", "<=", form.fim]);
+    if(form.data_fim) {
+      result.push(["data_fim", "<=", form.data_fim]);
     }
     return result;
   }

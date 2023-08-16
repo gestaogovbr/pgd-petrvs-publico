@@ -7,8 +7,8 @@ export class Afastamento extends Base {
     public usuario?: Usuario;
 
     public observacoes: string | null = null; /* Observação sobre o afastamento */
-    public inicio_afastamento: Date = new Date(); /* Inicio do afastamento  */
-    public fim_afastamento: Date = new Date(); /* Fim do afastamento */
+    public data_inicio: Date = new Date(); /* Início do afastamento  */
+    public data_fim: Date = new Date(); /* Fim do afastamento */
     public usuario_id: string = "" /*  */
     public tipo_motivo_afastamento_id: string = ""; /*  */
 

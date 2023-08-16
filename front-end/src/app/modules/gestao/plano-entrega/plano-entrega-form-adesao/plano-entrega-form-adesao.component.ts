@@ -41,8 +41,8 @@ export class PlanoEntregaFormAdesaoComponent extends PageFormBase<PlanoEntrega, 
     this.modalWidth = 1000;
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
-      inicio: { default: "" },
-      fim: { default: "" },
+      data_inicio: { default: "" },
+      data_fim: { default: "" },
       planejamento_id: { default: null },
       cadeia_valor_id: { default: null },
       unidade_id: { default: this.auth.unidade?.id },
@@ -58,8 +58,8 @@ export class PlanoEntregaFormAdesaoComponent extends PageFormBase<PlanoEntrega, 
     if(planoEntrega){
       this.form.controls.plano_entrega_id.setValue(planoEntrega.id);
       this.form.controls.nome.setValue(planoEntrega.nome);
-      this.form.controls.inicio.setValue(planoEntrega.inicio);
-      this.form.controls.fim.setValue(planoEntrega.fim);
+      this.form.controls.data_inicio.setValue(planoEntrega.data_inicio);
+      this.form.controls.data_fim.setValue(planoEntrega.data_fim);
       this.form.controls.planejamento_id.setValue(planoEntrega.planejamento_id);
       this.form.controls.cadeia_valor_id.setValue(planoEntrega.cadeia_valor_id);
     }
@@ -72,7 +72,7 @@ export class PlanoEntregaFormAdesaoComponent extends PageFormBase<PlanoEntrega, 
     }
     return result;
     /*  (RN_PENT_2_7)
-        Em caso de adesão, os campos 'inicio', 'fim', 'planejamento_id', e 'cadeia_valor_id', deverão ser sempre iguais aos do plano-pai; 
+        Em caso de adesão, os campos 'data_inicio', 'data_fim', 'planejamento_id', e 'cadeia_valor_id', deverão ser sempre iguais aos do plano-pai; 
         portanto, quando um plano de entregas próprio sofrer alteração em um desses campos, todos os planos a ele vinculados deverão ser atualizados também;
     */  
   }
@@ -102,8 +102,8 @@ export class PlanoEntregaFormAdesaoComponent extends PageFormBase<PlanoEntrega, 
   public onPlanoEntregaChange(event: Event){
     if(this.form.controls.plano_entrega_id.value){
       this.form.controls.nome.setValue(this.planoEntrega?.selectedItem?.entity.nome);
-      this.form.controls.inicio.setValue(this.planoEntrega?.selectedItem?.entity.inicio);
-      this.form.controls.fim.setValue(this.planoEntrega?.selectedItem?.entity.fim);
+      this.form.controls.data_inicio.setValue(this.planoEntrega?.selectedItem?.entity.data_inicio);
+      this.form.controls.data_fim.setValue(this.planoEntrega?.selectedItem?.entity.data_fim);
       this.form.controls.planejamento_id.setValue(this.planoEntrega?.selectedItem?.entity.planejamento_id);
       this.form.controls.cadeia_valor_id.setValue(this.planoEntrega?.selectedItem?.entity.cadeia_valor_id);
       this.form.controls.programa_id.setValue(this.planoEntrega?.selectedItem?.entity.programa_id);

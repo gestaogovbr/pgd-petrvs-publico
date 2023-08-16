@@ -17,8 +17,8 @@ export class ProgramaDaoService extends DaoBaseService<Programa> {
     return this.deepsFilter([
       { field: "nome", label: "Nome" },
       { field: "normativo", label: "Normativo" },
-      { field: "data_inicio_vigencia", label: "Data início" },
-      { field: "data_fim_vigencia", label: "Data termino" }
+      { field: "data_inicio", label: "Data início" },
+      { field: "data_fim", label: "Data término" }
     ], deeps);
   }
 

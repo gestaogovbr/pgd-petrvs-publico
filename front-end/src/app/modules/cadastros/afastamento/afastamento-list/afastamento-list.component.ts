@@ -32,8 +32,8 @@ export class AfastamentoListComponent extends PageListBase<Afastamento, Afastame
     this.code = "MOD_AFT";
     this.filter = this.fh.FormBuilder({
       observacoes: {default: ""},
-      inicio_afastamento: {default: new Date()},
-      fim_afastamento: {default: new Date()},
+      data_inicio: {default: new Date()},
+      data_fim: {default: new Date()},
       usuario_id: {default: ""},
       tipo_motivo_afastamento_id: {default: ""}
     });
@@ -56,12 +56,13 @@ export class AfastamentoListComponent extends PageListBase<Afastamento, Afastame
   }
 
   /*public filterClear(filter: FormGroup) {
-    filter.controls.inicio_afastamento.setValue("");
-    filter.controls.fim_afastamento.setValue("");
+    filter.controls.data_inicio.setValue("");
+    filter.controls.data_fim.setValue("");
     filter.controls.usuario_id.setValue("");
     filter.controls.tipo_motivo_afastamento_id.setValue("");
     super.filterClear(filter);
   }*/
+
   public filtro(){
     this.listagemInicial = false;
   }
@@ -69,8 +70,6 @@ export class AfastamentoListComponent extends PageListBase<Afastamento, Afastame
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
-    //let inicio_afast = new Date();
-    //let fim_afast = new Date();
     if(form.usuario_id?.length && form.tipo_motivo_afastamento_id?.length) {
       result.push(["usuario_id", "==", form.usuario_id]);
       result.push(["tipo_motivo_afastamento_id", "==", form.tipo_motivo_afastamento_id]);
@@ -78,12 +77,8 @@ export class AfastamentoListComponent extends PageListBase<Afastamento, Afastame
       result.push(["usuario_id", "==", form.usuario_id]);
     } else if(form.tipo_motivo_afastamento_id?.length) {
       result.push(["tipo_motivo_afastamento_id", "==", form.tipo_motivo_afastamento_id]);
-    } else if(this.dao?.validDateTime(form.inicio_afastamento) && this.dao?.validDateTime(form.fim_afastamento) && !this.listagemInicial) {
-      result.push(this.dao?.intersectionWhere("inicio_afastamento", "fim_afastamento", this.util.startOfDay(form.inicio_afastamento), this.util.startOfDay(form.fim_afastamento)));
-      //inicio_afast = form.inicio_afastamento.toISOString().slice(0,10);//Método para organizar o date em 'yyyy-mm-dd', formato que o banco consegue comparar.
-      //fim_afast = form.fim_afastamento.toISOString().slice(0,10);
-      //result.push(["inicio_afastamento", ">=", this.util.startOfDay(form.inicio_afastamento)]);
-      //result.push(["fim_afastamento", "<=", this.util.endOfDay(form.fim_afastamento)]);
+    } else if(this.dao?.validDateTime(form.data_inicio) && this.dao?.validDateTime(form.data_fim) && !this.listagemInicial) {
+      result.push(this.dao?.intersectionWhere("data_inicio", "data_fim", this.util.startOfDay(form.data_inicio), this.util.startOfDay(form.data_fim)));
     }
     return result;
   }

@@ -34,8 +34,8 @@ export class ProjetoFormFasesComponent extends PageFrameBase {
       nome: {default: ""},
       descricao: {default: ""},
       cor: {default: ""},
-      inicio: {default: null},
-      termino: {default: null}
+      data_inicio: {default: null},
+      data_fim: {default: null}
     }, this.cdRef, this.validate);
   }
 
@@ -68,8 +68,8 @@ export class ProjetoFormFasesComponent extends PageFrameBase {
       nome: "",
       descricao: "",
       cor: this.randomColor,
-      inicio: null,
-      termino: null
+      data_inicio: null,
+      data_fim: null
     } as IIndexable;
   }
 
@@ -77,8 +77,8 @@ export class ProjetoFormFasesComponent extends PageFrameBase {
     form.controls.nome.setValue(row.nome);
     form.controls.descricao.setValue(row.descricao);
     form.controls.cor.setValue(row.cor);
-    form.controls.inicio.setValue(row.inicio);
-    form.controls.termino.setValue(row.termino);
+    form.controls.data_inicio.setValue(row.data_inicio);
+    form.controls.data_fim.setValue(row.data_fim);
     this.cdRef.detectChanges();
   }
 
@@ -94,8 +94,8 @@ export class ProjetoFormFasesComponent extends PageFrameBase {
       row.nome = form.controls.nome.value;
       row.descricao = form.controls.descricao.value;
       row.cor = form.controls.cor.value;
-      row.inicio = form.controls.inicio.value;
-      row.termino = form.controls.termino.value;
+      row.data_inicio = form.controls.data_inicio.value;
+      row.data_fim = form.controls.data_fim.value;
       result = row;
       this.cdRef.detectChanges();
     }

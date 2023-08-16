@@ -26,9 +26,9 @@
     <separator title="Cronograma e progresso"></separator>
     <div class="row">
         <input-switch label="Marco" [size]="2" controlName="marco_inicio" labelInfo="Marco início"></input-switch>
-        <input-datetime [date]="projeto?.usa_horas ? undefined : 'true'" [size]="4" label="Início" icon="bi bi-calendar-date" controlName="inicio"></input-datetime>
+        <input-datetime [date]="projeto?.usa_horas ? undefined : 'true'" [size]="4" label="Início" icon="bi bi-calendar-date" controlName="data_inicio"></input-datetime>
         <input-switch label="Marco" [size]="2" controlName="marco_termino" labelInfo="Marco término"></input-switch>
-        <input-datetime [date]="projeto?.usa_horas ? undefined : 'true'" [size]="4" label="Término" icon="bi bi-calendar-date" controlName="termino"></input-datetime>
+        <input-datetime [date]="projeto?.usa_horas ? undefined : 'true'" [size]="4" label="Término" icon="bi bi-calendar-date" controlName="data_fim"></input-datetime>
         <!-- input-workload daysOrHours [size]="3" [unit]="unitDuracao" [disabled]="" label="Duração" controlName="duracao" [control]="form!.controls.carga_horaria" [unitChange]="onUnitDuracaoChange.bind(this)" labelInfo="Se o projeto será calculado em horas ou dias"></input-workload /-->
     </div>
     <div class="row">

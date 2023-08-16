@@ -11,8 +11,8 @@ export class Planejamento extends Base {
     public planejamento_superior?: Planejamento;
     
     public data_arquivamento: Date | null = null;  /* Data de arquivamento */
-    public inicio: Date = new Date(); /* Data de início do planejamento */
-    public fim: Date | null = null; /* Data do fim do planejamento */
+    public data_inicio: Date = new Date(); /* Data de início do planejamento */
+    public data_fim: Date | null = null; /* Data final do planejamento */
     public nome: string = ""; /* Nome do planejamento institucional */
     public missao: string = ""; /* Missão da Instituição/Unidade */
     public visao: string = ""; /* Visão da Instituição/Unidade */

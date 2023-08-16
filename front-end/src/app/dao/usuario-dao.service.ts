@@ -12,8 +12,8 @@ import { TemplateDataset } from '../modules/uteis/templates/template.service';
 export type UsuarioDashboard = {
   planos: [
     {
-      data_inicio_vigencia: Date,
-      data_fim_vigencia: Date,
+      data_inicio: Date,
+      data_fim: Date,
       horas_alocadas: number,
       horas_consolidadas: number,
       progresso: number,
@@ -44,8 +44,8 @@ export type GestorDashboard = {
       foto: string,
       planos: [
         {
-          data_inicio_vigencia: Date,
-          data_fim_vigencia: Date,
+          data_inicio: Date,
+          data_fim: Date,
           horas_alocadas: number,
           horas_consolidadas: number,
           progresso: number,
@@ -78,7 +78,7 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
       { field: "apelido", label: "Apelido" },
       { field: "telefone", label: "Telefone" },
       { field: "sexo", label: "Sexo", lookup: this.lookup.SEXO },
-      { field: "vinculacao", label: "Vinculo", lookup: this.lookup.USUARIO_VINCULACAO },
+      { field: "situacao_funcional", label: "Situação Funcional", lookup: this.lookup.USUARIO_SITUACAO_FUNCIONAL },
       { field: "texto_complementar_plano", label: "Mensagem do Plano de trabalho", type: "TEMPLATE"}
     ], deeps);
   }

@@ -8,8 +8,8 @@ import { ProjetoAlocacaoRegra } from './projeto-alocacao-regra.model';
 export class ProjetoFase extends Base {
     public projeto?: Projeto;
 
-    public inicio: Date | null = null /* Inicio (Opcional) */
-    public termino: Date | null = null /* Termino (Opcional) */
+    public data_inicio: Date | null = null /* Início (Opcional) */
+    public data_fim: Date | null = null /* Final (Opcional) */
     public cor: string = ""; /* Código da cor em formato hex */
     public nome: string = ""; /* Nome */
     public descricao: string = ""; /* Descrição */

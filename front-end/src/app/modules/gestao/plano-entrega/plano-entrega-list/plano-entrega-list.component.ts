@@ -61,8 +61,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       agrupar: { default: true },
       principais: { default: true },
       nome: { default: '' },
-      inicio: { default: '' },
-      fim: { default: '' },
+      data_inicio: { default: '' },
+      data_fim: { default: '' },
       status: { default: '' },
       unidade_id: { default: null },
       planejamento_id: { default: null },
@@ -134,8 +134,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public filterClear(filter: FormGroup) {
     filter.controls.nome.setValue("");
-    filter.controls.inicio.setValue(null);
-    filter.controls.fim.setValue(null);
+    filter.controls.data_inicio.setValue(null);
+    filter.controls.data_fim.setValue(null);
     filter.controls.unidade_id.setValue(null);
     filter.controls.planejamento_id.setValue(null);
     filter.controls.cadeia_valor_id.setValue(null);
@@ -159,11 +159,11 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       if (form.nome?.length) {
         result.push(["nome", "like", "%" + form.nome + "%"]);
       }
-      if (form.inicio) {
-        result.push(["inicio", ">=", form.inicio]);
+      if (form.data_inicio) {
+        result.push(["data_inicio", ">=", form.data_inicio]);
       }
-      if (form.fim) {
-        result.push(["fim", "<=", form.fim]);
+      if (form.data_fim) {
+        result.push(["data_fim", "<=", form.data_fim]);
       }
       if (form.unidade_id) {
         result.push(["unidade_id", "==", form.unidade_id]);
@@ -181,11 +181,11 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       if (form.nome?.length) {
         result.push(["nome", "like", "%" + form.nome + "%"]);
       }
-      if (form.inicio) {
-        result.push(["inicio", ">=", form.inicio]);
+      if (form.data_inicio) {
+        result.push(["data_inicio", ">=", form.data_inicio]);
       }
-      if (form.fim) {
-        result.push(["fim", "<=", form.fim]);
+      if (form.data_fim) {
+        result.push(["data_fim", "<=", form.data_fim]);
       }
       if (form.unidade_id) {
         result.push(["unidade_id", "==", form.unidade_id]);
@@ -260,7 +260,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
           - se a unidade selecionada não possuir plano de entrega Ativo no mesmo período do plano em questão;
         */
         return (this.situacaoPlano(planoEntrega) == 'ATIVO' && (planoEntrega.unidade_id == this.auth.unidade?.unidade_pai_id) && (this.auth.isGestorUnidade() || (this.auth.isLotacaoPrincipal(this.auth.unidade) && this.auth.hasPermissionTo("MOD_PENT_ADERIR"))) &&
-          (this.planosEntregasAtivosUnidadeSelecionada().filter(x => this.util.intersection([{ start: x.inicio, end: x.fim! }, { start: planoEntrega.inicio, end: planoEntrega.fim! }])).length == 0));
+          (this.planosEntregasAtivosUnidadeSelecionada().filter(x => this.util.intersection([{ start: x.data_inicio, end: x.data_fim! }, { start: planoEntrega.data_inicio, end: planoEntrega.data_fim! }])).length == 0));
       case this.BOTAO_ALTERAR:
         /*
           (RN_PENT_4_2) Para ALTERAR um plano de entregas:

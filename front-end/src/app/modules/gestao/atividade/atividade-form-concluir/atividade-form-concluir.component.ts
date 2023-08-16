@@ -43,7 +43,7 @@ export class AtividadeFormConcluirComponent extends PageFormBase<Atividade, Ativ
       data_distribuicao: {default: null},
       esforco: {default: 0},
       progresso: {default: 0},
-      prazo_entrega: {default: null},
+      data_estipulada_entrega: {default: null},
       data_inicio: {default: null},
       tempo_despendido: {default: 0},
       data_entrega: {default: null},
@@ -81,7 +81,7 @@ export class AtividadeFormConcluirComponent extends PageFormBase<Atividade, Ativ
       value: x.descricao + (x.entrega ? " (" + x.entrega!.nome + ")" : ""),
       data: x
     })) || [];
-    formValue.arquivar = true; //!!this.entity?.plano?.tipo_modalidade?.dispensa_avaliacao; 
+    formValue.arquivar = true;  
     form.patchValue(formValue);
     this.onDataEntregaChange();
   }

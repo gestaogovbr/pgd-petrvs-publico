@@ -27,8 +27,8 @@ export type TarefaTotaisFilhos = {
   custo: number;
   progresso: number;
   duracao: number;
-  inicio: Date | null,
-  termino: Date | null
+  data_inicio: Date | null,
+  data_fim: Date | null
 };
 
 export type RecursoListItem = {
@@ -387,8 +387,8 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
     (tarefas || []).forEach(tarefa => {
       if(!tarefa.agrupador) {
         result.push({
-          start: tarefa.inicio,
-          end: tarefa.termino,
+          start: tarefa.data_inicio,
+          end: tarefa.data_fim,
           title: tarefa.nome
           //color?
         });
@@ -438,8 +438,8 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
         description: tarefa.descricao,
         extra: tarefa,
         progress: tarefa.progresso,
-        start: tarefa.inicio,
-        end: tarefa.termino,
+        start: tarefa.data_inicio,
+        end: tarefa.data_fim,
         duration: tarefa.duracao,
         startIsMilestone: tarefa.inicio_marco,
         endIsMilestone: tarefa.termino_marco,
@@ -509,8 +509,8 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
         description: projeto.descricao,
         extra: projeto,
         progress: projeto.progresso,
-        start: projeto.inicio,
-        end: projeto.termino,
+        start: projeto.data_inicio,
+        end: projeto.data_fim,
         duration: projeto.duracao,
         startIsMilestone: false,
         endIsMilestone: false,
@@ -620,8 +620,8 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
     const updateTotals = (origem: HasAlocacoes & HasTarefas, totais: TarefaTotaisFilhos) => {
       if(origem.soma_progresso_filhos) origem.progresso = totais.progresso;
       if(origem.calcula_intervalo) {
-        origem.inicio = totais.inicio || origem.inicio;
-        origem.termino = totais.termino || origem.termino;
+        origem.data_inicio = totais.data_inicio || origem.data_inicio;
+        origem.data_fim = totais.data_fim || origem.data_fim;
         origem.duracao = totais.duracao || origem.duracao;
       }
     }
@@ -630,8 +630,8 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
         custo: 0,
         progresso: 0,
         duracao: 0,
-        inicio: null,
-        termino: null
+        data_inicio: null,
+        data_fim: null
       };
       /* Adiciona caso não exista, ou atualiza caso já exista (A exclusão de tarefas que não existem mais será feita utilizando tasksIds) */
       this.util.mergeArrayOfObject(projeto.tarefas!, tasks, "id", false, (action, dst, src) => {
@@ -646,8 +646,8 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
             descricao: src.description,
             documento_id: origem.documento_id,
             documento: origem.documento,
-            inicio: src.start,
-            termino: src.end,
+            data_inicio: src.start,
+            data_fim: src.end,
             duracao: src.duration,
             progresso: src.progress,
             inicio_marco: src.startIsMilestone,
@@ -670,8 +670,8 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
             path: path,
             nome: src.name,
             descricao: src.description,
-            inicio: src.start,
-            termino: src.end,
+            data_inicio: src.start,
+            data_fim: src.end,
             duracao: src.duration,
             progresso: src.progress,
             inicio_marco: src.startIsMilestone,
@@ -699,8 +699,8 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
         /* Calculos feitos para serem retornados, que são utilizados logo aqui acima */
         if(pai.soma_progresso_filhos) result.progresso += src.progress || 0;
         if(pai.calcula_intervalo) {
-          result.inicio = !result.inicio || src.start.getTime() < result.inicio.getTime() ? src.start : result.inicio;
-          result.termino = !result.termino || src.end.getTime() > result.termino.getTime() ? src.end : result.termino;
+          result.data_inicio = !result.data_inicio || src.start.getTime() < result.data_inicio.getTime() ? src.start : result.data_inicio;
+          result.data_fim = !result.data_fim || src.end.getTime() > result.data_fim.getTime() ? src.end : result.data_fim;
         }
         //if(pai.soma_recusos_alocados_filhos)  /* Não precisa fazer nada, vai ser concatenado somente para exibição no toGantt */
         if(pai.soma_custos_filhos) result.custo += tarefa.custo;
@@ -719,8 +719,8 @@ export class ProjetoPlanejamentoComponent extends PageFormBase<Projeto, ProjetoD
     Object.assign(projeto, {
       nome: root.name,
       descricao: root.description,
-      inicio: root.start,
-      termino: root.end,
+      data_inicio: root.start,
+      data_fim: root.end,
       duracao: root.duration,
       progresso: root.progress,
       regras: fromGanttRules(project.roles),

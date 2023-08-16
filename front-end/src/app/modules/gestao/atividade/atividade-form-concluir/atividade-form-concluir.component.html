@@ -14,14 +14,14 @@
     <div *ngIf="!entity?.plano_trabalho?.tipo_modalidade?.atividade_esforco; else comEsforco" class="row">
         <input-datetime noIcon [size]="4" [label]="lex.translate('Distribuição')" controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" labelInfo="Data de inclusão/distribuição/lançamento"></input-datetime>
         <input-number [size]="4" [decimals]="2" label="Progresso" disabled sufix="%" icon="bi bi-clock" controlName="progresso" labelInfo="Progresso de execução (% Concluído). Sempre será 100% na conclusão!"></input-number>
-        <input-datetime noIcon  [size]="4" [label]="lex.translate('Prazo de entrega')" controlName="prazo_entrega" [control]="form!.controls.prazo_entrega" labelInfo="Data estipulada para entrega da atividade"></input-datetime>
+        <input-datetime noIcon  [size]="4" [label]="lex.translate('Prazo de entrega')" controlName="data_estipulada_entrega" [control]="form!.controls.data_estipulada_entrega" labelInfo="Data estipulada para entrega da atividade"></input-datetime>
     </div>
     <ng-template #comEsforco>
         <div class="row">
             <input-datetime noIcon [size]="3" disabled [label]="lex.translate('Distribuição')" controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" labelInfo="Data de inclusão/distribuição/lançamento"></input-datetime>
             <input-timer [size]="3" [label]="lex.translate('Esforço')" icon="bi bi-stopwatch" onlyHours controlName="esforco" [control]="form!.controls.esforco" labelInfo="Tempo estimado de execução"></input-timer>
             <input-number [size]="3" [decimals]="2" label="Progresso" disabled sufix="%" icon="bi bi-clock" controlName="progresso" labelInfo="Progresso de execução (% Concluído). Sempre será 100% na conclusão!"></input-number>
-            <input-datetime noIcon  [size]="3" disabled [label]="lex.translate('Prazo de entrega')" controlName="prazo_entrega" [control]="form!.controls.prazo_entrega" labelInfo="Data estipulada para entrega da atividade"></input-datetime>
+            <input-datetime noIcon  [size]="3" disabled [label]="lex.translate('Prazo de entrega')" controlName="data_estipulada_entrega" [control]="form!.controls.data_estipulada_entrega" labelInfo="Data estipulada para entrega da atividade"></input-datetime>
         </div>
     </ng-template>
     <separator title="Conclusão">
@@ -40,24 +40,6 @@
         </ng-template>
         <documento-link [documento]="form!.controls.documento_entrega.value"></documento-link>
     </separator>
-    <!--div *ngIf="!entity?.plano_trabalho?.tipo_modalidade?.atividade_tempo_despendido; else comTempoDespendido" class="row">
-        <input-timer onlyHours [size]="3" [label]="lex.translate('Esforço')" disabled controlName="esforco" [control]="form!.controls.esforco" labelInfo="Tempo necessário para execução da atividade"></input-timer>
-        <input-datetime noIcon [size]="3" [label]="lex.translate('Prazo de entrega')" disabled controlName="prazo_entrega" [control]="form!.controls.prazo_entrega" labelInfo="Data estipulada para entrega da atividade"></input-datetime>
-        <input-datetime noIcon [size]="3" label="Data de inicio" disabled controlName="data_inicio" [control]="form!.controls.data_inicio" labelInfo="Data de inicio"></input-datetime>
-        <input-datetime noIcon [size]="3" label="Data de entrega" #entrega controlName="data_entrega" [control]="form!.controls.data_entrega" (change)="onDataEntregaChange($event)" labelInfo="Data e hora da entrega"></input-datetime>
-    </div>
-    <ng-template #comTempoDespendido>
-        <div class="row">
-            <input-datetime noIcon [size]="4" [label]="lex.translate('Data de distribuição')" disabled controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" labelInfo="Data de cadastro da atividade"></input-datetime>
-            <input-timer [label]="lex.translate('Tempo pactuado')" icon="bi bi-stopwatch" onlyHours [size]="4" controlName="tempo_pactuado" [control]="form!.controls.tempo_pactuado" labelInfo="Tempo estimado de execução"></input-timer>
-            <input-datetime noIcon [size]="4" [label]="lex.translate('Prazo de entrega')" disabled controlName="prazo_entrega" [control]="form!.controls.prazo_entrega" labelInfo="Data estipulada para entrega da atividade"></input-datetime>
-        </div>
-        <div class="row">
-            <input-datetime noIcon [size]="4" label="Data de inicio" disabled controlName="data_inicio" [control]="form!.controls.data_inicio" labelInfo="Data de inicio"></input-datetime>
-            <input-timer label="Tempo despendido" [size]="4" icon="bi bi-hourglass-bottom" disabled controlName="tempo_despendido" [control]="form!.controls.tempo_despendido" labelInfo="Tempo despendido na atividade (considerando fins de semana, feriados e afastamentos)"></input-timer>
-            <input-datetime noIcon [size]="4" label="Data de entrega" #entrega controlName="data_entrega" [control]="form!.controls.data_entrega" (change)="onDataEntregaChange($event)" labelInfo="Data e hora da entrega"></input-datetime>
-        </div>
-    </ng-template//-->
     <separator *ngIf="efemerides && entity?.plano_trabalho?.tipo_modalidade?.atividade_tempo_despendido" title="Cálculos das horas" collapse>
         <calendar-efemerides [efemerides]="efemerides"></calendar-efemerides>
     </separator>

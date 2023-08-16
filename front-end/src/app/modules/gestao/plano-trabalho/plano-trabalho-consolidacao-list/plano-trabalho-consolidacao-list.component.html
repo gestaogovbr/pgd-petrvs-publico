@@ -12,7 +12,7 @@
                 <plano-trabalho-consolidacao-form #consolidacao [entity]="row" [cdRef]="cdRef"></plano-trabalho-consolidacao-form>
             </ng-template>
         </column>
-        <column title="Data inicio" [template]="columnDataInicio">
+        <column title="Data início" [template]="columnDataInicio">
             <ng-template let-row="row" #columnDataInicio>
                 {{util.getDateFormatted(row.data_inicio)}}
             </ng-template>

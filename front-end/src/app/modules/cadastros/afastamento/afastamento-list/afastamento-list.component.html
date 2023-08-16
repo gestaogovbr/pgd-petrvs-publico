@@ -7,8 +7,8 @@
         <div class="row">
             <input-search [size]="3" #usuario controlName="usuario_id" [dao]="usuarioDao"></input-search>
             <input-search [size]="3" #tipoMotivoAfastamento controlName="tipo_motivo_afastamento_id" [dao]="tipoMotivoAfastamentoDao"></input-search>
-            <input-datetime date [size]="3" label="Início" controlName="inicio_afastamento" (click)="filtro()"></input-datetime>
-            <input-datetime date [size]="3" label="Fim" controlName="fim_afastamento" (click)="filtro()"></input-datetime>
+            <input-datetime date [size]="3" label="Início" controlName="data_inicio" (click)="filtro()"></input-datetime>
+            <input-datetime date [size]="3" label="Fim" controlName="data_fim" (click)="filtro()"></input-datetime>
         </div>
     </filter>
     <columns>
@@ -26,12 +26,12 @@
         </column>
         <column title="Início" [template]="columnInicioAfastamento">
             <ng-template let-row="row" #columnInicioAfastamento>
-                <span> {{dao!.getDateFormatted(row.inicio_afastamento)}}</span>
+                <span> {{dao!.getDateFormatted(row.data_inicio)}}</span>
             </ng-template>
         </column>
         <column title="Fim" [template]="columnFimAfastamento">
             <ng-template let-row="row" #columnFimAfastamento>
-                <span> {{dao!.getDateFormatted(row.fim_afastamento)}}</span>
+                <span> {{dao!.getDateFormatted(row.data_fim)}}</span>
             </ng-template>
         </column>
         <column title="Observações" field="observacoes"></column>

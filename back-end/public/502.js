@@ -857,7 +857,7 @@ function UnidadeListComponent_ng_template_20_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("ngIf", row_r13.instituidora);
     _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("color", !row_r13.inativo ? "success" : "danger")("icon", !row_r13.inativo ? "bi bi-check-circle" : "bi bi-x-circle")("label", !row_r13.inativo ? "Ativo" : "Inativo");
+    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("color", !row_r13.data_inativacao ? "success" : "danger")("icon", !row_r13.data_inativacao ? "bi bi-check-circle" : "bi bi-x-circle")("label", !row_r13.data_inativacao ? "Ativo" : "Inativo");
   }
 }
 class UnidadeListComponent extends src_app_modules_base_page_list_base__WEBPACK_IMPORTED_MODULE_6__.PageListBase {
@@ -923,11 +923,11 @@ class UnidadeListComponent extends src_app_modules_base_page_list_base__WEBPACK_
     });
     // Testa se o usuário possui permissão de inativar a unidade
     if (this.auth.hasPermissionTo("MOD_UND_INATV")) result.push({
-      icon: unidade.inativo ? "bi bi-check-circle" : "bi bi-x-circle",
-      label: unidade.inativo ? 'Reativar' : 'Inativar',
+      icon: unidade.data_inativacao ? "bi bi-check-circle" : "bi bi-x-circle",
+      label: unidade.data_inativacao ? 'Reativar' : 'Inativar',
       onClick: function () {
         var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (unidade) {
-          return yield _this.inativo(unidade, !unidade.inativo);
+          return yield _this.inativo(unidade, !unidade.data_inativacao);
         });
         return function onClick(_x) {
           return _ref.apply(this, arguments);
@@ -1214,11 +1214,11 @@ class UnidadeMergeComponent extends src_app_modules_base_page_frame_base__WEBPAC
     this.dao.mesmaSigla().then(unidades => {
       let destinos = [];
       destinos = unidades.reduce((acumulador, valor) => {
-        if (!valor.inativo && !acumulador.find(x => x.sigla == valor.sigla)) acumulador.push(valor);
+        if (!valor.data_inativacao && !acumulador.find(x => x.sigla == valor.sigla)) acumulador.push(valor);
         return acumulador;
       }, destinos);
       let destinosIds = destinos.map(x => x.id);
-      let origens = unidades.filter(x => !destinosIds.includes(x.id) && !!x.inativo);
+      let origens = unidades.filter(x => !destinosIds.includes(x.id) && !!x.data_inativacao);
       let origensIds = origens.map(x => x.id);
       this.items = [];
       for (let origem of origens) {

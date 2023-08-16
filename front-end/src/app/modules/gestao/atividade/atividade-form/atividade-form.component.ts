@@ -74,7 +74,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
       data_distribuicao: {default: horaInicial},
       carga_horaria: {default: 0},
       tempo_planejado: {default: 0},
-      prazo_entrega: {default: horaInicial},
+      data_estipulada_entrega: {default: horaInicial},
       data_inicio: {default: null},
       data_entrega: {default: null},
       esforco: {default: 0},
@@ -121,16 +121,6 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     return this.form?.controls.numero?.value ? "#" + this.form?.controls.numero?.value : "";
   }
 
-  /*public get prazoEmDias(): string | undefined {
-    const unidade = this.unidade?.searchObj as Unidade || this.auth.unidade!;
-    return ["DIAS_CORRIDOS", "DIAS_UTEIS"].includes(unidade?.distribuicao_forma_contagem_prazos) ? "true" : undefined;
-  }
-
-  public get prazoEmHoras(): string | undefined {
-    const unidade = this.unidade?.searchObj as Unidade || this.auth.unidade!;
-    return ["DIAS_CORRIDOS", "DIAS_UTEIS"].includes(unidade?.distribuicao_forma_contagem_prazos) ? undefined : "true";
-  }*/
-
   public validateChecklist = (control: AbstractControl, controlName: string) => {
     let result = null;
     return result;
@@ -143,14 +133,14 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
       result = "Obrigatório";
     } else if(controlName == "tipo_atividade_id" && !control?.value?.length && !this.auth.hasPermissionTo("MOD_ATV_TIPO_ATV_VAZIO")) {
       result = "Obrigatório";
-    } else if(["data_distribuicao", "prazo_entrega"].includes(controlName)) {
-      let prazoEntrega = this.form?.controls.prazo_entrega?.value;
+    } else if(["data_distribuicao", "data_estipulada_entrega"].includes(controlName)) {
+      let prazoEntrega = this.form?.controls.data_estipulada_entrega?.value;
       let dataDistribuicao = this.form?.controls.data_distribuicao?.value;
       if (!this.util.isDataValid(control.value)) {
         result = "Data inválida";
       } else if(controlName == "data_distribuicao" && control.value && this.util.isDataValid(prazoEntrega) && control.value.getTime() > prazoEntrega.getTime()) {
         result = "Maior que entrega";
-      } else if(controlName == "prazo_entrega" && control.value && this.util.isDataValid(dataDistribuicao) && control.value.getTime() < dataDistribuicao.getTime()) {
+      } else if(controlName == "data_estipulada_entrega" && control.value && this.util.isDataValid(dataDistribuicao) && control.value.getTime() < dataDistribuicao.getTime()) {
         result = "Menor que distribuição";
       }
     } else if(controlName == "plano_trabalho_id" && !control.value?.length && this.form?.controls?.usuario_id.value?.length) {
@@ -168,7 +158,6 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
 
   public formValidation = (form?: FormGroup) => {
     let result = undefined;
-    //if(!this.isComentarios) {
     this.loadEtiquetas();
     this.loadChecklist();
     const etiquetasKeys = this.etiquetas.map(x => x.key);
@@ -177,20 +166,6 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     const checklst = (this.form.controls.checklist.value || []).find((x: AtividadeChecklist) => !etiquetasKeys.includes(x.id) && x.checked) as AtividadeChecklist;
     if(etiqueta) result = "Etiqueta " + etiqueta.value + "não pode ser utilizada!";
     if(checklst) result = "Checklist " + checklst.texto + "não pode ser utilizado!";
-    /* Validações pelo plano *
-    if(this.form.controls.plano_id.value?.length) {
-      /* Verifica se a atividade seleciona está na lista de atividades permitidas no plano de trabalho *
-      if(this.form.controls.atividade_id.value?.length && !this.auth.hasPermissionTo('MOD_DMD_TIPO_ATV_FORA_PL_TRB')) {
-        const atividades_termo_adesao = this.planoSelecionado?.documento?.metadados?.atividades_termo_adesao;
-        const atividade = this.atividade!.searchObj as Atividade;
-        if(!this.planoSelecionado || this.planoSelecionado?.id != this.form.controls.plano_id.value) {
-          result = "Erro ao ler " + this.lex.translate("plano de trabalho") + ". Selecione-o novamente!";
-        } else if(atividades_termo_adesao && atividade && atividades_termo_adesao.indexOf(this.util.removeAcentos(atividade.nome.toLowerCase())) < 0){
-          result = this.lex.translate("Atividade") + " não consta na lista permitida pelo " + this.lex.translate("plano de trabalho") + " selecionado.";
-        }
-      }
-    }*/
-    //}
     return result;
   }
 
@@ -212,48 +187,13 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     return result;
   };
 
-  /*private calcularPrazo(source: "PACTUADO" | "COMPLEXIDADE" | "PLANO" | "PLANEJADO" | "ENTREGA") {
-    if(this.action != "consult"){
-      const atividade = this.atividade?.searchObj as Atividade;
-      const plano = (this.plano?.selectedItem?.data || this.planos.find(x => x.key == this.plano?.selectedItem?.key)?.data) as Plano;
-      if(source == "PACTUADO") {
-        const fator = this.form.controls.fator_complexidade.value || 1;
-        const fator_ganho_produtivade = 1 - ((plano?.ganho_produtividade || 0) / 100);
-        this.form.controls.tempo_pactuado.setValue((atividade?.tempo_pactuado || 0) * fator * fator_ganho_produtivade || 0);
-        this.cdRef.detectChanges();
-      } else if(this.deltaChanged()) {
-        const unidade = this.unidade?.searchObj as Unidade;
-        const fator = this.form.controls.fator_complexidade.value || 1;
-        const cargaHoraria = plano?.carga_horaria || this.calendar.expedienteMedio(unidade);
-        this.assignDelta(null);
-        if(source == "COMPLEXIDADE") {
-          if(atividade) this.setControlPreventChange("tempo_planejado", atividade.dias_planejado * cargaHoraria * fator || 0);
-          const entrega = this.calendar.prazo(this.form.controls.data_distribuicao.value, this.form.controls.tempo_planejado.value, cargaHoraria, unidade, "DISTRIBUICAO");
-          this.setControlPreventChange("prazo_entrega", entrega);
-        } else if(source == "PLANO") {
-          if(this.planejado) this.planejado.hoursPerDay = cargaHoraria;
-          this.form.controls.carga_horaria.setValue(cargaHoraria);
-          const tempo = this.calendar.horasUteis(this.form.controls.data_distribuicao.value, this.form.controls.prazo_entrega.value, cargaHoraria, unidade, "DISTRIBUICAO");
-          this.setControlPreventChange("tempo_planejado", tempo);
-        } else if(source == "PLANEJADO") {
-          const entrega = this.calendar.prazo(this.form.controls.data_distribuicao.value, this.form.controls.tempo_planejado.value, cargaHoraria, unidade, "DISTRIBUICAO");
-          this.setControlPreventChange("prazo_entrega", entrega);
-        } else if(source == "ENTREGA") {
-          const tempo = this.form.controls.prazo_entrega.value ? this.calendar.horasUteis(this.form.controls.data_distribuicao.value, this.form.controls.prazo_entrega.value, cargaHoraria, unidade, "DISTRIBUICAO") : 0;
-          this.setControlPreventChange("tempo_planejado", tempo);
-        }
-        this.cdRef.detectChanges();
-      }
-    }
-  }*/
-
   public onUnidadeChange(event: Event) {
     this.loadEtiquetas();
   }
 
   public onDataDistribuicaoChange(event: Event) {
     this.loadUsuario(this.usuario?.selectedItem?.entity); /* Atualiza a lista de planos de trabalho válidos no período */
-    this.form?.controls.prazo_entrega.updateValueAndValidity();
+    this.form?.controls.data_estipulada_entrega.updateValueAndValidity();
   }
 
   public onPrazoEntregaChange(event: Event) {
@@ -330,9 +270,9 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
   }
 
   public getPlanosTrabalhos(usuario: Usuario, data_distribuicao: Date, plano_trabalho_id: string | null): LookupItem[] {
-    return usuario.planos_trabalho?.filter(x => x.id == plano_trabalho_id || (this.util.between(data_distribuicao, {start: x.data_inicio_vigencia, end: x.data_fim_vigencia}))).map(x => Object.assign({
+    return usuario.planos_trabalho?.filter(x => x.id == plano_trabalho_id || (this.util.between(data_distribuicao, {start: x.data_inicio, end: x.data_fim}))).map(x => Object.assign({
       key: x.id, 
-      value: (x.tipo_modalidade?.nome || "") + " - " + this.usuarioDao.getDateFormatted(x.data_inicio_vigencia)+ " a " + this.usuarioDao.getDateFormatted(x.data_fim_vigencia), data: x
+      value: (x.tipo_modalidade?.nome || "") + " - " + this.usuarioDao.getDateFormatted(x.data_inicio)+ " a " + this.usuarioDao.getDateFormatted(x.data_fim), data: x
     })) || [];
   }
 
@@ -340,7 +280,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     if(usuario) {
       const planoTrabalhoId = this.form.controls.plano_trabalho_id.value;
       const dataDistribuicao = this.form.controls.data_distribuicao.value || new Date();
-      this.planosTrabalhos = this.getPlanosTrabalhos(usuario, dataDistribuicao, planoTrabalhoId); //usuario?.planos?.map(x => Object.assign({key: x.id, value: (x.tipo_modalidade?.nome || "") + " - " + this.usuarioDao.getDateFormatted(x.data_inicio_vigencia)+ " a " + this.usuarioDao.getDateFormatted(x.data_fim_vigencia), data: x})) || [];
+      this.planosTrabalhos = this.getPlanosTrabalhos(usuario, dataDistribuicao, planoTrabalhoId); //usuario?.planos?.map(x => Object.assign({key: x.id, value: (x.tipo_modalidade?.nome || "") + " - " + this.usuarioDao.getDateFormatted(x.data_inicio)+ " a " + this.usuarioDao.getDateFormatted(x.data_fim), data: x})) || [];
       this.cdRef.detectChanges();
       this.form.controls.plano_trabalho_id.setValue(!planoTrabalhoId?.length && this.planosTrabalhos.length > 0 ? this.planosTrabalhos[0].key : planoTrabalhoId);
     } else {
@@ -371,7 +311,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
       comentario.id = this.dao!.generateUuid();
       comentario.path = "";
       comentario.texto = tipoAtividade.comentario;
-      comentario.data_hora = this.auth.hora;
+      comentario.data_comentario = this.auth.hora;
       comentario.usuario_id = this.auth.usuario!.id;
       comentario.comentario_id = null;
       comentario.tipo = "TIPO_ATIVIDADE";
@@ -396,38 +336,11 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     if(!this.form?.controls.usuario_id.value?.length) this.loadUsuario(undefined);
   }
 
-  /*public addComentario = async () => {
-    this.comentario.newComentario(this.form.controls.comentarios, this.comentarios!);
-    return undefined;
-  }*/
-
   public orderPausas(pausas: AtividadePausa[]) {
     return pausas.sort((a: AtividadePausa, b: AtividadePausa) => {
       return a.data_inicio < b.data_inicio ? -1 : 1;
     });
   }
-
-  /*public comentarioDynamicOptions(row: any): ToolbarButton[] {
-    return [{
-      label: "Comentar",
-      icon: "bi bi-chat-left-quote",
-      onClick: (comentario: Comentario) => {
-        this.comentario.newComentario(this.form.controls.comentarios, this.comentarios!, comentario);
-      }
-    }];
-  }*/
-
-  /*public async saveComentario(form: FormGroup, item: any) {
-    const entity = form.value;
-    Object.assign(this.comentarios!.editing!, entity);
-    return undefined;
-  }*/
-
-  /*public async loadComentario(form: FormGroup, row: any) {
-    this.formComentarios.controls.texto.setValue(row.texto);
-    this.formComentarios.controls.tipo.setValue(row.tipo);
-    this.formComentarios.controls.privacidade.setValue(row.privacidade);
-  }*/
 
   public async loadData(entity: Atividade, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
@@ -446,13 +359,6 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     entity.pausas = this.orderPausas(entity.pausas || []);
     form.patchValue(formValue); /* Carrega os valores e dispara os eventos */
     this.loadEtiquetas();
-    /*if(this.action == "new" && this.entity?.numero_requisicao?.length || this.entity?.numero_processo?.length) {
-      if() {
-        this.onNumeroRequisicaoClick(new Event(""));
-      } else if() {
-        this.onProcessoRequisicaoClick(new Event(""));
-      }
-    }*/
   }
 
   public async initializeData(form: FormGroup) {
@@ -468,7 +374,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
         data_distribuicao: source.data_distribuicao,
         tempo_planejado: source.tempo_planejado,
         carga_horaria: source.carga_horaria,
-        prazo_entrega: source.prazo_entrega,
+        data_estipulada_entrega: source.data_estipulada_entrega,
         esforco: source.esforco,
         tipo_atividade_id: source.tipo_atividade_id,
         demandante_id: this.auth.usuario?.id,
@@ -497,7 +403,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
       this.sei = this.metadata?.sei;
       this.entity = new Atividade();
       this.entity.data_distribuicao = this.auth.hora;
-      this.entity.prazo_entrega = this.entity.data_distribuicao;
+      this.entity.data_estipulada_entrega = this.entity.data_distribuicao;
       this.entity.demandante_id = this.auth.usuario?.id || "";
       this.entity.unidade_id = this.auth.unidade?.id || "";
       this.entity.unidade = this.auth.unidade;

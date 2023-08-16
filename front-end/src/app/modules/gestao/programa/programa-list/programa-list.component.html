@@ -25,12 +25,12 @@
         </column>
         <column title="Início da Vigência" [template]="columnInicioVigencia">
             <ng-template let-row="row" #columnInicioVigencia>
-                <span> {{dao!.getDateFormatted(row.data_inicio_vigencia)}}</span><br>
+                <span> {{dao!.getDateFormatted(row.data_inicio)}}</span><br>
             </ng-template>
         </column>
         <column title="Fim da Vigência" [template]="columnFimVigencia">
             <ng-template let-row="row" #columnFimVigencia>
-                <span> {{dao!.getDateFormatted(row.data_fim_vigencia)}}</span>
+                <span> {{dao!.getDateFormatted(row.data_fim)}}</span>
             </ng-template>
         </column>
         <column type="options" [onEdit]="edit" [options]="options"></column>
