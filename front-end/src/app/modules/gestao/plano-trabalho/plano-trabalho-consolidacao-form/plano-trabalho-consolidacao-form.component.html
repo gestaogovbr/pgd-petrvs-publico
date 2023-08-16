@@ -16,7 +16,7 @@
                                             <small class="micro-text fw-ligh">#{{row.numero}}</small><br>
                                             <badge color="success" label="TODO"></badge>
                                             <!-- TODO: Por status!-->
-                                            <!-- badge *ngFor="let status of getStatus(row)" [data]="status" [color]="status.color" [icon]="status.icon" [label]="status.label" [click]="status.data?.filter ? onStatusClick.bind(this) : undefined"></badge//-->
+                                            <!-- badge *ngFor="let status of atividadeService.getStatus(row)" [data]="status" [color]="status.color" [icon]="status.icon" [label]="status.label" [click]="status.data?.filter ? onStatusClick.bind(this) : undefined"></badge//-->
                                         </div>
                                         <div class="col-md-3 one-per-line">
                                             <badge [icon]="'bi ' + (row.usuario?.nome?.length ? 'bi-person-check' : 'bi-person-x')" color="light" [label]="util.apelidoOuNome(row.usuario, true) || '(Não atribuído)'" [hint]="'Responsável: ' + (row.usuario?.nome || 'Não atribuido a nenhum usuário')"></badge>

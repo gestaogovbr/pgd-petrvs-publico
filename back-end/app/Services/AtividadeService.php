@@ -44,7 +44,7 @@ class AtividadeService extends ServiceBase
     ];
 
     public function validateIniciar($data) {
-        /*Testa permissão para iniciar atividade de outros usuarios */
+        /* Testa permissão para iniciar atividade de outros usuarios */
         $usuario = parent::loggedUser();
         if ($data["usuario_id"] != $usuario->id){
             if (!$usuario->hasPermissionTo('MOD_ATV_USERS_INICIAR')){
@@ -63,36 +63,78 @@ class AtividadeService extends ServiceBase
             if($planoTrabalho->unidade_id != $data["unidade_id"]) {
                 throw new ServerException("ValidateAtividade", "Unidade do plano diverge da unidade da atividade");
             }
-            /* REFECTORING
-            if(!empty($data["tipo_atividade_id"])) {
-                $atividade = TipoAtividade::find($data["tipo_atividade_id"]);
-                if(isset($planoTrabalho->documento?->metadados?->atividades_termo_adesao) && !parent::loggedUser()->hasPermissionTo('MOD_DMD_ATV_FORA_PL_TRB') &&
-                    !in_array(UtilService::removeAcentos(strtolower($atividade->nome)), $plano->documento?->metadados?->atividades_termo_adesao)) {
-                    throw new ServerException("ValidateDemanda", "Atividade não consta na lista permitida pelo plano de trabalho selecionado");
-                }
-            }*/
         }
         if(!empty($data["usuario_id"])) {
             $usuario = Usuario::find($data["usuario_id"]);
             if(!$this->usuarioService->hasLotacao($data["unidade_id"], $usuario, false)) {
-                if (!parent::loggedUser()->hasPermissionTo('MOD_ATV_EXT') && !parent::loggedUser()->hasPermissionTo('MOD_ATV_USERS_ATRIB')){
-                    throw new ServerException("ValidateAtividade", $unidade->sigla . " não é uma unidade (lotação) para o responsável, ou você não tem permissão para incluir para qualquer usuário");
+                if (!parent::loggedUser()->hasPermissionTo('MOD_ATV_USU_EXT')) {
+                    throw new ServerException("ValidateAtividade", $unidade->sigla . " não é uma unidade (lotação) para o responsável, ou você não tem permissão para incluir atividade para usuário de outra unidade (MOD_ATV_USU_EXT)");
                 }
             }
         }
     }
 
     public function proxyStore($data, $unidade, $action) {
-        if(empty($data["id"])) {
+        if($action == ServiceBase::ACTION_INSERT) {
             $usuario = parent::loggedUser();
             $data["demandante_id"] = $usuario->id;
         }
-        //$this->validateStore($data, $unidade);
+
+
+
+
+        /*if($condition[2] == "INICIADO") {
+            array_push($where, ["data_inicio", "!=", null]);
+            array_push($where, ["data_entrega", "==", null]);
+        } else if($condition[2] == "NAOCONCLUIDO") {
+            array_push($where, ["data_entrega", "==", null]);
+        } else if($condition[2] == "CONCLUIDO") {
+            array_push($where, ["data_entrega", "!=", null]);
+        } else if($condition[2] == "INCLUIDO") {
+            array_push($where, ["data_inicio", "==", null]);
+        } else if($condition[2] == "ARQUIVADO") {
+            array_push($where, ["data_arquivamento", "!=", null]);
+        }
+
+        "horario_servidor" => CalendarioService::horarioServidor(),
+        "tempo_despendido" => 0,
+        "concluido" => !empty($atividade->data_entrega),
+        "iniciado" => !empty($atividade->data_inicio),
+        "arquivado" => !empty($atividade->data_arquivamento),
+        "produtividade" => 0,
+        $suspenso = false;
+        foreach($atividade->pausas as $pausa) {
+            $suspenso = $suspenso || empty($pausa->data_fim);
+        }
+        $result["suspenso"] = $suspenso;
+        $result["atrasado"] = !$result["concluido"] && strtotime($atividade->prazo_entrega) < strtotime($hora);
+        $result["tempo_atraso"] = $result["atrasado"] ? $this->calendarioService->tempoAtraso($atividade->prazo_entrega, $hora, $atividade->carga_horaria) : 0;
+        $result["status"] = ($result["concluido"] ? "CONCLUIDO" : ($result["iniciado"] ? "INICIADO" : "INCLUIDO"));
+        
+        */
+
+
+
+
         return $data;
     }
 
+    public function afterStore($entity, $action) {
+        if($action == ServiceBase::ACTION_INSERT) {
+            $this->notificacoesService->send("ATV_DISTRIBUICAO", ["atividade" => $entity]);
+            $this->status->atualizaStatus($entity, 'INCLUIDO', 'A atividae foi criada nesta data.');
+        } else {
+            $this->notificacoesService->send("ATV_MODIFICACAO", ["atividade" => $entity]);
+        }
+    }
+
+    public function afterUpdate($entity, $data) {
+        if(isset($data["comentarios"])) {
+            $this->notificacoesService->send("ATV_COMENTARIO", ["atividade" => $entity]);
+        }
+    }
+
     public function proxyQuery($query, &$data) {
-        //LogError::newWarn("PROXY: Iniciou", $data);
         $where = [];
         $with = [];
         $unidade_id = null;
@@ -111,7 +153,6 @@ class AtividadeService extends ServiceBase
                 foreach($documentos as $documento) {
                     $ids[] = $documento->atividade?->id ?? $documento->atividade_tarefa?->id;
                 }
-                //$sql = "(demandas.numero_processo = ? OR demandas.numero_processo_entrega = ? OR EXISTS(SELECT where_demandas_entregas.id FROM demandas_entregas where_demandas_entregas WHERE where_demandas_entregas.demanda_id = demandas.id and where_demandas_entregas.numero_processo = ?))";
                 array_push($where, ["id", "in", $ids]);
             } else if(is_array($condition) && $condition[0] == "etiquetas") {
                 $sql = "";
@@ -320,21 +361,6 @@ class AtividadeService extends ServiceBase
         }
     }
 
-    public function afterStore($entity, $action) {
-        if($action == ServiceBase::ACTION_INSERT) {
-            $this->notificacoesService->send("ATV_DISTRIBUICAO", ["atividade" => $entity]);
-            $this->status->atualizaStatus($entity, 'INCLUIDO', 'A atividae foi criada nesta data.');
-        } else {
-            $this->notificacoesService->send("ATV_MODIFICACAO", ["atividade" => $entity]);
-        }
-    }
-
-    public function afterUpdate($entity, $data) {
-        if(isset($data["comentarios"])) {
-            $this->notificacoesService->send("ATV_COMENTARIO", ["atividade" => $entity]);
-        }
-    }
-
     public function iniciar($data, $unidade) {
         $suspender = $data["suspender"];
         unset($data["suspender"]);
@@ -396,18 +422,12 @@ class AtividadeService extends ServiceBase
         try {
             DB::beginTransaction();
             $atividade = Atividade::with(["planoTrabalho.tipoModalidade"])->where("id", $conclusao["id"])->first();
-            /*Testa permissão para iniciar atividade de outros usuarios*/
+            /* Testa permissão para iniciar atividade de outros usuarios */
             if ($atividade->usuario_id != parent::loggedUser()->id){
                 if (!parent::loggedUser()->hasPermissionTo('MOD_ATV_USERS_CONCL')){
                     throw new ServerException("ValidateAtividade", "Não é permitido concluir atividade de outro usuário!");
                 }
             }
-            /*Testa permissão para incluir atividades que estão fora do plano de trabalho*
-            $plano = $demanda->plano;
-            if(isset($plano->documento?->metadados?->atividades_termo_adesao) && !parent::loggedUser()->hasPermissionTo('MOD_DMD_ATV_FORA_PL_TRB') &&
-                !in_array(UtilService::removeAcentos(strtolower($demanda->atividade->nome)), $plano->documento?->metadados?->atividades_termo_adesao)) {
-                throw new ServerException("ValidateDemanda", "Atividade não consta na lista permitida pelo plano de trabalho selecionado");
-            }*/
             $conclusao["data_arquivamento"] = $arquivar ? Carbon::now() : null;
             $this->update($conclusao, $unidade, false);
             $comentarioTecnico = Comentario::where("atividade_id", $conclusao["id"])->where("tipo", "TECNICO")->first();
@@ -459,92 +479,6 @@ class AtividadeService extends ServiceBase
         return true;
     }
 
-    /*public function avaliar($avaliacao, $unidade) {
-        $comentarioService = new ComentarioService();
-        $demandaAvaliacaoService = new DemandaAvaliacaoService();
-        $comentario = $avaliacao["comentario_avaliacao"];
-        $demanda = Demanda::with("plano.tipoModalidade")->where("id", $avaliacao["demanda_id"])->first();
-        $dispensaAvaliacao = !empty($demanda->plano->tipo_modalidade) && $demanda->plano->tipo_modalidade->dispensa_avaliacao;
-        try {
-            /*Testa permissão para avaliar demanda de outros usuarios,
-            prevista para o Gestor ou Gestor substituto da Unidade da Demanda*
-            if (($demanda->unidade->gestor_id != parent::loggedUser()->id) && ($demanda->unidade->gestor_substituto_id != parent::loggedUser()->id)) {
-                throw new ServerException("ValidateDemanda", "Não é permitido avaliar demanda da qual usuário logado não é Gestor!");
-            }* /
-            if(!in_array(parent::loggedUser()->id, $this->unidadeService->avaliadores($demanda->unidade_id))) {
-                throw new ServerException("ValidateDemanda", "O avaliador deve ser gestor ou delegado como avaliador da unidade.");
-            }
-            DB::beginTransaction();
-            $tipoAvaliacao = TipoAvaliacao::find($avaliacao["tipo_avaliacao_id"]);
-            DemandaAvaliacao::where("demanda_id", $avaliacao["demanda_id"])->
-                update(["data_fim" => Carbon::now()]);
-            $demandaAvaliacao = $demandaAvaliacaoService->store([
-                "usuario_id" => parent::loggedUser()->id,
-                "demanda_id" => $avaliacao["demanda_id"],
-                "justificativas" => $avaliacao["justificativas"],
-                "tipo_avaliacao_id" => $avaliacao["tipo_avaliacao_id"],
-                "nota_atribuida" => $avaliacao["nota_atribuida"]
-            ], $unidade, false);
-            $update = [
-                "id" => $avaliacao["demanda_id"],
-                "atividade_id" => $avaliacao["atividade_id"],
-                "fator_complexidade" => $avaliacao["fator_complexidade"],
-                "tempo_pactuado" => $avaliacao["tempo_pactuado"],
-                "produtividade" => $avaliacao["produtividade"],
-                "avaliacao_id" => $demandaAvaliacao->id,
-                "data_arquivamento" => $avaliacao["arquivar"] ? Carbon::now() : null
-            ];
-            if(!$dispensaAvaliacao) $update["tempo_homologado"] = $tipoAvaliacao->aceita_entrega ? $avaliacao["tempo_pactuado"] : 0;
-            $this->update($update, $unidade, false);
-            $comentarioAvaliacao = Comentario::where("demanda_id", $avaliacao["demanda_id"])->where("tipo", "AVALIACAO")->first();
-            if(!empty($comentarioAvaliacao)) {
-                $comentarioService->destroy($comentarioAvaliacao->id);
-            }
-            if(!empty($comentario)) {
-                $unidadeService = new UnidadeService();
-                $comentarioService->store([
-                    "texto" => $comentario,
-                    "path" => null,
-                    "data_hora" => $unidadeService->hora($unidade->id),
-                    "tipo" => "AVALIACAO",
-                    "privacidade" => "PUBLICO",
-                    "usuario_id" => parent::loggedUser()->id,
-                    "demanda_id" => $avaliacao["demanda_id"]
-                ], $unidade, false);
-            }
-            DB::commit();
-        } catch (Throwable $e) {
-            DB::rollback();
-            throw $e;
-        }
-        $this->notificacoesService->send("DMD_AVALIACAO", ["demanda" => Demanda::find($avaliacao["demanda_id"])]);
-        return true;
-    }*
-
-    public function cancelarAvaliacao($data, $unidade) {
-        $comentarioService = new ComentarioService();
-        try {
-            DB::beginTransaction();
-            //$demanda = Demanda::find($data["id"]);
-            $demanda = Demanda::with("plano.tipoModalidade")->where("id", $data["id"])->first();
-            $dispensaAvaliacao = !empty($demanda->plano->tipo_modalidade) && $demanda->plano->tipo_modalidade->dispensa_avaliacao;
-            $update = ["id" => $demanda->id, "avaliacao_id" => null, "data_arquivamento" => null];
-            if(!$dispensaAvaliacao) $update["tempo_homologado"] = null;
-            $this->update($update, $unidade, false);
-            DemandaAvaliacao::where("demanda_id", $data["id"])->
-                update(["data_fim" => Carbon::now()]);
-            $comentarioAvaliacao = Comentario::where("demanda_id", $data["id"])->where("tipo", "AVALIACAO")->first();
-            if(!empty($comentarioAvaliacao)) {
-                $comentarioService->destroy($comentarioAvaliacao->id);
-            }
-            DB::commit();
-        } catch (Throwable $e) {
-            DB::rollback();
-            throw $e;
-        }
-        return true;
-    }*/
-
     public function pausar($pausa, $unidade) {
         $atividadePausaService = new AtividadePausaService();
         try {
@@ -567,15 +501,15 @@ class AtividadeService extends ServiceBase
                     throw new ServerException("ValidateAtividade", "Já existe uma pausa no período informado");
                 }
             }
-            //$demandaPausa = DemandaPausa::where("demanda_id", $pausa["demanda_id"])->first();
-            //if(empty($demandaPausa)) {
-            $atividadePausa = $atividadePausaService->store([
-                "atividade_id" => $pausa["atividade_id"],
-                "data_inicio" => $pausa["data"]
-            ], $unidade, false);
-            //} else {
-            //    throw new Exception("Demanda já pausada");
-            //}
+            $demandaPausa = AtividadePausa::where("atividade_id", $pausa["atividade_id"])->whereNull("data_fim")->first();
+            if(empty($demandaPausa)) {
+                $atividadePausa = $atividadePausaService->store([
+                    "atividade_id" => $pausa["atividade_id"],
+                    "data_inicio" => $pausa["data"]
+                ], $unidade, false);
+            } else {
+                throw new ServerException("ValidateAtividade", "Demanda já pausada!");
+            }
             DB::commit();
         } catch (Throwable $e) {
             DB::rollback();
@@ -588,7 +522,7 @@ class AtividadeService extends ServiceBase
         $atividadePausaService = new AtividadePausaService();
         try {
             DB::beginTransaction();
-            $atividadePausa = AtividadePausa::where("atividade_id", $pausa["atividade_id"])->first();
+            $atividadePausa = AtividadePausa::where("atividade_id", $pausa["atividade_id"])->whereNull("data_fim")->first();
             if(!empty($atividadePausa)) {
                 if(CalendarioService::getTimestamp($pausa["data"]) < CalendarioService::getTimestamp($atividadePausa->data_inicio)) {
                     throw new ServerException("ValidateAtividade", "Data de reinício menor que a de início da pausa");
