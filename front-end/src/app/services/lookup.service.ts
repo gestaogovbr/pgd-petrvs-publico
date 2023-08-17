@@ -80,19 +80,19 @@ export class LookupService {
   ];
 
   public ATIVIDADE_STATUS: LookupItem[] = [
-    { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star-half", color: "success" },
     { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-check-circle", color: "primary" },
     { key: "NAOCONCLUIDO", value: "Não concluído", icon: "bi bi-play-circle", color: "info" },
     { key: "INICIADO", value: "Iniciado", icon: "bi bi-play-circle", color: "info" },
+    { key: "PAUSADO", value: "Pausado", icon: "bi bi-sign-stop", color: "danger" },
     { key: "INCLUIDO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" }
   ];
 
   public ATIVIDADE_STATUS_COM_ARQUIVADAS: LookupItem[] = [
-    { key: "INCLUIDO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" },
-    { key: "INICIADO", value: "Iniciado", icon: "bi bi-play-circle", color: "info" },
-    { key: "NAOCONCLUIDO", value: "Não concluído", icon: "bi bi-play-circle", color: "info" },
     { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-check-circle", color: "primary" },
-    { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star-half", color: "success" },
+    { key: "NAOCONCLUIDO", value: "Não concluído", icon: "bi bi-play-circle", color: "info" },
+    { key: "INICIADO", value: "Iniciado", icon: "bi bi-play-circle", color: "info" },
+    { key: "PAUSADO", value: "Pausado", icon: "bi bi-sign-stop", color: "danger" },
+    { key: "INCLUIDO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" },
     { key: "ARQUIVADO", value: "Arquivado", icon: "bi bi-inboxes", color: "secondary" }
   ];
 

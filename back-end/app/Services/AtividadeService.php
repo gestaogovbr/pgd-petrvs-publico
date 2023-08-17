@@ -18,6 +18,7 @@ use App\Exceptions\ServerException;
 use App\Models\Atividade;
 use App\Models\Documento;
 use App\Models\PlanoTrabalho;
+use App\Models\Status;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -79,44 +80,24 @@ class AtividadeService extends ServiceBase
             $usuario = parent::loggedUser();
             $data["demandante_id"] = $usuario->id;
         }
-
-
-
-
-        /*if($condition[2] == "INICIADO") {
-            array_push($where, ["data_inicio", "!=", null]);
-            array_push($where, ["data_entrega", "==", null]);
-        } else if($condition[2] == "NAOCONCLUIDO") {
-            array_push($where, ["data_entrega", "==", null]);
-        } else if($condition[2] == "CONCLUIDO") {
-            array_push($where, ["data_entrega", "!=", null]);
-        } else if($condition[2] == "INCLUIDO") {
-            array_push($where, ["data_inicio", "==", null]);
-        } else if($condition[2] == "ARQUIVADO") {
-            array_push($where, ["data_arquivamento", "!=", null]);
-        }
-
-        "horario_servidor" => CalendarioService::horarioServidor(),
-        "tempo_despendido" => 0,
-        "concluido" => !empty($atividade->data_entrega),
-        "iniciado" => !empty($atividade->data_inicio),
-        "arquivado" => !empty($atividade->data_arquivamento),
-        "produtividade" => 0,
-        $suspenso = false;
-        foreach($atividade->pausas as $pausa) {
-            $suspenso = $suspenso || empty($pausa->data_fim);
-        }
-        $result["suspenso"] = $suspenso;
-        $result["atrasado"] = !$result["concluido"] && strtotime($atividade->prazo_entrega) < strtotime($hora);
-        $result["tempo_atraso"] = $result["atrasado"] ? $this->calendarioService->tempoAtraso($atividade->prazo_entrega, $hora, $atividade->carga_horaria) : 0;
-        $result["status"] = ($result["concluido"] ? "CONCLUIDO" : ($result["iniciado"] ? "INICIADO" : "INCLUIDO"));
-        
-        */
-
-
-
-
         return $data;
+    }
+
+    public function extraStore($entity, $unidade, $action) {
+        $metadados = $this->metadados($entity);
+        /* Atualiza status */
+        $status = $metadados["pausado"] ? "PAUSADO" : 
+            ($metadados["concluido"] ? "CONCLUIDO" : 
+            ($metadados["iniciado"] ? "INICIADO" : "INCLUIDO"));
+        if($entity->status?->codigo != $status) {
+            $status = new Status([
+                "codigo" => $status,
+                "atividade_id" => $entity->id
+            ]);
+            $status->save();
+            $entity->status_id = $status->id;
+            $entity->save();
+        }
     }
 
     public function afterStore($entity, $action) {
@@ -283,14 +264,13 @@ class AtividadeService extends ServiceBase
             "arquivado" => !empty($atividade->data_arquivamento),
             "produtividade" => 0,
         ];
-        $suspenso = false;
+        $pausado = false;
         foreach($atividade->pausas as $pausa) {
-            $suspenso = $suspenso || empty($pausa->data_fim);
+            $pausado = $pausado || empty($pausa->data_fim);
         }
-        $result["suspenso"] = $suspenso;
+        $result["pausado"] = $pausado;
         $result["atrasado"] = !$result["concluido"] && strtotime($atividade->prazo_entrega) < strtotime($hora);
         $result["tempo_atraso"] = $result["atrasado"] ? $this->calendarioService->tempoAtraso($atividade->prazo_entrega, $hora, $atividade->carga_horaria) : 0;
-        $result["status"] = ($result["concluido"] ? "CONCLUIDO" : ($result["iniciado"] ? "INICIADO" : "INCLUIDO"));
         return $result;
     }
 
@@ -510,6 +490,8 @@ class AtividadeService extends ServiceBase
             } else {
                 throw new ServerException("ValidateAtividade", "Demanda já pausada!");
             }
+            /* Atualiza o status da atividade */
+            $this->extraStore($atividade, $unidade, ServiceBase::ACTION_EDIT);
             DB::commit();
         } catch (Throwable $e) {
             DB::rollback();
@@ -522,6 +504,10 @@ class AtividadeService extends ServiceBase
         $atividadePausaService = new AtividadePausaService();
         try {
             DB::beginTransaction();
+            $atividade = Atividade::find($pausa["atividade_id"]);
+            if(empty($atividade)) {
+                throw new ServerException("ValidateAtividade", "Atividade não encontrada");
+            }
             $atividadePausa = AtividadePausa::where("atividade_id", $pausa["atividade_id"])->whereNull("data_fim")->first();
             if(!empty($atividadePausa)) {
                 if(CalendarioService::getTimestamp($pausa["data"]) < CalendarioService::getTimestamp($atividadePausa->data_inicio)) {
@@ -538,6 +524,8 @@ class AtividadeService extends ServiceBase
                     "data_arquivamento" => null,
                     "data_fim" => $pausa["data"]
                 ], $unidade, false);
+                /* Atualiza o status da atividade */
+                $this->extraStore($atividade, $unidade, ServiceBase::ACTION_EDIT);
             } else {
                 throw new ServerException("ValidateAtividade", "Não há pausa para reiniciar");
             }
@@ -558,6 +546,8 @@ class AtividadeService extends ServiceBase
                     "id" => $atividade->id,
                     "prazo_entrega" => $data["prazo_entrega"]
                 ], $unidade, false);
+                /* Atualiza o status da atividade */
+                $this->extraStore($atividade, $unidade, ServiceBase::ACTION_EDIT);
             } else {
                 throw new ServerException("ValidateAtividade", "Atividade não encontrada!");
             }

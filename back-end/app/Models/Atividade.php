@@ -16,7 +16,7 @@ class Atividade extends ModelBase
 {
     protected $table = 'atividades';
 
-    protected $with = [];
+    protected $with = ["status"];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'descricao', /* text; */// Assunto da atividade
@@ -74,7 +74,7 @@ class Atividade extends ModelBase
     public function comentarios() { return $this->hasMany(Comentario::class); }
     public function documentos() { return $this->hasMany(Documento::class); }
     // Belongs
-    public function statusAtual() { return $this->belongsTo(Status::class, "status_id"); }
+    public function status() { return $this->belongsTo(Status::class, "status_id"); }
     public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class); }        //nullable
     public function planoTrabalhoEntrega() { return $this->belongsTo(PlanoTrabalhoEntrega::class); }      //nullable
     public function tipoAtividade() { return $this->belongsTo(TipoAtividade::class); }    //nullable

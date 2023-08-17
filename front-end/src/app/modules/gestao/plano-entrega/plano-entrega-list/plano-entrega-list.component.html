@@ -66,7 +66,7 @@
         </column>
         <column title="Status" [template]="columnStatus">
             <ng-template let-row="row" #columnStatus>
-                <badge [color]="lookup.getColor(lookup.PLANO_ENTREGA_STATUS, row.status_atual.codigo)" [icon]="lookup.getIcon(lookup.PLANO_ENTREGA_STATUS, row.status_atual.codigo)" [label]="lookup.getValue(lookup.PLANO_ENTREGA_STATUS, row.status_atual.codigo)"></badge>
+                <badge [color]="lookup.getColor(lookup.PLANO_ENTREGA_STATUS, row.status.codigo)" [icon]="lookup.getIcon(lookup.PLANO_ENTREGA_STATUS, row.status.codigo)" [label]="lookup.getValue(lookup.PLANO_ENTREGA_STATUS, row.status.codigo)"></badge>
                 <badge *ngIf="row.data_cancelamento" color="danger" icon="bi bi-dash-circle" label="Cancelado"></badge>
             </ng-template>
         </column>

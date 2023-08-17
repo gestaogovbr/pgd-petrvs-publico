@@ -148,7 +148,7 @@ class PlanoEntregaService extends ServiceBase
      */
     public function emCurso(PlanoEntrega $plano): bool {
         $planoEntrega = !empty($plano['id']) ? PlanoEntrega::find($plano['id']) : $plano;
-        return empty($plano['id']) ? false : $this->isPlanoEntregaValido($plano) && $planoEntrega->statusAtual->codigo == 'ATIVO';
+        return empty($plano['id']) ? false : $this->isPlanoEntregaValido($plano) && $planoEntrega->status->codigo == 'ATIVO';
     }
 
     public function homologar($data, $unidade) {
@@ -172,7 +172,7 @@ class PlanoEntregaService extends ServiceBase
      */
     public function isPlano($status, $plano): bool {
         $planoEntrega = !empty($plano['id']) ? PlanoEntrega::find($plano['id']) : $plano;
-        return empty($plano['id']) ? false : $this->isPlanoEntregaValido($plano) && $planoEntrega->statusAtual->codigo == $status;
+        return empty($plano['id']) ? false : $this->isPlanoEntregaValido($plano) && $planoEntrega->status->codigo == $status;
     }
 
     /**
@@ -181,8 +181,8 @@ class PlanoEntregaService extends ServiceBase
      * @param array $planoEntrega  
      */
     public function isPlanoEntregaValido($plano): bool {
-        $planoEntrega = !empty($plano['id']) ? PlanoEntrega::with("statusAtual")->where('id',$plano['id'])->first() : $plano;
-        return empty($plano['id']) ? false : !$planoEntrega->trashed() && !$plano['data_arquivamento'] && $planoEntrega->statusAtual->codigo != 'CANCELADO';
+        $planoEntrega = !empty($plano['id']) ? PlanoEntrega::with("status")->where('id',$plano['id'])->first() : $plano;
+        return empty($plano['id']) ? false : !$planoEntrega->trashed() && !$plano['data_arquivamento'] && $planoEntrega->status->codigo != 'CANCELADO';
     }
 
     public function liberarHomologacao($data, $unidade) {
@@ -203,14 +203,14 @@ class PlanoEntregaService extends ServiceBase
             $this->unidades[$planoEntrega->unidade_id] = Unidade::find($planoEntrega->unidade_id);
         }
         $result = [
-            "incluido" => $planoEntrega->statusAtual->codigo == 'INCLUIDO',
-            "homologando" => $planoEntrega->statusAtual->codigo == 'HOMOLOGANDO',
-            "ativo" => $planoEntrega->statusAtual->codigo == 'ATIVO',
-            "suspenso" => $planoEntrega->statusAtual->codigo == 'SUSPENSO',
-            "concluido" => $planoEntrega->statusAtual->codigo == 'CONCLUIDO',
-            "avaliado" => $planoEntrega->statusAtual->codigo == 'AVALIADO',
+            "incluido" => $planoEntrega->status->codigo == 'INCLUIDO',
+            "homologando" => $planoEntrega->status->codigo == 'HOMOLOGANDO',
+            "ativo" => $planoEntrega->status->codigo == 'ATIVO',
+            "suspenso" => $planoEntrega->status->codigo == 'SUSPENSO',
+            "concluido" => $planoEntrega->status->codigo == 'CONCLUIDO',
+            "avaliado" => $planoEntrega->status->codigo == 'AVALIADO',
             "arquivado" => !empty($planoEntrega->data_arquivamento),
-            "cancelado" => $planoEntrega->statusAtual->codigo == 'CANCELADO'
+            "cancelado" => $planoEntrega->status->codigo == 'CANCELADO'
         ];
         return $result;
     }
@@ -222,7 +222,7 @@ class PlanoEntregaService extends ServiceBase
         //  (RI_PENT_5) Garante que, se não for especificado um status, só retornarão os planos de entrega não cancelados. (vide método proxyRows)
         $result = $this->extractWhere($data, "status");
         $this->statusQuery = empty($result) ? "" : $result[2]; 
-        $data["with"][] = "statusAtual:id,codigo";
+        $data["with"][] = "status:id,codigo";
     }
 
     public function proxyRows($rows){
@@ -230,7 +230,7 @@ class PlanoEntregaService extends ServiceBase
         //  (RI_PENT_5) Por padrão, os planos de entregas retornados na listagem do grid são os que não foram arquivados nem cancelados.
         //  O não-arquivamento é tratado no método proxyQuery e o não-cancelamento é tratado lá e aqui.
         $rows = $rows->filter(function($r) {
-            return $this->statusQuery == "" ? $r->statusAtual->codigo != "CANCELADO" : $r->statusAtual->codigo == $this->statusQuery; 
+            return $this->statusQuery == "" ? $r->status->codigo != "CANCELADO" : $r->status->codigo == $this->statusQuery; 
         })->values();
         return $rows;
     }

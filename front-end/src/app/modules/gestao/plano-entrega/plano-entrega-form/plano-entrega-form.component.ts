@@ -38,7 +38,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
     this.planejamentoInstitucionalDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
-    this.join = ["entregas.entrega", "unidade", "entregas.unidade", "status_atual:id,nome"];
+    this.join = ["entregas.entrega", "unidade", "entregas.unidade", "status:id,nome"];
     this.modalWidth = 1200;
     this.form = this.fh.FormBuilder({
       nome: { default: "" },

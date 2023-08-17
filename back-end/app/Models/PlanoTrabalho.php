@@ -18,7 +18,7 @@ class PlanoTrabalho extends ModelBase
 {
     protected $table = 'planos_trabalhos';
 
-    protected $with = [];
+    protected $with = ["status"];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'carga_horaria', /* double(8,2); NOT NULL; DEFAULT: '0.00'; */// Carga horária diária do usuário
@@ -58,7 +58,7 @@ class PlanoTrabalho extends ModelBase
     public function atividades() { return $this->hasMany(Atividade::class); }
     public function consolidacoes() { return $this->hasMany(PlanoTrabalhoConsolidacao::class)->orderBy('data_inicio'); }
     // Belongs
-    public function statusAtual() { return $this->belongsTo(Status::class, "status_id"); }
+    public function status() { return $this->belongsTo(Status::class, "status_id"); }
     public function usuario() { return $this->belongsTo(Usuario::class); }
     public function criador() { return $this->belongsTo(Usuario::class, 'criacao_usuario_id'); }
     public function programa() { return $this->belongsTo(Programa::class); }
