@@ -36,7 +36,6 @@ use App\Traits\LogChanges;
 use App\Traits\HasPermissions;
 use App\Services\UsuarioService;
 use Throwable;
-use Illuminate\Support\Str;
 
 class UsuarioConfig {}
 
@@ -185,20 +184,5 @@ class Usuario extends Authenticatable
             if(count($atribuicoes) > 0) $result[$vinculo->unidade_id] = array_map(fn($a) => $a["atribuicao"], $atribuicoes); 
         }
         return $result;
-    }
-
-    public function setNomeAttribute($value)
-    {
-        $this->attributes['nome'] = Str::upper($value);
-    }
-
-    public function setEmailAttribute($value)
-    {
-        $this->attributes['email'] = Str::upper($value);
-    }
-
-    public function setApelidoAttribute($value)
-    {
-        $this->attributes['apelido'] = Str::ucfirst($value);
     }
 }
