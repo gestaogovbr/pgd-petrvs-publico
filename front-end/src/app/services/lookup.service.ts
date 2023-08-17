@@ -72,7 +72,7 @@ export class LookupService {
     { key: 'ATIVIDADE', value: "Atividade", icon: "bi bi-envelope-exclamation" }
   ];
 
-  public USUARIO_VINCULACAO: LookupItem[] = [
+  public USUARIO_SITUACAO_FUNCIONAL: LookupItem[] = [
     { key: "SERVIDOR_EFETIVO", value: "Servidor público cargo efetivo" },
     { key: "SERVIDOR_COMISSIONADO", value: "Servidor público cargo em comissão" },
     { key: "EMPREGADO", value: "Empregado público" },
@@ -625,6 +625,24 @@ export class LookupService {
     { 'key': 'REMOTO', 'value': 'Remoto' },
     { 'key': 'HIBRIDO', 'value': 'Híbrido' }
   ];
+
+  public TIPO_INTEGRACAO: LookupItem[] = [
+    { 'key': 'NENHUMA', 'value': 'Nenhuma' },
+    { 'key': 'WSO2', 'value': 'Siape-PRF' },
+    { 'key': 'SIAPE', 'value': 'Siape-WS' },
+  ];
+
+  public EXISTE_PAGADOR: LookupItem[] = [
+    { 'key': 'A', 'value': 'Vínculos ativos sem ocorrência de exclusão' },
+    { 'key': 'B', 'value': 'Todos os vínculos' },
+  ];
+  
+  public TIPO_VINCULO: LookupItem[] = [
+    { 'key': 'A', 'value': 'Ativos em exercício no órgão' },
+    { 'key': 'B', 'value': 'Ativos e aposentados' },
+    { 'key': 'C', 'value': 'Ativos, aposentados e pensionistas' },
+  ];
+
 
   public getLookup(itens: LookupItem[], key: any) {
     return itens.find(x => x.key == key);
