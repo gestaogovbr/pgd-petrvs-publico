@@ -22,8 +22,6 @@ class DatabaseSeeder extends Seeder
             EntidadeSeeder::class,
             UnidadePrfSeeder::class,
             UsuarioSeeder::class,
-            TipoCapacidadeSeeder::class,
-            CapacidadeSeeder::class,
 /*             TipoAvaliacaoSeeder::class,
             TipoJustificativaSeeder::class,
             TipoAvaliacaoJustificativaSeeder::class,
