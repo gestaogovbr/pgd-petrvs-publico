@@ -35,32 +35,24 @@ class UnidadeIntegranteService extends ServiceBase
         return ['rows' => array_values($result), 'unidade' => $unidade, 'usuario' => $usuario];
     }
 
-    public function saveIntegrante($unidadeId, $usuarioId, $atribuicoes, $transaction = true) {
-        if($transaction) DB::beginTransaction();
-        try {
-            $usuario = Usuario::find($usuarioId);
-            $unidade = Unidade::find($unidadeId);
-            if(empty($unidade->id) || empty($usuario->id)) throw new ServerException("ValidateIntegrante", "Unidade/Usuário não existe no banco");
-            $novasAtribuicoes = $atribuicoes;
-            $atribuicoesFinais = [];
-            $vinculoNovo = UnidadeIntegrante::firstOrCreate(['unidade_id' => $unidadeId, 'usuario_id' => $usuarioId]);
-            if($usuario && !$novasAtribuicoes) {     // excluir o vínculo e suas atribuições
-                $vinculo = UnidadeIntegrante::where('usuario_id',$usuario->id)->where('unidade_id',$unidade->id)->first();
-                if(!empty($usuario->lotacao) && $usuario->lotacao->id == $vinculo->id) {     // o vínculo de lotação não pode ser excluído, apenas através da definição da lotação em outra unidade
-                    $vinculo->atribuicoes->each(function($a) { if($a->atribuicao != 'LOTADO') $a->delete(); });
-                    array_push($atribuicoesFinais,"LOTADO");
-                } else {
-                    $vinculo->deleteCascade();
-                };
-            } else {
-                $this->validateIntegrante($atribuicoes);
-                $unidadeLotacao = $usuario->lotacao ? $usuario->lotacao->unidade : null;
-                $unidadeGerenciaTitular = $usuario->gerenciaTitular ? $usuario->gerenciaTitular->unidade : null;
-                $atualGestorSubstitutoUnidade = $unidade->gestorSubstituto ? $unidade->gestorSubstituto->usuario : null;
-                
-                $definirLotacao = function($vinculoNovo) use ($unidadeLotacao,$unidadeId,$usuario,&$atribuicoesFinais) {
-                    if(empty($unidadeLotacao)) {
-                        UnidadeIntegranteAtribuicao::create(["atribuicao" => "LOTADO","unidade_integrante_id" => $vinculoNovo->id])->save();
+    public function saveIntegrante(array $vinculos, $transaction = true): array
+    {
+        $result = [];
+        foreach ($vinculos as $vinculo) {
+            if($transaction) DB::beginTransaction();
+            try {
+                $usuario = Usuario::find($vinculo["usuario_id"]);
+                $unidade = Unidade::find($vinculo["unidade_id"]);
+                if (empty($unidade) || empty($usuario)) throw new ServerException("ValidateIntegrante", "Unidade/Usuário não existe no banco");
+                $atribuicoesFinais = [];
+                if ($usuario && !$vinculo["atribuicoes"]) {     // excluir o vínculo e suas atribuições
+                    $integrante = UnidadeIntegrante::where('usuario_id', $usuario->id)->where('unidade_id', $unidade->id)->first();
+                    if (!empty($usuario->lotacao) && $usuario->lotacao->id == $integrante->id) {     // o vínculo de lotação não pode ser excluído, apenas através da definição da lotação em outra unidade
+                        $integrante->atribuicoes->each(function ($a) {
+                            if ($a->atribuicao != 'LOTADO') $a->delete();
+                            //Enviar mensagem de retorno para o front-end informando que a lotação não pôde ser apagada
+                        });
+                        array_push($atribuicoesFinais, "LOTADO");
                     } else {
                         $integrante->deleteCascade();
                     };
@@ -113,6 +105,7 @@ class UnidadeIntegranteService extends ServiceBase
         }
         return $result;
     }
+
 
     public function validateIntegrante($atribuicoes)
     {

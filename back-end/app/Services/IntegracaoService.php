@@ -547,15 +547,24 @@ class IntegracaoService extends ServiceBase {
                             $id_user = $registro->id;
 
                             $unidade_exercicio = Unidade::where("codigo", $v_isr["codigo_servo_exercicio"])->first();
-
-                            $this->unidadeIntegrante->saveIntegrante($unidade_exercicio->id, $id_user, ["LOTADO"], false);
                             
+                            $vinculo = [
+                              "usuario_id" => $id_user,
+                              "unidades_id" => $unidade_exercicio->id,
+                              "atribuicoes" => "LOTADO",
+                            ];
+
+                            $this->unidadeIntegrante->saveIntegrante($vinculo, false);
+
+                            //$this->unidadeIntegrante->saveIntegrante(["unidade_id" => $unidade_exercicio->id, "usuario_id" => $id_user, ["LOTADO"], false);
+
                             // $db_result = $this->usuario->store($registro, $unidade_exercicio, false);
 
                         }
                     } else {
                     // Exercício atual
-                        foreach ($vinculos as $v) {
+                      $vinculos_isr = IntegracaoServidor::all();
+                        foreach ($vinculos_isr as $v) {
                             // $lotacao_atual = DB::select("SELECT codigo_servo_exercicio from integracao_servidores where cpf = (SELECT cpf from usuarios where id = :usuario_id)", $v->usuario_id);
                             //if (!empty($v->lotado()) && $v->unidade->codigo != $lotacao_atual) {
                             //    $db_result = $this->UnidadeIntegrante->saveIntegrante($v->unidade_id, $v->usuario_id, ["LOTADO"]);
