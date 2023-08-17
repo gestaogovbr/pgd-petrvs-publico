@@ -62,10 +62,10 @@ class DocumentoService extends ServiceBase {
                 }
                 if(count($documento->assinaturas) == 0) {
                     $assinatura = new DocumentoAssinatura();
-                    $assinatura->data_hora = Carbon::now();
+                    $assinatura->data_assinatura = Carbon::now();
                     $assinatura->documento_id = $documento->id;
                     $assinatura->usuario_id = $usuario->id;
-                    $assinatura->assinatura = hash('md5', $assinatura->data_hora->toDateTimeString() . $usuario->id . $documento->conteudo);
+                    $assinatura->assinatura = hash('md5', $assinatura->data_assinatura->toDateTimeString() . $usuario->id . $documento->conteudo);
                     $assinatura->save();
                 } else {
                     /* Remove o documento que já foi assinado */

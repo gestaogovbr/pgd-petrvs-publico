@@ -13,7 +13,7 @@ class ProjetoHistorico extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'data_hora', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data e hora da modificação
+        'data_modificacao', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data e hora da modificação
         'completo', /* tinyint; NOT NULL; */// Se o delta corresponde ao objeto completo
         'delta', /* json; NOT NULL; */// Delta do objeto (ou objeto completo)
         'projeto_id', /* char(36); NOT NULL; */

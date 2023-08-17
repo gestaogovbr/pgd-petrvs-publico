@@ -157,7 +157,7 @@ function AtividadeFormConcluirComponent_div_12_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("decimals", 2);
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("label", ctx_r2.lex.translate("Prazo de entrega"))("control", ctx_r2.form.controls.prazo_entrega);
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("label", ctx_r2.lex.translate("Prazo de entrega"))("control", ctx_r2.form.controls.data_estipulada_entrega);
   }
 }
 function AtividadeFormConcluirComponent_ng_template_13_Template(rf, ctx) {
@@ -175,7 +175,7 @@ function AtividadeFormConcluirComponent_ng_template_13_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 3)("decimals", 2);
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 3)("label", ctx_r4.lex.translate("Prazo de entrega"))("control", ctx_r4.form.controls.prazo_entrega);
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 3)("label", ctx_r4.lex.translate("Prazo de entrega"))("control", ctx_r4.form.controls.data_estipulada_entrega);
   }
 }
 function AtividadeFormConcluirComponent_div_16_Template(rf, ctx) {
@@ -271,7 +271,7 @@ class AtividadeFormConcluirComponent extends src_app_modules_base_page_form_base
       progresso: {
         default: 0
       },
-      prazo_entrega: {
+      data_estipulada_entrega: {
         default: null
       },
       data_inicio: {
@@ -317,7 +317,7 @@ class AtividadeFormConcluirComponent extends src_app_modules_base_page_form_base
         value: x.descricao + (x.entrega ? " (" + x.entrega.nome + ")" : ""),
         data: x
       })) || [];
-      formValue.arquivar = true; //!!this.entity?.plano?.tipo_modalidade?.dispensa_avaliacao; 
+      formValue.arquivar = true;
       form.patchValue(formValue);
       _this.onDataEntregaChange();
     })();
@@ -383,7 +383,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵInheritDefinitionFeature"]],
   decls: 21,
   vars: 26,
-  consts: [[3, "form", "disabled", "submit", "cancel"], [3, "documento"], [1, "row"], ["controlName", "tipo_atividade_id", 3, "label", "emptyValue", "size", "dao", "select"], ["tipoAtividade", ""], ["controlName", "plano_trabalho_entrega_id", 3, "label", "size", "control", "items", "labelInfo"], ["entrega", ""], ["label", "Arquivar", "controlName", "arquivar", "labelInfo", "Arquivar automaticamente ap\u00F3s a conclus\u00E3o (Somente se o plano dispensar avalia\u00E7\u00E3o)", 3, "size", "control"], ["label", "Descri\u00E7\u00E3o t\u00E9cnica", "controlName", "descricao_tecnica", 3, "size", "rows", "control"], ["collapse", "", 3, "title", "collapsed"], ["persist", "", 3, "atividade"], ["class", "row", 4, "ngIf", "ngIfElse"], ["comEsforco", ""], ["title", "Conclus\u00E3o"], ["comTempoDespendido", ""], ["title", "C\u00E1lculos das horas", "collapse", "", 4, "ngIf"], ["noIcon", "", "controlName", "data_distribuicao", "labelInfo", "Data de inclus\u00E3o/distribui\u00E7\u00E3o/lan\u00E7amento", 3, "size", "label", "control"], ["label", "Progresso", "disabled", "", "sufix", "%", "icon", "bi bi-clock", "controlName", "progresso", "labelInfo", "Progresso de execu\u00E7\u00E3o (% Conclu\u00EDdo). Sempre ser\u00E1 100% na conclus\u00E3o!", 3, "size", "decimals"], ["noIcon", "", "controlName", "prazo_entrega", "labelInfo", "Data estipulada para entrega da atividade", 3, "size", "label", "control"], ["noIcon", "", "disabled", "", "controlName", "data_distribuicao", "labelInfo", "Data de inclus\u00E3o/distribui\u00E7\u00E3o/lan\u00E7amento", 3, "size", "label", "control"], ["icon", "bi bi-stopwatch", "onlyHours", "", "controlName", "esforco", "labelInfo", "Tempo estimado de execu\u00E7\u00E3o", 3, "size", "label", "control"], ["noIcon", "", "disabled", "", "controlName", "prazo_entrega", "labelInfo", "Data estipulada para entrega da atividade", 3, "size", "label", "control"], ["noIcon", "", "label", "Inicio", "controlName", "data_inicio", "disabled", "", "labelInfo", "Data em que o usu\u00E1rio iniciou a atividade", 3, "size", "control"], ["noIcon", "", "label", "Conclus\u00E3o", "controlName", "data_entrega", "labelInfo", "Data da conclus\u00E3o da atividade", 3, "size", "control", "change"], ["label", "Data de arquivamento", "controlName", "data_arquivamento", "disabled", "", "labelInfo", "Data de arquivamento da atividade", 3, "size", "control"], ["label", "Tempo despendido", "icon", "bi bi-hourglass-bottom", "controlName", "tempo_despendido", "disabled", "", "labelInfo", "Calculado no fim da atividade, sendo o tempo l\u00EDquido (considerando pausas)", 3, "size", "control"], ["title", "C\u00E1lculos das horas", "collapse", ""], [3, "efemerides"]],
+  consts: [[3, "form", "disabled", "submit", "cancel"], [3, "documento"], [1, "row"], ["controlName", "tipo_atividade_id", 3, "label", "emptyValue", "size", "dao", "select"], ["tipoAtividade", ""], ["controlName", "plano_trabalho_entrega_id", 3, "label", "size", "control", "items", "labelInfo"], ["entrega", ""], ["label", "Arquivar", "controlName", "arquivar", "labelInfo", "Arquivar automaticamente ap\u00F3s a conclus\u00E3o (Somente se o plano dispensar avalia\u00E7\u00E3o)", 3, "size", "control"], ["label", "Descri\u00E7\u00E3o t\u00E9cnica", "controlName", "descricao_tecnica", 3, "size", "rows", "control"], ["collapse", "", 3, "title", "collapsed"], ["persist", "", 3, "atividade"], ["class", "row", 4, "ngIf", "ngIfElse"], ["comEsforco", ""], ["title", "Conclus\u00E3o"], ["comTempoDespendido", ""], ["title", "C\u00E1lculos das horas", "collapse", "", 4, "ngIf"], ["noIcon", "", "controlName", "data_distribuicao", "labelInfo", "Data de inclus\u00E3o/distribui\u00E7\u00E3o/lan\u00E7amento", 3, "size", "label", "control"], ["label", "Progresso", "disabled", "", "sufix", "%", "icon", "bi bi-clock", "controlName", "progresso", "labelInfo", "Progresso de execu\u00E7\u00E3o (% Conclu\u00EDdo). Sempre ser\u00E1 100% na conclus\u00E3o!", 3, "size", "decimals"], ["noIcon", "", "controlName", "data_estipulada_entrega", "labelInfo", "Data estipulada para entrega da atividade", 3, "size", "label", "control"], ["noIcon", "", "disabled", "", "controlName", "data_distribuicao", "labelInfo", "Data de inclus\u00E3o/distribui\u00E7\u00E3o/lan\u00E7amento", 3, "size", "label", "control"], ["icon", "bi bi-stopwatch", "onlyHours", "", "controlName", "esforco", "labelInfo", "Tempo estimado de execu\u00E7\u00E3o", 3, "size", "label", "control"], ["noIcon", "", "disabled", "", "controlName", "data_estipulada_entrega", "labelInfo", "Data estipulada para entrega da atividade", 3, "size", "label", "control"], ["noIcon", "", "label", "Inicio", "controlName", "data_inicio", "disabled", "", "labelInfo", "Data em que o usu\u00E1rio iniciou a atividade", 3, "size", "control"], ["noIcon", "", "label", "Conclus\u00E3o", "controlName", "data_entrega", "labelInfo", "Data da conclus\u00E3o da atividade", 3, "size", "control", "change"], ["label", "Data de arquivamento", "controlName", "data_arquivamento", "disabled", "", "labelInfo", "Data de arquivamento da atividade", 3, "size", "control"], ["label", "Tempo despendido", "icon", "bi bi-hourglass-bottom", "controlName", "tempo_despendido", "disabled", "", "labelInfo", "Calculado no fim da atividade, sendo o tempo l\u00EDquido (considerando pausas)", 3, "size", "control"], ["title", "C\u00E1lculos das horas", "collapse", ""], [3, "efemerides"]],
   template: function AtividadeFormConcluirComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelementStart"](0, "editable-form", 0);
@@ -532,7 +532,7 @@ class AtividadeFormIniciarComponent extends src_app_modules_base_page_form_base_
       data_distribuicao: {
         default: new Date()
       },
-      prazo_entrega: {
+      data_estipulada_entrega: {
         default: new Date()
       },
       carga_horaria: {
@@ -568,7 +568,7 @@ class AtividadeFormIniciarComponent extends src_app_modules_base_page_form_base_
     this.planosTrabalhos = planosTrabalhos.filter(x => x.unidade_id == this.entity.unidade_id).map(x => {
       return {
         key: x.id,
-        value: (x.tipo_modalidade?.nome || "") + " - " + this.dao.getDateFormatted(x.data_inicio_vigencia) + " à " + this.dao.getDateFormatted(x.data_fim_vigencia),
+        value: (x.tipo_modalidade?.nome || "") + " - " + this.dao.getDateFormatted(x.data_inicio) + " à " + this.dao.getDateFormatted(x.data_fim),
         data: x
       };
     });
@@ -584,15 +584,8 @@ class AtividadeFormIniciarComponent extends src_app_modules_base_page_form_base_
       if (_this.entity) {
         const planoTrabalho = _this.planoTrabalho?.selectedItem?.data;
         const planoTrabalhoEntregaId = _this.form.controls.plano_trabalho_entrega_id.value;
-        /*if(plano && this.form!.controls.unidade_id.value != plano.unidade_id) {
-          const unidade = await this.unidadeDao.getById(plano.unidade_id);
-          if(unidade) {
-            await this.unidade?.loadSearch(unidade);
-            await this.auth.selecionaUnidade(unidade.id);
-          }
-        }*/
         const cargaHoraria = planoTrabalho?.carga_horaria || _this.calendar.expedienteMedio(_this.entity.unidade);
-        const tempo_planejado = _this.calendar.horasUteis(_this.form.controls.data_distribuicao.value, _this.form.controls.prazo_entrega.value, cargaHoraria, _this.entity.unidade, "DISTRIBUICAO");
+        const tempo_planejado = _this.calendar.horasUteis(_this.form.controls.data_distribuicao.value, _this.form.controls.data_estipulada_entrega.value, cargaHoraria, _this.entity.unidade, "DISTRIBUICAO");
         _this.form.controls.carga_horaria.setValue(cargaHoraria);
         _this.form.controls.tempo_planejado.setValue(tempo_planejado);
         _this.form.controls.esforco.setValue(_this.form.controls.esforco.value || _this.entity?.tipo_atividade?.esforco || 0);
@@ -667,7 +660,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵInheritDefinitionFeature"]],
   decls: 17,
   vars: 28,
-  consts: [[3, "form", "disabled", "submit", "cancel"], [1, "row"], ["controlName", "data_distribuicao", "disabled", "", "labelInfo", "Data de cadastro da atividade", 3, "size", "label", "control"], ["controlName", "prazo_entrega", "disabled", "", "labelInfo", "Data estipulada para entrega da atividade", 3, "size", "label", "control"], ["label", "Respons\u00E1vel", "controlName", "usuario_id", "labelInfo", "Respons\u00E1vel por executar a atividade", 3, "size", "dao", "join", "select"], ["usuario", ""], ["controlName", "plano_trabalho_id", 3, "label", "size", "control", "items", "labelInfo", "change"], ["planoTrabalho", ""], ["controlName", "plano_trabalho_entrega_id", 3, "label", "size", "control", "items", "labelInfo"], ["entrega", ""], ["label", "Inicio", "controlName", "data_inicio", "labelInfo", "Data em que o usu\u00E1rio iniciou a atividade", 3, "size", "control"], ["label", "Suspender as demais", "controlName", "suspender", 3, "size", "control", "disabled", "labelInfo"]],
+  consts: [[3, "form", "disabled", "submit", "cancel"], [1, "row"], ["controlName", "data_distribuicao", "disabled", "", "labelInfo", "Data de cadastro da atividade", 3, "size", "label", "control"], ["controlName", "data_estipulada_entrega", "disabled", "", "labelInfo", "Data estipulada para entrega da atividade", 3, "size", "label", "control"], ["label", "Respons\u00E1vel", "controlName", "usuario_id", "labelInfo", "Respons\u00E1vel por executar a atividade", 3, "size", "dao", "join", "select"], ["usuario", ""], ["controlName", "plano_trabalho_id", 3, "label", "size", "control", "items", "labelInfo", "change"], ["planoTrabalho", ""], ["controlName", "plano_trabalho_entrega_id", 3, "label", "size", "control", "items", "labelInfo"], ["entrega", ""], ["label", "Inicio", "controlName", "data_inicio", "labelInfo", "Data em que o usu\u00E1rio iniciou a atividade", 3, "size", "control"], ["label", "Suspender as demais", "controlName", "suspender", 3, "size", "control", "disabled", "labelInfo"]],
   template: function AtividadeFormIniciarComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "editable-form", 0);
@@ -702,7 +695,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 6)("label", ctx.lex.translate("Data de distribui\u00E7\u00E3o"))("control", ctx.form.controls.data_distribuicao);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 6)("label", ctx.lex.translate("Prazo de entrega"))("control", ctx.form.controls.prazo_entrega);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 6)("label", ctx.lex.translate("Prazo de entrega"))("control", ctx.form.controls.data_estipulada_entrega);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 12)("dao", ctx.usuarioDao)("join", _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵpureFunction0"](27, _c3));
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](3);
@@ -765,7 +758,7 @@ function AtividadeFormPausarComponent_div_2_Template(rf, ctx) {
   if (rf & 2) {
     const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 12)("control", ctx_r1.form.controls.inicio);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 12)("control", ctx_r1.form.controls.data_inicio);
   }
 }
 class AtividadeFormPausarComponent extends src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_4__.PageFormBase {
@@ -783,13 +776,13 @@ class AtividadeFormPausarComponent extends src_app_modules_base_page_form_base__
         } else if (!this.util.isDataValid(control.value)) {
           result = "Obrigatório";
         } else if (pausado && this.entity && control.value.getTime() < this.entity.data_inicio.getTime()) {
-          result = "Menor que inicio!";
+          result = "Menor que início!";
         }
       }
       return result;
     };
     this.form = this.fh.FormBuilder({
-      inicio: {
+      data_inicio: {
         default: undefined
       },
       data: {
@@ -860,7 +853,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdefi
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵInheritDefinitionFeature"]],
   decls: 5,
   vars: 8,
-  consts: [["type", "warning", "message", "Dica: N\u00E3o \u00E9 necess\u00E1rio suspender a tarefa entre as jornadas de trabalho!", 4, "ngIf"], [3, "form", "disabled", "submit", "cancel"], ["class", "row", 4, "ngIf"], [1, "row"], ["controlName", "data", 3, "size", "label", "control", "labelInfo"], ["type", "warning", "message", "Dica: N\u00E3o \u00E9 necess\u00E1rio suspender a tarefa entre as jornadas de trabalho!"], ["label", "In\u00EDcio da pausa", "controlName", "inicio", "disabled", "", "labelInfo", "Data de inicio da \u00FAltima pausa", 3, "size", "control"]],
+  consts: [["type", "warning", "message", "Dica: N\u00E3o \u00E9 necess\u00E1rio suspender a tarefa entre as jornadas de trabalho!", 4, "ngIf"], [3, "form", "disabled", "submit", "cancel"], ["class", "row", 4, "ngIf"], [1, "row"], ["controlName", "data", 3, "size", "label", "control", "labelInfo"], ["type", "warning", "message", "Dica: N\u00E3o \u00E9 necess\u00E1rio suspender a tarefa entre as jornadas de trabalho!"], ["label", "In\u00EDcio da pausa", "controlName", "data_inicio", "disabled", "", "labelInfo", "Data de in\u00EDcio da \u00FAltima pausa", 3, "size", "control"]],
   template: function AtividadeFormPausarComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](0, AtividadeFormPausarComponent_top_alert_0_Template, 1, 0, "top-alert", 0);
@@ -924,7 +917,7 @@ class AtividadeFormProrrogarComponent extends src_app_modules_base_page_form_bas
     this.modalWidth = 400;
     this.validate = (control, controlName) => {
       let result = null;
-      if (controlName == "prazo_entrega") {
+      if (controlName == "data_estipulada_entrega") {
         if (!this.util.isDataValid(control.value)) {
           result = "Obrigatório";
         } else if (this.entity?.data_distribuicao && control.value.getTime() < this.entity.data_distribuicao.getTime()) {
@@ -937,7 +930,7 @@ class AtividadeFormProrrogarComponent extends src_app_modules_base_page_form_bas
       data_distribuicao: {
         default: new Date()
       },
-      prazo_entrega: {
+      data_estipulada_entrega: {
         default: new Date()
       }
     }, this.cdRef, this.validate);
@@ -947,7 +940,7 @@ class AtividadeFormProrrogarComponent extends src_app_modules_base_page_form_bas
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = {
         data_distribuicao: entity.data_distribuicao,
-        prazo_entrega: entity.prazo_entrega
+        data_estipulada_entrega: entity.data_estipulada_entrega
       };
       if (entity.unidade_id != _this.auth.unidade.id) {
         yield _this.auth.selecionaUnidade(entity.unidade_id);
@@ -966,7 +959,7 @@ class AtividadeFormProrrogarComponent extends src_app_modules_base_page_form_bas
     return new Promise((resolve, reject) => {
       let prorrogar = {
         id: this.entity.id,
-        prazo_entrega: this.form.controls.prazo_entrega.value
+        data_estipulada_entrega: this.form.controls.data_estipulada_entrega.value
       };
       this.dao.prorrogar(prorrogar).then(saved => resolve(saved)).catch(reject);
     });
@@ -991,7 +984,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]],
   decls: 5,
   vars: 7,
-  consts: [[3, "form", "disabled", "submit", "cancel"], [1, "row"], ["label", "Data da distribui\u00E7\u00E3o", "controlName", "data_distribuicao", "disabled", "", "labelInfo", "Data de distribui\u00E7\u00E3o da atividade", 3, "size", "control"], ["controlName", "prazo_entrega", "labelInfo", "Prazo para entrega da atividade", 3, "size", "label", "control"]],
+  consts: [[3, "form", "disabled", "submit", "cancel"], [1, "row"], ["label", "Data da distribui\u00E7\u00E3o", "controlName", "data_distribuicao", "disabled", "", "labelInfo", "Data de distribui\u00E7\u00E3o da atividade", 3, "size", "control"], ["controlName", "data_estipulada_entrega", "labelInfo", "Prazo para entrega da atividade", 3, "size", "label", "control"]],
   template: function AtividadeFormProrrogarComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "editable-form", 0);
@@ -1012,7 +1005,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 12)("control", ctx.form.controls.data_distribuicao);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 12)("label", ctx.lex.translate("Prazo de entrega"))("control", ctx.form.controls.prazo_entrega);
+      _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 12)("label", ctx.lex.translate("Prazo de entrega"))("control", ctx.form.controls.data_estipulada_entrega);
     }
   },
   dependencies: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_5__.InputDatetimeComponent],
@@ -1353,7 +1346,7 @@ function AtividadeFormComponent_div_18_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_30__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_30__["ɵɵproperty"]("size", 4)("decimals", 2);
     _angular_core__WEBPACK_IMPORTED_MODULE_30__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_30__["ɵɵproperty"]("size", 4)("label", ctx_r5.lex.translate("Prazo de entrega"))("control", ctx_r5.form.controls.prazo_entrega);
+    _angular_core__WEBPACK_IMPORTED_MODULE_30__["ɵɵproperty"]("size", 4)("label", ctx_r5.lex.translate("Prazo de entrega"))("control", ctx_r5.form.controls.data_estipulada_entrega);
   }
 }
 function AtividadeFormComponent_ng_template_19_Template(rf, ctx) {
@@ -1384,7 +1377,7 @@ function AtividadeFormComponent_ng_template_19_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_30__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_30__["ɵɵproperty"]("size", 3)("decimals", 2);
     _angular_core__WEBPACK_IMPORTED_MODULE_30__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_30__["ɵɵproperty"]("size", 3)("label", ctx_r7.lex.translate("Prazo de entrega"))("control", ctx_r7.form.controls.prazo_entrega);
+    _angular_core__WEBPACK_IMPORTED_MODULE_30__["ɵɵproperty"]("size", 3)("label", ctx_r7.lex.translate("Prazo de entrega"))("control", ctx_r7.form.controls.data_estipulada_entrega);
   }
 }
 function AtividadeFormComponent_separator_21_div_1_Template(rf, ctx) {
@@ -1450,14 +1443,6 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
     this.planoTrabalhoSelecionado = null;
     this.usuarioJoin = ['planos_trabalho.entregas.entrega:id,nome', 'planos_trabalho.tipo_modalidade:id,nome'];
     this.entregas = [];
-    /*public get prazoEmDias(): string | undefined {
-      const unidade = this.unidade?.searchObj as Unidade || this.auth.unidade!;
-      return ["DIAS_CORRIDOS", "DIAS_UTEIS"].includes(unidade?.distribuicao_forma_contagem_prazos) ? "true" : undefined;
-    }
-           public get prazoEmHoras(): string | undefined {
-      const unidade = this.unidade?.searchObj as Unidade || this.auth.unidade!;
-      return ["DIAS_CORRIDOS", "DIAS_UTEIS"].includes(unidade?.distribuicao_forma_contagem_prazos) ? undefined : "true";
-    }*/
     this.validateChecklist = (control, controlName) => {
       let result = null;
       return result;
@@ -1468,14 +1453,14 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
         result = "Obrigatório";
       } else if (controlName == "tipo_atividade_id" && !control?.value?.length && !this.auth.hasPermissionTo("MOD_ATV_TIPO_ATV_VAZIO")) {
         result = "Obrigatório";
-      } else if (["data_distribuicao", "prazo_entrega"].includes(controlName)) {
-        let prazoEntrega = this.form?.controls.prazo_entrega?.value;
+      } else if (["data_distribuicao", "data_estipulada_entrega"].includes(controlName)) {
+        let prazoEntrega = this.form?.controls.data_estipulada_entrega?.value;
         let dataDistribuicao = this.form?.controls.data_distribuicao?.value;
         if (!this.util.isDataValid(control.value)) {
           result = "Data inválida";
         } else if (controlName == "data_distribuicao" && control.value && this.util.isDataValid(prazoEntrega) && control.value.getTime() > prazoEntrega.getTime()) {
           result = "Maior que entrega";
-        } else if (controlName == "prazo_entrega" && control.value && this.util.isDataValid(dataDistribuicao) && control.value.getTime() < dataDistribuicao.getTime()) {
+        } else if (controlName == "data_estipulada_entrega" && control.value && this.util.isDataValid(dataDistribuicao) && control.value.getTime() < dataDistribuicao.getTime()) {
           result = "Menor que distribuição";
         }
       } else if (controlName == "plano_trabalho_id" && !control.value?.length && this.form?.controls?.usuario_id.value?.length) {
@@ -1491,7 +1476,6 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
     };
     this.formValidation = form => {
       let result = undefined;
-      //if(!this.isComentarios) {
       this.loadEtiquetas();
       this.loadChecklist();
       const etiquetasKeys = this.etiquetas.map(x => x.key);
@@ -1500,20 +1484,6 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
       const checklst = (this.form.controls.checklist.value || []).find(x => !etiquetasKeys.includes(x.id) && x.checked);
       if (etiqueta) result = "Etiqueta " + etiqueta.value + "não pode ser utilizada!";
       if (checklst) result = "Checklist " + checklst.texto + "não pode ser utilizado!";
-      /* Validações pelo plano *
-      if(this.form.controls.plano_id.value?.length) {
-        /* Verifica se a atividade seleciona está na lista de atividades permitidas no plano de trabalho *
-        if(this.form.controls.atividade_id.value?.length && !this.auth.hasPermissionTo('MOD_DMD_TIPO_ATV_FORA_PL_TRB')) {
-          const atividades_termo_adesao = this.planoSelecionado?.documento?.metadados?.atividades_termo_adesao;
-          const atividade = this.atividade!.searchObj as Atividade;
-          if(!this.planoSelecionado || this.planoSelecionado?.id != this.form.controls.plano_id.value) {
-            result = "Erro ao ler " + this.lex.translate("plano de trabalho") + ". Selecione-o novamente!";
-          } else if(atividades_termo_adesao && atividade && atividades_termo_adesao.indexOf(this.util.removeAcentos(atividade.nome.toLowerCase())) < 0){
-            result = this.lex.translate("Atividade") + " não consta na lista permitida pelo " + this.lex.translate("plano de trabalho") + " selecionado.";
-          }
-        }
-      }*/
-      //}
       return result;
     };
     const horaInicial = this.auth.hora;
@@ -1539,7 +1509,7 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
       tempo_planejado: {
         default: 0
       },
-      prazo_entrega: {
+      data_estipulada_entrega: {
         default: horaInicial
       },
       data_inicio: {
@@ -1653,46 +1623,12 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
     }
     return result;
   }
-  /*private calcularPrazo(source: "PACTUADO" | "COMPLEXIDADE" | "PLANO" | "PLANEJADO" | "ENTREGA") {
-    if(this.action != "consult"){
-      const atividade = this.atividade?.searchObj as Atividade;
-      const plano = (this.plano?.selectedItem?.data || this.planos.find(x => x.key == this.plano?.selectedItem?.key)?.data) as Plano;
-      if(source == "PACTUADO") {
-        const fator = this.form.controls.fator_complexidade.value || 1;
-        const fator_ganho_produtivade = 1 - ((plano?.ganho_produtividade || 0) / 100);
-        this.form.controls.tempo_pactuado.setValue((atividade?.tempo_pactuado || 0) * fator * fator_ganho_produtivade || 0);
-        this.cdRef.detectChanges();
-      } else if(this.deltaChanged()) {
-        const unidade = this.unidade?.searchObj as Unidade;
-        const fator = this.form.controls.fator_complexidade.value || 1;
-        const cargaHoraria = plano?.carga_horaria || this.calendar.expedienteMedio(unidade);
-        this.assignDelta(null);
-        if(source == "COMPLEXIDADE") {
-          if(atividade) this.setControlPreventChange("tempo_planejado", atividade.dias_planejado * cargaHoraria * fator || 0);
-          const entrega = this.calendar.prazo(this.form.controls.data_distribuicao.value, this.form.controls.tempo_planejado.value, cargaHoraria, unidade, "DISTRIBUICAO");
-          this.setControlPreventChange("prazo_entrega", entrega);
-        } else if(source == "PLANO") {
-          if(this.planejado) this.planejado.hoursPerDay = cargaHoraria;
-          this.form.controls.carga_horaria.setValue(cargaHoraria);
-          const tempo = this.calendar.horasUteis(this.form.controls.data_distribuicao.value, this.form.controls.prazo_entrega.value, cargaHoraria, unidade, "DISTRIBUICAO");
-          this.setControlPreventChange("tempo_planejado", tempo);
-        } else if(source == "PLANEJADO") {
-          const entrega = this.calendar.prazo(this.form.controls.data_distribuicao.value, this.form.controls.tempo_planejado.value, cargaHoraria, unidade, "DISTRIBUICAO");
-          this.setControlPreventChange("prazo_entrega", entrega);
-        } else if(source == "ENTREGA") {
-          const tempo = this.form.controls.prazo_entrega.value ? this.calendar.horasUteis(this.form.controls.data_distribuicao.value, this.form.controls.prazo_entrega.value, cargaHoraria, unidade, "DISTRIBUICAO") : 0;
-          this.setControlPreventChange("tempo_planejado", tempo);
-        }
-        this.cdRef.detectChanges();
-      }
-    }
-  }*/
   onUnidadeChange(event) {
     this.loadEtiquetas();
   }
   onDataDistribuicaoChange(event) {
     this.loadUsuario(this.usuario?.selectedItem?.entity); /* Atualiza a lista de planos de trabalho válidos no período */
-    this.form?.controls.prazo_entrega.updateValueAndValidity();
+    this.form?.controls.data_estipulada_entrega.updateValueAndValidity();
   }
   onPrazoEntregaChange(event) {
     this.form?.controls.data_distribuicao.updateValueAndValidity();
@@ -1765,11 +1701,11 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
   }
   getPlanosTrabalhos(usuario, data_distribuicao, plano_trabalho_id) {
     return usuario.planos_trabalho?.filter(x => x.id == plano_trabalho_id || this.util.between(data_distribuicao, {
-      start: x.data_inicio_vigencia,
-      end: x.data_fim_vigencia
+      start: x.data_inicio,
+      end: x.data_fim
     })).map(x => Object.assign({
       key: x.id,
-      value: (x.tipo_modalidade?.nome || "") + " - " + this.usuarioDao.getDateFormatted(x.data_inicio_vigencia) + " a " + this.usuarioDao.getDateFormatted(x.data_fim_vigencia),
+      value: (x.tipo_modalidade?.nome || "") + " - " + this.usuarioDao.getDateFormatted(x.data_inicio) + " a " + this.usuarioDao.getDateFormatted(x.data_fim),
       data: x
     })) || [];
   }
@@ -1777,7 +1713,7 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
     if (usuario) {
       const planoTrabalhoId = this.form.controls.plano_trabalho_id.value;
       const dataDistribuicao = this.form.controls.data_distribuicao.value || new Date();
-      this.planosTrabalhos = this.getPlanosTrabalhos(usuario, dataDistribuicao, planoTrabalhoId); //usuario?.planos?.map(x => Object.assign({key: x.id, value: (x.tipo_modalidade?.nome || "") + " - " + this.usuarioDao.getDateFormatted(x.data_inicio_vigencia)+ " a " + this.usuarioDao.getDateFormatted(x.data_fim_vigencia), data: x})) || [];
+      this.planosTrabalhos = this.getPlanosTrabalhos(usuario, dataDistribuicao, planoTrabalhoId); //usuario?.planos?.map(x => Object.assign({key: x.id, value: (x.tipo_modalidade?.nome || "") + " - " + this.usuarioDao.getDateFormatted(x.data_inicio)+ " a " + this.usuarioDao.getDateFormatted(x.data_fim), data: x})) || [];
       this.cdRef.detectChanges();
       this.form.controls.plano_trabalho_id.setValue(!planoTrabalhoId?.length && this.planosTrabalhos.length > 0 ? this.planosTrabalhos[0].key : planoTrabalhoId);
     } else {
@@ -1806,7 +1742,7 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
       comentario.id = this.dao.generateUuid();
       comentario.path = "";
       comentario.texto = tipoAtividade.comentario;
-      comentario.data_hora = this.auth.hora;
+      comentario.data_comentario = this.auth.hora;
       comentario.usuario_id = this.auth.usuario.id;
       comentario.comentario_id = null;
       comentario.tipo = "TIPO_ATIVIDADE";
@@ -1827,34 +1763,11 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
   onUsuarioChange(event) {
     if (!this.form?.controls.usuario_id.value?.length) this.loadUsuario(undefined);
   }
-  /*public addComentario = async () => {
-    this.comentario.newComentario(this.form.controls.comentarios, this.comentarios!);
-    return undefined;
-  }*/
   orderPausas(pausas) {
     return pausas.sort((a, b) => {
       return a.data_inicio < b.data_inicio ? -1 : 1;
     });
   }
-  /*public comentarioDynamicOptions(row: any): ToolbarButton[] {
-    return [{
-      label: "Comentar",
-      icon: "bi bi-chat-left-quote",
-      onClick: (comentario: Comentario) => {
-        this.comentario.newComentario(this.form.controls.comentarios, this.comentarios!, comentario);
-      }
-    }];
-  }*/
-  /*public async saveComentario(form: FormGroup, item: any) {
-    const entity = form.value;
-    Object.assign(this.comentarios!.editing!, entity);
-    return undefined;
-  }*/
-  /*public async loadComentario(form: FormGroup, row: any) {
-    this.formComentarios.controls.texto.setValue(row.texto);
-    this.formComentarios.controls.tipo.setValue(row.tipo);
-    this.formComentarios.controls.privacidade.setValue(row.privacidade);
-  }*/
   loadData(entity, form) {
     var _this2 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
@@ -1872,16 +1785,8 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
       entity.pausas = _this2.orderPausas(entity.pausas || []);
       form.patchValue(formValue); /* Carrega os valores e dispara os eventos */
       _this2.loadEtiquetas();
-      /*if(this.action == "new" && this.entity?.numero_requisicao?.length || this.entity?.numero_processo?.length) {
-        if() {
-          this.onNumeroRequisicaoClick(new Event(""));
-        } else if() {
-          this.onProcessoRequisicaoClick(new Event(""));
-        }
-      }*/
     })();
   }
-
   initializeData(form) {
     var _this3 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
@@ -1897,7 +1802,7 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
           data_distribuicao: source.data_distribuicao,
           tempo_planejado: source.tempo_planejado,
           carga_horaria: source.carga_horaria,
-          prazo_entrega: source.prazo_entrega,
+          data_estipulada_entrega: source.data_estipulada_entrega,
           esforco: source.esforco,
           tipo_atividade_id: source.tipo_atividade_id,
           demandante_id: _this3.auth.usuario?.id,
@@ -1926,7 +1831,7 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
         _this3.sei = _this3.metadata?.sei;
         _this3.entity = new src_app_models_atividade_model__WEBPACK_IMPORTED_MODULE_3__.Atividade();
         _this3.entity.data_distribuicao = _this3.auth.hora;
-        _this3.entity.prazo_entrega = _this3.entity.data_distribuicao;
+        _this3.entity.data_estipulada_entrega = _this3.entity.data_distribuicao;
         _this3.entity.demandante_id = _this3.auth.usuario?.id || "";
         _this3.entity.unidade_id = _this3.auth.unidade?.id || "";
         _this3.entity.unidade = _this3.auth.unidade;
@@ -1986,7 +1891,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_30__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_30__["ɵɵInheritDefinitionFeature"]],
   decls: 53,
   vars: 55,
-  consts: [[3, "form", "disabled", "submit", "cancel"], ["display", "", "right", "", 3, "title"], ["key", "ATIVIDADE", "label", "Atividade"], [3, "sei", "documento"], [1, "row"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", 3, "size", "rows", "control"], ["controlName", "unidade_id", 3, "label", "size", "dao", "change"], ["unidade", ""], ["controlName", "tipo_atividade_id", 3, "label", "emptyValue", "size", "dao", "labelInfo", "select", "change"], ["tipoAtividade", ""], ["label", "Respons\u00E1vel", "controlName", "usuario_id", "labelInfo", "Respons\u00E1vel pela execu\u00E7\u00E3o", 3, "size", "emptyValue", "dao", "join", "select", "change"], ["usuario", ""], ["controlName", "plano_trabalho_id", 3, "label", "size", "control", "items", "labelInfo", "change"], ["planoTrabalho", ""], ["controlName", "plano_trabalho_entrega_id", 3, "label", "size", "control", "items", "labelInfo"], ["entrega", ""], ["class", "row", 4, "ngIf", "ngIfElse"], ["comEsforco", ""], ["title", "Conclus\u00E3o", 4, "ngIf"], ["key", "TAREFAS", 3, "label"], [3, "control", "atividade", "disabled"], ["key", "CARACTERIZACAO", "label", "Caracteriza\u00E7\u00E3o"], ["label", "Etiquetas", "controlName", "etiquetas", 3, "size", "control", "addItemHandle"], ["controlName", "etiqueta", 3, "size", "control", "items"], ["etiqueta", ""], [1, "col-md-4"], ["editable", "", 3, "control", "form", "hasAdd", "hasDelete"], ["type", "switch", "title", "Check", "field", "checked"], ["type", "display", "title", "Texto", "field", "texto", 3, "editable"], ["type", "options"], ["key", "COMENTARIOS", "label", "Coment\u00E1rios"], ["clss", "row"], ["origem", "ATIVIDADE", 3, "control"], ["comentarios", ""], ["key", "COMPLEMENTARES", "label", "Complementares"], ["label", "Demandante", "controlName", "demandante_id", "disabled", "", 3, "size", "dao"], [1, "card", "col-md-4", "mt-4"], [1, "card-header"], [1, "bi", "bi-pause-circle"], [1, "card-body"], ["disabled", "", 3, "control", "hasEdit", "hasDelete", "minHeight"], ["pausas", ""], ["title", "In\u00EDcio", "type", "datetime", "field", "data_inicio"], ["title", "Fim", "type", "datetime", "field", "data_fim"], ["noIcon", "", "controlName", "data_distribuicao", "labelInfo", "Data de inclus\u00E3o/distribui\u00E7\u00E3o/lan\u00E7amento", 3, "size", "label", "control", "change"], ["label", "Progresso", "disabled", "", "sufix", "%", "icon", "bi bi-clock", "controlName", "progresso", "labelInfo", "Progresso de execu\u00E7\u00E3o (% Conclu\u00EDdo)", 3, "size", "decimals"], ["noIcon", "", "controlName", "prazo_entrega", "labelInfo", "Data estipulada para entrega da atividade", 3, "size", "label", "control", "change"], ["icon", "bi bi-stopwatch", "onlyHours", "", "controlName", "esforco", "labelInfo", "Tempo estimado de execu\u00E7\u00E3o", 3, "size", "label", "control"], ["title", "Conclus\u00E3o"], ["comTempoDespendido", ""], [3, "documento"], ["noIcon", "", "label", "Inicio", "controlName", "data_inicio", "disabled", "", "labelInfo", "Data em que o usu\u00E1rio iniciou a atividade", 3, "size", "control"], ["noIcon", "", "label", "Conclus\u00E3o", "controlName", "data_entrega", "disabled", "", "labelInfo", "Data da conclus\u00E3o da atividade", 3, "size", "control"], ["label", "Data de arquivamento", "controlName", "data_arquivamento", "disabled", "", "labelInfo", "Data de arquivamento da atividade", 3, "size", "control"], ["label", "Tempo despendido", "icon", "bi bi-hourglass-bottom", "controlName", "tempo_despendido", "disabled", "", "labelInfo", "Calculado no fim da atividade, sendo o tempo l\u00EDquido (considerando pausas)", 3, "size", "control"]],
+  consts: [[3, "form", "disabled", "submit", "cancel"], ["display", "", "right", "", 3, "title"], ["key", "ATIVIDADE", "label", "Atividade"], [3, "sei", "documento"], [1, "row"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", 3, "size", "rows", "control"], ["controlName", "unidade_id", 3, "label", "size", "dao", "change"], ["unidade", ""], ["controlName", "tipo_atividade_id", 3, "label", "emptyValue", "size", "dao", "labelInfo", "select", "change"], ["tipoAtividade", ""], ["label", "Respons\u00E1vel", "controlName", "usuario_id", "labelInfo", "Respons\u00E1vel pela execu\u00E7\u00E3o", 3, "size", "emptyValue", "dao", "join", "select", "change"], ["usuario", ""], ["controlName", "plano_trabalho_id", 3, "label", "size", "control", "items", "labelInfo", "change"], ["planoTrabalho", ""], ["controlName", "plano_trabalho_entrega_id", 3, "label", "size", "control", "items", "labelInfo"], ["entrega", ""], ["class", "row", 4, "ngIf", "ngIfElse"], ["comEsforco", ""], ["title", "Conclus\u00E3o", 4, "ngIf"], ["key", "TAREFAS", 3, "label"], [3, "control", "atividade", "disabled"], ["key", "CARACTERIZACAO", "label", "Caracteriza\u00E7\u00E3o"], ["label", "Etiquetas", "controlName", "etiquetas", 3, "size", "control", "addItemHandle"], ["controlName", "etiqueta", 3, "size", "control", "items"], ["etiqueta", ""], [1, "col-md-4"], ["editable", "", 3, "control", "form", "hasAdd", "hasDelete"], ["type", "switch", "title", "Check", "field", "checked"], ["type", "display", "title", "Texto", "field", "texto", 3, "editable"], ["type", "options"], ["key", "COMENTARIOS", "label", "Coment\u00E1rios"], ["clss", "row"], ["origem", "ATIVIDADE", 3, "control"], ["comentarios", ""], ["key", "COMPLEMENTARES", "label", "Complementares"], ["label", "Demandante", "controlName", "demandante_id", "disabled", "", 3, "size", "dao"], [1, "card", "col-md-4", "mt-4"], [1, "card-header"], [1, "bi", "bi-pause-circle"], [1, "card-body"], ["disabled", "", 3, "control", "hasEdit", "hasDelete", "minHeight"], ["pausas", ""], ["title", "In\u00EDcio", "type", "datetime", "field", "data_inicio"], ["title", "Fim", "type", "datetime", "field", "data_fim"], ["noIcon", "", "controlName", "data_distribuicao", "labelInfo", "Data de inclus\u00E3o/distribui\u00E7\u00E3o/lan\u00E7amento", 3, "size", "label", "control", "change"], ["label", "Progresso", "disabled", "", "sufix", "%", "icon", "bi bi-clock", "controlName", "progresso", "labelInfo", "Progresso de execu\u00E7\u00E3o (% Conclu\u00EDdo)", 3, "size", "decimals"], ["noIcon", "", "controlName", "data_estipulada_entrega", "labelInfo", "Data estipulada para entrega da atividade", 3, "size", "label", "control", "change"], ["icon", "bi bi-stopwatch", "onlyHours", "", "controlName", "esforco", "labelInfo", "Tempo estimado de execu\u00E7\u00E3o", 3, "size", "label", "control"], ["title", "Conclus\u00E3o"], ["comTempoDespendido", ""], [3, "documento"], ["noIcon", "", "label", "Inicio", "controlName", "data_inicio", "disabled", "", "labelInfo", "Data em que o usu\u00E1rio iniciou a atividade", 3, "size", "control"], ["noIcon", "", "label", "Conclus\u00E3o", "controlName", "data_entrega", "disabled", "", "labelInfo", "Data da conclus\u00E3o da atividade", 3, "size", "control"], ["label", "Data de arquivamento", "controlName", "data_arquivamento", "disabled", "", "labelInfo", "Data de arquivamento da atividade", 3, "size", "control"], ["label", "Tempo despendido", "icon", "bi bi-hourglass-bottom", "controlName", "tempo_despendido", "disabled", "", "labelInfo", "Calculado no fim da atividade, sendo o tempo l\u00EDquido (considerando pausas)", 3, "size", "control"]],
   template: function AtividadeFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_30__["ɵɵelementStart"](0, "editable-form", 0);
@@ -2216,7 +2121,7 @@ function AtividadeListKanbanComponent_ng_template_17_ng_container_15_Template(rf
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("documento", card_r11.data.documento_requisicao);
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("ngForOf", ctx_r13.getStatus(card_r11.data));
+    _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("ngForOf", ctx_r13.atividadeService.getStatus(card_r11.data));
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("ngForOf", card_r11.data.etiquetas);
     _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](1);
@@ -2688,7 +2593,7 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
       rows?.forEach(row => {
         const atividade = row;
         let status = atividade.metadados?.suspenso ? "SUSPENSO" : this.lookup.ATIVIDADE_STATUS.find(x => x.key == atividade.metadados?.status)?.key;
-        switch (status || "LANCADO") {
+        switch (status || "INCLUIDO") {
           case "SUSPENSO":
             this.putCard(this.cards[this.PAUSADO], atividade);
             break;

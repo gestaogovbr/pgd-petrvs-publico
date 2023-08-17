@@ -15,7 +15,7 @@ export class Comentario extends Base {
 
     public texto: string = ""; /* Texto do comentário */
     public path: string = ""; /* Path dos ids dos comentários; */
-    public data_hora: Date = new Date(); /* Data e horário que foi feito o comentário */
+    public data_comentario: Date = new Date(); /* Data e horário que foi feito o comentário */
     public tipo: ComentarioTipo = "COMENTARIO"; /* Tipo comentario */
     public privacidade: ComentarioPrivacidade = "PUBLICO"; /* Tipo comentario */
 

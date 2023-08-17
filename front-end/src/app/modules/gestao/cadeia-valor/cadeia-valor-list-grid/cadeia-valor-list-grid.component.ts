@@ -27,8 +27,8 @@ export class CadeiaValorListGridComponent  extends PageListBase<CadeiaValor, Cad
     this.entidadeDao = injector.get<EntidadeDaoService>(EntidadeDaoService);
     /* Inicializações */
     this.filter = this.fh.FormBuilder({
-      inicio: {default: null},
-      fim: {default: null},
+      data_inicio: {default: null},
+      data_fim: {default: null},
       nome: {default: ""},
       entidade_id: {default: null}
      });
@@ -53,8 +53,8 @@ export class CadeiaValorListGridComponent  extends PageListBase<CadeiaValor, Cad
 
   public filterClear(filter: FormGroup) {
     filter.controls.nome.setValue("");
-    filter.controls.inicio.setValue(null);
-    filter.controls.fim.setValue(null);
+    filter.controls.data_inicio.setValue(null);
+    filter.controls.data_fim.setValue(null);
     filter.controls.entidade_id.setValue(null);
     super.filterClear(filter);
   }
@@ -66,11 +66,11 @@ export class CadeiaValorListGridComponent  extends PageListBase<CadeiaValor, Cad
     if(form.nome?.length) {
       result.push(["nome", "like", "%" + form.nome.replace(" ", "%") + "%"]);
     }
-    if(form.inicio) {
-      result.push(["fim", ">=", form.inicio]);
+    if(form.data_inicio) {
+      result.push(["data_fim", ">=", form.data_inicio]);
     }
-    if(form.fim) {
-      result.push(["inicio", "<=", form.fim]);
+    if(form.data_fim) {
+      result.push(["data_inicio", "<=", form.data_fim]);
     }
 
     return result;

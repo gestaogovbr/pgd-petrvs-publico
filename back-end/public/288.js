@@ -43,8 +43,8 @@ class CadeiaValor extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
   constructor(data) {
     super();
     this.processos = [];
-    this.inicio = new Date(); /* Data de início do planejamento */
-    this.fim = null; /* Data do fim do planejamento */
+    this.data_inicio = new Date(); /* Data de início do planejamento */
+    this.data_fim = null; /* Data do fim do planejamento */
     this.data_arquivamento = null; /* Data de arquivamento */
     this.nome = ""; /* Nome do plano de gestão/entregas */
     this.unidade_id = ""; /* Unidade à qual está vinculado o plano de gestão/entregas */
@@ -97,17 +97,17 @@ class CadeiaValorFormComponent extends _base_page_form_base__WEBPACK_IMPORTED_MO
       if (['nome'].indexOf(controlName) >= 0 && !control.value?.length) {
         result = "Obrigatório";
       }
-      if (['inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+      if (['data_inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
         result = "Inválido";
       }
-      if (controlName == 'fim' && control.value && !this.dao?.validDateTime(control.value)) {
+      if (controlName == 'data_fim' && control.value && !this.dao?.validDateTime(control.value)) {
         result = "Inválido";
       }
       return result;
     };
     this.formValidation = form => {
       let result = null;
-      if (this.form.controls.fim.value && this.form.controls.inicio.value > this.form.controls.fim.value) {
+      if (this.form.controls.data_fim.value && this.form.controls.data_inicio.value > this.form.controls.data_fim.value) {
         return "A data do início não pode ser maior que a data do fim!";
       }
       return result;
@@ -120,10 +120,10 @@ class CadeiaValorFormComponent extends _base_page_form_base__WEBPACK_IMPORTED_MO
       nome: {
         default: ""
       },
-      inicio: {
+      data_inicio: {
         default: new Date()
       },
-      fim: {
+      data_fim: {
         default: null
       },
       moveFilhos: {
@@ -175,7 +175,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefi
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵInheritDefinitionFeature"]],
   decls: 10,
   vars: 14,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["icon", "bi bi-textarea-t", "controlName", "nome", 3, "size", "label", "control"], ["date", "", "label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "inicio", 3, "size", "control", "labelInfo"], ["date", "", "label", "Fim", "icon", "bi bi-calendar-date", "controlName", "fim", 3, "size", "control", "labelInfo"], ["noPersist", "", 3, "entity", "cdRef"], ["processos", ""]],
+  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["icon", "bi bi-textarea-t", "controlName", "nome", 3, "size", "label", "control"], ["date", "", "label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio", 3, "size", "control", "labelInfo"], ["date", "", "label", "Fim", "icon", "bi bi-calendar-date", "controlName", "data_fim", 3, "size", "control", "labelInfo"], ["noPersist", "", 3, "entity", "cdRef"], ["processos", ""]],
   template: function CadeiaValorFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "editable-form", 0);
@@ -198,9 +198,9 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefi
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 12)("label", "Nome da " + ctx.lex.translate("cadeia de valor"))("control", ctx.form.controls.nome);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.inicio)("labelInfo", "In\u00EDcio da " + ctx.lex.translate("cadeia de valor"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.data_inicio)("labelInfo", "In\u00EDcio da " + ctx.lex.translate("cadeia de valor"));
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.fim)("labelInfo", "Fim da " + ctx.lex.translate("cadeia de valor"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.data_fim)("labelInfo", "Fim da " + ctx.lex.translate("cadeia de valor"));
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("entity", ctx.entity)("cdRef", ctx.cdRef);
     }
@@ -326,7 +326,7 @@ function CadeiaValorListGridComponent_ng_template_13_Template(rf, ctx) {
     const row_r19 = ctx.row;
     const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtextInterpolate"](ctx_r5.dao.getDateFormatted(row_r19.inicio));
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtextInterpolate"](ctx_r5.dao.getDateFormatted(row_r19.data_inicio));
   }
 }
 function CadeiaValorListGridComponent_ng_template_16_Template(rf, ctx) {
@@ -339,7 +339,7 @@ function CadeiaValorListGridComponent_ng_template_16_Template(rf, ctx) {
     const row_r20 = ctx.row;
     const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtextInterpolate"](ctx_r7.dao.getDateFormatted(row_r20.fim));
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtextInterpolate"](ctx_r7.dao.getDateFormatted(row_r20.data_fim));
   }
 }
 function CadeiaValorListGridComponent_column_18_Template(rf, ctx) {
@@ -362,21 +362,21 @@ class CadeiaValorListGridComponent extends src_app_modules_base_page_list_base__
       if (form.nome?.length) {
         result.push(["nome", "like", "%" + form.nome.replace(" ", "%") + "%"]);
       }
-      if (form.inicio) {
-        result.push(["fim", ">=", form.inicio]);
+      if (form.data_inicio) {
+        result.push(["data_fim", ">=", form.data_inicio]);
       }
-      if (form.fim) {
-        result.push(["inicio", "<=", form.fim]);
+      if (form.data_fim) {
+        result.push(["data_inicio", "<=", form.data_fim]);
       }
       return result;
     };
     this.entidadeDao = injector.get(src_app_dao_entidade_dao_service__WEBPACK_IMPORTED_MODULE_2__.EntidadeDaoService);
     /* Inicializações */
     this.filter = this.fh.FormBuilder({
-      inicio: {
+      data_inicio: {
         default: null
       },
-      fim: {
+      data_fim: {
         default: null
       },
       nome: {
@@ -406,8 +406,8 @@ class CadeiaValorListGridComponent extends src_app_modules_base_page_list_base__
   }
   filterClear(filter) {
     filter.controls.nome.setValue("");
-    filter.controls.inicio.setValue(null);
-    filter.controls.fim.setValue(null);
+    filter.controls.data_inicio.setValue(null);
+    filter.controls.data_fim.setValue(null);
     filter.controls.entidade_id.setValue(null);
     super.filterClear(filter);
   }
@@ -436,7 +436,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵInheritDefinitionFeature"]],
   decls: 20,
   vars: 31,
-  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome", "icon", "bi bi-textarea-t", "controlName", "nome", 3, "size", "control", "labelInfo"], ["date", "", "label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "inicio", 3, "size", "control", "labelInfo"], ["date", "", "label", "Fim", "icon", "bi bi-calendar-date", "controlName", "fim", 3, "size", "control", "labelInfo"], ["type", "expand", "icon", "bi bi-boxes", 3, "align", "hint", "template", "expandTemplate", 4, "ngIf"], ["title", "Nome", "orderBy", "nome", 3, "template"], ["columnNome", ""], ["title", "In\u00EDcio", 3, "template"], ["columnInicio", ""], ["title", "Fim", 3, "template"], ["columnFim", ""], ["type", "options", 3, "onEdit", "options", 4, "ngIf"], [3, "rows"], ["type", "expand", "icon", "bi bi-boxes", 3, "align", "hint", "template", "expandTemplate"], ["columnProcessos", ""], ["columnExpandedProcessos", ""], ["class", "badge rounded-pill bg-light text-dark", 4, "ngIf"], [1, "badge", "rounded-pill", "bg-light", "text-dark"], [1, "bi", "bi-boxes"], [3, "entity", "cdRef"], ["processos", ""], [1, "text-break", "w-100"], ["type", "options", 3, "onEdit", "options"]],
+  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome", "icon", "bi bi-textarea-t", "controlName", "nome", 3, "size", "control", "labelInfo"], ["date", "", "label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio", 3, "size", "control", "labelInfo"], ["date", "", "label", "Fim", "icon", "bi bi-calendar-date", "controlName", "data_fim", 3, "size", "control", "labelInfo"], ["type", "expand", "icon", "bi bi-boxes", 3, "align", "hint", "template", "expandTemplate", 4, "ngIf"], ["title", "Nome", "orderBy", "nome", 3, "template"], ["columnNome", ""], ["title", "In\u00EDcio", 3, "template"], ["columnInicio", ""], ["title", "Fim", 3, "template"], ["columnFim", ""], ["type", "options", 3, "onEdit", "options", 4, "ngIf"], [3, "rows"], ["type", "expand", "icon", "bi bi-boxes", 3, "align", "hint", "template", "expandTemplate"], ["columnProcessos", ""], ["columnExpandedProcessos", ""], ["class", "badge rounded-pill bg-light text-dark", 4, "ngIf"], [1, "badge", "rounded-pill", "bg-light", "text-dark"], [1, "bi", "bi-boxes"], [3, "entity", "cdRef"], ["processos", ""], [1, "text-break", "w-100"], ["type", "options", 3, "onEdit", "options"]],
   template: function CadeiaValorListGridComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](0, "grid", 0);
@@ -475,9 +475,9 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 6)("control", ctx.filter.controls.nome)("labelInfo", "Nome " + ctx.lex.translate("cadeia de valor"));
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.inicio)("labelInfo", "In\u00EDcio " + ctx.lex.translate("cadeia de valor"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.data_inicio)("labelInfo", "In\u00EDcio " + ctx.lex.translate("cadeia de valor"));
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.fim)("labelInfo", "Fim " + ctx.lex.translate("cadeia de valor"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.data_fim)("labelInfo", "Fim " + ctx.lex.translate("cadeia de valor"));
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("ngIf", !ctx.selectable);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
@@ -1527,7 +1527,7 @@ class CadeiaValorMapaComponent extends src_app_modules_base_page_frame_base__WEB
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this4.query = _this4.dao.query({
         where: [["data_arquivamento", "==", null]],
-        orderBy: [["inicio", "desc"]],
+        orderBy: [["data_inicio", "desc"]],
         join: _this4.join
       });
       _this4.query.asPromise().then(cadeiasValor => {

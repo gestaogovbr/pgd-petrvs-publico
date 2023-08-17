@@ -18,8 +18,8 @@ class PlanoEntregaEntrega extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base 
     super();
     this.objetivos = [];
     this.processos = [];
-    this.inicio = new Date();
-    this.fim = null;
+    this.data_inicio = new Date();
+    this.data_fim = null;
     this.descricao = "";
     this.homologado = false;
     this.meta = {};
@@ -57,8 +57,8 @@ class PlanoEntrega extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
     this.status_atual = new _status_model__WEBPACK_IMPORTED_MODULE_1__.Status();
     this.entregas = []; // Entregas que compõem o plano de entregas
     this.statusHistorico = []; // Mudanças de status sofridas pelo plano de entregas (histórico)
-    this.inicio = new Date(); // Data inicio do plano de entrega
-    this.fim = null; // Data fim do plano de entrega
+    this.data_inicio = new Date(); // Data inicial do plano de entrega
+    this.data_fim = null; // Data final do plano de entrega
     this.nome = ""; // Nome do plano de entrega
     this.metadados = undefined; // Campo virtual contendo informações calculadas pelo servidor
     this.unidade_id = '';
@@ -179,7 +179,7 @@ class PlanoEntregaFormAdesaoComponent extends src_app_modules_base_page_form_bas
       }
       return result;
       /*  (RN_PENT_2_7)
-          Em caso de adesão, os campos 'inicio', 'fim', 'planejamento_id', e 'cadeia_valor_id', deverão ser sempre iguais aos do plano-pai;
+          Em caso de adesão, os campos 'data_inicio', 'data_fim', 'planejamento_id', e 'cadeia_valor_id', deverão ser sempre iguais aos do plano-pai;
           portanto, quando um plano de entregas próprio sofrer alteração em um desses campos, todos os planos a ele vinculados deverão ser atualizados também;
       */
     };
@@ -198,10 +198,10 @@ class PlanoEntregaFormAdesaoComponent extends src_app_modules_base_page_form_bas
       nome: {
         default: ""
       },
-      inicio: {
+      data_inicio: {
         default: ""
       },
-      fim: {
+      data_fim: {
         default: ""
       },
       planejamento_id: {
@@ -230,8 +230,8 @@ class PlanoEntregaFormAdesaoComponent extends src_app_modules_base_page_form_bas
     if (planoEntrega) {
       this.form.controls.plano_entrega_id.setValue(planoEntrega.id);
       this.form.controls.nome.setValue(planoEntrega.nome);
-      this.form.controls.inicio.setValue(planoEntrega.inicio);
-      this.form.controls.fim.setValue(planoEntrega.fim);
+      this.form.controls.data_inicio.setValue(planoEntrega.data_inicio);
+      this.form.controls.data_fim.setValue(planoEntrega.data_fim);
       this.form.controls.planejamento_id.setValue(planoEntrega.planejamento_id);
       this.form.controls.cadeia_valor_id.setValue(planoEntrega.cadeia_valor_id);
     }
@@ -263,8 +263,8 @@ class PlanoEntregaFormAdesaoComponent extends src_app_modules_base_page_form_bas
   onPlanoEntregaChange(event) {
     if (this.form.controls.plano_entrega_id.value) {
       this.form.controls.nome.setValue(this.planoEntrega?.selectedItem?.entity.nome);
-      this.form.controls.inicio.setValue(this.planoEntrega?.selectedItem?.entity.inicio);
-      this.form.controls.fim.setValue(this.planoEntrega?.selectedItem?.entity.fim);
+      this.form.controls.data_inicio.setValue(this.planoEntrega?.selectedItem?.entity.data_inicio);
+      this.form.controls.data_fim.setValue(this.planoEntrega?.selectedItem?.entity.data_fim);
       this.form.controls.planejamento_id.setValue(this.planoEntrega?.selectedItem?.entity.planejamento_id);
       this.form.controls.cadeia_valor_id.setValue(this.planoEntrega?.selectedItem?.entity.cadeia_valor_id);
       this.form.controls.programa_id.setValue(this.planoEntrega?.selectedItem?.entity.programa_id);
@@ -294,7 +294,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵInheritDefinitionFeature"]],
   decls: 21,
   vars: 37,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row", "mb-4"], ["controlName", "plano_entrega_id", "label", "Plano de Entregas da Unidade-pai", 3, "size", "dao", "selectRoute", "where", "change"], ["planoEntrega", ""], [1, "row"], ["label", "Nome deste Plano de Entregas", "controlName", "nome", 3, "size"], ["disabled", "", "controlName", "unidade_id", 3, "size", "label", "dao"], ["disabled", "", "label", "Status", "controlName", "status", 3, "size"], [1, "row", "mt-4"], ["title", "Dados herdados do Plano de Entregas da Unidade-pai", 3, "collapse"], ["disabled", "", "label", "Programa de Gest\u00E3o", "controlName", "programa_id", 3, "size", "dao"], ["disabled", "", "label", "Planejamento Institucional", "controlName", "planejamento_id", 3, "size", "dao"], ["disabled", "", "controlName", "inicio", "label", "In\u00EDcio", 3, "size", "labelInfo"], ["disabled", "", "label", "Cadeia de Valor", "controlName", "cadeia_valor_id", 3, "size", "dao"], ["disabled", "", "controlName", "fim", "label", "Fim", 3, "size", "labelInfo"]],
+  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row", "mb-4"], ["controlName", "plano_entrega_id", "label", "Plano de Entregas da Unidade-pai", 3, "size", "dao", "selectRoute", "where", "change"], ["planoEntrega", ""], [1, "row"], ["label", "Nome deste Plano de Entregas", "controlName", "nome", 3, "size"], ["disabled", "", "controlName", "unidade_id", 3, "size", "label", "dao"], ["disabled", "", "label", "Status", "controlName", "status", 3, "size"], [1, "row", "mt-4"], ["title", "Dados herdados do Plano de Entregas da Unidade-pai", 3, "collapse"], ["disabled", "", "label", "Programa de Gest\u00E3o", "controlName", "programa_id", 3, "size", "dao"], ["disabled", "", "label", "Planejamento Institucional", "controlName", "planejamento_id", 3, "size", "dao"], ["disabled", "", "controlName", "data_inicio", "label", "In\u00EDcio", 3, "size", "labelInfo"], ["disabled", "", "label", "Cadeia de Valor", "controlName", "cadeia_valor_id", 3, "size", "dao"], ["disabled", "", "controlName", "data_fim", "label", "Fim", 3, "size", "labelInfo"]],
   template: function PlanoEntregaFormAdesaoComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵelementStart"](0, "editable-form", 0);
@@ -678,16 +678,16 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
         result = "O demandante é obrigatório";
       } else if (['entrega_id'].indexOf(controlName) >= 0 && !control.value?.length) {
         result = "A entrega é obrigatória";
-      } else if (['inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+      } else if (['data_inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
         result = "Inválido";
-      } else if (['fim'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+      } else if (['data_fim'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
         result = "Inválido";
       }
       return result;
     };
     this.formValidation = form => {
-      let inicio = this.form?.controls.inicio.value;
-      let fim = this.form?.controls.fim.value;
+      let inicio = this.form?.controls.data_inicio.value;
+      let fim = this.form?.controls.data_fim.value;
       if (this.gridObjetivos?.editing) {
         this.tabs.active = "OBJETIVOS";
         return "Salve ou cancele o registro atual em edição";
@@ -702,10 +702,10 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
         return "Data de fim inválida";
       } else if (inicio > fim) {
         return "A data do fim não pode ser anterior à data do fim!";
-      } else if (this.planoEntrega && inicio < this.planoEntrega.inicio) {
-        return "Data de inicio menor que a data de inicio" + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(this.planoEntrega.inicio);
-      } else if (this.planoEntrega && this.planoEntrega.fim && fim > this.planoEntrega.fim) {
-        return "Data de fim maior que a data de fim" + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(this.planoEntrega.fim);
+      } else if (this.planoEntrega && inicio < this.planoEntrega.data_inicio) {
+        return "Data de inicio menor que a data de inicio" + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(this.planoEntrega.data_inicio);
+      } else if (this.planoEntrega && this.planoEntrega.data_fim && fim > this.planoEntrega.data_fim) {
+        return "Data de fim maior que a data de fim" + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(this.planoEntrega.data_fim);
       }
       return undefined;
     };
@@ -724,10 +724,10 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
       descricao: {
         default: ""
       },
-      inicio: {
+      data_inicio: {
         default: new Date()
       },
-      fim: {
+      data_fim: {
         default: new Date()
       },
       meta: {
@@ -1014,7 +1014,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵInheritDefinitionFeature"]],
   decls: 28,
   vars: 25,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", "", 3, "title"], ["tabs", ""], ["key", "ENTREGAS", "label", "Entregas"], [1, "row"], ["controlName", "entrega_id", 3, "size", "dao", "change"], ["entrega", ""], ["label", "Detalhamento", "controlName", "descricao", 3, "size"], ["controlName", "entrega_pai_id", 3, "size", "label", "dao"], ["title", "Especifica\u00E7\u00E3o das Entregas"], ["date", "", "label", "In\u00EDcio", "controlName", "inicio", 3, "size", "labelInfo"], ["date", "", "label", "Fim", "controlName", "fim", 3, "size", "labelInfo"], ["label", "Demandante", "controlName", "unidade_id", 3, "size", "dao"], ["unidade", ""], ["label", "Destinat\u00E1rio", "controlName", "destinatario", 3, "size"], ["title", "Planejamento"], ["class", "row", 4, "ngIf"], ["label", "Progresso Esperado", "controlName", "progresso_esperado", "sufix", "%", 3, "size", "decimals"], ["label", "Progresso Realizado", "controlName", "progresso_realizado", "sufix", "%", "disabled", "", 3, "size", "decimals", "stepValue"], ["key", "OBJETIVOS", "label", "Objetivos", 4, "ngIf"], ["key", "PROCESSOS", "label", "Processos", 4, "ngIf"], ["label", "Meta", "controlName", "meta", "sufix", "%", 3, "size", 4, "ngIf"], ["label", "Meta", "controlName", "meta", 3, "size", 4, "ngIf"], ["label", "Meta", "controlName", "meta", 3, "size", "items", 4, "ngIf"], ["label", "Realizado", "controlName", "realizado", "sufix", "%", 3, "size", "change", 4, "ngIf"], ["label", "Realizado", "controlName", "realizado", 3, "size", "change", 4, "ngIf"], ["label", "Realizado", "controlName", "realizado", 3, "size", "items", "change", 4, "ngIf"], ["label", "Meta", "controlName", "meta", "sufix", "%", 3, "size"], ["label", "Meta", "controlName", "meta", 3, "size"], ["label", "Meta", "controlName", "meta", 3, "size", "items"], ["label", "Realizado", "controlName", "realizado", "sufix", "%", 3, "size", "change"], ["label", "Realizado", "controlName", "realizado", 3, "size", "change"], ["label", "Realizado", "controlName", "realizado", 3, "size", "items", "change"], ["key", "OBJETIVOS", "label", "Objetivos"], ["controlName", "planejamento_id", "disabled", "", 3, "size", "dao"], ["planejamento", ""], ["editable", "", 3, "control", "form", "hasDelete", "hasEdit", "add", "remove", "save"], ["gridObjetivos", ""], ["title", "Objetivo", 3, "template", "editTemplate"], ["columnObjetivo", ""], ["editObjetivo", ""], ["type", "options"], ["label", "", "icon", "", "controlName", "objetivo_id", "label", "", "icon", "", 3, "size", "where", "dao", "selectRoute"], ["inputObjetivo", ""], ["key", "PROCESSOS", "label", "Processos"], ["controlName", "cadeia_valor_id", "disabled", "", 3, "size", "dao"], ["cadeiaValor", ""], ["gridProcessos", ""], ["title", "Processos", 3, "template", "editTemplate"], ["processo", ""], ["editProcesso", ""], ["type", "options", 3, "dynamicButtons"], ["label", "", "icon", "", "controlName", "processo_id", "label", "", 3, "size", "where", "dao", "selectRoute"], ["inputProcesso", ""]],
+  consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", "", 3, "title"], ["tabs", ""], ["key", "ENTREGAS", "label", "Entregas"], [1, "row"], ["controlName", "entrega_id", 3, "size", "dao", "change"], ["entrega", ""], ["label", "Detalhamento", "controlName", "descricao", 3, "size"], ["controlName", "entrega_pai_id", 3, "size", "label", "dao"], ["title", "Especifica\u00E7\u00E3o das Entregas"], ["date", "", "label", "In\u00EDcio", "controlName", "data_inicio", 3, "size", "labelInfo"], ["date", "", "label", "Fim", "controlName", "data_fim", 3, "size", "labelInfo"], ["label", "Demandante", "controlName", "unidade_id", 3, "size", "dao"], ["unidade", ""], ["label", "Destinat\u00E1rio", "controlName", "destinatario", 3, "size"], ["title", "Planejamento"], ["class", "row", 4, "ngIf"], ["label", "Progresso Esperado", "controlName", "progresso_esperado", "sufix", "%", 3, "size", "decimals"], ["label", "Progresso Realizado", "controlName", "progresso_realizado", "sufix", "%", "disabled", "", 3, "size", "decimals", "stepValue"], ["key", "OBJETIVOS", "label", "Objetivos", 4, "ngIf"], ["key", "PROCESSOS", "label", "Processos", 4, "ngIf"], ["label", "Meta", "controlName", "meta", "sufix", "%", 3, "size", 4, "ngIf"], ["label", "Meta", "controlName", "meta", 3, "size", 4, "ngIf"], ["label", "Meta", "controlName", "meta", 3, "size", "items", 4, "ngIf"], ["label", "Realizado", "controlName", "realizado", "sufix", "%", 3, "size", "change", 4, "ngIf"], ["label", "Realizado", "controlName", "realizado", 3, "size", "change", 4, "ngIf"], ["label", "Realizado", "controlName", "realizado", 3, "size", "items", "change", 4, "ngIf"], ["label", "Meta", "controlName", "meta", "sufix", "%", 3, "size"], ["label", "Meta", "controlName", "meta", 3, "size"], ["label", "Meta", "controlName", "meta", 3, "size", "items"], ["label", "Realizado", "controlName", "realizado", "sufix", "%", 3, "size", "change"], ["label", "Realizado", "controlName", "realizado", 3, "size", "change"], ["label", "Realizado", "controlName", "realizado", 3, "size", "items", "change"], ["key", "OBJETIVOS", "label", "Objetivos"], ["controlName", "planejamento_id", "disabled", "", 3, "size", "dao"], ["planejamento", ""], ["editable", "", 3, "control", "form", "hasDelete", "hasEdit", "add", "remove", "save"], ["gridObjetivos", ""], ["title", "Objetivo", 3, "template", "editTemplate"], ["columnObjetivo", ""], ["editObjetivo", ""], ["type", "options"], ["label", "", "icon", "", "controlName", "objetivo_id", "label", "", "icon", "", 3, "size", "where", "dao", "selectRoute"], ["inputObjetivo", ""], ["key", "PROCESSOS", "label", "Processos"], ["controlName", "cadeia_valor_id", "disabled", "", 3, "size", "dao"], ["cadeiaValor", ""], ["gridProcessos", ""], ["title", "Processos", 3, "template", "editTemplate"], ["processo", ""], ["editProcesso", ""], ["type", "options", 3, "dynamicButtons"], ["label", "", "icon", "", "controlName", "processo_id", "label", "", 3, "size", "where", "dao", "selectRoute"], ["inputProcesso", ""]],
   template: function PlanoEntregaFormEntregaComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](0, "editable-form", 0);
@@ -1142,17 +1142,17 @@ class PlanoEntregaFormComponent extends src_app_modules_base_page_form_base__WEB
       if (['nome', 'unidade_id', 'programa_id'].indexOf(controlName) >= 0 && !control.value?.length) {
         result = "Obrigatório";
       }
-      if (['inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+      if (['data_inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
         result = "Inválido";
       }
-      if (['fim'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+      if (['data_fim'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
         result = "Inválido";
       }
       return result;
     };
     this.formValidation = form => {
-      const inicio = this.form?.controls.inicio.value;
-      const fim = this.form?.controls.fim.value;
+      const inicio = this.form?.controls.data_inicio.value;
+      const fim = this.form?.controls.data_fim.value;
       const programa = this.programa?.selectedItem?.entity;
       if (!programa) {
         return "Obrigatório selecionar o programa";
@@ -1168,8 +1168,8 @@ class PlanoEntregaFormComponent extends src_app_modules_base_page_form_base__WEB
         const entregas = this.form.controls.entregas.value || [];
         if (programa.prazo_max_plano_entrega > 0 && diffDays > programa.prazo_max_plano_entrega) return "A data de início e término" + this.lex.translate("do Plano de Entrega") + " deve respeitar o período previsto no " + this.lex.translate("Programa");
         for (let entrega of entregas) {
-          if (entrega.inicio < inicio) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data inicial anterior à " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(inicio);
-          if (entrega.fim > fim) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data fim posterior à " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(fim);
+          if (entrega.data_inicio < inicio) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data inicial anterior à " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(inicio);
+          if (entrega.data_fim > fim) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data fim posterior à " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(fim);
         }
       }
       return undefined;
@@ -1187,10 +1187,10 @@ class PlanoEntregaFormComponent extends src_app_modules_base_page_form_base__WEB
       nome: {
         default: ""
       },
-      inicio: {
+      data_inicio: {
         default: new Date()
       },
-      fim: {
+      data_fim: {
         default: new Date()
       },
       unidade_id: {
@@ -1269,7 +1269,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵInheritDefinitionFeature"]],
   decls: 19,
   vars: 24,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome", "controlName", "nome", 3, "size"], ["nome", ""], ["controlName", "programa_id", 3, "size", "disabled", "dao"], ["programa", ""], ["date", "", "label", "In\u00EDcio", "controlName", "inicio", 3, "size", "labelInfo"], ["date", "", "label", "Fim", "controlName", "fim", 3, "size", "labelInfo"], ["controlName", "unidade_id", 3, "size", "disabled", "dao"], ["unidade", ""], ["controlName", "planejamento_id", "label", "Planejamento Institucional", 3, "size", "emptyValue", "dao"], ["planejamento", ""], ["controlName", "cadeia_valor_id", "label", "Cadeia de Valor", 3, "size", "emptyValue", "dao"], ["cadeiaValor", ""], ["title", "Entregas"], ["noPersist", "", 3, "control", "planejamentoId", "cadeiaValorId", "unidadeId"], ["entregas", ""]],
+  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome", "controlName", "nome", 3, "size"], ["nome", ""], ["controlName", "programa_id", 3, "size", "disabled", "dao"], ["programa", ""], ["date", "", "label", "In\u00EDcio", "controlName", "data_inicio", 3, "size", "labelInfo"], ["date", "", "label", "Fim", "controlName", "data_fim", 3, "size", "labelInfo"], ["controlName", "unidade_id", 3, "size", "disabled", "dao"], ["unidade", ""], ["controlName", "planejamento_id", "label", "Planejamento Institucional", 3, "size", "emptyValue", "dao"], ["planejamento", ""], ["controlName", "cadeia_valor_id", "label", "Cadeia de Valor", 3, "size", "emptyValue", "dao"], ["cadeiaValor", ""], ["title", "Entregas"], ["noPersist", "", 3, "control", "planejamentoId", "cadeiaValorId", "unidadeId"], ["entregas", ""]],
   template: function PlanoEntregaFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵelementStart"](0, "editable-form", 0);
@@ -1398,7 +1398,7 @@ function PlanoEntregaListEntregaListComponent_ng_template_15_Template(rf, ctx) {
     const row_r13 = ctx.row;
     const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtextInterpolate1"](" ", ctx_r5.dao.getDateFormatted(row_r13.inicio) + " at\u00E9 " + ctx_r5.dao.getDateFormatted(row_r13.fim), "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtextInterpolate1"](" ", ctx_r5.dao.getDateFormatted(row_r13.data_inicio) + " at\u00E9 " + ctx_r5.dao.getDateFormatted(row_r13.data_fim), "");
   }
 }
 function PlanoEntregaListEntregaListComponent_ng_template_18_Template(rf, ctx) {
@@ -1690,7 +1690,7 @@ function PlanoEntregaListEntregaComponent_ng_template_10_span_0_Template(rf, ctx
     const row_r20 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]().row;
     const ctx_r21 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate1"](" ", ctx_r21.dao.getDateFormatted(row_r20.inicio), "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate1"](" ", ctx_r21.dao.getDateFormatted(row_r20.data_inicio), "");
   }
 }
 function PlanoEntregaListEntregaComponent_ng_template_10_span_1_Template(rf, ctx) {
@@ -1703,7 +1703,7 @@ function PlanoEntregaListEntregaComponent_ng_template_10_span_1_Template(rf, ctx
     const row_r20 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]().row;
     const ctx_r22 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate1"](" ", ctx_r22.dao.getDateFormatted(row_r20.fim), "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate1"](" ", ctx_r22.dao.getDateFormatted(row_r20.data_fim), "");
   }
 }
 function PlanoEntregaListEntregaComponent_ng_template_10_Template(rf, ctx) {
@@ -1713,9 +1713,9 @@ function PlanoEntregaListEntregaComponent_ng_template_10_Template(rf, ctx) {
   }
   if (rf & 2) {
     const row_r20 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", row_r20.inicio);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", row_r20.data_inicio);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", row_r20.fim);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", row_r20.data_fim);
   }
 }
 function PlanoEntregaListEntregaComponent_ng_template_13_span_0_Template(rf, ctx) {
@@ -1846,10 +1846,10 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
       descricao: {
         default: ""
       },
-      inicio: {
+      data_inicio: {
         default: new Date()
       },
-      fim: {
+      data_fim: {
         default: new Date()
       },
       meta: {
@@ -2566,7 +2566,7 @@ function PlanoEntregaListComponent_ng_template_26_Template(rf, ctx) {
     const row_r37 = ctx.row;
     const ctx_r12 = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵtextInterpolate1"](" ", ctx_r12.dao.getDateFormatted(row_r37.inicio), "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵtextInterpolate1"](" ", ctx_r12.dao.getDateFormatted(row_r37.data_inicio), "");
   }
 }
 function PlanoEntregaListComponent_ng_template_29_Template(rf, ctx) {
@@ -2579,7 +2579,7 @@ function PlanoEntregaListComponent_ng_template_29_Template(rf, ctx) {
     const row_r38 = ctx.row;
     const ctx_r14 = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵtextInterpolate1"](" ", ctx_r14.dao.getDateFormatted(row_r38.fim), "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵtextInterpolate1"](" ", ctx_r14.dao.getDateFormatted(row_r38.data_fim), "");
   }
 }
 function PlanoEntregaListComponent_ng_template_32_Template(rf, ctx) {
@@ -2662,11 +2662,11 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
         if (form.nome?.length) {
           result.push(["nome", "like", "%" + form.nome + "%"]);
         }
-        if (form.inicio) {
-          result.push(["inicio", ">=", form.inicio]);
+        if (form.data_inicio) {
+          result.push(["data_inicio", ">=", form.data_inicio]);
         }
-        if (form.fim) {
-          result.push(["fim", "<=", form.fim]);
+        if (form.data_fim) {
+          result.push(["data_fim", "<=", form.data_fim]);
         }
         if (form.unidade_id) {
           result.push(["unidade_id", "==", form.unidade_id]);
@@ -2684,11 +2684,11 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
         if (form.nome?.length) {
           result.push(["nome", "like", "%" + form.nome + "%"]);
         }
-        if (form.inicio) {
-          result.push(["inicio", ">=", form.inicio]);
+        if (form.data_inicio) {
+          result.push(["data_inicio", ">=", form.data_inicio]);
         }
-        if (form.fim) {
-          result.push(["fim", "<=", form.fim]);
+        if (form.data_fim) {
+          result.push(["data_fim", "<=", form.data_fim]);
         }
         if (form.unidade_id) {
           result.push(["unidade_id", "==", form.unidade_id]);
@@ -2725,10 +2725,10 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
       nome: {
         default: ''
       },
-      inicio: {
+      data_inicio: {
         default: ''
       },
-      fim: {
+      data_fim: {
         default: ''
       },
       status: {
@@ -2920,8 +2920,8 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
   }
   filterClear(filter) {
     filter.controls.nome.setValue("");
-    filter.controls.inicio.setValue(null);
-    filter.controls.fim.setValue(null);
+    filter.controls.data_inicio.setValue(null);
+    filter.controls.data_fim.setValue(null);
     filter.controls.unidade_id.setValue(null);
     filter.controls.planejamento_id.setValue(null);
     filter.controls.cadeia_valor_id.setValue(null);
@@ -2982,11 +2982,11 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
           - se a unidade selecionada não possuir plano de entrega Ativo no mesmo período do plano em questão;
         */
         return this.situacaoPlano(planoEntrega) == 'ATIVO' && planoEntrega.unidade_id == this.auth.unidade?.unidade_pai_id && (this.auth.isGestorUnidade() || this.auth.isLotacaoPrincipal(this.auth.unidade) && this.auth.hasPermissionTo("MOD_PENT_ADERIR")) && this.planosEntregasAtivosUnidadeSelecionada().filter(x => this.util.intersection([{
-          start: x.inicio,
-          end: x.fim
+          start: x.data_inicio,
+          end: x.data_fim
         }, {
-          start: planoEntrega.inicio,
-          end: planoEntrega.fim
+          start: planoEntrega.data_inicio,
+          end: planoEntrega.data_fim
         }])).length == 0;
       case this.BOTAO_ALTERAR:
         /*
@@ -3288,7 +3288,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵInheritDefinitionFeature"]],
   decls: 41,
   vars: 47,
-  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [3, "buttons", 4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed", "visible"], [1, "row"], ["label", "Nome", "controlName", "nome", 3, "size", "control", "placeholder"], ["controlName", "unidade_id", 3, "size", "dao"], ["unidade", ""], ["label", "Status", "controlName", "status", "itemTodos", "- Todos -", 3, "size", "items", "valueTodos"], ["controlName", "planejamento_id", 3, "size", "dao"], ["planejamento", ""], ["controlName", "cadeia_valor_id", 3, "size", "dao"], ["cadeiaValor", ""], ["date", "", "label", "In\u00EDcio", "controlName", "inicio", 3, "size", "control", "labelInfo"], ["date", "", "label", "Fim", "controlName", "fim", 3, "size", "control", "labelInfo"], ["type", "expand", "icon", "bi bi-list-check", 3, "align", "hint", "template", "expandTemplate", 4, "ngIf"], [3, "titleTemplate", "template"], ["titleIdNumeroStatus", ""], ["columnNumero", ""], ["title", "Nome/Unidade", "orderBy", "nome", 3, "template"], ["columnNome", ""], ["title", "In\u00EDcio", "orderBy", "inicio", 3, "template"], ["columnInicio", ""], ["title", "Fim", "orderBy", "fim", 3, "template"], ["columnFim", ""], ["titlePlanoCadeia", ""], ["columnPlanoCadeia", ""], ["title", "Status", 3, "template"], ["columnStatus", ""], ["type", "options", 3, "dynamicOptions", "dynamicButtons"], [3, "rows"], [3, "buttons"], ["labelPosition", "left", "label", "Agrupar por Un.", "controlName", "agrupar", 3, "size", "control", "change"], ["labelPosition", "left", "label", "Principais", "controlName", "principais", 3, "size", "control", "labelInfo", "change"], ["type", "expand", "icon", "bi bi-list-check", 3, "align", "hint", "template", "expandTemplate"], ["columnEntregas", ""], ["columnExpandedEntregas", ""], ["class", "badge rounded-pill bg-light text-dark", 4, "ngIf"], [1, "badge", "rounded-pill", "bg-light", "text-dark"], [1, "bi", "bi-list-check"], [3, "entity", "cdRef"], ["by", "numero", 3, "header"], [1, "micro-text", "fw-ligh"], [1, "text-break", "text-wrap"], ["color", "light", 3, "icon", "label"], ["color", "secondary", 3, "icon", "label", 4, "ngIf"], ["color", "secondary", 3, "icon", "label"], ["color", "light", 3, "maxWidth", "icon", "label", 4, "ngIf"], ["color", "light", 3, "maxWidth", "icon", "label"], [3, "color", "icon", "label"], ["color", "danger", "icon", "bi bi-dash-circle", "label", "Cancelado", 4, "ngIf"], ["color", "danger", "icon", "bi bi-dash-circle", "label", "Cancelado"]],
+  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [3, "buttons", 4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed", "visible"], [1, "row"], ["label", "Nome", "controlName", "nome", 3, "size", "control", "placeholder"], ["controlName", "unidade_id", 3, "size", "dao"], ["unidade", ""], ["label", "Status", "controlName", "status", "itemTodos", "- Todos -", 3, "size", "items", "valueTodos"], ["controlName", "planejamento_id", 3, "size", "dao"], ["planejamento", ""], ["controlName", "cadeia_valor_id", 3, "size", "dao"], ["cadeiaValor", ""], ["date", "", "label", "In\u00EDcio", "controlName", "data_inicio", 3, "size", "control", "labelInfo"], ["date", "", "label", "Fim", "controlName", "data_fim", 3, "size", "control", "labelInfo"], ["type", "expand", "icon", "bi bi-list-check", 3, "align", "hint", "template", "expandTemplate", 4, "ngIf"], [3, "titleTemplate", "template"], ["titleIdNumeroStatus", ""], ["columnNumero", ""], ["title", "Nome/Unidade", "orderBy", "nome", 3, "template"], ["columnNome", ""], ["title", "In\u00EDcio", "orderBy", "data_inicio", 3, "template"], ["columnInicio", ""], ["title", "Fim", "orderBy", "data_fim", 3, "template"], ["columnFim", ""], ["titlePlanoCadeia", ""], ["columnPlanoCadeia", ""], ["title", "Status", 3, "template"], ["columnStatus", ""], ["type", "options", 3, "dynamicOptions", "dynamicButtons"], [3, "rows"], [3, "buttons"], ["labelPosition", "left", "label", "Agrupar por Un.", "controlName", "agrupar", 3, "size", "control", "change"], ["labelPosition", "left", "label", "Principais", "controlName", "principais", 3, "size", "control", "labelInfo", "change"], ["type", "expand", "icon", "bi bi-list-check", 3, "align", "hint", "template", "expandTemplate"], ["columnEntregas", ""], ["columnExpandedEntregas", ""], ["class", "badge rounded-pill bg-light text-dark", 4, "ngIf"], [1, "badge", "rounded-pill", "bg-light", "text-dark"], [1, "bi", "bi-list-check"], [3, "entity", "cdRef"], ["by", "numero", 3, "header"], [1, "micro-text", "fw-ligh"], [1, "text-break", "text-wrap"], ["color", "light", 3, "icon", "label"], ["color", "secondary", 3, "icon", "label", 4, "ngIf"], ["color", "secondary", 3, "icon", "label"], ["color", "light", 3, "maxWidth", "icon", "label", 4, "ngIf"], ["color", "light", 3, "maxWidth", "icon", "label"], [3, "color", "icon", "label"], ["color", "danger", "icon", "bi bi-dash-circle", "label", "Cancelado", 4, "ngIf"], ["color", "danger", "icon", "bi bi-dash-circle", "label", "Cancelado"]],
   template: function PlanoEntregaListComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementStart"](0, "grid", 0);
@@ -3354,9 +3354,9 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 4)("dao", ctx.cadeiaValorDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 2)("control", ctx.filter.controls.inicio)("labelInfo", "Data de in\u00EDcio do " + ctx.lex.translate("plano de entrega"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 2)("control", ctx.filter.controls.data_inicio)("labelInfo", "Data de in\u00EDcio do " + ctx.lex.translate("plano de entrega"));
       _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 2)("control", ctx.filter.controls.fim)("labelInfo", "Data do fim do " + ctx.lex.translate("plano de entrega"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 2)("control", ctx.filter.controls.data_fim)("labelInfo", "Data do fim do " + ctx.lex.translate("plano de entrega"));
       _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("ngIf", !ctx.selectable);
       _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
@@ -3455,7 +3455,7 @@ function PlanoEntregaMapaEntregasComponent_ng_template_12_Template(rf, ctx) {
     const row_r8 = ctx.row;
     const ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtextInterpolate2"](" ", ctx_r3.util.getDateFormatted(row_r8.inicio), " - ", ctx_r3.util.getDateFormatted(row_r8.fim), "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtextInterpolate2"](" ", ctx_r3.util.getDateFormatted(row_r8.data_inicio), " - ", ctx_r3.util.getDateFormatted(row_r8.data_fim), "");
     _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](4);
     _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtextInterpolate1"](" ", row_r8.cliente, "");
     _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](2);
@@ -3528,8 +3528,8 @@ class PlanoEntregaMapaEntregasComponent extends src_app_modules_base_page_list_b
       if (this.processoId) result.push(["processos.processo_id", "==", this.processoId]);
       if (form.unidade_id) result.push(["plano_entrega.unidade_id", "==", form.unidade_id]);
       if (form.entrega_id) result.push(["entrega_id", "==", form.entrega_id]);
-      if (form.inicio) result.push(["data_inicio", ">=", form.inicio]);
-      if (form.fim) result.push(["data_fim", "<=", form.fim]);
+      if (form.data_inicio) result.push(["data_inicio", ">=", form.data_inicio]);
+      if (form.data_fim) result.push(["data_fim", "<=", form.data_fim]);
       return result;
     };
     this.unidadeDao = injector.get(src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_3__.UnidadeDaoService);
@@ -3544,10 +3544,10 @@ class PlanoEntregaMapaEntregasComponent extends src_app_modules_base_page_list_b
       entrega_id: {
         default: null
       },
-      inicio: {
+      data_inicio: {
         default: null
       },
-      fim: {
+      data_fim: {
         default: null
       }
     });
@@ -3561,8 +3561,8 @@ class PlanoEntregaMapaEntregasComponent extends src_app_modules_base_page_list_b
   filterClear(filter) {
     filter.controls.unidade_id.setValue(null);
     filter.controls.entrega_id.setValue(null);
-    filter.controls.inicio.setValue(null);
-    filter.controls.fim.setValue(null);
+    filter.controls.data_inicio.setValue(null);
+    filter.controls.data_fim.setValue(null);
     super.filterClear(filter);
   }
 }
@@ -3587,7 +3587,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵInheritDefinitionFeature"]],
   decls: 21,
   vars: 22,
-  consts: [["noHeader", "", 3, "dao", "title", "orderBy", "join"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["controlName", "unidade_id", 3, "size", "dao"], ["unidade", ""], ["controlName", "entrega_id", 3, "size", "dao"], ["entrega", ""], ["date", "", "noIcon", "", "label", "In\u00EDcio", "controlName", "inicio", "labelInfo", "Data de in\u00EDcio do planejamento institucional", 3, "size", "control"], ["date", "", "noIcon", "", "label", "Fim", "controlName", "fim", "labelInfo", "Data do fim do planejamento institucional", 3, "size", "control"], ["title", "Entrega", 3, "template"], ["columnEntrega", ""], ["title", "Meta", 3, "template"], ["columnMeta", ""], ["title", "Realizado", 3, "template"], ["columnRealizado", ""], [3, "rows"], ["icon", "bi bi-list-columns-reverse", "color", "light", 3, "label", "hint"], [1, "meta", "h-100"], [1, "card", "h-100"], [1, "card-body"], [1, "card-title"], [1, "text-primary"], [1, "realizado", "h-100"], ["class", "text-secondary", 4, "ngIf"], ["color", "success", 3, "value", 4, "ngIf"], [1, "card-footer", "p-0"], ["icon", "bi bi-card-checklist"], [1, "text-secondary"], ["color", "success", 3, "value"]],
+  consts: [["noHeader", "", 3, "dao", "title", "orderBy", "join"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["controlName", "unidade_id", 3, "size", "dao"], ["unidade", ""], ["controlName", "entrega_id", 3, "size", "dao"], ["entrega", ""], ["date", "", "noIcon", "", "label", "In\u00EDcio", "controlName", "data_inicio", "labelInfo", "Data de in\u00EDcio do planejamento institucional", 3, "size", "control"], ["date", "", "noIcon", "", "label", "Fim", "controlName", "data_fim", "labelInfo", "Data do fim do planejamento institucional", 3, "size", "control"], ["title", "Entrega", 3, "template"], ["columnEntrega", ""], ["title", "Meta", 3, "template"], ["columnMeta", ""], ["title", "Realizado", 3, "template"], ["columnRealizado", ""], [3, "rows"], ["icon", "bi bi-list-columns-reverse", "color", "light", 3, "label", "hint"], [1, "meta", "h-100"], [1, "card", "h-100"], [1, "card-body"], [1, "card-title"], [1, "text-primary"], [1, "realizado", "h-100"], ["class", "text-secondary", 4, "ngIf"], ["color", "success", 3, "value", 4, "ngIf"], [1, "card-footer", "p-0"], ["icon", "bi bi-card-checklist"], [1, "text-secondary"], ["color", "success", 3, "value"]],
   template: function PlanoEntregaMapaEntregasComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementStart"](0, "grid", 0);
@@ -3619,9 +3619,9 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("size", 4)("dao", ctx.entregaDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("size", 2)("control", ctx.filter.controls.inicio);
+      _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("size", 2)("control", ctx.filter.controls.data_inicio);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("size", 2)("control", ctx.filter.controls.fim);
+      _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("size", 2)("control", ctx.filter.controls.data_fim);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("template", _r2);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](3);

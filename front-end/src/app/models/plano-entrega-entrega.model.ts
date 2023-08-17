@@ -13,8 +13,8 @@ export class PlanoEntregaEntrega extends Base {
   public objetivos: PlanoEntregaEntregaObjetivo[] = [];
   public processos: PlanoEntregaEntregaProcesso[] = [];
 
-  public inicio: Date = new Date();
-  public fim: Date | null = null;
+  public data_inicio: Date = new Date();
+  public data_fim: Date | null = null;
   public descricao: string = "";
   public homologado: boolean = false;
   public meta: EntregaValor = {};

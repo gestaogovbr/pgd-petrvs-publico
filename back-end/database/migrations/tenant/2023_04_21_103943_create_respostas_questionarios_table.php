@@ -20,7 +20,7 @@ class CreateRespostasQuestionariosTable extends Migration
             $table->timestamps();
             $table->softDeletes();
             // Campos:
-            $table->dateTime('data_hora')->comment("Data e hora das respostas");
+            $table->dateTime('data_respostas')->comment("Data e hora das respostas");
             $table->tinyInteger('editavel')->default(1)->comment("Possibilidade de editar as respostas");
             $table->json('respostas')->nullable()->comment("Respostas do questionário");
             // Chaves estrangeiras:

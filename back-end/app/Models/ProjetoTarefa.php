@@ -22,10 +22,10 @@ class ProjetoTarefa extends ModelBase
         'path', /* text; NOT NULL; */// Path dos nós pais
         'nome', /* varchar(256); NOT NULL; */// Nome da tarefa
         'descricao', /* varchar(256); NOT NULL; */// Descricao da tarefa
-        'inicio', /* datetime; */// Inicio da tarefa
-        'termino', /* datetime; */// Fim da tarefa
-        'inicio_baseline', /* datetime; */// Inicio do projeto (Baseline)
-        'termino_baseline', /* datetime; */// Fim do projeto (Baseline)
+        'data_inicio', /* datetime; */// Inicio da tarefa
+        'data_fim', /* datetime; */// Fim da tarefa
+        'data_inicio_baseline', /* datetime; */// Inicio do projeto (Baseline)
+        'data_fim_baseline', /* datetime; */// Fim do projeto (Baseline)
         'duracao', /* double(8,2); NOT NULL; */// Duração da atividade. Se a duração for 0 e sintéfico for falso então irá se comportar apenas como um grupo
         'progresso', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */// Percentual de progresso da tarefa
         'inicio_marco', /* tinyint; NOT NULL; */// Se o inicio é um marco

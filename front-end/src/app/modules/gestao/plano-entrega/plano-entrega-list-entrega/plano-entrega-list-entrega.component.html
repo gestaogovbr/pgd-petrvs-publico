@@ -18,8 +18,8 @@
                 </column>
                 <column [title]="'Data Início\nData Fim'" [template]="columnDatas">
                     <ng-template let-row="row" #columnDatas>
-                        <span *ngIf="row.inicio"> {{dao!.getDateFormatted(row.inicio)}}</span>
-                        <span *ngIf="row.fim"> {{dao!.getDateFormatted(row.fim)}}</span>
+                        <span *ngIf="row.data_inicio"> {{dao!.getDateFormatted(row.data_inicio)}}</span>
+                        <span *ngIf="row.data_fim"> {{dao!.getDateFormatted(row.data_fim)}}</span>
                     </ng-template>
                 </column>
                 <column title="Entrega" [template]="columnEntrega">

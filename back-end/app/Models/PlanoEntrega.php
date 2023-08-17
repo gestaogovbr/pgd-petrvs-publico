@@ -28,8 +28,8 @@ class PlanoEntrega extends ModelBase
         'programa_id', /* char(36); NOT NULL; */
         'criacao_usuario_id', /* char(36); NOT NULL; */
         'status_id', 
-        'inicio', /* datetime; NOT NULL; */// Data inicial do plano de entregas
-        'fim', /* datetime; */// Data final do plano de entregas
+        'data_inicio', /* datetime; NOT NULL; */// Data inicial do plano de entregas
+        'data_fim', /* datetime; */// Data final do plano de entregas
         //'deleted_at', /* timestamp; */
         //'numero', /* int; NOT NULL; */// Número do plano de entrega (Gerado pelo sistema)
     ];

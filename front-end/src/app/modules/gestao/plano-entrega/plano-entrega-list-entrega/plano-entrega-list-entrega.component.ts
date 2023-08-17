@@ -74,8 +74,8 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
     this.form = this.fh.FormBuilder({
       descricao: { default: "" },
-      inicio: { default: new Date() },
-      fim: { default: new Date() },
+      data_inicio: { default: new Date() },
+      data_fim: { default: new Date() },
       meta: { default: "" },
       realizado: { default: null },
       entrega_id: { default: null },

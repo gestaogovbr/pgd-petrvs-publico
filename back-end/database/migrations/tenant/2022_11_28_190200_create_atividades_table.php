@@ -25,12 +25,12 @@ class CreateAtividadesTable extends Migration
             $table->text('descricao')->comment("Assunto da atividade");
             $table->dateTime('data_distribuicao')->comment("Data de cadastro da atividade");
             $table->float('carga_horaria')->nullable()->comment("Carga horária que será utilizada para todos os cálculos (vinda do plano de trabalho)");
-            $table->float('tempo_planejado')->comment("Diferença entre data_distribuicao e prazo_entrega em horas (úteis ou corridas, configurada na unidade)");
-            $table->dateTime('prazo_entrega')->comment("Data estipulada para entrega da demanda");
+            $table->float('tempo_planejado')->comment("Diferença entre data_distribuicao e data_estipulada_entrega em horas (úteis ou corridas, configurada na unidade)");
+            $table->dateTime('data_estipulada_entrega')->comment("Data estipulada para entrega da demanda");
             $table->dateTime('data_inicio')->nullable()->comment("Data em que o usuário iniciou a atividade");
             $table->dateTime('data_entrega')->nullable()->comment("Data da entrega");
             $table->float('esforco')->comment("Esforço (tempo) que será empregado na execução da atividade");
-            $table->float('tempo_despendido')->nullable()->comment("Calculado no fim da atividade, sendo o tempo líquido (considerando pausas)");
+            $table->float('tempo_despendido')->nullable()->comment("Calculado no final da atividade, sendo o tempo líquido (considerando pausas)");
             $table->dateTime('data_arquivamento')->nullable()->comment("Data de arquivamento da demanda");
             $table->json('etiquetas')->nullable()->comment("Etiquetas");
             $table->json('checklist')->nullable()->comment("Checklist");

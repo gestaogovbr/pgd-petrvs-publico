@@ -13,8 +13,8 @@ class AtividadePausa extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'atividade_id', /* char(36); NOT NULL; */
-        'inicio', /* datetime; NOT NULL; */// Data inicio da pausa
-        'fim', /* datetime; */// Data de retorno
+        'data_inicio', /* datetime; NOT NULL; */// Data início da pausa
+        'data_fim', /* datetime; */// Data de retorno
         //'deleted_at', /* timestamp; */
     ];
     

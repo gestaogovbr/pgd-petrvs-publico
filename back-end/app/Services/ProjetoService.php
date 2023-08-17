@@ -33,7 +33,7 @@ class ProjetoService extends ServiceBase {
         $this->recalcular($entity);
         $delta = $this->delta($this->projectBeforeStore, $entity->toArray());
         $historico = new ProjetoHistorico([
-            'data_hora' => now(),
+            'data_modificacao' => now(),
             'linha_base' => false,
             'completo' => $action == ServiceBase::ACTION_INSERT,
             'delta' => json_encode($delta),
@@ -52,12 +52,12 @@ class ProjetoService extends ServiceBase {
         $minData = null;
         $maxData = null;
         foreach($projeto->tarefas as $tarefa) {
-          $minData = (empty($minData) && !empty($tarefa->inicio)) || UtilService::lessThanOrIqual($tarefa->inicio, $minData) ? $tarefa->inicio : $minData;
-          $maxData = (empty($maxData) && !empty($tarefa->termino)) || UtilService::greaterThanOrIqual($tarefa->termino, $maxData) ? $tarefa->termino : $maxData;
+          $minData = (empty($minData) && !empty($tarefa->data_inicio)) || UtilService::lessThanOrIqual($tarefa->data_inicio, $minData) ? $tarefa->data_inicio : $minData;
+          $maxData = (empty($maxData) && !empty($tarefa->data_fim)) || UtilService::greaterThanOrIqual($tarefa->data_fim, $maxData) ? $tarefa->data_fim : $maxData;
         }
         if($projeto->calcula_intervalo) {
-          $projeto->inicio = $minData ?? $maxData ?? date("Y-m-d H:i:s");
-          $projeto->termino = $maxData ?? $projeto->inicio;
+          $projeto->data_inicio = $minData ?? $maxData ?? date("Y-m-d H:i:s");
+          $projeto->data_fim = $maxData ?? $projeto->data_inicio;
         }
     }
 }

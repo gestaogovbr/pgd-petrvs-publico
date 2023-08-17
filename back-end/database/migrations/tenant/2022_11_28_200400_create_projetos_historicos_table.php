@@ -20,7 +20,7 @@ class CreateProjetosHistoricosTable extends Migration
             $table->timestamps();
             $table->softDeletes();
             // Campos:
-            $table->dateTime('data_hora')->useCurrent()->comment("Data e hora da modificação");
+            $table->dateTime('data_modificacao')->useCurrent()->comment("Data e hora da modificação");
             $table->tinyInteger('completo')->default(0)->comment("Se o delta corresponde ao objeto completo");
             $table->json('delta')->comment("Delta do objeto (ou objeto completo)");
             // Chaves estrangeiras:

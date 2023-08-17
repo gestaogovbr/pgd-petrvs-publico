@@ -20,8 +20,8 @@ class CreateProjetosFasesTable extends Migration
             $table->timestamps();
             $table->softDeletes();
             // Campos:
-            $table->dateTime('inicio')->nullable()->comment("Inicio (opcional)");
-            $table->dateTime('termino')->nullable()->comment("Termino (opcional)");
+            $table->dateTime('data_inicio')->nullable()->comment("Inicio (opcional)");
+            $table->dateTime('data_fim')->nullable()->comment("Fim (opcional)");
             $table->string('cor', 100)->comment("Código da cor em formato hex"); // style="color: #AABBCC00"
             $table->string('nome', 100)->comment("Nome");
             $table->string('descricao', 256)->comment("Descrição");

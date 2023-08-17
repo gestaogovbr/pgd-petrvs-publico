@@ -2,7 +2,7 @@
     <div *ngIf="erros?.length" class="alert alert-danger mt-2 break-spaces" role="alert">{{erros}}</div>
     <div class="row">
         <div class="row">
-            <input-datetime [size]="3" datetime label="Início" controlName="inicio" [control]="form!.controls.inicio"></input-datetime>
+            <input-datetime [size]="3" datetime label="Início" controlName="data_inicio" [control]="form!.controls.data_inicio"></input-datetime>
             <input-radio [size]="4" label="Cálculo desejado" controlName="tipo_calculo" [control]="form!.controls.tipo_calculo" [items]="opcoes_calculo" (onChange)="onTipoCalculoChange($event)"></input-radio>
             <input-datetime [size]="3" datetime [disabled]="disabled_datetime ? 'disabled' : undefined" label="Data-fim" controlName="datafim_fimoutempo" [control]="form!.controls.datafim_fimoutempo"></input-datetime>
             <input-timer onlyHours [disabled]="disabled_datetime ? 'disabled' : undefined" label="Tempo" [size]="2" icon="bi bi-clock" controlName="tempo_fimoutempo" [control]="form!.controls.tempo_fimoutempo"></input-timer>
@@ -39,7 +39,7 @@
             <div class="row">
                 <input-switch [size]="2" label="Incluir Afastamentos" controlName="incluir_afastamentos" [control]="form!.controls.incluir_afastamentos" (change)="onAfastamentosChange($event)"></input-switch>
                 <input-select [size]="4" #tipoMotivoAfastamento [disabled]="disabled_afastamentos ? 'disabled' : undefined" label="Motivo" itemTodos="- Todos -" [valueTodos]="null" controlName="tipo_motivo_afastamento_id" [control]="form!.controls.tipo_motivo_afastamento_id" [dao]="tipoMotivoAfastamentoDao"></input-select>
-                <input-datetime datetime [size]="3" [disabled]="disabled_afastamentos ? 'disabled' : undefined" label="Início" controlName="inicio_afastamento" [control]="form!.controls.inicio_afastamento"></input-datetime>
-                <input-datetime datetime [size]="3" [disabled]="disabled_afastamentos ? 'disabled' : undefined" label="Fim" controlName="fim_afastamento" [control]="form!.controls.fim_afastamento"></input-datetime>
+                <input-datetime datetime [size]="3" [disabled]="disabled_afastamentos ? 'disabled' : undefined" label="Início" controlName="data_inicio_afastamento" [control]="form!.controls.data_inicio_afastamento"></input-datetime>
+                <input-datetime datetime [size]="3" [disabled]="disabled_afastamentos ? 'disabled' : undefined" label="Fim" controlName="data_fim_afastamento" [control]="form!.controls.data_fim_afastamento"></input-datetime>
             </div>
         </separator> -->

@@ -41,8 +41,8 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
       nome: {default: ""},
       normativa: {default: ""},
       config: {default: null},
-      data_inicio_vigencia: {default: new Date()},
-      data_fim_vigencia: {default: new Date()},
+      data_inicio: {default: new Date()},
+      data_fim: {default: new Date()},
       termo_obrigatorio: {default: false},
       template_tcr_id: {default: null},
       tipo_avaliacao_id: {default: ""},
@@ -62,7 +62,7 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
       result = "Obrigatório";
     } else if(controlName == "prazo_max_plano_entrega" && parseInt(control.value || 0) > 99999) {
       result = "Inválido";
-    } else if(['data_inicio_vigencia', 'data_fim_vigencia'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+    } else if(['data_inicio', 'data_fim'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
     } else if(controlName == "periodicidade_valor") {
       if(['SEMANAL', 'QUINZENAL'].includes(this.form?.controls.periodicidade_consolidacao.value) && control.value > 6) result = "Inválido";
@@ -73,7 +73,7 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
   }
   public formValidation = (form?: FormGroup) => {
     let result = null;
-    if(this.form?.controls.data_fim_vigencia.value && this.form?.controls.data_inicio_vigencia.value > this.form?.controls.data_fim_vigencia.value) {
+    if(this.form?.controls.data_fim.value && this.form?.controls.data_inicio.value > this.form?.controls.data_fim.value) {
       result = "A data do fim não pode ser anterior à data do inicio!";
     }
     return result;

@@ -42,11 +42,11 @@ export class ProjetoFormPrincipalComponent extends PageFrameBase {
       status: {default: "PLANEJADO"},
       descricao: {default: ""},
       finalidade: {default: ""},
-      inicio: {default: new Date()},
-      termino: {default: new Date()},
+      data_inicio: {default: new Date()},
+      data_fim: {default: new Date()},
       duracao: {default: 0},
-      inicio_baseline: {default: new Date()},
-      termino_baseline: {default: new Date()},
+      data_inicio_baseline: {default: new Date()},
+      data_fim_baseline: {default: new Date()},
       progresso: {default: 0},
       tempo_corrido: {default: false},
       usa_horas: {default: false},
@@ -70,8 +70,8 @@ export class ProjetoFormPrincipalComponent extends PageFrameBase {
     let result = null;
     let form = this.form?.value || {};
     if((controlName == "nome" && !control.value?.length) ||
-      (form.usa_baseline && ["inicio_baseline", "termino_baseline"].includes(controlName) && !this.util.isDataValid(control.value)) || 
-      (["inicio", "termino"].includes(controlName) && !this.util.isDataValid(control.value))) {
+      (form.usa_baseline && ["data_inicio_baseline", "data_fim_baseline"].includes(controlName) && !this.util.isDataValid(control.value)) || 
+      (["data_inicio", "data_fim"].includes(controlName) && !this.util.isDataValid(control.value))) {
       result = "Obrigatório";
     }
     return result;
@@ -124,11 +124,11 @@ export class ProjetoFormPrincipalComponent extends PageFrameBase {
 
   public onUsaBaselineChange() {
     if(this.form!.controls.usa_baseline.value) {
-      if(!this.util.isDataValid(this.form!.controls.inicio_baseline.value)) this.form!.controls.inicio_baseline.setValue(this.form!.controls.inicio.value);
-      if(!this.util.isDataValid(this.form!.controls.termino_baseline.value)) this.form!.controls.inicio_baseline.setValue(this.form!.controls.termino.value);
+      if(!this.util.isDataValid(this.form!.controls.data_inicio_baseline.value)) this.form!.controls.data_inicio_baseline.setValue(this.form!.controls.data_inicio.value);
+      if(!this.util.isDataValid(this.form!.controls.data_fim_baseline.value)) this.form!.controls.data_fim_baseline.setValue(this.form!.controls.data_fim.value);
     } else {
-      this.form!.controls.inicio_baseline.setValue(null);
-      this.form!.controls.termino_baseline.setValue(null);
+      this.form!.controls.data_inicio_baseline.setValue(null);
+      this.form!.controls.data_fim_baseline.setValue(null);
     }
   }
 

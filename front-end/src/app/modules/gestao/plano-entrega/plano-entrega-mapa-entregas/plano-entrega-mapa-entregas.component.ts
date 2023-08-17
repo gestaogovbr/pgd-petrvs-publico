@@ -34,8 +34,8 @@ export class PlanoEntregaMapaEntregasComponent extends PageListBase<PlanoEntrega
     this.filter = this.fh.FormBuilder({
       unidade_id: {default: null},
       entrega_id: {default: null},
-      inicio: {default: null},
-      fim: {default: null}
+      data_inicio: {default: null},
+      data_fim: {default: null}
     });
     this.join = [];
   }
@@ -49,8 +49,8 @@ export class PlanoEntregaMapaEntregasComponent extends PageListBase<PlanoEntrega
   public filterClear(filter: FormGroup) {
     filter.controls.unidade_id.setValue(null);
     filter.controls.entrega_id.setValue(null);
-    filter.controls.inicio.setValue(null);
-    filter.controls.fim.setValue(null);
+    filter.controls.data_inicio.setValue(null);
+    filter.controls.data_fim.setValue(null);
     super.filterClear(filter);
   }
 
@@ -62,8 +62,8 @@ export class PlanoEntregaMapaEntregasComponent extends PageListBase<PlanoEntrega
     if(this.processoId) result.push(["processos.processo_id", "==", this.processoId]);
     if(form.unidade_id) result.push(["plano_entrega.unidade_id", "==", form.unidade_id]);
     if(form.entrega_id) result.push(["entrega_id", "==", form.entrega_id]);
-    if(form.inicio) result.push(["data_inicio", ">=", form.inicio]);
-    if(form.fim) result.push(["data_fim", "<=", form.fim]);
+    if(form.data_inicio) result.push(["data_inicio", ">=", form.data_inicio]);
+    if(form.data_fim) result.push(["data_fim", "<=", form.data_fim]);
 
     return result;
   }

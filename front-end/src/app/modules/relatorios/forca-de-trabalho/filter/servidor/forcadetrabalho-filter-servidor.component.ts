@@ -46,9 +46,9 @@ export class ForcaDeTrabalhoFilterServidorComponent extends PageReportFilterBase
   }
 
   public formValidation = (form?: FormGroup) => {
-    if(this.form?.controls.data_inicio.value && this.form?.controls.data_inicio.value < this.planoSelecionado!.data_inicio_vigencia) return "Data inicial menor que o início da vigência do Plano!";
+    if(this.form?.controls.data_inicio.value && this.form?.controls.data_inicio.value < this.planoSelecionado!.data_inicio) return "Data inicial menor que o início da vigência do Plano!";
     if(this.form?.controls.data_inicio.value && this.form?.controls.data_fim.value && this.form?.controls.data_inicio.value > this.form?.controls.data_fim.value) return "Data inicial maior que data final!";
-    if(this.form?.controls.data_fim.value && this.form?.controls.data_fim.value > this.planoSelecionado!.data_fim_vigencia) return "Data final maior que o fim da vigência do Plano!";
+    if(this.form?.controls.data_fim.value && this.form?.controls.data_fim.value > this.planoSelecionado!.data_fim) return "Data final maior que o fim da vigência do Plano!";
     if(this.form?.controls.data_fim.value && this.form?.controls.data_fim.value > moment()) return "Data final não pode ser maior que a data de hoje!";
     return undefined;
   } 
@@ -63,7 +63,7 @@ export class ForcaDeTrabalhoFilterServidorComponent extends PageReportFilterBase
     this.planos = planos.map(x => {
       return {
         key: x.id,
-        value: (x.tipo_modalidade?.nome || "") + " - " + this.usuarioDao!.getDateFormatted(x.data_inicio_vigencia) + " a " + this.usuarioDao!.getDateFormatted(x.data_fim_vigencia) + " (" + x.unidade!.sigla + ")",
+        value: (x.tipo_modalidade?.nome || "") + " - " + this.usuarioDao!.getDateFormatted(x.data_inicio) + " a " + this.usuarioDao!.getDateFormatted(x.data_fim) + " (" + x.unidade!.sigla + ")",
         data: x
       };
     });

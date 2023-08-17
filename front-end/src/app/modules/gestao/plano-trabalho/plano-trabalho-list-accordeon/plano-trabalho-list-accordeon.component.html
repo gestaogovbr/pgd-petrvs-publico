@@ -8,7 +8,7 @@
                 <badge [icon]="entityService.getIcon('TipoModalidade')" [label]="item.tipo_modalidade?.nome" color="light"></badge>
             </div>
             <div class="col-md-4">
-                {{dao!.getDateFormatted(item.data_inicio_vigencia)+" até "+dao!.getDateFormatted(item.data_fim_vigencia)}}
+                {{dao!.getDateFormatted(item.data_inicio)+" até "+dao!.getDateFormatted(item.data_fim)}}
             </div>
             <div class="col-md-2">
                 <badge color="danger" label="STATUS"></badge>

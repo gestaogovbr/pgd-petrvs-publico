@@ -45,7 +45,7 @@ class AfastamentoFormComponent extends src_app_modules_base_page_form_base__WEBP
       let result = null;
       if (['usuario_id', 'tipo_motivo_afastamento_id'].indexOf(controlName) >= 0 && !control.value?.length) {
         result = "Obrigatório";
-      } else if (['inicio_afastamento', 'fim_afastamento'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+      } else if (['data_inicio', 'data_fim'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
         result = "Inválido";
       }
       return result;
@@ -59,10 +59,10 @@ class AfastamentoFormComponent extends src_app_modules_base_page_form_base__WEBP
       observacoes: {
         default: ""
       },
-      inicio_afastamento: {
+      data_inicio: {
         default: new Date()
       },
-      fim_afastamento: {
+      data_fim: {
         default: new Date()
       },
       usuario_id: {
@@ -96,9 +96,9 @@ class AfastamentoFormComponent extends src_app_modules_base_page_form_base__WEBP
       let afastamento = this.util.fill(new src_app_models_afastamento_model__WEBPACK_IMPORTED_MODULE_3__.Afastamento(), this.entity);
       afastamento = this.util.fillForm(afastamento, this.form.value);
       if (!this.isHoras()) {
-        afastamento.inicio_afastamento.setHours(0, 0, 0);
-        afastamento.fim_afastamento.setHours(23, 59, 0);
-        afastamento.fim_afastamento.setDate(afastamento.fim_afastamento.getDate());
+        afastamento.data_inicio.setHours(0, 0, 0);
+        afastamento.data_fim.setHours(23, 59, 0);
+        afastamento.data_fim.setDate(afastamento.data_fim.getDate());
       }
       resolve(afastamento);
     });
@@ -127,7 +127,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
   decls: 11,
   vars: 13,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "usuario_id", 3, "size", "dao"], ["usuario", ""], ["controlName", "tipo_motivo_afastamento_id", 3, "size", "dao"], ["tipoMotivoAfastamento", ""], ["label", "In\u00EDcio", "controlName", "inicio_afastamento", 3, "date", "size"], ["label", "Fim", "controlName", "fim_afastamento", 3, "date", "size"], ["label", "Observa\u00E7\u00F5es", "controlName", "observacoes", 3, "size", "rows"]],
+  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "usuario_id", 3, "size", "dao"], ["usuario", ""], ["controlName", "tipo_motivo_afastamento_id", 3, "size", "dao"], ["tipoMotivoAfastamento", ""], ["label", "In\u00EDcio", "controlName", "data_inicio", 3, "date", "size"], ["label", "Fim", "controlName", "data_fim", 3, "date", "size"], ["label", "Observa\u00E7\u00F5es", "controlName", "observacoes", 3, "size", "rows"]],
   template: function AfastamentoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "editable-form", 0);
@@ -266,7 +266,7 @@ function AfastamentoListComponent_ng_template_18_Template(rf, ctx) {
     const row_r15 = ctx.row;
     const ctx_r8 = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtextInterpolate1"](" ", ctx_r8.dao.getDateFormatted(row_r15.inicio_afastamento), "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtextInterpolate1"](" ", ctx_r8.dao.getDateFormatted(row_r15.data_inicio), "");
   }
 }
 function AfastamentoListComponent_ng_template_21_Template(rf, ctx) {
@@ -279,7 +279,7 @@ function AfastamentoListComponent_ng_template_21_Template(rf, ctx) {
     const row_r16 = ctx.row;
     const ctx_r10 = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtextInterpolate1"](" ", ctx_r10.dao.getDateFormatted(row_r16.fim_afastamento), "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtextInterpolate1"](" ", ctx_r10.dao.getDateFormatted(row_r16.data_fim), "");
   }
 }
 class AfastamentoListComponent extends src_app_modules_base_page_list_base__WEBPACK_IMPORTED_MODULE_3__.PageListBase {
@@ -290,8 +290,6 @@ class AfastamentoListComponent extends src_app_modules_base_page_list_base__WEBP
     this.filterWhere = filter => {
       let result = [];
       let form = filter.value;
-      //let inicio_afast = new Date();
-      //let fim_afast = new Date();
       if (form.usuario_id?.length && form.tipo_motivo_afastamento_id?.length) {
         result.push(["usuario_id", "==", form.usuario_id]);
         result.push(["tipo_motivo_afastamento_id", "==", form.tipo_motivo_afastamento_id]);
@@ -299,30 +297,25 @@ class AfastamentoListComponent extends src_app_modules_base_page_list_base__WEBP
         result.push(["usuario_id", "==", form.usuario_id]);
       } else if (form.tipo_motivo_afastamento_id?.length) {
         result.push(["tipo_motivo_afastamento_id", "==", form.tipo_motivo_afastamento_id]);
-      } else if (this.dao?.validDateTime(form.inicio_afastamento) && this.dao?.validDateTime(form.fim_afastamento) && !this.listagemInicial) {
-        result.push(this.dao?.intersectionWhere("inicio_afastamento", "fim_afastamento", this.util.startOfDay(form.inicio_afastamento), this.util.startOfDay(form.fim_afastamento)));
-        //inicio_afast = form.inicio_afastamento.toISOString().slice(0,10);//Método para organizar o date em 'yyyy-mm-dd', formato que o banco consegue comparar.
-        //fim_afast = form.fim_afastamento.toISOString().slice(0,10);
-        //result.push(["inicio_afastamento", ">=", this.util.startOfDay(form.inicio_afastamento)]);
-        //result.push(["fim_afastamento", "<=", this.util.endOfDay(form.fim_afastamento)]);
+      } else if (this.dao?.validDateTime(form.data_inicio) && this.dao?.validDateTime(form.data_fim) && !this.listagemInicial) {
+        result.push(this.dao?.intersectionWhere("data_inicio", "data_fim", this.util.startOfDay(form.data_inicio), this.util.startOfDay(form.data_fim)));
       }
-
       return result;
     };
+    /* Inicializações */
     this.join = ["tipo_motivo_afastamento:id, nome", "usuario: id, nome"];
     this.tipoMotivoAfastamentoDao = injector.get(src_app_dao_tipo_motivo_afastamento_dao_service__WEBPACK_IMPORTED_MODULE_4__.TipoMotivoAfastamentoDaoService);
     this.usuarioDao = injector.get(src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_5__.UsuarioDaoService);
-    /* Inicializações */
     this.title = this.lex.translate("Afastamentos");
     this.code = "MOD_AFT";
     this.filter = this.fh.FormBuilder({
       observacoes: {
         default: ""
       },
-      inicio_afastamento: {
+      data_inicio: {
         default: new Date()
       },
-      fim_afastamento: {
+      data_fim: {
         default: new Date()
       },
       usuario_id: {
@@ -332,30 +325,9 @@ class AfastamentoListComponent extends src_app_modules_base_page_list_base__WEBP
         default: ""
       }
     });
-    // Testa se o usuário possui permissão para exibir dados do afastamento
-    if (this.auth.hasPermissionTo("MOD_AFT_CONS")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir o afastamento
-    if (this.auth.hasPermissionTo("MOD_AFT_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
+    this.addOption(this.OPTION_INFORMACOES);
+    this.addOption(this.OPTION_EXCLUIR, "MOD_AFT_EXCL");
   }
-  /*public filterClear(filter: FormGroup) {
-    filter.controls.inicio_afastamento.setValue("");
-    filter.controls.fim_afastamento.setValue("");
-    filter.controls.usuario_id.setValue("");
-    filter.controls.tipo_motivo_afastamento_id.setValue("");
-    super.filterClear(filter);
-  }*/
   filtro() {
     this.listagemInicial = false;
   }
@@ -378,8 +350,8 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵInheritDefinitionFeature"]],
   decls: 26,
-  vars: 30,
-  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "hasAdd", "hasEdit"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["controlName", "usuario_id", 3, "size", "dao"], ["usuario", ""], ["controlName", "tipo_motivo_afastamento_id", 3, "size", "dao"], ["tipoMotivoAfastamento", ""], ["date", "", "label", "In\u00EDcio", "controlName", "inicio_afastamento", 3, "size", "click"], ["date", "", "label", "Fim", "controlName", "fim_afastamento", 3, "size", "click"], [3, "title", "template"], ["columnUsuario", ""], ["columnMotivoAfastamento", ""], ["title", "In\u00EDcio", 3, "template"], ["columnInicioAfastamento", ""], ["title", "Fim", 3, "template"], ["columnFimAfastamento", ""], ["title", "Observa\u00E7\u00F5es", "field", "observacoes"], ["type", "options", 3, "onEdit", "options"], [3, "rows"]],
+  vars: 29,
+  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "hasAdd", "hasEdit"], [4, "ngIf"], [3, "form", "where", "submit", "collapseChange", "collapsed"], [1, "row"], ["controlName", "usuario_id", 3, "size", "dao"], ["usuario", ""], ["controlName", "tipo_motivo_afastamento_id", 3, "size", "dao"], ["tipoMotivoAfastamento", ""], ["date", "", "label", "In\u00EDcio", "controlName", "data_inicio", 3, "size", "click"], ["date", "", "label", "Fim", "controlName", "data_fim", 3, "size", "click"], [3, "title", "template"], ["columnUsuario", ""], ["columnMotivoAfastamento", ""], ["title", "In\u00EDcio", 3, "template"], ["columnInicioAfastamento", ""], ["title", "Fim", 3, "template"], ["columnFimAfastamento", ""], ["title", "Observa\u00E7\u00F5es", "field", "observacoes"], ["type", "options", 3, "onEdit", "options"], [3, "rows"]],
   template: function AfastamentoListComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](0, "grid", 0);
@@ -422,7 +394,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("ngIf", !ctx.selectable);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", ctx.filterCollapsed);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 3)("dao", ctx.usuarioDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);

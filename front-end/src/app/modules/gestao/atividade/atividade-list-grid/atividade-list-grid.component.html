@@ -69,7 +69,7 @@
             <ng-template let-header="header" #titleTempos>
                 Tempos
                 <order by="data_distribuicao" [header]="header">Distribuição</order><br>
-                <order by="prazo_entrega" [header]="header">Prazo</order>
+                <order by="data_estipulada_entrega" [header]="header">Prazo</order>
                 <order by="data_entrega" [header]="header">Entrega</order>
             </ng-template>
             <ng-template let-row="row" #columnTempos>

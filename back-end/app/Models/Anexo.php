@@ -15,7 +15,7 @@ class Anexo extends ModelBase
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'nome', /* varchar(256); NOT NULL; */// Nome do arquivo com extensão
         'descricao', /* varchar(256); NOT NULL; */// Descrição do anexo
-        'data_hora', /* datetime; NOT NULL; */// Data e horário que foi feito o comentário
+        'data_comentario', /* datetime; NOT NULL; */// Data e horário que foi feito o comentário
         'path', /* varchar(256); */// Path relativo do arquivo
         'base64', /* text; */// Arquivo em formato base64
         'usuario_id', /* char(36); */

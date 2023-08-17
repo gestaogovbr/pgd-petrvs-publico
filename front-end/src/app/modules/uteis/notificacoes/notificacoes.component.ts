@@ -36,15 +36,15 @@ export class NotificacoesComponent extends PageListBase<Notificacao, Notificacao
     this.title = this.lex.translate('Notificações');
     this.filter = this.fh.FormBuilder({
       todas: {default: false},
-      inicio: {default: undefined},
-      fim: {default: undefined}
+      data_inicio: {default: undefined},
+      data_fim: {default: undefined}
     });
   }
 
   public filterClear(filter: FormGroup) {
     filter.controls.todas.setValue(false);
-    filter.controls.inicio.setValue(undefined);
-    filter.controls.fim.setValue(undefined);
+    filter.controls.data_inicio.setValue(undefined);
+    filter.controls.data_fim.setValue(undefined);
     super.filterClear(filter);
   }
 
@@ -53,8 +53,8 @@ export class NotificacoesComponent extends PageListBase<Notificacao, Notificacao
     let form: any = filter.value;
     result.push(["usuario_id", "==", this.auth.usuario!.id]);
     if(form.todas) result.push(["todas", "==", true]);
-    if(this.util.isDataValid(form.inicio)) result.push(["data_registro", ">=", form.inicio]);
-    if(this.util.isDataValid(form.fim)) result.push(["data_registro", "<=", form.fim]);
+    if(this.util.isDataValid(form.data_inicio)) result.push(["data_registro", ">=", form.data_inicio]);
+    if(this.util.isDataValid(form.data_fim)) result.push(["data_registro", "<=", form.data_fim]);
     return result;
   }
 

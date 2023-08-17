@@ -22,8 +22,8 @@ class CreatePlanosEntregas extends Migration
             $table->softDeletes();
             // Campos:
             $table->integer('numero')->unique()->default(0)->comment("Número do plano de entrega (Gerado pelo sistema)");
-            $table->dateTime('inicio')->comment("Data inicial do plano de entregas");
-            $table->dateTime('fim')->nullable()->comment("Data final do plano de entregas");
+            $table->dateTime('data_inicio')->comment("Data inicial do plano de entregas");
+            $table->dateTime('data_fim')->nullable()->comment("Data final do plano de entregas");
             $table->dateTime('data_arquivamento')->nullable()->comment("Data de arquivamento do plano de entregas");
             $table->string('nome', 256)->comment("Nome do plano de entregas");
             // Chaves estrangeiras:

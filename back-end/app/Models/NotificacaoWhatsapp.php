@@ -13,9 +13,9 @@ class NotificacaoWhatsapp extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'data_hora', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data hora do início da sessão
-        'finalizacao', /* datetime; */// Data hora da finalizacao da sessão (utilizado posteriormente para alertar o usuário que seu atendimento acabou)
-        'ultima_interacao', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data hora utilizada para fazer o controle do tempo de sessão
+        'data_inicio_sessao', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data hora do início da sessão
+        'data_fim_sessao', /* datetime; */// Data hora da finalizacao da sessão (utilizado posteriormente para alertar o usuário que seu atendimento acabou)
+        'data_ultima_interacao', /* datetime; NOT NULL; DEFAULT: 'CURRENT_TIMESTAMP'; */// Data hora utilizada para fazer o controle do tempo de sessão
         'interacoes', /* json; NOT NULL; DEFAULT: 'json_array()'; */// Interações (histórico do campo atual)
         'atual', /* tinyint; NOT NULL; */// Informações da posição atual no menu
         'usuario_id', /* char(36); */
@@ -25,7 +25,7 @@ class NotificacaoWhatsapp extends ModelBase
     protected static function booted()
     {
         static::creating(function ($unidade) {
-            $unidade->data_hora = now();
+            $unidade->data_inicio_sessao = now();
         });
     }
 

@@ -4,8 +4,8 @@
       <input-text [size]="12" [label]="'Nome da ' + lex.translate('cadeia de valor')" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome"></input-text>
     </div>
     <div class="row">
-      <input-datetime date [size]="6" label="Início" icon="bi bi-calendar-date" controlName="inicio" [control]="form!.controls.inicio" [labelInfo]="'Início da ' + lex.translate('cadeia de valor')"></input-datetime>
-      <input-datetime date [size]="6" label="Fim" icon="bi bi-calendar-date" controlName="fim" [control]="form!.controls.fim" [labelInfo]="'Fim da ' + lex.translate('cadeia de valor')"></input-datetime>
+      <input-datetime date [size]="6" label="Início" icon="bi bi-calendar-date" controlName="data_inicio" [control]="form!.controls.data_inicio" [labelInfo]="'Início da ' + lex.translate('cadeia de valor')"></input-datetime>
+      <input-datetime date [size]="6" label="Fim" icon="bi bi-calendar-date" controlName="data_fim" [control]="form!.controls.data_fim" [labelInfo]="'Fim da ' + lex.translate('cadeia de valor')"></input-datetime>
       <!-- <input-switch [size]="2" label="Mover filhos" controlName="moveFilhos" labelInfo="Os processos filhos serão movidos junto ao processo pai quando esta opção estiver selecionada." ></input-switch> -->
     </div>
   </div>

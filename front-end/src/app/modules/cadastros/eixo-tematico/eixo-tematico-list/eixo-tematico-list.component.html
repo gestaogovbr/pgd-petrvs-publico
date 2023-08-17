@@ -10,7 +10,7 @@
     <columns>
         <column title="Nome" [template]="columnNome" orderBy="nome">
             <ng-template let-row="row" #columnNome>
-                <badge [color]="row.cor" [icon]="row.icone" [label]="row.nome"></badge>
+                <badge [color]="row.cor" [icon]="row.icone" [label]="row.nome" [hint]="row.nome"></badge>
             </ng-template>
         </column>
         <column type="options" [onEdit]="edit" [options]="options"></column>

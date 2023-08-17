@@ -21,14 +21,14 @@ export class AtividadeFormProrrogarComponent extends PageFormBase<Atividade, Ati
     super(injector, Atividade, AtividadeDaoService);
     this.form = this.fh.FormBuilder({
       data_distribuicao: {default: new Date()},
-      prazo_entrega: {default: new Date()}
+      data_estipulada_entrega: {default: new Date()}
     }, this.cdRef, this.validate);
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
 
-    if(controlName == "prazo_entrega") {
+    if(controlName == "data_estipulada_entrega") {
       if(!this.util.isDataValid(control.value)) {
         result = "Obrigatório";
       } else if(this.entity?.data_distribuicao && (control.value as Date).getTime() < this.entity!.data_distribuicao!.getTime()) {
@@ -42,7 +42,7 @@ export class AtividadeFormProrrogarComponent extends PageFormBase<Atividade, Ati
   public async loadData(entity: Atividade, form: FormGroup) {
     let formValue = {
       data_distribuicao: entity.data_distribuicao, 
-      prazo_entrega: entity.prazo_entrega 
+      data_estipulada_entrega: entity.data_estipulada_entrega 
     };
     if(entity.unidade_id != this.auth.unidade!.id) {
       await this.auth.selecionaUnidade(entity.unidade_id);
@@ -59,7 +59,7 @@ export class AtividadeFormProrrogarComponent extends PageFormBase<Atividade, Ati
     return new Promise<boolean>((resolve, reject) => {
       let prorrogar = {
         id: this.entity!.id,
-        prazo_entrega: this.form.controls.prazo_entrega.value 
+        data_estipulada_entrega: this.form.controls.data_estipulada_entrega.value 
       };
       this.dao!.prorrogar(prorrogar).then(saved => resolve(saved)).catch(reject);
     });

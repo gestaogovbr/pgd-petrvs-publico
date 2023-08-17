@@ -27,7 +27,7 @@ class CreateUnidadesTable extends Migration
             $table->text('path')->nullable()->comment('Path dos nós pais separados por /, ou NULL caso sejam nós raiz');
             $table->longText('texto_complementar_plano')->nullable()->comment("Campo de mensagem adicional do plano de trabalho");
             $table->tinyInteger("atividades_arquivamento_automatico")->default(0)->comment("Se arquiva automaticamente após conclusão");
-            $table->dateTime('inativo')->nullable()->comment("Se a unidade está ou não inativa");
+            $table->dateTime('data_inativacao')->nullable()->comment("Data em que a unidade foi inativada, se for o caso");
             $table->set("distribuicao_forma_contagem_prazos", ["HORAS_CORRIDAS", "DIAS_CORRIDOS", "HORAS_UTEIS", "DIAS_UTEIS"])->default("DIAS_UTEIS")->comment("Forma da contagem de prazo");
             $table->set("entrega_forma_contagem_prazos", ["HORAS_CORRIDAS", "HORAS_UTEIS"])->default("HORAS_UTEIS")->comment("Forma da contagem de horas para entrega");
             $table->json("etiquetas")->nullable()->comment("Configuração das etiquetas que serão utilizadas nas atividades (contém nome, icone e cor)");

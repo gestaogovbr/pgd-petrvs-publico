@@ -22,8 +22,8 @@ class Atividade extends ModelBase
         'descricao', /* text; */// Assunto da atividade
         'data_distribuicao', /* datetime; NOT NULL; */// Data de cadastro da atividade
         'carga_horaria', /* double(8,2); */// Carga horária que será utilizada para todos os cálculos (vinda do plano de trabalho)
-        'tempo_planejado', /* double(8,2); NOT NULL; */// Diferença entre data_distribuicao e prazo_entrega em horas (úteis ou corridas, configurada na unidade)
-        'prazo_entrega', /* datetime; NOT NULL; */// Data estipulada para entrega da demanda
+        'tempo_planejado', /* double(8,2); NOT NULL; */// Diferença entre data_distribuicao e data_estipulada_entrega em horas (úteis ou corridas, configurada na unidade)
+        'data_estipulada_entrega', /* datetime; NOT NULL; */// Data estipulada para entrega da demanda
         'data_inicio', /* datetime; */// Data em que o usuário iniciou a atividade
         'data_entrega', /* datetime; */// Data da entrega
         'esforco', /* double(8,2); NOT NULL; */// Tempo calculado a partir da atividade e utilizando o fator_complexidade
@@ -90,7 +90,7 @@ class Atividade extends ModelBase
     public function scopeNaoIniciadas($query) { return $query->whereNull('data_inicio'); }
     public function scopeConcluidas($query) { return $query->whereNotNull('data_entrega'); }
     public function scopeNaoConcluidas($query) { return $query->whereNotNull('data_inicio')->whereNull('data_entrega'); }
-    public function scopeAtrasadas($query){ return $query->whereNotNull('data_inicio')->whereNull('data_entrega')->whereDate('prazo_entrega', '<', Carbon::today()); }
+    public function scopeAtrasadas($query){ return $query->whereNotNull('data_inicio')->whereNull('data_entrega')->whereDate('data_estipulada_entrega', '<', Carbon::today()); }
     public function scopeDistribuidas($query) { return $query->whereNotNull('data_distribuicao'); }
     public function scopeIniciadas($query) { return $query->whereNotNull('data_inicio'); }
     public function scopeEmAndamento($query) { return $query->whereNotNull('data_inicio')->whereNull('data_entrega'); }
