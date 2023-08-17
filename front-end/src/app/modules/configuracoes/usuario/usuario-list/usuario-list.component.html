@@ -4,7 +4,7 @@
     [hasAdd]="auth.hasPermissionTo('MOD_USER_INCL')"
     [hasEdit]="auth.hasPermissionTo('MOD_USER_EDT')">
     <toolbar *ngIf="!selectable"></toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-text [size]="4" [label]="lex.translate('Usuário')" controlName="usuario" [control]="filter!.controls.usuario" placeholder="Nome"></input-text>
             <input-search [size]="4" [label]="lex.translate('Lotação')" controlName="unidade_id" [dao]="unidadeDao"></input-search>

@@ -13,13 +13,13 @@ class ProgramaParticipanteController extends ControllerBase {
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
             case 'STORE':
-                if (!$usuario->hasPermissionTo('MOD_PRGT_INCL')) throw new ServerException("CapacidadeStore", "Inserção não executada");
+                if (!$usuario->hasPermissionTo('MOD_PRGT_PART_INCL')) throw new ServerException("CapacidadeStore", "Inserção não executada");
                 break;
             case 'EDIT':
-                if (!$usuario->hasPermissionTo('MOD_PRGT_EDT')) throw new ServerException("CapacidadeStore", "Edição não executada");
+                if (!$usuario->hasPermissionTo('MOD_PRGT_PART_EDT')) throw new ServerException("CapacidadeStore", "Edição não executada");
                 break;
             case 'DESTROY':
-                if (!$usuario->hasPermissionTo('MOD_PRGT_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não executada");
+                if (!$usuario->hasPermissionTo('MOD_PRGT_PART_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não executada");
                 break;
         }
     }
@@ -27,7 +27,7 @@ class ProgramaParticipanteController extends ControllerBase {
     public function habilitar(Request $request) {
         try {
             $usuario = parent::loggedUser();
-            if (!$usuario->hasPermissionTo('MOD_PRGT_INCL')) throw new ServerException("ValidateProgramaParticipante", "Usuário não tem permissão para habilitar participantes");
+            if (!$usuario->hasPermissionTo('MOD_PRGT_PART_INCL')) throw new ServerException("ValidateProgramaParticipante", "Usuário não tem permissão para habilitar participantes");
             $data = $request->validate([
                 'participantes_ids' => ['array'],
                 'habilitado' => ['required'],

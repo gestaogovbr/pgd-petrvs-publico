@@ -24,30 +24,8 @@ export class MaterialServicoListComponent extends PageListBase<MaterialServico, 
       referencia: {default: ""},
       descricao: {default: ""}
     });
-    // Testa se o usuário possui permissão para exibir dados do materiais e serviços
-    if (this.auth.hasPermissionTo("MOD_MATSRV_CONS")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir o materiais e serviços
-    if (this.auth.hasPermissionTo("MOD_MATSRV_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
-  }
-
-  public filterClear(filter: FormGroup) {
-    filter.controls.tipo.setValue(null);
-    filter.controls.codigo.setValue("");
-    filter.controls.referencia.setValue("");
-    filter.controls.descricao.setValue("");
-    super.filterClear(filter);
+    this.addOption(this.OPTION_INFORMACOES);
+    this.addOption(this.OPTION_EXCLUIR, "MOD_MATSRV_EXCL");
   }
 
   public filterWhere = (filter: FormGroup) => {

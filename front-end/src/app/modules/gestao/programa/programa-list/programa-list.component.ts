@@ -22,22 +22,9 @@ export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoSer
     this.filter = this.fh.FormBuilder({
       nome: {default: ""},
     });
-    // Testa se o usuário possui permissão para exibir dados do programa de  gestão
-    if (this.auth.hasPermissionTo("MOD_PRGT_CONS")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir o programa de gestão
-    if (this.auth.hasPermissionTo("MOD_PRGT_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
+
+    this.addOption(this.OPTION_INFORMACOES);
+    this.addOption(this.OPTION_EXCLUIR, "MOD_PRGT_EXCL");
     // Testa se o usuário possui permissão para excluir o programa de gestão
     if (this.auth.hasPermissionTo("MOD_PRGT_PART")) {
       this.options.push({
@@ -46,11 +33,6 @@ export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoSer
         onClick: (programa: Programa) => this.go.navigate({route: ["gestao", "programa", programa.id, "participantes"]})
       });
     }
-  }
-
-  public filterClear(filter: FormGroup) {
-    filter.controls.nome.setValue("");
-    super.filterClear(filter);
   }
 
   public filterWhere = (filter: FormGroup) => {

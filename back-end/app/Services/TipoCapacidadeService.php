@@ -104,8 +104,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo Cadeia de Valor",
             "capacidades"=> [
                 /* Capacidades do módulo CADEIA DE VALOR*/
-                //["MOD_CADV", "Permite acessar item do menu cadeia de valor"],
-                ["MOD_CADV_CONS", "Permite consultar cadeia de valor"],
                 ["MOD_CADV_EDT", "Permite editar cadeia de valor"],
                 ["MOD_CADV_EXCL", "Permite excluir cadeia de valor"],
                 ["MOD_CADV_INCL", "Permite incluir cadeia de valor"],
@@ -127,7 +125,6 @@ class TipoCapacidadeService extends ServiceBase {
             "capacidades"=> [
                 /* Capacidades do módulo LOGS*/
                 ["MOD_LOGS", "Permite manter registros de logs"],
-                ["DEV_MOD_LOGS", "Permite manter registros de logs"]
             ]
         ], [ // Marian
             "codigo"=> "MOD_CFG", // ok
@@ -157,8 +154,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo Entidade",
             "capacidades"=> [
                 /* Capacidades do módulo ENTIDADE*/
-                ["MOD_ENTD_CFG", "Permite configurar Entidade"],   /* Este pode ser substituído pelo MOD_CFG_ENTD */
-                ["MOD_ENTD_CONS", "Permite consultar Entidade"],
                 ["MOD_ENTD_EDT", "Permite editar entidade"],
                 ["MOD_ENTD_EXCL", "Permite excluir Entidade"],
                 ["MOD_ENTD_INCL", "Permite incluir Entidade"],
@@ -179,8 +174,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo de Entregas",
             "capacidades"=> [
                 /* Capacidades do módulo ENTREGAS*/
-                //["MOD_ENTRG", "Permite acessar o item menu Entregas"],
-                ["MOD_ENTRG_CONS", "Permite consultar Entregas"],
                 ["MOD_ENTRG_INCL", "Permite incluir Entregas"],
                 ["MOD_ENTRG_EDT", "Permite editar Entregas"],
                 ["MOD_ENTRG_EXCL", "Permite excluir Entregas"],
@@ -213,8 +206,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo materiais e serviços",
             "capacidades"=> [
                 /* Capacidades do módulo MATERIAIS E SERVIÇOS*/
-                //["MOD_MATSRV", "Permite acessar item menu materiais e serviços"],
-                ["MOD_MATSRV_CONS", "Permite consultar materiais e serviços"],
                 ["MOD_MATSRV_EDT", "Permite editar materiais e serviços"],
                 ["MOD_MATSRV_EXCL", "Permite excluir materiais e serviços"],
                 ["MOD_MATSRV_INCL", "Permite incluir materiais e serviços"],
@@ -314,12 +305,9 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo de Programa de Gestão",
             "capacidades"=> [
                 /* Capacidades do módulo PROGRAMA DE GESTÃO */
-                //["MOD_PRGT", "Permite acessar item menu programa de gestão"],
-                ["MOD_PRGT_CONS", "Permite consultar programa de gestão"],
                 ["MOD_PRGT_EDT", "Permite editar programas de gestão"],
                 ["MOD_PRGT_EXCL", "Permite excluir programas de gestão"],
                 ["MOD_PRGT_INCL", "Permite incluir programas de gestão"],
-                ["MOD_PROC_INCL", "Permite incluir tipos de processos"],
                 ["MOD_PRGT_PART", "Participantes do programa"],
                 ["MOD_PRGT_PART_INCL", "Permite incluir participantes do programa"],
                 ["MOD_PRGT_PART_EDT", "Permite editar participantes do programa"],
@@ -350,10 +338,9 @@ class TipoCapacidadeService extends ServiceBase {
             "capacidades"=> [
                 /* Capacidades do módulo de templates */
                 ["MOD_TEMP_INCL", "Permite incluir template"],
-                ["MOD_TEMP_CONS", "Permite consultar template"],
                 ["MOD_TEMP_EDT", "Permite editar template"],
                 ["MOD_TEMP_EXCL", "Permite excluir template"],
-            ]
+            ]  
         ], [ // Marian
             "codigo"=> "MOD_TIPO_ATV",
             "descricao"=> "Módulo de Tipos de Atividade",
@@ -379,8 +366,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo de Tipos de Avaliação",
             "capacidades"=> [
                 /* Capacidades do módulo TIPO AVALIACAO*/
-                //["MOD_TIPO_AVAL", "Permite acessar item de menu cadastro->tipos de avaliações"],
-                ["MOD_TIPO_AVAL_CONS", "Permite consultar tipos de avaliações"],
                 ["MOD_TIPO_AVAL_EDT", "Permite editar tipos de avaliações"],
                 ["MOD_TIPO_AVAL_EXCL", "Permite excluir tipos de avaliações"],
                 ["MOD_TIPO_AVAL_INCL", "Permite incluir tipos de avaliações"],
@@ -401,8 +386,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo de Tipos de Documentos",
             "capacidades"=> [
                 /* Capacidades do módulo TIPO DOCUMENTO*/
-                //["MOD_TIPO_DOC", "Permite acessar item de menu cadastro->tipo de documento"],
-                ["MOD_TIPO_DOC_CONS", "Permite consultar tipos de documentos"],
                 ["MOD_TIPO_DOC_EDT", "Permite editar tipos de documentos"],
                 ["MOD_TIPO_DOC_EXCL", "Permite excluir tipos de documentos"],
                 ["MOD_TIPO_DOC_INCL", "Permite incluir tipos de documentos"],
@@ -423,8 +406,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo de Tipos de Modalidade",
             "capacidades"=> [
                 /* Capacidades do módulo TIPO MODALIDADE*/
-                //["MOD_TIPO_MDL", "Permite acessar item de menu cadastro->tipo de modalidade"],
-                ["MOD_TIPO_MDL_CONS", "Permite consultar tipos de modalidades"],
                 ["MOD_TIPO_MDL_EDT", "Permite editar tipos de modalidades"],
                 ["MOD_TIPO_MDL_EXCL", "Permite excluir tipos de modalidades"],
                 ["MOD_TIPO_MDL_INCL", "Permite incluir tipos de modalidades"],
@@ -446,8 +427,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo de Tipos de Processos",
             "capacidades"=> [
                 /* Capacidades do módulo TIPO PROCESSO*/
-                //["MOD_TIPO_PROC", "Permite acessar item de menu cadastro->tipo de processo"],
-                ["MOD_TIPO_PROC_CONS", "Permite consultar tipos de processos"],
                 ["MOD_TIPO_PROC_EDT", "Permite editar tipos de processos"],
                 ["MOD_TIPO_PROC_EXCL", "Permite excluir tipos de processos"],
                 ["MOD_TIPO_PROC_INCL", "Permite incluir tipos de processos"],
@@ -463,12 +442,11 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_TRF_EXCL", "Permite excluir tarefas"],
                 ["MOD_TRF_INCL", "Permite incluir tarefas"],
             ]
-        ], [ // Pablo
+        ], [ // Pablo -- Essa capacidade não tem chamada no front
             "codigo"=> "MOD_TIPO_TRF",
             "descricao"=> "Módulo Tipo Tarefas",
             "capacidades"=> [
                 /* Capacidades do módulo TIPO TAREFA*/
-                ["MOD_TIPO_TRF_CONS", "Permite consultar tipos de tarefas"],
                 ["MOD_TIPO_TRF_EDT", "Permite editar tipos de tarefas"],
                 ["MOD_TIPO_TRF_EXCL", "Permite excluir tipos de tarefas"],
                 ["MOD_TIPO_TRF_INCL", "Permite incluir tipos de tarefas"],
@@ -495,12 +473,10 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo Usuários",
             "capacidades"=> [
                 /* Capacidades do módulo UNIDADES*/
-                ["MOD_USER_CONS", "Permite consultar dados de usuário"],
                 ["MOD_USER_EDT", "Permite alterar dados de usuário"],
                 ["MOD_USER_EXCL", "Permite excluir dados de usuário"],
                 ["MOD_USER_INCL", "Permite incluir usuário"],
                 ["MOD_USER_TUDO", "Permite consultar qualquer usuário independente de lotação"],
-                ["MOD_PERF_CONS", "Permite consultar perfil"],
             ]
         ], [ // Carlos
             "codigo"=> "MOD_RX",
