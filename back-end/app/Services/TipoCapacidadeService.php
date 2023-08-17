@@ -99,7 +99,7 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_ATV_TRF_CONS", "Permite consultar tarefas dentro de atividades"],
                 ["MOD_ATV_CLONAR", "Permite clonar atividades"],
             ]
-        ], [ // Pablo
+        ], [ 
             "codigo"=> "MOD_CADV",
             "descricao"=> "Módulo Cadeia de Valor",
             "capacidades"=> [
@@ -119,7 +119,7 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_CID_EXCL", "Permite excluir cidades"],
                 ["MOD_CID_INCL", "Permite incluir cidades"],
             ]
-        ], [ // Pablo
+        ], [ 
             "codigo"=> "MOD_DEV", // ok
             "descricao"=> "Módulo Desenvolvedor",
             "capacidades"=> [
@@ -149,7 +149,7 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_PERF_EXCL", "Permite excluir perfil"],
                 ["MOD_PERF_INCL", "Permite incluir perfil"],
             ]
-        ], [ // Pablo
+        ], [ 
             "codigo"=> "MOD_ENTD", // ok
             "descricao"=> "Módulo Entidade",
             "capacidades"=> [
@@ -169,7 +169,7 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_EXTM_EDT", "Permite editar Eixos temáticos"],
                 ["MOD_EXTM_EXCL", "Permite excluir Eixos temáticos"], 
             ]
-        ], [ // Pablo
+        ], [ 
             "codigo"=> "MOD_ENTRG", //ok
             "descricao"=> "Módulo de Entregas",
             "capacidades"=> [
@@ -201,7 +201,7 @@ class TipoCapacidadeService extends ServiceBase {
                 //["MOD_LOT_EXCL", "Permite excluir lotação"],
                 //["MOD_LOT_INCL", "Permite incluir lotação"],
             ]
-        ], [ // Pablo
+        ], [ 
             "codigo"=> "MOD_MATSRV", //ok
             "descricao"=> "Módulo materiais e serviços",
             "capacidades"=> [
@@ -300,7 +300,7 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_PENT_ENTR_EXCL", "Permite excluir entregas de um plano de entregas"], //só no back
                 ["MOD_PENT_ENTR_INCL", "Permite incluir entregas de um plano de entregas"], //só no back
             ]
-        ], [ // Pablo
+        ], [ 
             "codigo"=> "MOD_PRGT",
             "descricao"=> "Módulo de Programa de Gestão",
             "capacidades"=> [
@@ -332,7 +332,7 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_PROJ_REG_EXCL", "Permite excluir projeto regra"], //só no back
                 ["MOD_PROJ_REG_INCL", "Permite incluir projeto regra"], //só no back
             ]
-        ], [ // Pablo
+        ], [ 
             "codigo"=> "MOD_TEMP",
             "descricao"=> "Módulo de Templates",
             "capacidades"=> [
@@ -361,7 +361,7 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_TIPO_ATV_INCL_TP_MIN", "Permite incluir tempo máximo da atividade"],
                 ["MOD_TIPO_ATV_PCPL", "Permite incluir atividades na guia principal"],
             ]
-        ], [ // Pablo
+        ], [ 
             "codigo"=> "MOD_TIPO_AVAL",
             "descricao"=> "Módulo de Tipos de Avaliação",
             "capacidades"=> [
@@ -381,7 +381,7 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_TIPO_CAP_EXCL", "Permite excluir tipo de capacidade"],
                 ["MOD_TIPO_CAP_INCL", "Permite incluir tipos de capacidades"],
             ]
-        ], [ // Pablo
+        ], [ 
             "codigo"=> "MOD_TIPO_DOC",
             "descricao"=> "Módulo de Tipos de Documentos",
             "capacidades"=> [
@@ -401,7 +401,7 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_TIPO_JUST_EXCL", "Permite excluir tipos de justificativas"],
                 ["MOD_TIPO_JUST_INCL", "Permite incluir tipos de justificativas"],
             ]
-        ], [ // Pablo
+        ], [ 
             "codigo"=> "MOD_TIPO_MDL",
             "descricao"=> "Módulo de Tipos de Modalidade",
             "capacidades"=> [
@@ -422,7 +422,7 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_TIPO_MTV_AFT_INCL", "Permite incluir tipos de motivos de afastamentos"],
                 ["MOD_TPMAF_INCL", "Permite incluir tipos de motivos de afastamentos"], //só definição
             ]
-        ], [ // Pablo
+        ], [ 
             "codigo"=> "MOD_TIPO_PROC",
             "descricao"=> "Módulo de Tipos de Processos",
             "capacidades"=> [
@@ -442,7 +442,7 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_TRF_EXCL", "Permite excluir tarefas"],
                 ["MOD_TRF_INCL", "Permite incluir tarefas"],
             ]
-        ], [ // Pablo -- Essa capacidade não tem chamada no front
+        ], [ 
             "codigo"=> "MOD_TIPO_TRF",
             "descricao"=> "Módulo Tipo Tarefas",
             "capacidades"=> [
@@ -468,7 +468,7 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_UND_INTG_EDT", "Permite editar integrantes da unidade"],
                 ["MOD_UND_INTG_EXCL", "Permite excluir integrantes da unidade"],
             ]
-        ], [ // Pablo
+        ], [ 
             "codigo"=> "MOD_USER", //ok
             "descricao"=> "Módulo Usuários",
             "capacidades"=> [
