@@ -52,6 +52,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_dao_tipo_processo_dao_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! src/app/dao/tipo-processo-dao.service */ 70361);
 /* harmony import */ var src_app_services_comentario_service__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! src/app/services/comentario.service */ 2124);
 /* harmony import */ var src_app_dao_tipo_atividade_dao_service__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! src/app/dao/tipo-atividade-dao.service */ 22981);
+/* harmony import */ var _atividade_service__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./atividade.service */ 57338);
+
 
 
 
@@ -92,6 +94,7 @@ class AtividadeListBase extends src_app_modules_base_page_list_base__WEBPACK_IMP
     this.tipoAtividadeDao = injector.get(src_app_dao_tipo_atividade_dao_service__WEBPACK_IMPORTED_MODULE_9__.TipoAtividadeDaoService);
     this.tipoProcessoDao = injector.get(src_app_dao_tipo_processo_dao_service__WEBPACK_IMPORTED_MODULE_7__.TipoProcessoDaoService);
     this.allPages = injector.get(src_app_listeners_listener_all_pages_service__WEBPACK_IMPORTED_MODULE_4__.ListenerAllPagesService);
+    this.atividadeService = injector.get(_atividade_service__WEBPACK_IMPORTED_MODULE_10__.AtividadeService);
     this.calendar = injector.get(src_app_services_calendar_service__WEBPACK_IMPORTED_MODULE_5__.CalendarService);
     this.comentario = injector.get(src_app_services_comentario_service__WEBPACK_IMPORTED_MODULE_8__.ComentarioService);
     this.join = ["tipo_atividade", "demandante", "pausas", "usuario", "unidade", "comentarios.usuario", "tarefas.tarefa", "tarefas.comentarios.usuario"];
@@ -147,61 +150,32 @@ class AtividadeListBase extends src_app_modules_base_page_list_base__WEBPACK_IMP
       }, this.calendarEfemerides, []);
     }
   }
-  temposAtividade(row) {
-    /* Atualiza somente a cada mudança de minuto da unidade atual */
-    if (row.metadados && row.metadados.extra?.lastUpdate != this.auth.unidadeHora) {
-      let planoTrabalho = this.extra?.planos_trabalho[row.plano_trabalho_id];
-      let tempos = [{
-        color: "light",
-        hint: this.lex.translate("Data de distribuição"),
-        icon: "bi bi-file-earmark-plus",
-        label: this.dao.getDateTimeFormatted(row.data_distribuicao)
-      }, {
-        color: "light",
-        hint: this.lex.translate("Prazo de entrega"),
-        icon: "bi bi-calendar-check",
-        label: this.dao.getDateTimeFormatted(row.data_estipulada_entrega)
-      }];
-      if (planoTrabalho?.tipo_modalidade?.atividade_esforco) tempos.push({
-        color: "light",
-        hint: this.lex.translate("Esforço"),
-        icon: "bi bi-stopwatch",
-        label: row.esforco ? this.util.decimalToTimerFormated(row.esforco, true) + " " + this.lex.translate("esforço") : "Sem " + this.lex.translate("esforço")
-      });
-      if (row.metadados.concluido) tempos.push({
-        color: "light",
-        hint: "Data de entrega realizada",
-        icon: "bi bi-check-circle",
-        label: this.dao.getDateTimeFormatted(row.data_entrega)
-      });
-      if (row.metadados.iniciado && !!planoTrabalho?.tipo_modalidade?.atividade_tempo_despendido) {
-        const cargaHoraria = planoTrabalho?.carga_horaria || 0;
-        const afastamentos = this.extra?.afastamentos[row.usuario_id] || [];
-        const despendido = row.metadados.concluido ? row.tempo_despendido || 0 : this.calendar.horasUteis(row.data_inicio, this.auth.hora, cargaHoraria, row.unidade, "ENTREGA", row.pausas, afastamentos);
-        tempos.push({
-          color: despendido > row.esforco ? "warning" : "light",
-          hint: "Tempo despendido",
-          icon: "bi bi-hourglass-split",
-          label: this.util.decimalToTimerFormated(despendido, true) + " despendido",
-          click: !row.metadados.concluido ? this.onDespendidoClick.bind(this) : undefined,
-          data: row
-        });
+  /*   public temposAtividade(row: Atividade): BadgeButton[] {
+      // Atualiza somente a cada mudança de minuto da unidade atual
+      if (row.metadados && row.metadados.extra?.lastUpdate != this.auth.unidadeHora) {
+        let planoTrabalho = this.extra?.planos_trabalho[row.plano_trabalho_id!];
+        let tempos: BadgeButton[] = [
+          { color: "light", hint: this.lex.translate("Data de distribuição"), icon: "bi bi-file-earmark-plus", label: this.dao!.getDateTimeFormatted(row.data_distribuicao) },
+          { color: "light", hint: this.lex.translate("Prazo de entrega"), icon: "bi bi-calendar-check", label: this.dao!.getDateTimeFormatted(row.data_estipulada_entrega) }
+        ];
+        if (planoTrabalho?.tipo_modalidade?.atividade_esforco) tempos.push({ color: "light", hint: this.lex.translate("Esforço"), icon: "bi bi-stopwatch", label: (row.esforco ? this.util.decimalToTimerFormated(row.esforco, true) + " " + this.lex.translate("esforço") : "Sem " + this.lex.translate("esforço"))});
+        if (row.metadados.concluido) tempos.push({ color: "light", hint: "Data de entrega realizada", icon: "bi bi-check-circle", label: this.dao!.getDateTimeFormatted(row.data_entrega) });
+        if (row.metadados.iniciado && !!planoTrabalho?.tipo_modalidade?.atividade_tempo_despendido) {
+          const cargaHoraria = planoTrabalho?.carga_horaria || 0;
+          const afastamentos = this.extra?.afastamentos[row.usuario_id!] || [];
+          const despendido = row.metadados.concluido ? (row.tempo_despendido || 0) : this.calendar.horasUteis(row.data_inicio!, this.auth.hora, cargaHoraria, row.unidade!, "ENTREGA", row.pausas, afastamentos);
+          tempos.push({ color: (despendido > row.esforco ? "warning" : "light"), hint: "Tempo despendido", icon: "bi bi-hourglass-split", label: this.util.decimalToTimerFormated(despendido, true) + " despendido", click: !row.metadados.concluido ? this.onDespendidoClick.bind(this) : undefined, data: row });
+        }
+        if (!row.metadados.concluido && row.data_estipulada_entrega.getTime() < this.auth.hora.getTime()) {
+          const atrasado = this.calendar.horasAtraso(row.data_estipulada_entrega, row.unidade!);
+          tempos.push({ color: "danger", hint: "Tempo de atraso", icon: "bi bi-alarm", label: this.util.decimalToTimerFormated(atrasado, true) + " atrasado" });
+        }
+        row.metadados.extra = row.metadados.extra || {};
+        row.metadados.extra.lastUpdate = this.auth.unidadeHora;
+        row.metadados.extra.tempos = tempos;
       }
-      if (!row.metadados.concluido && row.data_estipulada_entrega.getTime() < this.auth.hora.getTime()) {
-        const atrasado = this.calendar.horasAtraso(row.data_estipulada_entrega, row.unidade);
-        tempos.push({
-          color: "danger",
-          hint: "Tempo de atraso",
-          icon: "bi bi-alarm",
-          label: this.util.decimalToTimerFormated(atrasado, true) + " atrasado"
-        });
-      }
-      row.metadados.extra = row.metadados.extra || {};
-      row.metadados.extra.lastUpdate = this.auth.unidadeHora;
-      row.metadados.extra.tempos = tempos;
-    }
-    return row.metadados?.extra?.tempos || [];
-  }
+      return row.metadados?.extra?.tempos || [];
+    } */
   desarquivar(atividade) {
     this.dao.arquivar(atividade.id, false).then(() => {
       this.grid.query.refreshId(atividade.id);
@@ -421,25 +395,10 @@ class AtividadeListBase extends src_app_modules_base_page_list_base__WEBPACK_IMP
       }
     });
   }
-  /*public cancelarAvaliacao(atividade: Atividade) {
-    const self = this;
-    this.dialog.confirm("Cancelar avaliacao ?", "Deseja realmente cancelar a avaliacao?").then(confirm => {
-      if (confirm) {
-        this.dao!.cancelarAvaliacao(atividade.id).then(function () {
-          (self.grid?.query || self.query!).refreshId(atividade.id);
-          self.dialog.alert("Sucesso", "Cancelado com sucesso!");
-        }).catch(function (error) {
-          self.dialog.alert("Erro", "Erro ao cancelar avaliacao: " + error?.message ? error?.message : error);
-        });
-      }
-    });
-  }*/
   dynamicButtons(row) {
     let result = [];
     let atividade = row;
     const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || this.auth.usuario?.id == atividade.unidade?.gestor_substituto?.id;
-    //const isAvaliador = isGestor || (this.extra.avaliadores[atividade.unidade_id] || []).includes(this.auth.usuario?.id || ""); //|| atividade.unidade
-    //const isDemandante = this.auth.usuario?.id == atividade.demandante_id;
     const isResponsavel = this.auth.usuario?.id == atividade.usuario_id;
     const BOTAO_ALTERAR_AVALIACAO = {
       hint: "Alterar avaliação",
@@ -466,7 +425,6 @@ class AtividadeListBase extends src_app_modules_base_page_list_base__WEBPACK_IMP
         route: ['gestao', 'atividade', atividade.id, 'iniciar']
       }, this.modalRefreshId(atividade))
     };
-    //const BOTAO_AVALIAR = { hint: "Avaliar", icon: "bi bi-star-half", color: "btn-outline-success", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'avaliar'] }, this.modalRefreshId(atividade)) };
     const BOTAO_REINICIAR = {
       hint: "Reiniciar",
       icon: "bi bi-play-circle",
@@ -503,13 +461,6 @@ class AtividadeListBase extends src_app_modules_base_page_list_base__WEBPACK_IMP
         route: ['gestao', 'atividade', atividade.id, 'concluir']
       }, this.modalRefreshId(atividade))
     };
-    /*if (atividade.metadados?.avaliado) { /* Arquivado *
-      if (isAvaliador || this.auth.hasPermissionTo('MOD_DMD_USERS_AVAL')) { /* Usuário logado é gestor da Unidade ou substituto*
-        result.push(BOTAO_ALTERAR_AVALIACAO);
-      } else if (atividade.metadados?.arquivado && (isGestor || isResponsavel)) { //Somente se gestor ou com capacidade para essa operação
-        result.push(BOTAO_DESARQUIVAR);
-      }
-    } else*/
     if (!atividade.metadados?.iniciado) {
       /* Não iniciado */
       if (isResponsavel || atividade.usuario_id == null || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) {
@@ -518,9 +469,6 @@ class AtividadeListBase extends src_app_modules_base_page_list_base__WEBPACK_IMP
       }
     } else if (atividade.metadados?.concluido) {
       /* Concluído */
-      /*if (isAvaliador || this.auth.hasPermissionTo('MOD_DMD_USERS_AVAL')) { /* Usuário logado é gestor da Unidade ou substituto * /
-          result.push(BOTAO_AVALIAR);
-      }*/
       if (isGestor || isResponsavel) {
         result.push(atividade.metadados?.arquivado ? BOTAO_DESARQUIVAR : BOTAO_ARQUIVAR);
       } else if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT_CONCL')) {
@@ -545,58 +493,6 @@ class AtividadeListBase extends src_app_modules_base_page_list_base__WEBPACK_IMP
     if (!result.length) result.push(BOTAO_INFORMACOES);
     return result;
   }
-  getStatus(row) {
-    const atividade = row;
-    const status = this.lookup.ATIVIDADE_STATUS.find(x => x.key == atividade.metadados?.status) || {
-      key: "DESCONHECIDO",
-      value: "Desconhecido",
-      icon: "bi bi-question-circle",
-      color: "light"
-    };
-    let result = [{
-      data: {
-        status: status.key,
-        filter: true
-      },
-      label: status.value,
-      icon: status.icon,
-      color: status.color
-    }];
-    if (atividade.metadados?.atrasado) result.push({
-      data: {
-        status: "ATRASADO",
-        filter: false
-      },
-      label: "Atrasado",
-      icon: "bi bi-alarm",
-      color: "danger"
-    });
-    if (atividade.metadados?.suspenso) result.push({
-      data: {
-        status: "SUSPENSO",
-        filter: false
-      },
-      label: "Suspenso",
-      icon: "bi bi-pause-circle",
-      color: "danger"
-    });
-    if (atividade.metadados?.arquivado) result.push({
-      data: {
-        status: "ARQUIVADO",
-        filter: false
-      },
-      label: "Arquivado",
-      icon: "bi bi-inboxes",
-      color: "danger"
-    });
-    if (atividade.metadados && JSON.stringify(atividade.metadados._status) != JSON.stringify(result)) atividade.metadados._status = result;
-    return atividade.metadados?._status || result;
-  }
-  /*public getEtiquetaStyle(etiqueta: any) {
-    const bgColor = etiqueta.color || "#000000";
-    const txtColor = this.util.contrastColor(bgColor);
-    return `background-color: ${bgColor}; color: ${txtColor};`;
-  }*/
   onEtiquetaConfigClick() {
     this.go.navigate({
       route: ["configuracoes", "preferencia", "usuario", this.auth.usuario.id],
@@ -767,7 +663,7 @@ function AtividadeListGridComponent_ng_template_30_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("documento", row_r36.documento_requisicao);
     _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("ngForOf", ctx_r9.getStatus(row_r36));
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("ngForOf", ctx_r9.atividadeService.getStatus(row_r36));
   }
 }
 function AtividadeListGridComponent_ng_template_33_Template(rf, ctx) {
@@ -850,7 +746,7 @@ function AtividadeListGridComponent_ng_template_40_Template(rf, ctx) {
     const row_r42 = ctx.row;
     const ctx_r17 = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("ngForOf", ctx_r17.temposAtividade(row_r42));
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("ngForOf", ctx_r17.atividadeService.temposAtividade(row_r42, ctx_r17.extra, ctx_r17.onDespendidoClick.bind(ctx_r17)));
   }
 }
 function AtividadeListGridComponent_ng_template_43_badge_1_Template(rf, ctx) {
@@ -1409,6 +1305,155 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefi
     }
   },
   styles: [".atividade-atividade[_ngcontent-%COMP%], .atividade-descricao[_ngcontent-%COMP%] {\n  height: auto;\n  display: block;\n  max-width: 200px;\n  white-space: initial;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvbW9kdWxlcy9nZXN0YW8vYXRpdmlkYWRlL2F0aXZpZGFkZS1saXN0LWdyaWQvYXRpdmlkYWRlLWxpc3QtZ3JpZC5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNJLFlBQUE7RUFDQSxjQUFBO0VBQ0EsZ0JBQUE7RUFDQSxvQkFBQTtBQUNKIiwic291cmNlc0NvbnRlbnQiOlsiLmF0aXZpZGFkZS1hdGl2aWRhZGUsIC5hdGl2aWRhZGUtZGVzY3JpY2FvIHtcclxuICAgIGhlaWdodDogYXV0bztcclxuICAgIGRpc3BsYXk6IGJsb2NrO1xyXG4gICAgbWF4LXdpZHRoOiAyMDBweDtcclxuICAgIHdoaXRlLXNwYWNlOiBpbml0aWFsO1xyXG59Il0sInNvdXJjZVJvb3QiOiIifQ== */"]
+});
+
+/***/ }),
+
+/***/ 57338:
+/*!***************************************************************!*\
+  !*** ./src/app/modules/gestao/atividade/atividade.service.ts ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   AtividadeService: () => (/* binding */ AtividadeService)
+/* harmony export */ });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/services/lookup.service */ 39702);
+/* harmony import */ var src_app_services_lexical_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/services/lexical.service */ 15908);
+/* harmony import */ var src_app_services_calendar_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/services/calendar.service */ 6551);
+/* harmony import */ var src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/services/auth.service */ 32333);
+/* harmony import */ var src_app_services_util_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/services/util.service */ 49193);
+/* harmony import */ var src_app_dao_atividade_dao_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/dao/atividade-dao.service */ 84971);
+var _class;
+
+
+
+
+
+
+
+class AtividadeService {
+  constructor(lookup, lex, calendar, auth, util, dao) {
+    this.lookup = lookup;
+    this.lex = lex;
+    this.calendar = calendar;
+    this.auth = auth;
+    this.util = util;
+    this.dao = dao;
+  }
+  getStatus(row) {
+    const atividade = row;
+    const status = this.lookup.ATIVIDADE_STATUS.find(x => x.key == atividade.metadados?.status) || {
+      key: "DESCONHECIDO",
+      value: "Desconhecido",
+      icon: "bi bi-question-circle",
+      color: "light"
+    };
+    let result = [{
+      data: {
+        status: status.key,
+        filter: true
+      },
+      label: status.value,
+      icon: status.icon,
+      color: status.color
+    }];
+    if (atividade.metadados?.atrasado) result.push({
+      data: {
+        status: "ATRASADO",
+        filter: false
+      },
+      label: "Atrasado",
+      icon: "bi bi-alarm",
+      color: "danger"
+    });
+    if (atividade.metadados?.suspenso) result.push({
+      data: {
+        status: "SUSPENSO",
+        filter: false
+      },
+      label: "Suspenso",
+      icon: "bi bi-pause-circle",
+      color: "danger"
+    });
+    if (atividade.metadados?.arquivado) result.push({
+      data: {
+        status: "ARQUIVADO",
+        filter: false
+      },
+      label: "Arquivado",
+      icon: "bi bi-inboxes",
+      color: "danger"
+    });
+    if (atividade.metadados && JSON.stringify(atividade.metadados._status) != JSON.stringify(result)) atividade.metadados._status = result;
+    return atividade.metadados?._status || result;
+  }
+  temposAtividade(row, extra, despendidoClick) {
+    /* Atualiza somente a cada mudança de minuto da unidade atual */
+    if (row.metadados && row.metadados.extra?.lastUpdate != this.auth.unidadeHora) {
+      let planoTrabalho = extra?.planos_trabalho[row.plano_trabalho_id];
+      let tempos = [{
+        color: "light",
+        hint: this.lex.translate("Data de distribuição"),
+        icon: "bi bi-file-earmark-plus",
+        label: this.dao.getDateTimeFormatted(row.data_distribuicao)
+      }, {
+        color: "light",
+        hint: this.lex.translate("Prazo de entrega"),
+        icon: "bi bi-calendar-check",
+        label: this.dao.getDateTimeFormatted(row.data_estipulada_entrega)
+      }];
+      if (planoTrabalho?.tipo_modalidade?.atividade_esforco) tempos.push({
+        color: "light",
+        hint: this.lex.translate("Esforço"),
+        icon: "bi bi-stopwatch",
+        label: row.esforco ? this.util.decimalToTimerFormated(row.esforco, true) + " " + this.lex.translate("esforço") : "Sem " + this.lex.translate("esforço")
+      });
+      if (row.metadados.concluido) tempos.push({
+        color: "light",
+        hint: "Data de entrega realizada",
+        icon: "bi bi-check-circle",
+        label: this.dao.getDateTimeFormatted(row.data_entrega)
+      });
+      if (row.metadados.iniciado && !!planoTrabalho?.tipo_modalidade?.atividade_tempo_despendido) {
+        const cargaHoraria = planoTrabalho?.carga_horaria || 0;
+        const afastamentos = extra?.afastamentos[row.usuario_id] || [];
+        const despendido = row.metadados.concluido ? row.tempo_despendido || 0 : this.calendar.horasUteis(row.data_inicio, this.auth.hora, cargaHoraria, row.unidade, "ENTREGA", row.pausas, afastamentos);
+        tempos.push({
+          color: despendido > row.esforco ? "warning" : "light",
+          hint: "Tempo despendido",
+          icon: "bi bi-hourglass-split",
+          label: this.util.decimalToTimerFormated(despendido, true) + " despendido",
+          click: !row.metadados.concluido ? despendidoClick : undefined,
+          data: row
+        });
+      }
+      if (!row.metadados.concluido && row.data_estipulada_entrega.getTime() < this.auth.hora.getTime()) {
+        const atrasado = this.calendar.horasAtraso(row.data_estipulada_entrega, row.unidade);
+        tempos.push({
+          color: "danger",
+          hint: "Tempo de atraso",
+          icon: "bi bi-alarm",
+          label: this.util.decimalToTimerFormated(atrasado, true) + " atrasado"
+        });
+      }
+      row.metadados.extra = row.metadados.extra || {};
+      row.metadados.extra.lastUpdate = this.auth.unidadeHora;
+      row.metadados.extra.tempos = tempos;
+    }
+    return row.metadados?.extra?.tempos || [];
+  }
+}
+_class = AtividadeService;
+_class.ɵfac = function AtividadeService_Factory(t) {
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵinject"](src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_0__.LookupService), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵinject"](src_app_services_lexical_service__WEBPACK_IMPORTED_MODULE_1__.LexicalService), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵinject"](src_app_services_calendar_service__WEBPACK_IMPORTED_MODULE_2__.CalendarService), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵinject"](src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_3__.AuthService), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵinject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_4__.UtilService), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵinject"](src_app_dao_atividade_dao_service__WEBPACK_IMPORTED_MODULE_5__.AtividadeDaoService));
+};
+_class.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineInjectable"]({
+  token: _class,
+  factory: _class.ɵfac,
+  providedIn: 'root'
 });
 
 /***/ })
