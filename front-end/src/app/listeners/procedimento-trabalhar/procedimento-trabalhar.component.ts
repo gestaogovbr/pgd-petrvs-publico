@@ -117,8 +117,8 @@ export class ProcedimentoTrabalharComponent extends ListenerBase {
     if(keys) {
       const selected = await AtividadeListGridComponent.modalSelect({fixedFilter: [["status", "==", "INICIADO"]]});
       if(selected) {
-        if(selected.metadados?.suspenso) {
-          if(await this.dialog.confirm("Atividade suspensa", "Para concluir é necessário primeiro reiniciar a atividade. Deseja reiniciar?")) {
+        if(selected.metadados?.pausado) {
+          if(await this.dialog.confirm("Atividade pausada", "Para concluir é necessário primeiro reiniciar a atividade. Deseja reiniciar?")) {
             this.go.navigate({route: ['gestao', 'atividade', selected.id, 'pausar'], params: {reiniciar: true}}, {
               modal: true, 
               modalClose: (modalResult?: string) => {
