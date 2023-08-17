@@ -325,7 +325,7 @@ function TipoAtividadeListComponent_ng_template_10_Template(rf, ctx) {
 }
 function TipoAtividadeListComponent_ng_template_13_badge_1_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](0, "badge", 30);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](0, "badge", 31);
   }
   if (rf & 2) {
     const etiqueta_r27 = ctx.$implicit;
@@ -334,8 +334,8 @@ function TipoAtividadeListComponent_ng_template_13_badge_1_Template(rf, ctx) {
 }
 function TipoAtividadeListComponent_ng_template_13_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "div", 26);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](1, TipoAtividadeListComponent_ng_template_13_badge_1_Template, 1, 3, "badge", 29);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "div", 29);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](1, TipoAtividadeListComponent_ng_template_13_badge_1_Template, 1, 3, "badge", 30);
     _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
@@ -346,7 +346,7 @@ function TipoAtividadeListComponent_ng_template_13_Template(rf, ctx) {
 }
 function TipoAtividadeListComponent_ng_template_16_badge_1_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](0, "badge", 32);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](0, "badge", 33);
   }
   if (rf & 2) {
     const check_r30 = ctx.$implicit;
@@ -355,8 +355,8 @@ function TipoAtividadeListComponent_ng_template_16_badge_1_Template(rf, ctx) {
 }
 function TipoAtividadeListComponent_ng_template_16_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "div", 26);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](1, TipoAtividadeListComponent_ng_template_16_badge_1_Template, 1, 1, "badge", 31);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "div", 29);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](1, TipoAtividadeListComponent_ng_template_16_badge_1_Template, 1, 1, "badge", 32);
     _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
@@ -494,7 +494,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵInheritDefinitionFeature"]],
   decls: 39,
   vars: 30,
-  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear"], [1, "row"], ["label", "Nome", "controlName", "nome", 3, "size", "control"], ["title", "Nome", 3, "template"], ["columnNome", ""], ["title", "Tempos", 3, "template"], ["columnTempos", ""], ["title", "Etiquetas", 3, "template"], ["columnEtiquetas", ""], ["title", "Checklist", 3, "template"], ["columnChecklist", ""], ["type", "options", 3, "onEdit", "options"], ["reportNome", ""], [3, "title", "template"], ["reportEsforco", ""], ["title", "Dias planejamento", 3, "template"], ["reportDiasPlanejado", ""], ["reportEtiquetas", ""], ["title", "Check-list", 3, "template"], ["reportChecklist", ""], ["title", "Coment\u00E1rio", 3, "template"], ["reportComentario", ""], [3, "rows"], [1, "d-block"], [1, "one-per-line"], ["icon", "bi bi-stopwatch", "color", "light", 3, "hint", "label"], ["icon", "bi bi-calendar2-check", "color", "light", 3, "hint", "label"], [3, "icon", "label", "color", 4, "ngFor", "ngForOf"], [3, "icon", "label", "color"], ["color", "light", "icon", "bi bi-check2-square", 3, "label", 4, "ngFor", "ngForOf"], ["color", "light", "icon", "bi bi-check2-square", 3, "label"]],
+  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear"], [1, "row"], ["label", "Nome", "controlName", "nome", 3, "size", "control"], ["title", "Nome", 3, "template"], ["columnNome", ""], ["title", "Tempos", 3, "template"], ["columnTempos", ""], ["title", "Etiquetas", 3, "template"], ["columnEtiquetas", ""], ["title", "Checklist", 3, "template"], ["columnChecklist", ""], ["type", "options", 3, "onEdit", "options"], ["reportNome", ""], [3, "title", "template"], ["reportEsforco", ""], ["title", "Dias planejamento", 3, "template"], ["reportDiasPlanejado", ""], ["reportEtiquetas", ""], ["title", "Check-list", 3, "template"], ["reportChecklist", ""], ["title", "Coment\u00E1rio", 3, "template"], ["reportComentario", ""], [3, "rows"], [1, "d-block"], [1, "one-per-line"], ["icon", "bi bi-stopwatch", "color", "light", 3, "hint", "label"], ["icon", "bi bi-calendar2-check", "color", "light", 3, "hint", "label"], [1, "one-per-line", "text-break", "w-100"], [3, "icon", "label", "color", 4, "ngFor", "ngForOf"], [3, "icon", "label", "color"], ["color", "light", "icon", "bi bi-check2-square", 3, "label", 4, "ngFor", "ngForOf"], ["color", "light", "icon", "bi bi-check2-square", 3, "label"]],
   template: function TipoAtividadeListComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "grid", 0);

@@ -217,26 +217,8 @@ class CidadeListComponent extends src_app_modules_base_page_list_base__WEBPACK_I
         default: ""
       }
     });
-    // Testa se o usuário possui permissão para exibir dados de cidade
-    if (this.auth.hasPermissionTo("MOD_CID_CONS")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir a cidade
-    if (this.auth.hasPermissionTo("MOD_CID_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
-  }
-  filterClear(filter) {
-    filter.controls.nome.setValue("");
-    super.filterClear(filter);
+    this.addOption(this.OPTION_INFORMACOES);
+    this.addOption(this.OPTION_EXCLUIR, "MOD_CID_EXCL");
   }
 }
 _class = CidadeListComponent;
@@ -257,8 +239,8 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
   decls: 13,
-  vars: 25,
-  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["controlName", "nome", 3, "size", "label", "control", "placeholder"], ["title", "C\u00F3digo IBGE", "field", "codigo_ibge"], ["title", "Nome", "field", "nome", "orderBy", "nome"], ["title", "UF", "field", "uf"], ["title", "Tipo", "type", "select", "field", "tipo", 3, "items"], ["title", "Timezone", "type", "select", "field", "timezone", 3, "items"], ["type", "options", 3, "onEdit", "options"], [3, "rows"]],
+  vars: 24,
+  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "collapseChange", "collapsed"], [1, "row"], ["controlName", "nome", 3, "size", "label", "control", "placeholder"], ["title", "C\u00F3digo IBGE", "field", "codigo_ibge"], ["title", "Nome", "field", "nome", "orderBy", "nome"], ["title", "UF", "field", "uf"], ["title", "Tipo", "type", "select", "field", "tipo", 3, "items"], ["title", "Timezone", "type", "select", "field", "timezone", 3, "items"], ["type", "options", 3, "onEdit", "options"], [3, "rows"]],
   template: function CidadeListComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "grid", 0);
@@ -280,7 +262,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("ngIf", !ctx.selectable);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 12)("label", ctx.lex.translate("Cidade"))("control", ctx.filter.controls.nome)("placeholder", "Nome " + ctx.lex.translate("da cidade") + "...");
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](5);

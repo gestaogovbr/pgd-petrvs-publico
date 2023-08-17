@@ -25,6 +25,8 @@ export class CadeiaValorListGridComponent  extends PageListBase<CadeiaValor, Cad
   constructor(public injector: Injector) {
     super(injector, CadeiaValor, CadeiaValorDaoService);
     this.entidadeDao = injector.get<EntidadeDaoService>(EntidadeDaoService);
+    this.join = ['processos'];
+    this.code = "MOD_CADV"
     /* Inicializações */
     this.filter = this.fh.FormBuilder({
       data_inicio: {default: null},
@@ -32,31 +34,8 @@ export class CadeiaValorListGridComponent  extends PageListBase<CadeiaValor, Cad
       nome: {default: ""},
       entidade_id: {default: null}
      });
-     this.join = ['processos'];
-    // Testa se o usuário possui permissão para exibir planos de gestão/entregas
-    if (this.auth.hasPermissionTo("MOD_CADV_CONS")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir planos de gestão/entregas
-    if (this.auth.hasPermissionTo("MOD_CADV_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
-  }
-
-  public filterClear(filter: FormGroup) {
-    filter.controls.nome.setValue("");
-    filter.controls.data_inicio.setValue(null);
-    filter.controls.data_fim.setValue(null);
-    filter.controls.entidade_id.setValue(null);
-    super.filterClear(filter);
+     this.addOption(this.OPTION_INFORMACOES);
+     this.addOption(this.OPTION_EXCLUIR, "MOD_CADV_EXCL");
   }
 
   public filterWhere = (filter: FormGroup) => {

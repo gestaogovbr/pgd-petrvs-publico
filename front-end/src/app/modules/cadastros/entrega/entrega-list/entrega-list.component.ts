@@ -19,35 +19,16 @@ export class EntregaListComponent extends PageListBase<Entrega, EntregaDaoServic
   constructor(public injector: Injector) {
     super(injector, Entrega, EntregaDaoService);
     /* Inicializações */
-    this.title = this.lex.translate('Entregas');
     this.join = ["unidade:id,sigla,nome"];
+    this.title = this.lex.translate('Entregas');
+    this.code = "MOD_ENTRG";
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.filter = this.fh.FormBuilder({
       nome: {default: ""},
       unidade_id: {default: null}
      });
-    // Testa se o usuário possui permissão para exibir dados de entrega
-    if (this.auth.hasPermissionTo("MOD_ENTRG_CONS")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir a entrega
-    if (this.auth.hasPermissionTo("MOD_ENTRG_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
-  }
-
-  public filterClear(filter: FormGroup) {
-    filter.controls.nome.setValue("");
-    filter.controls.unidade_id.setValue(null);
-    super.filterClear(filter);
+     this.addOption(this.OPTION_INFORMACOES);
+     this.addOption(this.OPTION_EXCLUIR, "MOD_ENTRG_EXCL");
   }
 
   public filterWhere = (filter: FormGroup) => {

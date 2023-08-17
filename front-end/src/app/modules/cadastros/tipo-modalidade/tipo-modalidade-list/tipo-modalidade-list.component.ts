@@ -26,27 +26,8 @@ export class TipoModalidadeListComponent extends PageListBase<TipoModalidade, Ti
       data_inicio: {default: ""},
       data_fim: {default: ""}
     });
-    // Testa se o usuário possui permissão para exibir dados do tipo de modalidade
-    if (this.auth.hasPermissionTo("MOD_TIPO_MDL_CONS")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir o tipo de modalidade
-    if (this.auth.hasPermissionTo("MOD_TIPO_MDL_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
-  }
-
-  public filterClear(filter: FormGroup) {
-    filter.controls.nome.setValue("");
-    super.filterClear(filter);
+    this.addOption(this.OPTION_INFORMACOES);
+    this.addOption(this.OPTION_EXCLUIR, "MOD_TIPO_MDL_EXCL");
   }
 
   public filterWhere = (filter: FormGroup) => {

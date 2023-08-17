@@ -59,13 +59,6 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
     this.programaId = this.urlParams?.get('id') || "";
   }
 
-  public filterClear(filter: FormGroup) {
-    filter.controls.nome.setValue("");
-    filter.controls.unidade_id.setValue(undefined);
-    filter.controls.todos.setValue(false);
-    super.filterClear(filter);
-  }
-
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;

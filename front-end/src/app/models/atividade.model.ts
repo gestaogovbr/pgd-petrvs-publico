@@ -11,7 +11,7 @@ import { Usuario } from './usuario.model';
 import { BadgeButton } from '../components/badge/badge.component';
 import { Documento } from './documento.model';
 import { AtividadePausa } from './atividade-pausa.model';
-import { Status } from './status.model';
+import { HasStatus, Status } from './status.model';
 
 export type AtividadeStatus = "CONCLUIDO" | "INICIADO" | "INCLUIDO";
 
@@ -19,13 +19,12 @@ export type AtividadeMetadados = {
     atrasado: boolean,
     tempo_despendido: number,
     tempo_atraso: number,
-    suspenso: boolean,
+    pausado: boolean,
     iniciado: boolean,
     concluido: boolean,
     avaliado: boolean,
     arquivado: boolean,
     produtividade: number,
-    status: string,
     extra?: any
     _status?: BadgeButton[],
 }
@@ -36,7 +35,7 @@ export type AtividadeChecklist = {
     checked: boolean
 }
 
-export class Atividade extends Base implements HasComentarios {
+export class Atividade extends Base implements HasComentarios, HasStatus {
     public plano_trabalho?: PlanoTrabalho;
     public plano_trabalho_entrega?: PlanoTrabalhoEntrega;
     public tipo_atividade?: TipoAtividade;
@@ -45,8 +44,8 @@ export class Atividade extends Base implements HasComentarios {
     public unidade?: Unidade;
     public documento_requisicao?: Documento;
     public documento_entrega?: Documento;
-    public status_atual?: Status;
-    public statusHistorico: Status[] = [];                             // Mudanças de status sofridas pela atividade (histórico)
+    public status?: Status;
+    public status_historico: Status[] = []; // Mudanças de status sofridas pela atividade (histórico)
 
     public numero: number = 0; /* Numero da atividade */
     public descricao: string = ""; /* Assunto da atividade */
@@ -74,6 +73,7 @@ export class Atividade extends Base implements HasComentarios {
     public demandante_id: string = "";
     public usuario_id: string | null = null;
     public unidade_id: string = "";
+    public status_id: string = "";
     public documento_requisicao_id: string | null = null;
     public documento_entrega_id: string | null = null;
 

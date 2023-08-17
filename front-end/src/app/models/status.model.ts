@@ -5,6 +5,13 @@ import { PlanoTrabalhoConsolidacao } from './plano-trabalho-consolidacao.model';
 import { PlanoTrabalho } from './plano-trabalho.model';
 import { Usuario } from './usuario.model';
 
+export interface HasStatus {
+    id: string;
+    status?: Status;
+    status_id: string;
+    status_historico: Status[];
+}
+
 export class Status extends Base {
     public usuario?: Usuario; /* Usuário que promoveu a mudança de status */
     public plano_entrega?: PlanoEntrega; /* Plano de Entregas que sofreu a mudança de status */

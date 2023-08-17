@@ -5,7 +5,7 @@
       [hasAdd]="auth.hasPermissionTo('MOD_TEMP_INCL')"
       [hasEdit]="auth.hasPermissionTo('MOD_TEMP_EDT')">
       <toolbar *ngIf="!selectable"></toolbar>
-      <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+      <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
           <input-select [size]="12" disabled label="Espécie" controlName="especie" [items]="lookup.TEMPLATE_ESPECIE"></input-select>
         </div>

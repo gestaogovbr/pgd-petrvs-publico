@@ -22,27 +22,8 @@ export class TipoAvaliacaoListComponent extends PageListBase<TipoAvaliacao, Tipo
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}
     });
-    // Testa se o usuário possui permissão para exibir dados do tipo de avaliação
-    if (this.auth.hasPermissionTo("MOD_TIPO_AVAL_CONS")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir o tipo de avaliação
-    if (this.auth.hasPermissionTo("MOD_TIPO_AVAL_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
-  }
-
-  public filterClear(filter: FormGroup) {
-    filter.controls.nome.setValue("");
-    super.filterClear(filter);
+    this.addOption(this.OPTION_INFORMACOES);
+    this.addOption(this.OPTION_EXCLUIR, "MOD_TIPO_AVAL_EXCL");
   }
 
   public filterWhere = (filter: FormGroup) => {
