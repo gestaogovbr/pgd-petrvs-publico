@@ -3,7 +3,7 @@
     [hasAdd]="auth.hasPermissionTo('MOD_CADV_INCL')"
     [hasEdit]="auth.hasPermissionTo('MOD_CADV_EDT')">
     <toolbar *ngIf="!selectable"></toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-text [size]="6" label="Nome" icon="bi bi-textarea-t" controlName="nome" [control]="filter!.controls.nome" [labelInfo]="'Nome ' + lex.translate('cadeia de valor')"></input-text>
             <input-datetime [size]="3" date label="Início" icon="bi bi-calendar-date" controlName="data_inicio" [control]="filter!.controls.data_inicio" [labelInfo]="'Início ' + lex.translate('cadeia de valor')"></input-datetime>

@@ -51,17 +51,8 @@ export class TemplateListComponent extends PageListBase<Template, TemplateDaoSer
       titulo: { default: "" },
       conteudo: { default: "" }
     });
-    // Testa se o usuário possui permissão para exibir dados da tarefa
-    if (this.auth.hasPermissionTo("MOD_TEMP_CONS")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-
-/* Continuar aqui */
-
+    this.addOption(this.OPTION_INFORMACOES)
+    this.addOption(this.OPTION_EXCLUIR, "MOD_TEMP_EXCL")
     if (this.auth.hasPermissionTo("MOD_TEMP_EDT")) {
       this.options.push({
         icon: "bi bi-check-all",
@@ -69,24 +60,11 @@ export class TemplateListComponent extends PageListBase<Template, TemplateDaoSer
         onClick: ((row: Template) => this.go.navigate({ route: ['cadastros', 'template', row.id, 'termos'] }, { modalClose: (modalResult) => console.log(modalResult?.conteudo) })).bind(this)
       });
     }
-    // Testa se o usuário possui permissão para excluir a tarefa
-    if (this.auth.hasPermissionTo("MOD_TEMP_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
   }
 
   ngAfterViewInit(): void {
     super.ngAfterViewInit();
     this.addParams = { especie: this.filter?.controls.especie.value };
-  }
-
-  public filterClear(filter: FormGroup) {
-    filter.controls.titulo.setValue("");
-    super.filterClear(filter);
   }
 
   public filterWhere = (filter: FormGroup) => {

@@ -2,7 +2,7 @@
 <grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" 
     [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_TIPO_AVAL_INCL')" [hasEdit]="auth.hasPermissionTo('MOD_TIPO_AVAL_EDT')">
     <toolbar *ngIf="!selectable"></toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
         <div class="row">
             <input-text [size]="12" [label]="'Nome ' + lex.translate('tipo de avaliação')" controlName="nome" [control]="filter!.controls.nome" placeholder="Nome..."></input-text>
         </div>

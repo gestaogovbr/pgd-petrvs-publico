@@ -35,22 +35,8 @@ export class TipoProcessoListComponent extends PageListBase<TipoProcesso, TipoPr
         onClick: this.atualizarPeloSei.bind(this)
       });
     }
-    // Testa se o usuário possui permissão para exibir dados do tipo de processo
-    if (this.auth.hasPermissionTo("MOD_TIPO_PROC_CONS")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir o tipo de processo
-    if (this.auth.hasPermissionTo("MOD_TIPO_PROC_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
+    this.addOption(this.OPTION_INFORMACOES);
+    this.addOption(this.OPTION_EXCLUIR, "MOD_TIPO_PROC_EXCL");
   }
 
   public async atualizarPeloSei() {
@@ -59,11 +45,6 @@ export class TipoProcessoListComponent extends PageListBase<TipoProcesso, TipoPr
     } catch (error) {
       this.dialog.alert("Erro ao consultar Sei", "Erro ao tentar obter a lista de Tipos de Processos do Sei!");
     }
-  }
-
-  public filterClear(filter: FormGroup) {
-    filter.controls.nome.setValue("");
-    super.filterClear(filter);
   }
 
   public filterWhere = (filter: FormGroup) => {
