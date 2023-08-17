@@ -16,7 +16,7 @@ class PlanoEntrega extends ModelBase
 {
     protected $table = 'planos_entregas';
 
-    protected $with = [];
+    protected $with = ["status"];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'nome', /* varchar(256); NOT NULL; */// Nome do plano de entregas
@@ -51,7 +51,7 @@ class PlanoEntrega extends ModelBase
     public function planosEntrega() { return $this->hasMany(PlanoEntrega::class); }   
     public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }   
     // Belongs
-    public function statusAtual() { return $this->belongsTo(Status::class, "status_id"); }
+    public function status() { return $this->belongsTo(Status::class, "status_id"); }
     public function planejamento() { return $this->belongsTo(Planejamento::class); }  //nullable
     public function cadeiaValor() { return $this->belongsTo(CadeiaValor::class); }    //nullable
     public function unidade() { return $this->belongsTo(Unidade::class); }
