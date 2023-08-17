@@ -72,7 +72,7 @@ export class LookupService {
     { key: 'ATIVIDADE', value: "Atividade", icon: "bi bi-envelope-exclamation" }
   ];
 
-  public USUARIO_SITUACAO_FUNCIONAL: LookupItem[] = [
+  public USUARIO_VINCULACAO: LookupItem[] = [
     { key: "SERVIDOR_EFETIVO", value: "Servidor público cargo efetivo" },
     { key: "SERVIDOR_COMISSIONADO", value: "Servidor público cargo em comissão" },
     { key: "EMPREGADO", value: "Empregado público" },
