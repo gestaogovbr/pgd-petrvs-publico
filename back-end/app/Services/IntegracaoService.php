@@ -375,8 +375,8 @@ class IntegracaoService extends ServiceBase {
                       $db_result = $self->deepReplaceUnidades($unidade, $entidade_id);
                     }
                     // Seta inativo nas unidades que não existem em integracao_unidades e garante que não esteja inativo as que existem em integracao_unidades.
-                    $db_result = $this->inativadas = DB::update("UPDATE unidades AS u SET inativo = NOW() WHERE inativo IS NULL AND NOT EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo)");
-                    $db_result = $this->ativadas = DB::update("UPDATE unidades AS u SET inativo = NULL WHERE inativo IS NOT NULL AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo);");
+                    $db_result = $this->inativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NOW() WHERE data_inativacao IS NULL AND NOT EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo)");
+                    $db_result = $this->ativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NULL WHERE data_inativacao IS NOT NULL AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo);");
                 });
                 $this->result['unidades']['Resultado'] = 'Sucesso';
                 array_push($this->result['unidades']['Observações'], 'Na tabela Unidades do Petrvs constam agora ' . DB::table('unidades')->get()->count() . ' unidades!');
@@ -436,6 +436,7 @@ class IntegracaoService extends ServiceBase {
                         }
 
                         $email = $self->UtilService->valueOrDefault($servidor['emailfuncional']);
+
                         if($ativo && !empty($email)) {
                             $email = str_contains($email, "@") ? $email : $email . "@prf.gov.br";
                             $servidor = [
@@ -459,7 +460,8 @@ class IntegracaoService extends ServiceBase {
                                 'codsitfuncional' => $self->UtilService->valueOrDefault($ativo['codsitfuncional']),
                                 'codupag' => $self->UtilService->valueOrDefault($ativo['codupag']),
                                 'dataexercicionoorgao' => $self->UtilService->valueOrDefault($ativo['dataexercicionoorgao']),
-                                'funcoes' => json_encode($ativo['funcoes'])
+                                'funcoes' => json_encode($ativo['funcoes']),
+                                'matricula' => $self->UtilService->valueOrDefault($ativo['matriculasiape']),
                             ];
                             $db_result = IntegracaoServidor::create($servidor)->save();
                         }
@@ -474,43 +476,55 @@ class IntegracaoService extends ServiceBase {
                 DB::transaction(function () use (&$atualizacoes) {
                     // Seleciona todos os servidores que sofreram alteração nos seus dados pessoais.
                     $atualizacoes = DB::select(
-                        "SELECT u.id, isr.cpf AS cpf_servidor, u.nome AS nome_anterior, isr.nome AS nome_servidor, u.apelido AS apelido_anterior, " .
-                        "isr.nomeguerra AS nome_guerra, u.email AS email_anterior, isr.emailfuncional, u.matricula AS matricula_anterior, " .
-                        "isr.matriculasiape, u.telefone AS telefone_anterior, isr.telefone FROM integracao_servidores isr LEFT JOIN usuarios u ON (isr.cpf = u.cpf) ".
-                        "WHERE isr.nome != u.nome OR isr.emailfuncional != u.email OR isr.matriculasiape != u.matricula OR isr.nomeguerra != u.apelido OR isr.telefone != u.telefone");
-                    $sql_update = "UPDATE usuarios SET nome = :nome, apelido = :nomeguerra, email = :email, matricula = :matricula, telefone = :telefone WHERE id = :id";
+                        "SELECT u.id, isr.cpf AS cpf_servidor, u.nome AS nome_anterior, ".
+                        "isr.nome AS nome_servidor, u.apelido AS apelido_anterior, ".
+                        "isr.nomeguerra AS nome_guerra, u.email AS email_anterior, ".
+                        "isr.emailfuncional, u.matricula AS matricula_anterior, ".
+                        "isr.matriculasiape, u.telefone AS telefone_anterior, isr.telefone ". 
+                        "FROM integracao_servidores isr LEFT JOIN usuarios u ON (isr.cpf = u.cpf) ".
+                        "WHERE isr.nome != u.nome OR isr.emailfuncional != u.email OR ".
+                        "isr.matriculasiape != u.matricula OR isr.nomeguerra != u.apelido OR ".
+                        "isr.telefone != u.telefone");
+                    
+                    $sql_update = "UPDATE usuarios SET ". 
+                        "nome = :nome, apelido = :nomeguerra, ".
+                        "email = :email, matricula = :matricula, ". 
+                        "telefone = :telefone WHERE id = :id";
 
-                    // Atualiza os dados pessoais de todos os servidores ATIVOS presentes na tabela USUARIOS. ESTA ROTINA NÃO DEVE INSERIR NOVOS SERVIDORES
+                    /* Atualiza os dados pessoais de todos os servidores ATIVOS 
+                    presentes na tabela USUARIOS. 
+                    *** ESTA ROTINA NÃO DEVE INSERIR NOVOS SERVIDORES *** */
                     if (!empty($atualizacoes)) {
                         foreach($atualizacoes as $linha) {
-                                DB::update($sql_update, [
+                            DB::update($sql_update, [
+                                'nome'          => $linha->nome_servidor,
+                                'nomeguerra'    => $linha->nome_guerra,
+                                'email'         => $linha->emailfuncional,
+                                'matricula'     => $linha->matriculasiape,
+                                'telefone'      => $linha->telefone,
+                                'id'            => $linha->id
+                            ]);
+                            $this->atualizaLogs($this->logged_user_id, 'usuarios', $linha->id, 'EDIT', [
+                                'Rotina' => 'Integração',
+                                'Observação' => 'Servidor ATIVO que foi atualizado porque apresentou '.
+                                'alteração em seus dados pessoais!',
+                                'Valores anteriores' => [
+                                    'nome'          => $linha->nome_anterior,
+                                    'nomeguerra'    => $linha->apelido_anterior,
+                                    'email'         => $linha->email_anterior,
+                                    'matricula'     => $linha->matricula_anterior,
+                                    'telefone'      => $linha->telefone_anterior,
+                                    'id'            => $linha->id
+                                ],
+                                'Valores atuais' => [
                                     'nome'          => $linha->nome_servidor,
                                     'nomeguerra'    => $linha->nome_guerra,
                                     'email'         => $linha->emailfuncional,
                                     'matricula'     => $linha->matriculasiape,
                                     'telefone'      => $linha->telefone,
                                     'id'            => $linha->id
-                                ]);
-                                /* $this->atualizaLogs($this->logged_user_id, 'usuarios', $linha->id, 'EDIT', [
-                                    'Rotina' => 'Integração',
-                                    'Observação' => 'Servidor ATIVO que foi atualizado porque apresentou alteração em seus dados pessoais!',
-                                    'Valores anteriores' => [
-                                                                'nome'          => $linha->nome_anterior,
-                                                                'nomeguerra'    => $linha->apelido_anterior,
-                                                                'email'         => $linha->email_anterior,
-                                                                'matricula'     => $linha->matricula_anterior,
-                                                                'telefone'      => $linha->telefone_anterior,
-                                                                'id'            => $linha->id
-                                                            ],
-                                    'Valores atuais' => [
-                                                                'nome'          => $linha->nome_servidor,
-                                                                'nomeguerra'    => $linha->nome_guerra,
-                                                                'email'         => $linha->emailfuncional,
-                                                                'matricula'     => $linha->matriculasiape,
-                                                                'telefone'      => $linha->telefone,
-                                                                'id'            => $linha->id
-                                    ]
-                                ]);*/
+                                ]
+                            ]);
                         }
                     };
 
@@ -519,19 +533,27 @@ class IntegracaoService extends ServiceBase {
                     if($n > 0) array_push($this->result['servidores']["Observações"], $n . ($n == 1 ? ' servidor foi atualizado porque sofreu alteração em seus dados pessoais!' : ' servidores foram atualizados porque sofreram alteração em seus dados pessoais!'));
 
                     // ################################################################
-                    // Rotina de inclusão/atualização de servidores na tabela usuários:
-                    // 1 - De cada usuário, pesquisar quais as unidades integrantes não correspondem com a unidade de exercício atual;
 
-                    // Incluir todos servidores da integracao_servidor caso tabela usuarios 
-                    // esteja vazia (seed inicial do órgão) e auto_incluir esteja ativado
+                    /* Incluir todos servidores da tabela integracao_servidores
+                    que não estejam na tabela usuarios caso autoIncluir seja verdadeiro. 
+                    Obs.:: Inserção de novos servidores automaticamente.
+                    */
                     
                     $this->autoIncluir = true;
 
                     if($this->autoIncluir){
-                        $vinculos_isr = IntegracaoServidor::all();
+                        /* QueryBuilder
+                        $vinculos_isr = DB::select("SELECT * FROM integracao_servidores as isr 
+                        LEFT JOIN usuarios as u ON isr.cpf = u.cpf WHERE isr.cpf is NULL");
+                        */
 
+                        // Olouco, vulgo Eloquent!
+                        $vinculos_isr = DB::table('integracao_servidores')
+                          ->leftJoin('usuarios', 'integracao_servidores.cpf', '=', 'usuarios.cpf')
+                          ->whereNull('integracao_servidores.cpf')
+                          ->get();
+                        
                         foreach($vinculos_isr as $v_isr){
-
                             $registro = new Usuario([
                                 'id' => Uuid::uuid4(),
                                 'email' => $this->UtilService->valueOrDefault($v_isr['emailfuncional']),
@@ -539,37 +561,19 @@ class IntegracaoService extends ServiceBase {
                                 'cpf' => $this->UtilService->valueOrDefault($v_isr['cpf']),
                                 'apelido' => 'Integração', // Se não tiver apelido usar primeiro nome.
                                 'perfil_id' => Perfil::where('nome', 'Usuário Nível 1')->first()->id,
-                                'vinculacao' => "SERVIDOR_EFETIVO",
+                                'situacao_funcional' => "SERVIDOR_EFETIVO",
                             ]);
-   
                             $registro->save();
-                            
                             $id_user = $registro->id;
-
                             $unidade_exercicio = Unidade::where("codigo", $v_isr["codigo_servo_exercicio"])->first();
                             
                             $vinculo = [
-                              "usuario_id" => $id_user,
-                              "unidades_id" => $unidade_exercicio->id,
-                              "atribuicoes" => "LOTADO",
+                              'usuario_id' => $id_user,
+                              'unidade_id' => $unidade_exercicio->id,
+                              'atribuicoes' => ["LOTADO"],
                             ];
 
                             $this->unidadeIntegrante->saveIntegrante($vinculo, false);
-
-                            //$this->unidadeIntegrante->saveIntegrante(["unidade_id" => $unidade_exercicio->id, "usuario_id" => $id_user, ["LOTADO"], false);
-
-                            // $db_result = $this->usuario->store($registro, $unidade_exercicio, false);
-
-                        }
-                    } else {
-                    // Exercício atual
-                      $vinculos_isr = IntegracaoServidor::all();
-                        foreach ($vinculos_isr as $v) {
-                            // $lotacao_atual = DB::select("SELECT codigo_servo_exercicio from integracao_servidores where cpf = (SELECT cpf from usuarios where id = :usuario_id)", $v->usuario_id);
-                            //if (!empty($v->lotado()) && $v->unidade->codigo != $lotacao_atual) {
-                            //    $db_result = $this->UnidadeIntegrante->saveIntegrante($v->unidade_id, $v->usuario_id, ["LOTADO"]);
-                            //}
-                            continue;
                         }
                     };
 
@@ -681,7 +685,7 @@ class IntegracaoService extends ServiceBase {
         }
 
         // Atualização dos Gestores
-        // Os gestores só são atualizadas quando as Unidades E os Servidores são atualizados e AMBOS com sucesso.
+        // Os gestores só são atualizadas quando as Unidades e os Servidores são atualizados e AMBOS com sucesso.
         if(!empty($inputs["gestores"]) && !$inputs["gestores"]){
             $this->result["gestores"]['Resultado'] = 'Os gestores não foram atualizados, conforme solicitado!';
         }elseif($this->result['unidades']['Resultado'] == 'Sucesso' && $this->result['servidores']['Resultado'] == 'Sucesso'){
