@@ -141,12 +141,12 @@ class IntegracaoService extends ServiceBase {
             $sql = "UPDATE unidades SET path = :path, unidade_pai_id = :unidade_id, codigo = :codigo, ".
                 "nome = :nome, sigla = :sigla, cidade_id = :cidade_id WHERE id = :id";
             DB::update($sql, $values);
-            /* $this->atualizaLogs($this->logged_user_id, 'unidades', $values[':id'], 'EDIT', [
+            $this->atualizaLogs($this->logged_user_id, 'unidades', $values[':id'], 'EDIT', [
                 'Rotina' => 'Integração',
                 'Observação' => 'A Unidade sofreu alterações na hierarquia e possivelmente em outros campos (ver: nome/codigo/sigla/path/cidade_id/unidade_id)!',
                 'Valores anteriores' => ['path' => $unidade->path_antigo, 'unidade_id' => $unidade->id_pai_antigo, 'codigo' => $unidade->codigo_antigo, 'nome' => $unidade->nome_antigo, 'sigla' => $unidade->sigla_antiga, 'cidade_id' => $unidade->cidade_antiga],
                 'Valores atuais' => $values
-            ]); */
+            ]);
 
             array_push($this->paisAlterados, $unidade);
             
@@ -538,22 +538,16 @@ class IntegracaoService extends ServiceBase {
                     que não estejam na tabela usuarios caso autoIncluir seja verdadeiro. 
                     Obs.:: Inserção de novos servidores automaticamente.
                     */
-                    
+
                     $this->autoIncluir = true;
 
                     if($this->autoIncluir){
-                        /* QueryBuilder
-                        $vinculos_isr = DB::select("SELECT * FROM integracao_servidores as isr 
-                        LEFT JOIN usuarios as u ON isr.cpf = u.cpf WHERE isr.cpf is NULL");
-                        */
-
-                        // Olouco, vulgo Eloquent!
-                        $vinculos_isr = DB::table('integracao_servidores')
-                          ->leftJoin('usuarios', 'integracao_servidores.cpf', '=', 'usuarios.cpf')
-                          ->whereNull('integracao_servidores.cpf')
-                          ->get();
+                        /* Query Builder */
+                        $query = "SELECT * FROM integracao_servidores as isr LEFT JOIN usuarios as u ON isr.cpf = u.cpf WHERE isr.cpf IS NULL";
+                        $vinculos_isr = DB::select($query);
                         
                         foreach($vinculos_isr as $v_isr){
+                            $v_isr = $this->UtilService->object2array($v_isr);
                             $registro = new Usuario([
                                 'id' => Uuid::uuid4(),
                                 'email' => $this->UtilService->valueOrDefault($v_isr['emailfuncional']),
@@ -567,116 +561,22 @@ class IntegracaoService extends ServiceBase {
                             $id_user = $registro->id;
                             $unidade_exercicio = Unidade::where("codigo", $v_isr["codigo_servo_exercicio"])->first();
                             
-                            $vinculo = [
+                            $vinculo = array([
                               'usuario_id' => $id_user,
                               'unidade_id' => $unidade_exercicio->id,
                               'atribuicoes' => ["LOTADO"],
-                            ];
-
+                            ]);
+                            
+                            /* Farias criou rotina para gerar exercícios (antiga lotação)
+                            de forma simplificada. Aqui é criado o exercício vinculando 
+                            o usuário a unidade. Olhar rotina para entender melhor. */
                             $this->unidadeIntegrante->saveIntegrante($vinculo, false);
                         }
                     };
-
-                    // Gestores
-                    $unidades = IntegracaoUnidade::all();
-
-                    // IntegracaoChefia::truncate();
-                    // foreach($unidades as $u){
-                    //     $gestor_titular = IntegracaoServidor::where('codexercicio','2690');
-                    //     //$this->UnidadeIntegrante->saveIntegrante($v->unidade_id, $v->usuario_id, ["LOTADO"]);
-                    // }
-
-                                      
-                    // // Todas são setadas como PRINCIPAL = 0.
-                    // if (!empty($lotacoes_nao_atuais)) {
-                    //     foreach($lotacoes_nao_atuais as $lotacao) {
-                    //         DB::update($sql2_update, ['id_lotacao' => $lotacao->id_lotacao]);
-                    //         /* $this->atualizaLogs($this->logged_user_id, 'lotacoes', $lotacao->id_lotacao, 'EDIT', [
-                    //             'Rotina' => 'Integração',
-                    //             'Observação' => 'Esta lotação não é a lotação atual do servidor (' . $lotacao->nome . '), mas estava setada com principal = 1',
-                    //             'Valores anteriores' => ['principal' => $lotacao->principal],
-                    //             'Valores atuais' => ['principal' => 0]
-                    //         ]); */
-                    // };
-                    // }
-
-                    // $n = count($lotacoes_nao_atuais);
-                    // if($n > 0) array_push($this->result['servidores']["Observações"], $n . ($n == 1 ? ' lotação foi setada com principal = 0 porque não corresponde mais à lotação atual do servidor!' : ' lotações foram setadas com principal = 0 porque não correspondem mais às lotações atuais dos servidores!'));
-
-                    //Seleciona todos os servidores que possuem alguma lotação registrada com a Unidade Atual.
-                    // Podem ocorrer 2 casos: I - possuem lotação com data_fim não nula (setar com PRINCIPAL = 0), ou II - possuem com data_fim nula (ou seja, estão OK. Setar com PRINCIPAL = 1, se estiver com PRINCIPAL = 0).
-                    // $lotacoes_atuais = DB::select(
-                    //     "SELECT u.id AS id_usuario, u.nome, l.id AS id_lotacao, l.data_fim, l.principal, isr.codigo_servo_exercicio AS cod_unidade_atual, und2.id AS id_unidade_atual ".
-                    //     "FROM usuarios u LEFT JOIN lotacoes l ON (l.usuario_id = u.id) ".
-                    //     "LEFT JOIN unidades und1 ON (l.unidade_id = und1.id) ".
-                    //     "LEFT JOIN integracao_servidores isr ON (u.cpf = isr.cpf) ".
-                    //     "LEFT JOIN unidades und2 ON (und2.codigo = isr.codigo_servo_exercicio) ".
-                    //     "WHERE und1.codigo = und2.codigo");
-                    // $sql3_update = "UPDATE lotacoes SET principal = :principal WHERE id = :id_lotacao";
-                    // if (!empty($lotacoes_atuais)) {
-                    //     $x = 0; $y = 0;
-                    //     foreach($lotacoes_atuais as $lotacao) {
-                    //         if (!empty($lotacao->data_fim) && $lotacao->principal == 1) {       // (I) cod. siape ok, data-fim não nula, principal = 1
-                    //             $x++;
-                    //             DB::update($sql3_update, ['id_lotacao' => $lotacao->id_lotacao, 'principal' => 0]);
-                    //             /* $this->atualizaLogs($this->logged_user_id, 'lotacoes', $lotacao->id_lotacao, 'EDIT', [
-                    //                 'Rotina' => 'Integração',
-                    //                 'Observação' => 'Esta lotação corresponde à lotação atual do servidor (' . $lotacao->nome . '). Entretanto, o registro não é mais válido (data-fim não-nula), mas ainda constava como principal = 1. O campo principal foi então setado para 0.',
-                    //                 'Valores anteriores' => ['principal' => $lotacao->principal, 'data-fim' => $lotacao->data_fim],
-                    //                 'Valores atuais' => ['principal' => 0, 'data-fim' => $lotacao->data_fim]
-                    //             ]); */
-                    //         } elseif(empty($lotacao->data_fim) && $lotacao->principal == 0) {   // (II) cod. siape ok, data-fim nula, principal = 0
-                    //             $y++;
-                    //             DB::update($sql3_update, ['id_lotacao' => $lotacao->id_lotacao, 'principal' => 1]);
-                    //             /* $this->atualizaLogs($this->logged_user_id, 'lotacoes', $lotacao->id_lotacao, 'EDIT', [
-                    //                 'Rotina' => 'Integração',
-                    //                 'Observação' => 'Esta lotação corresponde à lotação atual do servidor (' . $lotacao->nome . '), mas constava como principal = 0. O campo principal foi então setado para 1.',
-                    //                 'Valores anteriores' => ['principal' => $lotacao->principal, 'data-fim' => $lotacao->data_fim],
-                    //                 'Valores atuais' => ['principal' => 1, 'data-fim' => $lotacao->data_fim]
-                    //             ]); */
-                    //         };
-                    //      };
-                    // };
-                    // if($x > 0) array_push($this->result['servidores']["Observações"], $x . ($x == 1 ? ' lotação foi setada com principal = 0 porque, apesar de corresponder à lotação atual, o registro não era mais válido (data-fim não nula)!' : ' lotações foram setadas com principal = 0 porque, apesar de corresponderem às lotações atuais, os registros não eram mais válidos (data-fim não nula)!'));
-                    // if($y > 0) array_push($this->result['servidores']["Observações"], $y . ($y == 1 ? ' lotação foi setada com principal = 1 porque, apesar de corresponder à lotação atual e o registro ser válido (data-fim nula), o campo principal estava igual a 0!' : ' lotações foram setadas com principal = 1 porque, apesar de corresponderem às lotações atuais e os registros serem válidos (data-fim nula), o campo principal estava igual a 0!'));
-
-                    // Por fim, certifica-se de que todos os servidores ativos possuem alguma lotação com a Unidade Atual, Principal = 1 e Data_fim nula.
-                    // Executada a consulta, podem surgir 2 casos: (a) usuários com unidade localizada, mas sem lotação principal, e (b) usuários sem unidade localizada e, portanto, sem lotação principal
-                    // $servidores_sem_lotacoes_atualizadas = DB::select(
-                    //     "SELECT u.id AS id_usuario, u.nome, und.id AS id_unidade_atual, und.nome as nome_unidade, isr.codigo_servo_exercicio as unidade_antiga, isr.coduorgexercicio, l.principal, l.data_fim ".
-                    //     "FROM usuarios u LEFT JOIN integracao_servidores isr ON (u.cpf = isr.cpf) ".
-                    //     "LEFT JOIN unidades und ON (isr.codigo_servo_exercicio = und.codigo) ".
-                    //     "LEFT JOIN lotacoes l ON (und.id = l.unidade_id AND u.id = l.usuario_id AND l.principal = 1 AND l.data_fim is null) ".
-                    //     "WHERE l.id is null AND isr.coduorgexercicio is not null");
-
-                    // if (!empty($servidores_sem_lotacoes_atualizadas)) {
-                    //     $x = 0; $y = 0;
-                    //     foreach($servidores_sem_lotacoes_atualizadas as $lotacao) {
-                    //         if(!empty($lotacao->id_unidade_atual)) {    //(a) usuários com unidade, mas sem lotação principal
-                    //             $x++;
-                    //             $id = DB::table('lotacoes')->insertGetId([
-                    //                 'id'            => Uuid::uuid4(),
-                    //                 'principal'     => 1,
-                    //                 'unidade_id'    => $lotacao->id_unidade_atual,
-                    //                 'usuario_id'    => $lotacao->id_usuario
-                    //             ]);
-                    //             // $this->atualizaLogs($this->logged_user_id, 'lotacoes', $id, 'ADD', ['Rotina' => 'Integração', 'Observação' => 'Criação da lotação do servidor ' . $lotacao->nome . ' e a unidade ' . $lotacao->nome_unidade]);
-                    //         }else{                                      // (b) usuários sem unidade e, portanto, sem lotação
-                    //             $this->result["servidores"]["Falhas"] = $this->result["servidores"]["Falhas"] ?? [];
-                    //             array_push($this->result["servidores"]["Falhas"], [
-                    //                 "Lotação não existe nem foi inserida porque a Unidade não foi localizada!",
-                    //                 "Lotação: " . $lotacao->nome . " (ID do Usuário: " . $lotacao->id_usuario . ")",
-                    //                 "Código SIAPE da Unidade de Lotação Atualizada: " . $lotacao->coduorgexercicio]);
-                    //             // criar uma notificação por email
-                    //         }
-                    //     };
-                    //    if($x > 0) array_push($this->result['servidores']["Observações"], $x . ($x == 1 ? ' lotação nova foi criada!' : ' lotações novas foram criadas!'));
-                    //   if($y > 0) array_push($this->result['servidores']["Observações"], $y . ($y == 1 ? ' lotação nova não pode ser criada porque é impossível localizar a Unidade!' : ' lotações novas não puderam ser criadas porque é impossível localizar as Unidades!'));
-                    // };
-                  //  if($this->echo) $this->imprimeNoTerminal('Concluída a fase de atualização das lotações dos servidores!.....');
                 });
-                // $this->result['servidores']['Resultado'] = 'Sucesso';
-                // array_push($this->result['servidores']["Observações"], 'Na tabela Usuários constam agora ' . DB::table('usuarios')->get()->count() . ' servidores!');
+                $this->result['servidores']['Resultado'] = 'Sucesso';
+                array_push($this->result['servidores']["Observações"], 'Na tabela Usuários constam agora '.
+                Usuario::count() . ' servidores!');
 
             } catch (Throwable $e) {
                 LogError::newError("Erro ao importar servidores", $e);
@@ -688,7 +588,7 @@ class IntegracaoService extends ServiceBase {
         // Os gestores só são atualizadas quando as Unidades e os Servidores são atualizados e AMBOS com sucesso.
         if(!empty($inputs["gestores"]) && !$inputs["gestores"]){
             $this->result["gestores"]['Resultado'] = 'Os gestores não foram atualizados, conforme solicitado!';
-        }elseif($this->result['unidades']['Resultado'] == 'Sucesso' && $this->result['servidores']['Resultado'] == 'Sucesso'){
+        } elseif($this->result['unidades']['Resultado'] == 'Sucesso' && $this->result['servidores']['Resultado'] == 'Sucesso'){
             if($this->echo) $this->imprimeNoTerminal("Iniciando a fase de reconstrução das funções de chefia!.....");
             try {
                 DB::beginTransaction();

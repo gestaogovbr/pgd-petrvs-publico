@@ -33,7 +33,9 @@ class EntidadeSeeder extends Seeder
             'cidade_id' => $brasilia->id
         ]);
         $ent1->save();
-        /*$tipo1 = new TipoModalidade();
+
+        /*
+        $tipo1 = new TipoModalidade();
         $tipo1->fill([
             'nome' => 'Modalidade 1',
         ]);
@@ -70,27 +72,28 @@ class EntidadeSeeder extends Seeder
             'nomenclatura' => [],
             'cidade_id' => $juiz_fora->id
         ]);
+        */
 
-        //cria a entidade MJSP/DEPEN
+        // Cria a entidade SENAPPEN
         $ent4 = new Entidade();
         $ent4->fill([
-            'id' => '821cbe85-6382-4eb0-b4ca-704957de6b07',
-            'sigla' => 'MJSP/DEPEN',
-            'nome' => 'Departamento Penitenciário Nacional',
+            'id' => "821cbe85-6382-4eb0-b4ca-704957de6b07",
+            'sigla' => 'SENAPPEN',
+            'nome' => 'Secretaria Nacional de Políticas Penais',
+            'codigo_ibge' => '5300108',
+            'uf' => 'DF',
             'abrangencia' => 'NACIONAL',
-            'layout_formulario_demanda' => 'COMPLETO',
-            'campos_ocultos_demanda' => [],
-            'nomenclatura' => [],
             'cidade_id' => $brasilia->id
         ]);
+        $ent4->save();
 
+        /*
         $tipo4 = new TipoModalidade();
         $tipo4->fill([
             'nome' => 'Modalidade 1',
         ]);
         $tipo4->save();
         $tipo4->entidades()->save($ent4);
-
 
         //cria a entidade UFMT
         $ent5 = new Entidade();
