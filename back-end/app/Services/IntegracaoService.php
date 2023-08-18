@@ -539,7 +539,7 @@ class IntegracaoService extends ServiceBase {
                     Obs.:: Inserção de novos servidores automaticamente.
                     */
 
-                    $this->autoIncluir = true;
+                    $this->autoIncluir = false;
 
                     if($this->autoIncluir){
                         /* Query Builder */
@@ -553,35 +553,37 @@ class IntegracaoService extends ServiceBase {
                             "isr.telefone as telefone, " .
                             "isr.datanascimento as datanascimento, " .
                             "isr.tipo as cargo, " .
-                            "isr.nomeguerra as apelido " .
+                            "isr.nomeguerra as apelido, " .
+                            "isr.codigo_servo_exercicio as exercicio " .
                             "FROM integracao_servidores as isr LEFT JOIN usuarios as u " .
                             "ON isr.cpf = u.cpf";
 
                         $vinculos_isr = DB::select($query);
-
-                        /*$vinculos_isr = DB::table('integracao_servidores')
-                        ->leftJoin('usuarios', 'integracao_servidores.cpf', '=', 'usuarios.cpf')
-                        ->get();
-                        $vinculos_isr = DB::table('integracao_servidores')*/
-                        
+                      
                         foreach($vinculos_isr as $v_isr){
                             $v_isr = $this->UtilService->object2array($v_isr);
+
+                            // Ajuste no apelido.
+                            $v_isr['apelido'] = !empty($v_isr['apelido']) ? $this->UtilService->valueOrDefault($v_isr['apelido']) :
+                                $this->UtilService->getApelido($v_isr['nome']);
+                            
                             $registro = new Usuario([
                                 'id' => Uuid::uuid4(),
                                 'email' => $this->UtilService->valueOrDefault($v_isr['emailfuncional']),
                                 'nome' => $this->UtilService->valueOrDefault($v_isr['nome']),
                                 'cpf' => $this->UtilService->valueOrDefault($v_isr['cpf']),
                                 'matricula' => $this->UtilService->valueOrDefault($v_isr['matricula']),
-                                'apelido' => 'Integração', // Se não tiver apelido usar primeiro nome.
+                                'apelido' => $this->UtilService->valueOrDefault($v_isr['apelido']),
                                 'telefone' => $this->UtilService->valueOrDefault($v_isr['telefone']),
                                 'datanascimento' => $this->UtilService->valueOrDefault($v_isr['datanascimento']),
                                 'sexo' => $this->UtilService->valueOrDefault($v_isr['sexo']),
                                 'situacao_funcional' => "SERVIDOR_EFETIVO",
                                 'perfil_id' => Perfil::where('nome', 'Usuário Nível 1')->first()->id,
+                                'exercicio' => $this->UtilService->valueOrDefault($v_isr['exercicio']),
                             ]);
                             $registro->save();
                             $id_user = $registro->id;
-                            $unidade_exercicio = Unidade::where("codigo", $v_isr["codigo_servo_exercicio"])->first();
+                            $unidade_exercicio = Unidade::where("codigo", $v_isr["exercicio"])->first();
                             
                             $vinculo = array([
                               'usuario_id' => $id_user,

@@ -493,6 +493,16 @@ class UtilService
         } */
         return '';
     }
+
+    public static function getApelido(string $nome) {
+      (string) $apelido = "";
+      if(!empty($nome) && is_string($nome)){
+          $nome = strtolower($nome);
+          $nome = explode(" ", $nome);
+          $apelido = ucfirst($nome[0]);
+          }
+      return $apelido;
+    }
 }
 
 /* EXEMPLO:

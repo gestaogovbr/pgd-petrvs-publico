@@ -65,19 +65,20 @@ class UnidadeIntegranteService extends ServiceBase
 
                   $definirLotacao = function ($integranteNovoOuExistente) use ($unidadeLotacao, $unidade, $usuario, &$atribuicoesFinais) {
                       if(!empty($unidadeLotacao->id) && $unidadeLotacao->id != $unidade->id) $usuario->lotacao->lotado->delete();
+                      if(empty($unidadeLotacao->id) || $unidadeLotacao->id != $unidade->id) UnidadeIntegranteAtribuicao::create(["atribuicao" => "LOTADO", "unidade_integrante_id" => $integranteNovoOuExistente->id])->save();
                       array_push($atribuicoesFinais, "LOTADO");
                   };
 
                   $definirGerenciaTitular = function ($integranteNovoOuExistente) use ($unidadeGerenciaTitular, $unidade, $usuario, $definirLotacao, &$atribuicoesFinais) {
                       $definirLotacao($integranteNovoOuExistente);
                       if(!empty($unidadeGerenciaTitular->id) && $unidadeGerenciaTitular->id != $unidade->id) $usuario->gerenciaTitular->gestor->delete();
-                      if($unidadeGerenciaTitular->id != $unidade->id) UnidadeIntegranteAtribuicao::create(["atribuicao" => "GESTOR", "unidade_integrante_id" => $integranteNovoOuExistente->id])->save();
+                      if(empty($unidadeGerenciaTitular->id) || $unidadeGerenciaTitular->id != $unidade->id) UnidadeIntegranteAtribuicao::create(["atribuicao" => "GESTOR", "unidade_integrante_id" => $integranteNovoOuExistente->id])->save();
                       array_push($atribuicoesFinais, "GESTOR");
                   };
 
                   $definirGerenciaSubstituta = function ($integranteNovoOuExistente) use ($atualGestorSubstitutoUnidade, $usuario, $unidade, &$atribuicoesFinais) {
                       if(!empty($atualGestorSubstitutoUnidade->id) && $atualGestorSubstitutoUnidade->id != $usuario->id) $unidade->gestorSubstituto->gestorSubstituto->delete();
-                      if($atualGestorSubstitutoUnidade->id != $usuario->id) UnidadeIntegranteAtribuicao::create(["atribuicao" => "GESTOR_SUBSTITUTO", "unidade_integrante_id" => $integranteNovoOuExistente->id])->save();
+                      if(empty($atualGestorSubstitutoUnidade->id) || $atualGestorSubstitutoUnidade->id != $usuario->id) UnidadeIntegranteAtribuicao::create(["atribuicao" => "GESTOR_SUBSTITUTO", "unidade_integrante_id" => $integranteNovoOuExistente->id])->save();
                       array_push($atribuicoesFinais, "GESTOR_SUBSTITUTO");
                   };
 
@@ -85,6 +86,7 @@ class UnidadeIntegranteService extends ServiceBase
                   if (in_array("GESTOR", $vinculo["atribuicoes"])) $definirGerenciaTitular($integranteNovoOuExistente);
                   if (in_array("GESTOR_SUBSTITUTO", $vinculo["atribuicoes"])) $definirGerenciaSubstituta($integranteNovoOuExistente);
                   
+                  // Só salvar atribuições diferentes das comuns (Lotado, Gestor, Gestor_substituto) e se ainda não existir
                   foreach (array_diff($vinculo["atribuicoes"], ['LOTADO', 'GESTOR', 'GESTOR_SUBSTITUTO']) as $x) {
                       if(empty(UnidadeIntegranteAtribuicao::where('atribuicao', $x)->where('unidade_integrante_id', $integranteNovoOuExistente->id)->first())) {
                           $db_result = UnidadeIntegranteAtribuicao::create(['atribuicao' => $x, 'unidade_integrante_id' => $integranteNovoOuExistente->id], [])->save();
