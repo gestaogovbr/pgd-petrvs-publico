@@ -543,8 +543,26 @@ class IntegracaoService extends ServiceBase {
 
                     if($this->autoIncluir){
                         /* Query Builder */
-                        $query = "SELECT * FROM integracao_servidores as isr LEFT JOIN usuarios as u ON isr.cpf = u.cpf WHERE isr.cpf IS NULL";
+                        $query = "SELECT " .
+                            "isr.matriculasiape as matricula, " .
+                            "isr.nome as nome, isr.cpf as cpf, " .
+                            "isr.emailfuncional as emailfuncional, " .
+                            "isr.sexo as sexo, " .
+                            "isr.uf as uf, " .
+                            "isr.datanascimento as datanascimento, " .
+                            "isr.telefone as telefone, " .
+                            "isr.datanascimento as datanascimento, " .
+                            "isr.tipo as cargo, " .
+                            "isr.nomeguerra as apelido " .
+                            "FROM integracao_servidores as isr LEFT JOIN usuarios as u " .
+                            "ON isr.cpf = u.cpf";
+
                         $vinculos_isr = DB::select($query);
+
+                        /*$vinculos_isr = DB::table('integracao_servidores')
+                        ->leftJoin('usuarios', 'integracao_servidores.cpf', '=', 'usuarios.cpf')
+                        ->get();
+                        $vinculos_isr = DB::table('integracao_servidores')*/
                         
                         foreach($vinculos_isr as $v_isr){
                             $v_isr = $this->UtilService->object2array($v_isr);
@@ -553,9 +571,13 @@ class IntegracaoService extends ServiceBase {
                                 'email' => $this->UtilService->valueOrDefault($v_isr['emailfuncional']),
                                 'nome' => $this->UtilService->valueOrDefault($v_isr['nome']),
                                 'cpf' => $this->UtilService->valueOrDefault($v_isr['cpf']),
+                                'matricula' => $this->UtilService->valueOrDefault($v_isr['matricula']),
                                 'apelido' => 'Integração', // Se não tiver apelido usar primeiro nome.
-                                'perfil_id' => Perfil::where('nome', 'Usuário Nível 1')->first()->id,
+                                'telefone' => $this->UtilService->valueOrDefault($v_isr['telefone']),
+                                'datanascimento' => $this->UtilService->valueOrDefault($v_isr['datanascimento']),
+                                'sexo' => $this->UtilService->valueOrDefault($v_isr['sexo']),
                                 'situacao_funcional' => "SERVIDOR_EFETIVO",
+                                'perfil_id' => Perfil::where('nome', 'Usuário Nível 1')->first()->id,
                             ]);
                             $registro->save();
                             $id_user = $registro->id;

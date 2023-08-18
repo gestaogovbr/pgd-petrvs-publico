@@ -87,7 +87,7 @@ class UnidadeIntegranteService extends ServiceBase
                   
                   foreach (array_diff($vinculo["atribuicoes"], ['LOTADO', 'GESTOR', 'GESTOR_SUBSTITUTO']) as $x) {
                       if(empty(UnidadeIntegranteAtribuicao::where('atribuicao', $x)->where('unidade_integrante_id', $integranteNovoOuExistente->id)->first())) {
-                          UnidadeIntegranteAtribuicao::create(['atribuicao' => $x, 'unidade_integrante_id' => $integranteNovoOuExistente->id], [])->save();
+                          $db_result = UnidadeIntegranteAtribuicao::create(['atribuicao' => $x, 'unidade_integrante_id' => $integranteNovoOuExistente->id], [])->save();
                       }
                       array_push($atribuicoesFinais, $x);
                   }
