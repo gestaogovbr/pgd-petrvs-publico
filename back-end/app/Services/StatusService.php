@@ -10,13 +10,12 @@ class StatusService extends ServiceBase
     public function atualizaStatus($entity, $novoStatus, $justificativa, $usuarioId = null) {
         try {
             if(!empty($entity)) {
-                if($entity->status) $entity->status->delete();
-                $status = $entity->statusHistorico()->create([
+                $entity->statusHistorico()->create([
                     'codigo' => $novoStatus,
                     'justificativa' => $justificativa,
                     'usuario_id' => empty($usuarioId) ? parent::loggedUser()->id : $usuarioId        
-                ]);
-                $entity->status_id = $status->id;
+                ])->save();
+                $entity->status = $novoStatus;
                 $entity->save();
             }
         } catch (Throwable $e) { 

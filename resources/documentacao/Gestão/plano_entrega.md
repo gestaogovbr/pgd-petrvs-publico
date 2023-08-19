@@ -53,22 +53,22 @@
     2. (RN_PENT_1_2) O gestor de uma unidade e o gestor da sua unidade-pai, podem iniciar a elaboração de Planos de Entrega para a sua unidade;
     3. (RN_PENT_1_3) O chefe da unidade-pai pode homologar e, se possuir a capacidade "MOD_PENT_EDT_FLH", alterar o plano de entregas antes/depois de homologá-lo;
     4. (RN_PENT_1_4) Para ir para o status HOMOLOGANDO o Plano de Entregas deve ter ao menos uma entrega;
-2. PLANOS DE ENTREGA VINCULADOS
+2. PLANOS DE ENTREGA VINCULADOS (ADERIDO)
     1. (RN_PENT_2_1) Ao se criar um plano de entregas através da adesão ao da unidade-pai, aquele adquire de imediato o status "HOMOLOGANDO";
     2. (RN_PENT_2_2) A adesão a um Plano de Entregas da unidade-pai precisa da homologação do Chefe desta unidade para ser ativado (ir para o status ATIVO);
     3. (RN_PENT_2_3) Só é possível aderir a um Plano de Entregas se este for da unidade-pai e estiver ATIVO;
-    4. (RN_PENT_2_4) O gestor de uma unidade, e o gestor da sua unidade-pai, podem realizar a adesão a um Plano de Entrega;
+    4. (RN_PENT_2_4) O gestor de uma unidade, e o gestor da sua unidade-pai, podem realizar a adesão a um Plano de Entrega; (Aderir o filho compulsoriamente)
     5. (RN_PENT_2_5) No caso de a adesão ser feita pelo chefe da unidade-pai, o plano já adquire de imediato o status ATIVO;
     6. (RN_PENT_2_6) Se um Plano de Entregas for concluído/cancelado, e possuir planos vinculados, estes também serão concluídos/cancelados automaticamente;
     7. (RN_PENT_2_7) Em caso de adesão, os campos 'inicio', 'fim', 'planejamento_id', e 'cadeia_valor_id', deverão ser sempre iguais aos do plano-pai; portanto, quando um plano de entregas próprio sofrer alteração em um desses campos, todos os planos a ele vinculados deverão ser atualizados também;
 3. TODOS OS PLANOS DE ENTREGA
-    1. (RN_PENT_3_1) Ao voltar no status, e já tiver outros planos de entrega (ou planos de trabalhos) vinculados ATIVO, estes deverão ir para SUSPENSO;
+    1. (RN_PENT_3_1) Ao voltar no status, e já tiver outros planos de entrega (ou planos de trabalhos) vinculados ATIVO, estes deverão ir para SUSPENSO; *** Remover***
     2. (RN_PENT_3_2) Um Plano de Entregas, seja próprio ou não, precisa da Homologação do chefe da sua unidade-pai, ou de servidor com a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para esta unidade, para ser ativado (ir para o status ATIVO);
     3. (RN_PENT_3_3) Se a Unidade A tem um plano de entrega próprio e a Unidade B aderiu ao plano de A, a Unidade C pode aderir ao plano de B e só a ele; (Hierarquia considerada: A -> B -> C)
     4. (RN_PENT_3_4) O chefe de uma unidade deve poder visualizar os planos de entregas de todas as unidades hierarquicamente a ele subordinadas;
-    5. (RN_PENT_3_5) Uma vez homologado um Plano de Entregas, a unidade do plano está em PGD (Um Plano de Trabalho só pode ser vinculado a planos de entregas homologados);
+    5. (RN_PENT_3_5) Uma vez homologado um Plano de Entregas, a unidade do plano está em PGD (Um Plano de Trabalho só pode ser vinculado a entregas de planos de entregas homologados);
     6. (RN_PENT_3_6) Os planos de entregas vão gerar dados que serão enviados ao órgão central (aguardando a definição do formato);
-    7. (RN_PENT_3_7) O participante poderá visualizar o Plano de Entregas de qualquer Unidade em que esteja lotado;
+    7. (RN_PENT_3_7) O participante poderá visualizar o Plano de Entregas de qualquer Unidade em que esteja lotado/colaborando;
     8. (RN_PENT_3_8) Uma unidade de execução poderá ter mais de um Plano de Entregas com status 'HOMOLOGANDO' e 'ATIVO', desde que sejam para períodos diferentes;
     9. (RN_PENT_3_9) Após criado um plano de entregas, os seguintes campos não poderão mais ser alterados: unidade_id, programa_id;
     10. (DESENVOLVIMENTO FUTURO) Se o Plano de Entregas for integralmente sigiloso, só poderá ser visualizado pelo Chefe da sua unidade ou por quem tiver capacidade de acesso;
@@ -86,11 +86,23 @@
         2. o plano precisa estar com o status INCLUIDO ou HOMOLOGANDO, e o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação e ele possuir a capacidade "MOD_PENT_EDT"; ou
         3. o plano precisa ser válido, o usuário logado precisa possuir a capacidade "MOD_PENT_EDT_FLH", e ser gestor da unidade-pai da unidade do plano ou possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a unidade-pai da unidade do plano; (RN_PENT_1_3); ou
         4. o plano precisa estar com o status ATIVO, a unidade do plano ser a unidade de lotação do usuário logado, e ele possuir a capacidade "MOD_PENT_EDT_ATV_HOMOL" ou "MOD_PENT_EDT_ATV_ATV".
+
+- Ao alterar um plano de entrega pode acontecer:
+    * Incluir novas entregas, nada será necessário alterar
+    * Alterar a entrega: Limitar o período que pode ser editado, não editar mais a entrega do catálogo
+    * Excluir: Marcar como cancelado caso já tenha sido utilizado, e caso não foi utilizado em nenhum plano de trabalho poderá ser excluido
+   - Entregas caceladas não poderão mais ser adicionados novas atividades nem em novos planos de trabalho
+
+
+
    3. (RN_PENT_4_3) ARQUIVAR
         1. o plano precisa estar com o status AVALIADO e o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação e ele possuir a capacidade "MOD_PENT_ARQ";
    4. (RN_PENT_4_4) AVALIAR
         1. o plano precisa estar com o status CONCLUIDO e o usuário logado precisa ser gestor da unidade-pai da unidade do plano, ou possuir a atribuição de AVALIADOR DE PLANOS DE ENTREGAS para esta unidade; ou
         2. o plano precisa estar com o status CONCLUIDO, o usuário logado precisa ser gestor de alguma unidade da linha hierárquica ascendente da unidade do plano, e possuir a capacidade "MOD_PENT_AVAL_SUBORD";
+
+- Criar campos em Programa com as tolerâncias para concluir automaticamente o plano de entrega
+
    5. (RN_PENT_4_5) CANCELAR AVALIAÇÃO
         1. o plano precisa estar com o status AVALIADO e o usuário logado precisa ser gestor da unidade-pai da unidade do plano, ou possuir a atribuição de AVALIADOR DE PLANOS DE ENTREGAS para esta unidade;
    6. (RN_PENT_4_6) CANCELAR CONCLUSÃO
@@ -105,6 +117,8 @@
         1. o plano precisa estar com o status INCLUIDO ou HOMOLOGANDO; e
         2. o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação e ele possuir a capacidade "MOD_PENT_EXCL";
         3. se o plano não atender às condições acima, o usuário deve ser informado das razões pelas quais o plano não foi excluído;
+    - Caso tenha alguma entrega vinculada a algum plano de trabalho, as entregas vão para Cancelado, e o plano de entrega tambem vai para cancelado (Status definitivo)
+
    11. (RN_PENT_4_11) HOMOLOGAR
         1. o plano precisa estar com o status HOMOLOGANDO e o usuário logado ser gestor da unidade-pai da unidade do plano, ou possuir a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para a unidade-pai; (RN_PENT_1_3)(RN_PENT_3_2)
    12. (RN_PENT_4_12) INSERIR (exclusivamente para planos próprios)
@@ -112,7 +126,7 @@
         2. o usuário logado precisa ser gestor da unidade do plano, ou gestor da sua unidade-pai; ou
         3. o usuário precisa possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a unidade-pai da unidade do plano e possuir a capacidade "MOD_PENT_EDT_FLH";
    13. (RN_PENT_4_13) LIBERAR PARA HOMOLOGAÇÃO
-        1. o plano precisa estar com o status INCLUIDO e o usuário logado precisa ser gestor da unidade do plano;
+        1. o plano precisa estar com o status INCLUIDO e o usuário logado precisa ser gestor da unidade do plano, e conter ao menos uma entrega;
    14. (RN_PENT_4_14) RETIRAR DE HOMOLOGAÇÃO
         1. o plano precisa estar com o status HOMOLOGANDO, e o usuário logado precisa ser gestor da unidade do plano;
    15. (RN_PENT_4_15) REATIVAR
@@ -142,12 +156,13 @@
 
 ## REGRAS A SEREM MELHOR EXAMINADAS
 
+2. Qualquer alteração, depois de o plano ser homologado, precisa ser notificada ao chefe da unidade-pai ou à pessoa que homologou; **** OK ****
+3. Arquivamento automático do plano de entregas após ser avaliado; **** OK ****
+6. O plano de entregas pode ser desarquivado? SIM
+
 1. (DESENVOLVIMENTO FUTURO) Adesão a planos sigilosos
-2. Qualquer alteração, depois de o plano ser homologado, precisa ser notificada ao chefe da unidade-pai ou à pessoa que homologou;
-3. Arquivamento automático do plano de entregas após ser avaliado;
 4. MOD_PENT_CANC_CONCL_HOMOL/MOD_PENT_CANC_CONCL_ATV: o plano não deve retroagir mais de um passo de cada vez;
 5. Opções para o filtro: 'Incluir Unidades Superiores', 'Incluir Unidades Inferiores', 'Selecionar por Status'
-6. O plano de entregas pode ser desarquivado?
 7. Em que situações o plano de entregas sofrerá a ação UPDATE no back-end?
 8. Verificar se isso já foi implementado: O plano de entregas deverá ser aprovado por nível hierárquico superior ao da chefia da unidade de execução, o qual deverá ser informado sobre eventuais ajustes.
 9. A aprovação do plano de entregas e a comunicação sobre eventuais ajustes, de que trata o §1º, não se aplicam à unidade instituidora.

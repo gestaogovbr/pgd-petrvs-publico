@@ -16,7 +16,7 @@ class Atividade extends ModelBase
 {
     protected $table = 'atividades';
 
-    protected $with = ["status"];
+    protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'descricao', /* text; */// Assunto da atividade
@@ -34,7 +34,7 @@ class Atividade extends ModelBase
         'prioridade', /* int; */// Nível de prioridade
         'progresso', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */// Progresso da realização da atividade
         'plano_trabalho_id', /* char(36); */
-        'status_id',
+        'status',
         'plano_trabalho_entrega_id', /* char(36); */
         'tipo_atividade_id', /* char(36); */
         'demandante_id', /* char(36); NOT NULL; */
@@ -67,14 +67,13 @@ class Atividade extends ModelBase
     ];
 
     // Has
-    public function statusHistorico() { return $this->hasMany(Status::class, "atividade_id"); }   
+    public function statusHistorico() { return $this->hasMany(StatusJustificativa::class, "atividade_id"); }   
     public function tarefas() { return $this->hasMany(AtividadeTarefa::class); }    
     public function tarefasProjeto() { return $this->hasMany(ProjetoTarefa::class); }    
     public function pausas() { return $this->hasMany(AtividadePausa::class); }
     public function comentarios() { return $this->hasMany(Comentario::class); }
     public function documentos() { return $this->hasMany(Documento::class); }
     // Belongs
-    public function status() { return $this->belongsTo(Status::class, "status_id"); }
     public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class); }        //nullable
     public function planoTrabalhoEntrega() { return $this->belongsTo(PlanoTrabalhoEntrega::class); }      //nullable
     public function tipoAtividade() { return $this->belongsTo(TipoAtividade::class); }    //nullable

@@ -16,7 +16,7 @@ class PlanoEntrega extends ModelBase
 {
     protected $table = 'planos_entregas';
 
-    protected $with = ["status"];
+    protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'nome', /* varchar(256); NOT NULL; */// Nome do plano de entregas
@@ -27,7 +27,7 @@ class PlanoEntrega extends ModelBase
         'data_arquivamento', /* datetime; */// Data de arquivamento do plano de entregas
         'programa_id', /* char(36); NOT NULL; */
         'criacao_usuario_id', /* char(36); NOT NULL; */
-        'status_id', 
+        'status', 
         'data_inicio', /* datetime; NOT NULL; */// Data inicial do plano de entregas
         'data_fim', /* datetime; */// Data final do plano de entregas
         //'deleted_at', /* timestamp; */
@@ -46,12 +46,11 @@ class PlanoEntrega extends ModelBase
     }
 
     // Has
-    public function statusHistorico() { return $this->hasMany(Status::class, "plano_entrega_id"); }
+    public function statusHistorico() { return $this->hasMany(StatusJustificativa::class, "plano_entrega_id"); }
     public function entregas() { return $this->hasMany(PlanoEntregaEntrega::class); }
     public function planosEntrega() { return $this->hasMany(PlanoEntrega::class); }   
     public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }   
     // Belongs
-    public function status() { return $this->belongsTo(Status::class, "status_id"); }
     public function planejamento() { return $this->belongsTo(Planejamento::class); }  //nullable
     public function cadeiaValor() { return $this->belongsTo(CadeiaValor::class); }    //nullable
     public function unidade() { return $this->belongsTo(Unidade::class); }

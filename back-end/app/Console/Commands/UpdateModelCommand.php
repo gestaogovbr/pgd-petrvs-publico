@@ -70,7 +70,8 @@ class UpdateModelCommand extends Command
         tenancy()->initialize($tenant);
         DB::reconnect('tenant');
         $create = $this->option('create');
-        $tables = array_map(fn($row) => $row->TABLE_NAME, DB::select("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = :database", [":database" => env('DB_DATABASE')]));
+        //$tables = array_map(fn($row) => $row->TABLE_NAME, DB::select("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = :database", [":database" => env('DB_DATABASE')]));
+        $tables = array_map(fn($row) => $row->TABLE_NAME, DB::select("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = :database", [":database" => $tenant->tenancy_db_name]));
         $models = array_map(fn($file) => str_replace(base_path() . '/app/Models/', "", $file), array_filter(glob(base_path() . '/app/Models/*.php'), 'is_file'));
         $updated = "";
         foreach($models as $file) {

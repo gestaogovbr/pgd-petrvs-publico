@@ -48,47 +48,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   PlanoEntrega: () => (/* binding */ PlanoEntrega)
 /* harmony export */ });
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
-/* harmony import */ var _status_model__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./status.model */ 12971);
-
 
 class PlanoEntrega extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
   constructor(data) {
     super();
-    this.status_atual = new _status_model__WEBPACK_IMPORTED_MODULE_1__.Status();
     this.entregas = []; // Entregas que compõem o plano de entregas
-    this.statusHistorico = []; // Mudanças de status sofridas pelo plano de entregas (histórico)
+    this.status_historico = []; // Mudanças de status sofridas pelo plano de entregas (histórico)
     this.data_inicio = new Date(); // Data inicial do plano de entrega
     this.data_fim = null; // Data final do plano de entrega
     this.nome = ""; // Nome do plano de entrega
     this.metadados = undefined; // Campo virtual contendo informações calculadas pelo servidor
+    this.status = null; // Status atual do plano de entregas
     this.unidade_id = '';
     this.plano_entrega_id = null;
     this.planejamento_id = null;
     this.cadeia_valor_id = null;
     this.programa_id = null;
-    this.initialization(data);
-  }
-}
-
-/***/ }),
-
-/***/ 12971:
-/*!****************************************!*\
-  !*** ./src/app/models/status.model.ts ***!
-  \****************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Status: () => (/* binding */ Status)
-/* harmony export */ });
-/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
-
-class Status extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
-  constructor(data) {
-    super();
-    this.codigo = ""; /* Nome do status */
-    this.justificativa = ""; /* Justificativa da mudança para o status atual */
     this.initialization(data);
   }
 }
@@ -701,7 +676,7 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
       } else if (!this.dao?.validDateTime(fim)) {
         return "Data de fim inválida";
       } else if (inicio > fim) {
-        return "A data do fim não pode ser anterior à data do fim!";
+        return "A data do fim não pode ser anterior à data do início!";
       } else if (this.planoEntrega && inicio < this.planoEntrega.data_inicio) {
         return "Data de inicio menor que a data de inicio" + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(this.planoEntrega.data_inicio);
       } else if (this.planoEntrega && this.planoEntrega.data_fim && fim > this.planoEntrega.data_fim) {
@@ -1181,7 +1156,7 @@ class PlanoEntregaFormComponent extends src_app_modules_base_page_form_base__WEB
     this.programaDao = injector.get(src_app_dao_programa_dao_service__WEBPACK_IMPORTED_MODULE_6__.ProgramaDaoService);
     this.cadeiaValorDao = injector.get(src_app_dao_cadeia_valor_dao_service__WEBPACK_IMPORTED_MODULE_3__.CadeiaValorDaoService);
     this.planejamentoInstitucionalDao = injector.get(src_app_dao_planejamento_dao_service__WEBPACK_IMPORTED_MODULE_4__.PlanejamentoDaoService);
-    this.join = ["entregas.entrega", "unidade", "entregas.unidade", "status_atual:id,nome"];
+    this.join = ["entregas.entrega", "unidade", "entregas.unidade"];
     this.modalWidth = 1200;
     this.form = this.fh.FormBuilder({
       nome: {
@@ -2634,7 +2609,7 @@ function PlanoEntregaListComponent_ng_template_37_Template(rf, ctx) {
   if (rf & 2) {
     const row_r45 = ctx.row;
     const ctx_r20 = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("color", ctx_r20.lookup.getColor(ctx_r20.lookup.PLANO_ENTREGA_STATUS, row_r45.status_atual.codigo))("icon", ctx_r20.lookup.getIcon(ctx_r20.lookup.PLANO_ENTREGA_STATUS, row_r45.status_atual.codigo))("label", ctx_r20.lookup.getValue(ctx_r20.lookup.PLANO_ENTREGA_STATUS, row_r45.status_atual.codigo));
+    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("color", ctx_r20.lookup.getColor(ctx_r20.lookup.PLANO_ENTREGA_STATUS, row_r45.status.codigo))("icon", ctx_r20.lookup.getIcon(ctx_r20.lookup.PLANO_ENTREGA_STATUS, row_r45.status.codigo))("label", ctx_r20.lookup.getValue(ctx_r20.lookup.PLANO_ENTREGA_STATUS, row_r45.status.codigo));
     _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("ngIf", row_r45.data_cancelamento);
   }
@@ -3266,7 +3241,7 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
     this.checaBotaoAderirToolbar();
   }
   situacaoPlano(planoEntrega) {
-    if (planoEntrega.deleted_at) return "EXCLUIDO";else if (planoEntrega.data_arquivamento) return "ARQUIVADO";else return planoEntrega.status_atual.codigo;
+    if (planoEntrega.deleted_at) return "EXCLUIDO";else if (planoEntrega.data_arquivamento) return "ARQUIVADO";else return planoEntrega.status;
   }
 }
 _class = PlanoEntregaListComponent;

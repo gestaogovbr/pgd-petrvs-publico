@@ -36,6 +36,7 @@ class CreateAtividadesTable extends Migration
             $table->json('checklist')->nullable()->comment("Checklist");
             $table->integer('prioridade')->nullable()->comment("Nível de prioridade");
             $table->decimal('progresso', 5, 2)->default(0)->comment("Progresso da realização da atividade");
+            $table->enum('status', ["CONCLUIDO","NAOCONCLUIDO","INICIADO","PAUSADO","INCLUIDO"])->comment("Status atual da atividade");
             // Chaves estrangeiras:
             $table->foreignUuid('plano_trabalho_id')->nullable()->constrained("planos_trabalhos")->onDelete('restrict')->onUpdate('cascade')->comment("Plano de trabalho que a atividade está vinculada");
             $table->foreignUuid('plano_trabalho_entrega_id')->nullable()->constrained("planos_trabalhos_entregas")->onDelete('restrict')->onUpdate('cascade')->comment("Entrega que a atividade está vinculada");
@@ -45,8 +46,6 @@ class CreateAtividadesTable extends Migration
             $table->foreignUuid('unidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Unidade responsável pela atividade");
             $table->foreignUuid('documento_requisicao_id')->nullable()->constrained('documentos')->onDelete('restrict')->onUpdate('cascade')->comment("Documento de requisição");
             $table->foreignUuid('documento_entrega_id')->nullable()->constrained('documentos')->onDelete('restrict')->onUpdate('cascade')->comment("Documento de entrega");
-            //Criada na tabela 'status' devido à referência cruzada
-            //$table->foreignUuid('status_id')->constrained("status")->onDelete('restrict')->onUpdate('cascade')->comment("Status atual da Atividade");
         });
         // Cria sequencia atividade_numero
         Schema::table('sequences', function (Blueprint $table) {

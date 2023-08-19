@@ -31,6 +31,7 @@ use App\Models\ProjetoHistorico;
 use App\Models\ProjetoRecurso;
 use App\Models\ProjetoTarefa;
 use App\Models\NotificacaoConfig;
+use App\Models\StatusJustificativa;
 use App\Traits\MergeRelations;
 use App\Traits\LogChanges;
 use App\Traits\HasPermissions;
@@ -130,7 +131,7 @@ class Usuario extends Authenticatable
     public function planosEntregaCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }  
     public function planosTrabalhoCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); } 
     public function unidadesIntegrante() { return $this->hasMany(UnidadeIntegrante::class); }
-    public function statusHistorico() { return $this->hasMany(Status::class, "usuario_id"); }
+    public function statusHistorico() { return $this->hasMany(StatusJustificativa::class, "usuario_id"); }
     // belongsTo
     public function perfil() { return $this->belongsTo(Perfil::class); }     //nullable
     // belongsToMany
@@ -139,8 +140,9 @@ class Usuario extends Authenticatable
     public function gerenciaTitular() { return $this->hasOne(UnidadeIntegrante::class)->has('gestor'); }
     public function gerenciasSubstitutas() { return $this->hasMany(UnidadeIntegrante::class)->has('gestorSubstituto'); }
     public function lotacao() { return $this->hasOne(UnidadeIntegrante::class)->has('lotado'); }
-    public function areasTrabalho() { return $this->hasMany(UnidadeIntegrante::class)->has('lotado')->orHas('colaborador'); }
-    public function colaboracoes() { return $this->hasMany(UnidadeIntegrante::class)->has('colaborador'); }
+    //public function areasTrabalho() { return $this->hasMany(UnidadeIntegrante::class)->has('lotado')->orHas('colaborador'); }
+    public function areasTrabalho() { return $this->hasMany(UnidadeIntegrante::class)->has('atribuicoes'); }
+    //public function colaboracoes() { return $this->hasMany(UnidadeIntegrante::class)->has('colaborador'); }
     // Mutattors e Casts
     public function getUrlFotoAttribute($value) 
     {

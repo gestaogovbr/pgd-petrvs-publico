@@ -75,13 +75,13 @@ __webpack_require__.r(__webpack_exports__);
 class PlanoTrabalhoConsolidacao extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
   constructor(data) {
     super();
-    //public status?: Status;
     this.data_inicio = new Date();
     this.data_fim = new Date();
+    this.status = null; // Status atual da consolidação
     this.avaliacoes = [];
+    this.status_historico = [];
     this.plano_trabalho_id = "";
     this.avaliacao_id = null;
-    this.status_id = "";
     this.initialization(data);
   }
 }

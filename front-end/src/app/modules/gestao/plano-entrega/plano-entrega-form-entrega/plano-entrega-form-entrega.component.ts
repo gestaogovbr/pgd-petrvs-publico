@@ -155,7 +155,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     } else if(!this.dao?.validDateTime(fim)) {
       return "Data de fim inválida";
     } else if(inicio > fim) {
-      return "A data do fim não pode ser anterior à data do fim!";
+      return "A data do fim não pode ser anterior à data do início!";
     } else if(this.planoEntrega && inicio < this.planoEntrega.data_inicio) {
       return "Data de inicio menor que a data de inicio" + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(this.planoEntrega.data_inicio);
     } else if(this.planoEntrega && this.planoEntrega.data_fim && fim > this.planoEntrega.data_fim) {
