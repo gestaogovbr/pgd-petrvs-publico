@@ -106,6 +106,7 @@ class Usuario extends Authenticatable
     // hasOne
     public function gerenciaEntidade() { return $this->hasOne(Entidade::class, 'gestor_id'); } 
     public function gerenciaSubstitutaEntidade() { return $this->hasOne(Entidade::class, 'gestor_substituto_id'); }
+    public function curriculum() { return $this->hasOne(Curriculum::class); }
     // hasMany
     public function afastamentos() { return $this->hasMany(Afastamento::class); }
     public function anexos() { return $this->hasMany(Anexo::class); }
@@ -131,6 +132,7 @@ class Usuario extends Authenticatable
     public function planosTrabalhoCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); } 
     public function unidadesIntegrante() { return $this->hasMany(UnidadeIntegrante::class); }
     public function statusHistorico() { return $this->hasMany(Status::class, "usuario_id"); }
+    public function respostaQuestionario() { return $this->hasMany(RespostaQuestionario::class); }
     // belongsTo
     public function perfil() { return $this->belongsTo(Perfil::class); }     //nullable
     // belongsToMany
