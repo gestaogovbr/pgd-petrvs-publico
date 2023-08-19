@@ -18,7 +18,7 @@ class Entrega extends ModelBase
         'descricao', /* varchar(255); NOT NULL; */// Descrição da entrega
         'tipo_indicador', /* enum('QUANTIDADE','VALOR','PORCENTAGEM','QUALITATIVO'); NOT NULL; */// Tipo do indicador da entrega
         'lista_qualitativos', /* json; */// Lista de valores para entrega do tipo qualitativo
-        'unidade_id',
+        'unidade_id', /* char(36); */
         //'deleted_at', /* timestamp; */
     ];
 

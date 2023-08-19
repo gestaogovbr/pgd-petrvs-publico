@@ -12,7 +12,8 @@ import { HasStatus, StatusJustificativa } from './status-justificativa.model';
 import { PlanoTrabalhoConsolidacao } from './plano-trabalho-consolidacao.model';
 
 export type PlanoMetadados = { concluido: boolean }
-export type PlanoEntregaStatus = ""
+
+export type PlanoTrabalhoStatus = 'INCLUIDO' | 'AGUARDANDO_ASSINATURA' | 'ATIVO' | 'CONCLUIDO' | 'AVALIADO' | 'SUSPENSO' | 'CANCELADO';
 
 export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
     public tipo_modalidade?: TipoModalidade;
@@ -27,7 +28,7 @@ export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
     public tempo_proporcional: number = 0; //tempo_total menos os afastamentos
     public data_inicio: Date = new Date(); //Início do plano
     public data_fim: Date = new Date(); //Final do plano
-    public status: string | null = null; // Status atual do plano de trabalho
+    public status: PlanoTrabalhoStatus | null = null; // Status atual do plano de trabalho
     public forma_contagem_carga_horaria: TipoCargaHoraria = "DIA"; // Forma de contagem padrão da carga horária
     public metadados: PlanoMetadados | undefined = undefined; /* Campo virtual contendo informações calculadas pelo servidor */
     public entregas: PlanoTrabalhoEntrega[] = []; /* Entregas vinculadas ao Plano de Trabalho*/

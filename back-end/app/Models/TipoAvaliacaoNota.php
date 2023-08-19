@@ -10,17 +10,16 @@ class TipoAvaliacaoNota extends ModelBase
     protected $table = 'tipos_avaliacoes_notas';
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'sequencia',
-        'nota',
-        'descricao',
-        'aprova',
-        'pergunta',
-        'justifica',
-        'icone',
-        'cor',
+        'sequencia', /* int; NOT NULL; */// Sequencia da nota (serve para ordenar as notas de forma crescente)
+        'nota', /* json; NOT NULL; */// Nota
+        'descricao', /* varchar(255); NOT NULL; */// Descrição da nota
+        'aprova', /* tinyint; NOT NULL; */// Se essa nota aprova, quando aplicável
+        'pergunta', /* varchar(255); NOT NULL; */// Pergunta motivacional
+        'justifica', /* tinyint; NOT NULL; */// Se é obrigatório justificar essa nota
+        'icone', /* varchar(100); NOT NULL; */// Classe do icone
+        'cor', /* varchar(100); NOT NULL; */// Código da cor em hex
         'tipo_avaliacao_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */
-        //'nota', /* json; NOT NULL; */// Nota da avaliação
     ];
 
     // Belongs

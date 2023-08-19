@@ -8,6 +8,8 @@ import { HasStatus, StatusJustificativa } from './status-justificativa.model';
 import { Unidade } from './unidade.model';
 import { Usuario } from './usuario.model';
 
+export type PlanoEntregaStatus = 'INCLUIDO' | 'HOMOLOGANDO' | 'ATIVO' | 'CONCLUIDO' | 'AVALIADO' | 'SUSPENSO' | 'CANCELADO';
+
 export type PlanoEntregaMetadados = {
   incluido: boolean,
   homologando: boolean,
@@ -26,16 +28,15 @@ export class PlanoEntrega extends Base implements HasStatus {
   public criacao_usuario?: Usuario;                                 // Usuário que criou o plano de entregas
   public cancelamento_usuario?: Usuario;                            // Usuário que cancelou o plano de entregas
   public entregas: PlanoEntregaEntrega[] = [];                      // Entregas que compõem o plano de entregas
-  public status_historico: StatusJustificativa[] = [];                           // Mudanças de status sofridas pelo plano de entregas (histórico)
+  public status_historico: StatusJustificativa[] = [];              // Mudanças de status sofridas pelo plano de entregas (histórico)
 
-  public data_inicio: Date = new Date();                                 // Data inicial do plano de entrega
-  public data_fim: Date | null = null;                                   // Data final do plano de entrega
+  public data_inicio: Date = new Date();                            // Data inicial do plano de entrega
+  public data_fim: Date | null = null;                              // Data final do plano de entrega
   public nome: string = "";                                         // Nome do plano de entrega
   public numero?: number;                                           // Número do plano de entrega (Gerado pelo sistema)
-  public data_cancelamento?: Date | null;
   public data_arquivamento?: Date | null;
   public metadados: PlanoEntregaMetadados | undefined = undefined;  // Campo virtual contendo informações calculadas pelo servidor
-  public status: string | null = null;                              // Status atual do plano de entregas
+  public status: PlanoEntregaStatus | null = null;                  // Status atual do plano de entregas
 
   public unidade_id: string = '';
   public plano_entrega_id: string | null = null;

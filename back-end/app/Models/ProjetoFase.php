@@ -13,7 +13,7 @@ class ProjetoFase extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'data_inicio', /* datetime; */// Inicio (opcional)
-        'data_fim', /* datetime; */// Fim (opcional)
+        'data_fim', /* datetime; */// Termino (opcional)
         'cor', /* varchar(100); NOT NULL; */// Código da cor em formato hex
         'nome', /* varchar(100); NOT NULL; */// Nome
         'descricao', /* varchar(256); NOT NULL; */// Descrição

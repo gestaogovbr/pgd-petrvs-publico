@@ -1,8 +1,8 @@
 import { Atividade, AtividadeStatus } from './atividade.model';
 import { Base } from './base.model';
-import { PlanoEntrega } from './plano-entrega.model';
-import { PlanoTrabalhoConsolidacao } from './plano-trabalho-consolidacao.model';
-import { PlanoTrabalho } from './plano-trabalho.model';
+import { PlanoEntrega, PlanoEntregaStatus } from './plano-entrega.model';
+import { PlanoTrabalhoConsolidacao, PlanoTrabalhoConsolidacaoStatus } from './plano-trabalho-consolidacao.model';
+import { PlanoTrabalho, PlanoTrabalhoStatus } from './plano-trabalho.model';
 import { Usuario } from './usuario.model';
 
 export interface HasStatus {

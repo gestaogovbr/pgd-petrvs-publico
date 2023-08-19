@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Unidade;
 use App\Models\PlanoEntrega;
-use App\Models\StatusJustificativa;
 use App\Exceptions\ServerException;
 use App\Models\Programa;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +15,6 @@ use Exception;
 class PlanoEntregaService extends ServiceBase
 {
     public $unidades = []; /* Buffer de unidades para funções que fazem consulta frequentes em unidades */
-    public $statusQuery = "";
 
     public function arquivar($data, $unidade) { // ou 'desarquivar'
         try {
@@ -85,7 +83,7 @@ class PlanoEntregaService extends ServiceBase
         return $result;
     }
 
-    public function cancelarAvaliacao($data, $unidade) {
+    public function cancelarAvaliacao($data, $unidade) { // PRECISA DE JUSTIFICATIVA
         try {
             DB::beginTransaction();
             $planoEntrega = PlanoEntrega::find($data["id"]);
@@ -98,7 +96,7 @@ class PlanoEntregaService extends ServiceBase
         return true;
     }
 
-    public function cancelarConclusao($data, $unidade) {
+    public function cancelarConclusao($data, $unidade) {    // PRECISA DE JUSTIFICATIVA
         try {
             DB::beginTransaction();
             $planoEntrega = PlanoEntrega::find($data["id"]);
@@ -111,7 +109,7 @@ class PlanoEntregaService extends ServiceBase
         return true;
     }
 
-    public function cancelarHomologacao($data, $unidade) {
+    public function cancelarHomologacao($data, $unidade) {    // PRECISA DE JUSTIFICATIVA
         try {
             DB::beginTransaction();
             $planoEntrega = PlanoEntrega::find($data["id"]);
@@ -139,7 +137,7 @@ class PlanoEntregaService extends ServiceBase
 
     /**
      * Informa se o plano de entregas repassado como parâmetro está em curso.
-     * Um Plano de Entregas está EM CURSO quando não foi deletado, nem cancelado, nem arquivado e possui status ATIVO;
+     * Um Plano de Entregas está EM CURSO quando é um plano VÁLIDO e possui status ATIVO;
      * @param PlanoEntrega $planoEntrega  
      */
     public function emCurso(PlanoEntrega $plano): bool {
@@ -173,7 +171,7 @@ class PlanoEntregaService extends ServiceBase
 
     /**
      * Informa se o plano de entregas repassado como parâmetro é um plano válido.
-     * Um Plano de Entregas é válido se não foi deletado, nem arquivado, nem cancelado.
+     * Um Plano de Entregas é válido se não foi deletado, nem arquivado e não está no status de cancelado.
      * @param array $planoEntrega  
      */
     public function isPlanoEntregaValido($plano): bool {
@@ -227,12 +225,13 @@ class PlanoEntregaService extends ServiceBase
     public function proxyStore(&$data, $unidade, $action){
         if($action == ServiceBase::ACTION_INSERT) { 
             $data["criacao_usuario_id"] = parent::loggedUser()->id;
-            $data["status"] = "INCLUIDO"; 
+            $data["status"] = "INCLUIDO";
+            // (RN_PENT_1_1) Quando um Plano de Entregas próprio é criado adquire automaticamente o status INCLUIDO; 
         }
         return $data;
     }
 
-    public function reativar($data, $unidade) {
+    public function reativar($data, $unidade) {    // PRECISA DE JUSTIFICATIVA
         try {
             DB::beginTransaction();
             $planoEntrega = PlanoEntrega::find($data["id"]);
@@ -245,7 +244,7 @@ class PlanoEntregaService extends ServiceBase
         return true;    
     }
 
-    public function retirarHomologacao($data, $unidade) {
+    public function retirarHomologacao($data, $unidade) {    // PRECISA DE JUSTIFICATIVA
         try {
             DB::beginTransaction();
             $planoEntrega = PlanoEntrega::find($data["id"]);
@@ -258,7 +257,7 @@ class PlanoEntregaService extends ServiceBase
         return true;
     }
 
-    public function suspender($data, $unidade){
+    public function suspender($data, $unidade){    // PRECISA DE JUSTIFICATIVA
         try {
             DB::beginTransaction();
             $planoEntrega = PlanoEntrega::find($data["id"]);

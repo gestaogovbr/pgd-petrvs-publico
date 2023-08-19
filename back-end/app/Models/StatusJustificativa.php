@@ -15,13 +15,14 @@ class StatusJustificativa extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'codigo',
-        'justificativa',
-        'plano_entrega_id',
-        'plano_trabalho_id',
-        'plano_trabalho_consolidacao_id',
-        'atividade_id',
-        'usuario_id',
+        'codigo', /* enum('ATIVO','AVALIADO','CANCELADO','CONCLUIDO','HOMOLOGANDO','AGUARDANDO_ASSINATURA','INCLUIDO','INICIADO','EM_RECURSO','SUSPENSO'); NOT NULL; */// Status do artefato (plano de entregas, plano de trabalho ou atividade)
+        'justificativa', /* text; NOT NULL; */// Justificativa da mudança para este status
+        'plano_entrega_id', /* char(36); */
+        'plano_trabalho_id', /* char(36); */
+        'plano_trabalho_consolidacao_id', /* char(36); */
+        'atividade_id', /* char(36); */
+        'usuario_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
     ];
     //Has
     // Belongs

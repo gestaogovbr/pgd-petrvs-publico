@@ -12,7 +12,7 @@ import { Documento } from './documento.model';
 import { AtividadePausa } from './atividade-pausa.model';
 import { HasStatus, StatusJustificativa } from './status-justificativa.model';
 
-export type AtividadeStatus = "CONCLUIDO" | "INICIADO" | "INCLUIDO";
+export type AtividadeStatus = "CONCLUIDO" | "INICIADO" | "INCLUIDO" | "PAUSADO" | "NAOCONCLUIDO";
 
 export type AtividadeMetadados = {
     atrasado: boolean,
@@ -56,7 +56,7 @@ export class Atividade extends Base implements HasComentarios, HasStatus {
     public esforco: number = 0.0; /* Tempo calculado a partir da atividade e utilizando o fator_complexidade */
     public tempo_despendido: number | null = null; /* Calculado no fim da atividade, sendo o tempo líquido (considerando pausas) */
     public data_arquivamento: Date | null = null; /* Data de arquivamento da atividade */
-    public status: string | null = null; /* Status atual da atividade */
+    public status: AtividadeStatus | null = null; /* Status atual da atividade */
     public etiquetas: LookupItem[] = []; /* Etiquetas */
     public checklist: AtividadeChecklist[] = []; /* Checklist */
     public prioridade: number | null = null; /* Nível de prioridade */

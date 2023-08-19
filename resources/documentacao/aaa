@@ -1,7 +1,0 @@
-status_id => status: enum([""])
-status_justificativas
-   - texto
-   - status: enum([""])
-   - atividade_id   
-   - plano_entrega_id
-   - plano_trabalho_id

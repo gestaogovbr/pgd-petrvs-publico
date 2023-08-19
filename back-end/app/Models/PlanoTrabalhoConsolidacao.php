@@ -14,10 +14,10 @@ class PlanoTrabalhoConsolidacao extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'data_inicio', /* datetime; NOT NULL; */// Data inicial da consolidacão
-        'data_fim', /* datetime; NOT NULL; */// Data final da consolidação
+        'data_inicio', /* date; NOT NULL; */// Data inicial da consolidacão
+        'data_fim', /* date; NOT NULL; */// Data final da consolidação
         'plano_trabalho_id', /* char(36); NOT NULL; */
-        'status', 
+        'status', /* enum('CONCLUIDO','AVALIADO','INCLUIDO'); */// Status atual da consolidação
         'avaliacao_id', /* char(36); */
         //'deleted_at', /* timestamp; */
     ];
