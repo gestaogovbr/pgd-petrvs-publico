@@ -15,7 +15,8 @@ class TipoCapacidade extends ModelBase
         'id', /* char(36); NOT NULL; */
         'codigo', /* varchar(256); NOT NULL; */// Código da rotina no sistema (acesso)
         'descricao', /* text; NOT NULL; */// Descrição da capacidade (acesso)
-        'grupo_id'  /* Referência para o id do módulo ao qual a capacidade pertence */
+        'grupo_id', /* char(36); */
+        //'deleted_at', /* timestamp; */
     ];
 
     // Has

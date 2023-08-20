@@ -26,6 +26,7 @@ class CreatePlanosEntregas extends Migration
             $table->dateTime('data_fim')->nullable()->comment("Data final do plano de entregas");
             $table->dateTime('data_arquivamento')->nullable()->comment("Data de arquivamento do plano de entregas");
             $table->string('nome', 256)->comment("Nome do plano de entregas");
+            $table->enum('status', ["INCLUIDO","HOMOLOGANDO","ATIVO","CONCLUIDO","AVALIADO","SUSPENSO","CANCELADO"])->comment("Status atual do plano de entregas");
             // Chaves estrangeiras:
             $table->foreignUuid('planejamento_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Planejamento institucional ao qual está ligado o plano de entregas");
             $table->foreignUuid('cadeia_valor_id')->nullable()->constrained("cadeias_valores")->onDelete('restrict')->onUpdate('cascade')->comment("Cadeia de valores à qual está ligado o plano de entregas");
@@ -33,8 +34,6 @@ class CreatePlanosEntregas extends Migration
             $table->foreignUuid('plano_entrega_id')->nullable()->constrained("planos_entregas")->onDelete('restrict')->onUpdate('cascade')->comment("Plano de Entrega superior ao qual este aderiu");
             $table->foreignUuid('programa_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment('Programa de gestão ao qual está vinculado o plano de entregas');
             $table->foreignUuid('criacao_usuario_id')->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->comment("Usuário responsável pela criação do plano de entregas");
-            //Criada na tabela 'status' devido à referência cruzada
-            //$table->foreignUuid('status_id')->constrained("status")->onDelete('restrict')->onUpdate('cascade')->comment("Status atual do Plano de Entregas");
         });
         // Cria na tabela 'sequences' o campo plano_entrega_numero
         Schema::table('sequences', function (Blueprint $table) {

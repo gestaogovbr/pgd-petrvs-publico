@@ -82,7 +82,7 @@ class PlanoTrabalhoService extends ServiceBase
 
   public function afterStore($planoTrabalho, $action){
     if($action == ServiceBase::ACTION_INSERT) { $this->status->atualizaStatus($planoTrabalho, 'INCLUIDO', 'O plano de trabalho foi criado nesta data.'); }
-}
+  }
 
   public function validateStore($data, $unidade, $action)
   {
@@ -168,24 +168,26 @@ class PlanoTrabalhoService extends ServiceBase
   /* Será a data_inicio, ou a data_fim do último período CONCLUIDO ou AVALIADO, ou a data_fim da última ocorrência, ou data_inicio do último perído com entregas. O que for maior. */
   public function dataFinalMinimaConsolidacao($plano) {
     $result = strtotime($plano->data_inicio);
-    foreach($plano->consolidacoes as $consolidacao) {
-      $data = strtotime($consolidacao->status->codigo != "INCLUIDO" ? $consolidacao->data_fim : 
-        ($consolidacao->ocorrencias()->count() ? $consolidacao->ocorrencias()->max('data_fim') :
+    // ************ TRECHO COMENTADO TEMPORARIAMENTE (ENQUANTO É CRIADO O RELACIONAMENTO ENTREGAS 'DENTRO' DO MODEL DE PLANOTRABALHOCONSOLIDACAO) **********
+/*     foreach($plano->consolidacoes as $consolidacao) {
+      $data = strtotime($consolidacao->status != "INCLUIDO" ? $consolidacao->data_fim : 
+        ($consolidacao->ocorrencias()->count() ? $consolidacao->ocorrencias()->max('data_fim') : $result
         ($consolidacao->entregas()->count() ? $consolidacao->data_inicio : $result)));
       $result = max($result, $data);
-    }
+    } */
     return date('Y-m-d', $result);
   }
 
   /* Será a data_fim, ou a data_inicio do primeiro período CONCLUIDO ou AVALIADO, ou a data_inicio da primeira ocorrência, ou data_fim do primeiro período com entregas. O que for maior. */
   public function dataInicialMaximaConsolidacao($plano) {
     $result = strtotime($plano->data_fim);
-    foreach($plano->consolidacoes as $consolidacao) {
-      $data = strtotime($consolidacao->status->codigo != "INCLUIDO" ? $consolidacao->data_inicio : 
+    // ************ TRECHO COMENTADO TEMPORARIAMENTE (ENQUANTO É CRIADO O RELACIONAMENTO ENTREGAS 'DENTRO' DO MODEL DE PLANOTRABALHOCONSOLIDACAO) **********
+/*     foreach($plano->consolidacoes as $consolidacao) {
+      $data = strtotime($consolidacao->status != "INCLUIDO" ? $consolidacao->data_inicio : 
         ($consolidacao->ocorrencias()->count() ? $consolidacao->ocorrencias()->min('data_inicio') :
         ($consolidacao->entregas()->count() ? $consolidacao->data_fim : $result)));
       $result = min($result, $data);
-    }
+    } */
     return date('Y-m-d', $result);
   }
 
@@ -233,7 +235,7 @@ class PlanoTrabalhoService extends ServiceBase
       /* (RN_CSLD_3) Caso exista uma ocorrência que faça interseção no período e tenha data_fim maior que a calculada, a data_fim do período irá crescer */
       $dataFim = $maxDataFimOcorrencia > strtotime($dataFim) ? date("Y-m-d", $maxDataFimOcorrencia) : $dataFim;
       $igual = array_filter($existentes, fn($c) => $c->data_inicio == $dataInicio && $c->data_fim == $dataFim)[0] ?? null;
-      $intersecao = array_filter($existentes, fn($c) => $c->status->codigo != "INCLUIDO" && strtotime($dataInicio) <= strtotime($c->data_fim) && strtotime($dataFim) >= strtotime($c->data_inicio))[0] ?? null;
+      $intersecao = array_filter($existentes, fn($c) => $c->status != "INCLUIDO" && strtotime($dataInicio) <= strtotime($c->data_fim) && strtotime($dataFim) >= strtotime($c->data_inicio))[0] ?? null;
       if(!empty($igual)) { /* (RN_CSLD_4) Caso exista períodos iguais, o período existente será mantido (para este perído nada será feito, manterá a mesma ID) */
         $merged[] = $igual;
         $existentes = array_filter($existentes, fn($e) => $e->id !== $igual->id);
@@ -247,7 +249,7 @@ class PlanoTrabalhoService extends ServiceBase
             'data_inicio' => $dataInicio,
             'data_fim' => date("Y-m-d", strtotime($intersecao->data_inicio . ' - 1 days')), 
             'plano_trabalho_id' => $plano->id,
-            'status' => ['codigo' => 'INCLUIDO']
+            'status' => 'INCLUIDO'
           ]);
           $novo->save();
           $merged[] = $novo;
@@ -258,7 +260,7 @@ class PlanoTrabalhoService extends ServiceBase
           'data_inicio' => $dataInicio,
           'data_fim' => $dataFim, 
           'plano_trabalho_id' => $plano->id,
-          'status' => ['codigo' => 'INCLUIDO']
+          'status' => 'INCLUIDO'
         ]);
         $novo->save();
         $merged[] = $novo;

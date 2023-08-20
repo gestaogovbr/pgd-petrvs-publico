@@ -108,6 +108,6 @@ class UnidadeIntegranteService extends ServiceBase
 
     public function validateIntegrante($atribuicoes)
     {
-        if (count(array_intersect(['GESTOR', 'GESTOR_SUBSTITUTO'], $atribuicoes)) == 2 || count(array_intersect(['LOTADO', 'COLABORADOR'], $atribuicoes)) == 2) throw new ServerException("ValidateIntegrante", "Há inconsistência nas atribuições: GESTOR/GESTOR_SUBSTITUTO ou LOTADO/COLABORADOR");
+        if (count(array_intersect(['GESTOR', 'GESTOR_SUBSTITUTO'], $atribuicoes)) == 2) throw new ServerException("ValidateIntegrante", "Há inconsistência nas atribuições: GESTOR/GESTOR_SUBSTITUTO");
     }
 }

@@ -443,8 +443,8 @@ class ProcedimentoTrabalharComponent extends _listener_base__WEBPACK_IMPORTED_MO
           fixedFilter: [["status", "==", "INICIADO"]]
         });
         if (selected) {
-          if (selected.metadados?.suspenso) {
-            if (yield _this4.dialog.confirm("Atividade suspensa", "Para concluir é necessário primeiro reiniciar a atividade. Deseja reiniciar?")) {
+          if (selected.metadados?.pausado) {
+            if (yield _this4.dialog.confirm("Atividade pausada", "Para concluir é necessário primeiro reiniciar a atividade. Deseja reiniciar?")) {
               _this4.go.navigate({
                 route: ['gestao', 'atividade', selected.id, 'pausar'],
                 params: {

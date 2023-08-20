@@ -263,7 +263,8 @@ class UnidadeService extends ServiceBase
         $usuario = parent::loggedUser();
         $where = [];
         $subordinadas = true;
-        $inativos = !empty(array_filter($data["where"], fn($w) => $w[0] == "inativo"));
+        $dataInativacao = $this->extractWhere($data, "data_inativacao"); //  !empty(array_filter($data["where"], fn($w) => $w[0] == "data_inativacao"));
+        $inativos = empty($dataInativacao) || $dataInativacao[2];
         //Esta variável '$unidadesPlanejamento' informa se a consulta está vindo do formulário de inclusão de 
         //Planejamento Institucional para uma unidade executora
         $unidadesPlanejamento = !empty(array_filter($data["where"], fn($w) => $w[0] == "unidades_planejamento")); 
@@ -271,14 +272,14 @@ class UnidadeService extends ServiceBase
         foreach($data["where"] as $condition) {
             if(is_array($condition) && $condition[0] == "subordinadas") {
                 $subordinadas = $condition[2];
-            } else if(is_array($condition) && $condition[0] == "inativos" && !$inativos) {
-                $inativos = $condition[2];
+            } else if(is_array($condition) && $condition[0] == "inativos") {
+                $inativos = $inativos || $condition[2];
             } else {
                 array_push($where, $condition);
             }
         }
         if(!$inativos) {
-            array_push($where, ["inativo", "==", null]);
+            array_push($where, ["data_inativacao", "==", null]);
         }
         if(!$usuario->hasPermissionTo("MOD_UND_TUDO")) { // || ($unidadesPlanejamento && ($usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_SUBORD") || $usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_QQLOT")))) {
             //if($unidadesPlanejamento && $usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_QQLOT")) $subordinadas = false;

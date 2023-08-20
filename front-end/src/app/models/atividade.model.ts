@@ -5,15 +5,14 @@ import { Comentario, HasComentarios } from './comentario';
 import { AtividadeTarefa } from './atividade-tarefa.model';
 import { PlanoTrabalhoEntrega } from './plano-trabalho-entrega.model';
 import { PlanoTrabalho } from './plano-trabalho.model';
-import { TipoProcesso } from './tipo-processo.model';
 import { Unidade } from './unidade.model';
 import { Usuario } from './usuario.model';
 import { BadgeButton } from '../components/badge/badge.component';
 import { Documento } from './documento.model';
 import { AtividadePausa } from './atividade-pausa.model';
-import { HasStatus, Status } from './status.model';
+import { HasStatus, StatusJustificativa } from './status-justificativa.model';
 
-export type AtividadeStatus = "CONCLUIDO" | "INICIADO" | "INCLUIDO";
+export type AtividadeStatus = "CONCLUIDO" | "INICIADO" | "INCLUIDO" | "PAUSADO" | "NAOCONCLUIDO";
 
 export type AtividadeMetadados = {
     atrasado: boolean,
@@ -44,8 +43,7 @@ export class Atividade extends Base implements HasComentarios, HasStatus {
     public unidade?: Unidade;
     public documento_requisicao?: Documento;
     public documento_entrega?: Documento;
-    public status?: Status;
-    public status_historico: Status[] = []; // Mudanças de status sofridas pela atividade (histórico)
+    public status_historico: StatusJustificativa[] = []; // Mudanças de status sofridas pela atividade (histórico)
 
     public numero: number = 0; /* Numero da atividade */
     public descricao: string = ""; /* Assunto da atividade */
@@ -58,6 +56,7 @@ export class Atividade extends Base implements HasComentarios, HasStatus {
     public esforco: number = 0.0; /* Tempo calculado a partir da atividade e utilizando o fator_complexidade */
     public tempo_despendido: number | null = null; /* Calculado no fim da atividade, sendo o tempo líquido (considerando pausas) */
     public data_arquivamento: Date | null = null; /* Data de arquivamento da atividade */
+    public status: AtividadeStatus | null = null; /* Status atual da atividade */
     public etiquetas: LookupItem[] = []; /* Etiquetas */
     public checklist: AtividadeChecklist[] = []; /* Checklist */
     public prioridade: number | null = null; /* Nível de prioridade */
@@ -73,7 +72,6 @@ export class Atividade extends Base implements HasComentarios, HasStatus {
     public demandante_id: string = "";
     public usuario_id: string | null = null;
     public unidade_id: string = "";
-    public status_id: string = "";
     public documento_requisicao_id: string | null = null;
     public documento_entrega_id: string | null = null;
 

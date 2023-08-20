@@ -191,17 +191,7 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_FER_EXCL", "Permite excluir feriado"],
                 ["MOD_FER_INCL", "Permite incluir feriados"],
             ]
-        ], [ // Farias
-            "codigo"=> "MOD_LOT", //ok
-            "descricao"=> "Módulo lotação",
-            "capacidades"=> [
-                /* Capacidades do módulo LOTAÇÃO*/
-                ["MOD_LOT_CONS", "Permite consultar lotação"],
-                //["MOD_LOT_EDT", "Permite editar lotação"], // só no back
-                //["MOD_LOT_EXCL", "Permite excluir lotação"],
-                //["MOD_LOT_INCL", "Permite incluir lotação"],
-            ]
-        ], [ 
+        ], [ // Pablo
             "codigo"=> "MOD_MATSRV", //ok
             "descricao"=> "Módulo materiais e serviços",
             "capacidades"=> [
@@ -232,13 +222,10 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo de Plano de Trabalho",
             "capacidades"=> [
                 /* Capacidades do módulo PLANO DE TRABALHO */
-                //["MOD_PTR", "Permite acessar item menu plano de trabalho"],
                 ["MOD_PTR_CONS", "Permite consultar plano de trabalho"],
                 ["MOD_PTR_EDT", "Permite editar planos de trabalho"],
                 ["MOD_PTR_EXCL", "Permite excluir planos de trabalho"],
                 ["MOD_PTR_INCL", "Permite incluir planos de trabalho"],
-                //["MOD_PTR_USERS_CONS", "Permite consultar planos de trabalho de usuários fora da lotação"], //ó aqui
-                //["MOD_PTR_USERS_EXCL", "Permite excluir planos de trabalho de usuários fora da lotação"], //só aqui
                 ["MOD_PTR_USERS_INCL", "Permite incluir planos de trabalho de usuários fora da lotação"], //só no back
                 ["MOD_PTR_INCL_SEM_LOT", "Permite incluir planos de trabalho para usuários não lotado na unidade do plano"], //só no back
                 ["MOD_PTR_INTSC_DATA", "Permite incluir planos de trabalho para usuários que já possuem planos no período de mesma modalidade"], //só no back
@@ -267,7 +254,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo de Plano de Entrega",
             "capacidades"=> [
                 /* Capacidades do módulo PLANO DE ENTREGA */
-                //["MOD_PENT", "Permite acessar item do menu plano de entregas"],
                 ["MOD_PENT_CONS", "Permite consultar planos de entrega"],
                 ["MOD_PENT_INCL", "Permite incluir planos de entrega"], //só no front
                 ["MOD_PENT_EDT", "Permite editar planos de entrega"],
@@ -290,10 +276,6 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_PENT_REATIVAR", "Permite reativar planos de entregas suspensos, desde que sejam da sua unidade de lotação principal"], //só aqui
                 ["MOD_PENT_ARQ", "Permite arquivar planos de entregas da sua unidade de lotação principal"],
                 ["MOD_PENT_QQR_UND", "Permite realizar as operações em qualquer unidade, independente de onde esteja lotado ou seja gestor"],
-                //["MOD_PENT_DESARQ", "Permite desarquivar planos de entregas"], //só aqui
-                //["MOD_PENT_TOD_SUP", "Permite visualizar todas as unidades superiores"], //só aqui
-                //["MOD_PENT_IMD_SUP", "Permite visualizar somente a unidade imediatamente superior"], //só aqui
-                //["MOD_PENT_TOD_SUB", "Permite visualizar todas as unidades subordinadas"], //só aqui
                 /* Capacidades do módulo PLANO DE ENTREGAS - ENTREGAS*/
                 ["MOD_PENT_ENTR_CONS", "Permite consultar entregas de um plano de entregas"], //só aqui
                 ["MOD_PENT_ENTR_EDT", "Permite editar entregas de um plano de entregas"], //só no back

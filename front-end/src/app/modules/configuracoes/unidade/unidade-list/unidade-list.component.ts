@@ -81,7 +81,7 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
     let form: any = filter.value;
     let result: any[] = [];
     /* Se for selectable trás somente os inativos ou os não inativos, se não for então trás juntamente os inativos se form.inativos */
-    result.push(this.selectable ? ["inativo", form.inativos ? "!=" : "==", null] : ["inativos", "==", form.inativos]);
+    result.push(this.selectable ? ["data_inativacao", form.inativos ? "!=" : "==", null] : ["inativos", "==", form.inativos]);
     if (form.entidade_id?.length) result.push(["entidade_id", "==", form.entidade_id]);
     if (form.nome?.length) result.push(["or", ["nome", "like", "%" + form.nome.replace(" ", "%") + "%"], ["sigla", "like", "%" + form.nome.replace(" ", "%") + "%"]]);
     if (form.instituidora) result.push(["instituidora", "==", 1]);

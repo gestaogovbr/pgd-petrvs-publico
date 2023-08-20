@@ -12,10 +12,10 @@ class PlanoTrabalhoConsolidacaoOcorrencia extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'data_inicio', /* json; NOT NULL; */// Meta para a entrega
-        'data_fim', /* json; */// Valor realizado da meta
-        'descricao', /* char(36); NOT NULL; */
-        'plano_trabalho_consolidacao_id', /* char(36); NOT NULL; */
+        'data_inicio', /* datetime; NOT NULL; */// Data inicial da consolidacão
+        'data_fim', /* datetime; NOT NULL; */// Data final da consolidação
+        'descricao', /* text; NOT NULL; */// Descrição da ocorrência
+        'plano_trabalho_consolidacao_id', /* char(36); NOT NULL; */// Consolidação do Plano de Trabalho à qual está associada esta entrega
         //'deleted_at', /* timestamp; */
     ];
 

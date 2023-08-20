@@ -24,17 +24,17 @@ class Programa extends ModelBase
         'data_inicio', /* datetime; NOT NULL; */// Inicio da vigência do programa
         'data_fim', /* datetime; NOT NULL; */// Fim da vigência do programa
         'prazo_max_plano_entrega', /* int; NOT NULL; */// Limite máximo de dias corridos para o plano de entregas (Zero para não limitar)
-        'periodo_avaliacao', /* enum('SEMANAL','QUINZENAL','MENSAL','BIMESTRAL','TRIMESTRAL','SEMESTRAL'); NOT NULL; DEFAULT: 'MENSAL'; */// Período para avaliação do plano de trabalho
         'termo_obrigatorio', /* tinyint; NOT NULL; */// Se o termo é ou não obrigatório
-        'periodicidade_consolidacao',
-        'periodicidade_valor',
-        'dias_tolerancia_consolidacao',
+        'periodicidade_consolidacao', /* enum('DIAS','SEMANAL','QUINZENAL','MENSAL','BIMESTRAL','TRIMESTRAL','SEMESTRAL'); NOT NULL; DEFAULT: 'MENSAL'; */// Período para avaliação do plano de trabalho
+        'periodicidade_valor', /* int; NOT NULL; DEFAULT: '1'; */// Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do mês para o restante
+        'dias_tolerancia_consolidacao', /* int; NOT NULL; DEFAULT: '10'; */// Dias de tolerância para o lançamento do registro das atividades na consolidação, após esses dias será liberado automaticamente para avaliação
         'tipo_documento_tcr_id', /* char(36); */
-        'tipo_avaliacao_id',
+        'tipo_avaliacao_id', /* char(36); NOT NULL; */
         'documento_id', /* char(36); */
         'unidade_id', /* char(36); NOT NULL; */
         'template_tcr_id', /* char(36); */
         //'deleted_at', /* timestamp; */
+        /*'periodo_avaliacao',*/// REMOVED
     ];
 
     public $delete_cascade = ['documento'];

@@ -31,6 +31,7 @@ use App\Models\ProjetoHistorico;
 use App\Models\ProjetoRecurso;
 use App\Models\ProjetoTarefa;
 use App\Models\NotificacaoConfig;
+use App\Models\StatusJustificativa;
 use App\Traits\MergeRelations;
 use App\Traits\LogChanges;
 use App\Traits\HasPermissions;
@@ -59,10 +60,10 @@ class Usuario extends Authenticatable
         'config', /* json; */// Configurações do usuário
         'notificacoes', /* json; */// Configurações das notificações (Se envia e-mail, whatsapp, tipos, templates)
         'id_google', /* varchar(50); */// Id associado com o usuário do login do google
-        'situacao_funcional', /* enum('SERVIDOR_EFETIVO','SERVIDOR_COMISSIONADO','EMPREGADO','CONTRATADO_TEMPORARIO'); NOT NULL; DEFAULT: 'SERVIDOR_EFETIVO'; */// Vínculo do usuário com a administração
         'perfil_id', /* char(36); */
         'uf', /* char(2); */// UF do usuário
         'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho
+        'situacao_funcional',
         //'deleted_at', /* timestamp; */
         //'remember_token', /* varchar(100); */
         //'password', /* varchar(255); */// Senha do usuário
@@ -72,6 +73,7 @@ class Usuario extends Authenticatable
         //'foto_microsoft', /* text; */// Foto do Azure (Microsoft)
         //'foto_firebase', /* text; */// Foto do Firebase (Google, Facebook, Instagram, Twiter, etc...)
         //'id_super', /* text; */// Id do usuário no SUPER
+        //'vinculacao', /* enum('SERVIDOR_EFETIVO','SERVIDOR_COMISSIONADO','EMPREGADO','CONTRATADO_TEMPORARIO'); NOT NULL; DEFAULT: 'SERVIDOR_EFETIVO'; */// Vínculo do usuário com a administração
         //'metadados', /* json; */// Metadados do usuário
     ];
 
@@ -130,7 +132,7 @@ class Usuario extends Authenticatable
     public function planosEntregaCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }  
     public function planosTrabalhoCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); } 
     public function unidadesIntegrante() { return $this->hasMany(UnidadeIntegrante::class); }
-    public function statusHistorico() { return $this->hasMany(Status::class, "usuario_id"); }
+    public function statusHistorico() { return $this->hasMany(StatusJustificativa::class, "usuario_id"); }
     // belongsTo
     public function perfil() { return $this->belongsTo(Perfil::class); }     //nullable
     // belongsToMany
@@ -139,8 +141,9 @@ class Usuario extends Authenticatable
     public function gerenciaTitular() { return $this->hasOne(UnidadeIntegrante::class)->has('gestor'); }
     public function gerenciasSubstitutas() { return $this->hasMany(UnidadeIntegrante::class)->has('gestorSubstituto'); }
     public function lotacao() { return $this->hasOne(UnidadeIntegrante::class)->has('lotado'); }
-    public function areasTrabalho() { return $this->hasMany(UnidadeIntegrante::class)->has('lotado')->orHas('colaborador'); }
-    public function colaboracoes() { return $this->hasMany(UnidadeIntegrante::class)->has('colaborador'); }
+    //public function areasTrabalho() { return $this->hasMany(UnidadeIntegrante::class)->has('lotado')->orHas('colaborador'); }
+    public function areasTrabalho() { return $this->hasMany(UnidadeIntegrante::class)->has('atribuicoes'); }
+    //public function colaboracoes() { return $this->hasMany(UnidadeIntegrante::class)->has('colaborador'); }
     // Mutattors e Casts
     public function getUrlFotoAttribute($value) 
     {

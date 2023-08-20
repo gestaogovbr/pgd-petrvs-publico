@@ -112,7 +112,7 @@ export class LookupService {
   public UNIDADE_INTEGRANTE_TIPO: LookupItem[] = [
     { key: 'AVALIADOR_PLANO_ENTREGA', value: "Avaliador (Planos de Entrega)", icon: "bi bi-check-all", color: "warning" },
     { key: 'AVALIADOR_PLANO_TRABALHO', value: "Avaliador (Planos de Trabalho)", icon: "bi bi-check-circle", color: "info" },
-    { key: 'COLABORADOR', value: "Colaborador", icon: "bi bi-person-fill-add", color: "secondary" },
+    //{ key: 'COLABORADOR', value: "Colaborador", icon: "bi bi-person-fill-add", color: "secondary" },
     { key: 'GESTOR', value: "Gestor", icon: "bi bi-star-fill", color: "primary" },
     { key: 'GESTOR_SUBSTITUTO', value: "Gestor Substituto", icon: "bi bi-star-half", color: "primary" },
     { key: 'HOMOLOGADOR_PLANO_ENTREGA', value: "Homologador (Planos de Entrega)", icon: "bi bi-check2-square", color: "warning" },
@@ -534,7 +534,18 @@ export class LookupService {
     { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success" },
     { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-clipboard2-check", color: "primary" },
     { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info" },
-    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "danger" }
+    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "bg-warning text-dark" },
+    { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "danger" }
+  ];
+
+  public PLANO_TRABALHO_STATUS: LookupItem[] = [
+    { key: "INCLUIDO", value: "Incluído", icon: "bi bi-pencil-square", color: "secondary" },
+    { key: "AGUARDANDO_ASSINATURA", value: "Aguardando assinatura", icon: "bi bi-clock", color: "warning" },
+    { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success" },
+    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-clipboard2-check", color: "primary" },
+    { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info" },
+    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "bg-warning text-dark" },
+    { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "danger" }
   ];
 
   public PROJETO_PERFIS: LookupItem[] = [
