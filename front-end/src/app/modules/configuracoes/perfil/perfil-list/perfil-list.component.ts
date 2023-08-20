@@ -24,27 +24,8 @@ export class PerfilListComponent extends PageListBase<Perfil, PerfilDaoService> 
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}
     });
-    // Testa se o usuário possui permissão para exibir dados do perfil
-    if (this.auth.hasPermissionTo("MOD_PERF_CONS")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir o perfil
-    if (this.auth.hasPermissionTo("MOD_PERF_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
-  }
-
-  public filterClear(filter: FormGroup) {
-    filter.controls.nome.setValue("");
-    super.filterClear(filter);
+    this.addOption(this.OPTION_INFORMACOES);
+    this.addOption(this.OPTION_EXCLUIR, "MOD_PERF_EXCL");
   }
 
   public filterWhere = (filter: FormGroup) => {

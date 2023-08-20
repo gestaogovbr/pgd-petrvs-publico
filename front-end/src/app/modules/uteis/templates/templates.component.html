@@ -3,9 +3,6 @@
   [hasAdd]="true"
   [hasEdit]="true"
   [hasDelete]="true">
-  <!--[hasAdd]="auth.hasPermissionTo('MOD_TEMP_INCL')"
-  [hasEdit]="auth.hasPermissionTo('MOD_TEMP_EDT')"
-  [hasDelete]="auth.hasPermissionTo('MOD_TEMP_DEL')"//-->
   <toolbar *ngIf="!selectable"></toolbar>
   <filter hidden [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed"></filter>
   <side-panel [size]="8" fullSizeOnEdit [template]="panelTemplate" [editTemplate]="panelTemplateEdit">

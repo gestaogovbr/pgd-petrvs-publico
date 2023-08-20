@@ -23,7 +23,7 @@ import { PlanoEntregaListLogsComponent } from './plano-entrega-list-logs/plano-e
     PlanoEntregaMapaEntregasComponent,
     PlanoEntregaFormEntregaComponent,
     PlanoEntregaListEntregaListComponent,
-    PlanoEntregaListLogsComponent
+    PlanoEntregaListLogsComponent,
   ],
   imports: [
     CommonModule,

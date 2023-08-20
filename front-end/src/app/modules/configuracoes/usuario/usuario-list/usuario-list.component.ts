@@ -27,54 +27,33 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
     this.code = "MOD_CFG_USER";
     this.join = ["perfil:id,nome"];
     this.filter = this.fh.FormBuilder({
-      usuario: {default: ""},
-      unidade_id: {default: ""},
-      perfil_id: {default: null}
+      usuario: { default: "" },
+      unidade_id: { default: "" },
+      perfil_id: { default: null }
     });
-    // Testa se o usuário possui permissão para exibir dados do usuário
-    if (this.auth.hasPermissionTo("MOD_USER_CONS")) {
+    this.addOption(this.OPTION_INFORMACOES);
+    this.addOption(this.OPTION_EXCLUIR, "MOD_USER_EXCL");
+    // Testa se o usuário possui permissão para gerenciar as suas unidades-integrantes
+    if (this.auth.hasPermissionTo("MOD_UND_INTG")) {
       this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir dados do usuario
-    if (this.auth.hasPermissionTo("MOD_USER_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
-  // Testa se o usuário possui permissão para gerenciar as suas unidades-integrantes
-  if (this.auth.hasPermissionTo("MOD_UND_INTG")) {
-      this.options.push({
-      icon: "bi bi-list-task",
-      label: "Atribuições",
-      onClick: (usuario: Usuario) => {
-        this.go.navigate({ route: ['configuracoes', 'usuario', usuario.id, 'integrante'] });
+        icon: "bi bi-list-task",
+        label: "Atribuições",
+        onClick: (usuario: Usuario) => {
+          this.go.navigate({ route: ['configuracoes', 'usuario', usuario.id, 'integrante'] });
         }
       });
     }
   }
 
-  public filterClear(filter: FormGroup) {
-    this.filter?.controls.usuario.setValue("");
-    this.filter?.controls.unidade_id.setValue("");
-    this.filter?.controls.perfil_id.setValue(null);
-    super.filterClear(filter);
-  }
-
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
-    if(filter?.controls.usuario?.value?.length) {
+    if (filter?.controls.usuario?.value?.length) {
       result.push(["nome", "like", "%" + filter?.controls.usuario?.value + "%"]);
     }
-    if(filter?.controls.unidade_id?.value?.length) {
+    if (filter?.controls.unidade_id?.value?.length) {
       result.push(["lotacao", "==", filter?.controls.unidade_id.value]);
     }
-    if(filter?.controls.perfil_id?.value?.length) {
+    if (filter?.controls.perfil_id?.value?.length) {
       result.push(["perfil_id", "==", filter?.controls.perfil_id?.value]);
     }
     return result;

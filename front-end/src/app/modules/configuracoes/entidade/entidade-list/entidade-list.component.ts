@@ -20,28 +20,14 @@ export class EntidadeListComponent extends PageListBase<Entidade, EntidadeDaoSer
     super(injector, Entidade, EntidadeDaoService);
     /* Inicializações */
     this.title = this.lex.translate("Entidades");
-    this.code = "MOD_CFG_ENTD";
+    this.code = "MOD_ENTD";
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}
     });
-    // Testa se o usuário possui permissão para exibir dados da entidade
-    if (this.auth.hasPermissionTo("MOD_ENTD_CONS")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir a entidade
-    if (this.auth.hasPermissionTo("MOD_ENTD_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
+    this.addOption(this.OPTION_INFORMACOES);
+    this.addOption(this.OPTION_EXCLUIR, "MOD_ENTD_EXCL");
     // Testa se o usuário possui permissão para configurar a entidade
-    if (this.auth.hasPermissionTo("MOD_ENTD_CFG")){
+    if (this.auth.hasPermissionTo("MOD_CFG_ENTD")){
       this.options.push({
         icon: "bi bi-tools",
         label: "Configurações",
@@ -50,11 +36,6 @@ export class EntidadeListComponent extends PageListBase<Entidade, EntidadeDaoSer
         }
       });
     }
-  }
-
-  public filterClear(filter: FormGroup) {
-    filter.controls.nome.setValue("");
-    super.filterClear(filter);
   }
 
   public filterWhere = (filter: FormGroup) => {

@@ -3,7 +3,7 @@
     [hasAdd]="auth.hasPermissionTo('MOD_MATSRV_INCL')"
     [hasEdit]="auth.hasPermissionTo('MOD_MATSRV_EDT')">
     <toolbar *ngIf="!selectable"></toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-select [size]="4" label="Tipo" itemTodos="- Todos -" [valueTodos]="null" controlName="tipo" [control]="filter!.controls.tipo" [items]="lookup.MATERIAL_SERVICO_TIPO"></input-select>
             <input-text [size]="4" label="Código" controlName="codigo" [control]="filter!.controls.codigo"></input-text>

@@ -637,6 +637,24 @@ export class LookupService {
     { 'key': 'HIBRIDO', 'value': 'Híbrido' }
   ];
 
+  public TIPO_INTEGRACAO: LookupItem[] = [
+    { 'key': 'NENHUMA', 'value': 'Nenhuma' },
+    { 'key': 'WSO2', 'value': 'Siape-PRF' },
+    { 'key': 'SIAPE', 'value': 'Siape-WS' },
+  ];
+
+  public EXISTE_PAGADOR: LookupItem[] = [
+    { 'key': 'A', 'value': 'Vínculos ativos sem ocorrência de exclusão' },
+    { 'key': 'B', 'value': 'Todos os vínculos' },
+  ];
+  
+  public TIPO_VINCULO: LookupItem[] = [
+    { 'key': 'A', 'value': 'Ativos em exercício no órgão' },
+    { 'key': 'B', 'value': 'Ativos e aposentados' },
+    { 'key': 'C', 'value': 'Ativos, aposentados e pensionistas' },
+  ];
+
+
   public getLookup(itens: LookupItem[], key: any) {
     return itens.find(x => x.key == key);
   }
