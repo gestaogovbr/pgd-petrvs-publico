@@ -226,7 +226,7 @@ class PlanoEntregaService extends ServiceBase
         if($action == ServiceBase::ACTION_INSERT) { 
             $data["criacao_usuario_id"] = parent::loggedUser()->id;
             $data["status"] = "INCLUIDO";
-            // (RN_PENT_1_1) Quando um Plano de Entregas próprio é criado adquire automaticamente o status INCLUIDO; 
+            // (RN_PENT_A) Quando um Plano de Entregas é criado adquire automaticamente o status INCLUIDO; 
         }
         return $data;
     }
@@ -331,9 +331,9 @@ class PlanoEntregaService extends ServiceBase
      *   REGRAS NÃO     REGRAS TOTALMENTE        OUTRAS REGRAS       OUTRAS REGRAS
      *   IMPLEMENTADAS  IMPLEMENTADAS            100% COBERTAS       PARCIALMENTE COBERTAS
      *                  ----------------------------------------------------------------------
-     *   RN_PENT_1_1
-     *   RN_PENT_1_2
-     *                  RN_PENT_1_3
+     *                  RN_PENT_A
+     *   RN_PENT_B
+     *                  RN_PENT_C
      *   RN_PENT_1_4
      *   RN_PENT_2_1
      *   RN_PENT_2_2
