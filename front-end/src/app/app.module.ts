@@ -5,7 +5,6 @@ import { NgChartsModule } from 'ng2-charts';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HomeComponent } from './modules/home/home.component';
 import { LoginComponent } from './modules/login/login.component';
 import { ConfigComponent } from './modules/config/config.component';
 import { DialogComponent } from './services/dialog/dialog.component';
@@ -21,7 +20,6 @@ import { TesteFormComponent } from './modules/teste/teste-form/teste-form.compon
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
     LoginComponent,
     ConfigComponent,
     DialogComponent,

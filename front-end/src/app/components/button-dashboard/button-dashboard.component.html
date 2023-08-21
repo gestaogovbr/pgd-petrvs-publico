@@ -1,0 +1,7 @@
+
+<div class="card h-100" [ngStyle]="{'border-color': borderColor, 'cursor': route ? 'pointer' : 'inherit'}" (click)="onClick()">
+  <div class="card-body text-center">
+    <img src="{{imgIcon}}" />
+    <h2 class="fs-5 fw-semibold" [ngStyle]="{'color': textColor}">{{title}}</h2>
+  </div>
+</div>
