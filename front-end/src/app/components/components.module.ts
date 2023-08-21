@@ -66,6 +66,7 @@ import { AccordionComponent } from './accordion/accordion.component';
 import { SectionComponent } from './accordion/section/section.component';
 import { CollapseCardComponent } from './collapse-card/collapse-card.component';
 import { DoubleScrollbarComponent } from './double-scrollbar/double-scrollbar.component';
+import { ButtonDashboardComponent } from './button-dashboard/button-dashboard.component';
 
 const maskConfigFunction: () => Partial<IConfig> = () => {
   return {
@@ -133,7 +134,8 @@ const maskConfigFunction: () => Partial<IConfig> = () => {
     AccordionComponent,
     SectionComponent,
     CollapseCardComponent,
-    DoubleScrollbarComponent
+    DoubleScrollbarComponent,
+    ButtonDashboardComponent
   ],
   imports: [
     CommonModule,
@@ -199,7 +201,8 @@ const maskConfigFunction: () => Partial<IConfig> = () => {
     ActionButtonComponent,
     AccordionComponent,
     SectionComponent,
-    CollapseCardComponent
+    CollapseCardComponent,
+    ButtonDashboardComponent
   ],
   providers: [
     { 

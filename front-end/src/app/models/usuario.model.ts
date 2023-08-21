@@ -28,6 +28,7 @@ export class UsuarioConfig {
     menu_contexto: string = "EXECUCAO";
     ocultar_menu_sei: boolean = true;
     ocultar_container_petrvs: boolean = false;
+    theme: string = 'light';
 }
 
 export class Usuario extends Base implements HasNotificacao {

@@ -23,6 +23,12 @@
 
                         <div id="gbtn"></div>
 
+                        <div class="govbr">
+                            <button class="br-button btn btn-primary rounded-pill mt-3" type="button">
+                                Entrar com <span>gov.br</span>
+                            </button>
+                        </div>
+
                         <div class="or-container">
                             <div class="line-separator"></div>
                             <div class="or-label">ou</div>
@@ -60,8 +66,12 @@
                     </div>
                     <ng-template #naoPRF>
                         <div *ngIf="globals.hasGoogleLogin" class="card-body">
-
                             <div id="gbtn"></div>
+                        </div>
+
+                        <div class="govbr">
+                            <button class="br-sign-in medium primary mt-3 mt-sm-0 ml-sm-3" type="button">Entrar com&nbsp;<span class="text-black">gov.br</span>
+                            </button>
                         </div>
 
                         <div class="or-container">
