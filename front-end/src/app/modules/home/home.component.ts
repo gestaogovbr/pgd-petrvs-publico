@@ -19,8 +19,6 @@ import { FormControl, FormGroup } from '@angular/forms';
 })
 export class HomeComponent implements OnInit {
 
-  
-
   constructor(
     public auth: AuthService,
     public utils: UtilService,
@@ -33,6 +31,7 @@ export class HomeComponent implements OnInit {
     public gb: GlobalsService,
     public allPages: ListenerAllPagesService
   ) {
+   
     
   }
 
