@@ -17,6 +17,7 @@ class RespostaQuestionario extends ModelBase
         'usuario_id', /* char(36); */
         'curriculum_id', /* char(36); */
         'questionario_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
     ];
 
     protected $casts = [

@@ -2592,9 +2592,9 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
     if (!this.filter?.controls?.usarEtiquetas?.value) {
       rows?.forEach(row => {
         const atividade = row;
-        let status = atividade.metadados?.suspenso ? "SUSPENSO" : this.lookup.ATIVIDADE_STATUS.find(x => x.key == atividade.metadados?.status)?.key;
+        let status = this.lookup.ATIVIDADE_STATUS.find(x => x.key == atividade.status)?.key;
         switch (status || "INCLUIDO") {
-          case "SUSPENSO":
+          case "PAUSADO":
             this.putCard(this.cards[this.PAUSADO], atividade);
             break;
           case "INICIADO":

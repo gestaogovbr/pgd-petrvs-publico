@@ -32,7 +32,7 @@ export class AtividadeService {
 
   public getStatus(row: any): BadgeButton[] {
     const atividade: Atividade = row as Atividade;
-    const status = this.lookup.ATIVIDADE_STATUS.find(x => x.key == atividade.status?.codigo) || { key: "DESCONHECIDO", value: "Desconhecido", icon: "bi bi-question-circle", color: "light" };
+    const status = this.lookup.ATIVIDADE_STATUS.find(x => x.key == atividade.status) || { key: "DESCONHECIDO", value: "Desconhecido", icon: "bi bi-question-circle", color: "light" };
     let result: BadgeButton[] = [{ data: {status: status.key, filter: true}, label: status.value, icon: status.icon!, color: status.color! }];
     if (atividade.metadados?.atrasado) result.push({ data: {status: "ATRASADO", filter: false}, label: "Atrasado", icon: "bi bi-alarm", color: "danger" });
     if (atividade.metadados?.arquivado) result.push({ data: {status: "ARQUIVADO", filter: false}, label: "Arquivado", icon: "bi bi-inboxes", color: "danger" });

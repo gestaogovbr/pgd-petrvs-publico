@@ -148,12 +148,13 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     let form: any = filter.value;
     /*
         (RI_PENT_4) A consulta do grid retornará inicialmente os principais Planos de Entrega do usuário logado (a opção "principais" já vem marcada), que são:
-        - os válidos das unidades onde ele possui lotação (REFACTORING: ou seja, ele é 'lotado' ou 'colaborador'), e
-        - se ele for gestor, os ativos das unidades-pai de onde ele é gestor;
+        - os válidos das unidades onde ele possui lotação/colaboração, e
+        - se ele for gestor, os ativos das unidades-pai de onde ele é gestor e os ativos das unidades imediatamente subordinadas;
     */
     if (this.filter?.controls.principais.value) {
       let w1 = ["unidade_id", "in", this.auth.unidades?.map(u => u.id)];
       let w2 = ["unidade_id", "in", this.auth.unidades?.map(u => u.unidade?.id)];
+      // incluir a condição para trazer também as imediatamente subordinadas, se ele for gestor **************
       if (this.auth.isGestorAlgumaLotacao()) result.push(["or", w1, w2]); else result.push(w1);
 
       if (form.nome?.length) {
@@ -554,7 +555,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   public situacaoPlano(planoEntrega: PlanoEntrega): string {
     if (planoEntrega.deleted_at) return "EXCLUIDO";
     else if (planoEntrega.data_arquivamento) return "ARQUIVADO";
-    else return planoEntrega.status!.codigo;
+    else return planoEntrega.status!;
   }
 
 }

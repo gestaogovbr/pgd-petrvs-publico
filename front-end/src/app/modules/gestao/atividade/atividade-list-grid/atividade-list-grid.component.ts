@@ -72,6 +72,12 @@ export class AtividadeListGridComponent extends AtividadeListBase {
 
   ngAfterViewInit() {
     super.ngAfterViewInit();
+
+    if(this.metadata?.atribuidas_para_mim){
+      this.filter?.controls.atribuidas_para_mim.setValue(true);
+      this.filter?.controls.usuario_id.setValue(this.auth.usuario?.id);
+    }
+
     if (this.fixedFilter) {
       const status = this.fixedFilter.find(x => x[0] == "status");
       if (status) this.filter?.controls.status.setValue(status[2]);

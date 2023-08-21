@@ -70,7 +70,8 @@ class UpdateModelCommand extends Command
         tenancy()->initialize($tenant);
         DB::reconnect('tenant');
         $create = $this->option('create');
-        $tables = array_map(fn($row) => $row->TABLE_NAME, DB::select("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = :database", [":database" => env('DB_DATABASE')]));
+        //$tables = array_map(fn($row) => $row->TABLE_NAME, DB::select("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = :database", [":database" => env('DB_DATABASE')]));
+        $tables = array_map(fn($row) => $row->TABLE_NAME, DB::select("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = :database", [":database" => $tenant->tenancy_db_name]));
         $models = array_map(fn($file) => str_replace(base_path() . '/app/Models/', "", $file), array_filter(glob(base_path() . '/app/Models/*.php'), 'is_file'));
         $updated = "";
         foreach($models as $file) {
@@ -101,7 +102,8 @@ class UpdateModelCommand extends Command
                     preg_match_all('/^\s*\/\*[\'"](\w+?)[\'"],\*\/\/\/ REMOVED/m', $fillable, $match);
                     $removed = count($match) == 2 ? $match[1] : []; /* Campos removidos */
                     /* Cria novo vetor de $fillable */
-                    $columns = DB::select("SELECT COLUMN_NAME, IS_NULLABLE, COLUMN_DEFAULT, COLUMN_TYPE, COLUMN_KEY, COLUMN_COMMENT FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = :table AND TABLE_SCHEMA = :database ORDER BY ORDINAL_POSITION", [":database" => env('DB_DATABASE'), ":table" => $table]);
+                    //$columns = DB::select("SELECT COLUMN_NAME, IS_NULLABLE, COLUMN_DEFAULT, COLUMN_TYPE, COLUMN_KEY, COLUMN_COMMENT FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = :table AND TABLE_SCHEMA = :database ORDER BY ORDINAL_POSITION", [":database" => env('DB_DATABASE'), ":table" => $table]);
+                    $columns = DB::select("SELECT COLUMN_NAME, IS_NULLABLE, COLUMN_DEFAULT, COLUMN_TYPE, COLUMN_KEY, COLUMN_COMMENT FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = :table AND TABLE_SCHEMA = :database ORDER BY ORDINAL_POSITION", [":database" => $tenant->tenancy_db_name, ":table" => $table]);
                     $result = [];
                     $added = [];
                     /* Adiciona primeiro os campos que já estavam como fillable no arquivo original */
@@ -115,7 +117,7 @@ class UpdateModelCommand extends Command
                         }
                         $added[] = $field;
                     }
-                    /* Adiona os outros campos que não estão como fillable no arquivo original mas que estão no banco */
+                    /* Adiciona os outros campos que não estão como fillable no arquivo original mas que estão no banco */
                     foreach($columns as $column) {
                         if(!in_array(strtolower($column->COLUMN_NAME), $added) && !in_array($column->COLUMN_NAME, $this->ignoreFields)) $result[] = "//" . $this->fillableField((array) $column);
                     }

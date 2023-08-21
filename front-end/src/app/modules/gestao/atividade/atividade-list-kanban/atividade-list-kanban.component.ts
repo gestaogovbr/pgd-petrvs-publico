@@ -321,7 +321,7 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
     if(!this.filter?.controls?.usarEtiquetas?.value) {
       rows?.forEach(row => {
         const atividade: Atividade = row as Atividade;
-        let status = this.lookup.ATIVIDADE_STATUS.find(x => x.key == atividade.status?.codigo)?.key;
+        let status = this.lookup.ATIVIDADE_STATUS.find(x => x.key == atividade.status)?.key;
         switch(status || "INCLUIDO") {
           case "PAUSADO": this.putCard(this.cards[this.PAUSADO], atividade); break;
           case "INICIADO": this.putCard(this.cards[this.INICIADO], atividade); break;

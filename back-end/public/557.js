@@ -264,8 +264,8 @@ class AtividadeListBase extends src_app_modules_base_page_list_base__WEBPACK_IMP
         route: ['gestao', 'atividade', atividade.id, 'iniciar']
       }, this.modalRefreshId(atividade))
     };
-    const BOTAO_SUSPENDER = {
-      label: "Suspender",
+    const BOTAO_PAUSAR = {
+      label: "Pausar",
       id: "PAUSADO",
       icon: "bi bi-pause-circle",
       onClick: atividade => this.go.navigate({
@@ -351,15 +351,15 @@ class AtividadeListBase extends src_app_modules_base_page_list_base__WEBPACK_IMP
       }
     } else if (atividade.metadados?.iniciado) {
       /* Iniciado */
-      if (atividade.metadados?.suspenso) {
+      if (atividade.metadados?.pausado) {
         if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) {
-          /* Iniciada e Suspensa */
+          /* Iniciada e Pausada */
           result.push(BOTAO_REINICIAR);
         }
       } else {
         /* Iniciada e não Suspensa */
         if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CONCL')) result.push(BOTAO_CONCLUIR);
-        if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_PAUSA')) result.push(BOTAO_SUSPENDER);
+        if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_PAUSA')) result.push(BOTAO_PAUSAR);
         if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CANC_INICIAR')) result.push(BOTAO_CANCELAR_INICIO);
         if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) result.push(BOTAO_ALTERAR_INICIO);
       }
@@ -482,8 +482,8 @@ class AtividadeListBase extends src_app_modules_base_page_list_base__WEBPACK_IMP
       }
     } else if (atividade.metadados?.iniciado) {
       /* Iniciado */
-      if (atividade.metadados?.suspenso && isResponsavel) {
-        /* Iniciada e Suspensa */
+      if (atividade.metadados?.pausado && isResponsavel) {
+        /* Iniciada e Pausada */
         result.push(BOTAO_REINICIAR);
       } else if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CONCL')) {
         /* Iniciada e não Suspensa */
@@ -1345,7 +1345,7 @@ class AtividadeService {
   }
   getStatus(row) {
     const atividade = row;
-    const status = this.lookup.ATIVIDADE_STATUS.find(x => x.key == atividade.metadados?.status) || {
+    const status = this.lookup.ATIVIDADE_STATUS.find(x => x.key == atividade.status) || {
       key: "DESCONHECIDO",
       value: "Desconhecido",
       icon: "bi bi-question-circle",
@@ -1367,15 +1367,6 @@ class AtividadeService {
       },
       label: "Atrasado",
       icon: "bi bi-alarm",
-      color: "danger"
-    });
-    if (atividade.metadados?.suspenso) result.push({
-      data: {
-        status: "SUSPENSO",
-        filter: false
-      },
-      label: "Suspenso",
-      icon: "bi bi-pause-circle",
       color: "danger"
     });
     if (atividade.metadados?.arquivado) result.push({

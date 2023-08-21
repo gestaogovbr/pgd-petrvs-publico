@@ -112,7 +112,7 @@ export class LookupService {
   public UNIDADE_INTEGRANTE_TIPO: LookupItem[] = [
     { key: 'AVALIADOR_PLANO_ENTREGA', value: "Avaliador (Planos de Entrega)", icon: "bi bi-check-all", color: "warning" },
     { key: 'AVALIADOR_PLANO_TRABALHO', value: "Avaliador (Planos de Trabalho)", icon: "bi bi-check-circle", color: "info" },
-    { key: 'COLABORADOR', value: "Colaborador", icon: "bi bi-person-fill-add", color: "secondary" },
+    //{ key: 'COLABORADOR', value: "Colaborador", icon: "bi bi-person-fill-add", color: "secondary" },
     { key: 'GESTOR', value: "Gestor", icon: "bi bi-star-fill", color: "primary" },
     { key: 'GESTOR_SUBSTITUTO', value: "Gestor Substituto", icon: "bi bi-star-half", color: "primary" },
     { key: 'HOMOLOGADOR_PLANO_ENTREGA', value: "Homologador (Planos de Entrega)", icon: "bi bi-check2-square", color: "warning" },
@@ -489,7 +489,7 @@ export class LookupService {
     { key: "QUALITATIVO", value: "Qualitativo (conceitual)" },
     { key: "QUANTITATIVO", value: "Quantitativo (valor)" }
   ];
-  
+
   public ADESAO_STATUS: LookupItem[] = [
     { key: "SOLICITADO", value: "Solicitado", color: "bg-primary" },
     { key: "HOMOLOGADO", value: "Homologado", color: "bg-success" },
@@ -534,7 +534,18 @@ export class LookupService {
     { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success" },
     { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-clipboard2-check", color: "primary" },
     { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info" },
-    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "danger" }
+    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "bg-warning text-dark" },
+    { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "danger" }
+  ];
+
+  public PLANO_TRABALHO_STATUS: LookupItem[] = [
+    { key: "INCLUIDO", value: "Incluído", icon: "bi bi-pencil-square", color: "secondary" },
+    { key: "AGUARDANDO_ASSINATURA", value: "Aguardando assinatura", icon: "bi bi-clock", color: "warning" },
+    { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success" },
+    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-clipboard2-check", color: "primary" },
+    { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info" },
+    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "bg-warning text-dark" },
+    { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "danger" }
   ];
 
   public PROJETO_PERFIS: LookupItem[] = [
@@ -626,6 +637,11 @@ export class LookupService {
     { 'key': 'HIBRIDO', 'value': 'Híbrido' }
   ];
 
+  public THEMES: LookupItem[] = [
+    {'key': 'light', 'value': "Branco"},
+    {'key': 'blue', 'value': "Azul"},
+  ]
+
   public TIPO_INTEGRACAO: LookupItem[] = [
     { 'key': 'NENHUMA', 'value': 'Nenhuma' },
     { 'key': 'WSO2', 'value': 'Siape-PRF' },
@@ -636,7 +652,7 @@ export class LookupService {
     { 'key': 'A', 'value': 'Vínculos ativos sem ocorrência de exclusão' },
     { 'key': 'B', 'value': 'Todos os vínculos' },
   ];
-  
+
   public TIPO_VINCULO: LookupItem[] = [
     { 'key': 'A', 'value': 'Ativos em exercício no órgão' },
     { 'key': 'B', 'value': 'Ativos e aposentados' },

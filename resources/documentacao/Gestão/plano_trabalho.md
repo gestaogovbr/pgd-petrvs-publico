@@ -41,9 +41,17 @@
 
 ## REGRAS DE NEGÓCIO APLICADAS AOS PLANOS DE TRABALHO
 
-1. (RN_PTR_1) Após criado um plano de trabalho, o seu plano de entregas não pode mais ser alterado. Em consequência dessa regra, os seguintes campos não poderão mais ser alterados: plano_entrega_id, unidade_id, programa_id;
-2. O servidor só pode incluir plano de trabalho se ele for "participante do programa", habilitado. Se não for, somente seu chefe imediato pode inserir plano de trabalho para ele, e nesse caso, o servidor se torna participante automaticamente com o primeiro plano de trabalho!
-3. Os planos de trabalho dos participantes afetados por exclusão de entregas deverão ser repactuados.
+1. (RN_PTR_1) Após criado um plano de trabalho, o seu plano de entregas não pode mais ser alterado. Em consequência dessa regra, os seguintes campos não poderão mais ser alterados: plano_entrega_id, unidade_id, programa_id; **** DELETE ****
+
+
+2. O servidor só pode incluir plano de trabalho se ele for "participante do programa", habilitado. Se não for, somente o chefe da unidade executora pode inserir plano de trabalho para ele, e nesse caso, o servidor se torna participante automaticamente com o primeiro plano de trabalho!
+
+- Ao alterar um plano de entrega pode acontecer:
+    * Incluir novas entregas, nada será necessário alterar
+    * Alterar a entrega: Limitar o período que pode ser editado, não editar mais a entrega do catálogo
+    * Excluir: Marcar como cancelado caso já tenha sido utilizado, e caso não foi utilizado em nenhum plano de trabalho poderá ser excluido
+   - Entregas caceladas não poderão mais ser adicionados novas atividades nem em novos planos de trabalho
+
 4. O plano de trabalho pode ser elaborado pelo chefe da unidade ou pelo próprio participante, e em seguida aprovado pela outra parte.
 5. Como se dá o fluxo de plano de trabalho e plano de entregas quando o PGD for compulsório?
 6. Toda atividade deve gerar uma entrega/resultado
@@ -58,17 +66,17 @@
 
 ~~~text
 
-status possíveis = ['INCLUIDO', 'AGUARDANDO ASSINATURA', 'ATIVO', 'CONCLUIDO', 'AVALIADO', 'SUSPENSO', 'CANCELADO']
+status possíveis = ['INCLUIDO', 'AGUARDANDO ASSINATURA', 'ATIVO', 'CONCLUIDO', 'AVALIADO', 'RECURSO', 'SUSPENSO', 'CANCELADO']
 
 -----------------------------------------------------------------------------------------------------------------------------------
 obrigatoriedade     | inclusão realizada  |  status     |  evento que                |  status      |  evento que       |  status
 da assinatura       | pelo                |  inicial    |  faz avançar               |  seguinte    |  faz avançar      |  seguinte
 --------------------+--------------------------------------------------------------------------------------------------------------
-                    | participante        |  INCLUIDO   |  participante clica no     |  AGUARDANDO  |  chefe assina     |  ATIVO
+                    | participante        |  INCLUIDO   |  participante clica no     |  AGUARDANDO  |  os chefes assinam|  ATIVO
     chefe           |                     |             |  botão 'assinar' (*1)      |  ASSINATURA  |  o TCR            |  
     &               +--------------------------------------------------------------------------------------------------------------
-    participante    | chefe               |  INCLUIDO   |  chefe clica no            |  AGUARDANDO  |  participante     |  ATIVO
-                    |                     |             |  botão 'assinar' (*2)      |  ASSINATURA  |  assina o TCR     |  
+    participante    | chefe               |  INCLUIDO   |  chefe clica no            |  AGUARDANDO  |  particip/chefe   |  ATIVO
+    & ch imediato   |                     |             |  botão 'assinar' (*2)      |  ASSINATURA  |  assinam o TCR    |  
 --------------------+--------------------------------------------------------------------------------------------------------------
                     | participante        |  INCLUIDO   |  chefe/participante clica  |  ATIVO       |                   |  
                     |                     |             |  no botão 'ativar' (*3)    |              |                   |  
@@ -91,12 +99,9 @@ da assinatura       | pelo                |  inicial    |  faz avançar         
 
 (*1) para o botão 'assinar' estar disponível para o usuário, ele precisa ser o criador do plano de trabalho, este possuir ao menos uma entrega, e o TCR, se obrigatório/existente, já estar assinado pelo participante; 
 (*2) para o botão 'assinar' estar disponível para o gestor, o plano de trabalho precisa possuir ao menos uma entrega, e o TCR, se obrigatório/existente, já estar assinado pelo gestor;
-(*3) para o botão 'ativar' estar disponível para o gestor/usuário, ...
-(*4) para o botão 'assinar' estar disponível para o gestor/usuário, ...
-(*5) para o botão 'ativar' estar disponível para o gestor/usuário, ...
-(*6) para o botão 'assinar' estar disponível para o gestor/usuário, ...
 
 
+======== texto a ser editado ===============
 * Estando no status "INCLUIDO"
         padrão: 
             - se o usuário logado for gestor da unidade do plano de trabalho, ou esta for sua unidade de lotação e ele possuir a capacidade "MOD_PENT_LIB_HOMOL", exibir o botão 'Liberar para homologação' 

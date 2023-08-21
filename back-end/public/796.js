@@ -75,13 +75,13 @@ __webpack_require__.r(__webpack_exports__);
 class PlanoTrabalhoConsolidacao extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
   constructor(data) {
     super();
-    //public status?: Status;
     this.data_inicio = new Date();
     this.data_fim = new Date();
+    this.status = null; // Status atual da consolidação
     this.avaliacoes = [];
+    this.status_historico = [];
     this.plano_trabalho_id = "";
     this.avaliacao_id = null;
-    this.status_id = "";
     this.initialization(data);
   }
 }
@@ -688,7 +688,7 @@ function PlanoTrabalhoConsolidacaoListComponent_ng_template_18_Template(rf, ctx)
   if (rf & 2) {
     const row_r19 = ctx.row;
     const ctx_r12 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("color", ctx_r12.lookup.getColor(ctx_r12.lookup.CONSOLIDACAO_STATUS, row_r19.status.codigo))("icon", ctx_r12.lookup.getIcon(ctx_r12.lookup.CONSOLIDACAO_STATUS, row_r19.status.codigo))("label", ctx_r12.lookup.getValue(ctx_r12.lookup.CONSOLIDACAO_STATUS, row_r19.status.codigo));
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("color", ctx_r12.lookup.getColor(ctx_r12.lookup.CONSOLIDACAO_STATUS, row_r19.status))("icon", ctx_r12.lookup.getIcon(ctx_r12.lookup.CONSOLIDACAO_STATUS, row_r19.status))("label", ctx_r12.lookup.getValue(ctx_r12.lookup.CONSOLIDACAO_STATUS, row_r19.status));
   }
 }
 class PlanoTrabalhoConsolidacaoListComponent extends src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_4__.PageFrameBase {

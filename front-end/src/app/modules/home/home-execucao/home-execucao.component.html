@@ -1,0 +1,43 @@
+<p class="text-secondary">Você está acessando o módulo de Execução.</p>
+
+<div class="row mt-5">
+  <div class="col-6 col-sm-3 mb-3">
+    <app-button-dashboard
+      title="Registrar meu Trabalho"
+      imgIcon="../../../../assets/icons/home/todo-list.png"
+      textColor="#1369f0"
+      borderColor="#1369f0"
+      [route]="{route: ['gestao/atividade']}"
+      [metadata]="{ metadata: {atribuidas_para_mim: true}}"
+    ></app-button-dashboard>
+  </div>
+
+  <div class="col-6 col-sm-3 mb-3">
+    <app-button-dashboard
+      title="Consolidar meu registro mensal"
+      imgIcon="../../../../assets/icons/home/consolidation.png"
+      textColor="#1369f0"
+      borderColor="#1369f0"
+      [route]="{route: ['gestao/plano-trabalho/consolidacao']}"
+    ></app-button-dashboard>
+  </div>
+
+  <div class="col-6 col-sm-3 mb-3">
+    <app-button-dashboard
+      title="Ver minhas avaliações"
+      imgIcon="../../../../assets/icons/home/podio.png"
+      textColor="#1369f0"
+      borderColor="#1369f0"
+    ></app-button-dashboard>
+  </div>
+
+  <div class="col-6 col-sm-3 mb-3">
+    <app-button-dashboard
+      title="Propósito do meu trabalho"
+      imgIcon="../../../../assets/icons/home/monitoring.png"
+      textColor="#1369f0"
+      borderColor="#1369f0"
+    ></app-button-dashboard>
+  </div>
+
+</div>

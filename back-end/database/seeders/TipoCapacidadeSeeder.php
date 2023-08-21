@@ -19,24 +19,23 @@ class TipoCapacidadeSeeder extends Seeder
      */
     public function run()
     {
-        //TipoCapacidade::whereIn('codigo',['MOD_LOGS_CONS','MOD_LOGS_EDT','MOD_LOGS_EXCL'])->delete(); //apaga capacidades inseridas indevidamente
         $tiposCapacidadesService = new TipoCapacidadeService();
         $utilService = new UtilService();
 
         //garantir que existe o Perfil Desenvolvedor
-        $perfil = Perfil::where([['nome', 'Desenvolvedor']])->first();
-        if(!$perfil){
-            $perfil = new Perfil();
-            $perfil->fill([
+        $perfilDesenvolvedor = Perfil::where([['nome', 'Desenvolvedor']])->first();
+        if(!$perfilDesenvolvedor){
+            $perfilDesenvolvedor = new Perfil();
+            $perfilDesenvolvedor->fill([
                 'id' => $utilService->uuid("Desenvolvedor"),   
                 'nivel' => 0,         
                 'nome' => 'Desenvolvedor',
                 'descricao' => 'Perfil de Desenvolvedor - Todas as permissões',
             ]);
-            $perfil->save();
+            $perfilDesenvolvedor->save();
         };
 
-        $developerId = $perfil->id;
+        $developerId = $perfilDesenvolvedor->id;
 
         // carrega os tipos de capacidades do vetor declarado no serviço TipoCapacidadeService
         $dadosTiposCapacidades = array_map(fn ($capacidade) => array_merge([$utilService->uuid($capacidade['codigo'])], $capacidade), $tiposCapacidadesService->tiposCapacidades);

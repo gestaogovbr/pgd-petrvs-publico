@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -10,6 +10,7 @@ import { FullRoute, NavigateService } from 'src/app/services/navigate.service';
 import { UtilService } from 'src/app/services/util.service';
 import { ModalPage } from '../base/modal-page';
 import { DialogService } from 'src/app/services/dialog.service';
+import { DOCUMENT } from '@angular/common';
 
 
 @Component({
@@ -17,7 +18,7 @@ import { DialogService } from 'src/app/services/dialog.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit, ModalPage {
+export class LoginComponent implements OnInit, ModalPage, OnDestroy {
 
   public buttonDprfSeguranca: boolean = true;
   public error: string = "";
@@ -44,8 +45,11 @@ export class LoginComponent implements OnInit, ModalPage {
     public formBuilder: FormBuilder,
     public googleApi: GoogleApiService,
     public dialog: DialogService,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    @Inject(DOCUMENT) private document: any
   ) {
+    this.document.body.classList.add('login');
+
     this.login = this.fh.FormBuilder({
       usuario: { default: "" },
       senha: { default: "" },
@@ -154,6 +158,10 @@ export class LoginComponent implements OnInit, ModalPage {
 
   public signInAzure() {
     this.auth.authAzure();
+  }
+
+  ngOnDestroy(){
+    this.document.body.classList.remove('login');
   }
 
 }

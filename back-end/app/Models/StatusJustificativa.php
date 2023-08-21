@@ -8,26 +8,23 @@ use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\Atividade;
 
-class Status extends ModelBase
+class StatusJustificativa extends ModelBase
 {
-    protected $table = 'status';
+    protected $table = 'status_justificativas';
 
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'codigo',
-        'justificativa',
-        'plano_entrega_id',
-        'plano_trabalho_id',
-        'plano_trabalho_consolidacao_id',
-        'atividade_id',
-        'usuario_id'
+        'codigo', /* enum('ATIVO','AVALIADO','CANCELADO','CONCLUIDO','HOMOLOGANDO','AGUARDANDO_ASSINATURA','INCLUIDO','INICIADO','EM_RECURSO','SUSPENSO'); NOT NULL; */// Status do artefato (plano de entregas, plano de trabalho ou atividade)
+        'justificativa', /* text; NOT NULL; */// Justificativa da mudança para este status
+        'plano_entrega_id', /* char(36); */
+        'plano_trabalho_id', /* char(36); */
+        'plano_trabalho_consolidacao_id', /* char(36); */
+        'atividade_id', /* char(36); */
+        'usuario_id', /* char(36); NOT NULL; */
+        //'deleted_at', /* timestamp; */
     ];
     //Has
-    //public function planoEntrega() { return $this->hasOne(PlanoEntrega::class, "status_id"); }   
-    //public function planoTrabalho() { return $this->hasOne(PlanoTrabalho::class, "status_id"); }   
-    //public function planoTrabalhoConsolidacao() { return $this->hasOne(PlanoTrabalhoConsolidacao::class, "status_id"); }   
-    //public function atividade() { return $this->hasOne(Atividade::class, "status_id"); }   
     // Belongs
     public function planoEntrega() { return $this->belongsTo(PlanoEntrega::class, "plano_entrega_id"); }   
     public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class, "plano_trabalho_id"); }   

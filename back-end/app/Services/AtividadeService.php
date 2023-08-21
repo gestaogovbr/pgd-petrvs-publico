@@ -18,7 +18,7 @@ use App\Exceptions\ServerException;
 use App\Models\Atividade;
 use App\Models\Documento;
 use App\Models\PlanoTrabalho;
-use App\Models\Status;
+use App\Models\StatusJustificativa;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -89,13 +89,13 @@ class AtividadeService extends ServiceBase
         $status = $metadados["pausado"] ? "PAUSADO" : 
             ($metadados["concluido"] ? "CONCLUIDO" : 
             ($metadados["iniciado"] ? "INICIADO" : "INCLUIDO"));
-        if($entity->status?->codigo != $status) {
-            $status = new Status([
+        if($entity->status != $status) {
+/*             $status = new StatusJustificativa([
                 "codigo" => $status,
                 "atividade_id" => $entity->id
             ]);
-            $status->save();
-            $entity->status_id = $status->id;
+            $status->save(); */
+            $entity->status = $status;
             $entity->save();
         }
     }

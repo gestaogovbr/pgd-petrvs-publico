@@ -122,7 +122,7 @@ class PlanoEntregaController extends ControllerBase {
                         /*  (RN_PENT_4_2)   ALTERAR
                             1. o usuário precisa possuir também a capacidade "MOD_PENT_QQR_UND"; ou
                             2. o plano precisa estar com o status INCLUIDO ou HOMOLOGANDO, e o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação e ele possuir a capacidade "MOD_PENT_EDT"; ou
-                            3. o plano precisa ser válido, o usuário logado precisa possuir a capacidade "MOD_PENT_EDT_FLH", e ser gestor da unidade-pai da unidade do plano ou possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a unidade-pai da unidade do plano; (RN_PENT_1_3) ou
+                            3. o plano precisa ser válido, o usuário logado precisa possuir a capacidade "MOD_PENT_EDT_FLH", e ser gestor da unidade-pai da unidade do plano ou possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a unidade-pai da unidade do plano; (RN_PENT_C) ou
                             4. o plano precisa estar com o status ATIVO, a unidade do plano ser a unidade de lotação do usuário logado, e ele possuir a capacidade "MOD_PENT_EDT_ATV_HOMOL" ou "MOD_PENT_EDT_ATV_ATV";
                         */
                         break;
@@ -237,7 +237,7 @@ class PlanoEntregaController extends ControllerBase {
                 if (!($condicoes['planoHomologando'] && ($condicoes['gestorUnidadePaiUnidadePlano'] || (!empty($data['entity']['unidade']['unidade_id']) && UsuarioService::isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $data['entity']['unidade']['unidade_id']))))) throw new ServerException("CapacidadeStore", "Homologação não executada");
                 /*  
                     (RN_PENT_4_11) HOMOLOGAR
-                    - o plano precisa estar com o status HOMOLOGANDO e o usuário logado ser gestor da unidade-pai da unidade do plano, ou possuir a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para a unidade-pai; (RN_PENT_1_3)(RN_PENT_3_2)
+                    - o plano precisa estar com o status HOMOLOGANDO e o usuário logado ser gestor da unidade-pai da unidade do plano, ou possuir a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para a unidade-pai; (RN_PENT_C)(RN_PENT_3_2)
                 */
                 break;                
             case 'LIBERAR_HOMOLOGACAO':
