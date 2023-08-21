@@ -266,7 +266,8 @@ class IntegracaoSiapeService extends ServiceBase {
                             'codsitfuncional' => $this->UtilService->valueOrDefault($dadosFuncionais['codSitFuncional']),
                             'codupag' => $this->UtilService->valueOrDefault($dadosFuncionais['codUpag']),
                             'dataexercicionoorgao' => $this->UtilService->valueOrDefault($dadosFuncionais['dataOcorrIngressoOrgao']),
-                            'funcoes' => $funcao ? json_encode($funcao) : "",
+                            'funcoes' => $funcao ? $this->UtilService->valueOrDefault($funcao) : null,
+                            //'funcoes' => $funcao ? json_encode($funcao) : null,
                             ]
                         ]
                     ];

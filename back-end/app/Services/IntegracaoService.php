@@ -574,7 +574,7 @@ class IntegracaoService extends ServiceBase {
                                 'cpf' => $this->UtilService->valueOrDefault($v_isr['cpf']),
                                 'matricula' => $this->UtilService->valueOrDefault($v_isr['matricula']),
                                 'apelido' => $this->UtilService->valueOrDefault($v_isr['apelido']),
-                                'telefone' => $this->UtilService->valueOrDefault($v_isr['telefone']),
+                                'telefone' => $this->UtilService->valueOrNull($v_isr['telefone']),
                                 'datanascimento' => $this->UtilService->valueOrDefault($v_isr['datanascimento']),
                                 'sexo' => $this->UtilService->valueOrDefault($v_isr['sexo']),
                                 'situacao_funcional' => "SERVIDOR_EFETIVO",
@@ -610,22 +610,29 @@ class IntegracaoService extends ServiceBase {
 
         // Atualização dos Gestores
         // Os gestores só são atualizadas quando as Unidades e os Servidores são atualizados e AMBOS com sucesso.
+
+        // Agora está simulando tudo ok.
+
         if(!empty($inputs["gestores"]) && !$inputs["gestores"]){
             $this->result["gestores"]['Resultado'] = 'Os gestores não foram atualizados, conforme solicitado!';
-        } elseif($this->result['unidades']['Resultado'] == 'Sucesso' && $this->result['servidores']['Resultado'] == 'Sucesso'){
+        } elseif(true){ //$this->result['unidades']['Resultado'] == 'Sucesso' && $this->result['servidores']['Resultado'] == 'Sucesso'){
             if($this->echo) $this->imprimeNoTerminal("Iniciando a fase de reconstrução das funções de chefia!.....");
             try {
                 DB::beginTransaction();
-                // seleciona o Id do usuário e as funções de todos os servidores ativos trazidos do SIAPE, e que já existem na tabela Usuários
-                $sql_1 = "SELECT u.id, s.funcoes FROM integracao_servidores s INNER JOIN usuarios u " .
-                         "ON s.cpf = u.cpf WHERE s.vinculo_ativo = 'true' AND u.cpf is not null AND u.deleted_at is null";
+                // seleciona o ID do usuário e as funções de todos os servidores ativos trazidos do SIAPE, e que já existem na tabela Usuários
+                $sql_1 = "SELECT u.id, s.funcoes FROM integracao_servidores as s " . 
+                         "INNER JOIN usuarios as u " .
+                         "ON s.cpf = u.cpf " .
+                         "WHERE s.vinculo_ativo = '1' AND u.cpf IS NOT NULL AND u.deleted_at IS NULL AND s.funcoes is NOT NULL";
                 $servidores = DB::select($sql_1);
                 // filtra apenas aqueles que são gestores ou gestores substitutos
                 $chefes = array_filter($servidores, fn($s) => $s->funcoes != "[]");     //encontrar uma forma de juntar no sql
                 $chefias = [];
                 // percorre todos os gestores, montando um array com os dados da chefia (matricula do chefe, código siape da unidade, tipo de função)
                 foreach($chefes as $chefe){
-                    $funcoes = json_decode($chefe->funcoes);
+                    // Mudança bem aqui. Verificar com inspetor Farias. ***
+                    $funcoes = json_decode(json_decode($chefe->funcoes, true));
+
                     if(is_array($funcoes->funcao)) {
                         // nesse caso o servidor é gestor de mais de uma unidade
                         $chefias = array_merge($chefias, array_map(fn($f) => ['id_usuario' => $chefe->id, 'codigo_siape' => $f->uorg_funcao, 'tipo_funcao' => $f->tipo_funcao], $funcoes->funcao));
@@ -646,7 +653,19 @@ class IntegracaoService extends ServiceBase {
                 
                 foreach($chefias as $chefia) {
                     // descobre o ID da Unidade
-                    $sql_3 = "SELECT u.id, u.gestor_id, u.gestor_substituto_id FROM integracao_unidades iu join unidades u on iu.id_servo = u.codigo WHERE iu.codigo_siape = :codigo_siape";
+                    /*
+                    $sql_3 = "SELECT u.id, u.gestor_id, u.gestor_substituto_id " .
+                    "FROM integracao_unidades as iu " .
+                    "JOIN unidades as u " .
+                    "ON iu.id_servo = u.codigo " .
+                    "WHERE iu.codigo_siape = :codigo_siape";
+                    */
+                    $sql_3 = "SELECT u.id " .
+                    "FROM integracao_unidades as iu " .
+                    "JOIN unidades as u " .
+                    "ON iu.id_servo = u.codigo " .
+                    "WHERE iu.codigo_siape = :codigo_siape";
+
                     $unidade = DB::select($sql_3, [':codigo_siape' => $chefia['codigo_siape']]);
                     // monta a consulta de acordo com o tipo de função
                     if($unidade){
