@@ -449,13 +449,23 @@ class IntegracaoService extends ServiceBase {
 
                             // Trata $ativo['funcoes'] para registro na integracao_servidores
                             // e posteriores consultas aos códigos de função/unidade.
-                            if (is_array($ativo['funcoes'])) {
-                              $ativo['funcoes']['funcao']['uorg_funcao'] = strval(intval($ativo['funcoes']['funcao']['uorg_funcao']));
-                              $ativo['funcoes'] = json_encode($ativo['funcoes']);
-                            } else {
+
+                            /*
+                            $fixCodUorg = function ($codUorgErrado) use (&$ativo) {
+                                $codUorgErrado['uorg_funcao'] = strval(intval($codUorgErrado['uorg_funcao']));
+                            };
+                            */
+
+                            if(is_array($ativo['funcoes'])){
+                              foreach($ativo['funcoes'] as &$at){
+                                $at['uorg_funcao'] = strval(intval($at['uorg_funcao']));
+                              }
+                              $ativo['funcoes'] = json_encode(($ativo['funcoes']));
+                              
+                            } else{
                                 $ativo['funcoes'] = null;
                             }
-
+  
                             $servidor = [
                                 'cpf_ativo' => $self->UtilService->valueOrDefault($servidor['cpf_ativo']),
                                 'data_modificacao' => $self->UtilService->valueOrDefault($servidor['data_modificacao']),
@@ -624,8 +634,6 @@ class IntegracaoService extends ServiceBase {
         // Atualização dos Gestores
         // Os gestores só são atualizadas quando as Unidades e os Servidores são atualizados e AMBOS com sucesso.
 
-        // Agora está simulando tudo ok.
-
         if(!empty($inputs["gestores"]) && !$inputs["gestores"]){
             $this->result["gestores"]['Resultado'] = 'Os gestores não foram atualizados, conforme solicitado!';
         } elseif(true){ //$this->result['unidades']['Resultado'] == 'Sucesso' && $this->result['servidores']['Resultado'] == 'Sucesso'){
@@ -637,33 +645,30 @@ class IntegracaoService extends ServiceBase {
                          "INNER JOIN usuarios as u " .
                          "ON isr.cpf = u.cpf " .
                          "WHERE isr.vinculo_ativo = '1' AND u.cpf IS NOT NULL AND u.deleted_at IS NULL AND isr.funcoes is NOT NULL";
+                
                 // filtra apenas aqueles que são gestores ou gestores substitutos
+                // $servidores = DB::select($query_selecionar_chefes);
                 // $chefes = array_filter($servidores, fn($s) => $s->funcoes != null);     //encontrar uma forma de juntar no sql
                 $chefes = DB::select($query_selecionar_chefes);
-                
+
                 // percorre todos os gestores, montando um array com os dados da chefia (matricula do chefe, código siape da unidade, tipo de função)
                 $chefias = [];
+
                 foreach($chefes as $chefe){
-                    // Mudança bem aqui. Verificar com inspetor Farias. ***
                     $funcoes = json_decode($chefe->funcoes);
 
-                    if(is_array($funcoes->funcao)) {
+                    if(is_array($funcoes->funcao)){
                         // nesse caso o servidor é gestor de mais de uma unidade
-                        $chefias = array_merge($chefias, array_map(fn($f) => ['id_usuario' => $chefe->id, 'codigo_siape' => $f->uorg_funcao, 'tipo_funcao' => $f->tipo_funcao], $funcoes->funcao));
+                        $chefias = array_merge($chefias, 
+                          array_map(fn($f) => ['id_usuario' => $chefe->id, 'codigo_siape' => $f->uorg_funcao, 'tipo_funcao' => $f->tipo_funcao], $funcoes->funcao));
                     } else {
                         // nesse caso o servidor é gestor de apenas uma unidade
                         array_push($chefias, ['id_usuario' => $chefe->id, 'codigo_siape' => $funcoes->funcao->uorg_funcao, 'tipo_funcao' => $funcoes->funcao->tipo_funcao]);
                     }
                 }
-                if($this->echo) $this->imprimeNoTerminal("Concluída a fase de montagem do array de chefias!.....");
-                
-                //**** INSERIR AQUI O NOVO CODIGO PARA SALVAR CHEFIAS */
 
-                // torna nulos os campos gestor_id e gestor_substituto_id das unidades, para refazê-los com o atual array de chefias
-                /* DB::update("UPDATE unidades SET gestor_id = null, gestor_substituto_id = null");
-                $this->atualizaLogs($this->logged_user_id, 'unidades', 'unidades com gestores não nulos', 'EDIT', ['Rotina' => 'Integração', 'Observação' => 'Apagando todos os gestores antes de atualizá-los com a consulta ao SIAPE']); */
-                // percorre o array das chefias, inserindo na tabela de unidades os IDs dos respectivos gestores e gestores substitutos
-                
+                if($this->echo) $this->imprimeNoTerminal("Concluída a fase de montagem do array de chefias!.....");
+                  
                 foreach($chefias as $chefia){
                     // Descobre o ID da Unidade
                     $query_selecionar_unidade = "SELECT u.id " .
@@ -671,7 +676,9 @@ class IntegracaoService extends ServiceBase {
                     "JOIN unidades as u " .
                     "ON iu.id_servo = u.codigo " .
                     "WHERE iu.codigo_siape = :codigo_siape";
-                    $unidade_exercicio = DB::select($query_selecionar_unidade, [':codigo_siape' => $chefia['codigo_siape']]);
+
+                    $unidade_exercicio = DB::select($query_selecionar_unidade, 
+                        [':codigo_siape' => $chefia['codigo_siape']]);
 
                     /* 
                     Monta a consulta de acordo com o tipo de função e efetua 
@@ -697,14 +704,15 @@ class IntegracaoService extends ServiceBase {
                               $this->unidadeIntegrantsaveIntegrantee->saveIntegrante($vinculo, false);
                         } else{
                             throw new Exception("Falha no array de funções do servidor");
-                        }
-                        
-                        $this->atualizaLogs($this->logged_user_id, 'unidades', $unidade[0]->id, 'EDIT', [
+                        }     
+                        /*
+                        $this->atualizaLogs($this->logged_user_id, 'unidades', $unidade_exercicio[0]->id, 'EDIT', [
                                     'Rotina' => 'Integração',
                                     'Observação' => 'Atualização do ' . ($chefia['tipo_funcao'] == '1' ? 'Gestor' : 'Gestor substituto') . ' da Unidade',
-                                    'Valores anteriores' => ['gestor_id' => $unidade[0]->gestor_id, 'gestor_substituto_id' => $unidade[0]->gestor_substituto_id],
+                                    'Valores anteriores' => ['gestor_id' => $unidade_exercicio[0]->gestor_id, 'gestor_substituto_id' => $unidade_exercicio[0]->gestor_substituto_id],
                                     'Valores atuais' => ['gestor_id' => $chefia['tipo_funcao'] == '1' ? $chefia['id_usuario'] : null, 'gestor_substituto_id' => $chefia['tipo_funcao'] == '2' ? $chefia['id_usuario'] : null]
                                 ]);
+                        */
                     } else{
                         $nomeUsuario = Usuario::where('id',$chefia['id_usuario'])->first()->nome;
                         $unidade = array_filter($uos, function($o) use ($chefia){
