@@ -61,14 +61,14 @@ class UsuarioSeeder extends Seeder
                 'email' => 'edson.franca@mj.gov.br',
                 'nome' => 'Edson Dario Silva de França',
                 'cpf' => '01380127416',
-                'apelido' => 'Edson',
+                'apelido' => 'Dario',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
             ],
             [
               'email' => 'edson.dario@gmail.com',
               'nome' => 'Edson Dario Silva de França',
               'cpf' => '01380127416',
-              'apelido' => 'Edson',
+              'apelido' => 'Dario',
               'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
             ],
             [
@@ -135,7 +135,7 @@ class UsuarioSeeder extends Seeder
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
             ],
             [
-                'email' => 'jonatas.Ferreira@prf.gov.br',
+                'email' => 'jonatas.ferreira@prf.gov.br',
                 'nome' => 'Jonata Cunha',
                 'cpf' => '09741166702',
                 'apelido' => 'Jonata',

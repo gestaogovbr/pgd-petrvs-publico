@@ -221,14 +221,12 @@ class IntegracaoSiapeService extends ServiceBase {
                     );
                     $dadosFuncionais = $this->UtilService->object2array($dadosFuncionais)['dadosFuncionais']['DadosFuncionais'];
 
-                    $funcao = [];
+                    $funcao = null;
                     if(!empty($dadosFuncionais['codAtivFun']) && $dadosFuncionais['codAtivFun']){
-                        $funcao = json_encode(array('funcao' => ['tipo_funcao' => '1', 'uorg_funcao' => $dadosFuncionais['codUorgExercicio']]));
+                        $funcao = array('funcao' => ['tipo_funcao' => '1', 'uorg_funcao' => $dadosFuncionais['codUorgExercicio']]);
                         // $funcao = [ 'funcao' => ['tipo_funcao' => $dadosFuncionais['codAtivFun'], 'uorg_funcao' => $dadosFuncionais['codUorgExercicio']]];
                         // Aguardando evolução de ticket aberto no MGI para reparo no SIAPE WEB SERVICE na data de 09/08/2023 20:22.
-                      } else{
-                        $funcao = null;
-                      }
+                    }
 
                     if(!empty($pessoa['dataUltimaTransacao'])){
                         $pessoa['dataUltimaTransacao'] = $date->createFromFormat('dmY', $pessoa['dataUltimaTransacao'])->format('Y-m-d 00:00:00');
@@ -264,12 +262,11 @@ class IntegracaoSiapeService extends ServiceBase {
                             'coduorgexercicio' => $this->UtilService->valueOrDefault($dadosFuncionais['codUorgExercicio']),
                             'coduorglotacao' => $this->UtilService->valueOrDefault($dadosFuncionais['codUorgLotacao']),
                             'codigo_servo_exercicio' => $this->UtilService->valueOrDefault($dadosFuncionais['codUorgExercicio']),
-                            'nomeguerra' => '', // Web Service Siape não fornece (23/09/2022) informação.
+                            'nomeguerra' => '', // Web Service Siape não fornece (23/09/2022) informação. Tratada no IntegracaoService.
                             'codsitfuncional' => $this->UtilService->valueOrDefault($dadosFuncionais['codSitFuncional']),
                             'codupag' => $this->UtilService->valueOrDefault($dadosFuncionais['codUpag']),
                             'dataexercicionoorgao' => $this->UtilService->valueOrDefault($dadosFuncionais['dataOcorrIngressoOrgao']),
                             'funcoes' => $funcao
-                            //'funcoes' => $funcao ? json_encode($funcao) : null,
                             ]
                         ]
                     ];

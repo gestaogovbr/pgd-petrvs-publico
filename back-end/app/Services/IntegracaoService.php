@@ -438,29 +438,46 @@ class IntegracaoService extends ServiceBase {
                         $email = $self->UtilService->valueOrDefault($servidor['emailfuncional']);
 
                         if($ativo && !empty($email)) {
+                            // Tratamento de e-mail.
                             $email = str_contains($email, "@") ? $email : $email . "@prf.gov.br";
+                            $email = mb_strtolower($email, 'UTF-8');
+
+                            // Trata nome de guerra
+                            $nomeguerra = null;
+                            $nomeguerra ? $nomeguerra = $self->UtilService->valueOrDefault($ativo['nomeguerra']) : 
+                                          $nomeguerra = $self->UtilService->getApelido($servidor['nome']);
+
+                            // Trata $ativo['funcoes'] para registro na integracao_servidores
+                            // e posteriores consultas aos códigos de função/unidade.
+                            if (is_array($ativo['funcoes'])) {
+                              $ativo['funcoes']['funcao']['uorg_funcao'] = strval(intval($ativo['funcoes']['funcao']['uorg_funcao']));
+                              $ativo['funcoes'] = json_encode($ativo['funcoes']);
+                            } else {
+                                $ativo['funcoes'] = null;
+                            }
+
                             $servidor = [
                                 'cpf_ativo' => $self->UtilService->valueOrDefault($servidor['cpf_ativo']),
                                 'data_modificacao' => $self->UtilService->valueOrDefault($servidor['data_modificacao']),
                                 'cpf' => $self->UtilService->valueOrDefault($servidor['cpf']),
                                 'nome' => $self->UtilService->valueOrDefault($servidor['nome']),
                                 'emailfuncional' => $email,
-                                'sexo' => $self->UtilService->valueOrDefault($servidor['sexo']),
+                                'sexo' => $self->UtilService->valueOrDefault($servidor['sexo'], null),
                                 'municipio' => $self->UtilService->valueOrDefault($servidor['municipio']),
                                 'uf' => $self->UtilService->valueOrDefault($servidor['uf']),
                                 'datanascimento' => $self->UtilService->valueOrDefault($servidor['datanascimento']),
-                                'telefone' => $self->UtilService->valueOrNull($servidor['telefone']),
+                                'telefone' => $self->UtilService->valueOrDefault($servidor['telefone'], null),
                                 'vinculo_ativo' => $self->UtilService->valueOrDefault($ativo['vinculo_ativo']),
                                 'matriculasiape' => $self->UtilService->valueOrDefault($ativo['matriculasiape']),
                                 'tipo' => $self->UtilService->valueOrDefault($ativo['tipo']),
-                                'coduorgexercicio' => $self->UtilService->valueOrDefault($ativo['coduorgexercicio']),
-                                'coduorglotacao' => $self->UtilService->valueOrDefault($ativo['coduorglotacao']),
-                                'codigo_servo_exercicio' => $self->UtilService->valueOrDefault($ativo['codigo_servo_exercicio']),
-                                'nomeguerra' => $self->UtilService->valueOrDefault($ativo['nomeguerra']),
+                                'coduorgexercicio' => $self->UtilService->valueOrDefault($ativo['coduorgexercicio'], null, $uorg = true),
+                                'coduorglotacao' => $self->UtilService->valueOrDefault($ativo['coduorglotacao'], null, $uorg = true),
+                                'codigo_servo_exercicio' => $self->UtilService->valueOrDefault($ativo['codigo_servo_exercicio'], null, $uorg = true),
+                                'nomeguerra' => $nomeguerra,
                                 'codsitfuncional' => $self->UtilService->valueOrDefault($ativo['codsitfuncional']),
                                 'codupag' => $self->UtilService->valueOrDefault($ativo['codupag']),
                                 'dataexercicionoorgao' => $self->UtilService->valueOrDefault($ativo['dataexercicionoorgao']),
-                                'funcoes' => json_encode($ativo['funcoes']),
+                                'funcoes' => $ativo['funcoes'],
                                 'matricula' => $self->UtilService->valueOrDefault($ativo['matriculasiape']),
                             ];
                             $db_result = IntegracaoServidor::create($servidor)->save();
@@ -562,10 +579,6 @@ class IntegracaoService extends ServiceBase {
                       
                         foreach($vinculos_isr as $v_isr){
                             $v_isr = $this->UtilService->object2array($v_isr);
-
-                            // Ajuste no apelido.
-                            $v_isr['apelido'] = !empty($v_isr['apelido']) ? $this->UtilService->valueOrDefault($v_isr['apelido']) :
-                                $this->UtilService->getApelido($v_isr['nome']);
                             
                             $registro = new Usuario([
                                 'id' => Uuid::uuid4(),
@@ -574,7 +587,7 @@ class IntegracaoService extends ServiceBase {
                                 'cpf' => $this->UtilService->valueOrDefault($v_isr['cpf']),
                                 'matricula' => $this->UtilService->valueOrDefault($v_isr['matricula']),
                                 'apelido' => $this->UtilService->valueOrDefault($v_isr['apelido']),
-                                'telefone' => $this->UtilService->valueOrNull($v_isr['telefone']),
+                                'telefone' => $this->UtilService->valueOrDefault($v_isr['telefone'], null),
                                 'datanascimento' => $this->UtilService->valueOrDefault($v_isr['datanascimento']),
                                 'sexo' => $this->UtilService->valueOrDefault($v_isr['sexo']),
                                 'situacao_funcional' => "SERVIDOR_EFETIVO",
@@ -620,15 +633,16 @@ class IntegracaoService extends ServiceBase {
             try {
                 DB::beginTransaction();
                 // seleciona o ID do usuário e as funções de todos os servidores ativos trazidos do SIAPE, e que já existem na tabela Usuários
-                $sql_1 = "SELECT u.id, s.funcoes FROM integracao_servidores as s " . 
+                $query_selecionar_chefes = "SELECT u.id, isr.funcoes FROM integracao_servidores as isr " . 
                          "INNER JOIN usuarios as u " .
-                         "ON s.cpf = u.cpf " .
-                         "WHERE s.vinculo_ativo = '1' AND u.cpf IS NOT NULL AND u.deleted_at IS NULL AND s.funcoes is NOT NULL";
-                $servidores = DB::select($sql_1);
+                         "ON isr.cpf = u.cpf " .
+                         "WHERE isr.vinculo_ativo = '1' AND u.cpf IS NOT NULL AND u.deleted_at IS NULL AND isr.funcoes is NOT NULL";
                 // filtra apenas aqueles que são gestores ou gestores substitutos
-                $chefes = array_filter($servidores, fn($s) => $s->funcoes != "[]");     //encontrar uma forma de juntar no sql
-                $chefias = [];
+                // $chefes = array_filter($servidores, fn($s) => $s->funcoes != null);     //encontrar uma forma de juntar no sql
+                $chefes = DB::select($query_selecionar_chefes);
+                
                 // percorre todos os gestores, montando um array com os dados da chefia (matricula do chefe, código siape da unidade, tipo de função)
+                $chefias = [];
                 foreach($chefes as $chefe){
                     // Mudança bem aqui. Verificar com inspetor Farias. ***
                     $funcoes = json_decode($chefe->funcoes);
@@ -640,7 +654,6 @@ class IntegracaoService extends ServiceBase {
                         // nesse caso o servidor é gestor de apenas uma unidade
                         array_push($chefias, ['id_usuario' => $chefe->id, 'codigo_siape' => $funcoes->funcao->uorg_funcao, 'tipo_funcao' => $funcoes->funcao->tipo_funcao]);
                     }
-
                 }
                 if($this->echo) $this->imprimeNoTerminal("Concluída a fase de montagem do array de chefias!.....");
                 
@@ -651,40 +664,54 @@ class IntegracaoService extends ServiceBase {
                 $this->atualizaLogs($this->logged_user_id, 'unidades', 'unidades com gestores não nulos', 'EDIT', ['Rotina' => 'Integração', 'Observação' => 'Apagando todos os gestores antes de atualizá-los com a consulta ao SIAPE']); */
                 // percorre o array das chefias, inserindo na tabela de unidades os IDs dos respectivos gestores e gestores substitutos
                 
-                foreach($chefias as $chefia) {
+                foreach($chefias as $chefia){
                     // descobre o ID da Unidade
-                    /*
-                    $sql_3 = "SELECT u.id, u.gestor_id, u.gestor_substituto_id " .
-                    "FROM integracao_unidades as iu " .
-                    "JOIN unidades as u " .
-                    "ON iu.id_servo = u.codigo " .
-                    "WHERE iu.codigo_siape = :codigo_siape";
-                    */
-                    $sql_3 = "SELECT u.id " .
+                    $query_selecionar_unidade = "SELECT u.id " .
                     "FROM integracao_unidades as iu " .
                     "JOIN unidades as u " .
                     "ON iu.id_servo = u.codigo " .
                     "WHERE iu.codigo_siape = :codigo_siape";
 
-                    $unidade = DB::select($sql_3, [':codigo_siape' => $chefia['codigo_siape']]);
+                    $unidade_exercicio = DB::select($query_selecionar_unidade, [':codigo_siape' => $chefia['codigo_siape']]);
+
                     // monta a consulta de acordo com o tipo de função
-                    if($unidade){
+                    if($unidade_exercicio){
                         if($chefia['tipo_funcao'] == '1'){
-                            $sql_4 = "UPDATE unidades SET gestor_id = :id_usuario WHERE id = :id_unidade";
+                            $vinculo = array([
+                                'usuario_id' => $chefia['id_usuario'],
+                                'unidade_id' => $unidade_exercicio[0],
+                                'atribuicoes' => ["LOTADO", "GESTOR"],
+                            ]);
+                            
+                            $this->unidadeIntegrante->saveIntegrante($vinculo, false);
+
+                          // $sql_4 = "UPDATE unidades SET gestor_id = :id_usuario WHERE id = :id_unidade";
                         } else if($chefia['tipo_funcao'] == '2'){
-                            $sql_4 = "UPDATE unidades SET gestor_substituto_id = :id_usuario WHERE id = :id_unidade";
-                        } else {
+                              $vinculo = array([
+                              'usuario_id' => $chefia['id_usuario'],
+                              'unidade_id' => $unidade_exercicio[0],
+                              'atribuicoes' => ["LOTADO", "GESTOR_SUBSTITUTO"],
+                              ]);
+                              
+                              $this->unidadeIntegrante->saveIntegrante($vinculo, false);
+
+                          // $sql_4 = "UPDATE unidades SET gestor_substituto_id = :id_usuario WHERE id = :id_unidade";
+                        } else{
                             throw new Exception("Falha no array de funções do servidor");
                         }
+
                         // insere o ID do usuário na Unidade como gestor ou gestor substituto
-                        DB::update($sql_4, [':id_usuario'=> $chefia['id_usuario'], ':id_unidade' => $unidade[0]->id]);
+                        // DB::update($sql_4, [':id_usuario'=> $chefia['id_usuario'], ':id_unidade' => $unidade[0]->id]);
+
+                        /*
                         $this->atualizaLogs($this->logged_user_id, 'unidades', $unidade[0]->id, 'EDIT', [
                                     'Rotina' => 'Integração',
                                     'Observação' => 'Atualização do ' . ($chefia['tipo_funcao'] == '1' ? 'Gestor' : 'Gestor substituto') . ' da Unidade',
                                     'Valores anteriores' => ['gestor_id' => $unidade[0]->gestor_id, 'gestor_substituto_id' => $unidade[0]->gestor_substituto_id],
                                     'Valores atuais' => ['gestor_id' => $chefia['tipo_funcao'] == '1' ? $chefia['id_usuario'] : null, 'gestor_substituto_id' => $chefia['tipo_funcao'] == '2' ? $chefia['id_usuario'] : null]
                                 ]);
-                    }else{
+                        */
+                    } else{
                         $nomeUsuario = Usuario::where('id',$chefia['id_usuario'])->first()->nome;
                         $unidade = array_filter($uos, function($o) use ($chefia){
                             if($o['id_servo'] == $chefia['codigo_siape']) return $o['nomeuorg'];
