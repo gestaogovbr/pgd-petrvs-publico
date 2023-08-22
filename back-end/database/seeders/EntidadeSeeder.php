@@ -75,6 +75,7 @@ class EntidadeSeeder extends Seeder
         */
 
         // Cria a entidade SENAPPEN
+        /*
         $ent4 = new Entidade();
         $ent4->fill([
             'id' => "821cbe85-6382-4eb0-b4ca-704957de6b07",
@@ -87,7 +88,6 @@ class EntidadeSeeder extends Seeder
         ]);
         $ent4->save();
 
-        /*
         $tipo4 = new TipoModalidade();
         $tipo4->fill([
             'nome' => 'Modalidade 1',

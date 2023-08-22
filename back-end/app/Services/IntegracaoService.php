@@ -449,7 +449,7 @@ class IntegracaoService extends ServiceBase {
                                 'municipio' => $self->UtilService->valueOrDefault($servidor['municipio']),
                                 'uf' => $self->UtilService->valueOrDefault($servidor['uf']),
                                 'datanascimento' => $self->UtilService->valueOrDefault($servidor['datanascimento']),
-                                'telefone' => $self->UtilService->valueOrDefault($servidor['telefone']),
+                                'telefone' => $self->UtilService->valueOrNull($servidor['telefone']),
                                 'vinculo_ativo' => $self->UtilService->valueOrDefault($ativo['vinculo_ativo']),
                                 'matriculasiape' => $self->UtilService->valueOrDefault($ativo['matriculasiape']),
                                 'tipo' => $self->UtilService->valueOrDefault($ativo['tipo']),
@@ -631,7 +631,7 @@ class IntegracaoService extends ServiceBase {
                 // percorre todos os gestores, montando um array com os dados da chefia (matricula do chefe, código siape da unidade, tipo de função)
                 foreach($chefes as $chefe){
                     // Mudança bem aqui. Verificar com inspetor Farias. ***
-                    $funcoes = json_decode(json_decode($chefe->funcoes, true));
+                    $funcoes = json_decode($chefe->funcoes);
 
                     if(is_array($funcoes->funcao)) {
                         // nesse caso o servidor é gestor de mais de uma unidade

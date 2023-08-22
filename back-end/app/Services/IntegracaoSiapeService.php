@@ -40,7 +40,7 @@ class IntegracaoSiapeService extends ServiceBase {
         $this->siape = new SoapClient($this->siapeUrl);
     }
 
-    public function retornarUorgs($uorgInicial = 1){
+    public function retornarUorgs($uorgInicial = 3037){
         $uorgsWsdl = ""; 
         $uorgsPetrvs = [ "uorg" => []];
         $date = new Datetime();
@@ -222,10 +222,12 @@ class IntegracaoSiapeService extends ServiceBase {
                     $dadosFuncionais = $this->UtilService->object2array($dadosFuncionais)['dadosFuncionais']['DadosFuncionais'];
 
                     $funcao = [];
-                    if(!empty($dadosFuncionais['codAtivFun'])){
-                        $funcao = [ 'funcao' => ['tipo_funcao' => '1', 'uorg_funcao' => $dadosFuncionais['codUorgExercicio']]];
+                    if(!empty($dadosFuncionais['codAtivFun']) && $dadosFuncionais['codAtivFun']){
+                        $funcao = json_encode(array('funcao' => ['tipo_funcao' => '1', 'uorg_funcao' => $dadosFuncionais['codUorgExercicio']]));
                         // $funcao = [ 'funcao' => ['tipo_funcao' => $dadosFuncionais['codAtivFun'], 'uorg_funcao' => $dadosFuncionais['codUorgExercicio']]];
                         // Aguardando evolução de ticket aberto no MGI para reparo no SIAPE WEB SERVICE na data de 09/08/2023 20:22.
+                      } else{
+                        $funcao = null;
                       }
 
                     if(!empty($pessoa['dataUltimaTransacao'])){
@@ -266,7 +268,7 @@ class IntegracaoSiapeService extends ServiceBase {
                             'codsitfuncional' => $this->UtilService->valueOrDefault($dadosFuncionais['codSitFuncional']),
                             'codupag' => $this->UtilService->valueOrDefault($dadosFuncionais['codUpag']),
                             'dataexercicionoorgao' => $this->UtilService->valueOrDefault($dadosFuncionais['dataOcorrIngressoOrgao']),
-                            'funcoes' => $funcao ? $this->UtilService->valueOrDefault($funcao) : null,
+                            'funcoes' => $funcao
                             //'funcoes' => $funcao ? json_encode($funcao) : null,
                             ]
                         ]
