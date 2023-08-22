@@ -224,7 +224,6 @@ class IntegracaoSiapeService extends ServiceBase {
                     $funcao = null;
                     if(!empty($dadosFuncionais['codAtivFun']) && $dadosFuncionais['codAtivFun']){
                         $funcao = array('funcao' => ['tipo_funcao' => '1', 'uorg_funcao' => $dadosFuncionais['codUorgExercicio']]);
-                        // $funcao = [ 'funcao' => ['tipo_funcao' => $dadosFuncionais['codAtivFun'], 'uorg_funcao' => $dadosFuncionais['codUorgExercicio']]];
                         // Aguardando evolução de ticket aberto no MGI para reparo no SIAPE WEB SERVICE na data de 09/08/2023 20:22.
                     }
 

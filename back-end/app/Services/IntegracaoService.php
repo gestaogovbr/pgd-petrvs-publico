@@ -665,52 +665,46 @@ class IntegracaoService extends ServiceBase {
                 // percorre o array das chefias, inserindo na tabela de unidades os IDs dos respectivos gestores e gestores substitutos
                 
                 foreach($chefias as $chefia){
-                    // descobre o ID da Unidade
+                    // Descobre o ID da Unidade
                     $query_selecionar_unidade = "SELECT u.id " .
                     "FROM integracao_unidades as iu " .
                     "JOIN unidades as u " .
                     "ON iu.id_servo = u.codigo " .
                     "WHERE iu.codigo_siape = :codigo_siape";
-
                     $unidade_exercicio = DB::select($query_selecionar_unidade, [':codigo_siape' => $chefia['codigo_siape']]);
 
-                    // monta a consulta de acordo com o tipo de função
+                    /* 
+                    Monta a consulta de acordo com o tipo de função e efetua 
+                    o registro na tabela unidade_integrante_atribucoes.
+                    */
+
                     if($unidade_exercicio){
                         if($chefia['tipo_funcao'] == '1'){
                             $vinculo = array([
                                 'usuario_id' => $chefia['id_usuario'],
-                                'unidade_id' => $unidade_exercicio[0],
+                                'unidade_id' => $unidade_exercicio[0]->id,
                                 'atribuicoes' => ["LOTADO", "GESTOR"],
                             ]);
                             
                             $this->unidadeIntegrante->saveIntegrante($vinculo, false);
-
-                          // $sql_4 = "UPDATE unidades SET gestor_id = :id_usuario WHERE id = :id_unidade";
                         } else if($chefia['tipo_funcao'] == '2'){
                               $vinculo = array([
                               'usuario_id' => $chefia['id_usuario'],
-                              'unidade_id' => $unidade_exercicio[0],
-                              'atribuicoes' => ["LOTADO", "GESTOR_SUBSTITUTO"],
+                              'unidade_id' => $unidade_exercicio[0]->id,
+                              'atribuicoes' => ["GESTOR_SUBSTITUTO"],
                               ]);
                               
-                              $this->unidadeIntegrante->saveIntegrante($vinculo, false);
-
-                          // $sql_4 = "UPDATE unidades SET gestor_substituto_id = :id_usuario WHERE id = :id_unidade";
+                              $this->unidadeIntegrantsaveIntegrantee->saveIntegrante($vinculo, false);
                         } else{
                             throw new Exception("Falha no array de funções do servidor");
                         }
-
-                        // insere o ID do usuário na Unidade como gestor ou gestor substituto
-                        // DB::update($sql_4, [':id_usuario'=> $chefia['id_usuario'], ':id_unidade' => $unidade[0]->id]);
-
-                        /*
+                        
                         $this->atualizaLogs($this->logged_user_id, 'unidades', $unidade[0]->id, 'EDIT', [
                                     'Rotina' => 'Integração',
                                     'Observação' => 'Atualização do ' . ($chefia['tipo_funcao'] == '1' ? 'Gestor' : 'Gestor substituto') . ' da Unidade',
                                     'Valores anteriores' => ['gestor_id' => $unidade[0]->gestor_id, 'gestor_substituto_id' => $unidade[0]->gestor_substituto_id],
                                     'Valores atuais' => ['gestor_id' => $chefia['tipo_funcao'] == '1' ? $chefia['id_usuario'] : null, 'gestor_substituto_id' => $chefia['tipo_funcao'] == '2' ? $chefia['id_usuario'] : null]
                                 ]);
-                        */
                     } else{
                         $nomeUsuario = Usuario::where('id',$chefia['id_usuario'])->first()->nome;
                         $unidade = array_filter($uos, function($o) use ($chefia){
