@@ -261,7 +261,7 @@ class IntegracaoService extends ServiceBase {
                 'gravar_arquivos_locais' => $this->storeLocalFiles,
                 'usuario_id' => null,//"0",
                 'data_execucao' => Carbon::now(),
-                'resultado' => json_encode($this->result)      
+                'resultado' => json_encode($this->result)
         ], null)->resultado;
     }
 
@@ -307,6 +307,7 @@ class IntegracaoService extends ServiceBase {
 
                 // Resumo: Apaga conteúdo da tabela integracao_unidades e busca novo com as unidades ATIVAS obtidas pelo webservice
                 // Remove toda a lista da tabela temporária integracao_unidades
+                
                 IntegracaoUnidade::truncate();
                 // Iteração com lista de uorg's
                 foreach($uos as $uo) {
@@ -566,7 +567,7 @@ class IntegracaoService extends ServiceBase {
                     Obs.:: Inserção de novos servidores automaticamente.
                     */
 
-                    $this->autoIncluir = false;
+                    $this->autoIncluir = true;
 
                     if($this->autoIncluir){
                         /* Query Builder */
@@ -636,7 +637,7 @@ class IntegracaoService extends ServiceBase {
 
         if(!empty($inputs["gestores"]) && !$inputs["gestores"]){
             $this->result["gestores"]['Resultado'] = 'Os gestores não foram atualizados, conforme solicitado!';
-        } elseif(true){ //$this->result['unidades']['Resultado'] == 'Sucesso' && $this->result['servidores']['Resultado'] == 'Sucesso'){
+        } elseif($this->result['unidades']['Resultado'] == 'Sucesso' && $this->result['servidores']['Resultado'] == 'Sucesso'){
             if($this->echo) $this->imprimeNoTerminal("Iniciando a fase de reconstrução das funções de chefia!.....");
             try {
                 DB::beginTransaction();
