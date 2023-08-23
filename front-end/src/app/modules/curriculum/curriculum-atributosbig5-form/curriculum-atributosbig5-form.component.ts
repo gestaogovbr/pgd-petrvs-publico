@@ -11,6 +11,10 @@ export class CurriculumAtributosbig5FormComponent implements OnInit {
   comunica! : string;
   lideranca! : string;
   resolucao! :string;
+  pensamento! :string;
+  criatividade! : string;
+  habilidade! :string;
+  adaptabilidade! :string;
   bigico! :string;
   bigicoAmarelo! :string;
 
@@ -20,6 +24,10 @@ export class CurriculumAtributosbig5FormComponent implements OnInit {
     this.comunica="/assets/images/Comunica.jpeg"//"../assets/images/Comunica.jpg";
     this.lideranca="/assets/images/Lid.jpeg";
     this.resolucao="/assets/images/Resolucao.jpeg";
+    this.pensamento="/assets/images/pensamento-critico.jpg";
+    this.criatividade="/assets/images/criatividadeCuriosidade.jpeg";
+    this.habilidade="/assets/images/habilidadePessoas.jpg";
+    this.adaptabilidade="/assets/images/adaptabilidade.jpg";
     this.bigicoAmarelo="/assets/images/iconBigAmarelo.png";
     this.bigico="/assets/images/iconBig.png";
 
@@ -62,6 +70,10 @@ export class CurriculumAtributosbig5FormComponent implements OnInit {
     console.log()
     let value = $('#rangePerma').val()
     $('#lblPerma').text(value!.toString())
+  }
+
+  public onChangeValorSoft(){
+    
   }
 
   public voltarb5(){}

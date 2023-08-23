@@ -2,6 +2,8 @@ import { Component, Injector, ViewChild, OnInit } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
+import { SelectItem } from 'src/app/components/input/input-base';
+import { InputDatetimeComponent } from 'src/app/components/input/input-datetime/input-datetime.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { InputTextComponent } from 'src/app/components/input/input-text/input-text.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
@@ -27,6 +29,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   @ViewChild(GridComponent, { static: true }) public grid?: GridComponent;
   @ViewChild('programa', { static: true }) public programa?: InputSearchComponent;
   @ViewChild('nome', { static: true }) public nomePE?: InputTextComponent;
+  @ViewChild('data_fim', { static: true }) public dataFim?: InputDatetimeComponent;
   
   public unidadeDao: UnidadeDaoService;
   public programaDao: ProgramaDaoService;
@@ -108,8 +111,9 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     this.entity.unidade_id = this.auth.unidade?.id || "";
     this.entity.unidade = this.auth.unidade;
     const di = new Date(this.entity.data_inicio).toLocaleDateString();
-    const df = new Date(this.entity.data_fim!!).toLocaleDateString();
-    this.entity.nome = this.auth.unidade?.sigla !! + " - " + di + " - " + df;
+    const df= this.entity.data_fim ? new Date(this.entity.data_fim).toLocaleDateString() : new Date().toLocaleDateString();
+    //const df = new Date(this.entity.data_fim || (new Date())).toLocaleDateString();
+    this.entity.nome = this.auth.unidade!.sigla + " - " + di + " - " + df;
     this.loadData(this.entity!, this.form!);
   }
 
@@ -148,16 +152,10 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
 
   public onProgramaChange(){
     const dias=(this.programa?.searchObj as Programa).prazo_max_plano_entrega;
-    //if(this.entity){
-     // const dias = (this.programa?.selectedItem?. as Programa)
-    //  setTimeout(function () {
-     //   console.log('DIAS',dias);
-     // }, 2000);
-    //}
-    //console.log('SOMA DIAS',this.somaDia(this.entity!.data_inicio,dias))
-    const data=this.somaDia(this.entity!.data_inicio,dias)
-    this.form!.controls.data_fim.setValue(new Date(data)) // = this.somaDia(this.entity!.data_inicio,dias)//new Date()//(this.programa?.searchObj as Programa).prazo_max_plano_entrega
-
+    //const dias=(this.programa?.items[0] as SelectItem).entity.prazo_max_plano_entrega;
+    const data=this.somaDia(this.entity!.data_inicio,dias);
+    this.form!.controls.data_fim.setValue(new Date(data)); // = this.somaDia(this.entity!.data_inicio,dias)//new Date()//(this.programa?.searchObj as Programa).prazo_max_plano_entrega
+    this.dataFim?.change.emit();
   }
 
 }
