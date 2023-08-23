@@ -1,8 +1,9 @@
-import { Component, Injector, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild, OnInit } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
+import { InputTextComponent } from 'src/app/components/input/input-text/input-text.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { CadeiaValorDaoService } from 'src/app/dao/cadeia-valor-dao.service';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
@@ -25,13 +26,15 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild(GridComponent, { static: true }) public grid?: GridComponent;
   @ViewChild('programa', { static: true }) public programa?: InputSearchComponent;
+  @ViewChild('nome', { static: true }) public nomePE?: InputTextComponent;
   
   public unidadeDao: UnidadeDaoService;
   public programaDao: ProgramaDaoService;
   public cadeiaValorDao: CadeiaValorDaoService;
   public planejamentoInstitucionalDao: PlanejamentoDaoService;
   public form: FormGroup;
-
+  public maxPE: Number | undefined;
+ 
   constructor(public injector: Injector) {
     super(injector, PlanoEntrega, PlanoEntregaDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
@@ -51,6 +54,8 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
       programa_id: { default: null },
       entregas: { default: [] },
     }, this.cdRef, this.validate);
+    //this.maxPE=this.programa?.
+   
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -102,6 +107,9 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     this.entity = new PlanoEntrega();
     this.entity.unidade_id = this.auth.unidade?.id || "";
     this.entity.unidade = this.auth.unidade;
+    const di = new Date(this.entity.data_inicio).toLocaleDateString();
+    const df = new Date(this.entity.data_fim!!).toLocaleDateString();
+    this.entity.nome = this.auth.unidade?.sigla !! + " - " + di + " - " + df;
     this.loadData(this.entity!, this.form!);
   }
 
@@ -122,5 +130,35 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     let result: ToolbarButton[] = [];
     return result;
   }
+
+  public onNomeChange(){
+
+    const sigla = this.auth.unidade?.sigla;
+    const di = new Date(this.form!.controls.data_inicio.value).toLocaleDateString();
+    const df = new Date(this.form!.controls.data_fim.value).toLocaleDateString();
+    this.form!.controls.nome.setValue(sigla + " - " + di + " - " + df)
+    
+  }
+
+  public somaDia(date: Date, days: number){
+    let result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+  }
+
+  public onProgramaChange(){
+    const dias=(this.programa?.searchObj as Programa).prazo_max_plano_entrega;
+    //if(this.entity){
+     // const dias = (this.programa?.selectedItem?. as Programa)
+    //  setTimeout(function () {
+     //   console.log('DIAS',dias);
+     // }, 2000);
+    //}
+    //console.log('SOMA DIAS',this.somaDia(this.entity!.data_inicio,dias))
+    const data=this.somaDia(this.entity!.data_inicio,dias)
+    this.form!.controls.data_fim.setValue(new Date(data)) // = this.somaDia(this.entity!.data_inicio,dias)//new Date()//(this.programa?.searchObj as Programa).prazo_max_plano_entrega
+
+  }
+
 }
 
