@@ -26,5 +26,6 @@ class Cidade extends ModelBase
     public function unidades() { return $this->hasMany(Unidade::class); }
     public function entidades() { return $this->hasMany(Entidade::class); }
     public function feriados() { return $this->hasMany(Feriado::class); }
+    public function curriculum() { return $this->hasMany(Curriculum::class); }
     
 }

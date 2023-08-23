@@ -88,9 +88,10 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.BOTAO_REATIVAR = { label: "Reativar", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "ATIVO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "ATIVO"), onClick: this.reativar.bind(this) };
     this.BOTAO_RETIRAR_HOMOLOGACAO = { label: "Retirar de homologação", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), onClick: this.retirarHomologacao.bind(this) };
     this.BOTAO_SUSPENDER = { label: "Suspender", id: "PAUSADO", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "SUSPENSO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "SUSPENSO"), onClick: this.suspender.bind(this) };
-    this.botoes = [this.BOTAO_ADERIR_OPTION, this.BOTAO_ADERIR_TOOLBAR, this.BOTAO_ALTERAR, this.BOTAO_ARQUIVAR, this.BOTAO_AVALIAR, this.BOTAO_CANCELAR_AVALIACAO, this.BOTAO_CANCELAR_CONCLUSAO, 
+    this.botoes = [this.BOTAO_ALTERAR, this.BOTAO_ARQUIVAR, this.BOTAO_AVALIAR, this.BOTAO_CANCELAR_AVALIACAO, this.BOTAO_CANCELAR_CONCLUSAO, 
                   this.BOTAO_CANCELAR_HOMOLOGACAO, this.BOTAO_CONCLUIR, this.BOTAO_CONSULTAR, this.BOTAO_DESARQUIVAR, this.BOTAO_EXCLUIR, this.BOTAO_HOMOLOGAR, this.BOTAO_LIBERAR_HOMOLOGACAO, 
                   this.BOTAO_LOGS, this.BOTAO_REATIVAR, this.BOTAO_RETIRAR_HOMOLOGACAO, this.BOTAO_SUSPENDER];
+                  //this.BOTAO_ADERIR_OPTION, this.BOTAO_ADERIR_TOOLBAR,
   }
 
   ngOnInit(): void {
@@ -98,7 +99,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.showFilter = typeof this.queryParams?.showFilter != "undefined" ? (this.queryParams.showFilter == "true") : true;
     this.selectable = this.metadata?.selectable || this.selectable;
     this.checaBotaoAderirToolbar();
-    this.toolbarButtons.push(this.BOTAO_ADERIR_TOOLBAR);
+    //this.toolbarButtons.push(this.BOTAO_ADERIR_TOOLBAR);
   }
 
   ngAfterContentChecked(): void {

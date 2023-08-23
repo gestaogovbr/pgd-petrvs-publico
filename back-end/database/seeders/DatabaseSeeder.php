@@ -22,9 +22,9 @@ class DatabaseSeeder extends Seeder
             EntidadeSeeder::class,
             UnidadePrfSeeder::class,
             UsuarioSeeder::class,
-/*             TipoAvaliacaoSeeder::class,
+          /*   TipoAvaliacaoSeeder::class,
             TipoJustificativaSeeder::class,
-            TipoAvaliacaoJustificativaSeeder::class,
+            TipoAvaliacaoJustificativaSeeder::class,*/
             AreaConhecimentoSeeder::class,
             TipoCursoSeeder::class,
             CursoSeeder::class,
@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
             CargoSeeder::class,
             FuncaoSeeder::class,
             CentroTreinamentoSeeder::class,
-            GrupoEspecializadoSeeder::class, */
+            GrupoEspecializadoSeeder::class,
             
 
             /*Após a execução das Seeds acima, executar a rotina de integração com o comando

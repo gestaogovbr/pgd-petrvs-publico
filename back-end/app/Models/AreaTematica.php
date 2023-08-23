@@ -16,6 +16,6 @@ class AreaTematica extends ModelBase
     ];
 
     //Has
-    public function capacidadesTecnicas() { return $this->hasMany(CapacidadeTecnica::class, 'area_tematica_id'); }
+    public function capacidadeTecnica() { return $this->hasMany(CapacidadeTecnica::class, 'area_tematica_id'); }
     
 }

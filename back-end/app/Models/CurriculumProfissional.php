@@ -38,14 +38,20 @@ class CurriculumProfissional extends ModelBase
 
     //public $fillable_relation = [];
 
-    //Has
-   // public function graduacoes() { return $this->hasMany(CurriculumGraduacao::class,'curriculum_id'); }
+   // Belongs
+   public function curriculum() { return $this->belongsTo(Curriculum::class); }
+   public function centroTreinamento() { return $this->belongsTo(CentroTreinamento::class); }
+   public function cargo() { return $this->belongsTo(Cargo::class); }
+   public function grupoEspecializado() { return $this->belongsTo(GrupoEspecializado::class); }
+   //Has
+   public function historicoAtividadeInterna() { return $this->hasMany(HistoricoAtividadeInternaCurriculum::class); }
+   public function historicoAtividadeExterna() { return $this->hasMany(HistoricoAtividadeExternaCurriculum::class); }
+   public function historicoCursoInterno() { return $this->hasMany(HistoricoCursoInternoCurriculum::class); }
+   public function historicoCursoExterno() { return $this->hasMany(HistoricoCursoExternoCurriculum::class); }
+   public function historicoDocenciaInterna() { return $this->hasMany(HistoricoDocenciaInternaCurriculum::class); }
+   public function historicoDocenciaExterna() { return $this->hasMany(HistoricoDocenciaExternaCurriculum::class); }
+   public function historicoFuncao() { return $this->hasMany(HistoricoFuncaoCurriculum::class); }
+   public function historicoLotacao() { return $this->hasMany(HistoricoLotacaoCurriculum::class); }
 
-    // Belongs
-    public function curriculum() { return $this->belongsTo(Curriculum::class); }
-    public function centroTreinamento() { return $this->belongsTo(CentroTreinamento::class); }
-    public function cargo() { return $this->belongsTo(Cargo::class); }
-    public function grupoEspecializado() { return $this->belongsTo(GrupoEspecializado::class); }
-    public function historicoAtividadeExterna() { return $this->hasMany(HistoricoAtividadeExterna::class); }
 }
 

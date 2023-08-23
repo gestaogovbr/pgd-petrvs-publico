@@ -14,7 +14,8 @@ class GrupoEspecializado extends ModelBase
         //'deleted_at', /* timestamp; */
     ];
 
-    // Belongs
-    //public function centro() { return $this->belongsTo(AreaConhecimento::class,'area_curso_id'); }
+    // HAsMAny
+    public function curriculumProfissional() { return $this->hasMany(CurriculumProfissional::class); }
+
     
 }

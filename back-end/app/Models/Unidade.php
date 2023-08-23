@@ -79,11 +79,12 @@ class Unidade extends ModelBase
     public function planejamentos() { return $this->hasMany(Planejamento::class); }
     public function cadeiasValor() { return $this->hasMany(CadeiaValor::class); }
     public function integrantes() { return $this->hasMany(UnidadeIntegrante::class); }
+    public function historicoLotacao() { return $this->hasMany(HistoricoLotacaoCurriculum::class); }
     // Belongs
     public function entidade() { return $this->belongsTo(Entidade::class); }
     public function cidade() { return $this->belongsTo(Cidade::class); }  //nullable
     public function unidadePai() { return $this->belongsTo(Unidade::class, 'unidade_pai_id'); }    //nullable
-    public function usuarios() { return $this->belongsToMany(Usuario::class, 'unidades_integrantes', 'unidade_id', 'usuario_id'); }
+    
     // Others relationships
     public function gestor() { return $this->hasOne(UnidadeIntegrante::class)->has('gestor'); } 
     public function gestorSubstituto() { return $this->hasOne(UnidadeIntegrante::class)->has('gestorSubstituto'); }

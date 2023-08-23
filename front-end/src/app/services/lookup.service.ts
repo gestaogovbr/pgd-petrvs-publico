@@ -489,7 +489,7 @@ export class LookupService {
     { key: "QUALITATIVO", value: "Qualitativo (conceitual)" },
     { key: "QUANTITATIVO", value: "Quantitativo (valor)" }
   ];
-  
+
   public ADESAO_STATUS: LookupItem[] = [
     { key: "SOLICITADO", value: "Solicitado", color: "bg-primary" },
     { key: "HOMOLOGADO", value: "Homologado", color: "bg-success" },
@@ -652,7 +652,7 @@ export class LookupService {
     { 'key': 'A', 'value': 'Vínculos ativos sem ocorrência de exclusão' },
     { 'key': 'B', 'value': 'Todos os vínculos' },
   ];
-  
+
   public TIPO_VINCULO: LookupItem[] = [
     { 'key': 'A', 'value': 'Ativos em exercício no órgão' },
     { 'key': 'B', 'value': 'Ativos e aposentados' },
