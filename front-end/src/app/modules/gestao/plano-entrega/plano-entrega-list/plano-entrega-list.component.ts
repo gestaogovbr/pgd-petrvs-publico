@@ -114,14 +114,14 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   public checaBotaoAderirToolbar() {
     let planos_ativos_unidade_pai = this.planosEntregasAtivosUnidadePai().map(x => x.id);
     let planos_superiores_vinculados_pela_unidade_selecionada = this.planosEntregasAtivosUnidadeSelecionada().map(x => x.plano_entrega_id).filter(x => x != null);
-    let condition1 = this.auth.isGestorUnidade() || this.auth.isGestorUnidade(this.auth.unidade?.unidade_pai_id) || (this.auth.isLotacaoUsuario(this.auth.unidade) && this.auth.hasPermissionTo("MOD_PENT_ADERIR"));
+    let condition1 = this.auth.isGestorUnidade() || this.auth.isGestorUnidade(this.auth.unidade?.unidade_pai_id) || (this.auth.isLotacaoUsuario(this.auth.unidade) && this.auth.hasPermissionTo("MOD_PENT_ADR"));
     let condition2 = !!planos_ativos_unidade_pai.filter(x => !planos_superiores_vinculados_pela_unidade_selecionada.includes(x)).length;
     this.habilitarAdesaoToolbar = condition1 && condition2;
     this.BOTAO_ADERIR_TOOLBAR.disabled = !this.habilitarAdesaoToolbar;
     /*  (RI_PENT_1)
         O botão Aderir, na toolbar, deverá ser exibido sempre, mas para ficar habilitado:
         1. o usuário logado precisa ser gestor da unidade selecionada ou da sua unidade-pai, ou uma destas ser sua unidade de lotação principal e ele 
-        possuir a capacidade "MOD_PENT_ADERIR" (RN_PENT_2_4); e
+        possuir a capacidade "MOD_PENT_ADR" (RN_PENT_2_4); e
         2. a unidade-pai da unidade selecionada precisa possuir plano de entrega com o status ATIVO, que já não tenha sido vinculado pela unidade selecionada;
     */
   }
@@ -225,21 +225,27 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
         if(this.botaoAtendeCondicoes(this.BOTAO_LIBERAR_HOMOLOGACAO, row)) result.push(this.BOTAO_LIBERAR_HOMOLOGACAO); else result.push(this.BOTAO_CONSULTAR);
         break;
       case 'HOMOLOGANDO':
-        if(this.botaoAtendeCondicoes(this.BOTAO_HOMOLOGAR, row)) result.push(this.BOTAO_HOMOLOGAR); else result.push(this.BOTAO_CONSULTAR);
+        if(this.botaoAtendeCondicoes(this.BOTAO_HOMOLOGAR, row)) result.push(this.BOTAO_HOMOLOGAR);
         break;
       case 'ATIVO':
-        if(this.botaoAtendeCondicoes(this.BOTAO_CONCLUIR, row)) result.push(this.BOTAO_CONCLUIR); else result.push(this.BOTAO_CONSULTAR);
+        if(this.botaoAtendeCondicoes(this.BOTAO_CONCLUIR, row)) result.push(this.BOTAO_CONCLUIR);
         break;
       case 'CONCLUIDO':
-        if(this.botaoAtendeCondicoes(this.BOTAO_AVALIAR, row)) result.push(this.BOTAO_AVALIAR); else result.push(this.BOTAO_CONSULTAR);
+        if(this.botaoAtendeCondicoes(this.BOTAO_AVALIAR, row)) result.push(this.BOTAO_AVALIAR);
         break;
       case 'SUSPENSO':
-        if(this.botaoAtendeCondicoes(this.BOTAO_REATIVAR, row)) result.push(this.BOTAO_REATIVAR); else result.push(this.BOTAO_CONSULTAR);
+        if(this.botaoAtendeCondicoes(this.BOTAO_REATIVAR, row)) result.push(this.BOTAO_REATIVAR);
         break;
       case 'AVALIADO':
-        if(this.botaoAtendeCondicoes(this.BOTAO_CANCELAR_AVALIACAO, row)) result.push(this.BOTAO_CANCELAR_AVALIACAO); else result.push(this.BOTAO_CONSULTAR);
+        if(this.botaoAtendeCondicoes(this.BOTAO_ARQUIVAR, row)) result.push(this.BOTAO_ARQUIVAR);
+        break;
+      case 'ARQUIVADO':
+        if(this.botaoAtendeCondicoes(this.BOTAO_DESARQUIVAR, row)) result.push(this.BOTAO_DESARQUIVAR);
+        break;
+      case 'CANCELADO':
         break;
     }
+    if(!result.length) result.push(this.BOTAO_CONSULTAR);
     return result;
   }
 
@@ -259,10 +265,10 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
           (RI_PENT_2) O botão Aderir, nas linhas do grid, deverá aparecer num plano somente se:
           - o plano estiver com o status Ativo; e
           - a unidade do plano for a unidade-pai da unidade selecionada pelo usuário; e
-          - se o usuário for Gestor da unidade selecionada, ou ela for sua lotação principal e ele possuir a capacidade "MOD_PENT_ADERIR" ; e
+          - se o usuário for Gestor da unidade selecionada, ou ela for sua lotação principal e ele possuir a capacidade "MOD_PENT_ADR" ; e
           - se a unidade selecionada não possuir plano de entrega Ativo no mesmo período do plano em questão;
         */
-        return (this.planoEntregaService.situacaoPlano(planoEntrega) == 'ATIVO' && (planoEntrega.unidade_id == this.auth.unidade?.unidade_pai_id) && (this.auth.isGestorUnidade() || (this.auth.isLotacaoUsuario(this.auth.unidade) && this.auth.hasPermissionTo("MOD_PENT_ADERIR"))) &&
+        return (this.planoEntregaService.situacaoPlano(planoEntrega) == 'ATIVO' && (planoEntrega.unidade_id == this.auth.unidade?.unidade_pai_id) && (this.auth.isGestorUnidade() || (this.auth.isLotacaoUsuario(this.auth.unidade) && this.auth.hasPermissionTo("MOD_PENT_ADR"))) &&
           (this.planosEntregasAtivosUnidadeSelecionada().filter(x => this.util.intersection([{ start: x.data_inicio, end: x.data_fim! }, { start: planoEntrega.data_inicio, end: planoEntrega.data_fim! }])).length == 0));
       case this.BOTAO_ALTERAR:
         /*
@@ -273,6 +279,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
                 - o usuário logado precisa possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a Unidade-pai (Unidade A) da Unidade do plano (Unidade B); ou
                 - o plano de entregas precisa estar com o status ATIVO, a Unidade do plano precisa ser a Unidade de lotação do usuário logado, e ele possuir a capacidade "MOD_PENT_EDT_ATV_HOMOL" ou "MOD_PENT_EDT_ATV_ATV".
                 - o usuário precisa possuir também a capacidade "MOD_PENT_QQR_UND";
+          (RN_PENT_AE) Se a alteração for feita com o plano de entregas no status ATIVO e o usuário logado possuir a capacidade "MOD_PENT_EDT_ATV_HOMOL", o plano de entregas voltará ao status "HOMOLOGANDO";
+          (RN_PENT_AF) Se a alteração for feita com o plano de entregas no status ATIVO e o usuário logado possuir a capacidade "MOD_PENT_EDT_ATV_ATV", o plano de entregas permanecerá no status "ATIVO";
         */
         let condicao1 = ['INCLUIDO', 'HOMOLOGANDO'].includes(this.planoEntregaService.situacaoPlano(planoEntrega)) && (this.auth.isGestorUnidade(planoEntrega.unidade) || this.auth.isLotacaoUsuario(planoEntrega.unidade));
         let condicao2 = this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id) && this.auth.hasPermissionTo("MOD_PENT_EDT_FLH");
@@ -329,19 +337,19 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       case this.BOTAO_CANCELAR_PLANO:
           /*
             (RN_PENT_P) Para CANCELAR UM PLANO DE ENTREGAS:
-            - o usuário logado precisa possuir a capacidade "MOD_PENT_EXCL", o plano precisa estar em um dos seguintes status: INCLUIDO, HOMOLOGANDO, ATIVO ou CONCLUIDO; e
+            - o usuário logado precisa possuir a capacidade "MOD_PENT_CNC", o plano precisa estar em um dos seguintes status: INCLUIDO, HOMOLOGANDO, ATIVO ou CONCLUIDO; e
               - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
               - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado;
           */
-          return this.auth.hasPermissionTo("MOD_PENT_EXCL") && ['INCLUIDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO'].includes(this.planoEntregaService.situacaoPlano(planoEntrega)) && (this.auth.isGestorUnidade(planoEntrega.unidade?.id) || this.auth.isLotacaoUsuario(planoEntrega.unidade));
+          return this.auth.hasPermissionTo("MOD_PENT_CNC") && ['INCLUIDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO'].includes(this.planoEntregaService.situacaoPlano(planoEntrega)) && (this.auth.isGestorUnidade(planoEntrega.unidade?.id) || this.auth.isLotacaoUsuario(planoEntrega.unidade));
       case this.BOTAO_CONCLUIR:
         /*
           (RN_PENT_U) Para CONCLUIR um plano de entregas:
           - o plano precisa estar com o status ATIVO, e
             - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
-            - a Unidade do plano (Unidade B) precisa ser sua Unidade de lotação e o usuário logado precisa possuir a capacidade "MOD_PENT_CONCLUIR";
+            - a Unidade do plano (Unidade B) precisa ser sua Unidade de lotação e o usuário logado precisa possuir a capacidade "MOD_PENT_CONC";
         */
-        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'ATIVO' && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_CONCLUIR")));        
+        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'ATIVO' && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_CONC")));        
       case this.BOTAO_CONSULTAR:
         /*
           (RN_PENT_V) CONSULTAR
@@ -392,20 +400,22 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
           (RN_PENT_AC) Para REATIVAR um plano de entregas:
           - o plano precisa estar com o status SUSPENSO, e
               - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
-              - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado, e ele possuir a capacidade "MOD_PENT_REATIVAR"; ou
+              - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado, e ele possuir a capacidade "MOD_PENT_RTV"; ou
               - o usuário logado precisa ser gestor de alguma Unidade da linha hierárquica ascendente (Unidade A e superiores) da Unidade do plano (Unidade B);
         */
-        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'SUSPENSO' && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_REATIVAR")) || this.auth.isGestorLinhaAscendente(planoEntrega.unidade!) );  
+        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'SUSPENSO' && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_RTV")) || this.auth.isGestorLinhaAscendente(planoEntrega.unidade!) );  
       case this.BOTAO_RETIRAR_HOMOLOGACAO:
         /*
           (RN_PENT_AB) Para RETIRAR DE HOMOLOGAÇÃO um plano de entregas:
-          - o plano precisa estar com o status HOMOLOGANDO, e o usuário logado precisa ser gestor da Unidade do plano (Unidade B);
+          - o plano precisa estar com o status HOMOLOGANDO, e:
+              - o usuário logado precisa ser gestor da Unidade do plano (Unidade B); ou
+              - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado, e este possuir a capacidade "MOD_PENT_RET_HOMOL"
         */
-        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'HOMOLOGANDO' && this.auth.isGestorUnidade(planoEntrega.unidade); 
+        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'HOMOLOGANDO' && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_RET_HOMOL"))); 
       case this.BOTAO_SUSPENDER:
         /*
           (RN_PENT_AD) Para SUSPENDER um plano de entregas:
-          - o plano precisa estar com o status ATIVO, e
+          - o plano precisa estar com o status ATIVO, e:
               - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
               - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado, e ele possuir a capacidade "MOD_PENT_SUSP"; ou
               - o usuário logado precisa ser gestor de alguma Unidade da linha hierárquica ascendente (Unidade A e superiores) da Unidade do plano (Unidade B);

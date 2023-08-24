@@ -88,7 +88,7 @@ class Unidade extends ModelBase
     public function gestor() { return $this->hasOne(UnidadeIntegrante::class)->has('gestor'); } 
     public function gestorSubstituto() { return $this->hasOne(UnidadeIntegrante::class)->has('gestorSubstituto'); }
     public function lotados() { return $this->hasMany(UnidadeIntegrante::class)->has('lotado'); }
-    public function colaboradores() { return $this->hasMany(UnidadeIntegrantes::class)->has('colaborador'); }       
+    public function colaboradores() { return $this->hasMany(UnidadeIntegrante::class)->has('colaborador'); } // aqueles que possuem TCR      
     public function homologadoresPlanoEntrega() { return $this->hasMany(UnidadeIntegrante::class)->has('homologadorPlanoEntrega'); }       
     public function avaliadoresPlanoEntrega() { return $this->hasMany(UnidadeIntegrante::class)->has('avaliadorPlanoEntrega'); }       
     public function avaliadoresPlanoTrabalho() { return $this->hasMany(UnidadeIntegrante::class)->has('avaliadorPlanoTrabalho'); }       

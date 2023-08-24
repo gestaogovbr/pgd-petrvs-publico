@@ -4,11 +4,12 @@
 
 ~~~text
     MOD_PENT = Permite acesso ao menu do módulo Plano de Entregas, e consultar planos de entrega
-    MOD_PENT_INCL = Permite incluir planos de entrega
-    MOD_PENT_EDT = Permite editar planos de entrega
-    MOD_PENT_EXCL = Permite excluir ou cancelar planos de entrega
+    MOD_PENT_INCL = Permite incluir planos de entregas
+    MOD_PENT_EDT = Permite editar planos de entregas
+    MOD_PENT_EXCL = Permite excluir planos de entregas
+    MOD_PENT_CNC = Permite cancelar planos de entregas
     MOD_PENT_EDT_ATV_HOMOL = Permite editar planos de entrega que estejam no status ATIVO.
-                               O plano voltará ao status HOMOLOGANDO
+                             O plano voltará ao status HOMOLOGANDO.
     MOD_PENT_EDT_ATV_ATV = Permite editar planos de entrega que estejam no status ATIVO, mantendo-os neste status
     MOD_PENT_HOMOL = Permite homologar planos de entregas das Unidades imediatamente subordinadas à sua Unidade de lotação
     MOD_PENT_CANC_HOMOL = Permite cancelar a homologação dos planos de entregas das Unidades imediatamente 
@@ -20,10 +21,11 @@
     MOD_PENT_EDT_FLH = Permite alterar planos de entregas das Unidades imediatamente 
                          subordinadas à sua Unidade de lotação
     MOD_PENT_LIB_HOMOL = Permite liberar para homologação planos de entregas da sua Unidade de lotação
-    MOD_PENT_CONCLUIR = Permite marcar como concluídos planos de entregas da sua Unidade de lotação
+    MOD_PENT_RET_HOMOL = Permite retirar de homologação planos de entregas da sua Unidade de lotação
+    MOD_PENT_CONC = Permite marcar como concluídos planos de entregas da sua Unidade de lotação
     MOD_PENT_CANC_CONCL = Permite cancelar a conclusão de planos de entregas da sua Unidade de lotação
     MOD_PENT_SUSP = Permite suspender planos de entregas da sua Unidade de lotação
-    MOD_PENT_REATIVAR = Permite reativar planos de entregas suspensos, desde que sejam da sua Unidade de lotação
+    MOD_PENT_RTV = Permite reativar planos de entregas suspensos, desde que sejam da sua Unidade de lotação
     MOD_PENT_ARQ = Permite arquivar planos de entregas da sua Unidade de lotação
     MOD_PENT_QQR_UND = Permite Incluir/Editar planos de entrega de qualquer Unidade, desde que possua 
                        também as respectivas MOD_PENT_INCL/MOD_PENT_EDT (independente de qualquer outra condição)
@@ -83,6 +85,8 @@ Ação: ALTERAR -> não muda o status do plano ('INCLUIDO','HOMOLOGANDO','ATIVO'
         - o plano de entregas precisa estar com o status ATIVO, a Unidade do plano precisa ser a Unidade de lotação do usuário logado, e ele possuir a capacidade "MOD_PENT_EDT_ATV_HOMOL" ou "MOD_PENT_EDT_ATV_ATV"; ou
         - o usuário precisa possuir também a capacidade "MOD_PENT_QQR_UND".
 (RN_PENT_M) Qualquer alteração, depois de o plano de entregas ser homologado, precisa ser notificada ao gestor da Unidade-pai (Unidade A) ou à pessoa que homologou. Essa comunicação sobre eventuais ajustes, não se aplica à Unidade instituidora.
+(RN_PENT_AE) Se a alteração for feita com o plano de entregas no status ATIVO e o usuário logado possuir a capacidade "MOD_PENT_EDT_ATV_HOMOL", o plano de entregas voltará ao status "HOMOLOGANDO";
+(RN_PENT_AF) Se a alteração for feita com o plano de entregas no status ATIVO e o usuário logado possuir a capacidade "MOD_PENT_EDT_ATV_ATV", o plano de entregas permanecerá no status "ATIVO";
 
 ** Alterações realizadas em planos de entregas vinculados a quaisquer unidades que sejam instituidoras não precisam ser notificadas ao gestor de sua Unidade-pai. É isso? **
 
@@ -91,6 +95,12 @@ Ação: ARQUIVAR -> não muda o status do plano ('CONCLUIDO','AVALIADO')
     - o plano precisa estar com o status CONCLUIDO ou AVALIADO, não ter sido arquivado, e:
         - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
         - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado e ele possuir a capacidade "MOD_PENT_ARQ";
+    - Estando na condição de "ARQUIVADO"
+        botões-padrão:
+            - 'Consultar'. Condições para ser exibido: vide RN_PENT_V;
+        botões opcionais:
+            - 'Consultar'. Condições para ser exibido: vide RN_PENT_V;
+            - 'Desarquivar'. Condições para ser exibido: vide RN_PENT_W;
 
 Ação: AVALIAR -> o plano adquire o status de 'AVALIADO'
 (RN_PENT_O) Condições para que um plano de entregas possa ser avaliado:
@@ -102,17 +112,24 @@ Ação: AVALIAR -> o plano adquire o status de 'AVALIADO'
         - sugerir arquivamento automático (vide RI_PENT_A);
     - Estando no status "AVALIADO"
         botões-padrão:
-            - 'Cancelar Avaliação'. Condições para ser exibido: vide RN_PENT_R;
-            - 'Consultar'. Condições para ser exibido: vide RN_PENT_V;;
+            - 'Arquivar'. Condições para ser exibido: vide RN_PENT_N;
+            - 'Consultar'. Condições para ser exibido: vide RN_PENT_V;
         botões opcionais:
             - 'Arquivar'. Condições para ser exibido: vide RN_PENT_N;
+            - 'Consultar'. Condições para ser exibido: vide RN_PENT_V;
+            - 'Cancelar Avaliação'. Condições para ser exibido: vide RN_PENT_R;
 
 Ação: CANCELAR PLANO -> o plano adquire o status de 'CANCELADO'
 (RN_PENT_P) Condições para que um plano de entregas possa ser cancelado:
-    - o usuário logado precisa possuir a capacidade "MOD_PENT_EXCL", o plano precisa estar em um dos seguintes status: INCLUIDO, HOMOLOGANDO, ATIVO ou CONCLUIDO; e
+    - o usuário logado precisa possuir a capacidade "MOD_PENT_CNC", o plano precisa estar em um dos seguintes status: INCLUIDO, HOMOLOGANDO, ATIVO ou CONCLUIDO; e
         - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
         - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado;
 (RN_PENT_Q) Quando um plano de entregas é cancelado, todas as suas entregas são canceladas, vindo a afetar as entregas dos planos de trabalho a elas relacionadas;
+    - Estando no status "CANCELADO"
+        botões-padrão:
+            - 'Consultar'. Condições para ser exibido: vide RN_PENT_V;
+        botões opcionais:
+            - 'Consultar'. Condições para ser exibido: vide RN_PENT_V;
 
 Ação: CANCELAR AVALIAÇÃO -> o plano retorna ao status de 'CONCLUIDO'
 (RN_PENT_R) Condições para que um plano de entregas possa ter sua avaliação cancelada:
@@ -138,12 +155,16 @@ Ação: CONCLUIR -> o plano adquire o status de 'CONCLUIDO'
 (RN_PENT_U) Condições para que um plano de entregas possa ser concluído:
     - o plano precisa estar com o status ATIVO, e:
         - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
-        - a Unidade do plano (Unidade B) precisa ser sua Unidade de lotação e o usuário logado precisa possuir a capacidade "MOD_PENT_CONCLUIR";
+        - a Unidade do plano (Unidade B) precisa ser sua Unidade de lotação e o usuário logado precisa possuir a capacidade "MOD_PENT_CONC";
     - Estando no status "CONCLUIDO"
         botões-padrão:
             - 'Avaliar'. Condições para ser exibido: vide RN_PENT_O;
             - 'Consultar'. Condições para ser exibido: vide RN_PENT_V;
         botões opcionais:
+            - 'Avaliar'. Condições para ser exibido: vide RN_PENT_O;
+            - 'Consultar'. Condições para ser exibido: vide RN_PENT_V;
+            - 'Cancelar'. Condições para ser exibido: vide RN_PENT_P;
+            - 'Arquivar'. Condições para ser exibido: vide RN_PENT_N;
             - 'Cancelar Conclusão'. Condições para ser exibido: vide RN_PENT_S;
 
 Ação: CONSULTAR -> não muda o status do plano
@@ -169,16 +190,22 @@ Ação: HOMOLOGAR -> o plano adquire o status de 'ATIVO'
             - a Unidade-pai (Unidade A) for a Unidade de lotação do usuário logado e ele possuir a capacidade "MOD_PENT_HOMOL", ou
             - o usuário logado precisa possuir a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para a Unidade-pai (Unidade A); (RN_PENT_E)
         - A homologação do plano de entregas não se aplica à Unidade instituidora.
+
 ** Os planos de entregas vinculados a quaisquer unidades que sejam instituidoras não precisam ser homologados. É isso? **
+
         - Estando no status "ATIVO"
             botões-padrão:
                 - 'Concluir'. Condições para ser exibido: vide RN_PENT_U;
                 - 'Consultar'. Condições para ser exibido: vide RN_PENT_V;
             outras opções:
-                - 'Cancelar Homologação'. Condições para ser exibido: vide RN_PENT_T;
+                - 'Concluir'. Condições para ser exibido: vide RN_PENT_U;
+                - 'Consultar'. Condições para ser exibido: vide RN_PENT_V;
+                - 'Cancelar'. Condições para ser exibido: vide RN_PENT_P;
                 - 'Suspender'. Condições para ser exibido: vide RN_PENT_AD;
+                - 'Cancelar Homologação'. Condições para ser exibido: vide RN_PENT_T;
+                - 'Alterar'. Condições para ser exibido: vide RN_PENT_L;
 
-Ação: INCLUIR -> o plano adquire o status de 'INCLUIDO'
+Ação: INSERIR/INCLUIR -> o plano adquire o status de 'INCLUIDO'
 (RN_PENT_Z) Condições para que um plano de entregas possa ser criado:
         - o usuário logado precisa possuir a capacidade "MOD_PENT_INCL", e:
             - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou gestor da sua Unidade-pai (Unidade A)(RN_PENT_C); ou
@@ -189,8 +216,11 @@ Ação: INCLUIR -> o plano adquire o status de 'INCLUIDO'
                 - 'Liberar para homologação'. Condições para ser exibido: vide RN_PENT_AA;
                 - 'Consultar'. Condições para ser exibido: vide RN_PENT_V;
             botões opcionais:
-                - botão 'Alterar'. Condições para ser exibido: vide RN_PENT_L;
-                - botão 'Excluir'. Condições para ser exibido: vide RN_PENT_X;
+                - 'Liberar para Homologação'. Condições para ser exibido: vide RN_PENT_AA;
+                - 'Consultar'. Condições para ser exibido: vide RN_PENT_V;
+                - 'Cancelar'. Condições para ser exibido: vide RN_PENT_P;
+                - 'Excluir'. Condições para ser exibido: vide RN_PENT_X;
+                - 'Alterar'. Condições para ser exibido: vide RN_PENT_L;
 
 Ação: LIBERAR PARA HOMOLOGAÇÃO -> o plano adquire o status de 'HOMOLOGANDO'
 (RN_PENT_AA) Condições para que um plano de entregas possa ser liberado para homologação:
@@ -200,21 +230,26 @@ Ação: LIBERAR PARA HOMOLOGAÇÃO -> o plano adquire o status de 'HOMOLOGANDO'
         - Estando no status "HOMOLOGANDO"
             botões-padrão:
                 - 'Homologar'. Condições para ser exibido: vide RN_PENT_Y;
-                - 'Alterar'. Condições para ser exibido: vide RN_PENT_L;
                 - 'Consultar'. Condições para ser exibido: vide RN_PENT_V;
             outras opções:
+                - 'Homologar'. Condições para ser exibido: vide RN_PENT_Y;
+                - 'Consultar'. Condições para ser exibido: vide RN_PENT_V;
+                - 'Cancelar'. Condições para ser exibido: vide RN_PENT_P;
                 - 'Retirar de Homologação'. Condições para ser exibido: vide RN_PENT_AB;
                 - 'Excluir'. Condições para ser exibido: vide RN_PENT_X;
+                - 'Alterar'. Condições para ser exibido: vide RN_PENT_L;
 
 Ação: RETIRAR DE HOMOLOGAÇÃO -> o plano retorna ao status de 'INCLUIDO'
 (RN_PENT_AB) Condições para que um plano de entregas possa ser retirado de homologação:
-        - o plano precisa estar com o status HOMOLOGANDO, e o usuário logado precisa ser gestor da Unidade do plano (Unidade B);
+        - o plano precisa estar com o status HOMOLOGANDO, e:
+            - o usuário logado precisa ser gestor da Unidade do plano (Unidade B); ou
+            - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado, e este possuir a capacidade "MOD_PENT_RET_HOMOL"
 
 Ação: REATIVAR -> o plano adquire novamente o status de 'ATIVO'
 (RN_PENT_AC) Condições para que um plano de entregas possa ser reativado:
         - o plano precisa estar com o status SUSPENSO, e
             - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
-            - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado, e ele possuir a capacidade "MOD_PENT_REATIVAR"; ou
+            - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado, e ele possuir a capacidade "MOD_PENT_RTV"; ou
             - o usuário logado precisa ser gestor de alguma Unidade da linha hierárquica ascendente (Unidade A e superiores) da Unidade do plano (Unidade B);
 
 Ação: SUSPENDER -> o plano adquire o status de 'SUSPENSO'
@@ -228,6 +263,8 @@ Ação: SUSPENDER -> o plano adquire o status de 'SUSPENSO'
                 - 'Reativar'. Condições para ser exibido: vide RN_PENT_AC;
                 - 'Consultar'. Condições para ser exibido: vide RN_PENT_V;
             botões-opcionais:
+                - 'Reativar'. Condições para ser exibido: vide RN_PENT_AC;
+                - 'Consultar'. Condições para ser exibido: vide RN_PENT_V;
 
 ## REGRAS DE INTERFACE APLICADAS AOS PLANOS DE ENTREGAS
 
@@ -296,7 +333,7 @@ Adesão a Planos de Entregas
 - (RN_PENT_3_3) Se a Unidade A tem um plano de entrega próprio e a Unidade B aderiu ao plano de A, a Unidade C pode aderir ao plano de B e só a ele; (Hierarquia considerada: A -> B -> C)
 - (RN_PENT_4_1) Ação: ADERIR (exclusivamente para planos vinculados)
     . o usuário precisa possuir também a capacidade "MOD_PENT_QQR_UND"; ou
-    . o usuário logado precisa ser gestor da Unidade ou da sua Unidade-pai, ou uma destas ser sua Unidade de lotação e ele possuir a capacidade "MOD_PENT_ADERIR"; (RN_PENT_2_4) e
+    . o usuário logado precisa ser gestor da Unidade ou da sua Unidade-pai, ou uma destas ser sua Unidade de lotação e ele possuir a capacidade "MOD_PENT_ADR"; (RN_PENT_2_4) e
     . a Unidade do plano-pai precisa ser a Unidade-pai da Unidade do plano vinculado, e o plano-pai precisa estar com o status ATIVO; (RN_PENT_2_3) (RN_PENT_3_3) e
     . a Unidade não possua plano de entrega com o status ATIVO no mesmo período do plano ao qual está sendo feita a adesão;
 - (RN_PENT_3_1) Quando um Plano de Entregaqs voltar no status, e possuir outros Planos de Entrega a ele vinculados, no status ATIVO, estes deverão ir para o status SUSPENSO;
@@ -314,10 +351,10 @@ Planos de Entrega sigilosos
 
 (RI_PENT_1) O botão Aderir, na toolbar, deverá ser exibido sempre, mas para ficar habilitado:
     - o usuário logado precisa ser gestor da Unidade selecionada ou da sua Unidade-pai, ou uma destas ser sua Unidade de lotação e ele
-      possuir a capacidade "MOD_PENT_ADERIR" (RN_PENT_2_4); e
+      possuir a capacidade "MOD_PENT_ADR" (RN_PENT_2_4); e
     - a Unidade-pai da Unidade selecionada precisa possuir plano de entrega com o status ATIVO, que já não tenha sido vinculado pela Unidade selecionada;
 (RI_PENT_2) O botão Aderir, nas linhas do grid, deverá aparecer num plano somente se:
     - o plano estiver com o status Ativo; e
     - a Unidade do plano for a Unidade-pai da Unidade selecionada pelo usuário; e
-    - se o usuário for Gestor da Unidade selecionada, ou ela for sua lotação e ele possuir a capacidade "MOD_PENT_ADERIR" ; e
+    - se o usuário for Gestor da Unidade selecionada, ou ela for sua lotação e ele possuir a capacidade "MOD_PENT_ADR" ; e
     - se a Unidade selecionada não possuir plano de entrega Ativo no mesmo período do plano em questão;

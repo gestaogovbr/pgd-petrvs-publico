@@ -377,6 +377,8 @@ class PlanoEntregaService extends ServiceBase
      *                  RN_PENT_AB
      *                  RN_PENT_AC
      *                  RN_PENT_AD
+     *   RN_PENT_AE
+     *   RN_PENT_AF
      *   RI_PENT_A
      * 
      * Regras relativas a adesão de planos de entregas, assunto
