@@ -314,7 +314,8 @@ class IntegracaoService extends ServiceBase {
                     foreach($uos as $uo) {
                         if(!empty($self->UtilService->valueOrDefault($uo["id_servo"])) && $self->UtilService->valueOrDefault($uo["ativa"]) == 'true') {
 
-                              // Tratar telefone
+                              // Tratar de dados. Tentando melhorar um pouco...
+
                               $tel = $self->UtilService->valueOrDefault($uo["telefone"], null);
                               if(!is_null($tel) && strlen($tel) == 19 &&
                                   substr($tel,0,3) == '000' &&
@@ -330,6 +331,14 @@ class IntegracaoService extends ServiceBase {
                               $email = $self->UtilService->valueOrDefault($uo["email"], null);
                               if(!is_null($email)){
                                   $email = mb_strtolower(trim($email), 'UTF-8');
+                              }
+
+                              $cod_municipio_ibge = $self->UtilService->valueOrDefault($uo["municipio_ibge"], null);
+                              $municipio_nome = $self->UtilService->valueOrDefault($uo["municipio_nome"], null);
+                              if(!is_null($cod_municipio_ibge)){
+                                  $query = "SELECT nome FROM cidades where codigo_ibge = :cod_municipio_ibge";
+                                  $db_result = DB::select($query, ["cod_municipio_ibge" => $cod_municipio_ibge]);
+                                  if(is_array($db_result)) $municipio_nome = $db_result[0]->nome;
                               }
 
                               $unidade = [
@@ -356,8 +365,8 @@ class IntegracaoService extends ServiceBase {
                                 'ptn_ge_coordenada' => $self->UtilService->valueOrDefault($uo["ptn_ge_coordenada"], null),
                                 'municipio_siafi_siape' => $self->UtilService->valueOrDefault($uo["municipio_siafi_siape"], null),
                                 'municipio_siscom' => $self->UtilService->valueOrDefault($uo["municipio_siscom"], null),
-                                'municipio_ibge' => $self->UtilService->valueOrDefault($uo["municipio_ibge"], null),
-                                'municipio_nome' => $self->UtilService->valueOrDefault($uo["municipio_nome"], null),
+                                'municipio_ibge' => $cod_municipio_ibge,
+                                'municipio_nome' => $municipio_nome,
                                 'municipio_uf' => $self->UtilService->valueOrDefault($uo["municipio_uf"], null),
                                 'ativa' => $self->UtilService->valueOrDefault($uo["ativa"]),
                                 'regimental' => $self->UtilService->valueOrDefault($uo["regimental"], null),
