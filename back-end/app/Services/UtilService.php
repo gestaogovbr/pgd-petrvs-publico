@@ -26,8 +26,9 @@ class UtilService
         return Carbon::parse($dataHora)->format("d/m/Y");
     }
 
-    public function valueOrDefault($value, $default = "", $uorg = false) {
-        ($uorg && !is_null($value)) ? $value = strval(intval($value)) : $value; 
+    public function valueOrDefault($value, $default = "", $option = "") {
+        ($option == strtolower("uorg") && !is_null($value)) ? $value = strval(intval($value)) : $value;
+        ($option == strtolower("situacao_funcional") && !is_null($value)) ? $value = strval($value) : $value;
         return empty($value) || gettype($value) == "array" ? $default : $value;
     }
 

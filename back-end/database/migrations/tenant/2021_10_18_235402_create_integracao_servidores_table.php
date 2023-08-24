@@ -35,7 +35,7 @@ class CreateIntegracaoServidoresTable extends Migration
             $table->string('coduorglotacao', 50)->nullable();
             $table->string('codigo_servo_exercicio', 50)->nullable();
             $table->string('nomeguerra', 100)->nullable();
-            $table->string('codsitfuncional', 50)->nullable();
+            $table->string('situacao_funcional', 50)->nullable();
             $table->string('codupag', 50)->nullable();
             $table->string('dataexercicionoorgao', 50)->nullable();
             $table->json('funcoes')->nullable();

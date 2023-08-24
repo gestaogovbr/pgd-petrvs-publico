@@ -31,7 +31,7 @@ class IntegracaoServidor extends ModelBase
         'coduorglotacao', /* varchar(50); */
         'codigo_servo_exercicio', /* varchar(50); */
         'nomeguerra', /* varchar(100); */
-        'codsitfuncional', /* varchar(50); */
+        'situacao_funcional', /* varchar(50); */
         'codupag', /* varchar(50); */
         'dataexercicionoorgao', /* varchar(50); */
         'funcoes', /* json; */

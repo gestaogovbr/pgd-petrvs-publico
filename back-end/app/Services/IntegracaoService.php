@@ -11,8 +11,6 @@ use App\Models\Perfil;
 use App\Models\Unidade;
 use App\Models\IntegracaoUnidade;
 use App\Models\IntegracaoServidor;
-use App\Models\IntegracaoChefia;
-use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use Illuminate\Support\Facades\Auth;
 use Ramsey\Uuid\Uuid;
@@ -342,11 +340,11 @@ class IntegracaoService extends ServiceBase {
                               }
 
                               $unidade = [
-                                'id_servo' => $self->UtilService->valueOrDefault($uo["id_servo"], null, $uorg = true),
-                                'pai_servo' => $self->UtilService->valueOrDefault($uo["pai_servo"], null, $uorg = true),
-                                'codigo_siape' => $self->UtilService->valueOrDefault($uo["codigo_siape"], null, $uorg = true),
-                                'pai_siape' => $self->UtilService->valueOrDefault($uo["pai_siape"], null, $uorg = true),
-                                'codupag' => $self->UtilService->valueOrDefault($uo["codupag"], null, $uorg = true),
+                                'id_servo' => $self->UtilService->valueOrDefault($uo["id_servo"], null, $option = "uorg"),
+                                'pai_servo' => $self->UtilService->valueOrDefault($uo["pai_servo"], null, $option = "uorg"),
+                                'codigo_siape' => $self->UtilService->valueOrDefault($uo["codigo_siape"], null, $option = "uorg"),
+                                'pai_siape' => $self->UtilService->valueOrDefault($uo["pai_siape"], null, $option = "uorg"),
+                                'codupag' => $self->UtilService->valueOrDefault($uo["codupag"], null, $option = "uorg"),
                                 'nomeuorg' => $self->UtilService->valueOrDefault($uo["nomeuorg"], null),
                                 'siglauorg' => $sigla,
                                 'telefone' => $tel,
@@ -354,8 +352,8 @@ class IntegracaoService extends ServiceBase {
                                 'natureza' => $self->UtilService->valueOrDefault($uo["natureza"], null),
                                 'fronteira' => $self->UtilService->valueOrDefault($uo["fronteira"], null),
                                 'fuso_horario' => $self->UtilService->valueOrDefault($uo["fuso_horario"], null),
-                                'cod_uop' => $self->UtilService->valueOrDefault($uo["cod_uop"], null, $uorg = true),
-                                'cod_unidade' => $self->UtilService->valueOrDefault($uo["cod_unidade"], null, $uorg = true),
+                                'cod_uop' => $self->UtilService->valueOrDefault($uo["cod_uop"], null, $option = "uorg"),
+                                'cod_unidade' => $self->UtilService->valueOrDefault($uo["cod_unidade"], null, $option = "uorg"),
                                 'tipo' => $self->UtilService->valueOrDefault($uo["tipo"], null),
                                 'tipo_desc' => $self->UtilService->valueOrDefault($uo["tipo_desc"], null),
                                 'na_rodovia' => $self->UtilService->valueOrDefault($uo["na_rodovia"], null),
@@ -527,18 +525,17 @@ class IntegracaoService extends ServiceBase {
                                     'vinculo_ativo' => $self->UtilService->valueOrDefault($ativo['vinculo_ativo']),
                                     'matriculasiape' => $self->UtilService->valueOrDefault($ativo['matriculasiape']),
                                     'tipo' => $self->UtilService->valueOrDefault($ativo['tipo']),
-                                    'coduorgexercicio' => $self->UtilService->valueOrDefault($ativo['coduorgexercicio'], null, $uorg = true),
-                                    'coduorglotacao' => $self->UtilService->valueOrDefault($ativo['coduorglotacao'], null, $uorg = true),
-                                    'codigo_servo_exercicio' => $self->UtilService->valueOrDefault($ativo['codigo_servo_exercicio'], null, $uorg = true),
+                                    'coduorgexercicio' => $self->UtilService->valueOrDefault($ativo['coduorgexercicio'], null, $option = "uorg"),
+                                    'coduorglotacao' => $self->UtilService->valueOrDefault($ativo['coduorglotacao'], null, $option = "uorg"),
+                                    'codigo_servo_exercicio' => $self->UtilService->valueOrDefault($ativo['codigo_servo_exercicio'], null, $option = "uorg"),
                                     'nomeguerra' => $nomeguerra,
-                                    'codsitfuncional' => $self->UtilService->valueOrDefault($ativo['codsitfuncional']),
+                                    'situacao_funcional' => $self->UtilService->valueOrDefault($ativo['codsitfuncional']),
                                     'codupag' => $self->UtilService->valueOrDefault($ativo['codupag']),
                                     'dataexercicionoorgao' => $self->UtilService->valueOrDefault($ativo['dataexercicionoorgao']),
                                     'funcoes' => $ativo['funcoes'],
                                     'matricula' => $self->UtilService->valueOrDefault($ativo['matriculasiape']),
                                 ];
-                                // $db_result = IntegracaoServidor::create($servidor)->save();
-                                $db_result = $this->integracaoServidor->saveIntegracaoServidor($servidor, false);
+                                $db_result = IntegracaoServidor::create($servidor)->save();
                             }
                         }
                     }
