@@ -613,7 +613,6 @@ class IntegracaoService extends ServiceBase {
                     que não estejam na tabela usuarios caso autoIncluir seja verdadeiro. 
                     Obs.:: Inserção de novos servidores automaticamente.
                     */
-                    $this->autoIncluir = true;
 
                     if($this->autoIncluir){
                         /* Query Builder */
