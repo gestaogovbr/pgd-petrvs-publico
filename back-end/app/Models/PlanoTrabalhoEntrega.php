@@ -17,6 +17,7 @@ class PlanoTrabalhoEntrega extends ModelBase
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'plano_entrega_entrega_id', /* char(36); */
         'entrega_id', /* char(36); */
+        'orgao',
         'descricao', /* varchar(256); NOT NULL; */// Detalhamento da entrega
         'forca_trabalho', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */// Percentual da força de trabalho associado a esta entrega
         'plano_trabalho_id', /* char(36); NOT NULL; */

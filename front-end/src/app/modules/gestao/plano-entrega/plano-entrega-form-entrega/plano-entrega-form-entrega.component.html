@@ -22,7 +22,7 @@
                     <input-text [size]="6" label="Destinatário" controlName="destinatario"></input-text>
                 </div>
                 <separator title="Planejamento"></separator>
-                <div *ngIf="this.entrega?.selectedItem?.entity" class="row">
+                <div *ngIf="this.entrega?.selectedEntity" class="row">
                     <input-number *ngIf="checkTipoIndicador(['PORCENTAGEM'])" [size]="6" label="Meta" controlName="meta" sufix="%"></input-number>
                     <input-number *ngIf="checkTipoIndicador(['QUANTIDADE', 'VALOR'])" [size]="6" label="Meta" controlName="meta"></input-number>
                     <input-select *ngIf="checkTipoIndicador(['QUALITATIVO'])" [size]="6" label="Meta" controlName="meta" [items]="itensQualitativo"></input-select>

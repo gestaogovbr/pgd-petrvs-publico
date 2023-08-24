@@ -1,4 +1,4 @@
-import { Component, ContentChild, EventEmitter, Injector, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ContentChild, EventEmitter, HostBinding, Injector, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup, FormGroupDirective } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 import { DaoBaseService, QueryOrderBy } from 'src/app/dao/dao-base.service';
@@ -42,6 +42,7 @@ export class GridGroupSeparator {
   ]
 })
 export class GridComponent extends ComponentBase implements OnInit {
+  @HostBinding('class') get class(): string { return this.isNoMargin ? "p-0 m-0" : "" };
   @ContentChild(ColumnsComponent) columnsRef?: ColumnsComponent;
   @ContentChild(ReportComponent) reportRef?: ReportComponent;
   @ContentChild(FilterComponent) filterRef?: FilterComponent;
@@ -70,6 +71,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   @Input() join: string[] = [];
   @Input() form: FormGroup = new FormGroup({});
   @Input() noHeader?: string;
+  @Input() noMargin?: string;
   @Input() editable?: string;
   @Input() hasEdit: boolean = true;
   @Input() hasDelete: boolean = false;
@@ -346,6 +348,10 @@ export class GridComponent extends ComponentBase implements OnInit {
     return this.noHeader != undefined;
   }
 
+  public get isNoMargin(): boolean {
+    return this.noMargin != undefined;
+  }
+
   public get isLoading(): boolean {
     return this.query?.loading || this.loading;
   }
@@ -601,7 +607,7 @@ export class GridComponent extends ComponentBase implements OnInit {
         } else {
           this.adding = false;
         }
-      })();
+      }).bind(this)();
     }
   }  
 
@@ -613,7 +619,7 @@ export class GridComponent extends ComponentBase implements OnInit {
       this.editing = row; /* Previne multiplas chamadas para inserir */
       (async () => {
         await this.edit(row);
-      })();
+      }).bind(this)();
     }
   }
 
@@ -629,14 +635,14 @@ export class GridComponent extends ComponentBase implements OnInit {
       this.group(this.items);
       this.selected = undefined;
       this.cdRef.detectChanges();
-    })();
+    }).bind(this)();
   }
 
   public onCancelItem() {
     (async () => {
       if(this.adding) this.items.splice(this.items.findIndex(x => !(x instanceof GridGroupSeparator) && x["id"] == (this.editing || {id: undefined})["id"]), 1);
       await this.endEdit();
-    })();
+    }).bind(this)();
   }
 
   /**
@@ -646,7 +652,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   public onSaveItem(itemRow: Base | IIndexable) {
     (async () => {
       await this.saveItem(itemRow);
-    })();
+    }).bind(this)();
   }
 
   /**
@@ -657,7 +663,7 @@ export class GridComponent extends ComponentBase implements OnInit {
     if(this.form!.valid){
       const entity = this.save ? (await this.save(this.form!, itemRow)) as IIndexable : this.form.value;
       if(entity) {
-        const index = this.items.findIndex(x => !(x["id"] || "").length || x["id"] == entity["id"]);
+        const index = ((this.items.indexOf(itemRow) + 1) || (this.items.findIndex(x => !(x["id"] || "").length || x["id"] == entity["id"]) + 1)) - 1;
         let item: IIndexable | undefined = undefined;
         if(index >= 0) {
           item = this.items[index];
@@ -738,7 +744,7 @@ export class GridComponent extends ComponentBase implements OnInit {
 
   /* Side panel ****************************************************************/
   public get classColTable(): string {
-    return this.sidePanel ? "col-md-" + (12 - this.sidePanel.size) + (this.sidePanel.isFullSizeOnEdit && this.editing ? " d-none" : "") : "col-md-12";
+    return (this.sidePanel ? "col-md-" + (12 - this.sidePanel.size) + (this.sidePanel.isFullSizeOnEdit && this.editing ? " d-none" : "") : "col-md-12") + (this.isNoMargin ? " p-0 m-0" : "");
   }
 
   public get classColPanel(): string {

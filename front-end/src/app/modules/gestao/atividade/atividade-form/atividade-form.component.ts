@@ -54,9 +54,9 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
   public etiquetas: LookupItem[] = [];
   public checklist: LookupItem[] = [];
   public planosTrabalhos: LookupItem[] = [];
-  public planoTrabalhoJoin: string[] = ["entregas.entrega:id,nome", "tipo_modalidade:id,nome"];
+  public planoTrabalhoJoin: string[] = ["entregas.plano_entrega_entrega:id,descricao", "tipo_modalidade:id,nome"];
   public planoTrabalhoSelecionado?: PlanoTrabalho | null = null;
-  public usuarioJoin: string[] = ['planos_trabalho.entregas.entrega:id,nome', 'planos_trabalho.tipo_modalidade:id,nome'];
+  public usuarioJoin: string[] = ['planos_trabalho.entregas.plano_entrega_entrega:id,descricao', 'planos_trabalho.tipo_modalidade:id,nome'];
   public entregas: LookupItem[] = [];
 
   constructor(public injector: Injector) {
@@ -192,7 +192,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
   }
 
   public onDataDistribuicaoChange(event: Event) {
-    this.loadUsuario(this.usuario?.selectedItem?.entity); /* Atualiza a lista de planos de trabalho válidos no período */
+    this.loadUsuario(this.usuario?.selectedEntity); /* Atualiza a lista de planos de trabalho válidos no período */
     this.form?.controls.data_estipulada_entrega.updateValueAndValidity();
   }
 
@@ -203,7 +203,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
   public onPlanoTrabalhoChange(event: Event) {
     (async () => {
       if(this.entity) {
-        const planoTrabalho = (this.usuario?.searchObj as Usuario)?.planos_trabalho?.find(x => x.id == this.form!.controls.plano_trabalho_id.value);
+        const planoTrabalho = (this.usuario?.selectedEntity as Usuario)?.planos_trabalho?.find(x => x.id == this.form!.controls.plano_trabalho_id.value);
         const planoTrabalhoEntregaId = this.form.controls.plano_trabalho_entrega_id.value;
         if(planoTrabalho) {
           if(this.planoTrabalhoSelecionado?.id != planoTrabalho.id) {
@@ -218,7 +218,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
           }
           this.entregas = planoTrabalho.entregas?.map(x => Object.assign({}, {
             key: x.id,
-            value: x.descricao + (x.entrega ? " (" + x.entrega!.nome + ")" : ""),
+            value: x.descricao + (x.plano_entrega_entrega ? " (" + x.plano_entrega_entrega?.descricao + ")" : ""),
             data: x
           })) || [];
           this.cdRef.detectChanges();
@@ -232,13 +232,13 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
   }
 
   public loadEtiquetas() {
-    const unidade = (this.unidade?.searchObj as Unidade);
-    const tipoAtividade = (this.tipoAtividade?.searchObj as TipoAtividade);
+    const unidade = (this.unidade?.selectedEntity as Unidade);
+    const tipoAtividade = (this.tipoAtividade?.selectedEntity as TipoAtividade);
     this.etiquetas = this.util.merge(tipoAtividade?.etiquetas, unidade?.etiquetas, (a, b) => a.key == b.key);
   }
 
   public loadChecklist() {
-    const tipoAtividade = (this.tipoAtividade?.searchObj as TipoAtividade);
+    const tipoAtividade = (this.tipoAtividade?.selectedEntity as TipoAtividade);
     this.checklist = tipoAtividade?.checklist || [];
     let checks: AtividadeChecklist[] = this.util.merge(this.checklist.map(a => {
       return {

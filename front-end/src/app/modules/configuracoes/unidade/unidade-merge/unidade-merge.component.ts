@@ -110,9 +110,9 @@ export class UnidadeMergeComponent extends PageFrameBase {
     let result = undefined;
     if(this.form!.controls.unidade_origem_id.value?.length || this.form!.controls.unidade_destino_id.value?.length) {
       row.unidade_origem_id = form.controls.unidade_origem_id.value;
-      row.unidade_origem = this.unidadeOrigem?.selectedItem?.entity || await this.dao?.getById(row.unidade_origem_id);
+      row.unidade_origem = this.unidadeOrigem?.selectedEntity || await this.dao?.getById(row.unidade_origem_id);
       row.unidade_destino_id = form.controls.unidade_destino_id.value;
-      row.unidade_destino = this.unidadeDestino?.selectedItem?.entity || await this.dao?.getById(row.unidade_destino_id);
+      row.unidade_destino = this.unidadeDestino?.selectedEntity || await this.dao?.getById(row.unidade_destino_id);
       result = row;
     }
     return result;

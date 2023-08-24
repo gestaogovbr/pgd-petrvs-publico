@@ -18,6 +18,7 @@
                     <ng-template let-row="row" #editNota>
                         <input-number *ngIf="form!.controls.tipo.value == 'QUANTITATIVO'" [control]="formNota!.controls.nota"></input-number>
                         <input-text *ngIf="form!.controls.tipo.value == 'QUALITATIVO'" [control]="formNota!.controls.nota"></input-text>
+                        <input-text [control]="formNota!.controls.codigo" placeholder="Código integração"></input-text>
                     </ng-template>
                 </column>
                 <column title="Descrição/Icone/Cor" [template]="columnDescricao" [editTemplate]="editDescricao">
@@ -59,8 +60,8 @@
                         </div>
                     </ng-template>
                     <ng-template let-row="row" #editJustificativas>
-                        <input-multiselect [size]="12" [canEdit]="true" [addItemControl]="justificativa" [control]="formNota.controls.justificativas">
-                            <input-select [size]="12" #justificativa [control]="formNota.controls.tipo_justificativa_id" [dao]="tipoJustificativaDao" [addRoute]="{route: ['cadastros', 'tipo-justificativa', 'new']}"></input-select>
+                        <input-multiselect [size]="12" noBox [canEdit]="true" [addItemControl]="justificativa" [control]="formNota.controls.justificativas">
+                            <input-select [size]="12" #justificativa fullEntity [control]="formNota.controls.tipo_justificativa_id" [dao]="tipoJustificativaDao" [addRoute]="{route: ['cadastros', 'tipo-justificativa', 'new']}"></input-select>
                         </input-multiselect>
                     </ng-template>
                 </column>

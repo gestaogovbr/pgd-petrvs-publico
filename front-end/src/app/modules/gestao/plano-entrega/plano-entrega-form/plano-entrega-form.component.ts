@@ -85,14 +85,14 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
             - o usuário precisa possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a Unidade-pai (Unidade A) da Unidade do plano (Unidade B) e possuir a capacidade "MOD_PENT_EDT_FLH"; ou
             - o usuário precisa possuir também a capacidade "MOD_PENT_QQR_UND";
     */
-    let unidadeSelecionada = this.unidade?.searchObj.entity as Unidade;
+    let unidadeSelecionada = this.unidade?.selectedEntity as Unidade;
     let condition1 = this.auth.isGestorUnidade(unidadeSelecionada) || this.auth.isGestorUnidade(unidadeSelecionada.unidade);
     let condition2 = unidadeSelecionada.unidade ? (this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', unidadeSelecionada.unidade!.id) && this.auth.hasPermissionTo("MOD_PENT_EDT_FLH")) : false;
     let condition3 = this.auth.hasPermissionTo("MOD_PENT_QQR_UND");
     if (!(condition1 || condition2 || condition3)) return "Você não tem permissão para incluir plano de entregas para a unidade selecionada!";
     const inicio = this.form?.controls.data_inicio.value;
     const fim = this.form?.controls.data_fim.value;
-    const programa = this.programa?.selectedItem?.entity as Programa;
+    const programa = this.programa?.selectedEntity as Programa;
     if (!programa) {
       return "Obrigatório selecionar o programa";
     } else if (!this.dao?.validDateTime(inicio)) {
@@ -165,7 +165,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   }
 
   public onProgramaChange(){
-    const dias=(this.programa?.searchObj as Programa).prazo_max_plano_entrega;
+    const dias=(this.programa?.selectedEntity as Programa).prazo_max_plano_entrega;
     //const dias=(this.programa?.items[0] as SelectItem).entity.prazo_max_plano_entrega;
     const data=this.somaDia(this.entity!.data_inicio,dias);
     this.form!.controls.data_fim.setValue(new Date(data)); // = this.somaDia(this.entity!.data_inicio,dias)//new Date()//(this.programa?.searchObj as Programa).prazo_max_plano_entrega

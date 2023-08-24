@@ -82,8 +82,8 @@ export class EntidadeFormComponent extends PageFormBase<Entidade, EntidadeDaoSer
     return new Promise<Entidade>((resolve, reject) => {
       let entidade = this.util.fill(new Entidade(), this.entity!);
       entidade = this.util.fillForm(entidade, this.form!.value);
-      if(entidade.abrangencia == "MUNICIPAL" && this.cidade?.searchObj) {
-        entidade.codigo_ibge = (this.cidade?.searchObj as Cidade).codigo_ibge;
+      if(entidade.abrangencia == "MUNICIPAL" && this.cidade?.selectedEntity) {
+        entidade.codigo_ibge = (this.cidade?.selectedEntity as Cidade).codigo_ibge;
       } else if(entidade.abrangencia == "ESTADUAL") {
         entidade.codigo_ibge = this.lookup.UF.find(x => x.key == entidade.uf)?.code;
       } else {

@@ -9,7 +9,8 @@ export type ProgramaPeriodicidadeConsolidacao = 'DIAS' | 'SEMANAL' | 'QUINZENAL'
 export class Programa extends Base {
     public unidade?: Unidade;
     public template_tcr?: Template;
-    public tipo_avaliacao?: TipoAvaliacao;
+    public tipo_avaliacao_plano_trabalho?: TipoAvaliacao;
+    public tipo_avaliacao_plano_entrega?: TipoAvaliacao;
     public tipo_documento_tcr?: TipoDocumento;
 
     public nome: string = ""; /* Nome do programa */
@@ -22,8 +23,16 @@ export class Programa extends Base {
     public periodicidade_consolidacao: ProgramaPeriodicidadeConsolidacao = 'MENSAL'; /* Período para avaliação do plano de trabalho */
     public periodicidade_valor: number = 1; /* Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do mês para o restante */
     public dias_tolerancia_consolidacao: number = 10; /* Dias de tolerância para o lançamento do registro das atividades na consolidação, após esses dias será liberado automaticamente para avaliação */
+    public dias_tolerancia_avaliacao: number = 20; /* Dias de tolerância para realizar a avaliação, considerando a tolerância da consolidação. Caso seja zero não fará nada, caso contrário após esse prazo a consolidação será automaticamente avaliada com a nota padrão */
+    public nota_padrao_avaliacao: any | null = null; /* Nota padrão de avaliação, para quando o gestor não realizar a avaliação dentro do prazo */
+    public plano_trabalho_assinatura_participante: number = 1; /* Exigir assinatura do usuário no plano de trabalho */
+    public plano_trabalho_assinatura_gestor_lotacao: number = 0; /* Exigir assinatura do gestor da unidade de lotação do servidor */
+    public plano_trabalho_assinatura_gestor_unidade: number = 0; /* Exigir assinatura do gestor da unidade */
+    public plano_trabalho_assinatura_gestor_entidade: number = 0; /* Exigir assinatura do gestor da entidade */
 
-    public tipo_avaliacao_id: string = ""; /* Tipo de avaliação */
+    public tipo_avaliacao_plano_trabalho_id: string = ""; /* Tipo de avaliação do plano de trabalho */
+    public tipo_avaliacao_plano_entrega_id: string = ""; /* Tipo de avaliação do plano de entrega */
+    public tipo_justificativa_id: string | null = null; /* Tipo de justificativa, para quando o gestor não realizar a avaliação dentro do prazo */
     public unidade_id: string = ""; /* Unidade vinculada ao programa */
     public template_tcr_id: string | null = null; /* Template do TCR */
     public tipo_documento_tcr_id: string | null = null; /* Tipo de documento do TCR */

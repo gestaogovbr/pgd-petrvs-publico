@@ -88,9 +88,9 @@ export class ProjetoRecursoWidgetComponent implements OnInit {
         usuario_id: this.form.controls.tipo.value == "HUMANO" ? this.form.controls.usuario_id.value : null,
         unidade_id: this.form.controls.tipo.value == "DEPARTAMENTO" ? this.form.controls.unidade_id.value : null,
         valor: this.form.controls.valor.value,
-        usuario: this.usuario?.selectedItem?.entity,
-        unidade: this.unidade?.selectedItem?.entity,
-        material_servico: this.materialServico?.selectedItem?.entity
+        usuario: this.usuario?.selectedEntity,
+        unidade: this.unidade?.selectedEntity,
+        material_servico: this.materialServico?.selectedEntity
       });
     }
     return result;

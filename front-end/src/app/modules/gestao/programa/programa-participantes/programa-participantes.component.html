@@ -19,7 +19,7 @@
                 <profile-picture [url]="row.usuario?.url_foto" [size]="40" [hint]="row.usuario?.nome"></profile-picture>
             </ng-template>
             <ng-template let-row="row" #editFoto>
-                <profile-picture [url]="usuario?.searchObj?.url_foto" [size]="40"></profile-picture>
+                <profile-picture [url]="usuario?.selectedEntity?.url_foto" [size]="40"></profile-picture>
             </ng-template>
         </column>
         <column title="Usuário" [template]="columnUsuario" [editTemplate]="editUsuario">
