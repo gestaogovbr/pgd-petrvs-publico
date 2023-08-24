@@ -27,13 +27,18 @@ class CreateUnidadesTable extends Migration
             $table->text('path')->nullable()->comment('Path dos nós pais separados por /, ou NULL caso sejam nós raiz');
             $table->longText('texto_complementar_plano')->nullable()->comment("Campo de mensagem adicional do plano de trabalho");
             $table->tinyInteger("atividades_arquivamento_automatico")->default(0)->comment("Se arquiva automaticamente após conclusão");
+            $table->tinyInteger("atividades_avaliacao_automatico")->default(0)->comment("");
+            $table->integer("planos_prazo_comparecimento")->default(10)->comment("");
+            $table->string('planos_tipo_prazo_comparecimento')->default('DIAS')->comment("");
             $table->dateTime('data_inativacao')->nullable()->comment("Data em que a unidade foi inativada, se for o caso");
             $table->set("distribuicao_forma_contagem_prazos", ["HORAS_CORRIDAS", "DIAS_CORRIDOS", "HORAS_UTEIS", "DIAS_UTEIS"])->default("DIAS_UTEIS")->comment("Forma da contagem de prazo");
             $table->set("entrega_forma_contagem_prazos", ["HORAS_CORRIDAS", "HORAS_UTEIS"])->default("HORAS_UTEIS")->comment("Forma da contagem de horas para entrega");
+            $table->tinyInteger("autoedicao_subordinadas")->default(1)->comment("");
             $table->json("etiquetas")->nullable()->comment("Configuração das etiquetas que serão utilizadas nas atividades (contém nome, icone e cor)");
             $table->json('checklist')->nullable()->comment("Nome dos checklist");
             $table->json('notificacoes')->nullable()->comment("Configurações das notificações (Se envia e-mail, whatsapp, tipos, templates)");
             $table->json('expediente')->nullable()->comment("Configuração de expediente da unidade");
+            
             // Chaves estrangeiras:
             $table->foreignUuid('cidade_id')->nullable()->constrained("cidades")->onDelete('restrict')->onUpdate('cascade')->comment('Cidade da unidade');
             $table->foreignUuid('unidade_pai_id')->nullable()->constrained("unidades")->onDelete('restrict')->onUpdate('cascade')->comment('Unidade superior (nó pai hierárquico)');
