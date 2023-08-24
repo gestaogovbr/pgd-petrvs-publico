@@ -277,7 +277,7 @@ class UsuarioService extends ServiceBase
     
     public function proxyStore(&$data, $unidade, $action) {
         $data['cpf'] = $this->UtilService->onlyNumbers($data['cpf']);
-        $data['telefone'] = $this->UtilService->onlyNumbers($data['telefone']);
+        if(!empty($data['telefone'])) $data['telefone'] = $this->UtilService->onlyNumbers($data['telefone']);
         return $data;
     }
 

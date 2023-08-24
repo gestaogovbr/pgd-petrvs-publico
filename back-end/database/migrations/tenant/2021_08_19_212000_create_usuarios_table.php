@@ -14,6 +14,67 @@ class CreateUsuariosTable extends Migration
     public function up()
     {
         Schema::create('usuarios', function (Blueprint $table) {
+            $situacoes = array(
+                "ATIVO PERMANENTE",
+                "APOSENTADO",
+                "CEDIDO/REQUISITADO",
+                "NOMEADO CARGO COMIS.",
+                "SEM VÍNCULO",
+                "TABELISTA(ESP/EMERG)",
+                "NATUREZA ESPECIAL",
+                "ATIVO EM OUTRO ÓRGÃO",
+                "REDISTRIBUÍDO",
+                "ATIVO TRANSITÓRIO",
+                "EXCEDENTE À LOTAÇÃO",
+                "CONTRATO TEMPORÁRIO",
+                "EM DISPONIBILIDADE",
+                "REQ.DE OUTROS ÓRGÃOS",
+                "INSTITUIDOR PENSÃO",
+                "REQ. MILITAR F. ARM",
+                "APOSENTADO TCU733/94",
+                "EXERC DESCENT CARREI",
+                "EXERCÍCIO PROVISÓRIO",
+                "CELETISTA",
+                "ATIVO PERM L.8878/94",
+                "ANISTIADO ADCT CF",
+                "CELETISTA/EMPREGADO",
+                "CLT ANS DEC JUDICIAL",
+                "CLT ANS JUD. CEDIDO",
+                "CLT-APOS.COMPLEMENTO",
+                "CLT-APS.DEC.JUDICIAL",
+                "INST.PS DEC JUD",
+                "EMPREGO PÚBLICO",
+                "REFORMA CBM / PM",
+                "RESERVA CBM / PM",
+                "REQUIS. MILITAR GDF",
+                "ANIST.PUBLICO L10559",
+                "ANIST.PRIVADO L10559",
+                "ATIVO - DEC. JUDIC",
+                "COLAB PCCTAE E MAGIS",
+                "COLABORADOR ICT",
+                "CLT ANS -DEC 6657/08",
+                "EXERC. 7  ART93 8112",
+                "CEDIDO SUS/LEI 8270",
+                "INST.ANIST.PUBLICO",
+                "INST.ANIST.PRIVADO",
+                "CELETISTA DEC.JUDIC.",
+                "CONTR.TEMPORARIO CLT",
+                "EMPREGO PCC/EX-TERRI",
+                "EXC. INDISCIPLINA",
+                "CONT.PROF.SUBSTITUTO",
+                "ESTAGIÁRIO",
+                "ESTAGIÁRIO SIGEPE",
+                "RESIDÊNCIA E PMM",
+                "APOSENTADO TEMPORARI",
+                "CEDIDO DF EST MUNIC.",
+                "EXERC. DESCEN. CDT",
+                "EXERC. LEI 13681/18",
+                "PENSIONISTA",
+                "BENEFICIÁRIO PENSÃO",
+                "QE/MRE - CEDIDO",
+                "QUADRO ESPEC.-QE/MRE",
+            );
+
             // Configurações:
             $table->uuid('id');
             $table->primary('id');
@@ -40,7 +101,7 @@ class CreateUsuariosTable extends Migration
             $table->char('uf', 2)->nullable()->comment("UF do usuário");
             $table->timestamp('email_verified_at')->nullable()->comment("Data de verificação do e-mail do usuário");
             $table->enum('sexo', ["MASCULINO", "FEMININO"])->nullable()->comment("Sexo do usuário");
-            $table->enum("situacao_funcional", ["SERVIDOR_EFETIVO", "SERVIDOR_COMISSIONADO", "EMPREGADO", "CONTRATADO_TEMPORARIO"])->default("SERVIDOR_EFETIVO")->comment("Vínculo do usuário com a administração");
+            $table->enum("situacao_funcional", $situacoes)->default("ATIVO PERMANENTE")->comment("Vínculo do usuário com a administração");
             $table->json('config')->nullable()->comment("Configurações do usuário");
             $table->json('notificacoes')->nullable()->comment("Configurações das notificações (Se envia e-mail, whatsapp, tipos, templates)");
             $table->json('metadados')->nullable()->comment("Metadados do usuário");
