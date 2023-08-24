@@ -510,6 +510,11 @@ class IntegracaoService extends ServiceBase {
                                 } else{
                                     $ativo['funcoes'] = null;
                                 }
+                                
+                                // Transforma código da situação funcional em descrição
+                                $situacao_funcional = $self->UtilService
+                                    ->valueOrDefault($ativo['codsitfuncional'], 
+                                          null, $option = "situacao_funcional");
       
                                 $servidor = [
                                     'cpf_ativo' => $self->UtilService->valueOrDefault($servidor['cpf_ativo']),
@@ -520,16 +525,16 @@ class IntegracaoService extends ServiceBase {
                                     'sexo' => $self->UtilService->valueOrDefault($servidor['sexo'], null),
                                     'municipio' => $self->UtilService->valueOrDefault($servidor['municipio']),
                                     'uf' => $self->UtilService->valueOrDefault($servidor['uf']),
-                                    'datanascimento' => $self->UtilService->valueOrDefault($servidor['datanascimento']),
+                                    'data_nascimento' => $self->UtilService->valueOrDefault($servidor['datanascimento']),
                                     'telefone' => $self->UtilService->valueOrDefault($servidor['telefone'], null),
                                     'vinculo_ativo' => $self->UtilService->valueOrDefault($ativo['vinculo_ativo']),
                                     'matriculasiape' => $self->UtilService->valueOrDefault($ativo['matriculasiape']),
-                                    'tipo' => $self->UtilService->valueOrDefault($ativo['tipo']),
+                                    'cargo' => $self->UtilService->valueOrDefault($ativo['tipo']),
                                     'coduorgexercicio' => $self->UtilService->valueOrDefault($ativo['coduorgexercicio'], null, $option = "uorg"),
                                     'coduorglotacao' => $self->UtilService->valueOrDefault($ativo['coduorglotacao'], null, $option = "uorg"),
                                     'codigo_servo_exercicio' => $self->UtilService->valueOrDefault($ativo['codigo_servo_exercicio'], null, $option = "uorg"),
                                     'nomeguerra' => $nomeguerra,
-                                    'situacao_funcional' => $self->UtilService->valueOrDefault($ativo['codsitfuncional']),
+                                    'situacao_funcional' => $situacao_funcional,
                                     'codupag' => $self->UtilService->valueOrDefault($ativo['codupag']),
                                     'dataexercicionoorgao' => $self->UtilService->valueOrDefault($ativo['dataexercicionoorgao']),
                                     'funcoes' => $ativo['funcoes'],
@@ -549,7 +554,7 @@ class IntegracaoService extends ServiceBase {
 
                 DB::transaction(function () use (&$atualizacoes) {
                     // Seleciona todos os servidores que sofreram alteração nos seus dados pessoais.
-                    $atualizacoes = DB::select(
+                        $atualizacoes = DB::select(
                         "SELECT u.id, isr.cpf AS cpf_servidor, u.nome AS nome_anterior, ".
                         "isr.nome AS nome_servidor, u.apelido AS apelido_anterior, ".
                         "isr.nomeguerra AS nome_guerra, u.email AS email_anterior, ".
@@ -619,12 +624,11 @@ class IntegracaoService extends ServiceBase {
                             "isr.emailfuncional as emailfuncional, " .
                             "isr.sexo as sexo, " .
                             "isr.uf as uf, " .
-                            "isr.datanascimento as datanascimento, " .
+                            "isr.data_nascimento as data_nascimento, " .
                             "isr.telefone as telefone, " .
-                            "isr.datanascimento as datanascimento, " .
-                            "isr.tipo as cargo, " .
                             "isr.nomeguerra as apelido, " .
-                            "isr.codigo_servo_exercicio as exercicio " .
+                            "isr.codigo_servo_exercicio as exercicio, " .
+                            "isr.situacao_funcional as situacao_funcional " .
                             "FROM integracao_servidores as isr LEFT JOIN usuarios as u " .
                             "ON isr.cpf = u.cpf " . 
                             "WHERE u.cpf is NULL";
@@ -642,11 +646,12 @@ class IntegracaoService extends ServiceBase {
                                 'matricula' => $this->UtilService->valueOrDefault($v_isr['matricula']),
                                 'apelido' => $this->UtilService->valueOrDefault($v_isr['apelido']),
                                 'telefone' => $this->UtilService->valueOrDefault($v_isr['telefone'], null),
-                                'datanascimento' => $this->UtilService->valueOrDefault($v_isr['datanascimento']),
+                                'data_nascimento' => $this->UtilService->valueOrDefault($v_isr['data_nascimento'], null),
                                 'sexo' => $this->UtilService->valueOrDefault($v_isr['sexo']),
-                                'situacao_funcional' => "SERVIDOR_EFETIVO",
+                                'situacao_funcional' => $this->UtilService->valueOrDefault($v_isr['situacao_funcional'], null),
                                 'perfil_id' => Perfil::where('nome', 'Usuário Nível 1')->first()->id,
                                 'exercicio' => $this->UtilService->valueOrDefault($v_isr['exercicio']),
+                                'uf' => $this->UtilService->valueOrDefault($v_isr['uf']),
                             ]);
                             $registro->save();
                             $id_user = $registro->id;

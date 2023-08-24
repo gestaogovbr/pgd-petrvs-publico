@@ -26,11 +26,11 @@ class CreateIntegracaoServidoresTable extends Migration
             $table->string('sexo', 50)->nullable();
             $table->string('municipio', 100)->nullable();
             $table->string('uf', 50)->nullable();
-            $table->string('datanascimento', 50)->nullable();
+            $table->string('data_nascimento', 50)->nullable();
             $table->string('telefone', 50)->nullable();
             $table->string('vinculo_ativo', 50)->nullable();
             $table->string('matriculasiape', 50)->nullable();
-            $table->string('tipo', 50)->nullable();
+            $table->string('cargo', 100)->nullable();
             $table->string('coduorgexercicio', 50)->nullable();
             $table->string('coduorglotacao', 50)->nullable();
             $table->string('codigo_servo_exercicio', 50)->nullable();

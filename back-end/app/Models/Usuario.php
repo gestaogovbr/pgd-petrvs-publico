@@ -63,6 +63,7 @@ class Usuario extends Authenticatable
         'perfil_id', /* char(36); */
         'uf', /* char(2); */// UF do usuário
         'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho
+        'data_nascimento',
         //'deleted_at', /* timestamp; */
         //'remember_token', /* varchar(100); */
         //'password', /* varchar(255); */// Senha do usuário
