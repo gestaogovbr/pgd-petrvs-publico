@@ -17,12 +17,19 @@ use App\Models\UnidadeIntegrante;
 use App\Models\Cidade;
 use App\Models\Template;
 use App\Models\NotificacaoConfig;
+use App\Traits\AutoUuid;
 
 class Unidade extends ModelBase
 {
+    use AutoUuid;
+
     protected $table = 'unidades';
 
     protected $with = ['cidade'];
+
+    protected $keyType = 'string';
+
+    protected $dates = ['deleted_at'];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'codigo', /* varchar(12); NOT NULL; */// Código da unidade

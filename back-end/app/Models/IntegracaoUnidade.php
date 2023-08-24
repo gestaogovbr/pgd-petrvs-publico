@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
+use App\Traits\AutoUuid;
 
 class IntegracaoUnidade extends ModelBase
 {
+    use AutoUuid;
+
     protected $table = 'integracao_unidades';
 
     protected $with = [];
@@ -45,4 +48,8 @@ class IntegracaoUnidade extends ModelBase
     ];
 
     protected $casts = [];
+
+    protected $keyType = 'string';
+
+    protected $dates = ['deleted_at'];
 }

@@ -26,7 +26,85 @@ class UtilService
         return Carbon::parse($dataHora)->format("d/m/Y");
     }
 
-    public function valueOrDefault($value, $default = "") {
+    public function valueOrDefault($value, $default = "", $option = "") {
+        
+        // Trata númerações códigos siapes de uorgs com fins 
+        // de evitar erro nas respectivas querys
+        if(strtolower($option) == "uorg" && !is_null($value)){
+            $value = strval(intval($value));
+            return empty($value) || gettype($value) == "array" ? $default : $value;
+        }
+
+        // Retorna descrição de situação funcional baseado 
+        // no código informado pelo web service
+        if (strtolower($option) == "situacao_funcional" && !is_null($value)){
+            $situacoes = array(
+                "1"  => "ATIVO PERMANENTE",
+                "2"  => "APOSENTADO",
+                "3"  => "CEDIDO/REQUISITADO",
+                "4"  => "NOMEADO CARGO COMIS.",
+                "5"  => "SEM VÍNCULO",
+                "6"  => "TABELISTA(ESP/EMERG)",
+                "7"  => "NATUREZA ESPECIAL",
+                "8"  => "ATIVO EM OUTRO ÓRGÃO",
+                "9"  => "REDISTRIBUÍDO",
+                "10" => "ATIVO TRANSITÓRIO",
+                "11" => "EXCEDENTE À LOTAÇÃO",
+                "12" => "CONTRATO TEMPORÁRIO",
+                "13" => "EM DISPONIBILIDADE",
+                "14" => "REQ.DE OUTROS ÓRGÃOS",
+                "15" => "INSTITUIDOR PENSÃO",
+                "16" => "REQ. MILITAR F. ARM",
+                "17" => "APOSENTADO TCU733/94",
+                "18" => "EXERC DESCENT CARREI",
+                "19" => "EXERCÍCIO PROVISÓRIO",
+                "20" => "CELETISTA",
+                "21" => "ATIVO PERM L.8878/94",
+                "22" => "ANISTIADO ADCT CF",
+                "23" => "CELETISTA/EMPREGADO",
+                "25" => "CLT ANS DEC JUDICIAL",
+                "27" => "CLT ANS JUD. CEDIDO",
+                "29" => "CLT-APOS.COMPLEMENTO",
+                "30" => "CLT-APS.DEC.JUDICIAL",
+                "31" => "INST.PS DEC JUD",
+                "32" => "EMPREGO PÚBLICO",
+                "33" => "REFORMA CBM / PM",
+                "34" => "RESERVA CBM / PM",
+                "35" => "REQUIS. MILITAR GDF",
+                "36" => "ANIST.PUBLICO L10559",
+                "37" => "ANIST.PRIVADO L10559",
+                "38" => "ATIVO - DEC. JUDIC",
+                "40" => "CONTRATO TEMPORÁRIO",
+                "41" => "COLAB PCCTAE E MAGIS",
+                "42" => "COLABORADOR ICT",
+                "43" => "CLT ANS -DEC 6657/08",
+                "44" => "EXERC. 7  ART93 8112",
+                "45" => "CEDIDO SUS/LEI 8270",
+                "46" => "INST.ANIST.PUBLICO",
+                "47" => "INST.ANIST.PRIVADO",
+                "48" => "CELETISTA DEC.JUDIC.",
+                "49" => "CONTR.TEMPORARIO CLT",
+                "50" => "EMPREGO PCC/EX-TERRI",
+                "51" => "EXC. INDISCIPLINA",
+                "52" => "CONT.PROF.SUBSTITUTO",
+                "66" => "ESTAGIÁRIO",
+                "70" => "ESTAGIÁRIO SIGEPE",
+                "71" => "RESIDÊNCIA E PMM",
+                "72" => "APOSENTADO TEMPORARI",
+                "75" => "CEDIDO DF EST MUNIC.",
+                "76" => "CONTRATO TEMPORÁRIO",
+                "77" => "EXERC. DESCEN. CDT",
+                "80" => "EXERC. LEI 13681/18",
+                "84" => "PENSIONISTA",
+                "93" => "BENEFICIÁRIO PENSÃO",
+                "96" => "QE/MRE - CEDIDO",
+                "97" => "QUADRO ESPEC.-QE/MRE",
+            );
+            $value = intval($value);
+            array_key_exists($value, $situacoes) ? $value = $situacoes[$value] : $value = null;
+            return empty($value) || gettype($value) == "array" ? $default : $value;
+        }
+        // Retorno conforme função original
         return empty($value) || gettype($value) == "array" ? $default : $value;
     }
 
@@ -493,8 +571,37 @@ class UtilService
         } */
         return '';
     }
-}
 
+    public static function getApelido(string $nome) {
+      (string) $apelido = "";
+      if(!empty($nome) && is_string($nome)){
+          $nome = strtolower($nome);
+          $nome = explode(" ", $nome);
+          $apelido = ucfirst($nome[0]);
+          }
+      return $apelido;
+    }
+
+    function getNomeFormatado(string $in){
+        $out = null;
+        if(is_string($in) && !empty($in)){
+            $in = mb_strtolower($in, 'UTF-8');
+            $in = explode(" ",$in);
+            $out = null;
+      
+            $preposicoes = array(
+                'da', 'de', 'do', 'das', 'dos',
+                'a','as','o','os', 'ao', 'aos', 'e');
+        
+            foreach ($in as $word) {
+                in_array($word, $preposicoes) ? 
+                    $out = $out.$word.' ' : $out = $out.ucfirst($word). ' ';
+            }
+            $out = trim($out);
+        }
+        return $out;
+    }
+}
 /* EXEMPLO:
 
 $a = ['nome' => 'Ricardo', 'sexo' => 'MASC', 'endereco' => 'Av. Abdias Neves, 2168', 'esposa' => ['nome' => 'Suzana', 'idade' => 49]];
