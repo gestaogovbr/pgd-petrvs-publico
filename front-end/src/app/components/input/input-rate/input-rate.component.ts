@@ -34,6 +34,7 @@ export class InputRateComponent extends InputBase implements OnInit {
   @Input() form?: FormGroup;
   @Input() source?: any;
   @Input() path?: string;
+  @Input() required: boolean = false;
   @Input() set control(value: AbstractControl | undefined) {
     this._control = value;
   }

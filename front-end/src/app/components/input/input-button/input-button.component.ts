@@ -35,6 +35,7 @@ export class InputButtonComponent extends InputBase implements OnInit {
   @Input() source?: any;
   @Input() path?: string;
   @Input() maxLength?: number;
+  @Input() required: boolean = false;
   @Input() set value(value: any) {
     this.formControl.setValue(value);
   }

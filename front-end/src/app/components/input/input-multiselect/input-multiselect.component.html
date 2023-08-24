@@ -1,4 +1,4 @@
-<input-container [labelPosition]="labelPosition" [labelClass]="labelClass"  [loading]="loading" [disabled]="disabled" [controlName]="controlName" [control]="control" [label]="isNoBox ? label : ''" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold" errorMessageIcon="bi-info-circle">
+<input-container [labelPosition]="labelPosition" [labelClass]="labelClass"  [loading]="loading" [disabled]="disabled" [controlName]="controlName" [required]="required" [control]="control" [label]="isNoBox ? label : ''" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold" errorMessageIcon="bi-info-circle">
     <div [class.card]="!isNoBox">
         <h5 *ngIf="label?.length && !isNoBox" class="card-header">
             <i *ngIf="icon.length" [class]="icon"></i>
@@ -6,7 +6,7 @@
         </h5>
         <div [class.card-body]="!isNoBox">
             <div class="multiselect">
-                <div class="container-fluid border rounded multiselect-list px-1" [style.max-height.px]="maxListHeight > 0 ? maxListHeight : undefined">
+                <div class="container-fluid border rounded multiselect-list px-1 mb-3" [style.max-height.px]="maxListHeight > 0 ? maxListHeight : undefined">
                     <ng-container *ngFor="let item of items">
                         <!--button *ngIf="item.data?._status != 'DELETE'" type="button" [id]="generatedId(controlName) + '_button_' + item.key" class="btn btn-light m-1 multiselect-item" [class.multiselect-has-edit]="canEdit" [class.multiselect-item-row]="multiselectStyle == 'rows'" [style.max-width.px]="multiselectStyle == 'inline' ? maxItemWidth : undefined" data-bs-toggle="tooltip" [attr.title]="item.value">
                             <i *ngIf="item.icon" [class]="'multiselect-icon ' + item.icon"></i>
@@ -45,7 +45,7 @@
                     <div class="flex-grow-1 row">
                         <ng-content></ng-content>
                     </div>
-                    <div class="btn-group">
+                    <div class="btn-group align-self-center mx-2">
                         <button *ngIf="!editing" type="button" [id]="generatedId(controlName) + '_add_button'" class="btn btn-success" (click)="onAddItemClick()" data-bs-toggle="tooltip" data-bs-placement="top" title="Adicionar"><i class="bi bi-arrow-bar-up"></i></button>
                         <button *ngIf="editing" type="button" [id]="generatedId(controlName) + '_save_button'" class="btn btn-primary" (click)="onSaveItemClick()" data-bs-toggle="tooltip" data-bs-placement="top" title="Salvar"><i class="bi bi-check-circle"></i></button>
                         <button *ngIf="editing" type="button" [id]="generatedId(controlName) + '_cancel_button'" class="btn btn-danger" (click)="onCancelItemClick()" data-bs-toggle="tooltip" data-bs-placement="top" title="Cancelar"><i class="bi bi-dash-circle"></i></button>

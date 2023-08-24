@@ -150,11 +150,15 @@
     --petrvs-nav-link-bg-active: #13162d;
     --petrvs-nav-link-color: #fff;
     --petrvs-border-color-dropdown: #13162d;
+    --petrvs-form-control-background: #fff;
 
     .modal {
         --bs-modal-bg: #fff;
     }
 
+    .form-control {
+      background-color: var(--petrvs-form-control-background);
+    }
 
     .nav-link {
       color: var(--bs-nav-link-color);
@@ -188,11 +192,19 @@
     --petrvs-nav-link-bg-active: #fec803;
     --petrvs-nav-link-color: #2b2828;
     --petrvs-border-color-dropdown: #ffffff;
+    --petrvs-form-control-background: #fff;
+
+    .form-control {
+      background-color: var(--petrvs-form-control-background);
+    }
+
   }
 
   .btn-light {
-    --bs-btn-bg: #eee;
+    --bs-btn-bg: #fff;
+    --bs-btn-border-color: #eee;
   }
+  
 }
 
 /* Define variáveis do bootstrap */

@@ -1,4 +1,4 @@
-<input-container [labelPosition]="labelPosition" [labelClass]="labelClass" [controlName]="controlName" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold" [isRadio]="true">
+<input-container [labelPosition]="labelPosition" [labelClass]="labelClass" [controlName]="controlName" [required]="required" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold" [isRadio]="true">
     <div class="container-fluid d-flex justify-content-center border rounded flex-wrap">
         <button *ngFor="let item of items" type="button" [id]="generatedId(controlName) + '_' + item.key" [class.active]="isChecked(item)" [class]="'m-1 btn ' + classButton" (click)="onButtonToggle(item)">
             <i *ngIf="item.icon" [class]="item.icon"></i>

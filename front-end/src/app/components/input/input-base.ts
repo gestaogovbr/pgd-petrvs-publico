@@ -62,8 +62,10 @@ export abstract class InputBase extends ComponentBase {
         }
     }
 
-    public focus() {
-        this.inputElement?.nativeElement.focus();
+    public focus(): void {
+        setTimeout(() => {
+            document.getElementById(this.inputElement?.nativeElement.id)?.focus()
+        }, 1000);        
     }
 
     public onEnterKeyDown(e: Event) {
