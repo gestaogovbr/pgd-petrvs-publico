@@ -177,9 +177,9 @@ export class DocumentosComponent extends PageFrameBase {
   }
 
   /*public needSign(documento: Documento): boolean {
-    const tipoModalidade = this.entity!.tipo_modalidade!; //(this.tipoModalidade?.searchObj as TipoModalidade);
-    const usuario = this.entity!.usuario!; // (this.usuario?.searchObj as Usuario);
-    const unidade = this.entity!.unidade!; // (this.unidade?.searchObj as Unidade);
+    const tipoModalidade = this.entity!.tipo_modalidade!; //(this.tipoModalidade?.selectedEntity as TipoModalidade);
+    const usuario = this.entity!.usuario!; // (this.usuario?.selectedEntity as Usuario);
+    const unidade = this.entity!.unidade!; // (this.unidade?.selectedEntity as Unidade);
     const entidade = unidade?.entidade;
     const alredySigned = !!documento.assinaturas.find(x => x.usuario_id == this.auth.usuario!.id);
     let ids: string[] = [];

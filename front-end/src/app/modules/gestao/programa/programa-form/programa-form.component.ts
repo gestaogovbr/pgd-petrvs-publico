@@ -6,11 +6,14 @@ import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 import { TemplateDaoService } from 'src/app/dao/template-dao.service';
 import { TipoAvaliacaoDaoService } from 'src/app/dao/tipo-avaliacao-dao.service';
 import { TipoDocumentoDaoService } from 'src/app/dao/tipo-documento-dao.service';
+import { TipoJustificativaDaoService } from 'src/app/dao/tipo-justificativa-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Programa } from 'src/app/models/programa.model';
+import { TipoAvaliacao } from 'src/app/models/tipo-avaliacao.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { TemplateService } from 'src/app/modules/uteis/templates/template.service';
+import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
   selector: 'app-programa-form',
@@ -21,12 +24,16 @@ import { TemplateService } from 'src/app/modules/uteis/templates/template.servic
 export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
+  @ViewChild('tipoAvaliacao', { static: false }) public tipoAvaliacao?: InputSearchComponent;
 
   public templateDao: TemplateDaoService;
   public tipoDocumentoDao: TipoDocumentoDaoService;
   public tipoAvaliacaoDao: TipoAvaliacaoDaoService;
+  public tipoJustificativaDao: TipoJustificativaDaoService;
   public unidadeDao: UnidadeDaoService;
   public templateService: TemplateService;
+
+  private _tipoAvaliacaoQualitativo: LookupItem[] = [];
 
   constructor(public injector: Injector) {
     super(injector, Programa, ProgramaDaoService);
@@ -34,8 +41,9 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
     this.templateDao = injector.get<TemplateDaoService>(TemplateDaoService);
     this.tipoDocumentoDao = injector.get<TipoDocumentoDaoService>(TipoDocumentoDaoService);
     this.tipoAvaliacaoDao = injector.get<TipoAvaliacaoDaoService>(TipoAvaliacaoDaoService);
+    this.tipoJustificativaDao = injector.get<TipoJustificativaDaoService>(TipoJustificativaDaoService);
     this.templateService = injector.get<TemplateService>(TemplateService);
-    this.modalWidth = 600;
+    this.modalWidth = 700;
     this.form = this.fh.FormBuilder({
       unidade_id: {default: ""},
       nome: {default: ""},
@@ -45,12 +53,20 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
       data_fim: {default: new Date()},
       termo_obrigatorio: {default: false},
       template_tcr_id: {default: null},
-      tipo_avaliacao_id: {default: ""},
+      tipo_avaliacao_plano_entrega_id: {default: ""},
+      tipo_avaliacao_plano_trabalho_id: {default: ""},
       tipo_documento_tcr_id: {default: null},
       prazo_max_plano_entrega: {default: 365},
       periodicidade_consolidacao: {default: 'MENSAL'},
       periodicidade_valor: {default: 1},
-      dias_tolerancia_consolidacao: {default: 10}
+      dias_tolerancia_consolidacao: {default: 10},
+      plano_trabalho_assinatura_participante: { default: true },
+      plano_trabalho_assinatura_gestor_lotacao: { default: false },
+      plano_trabalho_assinatura_gestor_unidade: { default: false },
+      plano_trabalho_assinatura_gestor_entidade: { default: false },
+      dias_tolerancia_avaliacao: {default: 10},
+      nota_padrao_avaliacao: {default: 0},
+      tipo_justificativa_id: {default: null}
     }, this.cdRef, this.validate);
     this.join = ["unidade"];
   }
@@ -58,7 +74,7 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
 
-    if(['nome', 'unidade_id', 'tipo_avaliacao_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if(['nome', 'unidade_id', 'tipo_avaliacao_plano_trabalho_id', 'tipo_avaliacao_plano_entrega_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     } else if(controlName == "prazo_max_plano_entrega" && parseInt(control.value || 0) > 99999) {
       result = "Inválido";
@@ -96,6 +112,18 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
       const programa = this.util.fill(new Programa(), this.entity!);
       resolve(this.util.fillForm(programa, this.form!.value));
     });
+  }
+
+  public isTipoAvaliacao(tipo: string) {
+    let selected = this.tipoAvaliacao?.selectedEntity as TipoAvaliacao;
+    return selected?.tipo == tipo || (!selected && tipo == "QUANTITATIVO");
+  }
+
+  public get tipoAvaliacaoQualitativo(): LookupItem[] {
+    let selected = this.tipoAvaliacao?.selectedEntity as TipoAvaliacao;
+    let items = selected?.notas?.map(x => Object.assign({} as LookupItem, { key: x.nota, value: x.nota })) || [];
+    if(JSON.stringify(items) != JSON.stringify(this._tipoAvaliacaoQualitativo)) this._tipoAvaliacaoQualitativo = items;
+    return this._tipoAvaliacaoQualitativo;
   }
 
   public titleEdit = (entity: Programa): string => {

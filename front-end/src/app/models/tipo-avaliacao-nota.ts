@@ -15,6 +15,7 @@ export class TipoAvaliacaoNota extends Base {
     public pergunta: string = "";
     public icone: string = "";
     public cor: string = "";
+    public codigo: string = "";
 
     public tipo_avaliacao_id: string = "";
 

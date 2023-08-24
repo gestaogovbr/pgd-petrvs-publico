@@ -135,9 +135,9 @@ export class ProjetoFormRecursosComponent extends PageFrameBase {
       row.usuario_id = form.controls.tipo.value == "HUMANO" ? form.controls.usuario_id.value : null;
       row.unidade_id = form.controls.tipo.value == "DEPARTAMENTO" ? form.controls.unidade_id.value : null;
       row.valor = form.controls.valor.value;
-      row.usuario = this.usuario?.selectedItem?.entity;
-      row.unidade = this.unidade?.selectedItem?.entity;
-      row.material_servico = this.materialServico?.selectedItem?.entity;
+      row.usuario = this.usuario?.selectedEntity;
+      row.unidade = this.unidade?.selectedEntity;
+      row.material_servico = this.materialServico?.selectedEntity;
       result = row;
       this.cdRef.detectChanges();
     }

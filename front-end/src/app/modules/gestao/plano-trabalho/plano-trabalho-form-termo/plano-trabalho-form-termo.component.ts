@@ -80,7 +80,7 @@ export class PlanoTrabalhoFormTermoComponent extends PageFormBase<PlanoTrabalho,
   }
 
   public formValidation = (form?: FormGroup) => {
-    if(!this.tipoDocumento?.searchObj && form?.controls.tipo_documento_id.value?.length) {
+    if(!this.tipoDocumento?.selectedEntity && form?.controls.tipo_documento_id.value?.length) {
       return "Aguarde o carregamento do tipo de documento";
     }
     return undefined;
@@ -120,7 +120,7 @@ export class PlanoTrabalhoFormTermoComponent extends PageFormBase<PlanoTrabalho,
         /* TODO Gerar documento do TCR
         termo: this.termo!.conteudo,
         atividades_termo_adesao: this.termo!.atividades.map((x: { nome: string; }) => this.util.removeAcentos(x.nome.toLowerCase())),*/
-        codigo_tipo_documento: (this.tipoDocumento?.searchObj as TipoDocumento)?.codigo
+        codigo_tipo_documento: (this.tipoDocumento?.selectedEntity as TipoDocumento)?.codigo
       })));
       /*} else {
         const documento = Object.assign(new Documento(), {

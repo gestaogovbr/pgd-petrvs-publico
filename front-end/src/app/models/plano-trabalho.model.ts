@@ -17,7 +17,6 @@ export type PlanoTrabalhoStatus = 'INCLUIDO' | 'AGUARDANDO_ASSINATURA' | 'ATIVO'
 
 export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
     public tipo_modalidade?: TipoModalidade;
-    public plano_entrega?: PlanoEntrega;
     public unidade?: Unidade;
     public usuario?: Usuario;
     public programa?: Programa;
@@ -41,7 +40,6 @@ export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
     public usuario_id: string = "";
     public unidade_id: string = "";
     public tipo_modalidade_id: string = "";
-    public plano_entrega_id: string = "";
     public documento_id: string = "";
 
     public constructor(data?: any) { super(); this.initialization(data); }
