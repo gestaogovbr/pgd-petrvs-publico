@@ -249,7 +249,7 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_PTR_ENTR_EXCL", "Permite excluir entregas de um plano de trabalho"],
                 ["MOD_PTR_ENTR_INCL", "Permite incluir entregas de um plano de trabalho"],
             ]
-        ], [ // Farias
+        ], [ 
             "codigo"=> "MOD_PENT",
             "descricao"=> "Módulo de Plano de Entregas",
             "capacidades"=> [

@@ -1064,9 +1064,9 @@ class AtividadeListGridComponent extends _atividade_list_base__WEBPACK_IMPORTED_
   }
   ngAfterViewInit() {
     super.ngAfterViewInit();
-    if (this.minhas) {
-      this.filter.controls.usuario_id.setValue(this.auth.usuario.id);
+    if (this.metadata?.atribuidas_para_mim) {
       this.filter?.controls.atribuidas_para_mim.setValue(true);
+      this.filter?.controls.usuario_id.setValue(this.auth.usuario?.id);
     }
     if (this.fixedFilter) {
       const status = this.fixedFilter.find(x => x[0] == "status");
