@@ -1,16 +1,17 @@
 import { Injectable } from '@angular/core';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { Documento, HasDocumentos } from 'src/app/models/documento.model';
-import { PlanoTrabalhoEntrega } from 'src/app/models/plano-trabalho-entrega.model';
+import { PlanoTrabalhoEntrega, PlanoTrabalhoEntregaTipo } from 'src/app/models/plano-trabalho-entrega.model';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { Template } from 'src/app/models/template.model';
 import { AuthService } from 'src/app/services/auth.service';
-import { LookupItem } from 'src/app/services/lookup.service';
+import { LookupItem, LookupService } from 'src/app/services/lookup.service';
 
-export type badgeEntrega = {
+export type BadgeEntrega = {
   titulo: string,
   cor: string,
-  nome: string
+  nome: string,
+  tipo: PlanoTrabalhoEntregaTipo
 }
 
 @Injectable({
@@ -20,6 +21,7 @@ export class PlanoTrabalhoService {
 
   constructor(
     public auth: AuthService,
+    public lookup: LookupService,
     public planoTrabalhoDao: PlanoTrabalhoDaoService
   ) { }
 
@@ -45,11 +47,12 @@ export class PlanoTrabalhoService {
     const documento = item || (plano?.documentos || []).find(x => plano?.documento_id?.length && x.id == plano?.documento_id) || plano?.documento;
     if (parent && documento && !documento.assinaturas?.find(x => x.usuario_id == this.auth.usuario!.id)) {
       const tipoModalidade = plano.tipo_modalidade;
+      const programa = plano.programa;
       const entidade = this.auth.entidade!;
       let ids: string[] = [];
-      if (tipoModalidade?.plano_trabalho_assinatura_participante) ids.push(plano.usuario_id);
-      if (tipoModalidade?.plano_trabalho_assinatura_gestor_unidade) ids.push(plano.unidade?.gestor?.id || "", plano.unidade?.gestor_substituto?.id || "");
-      if (tipoModalidade?.plano_trabalho_assinatura_gestor_entidade) ids.push(entidade.gestor_id || "", entidade.gestor_substituto_id || "");
+      if (programa?.plano_trabalho_assinatura_participante) ids.push(plano.usuario_id);
+      if (programa?.plano_trabalho_assinatura_gestor_unidade) ids.push(plano.unidade?.gestor?.id || "", plano.unidade?.gestor_substituto?.id || "");
+      if (programa?.plano_trabalho_assinatura_gestor_entidade) ids.push(entidade.gestor_id || "", entidade.gestor_substituto_id || "");
       return !!tipoModalidade && ids.includes(this.auth.usuario!.id);
     }
     return false;
@@ -70,18 +73,17 @@ export class PlanoTrabalhoService {
    * @param planoTrabalho         Plano de Trabalho ao qual pertence a entrega a ser analisada. Se não for informado, o método tentará obtê-lo diretamente da própria entrega recebida.
    * @returns 
    */
-  public tipoEntrega(planoTrabalhoEntrega: PlanoTrabalhoEntrega, planoTrabalho?: PlanoTrabalho): badgeEntrega {
+  public tipoEntrega(planoTrabalhoEntrega: PlanoTrabalhoEntrega, planoTrabalho?: PlanoTrabalho): BadgeEntrega {
     /* Se row for uma entrega vinda do banco de dados, ela já deve trazer consigo um dos seus relacionamentos: 'entrega' ou 'plano_entrega_entrega', que serão lidos diretamente de row quando necessário. 
         Se row não vier do banco, ela passou pelo método saveEntrega() e lá um desses objetos, escolhido em um dos 3 inputSearch, foi anexado à variável this.novaEntrega, que originalmente é vazia. Sendo assim,
         quando necessário, os dados serão lidos em this.novaEntrega.entrega ou em this.novaEntrega.plano_entrega_entrega. */
     let plano = planoTrabalho || planoTrabalhoEntrega.plano_trabalho;
-    if (!!planoTrabalhoEntrega.entrega_id?.length) return { titulo: 'Catálogo', cor: 'secondary', nome: !!plano?._metadata?.novaEntrega?.entrega?.id?.length ? plano._metadata?.novaEntrega?.entrega?.nome || "Desconhecido" : planoTrabalhoEntrega.entrega?.nome || "Desconhecido1" };
-    let IdDoPlanoEntregaDoPlanoTrabalho: string, IdDoPlanoEntregaDaEntrega: string, badge: string, nome: string, cor: string;
-    IdDoPlanoEntregaDoPlanoTrabalho = plano?.plano_entrega_id || plano?._metadata.idPlanoEntregas || 'Desconhecido2';
-    IdDoPlanoEntregaDaEntrega = !!plano?._metadata?.novaEntrega?.plano_entrega_entrega?.id.length ? plano?._metadata?.novaEntrega?.plano_entrega_entrega?.plano_entrega_id || "Desconhecido3" : planoTrabalhoEntrega.plano_entrega_entrega?.plano_entrega_id || "Desconhecido4";
-    [badge, cor] = IdDoPlanoEntregaDoPlanoTrabalho == IdDoPlanoEntregaDaEntrega ? ['Mesma unidade', 'success'] : ['Outra unidade', 'primary'];
-    nome = !!plano?._metadata?.novaEntrega?.plano_entrega_entrega?.id.length ? plano?._metadata?.novaEntrega?.plano_entrega_entrega?.entrega?.nome || "Desconhecido5" : planoTrabalhoEntrega.plano_entrega_entrega?.entrega?.nome || "Desconhecido6";
-    return { titulo: badge, cor: cor, nome: nome };
+    let key: PlanoTrabalhoEntregaTipo = planoTrabalhoEntrega.plano_entrega_entrega?.plano_entrega?.unidade_id == plano!.unidade_id ? "PROPRIA_UNIDADE" :
+      (planoTrabalhoEntrega.plano_entrega_entrega ? "OUTRA_UNIDADE" : 
+      (!!planoTrabalhoEntrega.orgao?.length ? "OUTRO_ORGAO" : "SEM_ENTREGA"));
+    let result = this.lookup.ORIGENS_ENTREGAS_PLANO_TRABALHO.find(x => x.key == key) || {key: "", value: "Desconhecido"};
+    let nome = plano?._metadata?.novaEntrega?.plano_entrega_entrega?.entrega?.nome || planoTrabalhoEntrega.plano_entrega_entrega?.entrega?.nome || "Desconhecido";
+    return { titulo: result.value, cor: result.color || "danger", nome: nome, tipo: key};
   }
 
 }

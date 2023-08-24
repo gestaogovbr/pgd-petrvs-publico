@@ -40,7 +40,7 @@ export class AfastamentoFormComponent extends PageFormBase<Afastamento, Afastame
   }
 
   public isHoras(){
-    if(this.form.controls.tipo_motivo_afastamento_id.value?.length && (this.tipoMotivoAfastamento?.searchObj as TipoMotivoAfastamento)?.horas){//Então é em Horas
+    if(this.form.controls.tipo_motivo_afastamento_id.value?.length && (this.tipoMotivoAfastamento?.selectedEntity as TipoMotivoAfastamento)?.horas){//Então é em Horas
       return true;
     }
     else return false;

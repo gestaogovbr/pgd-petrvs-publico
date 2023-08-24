@@ -170,9 +170,9 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
         novoIntegrante = Object.assign(novoIntegrante, {
           id: form!.controls.unidade_id.value,
           atribuicoes: $result[0].atribuicoes,
-          unidade_codigo: (this.unidade?.searchObj as Unidade).codigo,
-          unidade_sigla: (this.unidade?.searchObj as Unidade).sigla,
-          unidade_nome: (this.unidade?.searchObj as Unidade).nome
+          unidade_codigo: (this.unidade?.selectedEntity as Unidade).codigo,
+          unidade_sigla: (this.unidade?.selectedEntity as Unidade).sigla,
+          unidade_nome: (this.unidade?.selectedEntity as Unidade).nome
         });
         if (this.grid?.adding) this.grid!.items[this.grid!.items.length - 1].id = '';  // (*4)
       } else {

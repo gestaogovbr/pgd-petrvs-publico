@@ -53,7 +53,7 @@ export class AtividadeFormConcluirComponent extends PageFormBase<Atividade, Ativ
       documento_entrega_id: {default: null},
       plano_trabalho_entrega_id: {default: null}
     }, this.cdRef, this.validate);
-    this.join = ["plano_trabalho.tipo_modalidade", "unidade", "plano_trabalho.entregas.entrega:id,nome"];
+    this.join = ["plano_trabalho.tipo_modalidade", "unidade", "plano_trabalho.entregas.plano_entrega_entrega:id,descricao"];
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -78,7 +78,7 @@ export class AtividadeFormConcluirComponent extends PageFormBase<Atividade, Ativ
     }
     this.entregas = entity.plano_trabalho?.entregas?.map(x => Object.assign({}, {
       key: x.id,
-      value: x.descricao + (x.entrega ? " (" + x.entrega!.nome + ")" : ""),
+      value: x.descricao + (x.plano_entrega_entrega ? " (" + x.plano_entrega_entrega?.descricao + ")" : ""),
       data: x
     })) || [];
     formValue.arquivar = true;  

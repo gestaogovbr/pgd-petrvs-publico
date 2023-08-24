@@ -186,8 +186,8 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       entrega = this.util.fillForm(entrega, valueWithout);
       entrega.objetivos = entrega.objetivos.filter(x => ["ADD", "DELETE"].includes(x._status || ""));
       entrega.processos = entrega.processos.filter(x => ["ADD", "DELETE"].includes(x._status || ""));
-      entrega.unidade = this.unidade?.selectedItem?.entity;
-      entrega.entrega = this.entrega?.selectedItem?.entity;
+      entrega.unidade = this.unidade?.selectedEntity;
+      entrega.entrega = this.entrega?.selectedEntity;
       entrega.meta = this.planoEntregaService.getEntregaValor(entrega.entrega!, meta);
       entrega.realizado = this.planoEntregaService.getEntregaValor(entrega.entrega!, realizado);
       resolve(new NavigateResult(entrega));
@@ -208,7 +208,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   }
 
   public checkTipoIndicador(tipos: string[]): boolean {
-    return tipos.includes((this.entrega?.selectedItem?.entity as Entrega).tipo_indicador);
+    return tipos.includes((this.entrega?.selectedEntity as Entrega).tipo_indicador);
   }
 
   public dynamicOptionsObjetivos(row: any): ToolbarButton[] {
@@ -279,7 +279,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
 
   public async onEntregaChange(row: any) {
     if (this.entrega && this.entrega.selectedItem) {
-      const entregaItem = this.entrega?.selectedItem?.entity as Entrega;
+      const entregaItem = this.entrega?.selectedEntity as Entrega;
       const tipoIndicador = entregaItem.tipo_indicador;
         switch (tipoIndicador) {
           case 'QUALITATIVO':

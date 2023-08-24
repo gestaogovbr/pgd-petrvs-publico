@@ -80,19 +80,18 @@ export class LookupService {
   ];
 
   public ATIVIDADE_STATUS: LookupItem[] = [
-    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-check-circle", color: "primary" },
-    { key: "NAOCONCLUIDO", value: "Não concluído", icon: "bi bi-play-circle", color: "info" },
+    { key: "INCLUIDO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" },
     { key: "INICIADO", value: "Iniciado", icon: "bi bi-play-circle", color: "info" },
     { key: "PAUSADO", value: "Pausado", icon: "bi bi-sign-stop", color: "danger" },
-    { key: "INCLUIDO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" }
+    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-check-circle", color: "primary" }
   ];
 
   public ATIVIDADE_STATUS_COM_ARQUIVADAS: LookupItem[] = [
-    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-check-circle", color: "primary" },
-    { key: "NAOCONCLUIDO", value: "Não concluído", icon: "bi bi-play-circle", color: "info" },
+    { key: "INCLUIDO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" },
     { key: "INICIADO", value: "Iniciado", icon: "bi bi-play-circle", color: "info" },
     { key: "PAUSADO", value: "Pausado", icon: "bi bi-sign-stop", color: "danger" },
-    { key: "INCLUIDO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" },
+    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-check-circle", color: "primary" },
+    { key: "NAOCONCLUIDO", value: "Não concluído", icon: "bi bi-play-circle", color: "info" },
     { key: "ARQUIVADO", value: "Arquivado", icon: "bi bi-inboxes", color: "secondary" }
   ];
 
@@ -129,10 +128,11 @@ export class LookupService {
   ];
 
   public ORIGENS_ENTREGAS_PLANO_TRABALHO: LookupItem[] = [
-    { key: 'MESMA_UNIDADE', value: "Mesma Unidade" },
-    { key: 'OUTRA_UNIDADE', value: "Outra Unidade" },
-    { key: 'CATALOGO', value: "Catálogo" },
-  ];
+    { key: 'PROPRIA_UNIDADE', value: "Própria Unidade", color: "success" },
+    { key: 'OUTRA_UNIDADE', value: "Outra Unidade", color: "primary" },
+    { key: 'OUTRO_ORGAO', value: "Outro Órgão/Entidade", color: "warning" },
+    { key: 'SEM_ENTREGA', value: "Não vinculadas a entregas", color: "light" }
+  ]; 
 
   public HORAS_CORRIDAS_OU_UTEIS: LookupItem[] = [
     { key: 'HORAS_CORRIDAS', value: "Horas Corridas" },
@@ -489,7 +489,7 @@ export class LookupService {
     { key: "QUALITATIVO", value: "Qualitativo (conceitual)" },
     { key: "QUANTITATIVO", value: "Quantitativo (valor)" }
   ];
-
+  
   public ADESAO_STATUS: LookupItem[] = [
     { key: "SOLICITADO", value: "Solicitado", color: "bg-primary" },
     { key: "HOMOLOGADO", value: "Homologado", color: "bg-success" },
@@ -640,7 +640,7 @@ export class LookupService {
   public THEMES: LookupItem[] = [
     {'key': 'light', 'value': "Branco"},
     {'key': 'blue', 'value': "Azul"},
-  ]
+  ];
 
   public TIPO_INTEGRACAO: LookupItem[] = [
     { 'key': 'NENHUMA', 'value': 'Nenhuma' },
@@ -652,7 +652,7 @@ export class LookupService {
     { 'key': 'A', 'value': 'Vínculos ativos sem ocorrência de exclusão' },
     { 'key': 'B', 'value': 'Todos os vínculos' },
   ];
-
+  
   public TIPO_VINCULO: LookupItem[] = [
     { 'key': 'A', 'value': 'Ativos em exercício no órgão' },
     { 'key': 'B', 'value': 'Ativos e aposentados' },

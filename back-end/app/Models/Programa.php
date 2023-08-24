@@ -28,7 +28,15 @@ class Programa extends ModelBase
         'periodicidade_consolidacao', /* enum('DIAS','SEMANAL','QUINZENAL','MENSAL','BIMESTRAL','TRIMESTRAL','SEMESTRAL'); NOT NULL; DEFAULT: 'MENSAL'; */// Período para avaliação do plano de trabalho
         'periodicidade_valor', /* int; NOT NULL; DEFAULT: '1'; */// Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do mês para o restante
         'dias_tolerancia_consolidacao', /* int; NOT NULL; DEFAULT: '10'; */// Dias de tolerância para o lançamento do registro das atividades na consolidação, após esses dias será liberado automaticamente para avaliação
+        'dias_tolerancia_avaliacao', /* int; NOT NULL; DEFAULT: '10'; */// Dias de tolerância para o lançamento do registro das atividades na consolidação, após esses dias será liberado automaticamente para avaliação
+        'nota_padrao_avaliacao', 
+        'plano_trabalho_assinatura_participante', /* tinyint; NOT NULL; DEFAULT: '1'; */// Exigir assinatura do usuário no plano de trabalho
+        'plano_trabalho_assinatura_gestor_unidade', /* tinyint; NOT NULL; */// Exigir assinatura do gestor da unidade do plano de trabalho
+        'plano_trabalho_assinatura_gestor_entidade', /* tinyint; NOT NULL; */// Exigir assinatura do gestor da entidade do plano de trabalho
         'tipo_documento_tcr_id', /* char(36); */
+        'tipo_justificativa_id', /* char(36); NOT NULL; */
+        'tipo_avaliacao_plano_trabalho_id', /* char(36); NOT NULL; */
+        'tipo_avaliacao_plano_entrega_id', /* char(36); NOT NULL; */
         'tipo_avaliacao_id', /* char(36); NOT NULL; */
         'documento_id', /* char(36); */
         'unidade_id', /* char(36); NOT NULL; */
@@ -46,7 +54,8 @@ class Programa extends ModelBase
     public function planosEntrega() { return $this->hasMany(PlanoEntrega::class); }
     public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }
     // Belongs
-    public function tipoAvaliacao() { return $this->belongsTo(TipoAvaliacao::class); }
+    public function tipoAvaliacaoPlanoTrabalho() { return $this->belongsTo(TipoAvaliacao::class, 'tipo_avaliacao_plano_trabalho_id'); }
+    public function tipoAvaliacaoPlanoEntrega() { return $this->belongsTo(TipoAvaliacao::class, 'tipo_avaliacao_plano_entrega_id'); }
     public function tipoDocumentoTcr() { return $this->belongsTo(TipoDocumento::class); }    //nullable
     public function templateTcr() { return $this->belongsTo(Template::class); }    //nullable
     public function unidade() { return $this->belongsTo(Unidade::class); }    

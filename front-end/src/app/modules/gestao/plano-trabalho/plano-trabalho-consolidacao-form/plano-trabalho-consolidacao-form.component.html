@@ -54,7 +54,7 @@
             </column>
             <column title="Origem" [template]="columnOrigem" [width]="200">
                 <ng-template let-row="row" #columnOrigem>
-                    <badge [label]="planoTrabalhoService.tipoEntrega(row.entrega, planoTrabalho).titulo" [color]="planoTrabalhoService.tipoEntrega(row.entrega, planoTrabalho).cor"></badge>
+                    <badge [title]="planoTrabalhoService.tipoEntrega(row.entrega, planoTrabalho).titulo" [color]="planoTrabalhoService.tipoEntrega(row.entrega, planoTrabalho).cor"></badge>
                 </ng-template>
             </column>
             <column title="Entrega" [template]="columnEntrega">

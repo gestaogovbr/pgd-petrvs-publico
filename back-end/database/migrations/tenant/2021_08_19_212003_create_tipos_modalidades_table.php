@@ -21,9 +21,6 @@ class CreateTiposModalidadesTable extends Migration
             $table->softDeletes();
             // Campos:
             $table->string('nome', 256)->comment("Nome da modalidade");
-            $table->tinyInteger('plano_trabalho_assinatura_participante')->default(1)->comment("Exigir assinatura do usuário no plano de trabalho");
-            $table->tinyInteger('plano_trabalho_assinatura_gestor_unidade')->default(0)->comment("Exigir assinatura do gestor da unidade do plano de trabalho");
-            $table->tinyInteger('plano_trabalho_assinatura_gestor_entidade')->default(0)->comment("Exigir assinatura do gestor da entidade do plano de trabalho");
             $table->tinyInteger('plano_trabalho_calcula_horas')->default(0)->comment("Se o plano de trabalho calcula horas (considerando a carga horária e os dias)");
             $table->tinyInteger('atividade_tempo_despendido')->default(0)->comment("Se calcula tempo despendido na atividade");
             $table->tinyInteger('atividade_esforco')->default(0)->comment("Se utiliza esforço (tempo para execução) na atividade");
