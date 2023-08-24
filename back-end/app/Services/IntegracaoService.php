@@ -339,13 +339,17 @@ class IntegracaoService extends ServiceBase {
                                   if(is_array($db_result)) $municipio_nome = $db_result[0]->nome;
                               }
 
+                              // Formata nome da uorg
+                              $nomeuorg = $self->UtilService->valueOrDefault($uo["nomeuorg"], null);
+                              if(!is_null($nomeuorg)) $nomeuorg = $self->UtilService->getNomeFormatado($nomeuorg);
+
                               $unidade = [
                                 'id_servo' => $self->UtilService->valueOrDefault($uo["id_servo"], null, $option = "uorg"),
                                 'pai_servo' => $self->UtilService->valueOrDefault($uo["pai_servo"], null, $option = "uorg"),
                                 'codigo_siape' => $self->UtilService->valueOrDefault($uo["codigo_siape"], null, $option = "uorg"),
                                 'pai_siape' => $self->UtilService->valueOrDefault($uo["pai_siape"], null, $option = "uorg"),
                                 'codupag' => $self->UtilService->valueOrDefault($uo["codupag"], null, $option = "uorg"),
-                                'nomeuorg' => $self->UtilService->valueOrDefault($uo["nomeuorg"], null),
+                                'nomeuorg' => $nomeuorg,
                                 'siglauorg' => $sigla,
                                 'telefone' => $tel,
                                 'email' =>  $email,
@@ -515,30 +519,34 @@ class IntegracaoService extends ServiceBase {
                                 $situacao_funcional = $self->UtilService
                                     ->valueOrDefault($ativo['codsitfuncional'], 
                                           null, $option = "situacao_funcional");
+
+                                // Formata nome dos servidores
+                                $nome = $self->UtilService->valueOrDefault($servidor['nome'], null);
+                                if(!is_null($nome)) $nome = $self->UtilService->getNomeFormatado($nome);
       
                                 $servidor = [
                                     'cpf_ativo' => $self->UtilService->valueOrDefault($servidor['cpf_ativo']),
-                                    'data_modificacao' => $self->UtilService->valueOrDefault($servidor['data_modificacao']),
-                                    'cpf' => $self->UtilService->valueOrDefault($servidor['cpf']),
-                                    'nome' => $self->UtilService->valueOrDefault($servidor['nome']),
+                                    'data_modificacao' => $self->UtilService->valueOrDefault($servidor['data_modificacao'], null),
+                                    'cpf' => $self->UtilService->valueOrDefault($servidor['cpf'], null),
+                                    'nome' => $nome,
                                     'emailfuncional' => $email,
                                     'sexo' => $self->UtilService->valueOrDefault($servidor['sexo'], null),
                                     'municipio' => $self->UtilService->valueOrDefault($servidor['municipio'], null),
                                     'uf' => $self->UtilService->valueOrDefault($servidor['uf'], null),
-                                    'data_nascimento' => $self->UtilService->valueOrDefault($servidor['datanascimento']),
+                                    'data_nascimento' => $self->UtilService->valueOrDefault($servidor['datanascimento'], null),
                                     'telefone' => $self->UtilService->valueOrDefault($servidor['telefone'], null),
-                                    'vinculo_ativo' => $self->UtilService->valueOrDefault($ativo['vinculo_ativo']),
-                                    'matriculasiape' => $self->UtilService->valueOrDefault($ativo['matriculasiape']),
+                                    'vinculo_ativo' => $self->UtilService->valueOrDefault($ativo['vinculo_ativo'], null),
+                                    'matriculasiape' => $self->UtilService->valueOrDefault($ativo['matriculasiape'], null),
                                     'cargo' => $self->UtilService->valueOrDefault($ativo['tipo'], null),
                                     'coduorgexercicio' => $self->UtilService->valueOrDefault($ativo['coduorgexercicio'], null, $option = "uorg"),
                                     'coduorglotacao' => $self->UtilService->valueOrDefault($ativo['coduorglotacao'], null, $option = "uorg"),
                                     'codigo_servo_exercicio' => $self->UtilService->valueOrDefault($ativo['codigo_servo_exercicio'], null, $option = "uorg"),
                                     'nomeguerra' => $nomeguerra,
                                     'situacao_funcional' => $situacao_funcional,
-                                    'codupag' => $self->UtilService->valueOrDefault($ativo['codupag']),
-                                    'dataexercicionoorgao' => $self->UtilService->valueOrDefault($ativo['dataexercicionoorgao']),
+                                    'codupag' => $self->UtilService->valueOrDefault($ativo['codupag'], null),
+                                    'dataexercicionoorgao' => $self->UtilService->valueOrDefault($ativo['dataexercicionoorgao'], null),
                                     'funcoes' => $ativo['funcoes'],
-                                    'matricula' => $self->UtilService->valueOrDefault($ativo['matriculasiape']),
+                                    'matricula' => $self->UtilService->valueOrDefault($ativo['matriculasiape'], null),
                                 ];
                                 $db_result = IntegracaoServidor::create($servidor)->save();
                             }

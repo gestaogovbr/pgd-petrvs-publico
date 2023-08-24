@@ -581,8 +581,27 @@ class UtilService
           }
       return $apelido;
     }
-}
 
+    function getNomeFormatado(string $in){
+        $out = null;
+        if(is_string($in) && !empty($in)){
+            $in = mb_strtolower($in, 'UTF-8');
+            $in = explode(" ",$in);
+            $out = null;
+      
+            $preposicoes = array(
+                'da', 'de', 'do', 'das', 'dos',
+                'a','as','o','os', 'ao', 'aos', 'e');
+        
+            foreach ($in as $word) {
+                in_array($word, $preposicoes) ? 
+                    $out = $out.$word.' ' : $out = $out.ucfirst($word). ' ';
+            }
+            $out = trim($out);
+        }
+        return $out;
+    }
+}
 /* EXEMPLO:
 
 $a = ['nome' => 'Ricardo', 'sexo' => 'MASC', 'endereco' => 'Av. Abdias Neves, 2168', 'esposa' => ['nome' => 'Suzana', 'idade' => 49]];
