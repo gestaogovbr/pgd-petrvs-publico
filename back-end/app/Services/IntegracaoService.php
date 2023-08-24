@@ -305,50 +305,71 @@ class IntegracaoService extends ServiceBase {
                 }
                 if($this->echo) $this->imprimeNoTerminal("Concluída a fase de obtenção dos dados das unidades informados pelo SIAPE!.....");
 
-                // Resumo: Apaga conteúdo da tabela integracao_unidades e busca novo com as unidades ATIVAS obtidas pelo webservice
-                // Remove toda a lista da tabela temporária integracao_unidades
-                
-                IntegracaoUnidade::truncate();
-                // Iteração com lista de uorg's
-                foreach($uos as $uo) {
-                    if(!empty($self->UtilService->valueOrDefault($uo["id_servo"])) && $self->UtilService->valueOrDefault($uo["ativa"]) == 'true') {
-                        $unidade = [
-                            'id_servo' => $self->UtilService->valueOrDefault($uo["id_servo"]),
-                            'pai_servo' => $self->UtilService->valueOrDefault($uo["pai_servo"]),
-                            'codigo_siape' => $self->UtilService->valueOrDefault($uo["codigo_siape"]),
-                            'pai_siape' => $self->UtilService->valueOrDefault($uo["pai_siape"]),
-                            'codupag' => $self->UtilService->valueOrDefault($uo["codupag"]),
-                            'nomeuorg' => $self->UtilService->valueOrDefault($uo["nomeuorg"]),
-                            'siglauorg' => $self->UtilService->valueOrDefault($uo["siglauorg"]),
-                            'telefone' => $self->UtilService->valueOrDefault($uo["telefone"]),
-                            'email' => $self->UtilService->valueOrDefault($uo["email"]),
-                            'natureza' => $self->UtilService->valueOrDefault($uo["natureza"]),
-                            'fronteira' => $self->UtilService->valueOrDefault($uo["fronteira"]),
-                            'fuso_horario' => $self->UtilService->valueOrDefault($uo["fuso_horario"]),
-                            'cod_uop' => $self->UtilService->valueOrDefault($uo["cod_uop"]),
-                            'cod_unidade' => $self->UtilService->valueOrDefault($uo["cod_unidade"]),
-                            'tipo' => $self->UtilService->valueOrDefault($uo["tipo"]),
-                            'tipo_desc' => $self->UtilService->valueOrDefault($uo["tipo_desc"]),
-                            'na_rodovia' => $self->UtilService->valueOrDefault($uo["na_rodovia"]),
-                            'logradouro' => $self->UtilService->valueOrDefault($uo["logradouro"]),
-                            'bairro' => $self->UtilService->valueOrDefault($uo["bairro"]),
-                            'cep' => $self->UtilService->valueOrDefault($uo["cep"]),
-                            'ptn_ge_coordenada' => $self->UtilService->valueOrDefault($uo["ptn_ge_coordenada"]),
-                            'municipio_siafi_siape' => $self->UtilService->valueOrDefault($uo["municipio_siafi_siape"]),
-                            'municipio_siscom' => $self->UtilService->valueOrDefault($uo["municipio_siscom"]),
-                            'municipio_ibge' => $self->UtilService->valueOrDefault($uo["municipio_ibge"]),
-                            'municipio_nome' => $self->UtilService->valueOrDefault($uo["municipio_nome"]),
-                            'municipio_uf' => $self->UtilService->valueOrDefault($uo["municipio_uf"]),
-                            'ativa' => $self->UtilService->valueOrDefault($uo["ativa"]),
-                            'regimental' => $self->UtilService->valueOrDefault($uo["regimental"]),
-                            'datamodificacao' => $self->UtilService->valueOrDefault($uo["datamodificacao"]),
-                            'und_nu_adicional' => $self->UtilService->valueOrDefault($uo["und_nu_adicional"]),
-                            'cnpjupag' => $self->UtilService->valueOrDefault($uo["cnpjupag"])
-                        ];
-                        // $result diferente de true é bronca!
-                        $db_result = IntegracaoUnidade::create($unidade)->save();
-                      }
-                }
+                // Resumo: Apaga conteúdo da tabela integracao_unidades e 
+                // busca novo com as unidades ATIVAS obtidas pelo webservice
+
+                DB::transaction(function () use (&$uos, &$self) {
+                    DB::table('integracao_unidades')->delete();
+                    // Iteração com lista de uorg's
+                    foreach($uos as $uo) {
+                        if(!empty($self->UtilService->valueOrDefault($uo["id_servo"])) && $self->UtilService->valueOrDefault($uo["ativa"]) == 'true') {
+
+                              // Tratar telefone
+                              $tel = $self->UtilService->valueOrDefault($uo["telefone"], null);
+                              if(!is_null($tel) && strlen($tel) == 19 &&
+                                  substr($tel,0,3) == '000' &&
+                                  substr($tel,14,5) == '00000'){
+                                  $tel = substr($tel,3,2) . substr($tel,6,8);
+                              }
+
+                              $sigla = $self->UtilService->valueOrDefault($uo["siglauorg"], null);
+                              if(!is_null($sigla)){
+                                $sigla = mb_strtoupper(trim($sigla), 'UTF-8');
+                              }
+
+                              $email = $self->UtilService->valueOrDefault($uo["email"], null);
+                              if(!is_null($email)){
+                                  $email = mb_strtolower(trim($email), 'UTF-8');
+                              }
+
+                              $unidade = [
+                                'id_servo' => $self->UtilService->valueOrDefault($uo["id_servo"], null, $uorg = true),
+                                'pai_servo' => $self->UtilService->valueOrDefault($uo["pai_servo"], null, $uorg = true),
+                                'codigo_siape' => $self->UtilService->valueOrDefault($uo["codigo_siape"], null, $uorg = true),
+                                'pai_siape' => $self->UtilService->valueOrDefault($uo["pai_siape"], null, $uorg = true),
+                                'codupag' => $self->UtilService->valueOrDefault($uo["codupag"], null, $uorg = true),
+                                'nomeuorg' => $self->UtilService->valueOrDefault($uo["nomeuorg"], null),
+                                'siglauorg' => $sigla,
+                                'telefone' => $tel,
+                                'email' =>  $email,
+                                'natureza' => $self->UtilService->valueOrDefault($uo["natureza"], null),
+                                'fronteira' => $self->UtilService->valueOrDefault($uo["fronteira"], null),
+                                'fuso_horario' => $self->UtilService->valueOrDefault($uo["fuso_horario"], null),
+                                'cod_uop' => $self->UtilService->valueOrDefault($uo["cod_uop"], null, $uorg = true),
+                                'cod_unidade' => $self->UtilService->valueOrDefault($uo["cod_unidade"], null, $uorg = true),
+                                'tipo' => $self->UtilService->valueOrDefault($uo["tipo"], null),
+                                'tipo_desc' => $self->UtilService->valueOrDefault($uo["tipo_desc"], null),
+                                'na_rodovia' => $self->UtilService->valueOrDefault($uo["na_rodovia"], null),
+                                'logradouro' => $self->UtilService->valueOrDefault($uo["logradouro"], null),
+                                'bairro' => $self->UtilService->valueOrDefault($uo["bairro"], null),
+                                'cep' => $self->UtilService->valueOrDefault($uo["cep"], null),
+                                'ptn_ge_coordenada' => $self->UtilService->valueOrDefault($uo["ptn_ge_coordenada"], null),
+                                'municipio_siafi_siape' => $self->UtilService->valueOrDefault($uo["municipio_siafi_siape"], null),
+                                'municipio_siscom' => $self->UtilService->valueOrDefault($uo["municipio_siscom"], null),
+                                'municipio_ibge' => $self->UtilService->valueOrDefault($uo["municipio_ibge"], null),
+                                'municipio_nome' => $self->UtilService->valueOrDefault($uo["municipio_nome"], null),
+                                'municipio_uf' => $self->UtilService->valueOrDefault($uo["municipio_uf"], null),
+                                'ativa' => $self->UtilService->valueOrDefault($uo["ativa"]),
+                                'regimental' => $self->UtilService->valueOrDefault($uo["regimental"], null),
+                                'datamodificacao' => $self->UtilService->valueOrDefault($uo["datamodificacao"], null),
+                                'und_nu_adicional' => $self->UtilService->valueOrDefault($uo["und_nu_adicional"], null),
+                                'cnpjupag' => $self->UtilService->valueOrDefault($uo["cnpjupag"], null)
+                            ];
+                            // $result diferente de true é bronca!
+                            $db_result = IntegracaoUnidade::create($unidade)->save();
+                        }
+                    }
+                });
                 
                 if($this->echo) $this->imprimeNoTerminal("Concluída a fase de reconstrução da tabela integracao_unidades!.....");
                 $n = IntegracaoUnidade::count();
@@ -362,23 +383,44 @@ class IntegracaoService extends ServiceBase {
                 //       todas as Unidades do SIAPE, de todas as agências que usarão o sistema. O ideal é essa consulta_sql utilizar um parâmetro de
                 //       identificação da entidade, presente no arquivo de configuração.
                 $this->unidadesSelecionadas = [];
-                $consulta_sql = "SELECT iu.id_servo, u.codigo as codigo_antigo, iu.nomeuorg, u.nome as nome_antigo, iu.siglauorg, u.sigla as sigla_antiga, iu.pai_servo, ".
-                    "un.id as id_pai_antigo, u.id, u.path as path_antigo, c.id AS cidade_id, u.cidade_id as cidade_antiga, und.id AS unidade_pai_id, ".
-                    "un.codigo AS codigoPai, und.path AS path_pai ".
-                    "FROM integracao_unidades iu LEFT JOIN unidades u ON (iu.id_servo = u.codigo) ".
+
+                $consulta_sql = "".
+                    "SELECT iu.id_servo, u.codigo as codigo_antigo, " . 
+                    "iu.nomeuorg, u.nome as nome_antigo, iu.siglauorg, " .
+                    "u.sigla as sigla_antiga, iu.pai_servo, " .
+                    "un.id as id_pai_antigo, u.id, u.path as path_antigo, " .
+                    "c.id AS cidade_id, u.cidade_id as cidade_antiga, " .
+                    "und.id AS unidade_pai_id, un.codigo AS codigoPai, " . 
+                    "und.path AS path_pai " .
+                    "" .
+                    "FROM integracao_unidades iu " .
+                    "" .
+                    "LEFT JOIN unidades u ON (iu.id_servo = u.codigo) " .
                     "LEFT JOIN unidades un ON (un.id = u.id) ".
-                    "LEFT JOIN unidades und ON (iu.pai_servo = und.codigo) ".
-                    "LEFT JOIN cidades c ON (iu.municipio_ibge = c.codigo_ibge) ".
-                    "WHERE (u.id is null OR iu.nomeuorg != u.nome OR iu.siglauorg != u.sigla OR iu.pai_servo != un.codigo) AND iu.ativa = 'true'";
+                    "LEFT JOIN unidades und ON (iu.pai_servo = und.codigo) " .
+                    "LEFT JOIN cidades c ON (iu.municipio_ibge = c.codigo_ibge) " .
+                    "" .
+                    "WHERE (u.id is null OR iu.nomeuorg != u.nome " .
+                    "OR iu.siglauorg != u.sigla " .
+                    "OR iu.pai_servo != " .
+                    "(SELECT codigo as cod_unidade_pai FROM unidades u2 " . 
+                    "WHERE id = u.unidade_pai_id)" .
+                    ") AND iu.ativa = 'true'";
+
                 $this->unidadesSelecionadas = DB::select($consulta_sql);
-                DB::transaction(function () use (&$self, $entidade_id) {
-                    foreach($self->unidadesSelecionadas as $unidade) {
-                      $db_result = $self->deepReplaceUnidades($unidade, $entidade_id);
-                    }
-                    // Seta inativo nas unidades que não existem em integracao_unidades e garante que não esteja inativo as que existem em integracao_unidades.
-                    $db_result = $this->inativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NOW() WHERE data_inativacao IS NULL AND NOT EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo)");
-                    $db_result = $this->ativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NULL WHERE data_inativacao IS NOT NULL AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo);");
-                });
+                
+                // Executa atualizações das unidades caso necessário.
+                if(!empty($this->unidadesSelecionadas)){
+                    DB::transaction(function () use (&$self, $entidade_id) {
+                        foreach($self->unidadesSelecionadas as $unidade) {
+                          $db_result = $self->deepReplaceUnidades($unidade, $entidade_id);
+                        }
+                        // Seta inativo nas unidades que não existem em integracao_unidades e garante que não esteja inativo as que existem em integracao_unidades.
+                        $db_result = $this->inativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NOW() WHERE data_inativacao IS NULL AND NOT EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo)");
+                        $db_result = $this->ativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NULL WHERE data_inativacao IS NOT NULL AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo);");
+                    });
+                }
+
                 $this->result['unidades']['Resultado'] = 'Sucesso';
                 array_push($this->result['unidades']['Observações'], 'Na tabela Unidades do Petrvs constam agora ' . DB::table('unidades')->get()->count() . ' unidades!');
                 $this->result['unidades']['Observações'] = [...$this->result['unidades']['Observações'], ...array_filter([
@@ -422,79 +464,77 @@ class IntegracaoService extends ServiceBase {
                 if($this->echo) $this->imprimeNoTerminal("Concluída a fase de obtenção dos dados dos servidores informados pelo SIAPE.....");
 
                 // Reseta tabela integracao_servidores e faz nova leitura do web service.
-                IntegracaoServidor::truncate();
-                foreach($servidores as $servidor) {
-                    if(isset($servidor['matriculas']) && isset($servidor['matriculas']['dados']) &&
-                        isset($servidor['cpf_ativo']) && $servidor['cpf_ativo'] == 'true') {
-                        $ativo = false;
+                DB::transaction(function () use (&$servidores, &$self) {
+                    DB::table('integracao_servidores')->delete();
+                    foreach($servidores as $servidor) {
+                        if(isset($servidor['matriculas']) && isset($servidor['matriculas']['dados']) &&
+                            isset($servidor['cpf_ativo']) && $servidor['cpf_ativo'] == 'true') {
+                            $ativo = false;
 
-                        $dados = isset($servidor['matriculas']['dados']['vinculo_ativo']) ? [$servidor['matriculas']['dados']] : $servidor['matriculas']['dados'];
+                            $dados = isset($servidor['matriculas']['dados']['vinculo_ativo']) ? [$servidor['matriculas']['dados']] : $servidor['matriculas']['dados'];
 
-                        foreach($dados as $matricula) {
-                            if(isset($matricula['vinculo_ativo']) && $matricula['vinculo_ativo'] == 'true') {
-                                $ativo = $matricula;
+                            foreach($dados as $matricula) {
+                                if(isset($matricula['vinculo_ativo']) && $matricula['vinculo_ativo'] == 'true') {
+                                    $ativo = $matricula;
+                                }
                             }
-                        }
 
-                        $email = $self->UtilService->valueOrDefault($servidor['emailfuncional']);
+                            $email = $self->UtilService->valueOrDefault($servidor['emailfuncional']);
 
-                        if($ativo && !empty($email)) {
-                            // Tratamento de e-mail.
-                            $email = str_contains($email, "@") ? $email : $email . "@prf.gov.br";
-                            $email = mb_strtolower($email, 'UTF-8');
+                            if($ativo && !empty($email)) {
+                                // Tratamento de e-mail.
+                                $email = str_contains($email, "@") ? $email : $email . "@prf.gov.br";
+                                $email = mb_strtolower($email, 'UTF-8');
 
-                            // Trata nome de guerra
-                            $nomeguerra = null;
-                            $nomeguerra ? $nomeguerra = $self->UtilService->valueOrDefault($ativo['nomeguerra']) : 
-                                          $nomeguerra = $self->UtilService->getApelido($servidor['nome']);
+                                // Trata nome de guerra
+                                $nomeguerra = null;
+                                $nomeguerra ? $nomeguerra = $self->UtilService->valueOrDefault($ativo['nomeguerra']) : 
+                                              $nomeguerra = $self->UtilService->getApelido($servidor['nome']);
 
-                            // Trata $ativo['funcoes'] para registro na integracao_servidores
-                            // e posteriores consultas aos códigos de função/unidade.
+                                // Trata $ativo['funcoes'] para registro na integracao_servidores
+                                // e posteriores consultas aos códigos de função/unidade.
 
-                            /*
-                            $fixCodUorg = function ($codUorgErrado) use (&$ativo) {
-                                $codUorgErrado['uorg_funcao'] = strval(intval($codUorgErrado['uorg_funcao']));
-                            };
-                            */
-
-                            if(is_array($ativo['funcoes'])){
-                              foreach($ativo['funcoes'] as &$at){
-                                $at['uorg_funcao'] = strval(intval($at['uorg_funcao']));
-                              }
-                              $ativo['funcoes'] = json_encode(($ativo['funcoes']));
-                              
-                            } else{
-                                $ativo['funcoes'] = null;
+                                if(is_array($ativo['funcoes'])){
+                                  foreach($ativo['funcoes'] as &$at){
+                                    $at['uorg_funcao'] = strval(intval($at['uorg_funcao']));
+                                  }
+                                  $ativo['funcoes'] = json_encode(($ativo['funcoes']));
+                                  
+                                } else{
+                                    $ativo['funcoes'] = null;
+                                }
+      
+                                $servidor = [
+                                    'cpf_ativo' => $self->UtilService->valueOrDefault($servidor['cpf_ativo']),
+                                    'data_modificacao' => $self->UtilService->valueOrDefault($servidor['data_modificacao']),
+                                    'cpf' => $self->UtilService->valueOrDefault($servidor['cpf']),
+                                    'nome' => $self->UtilService->valueOrDefault($servidor['nome']),
+                                    'emailfuncional' => $email,
+                                    'sexo' => $self->UtilService->valueOrDefault($servidor['sexo'], null),
+                                    'municipio' => $self->UtilService->valueOrDefault($servidor['municipio']),
+                                    'uf' => $self->UtilService->valueOrDefault($servidor['uf']),
+                                    'datanascimento' => $self->UtilService->valueOrDefault($servidor['datanascimento']),
+                                    'telefone' => $self->UtilService->valueOrDefault($servidor['telefone'], null),
+                                    'vinculo_ativo' => $self->UtilService->valueOrDefault($ativo['vinculo_ativo']),
+                                    'matriculasiape' => $self->UtilService->valueOrDefault($ativo['matriculasiape']),
+                                    'tipo' => $self->UtilService->valueOrDefault($ativo['tipo']),
+                                    'coduorgexercicio' => $self->UtilService->valueOrDefault($ativo['coduorgexercicio'], null, $uorg = true),
+                                    'coduorglotacao' => $self->UtilService->valueOrDefault($ativo['coduorglotacao'], null, $uorg = true),
+                                    'codigo_servo_exercicio' => $self->UtilService->valueOrDefault($ativo['codigo_servo_exercicio'], null, $uorg = true),
+                                    'nomeguerra' => $nomeguerra,
+                                    'codsitfuncional' => $self->UtilService->valueOrDefault($ativo['codsitfuncional']),
+                                    'codupag' => $self->UtilService->valueOrDefault($ativo['codupag']),
+                                    'dataexercicionoorgao' => $self->UtilService->valueOrDefault($ativo['dataexercicionoorgao']),
+                                    'funcoes' => $ativo['funcoes'],
+                                    'matricula' => $self->UtilService->valueOrDefault($ativo['matriculasiape']),
+                                ];
+                                // $db_result = IntegracaoServidor::create($servidor)->save();
+                                $db_result = $this->integracaoServidor->saveIntegracaoServidor($servidor, false);
                             }
-  
-                            $servidor = [
-                                'cpf_ativo' => $self->UtilService->valueOrDefault($servidor['cpf_ativo']),
-                                'data_modificacao' => $self->UtilService->valueOrDefault($servidor['data_modificacao']),
-                                'cpf' => $self->UtilService->valueOrDefault($servidor['cpf']),
-                                'nome' => $self->UtilService->valueOrDefault($servidor['nome']),
-                                'emailfuncional' => $email,
-                                'sexo' => $self->UtilService->valueOrDefault($servidor['sexo'], null),
-                                'municipio' => $self->UtilService->valueOrDefault($servidor['municipio']),
-                                'uf' => $self->UtilService->valueOrDefault($servidor['uf']),
-                                'datanascimento' => $self->UtilService->valueOrDefault($servidor['datanascimento']),
-                                'telefone' => $self->UtilService->valueOrDefault($servidor['telefone'], null),
-                                'vinculo_ativo' => $self->UtilService->valueOrDefault($ativo['vinculo_ativo']),
-                                'matriculasiape' => $self->UtilService->valueOrDefault($ativo['matriculasiape']),
-                                'tipo' => $self->UtilService->valueOrDefault($ativo['tipo']),
-                                'coduorgexercicio' => $self->UtilService->valueOrDefault($ativo['coduorgexercicio'], null, $uorg = true),
-                                'coduorglotacao' => $self->UtilService->valueOrDefault($ativo['coduorglotacao'], null, $uorg = true),
-                                'codigo_servo_exercicio' => $self->UtilService->valueOrDefault($ativo['codigo_servo_exercicio'], null, $uorg = true),
-                                'nomeguerra' => $nomeguerra,
-                                'codsitfuncional' => $self->UtilService->valueOrDefault($ativo['codsitfuncional']),
-                                'codupag' => $self->UtilService->valueOrDefault($ativo['codupag']),
-                                'dataexercicionoorgao' => $self->UtilService->valueOrDefault($ativo['dataexercicionoorgao']),
-                                'funcoes' => $ativo['funcoes'],
-                                'matricula' => $self->UtilService->valueOrDefault($ativo['matriculasiape']),
-                            ];
-                            $db_result = IntegracaoServidor::create($servidor)->save();
                         }
                     }
-                }
+                });
+
                 if($this->echo) $this->imprimeNoTerminal("Concluída a fase de reconstrução da tabela integração_servidores.....");
                 $n = IntegracaoServidor::count();
                 $this->atualizaLogs($this->logged_user_id, 'integracao_servidores', 'todos os registros', 'ADD', ['Observação' => 'Total de servidores importados do SIAPE: ' . $n . ' (apenas ativos)']);
@@ -560,13 +600,10 @@ class IntegracaoService extends ServiceBase {
                     $n = count($atualizacoes);
                     if($n > 0) array_push($this->result['servidores']["Observações"], $n . ($n == 1 ? ' servidor foi atualizado porque sofreu alteração em seus dados pessoais!' : ' servidores foram atualizados porque sofreram alteração em seus dados pessoais!'));
 
-                    // ################################################################
-
                     /* Incluir todos servidores da tabela integracao_servidores
                     que não estejam na tabela usuarios caso autoIncluir seja verdadeiro. 
                     Obs.:: Inserção de novos servidores automaticamente.
                     */
-
                     $this->autoIncluir = true;
 
                     if($this->autoIncluir){
@@ -584,7 +621,8 @@ class IntegracaoService extends ServiceBase {
                             "isr.nomeguerra as apelido, " .
                             "isr.codigo_servo_exercicio as exercicio " .
                             "FROM integracao_servidores as isr LEFT JOIN usuarios as u " .
-                            "ON isr.cpf = u.cpf";
+                            "ON isr.cpf = u.cpf " . 
+                            "WHERE u.cpf is NULL";
 
                         $vinculos_isr = DB::select($query);
                       
@@ -621,7 +659,9 @@ class IntegracaoService extends ServiceBase {
                             $this->unidadeIntegrante->saveIntegrante($vinculo, false);
                         }
                     };
+                    if($this->echo) $this->imprimeNoTerminal('Concluída a fase de atualização das lotações dos servidores!.....');
                 });
+
                 $this->result['servidores']['Resultado'] = 'Sucesso';
                 array_push($this->result['servidores']["Observações"], 'Na tabela Usuários constam agora '.
                 Usuario::count() . ' servidores!');
@@ -673,10 +713,10 @@ class IntegracaoService extends ServiceBase {
                 foreach($chefias as $chefia){
                     // Descobre o ID da Unidade
                     $query_selecionar_unidade = "SELECT u.id " .
-                    "FROM integracao_unidades as iu " .
-                    "JOIN unidades as u " .
-                    "ON iu.id_servo = u.codigo " .
-                    "WHERE iu.codigo_siape = :codigo_siape";
+                        "FROM integracao_unidades as iu " .
+                        "JOIN unidades as u " .
+                        "ON iu.id_servo = u.codigo " .
+                        "WHERE iu.codigo_siape = :codigo_siape";
 
                     $unidade_exercicio = DB::select($query_selecionar_unidade, 
                         [':codigo_siape' => $chefia['codigo_siape']]);
@@ -776,13 +816,13 @@ class IntegracaoService extends ServiceBase {
     }
 
     public function consultarApiSigepe($token, $url){
-            $response = Http::withToken($token)->withOptions([
+        $response = Http::withToken($token)->withOptions([
             'allow_redirects' => false,
             'verify' => $this->validaCertificado
-            ])->get($url);
-            if($response->failed()) $response->throw();
-            if($response->status() >= 300 && $response->status() < 400) $response = $this->consultarApiSigepe($token, $response->header('Location'));
-            return $response;
+        ])->get($url);
+        if($response->failed()) $response->throw();
+        if($response->status() >= 300 && $response->status() < 400) $response = $this->consultarApiSigepe($token, $response->header('Location'));
+        return $response;
     }
 
     public function atualizaLogs($user_id, string $table_name, string $row_id, string $type, array $delta)
