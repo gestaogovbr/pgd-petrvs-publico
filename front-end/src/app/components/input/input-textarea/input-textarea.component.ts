@@ -34,6 +34,7 @@ export class InputTextareaComponent extends InputBase implements OnInit {
   @Input() source?: any;
   @Input() path?: string;
   @Input() placeholder?: string;
+  @Input() required: boolean = false;
   @Input() set control(value: AbstractControl | undefined) {
     this._control = value;
   }

@@ -10,6 +10,7 @@ import { HomeDevComponent } from './home-dev/home-dev.component';
 import { HomeRaioxComponent } from './home-raiox/home-raiox.component';
 import { HomeAdministradorComponent } from './home-administrador/home-administrador.component';
 import { ComponentsModule } from "../../components/components.module";
+import { HomeAvaliadorComponent } from './home-avaliador/home-avaliador.component';
 
 const routes: Routes = [
   {
@@ -17,6 +18,9 @@ const routes: Routes = [
     children: [
       {
         path:'execucao', component: HomeExecucaoComponent
+      },
+      {
+        path:'avaliacao', component: HomeAvaliadorComponent
       },
       {
         path:'gestao', component: HomeGestaoComponent
@@ -51,7 +55,8 @@ const routes: Routes = [
         HomePontoComponent,
         HomeDevComponent,
         HomeRaioxComponent,
-        HomeAdministradorComponent
+        HomeAdministradorComponent,
+        HomeAvaliadorComponent
     ],
     imports: [
         RouterModule.forRoot(routes),

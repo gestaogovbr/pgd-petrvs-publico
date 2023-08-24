@@ -1,9 +1,9 @@
-<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="areaTematica" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
     <div class="row">
         <input-select [size]="5" #curso label="Área Temática" icon="fas fa-layer-group" controlName="areaTematica" liveSearch
                 [control]="form!.controls.areaTematica" [dao]="areaTematicaDao"  [addRoute]="{route: ['raiox','cadastros','gerais','areatematica','new']}">
         </input-select>
-        <input-text [size]="5" label="Nome da Capacidade Técnica" controlName="nome"></input-text>
+        <input-text [size]="5" label="Nome da Capacidade Técnica" controlName="nome" [required]="true"></input-text>
         <input-switch [size]="2" labelPosition="left" label="Ativo" controlName="ativo"></input-switch>
     </div>    
 </editable-form>
