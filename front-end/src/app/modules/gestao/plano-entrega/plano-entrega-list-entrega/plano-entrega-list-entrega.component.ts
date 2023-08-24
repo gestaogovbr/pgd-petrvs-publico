@@ -68,7 +68,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     super(injector);
     this.title = this.lex.translate("Entregas");
     this.join = ["unidade", "entidade", "entrega"];
-    this.code = "MOD_PENT_CONS";
+    this.code = "MOD_PENT";
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
     this.dao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
     this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);

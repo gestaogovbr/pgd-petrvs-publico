@@ -55,7 +55,7 @@ class LoginController extends Controller
                     });             // Acredito que seja possível reduzir a qde de relacionamentos solicitados
                 },
                 "perfil.capacidades.tipoCapacidade", 
-                "gerenciaTitular.atribuicoes", 
+                "gerenciaTitular.atribuicoes",
                 "gerenciasSubstitutas.atribuicoes",
                 /*"vinculosUnidades.unidade" => function($query) {
                     $query->with(["planosEntrega","unidade.planosEntrega"]);

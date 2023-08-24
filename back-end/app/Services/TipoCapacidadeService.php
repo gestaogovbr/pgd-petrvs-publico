@@ -210,7 +210,7 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_PLAN_INST_CONS", "Permite consultar Planejamentos Institucionais"],
                 ["MOD_PLAN_INST_INCL", "Permite incluir algum tipo de Planejamento Institucional"],
                 ["MOD_PLAN_INST_INCL_UNID_INST", "Permite incluir Planejamento Institucional para a Unidade Instituidora"],
-                ["MOD_PLAN_INST_INCL_UNEX_LOTPRI", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas para a sua lotação principal)"],
+                ["MOD_PLAN_INST_INCL_UNEX_LOTPRI", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas para a sua lotação)"],
                 ["MOD_PLAN_INST_INCL_UNEX_QQLOT", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas as de suas lotações)"],
                 ["MOD_PLAN_INST_INCL_UNEX_SUBORD", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas as de suas lotações e suas subordinadas)"],
                 ["MOD_PLAN_INST_INCL_UNEX_QUALQUER", "Permite incluir Planejamentos Institucionais para qualquer Unidade Executora, independente de sua lotação"],
@@ -249,38 +249,36 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_PTR_ENTR_EXCL", "Permite excluir entregas de um plano de trabalho"],
                 ["MOD_PTR_ENTR_INCL", "Permite incluir entregas de um plano de trabalho"],
             ]
-        ], [ // Farias
-            "codigo"=> "MOD_PENT", //ok
-            "descricao"=> "Módulo de Plano de Entrega",
+        ], [ 
+            "codigo"=> "MOD_PENT",
+            "descricao"=> "Módulo de Plano de Entregas",
             "capacidades"=> [
                 /* Capacidades do módulo PLANO DE ENTREGA */
-                ["MOD_PENT_CONS", "Permite consultar planos de entrega"],
-                ["MOD_PENT_INCL", "Permite incluir planos de entrega"], //só no front
+                ["MOD_PENT_INCL", "Permite incluir planos de entrega"],
                 ["MOD_PENT_EDT", "Permite editar planos de entrega"],
                 ["MOD_PENT_EDT_ATV_HOMOL", "Permite editar planos de entrega que estejam no status ATIVO. O plano voltará ao status HOMOLOGANDO"],
-                ["MOD_PENT_EDT_ATV_ATV", "Permite alterar planos de entregas das unidades imediatamente subordinadas à sua unidade de lotação principal"],
+                ["MOD_PENT_EDT_ATV_ATV", "Permite alterar planos de entregas das unidades imediatamente subordinadas à sua unidade de lotação"],
                 ["MOD_PENT_EDT_FLH", "Permite editar planos de entrega que estejam no status ATIVO, mantendo-os neste status."],
                 ["MOD_PENT_EXCL", "Permite excluir planos de entrega"],
-                ["MOD_PENT_HOMOL", "Permite homologar planos de entregas das unidades imediatamente subordinadas"], //só aqui
-                ["MOD_PENT_CANC_HOMOL", "Permite cancelar a homologação dos planos de entregas das unidades imediatamente subordinadas"], //só aqui
+                ["MOD_PENT_HOMOL", "Permite homologar planos de entregas das unidades imediatamente subordinadas"],
+                ["MOD_PENT_CANC_HOMOL", "Permite cancelar a homologação dos planos de entregas das unidades imediatamente subordinadas"],
                 ["MOD_PENT_AVAL", "Permite avaliar planos de entregas das unidades imediatamente subordinadas"],
-                ["MOD_PENT_CANC_AVAL", "Permite cancelar a avaliação dos planos de entregas das unidades imediatamente subordinadas"], //só aqui
-                ["MOD_PENT_AVAL_SUBORD", "Permite avaliar planos de entregas de todas as unidades subordinadas à sua unidade de lotação principal"],
-                ["MOD_PENT_LIB_HOMOL", "Permite liberar para homologação planos de entregas da sua unidade de lotação principal"], //só aqui
-                ["MOD_PENT_RET_HOMOL", "Permite retirar de homologação planos de entregas da sua unidade de lotação principal"], //só aqui
-                ["MOD_PENT_CONCLUIR", "Permite marcar como concluídos planos de entregas da sua unidade de lotação principal"],
-                ["MOD_PENT_ADERIR", "Permite aderir a planos de entregas da unidade imediatamente superior à sua unidade de lotação principal"],
-                ["MOD_PENT_CANC_CONCL", "Permite cancelar a conclusão de planos de entregas da sua unidade de lotação principal"],
-                ["MOD_PENT_CANCELAR", "Permite cancelar planos de entregas"], //só aqui
-                ["MOD_PENT_SUSP", "Permite suspender planos de entregas da sua unidade de lotação principal"], //só aqui
-                ["MOD_PENT_REATIVAR", "Permite reativar planos de entregas suspensos, desde que sejam da sua unidade de lotação principal"], //só aqui
-                ["MOD_PENT_ARQ", "Permite arquivar planos de entregas da sua unidade de lotação principal"],
+                ["MOD_PENT_CANC_AVAL", "Permite cancelar a avaliação dos planos de entregas das unidades imediatamente subordinadas"],
+                ["MOD_PENT_AVAL_SUBORD", "Permite avaliar planos de entregas de todas as unidades subordinadas à sua unidade de lotação"],
+                ["MOD_PENT_LIB_HOMOL", "Permite liberar para homologação planos de entregas da sua unidade de lotação"],
+                ["MOD_PENT_RET_HOMOL", "Permite retirar de homologação planos de entregas da sua unidade de lotação"],
+                ["MOD_PENT_CONC", "Permite marcar como concluídos planos de entregas da sua unidade de lotação"],
+                //["MOD_PENT_ADR", "Permite aderir a planos de entregas da unidade imediatamente superior à sua unidade de lotação"],
+                ["MOD_PENT_CANC_CONCL", "Permite cancelar a conclusão de planos de entregas da sua unidade de lotação"],
+                ["MOD_PENT_CNC", "Permite cancelar planos de entregas"],
+                ["MOD_PENT_SUSP", "Permite suspender planos de entregas da sua unidade de lotação"],
+                ["MOD_PENT_RTV", "Permite reativar planos de entregas suspensos, desde que sejam da sua unidade de lotação"],
+                ["MOD_PENT_ARQ", "Permite arquivar ou desarquivar planos de entregas da sua unidade de lotação"],
                 ["MOD_PENT_QQR_UND", "Permite realizar as operações em qualquer unidade, independente de onde esteja lotado ou seja gestor"],
                 /* Capacidades do módulo PLANO DE ENTREGAS - ENTREGAS*/
-                ["MOD_PENT_ENTR_CONS", "Permite consultar entregas de um plano de entregas"], //só aqui
-                ["MOD_PENT_ENTR_EDT", "Permite editar entregas de um plano de entregas"], //só no back
-                ["MOD_PENT_ENTR_EXCL", "Permite excluir entregas de um plano de entregas"], //só no back
-                ["MOD_PENT_ENTR_INCL", "Permite incluir entregas de um plano de entregas"], //só no back
+                ["MOD_PENT_ENTR_EDT", "Permite editar entregas de um plano de entregas"],
+                ["MOD_PENT_ENTR_EXCL", "Permite excluir entregas de um plano de entregas"],
+                ["MOD_PENT_ENTR_INCL", "Permite incluir entregas de um plano de entregas"],
             ]
         ], [ 
             "codigo"=> "MOD_PRGT",

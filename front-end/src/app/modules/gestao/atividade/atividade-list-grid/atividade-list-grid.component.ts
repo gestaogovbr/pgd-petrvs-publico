@@ -23,6 +23,7 @@ export class AtividadeListGridComponent extends AtividadeListBase {
   @ViewChild('etiqueta', { static: false }) public etiqueta?: InputSelectComponent;
   @Input() snapshot?: ActivatedRouteSnapshot;
   @Input() fixedFilter?: any[];
+  @Input() minhas: boolean = false;
 
   public static selectRoute?: FullRoute = { route: ["gestao", "atividade", "grid"] };
   public formEdit: FormGroup;

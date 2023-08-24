@@ -3,18 +3,17 @@ import { DaoBaseService } from './dao-base.service';
 import { UnidadeIntegrante, IntegranteConsolidado } from '../models/unidade-integrante.model';
 import { Unidade } from '../models/unidade.model';
 import { Usuario } from '../models/usuario.model';
-import { TypeAtribuicao } from '../models/base.model';
+import { IntegranteAtribuicao } from '../models/base.model';
 
 export type LoadIntegrantesResult = {
   integrantes: IntegranteConsolidado[],
   unidade?: Unidade,
   usuario?: Usuario
 }
-//export type ItemAtribuicao = {[key in TypeAtribuicao]?: EntityStatus};
 export type Vinculo = {
     ['unidade_id']: string,
     ['usuario_id']: string,
-    ['atribuicoes']: TypeAtribuicao[]
+    ['atribuicoes']: IntegranteAtribuicao[]
 }
 
 @Injectable({
