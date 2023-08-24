@@ -20,7 +20,7 @@ class PlanoEntregaEntregaController extends ControllerBase {
                 if (!$usuario->hasPermissionTo('MOD_PENT_ENTR_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não executada");
                 break;
             case 'QUERY':
-                if (!$usuario->hasPermissionTo('MOD_PENT_ENTR_CONS')) throw new ServerException("CapacidadeStore", "Consulta não executada");
+                if (!$usuario->hasPermissionTo('MOD_PENT')) throw new ServerException("CapacidadeStore", "Consulta não executada");
                 break;
         }
     }

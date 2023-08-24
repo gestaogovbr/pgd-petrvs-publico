@@ -925,6 +925,7 @@ class AtividadeListGridComponent extends _atividade_list_base__WEBPACK_IMPORTED_
   constructor(injector) {
     super(injector);
     this.injector = injector;
+    this.minhas = false;
     this.storeFilter = filter => {
       const form = filter?.value;
       return {
@@ -1063,6 +1064,10 @@ class AtividadeListGridComponent extends _atividade_list_base__WEBPACK_IMPORTED_
   }
   ngAfterViewInit() {
     super.ngAfterViewInit();
+    if (this.minhas) {
+      this.filter.controls.usuario_id.setValue(this.auth.usuario.id);
+      this.filter?.controls.atribuidas_para_mim.setValue(true);
+    }
     if (this.fixedFilter) {
       const status = this.fixedFilter.find(x => x[0] == "status");
       if (status) this.filter?.controls.status.setValue(status[2]);
@@ -1181,7 +1186,8 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefi
   },
   inputs: {
     snapshot: "snapshot",
-    fixedFilter: "fixedFilter"
+    fixedFilter: "fixedFilter",
+    minhas: "minhas"
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵInheritDefinitionFeature"]],
   decls: 52,
