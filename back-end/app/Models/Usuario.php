@@ -64,6 +64,7 @@ class Usuario extends Authenticatable
         'uf', /* char(2); */// UF do usuário
         'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho
         'situacao_funcional',
+        'data_nascimento',
         //'deleted_at', /* timestamp; */
         //'remember_token', /* varchar(100); */
         //'password', /* varchar(255); */// Senha do usuário
@@ -143,7 +144,7 @@ class Usuario extends Authenticatable
     public function lotacao() { return $this->hasOne(UnidadeIntegrante::class)->has('lotado'); }
     //public function areasTrabalho() { return $this->hasMany(UnidadeIntegrante::class)->has('lotado')->orHas('colaborador'); }
     public function areasTrabalho() { return $this->hasMany(UnidadeIntegrante::class)->has('atribuicoes'); }
-    //public function colaboracoes() { return $this->hasMany(UnidadeIntegrante::class)->has('colaborador'); }
+    public function colaboracao() { return $this->hasOne(UnidadeIntegrante::class)->has('colaborador'); } // unidade com a qual possui TCR
     // Mutattors e Casts
     public function getUrlFotoAttribute($value) 
     {

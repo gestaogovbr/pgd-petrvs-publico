@@ -151,7 +151,7 @@ class PlanoTrabalhoService extends ServiceBase
       $plano->documento_id = $this->documentoId;
       $plano->save();
     }
-    /* Adiciona a Lotação automaticamente caso o usuário não tenha */
+    /* Adiciona a atribuição de 'COLABORADOR' automaticamente caso o usuário não tenha */
     $usuario_lotacoes_ids = array_map(fn($u) => $u["unidade_id"], Usuario::find($plano->usuario_id)->areasTrabalho?->toArray() ?? []);
     if (!in_array($plano->unidade_id, $usuario_lotacoes_ids)) {
       $this->unidadeIntegranteAtribuicaoService->store([

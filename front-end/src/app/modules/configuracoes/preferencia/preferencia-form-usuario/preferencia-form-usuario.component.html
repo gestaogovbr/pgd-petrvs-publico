@@ -20,6 +20,9 @@
                 <input-switch [size]="12" scale="small" labelPosition="right" label="Ocultar o container Petrvs" controlName="ocultar_container_petrvs"></input-switch>
             </div>
         </separator>
+        <separator transparent title="Tema">
+            <input-select controlName="theme" [items]="lookup.THEMES"></input-select>
+        </separator>
         <separator *ngIf="entity" transparent title="Notificações">
             <notificacoes-config #notificacoes [entity]="entity!" [disabled]="formDisabled"></notificacoes-config>
         </separator>

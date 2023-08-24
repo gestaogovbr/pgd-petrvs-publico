@@ -66,6 +66,13 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     this.groupBy = [{field: "unidade.sigla", label: "Unidade"}];
   }
 
+  ngOnInit(): void {
+    super.ngOnInit();
+    if(this.metadata?.minha_unidade){
+      this.filter?.controls.unidade_id.setValue(this.auth.unidade?.id);
+    }
+  }
+
   public dynamicOptions(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let plano: PlanoTrabalho = row as PlanoTrabalho;

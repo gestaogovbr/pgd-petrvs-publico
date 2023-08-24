@@ -637,6 +637,11 @@ export class LookupService {
     { 'key': 'HIBRIDO', 'value': 'Híbrido' }
   ];
 
+  public THEMES: LookupItem[] = [
+    {'key': 'light', 'value': "Branco"},
+    {'key': 'blue', 'value': "Azul"},
+  ];
+
   public TIPO_INTEGRACAO: LookupItem[] = [
     { 'key': 'NENHUMA', 'value': 'Nenhuma' },
     { 'key': 'WSO2', 'value': 'Siape-PRF' },

@@ -14,8 +14,10 @@ class CreateIntegracaoServidoresTable extends Migration
     public function up()
     {
         Schema::create('integracao_servidores', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id');
+            $table->primary('id');
             $table->timestamps();
+            $table->softDeletes();
             $table->string('cpf_ativo', 50)->nullable();
             $table->string('data_modificacao', 50)->nullable();
             $table->string('cpf', 50)->nullable();
@@ -24,16 +26,16 @@ class CreateIntegracaoServidoresTable extends Migration
             $table->string('sexo', 50)->nullable();
             $table->string('municipio', 100)->nullable();
             $table->string('uf', 50)->nullable();
-            $table->string('datanascimento', 50)->nullable();
+            $table->string('data_nascimento', 50)->nullable();
             $table->string('telefone', 50)->nullable();
             $table->string('vinculo_ativo', 50)->nullable();
             $table->string('matriculasiape', 50)->nullable();
-            $table->string('tipo', 50)->nullable();
+            $table->string('cargo', 100)->nullable();
             $table->string('coduorgexercicio', 50)->nullable();
             $table->string('coduorglotacao', 50)->nullable();
             $table->string('codigo_servo_exercicio', 50)->nullable();
             $table->string('nomeguerra', 100)->nullable();
-            $table->string('codsitfuncional', 50)->nullable();
+            $table->string('situacao_funcional', 50)->nullable();
             $table->string('codupag', 50)->nullable();
             $table->string('dataexercicionoorgao', 50)->nullable();
             $table->json('funcoes')->nullable();

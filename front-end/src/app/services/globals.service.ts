@@ -1,8 +1,10 @@
-import { Injectable, Injector } from '@angular/core';
+import { Inject, Injectable, Injector } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { environment } from 'src/environments/environment';
 import { ToolbarButton } from '../components/toolbar/toolbar.component';
 import { AppComponent } from '../app.component';
+import { DOCUMENT } from '@angular/common';
+import { AuthService } from './auth.service';
 
 export type EntidadePetrvs = "ANTAQ" | "PRF" | "";
 
@@ -32,7 +34,14 @@ export class GlobalsService {
     local: new Date()
   };
 
+  public auth: AuthService;
+  
+  constructor(@Inject(DOCUMENT) private document: any, public injector: Injector) {
+    this.auth = injector.get<AuthService>(AuthService);
+   }
+
   public refresh() {
+    this.document.getElementById("html-petrvs").setAttribute("data-bs-theme", this.theme)
     this.app!.cdRef.detectChanges();
   }
 
@@ -94,7 +103,7 @@ export class GlobalsService {
   private _sanitizer?: DomSanitizer;
   public get sanitizer(): DomSanitizer { this._sanitizer = this._sanitizer || this.injector.get<DomSanitizer>(DomSanitizer); return this._sanitizer };
 
-  constructor(public injector: Injector) { }
+  
 
   public getResourcePath(resource: string) {
     const key = "URL_" + encodeURI(resource);
@@ -132,5 +141,10 @@ export class GlobalsService {
 
   public get hasLoginUnicoLogin(): boolean {
     return environment.login.login_unico == true;
+  }
+
+  public get theme(): string {
+    const theme = this.auth.usuarioConfig.theme   
+    return theme ? theme : 'light'
   }
 }

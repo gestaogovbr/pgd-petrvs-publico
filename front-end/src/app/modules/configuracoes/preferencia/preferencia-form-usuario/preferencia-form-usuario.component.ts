@@ -45,6 +45,7 @@ export class PreferenciaFormUsuarioComponent extends PageFormBase<Usuario, Usuar
       etiqueta_texto: {default: ""},
       etiqueta_icone: {default: null},
       etiqueta_cor: {default: null},
+      theme: {default: null},
       ocultar_menu_sei: {default: true},
       ocultar_container_petrvs: {default: false},
       /*notifica_demanda_distribuicao: {default: true},

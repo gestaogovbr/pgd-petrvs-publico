@@ -15,6 +15,7 @@ class CentroTreinamento extends ModelBase
     ];
 
     // Belongs
-    //public function centro() { return $this->belongsTo(AreaConhecimento::class,'area_curso_id'); }
+    public function centroTreinamento() { return $this->hasMany(CurriculumProfissional::class); }
+
     
 }

@@ -103,7 +103,8 @@ class UsuarioService extends ServiceBase
                     ->whereIn('lotacoes.unidade_id', $unidade_ids)->get(); */
         //$usuarios = Usuario::with(["areasTrabalho" => function ($query) use ($unidade_ids) { $query->whereIn("unidade_id", $unidade_ids); }])->get();
         $usuarios = [];
-        foreach(Unidade::whereIn('id',$unidade_ids)->get() as $u) { array_push($usuarios, ...$u->lotados, ...$u->colaboradores); }
+        //foreach(Unidade::whereIn('id',$unidade_ids)->get() as $u) { array_push($usuarios, ...$u->lotados, ...$u->colaboradores); }
+        foreach(Unidade::whereIn('id',$unidade_ids)->get() as $u) { array_push($usuarios, ...$u->integrantes); }
         foreach ($usuarios as $usuario) {
             $planosTrabalhoAtivos = $this->planoTrabalhoService->planosAtivosPorData($data_inicial, $data_final, $usuario->id);
             $planos_ids = $planosTrabalhoAtivos->map(function($plano){return $plano->id;});
@@ -276,7 +277,7 @@ class UsuarioService extends ServiceBase
     
     public function proxyStore(&$data, $unidade, $action) {
         $data['cpf'] = $this->UtilService->onlyNumbers($data['cpf']);
-        $data['telefone'] = $this->UtilService->onlyNumbers($data['telefone']);
+        if(!empty($data['telefone'])) $data['telefone'] = $this->UtilService->onlyNumbers($data['telefone']);
         return $data;
     }
 

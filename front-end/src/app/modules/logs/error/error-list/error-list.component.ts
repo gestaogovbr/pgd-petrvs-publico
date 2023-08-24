@@ -74,7 +74,7 @@ export class ErrorListComponent extends PageListBase<Error, ErrorDaoService> {
 
   public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
-    if (this.auth.hasPermissionTo("MOD_PENT_CONS")) result.push({icon: "bi bi-info-circle", label: "Informações", onClick: this.consult.bind(this)});
+    if (this.auth.hasPermissionTo("MOD_PENT")) result.push({icon: "bi bi-info-circle", label: "Informações", onClick: this.consult.bind(this)});
     return result;
   }
 }

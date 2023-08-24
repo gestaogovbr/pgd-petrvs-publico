@@ -1,12 +1,12 @@
 <!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
     <div class="row">
-        <input-search #unidade [size]="12" controlName="unidade_id" [dao]="unidadeDao" [selectParams]="{filter: {instituidora: true}}"></input-search>
+        <input-search #unidade [size]="12" label="Unidade Instituidora" controlName="unidade_id" [dao]="unidadeDao" [selectParams]="{filter: {instituidora: true}}"></input-search>
     </div>
     <div class="row">
         <input-datetime date [size]="4" label="Data de Início" icon="bi bi-calendar-date" controlName="data_inicio" [control]="form!.controls.data_inicio" labelInfo="Data de início da vigência do programa de gestão na unidade instituidora"></input-datetime>
         <input-datetime date [size]="4" label="Data de Fim" icon="bi bi-calendar-date" controlName="data_fim" [control]="form!.controls.data_fim" labelInfo="Data de fim da vigência do programa de gestão na unidade instituidora"></input-datetime>
-        <input-number [size]="4" [maxValue]="365" label="Vigência Máx P.E." icon="bi bi-blockquote-left" controlName="prazo_max_plano_entrega" [control]="form!.controls.prazo_max_plano_entrega" labelInfo="Limite máximo de dias corridos para a duração do plano de entregas a partir da sua data de criação (Zero para não limitar)"></input-number>
+        <input-number [size]="4" label="Duração Máx P.E." icon="bi bi-blockquote-left" controlName="prazo_max_plano_entrega" [control]="form!.controls.prazo_max_plano_entrega" labelInfo="Limite máximo de dias corridos para a duração do plano de entregas a partir da sua data de criação (Zero para não limitar)"></input-number>
     </div>
     <div class="row">
         <input-text [size]="6" label="Título" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome"></input-text>

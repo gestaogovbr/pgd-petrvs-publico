@@ -17,12 +17,19 @@ use App\Models\UnidadeIntegrante;
 use App\Models\Cidade;
 use App\Models\Template;
 use App\Models\NotificacaoConfig;
+use App\Traits\AutoUuid;
 
 class Unidade extends ModelBase
 {
+    use AutoUuid;
+
     protected $table = 'unidades';
 
     protected $with = ['cidade'];
+
+    protected $keyType = 'string';
+
+    protected $dates = ['deleted_at'];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'codigo', /* varchar(12); NOT NULL; */// Código da unidade
@@ -79,16 +86,17 @@ class Unidade extends ModelBase
     public function planejamentos() { return $this->hasMany(Planejamento::class); }
     public function cadeiasValor() { return $this->hasMany(CadeiaValor::class); }
     public function integrantes() { return $this->hasMany(UnidadeIntegrante::class); }
+    public function historicoLotacao() { return $this->hasMany(HistoricoLotacaoCurriculum::class); }
     // Belongs
     public function entidade() { return $this->belongsTo(Entidade::class); }
     public function cidade() { return $this->belongsTo(Cidade::class); }  //nullable
     public function unidadePai() { return $this->belongsTo(Unidade::class, 'unidade_pai_id'); }    //nullable
-    public function usuarios() { return $this->belongsToMany(Usuario::class, 'unidades_integrantes', 'unidade_id', 'usuario_id'); }
+    
     // Others relationships
     public function gestor() { return $this->hasOne(UnidadeIntegrante::class)->has('gestor'); } 
     public function gestorSubstituto() { return $this->hasOne(UnidadeIntegrante::class)->has('gestorSubstituto'); }
     public function lotados() { return $this->hasMany(UnidadeIntegrante::class)->has('lotado'); }
-    public function colaboradores() { return $this->hasMany(UnidadeIntegrantes::class)->has('colaborador'); }       
+    public function colaboradores() { return $this->hasMany(UnidadeIntegrante::class)->has('colaborador'); } // aqueles que possuem TCR      
     public function homologadoresPlanoEntrega() { return $this->hasMany(UnidadeIntegrante::class)->has('homologadorPlanoEntrega'); }       
     public function avaliadoresPlanoEntrega() { return $this->hasMany(UnidadeIntegrante::class)->has('avaliadorPlanoEntrega'); }       
     public function avaliadoresPlanoTrabalho() { return $this->hasMany(UnidadeIntegrante::class)->has('avaliadorPlanoTrabalho'); }       
