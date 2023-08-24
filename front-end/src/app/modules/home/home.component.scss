@@ -1,3 +1,6 @@
+
+@import url('https://fonts.cdnfonts.com/css/neutra-text-alt');
+
 .card {
     box-shadow: 0 0.1875rem 0.1875rem 0 rgba(14, 34, 56, .07);
     margin-bottom: 1.875rem;
@@ -65,4 +68,10 @@
             border: none;
         }
     }
+}
+
+.saudacao {
+   //color: #1d2143;
+    font-family: neutra text;
+    font-weight: bold;
 }

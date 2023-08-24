@@ -17,7 +17,7 @@ export class RaioxhomeComponent implements OnInit {
   imgOportunidades:string;
 
   constructor(private router:Router, private auth:AuthService) { 
-    this.logoInicial="../../../../assets/images/logo-raio-x-3.png";
+    this.logoInicial="../../../../assets/images/logo-raio-x-1.png";
     this.imgDadosPessoais="../../../../assets/images/Dados_pessoais.png";
     this.imgDadosProfissionais="../../../../assets/images/Dados_profissionais.png";
     this.imgAtributos="../../../../assets/images/Atributos_comportamentais.png";
@@ -36,9 +36,9 @@ export class RaioxhomeComponent implements OnInit {
 
   public mensagemSaudacao() {
     const hora = parseInt(this.auth.unidadeHora.replace(":", ""));
-    const apelido = this.auth.usuario?.apelido;
+    const apelido = this.auth.usuario?.apelido.toUpperCase();
     const mail = this.auth.usuario?.email;
-    return hora < 1200 ? "Bom dia, " + apelido : hora < 1800 ? "Boa tarde, " + apelido : "Boa noite, " + apelido;
+    return hora < 1200 ? "BOM DIA, " + apelido : hora < 1800 ? "BOA TARDE, " + apelido : "BOA NOITE, " + apelido;
   }
 
 }

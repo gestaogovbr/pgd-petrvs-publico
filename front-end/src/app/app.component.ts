@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Injector, ViewChild, ViewContainerRef } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Injector, ViewChild, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToolbarButton } from './components/toolbar/toolbar.component';
 import { ListenerAllPagesService } from './listeners/listener-all-pages.service';
@@ -12,6 +12,7 @@ import { UtilService } from './services/util.service';
 import { LookupService } from './services/lookup.service';
 import { EntityService } from './services/entity.service';
 import { NotificacaoService } from './modules/uteis/notificacoes/notificacao.service';
+import { DOCUMENT } from '@angular/common';
 
 export let appInjector: Injector;
 
@@ -57,7 +58,7 @@ export class AppComponent {
   public menuPonto: any;
   public menuRaioX: any;
   public menuExecucao: any;
-  public menuAvaliacao: any;
+  public menuAvaliacao: any;	
   public menuAdministrador: any;
   public menuDev: any;
   private _menu: any;
@@ -96,7 +97,7 @@ export class AppComponent {
     this.lex.cdRef = this.cdRef;
     /* Definição do menu do sistema */
     this.setMenuVars();
-    this.contexto = this.menuContexto[0].key;
+    this.contexto = this.menuContexto[0].key;    
   }
 
   public setMenuVars() {
@@ -130,8 +131,8 @@ export class AppComponent {
       /* Relatórios */
       FORCAS_TRABALHOS_SERVIDORES: { name: "Força de Trabalho - Servidor", permition: 'MOD_PTR_CONS', route: ['relatorios', 'forca-de-trabalho', 'servidor'], icon: this.entity.getIcon('RelatorioServidor') },
       FORCAS_TRABALHOS_AREAS: { name: "Força de Trabalho - Área", permition: 'MOD_PTR_CONS', route: ['relatorios', 'forca-de-trabalho', 'area'], icon: this.entity.getIcon('RelatorioArea') },
-      /* Avaliações */
-      AVALIACAO_CONSOLIDACAO_PLANO_TRABALHO: { name: "Consolidações (Plano de Trabalho)", permition: '', route: [], icon: this.entity.getIcon('PlanoTrabalho') },
+      /* Avaliações */	
+      AVALIACAO_CONSOLIDACAO_PLANO_TRABALHO: { name: "Consolidações (Plano de Trabalho)", permition: '', route: [], icon: this.entity.getIcon('PlanoTrabalho') },	
       AVALIACAO_PLANO_ENTREGAS: { name: "Plano de Entregas", permition: '', route: [], icon: this.entity.getIcon('PlanoEntrega') },
       /* CONFIGURAÇÕES */
       PREFERENCIAS: { name: "Preferências", permition: '', route: ['configuracoes', 'preferencia'], metadata: { root: true, modal: true }, icon: this.entity.getIcon('Preferencia') },
@@ -199,13 +200,13 @@ export class AppComponent {
         Object.assign({}, this.menuSchema.CONSOLIDACOES, {params: {tab: "USUARIO"}})
       ].sort(this.orderMenu)
     }, {
-      name: "Avaliação",
-      permition: "MENU_GESTAO_ACESSO",
-      id: "navbarDropdownGestaoAvaliacao",
-      menu: [
-        this.menuSchema.AVALIACAO_CONSOLIDACAO_PLANO_TRABALHO,
-        this.menuSchema.AVALIACAO_PLANO_ENTREGAS      
-      ].sort(this.orderMenu)
+      name: "Avaliação",	
+      permition: "MENU_GESTAO_ACESSO",	
+      id: "navbarDropdownGestaoAvaliacao",	
+      menu: [	
+        this.menuSchema.AVALIACAO_CONSOLIDACAO_PLANO_TRABALHO,	
+        this.menuSchema.AVALIACAO_PLANO_ENTREGAS      	
+      ].sort(this.orderMenu)	
     }, {
       name: "Gerenciamento",
       permition: "MENU_CONFIG_ACESSO",
@@ -239,8 +240,8 @@ export class AppComponent {
       this.menuSchema.AFASTAMENTOS
     ];
 
-    this.menuAvaliacao = [
-      this.menuSchema.AVALIACAO_CONSOLIDACAO_PLANO_TRABALHO
+    this.menuAvaliacao = [	
+      this.menuSchema.AVALIACAO_CONSOLIDACAO_PLANO_TRABALHO	
     ];
 
     this.menuAdministrador = [{
@@ -381,8 +382,8 @@ export class AppComponent {
 
 
   this.menuContexto = [
-      { key: "EXECUCAO", icon: "bi bi-person-check", name: "Participante (PGD)", menu: this.menuExecucao },
-      { key: "AVALIACAO", icon: "bi bi-question-square", name: "Avaliador (PGD)", menu: this.menuAvaliacao },
+      { key: "EXECUCAO", icon: "bi bi-person-check", name: "Participante (PGD)", menu: this.menuExecucao },	
+      { key: "AVALIACAO", icon: "bi bi-question-square", name: "Avaliador (PGD)", menu: this.menuAvaliacao },	
       { key: "GESTAO", icon: "bi bi-people-fill", name: "Gestor (PGD)", menu: this.menuGestao },
       { key: "ADMINISTRADOR", icon: "bi bi-emoji-sunglasses", name: "Administrador", menu: this.menuAdministrador },
       { key: "DEV", icon: "bi bi-braces", name: "Desenvolvedor", menu: this.menuDev },
@@ -400,7 +401,7 @@ export class AppComponent {
   }
 
   public goHome() {
-    this.go.navigate({ route: this.contexto?.key == 'RAIOX' ? ['raiox/home'] : ['home'] });
+    this.go.navigate({ route: ["home/"+this.contexto.key.toLowerCase( )] });
   }
 
   public orderMenu(a: any, b: any) {
@@ -429,6 +430,7 @@ export class AppComponent {
     /* Container para a criação de dialogs */
     this.dialog.container = this.dialogs;
     this.dialog.cdRef = this.cdRef;
+    this.globals.refresh();    
   }
 
   public toolbarLogin() {
@@ -478,9 +480,8 @@ export class AppComponent {
     popup.restore();
   }
 
-  public selecionaUnidade(event: Event) {
-    const key = (event.target as HTMLInputElement).value;
-    this.auth.selecionaUnidade(key, this.cdRef);
+  public selecionaUnidade(id: string) {
+    this.auth.selecionaUnidade(id, this.cdRef);
   }
 
   public async onToolbarButtonClick(btn: ToolbarButton) {
@@ -505,5 +506,6 @@ export class AppComponent {
   public get isConfig(): boolean {
     return this.router.url.indexOf("/extension/options") >= 0;
   }
+
 }
 

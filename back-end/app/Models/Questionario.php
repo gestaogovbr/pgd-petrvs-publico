@@ -27,9 +27,10 @@ class Questionario extends ModelBase
     //public $fillable_relation = [];
 
     //Has
-   // public function graduacoes() { return $this->hasMany(CurriculumGraduacao::class,'curriculum_id'); }
+    public function respostaQuestionario() { return $this->hasOne(RespostaQuestionario::class); }
 
     // Belongs
+
   
 }
 

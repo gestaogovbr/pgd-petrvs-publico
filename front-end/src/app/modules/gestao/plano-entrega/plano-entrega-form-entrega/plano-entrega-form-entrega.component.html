@@ -3,10 +3,10 @@
         <tab key="ENTREGAS" label="Entregas">
             <div class="row">
                 <div class="row">
-                    <input-search #entrega [size]="12" controlName="entrega_id" [dao]="entregaDao" (change)="onEntregaChange($event)"></input-search>
+                    <input-search #entrega [size]="12" controlName="entrega_id" [dao]="entregaDao" (change)="onEntregaChange($event)" placeholder="Selecione do catálogo ou cadastre uma entrega usando a lupa"></input-search>
                 </div>
                 <div class="row">
-                    <input-text [size]="12" label="Detalhamento" controlName="descricao"></input-text>
+                    <input-text [size]="12" label="Detalhamento" controlName="descricao" placeholder="Descreva melhor a entrega"></input-text>
                 </div>
                 <separator></separator>
                 <div class="row">
