@@ -72,6 +72,18 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
     });
   }
 
+  public cancelarPlano(plano_entrega_id: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/cancelar-plano', { id: plano_entrega_id }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }
+      }, error => reject(error));
+    });
+  }
+
   public concluir(plano_entrega_id: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/concluir', { id: plano_entrega_id }).subscribe(response => {

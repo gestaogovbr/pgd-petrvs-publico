@@ -394,6 +394,12 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
       label: "Unidade"
     }];
   }
+  ngOnInit() {
+    super.ngOnInit();
+    if (this.metadata?.minha_unidade) {
+      this.filter?.controls.unidade_id.setValue(this.auth.unidade?.id);
+    }
+  }
   dynamicOptions(row) {
     let result = [];
     let plano = row;

@@ -226,18 +226,18 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoConsolidacao')->group(
 });
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
     defaultRoutes(PlanoEntregaController::class);
-    Route::post('liberar-homologacao', [PlanoEntregaController::class, 'liberarHomologacao']);
-    Route::post('retirar-homologacao', [PlanoEntregaController::class, 'retirarHomologacao']);
-    Route::post('homologar', [PlanoEntregaController::class, 'homologar']);
-    Route::post('cancelar-homologacao', [PlanoEntregaController::class, 'cancelarHomologacao']);
-    Route::post('concluir', [PlanoEntregaController::class, 'concluir']);
-    Route::post('cancelar-conclusao', [PlanoEntregaController::class, 'cancelarConclusao']);
+    Route::post('arquivar', [PlanoEntregaController::class, 'arquivar']);
     Route::post('avaliar', [PlanoEntregaController::class, 'avaliar']);
     Route::post('cancelar-avaliacao', [PlanoEntregaController::class, 'cancelarAvaliacao']);
-    Route::post('arquivar', [PlanoEntregaController::class, 'arquivar']);
+    Route::post('cancelar-conclusao', [PlanoEntregaController::class, 'cancelarConclusao']);
+    Route::post('cancelar-homologacao', [PlanoEntregaController::class, 'cancelarHomologacao']);
+    Route::post('cancelar-plano', [PlanoEntregaController::class, 'cancelarPlano']);
+    Route::post('concluir', [PlanoEntregaController::class, 'concluir']);
+    Route::post('homologar', [PlanoEntregaController::class, 'homologar']);
+    Route::post('liberar-homologacao', [PlanoEntregaController::class, 'liberarHomologacao']);
     Route::post('reativar', [PlanoEntregaController::class, 'reativar']);
+    Route::post('retirar-homologacao', [PlanoEntregaController::class, 'retirarHomologacao']);
     Route::post('suspender', [PlanoEntregaController::class, 'suspender']);
-    Route::post('cancelar', [PlanoEntregaController::class, 'cancelar']);
 });
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntrega')->group(function () { defaultRoutes(PlanoEntregaEntregaController::class); });
 

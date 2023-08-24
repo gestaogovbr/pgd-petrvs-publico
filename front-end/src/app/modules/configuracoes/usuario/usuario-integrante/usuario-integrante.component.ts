@@ -5,7 +5,7 @@ import { InputSearchComponent } from 'src/app/components/input/input-search/inpu
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
-import { IIndexable, TypeAtribuicao } from 'src/app/models/base.model';
+import { IIndexable, IntegranteAtribuicao } from 'src/app/models/base.model';
 import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { Usuario } from 'src/app/models/usuario.model';
@@ -164,7 +164,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     this.loading = true;
     let novoIntegrante: IntegranteConsolidado = new IntegranteConsolidado;
     try {
-      let novasAtribuicoes: TypeAtribuicao[] = form!.controls.atribuicoes.value.map((x: LookupItem) => x.key);
+      let novasAtribuicoes: IntegranteAtribuicao[] = form!.controls.atribuicoes.value.map((x: LookupItem) => x.key);
       if (!this.isNoPersist) {
         let $result = await this.integranteDao.saveIntegrante([{'unidade_id': form!.controls.unidade_id.value, 'usuario_id': this.usuario!.id, 'atribuicoes': novasAtribuicoes}]);
         novoIntegrante = Object.assign(novoIntegrante, {

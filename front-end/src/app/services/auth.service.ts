@@ -12,12 +12,11 @@ import { CalendarService } from './calendar.service';
 import { LexicalService } from './lexical.service';
 import { UtilService } from './util.service';
 import { UsuarioDaoService } from '../dao/usuario-dao.service';
-import { IIndexable } from '../models/base.model';
+import { IIndexable, IntegranteAtribuicao } from '../models/base.model';
 import { Entidade } from '../models/entidade.model';
 import { UnidadeDaoService } from '../dao/unidade-dao.service';
 import { NotificacaoService } from '../modules/uteis/notificacoes/notificacao.service';
 import { AppComponent } from '../app.component';
-import { IntegranteAtribuicao } from '../models/unidade-integrante-atribuicao.model';
 
 export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION" | "SUPER";
 export type Permission = string | (string | string[])[];
@@ -357,7 +356,7 @@ export class AuthService {
    * @param pUnidade 
    * @returns 
    */
-  public isLotacaoPrincipal(pUnidade: Unidade | null = null): boolean {
+  public isLotacaoUsuario(pUnidade: Unidade | null = null): boolean {
     let unidade = pUnidade || this.unidade!;
     let lotacao = this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade; 
     return lotacao?.id == unidade.id;
@@ -395,7 +394,7 @@ export class AuthService {
     let result = false;
     let $ids_unidades = this.usuario?.gerencias_substitutas?.map(x => x.unidade_id) || [];
     if(this.usuario?.gerencia_titular?.unidade?.id) $ids_unidades.push(this.usuario?.gerencia_titular!.unidade_id);
-    $ids_unidades.forEach(x => { if (unidade.path.split('/').slice(1).includes(x)) result = true; });
+    $ids_unidades.forEach(x => { if (!!unidade.path && unidade.path.split('/').slice(1).includes(x)) result = true; });
     return false;
   }
 

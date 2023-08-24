@@ -323,26 +323,8 @@ class TipoModalidadeListComponent extends src_app_modules_base_page_list_base__W
         default: ""
       }
     });
-    // Testa se o usuário possui permissão para exibir dados do tipo de modalidade
-    if (this.auth.hasPermissionTo("MOD_TIPO_MDL_CONS")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir o tipo de modalidade
-    if (this.auth.hasPermissionTo("MOD_TIPO_MDL_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
-  }
-  filterClear(filter) {
-    filter.controls.nome.setValue("");
-    super.filterClear(filter);
+    this.addOption(this.OPTION_INFORMACOES);
+    this.addOption(this.OPTION_EXCLUIR, "MOD_TIPO_MDL_EXCL");
   }
 }
 _class = TipoModalidadeListComponent;
@@ -363,8 +345,8 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵInheritDefinitionFeature"]],
   decls: 15,
-  vars: 26,
-  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["controlName", "nome", "placeholder", "Nome...", 3, "size", "label", "control"], ["title", "Descri\u00E7\u00E3o", "field", "nome"], [3, "title", "template"], ["columnPlanoTrabalho", ""], ["columnAtividade", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"], [1, "one-per-line"], ["color", "light", "icon", "bi bi-pen", "label", "Assinatura do participante", 4, "ngIf"], ["color", "light", "icon", "bi bi-pen", "label", "Assinatura do gestor da unidade", 4, "ngIf"], ["color", "light", "icon", "bi bi-pen", "label", "Assinatura do gestor da entidade", 4, "ngIf"], ["color", "light", "icon", "bi bi-clock", 3, "label", 4, "ngIf"], ["color", "light", "icon", "bi bi-pen", "label", "Assinatura do participante"], ["color", "light", "icon", "bi bi-pen", "label", "Assinatura do gestor da unidade"], ["color", "light", "icon", "bi bi-pen", "label", "Assinatura do gestor da entidade"], ["color", "light", "icon", "bi bi-clock", 3, "label"], ["color", "light", "icon", "bi bi-hourglass-bottom", "label", "Assinatura do participante", 4, "ngIf"], ["color", "light", "icon", "bi bi-stopwatch", "label", "Assinatura do gestor da unidade", 4, "ngIf"], ["color", "light", "icon", "bi bi-hourglass-bottom", "label", "Assinatura do participante"], ["color", "light", "icon", "bi bi-stopwatch", "label", "Assinatura do gestor da unidade"]],
+  vars: 25,
+  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "collapseChange", "collapsed"], [1, "row"], ["controlName", "nome", "placeholder", "Nome...", 3, "size", "label", "control"], ["title", "Descri\u00E7\u00E3o", "field", "nome"], [3, "title", "template"], ["columnPlanoTrabalho", ""], ["columnAtividade", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"], [1, "one-per-line"], ["color", "light", "icon", "bi bi-pen", "label", "Assinatura do participante", 4, "ngIf"], ["color", "light", "icon", "bi bi-pen", "label", "Assinatura do gestor da unidade", 4, "ngIf"], ["color", "light", "icon", "bi bi-pen", "label", "Assinatura do gestor da entidade", 4, "ngIf"], ["color", "light", "icon", "bi bi-clock", 3, "label", 4, "ngIf"], ["color", "light", "icon", "bi bi-pen", "label", "Assinatura do participante"], ["color", "light", "icon", "bi bi-pen", "label", "Assinatura do gestor da unidade"], ["color", "light", "icon", "bi bi-pen", "label", "Assinatura do gestor da entidade"], ["color", "light", "icon", "bi bi-clock", 3, "label"], ["color", "light", "icon", "bi bi-hourglass-bottom", "label", "Assinatura do participante", 4, "ngIf"], ["color", "light", "icon", "bi bi-stopwatch", "label", "Assinatura do gestor da unidade", 4, "ngIf"], ["color", "light", "icon", "bi bi-hourglass-bottom", "label", "Assinatura do participante"], ["color", "light", "icon", "bi bi-stopwatch", "label", "Assinatura do gestor da unidade"]],
   template: function TipoModalidadeListComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "grid", 0);
@@ -395,7 +377,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", !ctx.selectable);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 12)("label", "Nome " + ctx.lex.translate("tipo de Modalidade"))("control", ctx.filter.controls.nome);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](3);
