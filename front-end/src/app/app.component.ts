@@ -169,8 +169,8 @@ export class AppComponent {
       RXCADASTRO_ADM_ATIVIDADESEXT: { name: this.lex.translate("Atividades Externas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','areaatividadeexterna'], icon: "bi bi-arrows-fullscreen" },
       RXCADASTRO_ADM_AREASTEMATICAS: { name: this.lex.translate("Áreas Temáticas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','areatematica'], icon: "bi bi-box-arrow-in-down" },
       RXCADASTRO_ADM_CAPACIDADES_TECNICAS: { name: this.lex.translate("Capacidades Técnicas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','capacidadetecnica'], icon: "bi bi-arrows-angle-contract" },
-      RXCADASTRO_ADM_QUESTIONARIOS_PERGUNTAS: { name: this.lex.translate("Perguntas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','cargo'], icon: "bi bi-patch-question" },
-      RXCADASTRO_ADM_QUESTIONARIOS_RESPOSTAS: { name: this.lex.translate("Respostas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','cargo'], icon: "bi bi-list-task" },
+      RXCADASTRO_ADM_QUESTIONARIOS_PERGUNTAS: { name: this.lex.translate("Perguntas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','questionariopergunta'], icon: "bi bi-patch-question" },
+      RXCADASTRO_ADM_QUESTIONARIOS_RESPOSTAS: { name: this.lex.translate("Respostas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','questionarioresposta'], icon: "bi bi-list-task" },
       RXVISUALIZA_ADM_PESQUISA1: { name:"Usuario", permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-search" },
       RXVISUALIZA_ADM_PESQUISA2: { name:"Administrador", permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-binoculars" },
       /*PROJETOS*/
@@ -197,6 +197,7 @@ export class AppComponent {
       menu: [
         this.menuSchema.ATIVIDADES,
         this.menuSchema.AFASTAMENTOS,
+        this.menuSchema.PLANOS_ENTREGAS,//Carlos
         Object.assign({}, this.menuSchema.CONSOLIDACOES, {params: {tab: "USUARIO"}})
       ].sort(this.orderMenu)
     }, {

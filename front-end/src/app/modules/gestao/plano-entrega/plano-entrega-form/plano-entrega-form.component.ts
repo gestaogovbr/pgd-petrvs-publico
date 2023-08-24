@@ -27,17 +27,16 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoEntregaDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild(GridComponent, { static: true }) public grid?: GridComponent;
-  @ViewChild('programa', { static: true }) public programa?: InputSearchComponent;
-  @ViewChild('nome', { static: true }) public nomePE?: InputTextComponent;
-  @ViewChild('data_fim', { static: true }) public dataFim?: InputDatetimeComponent;
+  @ViewChild('programa', { static: true }) public programa?: InputSearchComponent;//Carlos
+  @ViewChild('nome', { static: true }) public nomePE?: InputTextComponent;//Carlos
+  @ViewChild('data_fim', { static: true }) public dataFim?: InputDatetimeComponent;//Carlos
   
   public unidadeDao: UnidadeDaoService;
   public programaDao: ProgramaDaoService;
   public cadeiaValorDao: CadeiaValorDaoService;
   public planejamentoInstitucionalDao: PlanejamentoDaoService;
   public form: FormGroup;
-  public maxPE: Number | undefined;
- 
+   
   constructor(public injector: Injector) {
     super(injector, PlanoEntrega, PlanoEntregaDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
@@ -110,10 +109,9 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     this.entity = new PlanoEntrega();
     this.entity.unidade_id = this.auth.unidade?.id || "";
     this.entity.unidade = this.auth.unidade;
-    const di = new Date(this.entity.data_inicio).toLocaleDateString();
-    const df= this.entity.data_fim ? new Date(this.entity.data_fim).toLocaleDateString() : new Date().toLocaleDateString();
-    //const df = new Date(this.entity.data_fim || (new Date())).toLocaleDateString();
-    this.entity.nome = this.auth.unidade!.sigla + " - " + di + " - " + df;
+    const di = new Date(this.entity.data_inicio).toLocaleDateString();//Carlos
+    const df= this.entity.data_fim ? new Date(this.entity.data_fim).toLocaleDateString() : new Date().toLocaleDateString();//Carlos
+    this.entity.nome = this.auth.unidade!.sigla + " - " + di + " - " + df;//Carlos
     this.loadData(this.entity!, this.form!);
   }
 
@@ -135,26 +133,26 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     return result;
   }
 
-  public onNomeChange(){
+  public onNomeChange(){//Carlos
 
     const sigla = this.auth.unidade?.sigla;
     const di = new Date(this.form!.controls.data_inicio.value).toLocaleDateString();
     const df = new Date(this.form!.controls.data_fim.value).toLocaleDateString();
-    this.form!.controls.nome.setValue(sigla + " - " + di + " - " + df)
+    this.form!.controls.nome.setValue(sigla + " - " + di + " - " + df);
     
   }
 
-  public somaDia(date: Date, days: number){
+  public somaDia(date: Date, days: number){//Carlos
     let result = new Date(date);
     result.setDate(result.getDate() + days);
     return result;
   }
 
-  public onProgramaChange(){
+  public onProgramaChange(){//Carlos
     const dias=(this.programa?.searchObj as Programa).prazo_max_plano_entrega;
     //const dias=(this.programa?.items[0] as SelectItem).entity.prazo_max_plano_entrega;
     const data=this.somaDia(this.entity!.data_inicio,dias);
-    this.form!.controls.data_fim.setValue(new Date(data)); // = this.somaDia(this.entity!.data_inicio,dias)//new Date()//(this.programa?.searchObj as Programa).prazo_max_plano_entrega
+    this.form!.controls.data_fim.setValue(new Date(data)); 
     this.dataFim?.change.emit();
   }
 

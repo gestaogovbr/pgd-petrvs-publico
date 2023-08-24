@@ -30,6 +30,8 @@ import { CapacidadeTecnicaFormComponent } from './capacidade-tecnica-form/capaci
 import { CapacidadeTecnicaListComponent } from './capacidade-tecnica-list/capacidade-tecnica-list.component';
 import { QuestionarioPerguntaFormComponent } from './questionario-pergunta-form/questionario-pergunta-form.component';
 import { QuestionarioPerguntaListComponent } from './questionario-pergunta-list/questionario-pergunta-list.component';
+import { QuestionarioRespostaFormComponent } from './questionario-resposta-form/questionario-resposta-form.component';
+import { QuestionarioRespostaListComponent } from './questionario-resposta-list/questionario-resposta-list.component';
 
 
 @NgModule({
@@ -57,7 +59,10 @@ import { QuestionarioPerguntaListComponent } from './questionario-pergunta-list/
     CapacidadeTecnicaFormComponent,
     CapacidadeTecnicaListComponent,
     QuestionarioPerguntaFormComponent,
-    QuestionarioPerguntaListComponent
+    QuestionarioPerguntaListComponent,
+    QuestionarioRespostaFormComponent,
+    QuestionarioRespostaListComponent
+   
   
   ],
   imports: [
