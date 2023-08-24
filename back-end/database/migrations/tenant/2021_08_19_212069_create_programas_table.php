@@ -30,8 +30,16 @@ class CreateProgramasTable extends Migration
             $table->enum('periodicidade_consolidacao', ["DIAS", "SEMANAL", "QUINZENAL", "MENSAL", "BIMESTRAL", "TRIMESTRAL", "SEMESTRAL"])->default("MENSAL")->comment("Período para avaliação do plano de trabalho");
             $table->integer('periodicidade_valor')->default("1")->comment("Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do mês para o restante");
             $table->integer('dias_tolerancia_consolidacao')->default("10")->comment("Dias de tolerância para o lançamento do registro das atividades na consolidação, após esses dias será liberado automaticamente para avaliação");
+            $table->integer('dias_tolerancia_avaliacao')->default("20")->comment("Dias de tolerância para realizar a avaliação, considerando a tolerância da consolidação. Caso seja zero não fará nada, caso contrário após esse prazo a consolidação será automaticamente avaliada com a nota padrão");
+            $table->json('nota_padrao_avaliacao')->nullable()->comment("Nota padrão de avaliação, para quando o gestor não realizar a avaliação dentro do prazo");
+            $table->tinyInteger('plano_trabalho_assinatura_participante')->default(1)->comment("Exigir assinatura do usuário no plano de trabalho");
+            $table->tinyInteger('plano_trabalho_assinatura_gestor_lotacao')->default(0)->comment("Exigir assinatura do gestor da unidade de lotação do servidor");
+            $table->tinyInteger('plano_trabalho_assinatura_gestor_unidade')->default(0)->comment("Exigir assinatura do gestor da unidade do plano de trabalho");
+            $table->tinyInteger('plano_trabalho_assinatura_gestor_entidade')->default(0)->comment("Exigir assinatura do gestor da entidade do plano de trabalho");
             // Chaves estrangeiras:
-            $table->foreignUuid('tipo_avaliacao_id')->constrained("tipos_avaliacoes")->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de avaliação");
+            $table->foreignUuid('tipo_avaliacao_plano_trabalho_id')->constrained("tipos_avaliacoes")->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de avaliação do plano de trabalho");
+            $table->foreignUuid('tipo_avaliacao_plano_entrega_id')->constrained("tipos_avaliacoes")->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de avaliação do plano de entrega");
+            $table->foreignUuid('tipo_justificativa_id')->nullable()->constrained("tipos_justificativas")->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de justificativa, para quando o gestor não realizar a avaliação dentro do prazo");
             $table->foreignUuid('unidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Unidade do programa");
             $table->foreignUuid('template_tcr_id')->nullable()->constrained("templates")->onDelete('restrict')->onUpdate('cascade')->comment("Template para o TCR do programa");
             $table->foreignUuid('tipo_documento_tcr_id')->nullable()->constrained("tipos_documentos")->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de documento para o TCR do programa");

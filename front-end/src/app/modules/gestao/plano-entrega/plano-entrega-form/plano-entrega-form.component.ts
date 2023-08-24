@@ -70,7 +70,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   public formValidation = (form?: FormGroup) => {
     const inicio = this.form?.controls.data_inicio.value;
     const fim = this.form?.controls.data_fim.value;
-    const programa = this.programa?.selectedItem?.entity as Programa; 
+    const programa = this.programa?.selectedEntity as Programa; 
     if(!programa) {
       return "Obrigatório selecionar o programa";
     } else if(!this.dao?.validDateTime(inicio)) {

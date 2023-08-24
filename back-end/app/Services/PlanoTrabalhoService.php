@@ -113,12 +113,11 @@ class PlanoTrabalhoService extends ServiceBase
     if($action == ServiceBase::ACTION_EDIT) {
       $plano = PlanoTrabalho::find($data["id"]);
       /*  (RN_PTR_1)
-          Após criado um plano de trabalho, o seu plano de entregas não pode mais ser alterado. Em consequência dessa regra, os seguintes campos 
-          não poderão mais ser alterados: plano_entrega_id, unidade_id, programa_id;
+          Após criado um plano de trabalho, o sua unidade e programa não podem mais ser alterados. Em consequência dessa regra, os seguintes campos 
+          não poderão mais ser alterados: unidade_id, programa_id;
       */
       if($data["unidade_id"] != $plano->unidade_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Trabalho, não é possível alterar a sua Unidade.");
       if($data["programa_id"] != $plano->programa_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Trabalho, não é possível alterar o seu Programa.");
-      if($data["plano_entrega_id"] != $plano->plano_entrega_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Trabalho, não é possível alterar o seu Plano de Entregas.");
       /* (RN_CSLD_2) 
           O plano de trabalho somente poderá ser alterado: se a nova data de início não for superior a algum período já CONCLUIDO ou AVALIADO, ou até o limite da primeira ocorrência ou atividade já lançados; 
           e se a nova data de final não for inferior a algum período já CONCLUIDO ou AVALIADO, ou até o limite da última ocorrência ou atividade já lançados;
@@ -139,10 +138,7 @@ class PlanoTrabalhoService extends ServiceBase
   public function proxyStore($plano, $unidade, $action) {
     $this->documentoId = $plano["documento_id"];
     $plano["documento_id"] = null;
-    if(empty($plano["plano_entrega_id"])) throw new ServerException("ValidatePlanoTrabalho", "A definição de um Plano de Entregas é obrigatória!");
-    $planoEntrega = PlanoEntrega::find($plano["plano_entrega_id"]);
-    $plano["programa_id"] = $planoEntrega->programa_id;
-    $plano["unidade_id"] = $planoEntrega->unidade_id;
+    if($action == ServiceBase::ACTION_INSERT) $plano["status"] = "INCLUIDO";
     return $plano;
   }
 

@@ -101,12 +101,12 @@ export class PlanoEntregaFormAdesaoComponent extends PageFormBase<PlanoEntrega, 
 
   public onPlanoEntregaChange(event: Event){
     if(this.form.controls.plano_entrega_id.value){
-      this.form.controls.nome.setValue(this.planoEntrega?.selectedItem?.entity.nome);
-      this.form.controls.data_inicio.setValue(this.planoEntrega?.selectedItem?.entity.data_inicio);
-      this.form.controls.data_fim.setValue(this.planoEntrega?.selectedItem?.entity.data_fim);
-      this.form.controls.planejamento_id.setValue(this.planoEntrega?.selectedItem?.entity.planejamento_id);
-      this.form.controls.cadeia_valor_id.setValue(this.planoEntrega?.selectedItem?.entity.cadeia_valor_id);
-      this.form.controls.programa_id.setValue(this.planoEntrega?.selectedItem?.entity.programa_id);
+      this.form.controls.nome.setValue(this.planoEntrega?.selectedEntity.nome);
+      this.form.controls.data_inicio.setValue(this.planoEntrega?.selectedEntity.data_inicio);
+      this.form.controls.data_fim.setValue(this.planoEntrega?.selectedEntity.data_fim);
+      this.form.controls.planejamento_id.setValue(this.planoEntrega?.selectedEntity.planejamento_id);
+      this.form.controls.cadeia_valor_id.setValue(this.planoEntrega?.selectedEntity.cadeia_valor_id);
+      this.form.controls.programa_id.setValue(this.planoEntrega?.selectedEntity.programa_id);
     }
   }
 }

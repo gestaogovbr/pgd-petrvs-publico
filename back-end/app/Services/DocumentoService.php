@@ -49,15 +49,16 @@ class DocumentoService extends ServiceBase {
             DB::beginTransaction();
             foreach($documentos as $documento) {
                 if(in_array($documento->especie, ["TCR"])) {
-                    $plano = PlanoTrabalho::with(["tipoModalidade", "usuario", "unidade.entidade"])->find($documento->plano_trabalho_id);
+                    $plano = PlanoTrabalho::with(["tipoModalidade", "programa", "usuario", "unidade.entidade"])->find($documento->plano_trabalho_id);
                     $tipoModalidade = $plano->tipoModalidade;
+                    $programa = $plano->programa;
                     $servidor = $plano->usuario;
                     $unidade = $plano->unidade;
                     $entidade = $unidade->entidade;
                     $ids = [];
-                    if($tipoModalidade->plano_trabalho_assinatura_participante && isset($servidor)) $ids[] = $servidor->id;
-                    if($tipoModalidade->plano_trabalho_assinatura_gestor_unidade && isset($unidade)) array_merge($ids, array_filter([$unidade->gestor_id, $unidade->gestor_substituto_id]));
-                    if($tipoModalidade->plano_trabalho_assinatura_gestor_entidade && isset($entidade)) array_merge($ids, array_filter([$entidade->gestor_id, $entidade->gestor_substituto_id]));
+                    if($programa->plano_trabalho_assinatura_participante && isset($servidor)) $ids[] = $servidor->id;
+                    if($programa->plano_trabalho_assinatura_gestor_unidade && isset($unidade)) array_merge($ids, array_filter([$unidade->gestor_id, $unidade->gestor_substituto_id]));
+                    if($programa->plano_trabalho_assinatura_gestor_entidade && isset($entidade)) array_merge($ids, array_filter([$entidade->gestor_id, $entidade->gestor_substituto_id]));
                     if(!in_array($usuario->id, $ids)) throw new ServerException("ValidateDocumento", "Usuário não tem prerrogativas para asssinar o documento #" . $documento->numero);
                 }
                 if(count($documento->assinaturas) == 0) {

@@ -32,7 +32,6 @@ class PlanoTrabalho extends ModelBase
         'unidade_id', /* char(36); NOT NULL; */
         'documento_id', /* char(36); */
         'tipo_modalidade_id', /* char(36); NOT NULL; */
-        'plano_entrega_id', /* char(36); NOT NULL; */
         'data_inicio', /* datetime; NOT NULL; */// Inicio do plano de trabalho
         'data_fim', /* datetime; NOT NULL; */// Fim do plano de trabalho
         'data_arquivamento', /* datetime; */// Data de arquivamento do plano de trabalho
@@ -63,6 +62,5 @@ class PlanoTrabalho extends ModelBase
     public function programa() { return $this->belongsTo(Programa::class); }
     public function unidade() { return $this->belongsTo(Unidade::class); }
     public function tipoModalidade() { return $this->belongsTo(TipoModalidade::class); }
-    public function planoEntrega() { return $this->belongsTo(PlanoEntrega::class); }
     public function documento() { return $this->belongsTo(Documento::class); }    //nullable
 }

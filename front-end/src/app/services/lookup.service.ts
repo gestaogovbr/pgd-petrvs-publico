@@ -80,19 +80,18 @@ export class LookupService {
   ];
 
   public ATIVIDADE_STATUS: LookupItem[] = [
-    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-check-circle", color: "primary" },
-    { key: "NAOCONCLUIDO", value: "Não concluído", icon: "bi bi-play-circle", color: "info" },
+    { key: "INCLUIDO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" },
     { key: "INICIADO", value: "Iniciado", icon: "bi bi-play-circle", color: "info" },
     { key: "PAUSADO", value: "Pausado", icon: "bi bi-sign-stop", color: "danger" },
-    { key: "INCLUIDO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" }
+    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-check-circle", color: "primary" }
   ];
 
   public ATIVIDADE_STATUS_COM_ARQUIVADAS: LookupItem[] = [
-    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-check-circle", color: "primary" },
-    { key: "NAOCONCLUIDO", value: "Não concluído", icon: "bi bi-play-circle", color: "info" },
+    { key: "INCLUIDO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" },
     { key: "INICIADO", value: "Iniciado", icon: "bi bi-play-circle", color: "info" },
     { key: "PAUSADO", value: "Pausado", icon: "bi bi-sign-stop", color: "danger" },
-    { key: "INCLUIDO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" },
+    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-check-circle", color: "primary" },
+    { key: "NAOCONCLUIDO", value: "Não concluído", icon: "bi bi-play-circle", color: "info" },
     { key: "ARQUIVADO", value: "Arquivado", icon: "bi bi-inboxes", color: "secondary" }
   ];
 
@@ -129,10 +128,11 @@ export class LookupService {
   ];
 
   public ORIGENS_ENTREGAS_PLANO_TRABALHO: LookupItem[] = [
-    { key: 'MESMA_UNIDADE', value: "Mesma Unidade" },
-    { key: 'OUTRA_UNIDADE', value: "Outra Unidade" },
-    { key: 'CATALOGO', value: "Catálogo" },
-  ];
+    { key: 'PROPRIA_UNIDADE', value: "Própria Unidade", color: "success" },
+    { key: 'OUTRA_UNIDADE', value: "Outra Unidade", color: "primary" },
+    { key: 'OUTRO_ORGAO', value: "Outro Órgão/Entidade", color: "warning" },
+    { key: 'SEM_ENTREGA', value: "Não vinculadas a entregas", color: "light" }
+  ]; 
 
   public HORAS_CORRIDAS_OU_UTEIS: LookupItem[] = [
     { key: 'HORAS_CORRIDAS', value: "Horas Corridas" },

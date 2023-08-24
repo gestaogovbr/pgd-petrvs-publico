@@ -83,8 +83,8 @@ export class FeriadoFormComponent extends PageFormBase<Feriado, FeriadoDaoServic
     return new Promise<Feriado>((resolve, reject) => {
       let feriado = this.util.fill(new Feriado(), this.entity!);
       feriado = this.util.fillForm(feriado, this.form!.value);
-      if(feriado.abrangencia == "MUNICIPAL" && this.cidade?.searchObj) {
-        feriado.codigo_ibge = (this.cidade?.searchObj as Cidade).codigo_ibge;
+      if(feriado.abrangencia == "MUNICIPAL" && this.cidade?.selectedEntity) {
+        feriado.codigo_ibge = (this.cidade?.selectedEntity as Cidade).codigo_ibge;
       } else if(feriado.abrangencia == "ESTADUAL") {
         feriado.codigo_ibge = this.lookup.UF.find(x => x.key == feriado.uf)?.code;
       } else {
