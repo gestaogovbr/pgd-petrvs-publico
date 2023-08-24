@@ -1,0 +1,44 @@
+<p class="text-secondary">Você está acessando o módulo de Gestão.</p>
+
+<div class="row mt-5">
+  <div class="col-6 col-sm-3 mb-3">
+    <app-button-dashboard
+      title="Avalidar consolidadas"
+      imgIcon="../../../../assets/icons/home/ranking.png"
+      textColor="#1369f0"
+      borderColor="#1369f0"
+      [route]="{route: ['gestao/atividade'], params: {atribuidas_para_mim: true}}"
+    ></app-button-dashboard>
+  </div>
+
+  <div class="col-6 col-sm-3 mb-3">
+    <app-button-dashboard
+      title="Entregas da minha unidade"
+      imgIcon="../../../../assets/icons/home/service.png"
+      textColor="#1369f0"
+      borderColor="#1369f0"
+      [route]="{route: ['gestao/plano-trabalho/consolidacao']}"
+    ></app-button-dashboard>
+  </div>
+
+  <div class="col-6 col-sm-3 mb-3">
+    <app-button-dashboard
+      title="Trabalho da minha equipe"
+      imgIcon="../../../../assets/icons/home/team.png"
+      textColor="#1369f0"
+      borderColor="#1369f0"
+    ></app-button-dashboard>
+  </div>
+
+  <div class="col-6 col-sm-3 mb-3">
+    <app-button-dashboard
+      title="Planos de trabalho"
+      imgIcon="../../../../assets/icons/home/negociate.png"
+      textColor="#1369f0"
+      borderColor="#1369f0"
+      [route]="{route: ['gestao/plano-trabalho']}"
+      [metadata]="{ metadata: {minha_unidade: true}}"
+    ></app-button-dashboard>
+  </div>
+
+</div>

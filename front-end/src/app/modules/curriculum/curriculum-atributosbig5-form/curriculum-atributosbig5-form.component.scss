@@ -1,3 +1,5 @@
+@import url('https://fonts.cdnfonts.com/css/neutra-text-alt');
+
 input[type=range] {
     -webkit-appearance: none;
     margin: 20px 0;
@@ -193,4 +195,9 @@ input[type="radio"]:checked+ .lblRadio{
 #imgBigIco,#imgBigIcoAmarelo{
   max-width: 30px;
 
+}
+
+.h4{
+  font-family: neutra text;
+  font-weight: bold;
 }

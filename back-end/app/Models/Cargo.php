@@ -19,7 +19,9 @@ class Cargo extends ModelBase
         //'deleted_at', /* timestamp; */
     ];
 
-    // Belongs
+     // HasMAny
+     public function curriculumProfissional() { return $this->hasMany(CurriculumProfissional::class); }
+
   
     
 }
