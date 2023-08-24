@@ -74,4 +74,15 @@ export class PlanoEntregaService {
     return !planoEntrega.deleted_at && planoEntrega.status != 'CANCELADO' && !planoEntrega.data_arquivamento;
   }
 
+  /**
+   * Informa a situação do plano de entregas repassado como parâmetro, ou seja, se foi EXCLUIDO ou ARQUIVADO, ou, caso contrário, o seu status atual.
+   * @param planoEntrega 
+   * @returns 
+   */
+  public situacaoPlano(planoEntrega: PlanoEntrega): string {
+    if (planoEntrega.deleted_at) return "EXCLUIDO";
+    else if (planoEntrega.data_arquivamento) return "ARQUIVADO";
+    else return planoEntrega.status!;
+  }
+
 }

@@ -57,7 +57,7 @@ class PlanoEntregaService extends ServiceBase
      * @return array
      */
     public function buscaCondicoes(array $entity): array {
-        $planoEntrega = !empty($entity['id']) ? PlanoEntrega::find($entity['id'])->toArray() : $entity;
+        $planoEntrega = !empty($entity['id']) ? PlanoEntrega::find($entity['id'])->with('entregas')->toArray() : $entity;
         $planoEntregaPai = !empty($planoEntrega['plano_entrega_id']) ? PlanoEntrega::find($planoEntrega['plano_entrega_id']) : null;
         $planoEntrega['unidade'] = !empty($planoEntrega['unidade_id']) ? Unidade::find($planoEntrega['unidade_id'])->toArray() : null;
         $planoEntrega['unidade']['planosEntrega'] = !empty($planoEntrega['unidade']) ? PlanoEntrega::where('unidade_id',$planoEntrega['unidade_id'])->get()->toArray() : null;
@@ -69,6 +69,10 @@ class PlanoEntregaService extends ServiceBase
         $result["planoIncluido"] = $this->isPlano("INCLUIDO", $planoEntrega);
         $result["planoProprio"] = $planoEntrega['plano_entrega_id'] == null;
         $result["planoVinculado"] = $planoEntrega['plano_entrega_id'] != null;
+        $result["nrEntregas"] = empty($planoEntrega['entregas']) ? 0 : count($planoEntrega['entregas']);
+        $result["planoArquivado"] = empty($planoEntrega['id']) ? false : PlanoEntrega::find($planoEntrega['id'])->data_arquivamento != null;
+        $result["planoStatus"] = empty($planoEntrega['id']) ? null : PlanoEntrega::find($planoEntrega['id'])->status;
+        $result["gestorUnidadePlano"] = $this->usuario->isGestorUnidade($planoEntrega['unidade_id']);
         $result["gestorUnidadePlano"] = $this->usuario->isGestorUnidade($planoEntrega['unidade_id']);
         $result["gestorUnidadePaiUnidadePlano"] = !empty($planoEntrega['unidade']['unidade_id']) && $this->usuario->isGestorUnidade($planoEntrega['unidade']['unidade_id']);
         $result["gestorLinhaAscendenteUnidadePlano"] = !!array_filter($this->unidade->linhaAscendente($planoEntrega['unidade_id']), fn($u) => $this->usuario->isGestorUnidade($u));
@@ -114,6 +118,19 @@ class PlanoEntregaService extends ServiceBase
             DB::beginTransaction();
             $planoEntrega = PlanoEntrega::find($data["id"]);
             $this->status->atualizaStatus($planoEntrega,'HOMOLOGANDO','A homologação do plano de entregas foi cancelada nesta data.');
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollback();
+            throw $e;
+        }
+        return true;
+    }
+
+    public function cancelarPlano($data, $unidade) {    // PRECISA DE JUSTIFICATIVA
+        try {
+            DB::beginTransaction();
+            $planoEntrega = PlanoEntrega::find($data["id"]);
+            $this->status->atualizaStatus($planoEntrega,'CANCELADO','O Plano de entregas foi cancelado nesta data.');
             DB::commit();
         } catch (Throwable $e) {
             DB::rollback();
@@ -274,7 +291,7 @@ class PlanoEntregaService extends ServiceBase
     *  Verifica se algumas condições estão atendidas, antes de realizar a inserção/alteração do Plano de Entregas: 
     *  - as datas do Plano de Entregas devem se encaixar na duração do Programa de Gestão;
     *  - as datas das entregas do Plano de Entregas devem se encaixar na duração do Programa de Gestão;
-    *  - após criado um Plano de Entregas, os seguintes campos não poderão mais ser alterados: unidade_id, programa_id; (RN_PENT_3_9)
+    *  - após criado um Plano de Entregas, os seguintes campos não poderão mais ser alterados: unidade_id, programa_id; (RN_PENT_K)
     */
     public function validateStore($dataOrEntity, $unidade, $action)
     {
@@ -283,7 +300,7 @@ class PlanoEntregaService extends ServiceBase
             $planoEntrega = PlanoEntrega::find($dataOrEntity["id"]);
             if($dataOrEntity["unidade_id"] != $planoEntrega->unidade_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Entregas, não é possível alterar a sua Unidade.");
             if($dataOrEntity["programa_id"] != $planoEntrega->programa_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Entregas, não é possível alterar o seu Programa.");
-             /* (RN_PENT_3_9)
+             /* (RN_PENT_K)
                 Após criado um plano de entregas, os seguintes campos não poderão mais ser alterados: unidade_id, programa_id;
              */
         }
@@ -334,7 +351,36 @@ class PlanoEntregaService extends ServiceBase
      *                  RN_PENT_A
      *   RN_PENT_B
      *                  RN_PENT_C
-     *   RN_PENT_1_4
+     *   RN_PENT_D
+     *                  RN_PENT_E
+     *   RN_PENT_F
+     *   RN_PENT_G
+     *   RN_PENT_H
+     *   RN_PENT_I
+     *   RN_PENT_J
+     *                  RN_PENT_K
+     *                  RN_PENT_L
+     *   RN_PENT_M
+     *                  RN_PENT_N
+     *                  RN_PENT_O
+     *                  RN_PENT_P
+     *   RN_PENT_Q
+     *                  RN_PENT_R
+     *                  RN_PENT_S
+     *                  RN_PENT_T
+     *                  RN_PENT_U
+     *                  RN_PENT_V
+     *                  RN_PENT_X
+     *   RN_PENT_Y
+     *                  RN_PENT_Z
+     *                  RN_PENT_AA
+     *                  RN_PENT_AB
+     *                  RN_PENT_AC
+     *                  RN_PENT_AD
+     *   RI_PENT_A
+     * 
+     * Regras relativas a adesão de planos de entregas, assunto
+     * adiado para discussão futura
      *   RN_PENT_2_1
      *   RN_PENT_2_2
      *                  RN_PENT_2_3
@@ -343,32 +389,8 @@ class PlanoEntregaService extends ServiceBase
      *   RN_PENT_2_6
      *   RN_PENT_2_7
      *   RN_PENT_3_1
-     *                  RN_PENT_3_2
      *                  RN_PENT_3_3
-     *   RN_PENT_3_4
-     *   RN_PENT_3_5
-     *   RN_PENT_3_6
-     *   RN_PENT_3_7
-     *   RN_PENT_3_8
-     *                  RN_PENT_3_9
      *                  RN_PENT_4_1
-     *                  RN_PENT_4_2
-     *                  RN_PENT_4_3
-     *                  RN_PENT_4_4
-     *                  RN_PENT_4_5
-     *                  RN_PENT_4_6
-     *                  RN_PENT_4_7
-     *                  RN_PENT_4_8
-     *                  RN_PENT_4_9
-     *                  RN_PENT_4_10
-     *                  RN_PENT_4_11
-     *                  RN_PENT_4_12
-     *                  RN_PENT_4_13
-     *                  RN_PENT_4_14
-     *                  RN_PENT_4_15
-     *                  RN_PENT_4_16
-     * 
-     * 
-     * 
+     *  
      */
 }

@@ -70,11 +70,7 @@ export class PlanoEntregaFormAdesaoComponent extends PageFormBase<PlanoEntrega, 
     if (['nome', 'plano_entrega_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
-    return result;
-    /*  (RN_PENT_2_7)
-        Em caso de adesão, os campos 'data_inicio', 'data_fim', 'planejamento_id', e 'cadeia_valor_id', deverão ser sempre iguais aos do plano-pai; 
-        portanto, quando um plano de entregas próprio sofrer alteração em um desses campos, todos os planos a ele vinculados deverão ser atualizados também;
-    */  
+    return result; 
   }
 
   public async loadData(entity: PlanoEntrega, form: FormGroup) {

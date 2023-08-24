@@ -333,8 +333,9 @@ class EntregaListComponent extends src_app_modules_base_page_list_base__WEBPACK_
       return result;
     };
     /* Inicializações */
-    this.title = this.lex.translate('Entregas');
     this.join = ["unidade:id,sigla,nome"];
+    this.title = this.lex.translate('Entregas');
+    this.code = "MOD_ENTRG";
     this.unidadeDao = injector.get(src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_2__.UnidadeDaoService);
     this.filter = this.fh.FormBuilder({
       nome: {
@@ -344,27 +345,8 @@ class EntregaListComponent extends src_app_modules_base_page_list_base__WEBPACK_
         default: null
       }
     });
-    // Testa se o usuário possui permissão para exibir dados de entrega
-    if (this.auth.hasPermissionTo("MOD_ENTRG_CONS")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir a entrega
-    if (this.auth.hasPermissionTo("MOD_ENTRG_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
-  }
-  filterClear(filter) {
-    filter.controls.nome.setValue("");
-    filter.controls.unidade_id.setValue(null);
-    super.filterClear(filter);
+    this.addOption(this.OPTION_INFORMACOES);
+    this.addOption(this.OPTION_EXCLUIR, "MOD_ENTRG_EXCL");
   }
 }
 _class = EntregaListComponent;
@@ -385,8 +367,8 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵInheritDefinitionFeature"]],
   decls: 18,
-  vars: 31,
-  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["controlName", "nome", 3, "size", "label", "control", "placeholder"], ["controlName", "unidade_id", 3, "size", "emptyValue", "control", "dao"], ["title", "Nome", "field", "nome", "orderBy", "nome"], ["title", "Descri\u00E7\u00E3o", "field", "descricao", "orderBy", "descricao"], ["title", "Unidade", 3, "template"], ["columnUnidade", ""], ["type", "select", "field", "tipo_indicador", 3, "title", "items"], ["title", "Qualitativos", 3, "template"], ["columnQualitativos", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"], ["color", "light", 3, "icon", "label", "hint", 4, "ngIf"], ["color", "light", 3, "icon", "label", "hint"], [1, "one-per-line"], ["color", "light", "icon", "bi bi-check2-square", 3, "label", 4, "ngFor", "ngForOf"], ["color", "light", "icon", "bi bi-check2-square", 3, "label"]],
+  vars: 30,
+  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "collapseChange", "collapsed"], [1, "row"], ["controlName", "nome", 3, "size", "label", "control", "placeholder"], ["controlName", "unidade_id", 3, "size", "emptyValue", "control", "dao"], ["title", "Nome", "field", "nome", "orderBy", "nome"], ["title", "Descri\u00E7\u00E3o", "field", "descricao", "orderBy", "descricao"], ["title", "Unidade", 3, "template"], ["columnUnidade", ""], ["type", "select", "field", "tipo_indicador", 3, "title", "items"], ["title", "Qualitativos", 3, "template"], ["columnQualitativos", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"], ["color", "light", 3, "icon", "label", "hint", 4, "ngIf"], ["color", "light", 3, "icon", "label", "hint"], [1, "one-per-line"], ["color", "light", "icon", "bi bi-check2-square", 3, "label", 4, "ngFor", "ngForOf"], ["color", "light", "icon", "bi bi-check2-square", 3, "label"]],
   template: function EntregaListComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](0, "grid", 0);
@@ -418,7 +400,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("ngIf", !ctx.selectable);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 6)("label", ctx.lex.translate("Entrega"))("control", ctx.filter.controls.nome)("placeholder", "Nome " + ctx.lex.translate("entrega") + "...");
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);

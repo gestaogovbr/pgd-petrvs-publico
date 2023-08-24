@@ -357,7 +357,7 @@ export class AuthService {
    * @param pUnidade 
    * @returns 
    */
-  public isLotacaoPrincipal(pUnidade: Unidade | null = null): boolean {
+  public isLotacaoUsuario(pUnidade: Unidade | null = null): boolean {
     let unidade = pUnidade || this.unidade!;
     let lotacao = this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade; 
     return lotacao?.id == unidade.id;
@@ -395,7 +395,7 @@ export class AuthService {
     let result = false;
     let $ids_unidades = this.usuario?.gerencias_substitutas?.map(x => x.unidade_id) || [];
     if(this.usuario?.gerencia_titular?.unidade?.id) $ids_unidades.push(this.usuario?.gerencia_titular!.unidade_id);
-    $ids_unidades.forEach(x => { if (unidade.path.split('/').slice(1).includes(x)) result = true; });
+    $ids_unidades.forEach(x => { if (!!unidade.path && unidade.path.split('/').slice(1).includes(x)) result = true; });
     return false;
   }
 

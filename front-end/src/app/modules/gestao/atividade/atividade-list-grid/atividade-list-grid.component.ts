@@ -23,6 +23,7 @@ export class AtividadeListGridComponent extends AtividadeListBase {
   @ViewChild('etiqueta', { static: false }) public etiqueta?: InputSelectComponent;
   @Input() snapshot?: ActivatedRouteSnapshot;
   @Input() fixedFilter?: any[];
+  @Input() minhas: boolean = false;
 
   public static selectRoute?: FullRoute = { route: ["gestao", "atividade", "grid"] };
   public formEdit: FormGroup;
@@ -72,6 +73,10 @@ export class AtividadeListGridComponent extends AtividadeListBase {
 
   ngAfterViewInit() {
     super.ngAfterViewInit();
+    if(this.minhas) {
+      this.filter!.controls.usuario_id.setValue(this.auth.usuario!.id);
+      this.filter?.controls.atribuidas_para_mim.setValue(true);
+    }
     if (this.fixedFilter) {
       const status = this.fixedFilter.find(x => x[0] == "status");
       if (status) this.filter?.controls.status.setValue(status[2]);

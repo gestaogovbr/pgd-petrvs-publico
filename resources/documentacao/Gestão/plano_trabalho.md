@@ -41,28 +41,22 @@
 
 ## REGRAS DE NEGÓCIO APLICADAS AOS PLANOS DE TRABALHO
 
-1. (RN_PTR_1) Após criado um plano de trabalho, o seu plano de entregas não pode mais ser alterado. Em consequência dessa regra, os seguintes campos não poderão mais ser alterados: plano_entrega_id, unidade_id, programa_id; **** DELETE ****
+- O Plano de Trabalho só vai para o status ATIVO quando atender os critérios de assinatura, que estarão definidos no TCR com base nas configurações do Programa;
+- O Plano de Trabalho precisará ser repactuado quando alguma de suas entregas estiver vinculada a uma entrega de plano de entregas cancelada;
+- O servidor só pode incluir plano de trabalho para si próprio e somente se ele for "participante do programa", habilitado. Se não o for, somente o chefe da unidade executora poderá inserir plano de trabalho para ele, e nesse caso, com o primeiro plano de trabalho incluído, o servidor tornar-se-á automaticamente um participante habilitado;
+- Toda atividade deve gerar uma entrega/resultado;
+- Os planos de trabalho dos participantes contribuem direta ou indiretamente para o plano de entregas da unidade. Assim, um plano de trabalho será composto por atividades relacionadas ou não às entregas do plano de entregas da unidade;
+- A distribuição dos percentuais de carga horária do participante deve atender a três categorias de atividades: aquelas vinculadas a entregas do plano de entregas da unidade, aquelas não vinculadas a entregas mas que são do interesse da sua unidade organizacional, e por fim aquelas vinculadas a entregas de um plano de entregas de outra unidade organizacional.
+- (RN_PTR_) As entregas de um Plano de Trabalho só podem ser vinculadas a entregas de Planos de Entregas homologados (vide RN_PENT_G)
+- Na criação/alteração de um Plano de Trabalho só podem ser criadas/alteradas entregas se vinculas a entregas de planos de entregas não canceladas;
 
+## REGRAS DE INTERFACE APLICADAS AOS PLANOS DE TRABALHO
 
-2. O servidor só pode incluir plano de trabalho se ele for "participante do programa", habilitado. Se não for, somente o chefe da unidade executora pode inserir plano de trabalho para ele, e nesse caso, o servidor se torna participante automaticamente com o primeiro plano de trabalho!
+- (RI_PTR_A) No formulário de inclusão/edição de um plano de trabalho:
+    . se o usuário logado não for gestor da Unidade do plano (Unidade B), o inputSearch de usuário já vem preenchido com o seu nome e permanece bloqueado;
+    . os input-search de unidade, programa e usuario devem ficar desabilitados nas edições e habilitado apenas nas inclusões;
 
-- Ao alterar um plano de entrega pode acontecer:
-    * Incluir novas entregas, nada será necessário alterar
-    * Alterar a entrega: Limitar o período que pode ser editado, não editar mais a entrega do catálogo
-    * Excluir: Marcar como cancelado caso já tenha sido utilizado, e caso não foi utilizado em nenhum plano de trabalho poderá ser excluido
-   - Entregas caceladas não poderão mais ser adicionados novas atividades nem em novos planos de trabalho
-
-4. O plano de trabalho pode ser elaborado pelo chefe da unidade ou pelo próprio participante, e em seguida aprovado pela outra parte.
-5. Como se dá o fluxo de plano de trabalho e plano de entregas quando o PGD for compulsório?
-6. Toda atividade deve gerar uma entrega/resultado
-7. Os planos de trabalho dos participantes contribuem direta ou indiretamente para o plano de entregas da unidade. Assim, um plano de trabalho será composto por atividades relacionadas ou não às entregas do plano de entregas da unidade.
-8. A distribuição dos percentuais de carga horária do participante deve atender a três categorias de atividades: aquelas vinculadas a entregas do plano de entregas da unidade, aquelas não vinculadas a entregas mas que são do interesse da sua unidade organizacional, e por fim aquelas atividades a entregas de um plano de entregas de outra unidade organizacional.
-
-## REGRAS DE INTERFACE
-
-1. (RI_PTR_1) No formulário de inclusão/edição de um plano de trabalho, o input-search de plano de entregas deve ficar desabilitado nas edições e habilitado apenas nas inclusões;
-
-## FLUXO DOS PLANOS DE TRABALHO  
+## FLUXOS DOS PLANOS DE TRABALHO  
 
 ~~~text
 
@@ -100,57 +94,6 @@ da assinatura       | pelo                |  inicial    |  faz avançar         
 (*1) para o botão 'assinar' estar disponível para o usuário, ele precisa ser o criador do plano de trabalho, este possuir ao menos uma entrega, e o TCR, se obrigatório/existente, já estar assinado pelo participante; 
 (*2) para o botão 'assinar' estar disponível para o gestor, o plano de trabalho precisa possuir ao menos uma entrega, e o TCR, se obrigatório/existente, já estar assinado pelo gestor;
 
+## QUESTÕES PENDENTES
 
-======== texto a ser editado ===============
-* Estando no status "INCLUIDO"
-        padrão: 
-            - se o usuário logado for gestor da unidade do plano de trabalho, ou esta for sua unidade de lotação e ele possuir a capacidade "MOD_PENT_LIB_HOMOL", exibir o botão 'Liberar para homologação' 
-            (vai para HOMOLOGANDO)
-            - caso contrário, exibir o 'botão Consultar'
-        outras opções: 
-            - se o usuário logado for gestor da unidade do plano, ou esta for sua unidade de lotação e ele possuir a capacidade "MOD_PENT_EDT", exibir o botão 'Alterar'
-
-* Estando no status "HOMOLOGANDO"
-        padrão: 
-            - se o usuário logado for gestor da unidade-pai da unidade do plano, ou se esta for sua lotação e ele possuir a capacidade "MOD_PENT_HOMOL", apresentar o botão 'Homologar' (vai para ATIVO)
-            - se o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação e ele possuir a capacidade "MOD_PENT_EDT", exibir o botão 'Alterar'
-            - se o usuário logado for um usuário comum, exibir o 'botão Consultar'
-        outras opções:
-            - se for um plano próprio: se o usuário logado for gestor da unidade ou esta ser sua unidade de lotação e ele possuir a capacidade "MOD_PENT_RET_HOMOL", exibir o botão 'Retirar de Homologação' 
-            (volta para o status "INCLUIDO") 
-            - se for um plano vinculado: se o usuário logado for gestor da unidade ou esta ser sua unidade de lotação e ele possuir a capacidade "MOD_PENT_EXCL", exibir o botão 'Excluir'
-
-* Estando no status "ATIVO"
-        padrão:
-            - o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação e ele possuir a capacidade "MOD_PENT_CONCLUIR", exibir o botão 'Concluir' (vai para o status CONCLUIDO);
-            - caso contrário, exibir o 'botão Consultar';
-        outras opções:
-            - se o usuário logado for gestor da unidade-pai da unidade do plano, ou esta for sua unidade de lotação e ele possuir a capacidade "MOD_PENT_CANC_HOMOL", apresentar o botão 'Cancelar Homologação' (volta para o status HOMOLOGANDO);
-            - se o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação e ele possuir a capacidade "MOD_PENT_SUSP", exibir o botão 'Suspender' (vai para o status SUSPENSO);
-
-* Estando no status "CONCLUIDO"
-        padrão:
-            - se o usuário logado for gestor da unidade-pai da unidade do plano, ou se esta for a sua unidade de lotação e ele possuir a capacidade "MOD_PENT_AVAL", exibir o botão 'Avaliar' (vai para o status AVALIADO);
-            - se o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação e ele possuir a capacidade "MOD_PENT_CANC_CONCL", exibir o botão 'Cancelar Conclusão' 
-            (vai para o status ATIVO);
-
-* Estando no status "SUSPENSO"
-        padrão:
-            - se o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação e ele possuir a capacidade "MOD_PENT_REATIVAR", exibir o 
-            botão 'Reativar' (vai para o status ATIVO);
-
-* Estando no status "AVALIADO"
-        padrão:
-            - se o usuário logado for gestor da unidade-pai da unidade do plano, ou se esta for a sua unidade de lotação e ele possuir a capacidade
-            "MOD_PENT_CANC_AVAL", exibir o botão 'Cancelar Avaliação' (vai para o status CONCLUIDO);
-            - caso contrário, exibir o 'botão Consultar';
-        outras opções:
-            - se o plano não estiver arquivado: 
-                - se o usuário logado precisa ser gestor da unidade do plano, ou esta ser sua unidade de lotação e ele possuir a capacidade "MOD_PENT_ARQ", exibir o botão 'Arquivar';
-~~~~
-
-
-********************* OBSERVACOES *********************
-- Ao entrar na tela de incluir o plano, pesquisar se a unidade (lotacao) do usuário tem apenas um plano de entrega ativo e já selecionar ele na tela
-- Se o usuário não for o gestor da unidade, já selecionar o próprio usuário automaticamente
-- Data fim deve ser maior que data inicio (não pode nem ser igual)
+. a data final deve ser maior que a data inicial (não pode nem ser igual);
