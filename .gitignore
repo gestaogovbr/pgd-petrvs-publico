@@ -35,4 +35,5 @@ front-end/tsconfig.json
 *.bak
 front-end/.vscode/settings.json
 
-back-end/storage/tenant*
+# Dario
+back-end/storage/tenant*/*/

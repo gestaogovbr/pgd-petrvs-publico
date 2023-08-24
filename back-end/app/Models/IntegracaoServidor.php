@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
+use App\Traits\AutoUuid;
 
 class IntegracaoServidor extends ModelBase
 {
+    use AutoUuid;
+
     protected $table = 'integracao_servidores';
 
     protected $with = [];
@@ -19,20 +22,24 @@ class IntegracaoServidor extends ModelBase
         'sexo', /* varchar(50); */
         'municipio', /* varchar(100); */
         'uf', /* varchar(50); */
-        'datanascimento', /* varchar(50); */
+        'data_nascimento', /* varchar(50); */
         'telefone', /* varchar(50); */
         'vinculo_ativo', /* varchar(50); */
         'matriculasiape', /* varchar(50); */
-        'tipo', /* varchar(50); */
+        'cargo', /* varchar(50); */
         'coduorgexercicio', /* varchar(50); */
         'coduorglotacao', /* varchar(50); */
         'codigo_servo_exercicio', /* varchar(50); */
         'nomeguerra', /* varchar(100); */
-        'codsitfuncional', /* varchar(50); */
+        'situacao_funcional', /* varchar(50); */
         'codupag', /* varchar(50); */
         'dataexercicionoorgao', /* varchar(50); */
         'funcoes', /* json; */
     ];
 
+    protected $keyType = 'string';
+
     protected $casts = [];
+
+    protected $dates = ['deleted_at'];
 }
