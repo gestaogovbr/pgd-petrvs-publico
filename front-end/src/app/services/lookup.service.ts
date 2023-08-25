@@ -131,7 +131,7 @@ export class LookupService {
     { key: 'PROPRIA_UNIDADE', value: "Própria Unidade", color: "success" },
     { key: 'OUTRA_UNIDADE', value: "Outra Unidade", color: "primary" },
     { key: 'OUTRO_ORGAO', value: "Outro Órgão/Entidade", color: "warning" },
-    { key: 'SEM_ENTREGA', value: "Não vinculadas a entregas", color: "light" }
+    { key: 'SEM_ENTREGA', value: "Não vinculadas a entregas", color: "info" }
   ]; 
 
   public HORAS_CORRIDAS_OU_UTEIS: LookupItem[] = [

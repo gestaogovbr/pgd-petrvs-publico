@@ -3,9 +3,9 @@
         <tab key="DADOS" label="Dados">
             <div class="row">
                 <!-- (RI_PTR_1) No formulário de inclusão/edição de um plano de trabalho, o input-search de unidade, programa e usuario devem ficar desabilitados nas edições e habilitado apenas nas inclusões; -->
-                <input-search #unidade [size]="4" [disabled]="action == 'new' ? undefined : 'true'" controlName="unidade_id" [dao]="unidadeDao" (select)="onUnidadeSelect($event)" [required]="true"></input-search>
-                <input-search #programa [size]="4" [disabled]="action == 'new' ? undefined : 'true'" controlName="programa_id" [dao]="programaDao" (select)="onProgramaSelect($event)"></input-search>
-                <input-search #usuario [size]="4" controlName="usuario_id" [dao]="usuarioDao" [join]="['afastamentos']" (select)="onUsuarioSelect($event)" [required]="true"></input-search>
+                <input-search #unidade [size]="4" [required]="true" [disabled]="action == 'new' ? undefined : 'true'" controlName="unidade_id" [dao]="unidadeDao" (select)="onUnidadeSelect($event)"></input-search>
+                <input-search #programa [size]="4" [required]="true" [disabled]="action == 'new' ? undefined : 'true'" controlName="programa_id" [join]="joinPrograma" [dao]="programaDao" (select)="onProgramaSelect($event)"></input-search>
+                <input-search #usuario [size]="4" [required]="true" controlName="usuario_id" [dao]="usuarioDao" [join]="['afastamentos']" (select)="onUsuarioSelect($event)"></input-search>
             </div>
             <div class="row">
                 <input-datetime [size]="3" label="Início" icon="bi bi-calendar-date" controlName="data_inicio" [control]="form!.controls.data_inicio" (change)="onDataInicioChange($event)" labelInfo="'Início da Vigência do '+ lex.translate('Plano de trabalho')"  [required]="true"></input-datetime>
@@ -54,11 +54,11 @@
                 <input-editor controlName="usuario_texto_complementar" [disabled]="form!.controls.editar_texto_complementar_usuario.value ? undefined : 'true'" [dataset]="planoDataset"></input-editor>
             </separator>
         </tab>
-        <tab *ngIf="checkFilled(['usuario_id', 'tipo_modalidade_id'])" key="TERMO" label="Termo">
+        <tab *ngIf="checkFilled(['usuario_id', 'programa_id', 'tipo_modalidade_id'])" key="TERMO" label="Termo">
             <!--top-alert *ngIf="!isTermos" type="warning" message="Para [INSERIR] ou [ASSINAR] termos escolha opção Termos de adesão na tela de listagem, ou utilize o Sei"></top-alert/-->
             <div clss="row">
                 <documentos #documentos [entity]="entityDocumentos" noPersist [cdRef]="cdRef" [needSign]="planoTrabalhoService.needSign" [extraTags]="planoTrabalhoService.extraTags" especie="TCR" 
-                    [editingId]="documentoId" [datasource]="datasource" [template]="template"></documentos>
+                    [editingId]="documentoId" [datasource]="datasource" [template]="programa?.selectedEntity?.template_tcr"></documentos>
                 <!--grid [control]="form!.controls.documentos" #gridDocumentos [disabled]="undefined" #documentos [hasEdit]="false" [hasDelete]="false" [hasAdd]="isTermos" [add]="isTermos ? addDocumento.bind(this) : undefined" editable>
                     <columns>
                         <column title="Data" [template]="dataInicio">
