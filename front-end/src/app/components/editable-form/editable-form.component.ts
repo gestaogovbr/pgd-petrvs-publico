@@ -1,6 +1,6 @@
 import { NavigateService } from 'src/app/services/navigate.service';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
-import { Component, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ContentChildren, Injector } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ContentChildren, Injector, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, FormGroupDirective } from '@angular/forms';
 import { GridComponent } from '../grid/grid.component';
 import { InputButtonComponent } from '../input/input-button/input-button.component';
@@ -21,6 +21,8 @@ import { InputTimerComponent } from '../input/input-timer/input-timer.component'
 import { ComponentBase } from '../component-base';
 import { InputEditorComponent } from '../input/input-editor/input-editor.component';
 import { InputNumberComponent } from '../input/input-number/input-number.component';
+import { DOCUMENT } from '@angular/common';
+
 
 @Component({
   selector: 'editable-form',
@@ -69,6 +71,7 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
   @Input() cancelLabel?: string;
   @Input() noButtons?: string;
   @Input() noMargin?: string;
+  @Input() initialFocus?: string;
   @Input() forceInvalid: boolean = false;
   @Input() set disabled(value: boolean) {
     if(this._disabled != value) {
@@ -104,7 +107,7 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
     return this.noMargin !== undefined;
   }
 
-  constructor(injector: Injector) {
+  constructor(injector: Injector, @Inject(DOCUMENT) private document: any) {
     super(injector);
     this.fb = injector.get<FormBuilder>(FormBuilder);
     this.go = injector.get<NavigateService>(NavigateService);
@@ -123,6 +126,32 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
 
   ngAfterViewInit() {
     if(this.disabled) this.disableAll(true);
+    this.setInititalFocus()
+  }
+
+  public setInititalFocus() {
+    if(this.initialFocus){
+      for (const [key, value] of Object.entries(this.form!.controls)) {
+        if(key == this.initialFocus){
+          for (const element of this.components) {
+            if(element.control == value){
+              element.focus();              
+              break;
+            }
+          }
+        }        
+      }
+    } else {
+      const control = Object.entries(this.form!.controls)[0]
+      if(control){
+        for (const element of this.components) {
+          if(element.control == control[1]){
+            element.focus();              
+            break;
+          }
+        }
+      }
+    }
   }
 
   public get components() {
@@ -166,6 +195,7 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
       button.onClick();
     }
   }
+
 
   public onSubmit() {
     if(this.form!.valid){

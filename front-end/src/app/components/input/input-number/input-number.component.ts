@@ -37,6 +37,7 @@ export class InputNumberComponent extends InputBase implements OnInit {
   @Input() allowNegative?: string;
   @Input() source?: any;
   @Input() path?: string;
+  @Input() required: boolean = false;
   @Input() set control(value: AbstractControl | undefined) {
     this._control = value;
   }

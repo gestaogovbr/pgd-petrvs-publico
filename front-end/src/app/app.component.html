@@ -57,8 +57,8 @@
                     <a [class]="menuItemClass('nav-link', { route: ['home'] })" aria-current="page" role="button" (click)="goHome()">Home</a>
                 </li>
                 <ng-container *ngFor="let item of menu">
-                    <li *ngIf="item && (!item.permition?.length || auth.hasPermissionTo(item.permition))" class="nav-item dropdown">
-                        <a [class]="menuItemClass('nav-link' + (!item.route ? ' dropdown-toggle' : ''), item)" role="button" [attr.id]="item.id" role="button" data-bs-toggle="dropdown" aria-expanded="false" (click)="openModule(item)">
+                    <li *ngIf="item && (!item.permition?.length || auth.hasPermissionTo(item.permition))" class="nav-item" [ngClass]="item.menu?.length ? 'dropdown' : '' ">
+                        <a [class]="menuItemClass('nav-link' + (!item.route ? ' dropdown-toggle' : ''), item)" role="button" [attr.id]="item.id" role="button" [attr.data-bs-toggle]="item.menu?.length ? 'dropdown' : ''" aria-expanded="false" (click)="openModule(item)">
                             {{ item.name }}
                         </a>
                         <ul *ngIf="!item.route" class="dropdown-menu navbar-dropdown-caret shadow border border-300  py-0" [attr.aria-labelledby]="item.id">
@@ -89,7 +89,7 @@
 
         <ul class="navbar-nav navbar-nav-icons flex-row align-items-center justify-content-end ">
             <li class="nav-item dropdown">                
-                <a class="nav-link" id="petrvs-context" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" data-bs-auto-close="outside" aria-expanded="false">
+                <a class="nav-link" id="petrvs-context" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true"  aria-expanded="false">
                     <span class="d-none d-md-block">
                         {{ contexto?.name || "Selecione..." }}
                         <i class="bi bi-chevron-down fs-6"></i>
@@ -98,12 +98,14 @@
                         <i [class]="contexto?.icon"></i>
                     </span>
                 </a>
-                <div class="dropdown-menu contextoDropdown navbar-dropdown-caret py-0 shadow border border-300" aria-labelledby="petrvs-context" data-bs-popper="static">
+                <div class="dropdown-menu contextoDropdown navbar-dropdown-caret py-0 shadow border border-300" aria-labelledby="petrvs-context" >
                     <div class="card position-relative border-0">
                         <div class="card-body py-3 px-3">
                             <ul class="nav d-flex flex-column">
                                 <li *ngFor="let itemContexto2 of menuContexto" (click)="onContextoSelect(itemContexto2)" class="nav-item">                                    
-                                    <a [class.active]="contexto?.name == itemContexto2.name" class="nav-link " role="button"><i [class]="itemContexto2.icon"></i> {{ itemContexto2.name }}</a>                                            
+                                    <a [class.active]="contexto?.name == itemContexto2.name" class="nav-link " role="button">
+                                        <i [class]="itemContexto2.icon"></i> {{ itemContexto2.name }}
+                                    </a>                                            
                                 </li>
                             </ul>
                         </div>

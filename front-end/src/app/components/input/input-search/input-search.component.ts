@@ -57,6 +57,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
   @Input() form?: FormGroup;
   @Input() source?: any;
   @Input() path?: string;
+  @Input() required: boolean = false;
   @Input() displayOnlySelected?: string;
   @Input() displayTemplate?: TemplateRef<unknown>;
   @Input() set control(value: AbstractControl | undefined) {
