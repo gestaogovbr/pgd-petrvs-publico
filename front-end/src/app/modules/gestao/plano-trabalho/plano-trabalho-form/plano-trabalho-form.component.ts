@@ -75,6 +75,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   public horasParciais?: Efemerides;
   public planoDataset: TemplateDataset[];
   public documentoId?: string;
+  public joinPrograma: string[];
   public entregas: LookupItem[] = [];
 
   private _datasource: any;
@@ -83,6 +84,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   constructor(public injector: Injector) {
     super(injector, PlanoTrabalho, PlanoTrabalhoDaoService);
     this.join = ["unidade.entidade", "entregas.entrega", "entregas.plano_entrega_entrega:id,plano_entrega_id", "usuario", "programa.template_tcr", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "atividades.atividade", "entregas.plano_entrega_entrega.entrega"];
+    this.joinPrograma = ["template_tcr"];
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);

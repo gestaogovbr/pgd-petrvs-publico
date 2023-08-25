@@ -255,7 +255,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
       }
     } if (value == 'OUTRA_UNIDADE') {
       this.form?.controls.orgao.setValue(null);
-      this.entrega?.onSearchClick(this.entrega?.searchRoute);
+      this.planoEntrega?.onSelectClick(new Event("SELECT"));
     }
   }
 
