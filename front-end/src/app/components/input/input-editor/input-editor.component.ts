@@ -40,7 +40,7 @@ export class InputEditorComponent extends InputBase implements OnInit {
   @Input() path?: string;
   @Input() canEditTemplate: boolean = false;
   @Input() dataset?: TemplateDataset[];
-  @Input() required: boolean = false;
+  @Input() required?: string;
   @Input() set template(value: string | undefined) {
     if(this._template != value) {
       this._template = value;

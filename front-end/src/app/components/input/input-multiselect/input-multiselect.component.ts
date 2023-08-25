@@ -49,7 +49,7 @@ export class InputMultiselectComponent extends InputBase implements OnInit {
   @Input() source?: any;
   @Input() path?: string;
   @Input() canEdit?: boolean = false;
-  @Input() required: boolean = false;
+  @Input() required?: string;
   @Input() set items(value: LookupItem[]) {
     this._items = value;
     this.control?.setValue(value);

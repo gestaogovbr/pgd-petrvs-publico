@@ -25,6 +25,7 @@ export abstract class InputBase extends ComponentBase {
     public abstract control?: AbstractControl; 
     public abstract form?: FormGroup;
     public abstract disabled?: string;
+    public abstract required?: string;
     public abstract size: number;
     public abstract loading: boolean;
     public abstract class: string;
@@ -109,6 +110,10 @@ export abstract class InputBase extends ComponentBase {
     public get isDisabled(): boolean {
         return this.disabled != undefined;
     }
+
+    public get isRequired(): boolean {
+        return this.required != undefined;
+      }
 
     public get formControl(): FormControl {
         return this.getControl() as FormControl || this._fakeControl;

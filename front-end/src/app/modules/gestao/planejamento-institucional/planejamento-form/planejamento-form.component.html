@@ -3,7 +3,7 @@
         <tab key="DADOS" label="Dados">
             <div class="row">
                 <div class="row">
-                    <input-text [size]="12" label="Nome do Planejamento Institucional" [icon]="entityService.getIcon('Planejamento')" controlName="nome" [control]="form!.controls.nome" [required]="true"></input-text>
+                    <input-text [size]="12" label="Nome do Planejamento Institucional" [icon]="entityService.getIcon('Planejamento')" controlName="nome" [control]="form!.controls.nome" required></input-text>
                 </div>
                 <div class="row">
                     <input-search [size]="6" [disabled]="hasPermissionToUNEX ? undefined : 'true'" controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" [selectParams]="{filter: {instituidora: true}}" (change)="onUnidadeChange($event)" labelInfo="Unidade responsável pelo planejamento, caso vazio será considerado a Entidade"></input-search>
@@ -15,8 +15,8 @@
                 </div>                
                 <div class="row">
                     <div class="col-md-6">
-                        <input-textarea [size]="12" label="Missão" [rows]="3" controlName="missao" [control]="form!.controls.missao" [required]="true"></input-textarea>
-                        <input-textarea [size]="12" label="Visão" [rows]="3" controlName="visao" [control]="form!.controls.visao" [required]="true"></input-textarea>
+                        <input-textarea [size]="12" label="Missão" [rows]="3" controlName="missao" [control]="form!.controls.missao" required></input-textarea>
+                        <input-textarea [size]="12" label="Visão" [rows]="3" controlName="visao" [control]="form!.controls.visao" required></input-textarea>
                     </div>
                     <div class="col-md-6">
                         <div class="row">

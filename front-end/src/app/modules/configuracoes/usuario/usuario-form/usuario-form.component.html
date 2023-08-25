@@ -7,16 +7,16 @@
                 </div>
                 <div class="form-group col-md-9">
                     <div class="row">
-                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_CPF') ? 'true' : undefined" [size]="4" label="CPF" controlName="cpf" [maskFormat]="'000.000.000-00'" [required]="true"></input-text>
-                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAT') ? 'true' : undefined" [size]="3" label="Matrícula" controlName="matricula" [required]="true"></input-text>
-                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAIL') ? 'true' : undefined" [size]="5" label="E-mail" controlName="email" textCase="lower" [required]="true"></input-text>
+                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_CPF') ? 'true' : undefined" [size]="4" label="CPF" controlName="cpf" [maskFormat]="'000.000.000-00'" required></input-text>
+                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAT') ? 'true' : undefined" [size]="3" label="Matrícula" controlName="matricula" required></input-text>
+                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAIL') ? 'true' : undefined" [size]="5" label="E-mail" controlName="email" textCase="lower" required></input-text>
                     </div>
                     <div class="row">
-                        <input-text [size]="8" label="Nome" controlName="nome" [required]="true"></input-text>
-                        <input-text [size]="4" label="Apelido" controlName="apelido" [required]="true"></input-text>
+                        <input-text [size]="8" label="Nome" controlName="nome" required></input-text>
+                        <input-text [size]="4" label="Apelido" controlName="apelido" required></input-text>
                     </div>
                     <div class="row">
-                        <input-select [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_PERFIL') ? 'true' : undefined" [size]="4" label="Perfil" controlName="perfil_id" [dao]="perfilDao" [required]="true"></input-select>
+                        <input-select [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_PERFIL') ? 'true' : undefined" [size]="4" label="Perfil" controlName="perfil_id" [dao]="perfilDao" required></input-select>
                         <input-search #lotacao label="Lotação" [size]="8" [emptyValue]="null" [control]="formLotacao!.controls.unidade_lotacao_id" controlName="unidade_lotacao_id" [dao]="unidadeDao" labelInfo="Unidade de lotação do Usuário" (change)="onLotacaoChange()"></input-search>
                     </div>
                     <div class="row">

@@ -3,7 +3,7 @@
         <div class="row mb-4">
             <input-search #planoEntrega [size]="12" controlName="plano_entrega_id" label="Plano de Entregas da Unidade-pai" [dao]="planoEntregaDao" 
             [selectRoute]="{route: ['gestao', 'plano-entrega'], params: {showFilter: false, filter: {unidade_id: auth.unidade!.unidade_pai_id, status: 'ATIVO'}}}"
-            [where]="[['unidade_id', '=', auth.unidade!.unidade_pai_id], ['status', '=', 'ATIVO']]" (change)="onPlanoEntregaChange($event)" [required]="true"></input-search>
+            [where]="[['unidade_id', '=', auth.unidade!.unidade_pai_id], ['status', '=', 'ATIVO']]" (change)="onPlanoEntregaChange($event)" required></input-search>
             <!--    (RI_PENT_6) Na adesão a um plano de entregas:
                     - o input-search dos planos de entregas exibirá apenas os ativos da unidade-pai da unidade selecionada; 
                     - a listagem dos planos de entrega não exibirá as opções de filtro.
@@ -11,7 +11,7 @@
             <separator></separator>
         </div>
         <div class="row">
-            <input-text [size]="12" label="Nome deste Plano de Entregas" controlName="nome" [required]="true"></input-text>
+            <input-text [size]="12" label="Nome deste Plano de Entregas" controlName="nome" required></input-text>
         </div>
         <div class="row">
             <input-search disabled [size]="9" [label]="lex.translate('Unidade')" controlName="unidade_id" [dao]="unidadeDao"></input-search>
