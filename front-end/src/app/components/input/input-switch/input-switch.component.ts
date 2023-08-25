@@ -37,6 +37,7 @@ export class InputSwitchComponent extends InputBase implements OnInit {
   @Input() buttonColor?: string;
   @Input() buttonCaption?: string;
   @Input() scale: InputScale = "medium";
+  @Input() required: boolean = false;
   @Input() set value(value: any) {
     this.setValue(value);
   }

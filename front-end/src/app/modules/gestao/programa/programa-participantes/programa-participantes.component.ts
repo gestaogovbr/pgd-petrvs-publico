@@ -107,7 +107,7 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
     if (this.form!.valid) {
       item.usuario_id = form.controls.usuario_id.value;
       item.habilitado = !!form.controls.habilitado.value;
-      item.usuario = this.usuario?.searchObj as Usuario;
+      item.usuario = this.usuario?.selectedEntity as Usuario;
       item.programa_id = this.programaId;
       this.submitting = true;
       try {

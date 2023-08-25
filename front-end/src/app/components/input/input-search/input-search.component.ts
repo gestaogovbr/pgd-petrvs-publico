@@ -57,6 +57,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
   @Input() form?: FormGroup;
   @Input() source?: any;
   @Input() path?: string;
+  @Input() required: boolean = false;
   @Input() displayOnlySelected?: string;
   @Input() displayTemplate?: TemplateRef<unknown>;
   @Input() set control(value: AbstractControl | undefined) {
@@ -119,8 +120,8 @@ export class InputSearchComponent extends InputBase implements OnInit {
   public items: (SelectItem | SearchGroupSeparator)[] = [];
   public selectedItem?: SelectItem = undefined;
   public selectedValue?: string = undefined;
+  public selectedEntity?: any = undefined;
   public searching: boolean = false;
-  public searchObj: any = undefined;
   public go: NavigateService;
   public entities: EntityService; 
   public util: UtilService;
@@ -157,7 +158,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
     const selected = this.items.find(x => !(x instanceof SearchGroupSeparator) && x.value == value) as SelectItem;
     const setSelect = (entity: any) => {
       if(selected) selected.entity = entity;
-      this.searchObj = entity;
+      this.selectedEntity = entity;
       this.selectedItem = selected;
       if(this.select && emitEvent) this.select.emit(selected);
       if(this.change && emitEvent) this.change.emit(new Event("change"));
@@ -166,7 +167,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
       $("#"+ this.generatedId(this.controlName)).val(selected.text);
       this.selectedValue = selected.value;
       this.control?.setValue(this.selectedValue, {emitEvent: false});
-      this.searchObj = undefined;
+      this.selectedEntity = undefined;
       if(this.selectedValue?.length) {
         if(loadEntity) {
           this.loading = true;
@@ -208,17 +209,24 @@ export class InputSearchComponent extends InputBase implements OnInit {
     }});
   }
 
-  public onSelectClick(event: Event) {
-    if(this.selectRoute) {
-      const modalRoute = this.selectRoute!;
-      modalRoute.params = Object.assign(modalRoute.params || {}, this.selectParams || {}, { selectable: true, modal: true });
-      this.go.navigate(modalRoute, {modalClose: async (result) => {
-        if(result?.id?.length) {
-          this.control?.setValue(result.id, {emitEvent: false});
-          await this.loadSearch();
-        }
-      }});
-    }
+  public async onSelectClick(event: Event) {
+    return new Promise<string>((resolve, reject) => {
+      if(this.selectRoute) {
+        const modalRoute = this.selectRoute!;
+        modalRoute.params = Object.assign(modalRoute.params || {}, this.selectParams || {}, { selectable: true, modal: true });
+        this.go.navigate(modalRoute, {modalClose: async (result) => {
+          if(result?.id?.length) {
+            this.control?.setValue(result.id, {emitEvent: false});
+            await this.loadSearch();
+            resolve(result?.id);
+          } else {
+            reject("Nada foi selecionado");
+          }
+        }});
+      } else {
+        reject("Rota de seleção inexistente");
+      }  
+    });
   }
 
   public onKeyDown(event: any) {
@@ -310,14 +318,14 @@ export class InputSearchComponent extends InputBase implements OnInit {
   }
 
   public onDetailsClick(event: Event) {
-    if(this.details && this.selectedItem && this.searchObj) this.details.emit({...this.selectedItem, entity: this.searchObj});
+    if(this.details && this.selectedItem && this.selectedEntity) this.details.emit({...this.selectedItem, entity: this.selectedEntity});
   }
 
   public clear(clearControl: boolean = true, emitEvent: boolean = true, clearText = true) {
     this.items = [];
     this.selectedItem = undefined;
     this.selectedValue = undefined;
-    this.searchObj = undefined;
+    this.selectedEntity = undefined;
     if(clearText && this.inputElement) this.queryText = this.inputElement!.nativeElement.value = "";
     if(clearControl && !this.isDisabled && this.control) this.control.setValue(this.emptyValue);
     if(this.change && emitEvent) this.change.emit(new Event("change"));

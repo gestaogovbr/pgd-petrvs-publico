@@ -28,6 +28,7 @@ class CreateTiposAvaliacoesNotasTable extends Migration
             $table->tinyInteger('justifica')->comment("Se é obrigatório justificar essa nota");
             $table->string('icone', 100)->comment("Classe do icone");
             $table->string('cor', 100)->comment("Código da cor em hex");
+            $table->string('codigo', 50)->nullable()->comment("Código de integração");
             // Chaves estrangeiras:
             $table->foreignUuid('tipo_avaliacao_id')->constrained('tipos_avaliacoes')->onDelete('restrict')->onUpdate('cascade')->comment("Tipo avaliação");
         });

@@ -56,7 +56,7 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
       data_inicio: {default: null},
       suspender: {default: false}
     }, this.cdRef, this.validate);
-    this.join = ["unidade", "atividade", "usuario.planos_trabalho.tipo_modalidade", "usuario.planos_trabalho.entregas.entrega:id,nome"];
+    this.join = ["unidade", "atividade", "usuario.planos_trabalho.tipo_modalidade", "usuario.planos_trabalho.entregas.plano_entrega_entrega:id,descricao"];
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -111,7 +111,7 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
         /* Carrega entregas */
         this.planosTrabalhosEntregas = planoTrabalho.entregas?.map(x => Object.assign({}, {
           key: x.id,
-          value: x.descricao + (x.entrega ? " (" + x.entrega!.nome + ")" : ""),
+          value: x.descricao + (x.plano_entrega_entrega ? " (" + x.plano_entrega_entrega?.descricao + ")" : ""),
           data: x
         })) || [];
         this.cdRef.detectChanges();

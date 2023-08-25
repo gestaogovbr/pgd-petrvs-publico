@@ -145,9 +145,9 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
   }
 
   public onComplexidadeChange(event: Event) {
-    if(this.atividade?.searchObj) {
+    if(this.atividade?.selectedEntity) {
       const form = this.form.value;
-      const atividade = this.atividade?.searchObj as Atividade;
+      const atividade = this.atividade?.selectedEntity as Atividade;
       /* Carrega tempo pactuado */
       const fator = form.fator_complexidade || 1;
       const fator_ganho_produtivade = 1 - ((this.entity?.plano?.ganho_produtividade || 0) / 100);

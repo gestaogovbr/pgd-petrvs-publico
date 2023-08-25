@@ -1,7 +1,7 @@
 import { Component, EventEmitter, HostBinding, Injector, Input, OnInit, Output, ViewChild, ElementRef } from '@angular/core';
 import { AbstractControl, ControlContainer, FormControl, FormGroup, FormGroupDirective } from '@angular/forms';
 import { DaoBaseService } from 'src/app/dao/dao-base.service';
-import { Base } from 'src/app/models/base.model';
+import { Base, IIndexable } from 'src/app/models/base.model';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { FullRoute, NavigateService } from 'src/app/services/navigate.service';
 import { InputBase, LabelPosition, SelectItem } from '../input-base';
@@ -34,6 +34,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
   @Input() labelClass?: string;
   @Input() bold: boolean = false;
   @Input() fields: string[] = [];
+  @Input() fullEntity?: string;
   @Input() dao?: DaoBaseService<Base> = undefined;
   @Input() addRoute?: FullRoute;
   @Input() searchRoute?: FullRoute;
@@ -52,6 +53,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
   @Input() listHeight: number = 200;
   @Input() prefix?: string;
   @Input() sufix?: string;
+  @Input() required: boolean = false;
   @Input() set where(value: any[] | undefined) {
     if(JSON.stringify(this._where) != JSON.stringify(value)) {
       this._where = value;
@@ -150,6 +152,10 @@ export class InputSelectComponent extends InputBase implements OnInit {
     });
   }
 
+  public get isFullEntity(): boolean {
+    return this.fullEntity != undefined;
+  }
+
   public get isNullable(): boolean {
     return this.nullable != undefined;
   }
@@ -210,18 +216,35 @@ export class InputSelectComponent extends InputBase implements OnInit {
     return !this.filterControl.value?.length || (new RegExp(this.filterControl.value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), "i")).test(item.value);
   }
 
+  public getSelectItemValue(row: IIndexable): string {
+    return (this.fields.length ? this.fields : this.dao?.searchFields || []).map(f => row[f]).join(" - ");
+  }
+
   private loadItems() {
     this.loading = true;
     this.detectChanges();
-    this.dao?.searchText("", this.fields.length ? this.fields : undefined, this.where).then(result => {
-      this.loading = false;
-      this.items = result.map(x => {
-        return {
-          key: x.value,
-          value: x.text
-        };
-      }) || [];
-    });
+    if(this.isFullEntity) {
+      this.dao?.query({where: this.where}).asPromise().then(result => {
+        this.loading = false;
+        this.items = result.map(x => {
+          return {
+            key: x.id,
+            value: this.getSelectItemValue(x),
+            data: x
+          };
+        }) || [];
+      });
+    } else {
+      this.dao?.searchText("", this.fields.length ? this.fields : undefined, this.where).then(result => {
+        this.loading = false;
+        this.items = result.map(x => {
+          return {
+            key: x.value,
+            value: x.text
+          };
+        }) || [];
+      });
+    }
   }
 
   public get isDetails(): boolean {

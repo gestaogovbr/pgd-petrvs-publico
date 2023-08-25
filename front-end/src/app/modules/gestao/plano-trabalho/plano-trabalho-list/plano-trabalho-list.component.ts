@@ -62,7 +62,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
       data_filtro_fim: {default: new Date()}
     }, this.cdRef, this.filterValidate);
     this.join = ["unidade.entidade", "usuario", "programa", "documento.assinaturas.usuario:id,nome,url_foto", "tipo_modalidade", 
-                "entregas.plano_entrega_entrega.entrega", "entregas.entrega", "plano_entrega.entregas.entrega"];
+                "entregas.plano_entrega_entrega.entrega", "entregas.plano_entrega_entrega.plano_entrega:id,unidade_id", "entregas.plano_entrega_entrega.plano_entrega.unidade", "entregas.entrega"];
     this.groupBy = [{field: "unidade.sigla", label: "Unidade"}];
   }
 

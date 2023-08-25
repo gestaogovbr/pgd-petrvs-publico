@@ -36,8 +36,9 @@ export class TipoAvaliacaoFormComponent extends PageFormBase<TipoAvaliacao, Tipo
       notas: {default: []}
     }, this.cdRef, this.validate);
     this.formNota = this.fh.FormBuilder({
-      nota: {default: 0},
       descricao: {default: ""},
+      nota: {default: 0},
+      codigo: {default: ""},
       aprova: {default: false},
       pergunta: {default: ""},
       justifica: {default: false},
@@ -94,19 +95,13 @@ export class TipoAvaliacaoFormComponent extends PageFormBase<TipoAvaliacao, Tipo
   }
 
   public async loadNota(form: FormGroup, row: any) {
-    form.controls.nota.setValue(row.nota);
-    form.controls.descricao.setValue(row.descricao);
-    form.controls.aprova.setValue(row.aprova);
-    form.controls.pergunta.setValue(row.pergunta);
-    form.controls.justifica.setValue(row.justifica);
-    form.controls.icone.setValue(row.icone);
-    form.controls.cor.setValue(row.cor);
+    form.patchValue(row);
     form.controls.tipo_justificativa_id.setValue(null);
-    form.controls.justificativas.setValue(row.justificativas.map((x: TipoAvaliacaoJustificativa) => Object.assign({}, {
+    form.controls.justificativas.setValue(row.justificativas?.map((x: TipoAvaliacaoJustificativa) => Object.assign({}, {
       key: x.tipo_justificativa_id,
       value: x.tipo_justificativa!.nome,
       data: x.tipo_justificativa
-    })));
+    })) || []);
   }
 
   public async removeNota(row: any) {
@@ -115,8 +110,9 @@ export class TipoAvaliacaoFormComponent extends PageFormBase<TipoAvaliacao, Tipo
 
   public async saveNota(form: FormGroup, row: any) {
     let justificativas: LookupItem[] = form!.controls.justificativas.value || [];
+    this.util.fillForm(row, form!.value)
     row.justificativas = justificativas.map(x => {
-      let older = row.justificativas.find((y: TipoAvaliacaoJustificativa) => y.tipo_justificativa_id == x.key);
+      let older = (row.justificativas || []).find((y: TipoAvaliacaoJustificativa) => y.tipo_justificativa_id == x.key);
       return older || new TipoAvaliacaoJustificativa({
         tipo_avaliacao_nota_id: this.entity!.id,
         tipo_justificativa_id: x.key,

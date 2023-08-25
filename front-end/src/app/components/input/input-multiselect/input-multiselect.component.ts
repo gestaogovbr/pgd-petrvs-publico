@@ -49,6 +49,7 @@ export class InputMultiselectComponent extends InputBase implements OnInit {
   @Input() source?: any;
   @Input() path?: string;
   @Input() canEdit?: boolean = false;
+  @Input() required: boolean = false;
   @Input() set items(value: LookupItem[]) {
     this._items = value;
     this.control?.setValue(value);
@@ -116,7 +117,7 @@ export class InputMultiselectComponent extends InputBase implements OnInit {
         const search = this.addItemControl as InputSearchComponent;
         this.editing!.key = search.selectedItem!.value;
         this.editing!.value = search.selectedItem!.text;
-        this.editing!.data = search.selectedItem?.entity;
+        this.editing!.data = search.selectedEntity;
         result = this.editing;
       } else if(this.addItemControl instanceof InputSelectComponent && (this.addItemControl as InputSelectComponent).selectedItem?.key) {
         const select = this.addItemControl as InputSelectComponent;
@@ -157,7 +158,7 @@ export class InputMultiselectComponent extends InputBase implements OnInit {
         newItem = {
           key: search.selectedItem!.value,
           value: search.selectedItem!.text,
-          data: (this.addItemControl as InputSearchComponent).selectedItem?.entity
+          data: (this.addItemControl as InputSearchComponent).selectedEntity
         }
       } else if(this.addItemControl instanceof InputSelectComponent && (this.addItemControl as InputSelectComponent).selectedItem?.key) {
         const select = this.addItemControl as InputSelectComponent;

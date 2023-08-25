@@ -18,8 +18,13 @@ class TipoAvaliacaoNota extends ModelBase
         'justifica', /* tinyint; NOT NULL; */// Se é obrigatório justificar essa nota
         'icone', /* varchar(100); NOT NULL; */// Classe do icone
         'cor', /* varchar(100); NOT NULL; */// Código da cor em hex
+        'codigo', /* varchar(100); NOT NULL; */// Código da cor em hex
         'tipo_avaliacao_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */
+    ];
+
+    public $fillable_relations = [
+        "justificativas"
     ];
 
     // Belongs

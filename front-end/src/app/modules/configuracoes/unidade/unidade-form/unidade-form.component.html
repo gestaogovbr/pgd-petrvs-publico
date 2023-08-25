@@ -1,20 +1,20 @@
-<editable-form [title]="isModal ? '' : title" [form]="form!" [disabled]="formDisabled" (submit)="onSaveData()" (cancel)="onCancel()">
+<editable-form [title]="isModal ? '' : title" [form]="form!" [disabled]="formDisabled" initialFocus="codigo" (submit)="onSaveData()" (cancel)="onCancel()">
     <tabs display right>
         <tab key="PRINCIPAL" label="Principal">
             <div class="row">
                 <input-switch [size]="1" label="Instit." labelClass="text-nowrap" controlName="instituidora" [labelInfo]="'Se a ' + lex.noun('unidade') + ' é instituidora de Programas.'"></input-switch>
-                <input-text [size]="2" label="Código" controlName="codigo"></input-text>
-                <input-text [size]="2" label="Sigla" controlName="sigla"></input-text>
-                <input-text [size]="7" label="Nome" controlName="nome"></input-text>
+                <input-text [size]="2" label="Código" controlName="codigo" [required]="true"></input-text>
+                <input-text [size]="2" label="Sigla" controlName="sigla" [required]="true"></input-text>
+                <input-text [size]="7" label="Nome" controlName="nome" [required]="true"></input-text>
             </div>
             <div class="row">
                 <input-search #gestor label="Gestor" [size]="6" [emptyValue]="null" [control]="formGestor!.controls.gestor_id" controlName="gestor_id" [dao]="usuarioDao" labelInfo="Responsável pela unidade"></input-search>
                 <input-search #gestorSubstituto label="Gestor Substituto" [size]="6" [emptyValue]="null" [control]="formGestor!.controls.gestor_substituto_id" controlName="gestor_substituto_id" [dao]="usuarioDao" labelInfo="Responsável substituto pela unidade"></input-search>
             </div>
             <div class="row">
-                <input-search #cidade [size]="4" controlName="cidade_id" [dao]="cidadeDao"></input-search>
+                <input-search #cidade [size]="4" controlName="cidade_id" [dao]="cidadeDao" [required]="true"></input-search>
                 <input-search #unidade_pai [size]="4" [label]="lex.translate('Unidade') + ' pai'" controlName="unidade_pai_id" [where]="[['entidade_id', '==', form.controls.entidade_id.value]]" [dao]="dao!"></input-search>
-                <input-search #entidade [size]="4" disabled controlName="entidade_id" [dao]="entidadeDao"></input-search>
+                <input-search #entidade [size]="4" disabled controlName="entidade_id" [dao]="entidadeDao" [required]="true"></input-search>
             </div>
         </tab>
         <tab key="CONFIGURACOES" label="Configurações">

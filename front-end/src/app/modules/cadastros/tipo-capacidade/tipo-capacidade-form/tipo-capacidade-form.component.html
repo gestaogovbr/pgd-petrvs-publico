@@ -1,8 +1,8 @@
 <!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
-<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="codigo" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
     <div class="row">
-        <input-text [size]="3" label="Código" controlName="codigo"></input-text>
-        <input-text [size]="9" label="Descrição" controlName="descricao"></input-text>
+        <input-text [size]="3" label="Código" controlName="codigo" [required]="true"></input-text>
+        <input-text [size]="9" label="Descrição" controlName="descricao" [required]="true"></input-text>
     </div>
 
 </editable-form>

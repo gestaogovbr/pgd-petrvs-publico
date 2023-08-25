@@ -18,9 +18,6 @@ export class TipoModalidadeFormComponent extends PageFormBase<TipoModalidade, Ti
     super(injector, TipoModalidade, TipoModalidadeDaoService);
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
-      plano_trabalho_assinatura_participante: { default: true },
-      plano_trabalho_assinatura_gestor_unidade: { default: false },
-      plano_trabalho_assinatura_gestor_entidade: { default: false },
       plano_trabalho_calcula_horas: { default: false },
       atividade_tempo_despendido: { default: false },
       atividade_esforco: { default: false },

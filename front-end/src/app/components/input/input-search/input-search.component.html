@@ -1,4 +1,4 @@
-<input-container [labelPosition]="labelPosition" [labelClass]="labelClass" [controlName]="controlName" [control]="control" [disabled]="disabled" [label]="label"
+<input-container [labelPosition]="labelPosition" [labelClass]="labelClass" [controlName]="controlName" [required]="required" [control]="control" [disabled]="disabled" [label]="label"
     [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
     <div *ngIf="isDisabled" class="input-group" [id]="generatedId(controlName) + '_search_container'">
         <input type="text" class="form-control" [id]="generatedId(controlName)" [attr.placeholder]="placeholder" readonly>
@@ -22,7 +22,7 @@
             </ul>
             <input type="text" #inputElement class="form-control" autocomplete="off" [id]="generatedId(controlName)" aria-expanded="false" [attr.readonly]="isOnlySelect ? 'true' : undefined"
                 [attr.placeholder]="placeholder" [class.search-text-invalid]="!isTextValid" (keydown)="onKeyDown($event)" (keyup)="onKeyUp($event)">
-            <button *ngIf="isDetails" [id]="generatedId(controlName) + '_details_button'" class="btn btn-outline-secondary" type="button" [disabled]="!searchObj ? true : undefined" (click)="onDetailsClick($event)">
+            <button *ngIf="isDetails" [id]="generatedId(controlName) + '_details_button'" class="btn btn-outline-secondary" type="button" [disabled]="!selectedEntity ? true : undefined" (click)="onDetailsClick($event)">
                 <i class="bi bi-info-circle"></i>
             </button>
             <button *ngIf="addRoute" [id]="generatedId(controlName) + '_route_button'" class="btn btn-outline-success" type="button" (click)="onAddClick($event)">
