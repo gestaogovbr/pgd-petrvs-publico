@@ -259,7 +259,7 @@ class IntegracaoService extends ServiceBase {
                 'gravar_arquivos_locais' => $this->storeLocalFiles,
                 'usuario_id' => null,//"0",
                 'data_execucao' => Carbon::now(),
-                'resultado' => json_encode($this->result)
+                'resultado' => json_encode($this->result, JSON_UNESCAPED_UNICODE)
         ], null)->resultado;
     }
 
