@@ -9,6 +9,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { UnidadeMergeComponent } from './unidade-merge/unidade-merge.component';
 import { UteisModule } from '../../uteis/uteis.module';
 import { UnidadeIntegranteComponent } from './unidade-integrante/unidade-integrante.component';
+import { UnidadeListGridComponent } from './unidade-list-grid/unidade-list-grid.component';
+import { UnidadeListMapComponent } from './unidade-list-map/unidade-list-map.component';
 
 
 @NgModule({
@@ -16,7 +18,9 @@ import { UnidadeIntegranteComponent } from './unidade-integrante/unidade-integra
     UnidadeFormComponent,
     UnidadeListComponent,
     UnidadeMergeComponent,
-    UnidadeIntegranteComponent
+    UnidadeIntegranteComponent,
+    UnidadeListGridComponent,
+    UnidadeListMapComponent
   ],
   imports: [
     CommonModule,

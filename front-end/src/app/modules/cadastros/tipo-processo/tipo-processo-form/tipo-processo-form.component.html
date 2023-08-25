@@ -1,8 +1,8 @@
 <!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="codigo" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
     <div class="row">
-        <input-text [size]="3" label="Código" controlName="codigo" [required]="true"></input-text>
-        <input-text [size]="9" label="Nome" controlName="nome" [required]="true"></input-text>
+        <input-text [size]="3" label="Código" controlName="codigo" required></input-text>
+        <input-text [size]="9" label="Nome" controlName="nome" required></input-text>
     </div>
     <div class="row">
         <input-multiselect label="Etiquetas" controlName="etiquetas" [size]="8" [addItemHandle]="addItemHandleEtiquetas.bind(this)">

@@ -3,15 +3,15 @@
         <tab key="ATIVIDADE" label="Atividade">
             <documento-link [sei]="sei" [documento]="form!.controls.documento_requisicao.value"></documento-link>
             <div class="row">
-                <input-textarea label="Descrição" [size]="12" [rows]="2" controlName="descricao" [control]="form!.controls.descricao" [required]="true"></input-textarea>
+                <input-textarea label="Descrição" [size]="12" [rows]="2" controlName="descricao" [control]="form!.controls.descricao" required></input-textarea>
             </div>
             <div class="row">
-                <input-search [label]="lex.translate('Unidade')" [size]="6" #unidade controlName="unidade_id" [dao]="unidadeDao"  (change)="onUnidadeChange($event)" [required]="true"></input-search>
-                <input-search [label]="lex.translate('Tipo de atividade')" #tipoAtividade [emptyValue]="null" [size]="6" controlName="tipo_atividade_id"  [dao]="tipoAtividadeDao" (select)="onTipoAtividadeSelect($event)" (change)="onTipoAtividadeChange($event)" [labelInfo]="lex.translate('Tipo de atividade') + ' utilizado para classificar a atividade'" [required]="true"></input-search>
+                <input-search [label]="lex.translate('Unidade')" [size]="6" #unidade controlName="unidade_id" [dao]="unidadeDao"  (change)="onUnidadeChange($event)" required></input-search>
+                <input-search [label]="lex.translate('Tipo de atividade')" #tipoAtividade [emptyValue]="null" [size]="6" controlName="tipo_atividade_id"  [dao]="tipoAtividadeDao" (select)="onTipoAtividadeSelect($event)" (change)="onTipoAtividadeChange($event)" [labelInfo]="lex.translate('Tipo de atividade') + ' utilizado para classificar a atividade'" required></input-search>
             </div>
             <div class="row">
                 <input-search label="Responsável" [size]="4" [emptyValue]="null" #usuario controlName="usuario_id" [dao]="usuarioDao" [join]="usuarioJoin" labelInfo="Responsável pela execução" (select)="onUsuarioSelect($event)" (change)="onUsuarioChange($event)"></input-search>
-                <input-select [label]="lex.translate('Plano de trabalho')" [size]="4" controlName="plano_trabalho_id" #planoTrabalho [control]="form!.controls.plano_trabalho_id" [items]="planosTrabalhos" (change)="onPlanoTrabalhoChange($event)" [labelInfo]="lex.translate('Plano de trabalho')" [required]="true"></input-select>
+                <input-select [label]="lex.translate('Plano de trabalho')" [size]="4" controlName="plano_trabalho_id" #planoTrabalho [control]="form!.controls.plano_trabalho_id" [items]="planosTrabalhos" (change)="onPlanoTrabalhoChange($event)" [labelInfo]="lex.translate('Plano de trabalho')" required></input-select>
                 <input-select [label]="lex.translate('Entrega') + ' ' + lex.translate('plano de trabalho')" [size]="4" controlName="plano_trabalho_entrega_id" #entrega [control]="form!.controls.plano_trabalho_entrega_id" [items]="entregas" [labelInfo]="lex.translate('Entrega') + lex.translate('plano de trabalho') + ' que a ' + lex.translate('atividade') + ' é referente'"></input-select>
             </div>
             <div *ngIf="!planoTrabalho?.selectedItem?.data?.tipo_modalidade?.atividade_esforco; else comEsforco" class="row">

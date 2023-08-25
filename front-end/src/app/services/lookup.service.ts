@@ -639,7 +639,8 @@ export class LookupService {
 
   public THEMES: LookupItem[] = [
     {'key': 'light', 'value': "Branco"},
-    {'key': 'blue', 'value': "Azul"},
+    {'key': 'blue', 'value': "Azul"}, 
+    {'key': 'dark', 'value': "Preto"}, 
   ];
 
   public TIPO_INTEGRACAO: LookupItem[] = [

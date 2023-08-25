@@ -30,7 +30,7 @@ export class InputRadioComponent extends InputBase implements OnInit {
   @Input() form?: FormGroup;
   @Input() source?: any;
   @Input() path?: string;
-  @Input() required: boolean = false;
+  @Input() required?: string;
   @Input() change?: (value: any) => void;
   @Input() set value(value: any) {
     if(value != this._value) {

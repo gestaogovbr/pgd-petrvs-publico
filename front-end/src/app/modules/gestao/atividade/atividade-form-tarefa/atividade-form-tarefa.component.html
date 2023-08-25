@@ -2,7 +2,7 @@
     <tabs display right [title]="!isModal ? title : ''">
         <tab key="TAREFA" [label]="lex.translate('Tarefa da Atividade')">
             <div class="row">
-                <input-textarea label="Descrição" [size]="12" [rows]="2" controlName="descricao" [control]="form!.controls.descricao" [required]="true"></input-textarea>
+                <input-textarea label="Descrição" [size]="12" [rows]="2" controlName="descricao" [control]="form!.controls.descricao" required></input-textarea>
             </div>
             <div class="row">
                 <input-search [label]="lex.translate('Tipo de Tarefa')" #tipoTarefa [size]="7" controlName="tipo_tarefa_id" [dao]="tipoTarefaDao" (select)="onTipoTarefaSelect($event)"></input-search>

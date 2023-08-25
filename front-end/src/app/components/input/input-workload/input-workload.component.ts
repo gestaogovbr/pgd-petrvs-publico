@@ -35,7 +35,7 @@ export class InputWorkloadComponent extends InputBase implements OnInit {
   @Input() path?: string;
   @Input() daysOrHours?: string;
   @Input() maxLength?: number;
-  @Input() required: boolean = false;
+  @Input() required?: string;
   @Input() unitChange?: (newUnit: UnitWorkload) => void;
   @Input() set unit(value: UnitWorkload) {
     if(this._unit != value) {
