@@ -23,7 +23,7 @@ export class InputContainerComponent extends InputBase implements OnInit {
   @Input() icon: string = "";
   @Input() label: string = "";
   @Input() labelInfo: string = "";
-  @Input() required: boolean = false;
+  @Input() required?: string;
   @Input() labelClass?: string;
   @Input() bold: boolean = false;
   @Input() loading: boolean = false;
@@ -44,11 +44,20 @@ export class InputContainerComponent extends InputBase implements OnInit {
     return this.getSize(); 
   }
 
+ 
+
   constructor(public injector: Injector) {
     super(injector);
   }
 
   ngOnInit(): void {
     super.ngOnInit();
+  }
+
+  public ngAfterViewInit(): void {
+    super.ngAfterViewInit();
+    setTimeout(() => {
+      $('[data-bs-toggle="tooltip"]').tooltip();
+    }, 1000);
   }
 }

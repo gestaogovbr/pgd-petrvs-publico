@@ -22,6 +22,7 @@ import { ComponentBase } from '../component-base';
 import { InputEditorComponent } from '../input/input-editor/input-editor.component';
 import { InputNumberComponent } from '../input/input-number/input-number.component';
 import { DOCUMENT } from '@angular/common';
+import { InputBase } from '../input/input-base';
 
 
 @Component({
@@ -211,5 +212,14 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
 
   public onCancel() {
     this.cancel.emit();
+  }
+
+  public get anyRequired(): boolean {
+    for (const component of this.components) {
+      if(component instanceof InputBase && (component as InputBase).isRequired){
+        return true
+      }
+    }
+    return false
   }
 }

@@ -93,7 +93,7 @@
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
               "node_modules/jquery-ui/dist/jquery-ui.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.bundle.js",
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
               "node_modules/jquery-mask-plugin/dist/jquery.mask.min.js",
               "node_modules/@fortawesome/fontawesome-free/js/all.min.js"
             ]

@@ -2,7 +2,7 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="unidade_id" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
     <div class="row">
 
-        <input-search #unidade [size]="12" label="Unidade Instituidora" controlName="unidade_id" [dao]="unidadeDao" [selectParams]="{filter: {instituidora: true}}" [required]="true"></input-search>
+        <input-search #unidade [size]="12" label="Unidade Instituidora" controlName="unidade_id" [dao]="unidadeDao" [selectParams]="{filter: {instituidora: true}}" required></input-search>
     </div>
     <div class="row">
         <input-datetime date [size]="4" label="Data de Início" icon="bi bi-calendar-date" controlName="data_inicio" [control]="form!.controls.data_inicio" labelInfo="Data de início da vigência do programa de gestão na unidade instituidora"></input-datetime>
@@ -10,7 +10,7 @@
         <input-number [size]="4" label="Duração Máx P.E." icon="bi bi-blockquote-left" controlName="prazo_max_plano_entrega" [control]="form!.controls.prazo_max_plano_entrega" labelInfo="Limite máximo de dias corridos para a duração do plano de entregas a partir da sua data de criação (Zero para não limitar)"></input-number>
     </div>
     <div class="row">
-        <input-text [size]="6" label="Título" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome" [required]="true"></input-text>
+        <input-text [size]="6" label="Título" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome" required></input-text>
         <input-text [size]="6" label="Normativa" icon="bi bi-blockquote-left" controlName="normativa" [control]="form!.controls.normativa" labelInfo="Normativa que regula o Programa"></input-text>
     </div>
     <separator [title]="'Configurações ' + lex.translate('do Plano de entrega')">

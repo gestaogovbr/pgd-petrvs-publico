@@ -47,7 +47,7 @@ export class InputTextComponent extends InputBase implements OnInit {
   @Input() maskFormat: string = "";
   @Input() right?: string;
   @Input() maskDropSpecialCharacters: boolean = false; 
-  @Input() required: boolean = false;
+  @Input() required?: string;
   @Input() maskSpecialCharacters: string[] = ["-", "/", "(", ")", ".", ":", " ", "+", ",", "@", "[", "]", '"', "'"];
   @Input() set control(value: AbstractControl | undefined) {
     this._control = value;

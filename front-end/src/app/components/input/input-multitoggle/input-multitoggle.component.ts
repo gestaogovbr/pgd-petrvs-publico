@@ -32,7 +32,7 @@ export class InputMultitoggleComponent extends InputBase implements OnInit {
   @Input() source?: any;
   @Input() path?: string;
   @Input() classButton: string = "btn-outline-primary";
-  @Input() required: boolean = false;
+  @Input() required?: string;
   @Input() set value(value: LookupItem[]) {
     if(JSON.stringify(this._value) != JSON.stringify(value)) {
       this._value = value;
