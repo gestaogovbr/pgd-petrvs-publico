@@ -8,23 +8,16 @@ import { InputSelectComponent } from 'src/app/components/input/input-select/inpu
 import { UnitWorkload } from 'src/app/components/input/input-workload/input-workload.component';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
-import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { DocumentoDaoService } from 'src/app/dao/documento-dao-service';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
-import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
 import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 import { TipoModalidadeDaoService } from 'src/app/dao/tipo-modalidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
-import { Atividade } from 'src/app/models/atividade.model';
 import { IIndexable } from 'src/app/models/base.model';
 import { Documento } from 'src/app/models/documento.model';
-import { PlanoTrabalhoAtividade } from 'src/app/models/plano-trabalho-atividade.model';
-import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
-import { PlanoTrabalhoEntrega } from 'src/app/models/plano-trabalho-entrega.model';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { Programa } from 'src/app/models/programa.model';
-import { Template } from 'src/app/models/template.model';
 import { TipoModalidade } from 'src/app/models/tipo-modalidade.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { Usuario } from 'src/app/models/usuario.model';
@@ -36,6 +29,7 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { PlanoTrabalhoService } from '../plano-trabalho.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { TemplateDataset, TemplateService } from 'src/app/modules/uteis/templates/template.service';
+import { Template } from 'src/app/models/template.model';
 
 @Component({
   selector: 'plano-trabalho-form',
@@ -57,29 +51,32 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   @ViewChild('entrega', { static: false }) public entrega?: InputSelectComponent;
   @ViewChild('documentos', { static: false }) public documentos?: DocumentosComponent;
 
-  public formAtividades: FormGroup;
-  public formEntregas: FormGroup;
+  //public formAtividades: FormGroup;
+  //public formEntregas: FormGroup;
   public programaDao: ProgramaDaoService;
   public usuarioDao: UsuarioDaoService;
   public unidadeDao: UnidadeDaoService;
-  public atividadeDao: AtividadeDaoService;
+  //public atividadeDao: AtividadeDaoService;
   public documentoDao: DocumentoDaoService;
   public documentoService: DocumentoService;
   public templateService: TemplateService;
   public allPages: ListenerAllPagesService;
   public calendar: CalendarService;
   public tipoModalidadeDao: TipoModalidadeDaoService;
-  public planoEntregaDao: PlanoEntregaDaoService;
+  //public planoEntregaDao: PlanoEntregaDaoService;
   public planoTrabalhoService: PlanoTrabalhoService;
   public horasTotais?: Efemerides;
   public horasParciais?: Efemerides;
   public planoDataset: TemplateDataset[];
-  public documentoId?: string;
   public joinPrograma: string[];
   public entregas: LookupItem[] = [];
+  public planoTrabalho?: PlanoTrabalho;
+  public datasource: any;
+  public template?: Template;
+  public editingId?: string;
 
-  private _datasource: any;
-  private _entityDocumentos: PlanoTrabalho = new PlanoTrabalho();
+  /*private _datasource: any;
+  private _entityDocumentos: PlanoTrabalho = new PlanoTrabalho();*/
 
   constructor(public injector: Injector) {
     super(injector, PlanoTrabalho, PlanoTrabalhoDaoService);
@@ -88,8 +85,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
-    this.atividadeDao = injector.get<AtividadeDaoService>(AtividadeDaoService);
-    this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
     this.documentoService = injector.get<DocumentoService>(DocumentoService);
     this.templateService = injector.get<TemplateService>(TemplateService);
     this.calendar = injector.get<CalendarService>(CalendarService);
@@ -119,13 +114,13 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       unidade_texto_complementar: {default: ""},
       usuario_texto_complementar: {default: ""}
     }, this.cdRef, this.validate);
-    this.formAtividades = this.fh.FormBuilder({
+    /*this.formAtividades = this.fh.FormBuilder({
       atividade_id: {default: ""}
     }, this.cdRef, this.validateAtividades);
     this.formEntregas = this.fh.FormBuilder({
       nome: {default: ""},
       entrega_id: {default: ""}
-    }, this.cdRef, this.validateEntregas);
+    }, this.cdRef, this.validateEntregas);*/
   }
 
   public ngOnInit() {
@@ -134,16 +129,28 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.action = ["termos"].includes(segment) ? segment : this.action;
   }
 
+  public atualizarTcr() {
+    let planoNovo = this.loadEntity();
+    let textoUsuario = this.form!.controls.usuario_texto_complementar.value;
+    let textoUnidade = this.form!.controls.unidade_texto_complementar.value;
+    let documento = this.planoTrabalhoService.atualizarTcr(this.planoTrabalho!, this.entity!, textoUsuario, textoUnidade);
+    this.datasource = documento?.datasource || {};
+    this.template = planoNovo.programa?.template_tcr;
+    this.editingId = ["ADD", "EDIT"].includes(documento?._status || "") ? documento!.id : undefined;
+    this.cdRef.detectChanges();
+  }
+
+  /* SUBSTITUIDO pela proriedade public de mesmo nome
   public get datasource(): any {
-    /* _entityDocumentos é atualizado pelo angular na chamada do get entityDocumentos() */
+    /* _entityDocumentos é atualizado pelo angular na chamada do get entityDocumentos() * /
     let data = this.dao!.datasource(this._entityDocumentos);
     let programa = this.programa?.selectedEntity as Programa;
-    /* Atualiza os campos de texto complementar do usuário e da unidade */
+    /* Atualiza os campos de texto complementar do usuário e da unidade * /
     data.usuario.texto_complementar_plano = this.form!.controls.usuario_texto_complementar.value || "";
     data.unidade.texto_complementar_plano = this.form!.controls.unidade_texto_complementar.value || "";
     if(JSON.stringify(data) != this.JSON.stringify(this._datasource)) {
       this._datasource = data;
-      /* Se o termo for um documento obrigatório, então será gerado um termo automaticamente */
+      /* Se o termo for um documento obrigatório, então será gerado um termo automaticamente * /
       this.documentoId = undefined;
       if(programa?.termo_obrigatorio) {
         this.documentoId = this.form!.controls.documento_id.value;
@@ -172,31 +179,15 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       }
     }
     return this._datasource;
-  }
+  }*/
 
-  public get template(): Template | undefined {
-    /* _entityDocumentos é atualizado pelo angular na chamada do get entityDocumentos() */
+  /*public get template(): Template | undefined {
+    /* _entityDocumentos é atualizado pelo angular na chamada do get entityDocumentos() * /
     return this.planoTrabalhoService.template(this._entityDocumentos);
-  }
+  }*/
 
   public get isTermos(): boolean {
     return this.action == "termos";
-  }
-
-  public validateAtividades = (control: AbstractControl, controlName: string) => {
-    let result = null;
-    if(controlName == 'atividade_id' && !control.value?.length) {
-      result = "Obrigatório";
-    }
-    return result;
-  }
-
-  public validateEntregas = (control: AbstractControl, controlName: string) => {
-    let result = null;
-    if(controlName == 'entrega_id' && !control.value?.length) {
-      result = "Obrigatório";
-    }
-    return result;
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -204,11 +195,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
     if(['unidade_id', 'programa_id', 'usuario_id', 'tipo_modalidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    }
-    if(['carga_horaria'].indexOf(controlName) >= 0 && !control.value) {
+    } else if(['carga_horaria'].indexOf(controlName) >= 0 && !control.value) {
       result = "Valor não pode ser zero.";
-    } 
-    if(['data_inicio', 'data_fim'].includes(controlName) && !this.util.isDataValid(control.value)) {
+    } else if(['data_inicio', 'data_fim'].includes(controlName) && !this.util.isDataValid(control.value)) {
       result = "Inválido";
     } else if(this.programa && controlName == 'data_inicio' && (control.value as Date).getTime() < this.programa!.selectedEntity?.data_inicio.getTime()) {
       result = "Menor que programa";
@@ -220,11 +209,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public formValidation = (form?: FormGroup) => {
+    // TODO:
     // Validar se as entregas pertencem ao plano de entregas da unidade
     // Validar se o usuários está habilitado no programa
-    // Validar o período está dentro do plano de entregas
-
-
     return undefined;
   };
 
@@ -236,18 +223,16 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     let unidade = this.unidade?.selectedEntity as Unidade;
     this.entity!.unidade = unidade;
     this.entity!.unidade_id = unidade.id;
+    this.form!.controls.forma_contagem_carga_horaria.setValue(unidade?.entidade?.forma_contagem_carga_horaria || "DIA");
+    this.form!.controls.unidade_texto_complementar.setValue(unidade?.texto_complementar_plano || "");
   }
 
   public onProgramaSelect(selected: SelectItem) {
     let programa = selected.entity as Programa;
-    let unidade = this.unidade?.selectedEntity as Unidade;
-    //this.updateEntregas(planoEntrega);
     this.entity!.programa_id = programa.id;
     this.entity!.programa = programa;
     this.form?.controls.data_inicio.updateValueAndValidity();
     this.form?.controls.data_fim.updateValueAndValidity();
-    this.form!.controls.forma_contagem_carga_horaria.setValue(unidade?.entidade?.forma_contagem_carga_horaria || "DIA");
-    this.form!.controls.unidade_texto_complementar.setValue(unidade?.texto_complementar_plano || "");
     this.calculaTempos();
     this.cdRef.detectChanges();
   }
@@ -287,19 +272,20 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public async loadData(entity: PlanoTrabalho, form: FormGroup) {
+    this.planoTrabalho = new PlanoTrabalho(entity);
     await Promise.all([
       this.calendar.loadFeriadosCadastrados(entity.unidade_id),
       this.usuario?.loadSearch(entity.usuario || entity.usuario_id),
       this.unidade?.loadSearch(entity.unidade || entity.unidade_id),
       this.programa?.loadSearch(entity.programa || entity.programa_id),
-      this.tipoModalidade?.loadSearch(entity.tipo_modalidade || entity.tipo_modalidade_id),
+      this.tipoModalidade?.loadSearch(entity.tipo_modalidade || entity.tipo_modalidade_id)
     ]);
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
-    let documento = entity.documentos.find(x => x.id == entity.documento_id);
-    if(documento) this._datasource = documento.datasource;
+    /*let documento = entity.documentos.find(x => x.id == entity.documento_id);
+    if(documento) this._datasource = documento.datasource;*/
     this.calculaTempos();
-    this.cdRef.detectChanges();
+    this.atualizarTcr();
   }
 
   public async initializeData(form: FormGroup) {
@@ -313,7 +299,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     await this.loadData(this.entity, this.form!);
   }
 
-  /* Atividades */  
+  /* Atividades *
   public async addAtividades() {
     return new PlanoTrabalhoAtividade({ plano_trabalho_id: this.entity?.id, _status: "ADD" }) as IIndexable;
   }
@@ -336,11 +322,19 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       row.atividade = await this.atividadeDao?.getById(row.atividade_id)!;
     } finally {
       this.dialog.closeSppinerOverlay();
-    }*/
+    }* /
     return row;
   }
 
-  /* Entregas */
+  public validateAtividades = (control: AbstractControl, controlName: string) => {
+    let result = null;
+    if(controlName == 'atividade_id' && !control.value?.length) {
+      result = "Obrigatório";
+    }
+    return result;
+  }*/
+
+  /* Entregas * /
   public async addEntregas() {
     return new PlanoTrabalhoEntrega({ plano_trabalho_id: this.entity?.id, _status: "ADD" }) as IIndexable;
   }
@@ -363,52 +357,64 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     return row;
   }
 
-  /* Gera o objeto entity baseado nas informações atuais do formulário para ser utilizado por Documentos */
+  public validateEntregas = (control: AbstractControl, controlName: string) => {
+    let result = null;
+    if(controlName == 'entrega_id' && !control.value?.length) {
+      result = "Obrigatório";
+    }
+    return result;
+  }*/
+
+  /* Gera o objeto entity baseado nas informações atuais do formulário para ser utilizado por Documentos * /
+  SUBSTITUIDO POR entity
   public get entityDocumentos(): PlanoTrabalho {
     let plano = this.loadEntity();
-    /* Remove campo de documentos para comparar */
+    /* Remove campo de documentos para comparar * /
     plano.documentos = [];
     this._entityDocumentos.documentos = [];
     if(JSON.stringify(plano) != JSON.stringify(this._entityDocumentos)) {
       this._entityDocumentos = plano;  
     }
-    /* Atribui novamente o campo de documentos */
+    /* Atribui novamente o campo de documentos * /
     this._entityDocumentos.documentos = this.form!.controls.documentos.value;
     return this._entityDocumentos;
-  }
+  }*/
 
   /* Cria um objeto Plano baseado nos dados do formulário */
   public loadEntity(): PlanoTrabalho {
     let plano: PlanoTrabalho = this.util.fill(new PlanoTrabalho(), this.entity!);
     plano = this.util.fillForm(plano, this.form!.value);
-    plano.usuario = this.usuario!.selectedEntity as Usuario;
-    plano.unidade = (this.entity?.unidade || this.unidade?.selectItem) as Unidade;
-    plano.programa = (this.entity?.programa || this.programa?.selectItem) as Programa;
-    plano.tipo_modalidade = this.tipoModalidade!.selectedEntity as TipoModalidade;
+    plano.usuario = (this.usuario!.selectedEntity || this.entity?.usuario) as Usuario;
+    plano.unidade = (this.unidade?.selectedEntity || this.entity?.unidade) as Unidade;
+    plano.programa = (this.programa?.selectedEntity || this.entity?.programa) as Programa;
+    plano.tipo_modalidade = (this.tipoModalidade!.selectedEntity || this.entity?.tipo_modalidade) as TipoModalidade;
     return plano;
   }
 
   public async saveData(form: IIndexable): Promise<PlanoTrabalho | boolean> {
-    let plano = this.loadEntity();
+    //let plano = this.loadEntity();
+    /* Atualiza o documento */
+    this.atualizarTcr();
     /* Confirma dados do documento */
     this.documentos?.saveData();
-    plano.documentos = plano.documentos.filter((documento: Documento) => {
-      return ["ADD", "EDIT", "DELETE"].includes(documento._status || "")
+    this.entity!.documentos = this.entity!.documentos.filter((documento: Documento) => {
+      return ["ADD", "EDIT", "DELETE"].includes(documento._status || "");
     });
     /* Salva separadamente as informações do plano */
     this.submitting = true;
     try {
-      this.entity = await this.dao!.save(plano);
-      if(this.form!.controls.editar_texto_complementar_unidade.value) {
-        await this.unidadeDao.update(plano.unidade_id, {texto_complementar_plano: this.form!.controls.unidade_texto_complementar.value});
-      }
-      if(this.form!.controls.editar_texto_complementar_usuario.value) {
-        await this.usuarioDao.update(plano.unidade_id, {texto_complementar_plano: this.form!.controls.usuario_texto_complementar.value});
-      }
+      let requests: Promise<any>[] = [this.dao!.save(this.entity!)];
+      if(this.form!.controls.editar_texto_complementar_unidade.value) requests.push(this.unidadeDao.update(this.entity!.unidade_id, {texto_complementar_plano: this.form!.controls.unidade_texto_complementar.value}));
+      if(this.form!.controls.editar_texto_complementar_usuario.value) requests.push(this.usuarioDao.update(this.entity!.usuario_id, {texto_complementar_plano: this.form!.controls.usuario_texto_complementar.value}));
+      await Promise.all(requests);
     } finally {
       this.submitting = false;
     }
     return true;
+  }
+
+  public onTabSelect(tab: LookupItem) {
+    if(tab.key == "TERMO") this.atualizarTcr();
   }
 
   public titleEdit = (entity: PlanoTrabalho): string => {
@@ -470,7 +476,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.form!.controls.forma_contagem_carga_horaria.setValue(unit == "day" ? "DIA" : unit == "week" ? "SEMANA" : "MES");
   }
 
-  public async addDocumento() {
+  /*public async addDocumento() {
     const documento = new Documento();
     documento.id = this.dao!.generateUuid();
     documento.plano_trabalho_id = this.entity!.id;
@@ -509,15 +515,15 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       }
     }});
     return undefined;
-  }
+  }*/
 
   public isVigente(documento: Documento): boolean {
     return this.form!.controls.documento_id.value == documento.id;
   }
 
-  public onProcessoClick(row: any) {
+  /*public onProcessoClick(row: any) {
     this.allPages.openDocumentoSei(row.id_processo, row.id_documento);
-  }
+  }*/
 
 }
 

@@ -40,7 +40,7 @@ export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
     public usuario_id: string = "";
     public unidade_id: string = "";
     public tipo_modalidade_id: string = "";
-    public documento_id: string = "";
+    public documento_id: string | null = null;
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }
