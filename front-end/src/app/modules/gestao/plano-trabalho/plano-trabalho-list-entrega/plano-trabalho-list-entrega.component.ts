@@ -16,6 +16,7 @@ import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { PlanoTrabalhoService } from '../plano-trabalho.service';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
+import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
 
 @Component({
   selector: 'plano-trabalho-list-entrega',
@@ -262,6 +263,13 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   public onPlanoEntregaChange(event: Event) {
     let planoEntrega = this.planoEntrega?.selectedEntity as PlanoEntrega;
     this.carregarEntregas(planoEntrega);
+  }
+
+  public onEntregaChange(event: Event) {
+    let entrega = this.entrega!.selectedItem?.data as PlanoEntregaEntrega;
+    if(!this.form!.controls.descricao.value?.length) {
+      this.form!.controls.descricao.setValue(entrega?.descricao || "");
+    }
   }
 
   public onForcaTrabalhoChange(row: any) {

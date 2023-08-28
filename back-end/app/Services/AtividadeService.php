@@ -79,6 +79,7 @@ class AtividadeService extends ServiceBase
         if($action == ServiceBase::ACTION_INSERT) {
             $usuario = parent::loggedUser();
             $data["demandante_id"] = $usuario->id;
+            $data["status"] = 'INCLUIDO';
         }
         return $data;
     }

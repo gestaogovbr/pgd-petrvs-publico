@@ -6,6 +6,7 @@ import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { Template } from 'src/app/models/template.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { LookupItem, LookupService } from 'src/app/services/lookup.service';
+import { TemplateService } from '../../uteis/templates/template.service';
 
 export type BadgeEntrega = {
   titulo: string,
@@ -22,6 +23,8 @@ export class PlanoTrabalhoService {
   constructor(
     public auth: AuthService,
     public lookup: LookupService,
+    public dao: PlanoTrabalhoDaoService,
+    public templateService: TemplateService,
     public planoTrabalhoDao: PlanoTrabalhoDaoService
   ) { }
 
@@ -86,4 +89,53 @@ export class PlanoTrabalhoService {
     return { titulo: result.value, cor: result.color || "danger", nome: nome, tipo: key};
   }
 
+  /**
+   * Método atualiza o TCR caso ele exista (possivelmente obrigatório pelo programa), e caso ele não esteja assinado. 
+   * Em caso de estar assinado ou ser obrigatório e não exista ainda, será gerado um novo documento.
+   * @param planoReferencia  Plano de trabalho para comparação (contendo as entregas)
+   * @param planoNovo        Plano de trabalho modificado, com as novas informações (contendo as entregas, programa.template_tcr e documentos)
+   * @param ?textUsuario     Texto complementar do usuário, caso não seja informado, irá utilizar o do planoNovo.usuario.texto_complementar_plano
+   * @param ?textUnidade     Texto complementar da unidade, caso não seja informado, irá utilizar o do planoNovo.unidade.texto_complementar_plano
+   * @returns                Documento gerado ou modificado (observar o _status)
+   */
+  public atualizarTcr(planoReferencia: PlanoTrabalho, planoNovo: PlanoTrabalho, textUsuario?: string, textUnidade?: string) {
+    if(planoNovo.usuario && planoNovo.unidade) {
+      let dsReferencia = this.dao!.datasource(planoReferencia);
+      let dsNovo = this.dao!.datasource(planoNovo);
+      let programa = planoNovo.programa;
+      /* Atualiza os campos de texto complementar do usuário e da unidade */
+      dsNovo.usuario.texto_complementar_plano = textUsuario || planoNovo.usuario?.texto_complementar_plano || "";
+      dsNovo.unidade.texto_complementar_plano = textUnidade || planoNovo.unidade?.texto_complementar_plano || "";
+      /* Se tiver modificações e o termo for obrigatório ou já exista um documento */
+      if((programa?.termo_obrigatorio || planoNovo.documento_id?.length) && JSON.stringify(dsNovo) != JSON.stringify(dsReferencia) && programa?.template_tcr) {
+        let documento = planoNovo.documentos?.find((x: Documento) => x.id == planoNovo.documento_id);
+        if(!planoNovo.documento_id?.length || !documento || documento.assinaturas?.length || documento.tipo == "LINK") {
+          documento = new Documento({
+            id: this.dao?.generateUuid(), 
+            tipo: "HTML",
+            especie: "TCR",
+            titulo: "Termo de Ciência e Responsabilidade",
+            conteudo: this.templateService.renderTemplate(programa?.template_tcr?.conteudo || "", dsNovo),
+            status: "GERADO",
+            _status: "ADD",
+            template: programa?.template_tcr?.conteudo,
+            dataset: this.dao!.dataset(),
+            datasource: dsNovo,
+            entidade_id: this.auth.entidade?.id,
+            plano_trabalho_id: planoNovo.id,
+            template_id: programa?.template_tcr_id
+          });
+          planoNovo.documentos.push(documento);
+        } else {
+          documento.conteudo = this.templateService.renderTemplate(programa?.template_tcr?.conteudo || "", dsNovo);
+          documento.dataset = this.dao!.dataset();
+          documento.datasource = dsNovo;
+          documento._status = documento._status == "ADD" ? "ADD" : "EDIT"; 
+        }
+        planoNovo.documento = documento;
+        planoNovo.documento_id = documento?.id || null;
+      }
+    }
+    return planoNovo.documento;
+  }
 }

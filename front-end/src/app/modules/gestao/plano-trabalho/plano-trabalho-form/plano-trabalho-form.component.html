@@ -1,5 +1,5 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [noButtons]="isTermos ? 'true' : undefined" initialFocus="plano_entrega_id" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
-    <tabs #tabs display right [hidden]="isTermos ? 'true' : undefined" [title]="!isModal ? title : ''">
+    <tabs #tabs display right [hidden]="isTermos ? 'true' : undefined" [title]="!isModal ? title : ''" [select]="onTabSelect.bind(this)">
         <tab key="DADOS" label="Dados">
             <div class="row">
                 <!-- (RI_PTR_1) No formulário de inclusão/edição de um plano de trabalho, o input-search de unidade, programa e usuario devem ficar desabilitados nas edições e habilitado apenas nas inclusões; -->
@@ -29,10 +29,6 @@
                 <top-alert *ngIf="!form!.controls.programa_id.value?.length || !form!.controls.unidade_id.value?.length" type="warning" [message]="'Antes de incluir ' + lex.translate('entrega') + ' neste ' + lex.translate('Plano de Trabalho') + ', é necessário selecionar ' + lex.translate('a Unidade') + ' e ' + lex.translate('o Programa') + '!'"></top-alert>
                 <div *ngIf="form!.controls.programa_id.value?.length && form!.controls.unidade_id.value?.length">
                     <plano-trabalho-list-entrega noPersist [entity]="entity"></plano-trabalho-list-entrega>
-                    <!-- Pra que esse form?
-                        editable-form [form]="formEntregas!" noMargin [noButtons]="'true'">
-                        <plano-trabalho-list-entrega noPersist [entity]="entity"></plano-trabalho-list-entrega>
-                    </editable-form/-->
                 </div>
             </separator>
         </tab>
@@ -57,49 +53,8 @@
         <tab *ngIf="checkFilled(['usuario_id', 'programa_id', 'tipo_modalidade_id'])" key="TERMO" label="Termo">
             <!--top-alert *ngIf="!isTermos" type="warning" message="Para [INSERIR] ou [ASSINAR] termos escolha opção Termos de adesão na tela de listagem, ou utilize o Sei"></top-alert/-->
             <div clss="row">
-                <documentos #documentos [entity]="entityDocumentos" noPersist [cdRef]="cdRef" [needSign]="planoTrabalhoService.needSign" [extraTags]="planoTrabalhoService.extraTags" especie="TCR" 
-                    [editingId]="documentoId" [datasource]="datasource" [template]="programa?.selectedEntity?.template_tcr"></documentos>
-                <!--grid [control]="form!.controls.documentos" #gridDocumentos [disabled]="undefined" #documentos [hasEdit]="false" [hasDelete]="false" [hasAdd]="isTermos" [add]="isTermos ? addDocumento.bind(this) : undefined" editable>
-                    <columns>
-                        <column title="Data" [template]="dataInicio">
-                            <ng-template let-row="row" #dataInicio>
-                                <span class="badge bg-light text-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Data da inclusão">
-                                    <i class="bi bi-calendar-plus"></i>
-                                    {{util.getDateTimeFormatted(row.data_inicio)}}
-                                </span>
-                                <span *ngIf="row.data_fim" class="badge bg-light text-dark" data-bs-toggle="tooltip" data-bs-placement="top" title="Data substituição">
-                                    <i class="bi bi-calendar-x"></i>
-                                    {{util.getDateTimeFormatted(row.data_fim)}}
-                                </span>
-                            </ng-template>
-                        </column>
-                        <column title="Documento Sei" [template]="documento">
-                            <ng-template let-row="row" #documento>
-                                <span *ngIf="row.numero_processo?.length" class="badge bg-light text-dark" [attr.role]="row.numero_processo?.length ? 'button' : undefined" data-bs-toggle="tooltip" data-bs-placement="top" (click)="onProcessoClick(row)" [title]="allPages.getButtonTitle(row.numero_processo, row.numero_documento)">
-                                    <i [class]="'bi ' + (row.numero_processo?.length ? 'bi bi-folder-symlink' : 'bi bi-x-lg')"></i>
-                                    {{row.numero_processo?.length ? row.numero_processo : "Não atribuído"}}
-                                    <small *ngIf="row.numero_documento?.length"><br>Sei nº {{row.numero_documento}}</small>
-                                </span>
-                            </ng-template>
-                        </column>
-                        <column title="Status" [template]="vigente">
-                            <ng-template let-row="row" #vigente>
-                                <badge [color]="lookup.getColor(lookup.DOCUMENTO_STATUS, row.status)" [icon]="lookup.getIcon(lookup.DOCUMENTO_STATUS, row.status)" [label]="lookup.getValue(lookup.DOCUMENTO_STATUS, row.status)"></badge>
-                                <span *ngIf="isVigente(row)" class="badge rounded-pill bg-info text-dark">
-                                    <i class="bi bi-clipboard-check"></i>
-                                    Vigente
-                                </span>
-                                <div class="d-block">
-                                    <span *ngFor="let assinatura of row.assinaturas" class="badge rounded-pill bg-primary">
-                                        <i class="bi bi-pen"></i>
-                                        {{util.apelidoOuNome(assinatura.usuario)}}
-                                    </span>
-                                </div>
-                            </ng-template>
-                        </column>
-                        <column type="options" [dynamicButtons]="documentoDynamicButtons.bind(this)"></column>
-                    </columns>
-                </grid//-->
+                <documentos #documentos [entity]="entity" noPersist [cdRef]="cdRef" [needSign]="planoTrabalhoService.needSign" [extraTags]="planoTrabalhoService.extraTags" especie="TCR" 
+                    [editingId]="editingId" [datasource]="datasource" [template]="programa?.selectedEntity?.template_tcr"></documentos>
             </div>
         </tab>
     </tabs>

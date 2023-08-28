@@ -374,7 +374,7 @@ abstract class ControllerBase extends Controller
             $this->checkPermissions("UPDATEJSON", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
                 'id' => ['required'],
-                'data' => ['required'],
+                'data' => ['nullable'],
                 'field' => ['required'],
                 'with' => ['array']
             ]);

@@ -104,9 +104,9 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
       texto: {default: ""},
       checked: {default: false}
     }, this.cdRef, this.validateChecklist);
-    this.join = ["usuario.planos_entrega.entregas.entrega:id,nome", "usuario.planos_entrega.tipo_modalidade:id,nome", "pausas", "tipo_atividade", "unidade", "comentarios.usuario", "tarefas.tipo_tarefa", "tarefas.comentarios.usuario", "documento_requisicao", "documento_entrega"];
+    this.join = ["usuario.planos_trabalho.tipo_modalidade:id,nome", "pausas", "tipo_atividade", "unidade", "comentarios.usuario", "tarefas.tipo_tarefa", "tarefas.comentarios.usuario", "documento_requisicao", "documento_entrega"];
   }
-
+//"usuario.planos_trabalho.entregas.plano_entrega_entrega:id,descricao", 
   public ngOnInit() {
     super.ngOnInit();
     const segment = (this.url ? this.url[this.url.length-1]?.path : "") || "";
@@ -204,7 +204,6 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     (async () => {
       if(this.entity) {
         const planoTrabalho = (this.usuario?.selectedEntity as Usuario)?.planos_trabalho?.find(x => x.id == this.form!.controls.plano_trabalho_id.value);
-        const planoTrabalhoEntregaId = this.form.controls.plano_trabalho_entrega_id.value;
         if(planoTrabalho) {
           if(this.planoTrabalhoSelecionado?.id != planoTrabalho.id) {
             this.planoTrabalhoSelecionado = await this.planoTrabalhoDao.getById(planoTrabalho.id, this.planoTrabalhoJoin);
@@ -216,7 +215,8 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
               await this.auth.selecionaUnidade(unidade.id);
             }
           }
-          this.entregas = planoTrabalho.entregas?.map(x => Object.assign({}, {
+          const planoTrabalhoEntregaId = this.form.controls.plano_trabalho_entrega_id.value;
+          this.entregas = this.planoTrabalhoSelecionado?.entregas?.map(x => Object.assign({}, {
             key: x.id,
             value: x.descricao + (x.plano_entrega_entrega ? " (" + x.plano_entrega_entrega?.descricao + ")" : ""),
             data: x

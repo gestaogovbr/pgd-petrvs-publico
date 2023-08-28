@@ -808,9 +808,13 @@ class ServiceBase extends DynamicMethods
             try {
                 if($transaction) DB::beginTransaction();
                 $data = method_exists($this, "proxyUpdateJson") ? $this->proxyUpdateJson($data, $unidade) : $data;
-                $model::where('id', $data['id'])->addBinding(json_encode($data['data']), 'join')->update([
-                    $data['field'] => DB::raw("JSON_MERGE_PATCH(IFNULL(" . preg_replace( '/[^a-z0-9_]/i', '', $data['field']) . ", '{}'), ?)")
-                ]);
+                if($data['data'] == null) {
+                    $model::where('id', $data['id'])->update([$data['field'] => null]);
+                } else {
+                    $model::where('id', $data['id'])->addBinding(json_encode($data['data']), 'join')->update([
+                        $data['field'] => DB::raw("JSON_MERGE_PATCH(IFNULL(" . preg_replace( '/[^a-z0-9_]/i', '', $data['field']) . ", '{}'), ?)")
+                    ]);
+                }
                 $entity->fresh();
                 if($transaction) DB::commit();
                 return $entity;
