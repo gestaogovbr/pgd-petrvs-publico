@@ -27,6 +27,7 @@ import { CapacidadeTecnicaFormComponent } from './capacidade-tecnica-form/capaci
 import { CapacidadeTecnicaListComponent } from './capacidade-tecnica-list/capacidade-tecnica-list.component';
 import { QuestionarioPerguntaListComponent } from './questionario-pergunta-list/questionario-pergunta-list.component';
 import { QuestionarioPerguntaFormComponent } from './questionario-pergunta-form/questionario-pergunta-form.component';
+import { QuestionarioRespostaListComponent } from './questionario-resposta-list/questionario-resposta-list.component';
 
 
 const routes: Routes = [
@@ -83,6 +84,10 @@ const routes: Routes = [
   { path: 'gerais/questionariopergunta/new', component: QuestionarioPerguntaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
   { path: 'gerais/questionariopergunta/:id/edit', component: QuestionarioPerguntaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
   { path: 'gerais/questionariopergunta/:id/consult', component: QuestionarioPerguntaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } },
+  { path: 'gerais/questionarioresposta', component: QuestionarioRespostaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Lista", modal: false } },
+  { path: 'gerais/questionarioresposta/new', component: QuestionarioPerguntaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
+  { path: 'gerais/questionarioresposta/:id/edit', component: QuestionarioPerguntaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
+  { path: 'gerais/questionarioresposta/:id/consult', component: QuestionarioPerguntaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } },
 ];
 
 @NgModule({

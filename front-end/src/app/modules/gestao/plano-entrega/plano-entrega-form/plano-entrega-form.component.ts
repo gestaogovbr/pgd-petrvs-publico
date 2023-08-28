@@ -32,14 +32,14 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   @ViewChild('unidade', { static: true }) public unidade?: InputSearchComponent;
   @ViewChild('nome', { static: true }) public nomePE?: InputTextComponent;
   @ViewChild('data_fim', { static: true }) public dataFim?: InputDatetimeComponent;
-  
+
   public unidadeDao: UnidadeDaoService;
   public programaDao: ProgramaDaoService;
   public cadeiaValorDao: CadeiaValorDaoService;
   public planejamentoInstitucionalDao: PlanejamentoDaoService;
   public form: FormGroup;
   public maxPE: Number | undefined;
- 
+
   constructor(public injector: Injector) {
     super(injector, PlanoEntrega, PlanoEntregaDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
@@ -60,7 +60,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
       entregas: { default: [] },
     }, this.cdRef, this.validate);
     //this.maxPE=this.programa?.
-   
+
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -79,7 +79,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
 
   public formValidation = (form?: FormGroup) => {
     /*
-        (RN_PENT_Z) INSERIR/CRIAR 
+        (RN_PENT_Z) INSERIR/CRIAR
         - o usuário logado precisa possuir a capacidade "MOD_PENT_INCL", e:
             - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou gestor da sua Unidade-pai (Unidade A)(RN_PENT_C); ou
             - o usuário precisa possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a Unidade-pai (Unidade A) da Unidade do plano (Unidade B) e possuir a capacidade "MOD_PENT_EDT_FLH"; ou
@@ -155,7 +155,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     const di = new Date(this.form!.controls.data_inicio.value).toLocaleDateString();
     const df = new Date(this.form!.controls.data_fim.value).toLocaleDateString();
     this.form!.controls.nome.setValue(sigla + " - " + di + " - " + df)
-    
+
   }
 
   public somaDia(date: Date, days: number){
