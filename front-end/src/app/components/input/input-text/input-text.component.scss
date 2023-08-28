@@ -1,4 +1,5 @@
 input[type="text"]:read-only, 
-input[type="text"]:disabled { 
-    background-color:#e9ecef;
+input[type="text"]:disabled {
+    background-color: var(--bs-secondary-bg);
+    /*background-color:#e9ecef;*/
 }

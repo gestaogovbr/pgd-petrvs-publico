@@ -5,8 +5,10 @@
     width: 100px;
 }
 .grid-no-hover, .grid-no-hover:hover {
-    background-color: var(--bs-white) !important;
-    box-shadow: inset 0 0 0 9999px var(--bs-white);
+    /* background-color: var(--bs-white) !important; */
+    background-color: var(--bs-body-bg) !important;
+    filter: brightness(95%) !important;
+    /* box-shadow: inset 0 0 0 9999px var(--bs-white); */
     cursor: default;
 }
 .grid-column {
@@ -27,10 +29,14 @@
 }
 .grid-column-expanded {
     border-bottom: 0px;
-    background-color: var(--bs-light) !important;
+    /*background-color: var(--bs-light) !important;*/
+    background-color: var(--bs-body-bg) !important;
+    filter: brightness(95%) !important;
 }
 .grid-expanded-background {
-    background-color: var(--bs-light) !important;
+    /*background-color: var(--bs-light) !important;*/
+    background-color: var(--bs-body-bg) !important;
+    filter: brightness(95%) !important;
 }
 .grid-multiselect-header {
     width: 40px;

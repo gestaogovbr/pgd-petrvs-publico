@@ -15,7 +15,9 @@ export class PlanoTrabalhoEntregaDaoService extends DaoBaseService<PlanoTrabalho
   public dataset(deeps?: string[]): TemplateDataset[] {
     return this.deepsFilter([
       { field: "descricao", label: "Descrição da entrega" },
-      { field: "forca_trabalho", label: "Percentual da força de trabalho" }
+      { field: "forca_trabalho", label: "Percentual da força de trabalho" },
+      { field: "orgao", label: "Orgão externo vinculado a entrega" },
+      { field: "meta", label: "Meta extipulada para a entrega" }
     ], deeps);
   }
 

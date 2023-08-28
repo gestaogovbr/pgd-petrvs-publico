@@ -1,8 +1,8 @@
-<editable-form [form]="form!" [disabled]="formDisabled" (submit)="onSaveData()" (cancel)="onCancel()">
+<editable-form [form]="form!" [disabled]="formDisabled" initialFocus="tipo_atividade_id" (submit)="onSaveData()" (cancel)="onCancel()">
     <documento-link [documento]="form!.controls.documento_entrega.value"></documento-link>
     <div class="row">
         <input-search [label]="lex.translate('Tipo de Atividade')" #tipoAtividade [emptyValue]="null" [size]="5" controlName="tipo_atividade_id" [dao]="tipoAtividadeDao" (select)="onTipoAtividadeSelect($event)"></input-search>
-        <input-select [label]="lex.translate('Entrega do plano')" [size]="5" controlName="plano_trabalho_entrega_id" #entrega [control]="form!.controls.plano_trabalho_entrega_id" [items]="entregas" [labelInfo]="lex.translate('Entrega do plano') + ' que a ' + lex.translate('atividade') + ' é referente'"></input-select>
+        <input-select [label]="lex.translate('Entrega do plano')" [size]="5" controlName="plano_trabalho_entrega_id" #entrega [control]="form!.controls.plano_trabalho_entrega_id" [items]="entregas" [labelInfo]="lex.translate('Entrega do plano') + ' que a ' + lex.translate('atividade') + ' é referente'" required></input-select>
         <input-switch label="Arquivar" [size]="2" controlName="arquivar" [control]="form!.controls.arquivar" labelInfo="Arquivar automaticamente após a conclusão (Somente se o plano dispensar avaliação)"></input-switch>
     </div>
     <div class="row">
@@ -27,7 +27,7 @@
     <separator title="Conclusão">
         <div *ngIf="!entity?.plano_trabalho?.tipo_modalidade?.atividade_tempo_despendido; else comTempoDespendido" class="row">
             <input-datetime noIcon [size]="4" label="Inicio" controlName="data_inicio" [control]="form!.controls.data_inicio" disabled labelInfo="Data em que o usuário iniciou a atividade"></input-datetime>
-            <input-datetime noIcon [size]="4" label="Conclusão" controlName="data_entrega" [control]="form!.controls.data_entrega" (change)="onDataEntregaChange($event)" labelInfo="Data da conclusão da atividade"></input-datetime>
+            <input-datetime noIcon [size]="4" label="Conclusão" controlName="data_entrega" [control]="form!.controls.data_entrega" (change)="onDataEntregaChange($event)" labelInfo="Data da conclusão da atividade" required></input-datetime>
             <input-datetime [size]="4" label="Data de arquivamento" controlName="data_arquivamento" [control]="form!.controls.data_inicio" disabled labelInfo="Data de arquivamento da atividade"></input-datetime>
         </div>
         <ng-template #comTempoDespendido>

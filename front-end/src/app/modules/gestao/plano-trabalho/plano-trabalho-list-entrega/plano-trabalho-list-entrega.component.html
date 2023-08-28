@@ -7,10 +7,12 @@
                 <column [titleTemplate]="titleOrigem" [template]="columnOrigem" [editTemplate]="editOrigem" [verticalAlign]="'middle'" [width]="300" [align]="'center'">
                     <ng-template let-header="header" #titleOrigem><div class="text-center"><span><strong>Origem</strong></span></div></ng-template>
                     <ng-template let-row="row" #columnOrigem>
-                        <div class="one-per-line w-100">
-                            <badge [label]="planoTrabalhoService.tipoEntrega(row, entity).titulo" [color]="planoTrabalhoService.tipoEntrega(row, entity).cor"></badge>
-                            <badge *ngIf="row.plano_entrega_entrega_id?.length" [label]="row.plano_entrega_entrega?.plano_entrega?.unidade?.sigla || 'Desconhecido'" [icon]="entityService.getIcon('Unidade')" color="primary"></badge>
-                            <badge *ngIf="row.orgao?.length" [label]="row.orgao" icon="bi bi-box-arrow-down-left" color="warning"></badge>
+                        <div class="w-100 d-flex justify-content-center">
+                            <div class="one-per-line">
+                                <badge [label]="planoTrabalhoService.tipoEntrega(row, entity).titulo" [color]="planoTrabalhoService.tipoEntrega(row, entity).cor"></badge>
+                                <badge *ngIf="row.plano_entrega_entrega_id?.length" [label]="row.plano_entrega_entrega?.plano_entrega?.unidade?.sigla || 'Desconhecido'" [icon]="entityService.getIcon('Unidade')" color="primary"></badge>
+                                <badge *ngIf="row.orgao?.length" [label]="row.orgao" icon="bi bi-box-arrow-down-left" color="warning"></badge>
+                            </div>
                         </div>
                     </ng-template>
                     <ng-template let-row="row" #editOrigem>
@@ -23,13 +25,17 @@
                     <ng-template let-header="header" #titleEntrega><span><strong>Entrega</strong></span></ng-template>
                     <ng-template let-row="row" #columnEntrega>
                         <small>{{ planoTrabalhoService.tipoEntrega(row, entity).nome }}</small>
-                        <div *ngIf="['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(planoTrabalhoService.tipoEntrega(row, entity).tipo)" class="text-nowrap">
-                            <badge color="light" icon="bi bi-box-arrow-right" [label]="util.getDateFormatted(row.plano_entrega_entrega?.data_inicio)" hint="Data de início"></badge><br>
-                            <badge color="light" icon="bi bi-box-arrow-in-right" [label]="util.getDateFormatted(row.plano_entrega_entrega?.data_fim)" hint="Data de término"></badge>
+                        <div *ngIf="['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(planoTrabalhoService.tipoEntrega(row, entity).tipo)" class="w-100">
+                            <badge color="light" icon="bi bi-box-arrow-in-right" [label]="util.getDateFormatted(row.plano_entrega_entrega?.data_inicio)" hint="Data de início"></badge>
+                            <badge color="light" icon="bi bi-box-arrow-right" [label]="util.getDateFormatted(row.plano_entrega_entrega?.data_fim)" hint="Data de término"></badge>
                         </div>
                     </ng-template>
                     <ng-template let-row="row" #editEntrega>
-                        <input-select *ngIf="['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(origem?.value)" #entrega nullable itemNull="- Selecione -" controlName="plano_entrega_entrega_id" [control]="form!.controls.plano_entrega_entrega_id" [items]="entregas"></input-select>
+                        <input-select *ngIf="['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(origem?.value)" #entrega nullable itemNull="- Selecione -" controlName="plano_entrega_entrega_id" [control]="form!.controls.plano_entrega_entrega_id" [items]="entregas" (change)="onEntregaChange($event)"></input-select>
+                        <div *ngIf="entrega?.selectedItem" class="w-100">
+                            <badge color="light" icon="bi bi-box-arrow-in-right" [label]="util.getDateFormatted(entrega!.selectedItem!.data!.data_inicio)" hint="Data de início"></badge>
+                            <badge color="light" icon="bi bi-box-arrow-right" [label]="util.getDateFormatted(entrega!.selectedItem!.data!.data_fim)" hint="Data de término"></badge>
+                        </div>
                     </ng-template>
                 </column>
                 <column [titleTemplate]="titleForcaTrabalho" [template]="columnForcaTrabalho" [editTemplate]="editForcaTrabalho" [width]="125" [align]="'center'">

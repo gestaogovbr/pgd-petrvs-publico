@@ -281,27 +281,30 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     if (this.entrega && this.entrega.selectedItem) {
       const entregaItem = this.entrega?.selectedEntity as Entrega;
       const tipoIndicador = entregaItem.tipo_indicador;
-        switch (tipoIndicador) {
-          case 'QUALITATIVO':
-            this.itensQualitativo = entregaItem.lista_qualitativos || [];
-            this.form?.controls.meta.setValue(this.itensQualitativo.length ? this.itensQualitativo[0].key : null);
-            this.form?.controls.realizado.setValue(this.itensQualitativo.length ? this.itensQualitativo[0].key : null);
-            break;
-          case 'VALOR':
-            this.form?.controls.meta.setValue(100);
-            this.form?.controls.realizado.setValue(0);
-            break;
-          case 'QUANTIDADE':
-            this.form?.controls.meta.setValue(100);
-            this.form?.controls.realizado.setValue(0);
-            break;
-          case 'PORCENTAGEM':
-            this.form?.controls.meta.setValue(100);
-            this.form?.controls.realizado.setValue(100);
-            break;
-          default:
-            break;
-        }
+      if(!this.form!.controls.descricao.value.length) {
+        this.form!.controls.descricao.setValue(entregaItem?.descricao || "");
+      }
+      switch (tipoIndicador) {
+        case 'QUALITATIVO':
+          this.itensQualitativo = entregaItem.lista_qualitativos || [];
+          this.form?.controls.meta.setValue(this.itensQualitativo.length ? this.itensQualitativo[0].key : null);
+          this.form?.controls.realizado.setValue(this.itensQualitativo.length ? this.itensQualitativo[0].key : null);
+          break;
+        case 'VALOR':
+          this.form?.controls.meta.setValue(100);
+          this.form?.controls.realizado.setValue(0);
+          break;
+        case 'QUANTIDADE':
+          this.form?.controls.meta.setValue(100);
+          this.form?.controls.realizado.setValue(0);
+          break;
+        case 'PORCENTAGEM':
+          this.form?.controls.meta.setValue(100);
+          this.form?.controls.realizado.setValue(100);
+          break;
+        default:
+          break;
+      }
       this.calculaRealizado();
     }
   }

@@ -37,7 +37,7 @@ class Atividade extends ModelBase
         'prioridade', /* int; */// Nível de prioridade
         'progresso', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */// Progresso da realização da atividade
         'plano_trabalho_id', /* char(36); */
-        'status', /* enum('CONCLUIDO','NAOCONCLUIDO','INICIADO','PAUSADO','INCLUIDO'); */// Status atual da atividade
+        //'status', /* enum('CONCLUIDO','NAOCONCLUIDO','INICIADO','PAUSADO','INCLUIDO'); */// Status atual da atividade
         'plano_trabalho_entrega_id', /* char(36); */
         'tipo_atividade_id', /* char(36); */
         'demandante_id', /* char(36); NOT NULL; */

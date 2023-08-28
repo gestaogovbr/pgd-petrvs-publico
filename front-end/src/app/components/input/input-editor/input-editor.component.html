@@ -116,9 +116,7 @@
         </tab>
     </tabs>
 </ng-template>
-
-<input-container [labelPosition]="labelPosition" [controlName]="controlName" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
-
+<input-container [labelPosition]="labelPosition" [controlName]="controlName" [required]="required" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
     <!--toolbar *ngIf="hasToolbar" [buttons]="toolbarButtons"></toolbar//-->
     <editor #editor *ngIf="viewInit" [disabled]="isDisabled" [(ngModel)]="value" [ngModelOptions]="{standalone: true}" [init]="editorConfig" [plugins]="plugins" [toolbar]="toolbar"></editor>
 </input-container>

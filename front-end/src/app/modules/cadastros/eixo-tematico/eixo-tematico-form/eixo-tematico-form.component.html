@@ -1,15 +1,15 @@
-<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="nome" (submit)="onSaveData()" (cancel)="onCancel()">
     <div class="row">
         <div class="row">
-            <input-text [size]="12" [label]="'Nome ' + lex.translate('eixos temáticos')" controlName="nome"></input-text>
+            <input-text [size]="12" [label]="'Nome ' + lex.translate('eixos temáticos')" controlName="nome" required></input-text>
         </div>
         <div class="row">
             <div class="col">
-                <input-textarea label="Descrição" [size]="8" [rows]="4" controlName="descricao"></input-textarea>
+                <input-textarea label="Descrição" [size]="8" [rows]="4" controlName="descricao" required></input-textarea>
             </div>
             <div class="col">
                 <input-select [size]="3" label="Ícone" icon="fas fa-sign-out-alt" controlName="icone" [items]="lookup.ICONES"></input-select>
-                <input-color [size]="3" background label="Cor" controlName="cor"></input-color>    
+                <input-color [size]="3" background label="Cor" controlName="cor" required></input-color>    
             </div>
         </div>
     </div>
