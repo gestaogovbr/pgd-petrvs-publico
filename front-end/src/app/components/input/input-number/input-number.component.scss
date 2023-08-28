@@ -2,5 +2,6 @@ input[type="text"]:read-only,
 input[type="number"]:read-only,
 input[type="text"]:disabled, 
 input[type="number"]:disabled {
-    background-color:#e9ecef;
+    background-color: var(--bs-secondary-bg);
+    /*background-color:#e9ecef; */
 }

@@ -53,6 +53,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
   @Input() listHeight: number = 200;
   @Input() prefix?: string;
   @Input() sufix?: string;
+  @Input() required?: string;
   @Input() set where(value: any[] | undefined) {
     if(JSON.stringify(this._where) != JSON.stringify(value)) {
       this._where = value;

@@ -1,10 +1,10 @@
-<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="nome" (submit)="onSaveData()" (cancel)="onCancel()">
     <div class="row">
         <div class="row">
-            <input-text [size]="12" label="Nome" controlName="nome"></input-text>
+            <input-text [size]="12" label="Nome" controlName="nome" required></input-text>
         </div>
         <div class="row">
-            <input-textarea label="Fundamentação" [size]="12" [rows]="4" controlName="fundamentacao"></input-textarea>
+            <input-textarea label="Fundamentação" [size]="12" [rows]="4" controlName="fundamentacao" required></input-textarea>
         </div>
         <div class="row">
             <input-search [size]="12" controlName="eixo_tematico_id" [dao]="eixoTematicoDao" ></input-search>                        

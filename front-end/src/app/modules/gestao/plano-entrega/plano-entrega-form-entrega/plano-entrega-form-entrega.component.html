@@ -1,9 +1,9 @@
-<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="entrega_id" (submit)="onSaveData()" (cancel)="onCancel()">
     <tabs #tabs display right [title]="!isModal ? title : ''">
         <tab key="ENTREGAS" label="Entregas">
             <div class="row">
                 <div class="row">
-                    <input-search #entrega [size]="12" controlName="entrega_id" [dao]="entregaDao" (change)="onEntregaChange($event)" placeholder="Selecione do catálogo ou cadastre uma entrega usando a lupa"></input-search>
+                    <input-search #entrega [size]="12" controlName="entrega_id" [dao]="entregaDao" (change)="onEntregaChange($event)" placeholder="Selecione do catálogo ou cadastre uma entrega usando a lupa" required></input-search>
                 </div>
                 <div class="row">
                     <input-text [size]="12" label="Detalhamento" controlName="descricao" placeholder="Descreva melhor a entrega"></input-text>
@@ -14,20 +14,20 @@
                 </div>
                 <separator title="Especificação das Entregas"></separator>
                 <div class="row">
-                    <input-datetime date [size]="6" label="Início" controlName="data_inicio" [labelInfo]="'Início ' + lex.translate('Plano de Entregas')"></input-datetime>
-                    <input-datetime date [size]="6" label="Fim" controlName="data_fim" [labelInfo]="'Fim ' + lex.translate('Plano de Entregas') + '(Estimativa Inicial)'"></input-datetime>
+                    <input-datetime date [size]="6" label="Início" controlName="data_inicio" [labelInfo]="'Início ' + lex.translate('Plano de Entregas')" required></input-datetime>
+                    <input-datetime date [size]="6" label="Fim" controlName="data_fim" [labelInfo]="'Fim ' + lex.translate('Plano de Entregas') + '(Estimativa Inicial)'" required></input-datetime>
                 </div>
                 <div class="row">
-                    <input-search [size]="6" #unidade label="Demandante" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+                    <input-search [size]="6" #unidade label="Demandante" controlName="unidade_id" [dao]="unidadeDao" required></input-search>
                     <input-text [size]="6" label="Destinatário" controlName="destinatario"></input-text>
                 </div>
                 <separator title="Planejamento"></separator>
                 <div *ngIf="this.entrega?.selectedEntity" class="row">
-                    <input-number *ngIf="checkTipoIndicador(['PORCENTAGEM'])" [size]="6" label="Meta" controlName="meta" sufix="%"></input-number>
+                    <input-number *ngIf="checkTipoIndicador(['PORCENTAGEM'])" [size]="6" label="Meta" controlName="meta" sufix="%" required></input-number>
                     <input-number *ngIf="checkTipoIndicador(['QUANTIDADE', 'VALOR'])" [size]="6" label="Meta" controlName="meta"></input-number>
                     <input-select *ngIf="checkTipoIndicador(['QUALITATIVO'])" [size]="6" label="Meta" controlName="meta" [items]="itensQualitativo"></input-select>
                     <input-number *ngIf="checkTipoIndicador(['PORCENTAGEM'])" [size]="6" label="Realizado" (change)="onRealizadoChange($event)" controlName="realizado" sufix="%"></input-number>
-                    <input-number *ngIf="checkTipoIndicador(['QUANTIDADE', 'VALOR'])" [size]="6" label="Realizado" (change)="onRealizadoChange($event)" controlName="realizado"></input-number>
+                    <input-number *ngIf="checkTipoIndicador(['QUANTIDADE', 'VALOR'])" [size]="6" label="Realizado" (change)="onRealizadoChange($event)" controlName="realizado" required></input-number>
                     <input-select *ngIf="checkTipoIndicador(['QUALITATIVO'])" [size]="6" label="Realizado" (change)="onRealizadoChange($event)" controlName="realizado" [items]="itensQualitativo"></input-select>
                 </div>
                 <div class="row">

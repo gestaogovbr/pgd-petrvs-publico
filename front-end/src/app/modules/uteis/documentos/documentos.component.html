@@ -21,7 +21,7 @@
     <column title="#ID/Especie" [template]="documentoTemplate">
       <ng-template let-row="row" let-metadata="metadata" #documentoTemplate>
         <div class="row">
-          <strong>#{{row.numero}}<small> • {{util.getDateTimeFormatted(row.created_at)}}</small></strong>
+          <strong>#{{row.numero > 0 ? row.numero : "NOVO"}}<small> • {{util.getDateTimeFormatted(row.created_at)}}</small></strong>
         </div>
         <div class="row">
           <small>{{row.titulo}}</small>

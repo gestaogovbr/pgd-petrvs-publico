@@ -1,9 +1,9 @@
-<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="sigla" (submit)="onSaveData()" (cancel)="onCancel()">
   <tabs display right>
     <tab key="PRINCIPAL" label="Principal">
       <div class="row">
-        <input-text [size]="2" label="Sigla" controlName="sigla"></input-text>
-        <input-text [size]="10" label="Nome" controlName="nome"></input-text>
+        <input-text [size]="2" label="Sigla" controlName="sigla" required></input-text>
+        <input-text [size]="10" label="Nome" controlName="nome" required></input-text>
       </div>
       <div class="row">
         <input-search #gestor label="Gestor" [size]="6" [emptyValue]="null" controlName="gestor_id" [dao]="usuarioDao" labelInfo="Responsável pela unidade"></input-search>

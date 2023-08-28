@@ -14,6 +14,7 @@ import { InputSelectComponent } from 'src/app/components/input/input-select/inpu
 import { CalendarService } from 'src/app/services/calendar.service';
 import { InputTimerComponent } from 'src/app/components/input/input-timer/input-timer.component';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
+import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 
 @Component({
   selector: 'app-atividade-form-iniciar',
@@ -27,12 +28,15 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
   @ViewChild('planejado', { static: false }) public planejado?: InputTimerComponent;
   
   public usuarioDao: UsuarioDaoService;
+  public planoTrabalhoDao: PlanoTrabalhoDaoService;
   public calendar: CalendarService;
   public form: FormGroup;
   public modalWidth: number = 600;
   public iniciadas: string[] = []; 
+  public planoTrabalhoSelecionado?: PlanoTrabalho | null = null;
   public planosTrabalhos: LookupItem[] = [];
   public planosTrabalhosEntregas: LookupItem[] = [];
+  public planoTrabalhoJoin: string[] = ["entregas.plano_entrega_entrega:id,descricao", "tipo_modalidade:id,nome"];
   public get labelInfoSuspender(): string {
     const n = this.iniciadas.length > 1 ? this.lex.translate("tarefas"): this.lex.translate("tarefa");
     const s = this.iniciadas.length == 1 ? "" : "s";
@@ -43,6 +47,7 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
   constructor(public injector: Injector) {
     super(injector, Atividade, AtividadeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
+    this.planoTrabalhoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
     this.calendar = injector.get<CalendarService>(CalendarService);
     this.form = this.fh.FormBuilder({
       usuario_id: {default: undefined},
@@ -56,7 +61,7 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
       data_inicio: {default: null},
       suspender: {default: false}
     }, this.cdRef, this.validate);
-    this.join = ["unidade", "atividade", "usuario.planos_trabalho.tipo_modalidade", "usuario.planos_trabalho.entregas.plano_entrega_entrega:id,descricao"];
+    this.join = ["unidade", "atividade", "usuario.planos_trabalho.tipo_modalidade"];
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -102,14 +107,17 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
     (async () => {
       if(this.entity) {
         const planoTrabalho = this.planoTrabalho?.selectedItem?.data as PlanoTrabalho;
-        const planoTrabalhoEntregaId = this.form.controls.plano_trabalho_entrega_id.value;
+        if(this.planoTrabalhoSelecionado?.id != planoTrabalho.id) {
+          this.planoTrabalhoSelecionado = await this.planoTrabalhoDao.getById(planoTrabalho.id, this.planoTrabalhoJoin);
+        }
         const cargaHoraria = planoTrabalho?.carga_horaria || this.calendar.expedienteMedio(this.entity!.unidade);
         const tempo_planejado = this.calendar.horasUteis(this.form.controls.data_distribuicao.value, this.form.controls.data_estipulada_entrega.value, cargaHoraria, this.entity!.unidade!, "DISTRIBUICAO");
         this.form.controls.carga_horaria.setValue(cargaHoraria);
         this.form.controls.tempo_planejado.setValue(tempo_planejado);
         this.form.controls.esforco.setValue(this.form.controls.esforco.value || this.entity?.tipo_atividade?.esforco || 0);
         /* Carrega entregas */
-        this.planosTrabalhosEntregas = planoTrabalho.entregas?.map(x => Object.assign({}, {
+        const planoTrabalhoEntregaId = this.form.controls.plano_trabalho_entrega_id.value;
+        this.planosTrabalhosEntregas = this.planoTrabalhoSelecionado?.entregas?.map(x => Object.assign({}, {
           key: x.id,
           value: x.descricao + (x.plano_entrega_entrega ? " (" + x.plano_entrega_entrega?.descricao + ")" : ""),
           data: x

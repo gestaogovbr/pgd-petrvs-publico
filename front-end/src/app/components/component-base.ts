@@ -79,4 +79,6 @@ export abstract class ComponentBase {
     ngAfterViewInit() {
         this.viewInit = true;
     }
+
+    public focus() {}
 }
