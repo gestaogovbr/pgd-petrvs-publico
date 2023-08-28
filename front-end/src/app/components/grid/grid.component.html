@@ -23,7 +23,7 @@
                             <tr *ngIf="!!getGroupSeparator(row)" class="grid-no-hover">
                                 <td class="grid-no-hover px-0" [attr.colspan]="columns.length">
                                     <ng-container *ngIf="groupTemplate" [ngTemplateOutlet]="groupTemplate" [ngTemplateOutletContext]="{grid: this, separator: getGroupSeparator(row), group: getGroupSeparator(row)!.group}"></ng-container>
-                                    <strong *ngIf="!groupTemplate" class="grid-group-text">{{getGroupSeparator(row)!.text}}</strong>
+                                    <strong *ngIf="!groupTemplate" class="grid-group-text px-2">{{getGroupSeparator(row)!.text}}</strong>
                                 </td>
                             </tr>
                             <tr *ngIf="!isSeparator(row)" [class.d-none]="row._status == 'DELETE'" [class.table-active]="(row || [])['id'] == (selected || [])['id']" (click)="onRowClick($event, row)" [attr.role]="isSelectable ? 'button' : undefined">

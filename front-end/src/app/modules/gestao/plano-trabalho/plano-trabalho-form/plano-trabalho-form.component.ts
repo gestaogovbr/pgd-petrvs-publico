@@ -130,12 +130,14 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public atualizarTcr() {
-    let planoNovo = this.loadEntity();
+    this.entity = this.loadEntity();
     let textoUsuario = this.form!.controls.usuario_texto_complementar.value;
     let textoUnidade = this.form!.controls.unidade_texto_complementar.value;
     let documento = this.planoTrabalhoService.atualizarTcr(this.planoTrabalho!, this.entity!, textoUsuario, textoUnidade);
+    this.form?.controls.documento_id.setValue(documento?.id);
+    this.form?.controls.documentos.setValue(this.entity!.documentos);
     this.datasource = documento?.datasource || {};
-    this.template = planoNovo.programa?.template_tcr;
+    this.template = this.entity.programa?.template_tcr;
     this.editingId = ["ADD", "EDIT"].includes(documento?._status || "") ? documento!.id : undefined;
     this.cdRef.detectChanges();
   }
@@ -403,10 +405,11 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     /* Salva separadamente as informações do plano */
     this.submitting = true;
     try {
-      let requests: Promise<any>[] = [this.dao!.save(this.entity!)];
+      let requests: Promise<any>[] = [this.dao!.save(this.entity!, this.join)];
       if(this.form!.controls.editar_texto_complementar_unidade.value) requests.push(this.unidadeDao.update(this.entity!.unidade_id, {texto_complementar_plano: this.form!.controls.unidade_texto_complementar.value}));
       if(this.form!.controls.editar_texto_complementar_usuario.value) requests.push(this.usuarioDao.update(this.entity!.usuario_id, {texto_complementar_plano: this.form!.controls.usuario_texto_complementar.value}));
-      await Promise.all(requests);
+      let responses = await Promise.all(requests);
+      this.entity = responses[0] as PlanoTrabalho;
     } finally {
       this.submitting = false;
     }

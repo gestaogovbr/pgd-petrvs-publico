@@ -499,7 +499,7 @@ export class LookupService {
   public PROJETO_TAREFA_STATUS: LookupItem[] = [
     { key: "PLANEJADO", value: "Planejado", icon: "bi bi-bar-chart-steps", color: "primary" },
     { key: "INICIADO", value: "Iniciado", icon: "bi bi-collection-play", color: "success" },
-    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-calendar2-check", color: "dark" },
+    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-calendar2-check", color: "secondary" },
     { key: "FALHO", value: "Falho", icon: "bi bi-question-octagon", color: "danger" },
     { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-pause-btn", color: "warning" },
     { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "danger" },
@@ -638,9 +638,9 @@ export class LookupService {
   ];
 
   public THEMES: LookupItem[] = [
-    {'key': 'light', 'value': "Branco"},
-    {'key': 'blue', 'value': "Azul"}, 
-    {'key': 'dark', 'value': "Preto"}, 
+    {'key': 'light', 'value': "Branco (light)"},
+    {'key': 'blue', 'value': "Azul (oxford)"}, 
+    {'key': 'dark', 'value': "Preto (dark)"}
   ];
 
   public TIPO_INTEGRACAO: LookupItem[] = [

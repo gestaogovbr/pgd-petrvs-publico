@@ -170,7 +170,7 @@ export class DocumentosComponent extends PageFrameBase {
     let result: ToolbarButton[] = [];
     let documento: Documento = row as Documento;
     if(!this.isNoPersist && this.entity && this.needSign(this.entity, documento)) {
-      result.push({hint: "Assinar", icon: "bi bi-pen", onClick: this.signDocumento.bind(this) });
+      result.push({hint: "Assinar", icon: "bi bi-pen", color: "secondary", onClick: this.signDocumento.bind(this) });
     }
     result.push({hint: "Preview", icon: "bi bi-zoom-in", onClick: this.documentoService.onDocumentoClick.bind(this.documentoService.onDocumentoClick) });
     return result;

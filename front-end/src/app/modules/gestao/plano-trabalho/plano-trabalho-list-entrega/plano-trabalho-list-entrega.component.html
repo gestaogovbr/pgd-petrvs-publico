@@ -31,7 +31,7 @@
                         </div>
                     </ng-template>
                     <ng-template let-row="row" #editEntrega>
-                        <input-select *ngIf="['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(origem?.value)" #entrega nullable itemNull="- Selecione -" controlName="plano_entrega_entrega_id" [control]="form!.controls.plano_entrega_entrega_id" [items]="entregas"></input-select>
+                        <input-select *ngIf="['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(origem?.value)" #entrega nullable itemNull="- Selecione -" controlName="plano_entrega_entrega_id" [control]="form!.controls.plano_entrega_entrega_id" [items]="entregas" (change)="onEntregaChange($event)"></input-select>
                         <div *ngIf="entrega?.selectedItem" class="w-100">
                             <badge color="light" icon="bi bi-box-arrow-in-right" [label]="util.getDateFormatted(entrega!.selectedItem!.data!.data_inicio)" hint="Data de início"></badge>
                             <badge color="light" icon="bi bi-box-arrow-right" [label]="util.getDateFormatted(entrega!.selectedItem!.data!.data_fim)" hint="Data de término"></badge>

@@ -263,7 +263,7 @@ export class UtilService {
   }
 
   public fillForm(destination: any, source: any): any {
-    if(source) {
+    if(destination && source) {
       Object.keys(destination).forEach(key => {
         if(typeof source[key] != "undefined"){
           destination[key] = source[key];
