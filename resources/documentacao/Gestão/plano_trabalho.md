@@ -41,6 +41,8 @@
 
 ## REGRAS DE NEGÓCIO APLICADAS AOS PLANOS DE TRABALHO
 
+- (RN_PTR_A) Quando um Plano de Trabalho é criado adquire automaticamente o status INCLUIDO;
+
 - O Plano de Trabalho só vai para o status ATIVO quando atender os critérios de assinatura, que estarão definidos no TCR com base nas configurações do Programa;
 - O Plano de Trabalho precisará ser repactuado quando alguma de suas entregas estiver vinculada a uma entrega de plano de entregas cancelada;
 - O servidor só pode incluir plano de trabalho para si próprio e somente se ele for "participante do programa", habilitado. Se não o for, somente o chefe da unidade executora poderá inserir plano de trabalho para ele, e nesse caso, com o primeiro plano de trabalho incluído, o servidor tornar-se-á automaticamente um participante habilitado;

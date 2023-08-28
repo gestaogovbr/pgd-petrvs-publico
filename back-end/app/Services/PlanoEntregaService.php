@@ -16,6 +16,11 @@ class PlanoEntregaService extends ServiceBase
 {
     public $unidades = []; /* Buffer de unidades para funções que fazem consulta frequentes em unidades */
 
+    public function afterStore($planoEntrega, $action)
+    {
+      $planoEntrega->atualizaHistorico($action, 'Plano de Entrega criado nesta data.');
+    }
+
     public function arquivar($data, $unidade) { // ou 'desarquivar'
         try {
             DB::beginTransaction();
@@ -57,7 +62,7 @@ class PlanoEntregaService extends ServiceBase
      * @return array
      */
     public function buscaCondicoes(array $entity): array {
-        $planoEntrega = !empty($entity['id']) ? PlanoEntrega::find($entity['id'])->with('entregas')->toArray() : $entity;
+        $planoEntrega = !empty($entity['id']) ? PlanoEntrega::find($entity['id'])->with('entregas')->first()->toArray() : $entity;
         $planoEntregaPai = !empty($planoEntrega['plano_entrega_id']) ? PlanoEntrega::find($planoEntrega['plano_entrega_id']) : null;
         $planoEntrega['unidade'] = !empty($planoEntrega['unidade_id']) ? Unidade::find($planoEntrega['unidade_id'])->toArray() : null;
         $planoEntrega['unidade']['planosEntrega'] = !empty($planoEntrega['unidade']) ? PlanoEntrega::where('unidade_id',$planoEntrega['unidade_id'])->get()->toArray() : null;
@@ -239,13 +244,12 @@ class PlanoEntregaService extends ServiceBase
         return $rows;
     }
 
-    public function proxyStore(&$data, $unidade, $action){
+    public function proxyStore(&$planoEntrega, $unidade, $action){
         if($action == ServiceBase::ACTION_INSERT) { 
-            $data["criacao_usuario_id"] = parent::loggedUser()->id;
-            $data["status"] = "INCLUIDO";
-            // (RN_PENT_A) Quando um Plano de Entregas é criado adquire automaticamente o status INCLUIDO; 
+            $planoEntrega["criacao_usuario_id"] = parent::loggedUser()->id;
+            $planoEntrega->statusInicial($action);
         }
-        return $data;
+        return $planoEntrega;
     }
 
     public function reativar($data, $unidade) {    // PRECISA DE JUSTIFICATIVA

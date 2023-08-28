@@ -439,8 +439,8 @@ class EntidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK
     return new Promise((resolve, reject) => {
       let entidade = this.util.fill(new src_app_models_entidade_model__WEBPACK_IMPORTED_MODULE_6__.Entidade(), this.entity);
       entidade = this.util.fillForm(entidade, this.form.value);
-      if (entidade.abrangencia == "MUNICIPAL" && this.cidade?.searchObj) {
-        entidade.codigo_ibge = (this.cidade?.searchObj).codigo_ibge;
+      if (entidade.abrangencia == "MUNICIPAL" && this.cidade?.selectedEntity) {
+        entidade.codigo_ibge = (this.cidade?.selectedEntity).codigo_ibge;
       } else if (entidade.abrangencia == "ESTADUAL") {
         entidade.codigo_ibge = this.lookup.UF.find(x => x.key == entidade.uf)?.code;
       } else {

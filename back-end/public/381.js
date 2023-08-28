@@ -2832,9 +2832,9 @@ class ProjetoFormRecursosComponent extends src_app_modules_base_page_frame_base_
         row.usuario_id = form.controls.tipo.value == "HUMANO" ? form.controls.usuario_id.value : null;
         row.unidade_id = form.controls.tipo.value == "DEPARTAMENTO" ? form.controls.unidade_id.value : null;
         row.valor = form.controls.valor.value;
-        row.usuario = _this3.usuario?.selectedItem?.entity;
-        row.unidade = _this3.unidade?.selectedItem?.entity;
-        row.material_servico = _this3.materialServico?.selectedItem?.entity;
+        row.usuario = _this3.usuario?.selectedEntity;
+        row.unidade = _this3.unidade?.selectedEntity;
+        row.material_servico = _this3.materialServico?.selectedEntity;
         result = row;
         _this3.cdRef.detectChanges();
       }
@@ -5247,9 +5247,9 @@ class ProjetoRecursoWidgetComponent {
         usuario_id: this.form.controls.tipo.value == "HUMANO" ? this.form.controls.usuario_id.value : null,
         unidade_id: this.form.controls.tipo.value == "DEPARTAMENTO" ? this.form.controls.unidade_id.value : null,
         valor: this.form.controls.valor.value,
-        usuario: this.usuario?.selectedItem?.entity,
-        unidade: this.unidade?.selectedItem?.entity,
-        material_servico: this.materialServico?.selectedItem?.entity
+        usuario: this.usuario?.selectedEntity,
+        unidade: this.unidade?.selectedEntity,
+        material_servico: this.materialServico?.selectedEntity
       });
     }
     return result;

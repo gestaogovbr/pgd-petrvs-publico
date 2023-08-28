@@ -49,6 +49,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
   @Input() join?: string[];
   @Input() groupBy?: GroupBy[];
   @Input() where?: any;
+  @Input() metadata?: any;
   @Input() dao?: DaoBaseService<Base> = undefined;
   @Input() detailsButton?: string;
   @Input() addRoute?: FullRoute;
@@ -213,7 +214,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
       if(this.selectRoute) {
         const modalRoute = this.selectRoute!;
         modalRoute.params = Object.assign(modalRoute.params || {}, this.selectParams || {}, { selectable: true, modal: true });
-        this.go.navigate(modalRoute, {modalClose: async (result) => {
+        this.go.navigate(modalRoute, {metadata: this.metadata || {}, modalClose: async (result) => {
           if(result?.id?.length) {
             this.control?.setValue(result.id, {emitEvent: false});
             await this.loadSearch();

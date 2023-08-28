@@ -388,7 +388,7 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
         default: new Date()
       }
     }, this.cdRef, this.filterValidate);
-    this.join = ["unidade.entidade", "usuario", "programa", "documento.assinaturas.usuario:id,nome,url_foto", "tipo_modalidade", "entregas.plano_entrega_entrega.entrega", "entregas.entrega", "plano_entrega.entregas.entrega"];
+    this.join = ["unidade.entidade", "usuario", "programa", "documento.assinaturas.usuario:id,nome,url_foto", "tipo_modalidade", "entregas.plano_entrega_entrega.entrega", "entregas.entrega"];
     this.groupBy = [{
       field: "unidade.sigla",
       label: "Unidade"
@@ -673,16 +673,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   PlanoTrabalhoService: () => (/* binding */ PlanoTrabalhoService)
 /* harmony export */ });
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ 51197);
 /* harmony import */ var src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/services/auth.service */ 32333);
-/* harmony import */ var src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/dao/plano-trabalho-dao.service */ 87744);
+/* harmony import */ var src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/services/lookup.service */ 39702);
+/* harmony import */ var src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/plano-trabalho-dao.service */ 87744);
 var _class;
 
 
 
+
 class PlanoTrabalhoService {
-  constructor(auth, planoTrabalhoDao) {
+  constructor(auth, lookup, planoTrabalhoDao) {
     this.auth = auth;
+    this.lookup = lookup;
     this.planoTrabalhoDao = planoTrabalhoDao;
   }
   template(plano) {
@@ -705,11 +708,12 @@ class PlanoTrabalhoService {
     const documento = item || (plano?.documentos || []).find(x => plano?.documento_id?.length && x.id == plano?.documento_id) || plano?.documento;
     if (parent && documento && !documento.assinaturas?.find(x => x.usuario_id == this.auth.usuario.id)) {
       const tipoModalidade = plano.tipo_modalidade;
+      const programa = plano.programa;
       const entidade = this.auth.entidade;
       let ids = [];
-      if (tipoModalidade?.plano_trabalho_assinatura_participante) ids.push(plano.usuario_id);
-      if (tipoModalidade?.plano_trabalho_assinatura_gestor_unidade) ids.push(plano.unidade?.gestor?.id || "", plano.unidade?.gestor_substituto?.id || "");
-      if (tipoModalidade?.plano_trabalho_assinatura_gestor_entidade) ids.push(entidade.gestor_id || "", entidade.gestor_substituto_id || "");
+      if (programa?.plano_trabalho_assinatura_participante) ids.push(plano.usuario_id);
+      if (programa?.plano_trabalho_assinatura_gestor_unidade) ids.push(plano.unidade?.gestor?.id || "", plano.unidade?.gestor_substituto?.id || "");
+      if (programa?.plano_trabalho_assinatura_gestor_entidade) ids.push(entidade.gestor_id || "", entidade.gestor_substituto_id || "");
       return !!tipoModalidade && ids.includes(this.auth.usuario.id);
     }
     return false;
@@ -738,28 +742,25 @@ class PlanoTrabalhoService {
         Se row não vier do banco, ela passou pelo método saveEntrega() e lá um desses objetos, escolhido em um dos 3 inputSearch, foi anexado à variável this.novaEntrega, que originalmente é vazia. Sendo assim,
         quando necessário, os dados serão lidos em this.novaEntrega.entrega ou em this.novaEntrega.plano_entrega_entrega. */
     let plano = planoTrabalho || planoTrabalhoEntrega.plano_trabalho;
-    if (!!planoTrabalhoEntrega.entrega_id?.length) return {
-      titulo: 'Catálogo',
-      cor: 'secondary',
-      nome: !!plano?._metadata?.novaEntrega?.entrega?.id?.length ? plano._metadata?.novaEntrega?.entrega?.nome || "Desconhecido" : planoTrabalhoEntrega.entrega?.nome || "Desconhecido1"
+    let key = planoTrabalhoEntrega.plano_entrega_entrega?.plano_entrega?.unidade_id == plano.unidade_id ? "PROPRIA_UNIDADE" : planoTrabalhoEntrega.plano_entrega_entrega ? "OUTRA_UNIDADE" : !!planoTrabalhoEntrega.orgao?.length ? "OUTRO_ORGAO" : "SEM_ENTREGA";
+    let result = this.lookup.ORIGENS_ENTREGAS_PLANO_TRABALHO.find(x => x.key == key) || {
+      key: "",
+      value: "Desconhecido"
     };
-    let IdDoPlanoEntregaDoPlanoTrabalho, IdDoPlanoEntregaDaEntrega, badge, nome, cor;
-    IdDoPlanoEntregaDoPlanoTrabalho = plano?.plano_entrega_id || plano?._metadata.idPlanoEntregas || 'Desconhecido2';
-    IdDoPlanoEntregaDaEntrega = !!plano?._metadata?.novaEntrega?.plano_entrega_entrega?.id.length ? plano?._metadata?.novaEntrega?.plano_entrega_entrega?.plano_entrega_id || "Desconhecido3" : planoTrabalhoEntrega.plano_entrega_entrega?.plano_entrega_id || "Desconhecido4";
-    [badge, cor] = IdDoPlanoEntregaDoPlanoTrabalho == IdDoPlanoEntregaDaEntrega ? ['Mesma unidade', 'success'] : ['Outra unidade', 'primary'];
-    nome = !!plano?._metadata?.novaEntrega?.plano_entrega_entrega?.id.length ? plano?._metadata?.novaEntrega?.plano_entrega_entrega?.entrega?.nome || "Desconhecido5" : planoTrabalhoEntrega.plano_entrega_entrega?.entrega?.nome || "Desconhecido6";
+    let nome = plano?._metadata?.novaEntrega?.plano_entrega_entrega?.entrega?.nome || planoTrabalhoEntrega.plano_entrega_entrega?.entrega?.nome || "Desconhecido";
     return {
-      titulo: badge,
-      cor: cor,
-      nome: nome
+      titulo: result.value,
+      cor: result.color || "danger",
+      nome: nome,
+      tipo: key
     };
   }
 }
 _class = PlanoTrabalhoService;
 _class.ɵfac = function PlanoTrabalhoService_Factory(t) {
-  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵinject"](src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_0__.AuthService), _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵinject"](src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_1__.PlanoTrabalhoDaoService));
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_0__.AuthService), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_1__.LookupService), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_2__.PlanoTrabalhoDaoService));
 };
-_class.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineInjectable"]({
+_class.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineInjectable"]({
   token: _class,
   factory: _class.ɵfac,
   providedIn: 'root'

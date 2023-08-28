@@ -299,7 +299,7 @@ class AtividadeFormConcluirComponent extends src_app_modules_base_page_form_base
         default: null
       }
     }, this.cdRef, this.validate);
-    this.join = ["plano_trabalho.tipo_modalidade", "unidade", "plano_trabalho.entregas.entrega:id,nome"];
+    this.join = ["plano_trabalho.tipo_modalidade", "unidade", "plano_trabalho.entregas.plano_entrega_entrega:id,descricao"];
   }
   loadData(entity, form) {
     var _this = this;
@@ -314,7 +314,7 @@ class AtividadeFormConcluirComponent extends src_app_modules_base_page_form_base
       }
       _this.entregas = entity.plano_trabalho?.entregas?.map(x => Object.assign({}, {
         key: x.id,
-        value: x.descricao + (x.entrega ? " (" + x.entrega.nome + ")" : ""),
+        value: x.descricao + (x.plano_entrega_entrega ? " (" + x.plano_entrega_entrega?.descricao + ")" : ""),
         data: x
       })) || [];
       formValue.arquivar = true;
@@ -551,7 +551,7 @@ class AtividadeFormIniciarComponent extends src_app_modules_base_page_form_base_
         default: false
       }
     }, this.cdRef, this.validate);
-    this.join = ["unidade", "atividade", "usuario.planos_trabalho.tipo_modalidade", "usuario.planos_trabalho.entregas.entrega:id,nome"];
+    this.join = ["unidade", "atividade", "usuario.planos_trabalho.tipo_modalidade", "usuario.planos_trabalho.entregas.plano_entrega_entrega:id,descricao"];
   }
   loadIniciadas(usuario_id) {
     this.iniciadas = [];
@@ -592,7 +592,7 @@ class AtividadeFormIniciarComponent extends src_app_modules_base_page_form_base_
         /* Carrega entregas */
         _this.planosTrabalhosEntregas = planoTrabalho.entregas?.map(x => Object.assign({}, {
           key: x.id,
-          value: x.descricao + (x.entrega ? " (" + x.entrega.nome + ")" : ""),
+          value: x.descricao + (x.plano_entrega_entrega ? " (" + x.plano_entrega_entrega?.descricao + ")" : ""),
           data: x
         })) || [];
         _this.cdRef.detectChanges();
@@ -1083,10 +1083,10 @@ class AtividadeFormTarefaComponent extends src_app_modules_base_page_form_base__
     };
     this.formValidation = form => {
       const values = form.value;
-      if (values.tipo_tarefa_id?.length && !this.tipoTarefa?.searchObj) {
+      if (values.tipo_tarefa_id?.length && !this.tipoTarefa?.selectedEntity) {
         return "Aguarde o carregamento " + this.lex.translate("tipo de tarefa") + ". Caso demore, selecione novamente!";
       }
-      if (values.concluido && this.tipoTarefa?.searchObj?.documental && this.documento?.isEmpty()) {
+      if (values.concluido && this.tipoTarefa?.selectedEntity?.documental && this.documento?.isEmpty()) {
         return this.gb.isEmbedded ? "Obrigatório selecionar um arquivo para a tarefa selecionada!" : "Utilize o sistema como extensão para concluir!";
       }
       return undefined;
@@ -1153,7 +1153,7 @@ class AtividadeFormTarefaComponent extends src_app_modules_base_page_form_base__
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this3.comentarios?.confirm();
       _this3.util.fillForm(_this3.entity, _this3.form.value);
-      _this3.entity.tipo_tarefa = _this3.tipoTarefa?.searchObj;
+      _this3.entity.tipo_tarefa = _this3.tipoTarefa?.selectedEntity;
       return new src_app_services_navigate_service__WEBPACK_IMPORTED_MODULE_9__.NavigateResult(_this3.entity);
     })();
   }
@@ -1439,9 +1439,9 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
     this.etiquetas = [];
     this.checklist = [];
     this.planosTrabalhos = [];
-    this.planoTrabalhoJoin = ["entregas.entrega:id,nome", "tipo_modalidade:id,nome"];
+    this.planoTrabalhoJoin = ["entregas.plano_entrega_entrega:id,descricao", "tipo_modalidade:id,nome"];
     this.planoTrabalhoSelecionado = null;
-    this.usuarioJoin = ['planos_trabalho.entregas.entrega:id,nome', 'planos_trabalho.tipo_modalidade:id,nome'];
+    this.usuarioJoin = ['planos_trabalho.entregas.plano_entrega_entrega:id,descricao', 'planos_trabalho.tipo_modalidade:id,nome'];
     this.entregas = [];
     this.validateChecklist = (control, controlName) => {
       let result = null;
@@ -1627,7 +1627,7 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
     this.loadEtiquetas();
   }
   onDataDistribuicaoChange(event) {
-    this.loadUsuario(this.usuario?.selectedItem?.entity); /* Atualiza a lista de planos de trabalho válidos no período */
+    this.loadUsuario(this.usuario?.selectedEntity); /* Atualiza a lista de planos de trabalho válidos no período */
     this.form?.controls.data_estipulada_entrega.updateValueAndValidity();
   }
   onPrazoEntregaChange(event) {
@@ -1637,7 +1637,7 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
     var _this = this;
     (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (_this.entity) {
-        const planoTrabalho = _this.usuario?.searchObj?.planos_trabalho?.find(x => x.id == _this.form.controls.plano_trabalho_id.value);
+        const planoTrabalho = _this.usuario?.selectedEntity?.planos_trabalho?.find(x => x.id == _this.form.controls.plano_trabalho_id.value);
         const planoTrabalhoEntregaId = _this.form.controls.plano_trabalho_entrega_id.value;
         if (planoTrabalho) {
           if (_this.planoTrabalhoSelecionado?.id != planoTrabalho.id) {
@@ -1652,7 +1652,7 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
           }
           _this.entregas = planoTrabalho.entregas?.map(x => Object.assign({}, {
             key: x.id,
-            value: x.descricao + (x.entrega ? " (" + x.entrega.nome + ")" : ""),
+            value: x.descricao + (x.plano_entrega_entrega ? " (" + x.plano_entrega_entrega?.descricao + ")" : ""),
             data: x
           })) || [];
           _this.cdRef.detectChanges();
@@ -1665,12 +1665,12 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
     })();
   }
   loadEtiquetas() {
-    const unidade = this.unidade?.searchObj;
-    const tipoAtividade = this.tipoAtividade?.searchObj;
+    const unidade = this.unidade?.selectedEntity;
+    const tipoAtividade = this.tipoAtividade?.selectedEntity;
     this.etiquetas = this.util.merge(tipoAtividade?.etiquetas, unidade?.etiquetas, (a, b) => a.key == b.key);
   }
   loadChecklist() {
-    const tipoAtividade = this.tipoAtividade?.searchObj;
+    const tipoAtividade = this.tipoAtividade?.selectedEntity;
     this.checklist = tipoAtividade?.checklist || [];
     let checks = this.util.merge(this.checklist.map(a => {
       return {

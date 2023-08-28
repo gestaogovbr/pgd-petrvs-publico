@@ -865,6 +865,7 @@ class UnidadeListComponent extends src_app_modules_base_page_list_base__WEBPACK_
     super(injector, src_app_models_unidade_model__WEBPACK_IMPORTED_MODULE_5__.Unidade, src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_4__.UnidadeDaoService);
     this.injector = injector;
     this.buttons = [];
+    this.unidadesJaVinculadas = [];
     this.filterWhere = filter => {
       let form = filter.value;
       let result = [];
@@ -873,6 +874,7 @@ class UnidadeListComponent extends src_app_modules_base_page_list_base__WEBPACK_
       if (form.entidade_id?.length) result.push(["entidade_id", "==", form.entidade_id]);
       if (form.nome?.length) result.push(["or", ["nome", "like", "%" + form.nome.replace(" ", "%") + "%"], ["sigla", "like", "%" + form.nome.replace(" ", "%") + "%"]]);
       if (form.instituidora) result.push(["instituidora", "==", 1]);
+      if (this.unidadesJaVinculadas.length) result.push(["id", "not in", this.unidadesJaVinculadas]);
       return result;
     };
     this.join = ["cidade", "unidade_pai:id,sigla", "entidade:id,sigla", "gestor.usuario:id", "gestor_substituto.usuario:id"];
@@ -910,6 +912,10 @@ class UnidadeListComponent extends src_app_modules_base_page_list_base__WEBPACK_
         }, this.modalRefresh())
       });
     }
+  }
+  ngOnInit() {
+    super.ngOnInit();
+    this.unidadesJaVinculadas = this.metadata?.unidadesJaVinculadas || this.unidadesJaVinculadas;
   }
   dynamicOptions(row) {
     var _this = this;
@@ -1272,9 +1278,9 @@ class UnidadeMergeComponent extends src_app_modules_base_page_frame_base__WEBPAC
       let result = undefined;
       if (_this2.form.controls.unidade_origem_id.value?.length || _this2.form.controls.unidade_destino_id.value?.length) {
         row.unidade_origem_id = form.controls.unidade_origem_id.value;
-        row.unidade_origem = _this2.unidadeOrigem?.selectedItem?.entity || (yield _this2.dao?.getById(row.unidade_origem_id));
+        row.unidade_origem = _this2.unidadeOrigem?.selectedEntity || (yield _this2.dao?.getById(row.unidade_origem_id));
         row.unidade_destino_id = form.controls.unidade_destino_id.value;
-        row.unidade_destino = _this2.unidadeDestino?.selectedItem?.entity || (yield _this2.dao?.getById(row.unidade_destino_id));
+        row.unidade_destino = _this2.unidadeDestino?.selectedEntity || (yield _this2.dao?.getById(row.unidade_destino_id));
         result = row;
       }
       return result;

@@ -8,7 +8,7 @@ use App\Models\Unidade;
 use App\Models\Atividade;
 use App\Models\Programa;
 use App\Models\Documento;
-use App\Models\PlanoEntrega;
+use App\Traits\HasStatus;
 use App\Models\PlanoTrabalhoEntrega;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\TipoModalidade;
@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\DB;
 
 class PlanoTrabalho extends ModelBase
 {
+    use HasStatus;
+
     protected $table = 'planos_trabalhos';
 
     protected $with = [];

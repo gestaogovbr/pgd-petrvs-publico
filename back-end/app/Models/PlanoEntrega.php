@@ -10,10 +10,13 @@ use App\Models\Programa;
 use App\Models\Planejamento;
 use App\Models\CadeiaValor;
 use App\Models\PlanoEntregaEntrega;
+use App\Traits\HasStatus;
 use Illuminate\Support\Facades\DB;
 
 class PlanoEntrega extends ModelBase
 {
+    use HasStatus;
+    
     protected $table = 'planos_entregas';
 
     protected $with = [];

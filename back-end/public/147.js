@@ -154,8 +154,8 @@ class FeriadoFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
     return new Promise((resolve, reject) => {
       let feriado = this.util.fill(new src_app_models_feriado_model__WEBPACK_IMPORTED_MODULE_4__.Feriado(), this.entity);
       feriado = this.util.fillForm(feriado, this.form.value);
-      if (feriado.abrangencia == "MUNICIPAL" && this.cidade?.searchObj) {
-        feriado.codigo_ibge = (this.cidade?.searchObj).codigo_ibge;
+      if (feriado.abrangencia == "MUNICIPAL" && this.cidade?.selectedEntity) {
+        feriado.codigo_ibge = (this.cidade?.selectedEntity).codigo_ibge;
       } else if (feriado.abrangencia == "ESTADUAL") {
         feriado.codigo_ibge = this.lookup.UF.find(x => x.key == feriado.uf)?.code;
       } else {

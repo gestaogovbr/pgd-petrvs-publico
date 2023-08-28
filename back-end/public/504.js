@@ -75,7 +75,7 @@ class AfastamentoFormComponent extends src_app_modules_base_page_form_base__WEBP
     this.join = ["usuario", "tipo_motivo_afastamento"];
   }
   isHoras() {
-    if (this.form.controls.tipo_motivo_afastamento_id.value?.length && this.tipoMotivoAfastamento?.searchObj?.horas) {
+    if (this.form.controls.tipo_motivo_afastamento_id.value?.length && this.tipoMotivoAfastamento?.selectedEntity?.horas) {
       //Então é em Horas
       return true;
     } else return false;

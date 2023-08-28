@@ -232,12 +232,12 @@ class PlanoEntregaFormAdesaoComponent extends src_app_modules_base_page_form_bas
   }
   onPlanoEntregaChange(event) {
     if (this.form.controls.plano_entrega_id.value) {
-      this.form.controls.nome.setValue(this.planoEntrega?.selectedItem?.entity.nome);
-      this.form.controls.data_inicio.setValue(this.planoEntrega?.selectedItem?.entity.data_inicio);
-      this.form.controls.data_fim.setValue(this.planoEntrega?.selectedItem?.entity.data_fim);
-      this.form.controls.planejamento_id.setValue(this.planoEntrega?.selectedItem?.entity.planejamento_id);
-      this.form.controls.cadeia_valor_id.setValue(this.planoEntrega?.selectedItem?.entity.cadeia_valor_id);
-      this.form.controls.programa_id.setValue(this.planoEntrega?.selectedItem?.entity.programa_id);
+      this.form.controls.nome.setValue(this.planoEntrega?.selectedEntity.nome);
+      this.form.controls.data_inicio.setValue(this.planoEntrega?.selectedEntity.data_inicio);
+      this.form.controls.data_fim.setValue(this.planoEntrega?.selectedEntity.data_fim);
+      this.form.controls.planejamento_id.setValue(this.planoEntrega?.selectedEntity.planejamento_id);
+      this.form.controls.cadeia_valor_id.setValue(this.planoEntrega?.selectedEntity.cadeia_valor_id);
+      this.form.controls.programa_id.setValue(this.planoEntrega?.selectedEntity.programa_id);
     }
   }
 }
@@ -811,8 +811,8 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
       entrega = this.util.fillForm(entrega, valueWithout);
       entrega.objetivos = entrega.objetivos.filter(x => ["ADD", "DELETE"].includes(x._status || ""));
       entrega.processos = entrega.processos.filter(x => ["ADD", "DELETE"].includes(x._status || ""));
-      entrega.unidade = this.unidade?.selectedItem?.entity;
-      entrega.entrega = this.entrega?.selectedItem?.entity;
+      entrega.unidade = this.unidade?.selectedEntity;
+      entrega.entrega = this.entrega?.selectedEntity;
       entrega.meta = this.planoEntregaService.getEntregaValor(entrega.entrega, meta);
       entrega.realizado = this.planoEntregaService.getEntregaValor(entrega.entrega, realizado);
       resolve(new src_app_services_navigate_service__WEBPACK_IMPORTED_MODULE_11__.NavigateResult(entrega));
@@ -830,7 +830,7 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
     }
   }
   checkTipoIndicador(tipos) {
-    return tipos.includes((this.entrega?.selectedItem?.entity).tipo_indicador);
+    return tipos.includes((this.entrega?.selectedEntity).tipo_indicador);
   }
   dynamicOptionsObjetivos(row) {
     let result = [];
@@ -917,7 +917,7 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
     var _this10 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (_this10.entrega && _this10.entrega.selectedItem) {
-        const entregaItem = _this10.entrega?.selectedItem?.entity;
+        const entregaItem = _this10.entrega?.selectedEntity;
         const tipoIndicador = entregaItem.tipo_indicador;
         switch (tipoIndicador) {
           case 'QUALITATIVO':
@@ -1041,7 +1041,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 6);
       _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("ngIf", _r1 == null ? null : _r1.selectedItem == null ? null : _r1.selectedItem.entity);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("ngIf", _r1 == null ? null : _r1.selectedEntity);
       _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 6)("decimals", 2);
       _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
@@ -1131,14 +1131,14 @@ class PlanoEntregaFormComponent extends src_app_modules_base_page_form_base__WEB
               - o usuário precisa possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a Unidade-pai (Unidade A) da Unidade do plano (Unidade B) e possuir a capacidade "MOD_PENT_EDT_FLH"; ou
               - o usuário precisa possuir também a capacidade "MOD_PENT_QQR_UND";
       */
-      let unidadeSelecionada = this.unidade?.searchObj.entity;
+      let unidadeSelecionada = this.unidade?.selectedEntity;
       let condition1 = this.auth.isGestorUnidade(unidadeSelecionada) || this.auth.isGestorUnidade(unidadeSelecionada.unidade);
       let condition2 = unidadeSelecionada.unidade ? this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', unidadeSelecionada.unidade.id) && this.auth.hasPermissionTo("MOD_PENT_EDT_FLH") : false;
       let condition3 = this.auth.hasPermissionTo("MOD_PENT_QQR_UND");
       if (!(condition1 || condition2 || condition3)) return "Você não tem permissão para incluir plano de entregas para a unidade selecionada!";
       const inicio = this.form?.controls.data_inicio.value;
       const fim = this.form?.controls.data_fim.value;
-      const programa = this.programa?.selectedItem?.entity;
+      const programa = this.programa?.selectedEntity;
       if (!programa) {
         return "Obrigatório selecionar o programa";
       } else if (!this.dao?.validDateTime(inicio)) {
@@ -1248,7 +1248,7 @@ class PlanoEntregaFormComponent extends src_app_modules_base_page_form_base__WEB
     return result;
   }
   onProgramaChange() {
-    const dias = (this.programa?.searchObj).prazo_max_plano_entrega;
+    const dias = (this.programa?.selectedEntity).prazo_max_plano_entrega;
     //const dias=(this.programa?.items[0] as SelectItem).entity.prazo_max_plano_entrega;
     const data = this.somaDia(this.entity.data_inicio, dias);
     this.form.controls.data_fim.setValue(new Date(data)); // = this.somaDia(this.entity!.data_inicio,dias)//new Date()//(this.programa?.searchObj as Programa).prazo_max_plano_entrega

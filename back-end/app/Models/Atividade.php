@@ -9,11 +9,14 @@ use App\Models\Unidade;
 use App\Models\TipoAtividade;
 use App\Models\Comentario;
 use App\Models\Documento;
+use App\Traits\HasStatus;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class Atividade extends ModelBase
 {
+    use HasStatus;
+
     protected $table = 'atividades';
 
     protected $with = [];

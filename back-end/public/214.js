@@ -17,9 +17,6 @@ class TipoModalidade extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
   constructor(data) {
     super();
     this.nome = ""; /* Nome da modalidade */
-    this.plano_trabalho_assinatura_participante = 1; /* Exigir assinatura do usuário no plano de trabalho */
-    this.plano_trabalho_assinatura_gestor_unidade = 0; /* Exigir assinatura do gestor da unidade */
-    this.plano_trabalho_assinatura_gestor_entidade = 0; /* Exigir assinatura do gestor da entidade */
     this.plano_trabalho_calcula_horas = false; /* Se o plano de trabalho calcula horas (considerando a carga horaria e os dias) */
     this.atividade_tempo_despendido = false; /* Se calcula tempo despendido na atividade */
     this.atividade_esforco = false; /* Se utiliza esforço (tempo para execução) na atividade */
@@ -75,15 +72,6 @@ class TipoModalidadeFormComponent extends src_app_modules_base_page_form_base__W
       nome: {
         default: ""
       },
-      plano_trabalho_assinatura_participante: {
-        default: true
-      },
-      plano_trabalho_assinatura_gestor_unidade: {
-        default: false
-      },
-      plano_trabalho_assinatura_gestor_entidade: {
-        default: false
-      },
       plano_trabalho_calcula_horas: {
         default: false
       },
@@ -126,9 +114,9 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdefi
     }
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵInheritDefinitionFeature"]],
-  decls: 11,
-  vars: 18,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "T\u00EDtulo", "controlName", "nome", 3, "size"], ["transparent", "", 3, "title"], ["scale", "small", "labelPosition", "right", "controlName", "plano_trabalho_assinatura_participante", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "plano_trabalho_assinatura_gestor_unidade", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "plano_trabalho_assinatura_gestor_entidade", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "plano_trabalho_calcula_horas", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "atividade_tempo_despendido", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "atividade_esforco", 3, "size", "label"]],
+  decls: 8,
+  vars: 12,
+  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "T\u00EDtulo", "controlName", "nome", 3, "size"], ["transparent", "", 3, "title"], ["scale", "small", "labelPosition", "right", "controlName", "plano_trabalho_calcula_horas", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "atividade_tempo_despendido", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "atividade_esforco", 3, "size", "label"]],
   template: function TipoModalidadeFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "editable-form", 0);
@@ -141,10 +129,10 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdefi
       _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](2, "input-text", 2);
       _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](3, "separator", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](4, "input-switch", 4)(5, "input-switch", 5)(6, "input-switch", 6)(7, "input-switch", 7);
+      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](4, "input-switch", 4);
       _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](8, "separator", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](9, "input-switch", 8)(10, "input-switch", 9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](5, "separator", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](6, "input-switch", 5)(7, "input-switch", 6);
       _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]()();
     }
     if (rf & 2) {
@@ -153,12 +141,6 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdefi
       _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 12);
       _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("title", "Configura\u00E7\u00F5es " + ctx.lex.translate("plano de trabalho"));
-      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 12)("label", "Exige assinatura " + ctx.lex.translate("usu\u00E1rio") + ctx.lex.translate("plano de trabalho"));
-      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 12)("label", "Exige assinatura do gestor " + ctx.lex.translate("unidade"));
-      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 12)("label", "Exige assinatura do gestor " + ctx.lex.translate("entidade"));
       _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("size", 12)("label", "Se o " + ctx.lex.translate("plano de trabalho") + " calcula horas (considerando a carga hor\u00E1ria e os dias)");
       _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
@@ -220,72 +202,48 @@ function TipoModalidadeListComponent_toolbar_1_Template(rf, ctx) {
 }
 function TipoModalidadeListComponent_ng_template_8_badge_1_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "badge", 16);
-  }
-}
-function TipoModalidadeListComponent_ng_template_8_badge_2_Template(rf, ctx) {
-  if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "badge", 17);
-  }
-}
-function TipoModalidadeListComponent_ng_template_8_badge_3_Template(rf, ctx) {
-  if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "badge", 18);
-  }
-}
-function TipoModalidadeListComponent_ng_template_8_badge_4_Template(rf, ctx) {
-  if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "badge", 19);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "badge", 13);
   }
   if (rf & 2) {
-    const ctx_r9 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("label", "Usa horas no " + ctx_r9.lex.translate("plano de trabalho"));
+    const ctx_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("label", "Usa horas no " + ctx_r6.lex.translate("plano de trabalho"));
   }
 }
 function TipoModalidadeListComponent_ng_template_8_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "div", 11);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](1, TipoModalidadeListComponent_ng_template_8_badge_1_Template, 1, 0, "badge", 12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](2, TipoModalidadeListComponent_ng_template_8_badge_2_Template, 1, 0, "badge", 13);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](3, TipoModalidadeListComponent_ng_template_8_badge_3_Template, 1, 0, "badge", 14);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](4, TipoModalidadeListComponent_ng_template_8_badge_4_Template, 1, 1, "badge", 15);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](1, TipoModalidadeListComponent_ng_template_8_badge_1_Template, 1, 1, "badge", 12);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
     const row_r5 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", row_r5.plano_trabalho_assinatura_participante);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", row_r5.plano_trabalho_assinatura_gestor_unidade);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", row_r5.plano_trabalho_assinatura_gestor_entidade);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", row_r5.plano_trabalho_calcula_horas);
   }
 }
 function TipoModalidadeListComponent_ng_template_11_badge_1_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "badge", 22);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "badge", 16);
   }
 }
 function TipoModalidadeListComponent_ng_template_11_badge_2_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "badge", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "badge", 17);
   }
 }
 function TipoModalidadeListComponent_ng_template_11_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "div", 11);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](1, TipoModalidadeListComponent_ng_template_11_badge_1_Template, 1, 0, "badge", 20);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](2, TipoModalidadeListComponent_ng_template_11_badge_2_Template, 1, 0, "badge", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](1, TipoModalidadeListComponent_ng_template_11_badge_1_Template, 1, 0, "badge", 14);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](2, TipoModalidadeListComponent_ng_template_11_badge_2_Template, 1, 0, "badge", 15);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
-    const row_r10 = ctx.row;
+    const row_r7 = ctx.row;
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", row_r10.atividade_tempo_despendido);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", row_r7.atividade_tempo_despendido);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", row_r10.atividade_esforco);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", row_r7.atividade_esforco);
   }
 }
 class TipoModalidadeListComponent extends src_app_modules_base_page_list_base__WEBPACK_IMPORTED_MODULE_3__.PageListBase {
@@ -346,7 +304,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵInheritDefinitionFeature"]],
   decls: 15,
   vars: 25,
-  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "collapseChange", "collapsed"], [1, "row"], ["controlName", "nome", "placeholder", "Nome...", 3, "size", "label", "control"], ["title", "Descri\u00E7\u00E3o", "field", "nome"], [3, "title", "template"], ["columnPlanoTrabalho", ""], ["columnAtividade", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"], [1, "one-per-line"], ["color", "light", "icon", "bi bi-pen", "label", "Assinatura do participante", 4, "ngIf"], ["color", "light", "icon", "bi bi-pen", "label", "Assinatura do gestor da unidade", 4, "ngIf"], ["color", "light", "icon", "bi bi-pen", "label", "Assinatura do gestor da entidade", 4, "ngIf"], ["color", "light", "icon", "bi bi-clock", 3, "label", 4, "ngIf"], ["color", "light", "icon", "bi bi-pen", "label", "Assinatura do participante"], ["color", "light", "icon", "bi bi-pen", "label", "Assinatura do gestor da unidade"], ["color", "light", "icon", "bi bi-pen", "label", "Assinatura do gestor da entidade"], ["color", "light", "icon", "bi bi-clock", 3, "label"], ["color", "light", "icon", "bi bi-hourglass-bottom", "label", "Assinatura do participante", 4, "ngIf"], ["color", "light", "icon", "bi bi-stopwatch", "label", "Assinatura do gestor da unidade", 4, "ngIf"], ["color", "light", "icon", "bi bi-hourglass-bottom", "label", "Assinatura do participante"], ["color", "light", "icon", "bi bi-stopwatch", "label", "Assinatura do gestor da unidade"]],
+  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "collapseChange", "collapsed"], [1, "row"], ["controlName", "nome", "placeholder", "Nome...", 3, "size", "label", "control"], ["title", "Descri\u00E7\u00E3o", "field", "nome"], [3, "title", "template"], ["columnPlanoTrabalho", ""], ["columnAtividade", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"], [1, "one-per-line"], ["color", "light", "icon", "bi bi-clock", 3, "label", 4, "ngIf"], ["color", "light", "icon", "bi bi-clock", 3, "label"], ["color", "light", "icon", "bi bi-hourglass-bottom", "label", "Assinatura do participante", 4, "ngIf"], ["color", "light", "icon", "bi bi-stopwatch", "label", "Assinatura do gestor da unidade", 4, "ngIf"], ["color", "light", "icon", "bi bi-hourglass-bottom", "label", "Assinatura do participante"], ["color", "light", "icon", "bi bi-stopwatch", "label", "Assinatura do gestor da unidade"]],
   template: function TipoModalidadeListComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "grid", 0);
@@ -360,7 +318,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](5, "columns");
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](6, "column", 5);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](7, "column", 6);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](8, TipoModalidadeListComponent_ng_template_8_Template, 5, 4, "ng-template", null, 7, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](8, TipoModalidadeListComponent_ng_template_8_Template, 2, 1, "ng-template", null, 7, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](10, "column", 6);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](11, TipoModalidadeListComponent_ng_template_11_Template, 3, 2, "ng-template", null, 8, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);

@@ -4,11 +4,14 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\PlanoTrabalho;
+use App\Traits\HasStatus;
 use App\Models\PlanoTrabalhoConsolidacaoOcorrencia;
 use App\Models\StatusJustificativa;
 
 class PlanoTrabalhoConsolidacao extends ModelBase
 {
+    use HasStatus;
+
     protected $table = 'planos_trabalhos_consolidacoes';
 
     protected $with = [];
