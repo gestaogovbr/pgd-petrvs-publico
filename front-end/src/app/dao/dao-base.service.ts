@@ -56,6 +56,8 @@ export class DaoBaseService<T extends Base> {
         a[v.field] = this.util.getDateFormatted(entity[v.field]);
       } else if(v.type == "DATETIME" && entity[v.field] != "undefined") {
         a[v.field] = this.util.getDateTimeFormatted(entity[v.field]);
+      } else if(v.type == "LAMBDA" && v.lambda) {
+        a[v.field] = v.lambda(entity);
       }
       return a;
     }, {} as IIndexable);

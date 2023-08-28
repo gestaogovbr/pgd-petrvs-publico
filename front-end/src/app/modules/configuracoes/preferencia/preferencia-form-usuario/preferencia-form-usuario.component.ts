@@ -48,14 +48,6 @@ export class PreferenciaFormUsuarioComponent extends PageFormBase<Usuario, Usuar
       theme: {default: null},
       ocultar_menu_sei: {default: true},
       ocultar_container_petrvs: {default: false},
-      /*notifica_demanda_distribuicao: {default: true},
-      notifica_demanda_conclusao: {default: true},
-      notifica_demanda_avaliacao: {default: true},
-      notifica_demanda_modificacao: {default: true},
-      notifica_demanda_comentario: {default: true},
-      enviar_petrvs: {default: true},
-      enviar_email: {default: true},
-      enviar_whatsapp: {default: true}*/
     }, this.cdRef, this.validate);
   }
 

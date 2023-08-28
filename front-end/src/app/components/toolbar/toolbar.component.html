@@ -1,10 +1,12 @@
-<div *ngIf="visible" class="d-flex justify-content-end mt-2">
-    <h3 *ngIf="title.length" class="flex-fill">
+<div *ngIf="visible" class="d-flex flex-column flex-md-row justify-content-end  align-items-center mt-2">
+    <h3 *ngIf="title.length">
         <i *ngIf="icon.length" [class]="icon"></i>
         {{title}}
     </h3>
-    <ng-content></ng-content>
-    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+    <div class="flex-fill d-flex justify-content-end">
+        <ng-content></ng-content>
+    </div>
+    <div class="btn-group ms-auto" role="group" aria-label="Button group with nested dropdown">
         <ng-container *ngFor="let btn of buttons">
             <div *ngIf="!btn.dynamicVisible || btn.dynamicVisible(btn)" class="btn-group" role="group">
                 <button type="button" [id]="generatedButtonId(btn)" [class]="'btn ' + (btn.color || 'btn-outline-primary')" [class.active]="buttonPressed(btn)"

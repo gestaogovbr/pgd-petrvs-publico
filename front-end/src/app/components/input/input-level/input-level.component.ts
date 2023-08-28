@@ -52,6 +52,7 @@ export class InputLevelComponent extends InputBase implements OnInit {
   @Input() path?: string;
   @Input() type: InputLevelTypes = "number";
   @Input() separator: string = ".";
+  @Input() required?: string;
   @Input() set control(value: AbstractControl | undefined) {
     this._control = value;
   }

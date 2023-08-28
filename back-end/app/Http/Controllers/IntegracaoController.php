@@ -37,9 +37,18 @@ class IntegracaoController extends ControllerBase {
                 'unidades' => ['required'],
                 'entidade' => ['required']
             ]);
-            return response()->json([$this->service->sincronizar($data)]);
+            return response()->
+                json([$this->service->sincronizar($data)],
+                    $status = 200,
+                    $headers = ["Content-Type" => "application/json"], 
+                    $options = 256);
+
         } catch (Throwable $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->
+                json(['error' => $e->getMessage()],
+                    $status = 200,
+                    $headers = ["Content-Type" => "application/json"],
+                    $options = 256);
         }
     }
 
@@ -60,12 +69,17 @@ class IntegracaoController extends ControllerBase {
                 'id' => $entity->id,
                 'with' => ['entidade','usuario']
             ]);
-            return response()->json([
-                'success' => true,
-                'rows' => [$result] 
-            ]);
+            return response()->
+                json(['success' => true, 'rows' => [$result]],
+                    $status = 200,
+                    $headers = ["Content-Type" => "application/json"],
+                    $options = 256);
         } catch (Throwable $e) {
-            return response()->json(['error' => $e->getMessage()]);
+            return response()->
+                json(['error' => $e->getMessage()],
+                    $status = 200,
+                    $headers = ["Content-Type" => "application/json"],
+                    $options = 256);
         }
     }
 

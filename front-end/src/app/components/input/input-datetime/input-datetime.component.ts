@@ -41,6 +41,7 @@ export class InputDatetimeComponent extends InputBase implements OnInit {
   @Input() source?: any;
   @Input() path?: string;
   @Input() value: any = "";
+  @Input() required?: string;
   @Input() set control(value: AbstractControl | undefined) {
     this._control = value;
   }

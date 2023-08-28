@@ -1,4 +1,4 @@
-<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="programa_id" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
     <separator [title]="lex.translate('Plano de trabalho')" collapse [collapsed]="false">
         <div class="row">
             <input-search #programa [size]="6" disabled controlName="programa_id" [dao]="programaDao"></input-search>
@@ -20,7 +20,7 @@
     <div class="row">
         <input-datetime [size]="3" disabled label="Data e hora" controlName="data_inicio" [control]="form!.controls.data_inicio" labelInfo="Data de cadastro do termo"></input-datetime>
         <input-text [label]="'Número ' + lex.translate('Processo')" [size]="3" controlName="numero_processo" [control]="form!.controls.numero_processo" disabled labelInfo="Número do processo, com a formatação de origem"></input-text>
-        <input-search [size]="4" #tipoDocumento [disabled]="!form!.controls.numero_processo.value?.length ? 'true' : undefined" controlName="tipo_documento_id" [dao]="tipoDocumentoDao"></input-search>
+        <input-search [size]="4" #tipoDocumento [disabled]="!form!.controls.numero_processo.value?.length ? 'true' : undefined" controlName="tipo_documento_id" [dao]="tipoDocumentoDao" required></input-search>
         <input-switch label="Vinculadas" [disabled]="entity?.atividades?.length ? 'true' : undefined" [size]="2" controlName="vinculadas" [control]="form!.controls.vinculadas" (change)="onVinculadasChange($event)" labelInfo="Se inclui as atividades das unidades vinculadas a unidade do plano"></input-switch>
     </div>
     <!--separator title="Pré-visualização do termo de adesão" collapse [collapsed]="true">

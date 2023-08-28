@@ -3,6 +3,11 @@
 <form [class]="isNoMargin ? 'm-0 p-0' : 'mx-2 mt-2'" [id]="generatedId(title) + '_form'" [formGroup]="form!">
     <ng-content></ng-content>
 </form>
+<ng-container *ngIf="!isNoButtons && anyRequired">
+    <small>
+        (<span class="fs-6">＊</span>) Campos obrigatórios
+    </small>
+</ng-container>
 <div *ngIf="!isNoButtons" class="d-flex flex-row-reverse mt-3">
     <div class="btn-group float-right" role="group" aria-label="Opções">
         <button *ngFor="let btn of buttons" [id]="generatedId(title + btn.label + btn.icon) + '_button'" type="button" [class]="'btn ' + (btn.color || 'btn-outline-primary')" (click)="onButtonClick(btn)">

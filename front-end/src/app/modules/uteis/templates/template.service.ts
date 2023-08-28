@@ -19,7 +19,7 @@ export type TemplateNotificacao = {
   template: string
 }
 
-export type TemplateFieldType = "VALUE" | "DATE" | "DATETIME" | "TEMPLATE" | "OBJECT" | "ARRAY";
+export type TemplateFieldType = "VALUE" | "DATE" | "DATETIME" | "TEMPLATE" | "OBJECT" | "ARRAY" | "LAMBDA";
 
 export type TemplateDataset = {
   field: string,
@@ -27,7 +27,8 @@ export type TemplateDataset = {
   type?: TemplateFieldType,
   dao?: DaoBaseService<Base>,
   fields?: TemplateDataset[],
-  lookup?: LookupItem[]
+  lookup?: LookupItem[],
+  lambda?: (entity: any) => string 
 }
 
 export type TemplateTag = {
