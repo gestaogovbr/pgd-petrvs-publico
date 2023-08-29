@@ -91,11 +91,11 @@
             <li class="nav-item dropdown">                
                 <a class="nav-link" id="petrvs-context" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true"  aria-expanded="false">
                     <span class="d-none d-md-block">
-                        {{ contexto?.name || "Selecione..." }}
+                        {{ contexto.name || "Selecione..." }}
                         <i class="bi bi-chevron-down fs-6"></i>
                     </span>
                     <span class="d-block d-md-none">
-                        <i [class]="contexto?.icon"></i>
+                        <i [class]="contexto.icon"></i>
                     </span>
                 </a>
                 <div class="dropdown-menu contextoDropdown navbar-dropdown-caret py-0 shadow border border-300" aria-labelledby="petrvs-context" >
@@ -103,7 +103,7 @@
                         <div class="card-body py-3 px-3">
                             <ul class="nav d-flex flex-column">
                                 <li *ngFor="let itemContexto2 of menuContexto" (click)="onContextoSelect(itemContexto2)" class="nav-item">                                    
-                                    <a [class.active]="contexto?.name == itemContexto2.name" class="nav-link " role="button">
+                                    <a [class.active]="contexto.name == itemContexto2.name" class="nav-link " role="button">
                                         <i [class]="itemContexto2.icon"></i> {{ itemContexto2.name }}
                                     </a>                                            
                                 </li>

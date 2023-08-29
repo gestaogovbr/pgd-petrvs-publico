@@ -38,10 +38,10 @@ import { trigger,state,style,animate,transition } from '@angular/animations';
 export class CurriculumFormComponent extends PageFormBase<Curriculum, CurriculumDaoService>{
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   //@ViewChild(InputSearchComponent, { static: false }) public area?: InputSearchComponent;
-  @ViewChild("areaPos", { static: false }) public areaPos?: InputSearchComponent;
-  @ViewChild("estados", { static: false }) public estados?: InputSelectComponent;
+  @ViewChild("areaPos", { static: false }) public areaPosV?: InputSearchComponent;
+  @ViewChild("estados", { static: false }) public estadosV?: InputSelectComponent;
   //@ViewChild(InputSelectComponent, { static: false }) public titulo?: InputSelectComponent;
-  @ViewChild("curso", { static: false }) public curso?: InputSelectComponent;
+  @ViewChild("curso", { static: false }) public cursoV?: InputSelectComponent;
   
 
   public municipios: LookupItem[] = [];
@@ -141,8 +141,8 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
 
   public onEstadosChange() {
     //console.log('onEstadosChange', this.form?.controls.estados)
-    this.selecionaMunicipios(this.estados!.value)
-
+    const estados = this.estadosV!.value;
+    this.selecionaMunicipios(estados)
   }
 
   public selecionaMunicipios(uf: string) {
@@ -219,9 +219,9 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
         console.log('CURSO DENTRO->',curso)
     })*/
 
-    const area = { 'key': this.formGraduacao!.controls.areaPos.value, 'value': this.areaPos?.selectedItem?.text };
+    const area = { 'key': this.formGraduacao!.controls.areaPos.value, 'value': this.areaPosV?.selectedItem?.text };
 
-    const curso = this.curso!.selectedItem;//this.cursosGradPos.find(value => value.key == this.formGraduacao!.controls.cursoPos.value)
+    const curso = this.cursoV!.selectedItem;//this.cursosGradPos.find(value => value.key == this.formGraduacao!.controls.cursoPos.value)
     const titulo = this.lookup.TITULOS_CURSOS.find(x => x.key == this.formGraduacao!.controls.titulo.value);
     const pretensao = this.opcoesEscolha.find(value => value.key == (this.formGraduacao!.controls.pretensao.value ? 1 : 0));//converte o value do switch
     const key = this.util.textHash((area.key || "") + (curso?.key || "") + (titulo?.key || ""));// + (pretensao?.key || ""));

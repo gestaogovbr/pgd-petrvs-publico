@@ -7,7 +7,7 @@ import { DialogService } from './services/dialog.service';
 import { DialogComponent } from './services/dialog/dialog.component';
 import { GlobalsService } from './services/globals.service';
 import { LexicalService } from './services/lexical.service';
-import { NavigateService } from './services/navigate.service';
+import { NavigateService, RouteMetadata } from './services/navigate.service';
 import { UtilService } from './services/util.service';
 import { LookupService } from './services/lookup.service';
 import { EntityService } from './services/entity.service';
@@ -15,6 +15,27 @@ import { NotificacaoService } from './modules/uteis/notificacoes/notificacao.ser
 import { DOCUMENT } from '@angular/common';
 
 export let appInjector: Injector;
+export type Contexto = "EXECUCAO" | "AVALIACAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
+export type Schema = {
+  name: string, 
+  permition?: string, 
+  route: string[],
+  metadata?: RouteMetadata,
+  icon: string
+};
+export type MenuSchema = {[key: string]: Schema};
+export type MenuItem = {
+  name: string,
+  permition?: string,
+  id: string,
+  menu: Schema[]
+} | Schema;
+export type MenuContexto = {
+  key: Contexto,
+  icon: string,
+  name: string,
+  menu: MenuItem[]
+};	
 
 @Component({
   selector: 'app-root',
@@ -48,10 +69,10 @@ export class AppComponent {
   public lookup: LookupService;
   public entity: EntityService;
   public notificacao: NotificacaoService;
-  public menuSchema: any;
+  public menuSchema: MenuSchema = {};
   public menuToolbar: any[] = [];
-  public menuContexto: any[] = [];
-  public contexto: any;
+  public menuContexto: MenuContexto[] = [];
+  public contexto: MenuContexto;
   public menuProjeto: any;
   public menuGestao: any;
   public menuOperacional: any;
@@ -96,7 +117,7 @@ export class AppComponent {
     this.lex.cdRef = this.cdRef;
     /* Definição do menu do sistema */
     this.setMenuVars();
-    this.contexto = this.menuContexto[0].key;    
+    this.contexto = this.menuContexto[0];    
   }
 
   public setMenuVars() {
@@ -168,12 +189,11 @@ export class AppComponent {
       RXCADASTRO_ADM_ATIVIDADESEXT: { name: this.lex.translate("Atividades Externas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','areaatividadeexterna'], icon: "bi bi-arrows-fullscreen" },
       RXCADASTRO_ADM_AREASTEMATICAS: { name: this.lex.translate("Áreas Temáticas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','areatematica'], icon: "bi bi-box-arrow-in-down" },
       RXCADASTRO_ADM_CAPACIDADES_TECNICAS: { name: this.lex.translate("Capacidades Técnicas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','capacidadetecnica'], icon: "bi bi-arrows-angle-contract" },
-      RXCADASTRO_ADM_QUESTIONARIOS_PERGUNTAS: { name: this.lex.translate("Perguntas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','cargo'], icon: "bi bi-patch-question" },
-      RXCADASTRO_ADM_QUESTIONARIOS_RESPOSTAS: { name: this.lex.translate("Respostas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','cargo'], icon: "bi bi-list-task" },
+      RXCADASTRO_ADM_QUESTIONARIOS_PERGUNTAS: { name: this.lex.translate("Perguntas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','questionariopergunta'], icon: "bi bi-patch-question" },
+      RXCADASTRO_ADM_QUESTIONARIOS_RESPOSTAS: { name: this.lex.translate("Respostas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','gerais','questionarioresposta'], icon: "bi bi-list-task" },
       RXVISUALIZA_ADM_PESQUISA1: { name:"Usuario", permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-search" },
       RXVISUALIZA_ADM_PESQUISA2: { name:"Administrador", permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-binoculars" },
       /*PROJETOS*/
-
       PAINEL: { name: "Painel", permition: '', route: ['configuracoes', 'sobre'], icon: "" },
       AUDITORIA: { name: "Auditoria", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
     };
@@ -196,6 +216,7 @@ export class AppComponent {
       menu: [
         this.menuSchema.ATIVIDADES,
         this.menuSchema.AFASTAMENTOS,
+        this.menuSchema.PLANOS_ENTREGAS,//Carlos
         Object.assign({}, this.menuSchema.CONSOLIDACOES, {params: {tab: "USUARIO"}})
       ].sort(this.orderMenu)
     }, {
