@@ -92,7 +92,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       listaQualitativo: { default: [] },
       planejamento_id: { default: null },
       cadeia_valor_id: { default: null },
-      objetivo_id: { default: null },
+      planejamento_objetivo_id: { default: null },
       objetivo: { default: null },
     }, this.cdRef, this.validate);
     this.formObjetivos = this.fh.FormBuilder({
@@ -245,8 +245,8 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
 
   public async saveObjetivo(form: FormGroup, row: any) {
     let consolidado = row as PlanoEntregaEntregaObjetivo;
-    if (form!.controls.objetivo_id.value.length && this.inputObjetivo!.selectedItem) {
-      consolidado.objetivo_id = form!.controls.objetivo_id.value;
+    if (form!.controls.planejamento_objetivo_id.value.length && this.inputObjetivo!.selectedItem) {
+      consolidado.planejamento_objetivo_id = form!.controls.planejamento_objetivo_id.value;
       consolidado.objetivo = this.inputObjetivo!.selectedItem!.entity;
       return consolidado;
     }

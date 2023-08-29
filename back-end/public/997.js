@@ -388,7 +388,7 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
         default: new Date()
       }
     }, this.cdRef, this.filterValidate);
-    this.join = ["unidade.entidade", "usuario", "programa", "documento.assinaturas.usuario:id,nome,url_foto", "tipo_modalidade", "entregas.plano_entrega_entrega.entrega", "entregas.entrega"];
+    this.join = ["unidade.entidade", "usuario", "programa", "documento.assinaturas.usuario:id,nome,url_foto", "tipo_modalidade", "entregas.plano_entrega_entrega.entrega", "entregas.plano_entrega_entrega.plano_entrega:id,unidade_id", "entregas.plano_entrega_entrega.plano_entrega.unidade", "entregas.entrega"];
     this.groupBy = [{
       field: "unidade.sigla",
       label: "Unidade"
@@ -458,7 +458,7 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
     const BOTAO_ASSINAR = {
       hint: "Assinar",
       icon: "bi bi-pen",
-      color: "btn-outline-dark",
+      color: "btn-outline-secondary",
       onClick: this.assinar.bind(this)
     };
     if (this.planoService.needSign(plano)) result.push(BOTAO_ASSINAR);else if (this.auth.hasPermissionTo('MOD_PTR_EDT')) result.push(BOTAO_ALTERAR);else if (this.auth.hasPermissionTo("MOD_PTR_CONS")) result.push(BOTAO_INFORMACOES);
@@ -673,19 +673,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   PlanoTrabalhoService: () => (/* binding */ PlanoTrabalhoService)
 /* harmony export */ });
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ 51197);
-/* harmony import */ var src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/services/auth.service */ 32333);
-/* harmony import */ var src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/services/lookup.service */ 39702);
-/* harmony import */ var src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/plano-trabalho-dao.service */ 87744);
+/* harmony import */ var src_app_models_documento_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/models/documento.model */ 43972);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/services/auth.service */ 32333);
+/* harmony import */ var src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/services/lookup.service */ 39702);
+/* harmony import */ var src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/plano-trabalho-dao.service */ 87744);
+/* harmony import */ var _uteis_templates_template_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../uteis/templates/template.service */ 49367);
 var _class;
 
 
 
 
+
+
 class PlanoTrabalhoService {
-  constructor(auth, lookup, planoTrabalhoDao) {
+  constructor(auth, lookup, dao, templateService, planoTrabalhoDao) {
     this.auth = auth;
     this.lookup = lookup;
+    this.dao = dao;
+    this.templateService = templateService;
     this.planoTrabalhoDao = planoTrabalhoDao;
   }
   template(plano) {
@@ -755,12 +761,61 @@ class PlanoTrabalhoService {
       tipo: key
     };
   }
+  /**
+   * Método atualiza o TCR caso ele exista (possivelmente obrigatório pelo programa), e caso ele não esteja assinado.
+   * Em caso de estar assinado ou ser obrigatório e não exista ainda, será gerado um novo documento.
+   * @param planoReferencia  Plano de trabalho para comparação (contendo as entregas)
+   * @param planoNovo        Plano de trabalho modificado, com as novas informações (contendo as entregas, programa.template_tcr e documentos)
+   * @param ?textUsuario     Texto complementar do usuário, caso não seja informado, irá utilizar o do planoNovo.usuario.texto_complementar_plano
+   * @param ?textUnidade     Texto complementar da unidade, caso não seja informado, irá utilizar o do planoNovo.unidade.texto_complementar_plano
+   * @returns                Documento gerado ou modificado (observar o _status)
+   */
+  atualizarTcr(planoReferencia, planoNovo, textUsuario, textUnidade) {
+    if (planoNovo.usuario && planoNovo.unidade) {
+      let dsReferencia = this.dao.datasource(planoReferencia);
+      let dsNovo = this.dao.datasource(planoNovo);
+      let programa = planoNovo.programa;
+      /* Atualiza os campos de texto complementar do usuário e da unidade */
+      dsNovo.usuario.texto_complementar_plano = textUsuario || planoNovo.usuario?.texto_complementar_plano || "";
+      dsNovo.unidade.texto_complementar_plano = textUnidade || planoNovo.unidade?.texto_complementar_plano || "";
+      /* Se tiver modificações e o termo for obrigatório ou já exista um documento */
+      if ((programa?.termo_obrigatorio || planoNovo.documento_id?.length) && JSON.stringify(dsNovo) != JSON.stringify(dsReferencia) && programa?.template_tcr) {
+        let documento = planoNovo.documentos?.find(x => x.id == planoNovo.documento_id);
+        if (!planoNovo.documento_id?.length || !documento || documento.assinaturas?.length || documento.tipo == "LINK") {
+          documento = new src_app_models_documento_model__WEBPACK_IMPORTED_MODULE_0__.Documento({
+            id: this.dao?.generateUuid(),
+            tipo: "HTML",
+            especie: "TCR",
+            titulo: "Termo de Ciência e Responsabilidade",
+            conteudo: this.templateService.renderTemplate(programa?.template_tcr?.conteudo || "", dsNovo),
+            status: "GERADO",
+            _status: "ADD",
+            template: programa?.template_tcr?.conteudo,
+            dataset: this.dao.dataset(),
+            datasource: dsNovo,
+            entidade_id: this.auth.entidade?.id,
+            plano_trabalho_id: planoNovo.id,
+            template_id: programa?.template_tcr_id
+          });
+          planoNovo.documentos.push(documento);
+        } else {
+          documento.conteudo = this.templateService.renderTemplate(programa?.template_tcr?.conteudo || "", dsNovo);
+          documento.dataset = this.dao.dataset();
+          documento.datasource = dsNovo;
+          documento._status = documento._status == "ADD" ? "ADD" : "EDIT";
+        }
+        planoNovo.documento = documento;
+        planoNovo.documento_id = documento?.id || null;
+      }
+    }
+    return planoNovo.documento;
+  }
 }
 _class = PlanoTrabalhoService;
 _class.ɵfac = function PlanoTrabalhoService_Factory(t) {
-  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_0__.AuthService), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_1__.LookupService), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵinject"](src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_2__.PlanoTrabalhoDaoService));
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵinject"](src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_1__.AuthService), _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵinject"](src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_2__.LookupService), _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵinject"](src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_3__.PlanoTrabalhoDaoService), _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵinject"](_uteis_templates_template_service__WEBPACK_IMPORTED_MODULE_4__.TemplateService), _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵinject"](src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_3__.PlanoTrabalhoDaoService));
 };
-_class.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineInjectable"]({
+_class.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineInjectable"]({
   token: _class,
   factory: _class.ɵfac,
   providedIn: 'root'

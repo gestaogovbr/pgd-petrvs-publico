@@ -170,30 +170,36 @@ var _class;
 const _c0 = ["notificacoes"];
 function PreferenciaFormUsuarioComponent_div_0_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](0, "div", 12)(1, "div", 13);
-    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelement"](2, "span", 14);
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](0, "div", 10)(1, "div", 11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelement"](2, "span", 12);
     _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]()();
   }
 }
-function PreferenciaFormUsuarioComponent_separator_9_Template(rf, ctx) {
+function PreferenciaFormUsuarioComponent_div_5_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](0, "separator", 15)(1, "div", 3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelement"](2, "input-switch", 16)(3, "input-switch", 17);
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](0, "div", 13)(1, "separator", 14)(2, "div", 3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelement"](3, "input-switch", 15)(4, "input-switch", 16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](5, "separator", 17);
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelement"](6, "input-select", 18);
     _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]()();
   }
   if (rf & 2) {
     const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("title", "Prefer\u00EAncias de exibi\u00E7\u00E3o " + ctx_r1.lex.translate("usu\u00E1rio"));
     _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 12)("label", "Ocultar menu lateral do sei no Controle de " + ctx_r1.lex.translate("Processo"));
     _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("items", ctx_r1.lookup.THEMES);
   }
 }
-function PreferenciaFormUsuarioComponent_separator_12_Template(rf, ctx) {
+function PreferenciaFormUsuarioComponent_separator_11_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](0, "separator", 18);
-    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelement"](1, "notificacoes-config", 19, 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](0, "separator", 19);
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelement"](1, "notificacoes-config", 20, 21);
     _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
@@ -251,14 +257,6 @@ class PreferenciaFormUsuarioComponent extends src_app_modules_base_page_form_bas
       ocultar_container_petrvs: {
         default: false
       }
-      /*notifica_demanda_distribuicao: {default: true},
-      notifica_demanda_conclusao: {default: true},
-      notifica_demanda_avaliacao: {default: true},
-      notifica_demanda_modificacao: {default: true},
-      notifica_demanda_comentario: {default: true},
-      enviar_petrvs: {default: true},
-      enviar_email: {default: true},
-      enviar_whatsapp: {default: true}*/
     }, this.cdRef, this.validate);
   }
   get isPanel() {
@@ -346,9 +344,9 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdef
     usuarioId: "usuarioId"
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵInheritDefinitionFeature"]],
-  decls: 13,
-  vars: 15,
-  consts: [["class", "d-flex justify-content-center", 4, "ngIf"], [3, "buttons"], [3, "form", "noButtons", "submit", "cancel"], [1, "row"], ["label", "Etiquetas", "multiselectStyle", "inline", "controlName", "etiquetas", 3, "size", "addItemHandle"], ["label", "Texto", "controlName", "etiqueta_texto", 3, "size"], ["label", "\u00CDcone", "icon", "fas fa-sign-out-alt", "controlName", "etiqueta_icone", "liveSearch", "", 3, "size", "items"], ["label", "Cor", "controlName", "etiqueta_cor", 3, "size"], ["transparent", "", 3, "title", 4, "ngIf"], ["transparent", "", "title", "Tema"], ["controlName", "theme", 3, "items"], ["transparent", "", "title", "Notifica\u00E7\u00F5es", 4, "ngIf"], [1, "d-flex", "justify-content-center"], ["role", "status", 1, "spinner-border"], [1, "visually-hidden"], ["transparent", "", 3, "title"], ["scale", "small", "labelPosition", "right", "controlName", "ocultar_menu_sei", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "label", "Ocultar o container Petrvs", "controlName", "ocultar_container_petrvs", 3, "size"], ["transparent", "", "title", "Notifica\u00E7\u00F5es"], [3, "entity", "disabled"], ["notificacoes", ""]],
+  decls: 12,
+  vars: 16,
+  consts: [["class", "d-flex justify-content-center", 4, "ngIf"], [3, "buttons"], [3, "form", "noButtons", "submit", "cancel"], [1, "row"], ["class", "col-md-6", 4, "ngIf"], ["label", "Etiquetas", "multiselectStyle", "inline", "controlName", "etiquetas", 3, "size", "addItemHandle"], ["label", "Texto", "controlName", "etiqueta_texto", 3, "size"], ["label", "\u00CDcone", "icon", "fas fa-sign-out-alt", "controlName", "etiqueta_icone", "liveSearch", "", 3, "size", "items"], ["label", "Cor", "controlName", "etiqueta_cor", 3, "size"], ["transparent", "", "title", "Notifica\u00E7\u00F5es", 4, "ngIf"], [1, "d-flex", "justify-content-center"], ["role", "status", 1, "spinner-border"], [1, "visually-hidden"], [1, "col-md-6"], ["transparent", "", 3, "title"], ["scale", "small", "labelPosition", "right", "controlName", "ocultar_menu_sei", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "label", "Ocultar o container Petrvs", "controlName", "ocultar_container_petrvs", 3, "size"], ["transparent", "", "title", "Tema"], ["controlName", "theme", 3, "items"], ["transparent", "", "title", "Notifica\u00E7\u00F5es"], [3, "entity", "disabled"], ["notificacoes", ""]],
   template: function PreferenciaFormUsuarioComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](0, PreferenciaFormUsuarioComponent_div_0_Template, 3, 0, "div", 0);
@@ -360,14 +358,12 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdef
       })("cancel", function PreferenciaFormUsuarioComponent_Template_editable_form_cancel_3_listener() {
         return ctx.onCancel();
       });
-      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](4, "div", 3)(5, "input-multiselect", 4);
-      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelement"](6, "input-text", 5)(7, "input-select", 6)(8, "input-color", 7);
-      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](9, PreferenciaFormUsuarioComponent_separator_9_Template, 4, 4, "separator", 8);
-      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](10, "separator", 9);
-      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelement"](11, "input-select", 10);
-      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](12, PreferenciaFormUsuarioComponent_separator_12_Template, 3, 2, "separator", 11);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](4, "div", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](5, PreferenciaFormUsuarioComponent_div_5_Template, 7, 5, "div", 4);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](6, "div")(7, "input-multiselect", 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelement"](8, "input-text", 6)(9, "input-select", 7)(10, "input-color", 8);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]()()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](11, PreferenciaFormUsuarioComponent_separator_11_Template, 3, 2, "separator", 9);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]()();
     }
     if (rf & 2) {
@@ -379,6 +375,10 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("form", ctx.form)("noButtons", ctx.isPanel ? "true" : undefined);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("ngIf", !ctx.etiquetas);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵclassMap"](ctx.etiquetas ? "col-md-12" : "col-md-6");
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 12)("addItemHandle", ctx.addItemHandleEtiquetas.bind(ctx));
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 5);
@@ -387,11 +387,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 4);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("ngIf", !ctx.etiquetas);
-      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("items", ctx.lookup.THEMES);
-      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("ngIf", ctx.entity);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("ngIf", ctx.entity && !ctx.etiquetas);
     }
   },
   dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_14__.NgIf, _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_5__.ToolbarComponent, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_6__.InputSwitchComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_7__.InputTextComponent, _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_8__.InputSelectComponent, _components_input_input_color_input_color_component__WEBPACK_IMPORTED_MODULE_9__.InputColorComponent, _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_10__.InputMultiselectComponent, _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_11__.SeparatorComponent, _uteis_notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_12__.NotificacoesConfigComponent],

@@ -36,6 +36,41 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefi
 
 /***/ }),
 
+/***/ 46564:
+/*!*************************************************************************!*\
+  !*** ./src/app/modules/home/home-avaliador/home-avaliador.component.ts ***!
+  \*************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   HomeAvaliadorComponent: () => (/* binding */ HomeAvaliadorComponent)
+/* harmony export */ });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ 51197);
+var _class;
+
+class HomeAvaliadorComponent {}
+_class = HomeAvaliadorComponent;
+_class.ɵfac = function HomeAvaliadorComponent_Factory(t) {
+  return new (t || _class)();
+};
+_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({
+  type: _class,
+  selectors: [["app-home-avaliador"]],
+  decls: 2,
+  vars: 0,
+  template: function HomeAvaliadorComponent_Template(rf, ctx) {
+    if (rf & 1) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "p");
+      _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1, "home-avaliador works!");
+      _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+    }
+  },
+  styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
+});
+
+/***/ }),
+
 /***/ 56759:
 /*!*************************************************************!*\
   !*** ./src/app/modules/home/home-dev/home-dev.component.ts ***!
@@ -209,7 +244,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefi
   selectors: [["app-home-gestao"]],
   decls: 11,
   vars: 18,
-  consts: [[1, "text-secondary"], [1, "row", "mt-5"], [1, "col-6", "col-sm-3", "mb-3"], ["title", "Avalidar consolidadas", "imgIcon", "../../../../assets/icons/home/ranking.png", "textColor", "#1369f0", "borderColor", "#1369f0", 3, "route"], ["title", "Entregas da minha unidade", "imgIcon", "../../../../assets/icons/home/service.png", "textColor", "#1369f0", "borderColor", "#1369f0", 3, "route"], ["title", "Trabalho da minha equipe", "imgIcon", "../../../../assets/icons/home/team.png", "textColor", "#1369f0", "borderColor", "#1369f0"], ["title", "Planos de trabalho", "imgIcon", "../../../../assets/icons/home/negociate.png", "textColor", "#1369f0", "borderColor", "#1369f0", 3, "route", "metadata"]],
+  consts: [[1, "text-secondary"], [1, "row", "mt-5"], [1, "col-6", "col-sm-3", "mb-3"], ["title", "Avaliar consolidadas", "imgIcon", "../../../../assets/icons/home/ranking.png", "textColor", "#1369f0", "borderColor", "#1369f0", 3, "route"], ["title", "Entregas da minha unidade", "imgIcon", "../../../../assets/icons/home/service.png", "textColor", "#1369f0", "borderColor", "#1369f0", 3, "route"], ["title", "Trabalho da minha equipe", "imgIcon", "../../../../assets/icons/home/team.png", "textColor", "#1369f0", "borderColor", "#1369f0"], ["title", "Planos de trabalho", "imgIcon", "../../../../assets/icons/home/negociate.png", "textColor", "#1369f0", "borderColor", "#1369f0", 3, "route", "metadata"]],
   template: function HomeGestaoComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "p", 0);
@@ -442,7 +477,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
   selectors: [["app-home"]],
   decls: 5,
   vars: 1,
-  consts: [[1, "container-fluid"], [1, "saudacao"], [1, "text-black-50"]],
+  consts: [[1, "container-fluid"], [1, "saudacao"], [1, ""]],
   template: function HomeComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "div", 0)(1, "div", 1)(2, "h2", 2);
@@ -472,8 +507,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   HomeModule: () => (/* binding */ HomeModule)
 /* harmony export */ });
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/common */ 89650);
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/router */ 82454);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/common */ 89650);
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/router */ 82454);
 /* harmony import */ var _home_gestao_home_gestao_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./home-gestao/home-gestao.component */ 78037);
 /* harmony import */ var _home_execucao_home_execucao_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./home-execucao/home-execucao.component */ 99478);
 /* harmony import */ var _home_projetos_home_projetos_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./home-projetos/home-projetos.component */ 72360);
@@ -483,8 +518,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _home_raiox_home_raiox_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./home-raiox/home-raiox.component */ 8943);
 /* harmony import */ var _home_administrador_home_administrador_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./home-administrador/home-administrador.component */ 14673);
 /* harmony import */ var _components_components_module__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../components/components.module */ 10822);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _home_avaliador_home_avaliador_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./home-avaliador/home-avaliador.component */ 46564);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/core */ 51197);
 var _class;
+
 
 
 
@@ -504,6 +541,9 @@ const routes = [{
   children: [{
     path: 'execucao',
     component: _home_execucao_home_execucao_component__WEBPACK_IMPORTED_MODULE_1__.HomeExecucaoComponent
+  }, {
+    path: 'avaliacao',
+    component: _home_avaliador_home_avaliador_component__WEBPACK_IMPORTED_MODULE_9__.HomeAvaliadorComponent
   }, {
     path: 'gestao',
     component: _home_gestao_home_gestao_component__WEBPACK_IMPORTED_MODULE_0__.HomeGestaoComponent
@@ -529,16 +569,16 @@ _class = HomeModule;
 _class.ɵfac = function HomeModule_Factory(t) {
   return new (t || _class)();
 };
-_class.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefineNgModule"]({
+_class.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdefineNgModule"]({
   type: _class
 });
-_class.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefineInjector"]({
-  imports: [_angular_router__WEBPACK_IMPORTED_MODULE_10__.RouterModule.forRoot(routes), _angular_common__WEBPACK_IMPORTED_MODULE_11__.CommonModule, _components_components_module__WEBPACK_IMPORTED_MODULE_8__.ComponentsModule]
+_class.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdefineInjector"]({
+  imports: [_angular_router__WEBPACK_IMPORTED_MODULE_11__.RouterModule.forRoot(routes), _angular_common__WEBPACK_IMPORTED_MODULE_12__.CommonModule, _components_components_module__WEBPACK_IMPORTED_MODULE_8__.ComponentsModule]
 });
 (function () {
-  (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵsetNgModuleScope"](HomeModule, {
-    declarations: [_home_component__WEBPACK_IMPORTED_MODULE_4__.HomeComponent, _home_gestao_home_gestao_component__WEBPACK_IMPORTED_MODULE_0__.HomeGestaoComponent, _home_execucao_home_execucao_component__WEBPACK_IMPORTED_MODULE_1__.HomeExecucaoComponent, _home_projetos_home_projetos_component__WEBPACK_IMPORTED_MODULE_2__.HomeProjetosComponent, _home_ponto_home_ponto_component__WEBPACK_IMPORTED_MODULE_3__.HomePontoComponent, _home_dev_home_dev_component__WEBPACK_IMPORTED_MODULE_5__.HomeDevComponent, _home_raiox_home_raiox_component__WEBPACK_IMPORTED_MODULE_6__.HomeRaioxComponent, _home_administrador_home_administrador_component__WEBPACK_IMPORTED_MODULE_7__.HomeAdministradorComponent],
-    imports: [_angular_router__WEBPACK_IMPORTED_MODULE_10__.RouterModule, _angular_common__WEBPACK_IMPORTED_MODULE_11__.CommonModule, _components_components_module__WEBPACK_IMPORTED_MODULE_8__.ComponentsModule]
+  (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵsetNgModuleScope"](HomeModule, {
+    declarations: [_home_component__WEBPACK_IMPORTED_MODULE_4__.HomeComponent, _home_gestao_home_gestao_component__WEBPACK_IMPORTED_MODULE_0__.HomeGestaoComponent, _home_execucao_home_execucao_component__WEBPACK_IMPORTED_MODULE_1__.HomeExecucaoComponent, _home_projetos_home_projetos_component__WEBPACK_IMPORTED_MODULE_2__.HomeProjetosComponent, _home_ponto_home_ponto_component__WEBPACK_IMPORTED_MODULE_3__.HomePontoComponent, _home_dev_home_dev_component__WEBPACK_IMPORTED_MODULE_5__.HomeDevComponent, _home_raiox_home_raiox_component__WEBPACK_IMPORTED_MODULE_6__.HomeRaioxComponent, _home_administrador_home_administrador_component__WEBPACK_IMPORTED_MODULE_7__.HomeAdministradorComponent, _home_avaliador_home_avaliador_component__WEBPACK_IMPORTED_MODULE_9__.HomeAvaliadorComponent],
+    imports: [_angular_router__WEBPACK_IMPORTED_MODULE_11__.RouterModule, _angular_common__WEBPACK_IMPORTED_MODULE_12__.CommonModule, _components_components_module__WEBPACK_IMPORTED_MODULE_8__.ComponentsModule]
   });
 })();
 

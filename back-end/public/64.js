@@ -388,7 +388,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]],
   decls: 4,
   vars: 5,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome da \u00C1rea da Atividade Externa", "controlName", "nome", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
+  consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome da \u00C1rea da Atividade Externa", "controlName", "nome", "required", "", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
   template: function AreaAtividadeExternaFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "editable-form", 0);
@@ -637,7 +637,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]],
   decls: 4,
   vars: 5,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome da \u00E1rea de conhecimento", "controlName", "nome_area", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
+  consts: [["initialFocus", "nome_area", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome da \u00E1rea de conhecimento", "controlName", "nome_area", "required", "", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
   template: function AreaConhecimentoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "editable-form", 0);
@@ -886,7 +886,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]],
   decls: 4,
   vars: 5,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome da \u00C1rea Tematica", "controlName", "nome", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
+  consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome da \u00C1rea Tematica", "controlName", "nome", "required", "", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
   template: function AreaTematicaFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "editable-form", 0);
@@ -1152,7 +1152,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵdefi
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵInheritDefinitionFeature"]],
   decls: 6,
   vars: 12,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "\u00C1rea Tem\u00E1tica", "icon", "fas fa-layer-group", "controlName", "areaTematica", "liveSearch", "", 3, "size", "control", "dao", "addRoute"], ["curso", ""], ["label", "Nome da Capacidade T\u00E9cnica", "controlName", "nome", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
+  consts: [["initialFocus", "areaTematica", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "\u00C1rea Tem\u00E1tica", "icon", "fas fa-layer-group", "controlName", "areaTematica", "liveSearch", "", 3, "size", "control", "dao", "addRoute"], ["curso", ""], ["label", "Nome da Capacidade T\u00E9cnica", "controlName", "nome", "required", "", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
   template: function CapacidadeTecnicaFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](0, "editable-form", 0);
@@ -1471,7 +1471,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]],
   decls: 9,
   vars: 10,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome do Cargo", "controlName", "nome", 3, "size"], ["label", "N\u00EDvel do Cargo", "controlName", "nivel", 3, "size"], ["label", "C\u00F3digo SIAPE do Cargo", "controlName", "siape", 3, "size"], ["label", "C\u00F3digo CBO do Cargo", "controlName", "cbo", 3, "size"], ["label", "Descri\u00E7\u00E3o do Cargo", "controlName", "descricao", 3, "size"], ["labelPosition", "left", "label", "Efetivo", "controlName", "efetivo", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
+  consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome do Cargo", "controlName", "nome", "required", "", 3, "size"], ["label", "N\u00EDvel do Cargo", "controlName", "nivel", 3, "size"], ["label", "C\u00F3digo SIAPE do Cargo", "controlName", "siape", 3, "size"], ["label", "C\u00F3digo CBO do Cargo", "controlName", "cbo", 3, "size"], ["label", "Descri\u00E7\u00E3o do Cargo", "controlName", "descricao", 3, "size"], ["labelPosition", "left", "label", "Efetivo", "controlName", "efetivo", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
   template: function CargoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "editable-form", 0);
@@ -1820,7 +1820,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]],
   decls: 4,
   vars: 5,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome do Centro de Treinamento", "controlName", "nome", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
+  consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome do Centro de Treinamento", "controlName", "nome", "required", "", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
   template: function CentroTreinamentoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "editable-form", 0);
@@ -2899,7 +2899,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
   decls: 8,
   vars: 16,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "area_curso_id", 3, "size", "dao"], ["label", "Nome do Curso", "controlName", "nome", 3, "size"], ["label", "Titulo", "controlName", "titulo", 3, "size", "items"], ["label", "Tipo de Curso", "icon", "fas fa-layer-group", "controlName", "tipo_curso_id", "liveSearch", "", 3, "size", "control", "dao", "addRoute"], ["curso", ""], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
+  consts: [["initialFocus", "area_curso_id", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "area_curso_id", 3, "size", "dao"], ["label", "Nome do Curso", "controlName", "nome", "required", "", 3, "size"], ["label", "Titulo", "controlName", "titulo", 3, "size", "items"], ["label", "Tipo de Curso", "icon", "fas fa-layer-group", "controlName", "tipo_curso_id", "liveSearch", "", 3, "size", "control", "dao", "addRoute"], ["curso", ""], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
   template: function CursoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "editable-form", 0);
@@ -3253,7 +3253,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]],
   decls: 8,
   vars: 9,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome da Fun\u00E7\u00E3o", "controlName", "nome", 3, "size"], ["label", "N\u00EDvel da Fun\u00E7\u00E3o", "controlName", "nivel", 3, "size"], ["label", "C\u00F3digo SIAPE da Fun\u00E7\u00E3o", "controlName", "siape", 3, "size"], ["label", "C\u00F3digo CBO da Fun\u00E7\u00E3o", "controlName", "cbo", 3, "size"], ["label", "Descri\u00E7\u00E3o da Fun\u00E7\u00E3o", "controlName", "descricao", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
+  consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome da Fun\u00E7\u00E3o", "controlName", "nome", "required", "", 3, "size"], ["label", "N\u00EDvel da Fun\u00E7\u00E3o", "controlName", "nivel", 3, "size"], ["label", "C\u00F3digo SIAPE da Fun\u00E7\u00E3o", "controlName", "siape", 3, "size"], ["label", "C\u00F3digo CBO da Fun\u00E7\u00E3o", "controlName", "cbo", 3, "size"], ["label", "Descri\u00E7\u00E3o da Fun\u00E7\u00E3o", "controlName", "descricao", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
   template: function FuncaoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "editable-form", 0);
@@ -3576,7 +3576,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]],
   decls: 4,
   vars: 5,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome do Grupo Especializado", "controlName", "nome", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
+  consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome do Grupo Especializado", "controlName", "nome", "required", "", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
   template: function GrupoEspecializadoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "editable-form", 0);
@@ -3888,7 +3888,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵInheritDefinitionFeature"]],
   decls: 9,
   vars: 18,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "area_id", 3, "size", "dao", "change"], ["label", "Titulo", "controlName", "titulo", 3, "size", "items", "change"], ["label", "Curso", "icon", "fas fa-user-graduate", "controlName", "curso_id", "liveSearch", "", 3, "size", "control", "dao", "where", "addRoute"], ["label", "Nome da Mat\u00E9ria", "controlName", "nome", 3, "size"], ["label", "Horas Aula", "controlName", "horas_aula", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
+  consts: [["initialFocus", "area_id", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "area_id", "required", "", 3, "size", "dao", "change"], ["label", "Titulo", "controlName", "titulo", "required", "", 3, "size", "items", "change"], ["label", "Curso", "icon", "fas fa-user-graduate", "controlName", "curso_id", "liveSearch", "", "required", "", 3, "size", "control", "dao", "where", "addRoute"], ["label", "Nome da Mat\u00E9ria", "controlName", "nome", "required", "", 3, "size"], ["label", "Horas Aula", "controlName", "horas_aula", "required", "", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
   template: function MateriaFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "editable-form", 0);
@@ -4292,7 +4292,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]],
   decls: 4,
   vars: 5,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome do tipo do curso", "controlName", "nome", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
+  consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome do tipo do curso", "controlName", "nome", "required", "", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
   template: function TipoCursoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "editable-form", 0);
