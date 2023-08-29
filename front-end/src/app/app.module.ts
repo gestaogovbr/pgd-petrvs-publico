@@ -25,7 +25,7 @@ import { TesteFormComponent } from './modules/teste/teste-form/teste-form.compon
     DialogComponent,
     SpinnerOverlayComponent,
     TesteComponent,
-    TesteFormComponent
+    TesteFormComponent,
   ],
   imports: [
     BrowserModule,
