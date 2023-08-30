@@ -351,6 +351,26 @@ export class AuthService {
   }
 
   /**
+   * Retorna a unidade onde o usuário é gestor
+   * @returns 
+   */
+  public get lotacao(): Unidade | undefined {
+    return this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade;
+  }
+
+  /**
+   * Retorna a unidade onde o usuário é gestor
+   * @returns 
+   */
+  public get gestoresLotacao(): Usuario[] {
+    let lotacao = this.lotacao;
+    let result: Usuario[] = [];
+    if(lotacao?.gestor?.usuario) result.push(lotacao?.gestor?.usuario);
+    if(lotacao?.gestor_substituto?.usuario) result.push(lotacao?.gestor_substituto?.usuario);
+    return result;
+  }
+
+  /**
    * Informa se a unidade repassada como parâmetro é a lotação do usuário logado. Se nenhuma unidade for repassada, 
    * será adotada a unidade selecionada pelo servidor na homepage.
    * @param pUnidade 
