@@ -14,10 +14,20 @@ import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 export class PlanoTrabalhoListAccordeonComponent extends PageFrameBase {
   @ViewChild('accordion', { static: false }) public accordion?: AccordionComponent;
   @Input() usuarioId?: string;
-  @Input() arquivados: boolean = false;
+  @Input() set arquivados(value: boolean) {
+    if(this._arquivados != value) {
+      this._arquivados = value;
+      if(this.viewInit) this.loadData(this.entity!, this.form);
+    }
+  }
+  get arquivados(): boolean {
+    return this._arquivados;
+  }
 
   public dao?: PlanoTrabalhoDaoService;
   public planos: PlanoTrabalho[] = [];
+
+  private _arquivados: boolean = false;
 
   constructor(public injector: Injector) {
     super(injector);
