@@ -28,6 +28,7 @@ Route::post('/web/login-user-password', [LoginController::class, $actions['login
 Route::post('/web/login-firebase-token', [LoginController::class, $actions['login-firebase-token']]);
 Route::post('/web/login-google-token', [LoginController::class, $actions['login-google-token']]);
 Route::post('/web/login-institucional', [LoginController::class, $actions['login-institucional']]);
+Route::get('/web/login-unico', [LoginController::class, $actions['login-unico']]);
 Route::post('/web/login-session', [LoginController::class, 'authenticateSession']);
 Route::get('/web/logout', [LoginController::class, 'logout']);
 

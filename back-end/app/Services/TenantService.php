@@ -39,20 +39,13 @@ class TenantService extends ServiceBase {
             $entity->fill($dataOrEntity);
             $entity->save();
         } catch (\Stancl\Tenancy\Exceptions\TenantDatabaseAlreadyExistsException $e) {}
-        try {
-            \Illuminate\Support\Facades\Artisan::call('tenants:migrate', ['--tenants' => [$entity->id]]);
-        } catch (\Exception $e) {
-            throw $e;
-        }
-        Artisan::call('tenants:seed --class=CidadeSeeder' . (empty($id) ? '' : ' --tenants=' . $id));
-        Artisan::call('tenants:seed --class=PerfilSeeder' . (empty($id) ? '' : ' --tenants=' . $id));
         return $entity;
     }
 
     public function extraStore($dataOrEntity, $unidade, $action) {
         $tenant = Tenant::find($dataOrEntity->id);
         tenancy()->initialize($tenant);
-        if($tenant) {
+        if($tenant) {   
             $tenant->run(function () use ($dataOrEntity) {  
                 $entidade = Entidade::where('sigla', $dataOrEntity->id)->first();
                 $usuario = Usuario::where('nome', $dataOrEntity->nome_usuario)->first();
@@ -78,7 +71,7 @@ class TenantService extends ServiceBase {
                         'perfil_id' => Perfil::where('nome', 'Desenvolvedor')->first()->id,
                         'data_inicio' => Carbon::now()
                     ]);
-                    $usuario->save();
+                    $usuario->save();  
                 } 
             });
         }
@@ -89,11 +82,29 @@ class TenantService extends ServiceBase {
         return Artisan::output();
     }
 
-    public function seeder($id) {
+    public function tipoCapacidadeSeeder($id) {
         Artisan::call('tenants:run db:seed --option="class=AtualizacaoSeeder"' . (empty($id) ? '' : ' --tenants=' . $id));
         return Artisan::output();
     }
 
+    public function entidadeSeeder($id) {
+        Artisan::call('tenants:run db:seed --option="class=UsuarioSeeder"' . (empty($id) ? '' : ' --tenants=' . $id));
+        return Artisan::output();
+    }
+    public function usuarioSeeder($id) {
+        Artisan::call('tenants:run db:seed --option="class=EntidadeSeeder"' . (empty($id) ? '' : ' --tenants=' . $id));
+        return Artisan::output();
+    }
+    public function databaseSeeder($id) {
+        Artisan::call('tenants:run db:seed --option="class=DatabaseSeeder"' . (empty($id) ? '' : ' --tenants=' . $id));
+        return Artisan::output();
+    }
+
+    public function seeders($id) {
+        Artisan::call('tenants:seed' . (empty($id) ? '' : ' --tenants=' . $id));
+        return Artisan::output();
+    }
+ 
     public function migrate($id) {
         Artisan::call('tenants:migrate' . (empty($id) ? '' : ' --tenants=' . $id));
         return Artisan::output();

@@ -18,7 +18,7 @@ import { UnidadeDaoService } from '../dao/unidade-dao.service';
 import { NotificacaoService } from '../modules/uteis/notificacoes/notificacao.service';
 import { AppComponent } from '../app.component';
 
-export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION" | "SUPER";
+export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION" | "SUPER" | "LOGINUNICO";
 export type Permission = string | (string | string[])[];
 
 @Injectable({
@@ -233,6 +233,13 @@ export class AuthService {
     return this.logIn("GOOGLE", "login-google-token", {
       entidade: this.gb.ENTIDADE,
       token: tokenId
+    }, redirectTo); 
+  }
+
+  public authLoginUnico(redirectTo?: FullRoute) {
+    //this.googleApi.tokenId = tokenId;
+    return this.logIn("LOGINUNICO", "login-unico", {
+      entidade: this.gb.ENTIDADE,
     }, redirectTo);
   }
 

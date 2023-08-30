@@ -31,9 +31,45 @@ export class Tenant extends Base {
     public cpf: string = "";
     public apelido: string = "";
     public sigla: string = "";
-    public nome_entidade:string = "" ;
+    public nome_entidade: string = "";
     public abrangencia: string = "";
     public codigo_cidade: string | null = null
+    // LOGIN
+    public login_select_entidade: boolean = false;
+    public login_google_client_id:string = "" ;
+    public login_firebase_client_id:string = "" ;
+    public login_azure_client_id:string = "" ;
+    public login_azure_secret:string = "" ;
+    public login_azure_redirect_uri:string = "" ;
+    public login_login_unico_client_id:string = "" ;
+    public login_login_unico_secret:string = "" ;
+    // INTEGRACAO
+    public tipo_integracao: string = "";
+    public integracao_auto_incluir: boolean = true;
+    public integracao_cod_unidade_raiz:string = "" ;
+    public integracao_siape_url:string = "" ;
+    public integracao_siape_upag:string = "" ;
+    public integracao_siape_sigla:string = "" ;
+    public integracao_siape_nome:string = "" ;
+    public integracao_siape_cpf:string = "" ;
+    public integracao_siape_senha:string = "" ;
+    public integracao_siape_codorgao:string = "" ;
+    public integracao_siape_uorg:string = "" ;
+    public integracao_siape_existepag:string = "" ;
+    public integracao_siape_tipovinculo:string = "" ;
+    public integracao_wso2_url:string = "" ;
+    public integracao_wso2_unidades:string = "" ;
+    public integracao_wso2_pessoas:string = "" ;
+    public integracao_wso2_token_url:string = "" ;
+    public integracao_wso2_token_authorization:string = "" ;
+    public integracao_wso2_token_acesso:string = "" ;
+    public integracao_wso2_token_user:string = "" ;
+    public integracao_wso2_token_password:string = "" ;
+
+    // public petrvs_version //pega a versao do app.json
+    // public petrvs_last_migration // nome da ultima migration executada
+    // public petrvs_url // nome da ultima migration executada
+
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

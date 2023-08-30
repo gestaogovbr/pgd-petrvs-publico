@@ -5,11 +5,13 @@ import { PanelFormComponent } from './panel-form/panel-form.component';
 import { PanelRoutingModule } from './panel-routing.module';
 import { ComponentsModule } from 'src/app/components/components.module';
 import { UteisModule } from '../uteis/uteis.module';
+import { PanelListLogsComponent } from './panel-list-logs/panel-list-logs.component';
 
 @NgModule({
   declarations: [
     PanelListComponent,
-    PanelFormComponent
+    PanelFormComponent,
+    PanelListLogsComponent
   ],
   imports: [
     CommonModule,
