@@ -11,6 +11,7 @@ import { UtilService } from 'src/app/services/util.service';
 import { ModalPage } from '../base/modal-page';
 import { DialogService } from 'src/app/services/dialog.service';
 import { DOCUMENT } from '@angular/common';
+import { environment } from 'src/environments/environment';
 
 
 @Component({
@@ -155,6 +156,24 @@ export class LoginComponent implements OnInit, ModalPage, OnDestroy {
       this.error = "Verifique se está correto:" + (form.cpf.invalid ? " CPF;" : "") + (form.password.invalid ? " Senha;" : "") + (form.password.invalid ? " Token;" : "");
     }
   }
+  m 
+  public signInLoginUnico() {
+
+    // Construir a URL de autenticação do SouGov com parâmetros
+    const baseUrl = 'https://sso.staging.acesso.gov.br/authorize';
+    const responseType = 'code';
+    const clientId = 'pgd-pre.dth.api.gov.br';
+    const scope = 'openid+email+profile';
+    const redirectUri = 'https://pgd-pre.dth.api.gov.br/web/login-unico';
+    const state = 'state';
+    const nonce = 'nonce';
+    const codeChallenge = '47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU';
+    const codeChallengeMethod = 'S256';
+    
+    const authUrl = `${baseUrl}?response_type=${responseType}&client_id=${clientId}&scope=${scope}&redirect_uri=${redirectUri}&state=${state}&nonce=${nonce}&code_challenge=${codeChallenge}&code_challenge_method=${codeChallengeMethod}`;
+
+    window.location.href = authUrl;
+  } 
 
   public signInAzure() {
     this.auth.authAzure();
