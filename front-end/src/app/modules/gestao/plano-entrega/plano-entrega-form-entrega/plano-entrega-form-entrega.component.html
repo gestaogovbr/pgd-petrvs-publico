@@ -2,25 +2,28 @@
     <tabs #tabs display right [title]="!isModal ? title : ''">
         <tab key="ENTREGAS" label="Entregas">
             <div class="row">
-                <div class="row">
-                    <input-search #entrega [size]="12" controlName="entrega_id" [dao]="entregaDao" (change)="onEntregaChange($event)" placeholder="Selecione do catálogo ou cadastre uma entrega usando a lupa" required></input-search>
-                </div>
-                <div class="row">
-                    <input-text [size]="12" label="Detalhamento" controlName="descricao" placeholder="Descreva melhor a entrega"></input-text>
-                </div>
-                <separator></separator>
-                <div class="row">
-                    <input-search [size]="12" [label]="'Vinculo com ' + lex.translate('entrega') + ' de ' + lex.translate('plano de entrega') + ' de ' + lex.translate('unidade') + ' superior'" controlName="entrega_pai_id" [dao]="planoEntregaEntregaDao"></input-search>
-                </div>
-                <separator title="Especificação das Entregas"></separator>
-                <div class="row">
-                    <input-datetime date [size]="6" label="Início" controlName="data_inicio" [labelInfo]="'Início ' + lex.translate('Plano de Entregas')" required></input-datetime>
-                    <input-datetime date [size]="6" label="Fim" controlName="data_fim" [labelInfo]="'Fim ' + lex.translate('Plano de Entregas') + '(Estimativa Inicial)'" required></input-datetime>
-                </div>
-                <div class="row">
-                    <input-search [size]="6" #unidade label="Demandante" controlName="unidade_id" [dao]="unidadeDao" required></input-search>
-                    <input-text [size]="6" label="Destinatário" controlName="destinatario"></input-text>
-                </div>
+                <separator title="Vínculos da Entrega" collapse [collapsed]="false">
+                    <div class="row">
+                        <input-search #entrega [size]="12" label="Entrega do Catálogo" controlName="entrega_id" [dao]="entregaDao" (change)="onEntregaChange($event)" placeholder="Selecione ou cadastre uma entrega do catálogo usando a lupa" required></input-search>
+                    </div>
+                    <div class="row">
+                        <input-text [size]="12" label="Detalhamento" controlName="descricao" placeholder="Descreva melhor a entrega"></input-text>
+                    </div>
+                    <div class="row">
+                        <input-search [size]="12" [label]="lex.translate('Entrega') + ' de ' + lex.translate('plano de entrega')+ ' superior'" controlName="entrega_pai_id" 
+                                        [dao]="planoEntregaEntregaDao" [where]="['plano_entrega.unidade_id', 'in', idsUnidadesAscendentes]" [selectRoute]="{route: ['gestao', 'plano-entrega', 'entregaList']}" [metadata]="{'idsUnidadesAscendentes': idsUnidadesAscendentes}"></input-search>
+                    </div>
+                </separator>
+                <separator title="Especificações da Entrega" collapse [collapsed]="false">
+                    <div class="row">
+                        <input-datetime date [size]="6" label="Início" controlName="data_inicio" [labelInfo]="'Início ' + lex.translate('Plano de Entregas')" required></input-datetime>
+                        <input-datetime date [size]="6" label="Fim" controlName="data_fim" [labelInfo]="'Fim ' + lex.translate('Plano de Entregas') + '(Estimativa Inicial)'" required></input-datetime>
+                    </div>
+                    <div class="row">
+                        <input-search [size]="6" #unidade label="Demandante" controlName="unidade_id" [dao]="unidadeDao" required></input-search>
+                        <input-text [size]="6" label="Destinatário" controlName="destinatario"></input-text>
+                    </div>
+                </separator>
                 <separator title="Planejamento"></separator>
                 <div *ngIf="this.entrega?.selectedEntity" class="row">
                     <input-number *ngIf="checkTipoIndicador(['PORCENTAGEM'])" [size]="6" label="Meta" controlName="meta" sufix="%" required></input-number>
@@ -47,7 +50,7 @@
                             <span>{{row.objetivo.nome}}</span>
                         </ng-template>
                         <ng-template let-row="row" #editObjetivo>
-                            <input-search [size]="12" #inputObjetivo label icon controlName="objetivo_id" label icon [where]="[['planejamento_id', '==', planejamentoId]]" [dao]="planejamentoObjetivoDao" [selectRoute]="{route: ['gestao', 'planejamento', 'objetivoList'], params: {filter: {planejamento_id: planejamentoId}}}"></input-search>
+                            <input-search [size]="12" #inputObjetivo label icon controlName="planejamento_objetivo_id" label icon [where]="[['planejamento_id', '==', planejamentoId]]" [dao]="planejamentoObjetivoDao" [selectRoute]="{route: ['gestao', 'planejamento', 'objetivoList'], params: {filter: {planejamento_id: planejamentoId}}}"></input-search>
                         </ng-template>
                     </column>
                     <!--column type="options" [dynamicButtons]="dynamicButtonsObjetivos.bind(this)" [dynamicOptions]="dynamicOptionsObjetivos.bind(this)"></!--column//-->
@@ -67,7 +70,7 @@
                             <span>{{row.processo.nome}}</span>
                         </ng-template>
                         <ng-template let-row="row" #editProcesso>
-                            <input-search [size]="12" #inputProcesso label icon controlName="processo_id" label [where]="[['cadeia_valor_id', '==', cadeiaValorId]]" [dao]="cadeiaValorProcessoDao"[selectRoute]="{route: ['gestao', 'cadeia-valor', 'processoList'], params: {filter: {cadeia_valor_id: cadeiaValorId}}}"></input-search>
+                            <input-search [size]="12" #inputProcesso label icon controlName="cadeia_processo_id" label [where]="[['cadeia_valor_id', '==', cadeiaValorId]]" [dao]="cadeiaValorProcessoDao"[selectRoute]="{route: ['gestao', 'cadeia-valor', 'processoList'], params: {filter: {cadeia_valor_id: cadeiaValorId}}}"></input-search>
                         </ng-template>
                     </column>
                     <column type="options" [dynamicButtons]="dynamicButtonsProcessos.bind(this)"></column>

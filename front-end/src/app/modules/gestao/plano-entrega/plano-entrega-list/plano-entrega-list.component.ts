@@ -69,7 +69,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       planejamento_id: { default: null },
       cadeia_valor_id: { default: null },
     });
-    this.join = ['planejamento:id,nome', 'programa:id,nome', 'cadeia_valor:id,nome', 'unidade:id,sigla,path', 'entregas.entrega', 'entregas.unidade', 'unidade.gestor:id', 'unidade.gestor_substituto:id'];
+    this.join = ['planejamento:id,nome', 'programa:id,nome', 'cadeia_valor:id,nome', 'unidade:id,sigla,path', 'entregas.entrega', 'entregas.demandante', 'unidade.gestor:id', 'unidade.gestor_substituto:id'];
     this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }];
     this.BOTAO_ADERIR_OPTION = { label: "Aderir", icon: this.entityService.getIcon("Adesao"), onClick: (() => { this.go.navigate({route: ['gestao', 'plano-entrega', 'adesao']}, { metadata: { planoEntrega: this.linha }, modalClose: (modalResult) => { this.refresh(); } }); }).bind(this) };
     this.BOTAO_ADERIR_TOOLBAR = { label: "Aderir", disabled: !this.habilitarAdesaoToolbar, icon: this.entityService.getIcon("Adesao"), onClick: (() => { this.go.navigate({ route: ['gestao', 'plano-entrega', 'adesao'] }, { modalClose: (modalResult) => { this.refresh(); } }); }).bind(this) };
@@ -128,7 +128,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   }
 
   public planosEntregasAtivosUnidadePai(): PlanoEntrega[] {
-    return this.auth.unidade?.unidade?.planos_entrega?.filter(x => this.planoEntregaService.isAtivo(x)) || [];
+    return this.auth.unidade?.unidade_pai?.planos_entrega?.filter(x => this.planoEntregaService.isAtivo(x)) || [];
   }
 
   public planosEntregasAtivosUnidadeSelecionada(): PlanoEntrega[] {
@@ -151,15 +151,16 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     let form: any = filter.value;
     /*
         (RI_PENT_4) A consulta do grid retornará inicialmente os principais Planos de Entrega do usuário logado (a opção "principais" já vem marcada), que são:
-        - os válidos das unidades onde ele possui lotação/colaboração, e
+        - os válidos das unidades onde ele possui algum vínculo (áreas de trabalho), e
         - se ele for gestor, os ativos das unidades-pai de onde ele é gestor e os ativos das unidades imediatamente subordinadas;
     */
     if (this.filter?.controls.principais.value) {
+      let unidadesUsuarioEhGestor = this.auth.unidades?.filter(x => this.auth.isGestorUnidade(x));
       let w1 = ["unidade_id", "in", this.auth.unidades?.map(u => u.id)];
-      let w2 = ["unidade_id", "in", this.auth.unidades?.map(u => u.unidade?.id)];
-      // incluir a condição para trazer também as imediatamente subordinadas, se ele for gestor **************
-      if (this.auth.isGestorAlgumaLotacao()) result.push(["or", w1, w2]); else result.push(w1);
-
+      let w2 = ["unidade_id", "in", unidadesUsuarioEhGestor?.map(u => u.unidade_pai?.id)];
+      //let w3 = ["unidade.unidade_pai_id", "in", unidadesUsuarioEhGestor?.map(u => u.id)];
+      //if (this.auth.isGestorAlgumaAreaTrabalho()) result.push(["or", w1, w2, w3]); else result.push(w1);
+      if (this.auth.isGestorAlgumaAreaTrabalho()) result.push(["or", w1, w2]); else result.push(w1);
       if (form.nome?.length) {
         result.push(["nome", "like", "%" + form.nome + "%"]);
       }
@@ -309,7 +310,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
         */
        let condic1 = this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id);
        let condic2 = this.auth.isIntegrante('AVALIADOR_PLANO_ENTREGA', planoEntrega.unidade!.id!);
-       let condic3 = this.auth.isLotacaoUsuario(planoEntrega.unidade?.unidade) && this.auth.hasPermissionTo("MOD_PENT_AVAL");
+       let condic3 = this.auth.isLotacaoUsuario(planoEntrega.unidade?.unidade_pai) && this.auth.hasPermissionTo("MOD_PENT_AVAL");
        let condic4 = this.auth.isGestorLinhaAscendente(planoEntrega.unidade!) && this.auth.hasPermissionTo("MOD_PENT_AVAL_SUBORD");
        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'CONCLUIDO' && (condic1 || condic2 || condic3 || condic4);
       case this.BOTAO_CANCELAR_AVALIACAO:
@@ -334,7 +335,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
               - a Unidade-pai (Unidade A) precisa ser a Unidade de lotação do usuário logado, e ele possuir a capacidade "MOD_PENT_CANC_HOMOL"; ou
               - o usuário logado precisa possuir a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para a Unidade-pai (Unidade A) da Unidade do plano (Unidade B);
           */
-          return this.planoEntregaService.situacaoPlano(planoEntrega) == 'ATIVO' && (this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id) || (this.auth.isLotacaoUsuario(planoEntrega.unidade?.unidade) && this.auth.hasPermissionTo("MOD_PENT_CANC_HOMOL")) || this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', planoEntrega.unidade!.unidade_pai_id!));
+          return this.planoEntregaService.situacaoPlano(planoEntrega) == 'ATIVO' && (this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id) || (this.auth.isLotacaoUsuario(planoEntrega.unidade?.unidade_pai) && this.auth.hasPermissionTo("MOD_PENT_CANC_HOMOL")) || this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', planoEntrega.unidade!.unidade_pai_id!));
       case this.BOTAO_CANCELAR_PLANO:
           /*
             (RN_PENT_P) Para CANCELAR UM PLANO DE ENTREGAS:
@@ -382,7 +383,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
               - o usuário logado precisa possuir a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para a Unidade-pai (Unidade A); (RN_PENT_E)
           - A homologação do plano de entregas não se aplica à Unidade instituidora.
         */
-        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'HOMOLOGANDO' && (this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id) || (this.auth.isLotacaoUsuario(planoEntrega.unidade!.unidade) && this.auth.hasPermissionTo("MOD_PENT_HOMOL")) || this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', planoEntrega.unidade!.unidade_pai_id!));  
+        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'HOMOLOGANDO' && (this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id) || (this.auth.isLotacaoUsuario(planoEntrega.unidade!.unidade_pai) && this.auth.hasPermissionTo("MOD_PENT_HOMOL")) || this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', planoEntrega.unidade!.unidade_pai_id!));  
       case this.BOTAO_LIBERAR_HOMOLOGACAO:
         /*
           (RN_PENT_AA) Para LIBERAR PARA HOMOLOGAÇÃO um plano de entregas:

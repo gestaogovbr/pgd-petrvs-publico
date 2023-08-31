@@ -104,7 +104,7 @@ class AtividadeService extends ServiceBase
     public function afterStore($entity, $action) {
         if($action == ServiceBase::ACTION_INSERT) {
             $this->notificacoesService->send("ATV_DISTRIBUICAO", ["atividade" => $entity]);
-            $this->status->atualizaStatus($entity, 'INCLUIDO', 'A atividae foi criada nesta data.');
+            $this->status->atualizaStatus($entity, 'INCLUIDO', 'A atividade foi criada nesta data.');
         } else {
             $this->notificacoesService->send("ATV_MODIFICACAO", ["atividade" => $entity]);
         }

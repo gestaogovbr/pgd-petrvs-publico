@@ -4,14 +4,11 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Models\PlanoTrabalho;
-use App\Traits\HasStatus;
 use App\Models\PlanoTrabalhoConsolidacaoOcorrencia;
 use App\Models\StatusJustificativa;
 
 class PlanoTrabalhoConsolidacao extends ModelBase
 {
-    use HasStatus;
-
     protected $table = 'planos_trabalhos_consolidacoes';
 
     protected $with = [];
@@ -20,7 +17,7 @@ class PlanoTrabalhoConsolidacao extends ModelBase
         'data_inicio', /* date; NOT NULL; */// Data inicial da consolidacão
         'data_fim', /* date; NOT NULL; */// Data final da consolidação
         'plano_trabalho_id', /* char(36); NOT NULL; */
-        'status', /* enum('CONCLUIDO','AVALIADO','INCLUIDO'); */// Status atual da consolidação
+        //'status', /* enum('CONCLUIDO','AVALIADO','INCLUIDO'); */// Status atual da consolidação
         'avaliacao_id', /* char(36); */
         //'deleted_at', /* timestamp; */
     ];

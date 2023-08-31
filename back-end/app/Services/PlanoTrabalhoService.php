@@ -85,13 +85,13 @@ class PlanoTrabalhoService extends ServiceBase
     $plano["criacao_usuario_id"] = parent::loggedUser()->id;
     $this->documentoId = $plano["documento_id"];
     $plano["documento_id"] = null;
-    $plano->statusInicial($action);
     return $plano;
   }
 
   public function afterStore($planoTrabalho, $action)
   {
-    $planoTrabalho->atualizaHistorico($action, 'Plano de Trabalho criado nesta data.');
+    // (RN_PTR_A) Quando um Plano de Trabalho é criado adquire automaticamente o status INCLUIDO;
+    if($action == ServiceBase::ACTION_INSERT) $this->status->atualizaStatus($planoTrabalho, 'INCLUIDO', 'O Plano de Trabalho foi criado nesta data.');
   }
 
   public function validateStore($data, $unidade, $action)

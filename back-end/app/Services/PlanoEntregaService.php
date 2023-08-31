@@ -7,6 +7,7 @@ use App\Models\PlanoEntrega;
 use App\Exceptions\ServerException;
 use App\Models\Programa;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
 use DateTime;
 use Throwable;
@@ -18,7 +19,8 @@ class PlanoEntregaService extends ServiceBase
 
     public function afterStore($planoEntrega, $action)
     {
-      $planoEntrega->atualizaHistorico($action, 'Plano de Entrega criado nesta data.');
+        // (RN_PENT_A) Quando um Plano de Entregas é criado adquire automaticamente o status INCLUIDO;
+        if($action == ServiceBase::ACTION_INSERT) $this->status->atualizaStatus($planoEntrega, 'INCLUIDO', 'O Plano de Entrega foi criado nesta data.');
     }
 
     public function arquivar($data, $unidade) { // ou 'desarquivar'
@@ -232,11 +234,25 @@ class PlanoEntregaService extends ServiceBase
     }
 
     public function proxyQuery($query, &$data) {
+        $where = [];
+        foreach($data["where"] as $condition) {
+            if(is_array($condition) && $condition[0] == "or" && count($condition) == 4 && $condition[3][0] == "unidade.unidade_pai_id") { 
+                $query->whereHas('unidade', function (Builder $query) use ($condition) {
+                    $query->whereIn('unidade_pai_id', $condition[3][2]);
+                });
+                array_pop($condition);
+                array_push($where, $condition);
+            } else {
+                array_push($where, $condition);
+            }
+        }
         //  (RI_PENT_5) Garante que, se não houver um interesse específico na data de arquivamento, só retornarão os planos de entrega não arquivados e não cancelados.
         $result = $this->extractWhere($data, "data_arquivamento");
-        $data["where"][] = empty($result) ? ["data_arquivamento", "==", null] : $result;
+        array_push($where, empty($result) ? ["data_arquivamento", "==", null] : $result);
         $result = $this->extractWhere($data, "status");
-        $data["where"][] = empty($result) ? ["status", "!=", 'CANCELADO'] : $result;
+        array_push($where, empty($result) ? ["status", "!=", 'CANCELADO'] : $result);
+        $data["where"] = $where;
+        return $data;
     }
 
     public function proxyRows($rows){
@@ -247,7 +263,6 @@ class PlanoEntregaService extends ServiceBase
     public function proxyStore(&$planoEntrega, $unidade, $action){
         if($action == ServiceBase::ACTION_INSERT) { 
             $planoEntrega["criacao_usuario_id"] = parent::loggedUser()->id;
-            $planoEntrega->statusInicial($action);
         }
         return $planoEntrega;
     }

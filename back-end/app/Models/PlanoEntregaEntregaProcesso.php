@@ -13,7 +13,7 @@ class PlanoEntregaEntregaProcesso extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'processo_id', /* char(36); NOT NULL; */
+        'cadeia_processo_id', /* char(36); NOT NULL; */
         'entrega_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */
     ];
@@ -24,6 +24,6 @@ class PlanoEntregaEntregaProcesso extends ModelBase
   
     // Has
     // Belongs
-    public function processo() { return $this->belongsTo(CadeiaValorProcesso::class); }
-    public function entrega() { return $this->belongsTo(PlanoEntregaEntrega::class); }
+    public function processo() { return $this->belongsTo(CadeiaValorProcesso::class, 'cadeia_processo_id'); }
+    public function entrega() { return $this->belongsTo(PlanoEntregaEntrega::class, 'entrega_id'); }
 }

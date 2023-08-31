@@ -124,7 +124,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
   public async loadData(entity: Unidade, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
     await Promise.all ([
-      this.unidadePai!.loadSearch(entity.unidade || entity.unidade_pai_id),
+      this.unidadePai!.loadSearch(entity.unidade_pai || entity.unidade_pai_id),
       this.cidade!.loadSearch(entity.cidade || entity.cidade_id),
       this.gestor!.loadSearch(entity?.gestor?.usuario || entity.gestor?.usuario!.id),
       this.gestorSubstituto!.loadSearch(entity?.gestor_substituto?.usuario || entity.gestor_substituto?.usuario!.id),
