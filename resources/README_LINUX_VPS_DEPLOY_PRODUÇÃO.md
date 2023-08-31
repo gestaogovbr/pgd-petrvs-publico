@@ -50,7 +50,6 @@ sudo systemctl reload apache2
 sudo systemctl status certbot.timer
 
 ### 3 - Instalar Git e GitHub CLI
-
 ~~~shell
 curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
@@ -140,3 +139,12 @@ php artisan db:seed
 3) npm start
 ~~~
 - Para a primeira execução com o npm start (que build a aplicação em memória e serve na pora 4200), será necessário fazer a copia do arquivo environment.template.ts para o arquivo environment.ts dentro da pasta /PASTA_DO_PETRVS/front-end/src/environments. O arquivo copiado poderá ser editado convenientemente já que ele consta no .gitignore e não será comitado.
+
+## Debug (X-debug no back-end)
+
+- No vscode será necessário instalar a extensão PHP Debug (XDebug), bastando apenas acessar a area de extensões do vscode e pesquisar por PHP Debug. A configuração para realizar o debug já consta na pasta .vscode (dentro do repositório na pasta back-end). Ao clicar em "Run > Start debbuging", será executado o script para iniciar o XDebug no docker, e após a pausa será executado o script para desligar o x-debug. Lembrando que o vscode ao executar os scripts de habilitar ou desabilitar o xdebug solicita que o usuário precione qualquer tecla para fechar o pront shell que é aberto. 
+
+## Criando um docker temporário para executar comandos
+~~~shell
+docker run --rm -it --entrypoint bash php:8.1-apache
+~~~
