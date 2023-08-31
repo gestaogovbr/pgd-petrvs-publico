@@ -232,12 +232,12 @@ class PlanoEntregaFormAdesaoComponent extends src_app_modules_base_page_form_bas
   }
   onPlanoEntregaChange(event) {
     if (this.form.controls.plano_entrega_id.value) {
-      this.form.controls.nome.setValue(this.planoEntrega?.selectedItem?.entity.nome);
-      this.form.controls.data_inicio.setValue(this.planoEntrega?.selectedItem?.entity.data_inicio);
-      this.form.controls.data_fim.setValue(this.planoEntrega?.selectedItem?.entity.data_fim);
-      this.form.controls.planejamento_id.setValue(this.planoEntrega?.selectedItem?.entity.planejamento_id);
-      this.form.controls.cadeia_valor_id.setValue(this.planoEntrega?.selectedItem?.entity.cadeia_valor_id);
-      this.form.controls.programa_id.setValue(this.planoEntrega?.selectedItem?.entity.programa_id);
+      this.form.controls.nome.setValue(this.planoEntrega?.selectedEntity.nome);
+      this.form.controls.data_inicio.setValue(this.planoEntrega?.selectedEntity.data_inicio);
+      this.form.controls.data_fim.setValue(this.planoEntrega?.selectedEntity.data_fim);
+      this.form.controls.planejamento_id.setValue(this.planoEntrega?.selectedEntity.planejamento_id);
+      this.form.controls.cadeia_valor_id.setValue(this.planoEntrega?.selectedEntity.cadeia_valor_id);
+      this.form.controls.programa_id.setValue(this.planoEntrega?.selectedEntity.programa_id);
     }
   }
 }
@@ -264,7 +264,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵInheritDefinitionFeature"]],
   decls: 21,
   vars: 37,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row", "mb-4"], ["controlName", "plano_entrega_id", "label", "Plano de Entregas da Unidade-pai", 3, "size", "dao", "selectRoute", "where", "change"], ["planoEntrega", ""], [1, "row"], ["label", "Nome deste Plano de Entregas", "controlName", "nome", 3, "size"], ["disabled", "", "controlName", "unidade_id", 3, "size", "label", "dao"], ["disabled", "", "label", "Status", "controlName", "status", 3, "size"], [1, "row", "mt-4"], ["title", "Dados herdados do Plano de Entregas da Unidade-pai", 3, "collapse"], ["disabled", "", "label", "Programa de Gest\u00E3o", "controlName", "programa_id", 3, "size", "dao"], ["disabled", "", "label", "Planejamento Institucional", "controlName", "planejamento_id", 3, "size", "dao"], ["disabled", "", "controlName", "data_inicio", "label", "In\u00EDcio", 3, "size", "labelInfo"], ["disabled", "", "label", "Cadeia de Valor", "controlName", "cadeia_valor_id", 3, "size", "dao"], ["disabled", "", "controlName", "data_fim", "label", "Fim", 3, "size", "labelInfo"]],
+  consts: [["initialFocus", "plano_entrega_id", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row", "mb-4"], ["controlName", "plano_entrega_id", "label", "Plano de Entregas da Unidade-pai", "required", "", 3, "size", "dao", "selectRoute", "where", "change"], ["planoEntrega", ""], [1, "row"], ["label", "Nome deste Plano de Entregas", "controlName", "nome", "required", "", 3, "size"], ["disabled", "", "controlName", "unidade_id", 3, "size", "label", "dao"], ["disabled", "", "label", "Status", "controlName", "status", 3, "size"], [1, "row", "mt-4"], ["title", "Dados herdados do Plano de Entregas da Unidade-pai", 3, "collapse"], ["disabled", "", "label", "Programa de Gest\u00E3o", "controlName", "programa_id", 3, "size", "dao"], ["disabled", "", "label", "Planejamento Institucional", "controlName", "planejamento_id", 3, "size", "dao"], ["disabled", "", "controlName", "data_inicio", "label", "In\u00EDcio", 3, "size", "labelInfo"], ["disabled", "", "label", "Cadeia de Valor", "controlName", "cadeia_valor_id", 3, "size", "dao"], ["disabled", "", "controlName", "data_fim", "label", "Fim", 3, "size", "labelInfo"]],
   template: function PlanoEntregaFormAdesaoComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵelementStart"](0, "editable-form", 0);
@@ -811,8 +811,8 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
       entrega = this.util.fillForm(entrega, valueWithout);
       entrega.objetivos = entrega.objetivos.filter(x => ["ADD", "DELETE"].includes(x._status || ""));
       entrega.processos = entrega.processos.filter(x => ["ADD", "DELETE"].includes(x._status || ""));
-      entrega.unidade = this.unidade?.selectedItem?.entity;
-      entrega.entrega = this.entrega?.selectedItem?.entity;
+      entrega.unidade = this.unidade?.selectedEntity;
+      entrega.entrega = this.entrega?.selectedEntity;
       entrega.meta = this.planoEntregaService.getEntregaValor(entrega.entrega, meta);
       entrega.realizado = this.planoEntregaService.getEntregaValor(entrega.entrega, realizado);
       resolve(new src_app_services_navigate_service__WEBPACK_IMPORTED_MODULE_11__.NavigateResult(entrega));
@@ -830,7 +830,7 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
     }
   }
   checkTipoIndicador(tipos) {
-    return tipos.includes((this.entrega?.selectedItem?.entity).tipo_indicador);
+    return tipos.includes((this.entrega?.selectedEntity).tipo_indicador);
   }
   dynamicOptionsObjetivos(row) {
     let result = [];
@@ -917,8 +917,11 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
     var _this10 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (_this10.entrega && _this10.entrega.selectedItem) {
-        const entregaItem = _this10.entrega?.selectedItem?.entity;
+        const entregaItem = _this10.entrega?.selectedEntity;
         const tipoIndicador = entregaItem.tipo_indicador;
+        if (!_this10.form.controls.descricao.value.length) {
+          _this10.form.controls.descricao.setValue(entregaItem?.descricao || "");
+        }
         switch (tipoIndicador) {
           case 'QUALITATIVO':
             _this10.itensQualitativo = entregaItem.lista_qualitativos || [];
@@ -984,7 +987,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵInheritDefinitionFeature"]],
   decls: 28,
   vars: 25,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", "", 3, "title"], ["tabs", ""], ["key", "ENTREGAS", "label", "Entregas"], [1, "row"], ["controlName", "entrega_id", "placeholder", "Selecione do cat\u00E1logo ou cadastre uma entrega usando a lupa", 3, "size", "dao", "change"], ["entrega", ""], ["label", "Detalhamento", "controlName", "descricao", "placeholder", "Descreva melhor a entrega", 3, "size"], ["controlName", "entrega_pai_id", 3, "size", "label", "dao"], ["title", "Especifica\u00E7\u00E3o das Entregas"], ["date", "", "label", "In\u00EDcio", "controlName", "data_inicio", 3, "size", "labelInfo"], ["date", "", "label", "Fim", "controlName", "data_fim", 3, "size", "labelInfo"], ["label", "Demandante", "controlName", "unidade_id", 3, "size", "dao"], ["unidade", ""], ["label", "Destinat\u00E1rio", "controlName", "destinatario", 3, "size"], ["title", "Planejamento"], ["class", "row", 4, "ngIf"], ["label", "Progresso Esperado", "controlName", "progresso_esperado", "sufix", "%", 3, "size", "decimals"], ["label", "Progresso Realizado", "controlName", "progresso_realizado", "sufix", "%", "disabled", "", 3, "size", "decimals", "stepValue"], ["key", "OBJETIVOS", "label", "Objetivos", 4, "ngIf"], ["key", "PROCESSOS", "label", "Processos", 4, "ngIf"], ["label", "Meta", "controlName", "meta", "sufix", "%", 3, "size", 4, "ngIf"], ["label", "Meta", "controlName", "meta", 3, "size", 4, "ngIf"], ["label", "Meta", "controlName", "meta", 3, "size", "items", 4, "ngIf"], ["label", "Realizado", "controlName", "realizado", "sufix", "%", 3, "size", "change", 4, "ngIf"], ["label", "Realizado", "controlName", "realizado", 3, "size", "change", 4, "ngIf"], ["label", "Realizado", "controlName", "realizado", 3, "size", "items", "change", 4, "ngIf"], ["label", "Meta", "controlName", "meta", "sufix", "%", 3, "size"], ["label", "Meta", "controlName", "meta", 3, "size"], ["label", "Meta", "controlName", "meta", 3, "size", "items"], ["label", "Realizado", "controlName", "realizado", "sufix", "%", 3, "size", "change"], ["label", "Realizado", "controlName", "realizado", 3, "size", "change"], ["label", "Realizado", "controlName", "realizado", 3, "size", "items", "change"], ["key", "OBJETIVOS", "label", "Objetivos"], ["controlName", "planejamento_id", "disabled", "", 3, "size", "dao"], ["planejamento", ""], ["editable", "", 3, "control", "form", "hasDelete", "hasEdit", "add", "remove", "save"], ["gridObjetivos", ""], ["title", "Objetivo", 3, "template", "editTemplate"], ["columnObjetivo", ""], ["editObjetivo", ""], ["type", "options"], ["label", "", "icon", "", "controlName", "objetivo_id", "label", "", "icon", "", 3, "size", "where", "dao", "selectRoute"], ["inputObjetivo", ""], ["key", "PROCESSOS", "label", "Processos"], ["controlName", "cadeia_valor_id", "disabled", "", 3, "size", "dao"], ["cadeiaValor", ""], ["gridProcessos", ""], ["title", "Processos", 3, "template", "editTemplate"], ["processo", ""], ["editProcesso", ""], ["type", "options", 3, "dynamicButtons"], ["label", "", "icon", "", "controlName", "processo_id", "label", "", 3, "size", "where", "dao", "selectRoute"], ["inputProcesso", ""]],
+  consts: [["initialFocus", "entrega_id", 3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", "", 3, "title"], ["tabs", ""], ["key", "ENTREGAS", "label", "Entregas"], [1, "row"], ["controlName", "entrega_id", "placeholder", "Selecione do cat\u00E1logo ou cadastre uma entrega usando a lupa", "required", "", 3, "size", "dao", "change"], ["entrega", ""], ["label", "Detalhamento", "controlName", "descricao", "placeholder", "Descreva melhor a entrega", 3, "size"], ["controlName", "entrega_pai_id", 3, "size", "label", "dao"], ["title", "Especifica\u00E7\u00E3o das Entregas"], ["date", "", "label", "In\u00EDcio", "controlName", "data_inicio", "required", "", 3, "size", "labelInfo"], ["date", "", "label", "Fim", "controlName", "data_fim", "required", "", 3, "size", "labelInfo"], ["label", "Demandante", "controlName", "unidade_id", "required", "", 3, "size", "dao"], ["unidade", ""], ["label", "Destinat\u00E1rio", "controlName", "destinatario", 3, "size"], ["title", "Planejamento"], ["class", "row", 4, "ngIf"], ["label", "Progresso Esperado", "controlName", "progresso_esperado", "sufix", "%", 3, "size", "decimals"], ["label", "Progresso j\u00E1 Realizado", "controlName", "progresso_realizado", "sufix", "%", "disabled", "", 3, "size", "decimals", "stepValue"], ["key", "OBJETIVOS", "label", "Objetivos", 4, "ngIf"], ["key", "PROCESSOS", "label", "Processos", 4, "ngIf"], ["label", "Meta", "controlName", "meta", "sufix", "%", "required", "", 3, "size", 4, "ngIf"], ["label", "Meta", "controlName", "meta", 3, "size", 4, "ngIf"], ["label", "Meta", "controlName", "meta", 3, "size", "items", 4, "ngIf"], ["label", "Realizado", "controlName", "realizado", "sufix", "%", 3, "size", "change", 4, "ngIf"], ["label", "Realizado", "controlName", "realizado", "required", "", 3, "size", "change", 4, "ngIf"], ["label", "Realizado", "controlName", "realizado", 3, "size", "items", "change", 4, "ngIf"], ["label", "Meta", "controlName", "meta", "sufix", "%", "required", "", 3, "size"], ["label", "Meta", "controlName", "meta", 3, "size"], ["label", "Meta", "controlName", "meta", 3, "size", "items"], ["label", "Realizado", "controlName", "realizado", "sufix", "%", 3, "size", "change"], ["label", "Realizado", "controlName", "realizado", "required", "", 3, "size", "change"], ["label", "Realizado", "controlName", "realizado", 3, "size", "items", "change"], ["key", "OBJETIVOS", "label", "Objetivos"], ["controlName", "planejamento_id", "disabled", "", 3, "size", "dao"], ["planejamento", ""], ["editable", "", 3, "control", "form", "hasDelete", "hasEdit", "add", "remove", "save"], ["gridObjetivos", ""], ["title", "Objetivo", 3, "template", "editTemplate"], ["columnObjetivo", ""], ["editObjetivo", ""], ["type", "options"], ["label", "", "icon", "", "controlName", "objetivo_id", "label", "", "icon", "", 3, "size", "where", "dao", "selectRoute"], ["inputObjetivo", ""], ["key", "PROCESSOS", "label", "Processos"], ["controlName", "cadeia_valor_id", "disabled", "", 3, "size", "dao"], ["cadeiaValor", ""], ["gridProcessos", ""], ["title", "Processos", 3, "template", "editTemplate"], ["processo", ""], ["editProcesso", ""], ["type", "options", 3, "dynamicButtons"], ["label", "", "icon", "", "controlName", "processo_id", "label", "", 3, "size", "where", "dao", "selectRoute"], ["inputProcesso", ""]],
   template: function PlanoEntregaFormEntregaComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](0, "editable-form", 0);
@@ -1041,7 +1044,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 6);
       _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("ngIf", _r1 == null ? null : _r1.selectedItem == null ? null : _r1.selectedItem.entity);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("ngIf", _r1 == null ? null : _r1.selectedEntity);
       _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 6)("decimals", 2);
       _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
@@ -1131,14 +1134,14 @@ class PlanoEntregaFormComponent extends src_app_modules_base_page_form_base__WEB
               - o usuário precisa possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a Unidade-pai (Unidade A) da Unidade do plano (Unidade B) e possuir a capacidade "MOD_PENT_EDT_FLH"; ou
               - o usuário precisa possuir também a capacidade "MOD_PENT_QQR_UND";
       */
-      let unidadeSelecionada = this.unidade?.searchObj.entity;
+      let unidadeSelecionada = this.unidade?.selectedEntity;
       let condition1 = this.auth.isGestorUnidade(unidadeSelecionada) || this.auth.isGestorUnidade(unidadeSelecionada.unidade);
       let condition2 = unidadeSelecionada.unidade ? this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', unidadeSelecionada.unidade.id) && this.auth.hasPermissionTo("MOD_PENT_EDT_FLH") : false;
       let condition3 = this.auth.hasPermissionTo("MOD_PENT_QQR_UND");
       if (!(condition1 || condition2 || condition3)) return "Você não tem permissão para incluir plano de entregas para a unidade selecionada!";
       const inicio = this.form?.controls.data_inicio.value;
       const fim = this.form?.controls.data_fim.value;
-      const programa = this.programa?.selectedItem?.entity;
+      const programa = this.programa?.selectedEntity;
       if (!programa) {
         return "Obrigatório selecionar o programa";
       } else if (!this.dao?.validDateTime(inicio)) {
@@ -1248,7 +1251,7 @@ class PlanoEntregaFormComponent extends src_app_modules_base_page_form_base__WEB
     return result;
   }
   onProgramaChange() {
-    const dias = (this.programa?.searchObj).prazo_max_plano_entrega;
+    const dias = (this.programa?.selectedEntity).prazo_max_plano_entrega;
     //const dias=(this.programa?.items[0] as SelectItem).entity.prazo_max_plano_entrega;
     const data = this.somaDia(this.entity.data_inicio, dias);
     this.form.controls.data_fim.setValue(new Date(data)); // = this.somaDia(this.entity!.data_inicio,dias)//new Date()//(this.programa?.searchObj as Programa).prazo_max_plano_entrega
@@ -1284,7 +1287,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵInheritDefinitionFeature"]],
   decls: 20,
   vars: 24,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "unidade_id", 3, "size", "disabled", "dao"], ["unidade", ""], ["controlName", "programa_id", 3, "size", "disabled", "dao", "change"], ["programa", ""], ["date", "", "label", "In\u00EDcio", "controlName", "data_inicio", 3, "size", "labelInfo", "change"], ["date", "", "label", "Fim", "controlName", "data_fim", 3, "size", "labelInfo", "change"], ["data_fim", ""], ["label", "Nome", "controlName", "nome", 3, "size"], ["nome", ""], ["controlName", "planejamento_id", "label", "Planejamento Institucional", 3, "size", "emptyValue", "dao"], ["planejamento", ""], ["controlName", "cadeia_valor_id", "label", "Cadeia de Valor", 3, "size", "emptyValue", "dao"], ["cadeiaValor", ""], ["title", "Entregas"], ["noPersist", "", 3, "control", "planejamentoId", "cadeiaValorId", "unidadeId"], ["entregas", ""]],
+  consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "unidade_id", "required", "", 3, "size", "disabled", "dao"], ["unidade", ""], ["controlName", "programa_id", 3, "size", "disabled", "dao", "change"], ["programa", ""], ["date", "", "label", "In\u00EDcio", "controlName", "data_inicio", "required", "", 3, "size", "labelInfo", "change"], ["date", "", "label", "Fim", "controlName", "data_fim", "required", "", 3, "size", "labelInfo", "change"], ["data_fim", ""], ["label", "Nome", "controlName", "nome", "required", "", 3, "size"], ["nome", ""], ["controlName", "planejamento_id", "label", "Planejamento Institucional", 3, "size", "emptyValue", "dao"], ["planejamento", ""], ["controlName", "cadeia_valor_id", "label", "Cadeia de Valor", 3, "size", "emptyValue", "dao"], ["cadeiaValor", ""], ["title", "Entregas"], ["noPersist", "", 3, "control", "planejamentoId", "cadeiaValorId", "unidadeId"], ["entregas", ""]],
   template: function PlanoEntregaFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵelementStart"](0, "editable-form", 0);
