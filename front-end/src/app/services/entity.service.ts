@@ -127,7 +127,7 @@ export class EntityService {
             { collection: 'ProjetoTarefa', table: 'projetos_tarefas', campo: 'nome', icon: '', dao: injector.get<ProjetoTarefaDaoService>(ProjetoTarefaDaoService), label: "Tarefa do Projeto" },
             { collection: 'RelatorioArea', icon: 'bi bi-diagram-3-fill', label: "Área" },
             { collection: 'RelatorioServidor', icon: 'bi bi-file-person', label: "Servidor" },
-            { collection: 'Tarefa', table: 'tarefas', campo: 'nome', icon: 'bi bi-boxes', dao: injector.get<TipoTarefaDaoService>(TipoTarefaDaoService), label: "Tarefa", selectRoute: { route: ['cadastros', 'tarefa'] } },
+            { collection: 'TipoTarefa', table: 'tipos_tarefas', campo: 'nome', icon: 'bi bi-boxes', dao: injector.get<TipoTarefaDaoService>(TipoTarefaDaoService), label: "Tipo de Tarefa", selectRoute: { route: ['cadastros', 'tipo-tarefa'] } },
             { collection: 'Template', codigo: 'MOD_TEMP', table: 'templates', campo: 'titulo', icon: 'bi bi-archive', dao: injector.get<TemplateDaoService>(TemplateDaoService), label: "Template", selectRoute: { route: ['cadastros', 'template'] } },
             { collection: 'Teste', icon: 'bi bi-clipboard-check', label: "Teste" },
             { collection: 'TipoAtividade', codigo: 'MOD_TIPO_ATV', table: 'tipos_atividades', campo: 'nome', icon: 'bi bi-clipboard-pulse', dao: injector.get<TipoAtividadeDaoService>(TipoAtividadeDaoService), label: "Tipo de Atividade", selectRoute: { route: ['cadastros', 'tipo-atividade'] } },

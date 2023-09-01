@@ -119,7 +119,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]],
   decls: 8,
   vars: 10,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Tipo", "icon", "bi bi-intersect", "controlName", "tipo", 3, "size", "items"], ["label", "C\u00F3digo", "icon", "bi bi-upc-scan", "controlName", "codigo", 3, "size"], ["label", "Refer\u00EAncia", "icon", "bi bi-qr-code", "controlName", "referencia", 3, "size"], ["label", "Descricao", "controlName", "descricao", 3, "size"], ["label", "Unidade", "icon", "bi bi-rulers", "controlName", "unidade_medida", 3, "size", "items"]],
+  consts: [["initialFocus", "tipo", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Tipo", "icon", "bi bi-intersect", "controlName", "tipo", 3, "size", "items"], ["label", "C\u00F3digo", "icon", "bi bi-upc-scan", "controlName", "codigo", 3, "size"], ["label", "Refer\u00EAncia", "icon", "bi bi-qr-code", "controlName", "referencia", 3, "size"], ["label", "Descricao", "controlName", "descricao", "required", "", 3, "size"], ["label", "Unidade", "icon", "bi bi-rulers", "controlName", "unidade_medida", 3, "size", "items"]],
   template: function MaterialServicoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "editable-form", 0);

@@ -220,7 +220,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵInheritDefinitionFeature"]],
   decls: 28,
   vars: 32,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], [1, "form-group", "col-md-3", "text-center"], [1, "mt-5", 3, "url", "size"], [1, "form-group", "col-md-9"], ["label", "CPF", "controlName", "cpf", 3, "disabled", "size", "maskFormat"], ["label", "Matr\u00EDcula", "controlName", "matricula", 3, "disabled", "size"], ["label", "E-mail", "controlName", "email", "textCase", "lower", 3, "disabled", "size"], ["label", "Nome", "controlName", "nome", 3, "size"], ["label", "Apelido", "controlName", "apelido", 3, "size"], ["label", "Perfil", "controlName", "perfil_id", 3, "disabled", "size", "dao"], ["label", "Lota\u00E7\u00E3o", "controlName", "unidade_lotacao_id", "labelInfo", "Unidade de lota\u00E7\u00E3o do Usu\u00E1rio", 3, "size", "emptyValue", "control", "dao", "change"], ["lotacao", ""], ["label", "UF", "icon", "bi bi-flag", "controlName", "uf", 3, "size", "items"], ["label", "Sexo", "controlName", "sexo", 3, "size", "items"], ["label", "Telefone", "controlName", "telefone", 3, "size", "maskFormat"], ["key", "CONFIGURACOES", "label", "Configura\u00E7\u00F5es"], ["controlName", "texto_complementar_plano", 3, "label", "dataset"], ["key", "ATRIBUICOES", 3, "label"], ["noPersist", "", 3, "entity", "entity_id"], ["unidadesIntegrantes", ""]],
+  consts: [["initialFocus", "cpf", 3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], [1, "form-group", "col-md-3", "text-center"], [1, "mt-5", 3, "url", "size"], [1, "form-group", "col-md-9"], ["label", "CPF", "controlName", "cpf", "required", "", 3, "disabled", "size", "maskFormat"], ["label", "Matr\u00EDcula", "controlName", "matricula", "required", "", 3, "disabled", "size"], ["label", "E-mail", "controlName", "email", "textCase", "lower", "required", "", 3, "disabled", "size"], ["label", "Nome", "controlName", "nome", "required", "", 3, "size"], ["label", "Apelido", "controlName", "apelido", "required", "", 3, "size"], ["label", "Perfil", "controlName", "perfil_id", "required", "", 3, "disabled", "size", "dao"], ["label", "Lota\u00E7\u00E3o", "controlName", "unidade_lotacao_id", "labelInfo", "Unidade de lota\u00E7\u00E3o do Usu\u00E1rio", 3, "size", "emptyValue", "control", "dao", "change"], ["lotacao", ""], ["label", "UF", "icon", "bi bi-flag", "controlName", "uf", 3, "size", "items"], ["label", "Sexo", "controlName", "sexo", 3, "size", "items"], ["label", "Telefone", "controlName", "telefone", 3, "size", "maskFormat"], ["key", "CONFIGURACOES", "label", "Configura\u00E7\u00F5es"], ["controlName", "texto_complementar_plano", 3, "label", "dataset"], ["key", "ATRIBUICOES", 3, "label"], ["noPersist", "", 3, "entity", "entity_id"], ["unidadesIntegrantes", ""]],
   template: function UsuarioFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](0, "editable-form", 0);
@@ -606,9 +606,9 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
           novoIntegrante = Object.assign(novoIntegrante, {
             id: form.controls.unidade_id.value,
             atribuicoes: $result[0].atribuicoes,
-            unidade_codigo: (_this6.unidade?.searchObj).codigo,
-            unidade_sigla: (_this6.unidade?.searchObj).sigla,
-            unidade_nome: (_this6.unidade?.searchObj).nome
+            unidade_codigo: (_this6.unidade?.selectedEntity).codigo,
+            unidade_sigla: (_this6.unidade?.selectedEntity).sigla,
+            unidade_nome: (_this6.unidade?.selectedEntity).nome
           });
           if (_this6.grid?.adding) _this6.grid.items[_this6.grid.items.length - 1].id = ''; // (*4)
         } else {

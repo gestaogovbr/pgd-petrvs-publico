@@ -13,6 +13,9 @@ export class SectionComponent extends ComponentBase implements OnInit {
   @Input() template?: TemplateRef<unknown>;
   @Input() titleTemplate?: TemplateRef<unknown>;
   @Input() accordion?: AccordionComponent;
+  @Input() index: number = 0;
+  @Input() selected: boolean = false;
+  @Input() parentId: string = this.generatedId('accordion');
 
   public loading: boolean = false;
   public loaded: boolean = false;
@@ -26,6 +29,8 @@ export class SectionComponent extends ComponentBase implements OnInit {
   }
 
   public async onClick() {
+    this.selected = true;
+    if(this.accordion) this.accordion.selectedIndex = this.index;
     if(this.load) {
       this.loading = true;
       try {
@@ -36,6 +41,7 @@ export class SectionComponent extends ComponentBase implements OnInit {
         this.cdRef.detectChanges();
       }
     }
+    this.accordion?.cdRef.detectChanges();
   }
 
 }

@@ -4,5 +4,5 @@ namespace App\Services;
 
 use App\Services\ServiceBase;
 
-class TarefaService extends ServiceBase {}
+class TipoTarefaService extends ServiceBase {}
 

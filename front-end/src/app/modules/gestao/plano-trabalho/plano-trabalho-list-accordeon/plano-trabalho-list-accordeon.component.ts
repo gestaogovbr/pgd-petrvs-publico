@@ -24,6 +24,7 @@ export class PlanoTrabalhoListAccordeonComponent extends PageFrameBase {
     return this._arquivados;
   }
 
+  public selectedIndex: number = -1;
   public dao?: PlanoTrabalhoDaoService;
   public planos: PlanoTrabalho[] = [];
 
@@ -45,7 +46,13 @@ export class PlanoTrabalhoListAccordeonComponent extends PageFrameBase {
     this.accordion!.loading = true;
     try {
       let dados = await this.dao!.getByUsuario(this.usuarioId!, this.arquivados);
+      let agora = (new Date()).getTime();
       this.planos = dados.planos;
+      for(var i = 0; i < this.planos.length; i++) {
+        if(this.util.asDate(this.planos[i].data_inicio)!.getTime() <= agora && agora >= this.util.asDate(this.planos[i].data_fim)!.getTime() && ["ATIVO", "CONCLUIDO"].includes(this.planos[i].status)) {
+          this.selectedIndex = i;
+        }
+      }
     } finally {
       this.accordion!.loading = false;
       this.cdRef.detectChanges();
