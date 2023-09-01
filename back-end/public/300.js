@@ -214,7 +214,6 @@ class TipoTarefaListComponent extends src_app_modules_base_page_list_base__WEBPA
         default: ""
       }
     });
-    this.join = ["unidade", "entidade"];
     // Testa se o usuário possui permissão para exibir dados da tarefa
     if (this.auth.hasPermissionTo("MOD_TRF_CONS")) {
       this.options.push({

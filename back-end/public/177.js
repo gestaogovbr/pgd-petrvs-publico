@@ -3636,6 +3636,7 @@ class PlanoEntregaMapaEntregasComponent extends src_app_modules_base_page_list_b
     this.entregaDao = injector.get(src_app_dao_entrega_dao_service__WEBPACK_IMPORTED_MODULE_1__.EntregaDaoService);
     this.entregaService = injector.get(_plano_entrega_service__WEBPACK_IMPORTED_MODULE_6__.PlanoEntregaService);
     /* Inicializações */
+    this.join = ["plano_entrega.unidade"];
     this.title = this.lex.translate("Entregas");
     this.filter = this.fh.FormBuilder({
       unidade_id: {

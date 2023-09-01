@@ -1109,7 +1109,7 @@ class AtividadeFormTarefaComponent extends src_app_modules_base_page_form_base__
       descricao: {
         default: ""
       },
-      tarefa_id: {
+      tipo_tarefa_id: {
         default: null
       },
       tempo_estimado: {
@@ -1194,8 +1194,8 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵInheritDefinitionFeature"]],
   decls: 16,
-  vars: 17,
-  consts: [["initialFocus", "descricao", 3, "form", "disabled", "submit", "cancel"], ["display", "", "right", "", 3, "title"], ["key", "TAREFA", 3, "label"], [1, "row"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", "required", "", 3, "size", "rows", "control"], ["controlName", "tipo_tarefa_id", 3, "label", "size", "dao", "select"], ["tipoTarefa", ""], ["onlyHours", "", "label", "Tempo estimado", "controlName", "tempo_estimado", "labelInfo", "Tempo estimado de execu\u00E7\u00E3o", 3, "size", "control"], ["label", "Conclu\u00EDdo", "controlName", "concluido", "labelInfo", "Se foi conclu\u00EDda", 3, "size", "control"], [3, "sei", "documento"], ["documento", ""], ["key", "COMENTARIOS", "label", "Comentarios"], ["clss", "row"], ["origem", "ATIVIDADE_TAREFA", 3, "control"], ["comentarios", ""]],
+  vars: 18,
+  consts: [["initialFocus", "descricao", 3, "form", "disabled", "submit", "cancel"], ["display", "", "right", "", 3, "title"], ["key", "TAREFA", 3, "label"], [1, "row"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", "required", "", 3, "size", "rows", "control"], ["controlName", "tipo_tarefa_id", 3, "label", "size", "control", "dao", "select"], ["tipoTarefa", ""], ["onlyHours", "", "label", "Tempo estimado", "controlName", "tempo_estimado", "labelInfo", "Tempo estimado de execu\u00E7\u00E3o", 3, "size", "control"], ["label", "Conclu\u00EDdo", "controlName", "concluido", "labelInfo", "Se foi conclu\u00EDda", 3, "size", "control"], [3, "sei", "documento"], ["documento", ""], ["key", "COMENTARIOS", "label", "Comentarios"], ["clss", "row"], ["origem", "ATIVIDADE_TAREFA", 3, "control"], ["comentarios", ""]],
   template: function AtividadeFormTarefaComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelementStart"](0, "editable-form", 0);
@@ -1229,7 +1229,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("size", 12)("rows", 2)("control", ctx.form.controls.descricao);
       _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("label", ctx.lex.translate("Tipo de Tarefa"))("size", 7)("dao", ctx.tipoTarefaDao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("label", ctx.lex.translate("Tipo de Tarefa"))("size", 7)("control", ctx.form.controls.tipo_tarefa_id)("dao", ctx.tipoTarefaDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("size", 3)("control", ctx.form.controls.tempo_estimado);
       _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](1);
