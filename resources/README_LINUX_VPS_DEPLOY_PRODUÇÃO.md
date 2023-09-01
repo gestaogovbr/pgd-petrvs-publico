@@ -12,6 +12,7 @@
 <p>(Passo 1) Instalando aplicativos padrões e recursos adicionais:</p>
 
 ~~~shell
+sudo apt update -y
 sudo apt install apache2 php libapache2-mod-php php-mysql openssl git iputils-ping dnsutils nano apt-transport-https ca-certificates curl software-properties-common -y
 ~~~
 
@@ -19,13 +20,15 @@ sudo apt install apache2 php libapache2-mod-php php-mysql openssl git iputils-pi
 <p>(Passo 2) Bibliotecas PHP para Laravel:</p>
 
 ~~~shell
- sudo apt install php-cli php-common php-fpm php-bcmath php-curl php-json php-mbstring php-mysql php-tokenizer php-xml php-zip php-soap php-mysqli -y
+sudo apt update -y
+sudo apt install php-cli php-common php-fpm php-bcmath php-curl php-json php-mbstring php-mysql php-tokenizer php-xml php-zip php-soap php-mysqli -y
 ~~~
 
 <br>
 <p>(Passo 3) Bibliotecas Linux:</p>
 
-~~~shell 
+~~~shell
+sudo apt-update -y
 sudo apt install git zlib1g-dev libzip-dev unzip curl openssl libssl-dev libxml2-dev -y
 ~~~
 
@@ -40,6 +43,7 @@ sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
 <p>(Passo 4) Certbot - LetsEncrypt:</p>
 
 ~~~shell 
+sudo apt-update -y
 sudo apt install certbot python3-certbot-apache -y
 ~~~
 
