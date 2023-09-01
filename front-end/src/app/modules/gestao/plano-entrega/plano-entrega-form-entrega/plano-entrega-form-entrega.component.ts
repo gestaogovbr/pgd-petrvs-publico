@@ -19,13 +19,14 @@ import { InputSearchComponent } from 'src/app/components/input/input-search/inpu
 import { CadeiaValorProcesso } from 'src/app/models/cadeia-valor-processo.model';
 import { PlanoEntregaEntregaObjetivo } from 'src/app/models/plano-entrega-entrega-objetivo.model';
 import { PlanoEntregaEntregaProcesso } from 'src/app/models/plano-entrega-entrega-processo.model';
-import { GridComponent } from 'src/app/components/grid/grid.component';
+import { GridComponent, GroupBy } from 'src/app/components/grid/grid.component';
 import { Entrega } from 'src/app/models/entrega.model';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { PlanoEntregaService } from '../plano-entrega.service';
 import { Unidade } from 'src/app/models/unidade.model';
+import { QueryOrderBy } from 'src/app/dao/dao-base.service';
 
 @Component({
   selector: 'plano-entrega-form-entrega',
@@ -50,6 +51,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   public planejamentoId?: string;
   public cadeiaValorId?: string;
   public unidadeId?: string;
+  public orderBy?: QueryOrderBy[];
   public formObjetivos: FormGroup;
   public formProcessos: FormGroup;
   public unidadeDao: UnidadeDaoService;
@@ -74,7 +76,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.cadeiaValorProcessoDao = injector.get<CadeiaValorProcessoDaoService>(CadeiaValorProcessoDaoService);
     this.planejamentoObjetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
     this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
-    this.join = ['objetivos', 'processos', 'unidade'];
+    //this.join = ['objetivos', 'processos', 'unidade'];
     this.modalWidth = 600;
     this.form = this.fh.FormBuilder({
       descricao: { default: "" },
@@ -137,11 +139,17 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     } else if (['unidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "A unidade demandante é obrigatória";
     } else if (['entrega_id'].indexOf(controlName) >= 0 && !control.value?.length) {
-      if(!this.form?.controls.entrega_pai_id.value?.length) result = "A entrega é obrigatória";
+      result = "A entrega é obrigatória";
     } else if (['data_inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
     } else if (['data_fim'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
+    } else if (['planejamento_objetivo_id'].indexOf(controlName) >= 0) {
+      if(!control.value?.length) result = "O objetivo do planejamento é obrigatório";
+      if(control.value?.length && this.gridObjetivos?.items.map(x => x.planejamento_objetivo_id).includes(this.formObjetivos.controls.planejamento_objetivo_id.value)) result = "Este objetivo está em duplicidade!";
+    } else if (['cadeia_processo_id'].indexOf(controlName) >= 0) {
+      if(!control.value?.length) result = "O processo da cadeia de valor é obrigatório";
+      if(control.value?.length && this.gridProcessos?.items.map(x => x.cadeia_processo_id).includes(this.formProcessos.controls.cadeia_processo_id.value)) result = "Este processo está em duplicidade!";
     }
     return result;
   }
@@ -178,6 +186,8 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     form.patchValue(this.util.fillForm(formValue, entityWithout));
     form.controls.meta.setValue(this.planoEntregaService.getValor(entity.meta));
     form.controls.realizado.setValue(this.planoEntregaService.getValor(entity.realizado));
+    form.controls.objetivos.setValue(entity.objetivos);
+    form.controls.processos.setValue(entity.processos);
   }
 
   public async initializeData(form: FormGroup) {
@@ -191,8 +201,8 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       this.gridProcessos?.confirm();
       let {meta, realizado, ...valueWithout} = this.form!.value;
       entrega = this.util.fillForm(entrega, valueWithout);
-      entrega.objetivos = entrega.objetivos.filter(x => ["ADD", "DELETE"].includes(x._status || ""));
-      entrega.processos = entrega.processos.filter(x => ["ADD", "DELETE"].includes(x._status || ""));
+      //entrega.objetivos = entrega.objetivos.filter(x => ["ADD", "DELETE"].includes(x._status || ""));
+      //entrega.processos = entrega.processos.filter(x => ["ADD", "DELETE"].includes(x._status || ""));
       entrega.demandante = this.unidade?.selectedEntity;
       entrega.entrega = this.entrega?.selectedEntity;
       entrega.meta = this.planoEntregaService.getEntregaValor(entrega.entrega!, meta);

@@ -42,12 +42,12 @@ Campos obrigatórios:
 (RN_PTR_B) O Plano de Trabalho pode ser incluído pelo próprio servidor, se ele for "participante do programa", habilitado, ou pelo chefe da unidade executora.
 (RN_PTR_C) Quando o Chefe da unidade executora criar o primeiro plano de trabalho para um servidor, este tornar-se-á automaticamente um participante habilitado;
 (RN_PTR_D) O Plano de Trabalho só vai para o status ATIVO quando atender os critérios de assinatura, que estarão definidos no TCR com base nas configurações do Programa;
-(RN_PTR_E) O Plano de Trabalho precisará ser repactuado quando alguma de suas entregas estiver vinculada a uma entrega de plano de trabalho cancelada;
-(RN_PTR_F) Os planos de trabalho dos participantes contribuem direta ou indiretamente para o plano de trabalho da unidade. Assim, um plano de trabalho será composto por atividades relacionadas ou não às entregas do plano de trabalho da unidade;
+(RN_PTR_E) O Plano de Trabalho precisará ser repactuado quando alguma de suas entregas estiver vinculada a uma entrega de plano de entrega cancelada;
+(RN_PTR_F) Os planos de trabalho dos participantes contribuem direta ou indiretamente para o plano de entregas da unidade. Assim, um plano de trabalho será composto por atividades relacionadas ou não às entregas do plano de entregas da unidade;
 (RN_PTR_G) Na criação/alteração de um Plano de Trabalho só podem ser criadas/alteradas entregas se vinculadas a entregas de planos de entregas não canceladas;
-(RN_PTR_H) Segundo as configurações do Programa de Gestão, no TCR poderá ser exigida a assinatura dos seguintes atores: participante, gestor da Unidade Executora, gestor da Unidade de Lotação, e/ou gestor da Unidade Instituidora; entretanto, ainda segundo o Programa de Gestão, o TCR pode ser dispensável e, nesse caso, obviamente nenhuma assinatura será exigida;
-(RN_PTR_) 
-(RN_PTR_) 
+(RN_PTR_H) Segundo as configurações do Programa de Gestão, no TCR poderá ser exigida a assinatura dos seguintes atores: participante, gestor da Unidade Executora, gestor da Unidade de Lotação e/ou gestor da Unidade Instituidora; entretanto, ainda segundo o Programa de Gestão, o TCR pode ser dispensável e, nesse caso, obviamente nenhuma assinatura será exigida;
+(RN_PTR_I) Quando a unidade executora não for a unidade de lotação do servidor, seu chefe imediato deve ter acesso ao seu plano de trabalho (e à sua execução);
+(RN_PTR_J) Quando todas as consolidações de um plano de trabalho forem avaliadas, informar que este está também avaliado (não é um status);
 (RN_PTR_) 
 (RN_PTR_) 
 (RN_PTR_) 
@@ -56,20 +56,20 @@ Campos obrigatórios:
 ## REGRAS DE INTERFACE APLICADAS AOS PLANOS DE TRABALHO
 
 No formulário de inclusão/edição de um plano de trabalho:
-    . (RI_PTR_A) se o usuário logado não for gestor da Unidade do plano (Unidade B), o inputSearch de usuário já vem preenchido com o seu nome e permanece bloqueado;
+    . (RI_PTR_A) se o usuário logado não for gestor da Unidade executora, o inputSearch de usuário já vem preenchido com o seu nome e permanece bloqueado;
     . (RI_PTR_B) os input-search de unidade, programa e usuario devem ficar desabilitados nas edições e habilitado apenas nas inclusões;
 
 ## FLUXOS DOS PLANOS DE TRABALHO (STATUS & AÇÕES)
 
 ~~~text
 
-status possíveis = ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO', 'CONCLUIDO', 'AVALIADO', 'RECURSO', 'SUSPENSO', 'CANCELADO']
+status possíveis = ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO', 'EXECUTADO', 'SUSPENSO', 'CANCELADO']
 
 -----------------------------------------------------------------------------------------------------------------------------------
 obrigatoriedade     | inclusão realizada  |  status     |  evento que                |  status      |  evento que       |  status
 da assinatura       | pelo                |  inicial    |  faz avançar               |  seguinte    |  faz avançar      |  seguinte
 --------------------+--------------------------------------------------------------------------------------------------------------
-                    | participante        |  INCLUIDO   |  participante clica no     |  AGUARDANDO  |  os chefes assinam|  ATIVO
+                    | participante        |  INCLUIDO   |  participante clica no     |  AGUARDANDO  |  os chefes assinam|  ATIVO*
     chefe           |                     |             |  botão 'assinar' (*1)      |  ASSINATURA  |  o TCR            |  
     &               +--------------------------------------------------------------------------------------------------------------
     participante    | chefe               |  INCLUIDO   |  chefe clica no            |  AGUARDANDO  |  particip/chefe   |  ATIVO
@@ -101,23 +101,20 @@ da assinatura       | pelo                |  inicial    |  faz avançar         
 
 ~~~
 
-Ação: ALTERAR -> não muda o status do plano ('INCLUIDO','HOMOLOGANDO','ATIVO')
+*/*Ação: ALTERAR -> não muda o status do plano ('INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO')
 (RN_PTR_) Condições para que um plano de trabalho possa ser alterado:
     - o usuário logado precisa possuir a capacidade "MOD_PTR_EDT", o plano de trabalho precisa ser válido (ou seja, nem deletado, nem arquivado e com status diferente de 'CANCELADO'), e:
-        - estar com o status INCLUIDO ou HOMOLOGANDO, e o usuário logado precisa ser gestor da Unidade do plano, ou esta ser sua Unidade de lotação; ou
-        - o usuário logado precisa ser gestor da Unidade-pai (Unidade A) da Unidade do plano (Unidade B) e possuir a capacidade "MOD_PTR_EDT_FLH" (RN_PTR_C);  ou
-        - o usuário logado precisa possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a Unidade-pai (Unidade A) da Unidade do plano (Unidade B); ou
-        - o plano de trabalho precisa estar com o status ATIVO, a Unidade do plano precisa ser a Unidade de lotação do usuário logado, e ele possuir a capacidade "MOD_PTR_EDT_ATV_HOMOL" ou "MOD_PTR_EDT_ATV_ATV"; ou
-        - o usuário precisa possuir também a capacidade "MOD_PTR_QQR_UND".
-(RN_PTR_) Qualquer alteração, depois de o plano de trabalho ser homologado, precisa ser notificada ao gestor da Unidade-pai (Unidade A) ou à pessoa que homologou. Essa comunicação sobre eventuais ajustes, não se aplica à Unidade instituidora.
-(RN_PTR_AE) Se a alteração for feita com o plano de trabalho no status ATIVO e o usuário logado possuir a capacidade "MOD_PTR_EDT_ATV_HOMOL", o plano de trabalho voltará ao status "HOMOLOGANDO";
-(RN_PTR_AF) Se a alteração for feita com o plano de trabalho no status ATIVO e o usuário logado possuir a capacidade "MOD_PTR_EDT_ATV_ATV", o plano de trabalho permanecerá no status "ATIVO";
+        - estando com o status 'INCLUIDO'
+            - o usuário logado precisa ser o participante do plano ou o gestor da unidade executora;
+        - estando com o status 'AGUARDANDO_ASSINATURA'
+            - o usuário logado precisa ser o participante do plano ou um dos que precisa assinar;
+        - estando com o status 'ATIVO'
+            - o usuário precisa ser gestor da unidade executora e possuir a capacidade MOD_PTR_EDT_ATV. Após alterado, o plano terá que ser assinado novamente por todos os que assinaram originalmente;
 
-Ação: ARQUIVAR -> não muda o status do plano ('CONCLUIDO','AVALIADO')
+*/*Ação: ARQUIVAR -> não muda o status do plano ('EXECUTADO')
 (RN_PTR_) Condições para que um plano de trabalho possa ser arquivado:
-    - o plano precisa estar com o status CONCLUIDO ou AVALIADO, não ter sido arquivado, e:
-        - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
-        - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado e ele possuir a capacidade "MOD_PTR_ARQ";
+    - o plano precisa estar com o status EXECUTADO, não ter sido arquivado, e:
+        - o usuário logado precisa ser o participante ou o gestor da Unidade executora;
     - Estando na condição de "ARQUIVADO"
         botões-padrão:
             - 'Consultar'. Condições para ser exibido: vide RN_PTR_;
@@ -127,16 +124,16 @@ Ação: ARQUIVAR -> não muda o status do plano ('CONCLUIDO','AVALIADO')
 
 */*Ação: ASSINAR -> enquanto faltar assinatura, o plano vai para o (ou permanece no) status de 'AGUARDANDO_ASSINATURA'. Quando o último assinar, o plano vai para o status 'ATIVO'
 (RN_PTR_) Condições para que um plano de trabalho possa ser assinado:
-    - o plano precisa estar com o status CONCLUIDO ou AVALIADO, não ter sido arquivado, e:
-        - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
-        - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado e ele possuir a capacidade "MOD_PTR_ARQ";
+    - o plano precisa estar com o status INCLUIDO ou AGUARDANDO_ASSINATURA, e:
+        - o usuário logado precisa ser um dos exigidos pelo Programa e não ter ainda assinado o TCR;
     - Estando no status "AGUARDANDO_ASSINATURA"
         botões-padrão:
             - 'Assinar'. Condições para ser exibido: vide RN_PTR_;
             - 'Consultar'. Condições para ser exibido: vide RN_PTR_;
         botões opcionais:
-    - Estando no status "ATIVO"
+    - Estando no status "INCLUIDO"
         botões-padrão:
+            - 'Assinar'. Condições para ser exibido: vide RN_PTR_;
             - 'Concluir'. Condições para ser exibido: vide RN_PTR_;
         botões opcionais:
 
@@ -162,35 +159,14 @@ Ação: CANCELAR PLANO -> o plano adquire o status de 'CANCELADO'
         botões opcionais:
             - 'Consultar'. Condições para ser exibido: vide RN_PTR_;
 
-Ação: CANCELAR CONCLUSÃO -> o plano retorna ao status de 'ATIVO'
-(RN_PTR_) Condições para que um plano de trabalho possa ter sua conclusão cancelada:
-    - o plano precisa estar com o status CONCLUIDO e o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
-    - a Unidade do plano (Unidade B) precisa ser sua Unidade de lotação e o usuário logado precisa possuir a capacidade "MOD_PTR_CANC_CONCL";
-
-Ação: CONCLUIR -> o plano adquire o status de 'CONCLUIDO'
-(RN_PTR_) Condições para que um plano de trabalho possa ser concluído:
-    - o plano precisa estar com o status ATIVO, e:
-        - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
-        - a Unidade do plano (Unidade B) precisa ser sua Unidade de lotação e o usuário logado precisa possuir a capacidade "MOD_PTR_CONC";
-    - Estando no status "CONCLUIDO"
-        botões-padrão:
-            - 'Avaliar'. Condições para ser exibido: vide RN_PTR_;
-            - 'Consultar'. Condições para ser exibido: vide RN_PTR_;
-        botões opcionais:
-            - 'Avaliar'. Condições para ser exibido: vide RN_PTR_;
-            - 'Consultar'. Condições para ser exibido: vide RN_PTR_;
-            - 'Cancelar'. Condições para ser exibido: vide RN_PTR_;
-            - 'Arquivar'. Condições para ser exibido: vide RN_PTR_;
-            - 'Cancelar Conclusão'. Condições para ser exibido: vide RN_PTR_;
-
 Ação: CONSULTAR -> não muda o status do plano
 (RN_PTR_)
     - todos os participantes podem visualizar todos os planos de entrega, desde que possuam a capacidade "MOD_PENT";
 
-Ação: DESARQUIVAR -> o plano retorna ao status que estava quando foi arquivado ('CONCLUIDO','AVALIADO')
+Ação: DESARQUIVAR -> o plano retorna ao status que estava quando foi arquivado ('EXECUTADO')
 (RN_PTR_) Condições para que um plano de trabalho possa ser desarquivado:
     - o plano precisa estar arquivado, e:
-        - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
+        - o usuário logado precisa ser o participante ou o gestor, ou
         - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado e ele possuir a capacidade "MOD_PTR_ARQ";
 
 */*Ação: ENVIAR PARA ASSINATURA -> o plano vai para o status 'AGUARDANDO_ASSINATURA'
@@ -203,12 +179,6 @@ Ação: DESARQUIVAR -> o plano retorna ao status que estava quando foi arquivado
                 - 'Assinar'. Condições para ser exibido: vide RN_PTR_;
                 - 'Consultar'. Condições para ser exibido: vide RN_PTR_;
             botões opcionais:
-
-Ação: EXCLUIR -> não muda o status do plano
-(RN_PTR_) Condições para que um plano de trabalho possa ser excluído:
-        - o usuário logado precisa possuir a capacidade "MOD_PTR_EXCL", o plano precisa estar com o status INCLUIDO ou HOMOLOGANDO; e
-            - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
-            - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado;
 
 */*Ação: INSERIR/INCLUIR -> o plano adquire o status de 'INCLUIDO'
 (RN_PTR_) Condições para que um plano de trabalho possa ser criado:

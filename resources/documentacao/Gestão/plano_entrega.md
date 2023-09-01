@@ -88,7 +88,7 @@ Ação: ALTERAR -> não muda o status do plano ('INCLUIDO','HOMOLOGANDO','ATIVO'
 (RN_PENT_AE) Se a alteração for feita com o plano de entregas no status ATIVO e o usuário logado possuir a capacidade "MOD_PENT_EDT_ATV_HOMOL", o plano de entregas voltará ao status "HOMOLOGANDO";
 (RN_PENT_AF) Se a alteração for feita com o plano de entregas no status ATIVO e o usuário logado possuir a capacidade "MOD_PENT_EDT_ATV_ATV", o plano de entregas permanecerá no status "ATIVO";
 
-** Alterações realizadas em planos de entregas vinculados a quaisquer unidades que sejam instituidoras não precisam ser notificadas ao gestor de sua Unidade-pai. É isso? **
+** Alterações realizadas em planos de entregas vinculados a quaisquer unidades que sejam instituidoras não precisam ser notificadas ao gestor de sua Unidade-pai. É isso? **  SIM!
 
 Ação: ARQUIVAR -> não muda o status do plano ('CONCLUIDO','AVALIADO')
 (RN_PENT_N) Condições para que um plano de entregas possa ser arquivado:
@@ -191,7 +191,7 @@ Ação: HOMOLOGAR -> o plano adquire o status de 'ATIVO'
             - o usuário logado precisa possuir a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para a Unidade-pai (Unidade A); (RN_PENT_E)
         - A homologação do plano de entregas não se aplica à Unidade instituidora.
 
-** Os planos de entregas vinculados a quaisquer unidades que sejam instituidoras não precisam ser homologados. É isso? **
+** Os planos de entregas vinculados a quaisquer unidades que sejam instituidoras não precisam ser homologados. É isso? ** SIM!!
 
         - Estando no status "ATIVO"
             botões-padrão:

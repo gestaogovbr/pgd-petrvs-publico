@@ -151,8 +151,10 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     let form: any = filter.value;
     /*
         (RI_PENT_4) A consulta do grid retornará inicialmente os principais Planos de Entrega do usuário logado (a opção "principais" já vem marcada), que são:
-        - os válidos das unidades onde ele possui algum vínculo (áreas de trabalho), e
-        - se ele for gestor, os ativos das unidades-pai de onde ele é gestor e os ativos das unidades imediatamente subordinadas;
+        - os válidos das unidades onde ele possui algum vínculo (áreas de trabalho) (w1), e
+        - se ele for gestor:
+          - os ativos das unidades-pai de onde ele é gestor (w2), e 
+          - os ativos das unidades imediatamente subordinadas (w3);
     */
     if (this.filter?.controls.principais.value) {
       let unidadesUsuarioEhGestor = this.auth.unidades?.filter(x => this.auth.isGestorUnidade(x));

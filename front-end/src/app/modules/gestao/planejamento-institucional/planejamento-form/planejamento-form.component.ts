@@ -68,6 +68,11 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
       if(this.form!.controls.data_fim.value && this.form!.controls.data_inicio.value > this.form!.controls.data_fim.value) return "A data do início não pode ser maior que a data do fim!";
       if(this.form!.controls.valores.value.length == 0) return "É obrigatória a inclusão de ao menos um valor institucional!";
       if(this.isPlanejamentoUNEXEC() && !this.form.controls.planejamento_superior_id.value?.length) return "Quando o Planejamento é de uma Unidade Executora, é obrigatória a definição do Planejamento superior ao qual ele será vinculado!";
+/*       if(!form!.controls.unidade_id.value.length) {
+        this.dao?.query({where: [['unidade_id', "==", null],["data_inicio", "<=", form!.controls.data_inicio.value]]})
+      } else {
+        this.dao?.query({where: [['unidade_id', "==", form!.controls.unidade_id.value]]})
+      } */
       return undefined;
     }
   

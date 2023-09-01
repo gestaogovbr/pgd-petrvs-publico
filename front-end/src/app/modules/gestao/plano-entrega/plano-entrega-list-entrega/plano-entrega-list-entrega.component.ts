@@ -84,16 +84,16 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
       progresso_realizado: { default: null },
       destinatario: { default: null },
     }, this.cdRef, this.validate);
-    // Testa se o usuário possui permissão para exibir dados do feriado
-    if (true || this.auth.hasPermissionTo("")) {
+    // Testa se o usuário possui permissão para exibir dados da entrega do plano de entregas
+    if (true || this.auth.hasPermissionTo("MOD_PENT")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",
         onClick: this.consult.bind(this)
       });
     }
-    // Testa se o usuário possui permissão para excluir o feriado
-    if (true || this.auth.hasPermissionTo("MOD_FER_EXCL")) {
+    // Testa se o usuário possui permissão para excluir a entrega do plano de entregas
+    if (true || this.auth.hasPermissionTo("MOD_PENT_ENTR_EXCL")) {
       this.options.push({
         icon: "bi bi-trash",
         label: "Excluir",
@@ -182,7 +182,8 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   }
 
   public async consult(entrega: PlanoEntregaEntrega) {
-    this.go.navigate({route: ['', entrega.id, "consult"]});
+    //this.go.navigate({route: ['gestao', 'plano-entrega', entrega.id, "consult"]});
+    this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', entrega.id, "consult"]});
   }
 
 }

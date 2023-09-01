@@ -24,6 +24,6 @@ class PlanoEntregaEntregaProcesso extends ModelBase
   
     // Has
     // Belongs
-    public function processo() { return $this->belongsTo(CadeiaValorProcesso::class, 'cadeia_processo_id'); }
-    public function entrega() { return $this->belongsTo(PlanoEntregaEntrega::class, 'entrega_id'); }
+    public function processo() { return $this->belongsTo(CadeiaValorProcesso::class, 'cadeia_processo_id'); }   //ok
+    public function entrega() { return $this->belongsTo(PlanoEntregaEntrega::class, 'entrega_id'); }    //ok
 }

@@ -55,6 +55,8 @@ class UnidadeIntegranteService extends ServiceBase
                       array_push($atribuicoesFinais, "LOTADO");
                   } else {
                       $integrante->deleteCascade();
+                      if($transaction) DB::commit();
+                      return $result;
                   };
               } else {
                   $integranteNovoOuExistente = UnidadeIntegrante::firstOrCreate(['unidade_id' => $unidade->id, 'usuario_id' => $usuario->id]);

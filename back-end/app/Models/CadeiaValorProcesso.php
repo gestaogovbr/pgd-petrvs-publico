@@ -27,9 +27,9 @@ class CadeiaValorProcesso extends ModelBase
 
     public $delete_cascade = [];
     // Has
-    public function processosEntrega() { return $this->hasMany(PlanoEntregaEntregaProcesso::class, 'processo_id'); }
+    public function processosEntrega() { return $this->hasMany(PlanoEntregaEntregaProcesso::class, 'cadeia_processo_id'); }
     public function processos() { return $this->hasMany(CadeiaValorProcesso::class, 'processo_pai_id'); }
     // Belongs
-    public function cadeiaValor() { return $this->belongsTo(CadeiaValor::class); }
+    public function cadeiaValor() { return $this->belongsTo(CadeiaValor::class); }  //ok
     public function processoPai() { return $this->belongsTo(CadeiaValorProcesso::class); }    //nullable
 }

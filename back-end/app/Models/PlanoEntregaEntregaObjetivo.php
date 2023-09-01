@@ -24,6 +24,6 @@ class PlanoEntregaEntregaObjetivo extends ModelBase
 
     // Has
     // Belongs
-    public function objetivo() { return $this->belongsTo(PlanejamentoObjetivo::class); }
-    public function entrega() { return $this->belongsTo(PlanoEntregaEntrega::class, 'entrega_id'); }
+    public function objetivo() { return $this->belongsTo(PlanejamentoObjetivo::class, 'planejamento_objetivo_id'); }//ok
+    public function entrega() { return $this->belongsTo(PlanoEntregaEntrega::class, 'entrega_id'); }//ok
 }

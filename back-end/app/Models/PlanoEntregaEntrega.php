@@ -43,12 +43,12 @@ class PlanoEntregaEntrega extends ModelBase
     ];
 
     // HasMany
-    public function objetivos() { return $this->hasMany(PlanoEntregaEntregaObjetivo::class); }  
-    public function processos() { return $this->hasMany(PlanoEntregaEntregaProcesso::class); }  
+    public function objetivos() { return $this->hasMany(PlanoEntregaEntregaObjetivo::class, 'entrega_id'); }  //ok
+    public function processos() { return $this->hasMany(PlanoEntregaEntregaProcesso::class, 'entrega_id'); }  //ok
     public function entregasPlanoTrabalho() { return $this->hasMany(PlanoTrabalhoEntrega::class); }     
     // Belongs
     public function planoEntrega() { return $this->belongsTo(PlanoEntrega::class); }    
     public function entrega() { return $this->belongsTo(Entrega::class); }      //nullable
     public function demandante() { return $this->belongsTo(Unidade::class, 'unidade_id'); }  
-    public function entregaPai() { return $this->belongsTo(PlanoEntregaEntrega::class); }        //nullable
+    public function entregaPai() { return $this->belongsTo(PlanoEntregaEntrega::class, 'entrega_pai_id'); }        //nullable
 }
