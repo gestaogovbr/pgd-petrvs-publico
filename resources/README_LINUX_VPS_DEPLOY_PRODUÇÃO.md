@@ -29,6 +29,13 @@ sudo apt install apache2 php libapache2-mod-php php-mysql openssl git iputils-pi
 sudo apt install git zlib1g-dev libzip-dev unzip curl openssl libssl-dev libxml2-dev -y
 ~~~
 
+Instalar composer:
+~~~shell
+cd ~
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+~~~
+
 <br>
 <p>(Passo 4) Certbot - LetsEncrypt:</p>
 
