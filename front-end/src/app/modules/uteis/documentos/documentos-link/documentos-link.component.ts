@@ -86,8 +86,8 @@ export class DocumentosLinkComponent extends PageFrameBase {
   }
 
   public loadData(entity: Documento) {
-    entity.tipo = "LINK";
-    this.form!.patchValue(entity.link || {});
+    if(entity) entity.tipo = "LINK";
+    this.form!.patchValue(entity?.link || {});
   }
 
   public loadEntity(data: any) {
