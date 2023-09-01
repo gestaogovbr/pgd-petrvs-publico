@@ -123,7 +123,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefi
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵInheritDefinitionFeature"]],
   decls: 10,
   vars: 10,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "nome", 3, "size", "label"], [1, "col"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", 3, "size", "rows"], ["label", "\u00CDcone", "icon", "fas fa-sign-out-alt", "controlName", "icone", 3, "size", "items"], ["background", "", "label", "Cor", "controlName", "cor", 3, "size"]],
+  consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "nome", "required", "", 3, "size", "label"], [1, "col"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", "required", "", 3, "size", "rows"], ["label", "\u00CDcone", "icon", "fas fa-sign-out-alt", "controlName", "icone", 3, "size", "items"], ["background", "", "label", "Cor", "controlName", "cor", "required", "", 3, "size"]],
   template: function EixoTematicoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "editable-form", 0);

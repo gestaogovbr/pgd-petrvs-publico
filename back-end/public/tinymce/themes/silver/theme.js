@@ -1,5 +1,5 @@
 /**
- * TinyMCE version 6.6.2 (2023-08-09)
+ * TinyMCE version 6.6.1 (2023-08-02)
  */
 
 (function () {
@@ -14702,7 +14702,7 @@
     const isSafariOrFirefox = isSafari || isFirefox;
     const isChromium = browser.isChromium();
     const isElementScrollAtBottom = ({scrollTop, scrollHeight, clientHeight}) => Math.ceil(scrollTop) + clientHeight >= scrollHeight;
-    const scrollToY = (win, y) => win.scrollTo(0, y === 'bottom' ? 99999999 : y);
+    const scrollToY = (win, y) => win.scrollTo(0, y === 'bottom' ? win.document.body.scrollHeight : y);
     const getScrollingElement = (doc, html) => {
       const body = doc.body;
       return Optional.from(!/^<!DOCTYPE (html|HTML)/.test(html) && (!isChromium && !isSafari || isNonNullable(body) && (body.scrollTop !== 0 || Math.abs(body.scrollHeight - body.clientHeight) > 1)) ? body : doc.documentElement);
@@ -14736,7 +14736,7 @@
         }
       });
     };
-    const throttleInterval = someIf(isSafariOrFirefox, isSafari ? 500 : 200);
+    const throttleInterval = isSafariOrFirefox ? Optional.some(isSafari ? 500 : 200) : Optional.none();
     const writeValueThrottler = throttleInterval.map(interval => adaptable(writeValue, interval));
     const getDynamicSource = (initialData, stream) => {
       const cachedValue = Cell(initialData.getOr(''));
