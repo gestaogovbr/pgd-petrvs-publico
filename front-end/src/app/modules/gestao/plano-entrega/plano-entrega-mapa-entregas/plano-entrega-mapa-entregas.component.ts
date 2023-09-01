@@ -30,6 +30,7 @@ export class PlanoEntregaMapaEntregasComponent extends PageListBase<PlanoEntrega
     this.entregaDao = injector.get<EntregaDaoService>(EntregaDaoService);
     this.entregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
     /* Inicializações */
+    this.join = ["plano_entrega.unidade"];
     this.title = this.lex.translate("Entregas");
     this.filter = this.fh.FormBuilder({
       unidade_id: {default: null},
