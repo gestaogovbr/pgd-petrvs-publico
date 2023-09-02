@@ -44,6 +44,7 @@ import { InputBase } from '../input/input-base';
 export class EditableFormComponent extends ComponentBase implements OnInit {
   @ViewChild(FormGroupDirective) formDirective?: FormGroupDirective;
   @ContentChildren(GridComponent, { descendants: true }) grids!: QueryList<GridComponent>;
+  @ContentChildren(EditableFormComponent, { descendants: true }) forms!: QueryList<EditableFormComponent>;
   @ContentChildren(InputContainerComponent, { descendants: true }) inputContainers!: QueryList<InputContainerComponent>;
   @ContentChildren(InputSwitchComponent, { descendants: true }) inputSwitchs!: QueryList<InputSwitchComponent>;
   @ContentChildren(InputDisplayComponent, { descendants: true }) inputDisplays!: QueryList<InputDisplayComponent>;
@@ -179,9 +180,8 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
   }
 
   public disableAll(disabled: boolean) {
-    for (const component of this.components) {
-      component.disabled = disabled ? "true" : undefined;
-    }
+    this.components?.forEach(component => component.disabled = disabled ? "true" : undefined);
+    this.forms?.toArray()?.forEach(form => form.disabled = disabled);
     if(this.disable) this.disable.emit(new Event("disabled"));
   }
 

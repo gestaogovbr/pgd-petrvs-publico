@@ -14,6 +14,7 @@ export class AccordionComponent extends ComponentBase implements OnInit {
   @ContentChildren(SectionComponent, { descendants: true }) sectionsRef?: QueryList<SectionComponent>;
   @Input() load?: AccordionLoad;
   @Input() items: any[] = [];
+  @Input() selectedIndex: number = 0;
   @Input() template?: TemplateRef<unknown>;
   @Input() titleTemplate?: TemplateRef<unknown>;
   @Input() set active(value: any) {

@@ -21,7 +21,6 @@ export class TipoTarefaListComponent extends PageListBase<TipoTarefa, TipoTarefa
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}
      });
-     this.join = ["unidade", "entidade"];
     // Testa se o usuário possui permissão para exibir dados da tarefa
     if (this.auth.hasPermissionTo("MOD_TRF_CONS")) {
       this.options.push({
