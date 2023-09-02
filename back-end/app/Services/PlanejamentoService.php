@@ -12,7 +12,7 @@ class PlanejamentoService extends ServiceBase
 {
     /**
      * Este método verifica se a consulta provém da manutenção de planejamentos institucionais de unidades executoras. Em caso positivo, filtra apenas os planejamentos
-     * não deletados e que: a) são da Unidade Instituidora, ou b) são das Unidades Executoras hierarquicamente superiores à Unidade Executora do plano que stá sendo criado/editado.
+     * não deletados e que: a) são da Unidade Instituidora, ou b) são das Unidades Executoras hierarquicamente superiores à Unidade Executora do plano que está sendo criado/editado.
      */
     public function proxyQuery($query, &$data) {
         if(!empty(array_filter($data["where"], fn($w) => $w[0] == "manut_planej_unidades_executoras"))){

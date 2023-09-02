@@ -19,7 +19,7 @@ import { InputSearchComponent } from 'src/app/components/input/input-search/inpu
 import { CadeiaValorProcesso } from 'src/app/models/cadeia-valor-processo.model';
 import { PlanoEntregaEntregaObjetivo } from 'src/app/models/plano-entrega-entrega-objetivo.model';
 import { PlanoEntregaEntregaProcesso } from 'src/app/models/plano-entrega-entrega-processo.model';
-import { GridComponent, GroupBy } from 'src/app/components/grid/grid.component';
+import { GridComponent } from 'src/app/components/grid/grid.component';
 import { Entrega } from 'src/app/models/entrega.model';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
@@ -76,7 +76,6 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.cadeiaValorProcessoDao = injector.get<CadeiaValorProcessoDaoService>(CadeiaValorProcessoDaoService);
     this.planejamentoObjetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
     this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
-    //this.join = ['objetivos', 'processos', 'unidade'];
     this.modalWidth = 600;
     this.form = this.fh.FormBuilder({
       descricao: { default: "" },
@@ -201,8 +200,6 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       this.gridProcessos?.confirm();
       let {meta, realizado, ...valueWithout} = this.form!.value;
       entrega = this.util.fillForm(entrega, valueWithout);
-      //entrega.objetivos = entrega.objetivos.filter(x => ["ADD", "DELETE"].includes(x._status || ""));
-      //entrega.processos = entrega.processos.filter(x => ["ADD", "DELETE"].includes(x._status || ""));
       entrega.demandante = this.unidade?.selectedEntity;
       entrega.entrega = this.entrega?.selectedEntity;
       entrega.meta = this.planoEntregaService.getEntregaValor(entrega.entrega!, meta);

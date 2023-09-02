@@ -1,8 +1,7 @@
-import { Component, Injector, ViewChild, OnInit } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { SelectItem } from 'src/app/components/input/input-base';
 import { InputDatetimeComponent } from 'src/app/components/input/input-datetime/input-datetime.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { InputTextComponent } from 'src/app/components/input/input-text/input-text.component';
@@ -59,8 +58,6 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
       programa_id: { default: null },
       entregas: { default: [] },
     }, this.cdRef, this.validate);
-    //this.maxPE=this.programa?.
-
   }
 
   public validate = (control: AbstractControl, controlName: string) => {

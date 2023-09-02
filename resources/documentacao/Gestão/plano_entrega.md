@@ -1,6 +1,6 @@
-# Módulo: Plano de Entregas
+# MÓDULO: PLANO DE ENTREGAS
 
-## Acessos  
+## CAPACIDADES
 
 ~~~text
     MOD_PENT = Permite acesso ao menu do módulo Plano de Entregas, e consultar planos de entrega
@@ -31,7 +31,7 @@
                        também as respectivas MOD_PENT_INCL/MOD_PENT_EDT (independente de qualquer outra condição)
 ~~~
 
-## Planos de Entrega
+## BANCO DE DADOS
 
 ~~~text
 Tabela: planos_entregas
@@ -46,7 +46,7 @@ Campos obrigatórios:
     criacao_usuario_id
 ~~~
 
-## REGRAS DE NEGÓCIO APLICADAS AOS PLANOS DE ENTREGAS
+## REGRAS DE NEGÓCIO
 
 Consideremos a seguinte hierarquia:
 Unidade A
@@ -58,19 +58,19 @@ Unidade A
         Unidade G
 Consideremos também que o plano de entregas é da Unidade B.
 
-- (RN_PENT_A) Quando um Plano de Entregas é criado adquire automaticamente o status INCLUIDO;
-- (RN_PENT_B) O gestor de uma Unidade (B) e o gestor da sua Unidade-pai (A), podem iniciar a elaboração de Planos de Entrega para a Unidade B;
-- (RN_PENT_C) O gestor da Unidade-pai (A) pode homologar e, se possuir a capacidade "MOD_PENT_EDT_FLH", alterar o plano de entregas de uma unidade-filha (B ou E) antes/depois de homologá-lo;
-- (RN_PENT_D) Para ir para o status HOMOLOGANDO o Plano de Entregas deve ter ao menos uma entrega;
-- (RN_PENT_E) Para ir para o status 'ATIVO', um Plano de Entregas precisa da Homologação do gestor da sua Unidade-pai (Unidade A), ou de servidor com a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para ela (a Unidade A);
-- (RN_PENT_F) O gestor de uma Unidade deve poder visualizar os planos de entregas de todas as Unidades hierarquicamente a ele subordinadas;
-- (RN_PENT_G) Uma vez homologado um Plano de Entregas, a Unidade do plano (Unidade B) está em PGD;
-- (RN_PENT_H) Os planos de entregas vão gerar dados que serão enviados ao órgão central (aguardando a definição do formato);
-- (RN_PENT_I) O participante poderá visualizar o Plano de Entregas de qualquer uma das suas áreas de trabalho. Área de Trabalho é qualquer unidade onde o participante esteja lotado ou tenha alguma atribuição a ela vinculada (ver [lista de atribuições possíveis](../Geral/informacoes-complementares.md));
-- (RN_PENT_J) Uma Unidade de execução poderá ter mais de um Plano de Entregas com status 'HOMOLOGANDO' e 'ATIVO', desde que sejam para períodos diferentes;
-- (RN_PENT_K) Após criado um plano de entregas, os seguintes campos não poderão mais ser alterados: unidade_id, programa_id;
+(RN_PENT_A) Quando um Plano de Entregas é criado adquire automaticamente o status INCLUIDO;
+(RN_PENT_B) O gestor de uma Unidade (B) e o gestor da sua Unidade-pai (A), podem iniciar a elaboração de Planos de Entrega para a Unidade B;
+(RN_PENT_C) O gestor da Unidade-pai (A) pode homologar e, se possuir a capacidade "MOD_PENT_EDT_FLH", alterar o plano de entregas de uma unidade-filha (B ou E) antes/depois de homologá-lo;
+(RN_PENT_D) Para ir para o status HOMOLOGANDO o Plano de Entregas deve ter ao menos uma entrega;
+(RN_PENT_E) Para ir para o status 'ATIVO', um Plano de Entregas precisa da Homologação do gestor da sua Unidade-pai (Unidade A), ou de servidor com a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para ela (a Unidade A);
+(RN_PENT_F) O gestor de uma Unidade deve poder visualizar os planos de entregas de todas as Unidades hierarquicamente a ele subordinadas;
+(RN_PENT_G) Uma vez homologado um Plano de Entregas, a Unidade do plano (Unidade B) está em PGD;
+(RN_PENT_H) Os planos de entregas vão gerar dados que serão enviados ao órgão central (aguardando a definição do formato);
+(RN_PENT_I) O participante poderá visualizar o Plano de Entregas de qualquer uma das suas áreas de trabalho. Área de Trabalho é qualquer unidade onde o participante esteja lotado ou tenha alguma atribuição a ela vinculada (ver [lista de atribuições possíveis](../Geral/informacoes-complementares.md));
+(RN_PENT_J) Uma Unidade de execução poderá ter mais de um Plano de Entregas com status 'HOMOLOGANDO' e 'ATIVO', desde que sejam para períodos diferentes;
+(RN_PENT_K) Após criado um plano de entregas, os seguintes campos não poderão mais ser alterados: unidade_id, programa_id;
 
-## FLUXOS DOS PLANOS DE ENTREGAS (STATUS & AÇÕES)
+## FLUXOS (STATUS & AÇÕES)
 
 ![Fig. 1 - Análise dos Fluxos dos Planos de Entrega](Fluxo%20dos%20Planos%20de%20Entregas.jpg)
 
@@ -266,7 +266,7 @@ Ação: SUSPENDER -> o plano adquire o status de 'SUSPENSO'
                 - 'Reativar'. Condições para ser exibido: vide RN_PENT_AC;
                 - 'Consultar'. Condições para ser exibido: vide RN_PENT_V;
 
-## REGRAS DE INTERFACE APLICADAS AOS PLANOS DE ENTREGAS
+## REGRAS DE INTERFACE
 
 (RI_PENT_A) Na janela de avaliar, já deixar o switch de arquivamento marcado, igual à janela de avaliação nas atividades (vide RN_PENT_);
 (RI_PENT_B) A consulta do grid retornará inicialmente os principais Planos de Entrega do usuário logado (a opção 'principais' já vem marcada), que são:
@@ -284,7 +284,7 @@ MOD_PENT_CANC_CONCL_HOMOL/MOD_PENT_CANC_CONCL_ATV: o plano não deve retroagir m
 
 [Documentação para ENTREGAS DO PLANO DE ENTREGAS](plano_entrega_entrega.md)
 
-## Exemplos de grids do plano de entregas
+## EXEMPLOS DE GRIDS
 
 - exemplo 1
 

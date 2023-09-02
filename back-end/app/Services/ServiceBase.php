@@ -212,6 +212,11 @@ class ServiceBase extends DynamicMethods
         return Carbon::instance($fromData)->format(ServiceBase::ISO8601_FORMAT);
     }
 
+    /** Pesquisa se existe uma condição de busca envolvendo o campo procurado. Devolve a condição, se existir, ou null, caso contrário.
+     * @param array $data   array com as condições para a cláusula WHERE da consulta
+     * @param string $field campo procurado
+     * @return array $result    array com a condição que envolve o campo procurado, ou null
+     */
     function extractWhere(&$data, $field) {
         $result = null;
         $where = [];

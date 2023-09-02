@@ -9,6 +9,7 @@ import { Planejamento } from 'src/app/models/planejamento.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { PlanejamentoListObjetivoComponent } from '../planejamento-list-objetivo/planejamento-list-objetivo.component';
+import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 
 @Component({
   selector: 'app-planejamento-form',
@@ -18,6 +19,7 @@ import { PlanejamentoListObjetivoComponent } from '../planejamento-list-objetivo
 export class PlanejamentoFormComponent extends PageFormBase<Planejamento, PlanejamentoDaoService> {
     @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
     @ViewChild(GridComponent, { static: true }) public grid?: GridComponent;
+    @ViewChild('planejamentoSuperior', { static: false }) public planejamentoSuperior?: InputSelectComponent;
     @ViewChild('objetivos', { static: false }) public objetivos?: PlanejamentoListObjetivoComponent;
 
     public unidadeDao: UnidadeDaoService;
@@ -52,7 +54,10 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
   
     public validate = (control: AbstractControl, controlName: string) => {
       let result = null;
-      if(['nome','missao','visao'].indexOf(controlName) >= 0 && !control.value?.length) {
+      /*  (RN_PLAN_INST_A) 
+          Para a criação de um planejamento institucional são informações obrigatórias: nome, missão, visão, data de início, unidade responsável e ao menos um dos valores institucionais.
+      */
+      if(['nome','unidade_id','missao','visao'].indexOf(controlName) >= 0 && !control.value?.length) {
         result = "Obrigatório";
       }
       if(['data_inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
@@ -65,10 +70,14 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
     }
   
     public formValidation = (form?: FormGroup) => {
+      /*  (RN_PLAN_INST_A) 
+          Para a criação de um planejamento institucional são informações obrigatórias: nome, missão, visão, data de início, unidade responsável e ao menos um dos valores institucionais.
+      */
       if(this.form!.controls.data_fim.value && this.form!.controls.data_inicio.value > this.form!.controls.data_fim.value) return "A data do início não pode ser maior que a data do fim!";
       if(this.form!.controls.valores.value.length == 0) return "É obrigatória a inclusão de ao menos um valor institucional!";
-      if(this.isPlanejamentoUNEXEC() && !this.form.controls.planejamento_superior_id.value?.length) return "Quando o Planejamento é de uma Unidade Executora, é obrigatória a definição do Planejamento superior ao qual ele será vinculado!";
-/*       if(!form!.controls.unidade_id.value.length) {
+      /*  (RN_PLAN_INST_B) Não pode existir mais de um planejamento institucional para uma mesma unidade em um mesmo período de tempo;
+          GitLab #651: aguardando definição do assunto 
+      if(!form!.controls.unidade_id.value.length) {
         this.dao?.query({where: [['unidade_id', "==", null],["data_inicio", "<=", form!.controls.data_inicio.value]]})
       } else {
         this.dao?.query({where: [['unidade_id', "==", form!.controls.unidade_id.value]]})
@@ -79,6 +88,8 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
     public loadData(entity: Planejamento, form: FormGroup) {
       let formValue = Object.assign({}, form.value);
       form.patchValue(this.util.fillForm(formValue, entity));
+      this.carregaPlanejamentosSuperiores();
+      this.form.controls.planejamento_superior_id.setValue(entity.planejamento_superior_id);
     }
 
     public initializeData(form: FormGroup) {
@@ -115,14 +126,16 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
     }; 
     
     public onUnidadeChange(event: Event){
-      if(this.entity!.unidade_id != this.form.controls.unidade_id.value){
-        this.dao?.query({where: [['unidade_executora_id', '==', this.form.controls.unidade_id.value], ['manut_planej_unidades_executoras','==',true]]}).getAll().then((pls) => {
-          this.planejamentosSuperiores = pls.map(x => Object.assign({},{key: x.id, value: x.nome}) as LookupItem);
-          this.planejamentosSuperiores.unshift({key: null, value: 'Escolha um Planejamento superior...'});
-          this.objetivos!.loadData(this.entity!, this.form!);
-          this.cdRef.detectChanges();
-        });
-      };
+      if(this.entity!.unidade_id != this.form.controls.unidade_id.value) this.carregaPlanejamentosSuperiores();
+    }
+
+    public carregaPlanejamentosSuperiores(){
+      this.dao?.query({where: [['unidade_executora_id', '==', this.form.controls.unidade_id.value], ['manut_planej_unidades_executoras','==',true]]}).getAll().then((pls) => {
+        this.planejamentosSuperiores = pls.map(x => Object.assign({},{key: x.id, value: x.nome}) as LookupItem);
+        this.planejamentosSuperiores.unshift({key: null, value: 'Escolha um Planejamento superior...'});
+        this.objetivos!.loadData(this.entity!, this.form!);
+        this.cdRef.detectChanges();
+      });
     }
 
     /**
