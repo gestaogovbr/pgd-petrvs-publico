@@ -37,3 +37,4 @@ front-end/.vscode/settings.json
 
 # Dario
 back-end/storage/tenant*/*/
+back-end/database/seeders/ZUnidadesSeeder.php

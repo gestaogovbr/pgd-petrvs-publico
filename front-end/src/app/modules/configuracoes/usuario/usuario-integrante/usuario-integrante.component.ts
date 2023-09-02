@@ -1,4 +1,4 @@
-import { Component, Injector, Input, Type, ViewChild } from '@angular/core';
+import { Component, Injector, Input, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
@@ -30,6 +30,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   public unidadeDao: UnidadeDaoService;
   public usuario?: Usuario;
   public tiposAtribuicao: LookupItem[] = [];
+  public unidadesJaVinculadas: string[] = [];
 
   constructor(public injector: Injector) {
     super(injector);
@@ -41,7 +42,6 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
       unidade_id: { default: "" },
       atribuicoes: { default: undefined },
       atribuicao: { default: "" },
-      _status: { default: "" }
     }, this.cdRef, this.validate);
   }
 
@@ -50,6 +50,10 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     this.entity = this.metadata?.entity || this.entity;
     this.entity_id = this.metadata?.entity_id || this.entity_id;
     this.tiposAtribuicao = this.isNoPersist ? this.lookup.UNIDADE_INTEGRANTE_TIPO.filter((atribuicao) => atribuicao.key != "LOTADO") : this.lookup.UNIDADE_INTEGRANTE_TIPO;
+  }
+
+  ngAfterViewInit(): void {
+    super.ngAfterViewInit();
   }
 
   public async initializeData(form: FormGroup) {
@@ -70,6 +74,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
       let result = await this.integranteDao!.loadIntegrantes("", this.entity!.id);
       this.items = result.integrantes.filter(x => x.atribuicoes.length > 0);
       this.usuario = result.usuario;
+      this.unidadesJaVinculadas = (this.items as IntegranteConsolidado[]).map(x => x.id);
     } finally {
       this.grid!.loading = false;
     }
@@ -115,7 +120,6 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
    */
   public async addAtribuicao() {
     return Object.assign(new IntegranteConsolidado(), {
-      _status: this.isNoPersist ? "ADD" : "",
       id: this.dao!.generateUuid(),   // ainda não sei pra que esse id nesse momento
       atribuicoes: []
       //usuario_id: this.entity?.id
@@ -139,11 +143,14 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
    * @returns 
    */
   public async removeAtribuicao(row: any) {
-    let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
+    let a = (row as IntegranteConsolidado).usuario_nome;
+    let b = (row as IntegranteConsolidado).unidade_nome;
+    let nome = (row as IntegranteConsolidado).usuario_nome || (row as IntegranteConsolidado).unidade_nome;
+    let confirm = await this.dialog.confirm("Excluir '" + nome + "'", "Deseja realmente excluir?");
     if (confirm) {
       this.loading = true;
       try {
-        this.isNoPersist ? Object.assign(row, { _status: "DELETE" }) : this.integranteDao.saveIntegrante([{'unidade_id': row.id, 'usuario_id': this.usuario!.id, 'atribuicoes': []}]);
+        if(!this.isNoPersist) this.integranteDao.saveIntegrante([{'unidade_id': row.id, 'usuario_id': this.usuario!.id, 'atribuicoes': []}]);
         //await this.loadData({}, this.form);
       } finally {
         this.loading = false;
@@ -167,7 +174,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
       let novasAtribuicoes: IntegranteAtribuicao[] = form!.controls.atribuicoes.value.map((x: LookupItem) => x.key);
       if (!this.isNoPersist) {
         let $result = await this.integranteDao.saveIntegrante([{'unidade_id': form!.controls.unidade_id.value, 'usuario_id': this.usuario!.id, 'atribuicoes': novasAtribuicoes}]);
-        novoIntegrante = Object.assign(novoIntegrante, {
+          novoIntegrante = Object.assign(novoIntegrante, {
           id: form!.controls.unidade_id.value,
           atribuicoes: $result[0].atribuicoes,
           unidade_codigo: (this.unidade?.selectedEntity as Unidade).codigo,

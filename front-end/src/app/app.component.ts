@@ -79,7 +79,6 @@ export class AppComponent {
   public menuPonto: any;
   public menuRaioX: any;
   public menuExecucao: any;
-  public menuAvaliacao: any;	
   public menuAdministrador: any;
   public menuDev: any;
   private _menu: any;
@@ -140,10 +139,10 @@ export class AppComponent {
       TIPOS_MOTIVOS_AFASTAMENTOS: { name: this.lex.translate("Tipos de Motivo de Afastamento"), permition: 'MOD_TIPO_MTV_AFT', route: ['cadastros', 'tipo-motivo-afastamento'], icon: this.entity.getIcon('TipoMotivoAfastamento') },
       TIPOS_PROCESSOS: { name: this.lex.translate("Tipos de Processo"), permition: 'MOD_TIPO_PROC', route: ['cadastros', 'tipo-processo'], icon: this.entity.getIcon('TipoProcesso') },
       /*Gestão*/
-      CADEIAS_VALORES: { name: this.lex.translate("Cadeias de valor"), permition: 'MOD_CADV', route: ['gestao', 'cadeia-valor'], icon: this.entity.getIcon('CadeiaValor') },
+      CADEIAS_VALORES: { name: this.lex.translate("Cadeias de Valores"), permition: 'MOD_CADV', route: ['gestao', 'cadeia-valor'], icon: this.entity.getIcon('CadeiaValor') },
       ATIVIDADES: { name: this.lex.translate("Atividades"), permition: 'MOD_ATV', route: ['gestao', 'atividade'], icon: this.entity.getIcon('Atividade') },
-      PLANEJAMENTOS_INSTITUCIONAIS: { name: this.lex.translate("Planejamentos Institucional"), permition: 'MOD_PLAN_INST', route: ['gestao', 'planejamento'], icon: this.entity.getIcon('Planejamento') },
-      PLANOS_ENTREGAS: { name: this.lex.translate("Planos de Entrega"), permition: 'MOD_PENT', route: ['gestao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega') },
+      PLANEJAMENTOS_INSTITUCIONAIS: { name: this.lex.translate("Planejamentos Institucionais"), permition: 'MOD_PLAN_INST', route: ['gestao', 'planejamento'], icon: this.entity.getIcon('Planejamento') },
+      PLANOS_ENTREGAS: { name: this.lex.translate("Planos de Entregas"), permition: 'MOD_PENT', route: ['gestao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega') },
       PLANOS_TRABALHOS: { name: this.lex.translate("Planos de Trabalho"), permition: 'MOD_PTR', route: ['gestao', 'plano-trabalho'], icon: this.entity.getIcon('PlanoTrabalho') },
       CONSOLIDACOES: { name: this.lex.translate("Consolidações"), permition: 'MOD_PTR_CSLD', route: ['gestao', 'plano-trabalho', 'consolidacao'], icon: this.entity.getIcon('PlanoTrabalhoConsolidacao') },
       PROGRAMAS_GESTAO: { name: this.lex.translate("Programas de Gestão"), permition: 'MOD_PRGT', route: ['gestao', 'programa'], icon: this.entity.getIcon('Programa') },
@@ -259,10 +258,6 @@ export class AppComponent {
       this.menuSchema.ATIVIDADES,
       Object.assign({}, this.menuSchema.CONSOLIDACOES, {params: {tab: "UNIDADE"}}),
       this.menuSchema.AFASTAMENTOS
-    ];
-
-    this.menuAvaliacao = [	
-      this.menuSchema.AVALIACAO_CONSOLIDACAO_PLANO_TRABALHO	
     ];
 
     this.menuAdministrador = [{
@@ -404,7 +399,6 @@ export class AppComponent {
 
   this.menuContexto = [
       { key: "EXECUCAO", icon: "bi bi-person-check", name: "Participante (PGD)", menu: this.menuExecucao },	
-      { key: "AVALIACAO", icon: "bi bi-question-square", name: "Avaliador (PGD)", menu: this.menuAvaliacao },	
       { key: "GESTAO", icon: "bi bi-people-fill", name: "Gestor (PGD)", menu: this.menuGestao },
       { key: "ADMINISTRADOR", icon: "bi bi-emoji-sunglasses", name: "Administrador", menu: this.menuAdministrador },
       { key: "DEV", icon: "bi bi-braces", name: "Desenvolvedor", menu: this.menuDev },
@@ -437,7 +431,6 @@ export class AppComponent {
     switch (this.contexto.key) {
       case "GESTAO": return this.menuGestao;
       case "EXECUCAO": return this.menuExecucao;
-      case "AVALIACAO": return this.menuAvaliacao;
       case "ADMINISTRADOR": return this.menuAdministrador;
       case "DEV": return this.menuDev;
       case "PONTO": return this.menuPonto;

@@ -9,7 +9,7 @@ export class PlanoEntregaEntrega extends Base {
   public entrega?: Entrega;
   public entrega_pai?: Entrega;
   public plano_entrega?: PlanoEntrega;
-  public unidade?: Unidade;
+  public demandante?: Unidade;
   public objetivos: PlanoEntregaEntregaObjetivo[] = [];
   public processos: PlanoEntregaEntregaProcesso[] = [];
 

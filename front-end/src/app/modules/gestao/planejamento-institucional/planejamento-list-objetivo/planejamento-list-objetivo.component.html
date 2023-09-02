@@ -11,7 +11,7 @@
             </ng-template>
         </column>
         <column title="Fundamentação" [template]="columnFundamentacao"><ng-template let-row="row" #columnFundamentacao><span>{{ row.fundamentacao }}</span></ng-template></column>
-        <column *ngIf="entity?.unidade_id" title="Objetivo Superior" [template]="columnObjetivoSuperior"><ng-template let-row="row" #columnObjetivoSuperior><span>{{ row.objetivo_superior?.nome  || '' }}</span></ng-template></column>
+        <column title="Objetivo Superior" [template]="columnObjetivoSuperior"><ng-template let-row="row" #columnObjetivoSuperior><span>{{ row.objetivo_superior?.nome  || '' }}</span></ng-template></column>
         <column type="options" [dynamicButtons]="dynamicButtons.bind(this)" [dynamicOptions]="dynamicOptions.bind(this)"></column>
     </columns>
 </grid>

@@ -9,6 +9,7 @@ export class PlanoEntregaEntregaDaoService extends DaoBaseService<PlanoEntregaEn
 
   constructor(protected injector: Injector) {
     super("PlanoEntregaEntrega", injector);
+    this.searchFields = ["descricao","destinatario"];
   }
 }
 

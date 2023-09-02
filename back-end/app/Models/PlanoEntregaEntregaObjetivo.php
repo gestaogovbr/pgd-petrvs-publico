@@ -13,7 +13,7 @@ class PlanoEntregaEntregaObjetivo extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'objetivo_id', /* char(36); NOT NULL; */
+        'planejamento_objetivo_id', /* char(36); NOT NULL; */
         'entrega_id', /* char(36); NOT NULL; */
         //'deleted_at', /* timestamp; */
     ];
@@ -24,6 +24,6 @@ class PlanoEntregaEntregaObjetivo extends ModelBase
 
     // Has
     // Belongs
-    public function objetivo() { return $this->belongsTo(PlanejamentoObjetivo::class); }
-    public function entrega() { return $this->belongsTo(PlanoEntregaEntrega::class); }
+    public function objetivo() { return $this->belongsTo(PlanejamentoObjetivo::class, 'planejamento_objetivo_id'); }//ok
+    public function entrega() { return $this->belongsTo(PlanoEntregaEntrega::class, 'entrega_id'); }//ok
 }

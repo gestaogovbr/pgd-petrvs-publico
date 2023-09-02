@@ -53,7 +53,7 @@ class DynamicMethods {
  */
 class ServiceBase extends DynamicMethods
 {
-    const OPERATORS = ["=", "==", "like", "in", "<", ">", "<>", "!=", ">=", "<="];
+    const OPERATORS = ["=", "==", "like", "in", "not in", "<", ">", "<>", "!=", ">=", "<="];
     const ISO8601_VALIDATE = '/^[0-9]{4}-((0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01])|(0[469]|11)-(0[1-9]|[12][0-9]|30)|(02)-(0[1-9]|[12][0-9]))((T|\s)(0[0-9]|1[0-9]|2[0-3]):(0[0-9]|[1-5][0-9])(:(0[0-9]|[1-5][0-9])(\.[0-9]{3})?)?)?Z?$/';
     const ISO8601_FORMAT = "Y-m-d\TH:i:s";
     const ACTION_INSERT = "INSERT";
@@ -212,6 +212,11 @@ class ServiceBase extends DynamicMethods
         return Carbon::instance($fromData)->format(ServiceBase::ISO8601_FORMAT);
     }
 
+    /** Pesquisa se existe uma condição de busca envolvendo o campo procurado. Devolve a condição, se existir, ou null, caso contrário.
+     * @param array $data   array com as condições para a cláusula WHERE da consulta
+     * @param string $field campo procurado
+     * @return array $result    array com a condição que envolve o campo procurado, ou null
+     */
     function extractWhere(&$data, $field) {
         $result = null;
         $where = [];
@@ -334,7 +339,8 @@ class ServiceBase extends DynamicMethods
                 $self = $this;
                 $triade = count($value) == 3 && in_array($value[1], ServiceBase::OPERATORS);
                 $value = !$triade ? function($query) use ($value, $data) { $this->applyWhere($query, $value, $data); } :
-                    ($value[1] == "in" ? function($query) use ($value, $self) { $query->whereIn($self->prefixField($value[0]), $value[2]); } : $value);
+                    ($value[1] == "in" ? function($query) use ($value, $self) { $query->whereIn($self->prefixField($value[0]), $value[2]); } : 
+                    ($value[1] == "not in" ? function($query) use ($value, $self) { $query->whereNotIn($self->prefixField($value[0]), $value[2]); } : $value));
                 $this->chooseWhere($query, $or, $first, $value, $data);
                 $first = false;
             }

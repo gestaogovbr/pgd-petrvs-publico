@@ -8,7 +8,6 @@ use App\Models\Unidade;
 use App\Models\Atividade;
 use App\Models\Programa;
 use App\Models\Documento;
-use App\Models\PlanoEntrega;
 use App\Models\PlanoTrabalhoEntrega;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\TipoModalidade;
