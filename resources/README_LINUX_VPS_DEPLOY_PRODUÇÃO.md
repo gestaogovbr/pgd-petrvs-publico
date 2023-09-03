@@ -1,10 +1,14 @@
 # Resources
  Deploy produção
+ <br>
+
+ (Manual em processo de construção - 03/09/2023 12h e 49m)
 
 ###### Obs.: Antes de iniciar a instalação, certifique-se de que o DNS está configurado. Caso não esteja, edite o arquivo /etc/resolv.conf e adicione o DNS.
 
-###### Obs.: Guia simples presume existência de outra máquina, preferencialmente, com banco de dados mysql >=8.
+###### Obs.: Guia simples presume existência de outra máquina, preferencialmente, com banco de dados mysql >=8 e usuário petrvs com acesso total ao banco de dados petrvs e petrvs_logs;
 ---
+
 <br>
 
 <center>Deploy modo produção em VPS (Google Cloud) com Ubuntu 22.04.2 LTS (Jammy) (minimal - x86_x64)</center>
@@ -39,6 +43,12 @@ php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
 ~~~
 
+Habilitar módulos necessários no apache2:
+~~~shell
+sudo a2enmod ssl
+sudo a2enmod rewrite
+sudo a2enmod headers
+~~~
 <br>
 <p>(Passo 4) Certbot - LetsEncrypt:</p>
 
@@ -134,25 +144,55 @@ cd ~/petrvs
 chmod 777 ~/petrvs/storage -R
 cp ~/petrvs/.env.production.template ~/petrvs/.env
 composer install --optimize-autoloader --no-dev
+
+sudo rm -rf ~/petrvs/.env.dev.template
+sudo rm -rf ~/petrvs/.env.production.template
+sudo rm -rf ~/petrvs/README.md
+sudo rm -rf ~/petrvs/.vscode
+
+sudo rm -rf /var/www/html
+sudo cp -R . /var/www/
+cd /var/www/
+sudo chown www-data. /var/www/public
+sudo chown www-data. /var/www/storage
+sudo chmod 700 /var/www/storage -R
+sudo chmod 700 /var/www/public -R
 ~~~
 
-Ratifico necessidade de abrir o arquivo modelo .env e efetuar as configurações básicas. No ambiente de produção deverá ser utilizado um database para cada finalidade:
+Ratifico necessidade de abrir o arquivo modelo .env e efetuar as configurações básicas (em especial, verificar domínio web). No ambiente de produção deverá ser utilizado um database para cada finalidade:
 
-`sudo nano ~/petrvs/.env`
+~~~shell
+sudo nano /var/www/.env
+~~~
+
 ~~~shell
 DB_CONNECTION=mysql
 DB_HOST=localhost
 DB_PORT=3306
 DB_DATABASE=petrvs
-DB_USERNAME=root
+DB_USERNAME=petrvs
 DB_PASSWORD=PsEeTnRhVaS
 
 LOG_CONNECTION=log
 LOG_HOST=localhost
 LOG_PORT=3306
 LOG_DATABASE=petrvs_logs
-LOG_USERNAME=root
+LOG_USERNAME=petrvs
 LOG_PASSWORD=PsEeTnRhVaS
+~~~
+
+Editar arquivo para ajustar domínio quanto ao Tenant:
+
+~~~shell
+sudo nano /var/www/config/tenancy.php
+~~~
+
+~~~shel
+        'central_domains' => [
+           '127.0.0.1',
+           'localhost',
+           'pgd.senappen.seg.br',
+        ],
 ~~~
 
 Logo após, caso não possua os bancos de dados e seja a primeira instalação, deverá ser executado os comando abaixo para criar banco de dados e criar tabelas:
@@ -185,92 +225,66 @@ Por fim, configurar os dois arquivos do virtualhost para rodar o projeto (observ
 
 **DocumentRoot** deve informar a pasta **public** e não a pasta do projeto completo.
 
-`sudo nano /etc/apache2/sites-available/000-default.conf`
+~~~shell
+sudo nano /etc/apache2/sites-available/000-default.conf
+~~~
+
 ~~~shell
 <VirtualHost *:80>
-        # The ServerName directive sets the request scheme, hostname and port that
-        # the server uses to identify itself. This is used when creating
-        # redirection URLs. In the context of virtual hosts, the ServerName
-        # specifies what hostname must appear in the request's Host: header to
-        # match this virtual host. For the default virtual host (this file) this
-        # value is not decisive as it is used as a last resort host regardless.
-        # However, you must set it for any further virtual host explicitly.
-        #ServerName www.example.com
-
-
         ServerName pgd.senappen.seg.br
         Alias www.pgd.senappen.seg.br pgd.senappen.seg.br
 
         ServerAdmin edson.franca@mj.gov.br
-        DocumentRoot /home/edson_dario/petrvs/public
+        DocumentRoot /var/www/public
 
-        # Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
-        # error, crit, alert, emerg.
-        # It is also possible to configure the loglevel for particular
-        # modules, e.g.
-        #LogLevel info ssl:warn
+        <Directory /var/www/public>
+            Options -Indexes
+            AllowOverride All
+            Require all granted
+            DirectoryIndex index.php
+        </Directory>
 
         ErrorLog ${APACHE_LOG_DIR}/error.log
         CustomLog ${APACHE_LOG_DIR}/access.log combined
 
-        # For most configuration files from conf-available/, which are
-        # enabled or disabled at a global level, it is possible to
-        # include a line for only one particular virtual host. For example the
-        # following line enables the CGI configuration for this host only
-        # after it has been globally disabled with "a2disconf".
-        #Include conf-available/serve-cgi-bin.conf
         RewriteEngine on
         RewriteCond %{SERVER_NAME} =pgd.senappen.seg.br
         RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
 </VirtualHost>
+</details>
 ~~~
 
+~~~shell
+sudo nano /etc/apache2/sites-available/000-default-le-ssl.conf
+~~~
 
-`sudo nano /etc/apache2/sites-available/000-default-le-ssl.conf` 
-
-~~~shell                                                                                                        
+~~~shell
 <IfModule mod_ssl.c>
-<VirtualHost *:443>
-        # The ServerName directive sets the request scheme, hostname and port that
-        # the server uses to identify itself. This is used when creating
-        # redirection URLs. In the context of virtual hosts, the ServerName
-        # specifies what hostname must appear in the request's Host: header to
-        # match this virtual host. For the default virtual host (this file) this
-        # value is not decisive as it is used as a last resort host regardless.
-        # However, you must set it for any further virtual host explicitly.
-        #ServerName www.example.com
-
+    <VirtualHost *:443>
         ServerName pgd.senappen.seg.br
         Alias www.pgd.senappen.seg.br pgd.senappen.seg.br
 
         ServerAdmin edson.franca@mj.gov.br
+        DocumentRoot /var/www/public
 
-        DocumentRoot /home/edson_dario/petrvs/public
+        <Directory /var/www/public>
+            Options -Indexes
+            AllowOverride All
+            Require all granted
+            DirectoryIndex index.php
+        </Directory>
 
         #Header always set X-Frame-Options SAMEORIGIN
         Header always set X-Content-Type-Options nosniff
         Header always set X-XSS-Protection "1; mode=block"
 
-        # Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
-        # error, crit, alert, emerg.
-        # It is also possible to configure the loglevel for particular
-        # modules, e.g.
-        #LogLevel info ssl:warn
-
         ErrorLog ${APACHE_LOG_DIR}/error.log
         CustomLog ${APACHE_LOG_DIR}/access.log combined
-
-        # For most configuration files from conf-available/, which are
-        # enabled or disabled at a global level, it is possible to
-        # include a line for only one particular virtual host. For example the
-        # following line enables the CGI configuration for this host only
-        # after it has been globally disabled with "a2disconf".
-        #Include conf-available/serve-cgi-bin.conf
 
         SSLCertificateFile /etc/letsencrypt/live/pgd.senappen.seg.br/fullchain.pem
         SSLCertificateKeyFile /etc/letsencrypt/live/pgd.senappen.seg.br/privkey.pem
         Include /etc/letsencrypt/options-ssl-apache.conf
-</VirtualHost>
+    </VirtualHost>
 </IfModule>
 ~~~
 
@@ -279,4 +293,22 @@ No último passo, agora sim, rs, reiniciar o apache2:
 sudo service apache2 restart
 ~~~
 
-Caso tenha alguma dificuldade, entrar em contato com à EQUIPE PRF.
+**Se tudo ocorreu bem, sistema já deve tá funcionando.**
+
+Caso tenha alguma dificuldade, entrar em contato com à Equipe PRF.
+
+<br>
+
+### Melhorias básicas quanto segurança dos serviços rodando no Linux.
+
+Melhorando segurança do apache2 através destas configurações
+~~~shell
+sudo nano /etc/apache2/conf-available/security.conf
+~~~
+
+~~~shell
+ServerTokens Prod
+ServerSignature Off
+~~~
+
+Caso tenha alguma dificuldade, fazer contato com à EQUIPE PRF.
