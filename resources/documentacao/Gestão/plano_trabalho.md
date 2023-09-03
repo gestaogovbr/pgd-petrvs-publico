@@ -62,31 +62,31 @@ status possíveis = ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO', 'EXECUTADO', 
 obrigatoriedade     | inclusão realizada  |  status     |  evento que                |  status      |  evento que       |  status
 da assinatura       | pelo                |  inicial    |  faz avançar               |  seguinte    |  faz avançar      |  seguinte
 --------------------+--------------------------------------------------------------------------------------------------------------
-    participante    | participante        |  INCLUIDO   |  participante clica no     |  AGUARDANDO  |  gestores assinam |  ATIVO*
-    gestor TCR      |                     |             |  botão 'assinar'           |  ASSINATURA  |  o TCR            |  
+    participante    | participante        |  INCLUIDO   |  participante              |  AGUARDANDO  |  gestores assinam |  ATIVO*
+    gestor TCR      |                     |             |  assina o TCR              |  ASSINATURA  |  o TCR            |  
     gestor imediato +--------------------------------------------------------------------------------------------------------------
-    gestor entidade | gestor              |  INCLUIDO   |  gestor clica no           |  AGUARDANDO  |  particip/gestor  |  ATIVO
-                    |                     |             |  botão 'assinar'           |  ASSINATURA  |  assinam o TCR    |  
+    gestor entidade | gestor              |  INCLUIDO   |  gestor assina             |  AGUARDANDO  |  particip/gestor  |  ATIVO
+                    |                     |             |  o TCR                     |  ASSINATURA  |  assinam o TCR    |  
 --------------------+--------------------------------------------------------------------------------------------------------------
-                    | participante        |  INCLUIDO   |  gestor/participante clica |  ATIVO       |                   |  
-                    |                     |             |  no botão 'ativar'         |              |                   |  
+                    | participante        |  INCLUIDO   |  gestor/participante       |  ATIVO       |                   |  
+                    |                     |             |  ativa o plano             |              |                   |  
     ninguém         +--------------------------------------------------------------------------------------------------------------
-                    | gestor              |  INCLUIDO   |  gestor/participante clica |  ATIVO       |                   |  
-                    |                     |             |  no botão 'ativar'         |              |                   |  
+                    | gestor              |  INCLUIDO   |  gestor/participante       |  ATIVO       |                   |  
+                    |                     |             |  ativa o plano             |              |                   |  
 --------------------+--------------------------------------------------------------------------------------------------------------
-                    | participante        |  INCLUIDO   |  participante clica no     |              |                   |
-                    |                     |             |  botão 'enviar para        |  AGUARDANDO  |  gestores assinam |  ATIVO 
-                    |                     |             |  assinatura'               |  ASSINATURA  |  o TCR            |  
+                    | participante        |  INCLUIDO   |  participante              |              |                   |
+                    |                     |             |  envia para                |  AGUARDANDO  |  gestores assinam |  ATIVO 
+                    |                     |             |  assinatura do TCR         |  ASSINATURA  |  o TCR            |  
     gestor(es)      +--------------------------------------------------------------------------------------------------------------
-                    | gestor              |  INCLUIDO   |  gestor clica              |  ATIVO       |                   |  
-                    |                     |             |  no botão 'ativar'         |              |                   |  
+                    | gestor              |  INCLUIDO   |  gestor ativa              |  ATIVO       |                   |  
+                    |                     |             |  o plano                   |              |                   |  
 --------------------+--------------------------------------------------------------------------------------------------------------
-                    | participante        |  INCLUIDO   |  participante clica no     |  ATIVO       |                   |  
-                    |                     |             |  botão 'ativar'            |              |                   |  
+                    | participante        |  INCLUIDO   |  participante              |  ATIVO       |                   |  
+                    |                     |             |  ativa o plano             |              |                   |  
     participante    +--------------------------------------------------------------------------------------------------------------
-                    | gestor              |  INCLUIDO   |  gestor clica              |              |                   |  
-                    |                     |             |  no botão 'enviar para     |  AGUARDANDO  |  participante     |  ATIVO
-                    |                     |             |  assinatura'               |  ASSINATURA  |  assina o TCR     |  
+                    | gestor              |  INCLUIDO   |  gestor envia              |              |                   |  
+                    |                     |             |  para                      |  AGUARDANDO  |  participante     |  ATIVO
+                    |                     |             |  assinatura do TCR         |  ASSINATURA  |  assina o TCR     |  
 --------------------+--------------------------------------------------------------------------------------------------------------
 ~~~
 
@@ -97,9 +97,9 @@ Ação: ALTERAR -> não muda o status do plano se ele estiver com o status 'INCL
     - estando com o status 'INCLUIDO'
       - o usuário logado precisa ser o participante do plano ou o gestor da Unidade Executora;
     - estando com o status 'AGUARDANDO_ASSINATURA'
-      - o usuário logado precisa ser um dos que já assinaram o plano e todas as assinaturas tornam-se sem efeito;
+      - o usuário logado precisa ser um dos que já assinaram o TCR e todas as assinaturas tornam-se sem efeito;
     - estando com o status 'ATIVO'
-      - o usuário precisa ser gestor da Unidade Executora e possuir a capacidade MOD_PTR_EDT_ATV. Após alterado, todas as assinaturas tornam-se sem efeito, e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
+      - o usuário precisa ser gestor da Unidade Executora e possuir a capacidade MOD_PTR_EDT_ATV. Após alterado, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
 
 Ação: ARQUIVAR -> não muda o status do plano ('EXECUTADO');
 
@@ -107,7 +107,7 @@ Ação: ARQUIVAR -> não muda o status do plano ('EXECUTADO');
   - o plano precisa estar com o status EXECUTADO, não ter sido arquivado, e:
   - o usuário logado precisa ser o participante ou o gestor da Unidade Executora;
 
-Ação: ASSINAR -> enquanto faltar assinatura, o plano vai para o (ou permanece no) status de 'AGUARDANDO_ASSINATURA'. Quando o último assinar, o plano vai para o status 'ATIVO';
+Ação: ASSINAR -> enquanto faltar assinatura no TCR, o plano vai para o (ou permanece no) status de 'AGUARDANDO_ASSINATURA'. Quando o último assinar o TCR, o plano vai para o status 'ATIVO';
 
 - (RN_PTR_O) Condições para que um Plano de Trabalho possa ser assinado:
   - o plano precisa estar com o status INCLUIDO, e:
@@ -121,13 +121,13 @@ Ação: ATIVAR -> o plano vai para o status 'ATIVO';
 - (RN_PTR_P) Condições para que um Plano de Trabalho possa ser ativado:
   - o plano precisa estar no status 'INCLUIDO', e
     - o usuário logado precisa ser o participante do plano ou gestor da Unidade Executora, e
-    - nenhuma assinatura ser exigida pelo programa;
+    - nenhuma assinatura no TCR ser exigida pelo programa;
 
 Ação: CANCELAR ASSINATURA -> o plano permanece no status 'AGUARDANDO_ASSINATURA' ou retorna ao status 'INCLUIDO';
 
 - (RN_PTR_Q) Condições para que um Plano de Trabalho possa ter uma assinatura cancelada:
   - o plano precisa estar no status 'AGUARDANDO_ASSINATURA'; e
-    - o usuário logado precisa já ter assinado o plano;
+    - o usuário logado precisa já ter assinado o TCR;
 
 Ação: CANCELAR PLANO -> o plano adquire o status de 'CANCELADO';
 
@@ -160,7 +160,7 @@ Ação: INSERIR/INCLUIR -> o plano adquire o status de 'INCLUIDO';
   - o usuário logado precisa possuir a capacidade "MOD_PTR_INCL", e:
     - o usuário logado precisa ser um participante do PGD, habilitado, ou ser gestor da Unidade Executora do plano; (RN_PTR_B); e
     - o participante do plano precisa estar lotado em uma das áreas de trabalho do usuário logado, ou este deve possuir a capacidade MOD_PTR_USERS_INCL; e
-    - o participante do plano precisa estar lotado na Unidade Executora, ou o usuário logado possuir a capacidade MOD_PTR_INCL_SEM_LOT; e 
+    - o participante do plano precisa estar lotado na Unidade Executora, ou o usuário logado possuir a capacidade MOD_PTR_INCL_SEM_LOT; e
     - o novo Plano de Trabalho não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA
 
 Ação: REATIVAR -> o plano adquire novamente o status de 'ATIVO';
@@ -195,9 +195,9 @@ Ação: SUSPENDER -> o plano adquire o status de 'SUSPENSO';
 ~~~text
 - Estando no status "INCLUIDO"
   - botões-padrão:
-    - 'Assinar'. Condições para ser exibido: vide RN_PTR_O;                  (quando for exigida apenas a assinatura do participante)
-    - 'Ativar'. Condições para ser exibido: vide RN_PTR_P;                   (quando não for exigida nenhuma assinatura)
-    - 'Enviar para Assinatura'. Condições para ser exibido: vide RN_PTR_U;   (quando for exigida a assinatura apenas do(s) gestor(es))
+    - 'Assinar'. Condições para ser exibido: vide RN_PTR_O;                  (quando for exigida apenas a assinatura do usuário logado no TCR)
+    - 'Ativar'. Condições para ser exibido: vide RN_PTR_P;                   (quando não for exigida nenhuma assinatura no TCR)
+    - 'Enviar para Assinatura'. Condições para ser exibido: vide RN_PTR_U;
     - 'Consultar'. Condições para ser exibido: vide RN_PTR_S;
   - botões opcionais:
     - 'Alterar'. Condições para ser exibido: vide RN_PTR_M;
