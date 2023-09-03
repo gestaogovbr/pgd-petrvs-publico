@@ -152,7 +152,7 @@ sudo rm -rf ~/petrvs/.vscode
 
 sudo rm -rf /var/www/html
 sudo cp -R . /var/www/
-cd /var/www/
+cd /var/www
 sudo chown www-data. /var/www/public
 sudo chown www-data. /var/www/storage
 sudo chmod 700 /var/www/storage -R
@@ -212,7 +212,7 @@ chmod 750 /etc/letsencrypt/live
 Alterar APP_KEY do app Laravel e efetuar algumas otimizações conforme manual:
 
 ~~~shell
-cd ~/petrvs
+cd /var/www
 php artisan key:generate
 php artisan event:cache
 php artisan view:cache
