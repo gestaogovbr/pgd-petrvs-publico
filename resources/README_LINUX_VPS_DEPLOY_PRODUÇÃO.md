@@ -156,7 +156,7 @@ cd /var/www/
 sudo chown www-data. /var/www/public
 sudo chown www-data. /var/www/storage
 sudo chmod 700 /var/www/storage -R
-sudo chmod 700 /var/www/public -R
+sudo chmod 700 /var/www/public
 ~~~
 
 Ratifico necessidade de abrir o arquivo modelo .env e efetuar as configurações básicas (em especial, verificar domínio web). No ambiente de produção deverá ser utilizado um database para cada finalidade:
