@@ -9,11 +9,11 @@
 
 <center>Deploy modo produção em VPS (Google Cloud) com Ubuntu 22.04.2 LTS (Jammy) (minimal - x86_x64)</center>
 <br>
-<p>(Passo 1) Instalando aplicativos padrões e recursos adicionais:</p>
+<p>(Passo 1) Instalando aplicativos necessários e recursos adicionais:</p>
 
 ~~~shell
 sudo apt update -y
-sudo apt install apache2 php libapache2-mod-php php-mysql openssl git iputils-ping dnsutils nano apt-transport-https ca-certificates curl software-properties-common -y
+sudo apt install apache2 php libapache2-mod-php php-mysql openssl git iputils-ping dnsutils nano vim apt-transport-https ca-certificates curl software-properties-common -y
 ~~~
 
 <br>
@@ -70,7 +70,7 @@ sudo nano /etc/apache2/sites-available/000-default.conf
         <VirtualHost *:80>
 
         ServerName pgd.senappen.seg.br
-        Alias www.pgd.senappen.seg.br pgd.senappen.server.br**
+        Alias www.pgd.senappen.seg.br pgd.senappen.server.br
 
         ServerAdmin edson.franca@mj.gov.br
         DocumentRoot /var/www/html
@@ -133,13 +133,12 @@ Por fim, configurar o arquivo .env de acordo com o local de hospedagem (domínio
 cd ~/petrvs
 chmod 777 ~/petrvs/storage -R
 cp ~/petrvs/.env.production.template ~/petrvs/.env
-composer install
-composer update
+composer install --optimize-autoloader --no-dev
 ~~~
 
 Ratifico necessidade de abrir o arquivo modelo .env e efetuar as configurações básicas. No ambiente de produção deverá ser utilizado um database para cada finalidade:
 
-`~/petrvs/.env`
+`sudo nano ~/petrvs/.env`
 ~~~shell
 DB_CONNECTION=mysql
 DB_HOST=localhost
@@ -170,12 +169,11 @@ chown root.www-data /etc/letsencrypt/live
 chmod 750 /etc/letsencrypt/live
 ~~~
 
-Alterar APP_KEY do app Laravel e efetuar otimizações conforme manual:
+Alterar APP_KEY do app Laravel e efetuar algumas otimizações conforme manual:
 
 ~~~shell
 cd ~/petrvs
 php artisan key:generate
-composer install --optimize-autoloader --no-dev
 php artisan event:cache
 php artisan view:cache
 ~~~
@@ -187,7 +185,7 @@ Por fim, configurar os dois arquivos do virtualhost para rodar o projeto (observ
 
 **DocumentRoot** deve informar a pasta **public** e não a pasta do projeto completo.
 
-`000-default.conf`
+`sudo nano /etc/apache2/sites-available/000-default.conf`
 ~~~shell
 <VirtualHost *:80>
         # The ServerName directive sets the request scheme, hostname and port that
@@ -221,14 +219,14 @@ Por fim, configurar os dois arquivos do virtualhost para rodar o projeto (observ
         # following line enables the CGI configuration for this host only
         # after it has been globally disabled with "a2disconf".
         #Include conf-available/serve-cgi-bin.conf
-RewriteEngine on
-RewriteCond %{SERVER_NAME} =pgd.senappen.seg.br
-RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
+        RewriteEngine on
+        RewriteCond %{SERVER_NAME} =pgd.senappen.seg.br
+        RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
 </VirtualHost>
 ~~~
 
 
-`000-default-le-ssl.conf` 
+`sudo nano /etc/apache2/sites-available/000-default-le-ssl.conf` 
 
 ~~~shell                                                                                                        
 <IfModule mod_ssl.c>
@@ -242,7 +240,6 @@ RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
         # However, you must set it for any further virtual host explicitly.
         #ServerName www.example.com
 
-
         ServerName pgd.senappen.seg.br
         Alias www.pgd.senappen.seg.br pgd.senappen.seg.br
 
@@ -250,7 +247,7 @@ RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
 
         DocumentRoot /home/edson_dario/petrvs/public
 
-        Header always set X-Frame-Options SAMEORIGIN
+        #Header always set X-Frame-Options SAMEORIGIN
         Header always set X-Content-Type-Options nosniff
         Header always set X-XSS-Protection "1; mode=block"
 
@@ -270,10 +267,9 @@ RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
         # after it has been globally disabled with "a2disconf".
         #Include conf-available/serve-cgi-bin.conf
 
-
-SSLCertificateFile /etc/letsencrypt/live/pgd.senappen.seg.br/fullchain.pem
-SSLCertificateKeyFile /etc/letsencrypt/live/pgd.senappen.seg.br/privkey.pem
-Include /etc/letsencrypt/options-ssl-apache.conf
+        SSLCertificateFile /etc/letsencrypt/live/pgd.senappen.seg.br/fullchain.pem
+        SSLCertificateKeyFile /etc/letsencrypt/live/pgd.senappen.seg.br/privkey.pem
+        Include /etc/letsencrypt/options-ssl-apache.conf
 </VirtualHost>
 </IfModule>
 ~~~
