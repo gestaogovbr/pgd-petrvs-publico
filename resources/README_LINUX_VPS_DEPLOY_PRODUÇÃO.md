@@ -6,7 +6,7 @@
 
 ###### Obs.: Antes de iniciar a instalação, certifique-se de que o DNS está configurado. Caso não esteja, edite o arquivo /etc/resolv.conf e adicione o DNS.
 
-###### Obs.: Guia simples presume existência de outra máquina, preferencialmente, com banco de dados mysql >=8 e usuário petrvs com acesso total ao banco de dados petrvs e petrvs_logs;
+###### Obs.: Guia simples presume existência de outra máquina com SGBD MySQL versão >=8, usuário petrvs com acesso total ao banco de dados petrvs e petrvs_logs;
 ---
 
 <br>
@@ -17,7 +17,7 @@
 
 ~~~shell
 sudo apt update -y
-sudo apt install apache2 php libapache2-mod-php php-mysql openssl git iputils-ping dnsutils nano vim apt-transport-https ca-certificates curl software-properties-common -y
+sudo apt install apache2 php libapache2-mod-php php-mysql openssl git iputils-ping dnsutils nano vim apt-transport-https ca-certificates curl software-properties-common chrony -y
 ~~~
 
 <br>
@@ -133,7 +133,193 @@ sudo systemctl status certbot.timer
 
 </ol>
 
-**(Passo 6) - Baixar e configurar pasta do projeto Petrvs**
+**(Passo 6)** - Melhorias básicas quanto segurança dos serviços rodando no Linux.
+
+timezone
+~~~shell
+sudo timedatectl set-timezone 'America/Bahia'
+~~~
+
+apache2
+~~~shell
+sudo nano /etc/apache2/conf-available/security.conf
+~~~
+
+~~~shell
+ServerTokens Prod
+ServerSignature Off
+~~~
+#
+php (v8.1) - https://www.php.net/manual/en/ini.core.php:
+~~~shell
+sudo nano /etc/php/apache2/php.ini
+~~~
+~~~
+[PHP]
+engine = On
+short_open_tag = Off
+precision = 14
+output_buffering = 4096
+zlib.output_compression = Off
+implicit_flush = Off
+unserialize_callback_func =
+serialize_precision = -1
+disable_functions =
+disable_classes =
+zend.enable_gc = On
+zend.exception_ignore_args = On
+zend.exception_string_param_max_len = 0
+expose_php = Off
+max_execution_time = 30
+max_input_time = 60
+memory_limit = 256M
+error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT
+display_errors = Off
+display_startup_errors = Off
+log_errors = On
+ignore_repeated_errors = Off
+report_memleaks = On
+variables_order = "GPCS"
+request_order = "GP"
+register_argc_argv = Off
+auto_globals_jit = On
+post_max_size = 8M
+auto_prepend_file =
+auto_append_file =
+default_mimetype = "text/html"
+default_charset = "UTF-8"
+doc_root =
+user_dir =
+enable_dl = Off
+file_uploads = On
+upload_max_filesize = 4M
+max_file_uploads = 20
+allow_url_fopen = On
+allow_url_include = Off
+default_socket_timeout = 60
+extension=curl
+
+[CLI Server]
+cli_server.color = On
+
+[Date]
+date.timezone = 'America/Bahia'
+
+[Pdo_mysql]
+pdo_mysql.default_socket=
+
+[mail function]
+SMTP = localhost
+smtp_port = 25
+mail.add_x_header = Off
+
+[ODBC]
+odbc.allow_persistent = On
+odbc.check_persistent = On
+odbc.max_persistent = -1
+odbc.max_links = -1
+odbc.defaultlrl = 4096
+odbc.defaultbinmode = 1
+
+[MySQLi]
+mysqli.max_persistent = -1
+mysqli.allow_persistent = On
+mysqli.max_links = -1
+mysqli.default_port = 3306
+mysqli.default_socket =
+mysqli.default_host =
+mysqli.default_user =
+mysqli.default_pw =
+mysqli.reconnect = Off
+
+[mysqlnd]
+mysqlnd.collect_statistics = On
+mysqlnd.collect_memory_statistics = On
+
+[PostgreSQL]
+pgsql.allow_persistent = On
+pgsql.auto_reset_persistent = Off
+pgsql.max_persistent = -1
+pgsql.max_links = -1
+pgsql.ignore_notice = 0
+pgsql.log_notice = 0
+
+[bcmath]
+bcmath.scale = 0
+
+[Session]
+session.save_handler = files
+session.use_strict_mode = 0
+session.use_cookies = 1
+session.use_only_cookies = 1
+session.name = PHPSESSID
+session.auto_start = 0
+session.cookie_lifetime = 0
+session.cookie_path = /
+session.cookie_domain =
+session.cookie_httponly =
+session.cookie_samesite =
+session.serialize_handler = php
+session.gc_probability = 1
+session.gc_divisor = 1000
+session.gc_maxlifetime = 1440
+session.referer_check =
+session.cache_limiter = nocache
+session.cache_expire = 180
+session.use_trans_sid = 0
+session.sid_length = 26
+session.trans_sid_tags = "a=href,area=href,frame=src,form="
+session.sid_bits_per_character = 5
+
+[Assertion]
+zend.assertions = -1
+
+[Tidy]
+tidy.clean_output = Off
+
+[soap]
+soap.wsdl_cache_enabled=1
+soap.wsdl_cache_dir="/tmp"
+soap.wsdl_cache_ttl=86400
+soap.wsdl_cache_limit = 5
+
+[ldap]
+ldap.max_links = -1
+~~~
+
+~~~shell
+sudo service apache2 restart
+~~~
+
+#
+
+Chrony (servidor NTP):
+~~~shell
+sudo nano /etc/chrony/chrony.conf
+~~~
+
+~~~shell
+server a.st1.ntp.br iburst nts
+server b.st1.ntp.br iburst nts
+server c.st1.ntp.br iburst nts
+server d.st1.ntp.br iburst nts
+server gps.ntp.br iburst nts
+
+driftfile /var/lib/chrony/chrony.drift
+ntsdumpdir /var/lib/chrony
+maxupdateskew 100.0
+rtcsync
+makestep 1 3
+leapsectz right/UTC
+~~~
+
+~~~shell
+sudo service chrony restart
+~~~
+
+#
+
+**(Passo 7) - Baixar e configurar pasta do projeto Petrvs**
 
 De alguma forma entregar a pasta backend do projeto no diretório home do usuário (upload via winscp, por ex.) e depois rodar os comandos abaixo. 
 
@@ -296,19 +482,3 @@ sudo service apache2 restart
 **Se tudo ocorreu bem, sistema já deve tá funcionando.**
 
 Caso tenha alguma dificuldade, entrar em contato com à Equipe PRF.
-
-<br>
-
-### Melhorias básicas quanto segurança dos serviços rodando no Linux.
-
-Melhorando segurança do apache2 através destas configurações
-~~~shell
-sudo nano /etc/apache2/conf-available/security.conf
-~~~
-
-~~~shell
-ServerTokens Prod
-ServerSignature Off
-~~~
-
-Caso tenha alguma dificuldade, fazer contato com à EQUIPE PRF.
