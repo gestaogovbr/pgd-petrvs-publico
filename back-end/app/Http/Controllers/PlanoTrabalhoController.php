@@ -18,10 +18,10 @@ class PlanoTrabalhoController extends ControllerBase {
                 if (!$usuario->hasPermissionTo('MOD_PTR_EDT')) throw new ServerException("CapacidadeStore", "Edição não executada");
                 break;
             case 'DESTROY':
-                if (!$usuario->hasPermissionTo('MOD_PTR_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não executada");
+                throw new ServerException("CapacidadeStore", "Um Plano de Trabalho não pode ser excluído!");
                 break;
             case 'QUERY':
-                if (!$usuario->hasPermissionTo('MOD_PTR_CONS')) throw new ServerException("CapacidadeStore", "Consulta não executada");
+                if (!$usuario->hasPermissionTo('MOD_PTR')) throw new ServerException("CapacidadeStore", "Consulta não executada");
                 break;
         }
     }

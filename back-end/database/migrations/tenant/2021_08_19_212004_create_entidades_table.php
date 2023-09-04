@@ -21,7 +21,7 @@ class CreateEntidadesTable extends Migration
             $table->timestamps();
             $table->softDeletes();
             // Campos:
-            $table->string('sigla', 100)->comment("Sigla da entidade");
+            $table->string('sigla', 100)->unique()->comment("Sigla da entidade");
             $table->string('nome', 256)->comment("Nome da entidade");
             $table->enum("abrangencia", ["NACIONAL", "ESTADUAL", "MUNICIPAL"])->comment("Abrangência da entidade");
             $table->string("codigo_ibge", 8)->nullable()->comment("Código da UF ou do município (IBGE)");

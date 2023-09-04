@@ -31,7 +31,7 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
       unidade_id: { default: "" },
       perfil_id: { default: null }
     });
-    this.addOption(this.OPTION_INFORMACOES);
+    this.addOption(this.OPTION_INFORMACOES, "MOD_USER");
     this.addOption(this.OPTION_EXCLUIR, "MOD_USER_EXCL");
     // Testa se o usuário possui permissão para gerenciar as suas unidades-integrantes
     if (this.auth.hasPermissionTo("MOD_UND_INTG")) {

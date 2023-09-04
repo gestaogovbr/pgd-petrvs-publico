@@ -22,7 +22,7 @@ export type EntregaFormaContagemPrazos = "HORAS_CORRIDAS" | "HORAS_UTEIS";
 export class Unidade extends Base implements HasNotificacao {
     public entidade?: Entidade; /* Objeto da entidade */
     public cidade?: Cidade; /* Objeto da cidade */
-    public unidade?: Unidade; /* Objeto da unidade pai */
+    public unidade_pai?: Unidade; /* Objeto da unidade pai */
     public gestor: UnidadeIntegrante | null = null; /* Objeto do vinculo entre unidade/usuario que possui a atribuição de gestor */
     public gestor_substituto: UnidadeIntegrante | null = null; /* Objeto do vinculo entre unidade/usuario que possui a atribuição de gestor_substituto */
     public atividades?: Atividade[]; /* Lista de atividades */

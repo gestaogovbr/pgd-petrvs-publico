@@ -21,7 +21,7 @@ class CreatePlanosEntregasEntregasObjetivosTable extends Migration
             $table->softDeletes();
             // Campos:
             // Chaves estrangeiras:
-            $table->foreignUuid('objetivo_id')->constrained("planejamentos_objetivos")->onDelete('restrict')->onUpdate('cascade')->comment("Objetivo do Planejamento institucional ao qual está vinculado este objetivo");
+            $table->foreignUuid('planejamento_objetivo_id')->constrained("planejamentos_objetivos")->onDelete('restrict')->onUpdate('cascade')->comment("Objetivo do Planejamento institucional ao qual está vinculado este objetivo");
             $table->foreignUuid('entrega_id')->constrained("planos_entregas_entregas")->onDelete('restrict')->onUpdate('cascade')->comment("Entrega do Plano de Entregas à qual está vinculado este objetivo");
         });
     }

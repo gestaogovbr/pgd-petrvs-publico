@@ -1,10 +1,10 @@
-<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="nome" (submit)="onSaveData()" (cancel)="onCancel()">
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="entregas" (submit)="onSaveData()" (cancel)="onCancel()">
     <div>
         <div class="row">
             <input-search #unidade [size]="4" [disabled]="entity?.id ? 'disabled' : undefined" controlName="unidade_id" [dao]="unidadeDao" required></input-search>
             <input-search #programa [size]="4" [disabled]="entity?.id ? 'disabled' : undefined" controlName="programa_id" [dao]="programaDao" (change)="onProgramaChange()"></input-search>
-            <input-datetime date [size]="2" label="Início" controlName="data_inicio" [labelInfo]="'Início ' + lex.translate('Planejamento Institucional')" (change)="onNomeChange()" required></input-datetime>
-            <input-datetime date [size]="2" #data_fim label="Fim" controlName="data_fim" [labelInfo]="'Fim ' + lex.translate('Planejamento Institucional')" (change)="onNomeChange()" required></input-datetime>
+            <input-datetime date [size]="2" label="Início" controlName="data_inicio" [labelInfo]="'Início ' + lex.translate('Planejamento Institucional')" (change)="onDataChange()" required></input-datetime>
+            <input-datetime date [size]="2" #data_fim label="Fim" controlName="data_fim" [labelInfo]="'Fim ' + lex.translate('Planejamento Institucional')" (change)="onDataChange()" required></input-datetime>
         </div>
         <div class="row">
             <input-text #nome [size]="4" label="Nome" controlName="nome" required></input-text>

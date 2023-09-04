@@ -253,7 +253,7 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
     var _this = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = Object.assign({}, form.value);
-      yield Promise.all([_this.unidadePai.loadSearch(entity.unidade || entity.unidade_pai_id), _this.cidade.loadSearch(entity.cidade || entity.cidade_id), _this.gestor.loadSearch(entity?.gestor?.usuario || entity.gestor?.usuario.id), _this.gestorSubstituto.loadSearch(entity?.gestor_substituto?.usuario || entity.gestor_substituto?.usuario.id), _this.entidade.loadSearch(entity.entidade || entity.entidade_id)]);
+      yield Promise.all([_this.unidadePai.loadSearch(entity.unidade_pai || entity.unidade_pai_id), _this.cidade.loadSearch(entity.cidade || entity.cidade_id), _this.gestor.loadSearch(entity?.gestor?.usuario || entity.gestor?.usuario.id), _this.gestorSubstituto.loadSearch(entity?.gestor_substituto?.usuario || entity.gestor_substituto?.usuario.id), _this.entidade.loadSearch(entity.entidade || entity.entidade_id)]);
       _this.form.patchValue(_this.util.fillForm(formValue, {
         ...entity,
         ...{}
@@ -935,6 +935,7 @@ class UnidadeListComponent extends src_app_modules_base_page_list_base__WEBPACK_
     super(injector, src_app_models_unidade_model__WEBPACK_IMPORTED_MODULE_5__.Unidade, src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_4__.UnidadeDaoService);
     this.injector = injector;
     this.buttons = [];
+    this.unidadesJaVinculadas = [];
     this.filterWhere = filter => {
       let form = filter.value;
       let result = [];
@@ -943,6 +944,7 @@ class UnidadeListComponent extends src_app_modules_base_page_list_base__WEBPACK_
       if (form.entidade_id?.length) result.push(["entidade_id", "==", form.entidade_id]);
       if (form.nome?.length) result.push(["or", ["nome", "like", "%" + form.nome.replace(" ", "%") + "%"], ["sigla", "like", "%" + form.nome.replace(" ", "%") + "%"]]);
       if (form.instituidora) result.push(["instituidora", "==", 1]);
+      if (this.unidadesJaVinculadas.length) result.push(["id", "not in", this.unidadesJaVinculadas]);
       return result;
     };
     this.join = ["cidade", "unidade_pai:id,sigla", "entidade:id,sigla", "gestor.usuario:id", "gestor_substituto.usuario:id"];
@@ -980,6 +982,10 @@ class UnidadeListComponent extends src_app_modules_base_page_list_base__WEBPACK_
         }, this.modalRefresh())
       });
     }
+  }
+  ngOnInit() {
+    super.ngOnInit();
+    this.unidadesJaVinculadas = this.metadata?.unidadesJaVinculadas || this.unidadesJaVinculadas;
   }
   dynamicOptions(row) {
     var _this = this;

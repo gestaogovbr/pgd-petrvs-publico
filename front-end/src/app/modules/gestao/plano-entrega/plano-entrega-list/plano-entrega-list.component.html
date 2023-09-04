@@ -37,7 +37,11 @@
                 <small class="micro-text fw-ligh">#{{row.numero}}</small>
             </ng-template>
         </column>
-        <column title="Nome/Unidade" [template]="columnNome" orderBy="nome">
+        <column [titleTemplate]="titleNomeProgramaUnidade" [template]="columnNome">
+            <ng-template let-header="header" #titleNomeProgramaUnidade>
+                <order by="nome" [header]="header">Nome</order><br>
+                Programa{{ !filter!.controls.agrupar.value ? ' - Unidade' : ''}}
+            </ng-template>
             <ng-template let-row="row" #columnNome>
                 <span class="text-break text-wrap" [style.max-width.px]="400">{{row.nome}}</span><br>
                 <badge [icon]="entityService.getIcon('Programa')" [label]="row.programa.nome" color="light"></badge>

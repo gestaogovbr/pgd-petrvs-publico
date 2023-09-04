@@ -55,6 +55,8 @@ class UnidadeIntegranteService extends ServiceBase
                       array_push($atribuicoesFinais, "LOTADO");
                   } else {
                       $integrante->deleteCascade();
+                      if($transaction) DB::commit();
+                      return $result;
                   };
               } else {
                   $integranteNovoOuExistente = UnidadeIntegrante::firstOrCreate(['unidade_id' => $unidade->id, 'usuario_id' => $usuario->id]);
@@ -94,18 +96,19 @@ class UnidadeIntegranteService extends ServiceBase
                       array_push($atribuicoesFinais, $x);
                   }
               }
+              $atribuicoesFinais = array_values(array_unique($atribuicoesFinais));
               /* Excluir as atribuições remanescentes */
               foreach($integranteNovoOuExistente->atribuicoes as $atribuicao) { 
                   if(!in_array($atribuicao->atribuicao, $atribuicoesFinais)) $atribuicao->delete(); 
               }
-              DB::commit();
+              if($transaction) DB::commit();
               array_push($result,[
                   'unidade_id' => $unidade->id,
                   'usuario_id' => $usuario->id,
                   'atribuicoes' => $atribuicoesFinais
               ]);
           } catch (Throwable $e) {
-              DB::rollback();
+            if($transaction) DB::rollback();
               throw $e;
           }
       }
