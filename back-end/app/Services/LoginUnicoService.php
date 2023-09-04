@@ -3,19 +3,21 @@
 namespace App\Services;
 
 use App\Exceptions\ServerException;
+use GuzzleHttp\RequestOptions;
 use Laravel\Socialite\Two\AbstractProvider;
 use Laravel\Socialite\Two\ProviderInterface;
 use Laravel\Socialite\Two\User;
 
 class LoginUnicoService extends AbstractProvider implements ProviderInterface
 {
-    private $client_id;
-    private $client_secret;
+    private $codeChallenge;
 
     function __construct($config = null) {
         $loginUnicoApi_config = $config ?: config('loginUnico');
-        $this->client_id = $loginUnicoApi_config['client_id'];
-        $this->client_secret = $loginUnicoApi_config['client_secret'];
+        $this->clientId = $loginUnicoApi_config['client_id'];
+        $this->clientSecret = $loginUnicoApi_config['client_secret'];
+        $this->redirectUrl = "https://pgd-pre.dth.api.gov.br/login-unico";
+        $this->codeChallenge = $loginUnicoApi_config['codeChallenge'];
     }
 
     /**
@@ -39,12 +41,33 @@ class LoginUnicoService extends AbstractProvider implements ProviderInterface
      */
     public function getAccessToken($code)
     {
+        $response = $this->getAccessTokenResponse($code);
+
+        return $response;
+    }
+
+    /**
+     * Get the access token response for the given code.
+     *
+     * @param  string  $code
+     * @return array
+     */
+    public function getAccessTokenResponse($code)
+    {
+        $fields = [
+            'grant_type' => 'authorization_code',
+            'client_id' => $this->clientId,
+            'client_secret' => $this->clientSecret,
+            'code' => $code,
+            'redirect_uri' => $this->redirectUrl,
+            'code_verifier' => $this->codeChallenge
+        ];
         $response = $this->getHttpClient()->post($this->getTokenUrl(), [
-            'headers' => ['Authorization' => 'Basic ' . base64_encode($this->client_id . ':' . $this->client_secret)],
-            'body'    => $this->getTokenFields($code),
+            RequestOptions::HEADERS => $this->getTokenHeaders($code),
+            RequestOptions::FORM_PARAMS => $fields
         ]);
 
-        return $this->getAccessTokenResponse($response->getBody());
+        return json_decode($response->getBody(), true);
     }
 
     /**
@@ -71,5 +94,5 @@ class LoginUnicoService extends AbstractProvider implements ProviderInterface
             'avatar' => $user['avatar_url'],
         ]);
     }
-  
-}   
+
+}

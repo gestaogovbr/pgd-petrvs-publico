@@ -16,11 +16,12 @@ return [
     */
 
     'paths' => [
-        'api/*', 
-        'web/*', 
-        'config/*', 
+        'api/*',
+        'web/*',
+        'config/*',
         'environment-config',
-        'logout', 
+        'login-unico',
+        'logout',
         'sanctum/csrf-cookie'
     ],
 

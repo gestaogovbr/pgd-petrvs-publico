@@ -24,9 +24,9 @@ use Laravel\Socialite\Facades\Socialite;
 class LoginController extends Controller
 {
     private function registrarEntidade($request, $session = false) {
-        $with = ["feriados", "gestor", "gestorSubstituto"]; 
+        $with = ["feriados", "gestor", "gestorSubstituto"];
         $entidade = $session ? Entidade::with($with)->find($request->session()->put("entidade_id")) : null;
-        $sigla = $request->has('entidade') ? $request->input('entidade') : config("petrvs")["entidade"]; 
+        $sigla = $request->has('entidade') ? $request->input('entidade') : config("petrvs")["entidade"];
         if(empty($entidade) && !empty($sigla)) {
             $entidade = Entidade::with($with)->where("sigla", $sigla)->first();
             $request->session()->put("entidade_id", $entidade->id);
@@ -51,17 +51,17 @@ class LoginController extends Controller
             $usuario = Usuario::where("id", $usuario->id)->with([
                 "areasTrabalho" => function($query) use ($entidadeId) {
                     $query->with(["unidade.gestor", "unidade.gestorSubstituto", "unidade.cidade", "unidade.planosEntrega", "unidade.unidadePai.planosEntrega", "atribuicoes"])->whereHas('unidade', function ($query) use ($entidadeId) {
-                        return  $query->where('entidade_id', '=', $entidadeId); 
+                        return  $query->where('entidade_id', '=', $entidadeId);
                     });             // Acredito que seja possível reduzir a qde de relacionamentos solicitados
                 },
-                "perfil.capacidades.tipoCapacidade", 
+                "perfil.capacidades.tipoCapacidade",
                 "gerenciaTitular.atribuicoes",
                 "gerenciasSubstitutas.atribuicoes",
                 /*"vinculosUnidades.unidade" => function($query) {
                     $query->with(["planosEntrega","unidade.planosEntrega"]);
                 }*/
             ])->first();
-            $request->session()->put("unidade_id", $usuario->lotacao?->id);
+            $request->session()->put("unidade_id", $usuario->lotacao->id);
         }
         return $usuario;
     }
@@ -287,7 +287,7 @@ class LoginController extends Controller
                 $usuario = $this->registrarUsuario($request, $usuario, ['id_google' => $tokenData["sub"]]);
                 return response()->json([
                     'success' => true,
-                    "entidade" => $entidade, 
+                    "entidade" => $entidade,
                     "usuario" => $usuario,
                     "horario_servidor" => CalendarioService::horarioServidor()
                 ]);
@@ -345,33 +345,17 @@ class LoginController extends Controller
      */
     public function authenticateLoginUnico(Request $request, LoginUnicoService $auth)
     {
-        $auth->redirect();
-        $credentials = $request->validate([   
-            'entidade' => ['required']
+        $credentials = $request->validate([
+            'code' => ['required'],
+            'state' => ['required']
         ]);
-        // $tokenData = $auth->getAccessTokenResponse();
+        $tokenData = $auth->getAccessToken($credentials['code']);
         if(!isset($tokenData['error'])) {
-            // $usuario = Usuario::where('email', $tokenData['email'])->first();
-            // if(!isset($usuario) && $integracao->autoIncluir) {
-            //     $usuario = new Usuario();
-            //     $lotacao = new UnidadeIntegrante();
-            //     $service = new IntegracaoService();
-            //     $service->salvaUsuarioLotacaoGoogle($usuario, $lotacao, $tokenData, $auth);
-            // }
-            // if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
-            //     $usuarioService = new UsuarioService();
-            //     $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
-            //     $request->session()->regenerate();
-            //     $request->session()->put("kind", "GOOGLE");
-            //     $entidade = $this->registrarEntidade($request);
-            //     $usuario = $this->registrarUsuario($request, $usuario, ['id_google' => $tokenData["sub"]]);
-            //     return response()->json([
-            //         'success' => true,
-            //         "entidade" => $entidade, 
-            //         "usuario" => $usuario,
-            //         "horario_servidor" => CalendarioService::horarioServidor()
-            //     ]);
-            // }
+
+            return response()->json([
+                'success' => true,
+                'tokenData' => $tokenData
+            ]);
         }
         return LogError::newError('As credenciais fornecidas são inválidas.');
     }
@@ -388,7 +372,7 @@ class LoginController extends Controller
             $entidade = $this->registrarEntidade($request, true);
             $usuario = $this->registrarUsuario($request, $user);
             return response()->json([
-                "token" => $user->currentAccessToken()->plainTextToken ?? $request->bearerToken(), 
+                "token" => $user->currentAccessToken()->plainTextToken ?? $request->bearerToken(),
                 "kind" => $request->session()->get("kind"),
                 "entidade" => $entidade,
                 "usuario" => $usuario,
@@ -483,7 +467,7 @@ class LoginController extends Controller
                 $request->session()->regenerate();
                 $request->session()->put("kind", "GOOGLE");
                 $entidade = $this->registrarEntidade($request);
-                $usuario = $this->registrarUsuario($request, $usuario);                
+                $usuario = $this->registrarUsuario($request, $usuario);
                 return response()->json([
                     'token' => $usuario->createToken($credentials['device_name'])->plainTextToken,
                     'entidade' => $entidade,
@@ -630,7 +614,7 @@ class LoginController extends Controller
      */
     public function authenticateApiLoginUnico(Request $request, LoginUnicoService $auth)
     {
-       
+       return $request;
     }
 
     /**

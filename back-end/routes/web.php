@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PetrvsController;
 use App\Http\Controllers\AngularController;
@@ -19,13 +20,14 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 */
 
 /* Rotas do Angular */
-Route::any('/{any}', [AngularController::class, 'index'])->where('any', '^(?!api|sanctum|config|web|download|environment-config).*$');
+Route::any('/{any}', [AngularController::class, 'index'])->where('any', '^(?!api|sanctum|config|web|download|environment-config|login-unico).*$');
 
 /* Rotas diversas */
 Route::get('environment-config', [PetrvsController::class, 'environmentConfig']);
+Route::get('login-unico', [LoginController::class, 'authenticateLoginUnico']);
 /*
     ->withoutMiddleware([
-        StartSession::class, 
+        StartSession::class,
         VerifyCsrfToken::class,
         SubstituteBindings::class
     ]);*/
