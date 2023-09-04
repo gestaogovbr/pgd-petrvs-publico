@@ -689,7 +689,7 @@ class LoginController extends Controller
     }
 
     public function signInAzureRedirect(Request $request) {
-        $this->registrarEntidade($request);
+        $entidade = $this->registrarEntidade($request);
         return $this->azureProvider()->scopes(['openid', 'email', 'profile'])->redirect();
     }
 

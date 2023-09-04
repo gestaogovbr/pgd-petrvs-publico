@@ -104,6 +104,7 @@ class TenancyServiceProvider extends ServiceProvider
     public function boot()
     {
         Middleware\InitializeTenancyByRequestData::$header = 'X-ENTIDADE';
+        Middleware\InitializeTenancyByRequestData::$queryParameter = 'state';
 
         $this->bootEvents();
         $this->mapRoutes();
