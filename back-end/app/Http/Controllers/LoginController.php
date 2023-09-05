@@ -686,23 +686,25 @@ class LoginController extends Controller
     }
 
     public function azureProvider($config = null): Provider {
-        if ($config) {
+        if($config) {
+          // O método setConfig existe mesmo VSCode dizendo que não.
           return Socialite::driver('azure')->setConfig($config);
         }
         return null;
     }
 
     /*
-       * Returns a custom config for this specific Azure AD connection / directory
+       * Returns a custom config for this specific 
+       * Azure AD connection / directory
        * @return \SocialiteProviders\Manager\Config
     */
     function getConfigAzure($url_dinamica_callback = null): \SocialiteProviders\Manager\Config
     {
         return new \SocialiteProviders\Manager\Config(
-          config("services.azure.client_id"),
-          config("services.azure.client_secret"), 
-          $url_dinamica_callback,
-          ['tenant' => config("services.azure.tenant")]
+            config("services.azure.client_id"),
+            config("services.azure.client_secret"),
+            $url_dinamica_callback,
+            ['tenant' => config("services.azure.tenant")]
         );
     }
 
@@ -732,8 +734,8 @@ class LoginController extends Controller
         
         $azure_select_tenancy = $this->getConfigAzure($url_dinamica_callback);
         
-        $user = $this->azureProvider($config = $azure_select_tenancy)
-            ->stateless()->user();
+        // $user = $this->azureProvider($config = $azure_select_tenancy)->stateless()->user();
+        $user = $this->azureProvider($config = $azure_select_tenancy)->user();
 
         if(!empty($user)) {
             $token = $user->token;
