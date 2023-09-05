@@ -207,7 +207,7 @@ export class AuthService {
 
   public authAzure() {
     this.dialogs.showSppinerOverlay("Logando...", 300000);
-    this.go.openPopup(this.gb.servidorURL + "/web/login-azure-redirect?state=" + encodeURI(this.gb.ENTIDADE));
+    this.go.openPopup(this.gb.servidorURL + "/web/login-azure-redirect?entidade=" + encodeURI(this.gb.ENTIDADE));
     //this.go.openPopup(this.gb.servidorURL + "/web/login-azure-simulate-callback");
   }
 
