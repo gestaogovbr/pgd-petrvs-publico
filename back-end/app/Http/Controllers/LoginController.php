@@ -690,6 +690,8 @@ class LoginController extends Controller
 
     public function signInAzureRedirect(Request $request) {
         $entidade = $this->registrarEntidade($request);
+
+        # $url_rota_dinamica_tenancy = 
         return $this->azureProvider()->scopes(['openid', 'email', 'profile'])->redirect();
     }
 

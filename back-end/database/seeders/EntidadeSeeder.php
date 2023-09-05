@@ -23,6 +23,7 @@ class EntidadeSeeder extends Seeder
 
         //cria a entidade PRF
         $ent1 = new Entidade();
+        /*
         $ent1->fill([
             'id' => "52d78c7d-e0c1-422b-b094-2ca5958d5ac1",
             'sigla' => 'PRF',
@@ -32,6 +33,16 @@ class EntidadeSeeder extends Seeder
             'abrangencia' => 'NACIONAL',
             'cidade_id' => $brasilia->id
         ]);
+        */
+        $ent1->fill([
+          'id' => "52d78c7d-e0c1-422b-b094-2ca5958d5ac1",
+          'sigla' => 'SENAPPEN',
+          'nome' => 'Secretaria Nacional de Políticas Penais',
+          'codigo_ibge' => '5300108',
+          'uf' => 'DF',
+          'abrangencia' => 'NACIONAL',
+          'cidade_id' => $brasilia->id
+      ]);
         $ent1->save();
 
         /*

@@ -31,10 +31,14 @@ Route::post('/web/login-institucional', [LoginController::class, $actions['login
 Route::post('/web/login-session', [LoginController::class, 'authenticateSession']);
 Route::get('/web/logout', [LoginController::class, 'logout']);
 
-/* Rotas Login Azure*/
+/* Rotas Login Azure* */
 Route::view('/web/login-azure-popup', 'azure');
 Route::get('/web/login-azure-redirect', [LoginController::class, 'signInAzureRedirect']);
-Route::get('/web/login-azure-callback', [LoginController::class, 'signInAzureCallback']);
+
+/* Perdeu usou por motivo do tenancy
+ Route::get('/web/login-azure-callback', [LoginController::class, 'signInAzureCallback']);
+ */
+
 Route::get('/web/login-azure-simulate-callback', [LoginController::class, 'simulateAzureCallback']);
 
 /* Rotas diversas */
