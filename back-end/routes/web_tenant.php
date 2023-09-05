@@ -23,6 +23,7 @@ $actions = config('petrvs')['actions']['web'];
 /* Rotas do Angular *
 Route::any('/{any}', [AngularController::class, 'index'])->where('any', '^(?!api|web|download|environment-config).*$');
 */
+
 /* Rotas do login/logout */
 Route::post('/web/login-user-password', [LoginController::class, $actions['login-user-password']]);
 Route::post('/web/login-firebase-token', [LoginController::class, $actions['login-firebase-token']]);
@@ -35,9 +36,12 @@ Route::get('/web/logout', [LoginController::class, 'logout']);
 Route::view('/web/login-azure-popup', 'azure');
 Route::get('/web/login-azure-redirect', [LoginController::class, 'signInAzureRedirect']);
 
-/* Perdeu usou por motivo do tenancy
- Route::get('/web/login-azure-callback', [LoginController::class, 'signInAzureCallback']);
- */
+/* Perdeu usou por motivo do tenancy */
+// Route::get('/web/login-azure-callback', [LoginController::class, 'signInAzureCallback']);
+
+Route::middleware([InitializeTenancyByPath::class])
+    ->get('/login-azure-callback/{tenant}', 
+          [LoginController::class, 'signInAzureCallback']);
 
 Route::get('/web/login-azure-simulate-callback', [LoginController::class, 'simulateAzureCallback']);
 
