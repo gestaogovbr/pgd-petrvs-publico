@@ -113,7 +113,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]],
   decls: 4,
   vars: 6,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "T\u00EDtulo", "controlName", "nome", 3, "size"], ["label", "Entreg\u00E1vel", "controlName", "entregavel", "labelInfo", "Se esse documento vai precisar ser entregue. ", 3, "size", "items"]],
+  consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "T\u00EDtulo", "controlName", "nome", "required", "", 3, "size"], ["label", "Entreg\u00E1vel", "controlName", "entregavel", "labelInfo", "Se esse documento vai precisar ser entregue. ", 3, "size", "items"]],
   template: function TipoDocumentoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "editable-form", 0);

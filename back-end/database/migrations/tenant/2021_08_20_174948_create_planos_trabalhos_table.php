@@ -29,13 +29,13 @@ class CreatePlanosTrabalhosTable extends Migration
             $table->dateTime('data_fim')->comment("Fim do plano de trabalho");
             $table->dateTime('data_arquivamento')->nullable()->comment("Data de arquivamento do plano de trabalho");
             $table->enum('forma_contagem_carga_horaria', ["DIA", "SEMANA", "MES"])->default("DIA")->comment("Forma de contagem padrão da carga horária");
-            $table->enum('status', ["INCLUIDO","AGUARDANDO_ASSINATURA","ATIVO","CONCLUIDO","AVALIADO","SUSPENSO","CANCELADO"])->comment("Status atual do plano de trabalho");
+            $table->enum('status', ["INCLUIDO","AGUARDANDO_ASSINATURA","ATIVO","CONCLUIDO","AVALIADO","SUSPENSO","CANCELADO"])->default("INCLUIDO")->comment("Status atual do plano de trabalho");
             // Chaves estrangeiras:
             $table->foreignUuid('programa_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Programa do plano de trabalho");
             $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Usuário do plano de trabalho");
             $table->foreignUuid('unidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Unidade do plano de trabalho");
             $table->foreignUuid('tipo_modalidade_id')->constrained('tipos_modalidades')->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de modalidade do plano de trabalho");
-            $table->foreignUuid('criacao_usuario_id')->nullable()->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->comment("Usuário responsável pela criação do plano de trabalho");
+            $table->foreignUuid('criacao_usuario_id')->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->comment("Usuário responsável pela criação do plano de trabalho");
             //Criada na tabela 'documentos' devido à referência cruzada
             //$table->foreignUuid('documento_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Termo do plano de trabalho");
         });

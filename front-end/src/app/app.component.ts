@@ -7,7 +7,7 @@ import { DialogService } from './services/dialog.service';
 import { DialogComponent } from './services/dialog/dialog.component';
 import { GlobalsService } from './services/globals.service';
 import { LexicalService } from './services/lexical.service';
-import { NavigateService } from './services/navigate.service';
+import { NavigateService, RouteMetadata } from './services/navigate.service';
 import { UtilService } from './services/util.service';
 import { LookupService } from './services/lookup.service';
 import { EntityService } from './services/entity.service';
@@ -15,6 +15,27 @@ import { NotificacaoService } from './modules/uteis/notificacoes/notificacao.ser
 import { DOCUMENT } from '@angular/common';
 
 export let appInjector: Injector;
+export type Contexto = "EXECUCAO" | "AVALIACAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
+export type Schema = {
+  name: string, 
+  permition?: string, 
+  route: string[],
+  metadata?: RouteMetadata,
+  icon: string
+};
+export type MenuSchema = {[key: string]: Schema};
+export type MenuItem = {
+  name: string,
+  permition?: string,
+  id: string,
+  menu: Schema[]
+} | Schema;
+export type MenuContexto = {
+  key: Contexto,
+  icon: string,
+  name: string,
+  menu: MenuItem[]
+};	
 
 @Component({
   selector: 'app-root',
@@ -48,17 +69,16 @@ export class AppComponent {
   public lookup: LookupService;
   public entity: EntityService;
   public notificacao: NotificacaoService;
-  public menuSchema: any;
+  public menuSchema: MenuSchema = {};
   public menuToolbar: any[] = [];
-  public menuContexto: any[] = [];
-  public contexto: any;
+  public menuContexto: MenuContexto[] = [];
+  public contexto: MenuContexto;
   public menuProjeto: any;
   public menuGestao: any;
   public menuOperacional: any;
   public menuPonto: any;
   public menuRaioX: any;
   public menuExecucao: any;
-  public menuAvaliacao: any;	
   public menuAdministrador: any;
   public menuDev: any;
   private _menu: any;
@@ -97,7 +117,7 @@ export class AppComponent {
     this.lex.cdRef = this.cdRef;
     /* Definição do menu do sistema */
     this.setMenuVars();
-    this.contexto = this.menuContexto[0].key;    
+    this.contexto = this.menuContexto[0];    
   }
 
   public setMenuVars() {
@@ -109,8 +129,8 @@ export class AppComponent {
       ENTREGAS: { name: this.lex.translate("Entregas"), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: this.entity.getIcon('Entrega') },
       FERIADOS: { name: this.lex.translate("Feriados"), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: this.entity.getIcon('Feriado') },
       MATERIAIS_SERVICOS: { name: this.lex.translate("Materiais e Serviços"), permition: '', route: ['cadastros', 'material-servico'], icon: this.entity.getIcon('MaterialServico') },
-      TAREFAS: { name: this.lex.translate("Tarefas"), permition: 'MOD_DMD', route: ['cadastros', 'tarefa'], icon: this.entity.getIcon('Tarefa') },
       TEMPLATES: { name: this.lex.translate("Templates"), permition: 'MOD_TEMP', route: ['cadastros', 'template'], icon: this.entity.getIcon('Template') },
+      TIPOS_TAREFAS: { name: this.lex.translate("Tipos de Tarefas"), permition: 'MOD_TIPO_TRF', route: ['cadastros', 'tipo-tarefa'], icon: this.entity.getIcon('TipoTarefa') },
       TIPOS_ATIVIDADES: { name: this.lex.translate("Tipos de Atividade"), permition: 'MOD_TIPO_ATV', route: ['cadastros', 'tipo-atividade'], icon: this.entity.getIcon('TipoAtividade') },
       TIPOS_AVALIACOES: { name: this.lex.translate("Tipos de Avaliação"), permition: 'MOD_TIPO_AVAL', route: ['cadastros', 'tipo-avaliacao'], icon: this.entity.getIcon('TipoAvaliacao') },
       TIPOS_DOCUMENTOS: { name: this.lex.translate("Tipos de Documento"), permition: 'MOD_TIPO_DOC', route: ['cadastros', 'tipo-documento'], icon: this.entity.getIcon('TipoDocumento') },
@@ -119,10 +139,10 @@ export class AppComponent {
       TIPOS_MOTIVOS_AFASTAMENTOS: { name: this.lex.translate("Tipos de Motivo de Afastamento"), permition: 'MOD_TIPO_MTV_AFT', route: ['cadastros', 'tipo-motivo-afastamento'], icon: this.entity.getIcon('TipoMotivoAfastamento') },
       TIPOS_PROCESSOS: { name: this.lex.translate("Tipos de Processo"), permition: 'MOD_TIPO_PROC', route: ['cadastros', 'tipo-processo'], icon: this.entity.getIcon('TipoProcesso') },
       /*Gestão*/
-      CADEIAS_VALORES: { name: this.lex.translate("Cadeias de valor"), permition: 'MOD_CADV', route: ['gestao', 'cadeia-valor'], icon: this.entity.getIcon('CadeiaValor') },
+      CADEIAS_VALORES: { name: this.lex.translate("Cadeias de Valores"), permition: 'MOD_CADV', route: ['gestao', 'cadeia-valor'], icon: this.entity.getIcon('CadeiaValor') },
       ATIVIDADES: { name: this.lex.translate("Atividades"), permition: 'MOD_ATV', route: ['gestao', 'atividade'], icon: this.entity.getIcon('Atividade') },
-      PLANEJAMENTOS_INSTITUCIONAIS: { name: this.lex.translate("Planejamentos Institucional"), permition: 'MOD_PLAN_INST', route: ['gestao', 'planejamento'], icon: this.entity.getIcon('Planejamento') },
-      PLANOS_ENTREGAS: { name: this.lex.translate("Planos de Entrega"), permition: 'MOD_PENT', route: ['gestao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega') },
+      PLANEJAMENTOS_INSTITUCIONAIS: { name: this.lex.translate("Planejamentos Institucionais"), permition: 'MOD_PLAN_INST', route: ['gestao', 'planejamento'], icon: this.entity.getIcon('Planejamento') },
+      PLANOS_ENTREGAS: { name: this.lex.translate("Planos de Entregas"), permition: 'MOD_PENT', route: ['gestao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega') },
       PLANOS_TRABALHOS: { name: this.lex.translate("Planos de Trabalho"), permition: 'MOD_PTR', route: ['gestao', 'plano-trabalho'], icon: this.entity.getIcon('PlanoTrabalho') },
       CONSOLIDACOES: { name: this.lex.translate("Consolidações"), permition: 'MOD_PTR_CSLD', route: ['gestao', 'plano-trabalho', 'consolidacao'], icon: this.entity.getIcon('PlanoTrabalhoConsolidacao') },
       PROGRAMAS_GESTAO: { name: this.lex.translate("Programas de Gestão"), permition: 'MOD_PRGT', route: ['gestao', 'programa'], icon: this.entity.getIcon('Programa') },
@@ -174,7 +194,6 @@ export class AppComponent {
       RXVISUALIZA_ADM_PESQUISA1: { name:"Usuario", permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-search" },
       RXVISUALIZA_ADM_PESQUISA2: { name:"Administrador", permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-binoculars" },
       /*PROJETOS*/
-
       PAINEL: { name: "Painel", permition: '', route: ['configuracoes', 'sobre'], icon: "" },
       AUDITORIA: { name: "Auditoria", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
     };
@@ -241,10 +260,6 @@ export class AppComponent {
       this.menuSchema.AFASTAMENTOS
     ];
 
-    this.menuAvaliacao = [	
-      this.menuSchema.AVALIACAO_CONSOLIDACAO_PLANO_TRABALHO	
-    ];
-
     this.menuAdministrador = [{
       name: "Cadastros",
       permition: "MENU_CAD_ACESSO",
@@ -256,7 +271,6 @@ export class AppComponent {
         this.menuSchema.ENTREGAS,
         this.menuSchema.FERIADOS,
         this.menuSchema.MATERIAIS_SERVICOS,
-        this.menuSchema.TAREFAS,
         this.menuSchema.TEMPLATES,
         this.menuSchema.TIPOS_ATIVIDADES,
         this.menuSchema.TIPOS_AVALIACOES,
@@ -264,7 +278,8 @@ export class AppComponent {
         this.menuSchema.TIPOS_JUSTIFICATIVAS,
         this.menuSchema.TIPOS_MODALIDADES,
         this.menuSchema.TIPOS_MOTIVOS_AFASTAMENTOS,
-        this.menuSchema.TIPOS_PROCESSOS
+        this.menuSchema.TIPOS_PROCESSOS,
+        this.menuSchema.TIPOS_TAREFAS
       ].sort(this.orderMenu)
     },{
       name: "Gerenciamento",
@@ -384,7 +399,6 @@ export class AppComponent {
 
   this.menuContexto = [
       { key: "EXECUCAO", icon: "bi bi-person-check", name: "Participante (PGD)", menu: this.menuExecucao },	
-      { key: "AVALIACAO", icon: "bi bi-question-square", name: "Avaliador (PGD)", menu: this.menuAvaliacao },	
       { key: "GESTAO", icon: "bi bi-people-fill", name: "Gestor (PGD)", menu: this.menuGestao },
       { key: "ADMINISTRADOR", icon: "bi bi-emoji-sunglasses", name: "Administrador", menu: this.menuAdministrador },
       { key: "DEV", icon: "bi bi-braces", name: "Desenvolvedor", menu: this.menuDev },
@@ -417,7 +431,6 @@ export class AppComponent {
     switch (this.contexto.key) {
       case "GESTAO": return this.menuGestao;
       case "EXECUCAO": return this.menuExecucao;
-      case "AVALIACAO": return this.menuAvaliacao;
       case "ADMINISTRADOR": return this.menuAdministrador;
       case "DEV": return this.menuDev;
       case "PONTO": return this.menuPonto;

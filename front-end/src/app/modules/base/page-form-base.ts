@@ -88,7 +88,6 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
         error = e; 
       }
     }
-    //Object.keys(this.form!.controls).forEach(field => this.form!.get(field)?.updateValueAndValidity());
     if(this.form!.valid && !error){
       this.submitting = true;
       try {

@@ -237,4 +237,18 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     //result.push({ hint: "Adicionar filho", icon: "bi bi-plus-circle", onClick: this.addChildProcesso.bind(this) });
     return result;
   }  
+
+  /***************************************************************************************
+  * Ocorrências 
+  ****************************************************************************************/
+  public async addAfastamento() {
+    this.go.navigate({route: ['cadastros', 'afastamento'], params: {usuarioId: this.entity!.plano_trabalho!.usuario_id}}, {
+      filterSnapshot: undefined,
+      querySnapshot: undefined,
+      modalClose: (modalResult) => {
+        if(modalResult) this.loadData(this.entity!, this.form);
+      }
+    });
+  }
+ 
 }

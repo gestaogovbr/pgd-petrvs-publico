@@ -6,7 +6,7 @@ export class PlanoEntregaEntregaObjetivo extends Base {
   public objetivo?: PlanejamentoObjetivo;
   public entrega?: PlanoEntregaEntrega;
 
-  public objetivo_id: string = '';
+  public planejamento_objetivo_id: string = '';
   public entrega_id: string = '';                        
   
   public constructor(data?: any) { super(); this.initialization(data); }

@@ -14,10 +14,21 @@ import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 export class PlanoTrabalhoListAccordeonComponent extends PageFrameBase {
   @ViewChild('accordion', { static: false }) public accordion?: AccordionComponent;
   @Input() usuarioId?: string;
-  @Input() arquivados: boolean = false;
+  @Input() set arquivados(value: boolean) {
+    if(this._arquivados != value) {
+      this._arquivados = value;
+      if(this.viewInit) this.loadData(this.entity!, this.form);
+    }
+  }
+  get arquivados(): boolean {
+    return this._arquivados;
+  }
 
+  public selectedIndex: number = -1;
   public dao?: PlanoTrabalhoDaoService;
   public planos: PlanoTrabalho[] = [];
+
+  private _arquivados: boolean = false;
 
   constructor(public injector: Injector) {
     super(injector);
@@ -35,7 +46,13 @@ export class PlanoTrabalhoListAccordeonComponent extends PageFrameBase {
     this.accordion!.loading = true;
     try {
       let dados = await this.dao!.getByUsuario(this.usuarioId!, this.arquivados);
+      let agora = (new Date()).getTime();
       this.planos = dados.planos;
+      for(var i = 0; i < this.planos.length; i++) {
+        if(this.util.asDate(this.planos[i].data_inicio)!.getTime() <= agora && agora >= this.util.asDate(this.planos[i].data_fim)!.getTime() && ["ATIVO", "CONCLUIDO"].includes(this.planos[i].status)) {
+          this.selectedIndex = i;
+        }
+      }
     } finally {
       this.accordion!.loading = false;
       this.cdRef.detectChanges();

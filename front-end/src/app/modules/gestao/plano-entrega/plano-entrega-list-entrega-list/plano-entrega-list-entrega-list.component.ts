@@ -7,6 +7,7 @@ import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { PlanejamentoObjetivo } from 'src/app/models/planejamento-objetivo.model';
 import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
+import { PlanoEntregaService } from '../plano-entrega.service';
 
 @Component({
   selector: 'app-plano-entrega-list-entrega-list',
@@ -19,18 +20,26 @@ export class PlanoEntregaListEntregaListComponent extends PageListBase<PlanoEntr
   public planoEntregaDao: PlanoEntregaEntregaDaoService;
   public unidadeDao: UnidadeDaoService;
   public buttons: ToolbarButton[] = [];
+  public idsUnidadesAscendentes: string[] = [];
+  public planoEntregaService: PlanoEntregaService;
 
   constructor(public injector: Injector) {
     super(injector, PlanoEntregaEntrega, PlanoEntregaEntregaDaoService);
     this.planoEntregaDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
     this.title = this.lex.translate("Entregas");
     this.filter = this.fh.FormBuilder({
-      nome: { default: "" },
       descricao: { default: "" },
       unidade_id: { default: "" },
       destinatario: { default: "" },
     });
+    this.join = ["entrega:id,nome","entrega_pai:id,descricao","demandante:id,sigla"];
+  }
+
+  ngOnInit(): void {
+    super.ngOnInit();
+    this.idsUnidadesAscendentes = this.metadata?.idsUnidadesAscendentes || this.idsUnidadesAscendentes;
   }
 
   public dynamicOptions(row: any): ToolbarButton[] {
@@ -46,11 +55,15 @@ export class PlanoEntregaListEntregaListComponent extends PageListBase<PlanoEntr
   public filterWhere = (filter: FormGroup) => {
     let form: any = filter.value;
     let result: any[] = [];
-    if (form.planejamento_id?.length) {
-      result.push(["planejamento_id", "==", form.planejamento_id]);
+    if(this.idsUnidadesAscendentes.length) result.push(["plano_entrega.unidade_id", "in", this.idsUnidadesAscendentes]);
+    if (form.unidade_id?.length) {  // unidade demandante
+      result.push(["unidade_id", "==", form.unidade_id]);
     }
-    if (form.nome?.length) {
-      result.push(["or", ["nome", "like", "%" + form.nome.replace(" ", "%") + "%"], ["sigla", "like", "%" + form.nome.replace(" ", "%") + "%"]]);
+    if (form.descricao?.length) {
+      result.push(["descricao", "like", "%" + form.descricao.replace(" ", "%") + "%"]);
+    }
+    if (form.destinatario?.length) {
+      result.push(["destinatario", "like", "%" + form.destinatario.replace(" ", "%") + "%"]);
     }
     return result;
   }

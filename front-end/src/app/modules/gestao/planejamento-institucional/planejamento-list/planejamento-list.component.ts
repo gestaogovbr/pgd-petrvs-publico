@@ -121,8 +121,4 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
     }
   }
 
-  public get eixos(): EixoTematico[] {
-    return this.grid!.query?.extra?.eixos || [];
-  }
-
 }

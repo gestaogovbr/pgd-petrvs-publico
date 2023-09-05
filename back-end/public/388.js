@@ -120,7 +120,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]],
   decls: 9,
   vars: 11,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "C\u00F3digo IBGE", "icon", "bi bi-upc", "controlName", "codigo_ibge", 3, "size"], ["label", "Nome", "controlName", "nome", 3, "size"], ["label", "Tipo", "icon", "bi bi-arrow-up-right-circle", "controlName", "tipo", 3, "size", "items"], ["label", "UF", "icon", "bi bi-flag", "controlName", "uf", 3, "size", "items"], ["label", "Timezone", "icon", "bi bi-alarm", "controlName", "timezone", 3, "size", "items"]],
+  consts: [["initialFocus", "codigo_ibge", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "C\u00F3digo IBGE", "icon", "bi bi-upc", "controlName", "codigo_ibge", "required", "", 3, "size"], ["label", "Nome", "controlName", "nome", "required", "", 3, "size"], ["label", "Tipo", "icon", "bi bi-arrow-up-right-circle", "controlName", "tipo", 3, "size", "items"], ["label", "UF", "icon", "bi bi-flag", "controlName", "uf", 3, "size", "items"], ["label", "Timezone", "icon", "bi bi-alarm", "controlName", "timezone", "required", "", 3, "size", "items"]],
   template: function CidadeFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "editable-form", 0);

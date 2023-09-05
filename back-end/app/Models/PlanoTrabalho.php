@@ -8,7 +8,6 @@ use App\Models\Unidade;
 use App\Models\Atividade;
 use App\Models\Programa;
 use App\Models\Documento;
-use App\Models\PlanoEntrega;
 use App\Models\PlanoTrabalhoEntrega;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\TipoModalidade;
@@ -27,7 +26,7 @@ class PlanoTrabalho extends ModelBase
         'forma_contagem_carga_horaria', /* enum('DIA','SEMANA','MES'); NOT NULL; DEFAULT: 'DIA'; */// Forma de contagem padrão da carga horária
         'programa_id', /* char(36); NOT NULL; */
         'usuario_id', /* char(36); NOT NULL; */
-        'status', /* enum('INCLUIDO','AGUARDANDO_ASSINATURA','ATIVO','CONCLUIDO','AVALIADO','SUSPENSO','CANCELADO'); */// Status atual do plano de trabalho
+        //'status', /* enum('INCLUIDO','AGUARDANDO_ASSINATURA','ATIVO','CONCLUIDO','AVALIADO','SUSPENSO','CANCELADO'); */// Status atual do plano de trabalho
         'criacao_usuario_id', /* char(36); */
         'unidade_id', /* char(36); NOT NULL; */
         'documento_id', /* char(36); */

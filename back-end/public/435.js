@@ -439,8 +439,8 @@ class EntidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK
     return new Promise((resolve, reject) => {
       let entidade = this.util.fill(new src_app_models_entidade_model__WEBPACK_IMPORTED_MODULE_6__.Entidade(), this.entity);
       entidade = this.util.fillForm(entidade, this.form.value);
-      if (entidade.abrangencia == "MUNICIPAL" && this.cidade?.searchObj) {
-        entidade.codigo_ibge = (this.cidade?.searchObj).codigo_ibge;
+      if (entidade.abrangencia == "MUNICIPAL" && this.cidade?.selectedEntity) {
+        entidade.codigo_ibge = (this.cidade?.selectedEntity).codigo_ibge;
       } else if (entidade.abrangencia == "ESTADUAL") {
         entidade.codigo_ibge = this.lookup.UF.find(x => x.key == entidade.uf)?.code;
       } else {
@@ -478,7 +478,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵInheritDefinitionFeature"]],
   decls: 16,
   vars: 16,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], ["label", "Sigla", "controlName", "sigla", 3, "size"], ["label", "Nome", "controlName", "nome", 3, "size"], ["label", "Gestor", "controlName", "gestor_id", "labelInfo", "Respons\u00E1vel pela unidade", 3, "size", "emptyValue", "dao"], ["gestor", ""], ["label", "Gestor Substituto", "controlName", "gestor_substituto_id", "labelInfo", "Respons\u00E1vel substituto pela unidade", 3, "size", "emptyValue", "dao"], ["gestorSubstituto", ""], ["label", "Abrang\u00EAncia", "controlName", "abrangencia", 3, "size", "items"], ["controlName", "cidade_id", 3, "size", "dao", 4, "ngIf"], ["label", "UF", "icon", "bi bi-flag", "controlName", "uf", 3, "size", "items", 4, "ngIf"], ["label", "\u00C2mbito", "icon", "bi bi-shield-fill-check", "value", "Nacional", 3, "size", 4, "ngIf"], ["controlName", "cidade_id", 3, "size", "dao"], ["cidade", ""], ["label", "UF", "icon", "bi bi-flag", "controlName", "uf", 3, "size", "items"], ["label", "\u00C2mbito", "icon", "bi bi-shield-fill-check", "value", "Nacional", 3, "size"]],
+  consts: [["initialFocus", "sigla", 3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], ["label", "Sigla", "controlName", "sigla", "required", "", 3, "size"], ["label", "Nome", "controlName", "nome", "required", "", 3, "size"], ["label", "Gestor", "controlName", "gestor_id", "labelInfo", "Respons\u00E1vel pela unidade", 3, "size", "emptyValue", "dao"], ["gestor", ""], ["label", "Gestor Substituto", "controlName", "gestor_substituto_id", "labelInfo", "Respons\u00E1vel substituto pela unidade", 3, "size", "emptyValue", "dao"], ["gestorSubstituto", ""], ["label", "Abrang\u00EAncia", "controlName", "abrangencia", 3, "size", "items"], ["controlName", "cidade_id", 3, "size", "dao", 4, "ngIf"], ["label", "UF", "icon", "bi bi-flag", "controlName", "uf", 3, "size", "items", 4, "ngIf"], ["label", "\u00C2mbito", "icon", "bi bi-shield-fill-check", "value", "Nacional", 3, "size", 4, "ngIf"], ["controlName", "cidade_id", 3, "size", "dao"], ["cidade", ""], ["label", "UF", "icon", "bi bi-flag", "controlName", "uf", 3, "size", "items"], ["label", "\u00C2mbito", "icon", "bi bi-shield-fill-check", "value", "Nacional", 3, "size"]],
   template: function EntidadeFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵelementStart"](0, "editable-form", 0);

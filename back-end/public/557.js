@@ -97,7 +97,7 @@ class AtividadeListBase extends src_app_modules_base_page_list_base__WEBPACK_IMP
     this.atividadeService = injector.get(_atividade_service__WEBPACK_IMPORTED_MODULE_10__.AtividadeService);
     this.calendar = injector.get(src_app_services_calendar_service__WEBPACK_IMPORTED_MODULE_5__.CalendarService);
     this.comentario = injector.get(src_app_services_comentario_service__WEBPACK_IMPORTED_MODULE_8__.ComentarioService);
-    this.join = ["tipo_atividade", "demandante", "pausas", "usuario", "unidade", "comentarios.usuario", "tarefas.tarefa", "tarefas.comentarios.usuario"];
+    this.join = ["tipo_atividade", "demandante", "pausas", "usuario", "unidade", "comentarios.usuario", "tarefas.tipo_tarefa", "tarefas.comentarios.usuario"];
     /* Inicializações */
     this.extra = {
       planos_trabalho: {},

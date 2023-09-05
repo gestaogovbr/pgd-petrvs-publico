@@ -160,7 +160,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵdefi
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵInheritDefinitionFeature"]],
   decls: 11,
   vars: 14,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "C\u00F3digo", "controlName", "codigo", 3, "size"], ["label", "Nome", "controlName", "nome", 3, "size"], ["label", "Etiquetas", "controlName", "etiquetas", 3, "size", "addItemHandle"], ["label", "Texto", "controlName", "etiqueta_texto", 3, "size"], ["label", "\u00CDcone", "icon", "fas fa-sign-out-alt", "controlName", "etiqueta_icone", "liveSearch", "", 3, "size", "items"], ["label", "Cor", "controlName", "etiqueta_cor", 3, "size"], ["label", "Checklists", "controlName", "checklist", 3, "size", "addItemHandle"], ["controlName", "checklist_texto", 3, "size"]],
+  consts: [["initialFocus", "codigo", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "C\u00F3digo", "controlName", "codigo", "required", "", 3, "size"], ["label", "Nome", "controlName", "nome", "required", "", 3, "size"], ["label", "Etiquetas", "controlName", "etiquetas", 3, "size", "addItemHandle"], ["label", "Texto", "controlName", "etiqueta_texto", 3, "size"], ["label", "\u00CDcone", "icon", "fas fa-sign-out-alt", "controlName", "etiqueta_icone", "liveSearch", "", 3, "size", "items"], ["label", "Cor", "controlName", "etiqueta_cor", 3, "size"], ["label", "Checklists", "controlName", "checklist", 3, "size", "addItemHandle"], ["controlName", "checklist_texto", 3, "size"]],
   template: function TipoProcessoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](0, "editable-form", 0);
