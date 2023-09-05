@@ -8,6 +8,7 @@ import { LoginComponent } from './modules/login/login.component';
 import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
 import { TesteComponent } from './modules/teste/teste.component';
 import { ConfigResolver } from './resolvies/config.resolver';
+import {LoginUnicoComponent} from "./modules/login/login-unico/login-unico.component";
 
 const routes: Routes = [
   { path: 'panel', loadChildren: () => import('./modules/panel/panel.module').then(m => m.PanelModule) },
@@ -16,6 +17,7 @@ const routes: Routes = [
   { path: 'home', loadChildren: () => import('./modules/home/home.module').then(m => m.HomeModule), canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Login Petrvs", login: true } },
   { path: 'login-retorno', component: LoginRetornoComponent, data: { title: "Retorno de login", login: true } },
+  { path: 'login-unico', component: LoginUnicoComponent, data: { title: "Retorno de login"} },
   { path: 'config', component: ConfigComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Configurações", modal: true } },
   { path: 'uteis', loadChildren: () => import('./modules/uteis/uteis.module').then(m => m.UteisModule), canActivate: [AuthGuard] },
   { path: 'cadastros/afastamento', loadChildren: () => import('./modules/cadastros/afastamento/afastamento.module').then(m => m.AfastamentoModule), canActivate: [AuthGuard] },
@@ -52,7 +54,7 @@ const routes: Routes = [
   { path: 'raiox',loadChildren: () => import('./modules/curriculum/curriculum.module').then(m => m.CurriculumModule), canActivate: [AuthGuard] },
   { path: 'raiox/cadastros',loadChildren: () => import('./modules/cadastros/curriculum/curriculum-cadastros.module').then(m => m.CurriculumCadastrosModule), canActivate: [AuthGuard] },
   //{ path: 'raiox/cadastros/gerais',loadChildren: () => import('./modules/cadastros/curriculum/curriculum-cadastros.module').then(m => m.CurriculumCadastrosModule), canActivate: [AuthGuard] },
- 
+
   { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];
 

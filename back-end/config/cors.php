@@ -20,7 +20,6 @@ return [
         'web/*',
         'config/*',
         'environment-config',
-        'login-unico',
         'logout',
         'sanctum/csrf-cookie'
     ],

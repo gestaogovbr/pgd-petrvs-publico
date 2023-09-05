@@ -24,7 +24,6 @@ Route::any('/{any}', [AngularController::class, 'index'])->where('any', '^(?!api
 
 /* Rotas diversas */
 Route::get('environment-config', [PetrvsController::class, 'environmentConfig']);
-Route::get('login-unico', [LoginController::class, 'authenticateLoginUnico']);
 /*
     ->withoutMiddleware([
         StartSession::class,
