@@ -34,6 +34,10 @@ class LoginUnicoService extends AbstractProvider implements ProviderInterface
     protected function getTokenUrl()
     {
         return 'https://sso.staging.acesso.gov.br/token';
+
+    }    protected function getUserUrl()
+    {
+        return 'https://sso.staging.acesso.gov.br/userinfo';
     }
 
     /**
@@ -45,6 +49,7 @@ class LoginUnicoService extends AbstractProvider implements ProviderInterface
 
         return $response;
     }
+
 
     /**
      * Get the access token response for the given code.
@@ -70,6 +75,25 @@ class LoginUnicoService extends AbstractProvider implements ProviderInterface
         return json_decode($response->getBody(), true);
     }
 
+    public function getUserToken($token)
+    {
+        $response = $this->getUserResponse($token);
+
+        return $response;
+    }
+
+    private function getUserResponse($token)
+    {
+        $headers = [
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer '.$token,
+        ];
+        $response = $this->getHttpClient()->post($this->getUserUrl(), [
+            RequestOptions::HEADERS => $headers
+        ]);
+
+        return json_decode($response->getBody(), true);
+    }
     /**
      * {@inheritdoc}
      */

@@ -351,11 +351,20 @@ class LoginController extends Controller
         ]);
         $tokenData = $auth->getAccessToken($credentials['code']);
         if(!isset($tokenData['error'])) {
-
-            return response()->json([
-                'success' => true,
-                'tokenData' => $tokenData
-            ]);
+            $response = $auth->getUserToken($tokenData['access_token']);
+            $usuario = $this->registrarUsuario($request, Usuario::where('cpf',strtolower( $response['sub']))->first());
+            $state=json_decode(base64_decode($credentials['state']),0);
+            $with = ["feriados", "gestor", "gestorSubstituto"];
+            $entidade = Entidade::with($with)->where("sigla", $state->entidade)->first();
+            $request->session()->put("entidade_id", $entidade->id);
+            if (($usuario)) {
+                Auth::loginUsingId($usuario->id);
+                $request->session()->regenerate();
+                $request->session()->put("kind", "AZURE");
+                return view("azure"); //redirect()->intended('http://localhost:4200/#/login-retorno');
+            } else {
+                return LogError::newError('As credenciais fornecidas são inválidas.');
+            }
         }
         return LogError::newError('As credenciais fornecidas são inválidas.');
     }
