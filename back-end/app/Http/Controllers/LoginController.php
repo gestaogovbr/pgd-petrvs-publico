@@ -50,7 +50,7 @@ class LoginController extends Controller
                         }])->first(); */
             $usuario = Usuario::where("id", $usuario->id)->with([
                 "areasTrabalho" => function($query) use ($entidadeId) {
-                    $query->with(["unidade.gestor", "unidade.gestorSubstituto", "unidade.cidade", "unidade.planosEntrega", "unidade.unidadePai.planosEntrega", "atribuicoes"])->whereHas('unidade', function ($query) use ($entidadeId) {
+                    $query->with(["unidade.gestor.usuario", "unidade.gestorSubstituto.usuario", "unidade.cidade", "unidade.planosEntrega", "unidade.unidadePai.planosEntrega", "atribuicoes"])->whereHas('unidade', function ($query) use ($entidadeId) {
                         return  $query->where('entidade_id', '=', $entidadeId);
                     });             // Acredito que seja possível reduzir a qde de relacionamentos solicitados
                 },
@@ -61,7 +61,7 @@ class LoginController extends Controller
                     $query->with(["planosEntrega","unidade.planosEntrega"]);
                 }*/
             ])->first();
-            $request->session()->put("unidade_id", $usuario->lotacao->id);
+            $request->session()->put("unidade_id", $usuario->lotacao?->id);
         }
         return $usuario;
     }
@@ -336,6 +336,7 @@ class LoginController extends Controller
         }
         return LogError::newError('As credenciais fornecidas são inválidas.');
     }
+
     /**
 
      * Handle an authentication attempt.
@@ -352,16 +353,21 @@ class LoginController extends Controller
         $tokenData = $auth->getAccessToken($credentials['code']);
         if(!isset($tokenData['error'])) {
             $response = $auth->getUserToken($tokenData['access_token']);
-            $usuario = $this->registrarUsuario($request, Usuario::where('cpf',strtolower( $response['sub']))->first());
             $state=json_decode(base64_decode($credentials['state']),0);
             $with = ["feriados", "gestor", "gestorSubstituto"];
             $entidade = Entidade::with($with)->where("sigla", $state->entidade)->first();
             $request->session()->put("entidade_id", $entidade->id);
+            $usuario = $this->registrarUsuario($request, Usuario::where('cpf',strtolower( $response['sub']))->first());
             if (($usuario)) {
                 Auth::loginUsingId($usuario->id);
                 $request->session()->regenerate();
-                $request->session()->put("kind", "AZURE");
-                return view("azure"); //redirect()->intended('http://localhost:4200/#/login-retorno');
+                $request->session()->put("kind", "LOGINUNICO");
+                return response()->json([
+                    'success' => true,
+                    "entidade" => $entidade,
+                    "usuario" => $usuario,
+                    "horario_servidor" => CalendarioService::horarioServidor()
+                ]);
             } else {
                 return LogError::newError('As credenciais fornecidas são inválidas.');
             }
@@ -623,7 +629,38 @@ class LoginController extends Controller
      */
     public function authenticateApiLoginUnico(Request $request, LoginUnicoService $auth)
     {
-       return $request;
+        $credentials = $request->validate([
+            'entidade' => ['required'],
+            'cpf' => ['regex:/^\d{11}$/'],
+            'senha' => ['required'],
+            'token' => ['required'],
+            'device_name' => ['required']
+        ]);
+        /* Usando temporariamente o loginCpf(), mas o correto é login()  */
+        $profile = $auth->loginToken($credentials['cpf'], $credentials['senha'], $credentials['token']);
+        if(!isset($profile['error'])) {
+            $email = str_contains($profile["email"], "@") ? $profile["email"] : $profile["email"] . "@prf.gov.br";
+            $usuario = Usuario::where('email', $email)->where("data_fim", null)->first();
+            if(!isset($usuario) && $auth->autoIncluir) {
+                $usuario = new Usuario();
+                $lotacao = new UnidadeIntegrante();
+                $service = new IntegracaoService();
+                $service->salvaUsuarioLotacaoLoginUnico($usuario, $lotacao, $profile, $auth);
+            }
+            if (isset($usuario)) {
+                $request->session()->put("kind", "DPRFSEGURANCA");
+                $usuario->save();
+                $entidade = $this->registrarEntidade($request);
+                $usuario = $this->registrarUsuario($request, $usuario);
+                return response()->json([
+                    'token' => $usuario->createToken($credentials['device_name'])->plainTextToken,
+                    'entidade' => $entidade,
+                    'usuario' => $usuario,
+                    "horario_servidor" => CalendarioService::horarioServidor()
+                ]);
+            }
+        }
+        return LogError::newError('As credenciais fornecidas são inválidas.');
     }
 
     /**
