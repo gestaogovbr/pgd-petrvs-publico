@@ -13,6 +13,7 @@ export type BadgeButton = {
   icon?: string,
   img?: string,
   label?: string,
+  textValue?: string,
   color?: ComponentColor,
   class?: string,
   maxWidth?: number
@@ -32,6 +33,7 @@ export class BadgeComponent extends ComponentBase implements OnInit {
   @Input() set icon(value: string | undefined) { if(this._badge.icon != value) this._badge.icon = value; } get icon(): string | undefined { return this._badge.icon; }
   @Input() set img(value: string | undefined) { if(this._badge.img != value) this._badge.img = value; } get img(): string | undefined { return this._badge.img; }
   @Input() set label(value: string | undefined) { if(this._badge.label != value) this._badge.label = value; } get label(): string | undefined { return this._badge.label; }
+  @Input() set textValue(value: string | undefined) { if(this._badge.textValue != value) this._badge.textValue = value; } get textValue(): string | undefined { return this._badge.textValue; }
   @Input() set color(value: ComponentColor | undefined) { if(this._badge.color != value) this._badge.color = value; } get color(): ComponentColor | undefined { return this._badge.color; }
   @Input() set class(value: string) { if(this._badge.class != value) this._badge.class = value; } get class(): string { return "badge " + (this.rounded ? "rounded-pill " : "") + (this.maxWidth ? "text-break text-wrap " : "") + this.getClassBgColor(this.color) + (this._badge.class ? " " + this._badge.class : ""); }
   @Input() set maxWidth(value: number | undefined) { if(this._badge.maxWidth != value) this._badge.maxWidth = value; } get maxWidth(): number | undefined { return this._badge.maxWidth; }
