@@ -21,6 +21,8 @@
     left: -12px;
     border-top: .75rem solid var(--bs-gray-400);
     border-left: .75rem solid transparent;
+    border-bottom: none;
+    border-right: none;
 }
 .comentario-level {
     color: var(--bs-gray);

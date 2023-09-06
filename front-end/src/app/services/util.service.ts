@@ -361,6 +361,17 @@ export class UtilService {
     }
   }
 
+  public getBackgroundColor(level: number = 0, numLevels: number = 20): string {
+    const palette = [];
+    for (let i = 0; i < numLevels; i++) {
+      const hue = (i * 360) / numLevels; 
+      const color = `hsl(${hue}, 70%, 60%)`;
+      palette.push(color);
+    }
+    // Retorna uma cor do array
+    return palette[level % numLevels]
+  }
+
   public isTimeValid(timer: string): boolean {
     return UtilService.TIME_VALIDATE.test(timer);
   }
