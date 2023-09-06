@@ -26,7 +26,7 @@ const routes: Routes = [
   { path: 'cadastros/eixo-tematico', loadChildren: () => import('./modules/cadastros/eixo-tematico/eixo-tematico.module').then(m => m.EixoTematicoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/feriado', loadChildren: () => import('./modules/cadastros/feriado/feriado.module').then(m => m.FeriadoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/material-servico', loadChildren: () => import('./modules/cadastros/material-servico/material-servico.module').then(m => m.MaterialServicoModule), canActivate: [AuthGuard] },
-  { path: 'cadastros/tarefa', loadChildren: () => import('./modules/cadastros/tipo-tarefa/tipo-tarefa.module').then(m => m.TipoTarefaModule), canActivate: [AuthGuard] },
+  { path: 'cadastros/tipo-tarefa', loadChildren: () => import('./modules/cadastros/tipo-tarefa/tipo-tarefa.module').then(m => m.TipoTarefaModule), canActivate: [AuthGuard] },
   { path: 'cadastros/tipo-atividade', loadChildren: () => import('./modules/cadastros/tipo-atividade/tipo-atividade.module').then(m => m.TipoAtividadeModule), canActivate: [AuthGuard] },
   { path: 'cadastros/tipo-avaliacao', loadChildren: () => import('./modules/cadastros/tipo-avaliacao/tipo-avaliacao.module').then(m => m.TipoAvaliacaoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/tipo-documento', loadChildren: () => import('./modules/cadastros/tipo-documento/tipo-documento.module').then(m => m.TipoDocumentoModule), canActivate: [AuthGuard] },

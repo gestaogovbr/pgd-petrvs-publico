@@ -1,8 +1,7 @@
-import { Component, Injector, ViewChild, OnInit } from '@angular/core';
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { SelectItem } from 'src/app/components/input/input-base';
 import { InputDatetimeComponent } from 'src/app/components/input/input-datetime/input-datetime.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { InputTextComponent } from 'src/app/components/input/input-text/input-text.component';
@@ -46,7 +45,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
     this.planejamentoInstitucionalDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
-    this.join = ["entregas.entrega", "unidade", "entregas.unidade"];
+    this.join = ["entregas.entrega", "entregas.objetivos.objetivo", "entregas.processos.processo", "entregas.demandante", "unidade"];
     this.modalWidth = 1200;
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
@@ -59,8 +58,6 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
       programa_id: { default: null },
       entregas: { default: [] },
     }, this.cdRef, this.validate);
-    //this.maxPE=this.programa?.
-
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -86,8 +83,8 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
             - o usuário precisa possuir também a capacidade "MOD_PENT_QQR_UND";
     */
     let unidadeSelecionada = this.unidade?.selectedEntity as Unidade;
-    let condition1 = this.auth.isGestorUnidade(unidadeSelecionada) || this.auth.isGestorUnidade(unidadeSelecionada.unidade);
-    let condition2 = unidadeSelecionada.unidade ? (this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', unidadeSelecionada.unidade!.id) && this.auth.hasPermissionTo("MOD_PENT_EDT_FLH")) : false;
+    let condition1 = this.auth.isGestorUnidade(unidadeSelecionada) || this.auth.isGestorUnidade(unidadeSelecionada.unidade_pai);
+    let condition2 = unidadeSelecionada.unidade_pai ? (this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', unidadeSelecionada.unidade_pai!.id) && this.auth.hasPermissionTo("MOD_PENT_EDT_FLH")) : false;
     let condition3 = this.auth.hasPermissionTo("MOD_PENT_QQR_UND");
     if (!(condition1 || condition2 || condition3)) return "Você não tem permissão para incluir plano de entregas para a unidade selecionada!";
     const inicio = this.form?.controls.data_inicio.value;
@@ -126,7 +123,6 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     this.entity.unidade = this.auth.unidade;
     const di = new Date(this.entity.data_inicio).toLocaleDateString();
     const df= this.entity.data_fim ? new Date(this.entity.data_fim).toLocaleDateString() : new Date().toLocaleDateString();
-    //const df = new Date(this.entity.data_fim || (new Date())).toLocaleDateString();
     this.entity.nome = this.auth.unidade!.sigla + " - " + di + " - " + df;
     this.loadData(this.entity!, this.form!);
   }
@@ -149,13 +145,13 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     return result;
   }
 
-  public onNomeChange(){
-
-    const sigla = this.auth.unidade?.sigla;
-    const di = new Date(this.form!.controls.data_inicio.value).toLocaleDateString();
-    const df = new Date(this.form!.controls.data_fim.value).toLocaleDateString();
-    this.form!.controls.nome.setValue(sigla + " - " + di + " - " + df)
-
+  public onDataChange(){
+    if(this.action == 'new') {
+      const sigla = this.auth.unidade?.sigla;
+      const di = new Date(this.form!.controls.data_inicio.value).toLocaleDateString();
+      const df = new Date(this.form!.controls.data_fim.value).toLocaleDateString();
+      this.form!.controls.nome.setValue(sigla + " - " + di + " - " + df)      
+    }
   }
 
   public somaDia(date: Date, days: number){
@@ -165,10 +161,9 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   }
 
   public onProgramaChange(){
-    const dias=(this.programa?.selectedEntity as Programa).prazo_max_plano_entrega;
-    //const dias=(this.programa?.items[0] as SelectItem).entity.prazo_max_plano_entrega;
+    const dias=(this.programa?.selectedEntity as Programa)?.prazo_max_plano_entrega;
     const data=this.somaDia(this.entity!.data_inicio,dias);
-    this.form!.controls.data_fim.setValue(new Date(data)); // = this.somaDia(this.entity!.data_inicio,dias)//new Date()//(this.programa?.searchObj as Programa).prazo_max_plano_entrega
+    this.form!.controls.data_fim.setValue(new Date(data)); 
     this.dataFim?.change.emit();
   }
 

@@ -26,7 +26,7 @@ class CreatePlanosEntregas extends Migration
             $table->dateTime('data_fim')->nullable()->comment("Data final do plano de entregas");
             $table->dateTime('data_arquivamento')->nullable()->comment("Data de arquivamento do plano de entregas");
             $table->string('nome', 256)->comment("Nome do plano de entregas");
-            $table->enum('status', ["INCLUIDO","HOMOLOGANDO","ATIVO","CONCLUIDO","AVALIADO","SUSPENSO","CANCELADO"])->comment("Status atual do plano de entregas");
+            $table->enum('status', ["INCLUIDO","HOMOLOGANDO","ATIVO","CONCLUIDO","AVALIADO","SUSPENSO","CANCELADO"])->default("INCLUIDO")->comment("Status atual do plano de entregas");
             // Chaves estrangeiras:
             $table->foreignUuid('planejamento_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Planejamento institucional ao qual está ligado o plano de entregas");
             $table->foreignUuid('cadeia_valor_id')->nullable()->constrained("cadeias_valores")->onDelete('restrict')->onUpdate('cascade')->comment("Cadeia de valores à qual está ligado o plano de entregas");

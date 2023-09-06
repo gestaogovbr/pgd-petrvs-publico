@@ -5,6 +5,23 @@ declare(strict_types=1);
 use Stancl\Tenancy\Database\Models\Domain;
 use Stancl\Tenancy\Database\Models\Tenant;
 
+// Ajuste para automatizar deploy do Petrvs
+// no modo produção
+$app_url = config("app.url");
+
+$patterns = ["/http:\/\//","/https:\/\//"];
+$app_url = preg_replace($patterns, "", $app_url);
+
+if($app_url != 'localhost') {
+    $central_domains_fix = [$app_url];
+} else {
+    $central_domains_fix = [
+        '127.0.0.1',
+        'localhost',
+        'petrvs_php',
+    ];
+};
+
 return [
     'tenant_model' => \App\Models\Tenant::class,
     'id_generator' => Stancl\Tenancy\UUIDGenerator::class,
@@ -14,14 +31,9 @@ return [
     /**
      * The list of domains hosting your central app.
      *
-     * Only relevant if you're using the domain or subdomain identification middleware. 
+     * Only relevant if you're using the domain or subdomain identification middleware.
      */
-    'central_domains' => [
-        '127.0.0.1',
-        'localhost',
-        'petrvs_php',
-        'pgd-pre.dth.api.gov.br'
-    ],
+    'central_domains' => $central_domains_fix,
 
     /**
      * Tenancy bootstrappers are executed when tenancy is initialized.

@@ -2,52 +2,58 @@
     <tabs #tabs display right [title]="!isModal ? title : ''">
         <tab key="ENTREGAS" label="Entregas">
             <div class="row">
-                <div class="row">
-                    <input-search #entrega [size]="12" controlName="entrega_id" [dao]="entregaDao" (change)="onEntregaChange($event)" placeholder="Selecione do catálogo ou cadastre uma entrega usando a lupa" required></input-search>
-                </div>
-                <div class="row">
-                    <input-text [size]="12" label="Detalhamento" controlName="descricao" placeholder="Descreva melhor a entrega"></input-text>
-                </div>
-                <separator></separator>
-                <div class="row">
-                    <input-search [size]="12" [label]="'Vinculo com ' + lex.translate('entrega') + ' de ' + lex.translate('plano de entrega') + ' de ' + lex.translate('unidade') + ' superior'" controlName="entrega_pai_id" [dao]="planoEntregaEntregaDao"></input-search>
-                </div>
-                <separator title="Especificação das Entregas"></separator>
-                <div class="row">
-                    <input-datetime date [size]="6" label="Início" controlName="data_inicio" [labelInfo]="'Início ' + lex.translate('Plano de Entregas')" required></input-datetime>
-                    <input-datetime date [size]="6" label="Fim" controlName="data_fim" [labelInfo]="'Fim ' + lex.translate('Plano de Entregas') + '(Estimativa Inicial)'" required></input-datetime>
-                </div>
-                <div class="row">
-                    <input-search [size]="6" #unidade label="Demandante" controlName="unidade_id" [dao]="unidadeDao" required></input-search>
-                    <input-text [size]="6" label="Destinatário" controlName="destinatario"></input-text>
-                </div>
+                <separator title="Vínculos da Entrega" collapse [collapsed]="false">
+                    <div class="row">
+                        <input-search #entrega [size]="12" label="Entrega do Catálogo" controlName="entrega_id" [dao]="entregaDao" (change)="onEntregaChange($event)" placeholder="Selecione ou cadastre uma entrega do catálogo usando a lupa" required></input-search>
+                    </div>
+                    <div class="row">
+                        <input-text [size]="12" label="Título/Detalhamento" controlName="descricao" placeholder="Descreva melhor a entrega"></input-text>
+                    </div>
+                    <div class="row">
+                        <input-search [size]="12" [label]="lex.translate('Entrega') + ' de ' + lex.translate('plano de entrega')+ ' superior'" controlName="entrega_pai_id" 
+                                        [dao]="planoEntregaEntregaDao" [where]="['plano_entrega.unidade_id', 'in', idsUnidadesAscendentes]" [selectRoute]="{route: ['gestao', 'plano-entrega', 'entregaList']}" [metadata]="{'idsUnidadesAscendentes': idsUnidadesAscendentes}"></input-search>
+                    </div>
+                </separator>
+                <separator title="Especificações da Entrega" collapse [collapsed]="false">
+                    <div class="row">
+                        <input-datetime date [size]="6" label="Início" controlName="data_inicio" [labelInfo]="'Início ' + lex.translate('Plano de Entregas')" required></input-datetime>
+                        <input-datetime date [size]="6" label="Fim" controlName="data_fim" [labelInfo]="'Fim ' + lex.translate('Plano de Entregas') + '(Estimativa Inicial)'" required></input-datetime>
+                    </div>
+                    <div class="row">
+                        <input-search [size]="6" #unidade label="Demandante" controlName="unidade_id" [dao]="unidadeDao" required></input-search>
+                        <input-text [size]="6" label="Destinatário" controlName="destinatario"></input-text>
+                    </div>
+                </separator>
                 <separator title="Planejamento"></separator>
                 <div *ngIf="this.entrega?.selectedEntity" class="row">
                     <input-number *ngIf="checkTipoIndicador(['PORCENTAGEM'])" [size]="6" label="Meta" controlName="meta" sufix="%" required></input-number>
                     <input-number *ngIf="checkTipoIndicador(['QUANTIDADE', 'VALOR'])" [size]="6" label="Meta" controlName="meta"></input-number>
                     <input-select *ngIf="checkTipoIndicador(['QUALITATIVO'])" [size]="6" label="Meta" controlName="meta" [items]="itensQualitativo"></input-select>
-                    <input-number *ngIf="checkTipoIndicador(['PORCENTAGEM'])" [size]="6" label="Realizado" (change)="onRealizadoChange($event)" controlName="realizado" sufix="%"></input-number>
-                    <input-number *ngIf="checkTipoIndicador(['QUANTIDADE', 'VALOR'])" [size]="6" label="Realizado" (change)="onRealizadoChange($event)" controlName="realizado" required></input-number>
-                    <input-select *ngIf="checkTipoIndicador(['QUALITATIVO'])" [size]="6" label="Realizado" (change)="onRealizadoChange($event)" controlName="realizado" [items]="itensQualitativo"></input-select>
+                    <input-number *ngIf="checkTipoIndicador(['PORCENTAGEM'])" [size]="6" label="Já Realizado" (change)="onRealizadoChange($event)" controlName="realizado" sufix="%"></input-number>
+                    <input-number *ngIf="checkTipoIndicador(['QUANTIDADE', 'VALOR'])" [size]="6" label="Já Realizado" (change)="onRealizadoChange($event)" controlName="realizado" required></input-number>
+                    <input-select *ngIf="checkTipoIndicador(['QUALITATIVO'])" [size]="6" label="Já Realizado" (change)="onRealizadoChange($event)" controlName="realizado" [items]="itensQualitativo"></input-select>
                 </div>
                 <div class="row">
                     <input-number [size]="6" [decimals]="2" label="Progresso Esperado" controlName="progresso_esperado" sufix="%"></input-number>
-                    <input-number [size]="6" [decimals]="2" label="Progresso já Realizado" [stepValue]="0.01" controlName="progresso_realizado" sufix="%" disabled></input-number>
+                    <input-number [size]="6" [decimals]="2" label="Progresso Realizado" [stepValue]="0.01" controlName="progresso_realizado" sufix="%" disabled></input-number>
                 </div>
             </div>
         </tab>
         <!-- *ngIf="checkFilled(['planejamento_id'])" -->
         <tab *ngIf="planejamentoId?.length" key="OBJETIVOS" label="Objetivos">
             <input-search [size]="12" #planejamento controlName="planejamento_id" [dao]="planejamentoDao" disabled></input-search>
-            <grid [control]="form!.controls.objetivos" [form]="formObjetivos" #gridObjetivos editable [hasDelete]="false" [hasEdit]="false"
-                [add]="addObjetivo.bind(this)" [remove]="removeObjetivo.bind(this)" [save]="saveObjetivo.bind(this)">
+            <grid [control]="form!.controls.objetivos" [form]="formObjetivos" #gridObjetivos editable [orderBy]="orderBy" 
+                [hasDelete]="true" [hasEdit]="true" [add]="addObjetivo.bind(this)" [remove]="removeObjetivo.bind(this)" [save]="saveObjetivo.bind(this)">
                 <columns>
-                    <column title="Objetivo" [template]="columnObjetivo" [editTemplate]="editObjetivo">
+                    <column [titleTemplate]="titleObjetivo" [template]="columnObjetivo" [editTemplate]="editObjetivo">
+                        <ng-template let-header="header" #titleObjetivo>
+                            <order by="objetivo.nome" [header]="header">Objetivos</order>
+                        </ng-template>
                         <ng-template let-row="row" #columnObjetivo>
-                            <span>{{row.objetivo.nome}}</span>
+                            <span>{{row.objetivo?.nome}}</span>
                         </ng-template>
                         <ng-template let-row="row" #editObjetivo>
-                            <input-search [size]="12" #inputObjetivo label icon controlName="objetivo_id" label icon [where]="[['planejamento_id', '==', planejamentoId]]" [dao]="planejamentoObjetivoDao" [selectRoute]="{route: ['gestao', 'planejamento', 'objetivoList'], params: {filter: {planejamento_id: planejamentoId}}}"></input-search>
+                            <input-search [size]="12" #inputObjetivo label icon controlName="planejamento_objetivo_id" label icon [where]="[['planejamento_id', '==', planejamentoId]]" [dao]="planejamentoObjetivoDao" [selectRoute]="{route: ['gestao', 'planejamento', 'objetivoList'], params: {filter: {planejamento_id: planejamentoId}}}"></input-search>
                         </ng-template>
                     </column>
                     <!--column type="options" [dynamicButtons]="dynamicButtonsObjetivos.bind(this)" [dynamicOptions]="dynamicOptionsObjetivos.bind(this)"></!--column//-->
@@ -59,15 +65,18 @@
         <!-- *ngIf="checkFilled(['cadeia_valor_id'])" -->
         <tab *ngIf="cadeiaValorId?.length" key="PROCESSOS" label="Processos">
             <input-search [size]="12" #cadeiaValor controlName="cadeia_valor_id" [dao]="cadeiaValorDao" disabled></input-search>
-            <grid [control]="form!.controls.processos" [form]="formProcessos" #gridProcessos editable [hasDelete]="false" [hasEdit]="false"
+            <grid [control]="form!.controls.processos" [form]="formProcessos" #gridProcessos editable [orderBy]="orderBy" [hasDelete]="true" [hasEdit]="true"
                 [add]="addProcesso.bind(this)" [remove]="removeProcesso.bind(this)" [save]="saveProcesso.bind(this)">
                 <columns>
-                    <column title="Processos" [template]="processo" [editTemplate]="editProcesso">
+                    <column [titleTemplate]="titleProcessos" [template]="processo" [editTemplate]="editProcesso">
+                        <ng-template let-header="header" #titleProcessos>
+                            <order by="processo.nome" [header]="header">Processos</order>
+                        </ng-template>
                         <ng-template let-row="row" #processo>
-                            <span>{{row.processo.nome}}</span>
+                            <span>{{row.processo?.nome}}</span>
                         </ng-template>
                         <ng-template let-row="row" #editProcesso>
-                            <input-search [size]="12" #inputProcesso label icon controlName="processo_id" label [where]="[['cadeia_valor_id', '==', cadeiaValorId]]" [dao]="cadeiaValorProcessoDao"[selectRoute]="{route: ['gestao', 'cadeia-valor', 'processoList'], params: {filter: {cadeia_valor_id: cadeiaValorId}}}"></input-search>
+                            <input-search [size]="12" #inputProcesso label icon controlName="cadeia_processo_id" label [where]="[['cadeia_valor_id', '==', cadeiaValorId]]" [dao]="cadeiaValorProcessoDao"[selectRoute]="{route: ['gestao', 'cadeia-valor', 'processoList'], params: {filter: {cadeia_valor_id: cadeiaValorId}}}"></input-search>
                         </ng-template>
                     </column>
                     <column type="options" [dynamicButtons]="dynamicButtonsProcessos.bind(this)"></column>

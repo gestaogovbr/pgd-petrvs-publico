@@ -50,7 +50,7 @@ export class AtividadeFormTarefaComponent extends PageFormBase<AtividadeTarefa, 
     this.title = this.lex.translate("Tarefa da atividade");
     this.form = this.fh.FormBuilder({
       descricao: {default: ""},
-      tarefa_id: {default: null},
+      tipo_tarefa_id: {default: null},
       tempo_estimado: {default: 0},
       concluido: {default: false},
       id_processo: {default: 0},

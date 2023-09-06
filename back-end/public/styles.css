@@ -29254,6 +29254,10 @@ a > .petrvs code {
 .petrvs .shadow {
   box-shadow: 0px 2px 4px -2px rgba(36, 40, 46, 0.08) !important;
 }
+.petrvs .btn-light {
+  --bs-btn-bg: #fff;
+  --bs-btn-border-color: #eee;
+}
 .petrvs[data-bs-theme=blue] {
   --bs-body-color: #1d2143;
   --bs-body-bg: #f5f7fa;
@@ -29268,9 +29272,16 @@ a > .petrvs code {
   --petrvs-nav-link-bg-active: #13162d;
   --petrvs-nav-link-color: #fff;
   --petrvs-border-color-dropdown: #13162d;
+  --petrvs-form-control-background: #fff;
 }
 .petrvs[data-bs-theme=blue] .modal {
   --bs-modal-bg: #fff;
+}
+.petrvs[data-bs-theme=blue] .navbar-toggler-icon {
+  --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.55%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+.petrvs[data-bs-theme=blue] .form-control {
+  background-color: var(--petrvs-form-control-background);
 }
 .petrvs[data-bs-theme=blue] .nav-link {
   color: var(--bs-nav-link-color);
@@ -29300,9 +29311,31 @@ a > .petrvs code {
   --petrvs-nav-link-bg-active: #fec803;
   --petrvs-nav-link-color: #2b2828;
   --petrvs-border-color-dropdown: #ffffff;
+  --petrvs-form-control-background: #fff;
 }
-.petrvs .btn-light {
-  --bs-btn-bg: #eee;
+.petrvs[data-bs-theme=light] .form-control {
+  background-color: var(--petrvs-form-control-background);
+}
+.petrvs[data-bs-theme=dark] {
+  --petrvs-navbar-top-bg-color: #1b1f23;
+  --petrvs-navbar-vertical-border-color: #0c0f12;
+  --petrvs-nav-link-bg-hover: #111212;
+  --petrvs-nav-link-bg-active: #111212;
+}
+.petrvs[data-bs-theme=dark] .btn-light {
+  --bs-btn-bg: var(--bs-body-bg);
+  --bs-btn-border-color: var(--bs-border-color);
+  --bs-btn-color: var(--bs-body-color);
+  color: var(--bs-body-color) !important;
+  background-color: var(--bs-body-bg) !important;
+}
+.petrvs[data-bs-theme=dark] .btn-light:hover, .petrvs[data-bs-theme=dark] .btn-light:active {
+  background-color: var(--bs-body-bg);
+  border-color: var(--bs-border-color);
+  color: var(--bs-body-color) !important;
+}
+.petrvs[data-bs-theme=dark] .dropdown-item {
+  color: var(--bs-body-color) !important;
 }
 
 /* Define variáveis do bootstrap */

@@ -344,10 +344,10 @@ export class AuthService {
   }
 
   /**
-   * Informa se o usuário logado é gestor de alguma das suas lotações.
+   * Informa se o usuário logado é gestor de alguma das suas áreas de trabalho.
    * @returns
    */
-  public isGestorAlgumaLotacao(): boolean {
+  public isGestorAlgumaAreaTrabalho(): boolean {
     return !!this.unidades?.filter(x => this.isGestorUnidade(x)).length;
   }
 
@@ -357,6 +357,26 @@ export class AuthService {
    */
   public unidadeGestor(): Unidade | undefined {
     return this.unidades?.find(x => this.isGestorUnidade(x));
+  }
+
+  /**
+   * Retorna a unidade onde o usuário é gestor
+   * @returns
+   */
+  public get lotacao(): Unidade | undefined {
+    return this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade;
+  }
+
+  /**
+   * Retorna a unidade onde o usuário é gestor
+   * @returns
+   */
+  public get gestoresLotacao(): Usuario[] {
+    let lotacao = this.lotacao;
+    let result: Usuario[] = [];
+    if(lotacao?.gestor?.usuario) result.push(lotacao?.gestor?.usuario);
+    if(lotacao?.gestor_substituto?.usuario) result.push(lotacao?.gestor_substituto?.usuario);
+    return result;
   }
 
   /**

@@ -400,6 +400,17 @@ export class UtilService {
     return middle >= start && middle <= end;
   }
 
+  public asDate(dateTime: any, result: Date | null = null): Date | null {
+    if(dateTime instanceof Date) {
+      result = dateTime;
+    } else if (typeof dateTime == "number") {
+      result = new Date(dateTime);
+    } else if (typeof dateTime == "string" && moment(dateTime).isValid()) {
+      result = moment(dateTime).toDate();
+    }
+    return result;
+  }
+
   public asDateInterval(interval: Interval): DateInterval {
     return {
       start: interval.start instanceof Date ? interval.start : new Date(interval.start),
