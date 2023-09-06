@@ -728,9 +728,9 @@ class LoginController extends Controller
     public function signInAzureCallback(Request $request) {
         $entidade = $this->registrarEntidade($request);
         
-        $url_dinamica_callback = config("app.url");
-        $url_dinamica_callback = $url_dinamica_callback .
-          "/api/login-azure-callback/" . $entidade->sigla;
+        $url_dinamica_callback = config("app.url") .
+            "/api/login-azure-callback/" .
+            $entidade->sigla;
         
         $azure_select_tenancy = $this->getConfigAzure($url_dinamica_callback);
         

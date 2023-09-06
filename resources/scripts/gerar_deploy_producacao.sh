@@ -2,11 +2,8 @@
 cp -R ../../back-end petrvs
 cd petrvs
 
-cp .env.production.template .env
-
 rm -rf .env
 rm -rf .env.dev.template
-rm -rf .env.production.template
 rm -rf README.md
 rm -rf .vscode
 rm -rf php_sh.bat
