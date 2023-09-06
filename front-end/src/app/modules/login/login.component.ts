@@ -164,7 +164,7 @@ export class LoginComponent implements OnInit, ModalPage, OnDestroy {
     const responseType = 'code';
     const clientId = 'pgd-pre.dth.api.gov.br';
     const scope = 'openid+email+profile';
-    const redirectUri = 'https://pgd-pre.dth.api.gov.br/login-unico';
+    const redirectUri = 'https://pgd-pre.dth.api.gov.br/#/login-unico';
     const state = btoa('{"entidade":"'+entidade+'"}');
     const nonce = 'nonce';
     const codeChallenge = 'LwIDqJyJEGgdSQuwygHlkQDKsUXFz6jMIfkM_Jlv94w';
