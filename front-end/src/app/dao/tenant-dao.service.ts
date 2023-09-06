@@ -43,5 +43,75 @@ export class TenantDaoService extends DaoBaseService<Tenant> {
     });
   }
 
+
+  public seeders(item: TipoCapacidade) {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('config/' + this.collection + '/seeders', { 
+        tenant_id: item.id,
+      }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }
+      }, error => reject(error));
+    });
+  }
+
+  public migrations(item: TipoCapacidade) {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('config/' + this.collection + '/migrations', { 
+        tenant_id: item.id,
+      }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }
+      }, error => reject(error));
+    });
+  }
+
+  public usuarioSeeder(item: Cidade) {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('config/' + this.collection + '/cidades', { 
+        tenant_id: item.id
+      }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }
+      }, error => reject(error));
+    });
+  }
+
+  public entidadeSeeder(item: Cidade) {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('config/' + this.collection + '/cidades', { 
+        tenant_id: item.id
+      }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }
+      }, error => reject(error));
+    });
+  }
+
+  public databaseSeeder(item: Cidade) {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('config/' + this.collection + '/database', { 
+        tenant_id: item.id
+      }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }
+      }, error => reject(error));
+    });
+  }
 }
 
