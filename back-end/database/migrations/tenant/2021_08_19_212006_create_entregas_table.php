@@ -25,7 +25,7 @@ class CreateEntregasTable extends Migration
             $table->enum('tipo_indicador', ["QUANTIDADE", "VALOR", "PORCENTAGEM", "QUALITATIVO"])->comment("Tipo do indicador da entrega");
             $table->json('lista_qualitativos')->nullable()->comment("Lista de valores para entrega do tipo qualitativo");
             // Chaves estrangeiras:
-            $table->foreignUuid('unidade_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Usuário que incluiu o projeto");
+            $table->foreignUuid('unidade_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Unidade que incluiu a entrega");
         });
     }
 

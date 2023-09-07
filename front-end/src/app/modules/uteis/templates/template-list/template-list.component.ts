@@ -73,7 +73,7 @@ export class TemplateListComponent extends PageListBase<Template, TemplateDaoSer
 
     result.push(["especie", "==", form.especie]);
     if (form.titulo?.length) {
-      result.push(["titulo", "like", "%" + form.titulo + "%"]);
+      result.push(["titulo", "like", "%" + form.titulo.trim().replace(" ", "%") + "%"]);
     }
 
     return result;

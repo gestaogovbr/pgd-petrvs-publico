@@ -25,7 +25,7 @@ export class EntregaListComponent extends PageListBase<Entrega, EntregaDaoServic
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.filter = this.fh.FormBuilder({
       nome: {default: ""},
-      unidade_id: {default: null}
+      tipo_indicador: {default: null}
      });
      this.addOption(this.OPTION_INFORMACOES);
      this.addOption(this.OPTION_EXCLUIR, "MOD_ENTRG_EXCL");
@@ -34,10 +34,8 @@ export class EntregaListComponent extends PageListBase<Entrega, EntregaDaoServic
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
-
-    if(form.nome?.length) result.push(["nome", "like", "%" + form.nome + "%"]);
-    if(form.unidade_id?.length) result.push(["unidade_id", "==", form.unidade_id]);
-
+    if(form.nome?.length) result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
+    if(form.tipo_indicador?.length) result.push(["tipo_indicador", "==", form.tipo_indicador]);
     return result;
   }
 }

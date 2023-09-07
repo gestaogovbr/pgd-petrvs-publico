@@ -6,6 +6,7 @@ export class PlanejamentoObjetivo extends Base {
     public planejamento?: Planejamento;
     public eixo_tematico?: EixoTematico;
     public objetivo_pai?: PlanejamentoObjetivo;
+    public objetivo_superior?: PlanejamentoObjetivo;
     public objetivos?: PlanejamentoObjetivo[];
     
     public nome: string = ""; /* Nome do objetivo */
@@ -16,6 +17,7 @@ export class PlanejamentoObjetivo extends Base {
     public planejamento_id: string | null = null; 
     public eixo_tematico_id: string | null = null; 
     public objetivo_pai_id: string | null = null;
+    public objetivo_superior_id: string | null = null;
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

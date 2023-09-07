@@ -43,7 +43,7 @@ export class CadeiaValorListGridComponent  extends PageListBase<CadeiaValor, Cad
     let form: any = filter.value;
 
     if(form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome.replace(" ", "%") + "%"]);
+      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
     if(form.data_inicio) {
       result.push(["data_fim", ">=", form.data_inicio]);

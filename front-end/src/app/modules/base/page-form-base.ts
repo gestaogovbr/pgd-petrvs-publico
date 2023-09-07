@@ -23,6 +23,8 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
   public mensagemSalvarSucesso = "Registro salvo com sucesso!";
   public mensagemCarregando = "Carregando dados do formulário...";
   public mensagemSalvando = "Salvando dados do formulário...";
+  public get MAX_LENGTH_TEXT() { return 65500};
+  
   constructor(public injector: Injector, mType: Type<M>, dType: Type<D>) {
     super(injector);
     this.dao = injector.get<D>(dType);

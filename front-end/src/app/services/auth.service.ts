@@ -322,7 +322,7 @@ export class AuthService {
   }
 
   /**
-   * Informa se o usuário logado é gestor(titular ou substituto) da unidade repassada como parâmetro. Se nenhuma unidade for repassada, 
+   * Informa se o usuário logado é gestor(titular ou substituto) da unidade recebida como parâmetro. Se nenhuma unidade for repassada, 
    * será adotada a unidade selecionada pelo servidor na homepage.
    * @param pUnidade 
    * @returns 
@@ -371,7 +371,7 @@ export class AuthService {
   }
 
   /**
-   * Informa se a unidade repassada como parâmetro é a lotação do usuário logado. Se nenhuma unidade for repassada, 
+   * Informa se a unidade recebida como parâmetro é a lotação do usuário logado. Se nenhuma unidade for repassada, 
    * será adotada a unidade selecionada pelo servidor na homepage.
    * @param pUnidade 
    * @returns 
@@ -394,7 +394,7 @@ export class AuthService {
 
   /**
    * Informa se o usuário logado tem como área de trabalho alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
-   * repassada como parâmetro.
+   * recebida como parâmetro.
    * @param unidade 
    * @returns 
    */
@@ -406,7 +406,7 @@ export class AuthService {
 
   /**
    * Informa se o usuário logado é gestor (titular ou substituto) de alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
-   * repassada como parâmetro.
+   * recebida como parâmetro.
    * @param unidade 
    * @returns 
    */

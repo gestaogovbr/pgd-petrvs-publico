@@ -12,7 +12,7 @@
                     <input-datetime date [size]="3" label="Fim" icon="bi bi-calendar-date" controlName="data_fim" [control]="form!.controls.data_fim" labelInfo="Fim do Planejamento Institucional"></input-datetime>
                 </div>
                 <div class="row">
-                    <input-select #planejamentoSuperior [items]="planejamentosSuperiores" label="Selecione um Planejamento Institucional Superior (opcional)" controlName="planejamento_superior_id" [control]="form!.controls.planejamento_superior_id" (change)="onPlanejamentoChange($event)" [icon]="entityService.getIcon('Planejamento')"></input-select>
+                    <input-select #planejamentoSuperior [items]="planejamentosSuperiores" label="Planejamento Institucional Superior" controlName="planejamento_superior_id" [control]="form!.controls.planejamento_superior_id" (change)="onPlanejamentoChange($event)" [icon]="entityService.getIcon('Planejamento')"></input-select>
                 </div>                
                 <div class="row">
                     <div class="col-md-6">
@@ -30,7 +30,7 @@
             </div>
         </tab>
         <tab key="OBJETIVOS" label="Objetivos">
-            <planejamento-list-objetivo #objetivos noPersist [entity]="entity" [disabled]="action == 'consult'"></planejamento-list-objetivo>
+            <planejamento-list-objetivo #objetivos noPersist [entity]="entity" [disabled]="action == 'consult'" [planejamento_superior_id]="form.controls.planejamento_superior_id.value"></planejamento-list-objetivo>
         </tab>
     </tabs>
 </editable-form>

@@ -27,8 +27,8 @@ class CreatePlanejamentosObjetivosTable extends Migration
             // Chaves estrangeiras:
             $table->foreignUuid('planejamento_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Planejamento ao qual se refere o objetivo");
             $table->foreignUuid('eixo_tematico_id')->constrained("eixos_tematicos")->onDelete('restrict')->onUpdate('cascade')->comment("Eixo temático ao qual se refere o objetivo");
-            $table->foreignUuid('objetivo_pai_id')->nullable()->constrained("planejamentos_objetivos")->onDelete('restrict')->onUpdate('cascade')->comment("Objetivo pai do objetivo");
-            $table->foreignUuid('objetivo_superior_id')->nullable()->constrained("planejamentos_objetivos")->onDelete('restrict')->onUpdate('cascade')->comment("Objetivo do planejamento superior ao qual está vinculado este objetivo, se for o caso");
+            $table->foreignUuid('objetivo_pai_id')->nullable()->constrained("planejamentos_objetivos")->onDelete('restrict')->onUpdate('cascade')->comment("Objetivo pai do objetivo (mesmo planejamento)");
+            $table->foreignUuid('objetivo_superior_id')->nullable()->constrained("planejamentos_objetivos")->onDelete('restrict')->onUpdate('cascade')->comment("Objetivo ao qual está vinculado este objetivo, se for o caso (planejamento superior)");
         });
     }
 

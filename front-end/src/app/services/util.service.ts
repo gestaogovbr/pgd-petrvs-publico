@@ -340,7 +340,7 @@ export class UtilService {
     for(let nibble of temp) {
       result += result.length < 5 ? " " + nibble[0].toUpperCase() + nibble.substring(1).toLowerCase() : "";
     }
-    return result.trim();
+    return result.trim().replace(" ", "%");
   }
 
   public capitalCase(text: string): string {

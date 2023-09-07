@@ -17,7 +17,8 @@ class PlanoEntregaController extends ControllerBase {
             $this->checkPermissions("ARQUIVAR", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
             $data = $request->validate([
                 'id' => ['required'],
-                'arquivar' => ['required']
+                'arquivar' => ['required'],
+                'justificativa' => ['present']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
@@ -47,7 +48,8 @@ class PlanoEntregaController extends ControllerBase {
         try {
             $this->checkPermissions("CANCELAR_AVALIACAO", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
             $data = $request->validate([
-                'id' => ['required']
+                'id' => ['required'],
+                'justificativa' => ['present']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
@@ -62,7 +64,8 @@ class PlanoEntregaController extends ControllerBase {
         try {
             $this->checkPermissions("CANCELAR_CONCLUSAO", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
             $data = $request->validate([
-                'id' => ['required']
+                'id' => ['required'],
+                'justificativa' => ['present']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
@@ -77,7 +80,8 @@ class PlanoEntregaController extends ControllerBase {
         try {
             $this->checkPermissions("CANCELAR_HOMOLOGACAO", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
             $data = $request->validate([
-                'id' => ['required']
+                'id' => ['required'],
+                'justificativa' => ['present']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
@@ -92,7 +96,8 @@ class PlanoEntregaController extends ControllerBase {
         try {
             $this->checkPermissions("CANCELAR_PLANO", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
             $data = $request->validate([
-                'id' => ['required']
+                'id' => ['required'],
+                'justificativa' => ['present']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
@@ -398,7 +403,8 @@ class PlanoEntregaController extends ControllerBase {
         try {
             $this->checkPermissions("REATIVAR", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
-                'id' => ['required']
+                'id' => ['required'],
+                'justificativa' => ['present']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
@@ -413,7 +419,8 @@ class PlanoEntregaController extends ControllerBase {
         try {
             $this->checkPermissions("RETIRAR_HOMOLOGACAO", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
             $data = $request->validate([
-                'id' => ['required']
+                'id' => ['required'],
+                'justificativa' => ['present']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
@@ -428,7 +435,8 @@ class PlanoEntregaController extends ControllerBase {
         try {
             $this->checkPermissions("SUSPENDER", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
             $data = $request->validate([
-                'id' => ['required']
+                'id' => ['required'],
+                'justificativa' => ['present']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
