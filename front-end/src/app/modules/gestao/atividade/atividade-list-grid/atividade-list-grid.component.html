@@ -37,19 +37,18 @@
                 <atividade-list-tarefa persist [selectable]="selectable" [editable]="!row.metadados.concluido" [atividade]="row"></atividade-list-tarefa>
             </ng-template>
         </column>
-        <column [titleTemplate]="titleIdNumeroStatus" [template]="columnNumero">
-            <ng-template let-header="header" #titleIdNumeroStatus>
-                <order by="numero" [header]="header">#ID</order>/nº Processo<br>
-                Status
+        <column [titleTemplate]="titleIdAtividadeDescricao" [template]="columnAtividadeDescricao">
+            <ng-template let-header="header" #titleIdAtividadeDescricao>
+                <order by="numero" [header]="header">#ID</order>/{{lex.translate('Tipo de Atividade')}}/{{lex.translate('Entrega')}}<br>
+                Descrição
             </ng-template>
-            <ng-template let-row="row" #columnNumero>
-                <span class="text-nowrap">
-                    <small class="micro-text fw-ligh">#{{row.numero}}</small>
-                    <documentos-badge [documento]="row.documento_requisicao"></documentos-badge>
+            <ng-template let-row="row" #columnAtividadeDescricao>
+                <span class="text-nowrap d-block">
+                    <badge icon="bi bi-hash" [label]="row.numero" color="light" [data]="row.numero" [click]="atividadeService.onIdClick.bind(this)"></badge>
+                    <badge *ngIf="row.tipo_atividade" [icon]="entityService.getIcon('TipoAtividade')" [label]="row.tipo_atividade.nome" color="light"></badge>
+                    <badge *ngIf="row.plano_trabalho_entrega" [icon]="entityService.getIcon('Entrega')" [label]="row.plano_trabalho_entrega.descricao" color="light"></badge>
                 </span>
-                <div class="one-per-line">
-                    <badge *ngFor="let status of atividadeService.getStatus(row)" [data]="status" [color]="status.color" [icon]="status.icon" [label]="status.label" [click]="status.data?.filter ? onStatusClick.bind(this) : undefined"></badge>
-                </div>
+                <span class="micro-text fw-ligh atividade-descricao">{{row.descricao}}</span>
             </ng-template>
         </column>
         <column [titleTemplate]="titleUnResponsavelDemandante" [template]="columnPessoas">
@@ -78,7 +77,7 @@
                 </div>
             </ng-template>
         </column>
-        <column [title]="'Progresso\nEtiquetas/Checklist'" [editTemplate]="selectable ? undefined : columnProgressoEtiquetasChecklistEdit" [template]="columnProgressoEtiquetasChecklist" [edit]="selectable ? undefined : onColumnProgressoEtiquetasChecklistEdit.bind(this)" [save]="selectable ? undefined : onColumnProgressoEtiquetasChecklistSave.bind(this)">
+        <column [title]="'Progresso\nEtiquetas/Checklist'" [width]="200" [columnEditTemplate]="selectable ? undefined : columnProgressoEtiquetasChecklistEdit" [template]="columnProgressoEtiquetasChecklist" [edit]="selectable ? undefined : onColumnProgressoEtiquetasChecklistEdit.bind(this)" [save]="selectable ? undefined : onColumnProgressoEtiquetasChecklistSave.bind(this)">
             <ng-template let-row="row" #columnProgressoEtiquetasChecklist>
                 <progress-bar [value]="row.progresso" color="success"></progress-bar>
                 <badge *ngFor="let etiqueta of row.etiquetas" [lookup]="etiqueta" [click]="onEtiquetaClick.bind(this)"></badge>
@@ -98,22 +97,22 @@
                 <separator *ngIf="row.checklist?.length" small title="Checklist"></separator>
                 <table *ngIf="row.checklist?.length">
                     <tr *ngFor="let check of checklist; let i = index">
-                        <td>
-                            <input-switch [size]="12" scale="small" [source]="checklist" [path]="i + '.checked'"></input-switch>
-                        </td>
+                        <td><input-switch [size]="12" scale="small" [source]="checklist" [path]="i + '.checked'"></input-switch></td>
                         <td class="micro-text fw-ligh">{{check.texto}}</td>
                     </tr>
                 </table>
             </ng-template>
         </column>
-        <column [title]="'Tipo de Atividade\nDescrição'" [template]="columnTitulo">
-            <ng-template let-row="row" #columnTitulo>
-                <small *ngIf="row.atividade" class="atividade-atividade"><strong>{{row.tipo_atividade.nome || ""}}</strong><br></small>
-                <span class="micro-text fw-ligh atividade-descricao">{{row.descricao}}</span>
+        <column [title]="'nº Processo/Status\nComentários'" [template]="columnNumero">
+            <ng-template let-row="row" #columnNumero>
+                <documentos-badge [documento]="row.documento_requisicao"></documentos-badge>
+                <span class="d-block">
+                    <badge *ngFor="let status of atividadeService.getStatus(row)" [data]="status" [color]="status.color" [icon]="status.icon" [label]="status.label" [click]="status.data?.filter ? onStatusClick.bind(this) : undefined"></badge>
+                </span>
                 <comentarios-widget [entity]="row" [selectable]="selectable" origem="ATIVIDADE" [grid]="grid"></comentarios-widget>
             </ng-template>
         </column>
-        <column *ngIf="!selectable" type="options" [onEdit]="edit" [onDelete]="delete" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
+        <column *ngIf="!selectable" type="options" [metadata]="optionsMetadata" [dynamicOptions]="atividadeService.dynamicOptions.bind(this)" [dynamicButtons]="atividadeService.dynamicButtons.bind(this)"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

@@ -199,7 +199,7 @@ class AtividadeService extends ServiceBase
         return $data;
     }
 
-    public function proxyRows($rows) {
+    public function proxyRows(&$rows) {
         foreach($rows as $row) {
             $row->metadados = $this->metadados($row);
         }

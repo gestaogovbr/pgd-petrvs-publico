@@ -11,6 +11,7 @@ import { BadgeButton } from '../components/badge/badge.component';
 import { Documento } from './documento.model';
 import { AtividadePausa } from './atividade-pausa.model';
 import { HasStatus, StatusJustificativa } from './status-justificativa.model';
+import { PlanoTrabalhoConsolidacao } from './plano-trabalho-consolidacao.model';
 
 export type AtividadeStatus = "INCLUIDO" | "INICIADO" | "PAUSADO" | "CONCLUIDO";
 
@@ -37,6 +38,7 @@ export type AtividadeChecklist = {
 export class Atividade extends Base implements HasComentarios, HasStatus {
     public plano_trabalho?: PlanoTrabalho;
     public plano_trabalho_entrega?: PlanoTrabalhoEntrega;
+    public plano_trabalho_consolidacao?: PlanoTrabalhoConsolidacao;
     public tipo_atividade?: TipoAtividade;
     public demandante?: Usuario;
     public usuario?: Usuario;
@@ -68,6 +70,7 @@ export class Atividade extends Base implements HasComentarios, HasStatus {
 
     public plano_trabalho_id: string | null = null;
     public plano_trabalho_entrega_id: string | null = null;
+    public plano_trabalho_consolidacao_id: string | null = null;
     public tipo_atividade_id: string | null = null;
     public demandante_id: string = "";
     public usuario_id: string | null = null;

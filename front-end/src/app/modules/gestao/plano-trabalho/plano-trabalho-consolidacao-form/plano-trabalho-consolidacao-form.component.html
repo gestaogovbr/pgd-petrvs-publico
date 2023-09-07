@@ -6,60 +6,83 @@
                     <!--span *ngIf="row?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row?.length}}</span//-->
                 </ng-template>
                 <ng-template let-row="row" #columnExpandedConsolidacao>
-                    <grid [items]="row.atividades" [minHeight]="0" #gridAtividade [form]="formAtividade" [hasDelete]="false" [hasEdit]="false"
+                    <grid [items]="row.atividades" [minHeight]="0" #gridAtividade [form]="formAtividade" [hasAdd]="true" [hasDelete]="false" [hasEdit]="false"
                         [add]="addAtividade.bind(this, row.entrega)" [load]="loadAtividade.bind(this)" [remove]="removeAtividade.bind(this, row.atividades)" [save]="saveAtividade.bind(this)" editable>
                         <columns>
-                            <column [title]="lex.translate('Atividade')" [template]="columnAtividade" [editTemplate]="columnAtividadeEdit">
-                                <ng-template let-row="row" #columnAtividade>
-                                    <div class="row">
-                                        <div class="col-md-3 one-per-line">
-                                            <small class="micro-text fw-ligh">#{{row.numero}}</small><br>
-                                            <badge color="success" label="TODO"></badge>
-                                            <!-- TODO: Por status!-->
-                                            <!-- badge *ngFor="let status of atividadeService.getStatus(row)" [data]="status" [color]="status.color" [icon]="status.icon" [label]="status.label" [click]="status.data?.filter ? onStatusClick.bind(this) : undefined"></badge//-->
-                                        </div>
-                                        <div class="col-md-3 one-per-line">
-                                            <badge [icon]="'bi ' + (row.usuario?.nome?.length ? 'bi-person-check' : 'bi-person-x')" color="light" [label]="util.apelidoOuNome(row.usuario, true) || '(Não atribuído)'" [hint]="'Responsável: ' + (row.usuario?.nome || 'Não atribuido a nenhum usuário')"></badge>
-                                            <badge icon="bi bi-cursor" color="light" [label]="util.apelidoOuNome(row.demandante, true) || 'Desconhecido'" [hint]="'Demandante: ' + (row.demandante?.nome || 'Desconhecido')"></badge>
-                                        </div>
-                                        <div class="col-md-2 one-per-line">
-                                            <!-- TODO: Por tempos //-->
-                                            <badge color="primary" label="TODO"></badge>
-                                            <!-- badge *ngFor="let tempo of temposAtividade(row)" [badge]="tempo"></badge /-->
-                                            <progress-bar [value]="row.progresso" color="success"></progress-bar>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <small *ngIf="row.atividade" class="atividade-atividade"><strong>{{row.tipo_atividade.nome || ""}}</strong><br></small>
-                                            <span class="micro-text fw-ligh atividade-descricao">{{row.descricao}}</span>
-                                        </div>
-                                    </div>
+                            <column [title]="'#ID/' + lex.translate('Tipo de Atividade') + '\nDescrição'" [template]="columnAtividadeDescricao" [editTemplate]="editAtividadeDescricao">
+                                <ng-template let-row="row" #columnAtividadeDescricao>
+                                    <span class="text-nowrap d-block">
+                                        <badge icon="bi bi-hash" [label]="row.numero" color="light" [data]="row.numero" [click]="atividadeService.onIdClick.bind(this)"></badge>
+                                        <badge *ngIf="row.tipo_atividade" [icon]="entityService.getIcon('TipoAtividade')" [label]="row.tipo_atividade.nome" color="light"></badge>
+                                    </span>
+                                    <span class="micro-text fw-ligh atividade-descricao">{{row.descricao}}</span>
                                 </ng-template>
-                                <ng-template let-row="row" #columnAtividadeEdit>
-                                    <div class="row">
-                                        <div *ngIf="hasEsforco || hasRealizado" class="col-md-4">
-                                            <input-timer *ngIf="hasEsforco" onlyHours icon="bi bi-stopwatch" [label]="lex.translate('Esforço')" [control]="formAtividade.controls.esforco" labelInfo="Tempo em horas da execução da atividade"></input-timer>
-                                            <!--plano-entrega-indicador-valor [entrega]="row.entrega" [size]="12" [control]="formAtividade.controls.realizado"></plano-entrega-indicador-valor/-->
-                                        </div>
-                                        <div [class]="(hasEsforco || hasRealizado ? 'col-md-8' : 'col-md-12') + ' row'">
-                                            <input-search [label]="lex.translate('Tipo de Atividade')" #tipoAtividade [emptyValue]="null" [control]="formAtividade.controls.tipo_atividade_id" [dao]="tipoAtividadeDao"></input-search>
-                                            <input-textarea [rows]="5" label="Descriçao" [control]="formAtividade.controls.descricao"></input-textarea>
-                                        </div>
+                                <ng-template let-row="row" #editAtividadeDescricao>
+                                    <input-search [label]="lex.translate('Tipo de atividade')" [size]="12" [emptyValue]="null" controlName="tipo_atividade_id" [control]="formAtividade!.controls.tipo_atividade_id" [dao]="tipoAtividadeDao" (select)="onTipoAtividadeSelect($event)" [labelInfo]="lex.translate('Tipo de atividade') + ' utilizado para classificar a atividade'" [required]="!auth.hasPermissionTo('MOD_ATV_TIPO_ATV_VAZIO') ? 'true' : undefined"></input-search>
+                                    <input-textarea label="Descrição" [size]="12" [rows]="2" controlName="descricao" [control]="formAtividade!.controls.descricao" required></input-textarea>
+                                </ng-template>
+                            </column>
+                            <column [title]="'Tempos'" [template]="columnTempos" [editTemplate]="columnTempos">
+                                <ng-template let-row="row" #columnTempos>
+                                    <div class="one-per-line">
+                                        <badge *ngFor="let tempo of atividadeService.temposAtividade(row)" [badge]="tempo"></badge>
                                     </div>
                                 </ng-template>
                             </column>
-                            <column type="options" [dynamicButtons]="atividadeDynamicButtons.bind(this)"></column>
+                            <column [title]="'Progresso\nEtiquetas/Checklist'" [width]="200" [template]="columnProgressoEtiquetasChecklist" [editTemplate]="columnProgressoEtiquetasChecklist" [columnEditTemplate]="columnProgressoEtiquetasChecklistEdit" [edit]="onColumnProgressoEtiquetasChecklistEdit.bind(this)" [save]="onColumnProgressoEtiquetasChecklistSave.bind(this)">
+                                <ng-template let-row="row" #columnProgressoEtiquetasChecklist>
+                                    <progress-bar [value]="row.progresso" color="success"></progress-bar>
+                                    <badge *ngFor="let etiqueta of row.etiquetas" [lookup]="etiqueta"></badge>
+                                    <separator *ngIf="row.checklist?.length" small title="Checklist"></separator>
+                                    <table *ngIf="row.checklist?.length">
+                                        <tr *ngFor="let check of row.checklist">
+                                            <td><i *ngIf="check.checked" class="bi bi-check-circle"></i></td>
+                                            <td class="micro-text fw-ligh">{{check.texto}}</td>
+                                        </tr>
+                                    </table>
+                                </ng-template>
+                                <ng-template let-row="row" #columnProgressoEtiquetasChecklistEdit>
+                                    <input-number [size]="12" [decimals]="2" label="Progresso" sufix="%" icon="bi bi-clock" controlName="progresso" [control]="formEdit.controls.progresso" labelInfo="Progresso de execução (% Concluído)"></input-number>
+                                    <input-multiselect controlName="etiquetas" [size]="12" [control]="formEdit.controls.etiquetas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
+                                        <input-select [size]="12" label="Etiqueta" #etiqueta controlName="etiqueta" nullable itemNull="- Selecione -" detailsButton detailsButtonIcon="bi bi-tools" (details)="onEtiquetaConfigClick()" [control]="formEdit.controls.etiqueta" [items]="etiquetas"></input-select>
+                                    </input-multiselect>
+                                    <separator *ngIf="row.checklist?.length" small title="Checklist"></separator>
+                                    <table *ngIf="row.checklist?.length">
+                                        <tr *ngFor="let check of checklist; let i = index">
+                                            <td><input-switch [size]="12" scale="small" [source]="checklist" [path]="i + '.checked'"></input-switch></td>
+                                            <td class="micro-text fw-ligh">{{check.texto}}</td>
+                                        </tr>
+                                    </table>
+                                </ng-template>
+                            </column>
+                            <column [title]="'nº Processo/Status\nComentários'" [template]="columnNumero" [editTemplate]="columnNumero">
+                                <ng-template let-row="row" #columnNumero>
+                                    <documentos-badge [documento]="row.documento_requisicao"></documentos-badge>
+                                    <span class="d-block">
+                                        <badge *ngFor="let status of atividadeService.getStatus(row)" [data]="status" [color]="status.color" [icon]="status.icon" [label]="status.label"></badge>
+                                    </span>
+                                    <comentarios-widget *ngIf="!gridAtividade.editing" [entity]="row" [selectable]="false" origem="ATIVIDADE" [grid]="gridAtividade"></comentarios-widget>
+                                </ng-template>
+                            </column>
+                            <column type="options" [metadata]="atividadeOptionsMetadata" [dynamicOptions]="atividadeService.dynamicOptions.bind(this)" [dynamicButtons]="atividadeService.dynamicButtons.bind(this)"></column>
                         </columns>
                     </grid>
                 </ng-template>
             </column>
             <column title="Origem" [template]="columnOrigem" [width]="200">
                 <ng-template let-row="row" #columnOrigem>
-                    <badge [title]="planoTrabalhoService.tipoEntrega(row.entrega, planoTrabalho).titulo" [color]="planoTrabalhoService.tipoEntrega(row.entrega, planoTrabalho).cor"></badge>
+                    <badge [label]="row.badge.titulo" [color]="row.badge.cor"></badge>
                 </ng-template>
             </column>
             <column title="Entrega" [template]="columnEntrega">
                 <ng-template let-row="row" #columnEntrega>
-                    <small>{{ planoTrabalhoService.tipoEntrega(row).nome }}</small>
+                    <small>{{ row.badge.descricao }}</small>
+                    <badge [icon]="entityService.getIcon('Entrega')" [label]="row.badge.nome"></badge>
+                </ng-template>
+            </column>
+            <column title="% Força Trab. Planejado" [template]="columnForcaTrabalho">
+                <ng-template let-row="row" #columnForcaTrabalho>
+                    <badge color="light" [label]="row.entrega.forca_trabalho + '%'"></badge>
                 </ng-template>
             </column>
         </columns>

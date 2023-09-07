@@ -66,7 +66,7 @@ export class PlanoTrabalhoDaoService extends DaoBaseService<PlanoTrabalho> {
           reject(response?.error);
         } else {
           let dados = response?.dados as PlanoTrabalhoByUsuario;
-          dados.planos = dados.planos.map(x => new PlanoTrabalho(x));
+          dados.planos = dados.planos.map(x => new PlanoTrabalho(this.getRow(x)));
           resolve(dados);
         }
       }, error => reject(error));

@@ -608,7 +608,8 @@ class ServiceBase extends DynamicMethods
         if(!empty($data['limit'])) {
             $query->skip(max($data['page']-1, 0) * $data['limit'])->take($data['limit']);
         }
-        $rows = method_exists($this, 'proxyRows') ? $this->proxyRows($query->get()) : $query->get();
+        $rows = $query->get();
+        $rows = method_exists($this, 'proxyRows') ? $this->proxyRows($rows) : $rows;
         $extra = method_exists($this, 'proxyExtra') ? $this->proxyExtra($rows, $data) : null;
         return [
             'count' => $count,

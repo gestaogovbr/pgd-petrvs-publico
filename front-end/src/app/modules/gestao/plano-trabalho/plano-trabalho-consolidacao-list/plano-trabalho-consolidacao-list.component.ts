@@ -35,6 +35,15 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
     }, this.cdRef, this.validate);
   }
 
+  ngAfterViewInit(): void {
+    super.ngAfterViewInit();
+    let agora = (new Date()).getTime();
+    this.items.forEach(v => {
+      if(!v.plano_trabalho) v.plano_trabalho = this.entity;
+      if(this.util.asDate(v.data_inicio)!.getTime() <= agora && agora <= this.util.asDate(v.data_fim)!.getTime()) this.grid!.expand(v.id);
+    });
+  }
+
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
     // TODO: Validar data

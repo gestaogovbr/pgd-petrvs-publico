@@ -40,6 +40,7 @@ class CreateAtividadesTable extends Migration
             // Chaves estrangeiras:
             $table->foreignUuid('plano_trabalho_id')->nullable()->constrained("planos_trabalhos")->onDelete('restrict')->onUpdate('cascade')->comment("Plano de trabalho que a atividade está vinculada");
             $table->foreignUuid('plano_trabalho_entrega_id')->nullable()->constrained("planos_trabalhos_entregas")->onDelete('restrict')->onUpdate('cascade')->comment("Entrega que a atividade está vinculada");
+            $table->foreignUuid('plano_trabalho_consolidacao_id')->nullable()->constrained("planos_trabalhos_consolidacoes")->onDelete('restrict')->onUpdate('cascade')->comment("Preenchido quando a atividade é lançada diretamente pela consolidação");
             $table->foreignUuid('tipo_atividade_id')->nullable()->constrained("tipos_atividades")->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de atividade");
             $table->foreignUuid('demandante_id')->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->comment("Usuário demandante");
             $table->foreignUuid('usuario_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Usuário responsável pela atividade");

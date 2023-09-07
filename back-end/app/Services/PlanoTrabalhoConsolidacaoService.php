@@ -29,7 +29,14 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
    */
   public function consolidacaoDados($id): array
   {
-    $consolidacao = PlanoTrabalhoConsolidacao::with(['ocorrencias', 'atividades', 'planoTrabalho.entregas.entrega'])->find($id);
+    $consolidacao = PlanoTrabalhoConsolidacao::with([
+      'ocorrencias', 
+      'planoTrabalho.entregas.entrega', 
+      'planoTrabalho.entregas.planoEntregaEntrega:id,descricao,plano_entrega_id,entrega_id', 
+      'planoTrabalho.entregas.planoEntregaEntrega.entrega:id,nome,tipo_indicador', 
+      'planoTrabalho.tipoModalidade'
+    ])->find($id);
+    $planosEntregasIds = array_map(fn($pe) => $pe->planoEntregaEntrega->plano_entrega_id, $consolidacao->planoTrabalho->entregas?->all() ?? []);
     $planoTrabalho = $consolidacao->planoTrabalho;
     $atividades = Atividade::with(['demandante', 'usuario', 'tipoAtividade'])->
       where('data_estipulada_entrega', '>=', $consolidacao->data_inicio)->
@@ -40,9 +47,10 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       where('data_inicio', '<=', $consolidacao->data_fim)->
       where('usuario_id', $planoTrabalho->usuario_id)->get();
     return [
-      'atividades' => $atividades,
+      'atividades' => array_map(fn($atividade) => array_merge($atividade->toArray(), ["metadados" => $this->atividadeService->metadados($atividade)]), $atividades->all()),
       'consolidaoAtividades' => $consolidacao->atividades ?? [],
-      'entregas' => $consolidacao->planoTrabalho->entregas ?? [],
+      'planoTrabalho' => $consolidacao->planoTrabalho,
+      'planosEntregas' => PlanoEntrega::whereIn("id", $planosEntregasIds)->get(),
       'ocorrencias' => $consolidacao->ocorrencias ?? [],
       'afastamentos' => $afastamentos
     ];

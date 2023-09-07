@@ -8,19 +8,27 @@ import { PlanoTrabalhoConsolidacaoOcorrenciaDaoService } from 'src/app/dao/plano
 import { IIndexable } from 'src/app/models/base.model';
 import { PlanoTrabalhoConsolidacao } from 'src/app/models/plano-trabalho-consolidacao.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
-import { Atividade } from 'src/app/models/atividade.model';
+import { Atividade, AtividadeChecklist } from 'src/app/models/atividade.model';
 import { PlanoTrabalhoConsolidacaoOcorrencia } from 'src/app/models/plano-trabalho-consolidacao-ocorrencia.model';
 import { Afastamento } from 'src/app/models/afastamento.model';
 import { PlanoTrabalhoEntrega } from 'src/app/models/plano-trabalho-entrega.model';
-import { PlanoTrabalhoService } from '../plano-trabalho.service';
+import { BadgeEntrega, PlanoTrabalhoService } from '../plano-trabalho.service';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { TipoAtividadeDaoService } from 'src/app/dao/tipo-atividade-dao.service';
 import { PlanoEntregaService } from '../../plano-entrega/plano-entrega.service';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
+import { AtividadeOptionsMetadata, AtividadeService } from '../../atividade/atividade.service';
+import { LookupItem } from 'src/app/services/lookup.service';
+import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
+import { CalendarService } from 'src/app/services/calendar.service';
+import { SelectItem } from 'src/app/components/input/input-base';
+import { TipoAtividade } from 'src/app/models/tipo-atividade.model';
+import { Unidade } from 'src/app/models/unidade.model';
 
 export type ConsolidacaoEntrega = {
   id: string,
   entrega: PlanoTrabalhoEntrega,
+  badge: BadgeEntrega,
   atividades: Atividade[]
 };
 
@@ -32,6 +40,8 @@ export type ConsolidacaoEntrega = {
 export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('gridEntregas', { static: false }) public gridEntregas?: GridComponent;
+  @ViewChild('gridAtividades', { static: false }) public gridAtividades?: GridComponent;
+  @ViewChild('etiqueta', { static: false }) public etiqueta?: InputSelectComponent;
   @Input() cdRef: ChangeDetectorRef;
   @Input() planoTrabalho?: PlanoTrabalho;
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
@@ -42,14 +52,22 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   public ocorrenciaDao: PlanoTrabalhoConsolidacaoOcorrenciaDaoService;
   public formAtividade: FormGroup;
   public formOcorrencia: FormGroup;
+  public formEdit: FormGroup;
+  public unidade?: Unidade;
   public dao: PlanoTrabalhoConsolidacaoDaoService;
   public atividadeDao: AtividadeDaoService;
+  public atividadeService: AtividadeService;
+  public calendar: CalendarService;
+  public joinAtividade: string[] = ['demandante', 'usuario', 'tipo_atividade'];
   public tipoAtividadeDao: TipoAtividadeDaoService;
   public planoTrabalhoService: PlanoTrabalhoService;
   public planoEntregaService: PlanoEntregaService;
   public itemsEntregas: ConsolidacaoEntrega[] = [];
+  public etiquetas: LookupItem[] = [];
+  public checklist?: AtividadeChecklist[];
   public itemsOcorrencias: PlanoTrabalhoConsolidacaoOcorrencia[] = [];
   public itemsAfastamentos: Afastamento[] = [];
+  public atividadeOptionsMetadata: AtividadeOptionsMetadata;
   
   constructor(public injector: Injector) {
     super(injector);
@@ -57,21 +75,60 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     this.dao = injector.get<PlanoTrabalhoConsolidacaoDaoService>(PlanoTrabalhoConsolidacaoDaoService);
     this.consolidacaoOcorrenciaDao = injector.get<PlanoTrabalhoConsolidacaoOcorrenciaDaoService>(PlanoTrabalhoConsolidacaoOcorrenciaDaoService);
     this.atividadeDao = injector.get<AtividadeDaoService>(AtividadeDaoService);
+    this.atividadeService = injector.get<AtividadeService>(AtividadeService);
+    this.calendar = injector.get<CalendarService>(CalendarService);
     this.ocorrenciaDao = injector.get<PlanoTrabalhoConsolidacaoOcorrenciaDaoService>(PlanoTrabalhoConsolidacaoOcorrenciaDaoService);
     this.tipoAtividadeDao = injector.get<TipoAtividadeDaoService>(TipoAtividadeDaoService);
     this.planoTrabalhoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
     this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
     this.formAtividade = this.fh.FormBuilder({
-      esforco: { default: 0 },
-      realizado: { default: null },
       descricao: { default: "" },
-      tipo_atividade: {default: null}
+      etiquetas: { default: [] },
+      checklist: { default: [] },
+      comentarios: { default: [] },
+      esforco: { default: 0 },
+      tempo_planejado: { default: 0 },
+      tipo_atividade_id: {default: null}
     }, this.cdRef, this.validateEntrega);
     this.formOcorrencia = this.fh.FormBuilder({
       data_inicio: { default: new Date() },
       data_fim: { default: new Date() },
       descricao: { default: "" }
     }, this.cdRef, this.validateOcorrencia);
+    this.formEdit = this.fh.FormBuilder({
+      progresso: { default: 0 },
+      etiquetas: { default: [] },
+      etiqueta: { default: null }
+    });
+    this.atividadeOptionsMetadata = {
+      refreshId: this.atividadeRefreshId.bind(this),
+      removeId: this.atividadeRemoveId.bind(this),
+      refresh: this.refresh.bind(this)
+    }
+  }
+
+  public refresh() {
+    this.loadData(this.entity!, this.form);
+  }
+
+  public atividadeRefreshId(id: string) {
+    this.itemsEntregas.forEach(entrega => {
+      let foundIndex = entrega.atividades.findIndex(x => x.id == id);
+      if(foundIndex >= 0) {
+        this.atividadeDao.getById(id, this.joinAtividade).then(atividade => {
+          if(atividade) entrega.atividades[foundIndex] = atividade;
+        });
+      }
+    });
+    this.cdRef.detectChanges();
+  }
+
+  public atividadeRemoveId(id: string) {
+    this.itemsEntregas.forEach(entrega => {
+      let foundIndex = entrega.atividades.findIndex(x => x.id == id);
+      if(foundIndex >= 0) entrega.atividades.splice(foundIndex, 1);
+    });
+    this.cdRef.detectChanges();
   }
 
   ngAfterViewInit() {
@@ -107,45 +164,73 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     try {
       let dados = await this.dao!.dadosConsolidacao(entity.id);
       this.itemsEntregas = dados.entregas.map(x => {
-        return {
+        x.plano_entrega_entrega!.plano_entrega = dados.planosEntregas.find(pe => pe.id == x.plano_entrega_entrega!.plano_entrega_id);
+        let result = {
           id: x.id,
           entrega: x,
-          atividades: dados.atividades.filter(y => y.plano_trabalho_entrega_id == x.id)
+          atividades: dados.atividades.filter(y => y.plano_trabalho_entrega_id == x.id),
+          badge: this.planoTrabalhoService.tipoEntrega(x, dados.planoTrabalho)
         };
+        return result;
       });
+      this.planoTrabalho = dados.planoTrabalho;
       this.itemsOcorrencias = dados.ocorrencias;
       this.itemsAfastamentos = dados.afastamentos;
+      this.unidade = dados.planoTrabalho.unidade || this.entity!.plano_trabalho?.unidade;
     } finally {
       this.gridEntregas!.loading = false;
       this.cdRef.detectChanges();
     }
-  }
+  }  
 
-  public get hasEsforco(): boolean {
-    return !!this.planoTrabalho?.tipo_modalidade?.atividade_esforco;
-  }
-  
-  public get hasRealizado(): boolean {
-    return false;
-  }
-  
   /***************************************************************************************
   * Atividades 
   ****************************************************************************************/
   public async addAtividade(entrega: PlanoTrabalhoEntrega) {
+    let planoTrabalho: PlanoTrabalho | undefined = entrega.plano_trabalho || this.entity!.plano_trabalho;
+    let efemerides = this.calendar.calculaDataTempoUnidade(this.entity!.data_inicio, this.entity!.data_fim, planoTrabalho!.carga_horaria, this.unidade!, "ENTREGA");
+    const tempoPlanejado = this.calendar.horasUteis(this.entity!.data_inicio, this.entity!.data_fim, planoTrabalho!.carga_horaria, this.unidade!, "DISTRIBUICAO");
     return new Atividade({
       id: this.dao!.generateUuid(),
+      plano_trabalho: planoTrabalho,
+      plano_trabalho_entrega: entrega,
+      plano_trabalho_consolidacao: this.entity,
+      demandante: this.auth.usuario,
+      usuario: this.auth.usuario,
+      unidade: this.unidade,
+      data_distribuicao: this.entity!.data_inicio,
+      carga_horaria: planoTrabalho!.carga_horaria,
+      data_estipulada_entrega: this.entity!.data_fim,
+      data_inicio: this.entity!.data_inicio,
+      data_entrega: this.entity!.data_fim,
+      tempo_planejado: tempoPlanejado,
+      tempo_despendido: efemerides?.tempoUtil || 0,
+      status: 'CONCLUIDO',
+      progresso: 100,
+      plano_trabalho_id: this.entity!.plano_trabalho_id,
+      plano_trabalho_entrega_id: entrega.id,
       plano_trabalho_consolidacao_id: this.entity!.id,
-      plano_trabalho_entrega_id: entrega.id
+      demandante_id: this.auth.usuario!.id,
+      usuario_id: this.auth.usuario!.id,
+      unidade_id: this.unidade!.id,
+      metadados: { // Simula os metadados enviados pelo servidor
+        atrasado: false,
+        tempo_despendido: 0,
+        tempo_atraso: 0,
+        pausado: false,
+        iniciado: true,
+        concluido: true,
+        avaliado: false,
+        arquivado: false,
+        produtividade: 0,
+        extra: undefined,
+        _status: []
+      }
     });
   }
 
   public async loadAtividade(form: FormGroup, row: any) {
-    this.formAtividade.patchValue({
-      esforco: row.esforco,
-      realizado: row.realizado,
-      descricao: row.descricao
-    });
+    this.formAtividade.patchValue(row);
     this.cdRef.detectChanges();
   }
 
@@ -170,10 +255,8 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     this.formAtividade.markAllAsTouched();
     if (this.formAtividade!.valid) {
       row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
-      row.esforco = form.controls.esforco.value;
-      row.realizado = form.controls.esforco.value;
-      row.descricao = form.controls.descricao.value;
-      result = await this.atividadeDao?.save(row);
+      this.util.fillForm(row, this.formAtividade!.value);
+      result = await this.atividadeDao?.save(row, this.joinAtividade, ['etiquetas', 'checklist', 'comentarios', 'pausas', 'tarefas']);
     }
     return result;
   }
@@ -184,6 +267,76 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     result.push(Object.assign({}, this.gridEntregas!.BUTTON_DELETE, {}));
     return result;
   }  
+
+  public async onColumnProgressoEtiquetasChecklistEdit(row: any) {
+    this.formEdit.controls.progresso.setValue(row.progresso);
+    this.formEdit.controls.etiquetas.setValue(row.etiquetas);
+    this.formEdit.controls.etiqueta.setValue(null);
+    this.etiquetas = this.util.merge(row.tipo_atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key);
+    this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);
+    this.checklist = this.util.clone(row.checklist);
+  }
+
+  public async onColumnProgressoEtiquetasChecklistSave(row: any) {
+    try {
+      const saved = await this.atividadeDao!.update(row.id, {
+        progresso: this.formEdit.controls.progresso.value,
+        etiquetas: this.formEdit.controls.etiquetas.value,
+        checklist: this.checklist
+      });
+      row.progresso = this.formEdit.controls.progresso.value;
+      row.checklist = this.checklist;
+      return !!saved;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  public onEtiquetaConfigClick() {
+    this.go.navigate({ route: ["configuracoes", "preferencia", "usuario", this.auth.usuario!.id], params: { etiquetas: true } }, {
+      modal: true, modalClose: (modalResult) => {
+        this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);
+        this.cdRef.detectChanges();
+      }
+    });
+  }
+
+  public addItemHandleEtiquetas(): LookupItem | undefined {
+    let result = undefined;
+    if (this.etiqueta && this.etiqueta.selectedItem) {
+      const item = this.etiqueta.selectedItem;
+      const key = item.key?.length ? item.key : this.util.textHash(item.value);
+      if (this.util.validateLookupItem(this.formEdit.controls.etiquetas.value, key)) {
+        result = {
+          key: key,
+          value: item.value,
+          color: item.color,
+          icon: item.icon
+        };
+        this.formEdit.controls.etiqueta.setValue(null);
+      }
+    }
+    return result;
+  };
+
+  public loadTipoAtividade(tipoAtividade: TipoAtividade | undefined) {
+    if(tipoAtividade) {
+      this.etiquetas = this.atividadeService.buildEtiquetas(this.unidade, tipoAtividade);
+      this.atividadeService.buildChecklist(tipoAtividade, this.formAtividade.controls.checklist);
+      this.formAtividade.controls.esforco.setValue(tipoAtividade?.esforco || 0);
+    } else {
+      this.etiquetas = [];
+      this.formAtividade.controls.esforco.setValue(0);
+    }
+    this.cdRef.detectChanges();
+  }
+
+  public onTipoAtividadeSelect(item: SelectItem) {
+    const tipoAtividade: TipoAtividade | undefined = item.entity as TipoAtividade;
+    this.loadTipoAtividade(tipoAtividade);
+    this.atividadeService.comentarioAtividade(tipoAtividade, this.formAtividade!.controls.comentarios);
+    this.cdRef.detectChanges();
+  }
 
   /***************************************************************************************
   * Ocorrências 
@@ -246,7 +399,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       filterSnapshot: undefined,
       querySnapshot: undefined,
       modalClose: (modalResult) => {
-        if(modalResult) this.loadData(this.entity!, this.form);
+        if(modalResult) this.refresh();
       }
     });
   }

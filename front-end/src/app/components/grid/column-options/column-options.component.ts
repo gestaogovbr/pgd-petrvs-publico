@@ -18,9 +18,9 @@ export class ColumnOptionsComponent extends ComponentBase implements OnInit {
   @Input() grid?: GridComponent;
   @Input() upDownButtons?: string;
   @Input() buttons: ToolbarButton[] = [];
-  @Input() dynamicButtons?: (row: any) => ToolbarButton[];
+  @Input() dynamicButtons?: (row: any, metadata?: any) => ToolbarButton[];
   @Input() options?: ToolbarButton[] = [];
-  @Input() dynamicOptions?: (row: any) => ToolbarButton[];
+  @Input() dynamicOptions?: (row: any, metadata?: any) => ToolbarButton[];
 
   public randomId = Math.round(Math.random() * 1000).toString();
   public go: NavigateService;
@@ -69,7 +69,7 @@ export class ColumnOptionsComponent extends ComponentBase implements OnInit {
 
   public get allButtons(): ToolbarButton[] {
     if(!this._allButtons) {
-      const dynamicButtons = this.dynamicButtons ? this.dynamicButtons(this.row) : [];
+      const dynamicButtons = this.dynamicButtons ? this.dynamicButtons(this.row, this.column.metadata) : [];
       this._allButtons = [...dynamicButtons, ...this.buttons];
     }
     return this._allButtons!;
@@ -77,7 +77,7 @@ export class ColumnOptionsComponent extends ComponentBase implements OnInit {
 
   public get allOptions(): ToolbarButton[] {
     if(!this._allOptions) {
-      const dynamicOptions = this.dynamicOptions ? this.dynamicOptions(this.row) : [];
+      const dynamicOptions = this.dynamicOptions ? this.dynamicOptions(this.row, this.column.metadata) : [];
       this._allOptions = [...dynamicOptions, ...(this.options || [])];
     }
     return this._allOptions!;

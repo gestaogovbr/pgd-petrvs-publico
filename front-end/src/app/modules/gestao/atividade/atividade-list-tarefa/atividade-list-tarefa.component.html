@@ -17,7 +17,7 @@
                 </span/-->
             </ng-template>
         </column>
-        <column title="Concluído" [align]="'center'" [template]="concluido" [editTemplate]="editConcluido" [edit]="editable ? onColumnConcluidoEdit.bind(this) : undefined" [save]="editable ? onColumnConcluidoSave.bind(this) : undefined">
+        <column title="Concluído" [align]="'center'" [template]="concluido" [columnEditTemplate]="editConcluido" [edit]="editable ? onColumnConcluidoEdit.bind(this) : undefined" [save]="editable ? onColumnConcluidoSave.bind(this) : undefined">
             <ng-template let-row="row" #concluido>
                 <div class="text-center"><i *ngIf="row.concluido" class="bi bi-check-circle"></i></div>
             </ng-template>
