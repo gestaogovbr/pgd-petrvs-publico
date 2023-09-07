@@ -246,10 +246,30 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public onDataInicioChange(event: Event) {
+         
+    const di = new Date(this.form!.controls.data_inicio.value).getTime();
+    const df = new Date(this.form!.controls.data_fim.value).getTime();
+
+    if(df < di){
+      let diaI = new Date(di);
+      diaI.setDate(diaI.getDate() + 1);
+      this.form!.controls.data_fim.setValue(diaI)   
+    }
+   
+   
     this.calculaTempos();
   }
 
   public onDataFimChange(event: Event) {
+
+    const di = new Date(this.form!.controls.data_inicio.value).getTime();
+    const df = new Date(this.form!.controls.data_fim.value).getTime();
+
+    if(df < di){
+      let diaI = new Date(di);
+      diaI.setDate(diaI.getDate() + 1);
+      this.form!.controls.data_fim.setValue(diaI)   
+    }
     this.calculaTempos();
   }
 

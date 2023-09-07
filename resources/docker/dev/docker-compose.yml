@@ -25,6 +25,8 @@ services:
     working_dir: /var/www
     ports:
       - "80:80"
+    dns:
+      - 1.1.1.1
     depends_on:
       - petrvs_db
     volumes:
@@ -41,6 +43,8 @@ services:
       - NODE_ENV=production
     ports:
       - "4200:4200"
+    dns:
+      - 1.1.1.1
     depends_on:
       - petrvs_php
     volumes:
