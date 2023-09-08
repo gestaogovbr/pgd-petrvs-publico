@@ -335,7 +335,7 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
         result.push(["data_filtro_fim", "==", form.data_filtro_fim]);
       }
       if (form.usuario?.length) {
-        result.push(["usuario.nome", "like", "%" + form.usuario + "%"]);
+        result.push(["usuario.nome", "like", "%" + form.usuario.trim().replace(" ", "%") + "%"]);
       }
       if (form.unidade_id?.length) {
         result.push(["unidade_id", "==", form.unidade_id]);
@@ -487,7 +487,7 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
     const planosIds = row ? [row.id] : Object.keys(this.grid.multiselected || {});
     const documentos = this.grid.items.filter(x => planosIds.includes(x.id) && x.documento_id?.length).map(x => x.documento);
     if (!documentos.length) {
-      this.dialog.alert("Selecione", "Nenhum plano seleciono");
+      this.dialog.alert("Selecione", "Nenhum plano selecionado!");
     } else {
       this.documentoService.sign(documentos).then(() => this.grid.reset());
     }

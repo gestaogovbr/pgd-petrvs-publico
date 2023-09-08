@@ -10,6 +10,7 @@ class StatusService extends ServiceBase
     public function atualizaStatus($entity, $novoStatus, $justificativa, $usuarioId = null) {
         try {
             if(!empty($entity)) {
+                //$statusHistorico-> checar se o ultimo status do histório já não é o mesmo do novoStatus
                 $entity->statusHistorico()->create([
                     'codigo' => $novoStatus,
                     'justificativa' => $justificativa,

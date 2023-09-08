@@ -1294,8 +1294,14 @@ class PlanoEntregaFormComponent extends src_app_modules_base_page_form_base__WEB
     return result;
   }
   onDataChange() {
+    this.sugereNome();
+  }
+  onUnidadeChange() {
+    this.sugereNome();
+  }
+  sugereNome() {
     if (this.action == 'new') {
-      const sigla = this.auth.unidade?.sigla;
+      const sigla = this.unidade?.selectedItem ? this.unidade?.selectedItem?.entity.sigla : this.auth.unidade?.sigla;
       const di = new Date(this.form.controls.data_inicio.value).toLocaleDateString();
       const df = new Date(this.form.controls.data_fim.value).toLocaleDateString();
       this.form.controls.nome.setValue(sigla + " - " + di + " - " + df);
@@ -1342,7 +1348,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵInheritDefinitionFeature"]],
   decls: 20,
   vars: 24,
-  consts: [["initialFocus", "entregas", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "unidade_id", "required", "", 3, "size", "disabled", "dao"], ["unidade", ""], ["controlName", "programa_id", 3, "size", "disabled", "dao", "change"], ["programa", ""], ["date", "", "label", "In\u00EDcio", "controlName", "data_inicio", "required", "", 3, "size", "labelInfo", "change"], ["date", "", "label", "Fim", "controlName", "data_fim", "required", "", 3, "size", "labelInfo", "change"], ["data_fim", ""], ["label", "Nome", "controlName", "nome", "required", "", 3, "size"], ["nome", ""], ["controlName", "planejamento_id", "label", "Planejamento Institucional", 3, "size", "emptyValue", "dao"], ["planejamento", ""], ["controlName", "cadeia_valor_id", "label", "Cadeia de Valor", 3, "size", "emptyValue", "dao"], ["cadeiaValor", ""], ["title", "Entregas"], ["noPersist", "", 3, "control", "planejamentoId", "cadeiaValorId", "unidadeId"], ["entregas", ""]],
+  consts: [["initialFocus", "entregas", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "unidade_id", "required", "", 3, "size", "disabled", "dao", "change"], ["unidade", ""], ["controlName", "programa_id", 3, "size", "disabled", "dao", "change"], ["programa", ""], ["date", "", "label", "In\u00EDcio", "controlName", "data_inicio", "required", "", 3, "size", "labelInfo", "change"], ["date", "", "label", "Fim", "controlName", "data_fim", "required", "", 3, "size", "labelInfo", "change"], ["data_fim", ""], ["label", "Nome", "controlName", "nome", "required", "", 3, "size"], ["nome", ""], ["controlName", "planejamento_id", "label", "Planejamento Institucional", 3, "size", "emptyValue", "dao"], ["planejamento", ""], ["controlName", "cadeia_valor_id", "label", "Cadeia de Valor", 3, "size", "emptyValue", "dao"], ["cadeiaValor", ""], ["title", "Entregas"], ["noPersist", "", 3, "control", "planejamentoId", "cadeiaValorId", "unidadeId"], ["entregas", ""]],
   template: function PlanoEntregaFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵelementStart"](0, "editable-form", 0);
@@ -1351,8 +1357,11 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵdef
       })("cancel", function PlanoEntregaFormComponent_Template_editable_form_cancel_0_listener() {
         return ctx.onCancel();
       });
-      _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵelementStart"](1, "div")(2, "div", 1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵelement"](3, "input-search", 2, 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵelementStart"](1, "div")(2, "div", 1)(3, "input-search", 2, 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵlistener"]("change", function PlanoEntregaFormComponent_Template_input_search_change_3_listener() {
+        return ctx.onUnidadeChange();
+      });
+      _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵelementStart"](5, "input-search", 4, 5);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵlistener"]("change", function PlanoEntregaFormComponent_Template_input_search_change_5_listener() {
         return ctx.onProgramaChange();
@@ -1556,10 +1565,10 @@ class PlanoEntregaListEntregaListComponent extends src_app_modules_base_page_lis
         result.push(["unidade_id", "==", form.unidade_id]);
       }
       if (form.descricao?.length) {
-        result.push(["descricao", "like", "%" + form.descricao.replace(" ", "%") + "%"]);
+        result.push(["descricao", "like", "%" + form.descricao.trim().replace(" ", "%") + "%"]);
       }
       if (form.destinatario?.length) {
-        result.push(["destinatario", "like", "%" + form.destinatario.replace(" ", "%") + "%"]);
+        result.push(["destinatario", "like", "%" + form.destinatario.trim().replace(" ", "%") + "%"]);
       }
       return result;
     };
@@ -2785,52 +2794,29 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
         let unidadesUsuarioEhGestor = this.auth.unidades?.filter(x => this.auth.isGestorUnidade(x));
         let w1 = ["unidade_id", "in", this.auth.unidades?.map(u => u.id)];
         let w2 = ["unidade_id", "in", unidadesUsuarioEhGestor?.map(u => u.unidade_pai?.id)];
-        //let w3 = ["unidade.unidade_pai_id", "in", unidadesUsuarioEhGestor?.map(u => u.id)];
-        //if (this.auth.isGestorAlgumaAreaTrabalho()) result.push(["or", w1, w2, w3]); else result.push(w1);
-        if (this.auth.isGestorAlgumaAreaTrabalho()) result.push(["or", w1, w2]);else result.push(w1);
-        if (form.nome?.length) {
-          result.push(["nome", "like", "%" + form.nome + "%"]);
-        }
-        if (form.data_inicio) {
-          result.push(["data_inicio", ">=", form.data_inicio]);
-        }
-        if (form.data_fim) {
-          result.push(["data_fim", "<=", form.data_fim]);
-        }
-        if (form.unidade_id) {
-          result.push(["unidade_id", "==", form.unidade_id]);
-        }
-        if (form.planejamento_id) {
-          result.push(["planejamento_id", "==", form.planejamento_id]);
-        }
-        if (form.cadeia_valor_id) {
-          result.push(["cadeia_valor_id", "==", form.cadeia_valor_id]);
-        }
-        if (form.status) {
-          result.push(["status", "==", form.status]);
-        }
-      } else {
-        if (form.nome?.length) {
-          result.push(["nome", "like", "%" + form.nome + "%"]);
-        }
-        if (form.data_inicio) {
-          result.push(["data_inicio", ">=", form.data_inicio]);
-        }
-        if (form.data_fim) {
-          result.push(["data_fim", "<=", form.data_fim]);
-        }
-        if (form.unidade_id) {
-          result.push(["unidade_id", "==", form.unidade_id]);
-        }
-        if (form.planejamento_id) {
-          result.push(["planejamento_id", "==", form.planejamento_id]);
-        }
-        if (form.cadeia_valor_id) {
-          result.push(["cadeia_valor_id", "==", form.cadeia_valor_id]);
-        }
-        if (form.status) {
-          result.push(["status", "==", form.status]);
-        }
+        let w3 = ["unidade.unidade_pai_id", "in", unidadesUsuarioEhGestor?.map(u => u.id)];
+        if (this.auth.isGestorAlgumaAreaTrabalho()) result.push(["or", w1, w2, w3]);else result.push(w1);
+      }
+      if (form.nome?.length) {
+        result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
+      }
+      if (form.data_inicio) {
+        result.push(["data_inicio", ">=", form.data_inicio]);
+      }
+      if (form.data_fim) {
+        result.push(["data_fim", "<=", form.data_fim]);
+      }
+      if (form.unidade_id) {
+        result.push(["unidade_id", "==", form.unidade_id]);
+      }
+      if (form.planejamento_id) {
+        result.push(["planejamento_id", "==", form.planejamento_id]);
+      }
+      if (form.cadeia_valor_id) {
+        result.push(["cadeia_valor_id", "==", form.cadeia_valor_id]);
+      }
+      if (form.status) {
+        result.push(["status", "==", form.status]);
       }
       //  (RI_PENT_5) Por padrão, os planos de entregas retornados na listagem do grid são os que não foram arquivados nem cancelados.
       //  O não-arquivamento é tratado abaixo. A condição de não-cancelado é tratada no back-end.
@@ -3036,12 +3022,12 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
     }
   }
   checaBotaoAderirToolbar() {
-    let planos_ativos_unidade_pai = this.planosEntregasAtivosUnidadePai().map(x => x.id);
+    /* let planos_ativos_unidade_pai = this.planosEntregasAtivosUnidadePai().length ? this.planosEntregasAtivosUnidadePai().map(x => x.id) : [];
     let planos_superiores_vinculados_pela_unidade_selecionada = this.planosEntregasAtivosUnidadeSelecionada().map(x => x.plano_entrega_id).filter(x => x != null);
-    let condition1 = this.auth.isGestorUnidade() || this.auth.isGestorUnidade(this.auth.unidade?.unidade_pai_id) || this.auth.isLotacaoUsuario(this.auth.unidade) && this.auth.hasPermissionTo("MOD_PENT_ADR");
+    let condition1 = this.auth.isGestorUnidade() || this.auth.isGestorUnidade(this.auth.unidade?.unidade_pai_id) || (this.auth.isLotacaoUsuario(this.auth.unidade) && this.auth.hasPermissionTo("MOD_PENT_ADR"));
     let condition2 = !!planos_ativos_unidade_pai.filter(x => !planos_superiores_vinculados_pela_unidade_selecionada.includes(x)).length;
     this.habilitarAdesaoToolbar = condition1 && condition2;
-    this.BOTAO_ADERIR_TOOLBAR.disabled = !this.habilitarAdesaoToolbar;
+    this.BOTAO_ADERIR_TOOLBAR.disabled = !this.habilitarAdesaoToolbar; */
     /*  (RI_PENT_1)
         O botão Aderir, na toolbar, deverá ser exibido sempre, mas para ficar habilitado:
         1. o usuário logado precisa ser gestor da unidade selecionada ou da sua unidade-pai, ou uma destas ser sua unidade de lotação principal e ele
@@ -3049,7 +3035,6 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
         2. a unidade-pai da unidade selecionada precisa possuir plano de entrega com o status ATIVO, que já não tenha sido vinculado pela unidade selecionada;
     */
   }
-
   planosEntregasAtivosUnidadePai() {
     return this.auth.unidade?.unidade_pai?.planos_entrega?.filter(x => this.planoEntregaService.isAtivo(x)) || [];
   }
@@ -3290,7 +3275,7 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
   arquivar(planoEntrega) {
     this.dialog.confirm("Arquivar?", "Deseja realmente arquivar o Plano de Entregas?").then(confirm => {
       if (confirm) {
-        this.dao.arquivar(planoEntrega.id, true).then(() => {
+        this.dao.arquivar(planoEntrega.id, null, true).then(() => {
           if (this.filter?.controls.arquivadas?.value) {
             this.grid.query.refreshId(planoEntrega.id);
           } else {
@@ -3299,6 +3284,7 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
         }).catch(error => this.dialog.alert("Erro", "Erro ao arquivar o Plano de Entregas: " + error?.message ? error?.message : 0));
       }
     });
+    this.checaBotaoAderirToolbar();
   }
   avaliar(planoEntrega) {
     const self = this;
@@ -3308,67 +3294,83 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
     }).catch(function (error) {
       self.dialog.alert("Erro", "Erro ao avaliar: " + error?.message ? error?.message : 0);
     });
-    this.auth.selecionaUnidade(this.auth.unidade.id);
     this.checaBotaoAderirToolbar();
   }
   cancelarAvaliacao(planoEntrega) {
     const self = this;
-    this.dialog.confirm("Cancelar avaliacao ?", "Deseja realmente cancelar a avaliação?").then(confirm => {
-      if (confirm) {
-        this.dao.cancelarAvaliacao(planoEntrega.id).then(function () {
-          (self.grid?.query || self.query).refreshId(planoEntrega.id);
-          self.dialog.alert("Sucesso", "Cancelado com sucesso!");
-        }).catch(function (error) {
-          self.dialog.alert("Erro", "Erro ao cancelar avaliacao: " + error?.message ? error?.message : 0);
-        });
+    this.go.navigate({
+      route: ["uteis", "status"]
+    }, {
+      metadata: {},
+      modalClose: justificativa => {
+        if (justificativa) {
+          this.dao.cancelarAvaliacao(planoEntrega.id, justificativa).then(function () {
+            (self.grid?.query || self.query).refreshId(planoEntrega.id);
+            self.dialog.alert("Sucesso", "Cancelado com sucesso!");
+          }).catch(function (error) {
+            self.dialog.alert("Erro", "Erro ao cancelar avaliacao: " + error?.message ? error?.message : 0);
+          });
+        }
       }
     });
-    this.auth.selecionaUnidade(this.auth.unidade.id);
     this.checaBotaoAderirToolbar();
   }
   cancelarConclusao(planoEntrega) {
     const self = this;
-    this.dialog.confirm("Cancelar conclusão ?", "Deseja realmente cancelar a conclusão?").then(confirm => {
-      if (confirm) {
-        this.dao.cancelarConclusao(planoEntrega.id).then(function () {
-          (self.grid?.query || self.query).refreshId(planoEntrega.id);
-          self.dialog.alert("Sucesso", "Cancelado com sucesso!");
-        }).catch(function (error) {
-          self.dialog.alert("Erro", "Erro ao cancelar conclusão: " + error?.message ? error?.message : 0);
-        });
+    this.go.navigate({
+      route: ["uteis", "status"]
+    }, {
+      metadata: {},
+      modalClose: justificativa => {
+        if (justificativa) {
+          this.dao.cancelarConclusao(planoEntrega.id, justificativa).then(function () {
+            (self.grid?.query || self.query).refreshId(planoEntrega.id);
+            self.dialog.alert("Sucesso", "Cancelado com sucesso!");
+          }).catch(function (error) {
+            self.dialog.alert("Erro", "Erro ao cancelar conclusão: " + error?.message ? error?.message : 0);
+          });
+        }
       }
     });
-    this.auth.selecionaUnidade(this.auth.unidade.id);
     this.checaBotaoAderirToolbar();
   }
   cancelarHomologacao(planoEntrega) {
     const self = this;
-    this.dialog.confirm("Cancelar homologacao ?", "Deseja realmente cancelar a homologacao?").then(confirm => {
-      if (confirm) {
-        this.dao.cancelarHomologacao(planoEntrega.id).then(function () {
-          (self.grid?.query || self.query).refreshId(planoEntrega.id);
-          self.dialog.alert("Sucesso", "Cancelado com sucesso!");
-        }).catch(function (error) {
-          self.dialog.alert("Erro", "Erro ao cancelar a homologação: " + error?.message ? error?.message : 0);
-        });
+    this.go.navigate({
+      route: ["uteis", "status"]
+    }, {
+      metadata: {},
+      modalClose: justificativa => {
+        if (justificativa) {
+          this.dao.cancelarHomologacao(planoEntrega.id, justificativa).then(function () {
+            (self.grid?.query || self.query).refreshId(planoEntrega.id);
+            self.dialog.alert("Sucesso", "Cancelado com sucesso!");
+          }).catch(function (error) {
+            self.dialog.alert("Erro", "Erro ao cancelar a homologação: " + error?.message ? error?.message : 0);
+          });
+        }
       }
     });
-    this.auth.selecionaUnidade(this.auth.unidade.id);
     this.checaBotaoAderirToolbar();
   }
   cancelarPlano(planoEntrega) {
     const self = this;
-    this.dialog.confirm("Cancelar plano ?", "Deseja realmente cancelar o plano de entregas?").then(confirm => {
-      if (confirm) {
-        this.dao.cancelarPlano(planoEntrega.id).then(function () {
-          (self.grid?.query || self.query).refreshId(planoEntrega.id);
-          self.dialog.alert("Sucesso", "Plano cancelado com sucesso!");
-        }).catch(function (error) {
-          self.dialog.alert("Erro", "Erro ao cancelar o plano: " + error?.message ? error?.message : 0);
-        });
+    this.go.navigate({
+      route: ["uteis", "status"]
+    }, {
+      metadata: {},
+      modalClose: justificativa => {
+        if (justificativa) {
+          this.dao.cancelarPlano(planoEntrega.id, justificativa).then(function () {
+            (self.grid?.query || self.query).refreshId(planoEntrega.id);
+            self.dialog.alert("Sucesso", "Plano cancelado com sucesso!");
+          }).catch(function (error) {
+            self.dialog.alert("Erro", "Erro ao cancelar o plano: " + error?.message ? error?.message : 0);
+          });
+        }
       }
     });
-    this.auth.selecionaUnidade(this.auth.unidade.id);
+    //this.auth.selecionaUnidade(this.auth!.unidade!.id);
     this.checaBotaoAderirToolbar();
   }
   concluir(planoEntrega) {
@@ -3387,14 +3389,18 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
     this.checaBotaoAderirToolbar();
   }
   desarquivar(planoEntrega) {
-    this.dialog.confirm("Desarquivar ?", "Deseja realmente desarquivar o Plano de Entregas?").then(confirm => {
-      if (confirm) {
-        this.dao.arquivar(planoEntrega.id, false).then(() => {
-          this.grid.query.refreshId(planoEntrega.id);
-        }).catch(error => this.dialog.alert("Erro", "Erro ao desarquivar o Plano de Entregas: " + error?.message ? error?.message : 0));
+    this.go.navigate({
+      route: ["uteis", "status"]
+    }, {
+      metadata: {},
+      modalClose: justificativa => {
+        if (justificativa) {
+          this.dao.arquivar(planoEntrega.id, justificativa, false).then(() => {
+            this.grid.query.refreshId(planoEntrega.id);
+          }).catch(error => this.dialog.alert("Erro", "Erro ao desarquivar o Plano de Entregas: " + error?.message ? error?.message : 0));
+        }
       }
     });
-    this.auth.selecionaUnidade(this.auth.unidade.id);
     this.checaBotaoAderirToolbar();
   }
   homologar(planoEntrega) {
@@ -3407,7 +3413,7 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
         }).catch(function (error) {
           self.dialog.alert("Erro", "Erro ao homologar: " + error?.message ? error?.message : 0);
         });
-        this.auth.selecionaUnidade(this.auth.unidade.id);
+        //this.auth.selecionaUnidade(this.auth!.unidade!.id);
         this.checaBotaoAderirToolbar();
       }
     });
@@ -3418,58 +3424,72 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
       if (confirm) {
         this.dao.liberarHomologacao(planoEntrega.id).then(function () {
           (self.grid?.query || self.query).refreshId(planoEntrega.id);
-          self.dialog.alert("Sucesso", "Liberado com sucesso!");
+          self.dialog.alert("Sucesso", "Liberado para homologação com sucesso!");
         }).catch(function (error) {
           self.dialog.alert("Erro", "Erro ao liberar para homologação: " + error?.message ? error?.message : 0);
         });
       }
     });
-    this.auth.selecionaUnidade(this.auth.unidade.id);
     this.checaBotaoAderirToolbar();
   }
   reativar(planoEntrega) {
     const self = this;
-    this.dialog.confirm("Reativar ?", "Deseja realmente reativar este Plano de Entregas?").then(confirm => {
-      if (confirm) {
-        this.dao.reativar(planoEntrega.id).then(function () {
-          (self.grid?.query || self.query).refreshId(planoEntrega.id);
-          self.dialog.alert("Sucesso", "Reativado com sucesso!");
-        }).catch(function (error) {
-          self.dialog.alert("Erro", "Erro ao reativar: " + error?.message ? error?.message : 0);
-        });
+    this.go.navigate({
+      route: ["uteis", "status"]
+    }, {
+      metadata: {},
+      modalClose: justificativa => {
+        if (justificativa) {
+          this.dao.reativar(planoEntrega.id, justificativa).then(function () {
+            (self.grid?.query || self.query).refreshId(planoEntrega.id);
+            self.dialog.alert("Sucesso", "Reativado com sucesso!");
+          }).catch(function (error) {
+            self.dialog.alert("Erro", "Erro ao reativar: " + error?.message ? error?.message : 0);
+          });
+        }
       }
     });
-    this.auth.selecionaUnidade(this.auth.unidade.id);
+    //this.auth.selecionaUnidade(this.auth!.unidade!.id);
     this.checaBotaoAderirToolbar();
   }
   retirarHomologacao(planoEntrega) {
     const self = this;
-    this.dialog.confirm("Retirar da homologação ?", "Deseja realmente retirar da homologação?").then(confirm => {
-      if (confirm) {
-        this.dao.retirarHomologacao(planoEntrega.id).then(function () {
-          (self.grid?.query || self.query).refreshId(planoEntrega.id);
-          self.dialog.alert("Sucesso", "Retirado com sucesso!");
-        }).catch(function (error) {
-          self.dialog.alert("Erro", "Erro ao retirar da homologação: " + error?.message ? error?.message : 0);
-        });
+    this.go.navigate({
+      route: ["uteis", "status"]
+    }, {
+      metadata: {},
+      modalClose: justificativa => {
+        if (justificativa) {
+          this.dao.retirarHomologacao(planoEntrega.id, justificativa).then(function () {
+            (self.grid?.query || self.query).refreshId(planoEntrega.id);
+            self.dialog.alert("Sucesso", "Retirado com sucesso!");
+          }).catch(function (error) {
+            self.dialog.alert("Erro", "Erro ao retirar da homologação: " + error?.message ? error?.message : 0);
+          });
+        }
       }
     });
-    this.auth.selecionaUnidade(this.auth.unidade.id);
+    //this.auth.selecionaUnidade(this.auth!.unidade!.id);
     this.checaBotaoAderirToolbar();
   }
   suspender(planoEntrega) {
     const self = this;
-    this.dialog.confirm("Suspender ?", "Deseja realmente suspender este Plano de Entregas?").then(confirm => {
-      if (confirm) {
-        this.dao.suspender(planoEntrega.id).then(function () {
-          (self.grid?.query || self.query).refreshId(planoEntrega.id);
-          self.dialog.alert("Sucesso", "Suspenso com sucesso!");
-        }).catch(function (error) {
-          self.dialog.alert("Erro", "Erro ao suspender: " + error?.message ? error?.message : 0);
-        });
+    this.go.navigate({
+      route: ["uteis", "status"]
+    }, {
+      metadata: {},
+      modalClose: justificativa => {
+        if (justificativa) {
+          this.dao.suspender(planoEntrega.id, justificativa).then(function () {
+            (self.grid?.query || self.query).refreshId(planoEntrega.id);
+            self.dialog.alert("Sucesso", "Suspenso com sucesso!");
+          }).catch(function (error) {
+            self.dialog.alert("Erro", "Erro ao suspender: " + error?.message ? error?.message : 0);
+          });
+        }
       }
     });
-    this.auth.selecionaUnidade(this.auth.unidade.id);
+    //this.auth.selecionaUnidade(this.auth!.unidade!.id);
     this.checaBotaoAderirToolbar();
   }
 }

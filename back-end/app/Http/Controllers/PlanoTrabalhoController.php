@@ -121,26 +121,22 @@ class PlanoTrabalhoController extends ControllerBase {
                     case 'EDIT':    // alteração de um Plano de Trabalho
                         if (!$usuario->hasPermissionTo('MOD_PTR_EDT')) throw new ServerException("CapacidadeStore", "Alteração não executada");
                         $canStore = false;
-                        $condition1 = $condicoes['planoIncluido'] && ($this->usuario->isParticipante($planoTrabalho) || $condicoes['gestorUnidadeExecutora']);
+                        $condition1 = $condicoes['planoIncluido'] && ($usuario->isParticipante($planoTrabalho) || $condicoes['gestorUnidadeExecutora']);
                         //($condicoes['planoAguardandoAssinatura'] && ) || ($condicoes['planoAtivo'] &&)))
-                        $condition2 = $condicoes['planoAguardandoAssinatura'] && o usuario logado precisa ser um dos que ja assinaram o tcr
+                        $condition2 = $condicoes['planoAguardandoAssinatura'];// && o usuario logado precisa ser um dos que ja assinaram o tcr
                         //$usuario->hasPermissionTo("MOD_PTR_EDT_FLH") && $condicoes['gestorUnidadePaiUnidadePlano'];
-                        $condition3 = !empty($data['entity']['unidade']['unidade_id']) && UsuarioService::isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $data['entity']['unidade']['unidade_id']);
+                        $condition3 = !empty($data['entity']['unidade']['unidade_id']); //&& UsuarioService::isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $data['entity']['unidade']['unidade_id']);
                         $condition4 = $condicoes['planoAtivo'] && $condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo(['MOD_PTR_EDT_ATV_HOMOL','MOD_PTR_EDT_ATV_ATV']);
                         $condition5 = $usuario->hasPermissionTo('MOD_PTR_QQR_UND');
-                        if($condicoes['planoValido'] && ($condition1 || $condition2 || $condition3))xs  $canStore = true;
-                        } 
+                        if($condicoes['planoValido'] && ($condition1 || $condition2 || $condition3))  $canStore = true;
+                         
                         if(!$canStore) throw new ServerException("CapacidadeStore", "Alteração não executada");
                         /*  
-                            (RN_PENT_L) Para ALTERAR um Plano de Trabalho:
-                                - O usuário logado precisa possuir a capacidade "MOD_PTR_EDT", o Plano de Trabalho precisa ser válido (ou seja, nem deletado, nem arquivado e com status diferente de 'CANCELADO'), e:
-                                    - estar com o status INCLUIDO ou HOMOLOGANDO, e o usuário logado precisa ser gestor da Unidade do plano, ou esta ser sua Unidade de lotação; ou
-                                    - o usuário logado precisa possuir a capacidade "MOD_PTR_EDT_FLH" e ser gestor da Unidade-pai (Unidade A) da Unidade do plano (Unidade B); (RN_PENT_C) ou
-                                    - o usuário logado precisa possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a Unidade-pai (Unidade A) da Unidade do plano (Unidade B); ou
-                                    - o Plano de Trabalho precisa estar com o status ATIVO, a Unidade do plano precisa ser a Unidade de lotação do usuário logado, e ele possuir a capacidade "MOD_PTR_EDT_ATV_HOMOL" ou "MOD_PTR_EDT_ATV_ATV".
-                                    - o usuário precisa possuir também a capacidade "MOD_PTR_QQR_UND";
-                            (RN_PENT_AE) Se a alteração for feita com o Plano de Trabalho no status ATIVO e o usuário logado possuir a capacidade "MOD_PTR_EDT_ATV_HOMOL", o Plano de Trabalho voltará ao status "HOMOLOGANDO";
-                            (RN_PENT_AF) Se a alteração for feita com o Plano de Trabalho no status ATIVO e o usuário logado possuir a capacidade "MOD_PTR_EDT_ATV_ATV", o Plano de Trabalho permanecerá no status "ATIVO";
+                            (RN_PTR_M) Condições para que um Plano de Trabalho possa ser alterado:
+                              - o usuário logado precisa possuir a capacidade "MOD_PTR_EDT", o Plano de Trabalho precisa ser válido (ou seja, nem deletado, nem arquivado, nem estar no status CANCELADO), e:
+                                - estando com o status 'INCLUIDO', o usuário logado precisa ser o participante do plano ou o gestor da Unidade Executora;
+                                - estando com o status 'AGUARDANDO_ASSINATURA', o usuário logado precisa ser um dos que já assinaram o TCR e todas as assinaturas tornam-se sem efeito;
+                                - estando com o status 'ATIVO', o usuário precisa ser gestor da Unidade Executora e possuir a capacidade MOD_PTR_EDT_ATV. Após alterado, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
                         */
                         break;
                     case 'INSERT':  // inclusão de um novo Plano de Trabalho

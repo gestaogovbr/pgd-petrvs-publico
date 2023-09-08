@@ -7,7 +7,7 @@ import { DocumentosAssinarComponent } from './documentos/documentos-assinar/docu
 import { DocumentosComponent } from './documentos/documentos.component';
 import { TemplatesComponent } from './templates/templates.component';
 import { NotificacoesComponent } from './notificacoes/notificacoes.component';
-import { StatusFormComponent } from './status-form/status-form.component';
+import { StatusFormComponent } from './status/status-form/status-form.component';
 
 const routes: Routes = [
   { path: 'comentarios/:origem/:id/new', component: ComentariosComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Comentários", modal: true } },

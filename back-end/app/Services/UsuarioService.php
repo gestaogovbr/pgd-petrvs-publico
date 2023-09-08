@@ -204,6 +204,19 @@ class UsuarioService extends ServiceBase
     }
 
     /**
+     * Recebe o ID de um usuário e o ID de um plano de trabalho como parâmetros e retorna um booleano indicando se o usuário já assinou ou não o TCR atual do plano.
+     * Se o usuário não for informado, será utilizado o usuário logado.
+     */
+    public function jaAssinouTCR(string | null $usuario_id, string $plano_trabalho_id){
+        $result = false;
+        $planoTrabalho = PlanoTrabalho::find($plano_trabalho_id);
+        if($planoTrabalho->documento_id) {
+            $result = count(array_filter($planoTrabalho->documento->assinaturas, fn($a) => $a->usuario_id == $usuario_id ?? self::loggedUser()->id));
+        }
+        return $result;
+    }
+
+    /**
      * Informa se o usuário logado tem como lotação alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
      * recebida como parâmetro.
      * @param string $unidade_id 
