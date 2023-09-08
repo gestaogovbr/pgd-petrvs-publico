@@ -2862,7 +2862,7 @@ __webpack_require__.r(__webpack_exports__);
 /**
  * IE11 requires the following for NgClass support on SVG elements
  */
-// import 'classlist.js';  // Run `npm install --save classlist.js`.
+//import 'classlist.js';  // Run `npm install --save classlist.js`.
 /**
  * Web Animations `@angular/platform-browser/animations`
  * Only required if AnimationBuilder is used within the application and using IE/Edge or Safari.

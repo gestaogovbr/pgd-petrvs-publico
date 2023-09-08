@@ -29,10 +29,11 @@ Route::post('/web/login-user-password', [LoginController::class, $actions['login
 Route::post('/web/login-firebase-token', [LoginController::class, $actions['login-firebase-token']]);
 Route::post('/web/login-google-token', [LoginController::class, $actions['login-google-token']]);
 Route::post('/web/login-institucional', [LoginController::class, $actions['login-institucional']]);
-Route::post('/web/login-unico', [LoginController::class, $actions['login-unico']]);
+// Route::post('/web/login-unico', [LoginController::class, $actions['login-unico']]);
 Route::post('/web/login-session', [LoginController::class, 'authenticateSession']);
 Route::get('/web/logout', [LoginController::class, 'logout']);
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
 /* Rotas Login Azure* */
 Route::view('/web/login-azure-popup', 'azure');
 Route::get('/web/login-azure-redirect', [LoginController::class, 'signInAzureRedirect']);
@@ -45,6 +46,20 @@ Route::middleware([InitializeTenancyByPath::class])
           [LoginController::class, 'signInAzureCallback']);
 
 Route::get('/web/login-azure-simulate-callback', [LoginController::class, 'simulateAzureCallback']);
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/* Rotas Login Unico */
+Route::view('/web/login-unico-popup', 'login-unico');
+Route::get('/web/login-unico-redirect', [LoginController::class, 'signInLoginUnicoRedirect']);
+
+/* Perdeu usou por motivo do tenancy */
+// Route::get('/web/login-azure-callback', [LoginController::class, 'signInAzureCallback']);
+
+Route::middleware([InitializeTenancyByPath::class])
+    ->get('/login-unico-callback/{tenant}', 
+          [LoginController::class, 'signInLoginUnicoCallback']);
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /* Rotas diversas */
 //Route::get('environment-config', [PetrvsController::class, 'environmentConfig']);

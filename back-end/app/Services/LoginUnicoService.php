@@ -8,12 +8,12 @@ use Laravel\Socialite\Two\AbstractProvider;
 use Laravel\Socialite\Two\ProviderInterface;
 use Laravel\Socialite\Two\User;
 
-class LoginUnicoService extends AbstractProvider implements ProviderInterface
+class  SocialiteLoginUnicoProvider extends AbstractProvider implements ProviderInterface
 {
     private $codeChallenge;
 
     function __construct($config = null) {
-        $loginUnicoApi_config = $config ?: config('loginUnico');
+        $loginUnicoApi_config = $config ?: config('login-unico');
         $this->clientId = $loginUnicoApi_config['client_id'];
         $this->clientSecret = $loginUnicoApi_config['client_secret'];
         $this->redirectUrl = "https://pgd-pre.dth.api.gov.br/login-unico";

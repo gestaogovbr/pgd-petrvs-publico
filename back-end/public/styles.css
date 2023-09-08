@@ -29259,6 +29259,7 @@ a > .petrvs code {
   --bs-btn-border-color: #eee;
 }
 .petrvs[data-bs-theme=blue] {
+  --bs-light-rgb: 207, 207, 207;
   --bs-body-color: #1d2143;
   --bs-body-bg: #f5f7fa;
   --bs-nav-link-color: #fff;
@@ -29302,6 +29303,7 @@ a > .petrvs code {
   border: var(--bs-border-width) var(--bs-border-style) #13162d !important;
 }
 .petrvs[data-bs-theme=light] {
+  --bs-light-rgb: 207, 207, 207;
   --bs-body-color: #212529;
   --bs-body-bg: #f5f7fa;
   --petrvs-navbar-vertical-border-color: #cbd0dd;
@@ -29336,6 +29338,20 @@ a > .petrvs code {
 }
 .petrvs[data-bs-theme=dark] .dropdown-item {
   color: var(--bs-body-color) !important;
+}
+.petrvs .textValue {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  padding: 3px 7px;
+  display: inline-block;
+  font-size: inherit;
+  margin-left: 3px;
+}
+.petrvs .withTextValue {
+  padding: 1px;
+}
+.petrvs .withTextValue i {
+  margin: 5px;
 }
 
 /* Define variáveis do bootstrap */
