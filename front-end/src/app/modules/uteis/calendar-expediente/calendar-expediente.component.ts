@@ -211,8 +211,7 @@ export class CalendarExpedienteComponent implements OnInit {
           const fimB = x.data.fim;
           
           if( (inicio >= inicioB &&  fim <= inicioB) || (inicio <= inicioB &&  fim >= inicioB) || (inicio >= inicioB &&  fim <= inicioB) || (inicio <= inicioB &&  fim >= fimB) || (inicio >= inicioB &&  inicio <= fimB) || (fim >= inicioB &&  fim <= fimB) || (inicio == fimB) || (fim == inicioB)){
-            console.log('Conflitante')//fim <= fimB
-      
+            console.log('Conflitante');
             result = undefined;
           }
       });
