@@ -2,6 +2,7 @@ import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
+import { InputSwitchComponent } from 'src/app/components/input/input-switch/input-switch.component';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
@@ -32,6 +33,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
   @ViewChild('gestorSubstituto', { static: false }) public gestorSubstituto?: InputSearchComponent;
   @ViewChild('entidade', { static: false }) public entidade?: InputSearchComponent;
   @ViewChild('notificacoes', { static: false }) public notificacoes?: NotificacoesConfigComponent;
+  @ViewChild('instituidora', { static: false }) public instituidora?: InputSwitchComponent;
 
   public form: FormGroup;
   public formGestor: FormGroup;
@@ -77,7 +79,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       etiqueta_cor: {default: null},
       expediente24: {default: true},
       expediente: {default: null},
-      usar_expediente_entidade: {default: true},
+      usar_expediente_entidade: {default: false},
       texto_complementar_plano: {default: ""}
     }, this.cdRef, this.validate);
     this.formGestor = this.fh.FormBuilder({
@@ -100,7 +102,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
   }
 
   public onUsarExpedienteEntidadeChange() {
-    this.form.controls.expediente.setValue(this.form.controls.usar_expediente_entidade.value ? null : this.form.controls.expediente.value || new Expediente());
+    this.form.controls.expediente.setValue( this.form.controls.usar_expediente_entidade.value ? null : this.form.controls.expediente.value || new Expediente());
   }
 
   public addItemHandle(): LookupItem | undefined {
@@ -162,6 +164,10 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
 
   public titleEdit = (entity: Unidade): string => {
     return "Editando " + this.lex.translate("Unidade") + ': ' + (entity?.sigla || "");
+  }
+
+  public onChangeInstituidora(){
+
   }
 
 }
