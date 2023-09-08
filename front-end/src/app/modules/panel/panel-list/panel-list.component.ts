@@ -1,6 +1,7 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { TenantDaoService } from 'src/app/dao/tenant-dao.service';
 import { Tenant } from 'src/app/models/tenant.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
@@ -12,6 +13,19 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 })
 export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
+
+  public toolbarButtons: ToolbarButton[] = [
+    {
+      icon: "bi bi-building",
+      label: "Executar Migrations",
+      onClick: this.executaMigrations.bind(this)
+    },
+    {
+      icon: "bi bi-building",
+      label: "Executar Seeders",
+      onClick: this.executaSeeders.bind(this)
+    }
+  ];
 
   constructor(public injector: Injector, dao: TenantDaoService) {
     super(injector, Tenant, TenantDaoService);
@@ -26,8 +40,8 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
     });
     this.options.push({
       icon: "bi bi-info-circle",
-      label: "Executar Migrations",
-      onClick: this.consult.bind(this)
+      label: "Executar Database",
+      onClick: this.databaseSeeder.bind(this)
     });
     this.options.push({
       icon: "bi bi-building",
@@ -38,6 +52,16 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
       icon: "bi bi-list-check",
       label: "Executar Tipos Capacidades",
       onClick: this.tipoCapacidadeSeeder.bind(this)
+    });
+    this.options.push({
+      icon: "bi bi-list-check",
+      label: "Executar Entidades",
+      onClick: this.entidadesSeeder.bind(this)
+    });
+    this.options.push({
+      icon: "bi bi-list-check",
+      label: "Executar Usuarios",
+      onClick: this.usuariosSeeder.bind(this)
     });
     this.options.push({
       icon: "bi bi-trash",
@@ -51,6 +75,32 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
     let result: any[] = [];
     return result;
   }
+
+  public executaMigrations(row: any) {
+    const self = this;
+    this.dialog.confirm("Executar Migration?", "Deseja realmente executar as migrations?").then(confirm => {
+      if (confirm) {
+        this.dao!.migrations(row).then(function () {
+          self.dialog.alert("Sucesso", "Migration executada com sucesso!");
+        }).catch(function (error) {
+          self.dialog.alert("Erro", "Erro ao executar a migration: " + error?.message ? error?.message : error);
+        });
+      }
+    });
+  }
+  public executaSeeders(row: any) {
+    const self = this;
+    this.dialog.confirm("Executar Seeder?", "Deseja realmente executar as seeders?").then(confirm => {
+      if (confirm) {
+        this.dao!.seeders(row).then(function () {
+          self.dialog.alert("Sucesso", "Migration executada com sucesso!");
+        }).catch(function (error) {
+          self.dialog.alert("Erro", "Erro ao executar a migration: " + error?.message ? error?.message : error);
+        });
+      }
+    });
+  }
+
 
   public executaMigrationTenant(row: any) {
     const self = this;
@@ -83,6 +133,44 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
     this.dialog.confirm("Executar Seeder?", "Deseja realmente executar a seeder de cidades?").then(confirm => {
       if (confirm) {
         this.dao!.cidadesSeeder(row).then(function () {
+          self.dialog.alert("Sucesso", "Seeder executada com sucesso!");
+        }).catch(function (error) {
+          self.dialog.alert("Erro", "Erro ao executar a seeder: " + error?.message ? error?.message : error);
+        });
+      }
+    });
+  }
+
+  public usuariosSeeder(row: any) {
+    const self = this;
+    this.dialog.confirm("Executar Seeder?", "Deseja realmente atualizar as capacidades?").then(confirm => {
+      if (confirm) {
+        this.dao!.usuarioSeeder(row).then(function () {
+          self.dialog.alert("Sucesso", "Seeder executada com sucesso!");
+        }).catch(function (error) {
+          self.dialog.alert("Erro", "Erro ao executar a seeder: " + error?.message ? error?.message : error);
+        });
+      }
+    });
+  }
+
+  public entidadesSeeder(row: any) {
+    const self = this;
+    this.dialog.confirm("Executar Seeder?", "Deseja realmente atualizar as capacidades?").then(confirm => {
+      if (confirm) {
+        this.dao!.entidadeSeeder(row).then(function () {
+          self.dialog.alert("Sucesso", "Seeder executada com sucesso!");
+        }).catch(function (error) {
+          self.dialog.alert("Erro", "Erro ao executar a seeder: " + error?.message ? error?.message : error);
+        });
+      }
+    });
+  }
+  public databaseSeeder(row: any) {
+    const self = this;
+    this.dialog.confirm("Executar Seeder?", "Deseja realmente atualizar as capacidades?").then(confirm => {
+      if (confirm) {
+        this.dao!.entidadeSeeder(row).then(function () {
           self.dialog.alert("Sucesso", "Seeder executada com sucesso!");
         }).catch(function (error) {
           self.dialog.alert("Erro", "Erro ao executar a seeder: " + error?.message ? error?.message : error);

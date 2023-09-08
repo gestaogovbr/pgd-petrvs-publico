@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Providers\LoginUnicoProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,5 +25,18 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
+        $this->bootLoginUnicoSocialite();
+    }
+
+    private function bootLoginUnicoSocialite()
+    {
+        $socialite = $this->app->make('Laravel\Socialite\Contracts\Factory');
+        $socialite->extend(
+            'loginunico',
+            function ($app) use ($socialite) {
+                $config = $app['config']['services.login-unico'];
+                return $socialite->buildProvider(LoginUnicoProvider::class, $config);
+            }
+        );
     }
 }

@@ -17,16 +17,18 @@ use App\Services\UnidadeService;
 use App\Services\CalendarioService;
 use App\Services\LoginUnicoService;
 use App\Services\UsuarioService;
+use App\Providers\LoginUnicoProvider;
 use SocialiteProviders\Azure\Provider;
-use DateTime;
 use Laravel\Socialite\Facades\Socialite;
+use \SocialiteProviders\Manager\Config;
+use DateTime;
 
 class LoginController extends Controller
 {
     private function registrarEntidade($request, $session = false) {
-        $with = ["feriados", "gestor", "gestorSubstituto"]; 
+        $with = ["feriados", "gestor", "gestorSubstituto"];
         $entidade = $session ? Entidade::with($with)->find($request->session()->put("entidade_id")) : null;
-        $sigla = $request->has('entidade') ? $request->input('entidade') : config("petrvs")["entidade"]; 
+        $sigla = $request->has('entidade') ? $request->input('entidade') : config("petrvs")["entidade"];
         if(empty($entidade) && !empty($sigla)) {
             $entidade = Entidade::with($with)->where("sigla", $sigla)->first();
             $request->session()->put("entidade_id", $entidade->id);
@@ -51,10 +53,10 @@ class LoginController extends Controller
             $usuario = Usuario::where("id", $usuario->id)->with([
                 "areasTrabalho" => function($query) use ($entidadeId) {
                     $query->with(["unidade.gestor.usuario", "unidade.gestorSubstituto.usuario", "unidade.cidade", "unidade.planosEntrega", "unidade.unidadePai.planosEntrega", "atribuicoes"])->whereHas('unidade', function ($query) use ($entidadeId) {
-                        return  $query->where('entidade_id', '=', $entidadeId); 
+                        return  $query->where('entidade_id', '=', $entidadeId);
                     });             // Acredito que seja possível reduzir a qde de relacionamentos solicitados
                 },
-                "perfil.capacidades.tipoCapacidade", 
+                "perfil.capacidades.tipoCapacidade",
                 "gerenciaTitular.atribuicoes",
                 "gerenciasSubstitutas.atribuicoes",
                 /*"vinculosUnidades.unidade" => function($query) {
@@ -287,7 +289,7 @@ class LoginController extends Controller
                 $usuario = $this->registrarUsuario($request, $usuario, ['id_google' => $tokenData["sub"]]);
                 return response()->json([
                     'success' => true,
-                    "entidade" => $entidade, 
+                    "entidade" => $entidade,
                     "usuario" => $usuario,
                     "horario_servidor" => CalendarioService::horarioServidor()
                 ]);
@@ -338,39 +340,6 @@ class LoginController extends Controller
     }
 
     /**
-
-     * Handle an authentication attempt.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function authenticateLoginUnicoToken(Request $request, LoginUnicoService $auth)
-    {
-        $credentials = $request->validate([
-            'entidade' => ['required'],
-            'token' => ['required']
-        ]);
-        $tokenData = $auth->verifyToken($credentials['token']);
-        if(!isset($tokenData['error'])) {
-            $entidade = $this->registrarEntidade($request);
-            $usuario = $this->registrarUsuario($request, Usuario::where('email', $tokenData['email'])->where("data_fim", null)->first());
-            if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
-                $usuarioService = new UsuarioService();
-                $usuarioService->atualizarFotoPerfil(UsuarioService::LOGIN_GOOGLE, $usuario, $tokenData["picture"]);
-                $request->session()->regenerate();
-                $request->session()->put("kind", "GOOGLE");
-                return response()->json([
-                    'success' => true,
-                    "entidade" => $entidade,
-                    "usuario" => $usuario,
-                    "horario_servidor" => CalendarioService::horarioServidor()
-                ]);
-            }
-        }
-        return LogError::newError('As credenciais fornecidas são inválidas.');
-    }
-
-    /**
      * Handle an authentication attempt.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -382,7 +351,7 @@ class LoginController extends Controller
             $entidade = $this->registrarEntidade($request, true);
             $usuario = $this->registrarUsuario($request, $user);
             return response()->json([
-                "token" => $user->currentAccessToken()->plainTextToken ?? $request->bearerToken(), 
+                "token" => $user->currentAccessToken()->plainTextToken ?? $request->bearerToken(),
                 "kind" => $request->session()->get("kind"),
                 "entidade" => $entidade,
                 "usuario" => $usuario,
@@ -477,7 +446,7 @@ class LoginController extends Controller
                 $request->session()->regenerate();
                 $request->session()->put("kind", "GOOGLE");
                 $entidade = $this->registrarEntidade($request);
-                $usuario = $this->registrarUsuario($request, $usuario);                
+                $usuario = $this->registrarUsuario($request, $usuario);
                 return response()->json([
                     'token' => $usuario->createToken($credentials['device_name'])->plainTextToken,
                     'entidade' => $entidade,
@@ -625,34 +594,29 @@ class LoginController extends Controller
     public function authenticateApiLoginUnico(Request $request, LoginUnicoService $auth)
     {
         $credentials = $request->validate([
-            'entidade' => ['required'],
-            'cpf' => ['regex:/^\d{11}$/'],
-            'senha' => ['required'],
-            'token' => ['required'],
-            'device_name' => ['required']
+            'code' => ['required'],
+            'state' => ['required']
         ]);
-        /* Usando temporariamente o loginCpf(), mas o correto é login()  */
-        $profile = $auth->loginToken($credentials['cpf'], $credentials['senha'], $credentials['token']);
-        if(!isset($profile['error'])) {
-            $email = str_contains($profile["email"], "@") ? $profile["email"] : $profile["email"] . "@prf.gov.br";
-            $usuario = Usuario::where('email', $email)->where("data_fim", null)->first();
-            if(!isset($usuario) && $auth->autoIncluir) {
-                $usuario = new Usuario();
-                $lotacao = new UnidadeIntegrante();
-                $service = new IntegracaoService();
-                $service->salvaUsuarioLotacaoLoginUnico($usuario, $lotacao, $profile, $auth);
-            }
-            if (isset($usuario)) {
-                $request->session()->put("kind", "DPRFSEGURANCA");
-                $usuario->save();
-                $entidade = $this->registrarEntidade($request);
-                $usuario = $this->registrarUsuario($request, $usuario);
+        $tokenData = $auth->getAccessToken($credentials['code']);
+        if(!isset($tokenData['error'])) {
+            $response = $auth->getUserToken($tokenData['access_token']);
+            $state=json_decode(base64_decode($credentials['state']),0);
+            $with = ["feriados", "gestor", "gestorSubstituto"];
+            $entidade = Entidade::with($with)->where("sigla", $state->entidade)->first();
+            $request->session()->put("entidade_id", $entidade->id);
+            $usuario = $this->registrarUsuario($request, Usuario::where('cpf',strtolower( $response['sub']))->first());
+            if (($usuario)) {
+                Auth::loginUsingId($usuario->id);
+                $request->session()->regenerate();
+                $request->session()->put("kind", "LOGINUNICO");
                 return response()->json([
-                    'token' => $usuario->createToken($credentials['device_name'])->plainTextToken,
-                    'entidade' => $entidade,
-                    'usuario' => $usuario,
+                    'success' => true,
+                    "entidade" => $entidade,
+                    "usuario" => $usuario,
                     "horario_servidor" => CalendarioService::horarioServidor()
                 ]);
+            } else {
+                return LogError::newError('As credenciais fornecidas são inválidas.');
             }
         }
         return LogError::newError('As credenciais fornecidas são inválidas.');
@@ -684,13 +648,35 @@ class LoginController extends Controller
         return redirect('<azure></azure>')->with('popup', 'open');
     }
 
-    public function azureProvider(): Provider {
-        return Socialite::driver('azure');
+    public function azureProvider($config = null): Provider {
+        if($config) {
+          // O método setConfig existe mesmo VSCode dizendo que não.
+          return Socialite::driver('azure')->setConfig($config);
+        }
+        return null;
+    }
+
+    function getConfigAzure($url_dinamica_callback = null): \SocialiteProviders\Manager\Config
+    {
+        return new \SocialiteProviders\Manager\Config(
+            config("services.azure.client_id"),
+            config("services.azure.client_secret"),
+            $url_dinamica_callback,
+            ['tenant' => config("services.azure.tenant")]
+        );
     }
 
     public function signInAzureRedirect(Request $request) {
-        $this->registrarEntidade($request);
-        return $this->azureProvider()->scopes(['openid', 'email', 'profile'])->redirect();
+        $entidade = $this->registrarEntidade($request);
+        $url_dinamica_callback = config("app.url");
+        $url_dinamica_callback = $url_dinamica_callback .
+            "/api/login-azure-callback/" . $entidade->sigla;
+
+        $azure_select_tenancy = $this->getConfigAzure($url_dinamica_callback);
+
+        return $this->azureProvider($config = $azure_select_tenancy)
+            ->scopes(['openid', 'email', 'profile'])
+            ->redirect();
     }
 
     public function simulateAzureCallback(Request $request) {
@@ -698,7 +684,17 @@ class LoginController extends Controller
     }
 
     public function signInAzureCallback(Request $request) {
-        $user = $this->azureProvider()->user();
+        $entidade = $this->registrarEntidade($request);
+
+        $url_dinamica_callback = config("app.url") .
+            "/api/login-azure-callback/" .
+            $entidade->sigla;
+
+        $azure_select_tenancy = $this->getConfigAzure($url_dinamica_callback);
+
+        // $user = $this->azureProvider($config = $azure_select_tenancy)->stateless()->user();
+        $user = $this->azureProvider($config = $azure_select_tenancy)->user();
+
         if(!empty($user)) {
             $token = $user->token;
             $email = $user->email;
@@ -719,4 +715,74 @@ class LoginController extends Controller
         }
     }
 
+    /* LoginUnico BackEnd */
+
+    public function loginUnicoPopup(){
+      return redirect('<login-unico></login-unico>')->with('popup', 'open');
+  }
+
+  public function loginUnicoProvider($config = null): Provider {
+      if($config) {
+        // O método setConfig existe mesmo VSCode dizendo que não.
+        return Socialite::driver('loginunico')->setConfig($config);
+      }
+      return null;
+  }
+
+  function getConfigLoginUnico($url_dinamica_callback = null): \SocialiteProviders\Manager\Config
+  {
+      return new \SocialiteProviders\Manager\Config(
+          config("services.login-unico.client_id"),
+          config("services.login-unico.client_secret"),
+          $url_dinamica_callback,
+          ['tenant' => "commom"],
+      );
+  }
+
+  public function signInLoginUnicoRedirect(Request $request) {
+      $entidade = $this->registrarEntidade($request);
+      $url_dinamica_callback = config("app.url");
+      $url_dinamica_callback = $url_dinamica_callback .
+          "/api/login-unico-callback/" . $entidade->sigla;
+
+      $login_unico_select_tenancy = $this->getConfigLoginUnico($url_dinamica_callback);
+
+      return $this->loginUnicoProvider($config = $login_unico_select_tenancy)
+          ->scopes(['openid', 'email', 'profile'])
+          ->redirect();
+  }
+
+  public function signInLoginUnicoCallback(Request $request) {
+      $entidade = $this->registrarEntidade($request);
+
+      $url_dinamica_callback = config("app.url") .
+          "/api/login-unico-callback/" .
+          $entidade->sigla;
+
+      $login_unico_select_tenancy = $this->getConfigLoginUnico($url_dinamica_callback);
+
+      // $user = $this->azureProvider($config = $azure_select_tenancy)->stateless()->user();
+      $user = $this->loginUnicoProvider($config = $login_unico_select_tenancy)->user();
+
+      if(!empty($user)) {
+          $token = $user->token;
+          $email = $user->email;
+          $email = explode("#", $email);
+          $email = $email[0];
+          $email = str_replace("_", "@", $email);
+          $usuario = $this->registrarUsuario($request, Usuario::where('email', $email)->first());
+          if (($usuario)) {
+              Auth::loginUsingId($usuario->id);
+              $request->session()->regenerate();
+              $request->session()->put("kind", "UNICO");
+              return view("login-unico");
+          } else {
+              return LogError::newError('As credenciais fornecidas são inválidas. Email: '.$email);
+          }
+      } else {
+          return $this->loginUnicoProvider($config = $login_unico_select_tenancy)
+          ->scopes(['openid', 'email', 'profile'])
+          ->redirect();
+      }
+  }
 }
