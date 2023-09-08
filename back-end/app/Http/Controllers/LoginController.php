@@ -17,10 +17,11 @@ use App\Services\UnidadeService;
 use App\Services\CalendarioService;
 use App\Services\LoginUnicoService;
 use App\Services\UsuarioService;
+use App\Providers\LoginUnicoProvider;
 use SocialiteProviders\Azure\Provider;
-use DateTime;
 use Laravel\Socialite\Facades\Socialite;
 use \SocialiteProviders\Manager\Config;
+use DateTime;
 
 class LoginController extends Controller
 {
@@ -655,11 +656,6 @@ class LoginController extends Controller
         return null;
     }
 
-    /*
-       * Returns a custom config for this specific
-       * Azure AD connection / directory
-       * @return \SocialiteProviders\Manager\Config
-    */
     function getConfigAzure($url_dinamica_callback = null): \SocialiteProviders\Manager\Config
     {
         return new \SocialiteProviders\Manager\Config(
@@ -719,4 +715,74 @@ class LoginController extends Controller
         }
     }
 
+    /* LoginUnico BackEnd */
+
+    public function loginUnicoPopup(){
+      return redirect('<login-unico></login-unico>')->with('popup', 'open');
+  }
+
+  public function loginUnicoProvider($config = null): Provider {
+      if($config) {
+        // O método setConfig existe mesmo VSCode dizendo que não.
+        return Socialite::driver('loginunico')->setConfig($config);
+      }
+      return null;
+  }
+
+  function getConfigLoginUnico($url_dinamica_callback = null): \SocialiteProviders\Manager\Config
+  {
+      return new \SocialiteProviders\Manager\Config(
+          config("services.login-unico.client_id"),
+          config("services.login-unico.client_secret"),
+          $url_dinamica_callback,
+          ['tenant' => "commom"],
+      );
+  }
+
+  public function signInLoginUnicoRedirect(Request $request) {
+      $entidade = $this->registrarEntidade($request);
+      $url_dinamica_callback = config("app.url");
+      $url_dinamica_callback = $url_dinamica_callback .
+          "/api/login-unico-callback/" . $entidade->sigla;
+
+      $login_unico_select_tenancy = $this->getConfigLoginUnico($url_dinamica_callback);
+
+      return $this->loginUnicoProvider($config = $login_unico_select_tenancy)
+          ->scopes(['openid', 'email', 'profile'])
+          ->redirect();
+  }
+
+  public function signInLoginUnicoCallback(Request $request) {
+      $entidade = $this->registrarEntidade($request);
+
+      $url_dinamica_callback = config("app.url") .
+          "/api/login-unico-callback/" .
+          $entidade->sigla;
+
+      $login_unico_select_tenancy = $this->getConfigLoginUnico($url_dinamica_callback);
+
+      // $user = $this->azureProvider($config = $azure_select_tenancy)->stateless()->user();
+      $user = $this->loginUnicoProvider($config = $login_unico_select_tenancy)->user();
+
+      if(!empty($user)) {
+          $token = $user->token;
+          $email = $user->email;
+          $email = explode("#", $email);
+          $email = $email[0];
+          $email = str_replace("_", "@", $email);
+          $usuario = $this->registrarUsuario($request, Usuario::where('email', $email)->first());
+          if (($usuario)) {
+              Auth::loginUsingId($usuario->id);
+              $request->session()->regenerate();
+              $request->session()->put("kind", "UNICO");
+              return view("login-unico");
+          } else {
+              return LogError::newError('As credenciais fornecidas são inválidas. Email: '.$email);
+          }
+      } else {
+          return $this->loginUnicoProvider($config = $login_unico_select_tenancy)
+          ->scopes(['openid', 'email', 'profile'])
+          ->redirect();
+      }
+  }
 }

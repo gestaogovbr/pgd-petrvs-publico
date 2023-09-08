@@ -17,3 +17,7 @@ baseado em B2B (multi-tenancy / multi-tenant)
 Route::middleware([InitializeTenancyByPath::class])
     ->get('/login-azure-callback/{tenant}', 
           [LoginController::class, 'signInAzureCallback']);
+
+Route::middleware([InitializeTenancyByPath::class])
+    ->get('/login-unico-callback/{tenant}', 
+          [LoginController::class, 'signInLoginUnicoCallback']);

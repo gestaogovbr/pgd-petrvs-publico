@@ -179,6 +179,10 @@ export class LoginComponent implements OnInit, ModalPage, OnDestroy {
     this.auth.authAzure();
   }
 
+  public signInLoginUnicoBackEnd() {
+    this.auth.authLoginUnicoBackEnd();
+  }
+
   ngOnDestroy(){
     this.document.body.classList.remove('login');
   }

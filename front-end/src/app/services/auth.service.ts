@@ -211,6 +211,22 @@ export class AuthService {
     //this.go.openPopup(this.gb.servidorURL + "/web/login-azure-simulate-callback");
   }
 
+  public authLoginUnicoBackEnd() {
+    this.dialogs.showSppinerOverlay("Logando...", 300000);
+    this.go.openPopup(this.gb.servidorURL + "/web/login-unico-redirect?entidade=" + encodeURI(this.gb.ENTIDADE));
+  }
+
+  /*
+  public authLoginUnico(code: string, state: string,redirectTo?: FullRoute) {
+    //this.googleApi.tokenId = tokenId;
+    return this.logIn("LOGINUNICO", "login-unico", {
+      entidade: this.gb.ENTIDADE,
+      code: code,
+      state: state,
+    }, redirectTo);
+  }
+  */
+
   public authUserPassword(user: string, password: string, redirectTo?: FullRoute) {
     return this.logIn("USERPASSWORD", "login-user-password", {
       entidade: this.gb.ENTIDADE,
