@@ -1494,7 +1494,7 @@ class CadeiaValorMapaComponent extends src_app_modules_base_page_frame_base__WEB
             if (entity) result.dialog.close();
             yield _this2.refreshCadeiaValor();
           } catch (error) {
-            _this2.dialog.alert("Error", error.message ? error.message : error || "Erro deconhecido");
+            _this2.dialog.alert("Error", error.message ? error.message : error || "Erro desconhecido");
           } finally {
             _this2.submitting = false;
           }
@@ -1515,7 +1515,7 @@ class CadeiaValorMapaComponent extends src_app_modules_base_page_frame_base__WEB
           yield _this3.cadeiaValorProcessoDao.delete(processo.id);
           yield _this3.refreshCadeiaValor();
         } catch (error) {
-          _this3.dialog.alert("Erro", "Erro ao excluir: " + (error?.message ? error?.message : error || "Erro deconhecido"));
+          _this3.dialog.alert("Erro", "Erro ao excluir: " + (error?.message ? error?.message : error || "Erro desconhecido"));
         }
       }
     })();

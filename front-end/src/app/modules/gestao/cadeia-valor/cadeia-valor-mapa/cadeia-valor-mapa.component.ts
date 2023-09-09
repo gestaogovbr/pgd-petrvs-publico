@@ -126,7 +126,7 @@ export class CadeiaValorMapaComponent extends PageFrameBase {
           if(entity) result.dialog.close();
           await this.refreshCadeiaValor();
         } catch (error: any) {
-          this.dialog.alert("Error", error.message ? error.message : error || "Erro deconhecido");
+          this.dialog.alert("Error", error.message ? error.message : error || "Erro desconhecido");
         } finally {
           this.submitting = false;
         }
@@ -145,7 +145,7 @@ export class CadeiaValorMapaComponent extends PageFrameBase {
         await this.cadeiaValorProcessoDao.delete(processo.id);
         await this.refreshCadeiaValor();
       } catch (error: any) {
-        this.dialog.alert("Erro", "Erro ao excluir: " + (error?.message ? error?.message : error || "Erro deconhecido"));
+        this.dialog.alert("Erro", "Erro ao excluir: " + (error?.message ? error?.message : error || "Erro desconhecido"));
       }
     }
   }
