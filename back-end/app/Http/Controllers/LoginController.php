@@ -726,22 +726,32 @@ class LoginController extends Controller
       return Socialite::driver('govbr');
   }
 
-  function getConfigGovBr($url_dinamica_callback = null): \SocialiteProviders\Manager\Config
+  function getConfigGovBr($url_dinamica_callback = null, $dados): \SocialiteProviders\Manager\Config
   {
       return new \SocialiteProviders\Manager\Config(
           config("services.govbr.client_id"),
           config("services.govbr.client_secret"),
           $url_dinamica_callback,
-          ['environment' => config("services.govbr.environment")],
+          [
+              'environment' => config("services.govbr.environment"),
+              'code' => $dados['code']??null,
+              'state' => $dados['state']??null,
+              'code_verifier' => $dados['code_verifier']??null,
+              'code_challenge' => $dados['code_challenge']??null,
+              'code_challenge_method' => $dados['code_challenge_method']??null
+          ]
       );
   }
 
   public function signInGovBrRedirect(Request $request) {
       $entidade = $this->registrarEntidade($request);
-      $url_dinamica_callback = config("app.url") .
-          "/api/login-govbr-callback/" . $entidade->sigla;
+      $url_dinamica_callback =config("services.govbr.redirect") . $entidade->sigla;
 
-      $login_govbr_select_tenancy = $this->getConfigGovBr($url_dinamica_callback);
+      $dados= [
+          "code_challenge" => config("services.govbr.code_challenge"),
+          "code_challenge_method" => config("services.govbr.code_challenge_method"),
+      ];
+      $login_govbr_select_tenancy = $this->getConfigGovBr($url_dinamica_callback,$dados);
 
       return $this->govBrProvider($config = $login_govbr_select_tenancy)
           ->scopes(['openid', 'email', 'profile'])
@@ -751,30 +761,35 @@ class LoginController extends Controller
   public function signInGovBrCallback(Request $request) {
       $entidade = $this->registrarEntidade($request);
 
-      $url_dinamica_callback = config("app.url") .
-          "/api/login-govbr-callback/" .
+      $url_dinamica_callback = config("services.govbr.redirect") .
           $entidade->sigla;
 
-      $login_govbr_select_tenancy = $this->getConfigGovBr($url_dinamica_callback);
+      $dados= [
+          "code" => $request->code,
+          "state" => $request->state,
+          "code_verifier" => config("services.govbr.code_verifier")
+      ];
+      $login_govbr_select_tenancy = $this->getConfigGovBr($url_dinamica_callback,$dados);
 
       // $user = $this->azureProvider($config = $azure_select_tenancy)->stateless()->user();
-      $user = $this->govBrProvider($config = $login_govbr_select_tenancy)
+      $user= $this->govBrProvider($config = $login_govbr_select_tenancy)->stateless()
         ->user();
 
       if(!empty($user)) {
           $token = $user->token;
+          $cpf = $user->cpf;
           $email = $user->email;
           $email = explode("#", $email);
           $email = $email[0];
           $email = str_replace("_", "@", $email);
-          $usuario = $this->registrarUsuario($request, Usuario::where('email', $email)->first());
+          $usuario = $this->registrarUsuario($request, Usuario::where('cpf',$cpf)->first());
           if (($usuario)) {
               Auth::loginUsingId($usuario->id);
               $request->session()->regenerate();
               $request->session()->put("kind", "GOVBR");
               return view("govbr");
           } else {
-              return LogError::newError('As credenciais fornecidas são inválidas. Email: '.$email);
+              return LogError::newError('As credenciais fornecidas são inválidas. CPF: '.$cpf);
           }
       } else {
           return $this->govBrProvider($config = $login_govbr_select_tenancy)
