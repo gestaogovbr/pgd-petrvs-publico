@@ -10,8 +10,8 @@ Route::get('/teste', function (Request $request) { return ["CENTRAL"]; }); *
 
 
 /* 
-Rota dinâmica para login social Microsoft (Azure)
-baseado em B2B (multi-tenancy / multi-tenant)
+Rota dinâmica para login social Microsoft (Azure) e
+GovBr baseado em B2B (multi-tenancy / multi-tenant)
 */
 
 Route::middleware([InitializeTenancyByPath::class])
@@ -19,5 +19,5 @@ Route::middleware([InitializeTenancyByPath::class])
           [LoginController::class, 'signInAzureCallback']);
 
 Route::middleware([InitializeTenancyByPath::class])
-    ->get('/login-unico-callback/{tenant}', 
-          [LoginController::class, 'signInLoginUnicoCallback']);
+    ->get('/login-govbr-callback/{tenant}', 
+          [LoginController::class, 'signInGovBrCallback']);
