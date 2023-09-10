@@ -331,7 +331,11 @@ export class AuthService {
   }
 
   /**
+<<<<<<< HEAD
    * Informa se o usuário logado é gestor(titular ou substituto) da unidade recebida como parâmetro. Se nenhuma unidade for repassada, 
+=======
+   * Informa se o usuário logado é gestor(titular ou substituto) da unidade repassada como parâmetro. Se nenhuma unidade for repassada,
+>>>>>>> remotes/origin/develop
    * será adotada a unidade selecionada pelo servidor na homepage.
    * @param pUnidade
    * @returns
@@ -380,7 +384,11 @@ export class AuthService {
   }
 
   /**
+<<<<<<< HEAD
    * Informa se a unidade recebida como parâmetro é a lotação do usuário logado. Se nenhuma unidade for recebida, 
+=======
+   * Informa se a unidade repassada como parâmetro é a lotação do usuário logado. Se nenhuma unidade for repassada,
+>>>>>>> remotes/origin/develop
    * será adotada a unidade selecionada pelo servidor na homepage.
    * @param pUnidade
    * @returns
@@ -402,10 +410,17 @@ export class AuthService {
   }
 
   /**
+<<<<<<< HEAD
    * Informa se o usuário logado tem como área de trabalho alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
    * recebida como parâmetro.
    * @param unidade 
    * @returns 
+=======
+   * Informa se o usuário logado tem como área de trabalho alguma das unidades pertencentes à linha hierárquica ascendente da unidade
+   * repassada como parâmetro.
+   * @param unidade
+   * @returns
+>>>>>>> remotes/origin/develop
    */
   public isLotadoNaLinhaAscendente(unidade: Unidade): boolean {
     let result = false;
@@ -414,10 +429,17 @@ export class AuthService {
   }
 
   /**
+<<<<<<< HEAD
    * Informa se o usuário logado é gestor (titular ou substituto) de alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
    * recebida como parâmetro.
    * @param unidade 
    * @returns 
+=======
+   * Informa se o usuário logado é gestor (titular ou substituto) de alguma das unidades pertencentes à linha hierárquica ascendente da unidade
+   * repassada como parâmetro.
+   * @param unidade
+   * @returns
+>>>>>>> remotes/origin/develop
    */
   public isGestorLinhaAscendente(unidade: Unidade): boolean {
     let result = false;
