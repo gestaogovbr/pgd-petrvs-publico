@@ -165,19 +165,22 @@ class UsuarioService extends ServiceBase
 
     public function hasLotacao($id, $usuario = null, $subordinadas = true) {
         return Unidade::where("id", $id)->whereRaw($this->areasTrabalhoWhere($subordinadas, $usuario, ""))->count() > 0;
-        /*
-        CONFERIR ESTE TRECHO ...
-        Usuario::where("id", $usuario->id)->whereHas('lotacoes', function (Builder $query) use ($id) {
-            $query->where('id', $id);
-        })->count() > 0;*/
     }
 
     /**
-     * Informa se o usuário logado é gestor(titular ou substituto) da unidade repassada como parâmetro.
+     * Informa se o usuário logado é gestor(titular ou substituto) da unidade recebida como parâmetro.
      * @param string $unidade_id 
      */
     public function isGestorUnidade(string $unidade_id): bool {
         return $this->isIntegrante('GESTOR',$unidade_id) || $this->isIntegrante('GESTOR_SUBSTITUTO',$unidade_id);
+    }
+
+    /**
+     * Informa se o usuário logado é participante do plano de trabalho recebido como parâmetro.
+     * @param string $unidade_id 
+     */
+    public function isParticipante($planoTrabalho){
+        return $planoTrabalho['usuario_id'] == self::loggedUser()->id;
     }
 
     /**
@@ -195,7 +198,7 @@ class UsuarioService extends ServiceBase
     }
 
     /**
-     * Informa se a unidade repassada como parâmetro é a lotação do usuário logado.
+     * Informa se a unidade recebida como parâmetro é a lotação do usuário logado.
      * @param string $unidade_id 
      */
     public function isLotacao(string $unidade_id): bool {
@@ -203,8 +206,21 @@ class UsuarioService extends ServiceBase
     }
 
     /**
+     * Recebe o ID de um usuário e o ID de um plano de trabalho como parâmetros e retorna um booleano indicando se o usuário já assinou ou não o TCR atual do plano.
+     * Se o usuário não for informado, será utilizado o usuário logado.
+     */
+    public function jaAssinouTCR(string | null $usuario_id, string $plano_trabalho_id){
+        $result = false;
+        $planoTrabalho = PlanoTrabalho::find($plano_trabalho_id);
+        if($planoTrabalho->documento_id) {
+            $result = count(array_filter($planoTrabalho->documento->assinaturas, fn($a) => $a->usuario_id == $usuario_id ?? self::loggedUser()->id));
+        }
+        return $result;
+    }
+
+    /**
      * Informa se o usuário logado tem como lotação alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
-     * repassada como parâmetro.
+     * recebida como parâmetro.
      * @param string $unidade_id 
      * @returns 
      */

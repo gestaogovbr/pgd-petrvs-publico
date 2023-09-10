@@ -57,7 +57,7 @@ export class TipoCursoListComponent extends PageListBase<TipoCurso, TipoCursoDao
     let form: any = filter.value;
 
     if(form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome + "%"]);
+      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
 
    

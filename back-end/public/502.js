@@ -951,7 +951,7 @@ class UnidadeListComponent extends src_app_modules_base_page_list_base__WEBPACK_
       /* Se for selectable trás somente os inativos ou os não inativos, se não for então trás juntamente os inativos se form.inativos */
       result.push(this.selectable ? ["data_inativacao", form.inativos ? "!=" : "==", null] : ["inativos", "==", form.inativos]);
       if (form.entidade_id?.length) result.push(["entidade_id", "==", form.entidade_id]);
-      if (form.nome?.length) result.push(["or", ["nome", "like", "%" + form.nome.replace(" ", "%") + "%"], ["sigla", "like", "%" + form.nome.replace(" ", "%") + "%"]]);
+      if (form.nome?.length) result.push(["or", ["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"], ["sigla", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]]);
       if (form.instituidora) result.push(["instituidora", "==", 1]);
       if (this.unidadesJaVinculadas.length) result.push(["id", "not in", this.unidadesJaVinculadas]);
       return result;

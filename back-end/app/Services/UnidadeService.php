@@ -250,7 +250,7 @@ class UnidadeService extends ServiceBase
     } 
 
     /**
-     * Retorna um array com os planos de entregas EM CURSO relativos à unidade repassada como parâmetro. 
+     * Retorna um array com os planos de entregas EM CURSO relativos à unidade recebida como parâmetro. 
      * Um Plano de Entregas está EM CURSO quando não foi deletado, nem cancelado, nem arquivado e possui status ATIVO;
      * @param string $unidade_id  
      */
@@ -349,7 +349,7 @@ class UnidadeService extends ServiceBase
     }
 
     /**
-     * Retorna um array com os ids das unidades que compõem a linha hierárquica ascendente da unidade repassada como parâmetro.
+     * Retorna um array com os ids das unidades que compõem a linha hierárquica ascendente da unidade recebida como parâmetro.
      * @param string $unidade_id
      * @return array
      */

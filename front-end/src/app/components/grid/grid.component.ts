@@ -408,7 +408,9 @@ export class GridComponent extends ComponentBase implements OnInit {
     if(this.groupBy && items?.length) {
       let buffer = "";
       this.groupIds = { _qtdRows: items.length };
-      items = items.filter(x => !(x instanceof GridGroupSeparator)).map(x => Object.assign(x, {_group: this.groupBy!.map(g => Object.assign({}, g, { value: this.util.getNested(x, g.field) }))}));
+      let mapItems = items.filter(x => !(x instanceof GridGroupSeparator)).map(x => Object.assign(x, {_group: this.groupBy!.map(g => Object.assign({}, g, { value: this.util.getNested(x, g.field) }))}));
+      //items = items.filter(x => !(x instanceof GridGroupSeparator)).map(x => Object.assign(x, {_group: this.groupBy!.map(g => Object.assign({}, g, { value: this.util.getNested(x, g.field) }))}));
+      items.splice(0, items.length, ...mapItems);
       if(!this.query) items.sort((a: IIndexable, b: IIndexable) => JSON.stringify(a._group) > JSON.stringify(b._group) ? 1 : JSON.stringify(a._group) < JSON.stringify(b._group) ? -1 : 0);
       for(let i = 0; i < items.length; i++) {
         if(buffer != JSON.stringify(items[i]._group)) {

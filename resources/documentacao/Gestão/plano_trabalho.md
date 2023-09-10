@@ -51,6 +51,7 @@ Campos obrigatórios:
 - (RN_PTR_Y) Para incluir um Plano de Trabalho para um participante, é necessário que este esteja lotado em uma das áreas de trabalho do usuário logado, a menos que este possua a capacidade MOD_PTR_USERS_INCL;
 - (RN_PTR_Z) Na inclusão de um Plano de Trabalho, é necessário que o participante esteja lotado na Unidade Executora, a menos que o usuário logado possua a capacidade MOD_PTR_INCL_SEM_LOT;
 - (RN_PTR_AA) Um Plano de Trabalho não pode ser incluído se apresentar período conflitante com outro Plano de Trabalho já existente para a mesma Unidade Executora, a menos que o usuário logado possua a capacidade MOD_PTR_INTSC_DATA;
+- (RN_PTR_AB) Um Plano de Trabalho não pode ser excluído;
 
 ## FLUXOS (STATUS & AÇÕES)
 
@@ -93,13 +94,10 @@ da assinatura       | pelo                |  inicial    |  faz avançar         
 Ação: ALTERAR -> não muda o status do plano se ele estiver com o status 'INCLUIDO' ou 'AGUARDANDO_ASSINATURA', mas retorna ao status 'AGUARDANDO_ASSINATURA' se ele estiver no status 'ATIVO';
 
 - (RN_PTR_M) Condições para que um Plano de Trabalho possa ser alterado:
-  - o usuário logado precisa possuir a capacidade "MOD_PTR_EDT", o Plano de Trabalho precisa ser válido (ou seja, nem deletado, nem arquivado), e:
-    - estando com o status 'INCLUIDO'
-      - o usuário logado precisa ser o participante do plano ou o gestor da Unidade Executora;
-    - estando com o status 'AGUARDANDO_ASSINATURA'
-      - o usuário logado precisa ser um dos que já assinaram o TCR e todas as assinaturas tornam-se sem efeito;
-    - estando com o status 'ATIVO'
-      - o usuário precisa ser gestor da Unidade Executora e possuir a capacidade MOD_PTR_EDT_ATV. Após alterado, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
+  - o usuário logado precisa possuir a capacidade "MOD_PTR_EDT", o Plano de Trabalho precisa ser válido (ou seja, nem deletado, nem arquivado, nem estar no status CANCELADO), e:
+    - estando com o status 'INCLUIDO', o usuário logado precisa ser o participante do plano ou o gestor da Unidade Executora;
+    - estando com o status 'AGUARDANDO_ASSINATURA', o usuário logado precisa ser um dos que já assinaram o TCR e todas as assinaturas tornam-se sem efeito;
+    - estando com o status 'ATIVO', o usuário precisa ser gestor da Unidade Executora e possuir a capacidade MOD_PTR_EDT_ATV. Após alterado, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
 
 Ação: ARQUIVAR -> não muda o status do plano ('EXECUTADO');
 
@@ -136,7 +134,7 @@ Ação: CANCELAR PLANO -> o plano adquire o status de 'CANCELADO';
     - o plano precisa estar em um dos seguintes status: INCLUIDO, AGUARDANDO_ASSINATURA, ATIVO ou EXECUTADO; e
     - o usuário logado precisa ser gestor da Unidade Executora;
 
-Ação: CONSULTAR -> não muda o status do plano;
+*/*Ação: CONSULTAR -> não muda o status do plano;
 
 - (RN_PTR_S) Condições para que um Plano de Trabalho possa ser consultado:
   - todos os participantes podem visualizar todos os planos de trabalho, desde que possuam a capacidade "MOD_PTR";

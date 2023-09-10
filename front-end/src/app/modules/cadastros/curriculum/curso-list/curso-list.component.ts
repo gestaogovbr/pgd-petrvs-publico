@@ -68,18 +68,18 @@ export class CursoListComponent extends PageListBase<Curso, CursoDaoService> {
     let form: any = filter.value;
 
     if(form.nome_curso?.length) {
-      result.push(["nome", "like", "%" + form.nome_curso + "%"]);
+      result.push(["nome", "like", "%" + form.nome_curso.trim().replace(" ", "%") + "%"]);
     }
 
     if(form.nome_area?.length) {
-      result.push(["area_curso_id", "like", "%" + form.nome_area + "%"]);
+      result.push(["area_curso_id", "like", "%" + form.nome_area.trim().replace(" ", "%") + "%"]);
     }
     
     if(form.titulo?.length) {
-      result.push(["titulo", "like", "%" + form.titulo + "%"]);
+      result.push(["titulo", "like", "%" + form.titulo.trim().replace(" ", "%") + "%"]);
     }
     if(form.nome_tipo?.length) {
-      result.push(["tipo_curso_id", "like", "%" + form.tipo + "%"]);
+      result.push(["tipo_curso_id", "like", "%" + form.tipo.trim().replace(" ", "%") + "%"]);
     }
 
     return result;

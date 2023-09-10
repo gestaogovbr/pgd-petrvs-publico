@@ -233,6 +233,7 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
     Route::post('cancelar-homologacao', [PlanoEntregaController::class, 'cancelarHomologacao']);
     Route::post('cancelar-plano', [PlanoEntregaController::class, 'cancelarPlano']);
     Route::post('concluir', [PlanoEntregaController::class, 'concluir']);
+    Route::post('desativar', [PlanoEntregaController::class, 'desativar']);
     Route::post('homologar', [PlanoEntregaController::class, 'homologar']);
     Route::post('liberar-homologacao', [PlanoEntregaController::class, 'liberarHomologacao']);
     Route::post('reativar', [PlanoEntregaController::class, 'reativar']);

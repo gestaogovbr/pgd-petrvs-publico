@@ -360,7 +360,7 @@ class CadeiaValorListGridComponent extends src_app_modules_base_page_list_base__
       let result = [];
       let form = filter.value;
       if (form.nome?.length) {
-        result.push(["nome", "like", "%" + form.nome.replace(" ", "%") + "%"]);
+        result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
       }
       if (form.data_inicio) {
         result.push(["data_fim", ">=", form.data_inicio]);
@@ -579,7 +579,7 @@ class CadeiaValorListProcessosEntregasComponent extends src_app_modules_base_pag
         result.push(["cadeia_valor_id", "==", form.cadeia_valor_id]);
       }
       if (form.nome?.length) {
-        result.push(["or", ["nome", "like", "%" + form.nome.replace(" ", "%") + "%"], ["sigla", "like", "%" + form.nome.replace(" ", "%") + "%"]]);
+        result.push(["or", ["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"], ["sigla", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]]);
       }
       return result;
     };
