@@ -1742,9 +1742,23 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
     this.cdRef.detectChanges();
   }
   onDataInicioChange(event) {
+    const di = new Date(this.form.controls.data_inicio.value).getTime();
+    const df = new Date(this.form.controls.data_fim.value).getTime();
+    if (df < di) {
+      let diaI = new Date(di);
+      diaI.setDate(diaI.getDate() + 1);
+      this.form.controls.data_fim.setValue(diaI);
+    }
     this.calculaTempos();
   }
   onDataFimChange(event) {
+    const di = new Date(this.form.controls.data_inicio.value).getTime();
+    const df = new Date(this.form.controls.data_fim.value).getTime();
+    if (df < di) {
+      let diaI = new Date(di);
+      diaI.setDate(diaI.getDate() + 1);
+      this.form.controls.data_fim.setValue(diaI);
+    }
     this.calculaTempos();
   }
   onCargaHorariaChenge(event) {
@@ -2118,7 +2132,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵproperty"]("ngIf", _r4.selectedEntity == null ? null : _r4.selectedEntity.plano_trabalho_calcula_horas);
       _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵproperty"]("title", ctx.lex.translate("Entregas") + ctx.lex.translate("do plano de trabalho"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵproperty"]("title", ctx.lex.translate("Entregas") + ctx.lex.translate(" do plano de trabalho"));
       _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵproperty"]("ngIf", !(ctx.form.controls.programa_id.value == null ? null : ctx.form.controls.programa_id.value.length) || !(ctx.form.controls.unidade_id.value == null ? null : ctx.form.controls.unidade_id.value.length));
       _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵadvance"](1);

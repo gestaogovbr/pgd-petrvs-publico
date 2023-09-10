@@ -13,9 +13,9 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
     this.searchFields = ["numero", "nome"];
   }
 
-  public arquivar(plano_entrega_id: string, justificativa: string | null, arquivar: boolean): Promise<boolean> {
+  public arquivar(planoEntrega: PlanoEntrega, justificativa: string | null): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/arquivar', { id: plano_entrega_id, justificativa: justificativa, arquivar: arquivar }).subscribe(response => {
+      this.server.post('api/' + this.collection + '/arquivar', { id: planoEntrega.id, justificativa: justificativa }).subscribe(response => {
         if (response.error) {
           reject(response.error);
         } else {
@@ -25,9 +25,9 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
     });
   }
 
-  public avaliar(plano_entrega_id: string): Promise<boolean> {
+  public avaliar(planoEntrega: PlanoEntrega): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/avaliar', { id: plano_entrega_id }).subscribe(response => {
+      this.server.post('api/' + this.collection + '/avaliar', { id: planoEntrega.id }).subscribe(response => {
         if (response.error) {
           reject(response.error);
         } else {
@@ -37,9 +37,9 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
     });
   }
 
-  public cancelarAvaliacao(plano_entrega_id: string, justificativa: string): Promise<boolean> {
+  public cancelarAvaliacao(planoEntrega: PlanoEntrega, justificativa: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/cancelar-avaliacao', { id: plano_entrega_id, justificativa: justificativa }).subscribe(response => {
+      this.server.post('api/' + this.collection + '/cancelar-avaliacao', { id: planoEntrega.id, justificativa: justificativa }).subscribe(response => {
         if (response.error) {
           reject(response.error);
         } else {
@@ -49,9 +49,9 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
     });
   }
 
-  public cancelarConclusao(plano_entrega_id: string, justificativa: string): Promise<boolean> {
+  public cancelarConclusao(planoEntrega: PlanoEntrega, justificativa: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/cancelar-conclusao', { id: plano_entrega_id, justificativa: justificativa }).subscribe(response => {
+      this.server.post('api/' + this.collection + '/cancelar-conclusao', { id: planoEntrega.id, justificativa: justificativa }).subscribe(response => {
         if (response.error) {
           reject(response.error);
         } else {
@@ -61,9 +61,9 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
     });
   }
 
-  public cancelarHomologacao(plano_entrega_id: string, justificativa: string): Promise<boolean> {
+  public cancelarHomologacao(planoEntrega: PlanoEntrega, justificativa: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/cancelar-homologacao', { id: plano_entrega_id, justificativa: justificativa }).subscribe(response => {
+      this.server.post('api/' + this.collection + '/cancelar-homologacao', { id: planoEntrega.id, justificativa: justificativa }).subscribe(response => {
         if (response.error) {
           reject(response.error);
         } else {
@@ -73,9 +73,9 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
     });
   }
 
-  public cancelarPlano(plano_entrega_id: string, justificativa: string): Promise<boolean> {
+  public cancelarPlano(planoEntrega: PlanoEntrega, justificativa: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/cancelar-plano', { id: plano_entrega_id, justificativa: justificativa }).subscribe(response => {
+      this.server.post('api/' + this.collection + '/cancelar-plano', { id: planoEntrega.id, justificativa: justificativa }).subscribe(response => {
         if (response.error) {
           reject(response.error);
         } else {
@@ -85,9 +85,9 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
     });
   }
 
-  public concluir(plano_entrega_id: string): Promise<boolean> {
+  public concluir(planoEntrega: PlanoEntrega): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/concluir', { id: plano_entrega_id }).subscribe(response => {
+      this.server.post('api/' + this.collection + '/concluir', { id: planoEntrega.id }).subscribe(response => {
         if (response.error) {
           reject(response.error);
         } else {
@@ -97,9 +97,9 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
     });
   }
 
-  public homologar(plano_entrega_id: string): Promise<boolean> {
+  public desarquivar(planoEntrega: PlanoEntrega, justificativa: string | null): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/homologar', { id: plano_entrega_id }).subscribe(response => {
+      this.server.post('api/' + this.collection + '/desarquivar', { id: planoEntrega.id, justificativa: justificativa }).subscribe(response => {
         if (response.error) {
           reject(response.error);
         } else {
@@ -109,9 +109,9 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
     });
   }
 
-  public liberarHomologacao(plano_entrega_id: string): Promise<boolean> {
+  public homologar(planoEntrega: PlanoEntrega): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/liberar-homologacao', { id: plano_entrega_id }).subscribe(response => {
+      this.server.post('api/' + this.collection + '/homologar', { id: planoEntrega.id }).subscribe(response => {
         if (response.error) {
           reject(response.error);
         } else {
@@ -121,9 +121,9 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
     });
   }
 
-  public reativar(plano_entrega_id: string, justificativa: string): Promise<boolean> {
+  public liberarHomologacao(planoEntrega: PlanoEntrega): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/reativar', { id: plano_entrega_id, justificativa: justificativa }).subscribe(response => {
+      this.server.post('api/' + this.collection + '/liberar-homologacao', { id: planoEntrega.id }).subscribe(response => {
         if (response.error) {
           reject(response.error);
         } else {
@@ -133,9 +133,9 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
     });
   }
 
-  public retirarHomologacao(plano_entrega_id: string, justificativa: string): Promise<boolean> {
+  public reativar(planoEntrega: PlanoEntrega, justificativa: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/retirar-homologacao', { id: plano_entrega_id, justificativa: justificativa }).subscribe(response => {
+      this.server.post('api/' + this.collection + '/reativar', { id: planoEntrega.id, justificativa: justificativa }).subscribe(response => {
         if (response.error) {
           reject(response.error);
         } else {
@@ -145,9 +145,21 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
     });
   }
 
-  public suspender(plano_entrega_id: string, justificativa: string): Promise<boolean> {
+  public retirarHomologacao(planoEntrega: PlanoEntrega, justificativa: string | null): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/suspender', { id: plano_entrega_id, justificativa: justificativa }).subscribe(response => {
+      this.server.post('api/' + this.collection + '/retirar-homologacao', { id: planoEntrega.id, justificativa: justificativa }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }
+      }, error => reject(error));
+    });
+  }
+
+  public suspender(planoEntrega: PlanoEntrega, justificativa: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/suspender', { id: planoEntrega.id, justificativa: justificativa }).subscribe(response => {
         if (response.error) {
           reject(response.error);
         } else {

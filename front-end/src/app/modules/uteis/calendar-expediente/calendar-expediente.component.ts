@@ -189,6 +189,8 @@ export class CalendarExpedienteComponent implements OnInit {
     const data = this.form.controls.especial_data.value;
     const sem = this.form.controls.especial_sem.value;
     const key = this.util.textHash((dia == "especial" ? this.util.getDateFormatted(data) : "") + dia + inicio + fim);
+    const array = this.form.controls[dia].value;
+   
     if(this.util.isTimeValid(inicio) && this.util.isTimeValid(fim) && (this.util.getStrTimeHours(inicio) < this.util.getStrTimeHours(fim)) && (dia != "especial" || data) && this.util.validateLookupItem(this.form.controls[dia].value, key)) {
       result = {
         key: key,
@@ -200,12 +202,26 @@ export class CalendarExpedienteComponent implements OnInit {
           sem: sem
         }  
       };
-      this.form.controls[dia + "_inicio"].setValue("");
-      this.form.controls[dia + "_fim"].setValue("");
-      if(dia == "especial") {
-        this.form.controls[dia + "_data"].setValue(null);
-        this.form.controls[dia + "_sem"].setValue(false);
-      }
+     
+    }
+
+    if(array.length>0){
+        array.forEach( (x:any) => {
+          const inicioB = x.data.inicio
+          const fimB = x.data.fim;
+          
+          if( (inicio >= inicioB &&  fim <= inicioB) || (inicio <= inicioB &&  fim >= inicioB) || (inicio >= inicioB &&  fim <= inicioB) || (inicio <= inicioB &&  fim >= fimB) || (inicio >= inicioB &&  inicio <= fimB) || (fim >= inicioB &&  fim <= fimB) || (inicio == fimB) || (fim == inicioB)){
+            console.log('Conflitante')//fim <= fimB
+      
+            result = undefined;
+          }
+      });
+    }
+    this.form.controls[dia + "_inicio"].setValue("");
+    this.form.controls[dia + "_fim"].setValue("");
+    if(dia == "especial") {
+      this.form.controls[dia + "_data"].setValue(null);
+      this.form.controls[dia + "_sem"].setValue(false);
     }
     return result;
   };

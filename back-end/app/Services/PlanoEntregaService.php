@@ -23,14 +23,14 @@ class PlanoEntregaService extends ServiceBase
         if($action == ServiceBase::ACTION_INSERT) $this->status->atualizaStatus($planoEntrega, 'INCLUIDO', 'O Plano de Entrega foi criado nesta data.');
     }
 
-    public function arquivar($data, $unidade) { // ou 'desarquivar'
+    public function arquivar($data, $unidade) { 
         try {
             DB::beginTransaction();
             $planoEntrega = PlanoEntrega::find($data["id"]);
             if(!empty($planoEntrega)) {
                 $this->update([
                     "id" => $planoEntrega->id,
-                    "data_arquivamento" => $data["arquivar"] ? Carbon::now() : null
+                    "data_arquivamento" => Carbon::now()
                 ], $unidade, false);
             } else {
                 throw new ServerException("ValidatePlanoTrabalho", "Plano de Entrega não encontrado!");
@@ -150,6 +150,26 @@ class PlanoEntregaService extends ServiceBase
             DB::beginTransaction();
             $planoEntrega = PlanoEntrega::find($data["id"]);
             $this->status->atualizaStatus($planoEntrega,'CONCLUIDO','O plano de entregas foi concluído nesta data.');
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollback();
+            throw $e;
+        }
+        return true;
+    }
+
+    public function desarquivar($data, $unidade) { 
+        try {
+            DB::beginTransaction();
+            $planoEntrega = PlanoEntrega::find($data["id"]);
+            if(!empty($planoEntrega)) {
+                $this->update([
+                    "id" => $planoEntrega->id,
+                    "data_arquivamento" => null
+                ], $unidade, false);
+            } else {
+                throw new ServerException("ValidatePlanoTrabalho", "Plano de Entrega não encontrado!");
+            }
             DB::commit();
         } catch (Throwable $e) {
             DB::rollback();

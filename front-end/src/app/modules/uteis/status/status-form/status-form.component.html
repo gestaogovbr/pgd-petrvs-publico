@@ -2,11 +2,10 @@
 <editable-form [form]="form!" confirmLabel="Confirmar" (submit)="onSubmitClick()" (cancel)="onCancel()">
     <div class="row">
         <div class="row mb-4">
-            <span><strong>Novo status: </strong></span>
-            <badge [color]="lookup.getColor(statusService.itens[tipo], status)" [icon]="lookup.getIcon(statusService.itens[tipo], status)" [label]="lookup.getValue(statusService.itens[tipo], status)"></badge>
+            <input-select [size]="12" label="Novo status" icon="" controlName="novo_status" [items]="this.statusService.getItem(this.tipo) || []" [disabled]="novoStatus.length ? 'true' : undefined"></input-select>
         </div>            
         <div class="row">
-            <input-textarea [size]="12" [rows]="3" label="Justificativa" controlName="justificativa"></input-textarea>
+            <input-textarea *ngIf="exigeJustificativa()" [size]="12" [rows]="3" label="Justificativa" controlName="justificativa"></input-textarea>
         </div>
     </div>
 </editable-form>

@@ -55,4 +55,16 @@ export class CadeiaValorListGridComponent  extends PageListBase<CadeiaValor, Cad
     return result;
   }
 
+  public onChangeData(){
+
+    const di = new Date(this.filter!.controls.data_inicio.value).getTime();
+    const df = new Date(this.filter!.controls.data_fim.value).getTime();
+
+    if(df < di){
+      let diaI = new Date(di);
+      diaI.setDate(diaI.getDate() + 1);
+      this.filter!.controls.data_fim.setValue(diaI)   
+    }
+  }
+
 }

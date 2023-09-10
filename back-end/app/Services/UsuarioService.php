@@ -4,12 +4,14 @@ namespace App\Services;
 
 use App\Models\Usuario;
 use App\Models\Unidade;
+use App\Models\UnidadeIntegrante;
 use App\Models\Atividade;
 use App\Models\PlanoTrabalho;
 use App\Services\ServiceBase;
 use App\Services\RawWhere;
 use App\Services\UtilService;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Builder;
 use Exception;
 use Throwable;
 
@@ -271,7 +273,10 @@ class UsuarioService extends ServiceBase
         $subordinadas = true;
         foreach($data["where"] as $condition) {
             if(is_array($condition) && $condition[0] == "lotacao") {
-                array_push($where, new RawWhere("EXISTS(SELECT id FROM lotacoes where_lotacoes WHERE where_lotacoes.usuario_id = usuarios.id AND where_lotacoes.unidade_id = ?)", [$condition[2]]));
+                //array_push($where, new RawWhere("EXISTS(SELECT id FROM lotacoes where_lotacoes WHERE where_lotacoes.usuario_id = usuarios.id AND where_lotacoes.unidade_id = ?)", [$condition[2]]));
+                $query->whereHas('lotacao', function (Builder $query) use ($condition) {
+                    $query->where('unidade_id', $condition[2]);
+                });
             } else if(is_array($condition) && $condition[0] == "subordinadas") {
                 $subordinadas = $condition[2];
             } else {

@@ -3,10 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use App\Services\GoogleService;
 use App\Services\LoginUnicoService;
 
-class Login extends ServiceProvider
+class LoginUnicoServiceProvider extends ServiceProvider
 {
     /**
      * Register services.
@@ -16,7 +15,7 @@ class Login extends ServiceProvider
     public function register()
     {
         $this->app->singleton(LoginUnicoService::class, function ($app) {
-            return new LoginUnicoService(config('login_unico'));
+            return new LoginUnicoService(config('login-unico'));
         });
     }
 

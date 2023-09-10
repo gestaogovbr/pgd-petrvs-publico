@@ -2780,6 +2780,9 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
     this.habilitarAdesaoToolbar = false;
     this.toolbarButtons = [];
     this.botoes = [];
+    this.routeStatus = {
+      route: ["uteis", "status"]
+    };
     this.filterWhere = filter => {
       let result = [];
       let form = filter.value;
@@ -3011,7 +3014,7 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
     this.showFilter = typeof this.queryParams?.showFilter != "undefined" ? this.queryParams.showFilter == "true" : true;
     this.selectable = this.metadata?.selectable || this.selectable;
     this.checaBotaoAderirToolbar();
-    //this.toolbarButtons.push(this.BOTAO_ADERIR_TOOLBAR);
+    //this.toolbarButtons.push(this.BOTAO_ADERIR_TOOLBAR);  // Adesão de plano suspensa, por enquanto
   }
 
   ngAfterContentChecked() {
@@ -3273,224 +3276,251 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
     return false;
   }
   arquivar(planoEntrega) {
-    this.dialog.confirm("Arquivar?", "Deseja realmente arquivar o Plano de Entregas?").then(confirm => {
-      if (confirm) {
-        this.dao.arquivar(planoEntrega.id, null, true).then(() => {
-          if (this.filter?.controls.arquivadas?.value) {
-            this.grid.query.refreshId(planoEntrega.id);
-          } else {
-            (this.grid?.query || this.query).removeId(planoEntrega.id);
-          }
-        }).catch(error => this.dialog.alert("Erro", "Erro ao arquivar o Plano de Entregas: " + error?.message ? error?.message : 0));
+    this.go.navigate(this.routeStatus, {
+      metadata: {
+        tipo: "PlanoEntrega",
+        entity: planoEntrega,
+        novoStatus: planoEntrega.status,
+        onClick: this.dao.arquivar.bind(this.dao)
+      },
+      title: "Arquivar Plano de Entregas",
+      modalClose: modalResult => {
+        if (modalResult) {
+          (this.grid?.query || this.query).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
+          });
+        }
+        ;
       }
     });
-    this.checaBotaoAderirToolbar();
   }
   avaliar(planoEntrega) {
-    const self = this;
-    this.dao.avaliar(planoEntrega.id).then(function () {
-      (self.grid?.query || self.query).refreshId(planoEntrega.id);
-      self.dialog.alert("Sucesso", "Avaliado com sucesso!");
-    }).catch(function (error) {
-      self.dialog.alert("Erro", "Erro ao avaliar: " + error?.message ? error?.message : 0);
+    this.go.navigate(this.routeStatus, {
+      metadata: {
+        tipo: "PlanoEntrega",
+        entity: planoEntrega,
+        novoStatus: "AVALIADO",
+        onClick: this.dao.avaliar.bind(this.dao)
+      },
+      title: "Avaliar Plano de Entregas",
+      modalClose: modalResult => {
+        if (modalResult) {
+          (this.grid?.query || this.query).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
+          });
+        }
+        ;
+      }
     });
-    this.checaBotaoAderirToolbar();
   }
   cancelarAvaliacao(planoEntrega) {
-    const self = this;
-    this.go.navigate({
-      route: ["uteis", "status"]
-    }, {
-      metadata: {},
-      modalClose: justificativa => {
-        if (justificativa) {
-          this.dao.cancelarAvaliacao(planoEntrega.id, justificativa).then(function () {
-            (self.grid?.query || self.query).refreshId(planoEntrega.id);
-            self.dialog.alert("Sucesso", "Cancelado com sucesso!");
-          }).catch(function (error) {
-            self.dialog.alert("Erro", "Erro ao cancelar avaliacao: " + error?.message ? error?.message : 0);
+    this.go.navigate(this.routeStatus, {
+      metadata: {
+        tipo: "PlanoEntrega",
+        entity: planoEntrega,
+        novoStatus: "CONCLUIDO",
+        onClick: this.dao.cancelarAvaliacao.bind(this.dao)
+      },
+      title: "Cancelar Avaliação",
+      modalClose: modalResult => {
+        if (modalResult) {
+          (this.grid?.query || this.query).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
           });
         }
+        ;
       }
     });
-    this.checaBotaoAderirToolbar();
   }
   cancelarConclusao(planoEntrega) {
-    const self = this;
-    this.go.navigate({
-      route: ["uteis", "status"]
-    }, {
-      metadata: {},
-      modalClose: justificativa => {
-        if (justificativa) {
-          this.dao.cancelarConclusao(planoEntrega.id, justificativa).then(function () {
-            (self.grid?.query || self.query).refreshId(planoEntrega.id);
-            self.dialog.alert("Sucesso", "Cancelado com sucesso!");
-          }).catch(function (error) {
-            self.dialog.alert("Erro", "Erro ao cancelar conclusão: " + error?.message ? error?.message : 0);
+    this.go.navigate(this.routeStatus, {
+      metadata: {
+        tipo: "PlanoEntrega",
+        entity: planoEntrega,
+        novoStatus: "ATIVO",
+        onClick: this.dao.cancelarConclusao.bind(this.dao)
+      },
+      title: "Cancelar Conclusão",
+      modalClose: modalResult => {
+        if (modalResult) {
+          (this.grid?.query || this.query).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
           });
         }
+        ;
       }
     });
-    this.checaBotaoAderirToolbar();
   }
   cancelarHomologacao(planoEntrega) {
-    const self = this;
-    this.go.navigate({
-      route: ["uteis", "status"]
-    }, {
-      metadata: {},
-      modalClose: justificativa => {
-        if (justificativa) {
-          this.dao.cancelarHomologacao(planoEntrega.id, justificativa).then(function () {
-            (self.grid?.query || self.query).refreshId(planoEntrega.id);
-            self.dialog.alert("Sucesso", "Cancelado com sucesso!");
-          }).catch(function (error) {
-            self.dialog.alert("Erro", "Erro ao cancelar a homologação: " + error?.message ? error?.message : 0);
+    this.go.navigate(this.routeStatus, {
+      metadata: {
+        tipo: "PlanoEntrega",
+        entity: planoEntrega,
+        novoStatus: "HOMOLOGANDO",
+        onClick: this.dao.cancelarHomologacao.bind(this.dao)
+      },
+      title: "Cancelar Homologação",
+      modalClose: modalResult => {
+        if (modalResult) {
+          (this.grid?.query || this.query).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
           });
         }
+        ;
       }
     });
-    this.checaBotaoAderirToolbar();
   }
   cancelarPlano(planoEntrega) {
-    const self = this;
-    this.go.navigate({
-      route: ["uteis", "status"]
-    }, {
-      metadata: {},
-      modalClose: justificativa => {
-        if (justificativa) {
-          this.dao.cancelarPlano(planoEntrega.id, justificativa).then(function () {
-            (self.grid?.query || self.query).refreshId(planoEntrega.id);
-            self.dialog.alert("Sucesso", "Plano cancelado com sucesso!");
-          }).catch(function (error) {
-            self.dialog.alert("Erro", "Erro ao cancelar o plano: " + error?.message ? error?.message : 0);
+    this.go.navigate(this.routeStatus, {
+      metadata: {
+        tipo: "PlanoEntrega",
+        entity: planoEntrega,
+        novoStatus: "CANCELADO",
+        onClick: this.dao.cancelarPlano.bind(this.dao)
+      },
+      title: "Cancelar Plano de Entregas",
+      modalClose: modalResult => {
+        if (modalResult) {
+          (this.grid?.query || this.query).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
           });
         }
+        ;
       }
     });
-    //this.auth.selecionaUnidade(this.auth!.unidade!.id);
-    this.checaBotaoAderirToolbar();
   }
   concluir(planoEntrega) {
-    const self = this;
-    this.dialog.confirm("Concluir ?", "Deseja realmente concluir este Plano de Entregas?").then(confirm => {
-      if (confirm) {
-        this.dao.concluir(planoEntrega.id).then(function () {
-          (self.grid?.query || self.query).refreshId(planoEntrega.id);
-          self.dialog.alert("Sucesso", "Concluído com sucesso!");
-        }).catch(function (error) {
-          self.dialog.alert("Erro", "Erro ao concluir: " + error?.message ? error?.message : 0);
-        });
+    this.go.navigate(this.routeStatus, {
+      metadata: {
+        tipo: "PlanoEntrega",
+        entity: planoEntrega,
+        novoStatus: "CONCLUIDO",
+        onClick: this.dao.concluir.bind(this.dao)
+      },
+      title: "Concluir Plano de Entregas",
+      modalClose: modalResult => {
+        if (modalResult) {
+          (this.grid?.query || this.query).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
+          });
+        }
+        ;
       }
     });
-    this.auth.selecionaUnidade(this.auth.unidade.id);
-    this.checaBotaoAderirToolbar();
   }
   desarquivar(planoEntrega) {
-    this.go.navigate({
-      route: ["uteis", "status"]
-    }, {
-      metadata: {},
-      modalClose: justificativa => {
-        if (justificativa) {
-          this.dao.arquivar(planoEntrega.id, justificativa, false).then(() => {
-            this.grid.query.refreshId(planoEntrega.id);
-          }).catch(error => this.dialog.alert("Erro", "Erro ao desarquivar o Plano de Entregas: " + error?.message ? error?.message : 0));
+    this.go.navigate(this.routeStatus, {
+      metadata: {
+        tipo: "PlanoEntrega",
+        entity: planoEntrega,
+        novoStatus: planoEntrega.status,
+        onClick: this.dao.desarquivar.bind(this.dao)
+      },
+      title: "Desarquivar Plano de Entregas",
+      modalClose: modalResult => {
+        if (modalResult) {
+          (this.grid?.query || this.query).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
+          });
         }
+        ;
       }
     });
-    this.checaBotaoAderirToolbar();
   }
   homologar(planoEntrega) {
-    const self = this;
-    this.dialog.confirm("Homologar ?", "Deseja realmente homologar este Plano de Entregas?").then(confirm => {
-      if (confirm) {
-        this.dao.homologar(planoEntrega.id).then(function () {
-          (self.grid?.query || self.query).refreshId(planoEntrega.id);
-          self.dialog.alert("Sucesso", "Homologado com sucesso!");
-        }).catch(function (error) {
-          self.dialog.alert("Erro", "Erro ao homologar: " + error?.message ? error?.message : 0);
-        });
-        //this.auth.selecionaUnidade(this.auth!.unidade!.id);
-        this.checaBotaoAderirToolbar();
+    this.go.navigate(this.routeStatus, {
+      metadata: {
+        tipo: "PlanoEntrega",
+        entity: planoEntrega,
+        novoStatus: "ATIVO",
+        onClick: this.dao.homologar.bind(this.dao)
+      },
+      title: "Homologar Plano de Entregas",
+      modalClose: modalResult => {
+        if (modalResult) {
+          (this.grid?.query || this.query).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
+          });
+        }
+        ;
       }
     });
   }
   liberarHomologacao(planoEntrega) {
-    const self = this;
-    this.dialog.confirm("Liberar para homologação ?", "Deseja realmente liberar para a homologação?").then(confirm => {
-      if (confirm) {
-        this.dao.liberarHomologacao(planoEntrega.id).then(function () {
-          (self.grid?.query || self.query).refreshId(planoEntrega.id);
-          self.dialog.alert("Sucesso", "Liberado para homologação com sucesso!");
-        }).catch(function (error) {
-          self.dialog.alert("Erro", "Erro ao liberar para homologação: " + error?.message ? error?.message : 0);
-        });
+    this.go.navigate(this.routeStatus, {
+      metadata: {
+        tipo: "PlanoEntrega",
+        entity: planoEntrega,
+        novoStatus: "HOMOLOGANDO",
+        onClick: this.dao.liberarHomologacao.bind(this.dao)
+      },
+      title: "Liberar para Homologação",
+      modalClose: modalResult => {
+        if (modalResult) {
+          (this.grid?.query || this.query).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
+          });
+        }
+        ;
       }
     });
-    this.checaBotaoAderirToolbar();
   }
   reativar(planoEntrega) {
-    const self = this;
-    this.go.navigate({
-      route: ["uteis", "status"]
-    }, {
-      metadata: {},
-      modalClose: justificativa => {
-        if (justificativa) {
-          this.dao.reativar(planoEntrega.id, justificativa).then(function () {
-            (self.grid?.query || self.query).refreshId(planoEntrega.id);
-            self.dialog.alert("Sucesso", "Reativado com sucesso!");
-          }).catch(function (error) {
-            self.dialog.alert("Erro", "Erro ao reativar: " + error?.message ? error?.message : 0);
+    this.go.navigate(this.routeStatus, {
+      metadata: {
+        tipo: "PlanoEntrega",
+        entity: planoEntrega,
+        novoStatus: "ATIVO",
+        onClick: this.dao.reativar.bind(this.dao)
+      },
+      title: "Reativar Plano de Entregas",
+      modalClose: modalResult => {
+        if (modalResult) {
+          (this.grid?.query || this.query).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
           });
         }
+        ;
       }
     });
-    //this.auth.selecionaUnidade(this.auth!.unidade!.id);
-    this.checaBotaoAderirToolbar();
   }
   retirarHomologacao(planoEntrega) {
-    const self = this;
-    this.go.navigate({
-      route: ["uteis", "status"]
-    }, {
-      metadata: {},
-      modalClose: justificativa => {
-        if (justificativa) {
-          this.dao.retirarHomologacao(planoEntrega.id, justificativa).then(function () {
-            (self.grid?.query || self.query).refreshId(planoEntrega.id);
-            self.dialog.alert("Sucesso", "Retirado com sucesso!");
-          }).catch(function (error) {
-            self.dialog.alert("Erro", "Erro ao retirar da homologação: " + error?.message ? error?.message : 0);
+    this.go.navigate(this.routeStatus, {
+      metadata: {
+        tipo: "PlanoEntrega",
+        entity: planoEntrega,
+        novoStatus: "INCLUIDO",
+        onClick: this.dao.retirarHomologacao.bind(this.dao)
+      },
+      title: "Retirar de Homologação",
+      modalClose: modalResult => {
+        if (modalResult) {
+          (this.grid?.query || this.query).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
           });
         }
+        ;
       }
     });
-    //this.auth.selecionaUnidade(this.auth!.unidade!.id);
-    this.checaBotaoAderirToolbar();
   }
   suspender(planoEntrega) {
-    const self = this;
-    this.go.navigate({
-      route: ["uteis", "status"]
-    }, {
-      metadata: {},
-      modalClose: justificativa => {
-        if (justificativa) {
-          this.dao.suspender(planoEntrega.id, justificativa).then(function () {
-            (self.grid?.query || self.query).refreshId(planoEntrega.id);
-            self.dialog.alert("Sucesso", "Suspenso com sucesso!");
-          }).catch(function (error) {
-            self.dialog.alert("Erro", "Erro ao suspender: " + error?.message ? error?.message : 0);
+    this.go.navigate(this.routeStatus, {
+      metadata: {
+        tipo: "PlanoEntrega",
+        entity: planoEntrega,
+        novoStatus: "SUSPENSO",
+        onClick: this.dao.suspender.bind(this.dao)
+      },
+      title: "Suspender Plano de Entregas",
+      modalClose: modalResult => {
+        if (modalResult) {
+          (this.grid?.query || this.query).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
           });
         }
+        ;
       }
     });
-    //this.auth.selecionaUnidade(this.auth!.unidade!.id);
-    this.checaBotaoAderirToolbar();
   }
 }
 _class = PlanoEntregaListComponent;

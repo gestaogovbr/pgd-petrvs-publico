@@ -18,7 +18,7 @@ class PlanoEntregaController extends ControllerBase {
             $data = $request->validate([
                 'id' => ['required'],
                 'arquivar' => ['required'],
-                'justificativa' => ['present']
+                'justificativa' => ['required_if:arquivar,false']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
