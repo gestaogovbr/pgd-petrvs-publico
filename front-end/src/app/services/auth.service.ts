@@ -18,7 +18,7 @@ import { UnidadeDaoService } from '../dao/unidade-dao.service';
 import { NotificacaoService } from '../modules/uteis/notificacoes/notificacao.service';
 import { AppComponent } from '../app.component';
 
-export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION" | "SUPER";
+export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION" | "SUPER" | "LOGINUNICO";
 export type Permission = string | (string | string[])[];
 
 @Injectable({
@@ -160,7 +160,7 @@ export class AuthService {
       this.unidade = this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade;
       if (this.unidade) this.calendar.loadFeriadosCadastrados(this.unidade.id);
       if (token?.length) localStorage.setItem("petrvs_api_token", token);
-      this.app!.onContextoSelect(this.app!.menuContexto.find(x => x.key == this.usuarioConfig.menu_contexto) || this.app!.menuContexto[0]);
+      this.gb.setContexto(this.usuarioConfig.menu_contexto || this.app!.menuContexto[0].key);
       this.notificacao.updateNaoLidas();
     } else {
       this.usuario = undefined;
@@ -197,8 +197,8 @@ export class AuthService {
   }
 
   /********************************************************************************************
-  Rotinas para autenticar (cada entidade poderá criar a sua, caso as que estejam aqui não atendam). 
-  Serve como proxy para a chamada do método logIn, que é quem realmente autentica o usuário. As 
+  Rotinas para autenticar (cada entidade poderá criar a sua, caso as que estejam aqui não atendam).
+  Serve como proxy para a chamada do método logIn, que é quem realmente autentica o usuário. As
   rotinas atuais estão consideram que a entidade utilizada pelo sistema será a configurada no .env
   do back-end, mas caso haja a necessidade de criar um combobox no login para selecionar a entidade
   isso poderá ser feito sem problema algum, somente sendo necessário criar um novo método para receber
@@ -233,6 +233,15 @@ export class AuthService {
     return this.logIn("GOOGLE", "login-google-token", {
       entidade: this.gb.ENTIDADE,
       token: tokenId
+    }, redirectTo);
+  }
+
+  public authLoginUnico(code: string, state: string,redirectTo?: FullRoute) {
+    //this.googleApi.tokenId = tokenId;
+    return this.logIn("LOGINUNICO", "login-unico", {
+      entidade: this.gb.ENTIDADE,
+      code: code,
+      state: state,
     }, redirectTo);
   }
 
@@ -322,10 +331,10 @@ export class AuthService {
   }
 
   /**
-   * Informa se o usuário logado é gestor(titular ou substituto) da unidade repassada como parâmetro. Se nenhuma unidade for repassada, 
+   * Informa se o usuário logado é gestor(titular ou substituto) da unidade repassada como parâmetro. Se nenhuma unidade for repassada,
    * será adotada a unidade selecionada pelo servidor na homepage.
-   * @param pUnidade 
-   * @returns 
+   * @param pUnidade
+   * @returns
    */
   public isGestorUnidade(pUnidade: Unidade | string | null = null): boolean {
     /*       let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? this.unidades?.find(x => x.id == pUnidade) : pUnidade;
@@ -335,16 +344,16 @@ export class AuthService {
   }
 
   /**
-   * Informa se o usuário logado é gestor de alguma das suas lotações.
-   * @returns 
+   * Informa se o usuário logado é gestor de alguma das suas áreas de trabalho.
+   * @returns
    */
-  public isGestorAlgumaLotacao(): boolean {
+  public isGestorAlgumaAreaTrabalho(): boolean {
     return !!this.unidades?.filter(x => this.isGestorUnidade(x)).length;
   }
 
   /**
    * Retorna a unidade onde o usuário é gestor
-   * @returns 
+   * @returns
    */
   public unidadeGestor(): Unidade | undefined {
     return this.unidades?.find(x => this.isGestorUnidade(x));
@@ -352,7 +361,7 @@ export class AuthService {
 
   /**
    * Retorna a unidade onde o usuário é gestor
-   * @returns 
+   * @returns
    */
   public get lotacao(): Unidade | undefined {
     return this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade;
@@ -360,7 +369,7 @@ export class AuthService {
 
   /**
    * Retorna a unidade onde o usuário é gestor
-   * @returns 
+   * @returns
    */
   public get gestoresLotacao(): Usuario[] {
     let lotacao = this.lotacao;
@@ -371,21 +380,21 @@ export class AuthService {
   }
 
   /**
-   * Informa se a unidade repassada como parâmetro é a lotação do usuário logado. Se nenhuma unidade for repassada, 
+   * Informa se a unidade repassada como parâmetro é a lotação do usuário logado. Se nenhuma unidade for repassada,
    * será adotada a unidade selecionada pelo servidor na homepage.
-   * @param pUnidade 
-   * @returns 
+   * @param pUnidade
+   * @returns
    */
   public isLotacaoUsuario(pUnidade: Unidade | null = null): boolean {
     let unidade = pUnidade || this.unidade!;
-    let lotacao = this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade; 
+    let lotacao = this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade;
     return lotacao?.id == unidade.id;
   }
 
   /**
    * Informa se o usuário logado possui determinada atribuição para uma unidade específica dentre as suas unidades-integrante.
-   * @param atribuicao 
-   * @param unidade_id 
+   * @param atribuicao
+   * @param unidade_id
    */
   public isIntegrante(atribuicao: IntegranteAtribuicao, unidade_id: string): boolean {
     let $vinculo = this.usuario?.unidades_integrante?.find(x => x.unidade_id == unidade_id);
@@ -393,10 +402,10 @@ export class AuthService {
   }
 
   /**
-   * Informa se o usuário logado tem como área de trabalho alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
+   * Informa se o usuário logado tem como área de trabalho alguma das unidades pertencentes à linha hierárquica ascendente da unidade
    * repassada como parâmetro.
-   * @param unidade 
-   * @returns 
+   * @param unidade
+   * @returns
    */
   public isLotadoNaLinhaAscendente(unidade: Unidade): boolean {
     let result = false;
@@ -405,10 +414,10 @@ export class AuthService {
   }
 
   /**
-   * Informa se o usuário logado é gestor (titular ou substituto) de alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
+   * Informa se o usuário logado é gestor (titular ou substituto) de alguma das unidades pertencentes à linha hierárquica ascendente da unidade
    * repassada como parâmetro.
-   * @param unidade 
-   * @returns 
+   * @param unidade
+   * @returns
    */
   public isGestorLinhaAscendente(unidade: Unidade): boolean {
     let result = false;

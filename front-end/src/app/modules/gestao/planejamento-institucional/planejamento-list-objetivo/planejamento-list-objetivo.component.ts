@@ -23,7 +23,6 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
   @Input() set entity(value: Planejamento | undefined) { super.entity = value; } get entity(): Planejamento | undefined { return super.entity; }
   @Input() set disabled(value: boolean) { if (this._disabled != value) this._disabled = value; } get disabled(): boolean { return this._disabled; }
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
-  @Input() eixos?: EixoTematico[];
 
   public get items(): PlanejamentoObjetivo[] {
     if (!this.gridControl.value) this.gridControl.setValue(new Planejamento());
@@ -35,6 +34,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
   public objetivoDao?: PlanejamentoObjetivoDaoService;
   public eixoDao?: EixoTematicoDaoService;
   private _disabled: boolean = false;
+  public eixos: EixoTematico[] = [];
 
   constructor(public injector: Injector) {
     super(injector);
@@ -54,11 +54,8 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
   ngOnInit(): void {
     super.ngOnInit();
     this.entity = this.metadata?.entity || this.entity;
-    this.eixos = this.metadata?.eixos || this.eixos;
+    this.carregaEixos();
     this.sortObjetivos();
-    if (!this.eixos) this.eixoDao?.query().getAll().then(eixos => {
-      this.eixos = eixos;
-    });
   }
 
   public dynamicButtons(row: any): ToolbarButton[] {
@@ -103,6 +100,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
       modalClose: async (modalResult) => {
         if (modalResult) {
           try {
+            this.carregaEixos();
             this.isNoPersist ? this.items.push(modalResult) : this.items.push(await this.objetivoDao!.save(modalResult)); 
             this.sortObjetivos();
           } catch (error: any) {
@@ -155,6 +153,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
         if (modalResult) {
           if (!this.isNoPersist) await this.objetivoDao?.save(modalResult);
           this.items[index] = modalResult;
+          this.carregaEixos();
           this.sortObjetivos();
         };
       }
@@ -180,6 +179,12 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
 
   public getEixo(id: string): EixoTematico | undefined {
     return this.eixos?.find(x => x.id == id);
+  }
+
+  public carregaEixos(){
+    this.eixoDao?.query().getAll().then(eixos => {
+      this.eixos = eixos;
+    });
   }
 
 }

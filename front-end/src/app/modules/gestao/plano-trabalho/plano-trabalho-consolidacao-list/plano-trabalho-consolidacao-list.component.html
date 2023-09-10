@@ -31,6 +31,6 @@
                 <badge [color]="lookup.getColor(lookup.CONSOLIDACAO_STATUS, row.status)" [icon]="lookup.getIcon(lookup.CONSOLIDACAO_STATUS, row.status)" [label]="lookup.getValue(lookup.CONSOLIDACAO_STATUS, row.status)"></badge>
             </ng-template>
         </column>
-        <column type="options" [dynamicButtons]="dynamicButtons"></column>
+        <column type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
     </columns>
 </grid>

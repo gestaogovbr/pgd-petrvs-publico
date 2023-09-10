@@ -113,7 +113,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefi
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵInheritDefinitionFeature"]],
   decls: 7,
   vars: 7,
-  consts: [["class", "my-2", 4, "ngIf"], [3, "form", "submit", "cancel"], [1, "row"], ["controlName", "tipo_capacidade_id", 3, "size", "dao"], ["tipo_capacidade", ""], ["controlName", "perfil_id", 3, "size", "label", "dao"], [1, "my-2"]],
+  consts: [["class", "my-2", 4, "ngIf"], ["initialFocus", "tipo_capacidade_id", 3, "form", "submit", "cancel"], [1, "row"], ["controlName", "tipo_capacidade_id", 3, "size", "dao"], ["tipo_capacidade", ""], ["controlName", "perfil_id", "required", "", 3, "size", "label", "dao"], [1, "my-2"]],
   template: function CapacidadeFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](0, CapacidadeFormComponent_h3_0_Template, 2, 1, "h3", 0);

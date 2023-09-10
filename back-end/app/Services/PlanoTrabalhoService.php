@@ -14,6 +14,7 @@ use App\Services\UtilService;
 use App\Exceptions\ServerException;
 use App\Models\Documento;
 use App\Models\PlanoTrabalhoConsolidacao;
+use App\Models\Programa;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Database\Eloquent\Collection;
@@ -80,8 +81,18 @@ class PlanoTrabalhoService extends ServiceBase
     $data["where"] = $where;
   }
 
-  public function afterStore($planoTrabalho, $action){
-    if($action == ServiceBase::ACTION_INSERT) { $this->status->atualizaStatus($planoTrabalho, 'INCLUIDO', 'O plano de trabalho foi criado nesta data.'); }
+  public function proxyStore($plano, $unidade, $action)
+  {
+    $plano["criacao_usuario_id"] = parent::loggedUser()->id;
+    $this->documentoId = $plano["documento_id"];
+    $plano["documento_id"] = null;
+    return $plano;
+  }
+
+  public function afterStore($planoTrabalho, $action)
+  {
+    // (RN_PTR_A) Quando um Plano de Trabalho é criado adquire automaticamente o status INCLUIDO;
+    if($action == ServiceBase::ACTION_INSERT) $this->status->atualizaStatus($planoTrabalho, 'INCLUIDO', 'O Plano de Trabalho foi criado nesta data.');
   }
 
   public function validateStore($data, $unidade, $action)
@@ -110,14 +121,14 @@ class PlanoTrabalhoService extends ServiceBase
         throw new ServerException("ValidatePlanoTrabalho", "O plano de trabalho #" . $plano->numero . " (" . UtilService::getDateTimeFormatted($plano->data_inicio) . " à " . UtilService::getDateTimeFormatted($plano->data_fim) . ") possui período conflitante para a mesma modalidade (MOD_PTR_INTSC_DATA)");
       }
     }
-    if($action == ServiceBase::ACTION_EDIT) {
+    if ($action == ServiceBase::ACTION_EDIT) {
       $plano = PlanoTrabalho::find($data["id"]);
       /*  (RN_PTR_1)
           Após criado um plano de trabalho, o sua unidade e programa não podem mais ser alterados. Em consequência dessa regra, os seguintes campos 
           não poderão mais ser alterados: unidade_id, programa_id;
       */
-      if($data["unidade_id"] != $plano->unidade_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Trabalho, não é possível alterar a sua Unidade.");
-      if($data["programa_id"] != $plano->programa_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Trabalho, não é possível alterar o seu Programa.");
+      if ($data["unidade_id"] != $plano->unidade_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Trabalho, não é possível alterar a sua Unidade.");
+      if ($data["programa_id"] != $plano->programa_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Trabalho, não é possível alterar o seu Programa.");
       /* (RN_CSLD_2) 
           O plano de trabalho somente poderá ser alterado: se a nova data de início não for superior a algum período já CONCLUIDO ou AVALIADO, ou até o limite da primeira ocorrência ou atividade já lançados; 
           e se a nova data de final não for inferior a algum período já CONCLUIDO ou AVALIADO, ou até o limite da última ocorrência ou atividade já lançados;
@@ -135,24 +146,17 @@ class PlanoTrabalhoService extends ServiceBase
     }
   }
 
-  public function proxyStore($plano, $unidade, $action) {
-    $this->documentoId = $plano["documento_id"];
-    $plano["documento_id"] = null;
-    if($action == ServiceBase::ACTION_INSERT) $plano["status"] = "INCLUIDO";
-    return $plano;
-  }
-
   public function extraStore($plano, $unidade, $action)
   {
     /* (RN_CSLD_1) Inclui ou atualiza as consolidações com base no período do plano de trabalho */
     $this->atualizaConsolidacoes($plano);
     /* Restaura o documento_id */
-    if(!empty($this->documentoId) && !empty(Documento::find($this->documentoId))) {
+    if (!empty($this->documentoId) && !empty(Documento::find($this->documentoId))) {
       $plano->documento_id = $this->documentoId;
       $plano->save();
     }
     /* Adiciona a atribuição de 'COLABORADOR' automaticamente caso o usuário não tenha */
-    $usuario_lotacoes_ids = array_map(fn($u) => $u["unidade_id"], Usuario::find($plano->usuario_id)->areasTrabalho?->toArray() ?? []);
+    $usuario_lotacoes_ids = array_map(fn ($u) => $u["unidade_id"], Usuario::find($plano->usuario_id)->areasTrabalho?->toArray() ?? []);
     if (!in_array($plano->unidade_id, $usuario_lotacoes_ids)) {
       $this->unidadeIntegranteAtribuicaoService->store([
         'unidade_integrante_id' => UnidadeIntegrante::firstOrCreate(['unidade_id' => $plano->unidade_id, 'usuario_id' => $plano->usuario_id])->id,
@@ -162,10 +166,11 @@ class PlanoTrabalhoService extends ServiceBase
   }
 
   /* Será a data_inicio, ou a data_fim do último período CONCLUIDO ou AVALIADO, ou a data_fim da última ocorrência, ou data_inicio do último perído com entregas. O que for maior. */
-  public function dataFinalMinimaConsolidacao($plano) {
+  public function dataFinalMinimaConsolidacao($plano)
+  {
     $result = strtotime($plano->data_inicio);
     // ************ TRECHO COMENTADO TEMPORARIAMENTE (ENQUANTO É CRIADO O RELACIONAMENTO ENTREGAS 'DENTRO' DO MODEL DE PLANOTRABALHOCONSOLIDACAO) **********
-/*     foreach($plano->consolidacoes as $consolidacao) {
+    /*     foreach($plano->consolidacoes as $consolidacao) {
       $data = strtotime($consolidacao->status != "INCLUIDO" ? $consolidacao->data_fim : 
         ($consolidacao->ocorrencias()->count() ? $consolidacao->ocorrencias()->max('data_fim') : $result
         ($consolidacao->entregas()->count() ? $consolidacao->data_inicio : $result)));
@@ -175,10 +180,11 @@ class PlanoTrabalhoService extends ServiceBase
   }
 
   /* Será a data_fim, ou a data_inicio do primeiro período CONCLUIDO ou AVALIADO, ou a data_inicio da primeira ocorrência, ou data_fim do primeiro período com entregas. O que for maior. */
-  public function dataInicialMaximaConsolidacao($plano) {
+  public function dataInicialMaximaConsolidacao($plano)
+  {
     $result = strtotime($plano->data_fim);
     // ************ TRECHO COMENTADO TEMPORARIAMENTE (ENQUANTO É CRIADO O RELACIONAMENTO ENTREGAS 'DENTRO' DO MODEL DE PLANOTRABALHOCONSOLIDACAO) **********
-/*     foreach($plano->consolidacoes as $consolidacao) {
+    /*     foreach($plano->consolidacoes as $consolidacao) {
       $data = strtotime($consolidacao->status != "INCLUIDO" ? $consolidacao->data_inicio : 
         ($consolidacao->ocorrencias()->count() ? $consolidacao->ocorrencias()->min('data_inicio') :
         ($consolidacao->entregas()->count() ? $consolidacao->data_fim : $result)));
@@ -187,24 +193,36 @@ class PlanoTrabalhoService extends ServiceBase
     return date('Y-m-d', $result);
   }
 
-  public function proxDataConsolidacao($data, $programa) {
+  public function proxDataConsolidacao($data, $programa)
+  {
     $dayWeek = date('w', strtotime($data));
     $incMonth = 0;
     switch ($programa->periodicidade_consolidacao) {
-      case 'DIAS': return date("Y-m-d", strtotime($data . " + " . $programa->periodicidade_valor . " days")); break;
-      case 'SEMANAL': return date("Y-m-d", strtotime($data . " + " . ($dayWeek < $programa->periodicidade_valor ? $programa->periodicidade_valor - $dayWeek : 6 - $dayWeek + $programa->periodicidade_valor) . " days")); break;
-      case 'QUINZENAL': return date("Y-m-d", strtotime($data . " + " . ($dayWeek < $programa->periodicidade_valor ? 7 + $programa->periodicidade_valor - $dayWeek : 7 + 6 - $dayWeek + $programa->periodicidade_valor) . " days")); break;
-      case 'MENSAL': $incMonth = 0;
-      case 'BIMESTRAL': $incMonth = 1;
-      case 'TRIMESTRAL': $incMonth = 2;
-      case 'SEMESTRAL': $incMonth = 5;
-      default: $incMonth = 0;
+      case 'DIAS':
+        return date("Y-m-d", strtotime($data . " + " . $programa->periodicidade_valor . " days"));
+        break;
+      case 'SEMANAL':
+        return date("Y-m-d", strtotime($data . " + " . ($dayWeek < $programa->periodicidade_valor ? $programa->periodicidade_valor - $dayWeek : 6 - $dayWeek + $programa->periodicidade_valor) . " days"));
+        break;
+      case 'QUINZENAL':
+        return date("Y-m-d", strtotime($data . " + " . ($dayWeek < $programa->periodicidade_valor ? 7 + $programa->periodicidade_valor - $dayWeek : 7 + 6 - $dayWeek + $programa->periodicidade_valor) . " days"));
+        break;
+      case 'MENSAL':
+        $incMonth = 0;
+      case 'BIMESTRAL':
+        $incMonth = 1;
+      case 'TRIMESTRAL':
+        $incMonth = 2;
+      case 'SEMESTRAL':
+        $incMonth = 5;
+      default:
+        $incMonth = 0;
     }
     /* Calulo para MENSAL, BIMESTRAL, TRIMESTRAL e SEMANAL */
     $ano = date('Y', strtotime($data)); /* 20xx */
     $mes = date('m', strtotime($data)); /* 01 - 12 */
     $dia = date('d', strtotime($data)); /* 01 - 12 */
-    if($dia >= $programa->periodicidade_valor) $incMonth++;
+    if ($dia >= $programa->periodicidade_valor) $incMonth++;
     $anoMesDia = date("Y-m-d", strtotime($ano . "-" . $mes . "-01 + " . $incMonth . " month"));
     $days = min(date('t', strtotime($anoMesDia)), $programa->periodicidade_valor) - 1;
     return date("Y-m-d", strtotime($anoMesDia . " + " . $days . " days"));
@@ -217,33 +235,34 @@ class PlanoTrabalhoService extends ServiceBase
    * @param   string  $usuario_id
    * @return  Illuminate\Database\Eloquent\Collection      
    */
-  public function atualizaConsolidacoes($plano) {
+  public function atualizaConsolidacoes($plano)
+  {
     $existentes = $plano->consolidacoes->all();
-    $ocorrencias = array_reduce($existentes, fn($carry, $item) => array_merge($carry, $item->ocorrencias->all()), []);
+    $ocorrencias = array_reduce($existentes, fn ($carry, $item) => array_merge($carry, $item->ocorrencias->all()), []);
     $merged = [];
     $dataInicioVigencia = date("Y-m-d", strtotime($plano->data_inicio)); /* Transforma de datetime para date */
     $dataFimVigencia = date("Y-m-d", strtotime($plano->data_fim)); /* Transforma de datetime para date */
     $dataInicio = $dataInicioVigencia;
-    while(strtotime($dataInicio) <= strtotime($dataFimVigencia)) {
+    while (strtotime($dataInicio) <= strtotime($dataFimVigencia)) {
       $dataFim = date("Y-m-d", min(strtotime($this->proxDataConsolidacao($dataInicio, $plano->programa)), strtotime($dataFimVigencia)));
-      $intersecaoOcorrencias = array_filter($ocorrencias, fn($o) => strtotime($dataInicio) <= strtotime($o->data_fim) && strtotime($dataFim) >= strtotime($o->data_inicio));
-      $maxDataFimOcorrencia = count($intersecaoOcorrencias) ? max(array_map(fn($item) => strtotime($item->data_fim), $intersecaoOcorrencias)) : strtotime($dataFim);
+      $intersecaoOcorrencias = array_filter($ocorrencias, fn ($o) => strtotime($dataInicio) <= strtotime($o->data_fim) && strtotime($dataFim) >= strtotime($o->data_inicio));
+      $maxDataFimOcorrencia = count($intersecaoOcorrencias) ? max(array_map(fn ($item) => strtotime($item->data_fim), $intersecaoOcorrencias)) : strtotime($dataFim);
       /* (RN_CSLD_3) Caso exista uma ocorrência que faça interseção no período e tenha data_fim maior que a calculada, a data_fim do período irá crescer */
       $dataFim = $maxDataFimOcorrencia > strtotime($dataFim) ? date("Y-m-d", $maxDataFimOcorrencia) : $dataFim;
-      $igual = array_filter($existentes, fn($c) => $c->data_inicio == $dataInicio && $c->data_fim == $dataFim)[0] ?? null;
-      $intersecao = array_filter($existentes, fn($c) => $c->status != "INCLUIDO" && strtotime($dataInicio) <= strtotime($c->data_fim) && strtotime($dataFim) >= strtotime($c->data_inicio))[0] ?? null;
-      if(!empty($igual)) { /* (RN_CSLD_4) Caso exista períodos iguais, o período existente será mantido (para este perído nada será feito, manterá a mesma ID) */
+      $igual = array_filter($existentes, fn ($c) => $c->data_inicio == $dataInicio && $c->data_fim == $dataFim)[0] ?? null;
+      $intersecao = array_filter($existentes, fn ($c) => $c->status != "INCLUIDO" && strtotime($dataInicio) <= strtotime($c->data_fim) && strtotime($dataFim) >= strtotime($c->data_inicio))[0] ?? null;
+      if (!empty($igual)) { /* (RN_CSLD_4) Caso exista períodos iguais, o período existente será mantido (para este perído nada será feito, manterá a mesma ID) */
         $merged[] = $igual;
-        $existentes = array_filter($existentes, fn($e) => $e->id !== $igual->id);
+        $existentes = array_filter($existentes, fn ($e) => $e->id !== $igual->id);
         $dataInicio = date("Y-m-d", strtotime($igual->data_fim . ' + 1 days'));
-      } else if(!empty($intersecao)) { /* Se houver intersecção do período gerado com um existente que esteja com status CONCLUIDO ou AVALIADO */
-        $existentes = array_filter($existentes, fn($e) => $e->id !== $igual->id);
-        if($intersecao->data_inicio == $dataInicio) { /* (RN_CSLD_5) Se as datas de início forem iguais o periodo existente será mantido */
+      } else if (!empty($intersecao)) { /* Se houver intersecção do período gerado com um existente que esteja com status CONCLUIDO ou AVALIADO */
+        $existentes = array_filter($existentes, fn ($e) => $e->id !== $igual->id);
+        if ($intersecao->data_inicio == $dataInicio) { /* (RN_CSLD_5) Se as datas de início forem iguais o periodo existente será mantido */
           $dataInicio = date("Y-m-d", strtotime($intersecao->data_fim . ' + 1 days'));
         } else { /* (RN_CSLD_6) Se as datas de início forem diferente, então será criado um novo perído entre o novo início e o início do período CONCLUIDO/AVALIADO, e o período CONCLUIDO/AVALIADO será mantido */
           $novo = new PlanoTrabalhoConsolidacao([
             'data_inicio' => $dataInicio,
-            'data_fim' => date("Y-m-d", strtotime($intersecao->data_inicio . ' - 1 days')), 
+            'data_fim' => date("Y-m-d", strtotime($intersecao->data_inicio . ' - 1 days')),
             'plano_trabalho_id' => $plano->id,
             'status' => 'INCLUIDO'
           ]);
@@ -254,7 +273,7 @@ class PlanoTrabalhoService extends ServiceBase
       } else { /* Novo período */
         $novo = new PlanoTrabalhoConsolidacao([
           'data_inicio' => $dataInicio,
-          'data_fim' => $dataFim, 
+          'data_fim' => $dataFim,
           'plano_trabalho_id' => $plano->id,
           'status' => 'INCLUIDO'
         ]);
@@ -264,30 +283,31 @@ class PlanoTrabalhoService extends ServiceBase
       }
     }
     /* (RN_CSLD_7) Ocorrências e Atividades devem ser transferiadas para os novos perídos */
-    foreach($existentes as $anterior) {
+    foreach ($existentes as $anterior) {
       /* Realoca ocorrencias */
-      foreach($anterior->ocorrencias as $ocorrencia) {
-        $consolidacao = array_filter($merged, fn($item) => strtotime($item->data_inicio) <= strtotime($ocorrencia->data_inicio) && strtotime($ocorrencia->data_inicio) <= strtotime($item->data_fim))[0] ?? null;
-        if(empty($consolidacao)) throw new ServerException("ValidatePlanoTrabalho", "Erro ao realocar ocorrência para novo período: " . $ocorrencia->data_inicio);
+      foreach ($anterior->ocorrencias as $ocorrencia) {
+        $consolidacao = array_filter($merged, fn ($item) => strtotime($item->data_inicio) <= strtotime($ocorrencia->data_inicio) && strtotime($ocorrencia->data_inicio) <= strtotime($item->data_fim))[0] ?? null;
+        if (empty($consolidacao)) throw new ServerException("ValidatePlanoTrabalho", "Erro ao realocar ocorrência para novo período: " . $ocorrencia->data_inicio);
         $ocorrencia->plano_trabalho_consolidacao_id = $consolidacao->id;
-        $ocorrencia->save();        
+        $ocorrencia->save();
       }
       /* Remove o registro da consolidação completamente vazio */
       $anterior->delete();
     }
-    /* Refaz todas as datas finais das consolidações considerando sempre data_inicio da próxima - 1 dia */  
+    /* Refaz todas as datas finais das consolidações considerando sempre data_inicio da próxima - 1 dia */
     $this->atualizaDataFimConsolidacoes($plano->id);
   }
 
   /* Refaz todas as datas finais das consolidações considerando sempre data_inicio da próxima - 1 dia */
-  public function atualizaDataFimConsolidacoes($planoId) {
+  public function atualizaDataFimConsolidacoes($planoId)
+  {
     $plano = PlanoTrabalho::find($planoId);
     $consolidacoes = $plano?->consolidacoes?->all() ?? [];
-    $consolidacoes[] = new PlanoTrabalhoConsolidacao([ "data_inicio" => $plano?->data_fim ]);
-    for($i = 1; $i < count($consolidacoes); $i++) {
-      if(strtotime($consolidacoes[$i-1]->data_fim) != strtotime($consolidacoes[$i]->data_inicio . " -1 days")) {
-        $consolidacoes[$i-1]->data_fim = date("Y-m-d", strtotime($consolidacoes[$i]->data_inicio . " -1 days"));
-        $consolidacoes[$i-1]->save();
+    $consolidacoes[] = new PlanoTrabalhoConsolidacao(["data_inicio" => $plano?->data_fim]);
+    for ($i = 1; $i < count($consolidacoes); $i++) {
+      if (strtotime($consolidacoes[$i - 1]->data_fim) != strtotime($consolidacoes[$i]->data_inicio . " -1 days")) {
+        $consolidacoes[$i - 1]->data_fim = date("Y-m-d", strtotime($consolidacoes[$i]->data_inicio . " -1 days"));
+        $consolidacoes[$i - 1]->save();
       }
     }
   }
@@ -300,13 +320,24 @@ class PlanoTrabalhoService extends ServiceBase
    * @param   string  $arquivadas  Se o resultado deve incluir os planos arquivados
    * @return  array
    */
-  public function getByUsuario($usuarioId, $arquivados) {
-      // TODO: validar permissoes
-      $query = PlanoTrabalho::with(["unidade:id,sigla,nome", "programa:id,nome", "tipoModalidade:id,nome", "consolidacoes"])->where("usuario_id", $usuarioId);
-      if(!$arquivados) $query->whereNull("data_arquivamento");
-      return [
-        "planos" => $query->get()->all()
-      ];
+  public function getByUsuario($usuarioId, $arquivados)
+  {
+    // TODO: validar permissoes
+    $query = PlanoTrabalho::with([
+      "unidade:id,sigla,nome", 
+      "unidade.gestor:id,usuario_id",
+      "unidade.gestorSubstituto:id,usuario_id",
+      "tipoModalidade:id,nome", 
+      "consolidacoes"
+    ])->where("usuario_id", $usuarioId);
+    if (!$arquivados) $query->whereNull("data_arquivamento");
+    $planos = $query->get()->all();
+    $programasIds = array_unique(array_map(fn($v) => $v["programa_id"], $planos));
+    $programas = Programa::whereIn("id", $programasIds)->get()->all();
+    return [
+      "planos" => $planos,
+      "programas" => $programas
+    ];
   }
 
   /** 
@@ -341,29 +372,29 @@ class PlanoTrabalhoService extends ServiceBase
       "percentualHorasNaoIniciadas" => 0,
       "usuario_id" => $plano['usuario_id'],
       "noPeriodo" => [
-        "atividadesDistribuidas" => [], 
-        "atividadesNaoIniciadas" => [], 
-        "atividadesEmAndamento" => [], 
+        "atividadesDistribuidas" => [],
+        "atividadesNaoIniciadas" => [],
+        "atividadesEmAndamento" => [],
         //"atividadesSoConcluidas" => [], 
         //"atividadesReprovadas" => [], 
         //"atividadesAprovadas" => [],
-        "horasUteisDisponiveisServidor" => 0, 
+        "horasUteisDisponiveisServidor" => 0,
         //"tempoTrabalhadoHomologado" => 0, 
         //"tempoTrabalhadoNaoHomologado" => 0,
         //"tempoDespendidoSoConcluidas" => 0, 
-        "tempoTotalRealizadoNoPeriodo" => 0, 
+        "tempoTotalRealizadoNoPeriodo" => 0,
         "tempoTotalAlocado" => 0,
         "tempoTotalNaoIniciadas" => 0,
         "tempoTotalEmAndamento" => 0,
         //"tempoTotalSoConcluidas" => 0, 
         //"tempoTotalReprovadas" => 0, 
         //"tempoTotalAprovadas" => 0,
-        "tempoPrevistoNaoIniciadasNoPeriodo" => 0, 
+        "tempoPrevistoNaoIniciadasNoPeriodo" => 0,
         "tempoPrevistoEmAndamentoNoPeriodo" => 0,
         //"tempoPrevistoSoConcluidasNoPeriodo" => 0,
         //"tempoPrevistoReprovadasNoPeriodo" => 0,
         //"tempoPrevistoAprovadasNoPeriodo" => 0, 
-        "tempoTotalPrevistoNoPeriodo" => 0, 
+        "tempoTotalPrevistoNoPeriodo" => 0,
       ]
     ];
     $inicioPlano = new DateTime($plano['data_inicio']);
@@ -377,7 +408,8 @@ class PlanoTrabalhoService extends ServiceBase
     $result["horasAfastamentoDecorridas"] = new DateTime() < $inicioPlano ? 0 : CalendarioService::calculaDataTempoUnidade($inicioPlano, new DateTime() > $fimPlano ? $fimPlano : new DateTime(), $plano['carga_horaria'], $unidadePlano, "HORAS_UTEIS", null, $afastamentosUsuario)->horasAfastamento;
     /*  Definição se o Plano de Trabalho foi concluído ou não. O plano será considerado CONCLUÍDO se não possuir nenhuma atividade OU quando todas as suas atividades forem CUMPRIDAS. Uma atividade é considerada cumprida quando
         seu tempo homologado não for mais nulo. */
-    if (count($plano['atividades']) == 0) $result['concluido'] = true; else {
+    if (count($plano['atividades']) == 0) $result['concluido'] = true;
+    else {
       foreach ($plano['atividades'] as $atividade) {
         //if ($atividade['tempo_homologado'] == null) $result['concluido'] = false;
         if ($atividade['progresso'] < 100) $result['concluido'] = false;
@@ -392,7 +424,7 @@ class PlanoTrabalhoService extends ServiceBase
     /* Média das avaliações das atividades já avaliadas */
     //$result['mediaAvaliacoes'] = (count($result['atividadesAvaliadas']) == 0) ? null : $this->utilService->avg(array_map(fn ($d) => $d['avaliacao']['nota_atribuida'], $result['atividadesAvaliadas']));
     /* Cálculo das estatísticas limitadas pelo período estabelecido, se houver um. */
-    if($inicioPeriodo){ // se for solicitada a análise de um determinado período, obrigatoriamente serão fornecidos as datas inicial e final desse período
+    if ($inicioPeriodo) { // se for solicitada a análise de um determinado período, obrigatoriamente serão fornecidos as datas inicial e final desse período
       $result['noPeriodo']['atividadesDistribuidas'] = $this->atividadesDistribuidas($plano, $inicioPeriodo, $fimPeriodo);
       $result['noPeriodo']['atividadesNaoIniciadas'] = $this->atividadesNaoIniciadas($plano, $inicioPeriodo, $fimPeriodo);
       $result['noPeriodo']['atividadesEmAndamento'] = $this->atividadesEmAndamento($plano, $inicioPeriodo, $fimPeriodo);
@@ -411,14 +443,14 @@ class PlanoTrabalhoService extends ServiceBase
       //$result['noPeriodo']['tempoPrevistoSoConcluidasNoPeriodo'] = $this->somaTemposPactuados($result['noPeriodo']['atividadesSoConcluidas'], $inicioPeriodo, $fimPeriodo, $plano['carga_horaria'], $unidadePlano, $afastamentosUsuario);
       //$result['noPeriodo']['tempoPrevistoReprovadasNoPeriodo'] = $this->somaTemposPactuados($result['noPeriodo']['atividadesReprovadas'], $inicioPeriodo, $fimPeriodo, $plano['carga_horaria'], $unidadePlano, $afastamentosUsuario);
       //$result['noPeriodo']['tempoPrevistoAprovadasNoPeriodo'] = $this->somaTemposPactuados($result['noPeriodo']['atividadesAprovadas'], $inicioPeriodo, $fimPeriodo, $plano['carga_horaria'], $unidadePlano, $afastamentosUsuario);
-      $result['noPeriodo']['tempoTotalPrevistoNoPeriodo'] = $result['noPeriodo']['tempoPrevistoNaoIniciadasNoPeriodo'] + $result['noPeriodo']['tempoPrevistoEmAndamentoNoPeriodo'] + $result['noPeriodo']['tempoPrevistoSoConcluidasNoPeriodo'] + 
-                                                            $result['noPeriodo']['tempoPrevistoReprovadasNoPeriodo'] + $result['noPeriodo']['tempoPrevistoAprovadasNoPeriodo'];
+      $result['noPeriodo']['tempoTotalPrevistoNoPeriodo'] = $result['noPeriodo']['tempoPrevistoNaoIniciadasNoPeriodo'] + $result['noPeriodo']['tempoPrevistoEmAndamentoNoPeriodo'] + $result['noPeriodo']['tempoPrevistoSoConcluidasNoPeriodo'] +
+        $result['noPeriodo']['tempoPrevistoReprovadasNoPeriodo'] + $result['noPeriodo']['tempoPrevistoAprovadasNoPeriodo'];
       //$result['noPeriodo']['tempoTrabalhadoHomologado'] = $this->tempoAvaliado($result['noPeriodo']['atividadesAprovadas'], true, $inicioPeriodo, $fimPeriodo, $plano['carga_horaria'], $unidadePlano, $afastamentosUsuario);
       //$result['noPeriodo']['tempoTrabalhadoNaoHomologado'] = $this->tempoAvaliado($result['noPeriodo']['atividadesReprovadas'], false, $inicioPeriodo, $fimPeriodo, $plano['carga_horaria'], $unidadePlano, $afastamentosUsuario);
       //$result['noPeriodo']['tempoDespendidoSoConcluidas'] = $this->tempoAvaliado($result['noPeriodo']['atividadesSoConcluidas'], false, $inicioPeriodo, $fimPeriodo, $plano['carga_horaria'], $unidadePlano, $afastamentosUsuario);
       //$result['noPeriodo']['tempoTotalRealizadoNoPeriodo'] = $result['noPeriodo']['tempoTrabalhadoHomologado'] + $result['noPeriodo']['tempoTrabalhadoNaoHomologado'] + $result['noPeriodo']['tempoDespendidoSoConcluidas']; 
     }
-      return $result;
+    return $result;
   }
 
   /** 
@@ -434,7 +466,7 @@ class PlanoTrabalhoService extends ServiceBase
   {
     $result = [];
     foreach ($plano['atividades'] as $atividade) {
-      if($this->atividadeService->withinPeriodo($atividade, $inicioPeriodo, $fimPeriodo)) array_push($result, $atividade);
+      if ($this->atividadeService->withinPeriodo($atividade, $inicioPeriodo, $fimPeriodo)) array_push($result, $atividade);
     }
     return $result;
   }
@@ -452,7 +484,7 @@ class PlanoTrabalhoService extends ServiceBase
   {
     $result = [];
     foreach ($plano['atividades'] as $atividade) {
-      if(!$this->atividadeService->isIniciada($atividade) && $this->atividadeService->withinPeriodo($atividade, $inicioPeriodo, $fimPeriodo)) array_push($result, $atividade);
+      if (!$this->atividadeService->isIniciada($atividade) && $this->atividadeService->withinPeriodo($atividade, $inicioPeriodo, $fimPeriodo)) array_push($result, $atividade);
     }
     return $result;
   }
@@ -470,7 +502,7 @@ class PlanoTrabalhoService extends ServiceBase
   {
     $result = [];
     foreach ($plano['atividades'] as $atividade) {
-      if($this->atividadeService->isIniciada($atividade) && !$this->atividadeService->isConcluida($atividade) && $this->atividadeService->withinPeriodo($atividade, $inicioPeriodo, $fimPeriodo)) array_push($result, $atividade);
+      if ($this->atividadeService->isIniciada($atividade) && !$this->atividadeService->isConcluida($atividade) && $this->atividadeService->withinPeriodo($atividade, $inicioPeriodo, $fimPeriodo)) array_push($result, $atividade);
     }
     return $result;
   }
@@ -484,7 +516,7 @@ class PlanoTrabalhoService extends ServiceBase
    * @param   string  $fimPeriodo     Data final do período.
    * @return  array
    */
-    /*   public function atividadesSoConcluidas($plano, $inicioPeriodo, $fimPeriodo): array
+  /*   public function atividadesSoConcluidas($plano, $inicioPeriodo, $fimPeriodo): array
     {
     $result = [];
     foreach ($plano['atividades'] as $atividade) {
@@ -502,7 +534,7 @@ class PlanoTrabalhoService extends ServiceBase
    * @param   string  $fimPeriodo     Data final do período.
    * @return  array
    */
-    /*   public function atividadesAvaliadas($plano, $inicioPeriodo, $fimPeriodo): array
+  /*   public function atividadesAvaliadas($plano, $inicioPeriodo, $fimPeriodo): array
     {
     $result = [];
     foreach ($plano['atividades'] as $atividade) {
@@ -520,7 +552,7 @@ class PlanoTrabalhoService extends ServiceBase
    * @param   string  $fimPeriodo     Data final do período.
    * @return  array
    */
-    /*   public function atividadesAprovadas($plano, $inicioPeriodo, $fimPeriodo): array
+  /*   public function atividadesAprovadas($plano, $inicioPeriodo, $fimPeriodo): array
     {
     $result = [];
     foreach ($plano['atividades'] as $atividade) {
@@ -538,7 +570,7 @@ class PlanoTrabalhoService extends ServiceBase
    * @param   string  $fimPeriodo     Data final do período.
    * @return  array
    */
-    /*   public function atividadesReprovadas($plano, $inicioPeriodo, $fimPeriodo): array
+  /*   public function atividadesReprovadas($plano, $inicioPeriodo, $fimPeriodo): array
     {
     $result = [];
     foreach ($plano['atividades'] as $atividade) {
@@ -556,7 +588,7 @@ class PlanoTrabalhoService extends ServiceBase
    * @param   string  $fimPeriodo     Data final do período.
    * @return  array
    */
-    /*   public function atividadesCumpridas($plano, $inicioPeriodo, $fimPeriodo): array
+  /*   public function atividadesCumpridas($plano, $inicioPeriodo, $fimPeriodo): array
     {
     $result = [];
     foreach ($plano['atividades'] as $atividade) {
@@ -571,7 +603,7 @@ class PlanoTrabalhoService extends ServiceBase
    * @param array $atividades
    * @return float
    */
-    /*   public function somaTemposPactuados(array $atividades, $inicio = null, $fim = null, $cargaHoraria = 0, $unidadePlano = null, $afastamentosUsuario = []): float {
+  /*   public function somaTemposPactuados(array $atividades, $inicio = null, $fim = null, $cargaHoraria = 0, $unidadePlano = null, $afastamentosUsuario = []): float {
     $total = 0;
     foreach ($atividades as $atividade) { 
       $periodo = $inicio && $fim;
@@ -634,7 +666,7 @@ class PlanoTrabalhoService extends ServiceBase
    * @param array     $afastamentosUsuario  Array dos afastamentos do usuário.
    * @return float
    */
-    /*   public function tempoAvaliado(array $atividades, bool $homologadas, string $inicioPeriodo, string $fimPeriodo, int|float $cargaHoraria, Unidade $unidadePlano, array $afastamentosUsuario): float {
+  /*   public function tempoAvaliado(array $atividades, bool $homologadas, string $inicioPeriodo, string $fimPeriodo, int|float $cargaHoraria, Unidade $unidadePlano, array $afastamentosUsuario): float {
     $total = 0.0;
     foreach ($atividades as $atividade) {
       $tempoTotalDemanda = CalendarioService::calculaDataTempoUnidade(new DateTime($atividade['data_inicio']), new DateTime($atividade['data_entrega']), $cargaHoraria, $unidadePlano, "HORAS_UTEIS", null, $afastamentosUsuario)->tempoUtil;

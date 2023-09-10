@@ -54,6 +54,7 @@ export class AuthGuard  {
               }
             }
           };
+          if(route.queryParams?.context) this.gb.setContexto(route.queryParams?.context, false);
           this.auth.authSession().then(handle).catch(error => handle(false));
         }); 
       } else if(route.data.permission && !this.auth.hasPermissionTo(route.data.permission)) {

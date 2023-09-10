@@ -7,6 +7,9 @@ import { Template } from 'src/app/models/template.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { LookupItem, LookupService } from 'src/app/services/lookup.service';
 import { TemplateService } from '../../uteis/templates/template.service';
+import { PlanoTrabalhoConsolidacao } from 'src/app/models/plano-trabalho-consolidacao.model';
+import { Programa } from 'src/app/models/programa.model';
+import { UtilService } from 'src/app/services/util.service';
 
 export type BadgeEntrega = {
   titulo: string,
@@ -23,6 +26,7 @@ export class PlanoTrabalhoService {
 
   constructor(
     public auth: AuthService,
+    public util: UtilService,
     public lookup: LookupService,
     public dao: PlanoTrabalhoDaoService,
     public templateService: TemplateService,
@@ -140,5 +144,16 @@ export class PlanoTrabalhoService {
       }
     }
     return planoNovo.documento;
+  }
+
+
+  /**
+   * Calcula a quantidade de dias para concluir a consolidação considerando a tolerância configurada no programa.
+   * @param consolidacao  Consolidacao do plano de trabalho
+   * @param programa      Programa
+   * @returns             Quantidade de dias para conclusão (Retorna números negativos caso tenha passado o prazo)
+   */
+  public diasParaConcluirConsolidacao(consolidacao?: PlanoTrabalhoConsolidacao, programa?: Programa): number {
+    return !consolidacao || !programa ? -1 : this.util.daystamp(consolidacao.data_fim) + programa.dias_tolerancia_avaliacao - this.util.daystamp(this.auth.hora);
   }
 }

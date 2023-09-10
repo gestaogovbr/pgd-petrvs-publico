@@ -1,65 +1,68 @@
-# Módulo: Planejamento Institucional  
+# MÓDULO: PLANEJAMENTO INSTITUCIONAL
 
-## ACESSOS  
+## CAPACIDADES  
 
-> MOD_PLAN_INST  
-> MOD_PLAN_INST_CONS  
-> MOD_PLAN_INST_INCL  
-> MOD_PLAN_INST_INCL_UNID_INST  
-> MOD_PLAN_INST_INCL_UNEX_LOTPRI  
-> MOD_PLAN_INST_INCL_UNEX_QQLOT  
-> MOD_PLAN_INST_INCL_UNEX_SUBORD  
-> MOD_PLAN_INST_INCL_UNEX_QUALQUER  
-> MOD_PLAN_INST_EDT  
-> MOD_PLAN_INST_EXCL  
+~~~text
+    MOD_PLAN_INST  
+    MOD_PLAN_INST_CONS  
+    MOD_PLAN_INST_INCL  
+    MOD_PLAN_INST_INCL_UNID_INST  
+    MOD_PLAN_INST_INCL_UNEX_LOTPRI  
+    MOD_PLAN_INST_INCL_UNEX_QQLOT  
+    MOD_PLAN_INST_INCL_UNEX_SUBORD  
+    MOD_PLAN_INST_INCL_UNEX_QUALQUER  
+    MOD_PLAN_INST_EDT  
+    MOD_PLAN_INST_EXCL  
+~~~
 
-- Video da modelagem técnica  
-    <https://drive.google.com/file/d/1rzUzlzU26MVcvnGwVA2BVUgEzW_sUXqV/view>  
-    início: 4min30s  
-    continuação: 46min15s
+## BANCO DE DADOS
 
-## ENTIDADE: Eixos Temáticos
+~~~text
+Tabela: planejamentos
 
-- Tabela: eixos_tematicos
+Campos obrigatórios:
+    nome
+    missao
+    visao
+    valores
+    data_inicio
+    entidade_id
+    unidade_id
+~~~
 
-> Nome (\*)  
-> Icone (\*)  
-> Cor (\*)  
-> Descrição (\*)  
-> (id/created_at/updated_at/deleted_at)  
->  
-> (*) campo obrigatório
+## REGRAS DE NEGÓCIO
 
-## ENTIDADE: Planejamento Institucional
+(RN_PLAN_INST_A) Para a criação de um planejamento institucional são informações obrigatórias: nome, missão, visão, data de início, unidade responsável e ao menos um dos valores institucionais.
+(RN_PLAN_INST_B) Não pode existir mais de um planejamento institucional para uma mesma unidade em um mesmo período de tempo.
+(RN_PLAN_INST_C) Um Planejamento Institucional pode ser ou não vinculado ao planejamento institucional de uma unidade hierarquicamente superior.
 
-- Tabela: planejamentos
+(RN_PLAN_INST_) 
+(RN_PLAN_INST_) 
+(RN_PLAN_INST_) 
+(RN_PLAN_INST_) 
+(RN_PLAN_INST_) 
+(RN_PLAN_INST_) 
+(RN_PLAN_INST_) 
+(RN_PLAN_INST_) 
+(RN_PLAN_INST_) 
+(RN_PLAN_INST_) 
+(\**) é obrigatória a existência de ao menos um valor institucional  
+(\***) se o planejamento for de uma Unidade Executora, é obrigatória a definição do  
+planejamento superior ao qual ele está vinculado  
+## OBJETIVOS
 
-> Nome (\*)  
-> Missão (\*)  
-> Visão (\*)  
-> Valores (\**)  
-> inicio (\*)  
-> fim  
-> (id/created_at/updated_at/deleted_at)  
-> &ensp;&ensp;&ensp;&ensp;entidade_id (\*)  
-> &ensp;&ensp;&ensp;&ensp;unidade_id (\***)  
-> &ensp;&ensp;&ensp;&ensp;planejamento_superior_id (***)  
->  
-> (\*) campo obrigatório  
-> (\**) é obrigatória a existência de ao menos um valor institucional  
-> (\***) se o planejamento for de uma Unidade Executora, é obrigatória a definição do  
-> planejamento superior ao qual ele está vinculado  
+(RN_PLAN_INST_OBJ_A) Quando o Planejamento é de uma Unidade Executora é obrigatório associar cada um dos seus objetivos a um objetivo do Planejamento Institucional superior!"
+## QUESTÕES PENDENTES
 
-### VALIDAÇÕES
-
+- Definir se há ou não obrigatoriedade de um planejamento estar vinculado a outro superior. (vide RN_PLAN_INST_C)
 - A data do início não pode ser maior que a data do fim;  
 - Permissão do usuário para criar Planejamentos para a Unidade Instituidora (MOD_PLAN_INST_INCL_UNID_INST);  
 - Permissão do usuário para criar Planejamentos para Unidades executoras quaisquer (MOD_PLAN_INST_INCL_UNEX_QUALQUER);  
 - Permissão do usuário para criar Planejamentos para Unidades executoras subordinadas (MOD_PLAN_INST_INCL_UNEX_SUBORD);  
-- Permissão do usuário para criar Planejamentos para qualquer Unidade executora das suas lotações (MOD_PLAN_INST_INCL_UNEX_QQLOT);  
+- Permissão do usuário para criar Planejamentos para qualquer Unidade executora das suas lotações (MOD_PLAN_INST_INCL_UNEX_QQLOT); 
+ 
 - Permissão do usuário para criar Planejamentos para a Unidade executora de sua lotação principal (MOD_PLAN_INST_INCL_UNEX_LOTPRI);
 
-## ENTIDADE: Objetivos
 
 - Tabela: planejamentos_objetivos
 
@@ -86,21 +89,21 @@
 ***** Verificar: Na edição de um planejamento de uma unidade executora, o campo SELECIONE O PLANEJAMENTO SUPERIOR VINCULADO deve/não deve mais ser exibido, já que ele não pode ser alterado
 ***** No form de objetivos de planejamento não está aparecendo o nome do planejamento superior vinculado
 
-# Exemplo de grid
+### Exemplo de grid
 
-> Nome: Planejamento Institucional do Biênio 2023-2024  
-> Entidade:           Unidade:  
-> Missão:  
-> Visão:  
-> Valores:  
-> Inicio:         Fim:  
->  
-> -------------------------------------------  
->     Objetivo       ObjSuperior      [ + ]
-> EIXO TEMATICO 1  
->&ensp;&ensp;Objetivo1      &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;ObjSup1  
->&ensp;&ensp;Objetivo2      &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;ObjSup4  
->  
-> EIXO TEMATICO 2  
->&ensp;&ensp;Objetivo1      &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;ObjSup7  
->&ensp;&ensp;Objetivo2      &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;ObjSup7  
+ Nome: Planejamento Institucional do Biênio 2023-2024  
+ Entidade:           Unidade:  
+ Missão:  
+ Visão:  
+ Valores:  
+ Inicio:         Fim:  
+  
+ -------------------------------------------  
+     Objetivo       ObjSuperior      [ + ]
+ EIXO TEMATICO 1  
+&ensp;&ensp;Objetivo1      &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;ObjSup1  
+&ensp;&ensp;Objetivo2      &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;ObjSup4  
+  
+ EIXO TEMATICO 2  
+&ensp;&ensp;Objetivo1      &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;ObjSup7  
+&ensp;&ensp;Objetivo2      &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;ObjSup7  

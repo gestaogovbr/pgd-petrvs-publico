@@ -79,12 +79,12 @@ class AtividadeService extends ServiceBase
         if($action == ServiceBase::ACTION_INSERT) {
             $usuario = parent::loggedUser();
             $data["demandante_id"] = $usuario->id;
-            $data["status"] = 'INCLUIDO';
+            $data["status"] = empty($data["plano_trabalho_consolidacao_id"]) ? 'INCLUIDO' : 'CONCLUIDO';
         }
         return $data;
     }
 
-    public function extraStore($entity, $unidade, $action) {
+    public function extraStore(&$entity, $unidade, $action) {
         $metadados = $this->metadados($entity);
         /* Atualiza status */
         $status = $metadados["pausado"] ? "PAUSADO" : 
@@ -98,13 +98,14 @@ class AtividadeService extends ServiceBase
             $status->save(); */
             $entity->status = $status;
             $entity->save();
+            $entity->refresh();
         }
     }
 
     public function afterStore($entity, $action) {
         if($action == ServiceBase::ACTION_INSERT) {
             $this->notificacoesService->send("ATV_DISTRIBUICAO", ["atividade" => $entity]);
-            $this->status->atualizaStatus($entity, 'INCLUIDO', 'A atividae foi criada nesta data.');
+            $this->status->atualizaStatus($entity, $entity->status, 'A atividade foi criada nesta data.');
         } else {
             $this->notificacoesService->send("ATV_MODIFICACAO", ["atividade" => $entity]);
         }

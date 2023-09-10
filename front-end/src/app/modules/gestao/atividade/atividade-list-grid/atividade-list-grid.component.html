@@ -103,7 +103,7 @@
                 </table>
             </ng-template>
         </column>
-        <column [title]="'nº Processo/Status\nComentários'" [template]="columnNumero">
+        <column [title]="'nº Processo/Status\nComentários'" [width]="350" [template]="columnNumero">
             <ng-template let-row="row" #columnNumero>
                 <documentos-badge [documento]="row.documento_requisicao"></documentos-badge>
                 <span class="d-block">

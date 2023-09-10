@@ -20,7 +20,7 @@ class CreateCidadesTable extends Migration
             $table->timestamps();
             $table->softDeletes();
             // Campos:
-            $table->string('codigo_ibge', 20)->comment("Código IBGE");
+            $table->string('codigo_ibge', 20)->unique()->comment("Código IBGE");
             $table->string('nome', 256)->comment("Nome");
             $table->set('tipo', ["MUNICIPIO", "DISTRITO", "CAPITAL"])->comment("Tipo da cidade");
             $table->string('uf', 2)->comment("Unidade Federativa");

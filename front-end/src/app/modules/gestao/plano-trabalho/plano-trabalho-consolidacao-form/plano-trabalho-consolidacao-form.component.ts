@@ -24,6 +24,7 @@ import { CalendarService } from 'src/app/services/calendar.service';
 import { SelectItem } from 'src/app/components/input/input-base';
 import { TipoAtividade } from 'src/app/models/tipo-atividade.model';
 import { Unidade } from 'src/app/models/unidade.model';
+import { Programa } from 'src/app/models/programa.model';
 
 export type ConsolidacaoEntrega = {
   id: string,
@@ -58,7 +59,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   public atividadeDao: AtividadeDaoService;
   public atividadeService: AtividadeService;
   public calendar: CalendarService;
-  public joinAtividade: string[] = ['demandante', 'usuario', 'tipo_atividade'];
+  public joinAtividade: string[] = ['demandante', 'usuario', 'tipo_atividade', 'comentarios.usuario:id,nome,apelido'];
   public tipoAtividadeDao: TipoAtividadeDaoService;
   public planoTrabalhoService: PlanoTrabalhoService;
   public planoEntregaService: PlanoEntregaService;
@@ -68,6 +69,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   public itemsOcorrencias: PlanoTrabalhoConsolidacaoOcorrencia[] = [];
   public itemsAfastamentos: Afastamento[] = [];
   public atividadeOptionsMetadata: AtividadeOptionsMetadata;
+  public programa?: Programa;
   
   constructor(public injector: Injector) {
     super(injector);
@@ -111,13 +113,15 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     this.loadData(this.entity!, this.form);
   }
 
-  public atividadeRefreshId(id: string) {
+  public atividadeRefreshId(id: string, atividade?: Atividade) {
     this.itemsEntregas.forEach(entrega => {
       let foundIndex = entrega.atividades.findIndex(x => x.id == id);
       if(foundIndex >= 0) {
-        this.atividadeDao.getById(id, this.joinAtividade).then(atividade => {
-          if(atividade) entrega.atividades[foundIndex] = atividade;
-        });
+        if(atividade) {
+          entrega.atividades[foundIndex] = atividade;
+        } else {
+          this.atividadeDao.getById(id, this.joinAtividade).then(atividade => { if(atividade) entrega.atividades[foundIndex] = atividade; });
+        }
       }
     });
     this.cdRef.detectChanges();
@@ -173,6 +177,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
         };
         return result;
       });
+      this.programa = dados.programa;
       this.planoTrabalho = dados.planoTrabalho;
       this.itemsOcorrencias = dados.ocorrencias;
       this.itemsAfastamentos = dados.afastamentos;
@@ -182,7 +187,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       this.cdRef.detectChanges();
     }
   }  
-
+  
   /***************************************************************************************
   * Atividades 
   ****************************************************************************************/
@@ -190,6 +195,8 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     let planoTrabalho: PlanoTrabalho | undefined = entrega.plano_trabalho || this.entity!.plano_trabalho;
     let efemerides = this.calendar.calculaDataTempoUnidade(this.entity!.data_inicio, this.entity!.data_fim, planoTrabalho!.carga_horaria, this.unidade!, "ENTREGA");
     const tempoPlanejado = this.calendar.horasUteis(this.entity!.data_inicio, this.entity!.data_fim, planoTrabalho!.carga_horaria, this.unidade!, "DISTRIBUICAO");
+    const dataInicio = this.util.setTime(this.entity!.data_inicio, 0, 0, 0);
+    const dataFim = this.util.setTime(this.entity!.data_fim, 23, 59, 59);
     return new Atividade({
       id: this.dao!.generateUuid(),
       plano_trabalho: planoTrabalho,
@@ -198,11 +205,11 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       demandante: this.auth.usuario,
       usuario: this.auth.usuario,
       unidade: this.unidade,
-      data_distribuicao: this.entity!.data_inicio,
+      data_distribuicao: dataInicio,
       carga_horaria: planoTrabalho!.carga_horaria,
-      data_estipulada_entrega: this.entity!.data_fim,
-      data_inicio: this.entity!.data_inicio,
-      data_entrega: this.entity!.data_fim,
+      data_estipulada_entrega: dataFim,
+      data_inicio: dataInicio,
+      data_entrega: dataFim,
       tempo_planejado: tempoPlanejado,
       tempo_despendido: efemerides?.tempoUtil || 0,
       status: 'CONCLUIDO',
@@ -257,6 +264,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
       this.util.fillForm(row, this.formAtividade!.value);
       result = await this.atividadeDao?.save(row, this.joinAtividade, ['etiquetas', 'checklist', 'comentarios', 'pausas', 'tarefas']);
+      this.atividadeRefreshId(row.id, result);
     }
     return result;
   }
@@ -392,10 +400,11 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   }  
 
   /***************************************************************************************
-  * Ocorrências 
+  * Afastamentos
   ****************************************************************************************/
   public async addAfastamento() {
-    this.go.navigate({route: ['cadastros', 'afastamento'], params: {usuarioId: this.entity!.plano_trabalho!.usuario_id}}, {
+    this.go.navigate({route: ['cadastros', 'afastamento', 'new']}, {
+      metadata: { consolidacao: this.entity },
       filterSnapshot: undefined,
       querySnapshot: undefined,
       modalClose: (modalResult) => {
@@ -403,5 +412,12 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       }
     });
   }
+
+  public afastamentoDynamicButtons(row: any): ToolbarButton[] {
+    let result: ToolbarButton[] = [];
+    result.push(Object.assign({}, this.OPTION_INFORMACOES, { onClick: (doc: Afastamento) => this.go.navigate({route: ["cadastros", "afastamento", doc.id, "consult"]}) }));
+    //result.push({ hint: "Adicionar filho", icon: "bi bi-plus-circle", onClick: this.addChildProcesso.bind(this) });
+    return result;
+  }  
  
 }

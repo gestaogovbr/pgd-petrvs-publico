@@ -55,7 +55,7 @@
                                     </table>
                                 </ng-template>
                             </column>
-                            <column [title]="'nº Processo/Status\nComentários'" [template]="columnNumero" [editTemplate]="columnNumero">
+                            <column [title]="'nº Processo/Status\nComentários'" [width]="400" [template]="columnNumero" [editTemplate]="columnNumero">
                                 <ng-template let-row="row" #columnNumero>
                                     <documentos-badge [documento]="row.documento_requisicao"></documentos-badge>
                                     <span class="d-block">
@@ -76,8 +76,7 @@
             </column>
             <column title="Entrega" [template]="columnEntrega">
                 <ng-template let-row="row" #columnEntrega>
-                    <small>{{ row.badge.descricao }}</small>
-                    <badge [icon]="entityService.getIcon('Entrega')" [label]="row.badge.nome"></badge>
+                    <badge [icon]="entityService.getIcon('Entrega')" [label]="row.badge.nome" [textValue]="row.badge.descricao"></badge>
                 </ng-template>
             </column>
             <column title="% Força Trab. Planejado" [template]="columnForcaTrabalho">
@@ -101,7 +100,7 @@
     </grid>
 </separator>
 <separator [title]="lex.translate('Afastamentos')" [icon]="entityService.getIcon('Afastamento')">
-    <grid [items]="itemsAfastamentos" [minHeight]="0" #gridAfastamento [add]="addAfastamento.bind(this)" [hasAdd]="true">
+    <grid [items]="itemsAfastamentos" [minHeight]="0" #gridAfastamento [add]="addAfastamento.bind(this)" [hasEdit]="false" [hasDelete]="false" [hasAdd]="true" editable>
         <columns>
             <column title="Início" type="datetime" field="data_inicio"></column>
             <column title="Fim" type="datetime" field="data_fim"></column>
@@ -111,7 +110,7 @@
                     {{row.observacao}}
                 </ng-template>
             </column>
-            <!--column type="options" [dynamicButtons]="afastamentoDynamicButtons.bind(this)"></column/-->
+            <column type="options" [dynamicButtons]="afastamentoDynamicButtons.bind(this)"></column>
         </columns>
     </grid>
 </separator>

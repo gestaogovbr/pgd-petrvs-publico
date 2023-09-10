@@ -75,7 +75,7 @@ class AfastamentoFormComponent extends src_app_modules_base_page_form_base__WEBP
     this.join = ["usuario", "tipo_motivo_afastamento"];
   }
   isHoras() {
-    if (this.form.controls.tipo_motivo_afastamento_id.value?.length && this.tipoMotivoAfastamento?.searchObj?.horas) {
+    if (this.form.controls.tipo_motivo_afastamento_id.value?.length && this.tipoMotivoAfastamento?.selectedEntity?.horas) {
       //Então é em Horas
       return true;
     } else return false;
@@ -127,7 +127,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
   decls: 11,
   vars: 13,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "usuario_id", 3, "size", "dao"], ["usuario", ""], ["controlName", "tipo_motivo_afastamento_id", 3, "size", "dao"], ["tipoMotivoAfastamento", ""], ["label", "In\u00EDcio", "controlName", "data_inicio", 3, "date", "size"], ["label", "Fim", "controlName", "data_fim", 3, "date", "size"], ["label", "Observa\u00E7\u00F5es", "controlName", "observacoes", 3, "size", "rows"]],
+  consts: [["initialFocus", "usuario_id", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "usuario_id", "required", "", 3, "size", "dao"], ["usuario", ""], ["controlName", "tipo_motivo_afastamento_id", "required", "", 3, "size", "dao"], ["tipoMotivoAfastamento", ""], ["label", "In\u00EDcio", "controlName", "data_inicio", 3, "date", "size"], ["label", "Fim", "controlName", "data_fim", 3, "date", "size"], ["label", "Observa\u00E7\u00F5es", "controlName", "observacoes", 3, "size", "rows"]],
   template: function AfastamentoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "editable-form", 0);

@@ -119,7 +119,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵdefi
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵInheritDefinitionFeature"]],
   decls: 8,
   vars: 9,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome", "icon", "bi bi-upc", "controlName", "nome", 3, "size"], ["onlyHours", "", "controlName", "tempo_estimado", "labelInfo", "Tempo estimado para execu\u00E7\u00E3o", 3, "label", "size"], ["label", "Documental?", "controlName", "documental", "labelInfo", "", 3, "size"], ["label", "Coment\u00E1rio autom\u00E1tico", "controlName", "comentario_predefinido", 3, "size", "rows"]],
+  consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome", "icon", "bi bi-upc", "controlName", "nome", "required", "", 3, "size"], ["onlyHours", "", "controlName", "tempo_estimado", "labelInfo", "Tempo estimado para execu\u00E7\u00E3o", 3, "label", "size"], ["label", "Documental?", "controlName", "documental", "labelInfo", "", 3, "size"], ["label", "Coment\u00E1rio autom\u00E1tico", "controlName", "comentario_predefinido", 3, "size", "rows"]],
   template: function TipoTarefaFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](0, "editable-form", 0);
@@ -214,7 +214,6 @@ class TipoTarefaListComponent extends src_app_modules_base_page_list_base__WEBPA
         default: ""
       }
     });
-    this.join = ["unidade", "entidade"];
     // Testa se o usuário possui permissão para exibir dados da tarefa
     if (this.auth.hasPermissionTo("MOD_TRF_CONS")) {
       this.options.push({

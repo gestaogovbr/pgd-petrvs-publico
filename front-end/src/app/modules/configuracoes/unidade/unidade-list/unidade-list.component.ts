@@ -19,6 +19,7 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
   public cidadeDao: CidadeDaoService;
   public entidadeDao: EntidadeDaoService;
   public buttons: ToolbarButton[] = [];
+  public unidadesJaVinculadas: string[] = [];
 
   constructor(public injector: Injector) {
     super(injector, Unidade, UnidadeDaoService);
@@ -45,6 +46,11 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
         onClick: (unidade: Unidade) => this.go.navigate({ route: ['configuracoes', 'unidade', 'merge'] }, this.modalRefresh())
       });
     }
+  }
+
+  ngOnInit(): void {
+    super.ngOnInit();
+    this.unidadesJaVinculadas = this.metadata?.unidadesJaVinculadas || this.unidadesJaVinculadas;
   }
 
   public dynamicOptions(row: any): ToolbarButton[] {
@@ -85,6 +91,7 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
     if (form.entidade_id?.length) result.push(["entidade_id", "==", form.entidade_id]);
     if (form.nome?.length) result.push(["or", ["nome", "like", "%" + form.nome.replace(" ", "%") + "%"], ["sigla", "like", "%" + form.nome.replace(" ", "%") + "%"]]);
     if (form.instituidora) result.push(["instituidora", "==", 1]);
+    if (this.unidadesJaVinculadas.length) result.push(["id","not in",this.unidadesJaVinculadas]);
     return result;
   }
 }

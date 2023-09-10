@@ -16,7 +16,7 @@ class UnidadePrfSeeder extends Seeder
     public function run()
     {
         $brasilia = Cidade::where('codigo_ibge', '5300108')->sole();
-        //cria a Unidade 'PRF', que será a raiz de todas as outras
+        //cria a Unidade 'PRF' que será a raiz de todas as outras.
         $prf = new Unidade();
         $prf->fill([
             'codigo' => '1',

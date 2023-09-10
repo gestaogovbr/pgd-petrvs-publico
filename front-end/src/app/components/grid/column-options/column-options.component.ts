@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, Injector, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Injector, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { NavigateService } from 'src/app/services/navigate.service';
 import { ToolbarButton } from '../../toolbar/toolbar.component';
 import { GridColumn } from '../grid-column';
@@ -12,6 +12,8 @@ import { ComponentBase } from '../../component-base';
 })
 export class ColumnOptionsComponent extends ComponentBase implements OnInit {
   @ViewChild('optionButton', {static: false}) optionButton?: ElementRef;
+  @Output() calcWidthChange = new EventEmitter<number>();
+  @Input()  calcWidth?: number;
   @Input() index: number = 0;
   @Input() column: GridColumn = new GridColumn();
   @Input() row: any = undefined;
@@ -67,10 +69,16 @@ export class ColumnOptionsComponent extends ComponentBase implements OnInit {
     }
   }
 
+  public recalcWith() {
+    this.calcWidth = ((this._allButtons || []).length * 40) + (this._allOptions?.length ? 50 : 0) || undefined;
+    this.calcWidthChange.emit(this.calcWidth);
+  }
+
   public get allButtons(): ToolbarButton[] {
     if(!this._allButtons) {
       const dynamicButtons = this.dynamicButtons ? this.dynamicButtons(this.row, this.column.metadata) : [];
       this._allButtons = [...dynamicButtons, ...this.buttons];
+      this.recalcWith();
     }
     return this._allButtons!;
   }
@@ -79,6 +87,7 @@ export class ColumnOptionsComponent extends ComponentBase implements OnInit {
     if(!this._allOptions) {
       const dynamicOptions = this.dynamicOptions ? this.dynamicOptions(this.row, this.column.metadata) : [];
       this._allOptions = [...dynamicOptions, ...(this.options || [])];
+      this.recalcWith();
     }
     return this._allOptions!;
   }

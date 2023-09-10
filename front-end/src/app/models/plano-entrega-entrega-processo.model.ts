@@ -6,7 +6,7 @@ export class PlanoEntregaEntregaProcesso extends Base {
   public processo?: CadeiaValorProcesso;
   public entrega?: PlanoEntregaEntrega;
 
-  public processo_id: string = '';
+  public cadeia_processo_id: string = '';
   public entrega_id: string = '';                        
   
   public constructor(data?: any) { super(); this.initialization(data); }

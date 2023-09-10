@@ -56,11 +56,13 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
 
   public formValidation = (form?: FormGroup) =>{
     let result = null;
-
-    if(this.isPlanejamentoUNEX() && !this.form?.controls.objetivo_superior_id.value){
+    /*  Regra está sendo discutida
+        (RN_PLAN_INST_OBJ_A)
+        Quando o Planejamento é de uma Unidade Executora é obrigatório associar cada um dos seus objetivos a um objetivo do Planejamento Institucional superior
+    */
+/*     if(this.isPlanejamentoUNEX() && !this.form?.controls.objetivo_superior_id.value){
       result = "Quando o Planejamento é de uma Unidade Executora é obrigatório associar cada um dos seus objetivos a um objetivo do Planejamento Institucional superior!";
-    }
-
+    } */
     return result;
   }
 
@@ -87,7 +89,7 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
   }
 
   public saveData(form: IIndexable): Promise<NavigateResult> {
-    return new Promise<NavigateResult>((resolve, reject) => {
+    return new Promise<NavigateResult>(async (resolve, reject) => {
       const objetivo = this.util.fill(new PlanejamentoObjetivo(), this.entity!);
       resolve(new NavigateResult(this.util.fillForm(objetivo, this.form!.value)));
     });

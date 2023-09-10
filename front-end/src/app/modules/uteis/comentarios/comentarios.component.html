@@ -8,12 +8,10 @@
                             <td *ngIf="comentario.comentarioLevel(row).length > 0" class="d-none d-md-table-cell" [style.width.px]="comentario.comentarioLevel(row).length * 20">&nbsp;</td>
                             <td class="comentario-user text-center">
                                 <profile-picture [url]="row.usuario?.url_foto" [hint]="row.usuario?.nome || 'Desconhecido'"></profile-picture><br>
-                                <ng-container *ngFor="let dot of comentario.comentarioLevel(row)">
-                                    <span class="comentario-level">•</span><br>
-                                </ng-container>
+                                
                             </td>
-                            <td class="comentario-container">
-                                <span class="comentario-user-indicator"></span>
+                            <td class="comentario-container" [style.border-color]="util.getBackgroundColor(comentario.comentarioLevel(row).length, 20)">
+                                <span class="comentario-user-indicator" [style.border-color]="util.getBackgroundColor(comentario.comentarioLevel(row).length, 20)"></span>
                                 <h6 class="comentario-message-title">
                                     {{row.usuario?.nome || "Desconhecido"}}
                                     <span>{{lookup.getValue(lookup.COMENTARIO_TIPO, row.tipo)}}</span>

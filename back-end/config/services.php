@@ -34,5 +34,10 @@ return [
         'client_secret' => env('AZURE_CLIENT_SECRET'),
         'redirect' => env('AZURE_REDIRECT_URI', "/web/login-azure-callback"),
         'tenant' => env('AZURE_TENANT_ID')
+    ],
+    'login-unico' => [
+        'client_id' => env('LOGIN_UNICO_CLIENT_ID'),
+        'client_secret' => env('LOGIN_UNICO_CLIENT_SECRET'),
+        'redirect' => env('LOGIN_UNICO_REDIRECT_URI'),
     ]
 ];

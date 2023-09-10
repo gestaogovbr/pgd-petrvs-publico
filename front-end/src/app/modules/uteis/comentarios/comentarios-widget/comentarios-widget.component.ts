@@ -88,4 +88,18 @@ export class ComentariosWidgetComponent implements OnInit {
     }});
   }
 
+  getBackgroundColor(comentario: any): string {
+    const level = comentario.path.includes('/') ? comentario.path.split('/').length - 1 : 0;
+    const palette = [];
+    const numLevels = 20; // Número de níveis desejados
+
+    for (let i = 0; i < numLevels; i++) {
+      const hue = (i * 360) / numLevels; // Distribui as cores uniformemente no círculo de cores (360 graus)
+      const color = `hsl(${hue}, 70%, 60%)`; // Define a matiz (hue), saturação e luminosidade
+      palette.push(color);
+    }
+ 
+    return palette[level % numLevels]
+  }
+
 }

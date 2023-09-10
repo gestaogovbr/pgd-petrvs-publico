@@ -36,7 +36,7 @@ class CreateAtividadesTable extends Migration
             $table->json('checklist')->nullable()->comment("Checklist");
             $table->integer('prioridade')->nullable()->comment("Nível de prioridade");
             $table->decimal('progresso', 5, 2)->default(0)->comment("Progresso da realização da atividade");
-            $table->enum('status', ["INCLUIDO", "INICIADO", "PAUSADO", "CONCLUIDO"])->comment("Status atual da atividade");
+            $table->enum('status', ["INCLUIDO", "INICIADO", "PAUSADO", "CONCLUIDO"])->default("INCLUIDO")->comment("Status atual da atividade");
             // Chaves estrangeiras:
             $table->foreignUuid('plano_trabalho_id')->nullable()->constrained("planos_trabalhos")->onDelete('restrict')->onUpdate('cascade')->comment("Plano de trabalho que a atividade está vinculada");
             $table->foreignUuid('plano_trabalho_entrega_id')->nullable()->constrained("planos_trabalhos_entregas")->onDelete('restrict')->onUpdate('cascade')->comment("Entrega que a atividade está vinculada");

@@ -9,9 +9,11 @@ import { ProgramaDaoService } from './programa-dao.service';
 import { LookupService } from '../services/lookup.service';
 import { TemplateDataset } from '../modules/uteis/templates/template.service';
 import { PlanoTrabalhoEntregaDaoService } from './plano-trabalho-entrega-dao.service';
+import { Programa } from '../models/programa.model';
 
 export type PlanoTrabalhoByUsuario = {
-  planos: PlanoTrabalho[]
+  planos: PlanoTrabalho[],
+  programas: Programa[]
 }
 
 @Injectable({
@@ -67,6 +69,8 @@ export class PlanoTrabalhoDaoService extends DaoBaseService<PlanoTrabalho> {
         } else {
           let dados = response?.dados as PlanoTrabalhoByUsuario;
           dados.planos = dados.planos.map(x => new PlanoTrabalho(this.getRow(x)));
+          dados.programas = dados.programas.map(x => new Programa(this.getRow(x)));
+          dados.planos.forEach(x => x.programa = dados.programas.find(y => y.id == x.programa_id));
           resolve(dados);
         }
       }, error => reject(error));

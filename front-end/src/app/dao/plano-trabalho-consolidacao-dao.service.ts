@@ -8,9 +8,11 @@ import { Afastamento } from '../models/afastamento.model';
 import { PlanoTrabalhoConsolidacaoOcorrencia } from '../models/plano-trabalho-consolidacao-ocorrencia.model';
 import { PlanoEntrega } from '../models/plano-entrega.model';
 import { PlanoTrabalho } from '../models/plano-trabalho.model';
+import { Programa } from '../models/programa.model';
 
 export type ConsolidacaoDados = {
   atividades: Atividade[],
+  programa: Programa,
   planosEntregas: PlanoEntrega[],
   planoTrabalho: PlanoTrabalho,
   ocorrencias: PlanoTrabalhoConsolidacaoOcorrencia[],
@@ -38,6 +40,7 @@ export class PlanoTrabalhoConsolidacaoDaoService extends DaoBaseService<PlanoTra
           reject(response?.error);
         } else {
           let dados = response?.dados as ConsolidacaoDados;
+          dados.programa = new Programa(this.getRow(dados.programa));
           dados.planoTrabalho = new PlanoTrabalho(this.getRow(dados.planoTrabalho));
           dados.planoTrabalho.entregas = (dados.planoTrabalho.entregas || []).map(x => new PlanoTrabalhoEntrega(this.getRow(x)));
           dados.afastamentos = dados.afastamentos.map(x => new Afastamento(this.getRow(x)));
