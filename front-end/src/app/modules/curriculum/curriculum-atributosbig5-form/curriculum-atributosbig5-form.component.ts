@@ -15,19 +15,21 @@ export class CurriculumAtributosbig5FormComponent implements OnInit {
   criatividade! : string;
   habilidade! :string;
   adaptabilidade! :string;
+  etica! :string;
   bigico! :string;
   bigicoAmarelo! :string;
 
 
   constructor(private router:Router) { 
 
-    this.comunica="/assets/images/iconeComunicacao.png";//"../assets/images/Comunica.jpg";
-    this.lideranca="/assets/images/iconeLideranca.png";
-    this.resolucao="/assets/images/iconeResolucao.png";
-    this.pensamento="/assets/images/iconePensamento.png";
-    this.criatividade="/assets/images/iconeCriatividade.png";
-    this.habilidade="/assets/images/iconeHabilidades.png";
-    this.adaptabilidade="/assets/images/iconeAdaptabilidade.png";
+    this.comunica="/assets/icons/iconeComunicacao.png";//"../assets/icons/Comunica.jpg";
+    this.lideranca="/assets/icons/iconeLideranca.png";
+    this.resolucao="/assets/icons/iconeResolucao.png";
+    this.pensamento="/assets/icons/iconePensamento.png";
+    this.criatividade="/assets/icons/iconeCriatividade.png";
+    this.habilidade="/assets/icons/iconeHabilidades.png";
+    this.adaptabilidade="/assets/icons/iconeAdaptabilidade.png";
+    this.etica="/assets/icons/iconeEtica.png";
     this.bigicoAmarelo="/assets/images/iconBigAmarelo.png";
     this.bigico="/assets/images/iconBig.png";
 

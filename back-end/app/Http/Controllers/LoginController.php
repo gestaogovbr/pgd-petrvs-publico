@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Exceptions\LogError;
 use App\Services\FirebaseAuthService;
 use App\Services\GoogleService;
 use App\Services\DprfSegurancaAuthService;
@@ -11,16 +12,13 @@ use App\Services\IntegracaoService;
 use App\Services\ApiService;
 use App\Models\Usuario;
 use App\Models\UnidadeIntegrante;
-use App\Exceptions\LogError;
 use App\Models\Entidade;
 use App\Services\UnidadeService;
 use App\Services\CalendarioService;
-use App\Services\LoginUnicoService;
 use App\Services\UsuarioService;
-use SocialiteProviders\Azure\Provider;
-use DateTime;
 use Laravel\Socialite\Facades\Socialite;
 use \SocialiteProviders\Manager\Config;
+use DateTime;
 
 class LoginController extends Controller
 {
@@ -590,6 +588,8 @@ class LoginController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
+    /*
     public function authenticateApiLoginUnico(Request $request, LoginUnicoService $auth)
     {
         $credentials = $request->validate([
@@ -620,6 +620,7 @@ class LoginController extends Controller
         }
         return LogError::newError('As credenciais fornecidas são inválidas.');
     }
+    */
 
     /**
      * Verify an firebase token
@@ -647,19 +648,14 @@ class LoginController extends Controller
         return redirect('<azure></azure>')->with('popup', 'open');
     }
 
-    public function azureProvider($config = null): Provider {
+    public function azureProvider($config = null) {
         if($config) {
           // O método setConfig existe mesmo VSCode dizendo que não.
           return Socialite::driver('azure')->setConfig($config);
         }
-        return null;
+        return Socialite::driver('azure');
     }
 
-    /*
-       * Returns a custom config for this specific
-       * Azure AD connection / directory
-       * @return \SocialiteProviders\Manager\Config
-    */
     function getConfigAzure($url_dinamica_callback = null): \SocialiteProviders\Manager\Config
     {
         return new \SocialiteProviders\Manager\Config(
@@ -672,8 +668,7 @@ class LoginController extends Controller
 
     public function signInAzureRedirect(Request $request) {
         $entidade = $this->registrarEntidade($request);
-        $url_dinamica_callback = config("app.url");
-        $url_dinamica_callback = $url_dinamica_callback .
+        $url_dinamica_callback = config("app.url") .
             "/api/login-azure-callback/" . $entidade->sigla;
 
         $azure_select_tenancy = $this->getConfigAzure($url_dinamica_callback);
@@ -681,10 +676,6 @@ class LoginController extends Controller
         return $this->azureProvider($config = $azure_select_tenancy)
             ->scopes(['openid', 'email', 'profile'])
             ->redirect();
-    }
-
-    public function simulateAzureCallback(Request $request) {
-        return view("azure");
     }
 
     public function signInAzureCallback(Request $request) {
@@ -710,13 +701,85 @@ class LoginController extends Controller
                 Auth::loginUsingId($usuario->id);
                 $request->session()->regenerate();
                 $request->session()->put("kind", "AZURE");
-                return view("azure"); //redirect()->intended('http://localhost:4200/#/login-retorno');
+                return view("azure");
             } else {
                 return LogError::newError('As credenciais fornecidas são inválidas. Email: '.$email);
             }
         } else {
-            return $this->azureProvider()->redirect();
+              return $this->azureProvider($config = $azure_select_tenancy)
+                  ->scopes(['openid', 'email', 'profile'])
+                  ->redirect();
         }
     }
 
+    /* LoginUnico BackEnd */
+
+    public function loginGovBrPopup(){
+        return redirect('<govbr></govbr>')->with('popup', 'open');
+  }
+
+  public function govBrProvider($config = null) {
+      if($config) {
+        // O método setConfig existe mesmo VSCode dizendo que não.
+        return Socialite::driver('govbr')->setConfig($config);
+      }
+      return Socialite::driver('govbr');
+  }
+
+  function getConfigGovBr($url_dinamica_callback = null): \SocialiteProviders\Manager\Config
+  {
+      return new \SocialiteProviders\Manager\Config(
+          config("services.govbr.client_id"),
+          config("services.govbr.client_secret"),
+          $url_dinamica_callback,
+          ['environment' => config("services.govbr.environment")],
+      );
+  }
+
+  public function signInGovBrRedirect(Request $request) {
+      $entidade = $this->registrarEntidade($request);
+      $url_dinamica_callback = config("app.url") .
+          "/api/login-govbr-callback/" . $entidade->sigla;
+
+      $login_govbr_select_tenancy = $this->getConfigGovBr($url_dinamica_callback);
+
+      return $this->govBrProvider($config = $login_govbr_select_tenancy)
+          ->scopes(['openid', 'email', 'profile'])
+          ->redirect();
+  }
+
+  public function signInGovBrCallback(Request $request) {
+      $entidade = $this->registrarEntidade($request);
+
+      $url_dinamica_callback = config("app.url") .
+          "/api/login-govbr-callback/" .
+          $entidade->sigla;
+
+      $login_govbr_select_tenancy = $this->getConfigGovBr($url_dinamica_callback);
+
+      // $user = $this->azureProvider($config = $azure_select_tenancy)->stateless()->user();
+      $user = $this->govBrProvider($config = $login_govbr_select_tenancy)
+        ->user();
+
+      if(!empty($user)) {
+          $token = $user->token;
+          $email = $user->email;
+          $email = explode("#", $email);
+          $email = $email[0];
+          $email = str_replace("_", "@", $email);
+          $usuario = $this->registrarUsuario($request, Usuario::where('email', $email)->first());
+          if (($usuario)) {
+              Auth::loginUsingId($usuario->id);
+              $request->session()->regenerate();
+              $request->session()->put("kind", "GOVBR");
+              return view("govbr");
+          } else {
+              return LogError::newError('As credenciais fornecidas são inválidas. Email: '.$email);
+          }
+      } else {
+          return $this->govBrProvider($config = $login_govbr_select_tenancy)
+          ->scopes(['openid', 'email', 'profile'])
+          ->redirect();
+      }
+  }
 }

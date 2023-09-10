@@ -211,6 +211,11 @@ export class AuthService {
     //this.go.openPopup(this.gb.servidorURL + "/web/login-azure-simulate-callback");
   }
 
+  public authLoginUnicoBackEnd() {
+    this.dialogs.showSppinerOverlay("Logando...", 300000);
+    this.go.openPopup(this.gb.servidorURL + "/web/login-govbr-redirect?entidade=" + encodeURI(this.gb.ENTIDADE));
+  }
+
   public authUserPassword(user: string, password: string, redirectTo?: FullRoute) {
     return this.logIn("USERPASSWORD", "login-user-password", {
       entidade: this.gb.ENTIDADE,
