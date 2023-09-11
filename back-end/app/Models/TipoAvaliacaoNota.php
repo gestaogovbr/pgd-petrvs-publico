@@ -4,6 +4,7 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\TipoAvaliacao;
 use App\Models\TipoAvaliacaoJustificativa;
+use App\Casts\AsJson;
 
 class TipoAvaliacaoNota extends ModelBase
 {
@@ -28,7 +29,7 @@ class TipoAvaliacaoNota extends ModelBase
     ];
 
     protected $casts = [
-      'nota' => 'array'
+      'nota' => AsJson::class
     ];
 
     // Belongs

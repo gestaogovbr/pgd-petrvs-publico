@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Database\Seeders\BulkSeeeder;
 use App\Models\Cidade;
+use Illuminate\Support\Str;
 
 class CidadeSeeder extends Seeder
 {
@@ -20,11 +21,17 @@ class CidadeSeeder extends Seeder
     
         $timenow = now();
     
-        foreach($csv_reader->csvToArray() as $data){
+        foreach($csv_reader->csvToArray($bulk = 1000) as $data){
             // Preprocessamento do array
             foreach($data as $key => $entry){
                 // Inserindo dados faltantes uma vez que método insert
-                // insertOrIgnore não o faz. 
+                // insertOrIgnore não o faz.
+                $data[$key]['id'] = Str::uuid();
+                $data[$key]['nome'] = mb_convert_encoding($data[$key]['nome'],
+                    "UTF-8", 
+                    "ISO-8859-1"
+                );
+
                 $data[$key]['created_at'] = $timenow;
                 $data[$key]['updated_at'] = $timenow;
             }
