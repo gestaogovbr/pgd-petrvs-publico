@@ -70,7 +70,6 @@ export class Atividade extends Base implements HasComentarios, HasStatus {
 
     public plano_trabalho_id: string | null = null;
     public plano_trabalho_entrega_id: string | null = null;
-    public plano_trabalho_consolidacao_id: string | null = null;
     public tipo_atividade_id: string | null = null;
     public demandante_id: string = "";
     public usuario_id: string | null = null;

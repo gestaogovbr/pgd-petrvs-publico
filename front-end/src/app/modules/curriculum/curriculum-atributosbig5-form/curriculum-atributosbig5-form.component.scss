@@ -197,7 +197,7 @@ input[type="radio"]:checked+ .lblRadio{
 
 }
 
-.h4{
+.h4, .card-title{
   font-family: neutra text;
   font-weight: bold;
 }
@@ -205,6 +205,7 @@ input[type="radio"]:checked+ .lblRadio{
 .card-img-top{
   height: auto;
   max-width: 90px;
+ // background-color: #f5f7fa;
 }
 
 .card{

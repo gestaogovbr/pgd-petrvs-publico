@@ -62,6 +62,7 @@ use App\Http\Controllers\MateriaController;
 use App\Http\Controllers\CurriculumProfissionalController;
 use App\Http\Controllers\AreaAtividadeExternaController;
 use App\Http\Controllers\AreaTematicaController;
+use App\Http\Controllers\AtividadeTarefaController;
 use App\Http\Controllers\CapacidadeTecnicaController;
 use App\Http\Controllers\HistoricoAtividadeExternaCurriculumController;
 use App\Http\Controllers\HistoricoAtividadeInternaCurriculumController;
@@ -225,6 +226,8 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoConsolidacaoOcorrencia
 Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoConsolidacao')->group(function () {
     defaultRoutes(PlanoTrabalhoConsolidacaoController::class);
     Route::post('consolidacao-dados', [PlanoTrabalhoConsolidacaoController::class, 'consolidacaoDados']);
+    Route::post('concluir', [PlanoTrabalhoConsolidacaoController::class, 'concluir']);
+    Route::post('cancelar-conclusao', [PlanoTrabalhoConsolidacaoController::class, 'cancelarConclusao']);
 });
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
     defaultRoutes(PlanoEntregaController::class);
@@ -235,6 +238,7 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
     Route::post('cancelar-homologacao', [PlanoEntregaController::class, 'cancelarHomologacao']);
     Route::post('cancelar-plano', [PlanoEntregaController::class, 'cancelarPlano']);
     Route::post('concluir', [PlanoEntregaController::class, 'concluir']);
+    Route::post('desativar', [PlanoEntregaController::class, 'desativar']);
     Route::post('homologar', [PlanoEntregaController::class, 'homologar']);
     Route::post('liberar-homologacao', [PlanoEntregaController::class, 'liberarHomologacao']);
     Route::post('reativar', [PlanoEntregaController::class, 'reativar']);

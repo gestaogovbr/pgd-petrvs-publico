@@ -19,7 +19,7 @@
         </column>
         <column title="Concluído" [align]="'center'" [template]="concluido" [columnEditTemplate]="editConcluido" [edit]="editable ? onColumnConcluidoEdit.bind(this) : undefined" [save]="editable ? onColumnConcluidoSave.bind(this) : undefined">
             <ng-template let-row="row" #concluido>
-                <div class="text-center"><i *ngIf="row.concluido" class="bi bi-check-circle"></i></div>
+                <div class="text-center"><i *ngIf="row.data_conclusao" class="bi bi-check-circle"></i></div>
             </ng-template>
             <ng-template let-row="row" #editConcluido>
                 <input-switch [size]="12" controlName="concluido" [control]="formEdit!.controls.concluido"></input-switch>

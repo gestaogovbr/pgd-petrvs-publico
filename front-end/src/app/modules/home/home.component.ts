@@ -12,6 +12,7 @@ import { Chart, ChartData, ChartOptions } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { UtilService } from 'src/app/services/util.service';
 import { FormControl, FormGroup } from '@angular/forms';
+import { LookupItem } from 'src/app/services/lookup.service';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -39,6 +40,7 @@ export class HomeComponent implements OnInit {
     if (this.gb.isEmbedded) {
       this.allPages.visibilidadeMenuSei(!this.auth.usuario!.config.ocultar_menu_sei);
     }
+   
 
   }
 
@@ -72,6 +74,8 @@ export class HomeComponent implements OnInit {
   getLastDayOfMonth(year: number, month: number) {
     return new Date(year, month + 1, 0);
   }
+
+ 
 
 }
 

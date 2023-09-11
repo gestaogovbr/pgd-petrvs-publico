@@ -48,7 +48,7 @@ export class CadeiaValorListProcessosEntregasComponent extends PageListBase<Cade
       result.push(["cadeia_valor_id", "==", form.cadeia_valor_id]);
     }
     if (form.nome?.length) {
-      result.push(["or", ["nome", "like", "%" + form.nome.replace(" ", "%") + "%"], ["sigla", "like", "%" + form.nome.replace(" ", "%") + "%"]]);
+      result.push(["or", ["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"], ["sigla", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]]);
     }
     return result;
   }

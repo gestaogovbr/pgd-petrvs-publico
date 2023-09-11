@@ -6,7 +6,7 @@
                     <!--span *ngIf="row?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row?.length}}</span//-->
                 </ng-template>
                 <ng-template let-row="row" #columnExpandedConsolidacao>
-                    <grid [items]="row.atividades" [minHeight]="0" #gridAtividade [form]="formAtividade" [hasAdd]="true" [hasDelete]="false" [hasEdit]="false"
+                    <grid [items]="row.atividades" [minHeight]="0" #gridAtividade [form]="formAtividade" [hasAdd]="!disabled" [hasDelete]="false" [hasEdit]="false"
                         [add]="addAtividade.bind(this, row.entrega)" [load]="loadAtividade.bind(this)" [remove]="removeAtividade.bind(this, row.atividades)" [save]="saveAtividade.bind(this)" editable>
                         <columns>
                             <column [title]="'#ID/' + lex.translate('Tipo de Atividade') + '\nDescrição'" [template]="columnAtividadeDescricao" [editTemplate]="editAtividadeDescricao">
@@ -59,7 +59,7 @@
                                 <ng-template let-row="row" #columnNumero>
                                     <documentos-badge [documento]="row.documento_requisicao"></documentos-badge>
                                     <span class="d-block">
-                                        <badge *ngFor="let status of atividadeService.getStatus(row)" [data]="status" [color]="status.color" [icon]="status.icon" [label]="status.label"></badge>
+                                        <badge *ngFor="let status of atividadeService.getStatus(row, entity)" [data]="status" [color]="status.color" [icon]="status.icon" [label]="status.label"></badge>
                                     </span>
                                     <comentarios-widget *ngIf="!gridAtividade.editing" [entity]="row" [selectable]="false" origem="ATIVIDADE" [grid]="gridAtividade"></comentarios-widget>
                                 </ng-template>
@@ -88,7 +88,7 @@
     </grid>
 </separator>
 <separator [title]="lex.translate('Ocorrências')" [icon]="entityService.getIcon('PlanoTrabalhoConsolidacao')">
-    <grid [items]="itemsOcorrencias" [minHeight]="0" #gridOcorrencia [form]="formOcorrencia" [hasDelete]="true" 
+    <grid [items]="itemsOcorrencias" [minHeight]="0" #gridOcorrencia [form]="formOcorrencia" [hasDelete]="!disabled" [hasAdd]="!disabled" [hasEdit]="!disabled"
         [add]="addOcorrencia.bind(this)" [load]="loadOcorrencia.bind(this)" 
         [remove]="removeOcorrencia.bind(this)" [save]="saveOcorrencia.bind(this)" editable>
         <columns>
@@ -100,7 +100,7 @@
     </grid>
 </separator>
 <separator [title]="lex.translate('Afastamentos')" [icon]="entityService.getIcon('Afastamento')">
-    <grid [items]="itemsAfastamentos" [minHeight]="0" #gridAfastamento [add]="addAfastamento.bind(this)" [hasEdit]="false" [hasDelete]="false" [hasAdd]="true" editable>
+    <grid [items]="itemsAfastamentos" [minHeight]="0" #gridAfastamento [add]="addAfastamento.bind(this)" [hasEdit]="false" [hasDelete]="false" [hasAdd]="!disabled" editable>
         <columns>
             <column title="Início" type="datetime" field="data_inicio"></column>
             <column title="Fim" type="datetime" field="data_fim"></column>

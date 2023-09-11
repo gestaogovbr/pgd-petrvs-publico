@@ -27,6 +27,8 @@ export class ColumnOptionsComponent extends ComponentBase implements OnInit {
   public randomId = Math.round(Math.random() * 1000).toString();
   public go: NavigateService;
 
+  private _hashButtons: string = "";
+  private _hashOptions: string = "";
   private _allButtons?: ToolbarButton[] = undefined;
   private _allOptions?: ToolbarButton[] = undefined;
 
@@ -74,8 +76,15 @@ export class ColumnOptionsComponent extends ComponentBase implements OnInit {
     this.calcWidthChange.emit(this.calcWidth);
   }
 
+  public calcHashChanges(): string {
+    const oneDeep = (k: any, v: any) => k != "" && (typeof v == "object" || typeof v == "function") ? "" : v;
+    return this.util.md5(JSON.stringify(this.row, oneDeep) + JSON.stringify(this.column.metadata, oneDeep));
+  }
+
   public get allButtons(): ToolbarButton[] {
-    if(!this._allButtons) {
+    let hash = this.calcHashChanges();
+    if(!this._allButtons || this._hashButtons != hash) {
+      this._hashButtons = hash;
       const dynamicButtons = this.dynamicButtons ? this.dynamicButtons(this.row, this.column.metadata) : [];
       this._allButtons = [...dynamicButtons, ...this.buttons];
       this.recalcWith();
@@ -84,7 +93,9 @@ export class ColumnOptionsComponent extends ComponentBase implements OnInit {
   }
 
   public get allOptions(): ToolbarButton[] {
-    if(!this._allOptions) {
+    let hash = this.calcHashChanges();
+    if(!this._allOptions || this._hashOptions != hash) {
+      this._hashOptions = hash;
       const dynamicOptions = this.dynamicOptions ? this.dynamicOptions(this.row, this.column.metadata) : [];
       this._allOptions = [...dynamicOptions, ...(this.options || [])];
       this.recalcWith();

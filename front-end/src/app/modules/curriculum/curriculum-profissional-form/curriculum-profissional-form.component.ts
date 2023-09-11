@@ -19,6 +19,7 @@ import { CurriculumProfissionalDaoService } from 'src/app/dao/curriculum-profiss
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
 import { NavigateResult } from 'src/app/services/navigate.service';
+import { UnidadesService } from 'src/app/services/unidades.service';
 
 @Component({
   selector: 'curriculum-profissional-form',
@@ -56,6 +57,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   public funcaoDao?: FuncaoDaoService;
   public ctDao?: CentroTreinamentoDaoService;
   public grupoDao?: GrupoEspecializadoDaoService;
+  public unidadeService?: UnidadesService;
   
   
  
@@ -67,6 +69,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     this.funcaoDao = injector.get<FuncaoDaoService>(FuncaoDaoService);
     this.grupoDao = injector.get<GrupoEspecializadoDaoService>(GrupoEspecializadoDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    this.unidadeService = injector.get<UnidadesService>(UnidadesService);
     this.form = this.fh.FormBuilder({
       radioDocenciaFora: { default: false },
       radioDocenciaPRF: { default: false },
@@ -95,6 +98,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
      
 
     }, this.cdRef, this.validate)
+   
 
   }
 
@@ -102,6 +106,8 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       for (let i = 1980; i <= (new Date()).getFullYear(); i++) {
         this.anos.push(Object.assign({}, { key: i, value: (i.toString()) }));
       }
+
+      this.getAllUnidades();
       
       const userUnidade=this.auth.unidade;
       console.log(userUnidade)
@@ -156,5 +162,12 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
 
   public onAddClick() { }
 
+  async getAllUnidades(){
+    this.unidadeDao?.query().getAll().then((unidade) => {
+      //console.log(unidade);
+      this.unidade = unidade.map(x => Object.assign({}, { key: x.id, value: x.sigla }) as LookupItem);
+      //console.log(this.unidade)
+    });
+  }
  
 }

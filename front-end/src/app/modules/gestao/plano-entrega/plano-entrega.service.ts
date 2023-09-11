@@ -56,7 +56,7 @@ export class PlanoEntregaService {
   }
 
   /**
-   * Informa se o plano de entregas repassado como parâmetro está ativo, ou seja: é um plano válido (não foi deletado, não foi cancelado,
+   * Informa se o plano de entregas recebido como parâmetro está ativo, ou seja: é um plano válido (não foi deletado, não foi cancelado,
    * não foi arquivado) e possui o status ATIVO.
    * @param planoEntrega 
    * @returns 
@@ -66,7 +66,7 @@ export class PlanoEntregaService {
   }
 
   /**
-   * Informa se o plano de entregas repassado como parâmetro é válido, ou seja, não foi deletado, não foi cancelado nem foi arquivado.
+   * Informa se o plano de entregas recebido como parâmetro é válido, ou seja, não foi deletado, não foi cancelado nem foi arquivado.
    * @param planoEntrega 
    * @returns 
    */
@@ -75,7 +75,7 @@ export class PlanoEntregaService {
   }
 
   /**
-   * Informa a situação do plano de entregas repassado como parâmetro, ou seja, se foi EXCLUIDO ou ARQUIVADO, ou, caso contrário, o seu status atual.
+   * Informa a situação do plano de entregas recebido como parâmetro, ou seja, se foi EXCLUIDO ou ARQUIVADO, ou, caso contrário, o seu status atual.
    * @param planoEntrega 
    * @returns 
    */

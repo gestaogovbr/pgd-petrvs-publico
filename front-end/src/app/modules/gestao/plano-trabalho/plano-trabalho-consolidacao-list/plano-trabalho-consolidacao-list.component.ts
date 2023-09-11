@@ -3,11 +3,12 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { PlanoTrabalhoConsolidacaoDaoService } from 'src/app/dao/plano-trabalho-consolidacao-dao.service';
-import { PlanoTrabalhoConsolidacao } from 'src/app/models/plano-trabalho-consolidacao.model';
+import { PlanoTrabalhoConsolidacao, PlanoTrabalhoConsolidacaoStatus } from 'src/app/models/plano-trabalho-consolidacao.model';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { PlanoTrabalhoService } from '../plano-trabalho.service';
+import { PlanoTrabalhoConsolidacaoFormComponent } from '../plano-trabalho-consolidacao-form/plano-trabalho-consolidacao-form.component';
 
 @Component({
   selector: 'plano-trabalho-consolidacao-list',
@@ -96,12 +97,43 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
     return result;
   }
 
-  public concluir(consolidacao: PlanoTrabalhoConsolidacao) {
-    //
+  public async concluir(consolidacao: PlanoTrabalhoConsolidacao) {
+    this.submitting = true;
+    try {
+      let response = await this.dao!.concluir(consolidacao.id);
+      consolidacao.status = response.status as PlanoTrabalhoConsolidacaoStatus;
+      if(consolidacao._metadata?.planoTrabalhoConsolidacaoFormComponent) {
+        let consolidacaoForm = consolidacao._metadata?.planoTrabalhoConsolidacaoFormComponent as PlanoTrabalhoConsolidacaoFormComponent;
+        consolidacaoForm.loadConsolidacao(response);
+      } else {
+        this.grid!.refreshExpanded(consolidacao.id);
+      }
+    } catch (error: any) {
+      this.error(error.message || error);
+    } finally {
+      this.submitting = false;
+    }
   }
 
-  public cancelarConclusao(consolidacao: PlanoTrabalhoConsolidacao) {
-    //
+  public async cancelarConclusao(consolidacao: PlanoTrabalhoConsolidacao) {
+    this.submitting = true;
+    try {
+      let response = await this.dao!.cancelarConclusao(consolidacao.id);
+      if(consolidacao._metadata?.planoTrabalhoConsolidacaoFormComponent) {
+        let consolidacaoForm = consolidacao._metadata?.planoTrabalhoConsolidacaoFormComponent as PlanoTrabalhoConsolidacaoFormComponent;
+        consolidacaoForm.loadConsolidacao(response);
+      } else {
+        this.grid!.refreshExpanded(consolidacao.id);
+      }
+    } catch (error: any) {
+      this.error(error.message || error);
+    } finally {
+      this.submitting = false;
+    }
+  }
+
+  public isDisabled(row?: PlanoTrabalhoConsolidacao): boolean {
+    return (row && row.status != "INCLUIDO") || this.entity?.status != "ATIVO";
   }
 
   public avaliar(consolidacao: PlanoTrabalhoConsolidacao) {
@@ -126,22 +158,24 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
     const isUsuarioConsolidacao = this.auth.usuario!.id == this.entity!.usuario_id;
     const isGestor = [this.entity!.unidade!.gestor?.usuario_id, this.entity!.unidade!.gestor_substituto?.usuario_id].includes(this.auth.usuario?.id);
     const BOTAO_CONCLUIR = { hint: "Concluir", icon: "bi bi-check-circle", color: "btn-outline-success", onClick: this.concluir.bind(this) };
-    const BOTAO_CANCELAR_CONCLUSAO = { hint: "Cancelar conclusão", icon: "bi bi-backspace", color: "btn-outline-success", onClick: this.cancelarConclusao.bind(this) };
+    const BOTAO_CANCELAR_CONCLUSAO = { hint: "Cancelar conclusão", icon: "bi bi-backspace", color: "btn-outline-danger", onClick: this.cancelarConclusao.bind(this) };
     const BOTAO_AVALIAR = { hint: "Avaliar", icon: "bi bi-star", color: "btn-outline-warning", onClick: this.avaliar.bind(this) };
     const BOTAO_EDITAR_AVALIACAO = { hint: "Editar avaliação", icon: "bi bi-star-half", color: "btn-outline-warning", onClick: this.editarAvaliacao.bind(this) };
     const BOTAO_FAZER_RECURSO = { hint: "Fazer recurso", id: "RECORRIDO", icon: "bi bi-journal-medical", color: "btn-outline-warning", onClick: this.fazerRecurso.bind(this) };
     const BOTAO_CANCELAR_AVALIACAO = { hint: "Cancelar avaliação", id: "INCLUIDO", icon: "bi bi-backspace", color: "btn-outline-warning", onClick: this.cancelarAvaliacao.bind(this) };
-    if(consolidacao.status == "INCLUIDO" && (isUsuarioConsolidacao || this.auth.hasPermissionTo("MOD_PTR_CSLD_CONCL"))) {
-      result.push(BOTAO_CONCLUIR);
-    }
-    if(consolidacao.status == "CONCLUIDO" && this.planoTrabalhoService.diasParaConcluirConsolidacao(row, this.entity!.programa) >= 0 && (isUsuarioConsolidacao || this.auth.hasPermissionTo("MOD_PTR_CSLD_DES_CONCL"))) {
-      result.push(BOTAO_CANCELAR_CONCLUSAO);
-    }
-    if(consolidacao.status == "CONCLUIDO" && (isGestor || this.auth.hasPermissionTo("MOD_PTR_CSLD_AVALIAR"))) {
-      result.push(BOTAO_AVALIAR);
-    }
-    if(consolidacao.status == "AVALIADO") {
-      /* TODO: Fazer as condições para avaliado */
+    if(!this.isDisabled()) {
+      if(consolidacao.status == "INCLUIDO" && (isUsuarioConsolidacao || this.auth.hasPermissionTo("MOD_PTR_CSLD_CONCL"))) {
+        result.push(BOTAO_CONCLUIR);
+      }
+      if(consolidacao.status == "CONCLUIDO" && this.planoTrabalhoService.diasParaConcluirConsolidacao(row, this.entity!.programa) >= 0 && (isUsuarioConsolidacao || this.auth.hasPermissionTo("MOD_PTR_CSLD_DES_CONCL"))) {
+        result.push(BOTAO_CANCELAR_CONCLUSAO);
+      }
+      if(consolidacao.status == "CONCLUIDO" && (isGestor || this.auth.hasPermissionTo("MOD_PTR_CSLD_AVALIAR"))) {
+        result.push(BOTAO_AVALIAR);
+      }
+      if(consolidacao.status == "AVALIADO") {
+        /* TODO: Fazer as condições para avaliado */
+      }
     }
     return result;
   }

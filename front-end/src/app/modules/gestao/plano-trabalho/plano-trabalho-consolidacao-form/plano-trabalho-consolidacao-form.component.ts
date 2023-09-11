@@ -3,7 +3,7 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
-import { PlanoTrabalhoConsolidacaoDaoService } from 'src/app/dao/plano-trabalho-consolidacao-dao.service';
+import { ConsolidacaoDados, PlanoTrabalhoConsolidacaoDaoService } from 'src/app/dao/plano-trabalho-consolidacao-dao.service';
 import { PlanoTrabalhoConsolidacaoOcorrenciaDaoService } from 'src/app/dao/plano-trabalho-consolidacao-ocorrencia-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { PlanoTrabalhoConsolidacao } from 'src/app/models/plano-trabalho-consolidacao.model';
@@ -47,7 +47,17 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   @Input() planoTrabalho?: PlanoTrabalho;
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
-  @Input() set entity(value: PlanoTrabalhoConsolidacao | undefined) { super.entity = value; } get entity(): PlanoTrabalhoConsolidacao | undefined { return super.entity; }
+  @Input() set entity(value: PlanoTrabalhoConsolidacao | undefined) { super.entity = value; this.bindEntity(); } get entity(): PlanoTrabalhoConsolidacao | undefined { return super.entity; }
+  @Input() set disabled(value: boolean) {
+    if(this._disabled != value || this.atividadeOptionsMetadata.disabled !== value) {
+      this._disabled = value;
+      this.atividadeOptionsMetadata.disabled = value;
+      this.cdRef.detectChanges();
+    }
+  }
+  get disabled(): boolean {
+    return this._disabled;
+  }
 
   public consolidacaoOcorrenciaDao: PlanoTrabalhoConsolidacaoOcorrenciaDaoService;
   public ocorrenciaDao: PlanoTrabalhoConsolidacaoOcorrenciaDaoService;
@@ -71,6 +81,8 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   public atividadeOptionsMetadata: AtividadeOptionsMetadata;
   public programa?: Programa;
   
+  private _disabled: boolean = true;
+
   constructor(public injector: Injector) {
     super(injector);
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
@@ -111,6 +123,13 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
 
   public refresh() {
     this.loadData(this.entity!, this.form);
+  }
+
+  public bindEntity() {
+    if(this.entity) {
+      this.entity._metadata = this.entity._metadata || {};
+      this.entity._metadata.planoTrabalhoConsolidacaoFormComponent = this;
+    }
   }
 
   public atividadeRefreshId(id: string, atividade?: Atividade) {
@@ -162,26 +181,31 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     return result;
   }
 
+  public loadConsolidacao(dados: ConsolidacaoDados) {
+    this.itemsEntregas = dados.entregas.map(x => {
+      x.plano_entrega_entrega!.plano_entrega = dados.planosEntregas.find(pe => pe.id == x.plano_entrega_entrega!.plano_entrega_id);
+      let result = {
+        id: x.id,
+        entrega: x,
+        atividades: dados.atividades.filter(y => y.plano_trabalho_entrega_id == x.id),
+        badge: this.planoTrabalhoService.tipoEntrega(x, dados.planoTrabalho)
+      };
+      return result;
+    });
+    this.programa = dados.programa;
+    this.planoTrabalho = dados.planoTrabalho;
+    this.itemsOcorrencias = dados.ocorrencias;
+    this.itemsAfastamentos = dados.afastamentos;
+    this.unidade = dados.planoTrabalho.unidade || this.entity!.plano_trabalho?.unidade;
+    this.cdRef.detectChanges();
+  }
+
   public async loadData(entity: IIndexable, form?: FormGroup) {
     this.gridEntregas!.loading = true;
     this.cdRef.detectChanges();
     try {
       let dados = await this.dao!.dadosConsolidacao(entity.id);
-      this.itemsEntregas = dados.entregas.map(x => {
-        x.plano_entrega_entrega!.plano_entrega = dados.planosEntregas.find(pe => pe.id == x.plano_entrega_entrega!.plano_entrega_id);
-        let result = {
-          id: x.id,
-          entrega: x,
-          atividades: dados.atividades.filter(y => y.plano_trabalho_entrega_id == x.id),
-          badge: this.planoTrabalhoService.tipoEntrega(x, dados.planoTrabalho)
-        };
-        return result;
-      });
-      this.programa = dados.programa;
-      this.planoTrabalho = dados.planoTrabalho;
-      this.itemsOcorrencias = dados.ocorrencias;
-      this.itemsAfastamentos = dados.afastamentos;
-      this.unidade = dados.planoTrabalho.unidade || this.entity!.plano_trabalho?.unidade;
+      this.loadConsolidacao(dados);
     } finally {
       this.gridEntregas!.loading = false;
       this.cdRef.detectChanges();
@@ -216,7 +240,6 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       progresso: 100,
       plano_trabalho_id: this.entity!.plano_trabalho_id,
       plano_trabalho_entrega_id: entrega.id,
-      plano_trabalho_consolidacao_id: this.entity!.id,
       demandante_id: this.auth.usuario!.id,
       usuario_id: this.auth.usuario!.id,
       unidade_id: this.unidade!.id,

@@ -39,6 +39,7 @@ export class PlanejamentoListObjetivosEntregasComponent extends PageListBase<Pla
 
   public filterClear(filter: FormGroup) {
     super.filterClear(filter);
+    this.filter?.controls.nome.setValue("");
   }
 
   public filterWhere = (filter: FormGroup) => {
@@ -48,7 +49,7 @@ export class PlanejamentoListObjetivosEntregasComponent extends PageListBase<Pla
       result.push(["planejamento_id", "==", form.planejamento_id]);
     }
     if (form.nome?.length) {
-      result.push(["or", ["nome", "like", "%" + form.nome.replace(" ", "%") + "%"], ["sigla", "like", "%" + form.nome.replace(" ", "%") + "%"]]);
+      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
     return result;
   }

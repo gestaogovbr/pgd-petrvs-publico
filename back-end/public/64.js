@@ -464,7 +464,7 @@ class AreaAtividadeExternaListComponent extends src_app_modules_base_page_list_b
       let result = [];
       let form = filter.value;
       if (form.nome_area?.length) {
-        result.push(["nome", "like", "%" + form.nome + "%"]);
+        result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
       }
       return result;
     };
@@ -713,7 +713,7 @@ class AreaConhecimentoListComponent extends src_app_modules_base_page_list_base_
       let result = [];
       let form = filter.value;
       if (form.nome_area?.length) {
-        result.push(["nome", "like", "%" + form.nome_area + "%"]);
+        result.push(["nome", "like", "%" + form.nome_area.trim().replace(" ", "%") + "%"]);
       }
       return result;
     };
@@ -962,7 +962,7 @@ class AreaTematicaListComponent extends src_app_modules_base_page_list_base__WEB
       let result = [];
       let form = filter.value;
       if (form.nome?.length) {
-        result.push(["nome", "like", "%" + form.nome + "%"]);
+        result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
       }
       return result;
     };
@@ -1252,10 +1252,10 @@ class CapacidadeTecnicaListComponent extends src_app_modules_base_page_list_base
       let result = [];
       let form = filter.value;
       if (form.nome?.length) {
-        result.push(["nome", "like", "%" + form.nome + "%"]);
+        result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
       }
       if (form.area_tematica_id?.length) {
-        result.push(["id", "like", "%" + form.area_tematica_id + "%"]);
+        result.push(["id", "like", "%" + form.area_tematica_id.trim().replace(" ", "%") + "%"]);
       }
       return result;
     };
@@ -1581,19 +1581,19 @@ class CargoListComponent extends src_app_modules_base_page_list_base__WEBPACK_IM
       let valEfetivo = form.efetivo.value ? 1 : 0;
       let valAtivo = form.ativo.value ? 1 : 0;
       if (form.nome?.length) {
-        result.push(["nome", "like", "%" + form.nome + "%"]);
+        result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
       }
       if (form.descricao?.length) {
-        result.push(["descricao", "like", "%" + form.descricao + "%"]);
+        result.push(["descricao", "like", "%" + form.descricao.trim().replace(" ", "%") + "%"]);
       }
       if (form.nivel?.length) {
-        result.push(["nivel", "like", "%" + form.nivel + "%"]);
+        result.push(["nivel", "like", "%" + form.nivel.trim().replace(" ", "%") + "%"]);
       }
       if (form.siape?.length) {
-        result.push(["siape", "like", "%" + form.siape + "%"]);
+        result.push(["siape", "like", "%" + form.siape.trim().replace(" ", "%") + "%"]);
       }
       if (form.cbo?.length) {
-        result.push(["cbo", "like", "%" + form.cbo + "%"]);
+        result.push(["cbo", "like", "%" + form.cbo.trim().replace(" ", "%") + "%"]);
       }
       if (form.ativo) {
         result.push(["ativo", "==", 1]);
@@ -1896,7 +1896,7 @@ class CentroTreinamentoListComponent extends src_app_modules_base_page_list_base
       let result = [];
       let form = filter.value;
       if (form.nome?.length) {
-        result.push(["nome", "like", "%" + form.nome + "%"]);
+        result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
       }
       return result;
     };
@@ -3072,16 +3072,16 @@ class CursoListComponent extends src_app_modules_base_page_list_base__WEBPACK_IM
       let result = [];
       let form = filter.value;
       if (form.nome_curso?.length) {
-        result.push(["nome", "like", "%" + form.nome_curso + "%"]);
+        result.push(["nome", "like", "%" + form.nome_curso.trim().replace(" ", "%") + "%"]);
       }
       if (form.nome_area?.length) {
-        result.push(["area_curso_id", "like", "%" + form.nome_area + "%"]);
+        result.push(["area_curso_id", "like", "%" + form.nome_area.trim().replace(" ", "%") + "%"]);
       }
       if (form.titulo?.length) {
-        result.push(["titulo", "like", "%" + form.titulo + "%"]);
+        result.push(["titulo", "like", "%" + form.titulo.trim().replace(" ", "%") + "%"]);
       }
       if (form.nome_tipo?.length) {
-        result.push(["tipo_curso_id", "like", "%" + form.tipo + "%"]);
+        result.push(["tipo_curso_id", "like", "%" + form.tipo.trim().replace(" ", "%") + "%"]);
       }
       return result;
     };
@@ -3403,19 +3403,19 @@ class FuncaoListComponent extends src_app_modules_base_page_list_base__WEBPACK_I
       let result = [];
       let form = filter.value;
       if (form.nome?.length) {
-        result.push(["nome", "like", "%" + form.nome + "%"]);
+        result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
       }
       if (form.descricao?.length) {
-        result.push(["descricao", "like", "%" + form.descricao + "%"]);
+        result.push(["descricao", "like", "%" + form.descricao.trim().replace(" ", "%") + "%"]);
       }
       if (form.nivel?.length) {
-        result.push(["nivel", "like", "%" + form.nivel + "%"]);
+        result.push(["nivel", "like", "%" + form.nivel.trim().replace(" ", "%") + "%"]);
       }
       if (form.siape?.length) {
-        result.push(["siape", "like", "%" + form.siape + "%"]);
+        result.push(["siape", "like", "%" + form.siape.trim().replace(" ", "%") + "%"]);
       }
       if (form.cbo?.length) {
-        result.push(["cbo", "like", "%" + form.cbo + "%"]);
+        result.push(["cbo", "like", "%" + form.cbo.trim().replace(" ", "%") + "%"]);
       }
       /* if(form.ativo?.length) {
          result.push(["ativo", "like", "%" + form.titulo + "%"]);
@@ -3706,7 +3706,7 @@ class GrupoEspecializadoListComponent extends src_app_modules_base_page_list_bas
       let result = [];
       let form = filter.value;
       if (form.nome?.length) {
-        result.push(["nome", "like", "%" + form.nome + "%"]);
+        result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
       }
       return result;
     };
@@ -4064,10 +4064,10 @@ class MateriaListComponent extends src_app_modules_base_page_list_base__WEBPACK_
       let result = [];
       let form = filter.value;
       if (form.nome?.length) {
-        result.push(["nome", "like", "%" + form.nome + "%"]);
+        result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
       }
       if (form.horas_aula?.length) {
-        result.push(["horas_aula", "like", "%" + form.horas_aula + "%"]);
+        result.push(["horas_aula", "like", "%" + form.horas_aula.trim().replace(" ", "%") + "%"]);
       }
       return result;
     };
@@ -4492,7 +4492,7 @@ class TipoCursoListComponent extends src_app_modules_base_page_list_base__WEBPAC
       let result = [];
       let form = filter.value;
       if (form.nome?.length) {
-        result.push(["nome", "like", "%" + form.nome + "%"]);
+        result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
       }
       return result;
     };

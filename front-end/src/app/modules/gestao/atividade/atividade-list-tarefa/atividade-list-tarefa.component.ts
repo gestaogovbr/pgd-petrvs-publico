@@ -183,14 +183,13 @@ export class AtividadeListTarefaComponent extends PageBase {
   }*/
 
   public async onColumnConcluidoEdit(row: any) {
-    this.formEdit.controls.concluido.setValue(row.concluido);
+    this.formEdit.controls.concluido.setValue(!!row.data_conclusao);
   }
 
   public async onColumnConcluidoSave(row: any) {
     try {
-      const saved = await this.dao!.update(row.id, {
-        concluido: this.formEdit.controls.concluido.value
-      });
+      const data_conclusao = this.formEdit.controls.concluido.value && !!row.data_conclusao ? this.auth.hora : row.data_conclusao;
+      const saved = await this.dao!.update(row.id, { data_conclusao });
       row.concluido = this.formEdit.controls.concluido.value;
       return !!saved;
     } catch (error) {

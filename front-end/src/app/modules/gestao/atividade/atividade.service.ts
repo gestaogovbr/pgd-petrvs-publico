@@ -7,6 +7,7 @@ import { Afastamento } from 'src/app/models/afastamento.model';
 import { Atividade, AtividadeChecklist } from 'src/app/models/atividade.model';
 import { Base } from 'src/app/models/base.model';
 import { Comentario } from 'src/app/models/comentario';
+import { PlanoTrabalhoConsolidacao } from 'src/app/models/plano-trabalho-consolidacao.model';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { TipoAtividade } from 'src/app/models/tipo-atividade.model';
 import { Unidade } from 'src/app/models/unidade.model';
@@ -26,6 +27,7 @@ export type ExtraAtividade = {
 }
 
 export type AtividadeOptionsMetadata = {
+  disabled?: boolean,
   refreshId: (id: string) => Promise<any> | void;
   removeId: (id: string) => Promise<any> | void;
   refresh: () => Promise<any> | void;
@@ -48,11 +50,15 @@ export class AtividadeService {
     public dao: AtividadeDaoService
   ) { }
 
-  public getStatus(row: any): BadgeButton[] {
+  public getStatus(row: any, consolidacao?: PlanoTrabalhoConsolidacao): BadgeButton[] {
     const atividade: Atividade = row as Atividade;
     const status = this.lookup.ATIVIDADE_STATUS.find(x => x.key == atividade.status) || { key: "DESCONHECIDO", value: "Desconhecido", icon: "bi bi-question-circle", color: "light" };
     let result: BadgeButton[] = [{ data: {status: status.key, filter: true}, label: status.value, icon: status.icon!, color: status.color! }];
     if (atividade.metadados?.atrasado) result.push({ data: {status: "ATRASADO", filter: false}, label: "Atrasado", icon: "bi bi-alarm", color: "danger" });
+    if (consolidacao && ((atividade.data_inicio && this.util.asDate(atividade.data_inicio)!.getTime() < this.util.asDate(consolidacao.data_inicio)!.getTime()) ||
+      (atividade.data_entrega && this.util.asDate(atividade.data_entrega)!.getTime() > this.util.asDate(consolidacao!.data_fim)!.getTime()))) {
+      result.push({ data: {status: "EXTRAPOLADO", filter: false}, label: "Extrapolado", icon: "bi bi-arrow-left-right", color: "danger", hint: "Data de início ou conclusão " + this.lex.translate("da Atividade") + " extrapola os da consolidação" });
+    }
     if (atividade.metadados?.arquivado) result.push({ data: {status: "ARQUIVADO", filter: false}, label: "Arquivado", icon: "bi bi-inboxes", color: "danger" });
     if (atividade.metadados && JSON.stringify(atividade.metadados._status) != JSON.stringify(result)) atividade.metadados._status = result;
     return atividade.metadados?._status || result;
@@ -202,6 +208,7 @@ export class AtividadeService {
     const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || this.auth.usuario?.id == atividade.unidade?.gestor_substituto?.id;
     const isDemandante = this.auth.usuario?.id == atividade.demandante_id;
     const isResponsavel = this.auth.usuario?.id == atividade.usuario_id;
+    const hasConsolidacao = !!row.metadados?.consolidacoes?.length;
     const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'consult'] }, { modal: true }) };
     const BOTAO_COMENTARIOS = { label: "Comentários", icon: "bi bi-chat-left-quote", onClick: (atividade: Atividade) => this.go.navigate({ route: ['uteis', 'comentarios', 'ATIVIDADE', atividade.id, 'new'] }, this.modalRefreshId(metadata, atividade)) };
     const BOTAO_CLONAR = { label: "Clonar", icon: "bi bi-stickies", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'clonar'] }, this.modalRefresh(metadata)) };
@@ -219,44 +226,46 @@ export class AtividadeService {
     const BOTAO_ARQUIVAR = { label: "Arquivar", icon: "bi bi-inboxes", onClick: this.arquivar.bind(this, metadata) };
     const BOTAO_DESARQUIVAR = { label: "Desarquivar", icon: "bi bi-reply", onClick: this.desarquivar.bind(this, metadata) };
 
-    result.push(BOTAO_INFORMACOES);
-    if (isResponsavel || isGestor || isDemandante) result.push(BOTAO_COMENTARIOS);
-    result.push(BOTAO_CLONAR);
-    if (atividade.metadados?.arquivado) { /* Arquivado*/
-      if (isGestor || isResponsavel) result.push(BOTAO_DESARQUIVAR);
-    } else if (!atividade.metadados?.iniciado) {
-      if (isResponsavel || (atividade.usuario_id == null) || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) { /* Não iniciado */
-        result.push(BOTAO_INICIAR);
-      }
-      if (isGestor || isDemandante || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT')) {
-        result.push(BOTAO_ALTERAR);
-      }
-      if (isGestor || isDemandante || this.auth.hasPermissionTo('MOD_DMD_USERS_EXCL') || this.auth.hasPermissionTo('MOD_DMD_NI_EXCL')) {
-        if (result.length) result.push({ divider: true });
-        result.push(BOTAO_EXCLUIR);
-      }
-    } else if (atividade.metadados?.concluido) { /* Concluído -> Gestor ou substituto pode avaliar */
-      if (isGestor || isResponsavel) result.push(BOTAO_ARQUIVAR);
-      if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT_CONCL')) {
-        result.push(BOTAO_ALTERAR_CONCLUSAO);
-      }
-      if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CANC_CONCL') ) {
-        if (result.length) result.push({ divider: true });
-        result.push(BOTAO_CANCELAR_CONCLUSAO);
-      }
-    } else if (atividade.metadados?.iniciado) { /* Iniciado */
-      if (atividade.metadados?.pausado) {
-        if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) { /* Iniciada e Pausada */
-          result.push(BOTAO_REINICIAR);
+    if(!metadata?.disabled) {
+      result.push(BOTAO_INFORMACOES);
+      if (isResponsavel || isGestor || isDemandante) result.push(BOTAO_COMENTARIOS);
+      result.push(BOTAO_CLONAR);
+      if (atividade.metadados?.arquivado) { /* Arquivado */
+        if (isGestor || isResponsavel) result.push(BOTAO_DESARQUIVAR);
+      } else if (!atividade.metadados?.iniciado) {
+        if (isResponsavel || (atividade.usuario_id == null) || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) { /* Não iniciado */
+          result.push(BOTAO_INICIAR);
         }
-      } else { /* Iniciada e não Suspensa */
-        if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CONCL')) result.push(BOTAO_CONCLUIR);
-        if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_PAUSA')) result.push(BOTAO_PAUSAR);
-        if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CANC_INICIAR')) result.push(BOTAO_CANCELAR_INICIO);
-        if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) result.push(BOTAO_ALTERAR_INICIO);
-      }
-      if (isGestor || isDemandante || this.auth.hasPermissionTo('MOD_DMD_USERS_PPRZO')) {
-        result.push(BOTAO_PRORROGAR_PRAZO);
+        if (isGestor || isDemandante || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT')) {
+          result.push(BOTAO_ALTERAR);
+        }
+        if (isGestor || isDemandante || this.auth.hasPermissionTo('MOD_DMD_USERS_EXCL') || this.auth.hasPermissionTo('MOD_DMD_NI_EXCL')) {
+          if (result.length) result.push({ divider: true });
+          result.push(BOTAO_EXCLUIR);
+        }
+      } else if (atividade.metadados?.concluido) { /* Concluído -> Gestor ou substituto pode avaliar */
+        if (isGestor || isResponsavel) result.push(BOTAO_ARQUIVAR);
+        if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT_CONCL')) {
+          result.push(BOTAO_ALTERAR_CONCLUSAO);
+        }
+        if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CANC_CONCL') ) {
+          if (result.length) result.push({ divider: true });
+          result.push(BOTAO_CANCELAR_CONCLUSAO);
+        }
+      } else if (atividade.metadados?.iniciado) { /* Iniciado */
+        if (atividade.metadados?.pausado) {
+          if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) { /* Iniciada e Pausada */
+            result.push(BOTAO_REINICIAR);
+          }
+        } else { /* Iniciada e não Suspensa */
+          if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CONCL')) result.push(BOTAO_CONCLUIR);
+          if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_PAUSA')) result.push(BOTAO_PAUSAR);
+          if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CANC_INICIAR')) result.push(BOTAO_CANCELAR_INICIO);
+          if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) result.push(BOTAO_ALTERAR_INICIO);
+        }
+        if (isGestor || isDemandante || this.auth.hasPermissionTo('MOD_DMD_USERS_PPRZO')) {
+          result.push(BOTAO_PRORROGAR_PRAZO);
+        }
       }
     }
     return result;
@@ -276,25 +285,27 @@ export class AtividadeService {
     const BOTAO_DESARQUIVAR = { hint: "Desarquivar", icon: "bi bi-reply", onClick: this.desarquivar.bind(this, metadata) };
     const BOTAO_ALTERAR_CONCLUSAO = { hint: "Alterar conclusão", icon: "bi bi-check-circle", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'concluir'] }, this.modalRefreshId(metadata, atividade)) };
 
-    if (!atividade.metadados?.iniciado) { /* Não iniciado */
-      if (isResponsavel || (atividade.usuario_id == null) || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) { /* Usuário da atividade é o mesmo logado */
-        result.push(BOTAO_INICIAR);
-      }
-    } else if (atividade.metadados?.concluido) { /* Concluído */
-      if (isGestor || isResponsavel) {
-        result.push(atividade.metadados?.arquivado ? BOTAO_DESARQUIVAR : BOTAO_ARQUIVAR);
-      } else if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT_CONCL')) {
-        result.push(BOTAO_ALTERAR_CONCLUSAO);
-      }
-    } else if (atividade.metadados?.avaliado) { /* Avaliado */
-      if (isGestor) { /* Usuário logado é gestor da Unidade ou substituto */
-        result.push(BOTAO_ALTERAR_AVALIACAO);
-      }
-    } else if (atividade.metadados?.iniciado) { /* Iniciado */
-      if (atividade.metadados?.pausado && isResponsavel) { /* Iniciada e Pausada */
-        result.push(BOTAO_REINICIAR);
-      } else if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CONCL')) { /* Iniciada e não Suspensa */
-        result.push(BOTAO_CONCLUIR);
+    if(!metadata?.disabled) {
+      if (!atividade.metadados?.iniciado) { /* Não iniciado */
+        if (isResponsavel || (atividade.usuario_id == null) || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) { /* Usuário da atividade é o mesmo logado */
+          result.push(BOTAO_INICIAR);
+        }
+      } else if (atividade.metadados?.concluido) { /* Concluído */
+        if (isGestor || isResponsavel) {
+          result.push(atividade.metadados?.arquivado ? BOTAO_DESARQUIVAR : BOTAO_ARQUIVAR);
+        } else if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT_CONCL')) {
+          result.push(BOTAO_ALTERAR_CONCLUSAO);
+        }
+      } else if (atividade.metadados?.avaliado) { /* Avaliado */
+        if (isGestor) { /* Usuário logado é gestor da Unidade ou substituto */
+          result.push(BOTAO_ALTERAR_AVALIACAO);
+        }
+      } else if (atividade.metadados?.iniciado) { /* Iniciado */
+        if (atividade.metadados?.pausado && isResponsavel) { /* Iniciada e Pausada */
+          result.push(BOTAO_REINICIAR);
+        } else if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CONCL')) { /* Iniciada e não Suspensa */
+          result.push(BOTAO_CONCLUIR);
+        }
       }
     }
     if(!result.length) result.push(BOTAO_INFORMACOES);

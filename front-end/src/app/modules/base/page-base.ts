@@ -53,6 +53,8 @@ export abstract class PageBase implements OnInit, ModalPage {
   public get submitting(): boolean {
     return this._submitting;
   } 
+  public get MAX_LENGTH_TEXT() { return 65500};
+  public get MIN_LENGTH_TEXT() { return 10};
 
   /* Constantes */
   public OPTION_INFORMACOES: ToolbarButton =  {

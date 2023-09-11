@@ -50,7 +50,7 @@ export class TipoCapacidadeListComponent extends PageListBase<TipoCapacidade, Ti
     let form: any = filter.value;
 
     if(form.descricao?.length) {
-      result.push(["descricao", "like", "%" + form.descricao + "%"]);
+      result.push(["descricao", "like", "%" + form.descricao.trim().replace(" ", "%") + "%"]);
     }
 
     return result;

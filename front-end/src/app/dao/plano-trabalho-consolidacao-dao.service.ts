@@ -17,7 +17,8 @@ export type ConsolidacaoDados = {
   planoTrabalho: PlanoTrabalho,
   ocorrencias: PlanoTrabalhoConsolidacaoOcorrencia[],
   entregas: PlanoTrabalhoEntrega[],
-  afastamentos: Afastamento[]
+  afastamentos: Afastamento[],
+  status: string
 }
 
 @Injectable({
@@ -33,26 +34,52 @@ export class PlanoTrabalhoConsolidacaoDaoService extends DaoBaseService<PlanoTra
     return this.deepsFilter([], deeps);
   }
 
+  private loadConsolidacaoDados(response: any): ConsolidacaoDados {
+    let dados = response?.dados as ConsolidacaoDados;
+    dados.programa = new Programa(this.getRow(dados.programa));
+    dados.planoTrabalho = new PlanoTrabalho(this.getRow(dados.planoTrabalho));
+    dados.planoTrabalho.entregas = (dados.planoTrabalho.entregas || []).map(x => new PlanoTrabalhoEntrega(this.getRow(x)));
+    dados.afastamentos = dados.afastamentos.map(x => new Afastamento(this.getRow(x)));
+    dados.atividades = dados.atividades.map(x => new Atividade(Object.assign(this.getRow(x), {plano_trabalho: dados.planoTrabalho})));
+    dados.entregas = dados.planoTrabalho.entregas;
+    dados.ocorrencias = dados.ocorrencias.map(x => new PlanoTrabalhoConsolidacaoOcorrencia(this.getRow(x)));
+    return dados;
+  }
+
   public dadosConsolidacao(id: string): Promise<ConsolidacaoDados> {
     return new Promise<ConsolidacaoDados>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/consolidacao-dados', {id}).subscribe(response => {
         if(response?.error) {
           reject(response?.error);
         } else {
-          let dados = response?.dados as ConsolidacaoDados;
-          dados.programa = new Programa(this.getRow(dados.programa));
-          dados.planoTrabalho = new PlanoTrabalho(this.getRow(dados.planoTrabalho));
-          dados.planoTrabalho.entregas = (dados.planoTrabalho.entregas || []).map(x => new PlanoTrabalhoEntrega(this.getRow(x)));
-          dados.afastamentos = dados.afastamentos.map(x => new Afastamento(this.getRow(x)));
-          dados.atividades = dados.atividades.map(x => new Atividade(Object.assign(this.getRow(x), {plano_trabalho: dados.planoTrabalho})));
-          dados.entregas = dados.planoTrabalho.entregas;
-          dados.ocorrencias = dados.ocorrencias.map(x => new PlanoTrabalhoConsolidacaoOcorrencia(this.getRow(x)));
-          resolve(dados);
+          resolve(this.loadConsolidacaoDados(response));
         }
       }, error => reject(error));
     });
   }
 
+  public concluir(id: string): Promise<ConsolidacaoDados> {
+    return new Promise<ConsolidacaoDados>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/concluir', {id}).subscribe(response => {
+        if(response?.error) {
+          reject(response?.error);
+        } else {
+          resolve(this.loadConsolidacaoDados(response));
+        }
+      }, error => reject(error));
+    });
+  }
 
+  public cancelarConclusao(id: string): Promise<ConsolidacaoDados> {
+    return new Promise<ConsolidacaoDados>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/cancelar-conclusao', {id}).subscribe(response => {
+        if(response?.error) {
+          reject(response?.error);
+        } else {
+          resolve(this.loadConsolidacaoDados(response));
+        }
+      }, error => reject(error));
+    });
+  }
 }
 

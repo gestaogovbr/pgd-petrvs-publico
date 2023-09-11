@@ -18,6 +18,8 @@ use App\Exceptions\ServerException;
 use App\Models\Atividade;
 use App\Models\Documento;
 use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalhoConsolidacao;
+use App\Models\PlanoTrabalhoConsolidacaoAtividade;
 use App\Models\StatusJustificativa;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -175,6 +177,7 @@ class AtividadeService extends ServiceBase
                 array_push($with, $join);
             }
         }
+        array_push($with, "consolidacoes:id,data_conclusao");
         $unidades_ids = [];
         if(!empty($unidade_id)) {
             array_push($unidades_ids, $unidade_id);
@@ -254,6 +257,7 @@ class AtividadeService extends ServiceBase
     }
 
     public function metadados($atividade) {
+        $atividade = (object) $atividade;
         if(empty($this->unidades[$atividade->unidade_id])) {
             $this->unidades[$atividade->unidade_id] = Unidade::find($atividade->unidade_id);
         }
@@ -270,9 +274,15 @@ class AtividadeService extends ServiceBase
         foreach($atividade->pausas as $pausa) {
             $pausado = $pausado || empty($pausa->data_fim);
         }
+        $consolidacoes = $atividade->consolidacoes ?? PlanoTrabalhoConsolidacaoAtividade::where("atividade_id", $atividade->id)->get();
         $result["pausado"] = $pausado;
-        $result["atrasado"] = !$result["concluido"] && strtotime($atividade->prazo_entrega) < strtotime($hora);
-        $result["tempo_atraso"] = $result["atrasado"] ? $this->calendarioService->tempoAtraso($atividade->prazo_entrega, $hora, $atividade->carga_horaria) : 0;
+        $result["atrasado"] = !$result["concluido"] && strtotime($atividade->data_estipulada_entrega) < strtotime($hora);
+        $result["tempo_atraso"] = $result["atrasado"] ? $this->calendarioService->tempoAtraso($atividade->data_estipulada_entrega, $hora, $atividade->carga_horaria) : 0;
+        $result["consolidacoes"] = $consolidacoes->map(fn($x) => [
+            "id" => ((object) $x)->id,
+            "status" => ((object) $x)->snapshot->status,
+            "data_conclusao" => ((object) $x)->data_conclusao
+        ]);
         return $result;
     }
 

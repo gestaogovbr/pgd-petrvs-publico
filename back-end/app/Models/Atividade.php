@@ -36,7 +36,6 @@ class Atividade extends ModelBase
         'plano_trabalho_id', /* char(36); */
         //'status', /* enum('CONCLUIDO','NAOCONCLUIDO','INICIADO','PAUSADO','INCLUIDO'); */// Status atual da atividade
         'plano_trabalho_entrega_id', /* char(36); */
-        'plano_trabalho_consolidacao_id', /* char(36); */
         'tipo_atividade_id', /* char(36); */
         'demandante_id', /* char(36); NOT NULL; */
         'usuario_id', /* char(36); */
@@ -69,11 +68,13 @@ class Atividade extends ModelBase
 
     // Has
     public function statusHistorico() { return $this->hasMany(StatusJustificativa::class, "atividade_id"); }   
+    public function latestStatus() { return $this->hasOne(StatusJustificativa::class, "atividade_id")->latestOfMany();}
     public function tarefas() { return $this->hasMany(AtividadeTarefa::class); }    
     public function tarefasProjeto() { return $this->hasMany(ProjetoTarefa::class); }    
     public function pausas() { return $this->hasMany(AtividadePausa::class); }
     public function comentarios() { return $this->hasMany(Comentario::class); }
     public function documentos() { return $this->hasMany(Documento::class); }
+    public function consolidacoes() { return $this->hasMany(PlanoTrabalhoConsolidacaoAtividade::class); }
     // Belongs
     public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class); }        //nullable
     public function planoTrabalhoEntrega() { return $this->belongsTo(PlanoTrabalhoEntrega::class); }      //nullable

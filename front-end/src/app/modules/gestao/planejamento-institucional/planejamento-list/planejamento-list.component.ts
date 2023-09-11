@@ -100,7 +100,7 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
       if(form.unidade_id) result.push(["unidade_id", "==", form.unidade_id]);
     }
     if(form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome + "%"]);
+      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
     if(form.data_inicio) {
       result.push(["data_inicio", ">=", form.data_inicio]);
