@@ -15,8 +15,8 @@ class CidadeSeeder extends Seeder
      */
     public function run()
     {
-        $file = database_path('seeders/arquivos_csv/cidades2_0.csv');
-        $csv_reader = new BulkSeeeder($file, ",");
+        $file = database_path('seeders/arquivos_csv/cidades.csv');
+        $csv_reader = new BulkSeeeder($file, ";");
     
         $timenow = now();
     
