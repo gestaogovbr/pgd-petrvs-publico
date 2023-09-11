@@ -177,20 +177,18 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
   }
   saveData(form) {
     return new Promise((resolve, reject) => {
+      var _ref;
       this.unidadesIntegrantes.grid.confirm();
       let usuario = this.util.fill(new src_app_models_usuario_model__WEBPACK_IMPORTED_MODULE_6__.Usuario(), this.entity);
       usuario = this.util.fillForm(usuario, this.form.value);
       //usuario.unidades_integrante = usuario.atribuicoes.filter((x: { _status: any; unidade_id: string; nome: string; }) => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.unidade_id?.length && x.nome?.length);
       usuario.unidades_integrante = this.unidadesIntegrantes?.grid?.items.filter(x => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.unidade_id?.length && x.nome?.length);
-      this.dao?.save(usuario).then( /*#__PURE__*/function () {
-        var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (usuario) {
+      this.dao?.save(usuario).then(function (_x) {
+        return (_ref = _ref || (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (usuario) {
           //if(this.formLotacao.controls.unidade_lotacao_id.value != usuario.lotacao?.unidade_id) this.integranteDao.saveIntegrante([{'unidade_id': this.formLotacao!.controls.unidade_lotacao_id!.value, 'usuario_id': usuario.id, 'atribuicoes': ["LOTADO"]}]);
           resolve(true);
-        });
-        return function (_x) {
-          return _ref.apply(this, arguments);
-        };
-      }());
+        })).apply(this, arguments);
+      });
     });
   }
   onLotacaoChange() {

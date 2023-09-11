@@ -1047,11 +1047,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   PlanoTrabalhoService: () => (/* binding */ PlanoTrabalhoService)
 /* harmony export */ });
 /* harmony import */ var src_app_models_documento_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/models/documento.model */ 43972);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ 51197);
 /* harmony import */ var src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/services/auth.service */ 32333);
-/* harmony import */ var src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/services/lookup.service */ 39702);
-/* harmony import */ var src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/plano-trabalho-dao.service */ 87744);
-/* harmony import */ var _uteis_templates_template_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../uteis/templates/template.service */ 49367);
+/* harmony import */ var src_app_services_util_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/services/util.service */ 49193);
+/* harmony import */ var src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/services/lookup.service */ 39702);
+/* harmony import */ var src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/dao/plano-trabalho-dao.service */ 87744);
+/* harmony import */ var _uteis_templates_template_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../uteis/templates/template.service */ 49367);
 var _class;
 
 
@@ -1059,9 +1060,11 @@ var _class;
 
 
 
+
 class PlanoTrabalhoService {
-  constructor(auth, lookup, dao, templateService, planoTrabalhoDao) {
+  constructor(auth, util, lookup, dao, templateService, planoTrabalhoDao) {
     this.auth = auth;
+    this.util = util;
     this.lookup = lookup;
     this.dao = dao;
     this.templateService = templateService;
@@ -1119,20 +1122,22 @@ class PlanoTrabalhoService {
    */
   tipoEntrega(planoTrabalhoEntrega, planoTrabalho) {
     /* Se row for uma entrega vinda do banco de dados, ela já deve trazer consigo um dos seus relacionamentos: 'entrega' ou 'plano_entrega_entrega', que serão lidos diretamente de row quando necessário.
-        Se row não vier do banco, ela passou pelo método saveTrabalho() e lá um desses objetos, escolhido em um dos 3 inputSearch, foi anexado à variável this.novaTrabalho, que originalmente é vazia. Sendo assim,
-        quando necessário, os dados serão lidos em this.novaTrabalho.entrega ou em this.novaTrabalho.plano_entrega_entrega. */
+       Se row não vier do banco, ela passou pelo método saveEntrega() e lá um desses objetos, escolhido em um dos 3 inputSearch, foi anexado à variável this.novaEntrega, que originalmente é vazia. Sendo assim,
+       quando necessário, os dados serão lidos em this.novaEntrega.entrega ou em this.novaEntrega.plano_entrega_entrega. */
     let plano = planoTrabalho || planoTrabalhoEntrega.plano_trabalho;
     let key = planoTrabalhoEntrega.plano_entrega_entrega?.plano_entrega?.unidade_id == plano.unidade_id ? "PROPRIA_UNIDADE" : planoTrabalhoEntrega.plano_entrega_entrega ? "OUTRA_UNIDADE" : !!planoTrabalhoEntrega.orgao?.length ? "OUTRO_ORGAO" : "SEM_ENTREGA";
     let result = this.lookup.ORIGENS_ENTREGAS_PLANO_TRABALHO.find(x => x.key == key) || {
       key: "",
       value: "Desconhecido"
     };
-    let nome = plano?._metadata?.novaTrabalho?.plano_entrega_entrega?.entrega?.nome || planoTrabalhoEntrega.plano_entrega_entrega?.entrega?.nome || "Desconhecido";
+    let nome = plano?._metadata?.novaEntrega?.plano_entrega_entrega?.entrega?.nome || planoTrabalhoEntrega.plano_entrega_entrega?.entrega?.nome || "Desconhecido";
+    let descricao = plano?._metadata?.novaEntrega?.plano_entrega_entrega?.descricao || planoTrabalhoEntrega.plano_entrega_entrega?.descricao || "";
     return {
       titulo: result.value,
       cor: result.color || "danger",
       nome: nome,
-      tipo: key
+      tipo: key,
+      descricao: descricao
     };
   }
   /**
@@ -1200,12 +1205,21 @@ class PlanoTrabalhoService {
   isValido(planoTrabalho) {
     return !planoTrabalho.deleted_at && planoTrabalho.status != 'CANCELADO' && !planoTrabalho.data_arquivamento;
   }
+  /**
+   * Calcula a quantidade de dias para concluir a consolidação considerando a tolerância configurada no programa.
+   * @param consolidacao  Consolidacao do plano de trabalho
+   * @param programa      Programa
+   * @returns             Quantidade de dias para conclusão (Retorna números negativos caso tenha passado o prazo)
+   */
+  diasParaConcluirConsolidacao(consolidacao, programa) {
+    return !consolidacao || !programa ? -1 : this.util.daystamp(consolidacao.data_fim) + programa.dias_tolerancia_avaliacao - this.util.daystamp(this.auth.hora);
+  }
 }
 _class = PlanoTrabalhoService;
 _class.ɵfac = function PlanoTrabalhoService_Factory(t) {
-  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵinject"](src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_1__.AuthService), _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵinject"](src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_2__.LookupService), _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵinject"](src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_3__.PlanoTrabalhoDaoService), _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵinject"](_uteis_templates_template_service__WEBPACK_IMPORTED_MODULE_4__.TemplateService), _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵinject"](src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_3__.PlanoTrabalhoDaoService));
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵinject"](src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_1__.AuthService), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵinject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_2__.UtilService), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵinject"](src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_3__.LookupService), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵinject"](src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_4__.PlanoTrabalhoDaoService), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵinject"](_uteis_templates_template_service__WEBPACK_IMPORTED_MODULE_5__.TemplateService), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵinject"](src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_4__.PlanoTrabalhoDaoService));
 };
-_class.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineInjectable"]({
+_class.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineInjectable"]({
   token: _class,
   factory: _class.ɵfac,
   providedIn: 'root'

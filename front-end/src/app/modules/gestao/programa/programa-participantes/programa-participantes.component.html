@@ -37,7 +37,7 @@
                 <i *ngIf="row.habilitado" class="bi bi-person-check"></i>
             </ng-template>
             <ng-template let-row="row" #editHabilitado>
-                <input-switch [size]="12" controlName="habilitado" [control]="form!.controls.habilitado"></input-switch>
+                <input-switch [size]="12" #habilitado controlName="habilitado" [control]="form!.controls.habilitado" (change)="onHabilitadoChange(row, habilitado.value)"></input-switch>
             </ng-template>
         </column>
         <column type="options"></column>
