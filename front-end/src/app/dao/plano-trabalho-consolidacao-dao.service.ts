@@ -6,12 +6,19 @@ import { Atividade } from '../models/atividade.model';
 import { PlanoTrabalhoEntrega } from '../models/plano-trabalho-entrega.model';
 import { Afastamento } from '../models/afastamento.model';
 import { PlanoTrabalhoConsolidacaoOcorrencia } from '../models/plano-trabalho-consolidacao-ocorrencia.model';
+import { PlanoEntrega } from '../models/plano-entrega.model';
+import { PlanoTrabalho } from '../models/plano-trabalho.model';
+import { Programa } from '../models/programa.model';
 
 export type ConsolidacaoDados = {
   atividades: Atividade[],
+  programa: Programa,
+  planosEntregas: PlanoEntrega[],
+  planoTrabalho: PlanoTrabalho,
   ocorrencias: PlanoTrabalhoConsolidacaoOcorrencia[],
   entregas: PlanoTrabalhoEntrega[],
-  afastamentos: Afastamento[]
+  afastamentos: Afastamento[],
+  status: string
 }
 
 @Injectable({
@@ -27,23 +34,52 @@ export class PlanoTrabalhoConsolidacaoDaoService extends DaoBaseService<PlanoTra
     return this.deepsFilter([], deeps);
   }
 
+  private loadConsolidacaoDados(response: any): ConsolidacaoDados {
+    let dados = response?.dados as ConsolidacaoDados;
+    dados.programa = new Programa(this.getRow(dados.programa));
+    dados.planoTrabalho = new PlanoTrabalho(this.getRow(dados.planoTrabalho));
+    dados.planoTrabalho.entregas = (dados.planoTrabalho.entregas || []).map(x => new PlanoTrabalhoEntrega(this.getRow(x)));
+    dados.afastamentos = dados.afastamentos.map(x => new Afastamento(this.getRow(x)));
+    dados.atividades = dados.atividades.map(x => new Atividade(Object.assign(this.getRow(x), {plano_trabalho: dados.planoTrabalho})));
+    dados.entregas = dados.planoTrabalho.entregas;
+    dados.ocorrencias = dados.ocorrencias.map(x => new PlanoTrabalhoConsolidacaoOcorrencia(this.getRow(x)));
+    return dados;
+  }
+
   public dadosConsolidacao(id: string): Promise<ConsolidacaoDados> {
     return new Promise<ConsolidacaoDados>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/consolidacao-dados', {id}).subscribe(response => {
         if(response?.error) {
           reject(response?.error);
         } else {
-          let dados = response?.dados as ConsolidacaoDados;
-          dados.afastamentos = dados.afastamentos.map(x => new Afastamento(x));
-          dados.atividades = dados.atividades.map(x => new Atividade(x));
-          dados.entregas = dados.entregas.map(x => new PlanoTrabalhoEntrega(x));
-          dados.ocorrencias = dados.ocorrencias.map(x => new PlanoTrabalhoConsolidacaoOcorrencia(x));
-          resolve(dados);
+          resolve(this.loadConsolidacaoDados(response));
         }
       }, error => reject(error));
     });
   }
 
+  public concluir(id: string): Promise<ConsolidacaoDados> {
+    return new Promise<ConsolidacaoDados>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/concluir', {id}).subscribe(response => {
+        if(response?.error) {
+          reject(response?.error);
+        } else {
+          resolve(this.loadConsolidacaoDados(response));
+        }
+      }, error => reject(error));
+    });
+  }
 
+  public cancelarConclusao(id: string): Promise<ConsolidacaoDados> {
+    return new Promise<ConsolidacaoDados>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/cancelar-conclusao', {id}).subscribe(response => {
+        if(response?.error) {
+          reject(response?.error);
+        } else {
+          resolve(this.loadConsolidacaoDados(response));
+        }
+      }, error => reject(error));
+    });
+  }
 }
 

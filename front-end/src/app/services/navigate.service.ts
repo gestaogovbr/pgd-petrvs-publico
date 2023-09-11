@@ -91,7 +91,7 @@ export class NavigateService {
   }
 
   public navigate(destination: FullRoute, metadata?: RouteMetadata) {
-    destination.params = Object.assign(destination.params || {}, { context: this.gb.app?.contexto?.key, idroute: Md5.hashStr(this.currentOrDefault.route.join("") + destination.route.join("")) });
+    destination.params = Object.assign(destination.params || {}, { context: this.gb.contexto?.key, idroute: Md5.hashStr(this.currentOrDefault.route.join("") + destination.route.join("")) });
     destination.params.modal = metadata?.modal || destination.params.modal;
     if(metadata?.modalWidth) destination.params.modalWidth = metadata?.modalWidth;
     this.encodeParam(destination.params);

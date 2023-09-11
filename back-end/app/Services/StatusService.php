@@ -21,6 +21,7 @@ class StatusService extends ServiceBase
                 $entity->save();
             }
         } catch (Throwable $e) { 
-            throw $e; }
+            throw $e;
+        }
     }
 }

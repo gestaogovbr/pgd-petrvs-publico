@@ -160,7 +160,7 @@ export class AuthService {
       this.unidade = this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade;
       if (this.unidade) this.calendar.loadFeriadosCadastrados(this.unidade.id);
       if (token?.length) localStorage.setItem("petrvs_api_token", token);
-      this.app!.onContextoSelect(this.app!.menuContexto.find(x => x.key == this.usuarioConfig.menu_contexto) || this.app!.menuContexto[0]);
+      this.gb.setContexto(this.usuarioConfig.menu_contexto || this.app!.menuContexto[0].key);
       this.notificacao.updateNaoLidas();
     } else {
       this.usuario = undefined;

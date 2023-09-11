@@ -7,11 +7,15 @@ import { Template } from 'src/app/models/template.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { LookupItem, LookupService } from 'src/app/services/lookup.service';
 import { TemplateService } from '../../uteis/templates/template.service';
+import { PlanoTrabalhoConsolidacao } from 'src/app/models/plano-trabalho-consolidacao.model';
+import { Programa } from 'src/app/models/programa.model';
+import { UtilService } from 'src/app/services/util.service';
 
 export type BadgeTrabalho = {
   titulo: string,
   cor: string,
   nome: string,
+  descricao: string,
   tipo: PlanoTrabalhoEntregaTipo
 }
 
@@ -22,6 +26,7 @@ export class PlanoTrabalhoService {
 
   constructor(
     public auth: AuthService,
+    public util: UtilService,
     public lookup: LookupService,
     public dao: PlanoTrabalhoDaoService,
     public templateService: TemplateService,
@@ -79,15 +84,16 @@ export class PlanoTrabalhoService {
    */
   public tipoEntrega(planoTrabalhoEntrega: PlanoTrabalhoEntrega, planoTrabalho?: PlanoTrabalho): BadgeTrabalho {
     /* Se row for uma entrega vinda do banco de dados, ela já deve trazer consigo um dos seus relacionamentos: 'entrega' ou 'plano_entrega_entrega', que serão lidos diretamente de row quando necessário. 
-        Se row não vier do banco, ela passou pelo método saveTrabalho() e lá um desses objetos, escolhido em um dos 3 inputSearch, foi anexado à variável this.novaTrabalho, que originalmente é vazia. Sendo assim,
-        quando necessário, os dados serão lidos em this.novaTrabalho.entrega ou em this.novaTrabalho.plano_entrega_entrega. */
+       Se row não vier do banco, ela passou pelo método saveEntrega() e lá um desses objetos, escolhido em um dos 3 inputSearch, foi anexado à variável this.novaEntrega, que originalmente é vazia. Sendo assim,
+       quando necessário, os dados serão lidos em this.novaEntrega.entrega ou em this.novaEntrega.plano_entrega_entrega. */
     let plano = planoTrabalho || planoTrabalhoEntrega.plano_trabalho;
     let key: PlanoTrabalhoEntregaTipo = planoTrabalhoEntrega.plano_entrega_entrega?.plano_entrega?.unidade_id == plano!.unidade_id ? "PROPRIA_UNIDADE" :
-      (planoTrabalhoEntrega.plano_entrega_entrega ? "OUTRA_UNIDADE" :
-        (!!planoTrabalhoEntrega.orgao?.length ? "OUTRO_ORGAO" : "SEM_ENTREGA"));
-    let result = this.lookup.ORIGENS_ENTREGAS_PLANO_TRABALHO.find(x => x.key == key) || { key: "", value: "Desconhecido" };
-    let nome = plano?._metadata?.novaTrabalho?.plano_entrega_entrega?.entrega?.nome || planoTrabalhoEntrega.plano_entrega_entrega?.entrega?.nome || "Desconhecido";
-    return { titulo: result.value, cor: result.color || "danger", nome: nome, tipo: key };
+      (planoTrabalhoEntrega.plano_entrega_entrega ? "OUTRA_UNIDADE" : 
+      (!!planoTrabalhoEntrega.orgao?.length ? "OUTRO_ORGAO" : "SEM_ENTREGA"));
+    let result = this.lookup.ORIGENS_ENTREGAS_PLANO_TRABALHO.find(x => x.key == key) || {key: "", value: "Desconhecido"};
+    let nome = plano?._metadata?.novaEntrega?.plano_entrega_entrega?.entrega?.nome || planoTrabalhoEntrega.plano_entrega_entrega?.entrega?.nome || "Desconhecido";
+    let descricao = plano?._metadata?.novaEntrega?.plano_entrega_entrega?.descricao || planoTrabalhoEntrega.plano_entrega_entrega?.descricao || "";
+    return { titulo: result.value, cor: result.color || "danger", nome: nome, tipo: key, descricao: descricao};
   }
 
   /**
@@ -159,4 +165,14 @@ export class PlanoTrabalhoService {
     public isValido(planoTrabalho: PlanoTrabalho): boolean {
       return !planoTrabalho.deleted_at && planoTrabalho.status != 'CANCELADO' && !planoTrabalho.data_arquivamento;
     }
+
+  /**
+   * Calcula a quantidade de dias para concluir a consolidação considerando a tolerância configurada no programa.
+   * @param consolidacao  Consolidacao do plano de trabalho
+   * @param programa      Programa
+   * @returns             Quantidade de dias para conclusão (Retorna números negativos caso tenha passado o prazo)
+   */
+  public diasParaConcluirConsolidacao(consolidacao?: PlanoTrabalhoConsolidacao, programa?: Programa): number {
+    return !consolidacao || !programa ? -1 : this.util.daystamp(consolidacao.data_fim) + programa.dias_tolerancia_avaliacao - this.util.daystamp(this.auth.hora);
+  }
 }

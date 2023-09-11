@@ -9,6 +9,7 @@ import { TipoMotivoAfastamentoDaoService } from 'src/app/dao/tipo-motivo-afastam
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { TipoMotivoAfastamento } from 'src/app/models/tipo-motivo-afastamento.model';
+import { PlanoTrabalhoConsolidacao } from 'src/app/models/plano-trabalho-consolidacao.model';
 
 @Component({
   selector: 'app-afastamento-form',
@@ -23,6 +24,8 @@ export class AfastamentoFormComponent extends PageFormBase<Afastamento, Afastame
   public form: FormGroup;
   public tipoMotivoAfastamentoDao: TipoMotivoAfastamentoDaoService;
   public usuarioDao: UsuarioDaoService;
+  public usuarioId?: string;
+  public consolidacao?: PlanoTrabalhoConsolidacao;
 
   constructor(public injector: Injector) {
     super(injector, Afastamento, AfastamentoDaoService);
@@ -60,6 +63,12 @@ export class AfastamentoFormComponent extends PageFormBase<Afastamento, Afastame
 
   public async loadData(entity: Afastamento, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
+    /* Caso venha pela chamada da consolidação do plano de trabalho */
+    if(this.metadata?.consolidacao) {
+      this.consolidacao = this.metadata?.consolidacao;
+      entity.usuario_id = this.consolidacao!.plano_trabalho!.usuario_id;
+      entity.usuario = this.consolidacao!.plano_trabalho?.usuario;
+    }
     await Promise.all([
       this.usuario!.loadSearch(entity.usuario || formValue.usuario_id),
       this.tipoMotivoAfastamento!.loadSearch(entity.tipo_motivo_afastamento || formValue.tipo_motivo_afastamento_id)
@@ -68,7 +77,8 @@ export class AfastamentoFormComponent extends PageFormBase<Afastamento, Afastame
   }
 
   public initializeData(form: FormGroup): void {
-    form.patchValue(new Afastamento());
+    this.entity = new Afastamento();
+    this.loadData(this.entity, form); 
   }
 
   public saveData(form: IIndexable): Promise<Afastamento> {
@@ -82,6 +92,17 @@ export class AfastamentoFormComponent extends PageFormBase<Afastamento, Afastame
       }
       resolve(afastamento);
     });
+  }
+
+  public get warning(): string | undefined {
+    let result: string | undefined = undefined;
+    let inicio = this.util.asDate(this.form!.controls.data_inicio.value);
+    let fim = this.util.asDate(this.form!.controls.data_fim.value);
+    if(this.consolidacao && inicio && fim && (this.util.daystamp(inicio) < this.util.daystamp(this.consolidacao.data_inicio) || 
+      this.util.daystamp(fim) > this.util.daystamp(this.consolidacao.data_fim))) {
+      result = "Atenção: Data da consolidação do plano é de " + this.util.getDateFormatted(this.consolidacao.data_inicio) + " a " + this.util.getDateFormatted(this.consolidacao.data_fim);
+    }
+    return result;
   }
 
   public titleEdit = (entity: Afastamento): string => {

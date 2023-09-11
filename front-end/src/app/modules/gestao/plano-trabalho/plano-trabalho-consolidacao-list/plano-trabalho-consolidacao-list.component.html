@@ -1,15 +1,12 @@
 <grid [items]="items" #grid [form]="form!" [hasDelete]="true" [minHeight]="0"
-    [add]="addConsolidacao.bind(this)" [hasAdd]="true" [hasEdit]="false" [hasDelete]="false" editable>
-<!--
-    [load]="loadConsolidacao.bind(this)" [remove]="removeConsolidacao.bind(this)" [save]="saveConsolidacao.bind(this)" 
--->
+    [add]="addConsolidacao.bind(this)" [hasAdd]="!isDisabled()" [hasEdit]="false" [hasDelete]="false" editable>
     <columns>
         <column type="expand" [icon]="entityService.getIcon('PlanoTrabalhoConsolidacao')" [align]="'center'" [hint]="lex.translate('Consolidação')" [template]="columnConsolidacao" [expandTemplate]="columnExpandedConsolidacao">
             <ng-template let-row="row" #columnConsolidacao>
                 <!--span *ngIf="row?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row?.length}}</span//-->
             </ng-template>
             <ng-template let-row="row" #columnExpandedConsolidacao>
-                <plano-trabalho-consolidacao-form #consolidacao [entity]="row" [cdRef]="cdRef"></plano-trabalho-consolidacao-form>
+                <plano-trabalho-consolidacao-form #consolidacao [disabled]="isDisabled(row)" [entity]="row" [planoTrabalho]="entity" [cdRef]="cdRef"></plano-trabalho-consolidacao-form>
             </ng-template>
         </column>
         <column title="Data início" [template]="columnDataInicio">
@@ -31,6 +28,6 @@
                 <badge [color]="lookup.getColor(lookup.CONSOLIDACAO_STATUS, row.status)" [icon]="lookup.getIcon(lookup.CONSOLIDACAO_STATUS, row.status)" [label]="lookup.getValue(lookup.CONSOLIDACAO_STATUS, row.status)"></badge>
             </ng-template>
         </column>
-        <column type="options" [dynamicButtons]="dynamicButtons"></column>
+        <column type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
     </columns>
 </grid>

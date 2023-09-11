@@ -16,6 +16,8 @@ use App\Models\Programa;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\PlanoTrabalhoConsolidacao;
+use App\Models\Programa;
+use Carbon\Carbon;
 use DateTime;
 use Throwable;
 use Illuminate\Database\Eloquent\Collection;
@@ -322,10 +324,20 @@ class PlanoTrabalhoService extends ServiceBase
   public function getByUsuario($usuarioId, $arquivados)
   {
     // TODO: validar permissoes
-    $query = PlanoTrabalho::with(["unidade:id,sigla,nome", "programa:id,nome", "tipoModalidade:id,nome", "consolidacoes"])->where("usuario_id", $usuarioId);
+    $query = PlanoTrabalho::with([
+      "unidade:id,sigla,nome", 
+      "unidade.gestor:id,unidade_id,usuario_id",
+      "unidade.gestorSubstituto:id,unidade_id,usuario_id",
+      "tipoModalidade:id,nome", 
+      "consolidacoes"
+    ])->where("usuario_id", $usuarioId);
     if (!$arquivados) $query->whereNull("data_arquivamento");
+    $planos = $query->get()->all();
+    $programasIds = array_unique(array_map(fn($v) => $v["programa_id"], $planos));
+    $programas = Programa::whereIn("id", $programasIds)->get()->all();
     return [
-      "planos" => $query->get()->all()
+      "planos" => $planos,
+      "programas" => $programas
     ];
   }
 
