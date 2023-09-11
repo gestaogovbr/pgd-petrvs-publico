@@ -14,7 +14,7 @@ import { ComentarioService } from 'src/app/services/comentario.service';
 import { BadgeButton } from 'src/app/components/badge/badge.component';
 import { TipoAtividadeDaoService } from 'src/app/dao/tipo-atividade-dao.service';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
-import { AtividadeService, ExtraAtividade } from './atividade.service';
+import { AtividadeOptionsMetadata, AtividadeService, ExtraAtividade } from './atividade.service';
 
 export abstract class AtividadeListBase extends PageListBase<Atividade, AtividadeDaoService> {
   public calendarEfemerides?: TemplateRef<any>;
@@ -30,6 +30,7 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
   public etiquetas: LookupItem[] = [];
   public checklist?: AtividadeChecklist[];
   public efemerides?: Efemerides;
+  public optionsMetadata: AtividadeOptionsMetadata;
   public addComentarioButton: ToolbarButton = {
     icon: "bi bi-plus-circle",
     hint: "Incluir comentário"
@@ -50,9 +51,14 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
     this.atividadeService = injector.get<AtividadeService>(AtividadeService);
     this.calendar = injector.get<CalendarService>(CalendarService);
     this.comentario = injector.get<ComentarioService>(ComentarioService);
-    this.join = ["tipo_atividade", "demandante", "pausas", "usuario", "unidade", "comentarios.usuario", "tarefas.tipo_tarefa", "tarefas.comentarios.usuario"];
+    this.join = ["tipo_atividade", "plano_trabalho_entrega", "demandante", "pausas", "usuario", "unidade", "comentarios.usuario:id,nome,apelido", "tarefas.tipo_tarefa", "tarefas.comentarios.usuario:id,nome,apelido"];
     /* Inicializações */
     this.extra = { planos_trabalho: {}, afastamentos: {} };
+    this.optionsMetadata = {
+      refreshId: ((id: string) => (this.grid?.query || this.query!).refreshId(id)).bind(this),
+      removeId: ((id: string) => (this.grid?.query || this.query!).removeId(id)).bind(this),
+      refresh: this.refresh.bind(this)
+    }
   }
 
   public onGridLoad(rows?: any[]) {
@@ -128,7 +134,7 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
       row.metadados.extra.tempos = tempos;
     }
     return row.metadados?.extra?.tempos || [];
-  } */
+  } 
 
   public desarquivar(atividade: Atividade) {
     this.dao!.arquivar(atividade.id, false).then(() => {
@@ -148,12 +154,11 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
         }).catch(error => this.dialog.alert("Erro", "Erro ao cancelar inicio: " + error?.message ? error?.message : error));
       }
     });
-  }
+  }*/
 
-  public dynamicOptions(row: any): ToolbarButton[] {
+  /*public dynamicOptions(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let atividade: Atividade = row as Atividade;
-    //const isAvaliador = isGestor || (this.extra.avaliadores[atividade.unidade_id] || []).includes(this.auth.usuario?.id || ""); //|| atividade.unidade
     const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || this.auth.usuario?.id == atividade.unidade?.gestor_substituto?.id;
     const isDemandante = this.auth.usuario?.id == atividade.demandante_id;
     const isResponsavel = this.auth.usuario?.id == atividade.usuario_id;
@@ -171,19 +176,16 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
     const BOTAO_CONCLUIR = { label: "Concluir", id: "CONCLUIDO", icon: "bi bi-check-circle", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'concluir'] }, this.modalRefreshId(atividade)) };
     const BOTAO_ALTERAR_CONCLUSAO = { label: "Alterar conclusão", icon: "bi bi-check-circle", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'concluir'] }, this.modalRefreshId(atividade)) };
     const BOTAO_CANCELAR_CONCLUSAO = { label: "Cancelar conclusão", id: "INICIADO", icon: "bi bi-backspace", onClick: this.cancelarConclusao.bind(this) };
-    //const BOTAO_AVALIAR = { label: "Avaliar", id: "AVALIADO", icon: "bi bi-star-half", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'avaliar'] }, this.modalRefreshId(atividade)) };
-    //const BOTAO_ALTERAR_AVALIACAO = { label: "Alterar avaliação", hint: "Alterar avaliação", icon: "bi bi-check-all", color: "btn-outline-danger", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'avaliar'] }, this.modalRefreshId(atividade)) };
-    //const BOTAO_CANCELAR_AVALIACAO = { label: "Cancelar avaliação", id: "CONCLUIDO", icon: "bi bi-backspace", onClick: this.cancelarAvaliacao.bind(this) };
     const BOTAO_ARQUIVAR = { label: "Arquivar", icon: "bi bi-inboxes", onClick: this.arquivar.bind(this) };
     const BOTAO_DESARQUIVAR = { label: "Desarquivar", icon: "bi bi-reply", onClick: this.desarquivar.bind(this) };
 
     result.push(BOTAO_INFORMACOES);
     if (isResponsavel || isGestor || isDemandante) result.push(BOTAO_COMENTARIOS);
     result.push(BOTAO_CLONAR);
-    if (atividade.metadados?.arquivado) { /* Arquivado*/
+    if (atividade.metadados?.arquivado) { /* Arquivado * /
       if (isGestor || isResponsavel) result.push(BOTAO_DESARQUIVAR);
     } else if (!atividade.metadados?.iniciado) {
-      if (isResponsavel || (atividade.usuario_id == null) || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) { /* Não iniciado */
+      if (isResponsavel || (atividade.usuario_id == null) || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) { /* Não iniciado * /
         result.push(BOTAO_INICIAR);
       }
       if (isGestor || isDemandante || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT')) {
@@ -193,7 +195,7 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
         if (result.length) result.push({ divider: true });
         result.push(BOTAO_EXCLUIR);
       }
-    } else if (atividade.metadados?.concluido) { /* Concluído -> Gestor ou substituto pode avaliar */
+    } else if (atividade.metadados?.concluido) { /* Concluído -> Gestor ou substituto pode avaliar * /
       if (isGestor || isResponsavel) result.push(BOTAO_ARQUIVAR);
       if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT_CONCL')) {
         result.push(BOTAO_ALTERAR_CONCLUSAO);
@@ -202,12 +204,12 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
         if (result.length) result.push({ divider: true });
         result.push(BOTAO_CANCELAR_CONCLUSAO);
       }
-    } else if (atividade.metadados?.iniciado) { /* Iniciado */
+    } else if (atividade.metadados?.iniciado) { /* Iniciado * /
       if (atividade.metadados?.pausado) {
-        if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) { /* Iniciada e Pausada */
+        if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) { /* Iniciada e Pausada * /
           result.push(BOTAO_REINICIAR);
         }
-      } else { /* Iniciada e não Suspensa */
+      } else { /* Iniciada e não Suspensa * /
         if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CONCL')) result.push(BOTAO_CONCLUIR);
         if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_PAUSA')) result.push(BOTAO_PAUSAR);
         if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CANC_INICIAR')) result.push(BOTAO_CANCELAR_INICIO);
@@ -218,9 +220,9 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
       }
     }
     return result;
-  }
+  }*/
 
-  public cancelarInicio(atividade: Atividade) {
+  /*public cancelarInicio(atividade: Atividade) {
     const self = this;
     this.dialog.confirm("Cancelar inicio ?", "Deseja realmente cancelar a inicialização?").then(confirm => {
       if (confirm) {
@@ -246,9 +248,9 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
         });
       }
     });
-  }
+  }*/
 
-  public dynamicButtons(row: any): ToolbarButton[] {
+  /*public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let atividade: Atividade = row as Atividade;
     const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || this.auth.usuario?.id == atividade.unidade?.gestor_substituto?.id;
@@ -262,30 +264,30 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
     const BOTAO_DESARQUIVAR = { hint: "Desarquivar", icon: "bi bi-reply", onClick: this.desarquivar.bind(this) };
     const BOTAO_ALTERAR_CONCLUSAO = { hint: "Alterar conclusão", icon: "bi bi-check-circle", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'concluir'] }, this.modalRefreshId(atividade)) };
 
-    if (!atividade.metadados?.iniciado) { /* Não iniciado */
-      if (isResponsavel || (atividade.usuario_id == null) || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) { /* Usuário da atividade é o mesmo logado */
+    if (!atividade.metadados?.iniciado) { /* Não iniciado * /
+      if (isResponsavel || (atividade.usuario_id == null) || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) { /* Usuário da atividade é o mesmo logado * /
         result.push(BOTAO_INICIAR);
       }
-    } else if (atividade.metadados?.concluido) { /* Concluído */
+    } else if (atividade.metadados?.concluido) { /* Concluído * /
       if (isGestor || isResponsavel) {
         result.push(atividade.metadados?.arquivado ? BOTAO_DESARQUIVAR : BOTAO_ARQUIVAR);
       } else if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT_CONCL')) {
         result.push(BOTAO_ALTERAR_CONCLUSAO);
       }
-    } else if (atividade.metadados?.avaliado) { /* Avaliado */
-      if (isGestor) { /* Usuário logado é gestor da Unidade ou substituto */
+    } else if (atividade.metadados?.avaliado) { /* Avaliado * /
+      if (isGestor) { /* Usuário logado é gestor da Unidade ou substituto * /
         result.push(BOTAO_ALTERAR_AVALIACAO);
       }
-    } else if (atividade.metadados?.iniciado) { /* Iniciado */
-      if (atividade.metadados?.pausado && isResponsavel) { /* Iniciada e Pausada */
+    } else if (atividade.metadados?.iniciado) { /* Iniciado * /
+      if (atividade.metadados?.pausado && isResponsavel) { /* Iniciada e Pausada * /
         result.push(BOTAO_REINICIAR);
-      } else if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CONCL')) { /* Iniciada e não Suspensa */
+      } else if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CONCL')) { /* Iniciada e não Suspensa * /
         result.push(BOTAO_CONCLUIR);
       }
     }
     if(!result.length) result.push(BOTAO_INFORMACOES);
     return result;
-  }
+  }*/
 
   public onEtiquetaConfigClick() {
     this.go.navigate({ route: ["configuracoes", "preferencia", "usuario", this.auth.usuario!.id], params: { etiquetas: true } }, {

@@ -216,7 +216,11 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
   }
 
   public error = (error: string) => {
-    if (this.editableForm) this.editableForm.error = error;
+    if (this.editableForm) {
+      this.editableForm.error = error;
+    } else {
+      this.dialog.topAlert(error);
+    }
   }
 
   public clearErros = () => {

@@ -143,4 +143,16 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
         });
     });
   }
+
+  public jaAssinouTCR(usuario_id: string | null, plano_trabalho_id : string): Promise<boolean> {
+    return new Promise<boolean>((resolve,reject) => {
+      this.server.post('api/Usuario/ja-assinou-tcr',{ usuario_id: usuario_id, plano_trabalho_id: plano_trabalho_id})
+        .subscribe(response => {
+          resolve(response);
+        }, error => {
+          console.log("Erro no acesso aos dados das assinaturas!", error);
+          resolve(false);
+        });
+    });
+  }
 }

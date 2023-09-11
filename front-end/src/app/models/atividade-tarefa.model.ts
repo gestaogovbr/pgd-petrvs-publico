@@ -15,7 +15,7 @@ export class AtividadeTarefa extends Base implements HasComentarios {
     public descricao: string | null = null; /* Descrição da tarefa */
     public data_lancamento: Date = new Date(); /* Data hora do lançamento da tarefa */
     public tempo_estimado: number = 0; /* Tempo estimado para a execução da tarefa (Horas decimais) */
-    public concluido: boolean = false; /* Se a tarefa foi concluída */
+    public data_conclusao: Date | null = null; /* Data de conclusao */
 
     public documento_id: string | null = null ; /* Documento de entrga */ 
     public atividade_id: string = ""; /* Atividade */

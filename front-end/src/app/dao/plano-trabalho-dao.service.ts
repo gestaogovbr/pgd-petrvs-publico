@@ -9,9 +9,11 @@ import { ProgramaDaoService } from './programa-dao.service';
 import { LookupService } from '../services/lookup.service';
 import { TemplateDataset } from '../modules/uteis/templates/template.service';
 import { PlanoTrabalhoEntregaDaoService } from './plano-trabalho-entrega-dao.service';
+import { Programa } from '../models/programa.model';
 
 export type PlanoTrabalhoByUsuario = {
-  planos: PlanoTrabalho[]
+  planos: PlanoTrabalho[],
+  programas: Programa[]
 }
 
 @Injectable({
@@ -66,8 +68,106 @@ export class PlanoTrabalhoDaoService extends DaoBaseService<PlanoTrabalho> {
           reject(response?.error);
         } else {
           let dados = response?.dados as PlanoTrabalhoByUsuario;
-          dados.planos = dados.planos.map(x => new PlanoTrabalho(x));
+          dados.planos = dados.planos.map(x => new PlanoTrabalho(this.getRow(x)));
+          dados.programas = dados.programas.map(x => new Programa(this.getRow(x)));
+          dados.planos.forEach(x => x.programa = dados.programas.find(y => y.id == x.programa_id));
           resolve(dados);
+        }
+      }, error => reject(error));
+    });
+  }
+
+  public arquivar(planoTrabalho: PlanoTrabalho, justificativa: string | null): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/arquivar', { id: planoTrabalho.id, justificativa: justificativa }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }
+      }, error => reject(error));
+    });
+  }
+
+  public ativar(planoTrabalho: PlanoTrabalho, justificativa: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/ativar', { id: planoTrabalho.id, justificativa: justificativa }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }
+      }, error => reject(error));
+    });
+  }
+
+  public cancelarAssinatura(planoTrabalho: PlanoTrabalho, justificativa: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/cancelar-assinatura', { id: planoTrabalho.id, justificativa: justificativa }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }
+      }, error => reject(error));
+    });
+  }
+
+  public cancelarPlano(planoTrabalho: PlanoTrabalho, justificativa: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/cancelar-plano', { id: planoTrabalho.id, justificativa: justificativa }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }
+      }, error => reject(error));
+    });
+  }
+
+  public desarquivar(planoTrabalho: PlanoTrabalho, justificativa: string | null): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/desarquivar', { id: planoTrabalho.id, justificativa: justificativa }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }
+      }, error => reject(error));
+    });
+  }
+
+  public enviarParaAssinatura(planoTrabalho: PlanoTrabalho, justificativa: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/enviar-para-assinatura', { id: planoTrabalho.id, justificativa: justificativa }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }
+      }, error => reject(error));
+    });
+  }
+
+  public reativar(planoTrabalho: PlanoTrabalho, justificativa: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/reativar', { id: planoTrabalho.id, justificativa: justificativa }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }
+      }, error => reject(error));
+    });
+  }
+
+  public suspender(planoTrabalho: PlanoTrabalho, justificativa: string): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/suspender', { id: planoTrabalho.id, justificativa: justificativa }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
         }
       }, error => reject(error));
     });

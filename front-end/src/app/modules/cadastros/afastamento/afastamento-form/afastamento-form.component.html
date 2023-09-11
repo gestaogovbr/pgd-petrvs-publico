@@ -1,6 +1,7 @@
+<top-alert *ngIf="warning?.length" type="warning" [message]="warning"></top-alert>
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="usuario_id" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
     <div class="row">
-        <input-search [size]="6" #usuario controlName="usuario_id" [dao]="usuarioDao" required></input-search>
+        <input-search [size]="6" #usuario controlName="usuario_id" [disabled]="consolidacao ? 'true' : undefined" [dao]="usuarioDao" required></input-search>
         <input-search [size]="6" #tipoMotivoAfastamento controlName="tipo_motivo_afastamento_id" [dao]="tipoMotivoAfastamentoDao" required></input-search>
     </div>
     <div class="row">

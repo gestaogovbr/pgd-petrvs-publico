@@ -62,7 +62,7 @@ export class DocumentosAssinarComponent extends PageFrameBase {
       this.go.setModalResult(this.modalRoute?.queryParams?.idroute, response);
       this.close();
     } catch (error: any) {
-      this.error(error?.message || error || "Erro deconhecido");
+      this.error(error?.message || error || "Erro desconhecido");
     } finally {
       this.dialog.closeSppinerOverlay();
     }

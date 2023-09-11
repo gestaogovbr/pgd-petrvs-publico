@@ -10,7 +10,7 @@
                 <span class="visually-hidden"></span>
             </div>
         </div>
-        <div *ngIf="template && (!load || !loading)" class="accordion-body">
+        <div *ngIf="selected && template && (!load || !loading)" class="accordion-body">
             <ng-container [ngTemplateOutlet]="template" [ngTemplateOutletContext]="{item: item, data: data, accordion: accordion}"></ng-container>
         </div>        
     </div>
