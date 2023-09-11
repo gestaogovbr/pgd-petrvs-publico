@@ -89,6 +89,7 @@ export class AtividadeFormTarefaComponent extends PageFormBase<AtividadeTarefa, 
     let formValue = Object.assign({}, form.value);
     formValue = this.util.fillForm(formValue, entity);
     await this.tipoTarefa?.loadSearch(entity.tipo_tarefa || formValue.tipo_tarefa_id);
+    formValue.concluido = !!entity.data_conclusao;
     formValue.comentarios = this.comentario.orderComentarios(formValue.comentarios || []);
     form.patchValue(formValue);
   }
@@ -104,6 +105,7 @@ export class AtividadeFormTarefaComponent extends PageFormBase<AtividadeTarefa, 
     this.comentarios?.confirm();
     this.util.fillForm(this.entity, this.form!.value);
     this.entity!.tipo_tarefa = this.tipoTarefa?.selectedEntity;
+    this.entity!.data_conclusao = this.form!.controls.concluido.value && !this.entity!.data_conclusao ? this.auth.hora : this.entity!.data_conclusao;
     return new NavigateResult(this.entity);
   }
 

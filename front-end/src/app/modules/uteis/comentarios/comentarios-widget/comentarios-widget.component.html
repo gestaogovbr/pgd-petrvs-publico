@@ -1,8 +1,8 @@
 <separator title="Comentários" small [button]="!selectable ? addComentarioButton : undefined" (buttonClick)="addComentarioClick($event, entity!)"></separator>
 <span *ngFor="let comentario of (entity?.comentarios || [])" #badge class="badge bg-light text-dark comentario-badge" role="button" (click)="comentarioClick(badge)" 
 data-expanded="false" data-bs-toggle="tooltip" data-bs-placement="top" [title]="lookup.getValue(lookup.COMENTARIO_TIPO, comentario.tipo)"
-[style.margin-left]="(comentario.path.includes('/') ? comentario.path.split('/').length-1 : 0) * 5 + 'px'"
-[style.background-color]="util.getBackgroundColor((comentario.path.includes('/') ? comentario.path.split('/').length-1 : 0), 20) + '!important'">
+[style.margin-left]="(comentario.path && comentario.path.includes('/') ? comentario.path.split('/').length-1 : 0) * 5 + 'px'"
+[style.background-color]="util.getBackgroundColor((comentario.path && comentario.path.includes('/') ? comentario.path.split('/').length-1 : 0), 20) + '!important'">
     <i [class]="'me-1 ' + lookup.getIcon(lookup.COMENTARIO_TIPO, comentario.tipo)"></i>
     <span class="comentario-title">
         <strong>{{util.shortName(util.apelidoOuNome(comentario.usuario)!)}}</strong>

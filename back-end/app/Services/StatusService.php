@@ -10,7 +10,7 @@ class StatusService extends ServiceBase
     public function atualizaStatus($entity, $novoStatus, $justificativa, $usuarioId = null) {
         try {
             if(!empty($entity)) {
-                if($entity->latestStatus->codigo != $novoStatus){
+                if($entity->latestStatus?->codigo != $novoStatus){
                     $entity->statusHistorico()->create([
                         'codigo' => $novoStatus,
                         'justificativa' => $justificativa,
@@ -21,6 +21,7 @@ class StatusService extends ServiceBase
                 $entity->save();
             }
         } catch (Throwable $e) { 
-            throw $e; }
+            throw $e;
+        }
     }
 }

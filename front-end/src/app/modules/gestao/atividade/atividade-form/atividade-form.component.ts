@@ -25,6 +25,7 @@ import { TipoAtividade } from 'src/app/models/tipo-atividade.model';
 import { SeiKeys } from 'src/app/listeners/procedimento-trabalhar/procedimento-trabalhar.component';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
+import { AtividadeService } from '../atividade.service';
 
 export type Checklist = {id: string, texto: string, checked: boolean};
 
@@ -47,6 +48,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
   public formChecklist: FormGroup;
   public planoTrabalhoDao: PlanoTrabalhoDaoService;
   public tipoAtividadeDao: TipoAtividadeDaoService;
+  public atividadeService: AtividadeService;
   public unidadeDao: UnidadeDaoService;
   public usuarioDao: UsuarioDaoService;
   public calendar: CalendarService;
@@ -66,6 +68,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.planoTrabalhoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
+    this.atividadeService = injector.get<AtividadeService>(AtividadeService);
     this.calendar = injector.get<CalendarService>(CalendarService);
     this.comentario = injector.get<ComentarioService>(ComentarioService);
     this.form = this.fh.FormBuilder({
@@ -163,7 +166,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     const etiquetasKeys = this.etiquetas.map(x => x.key);
     const checklistKeys = this.checklist.map(x => x.key);
     const etiqueta = (this.form.controls.etiquetas.value || []).find((x: LookupItem) => !etiquetasKeys.includes(x.key)) as LookupItem;
-    const checklst = (this.form.controls.checklist.value || []).find((x: AtividadeChecklist) => !etiquetasKeys.includes(x.id) && x.checked) as AtividadeChecklist;
+    const checklst = (this.form.controls.checklist.value || []).find((x: AtividadeChecklist) => !checklistKeys.includes(x.id) && x.checked) as AtividadeChecklist;
     if(etiqueta) result = "Etiqueta " + etiqueta.value + "não pode ser utilizada!";
     if(checklst) result = "Checklist " + checklst.texto + "não pode ser utilizado!";
     return result;
@@ -232,29 +235,13 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
   }
 
   public loadEtiquetas() {
-    const unidade = (this.unidade?.selectedEntity as Unidade);
-    const tipoAtividade = (this.tipoAtividade?.selectedEntity as TipoAtividade);
-    this.etiquetas = this.util.merge(tipoAtividade?.etiquetas, unidade?.etiquetas, (a, b) => a.key == b.key);
+    this.etiquetas = this.atividadeService.buildEtiquetas(this.unidade?.selectedEntity, this.tipoAtividade?.selectedEntity);
   }
 
   public loadChecklist() {
-    const tipoAtividade = (this.tipoAtividade?.selectedEntity as TipoAtividade);
+    const tipoAtividade = this.tipoAtividade?.selectedEntity as TipoAtividade;
     this.checklist = tipoAtividade?.checklist || [];
-    let checks: AtividadeChecklist[] = this.util.merge(this.checklist.map(a => {
-      return {
-        id: a.key,
-        texto: a.value,
-        checked: false
-      } as AtividadeChecklist;
-    }), (this.form.controls.checklist.value || []).filter((b: AtividadeChecklist) => b.checked), (a: AtividadeChecklist, b: AtividadeChecklist) => {
-      if(a.id == b.id) {
-        a.checked = b.checked;
-        return true;
-      } else {
-        return false;
-      }
-    });
-    this.form.controls.checklist.setValue(checks);
+    this.atividadeService.buildChecklist(tipoAtividade, this.form.controls.checklist);
   }
 
   public loadTipoAtividade(tipoAtividade: TipoAtividade | undefined) {
@@ -293,10 +280,11 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
   public onTipoAtividadeSelect(item: SelectItem) {
     const tipoAtividade: TipoAtividade | undefined = item.entity as TipoAtividade;
     this.loadTipoAtividade(tipoAtividade);
-    this.comentarioAtividade(tipoAtividade);
+    this.atividadeService.comentarioAtividade(tipoAtividade, this.form!.controls.comentarios);
+    this.cdRef.detectChanges();
   }
 
-  public comentarioAtividade(tipoAtividade?: TipoAtividade) {
+  /*public comentarioAtividade(tipoAtividade?: TipoAtividade) {
     const comentarios: Comentario[] = this.form.controls.comentarios.value || [];
     const index = comentarios.findIndex(x => x.tipo == "TIPO_ATIVIDADE");
     if(index >= 0) {
@@ -321,7 +309,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
       this.form.controls.comentarios.setValue(this.comentario.orderComentarios(comentarios));
       this.cdRef.detectChanges();
     }
-  }
+  }*/
 
   public onTipoAtividadeChange(event: Event) {
     if(!this.form?.controls.tipo_atividade_id.value?.length) this.loadTipoAtividade(undefined);

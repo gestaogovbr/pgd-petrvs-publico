@@ -41,4 +41,34 @@ class PlanoTrabalhoConsolidacaoController extends ControllerBase {
         }
     }
 
+    public function concluir(Request $request) {
+        try {
+            $this->checkPermissions('CONC', $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
+            $data = $request->validate([
+                'id' => ['required'],
+            ]);
+            return response()->json([
+                'success' => true,
+                'dados' => $this->service->concluir($data["id"])
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function cancelarConclusao(Request $request) {
+        try {
+            $this->checkPermissions('CONC', $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
+            $data = $request->validate([
+                'id' => ['required'],
+            ]);
+            return response()->json([
+                'success' => true,
+                'dados' => $this->service->cancelarConclusao($data["id"])
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
 }

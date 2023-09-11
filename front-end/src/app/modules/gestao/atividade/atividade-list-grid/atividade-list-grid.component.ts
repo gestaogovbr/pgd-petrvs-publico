@@ -111,7 +111,7 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     this.formEdit.controls.progresso.setValue(row.progresso);
     this.formEdit.controls.etiquetas.setValue(row.etiquetas);
     this.formEdit.controls.etiqueta.setValue(null);
-    this.etiquetas = this.util.merge(row.atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key);
+    this.etiquetas = this.util.merge(row.tipo_atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key);
     this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);
     this.checklist = this.util.clone(row.checklist);
   }

@@ -195,7 +195,7 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
   }
 
   public loadEtiquetas() {
-    //this.etiquetas = this.util.merge(row.atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key); 
+    //this.etiquetas = this.util.merge(row.tipo_atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key); 
     this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key); 
   }
 
@@ -376,7 +376,7 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
   }
 
   public dynamicCardMenu(card: CardItem): ToolbarButton[] | undefined {
-    const menu: ToolbarButton[] | undefined = this.dynamicButtons(card.data);
+    const menu: ToolbarButton[] | undefined = this.atividadeService.dynamicButtons.bind(this)(card.data, this.optionsMetadata);
     menu.push({
       icon: "bi bi-three-dots",
       hint: "Opções",
@@ -389,7 +389,7 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
   public cardDynamicOptions(card: CardItem): ToolbarButton[] | undefined {
     const olders = card.menu?.find(x => x.hint == "Opções");
     if(olders) {
-      const options = this.dynamicOptions.bind(this)(card.data);
+      const options = this.atividadeService.dynamicOptions.bind(this)(card.data, this.optionsMetadata);
       if(!olders.items || olders?.items.map(x => x.label).join() != options.map(x => x.label).join()) olders.items = options;
     }
     return olders?.items;
@@ -401,7 +401,7 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
       if(self.isEtiquetas) {
         return true;
       } else {
-        const buttons = self.dynamicOptions(drag.data);
+        const buttons = self.atividadeService.dynamicOptions.bind(self)(drag.data, self.optionsMetadata);
         return !!buttons.find(x => x.id == status);
       }
     }
@@ -433,7 +433,7 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
       let index = typeof event.index === "undefined" ? list.length : event.index;
       this.dragDrop = {destination: {list, index, card, atividade}};
       if(!this.isEtiquetas) {
-        const buttons = this.dynamicOptions(atividade);
+        const buttons = this.atividadeService.dynamicOptions.bind(this)(atividade, this.optionsMetadata);
         const docker = this.cards.indexOf(list);
         if(docker >= 0) {
           const action = buttons.find(x => x.id == this.DOCKERS[docker]);
