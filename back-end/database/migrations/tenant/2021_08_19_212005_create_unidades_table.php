@@ -21,7 +21,7 @@ class CreateUnidadesTable extends Migration
             $table->softDeletes();
             // Campos
             $table->string('codigo', 12)->comment('Código da unidade');
-            $table->string('sigla', 100)->unique()->comment("Sigla da unidade");
+            $table->string('sigla', 100)->comment("Sigla da unidade");
             $table->string('nome', 256)->comment("Nome da unidade");
             $table->tinyInteger('instituidora')->default(0)->comment("Se a unidade é instituidora (Programas)");
             $table->text('path')->nullable()->comment('Path dos nós pais separados por /, ou NULL caso sejam nós raiz');
