@@ -3,14 +3,14 @@
 
 module.exports = function (config) {
   config.set({
-    frameworks: ['jasmine', '@angular-devkit/build-angular'],
+    frameworks: ['jasmine', '@angular/cli'],
     plugins: [
-      require('karma-jasmine'),
-      require('karma-chrome-launcher'),
-      require('karma-firefox-launcher'),
-      require('karma-jasmine-html-reporter'),
-      require('karma-coverage'),
-      require('@angular-devkit/build-angular/plugins/karma')
+      // require('karma-jasmine'),
+      // require('karma-chrome-launcher'),
+      // require('karma-firefox-launcher'),
+      // require('karma-jasmine-html-reporter'),
+      // require('karma-coverage'),
+      require('@angular/cli/plugins/karma')
     ],
     files: [
       'node_modules/jquery/dist/jquery.min.js'
@@ -43,6 +43,9 @@ module.exports = function (config) {
     autoWatch: true,
     browsers: ['Chrome'],
     singleRun: false,
-    restartOnFileChange: true
+    restartOnFileChange: true,
+    preprocessors: {
+      './src/test.ts': ['@angular/cli']
+    }
   });
 };

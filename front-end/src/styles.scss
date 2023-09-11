@@ -140,8 +140,10 @@
     --bs-btn-bg: #fff;
     --bs-btn-border-color: #eee;
   }
+  
 
   &[data-bs-theme="blue"] {
+    --bs-light-rgb: 207, 207, 207;
     --bs-body-color: #1d2143;
     --bs-body-bg: #f5f7fa;
     --bs-nav-link-color: #fff;
@@ -193,6 +195,7 @@
   }
 
   &[data-bs-theme="light"] {
+    --bs-light-rgb: 207, 207, 207;
     --bs-body-color: #212529;
     --bs-body-bg: #f5f7fa;
     --petrvs-navbar-vertical-border-color: #cbd0dd;
@@ -234,6 +237,22 @@
       color: var(--bs-body-color) !important;
     }
 
+  }
+
+  .textValue {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    padding: 3px 7px;
+    display: inline-block;
+    font-size: inherit;
+    margin-left: 3px;
+  }
+
+  .withTextValue {
+    padding: 1px;
+    i {
+      margin: 5px;
+    }
   }
 
   

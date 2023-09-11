@@ -13,11 +13,11 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.54",
         "laravel/sanctum": "2.11",
-        "laravel/socialite": "^5.5",
         "laravel/tinker": "^2.5",
         "lawondyss/moment-php": "dev-master",
         "phpseclib/phpseclib": "~2.0",
         "ricorocks-digital-agency/soap": "^1.6",
+        "socialiteproviders/govbr": "^5.0",
         "socialiteproviders/microsoft-azure": "^5.1",
         "spatie/array-to-xml": "^3.1",
         "stancl/tenancy": "^3.6"

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\PlanoTrabalho;
-use App\Models\PlanoEntrega;
 use App\Models\Usuario;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
@@ -14,6 +13,7 @@ use App\Services\UtilService;
 use App\Exceptions\ServerException;
 use App\Models\Documento;
 use App\Models\PlanoTrabalhoConsolidacao;
+use App\Models\Programa;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Database\Eloquent\Collection;
@@ -91,7 +91,7 @@ class PlanoTrabalhoService extends ServiceBase
   public function afterStore($planoTrabalho, $action)
   {
     // (RN_PTR_A) Quando um Plano de Trabalho é criado adquire automaticamente o status INCLUIDO;
-    if($action == ServiceBase::ACTION_INSERT) $this->status->atualizaStatus($planoTrabalho, 'INCLUIDO', 'O Plano de Trabalho foi criado nesta data.');
+    if ($action == ServiceBase::ACTION_INSERT) $this->status->atualizaStatus($planoTrabalho, 'INCLUIDO', 'O Plano de Trabalho foi criado nesta data.');
   }
 
   public function validateStore($data, $unidade, $action)
@@ -322,10 +322,20 @@ class PlanoTrabalhoService extends ServiceBase
   public function getByUsuario($usuarioId, $arquivados)
   {
     // TODO: validar permissoes
-    $query = PlanoTrabalho::with(["unidade:id,sigla,nome", "programa:id,nome", "tipoModalidade:id,nome", "consolidacoes"])->where("usuario_id", $usuarioId);
+    $query = PlanoTrabalho::with([
+      "unidade:id,sigla,nome", 
+      "unidade.gestor:id,unidade_id,usuario_id",
+      "unidade.gestorSubstituto:id,unidade_id,usuario_id",
+      "tipoModalidade:id,nome", 
+      "consolidacoes"
+    ])->where("usuario_id", $usuarioId);
     if (!$arquivados) $query->whereNull("data_arquivamento");
+    $planos = $query->get()->all();
+    $programasIds = array_unique(array_map(fn($v) => $v["programa_id"], $planos));
+    $programas = Programa::whereIn("id", $programasIds)->get()->all();
     return [
-      "planos" => $query->get()->all()
+      "planos" => $planos,
+      "programas" => $programas
     ];
   }
 
@@ -346,17 +356,14 @@ class PlanoTrabalhoService extends ServiceBase
       "atividadesNaoIniciadas" => $this->atividadesNaoIniciadas($plano, null, null), //array_filter($plano['atividades'], fn($atividade) => $atividade['data_inicio'] == null),
       "atividadesEmAndamento" => $this->atividadesEmAndamento($plano, null, null), //array_filter($plano['atividades'], fn($atividade) => $atividade['data_inicio'] != null && $atividade['data_entrega'] == null),
       "atividadesConcluidas" => $this->atividadesSoConcluidas($plano, null, null),
-      //"atividadesAvaliadas" => $this->atividadesAvaliadas($plano, null, null),
       "horasAfastamentoDecorridas" => 0,
       "horasAtividadesNaoIniciadas" => 0,
       "horasAtividadesEmAndamento" => 0,
       "horasAtividadesConcluidas" => 0,
-      //"horasAtividadesAvaliadas" => 0,
       "horasTotaisAlocadas" => 0,
       "horasUteisAfastamento" => 0,
       "horasUteisDecorridas" => 0,
       "horasUteisTotais" => $plano['tempo_total'],
-      //"mediaAvaliacoes" => null,
       "modalidade" => $plano['tipo_modalidade']['nome'],
       "percentualHorasNaoIniciadas" => 0,
       "usuario_id" => $plano['usuario_id'],
@@ -364,25 +371,13 @@ class PlanoTrabalhoService extends ServiceBase
         "atividadesDistribuidas" => [],
         "atividadesNaoIniciadas" => [],
         "atividadesEmAndamento" => [],
-        //"atividadesSoConcluidas" => [], 
-        //"atividadesReprovadas" => [], 
-        //"atividadesAprovadas" => [],
         "horasUteisDisponiveisServidor" => 0,
-        //"tempoTrabalhadoHomologado" => 0, 
-        //"tempoTrabalhadoNaoHomologado" => 0,
-        //"tempoDespendidoSoConcluidas" => 0, 
         "tempoTotalRealizadoNoPeriodo" => 0,
         "tempoTotalAlocado" => 0,
         "tempoTotalNaoIniciadas" => 0,
         "tempoTotalEmAndamento" => 0,
-        //"tempoTotalSoConcluidas" => 0, 
-        //"tempoTotalReprovadas" => 0, 
-        //"tempoTotalAprovadas" => 0,
         "tempoPrevistoNaoIniciadasNoPeriodo" => 0,
         "tempoPrevistoEmAndamentoNoPeriodo" => 0,
-        //"tempoPrevistoSoConcluidasNoPeriodo" => 0,
-        //"tempoPrevistoReprovadasNoPeriodo" => 0,
-        //"tempoPrevistoAprovadasNoPeriodo" => 0, 
         "tempoTotalPrevistoNoPeriodo" => 0,
       ]
     ];
@@ -496,121 +491,6 @@ class PlanoTrabalhoService extends ServiceBase
     return $result;
   }
 
-  /** 
-   * Retorna um array com todas as atividades só concluidas de um determinado Plano de Trabalho, cujas data de início ou data de entrega estejam
-   * dentro do período estabelecido. Uma atividade é considerada só concluída se o seu campo data_entrega não for nulo e se ainda não foi avaliada. 
-   * 
-   * @param   Plano   $plano          Plano de Trabalho a ser pesquisado.
-   * @param   string  $inicioPeriodo  Data inicial do período.
-   * @param   string  $fimPeriodo     Data final do período.
-   * @return  array
-   */
-  /*   public function atividadesSoConcluidas($plano, $inicioPeriodo, $fimPeriodo): array
-    {
-    $result = [];
-    foreach ($plano['atividades'] as $atividade) {
-      if ($this->atividadeService->isConcluida($atividade) && !($this->atividadeService->isAvaliada($atividade)) && $this->atividadeService->withinPeriodo($atividade, $inicioPeriodo, $fimPeriodo)) array_push($result, $atividade);
-    }
-    return $result;
-  } */
-
-  /**
-   * Retorna um array com todas as atividades avaliadas de um determinado Plano de Trabalho, cujas data de início ou data de entrega estejam
-   * dentro do período estabelecido. Uma atividade é considerada avaliada se o seu campo avalicao_id não for nulo.
-   * 
-   * @param   Plano   $plano          Plano de Trabalho a ser pesquisado.
-   * @param   string  $inicioPeriodo  Data inicial do período.
-   * @param   string  $fimPeriodo     Data final do período.
-   * @return  array
-   */
-  /*   public function atividadesAvaliadas($plano, $inicioPeriodo, $fimPeriodo): array
-    {
-    $result = [];
-    foreach ($plano['atividades'] as $atividade) {
-      if ($this->atividadeService->isAvaliada($atividade) && $this->atividadeService->withinPeriodo($atividade, $inicioPeriodo, $fimPeriodo)) array_push($result, $atividade);
-    }
-    return $result;
-  } */
-
-  /**
-   * Retorna um array com todas as atividades aprovadas de um determinado Plano de Trabalho, cujas data de início ou data de entrega estejam
-   * dentro do período estabelecido. Uma atividade é considerada aprovada se a nota da sua avaliação foi maior ou igual a 5.0.
-   * 
-   * @param   Plano   $plano          Plano de Trabalho a ser pesquisado.
-   * @param   string  $inicioPeriodo  Data inicial do período.
-   * @param   string  $fimPeriodo     Data final do período.
-   * @return  array
-   */
-  /*   public function atividadesAprovadas($plano, $inicioPeriodo, $fimPeriodo): array
-    {
-    $result = [];
-    foreach ($plano['atividades'] as $atividade) {
-      if ($this->atividadeService->isAprovada($atividade) && $this->atividadeService->withinPeriodo($atividade, $inicioPeriodo, $fimPeriodo)) array_push($result, $atividade);
-    }
-    return $result;
-  } */
-
-  /**
-   * Retorna um array com todas as atividades reprovadas de um determinado Plano de Trabalho, cujas data de início ou data de entrega estejam
-   * dentro do período estabelecido. Uma atividade é considerada reprovada se a nota da sua avaliação foi menor que 5.0.
-   * 
-   * @param   Plano   $plano          Plano de Trabalho a ser pesquisado.
-   * @param   string  $inicioPeriodo  Data inicial do período.
-   * @param   string  $fimPeriodo     Data final do período.
-   * @return  array
-   */
-  /*   public function atividadesReprovadas($plano, $inicioPeriodo, $fimPeriodo): array
-    {
-    $result = [];
-    foreach ($plano['atividades'] as $atividade) {
-      if ($this->atividadeService->isReprovada($atividade) && $this->atividadeService->withinPeriodo($atividade, $inicioPeriodo, $fimPeriodo)) array_push($result, $atividade);
-    }
-    return $result;
-  } */
-
-  /** 
-   * Retorna um array com todas as atividades cumpridas de um determinado Plano de Trabalho, cujas data de início ou data de entrega estejam
-   * dentro do período estabelecido. Uma atividade é considerada cumprida se o seu campo tempo_homologado não for nulo. 
-   * 
-   * @param   Plano   $plano          Plano de Trabalho a ser pesquisado.
-   * @param   string  $inicioPeriodo  Data inicial do período.
-   * @param   string  $fimPeriodo     Data final do período.
-   * @return  array
-   */
-  /*   public function atividadesCumpridas($plano, $inicioPeriodo, $fimPeriodo): array
-    {
-    $result = [];
-    foreach ($plano['atividades'] as $atividade) {
-      if ($this->atividadeService->isCumprida($atividade) && $this->atividadeService->withinPeriodo($atividade, $inicioPeriodo, $fimPeriodo)) array_push($result, $atividade);
-    }
-    return $result;
-  } */
-
-  /**
-   * Retorna a soma dos tempos pactuados de um array de atividades.
-   * 
-   * @param array $atividades
-   * @return float
-   */
-  /*   public function somaTemposPactuados(array $atividades, $inicio = null, $fim = null, $cargaHoraria = 0, $unidadePlano = null, $afastamentosUsuario = []): float {
-    $total = 0;
-    foreach ($atividades as $atividade) { 
-      $periodo = $inicio && $fim;
-      if($periodo){
-        $intersecao = UtilService::intersection([
-              new Interval(['start' => strtotime($atividade['data_distribuicao']), 'end' => strtotime($atividade['prazo_entrega'])]), 
-              new Interval(['start' => strtotime($inicio), 'end' => strtotime($fim)])
-          ]);
-        $hIntersecao = empty($intersecao) ? 0 : CalendarioService::calculaDataTempoUnidade(UtilService::asDateTime($intersecao->start), UtilService::asDateTime($intersecao->end), $cargaHoraria, $unidadePlano, "HORAS_UTEIS", null, $afastamentosUsuario)->tempoUtil;
-        $hPrazo = CalendarioService::calculaDataTempoUnidade(new DateTime($atividade['data_distribuicao']), new DateTime($atividade['prazo_entrega']), $cargaHoraria, $unidadePlano, "HORAS_UTEIS", null, $afastamentosUsuario)->tempoUtil;
-        $horasForaPeriodo = $hPrazo - $hIntersecao;
-        $tempoPactuadoPrevistoNoPeriodo = ($horasForaPeriodo >= $atividade['tempo_pactuado']) ? 0 : $atividade['tempo_pactuado'] - $horasForaPeriodo;
-      }
-      $total += $periodo ? $tempoPactuadoPrevistoNoPeriodo : $atividade['tempo_pactuado']; 
-    }
-    return $total;
-  } */
-
   /**
    * Define se um Plano de Trabalho é considerado um Plano de Gestão ou não, ou seja, se existe ou não um normativo definindo como Programa de Gestão 
    * o Programa ao qual ele está vinculado.
@@ -643,28 +523,51 @@ class PlanoTrabalhoService extends ServiceBase
   }
 
   /**
-   * Retorna a soma dos tempos homologados ou pactuados das atividades recebidas no array, a depender do parâmetro $homologadas. Os tempos são calculados proporcionalmente dentro do período 
-   * estabelecido pelos parâmetros $inicioPeriodo e $fimPeriodo. Para as atividades homologadas é utilizado o tempo_homologado e para as atividades não homologadas é utilizado o tempo_pactuado.
-   * 
-   * @param array     $atividades             Um array de atividades.
-   * @param bool      $homologadas          Informa se o array passado como parâmetro se refere a atividades homologadas ou não.
-   * @param string    $inicioPeriodo        Data inicial do período de pesquisa.
-   * @param string    $fimPeriodo           Data final do período de pesquisa.
-   * @param int|float $cargaHoraria         Carga horária do servidor, constante do seu Plano de Trabalho.
-   * @param Unidade   $unidadePlano         Unidade à qual está vinculado o Plano de Trabalho.
-   * @param array     $afastamentosUsuario  Array dos afastamentos do usuário.
-   * @return float
+   * Retorna um array com várias informações sobre o plano recebido como parâmetro que serão auxiliares na definição das permissões para as diversas operações possíveis com um Plano de Trabalho.
+   * Se o plano recebido como parâmetro possuir ID, as informações devolvidas serão baseadas nos dados armazenados no banco. Caso contrário, as informações devolvidas serão baseadas nos dados
+   * recebidos na chamada do método. 
+   * @param array $entity     Um array com os dados de um plano já existente ou que esteja sendo criado.
+   * @return array
    */
-  /*   public function tempoAvaliado(array $atividades, bool $homologadas, string $inicioPeriodo, string $fimPeriodo, int|float $cargaHoraria, Unidade $unidadePlano, array $afastamentosUsuario): float {
-    $total = 0.0;
-    foreach ($atividades as $atividade) {
-      $tempoTotalDemanda = CalendarioService::calculaDataTempoUnidade(new DateTime($atividade['data_inicio']), new DateTime($atividade['data_entrega']), $cargaHoraria, $unidadePlano, "HORAS_UTEIS", null, $afastamentosUsuario)->tempoUtil;
-      $marcoInicial = UtilService::maxDate(new DateTime($atividade['data_inicio']),new DateTime($inicioPeriodo));
-      $marcoFinal = UtilService::minDate(new DateTime($atividade['data_entrega']),new DateTime($fimPeriodo));
-      $tempoDemandaNoPeriodo = CalendarioService::calculaDataTempoUnidade($marcoInicial, $marcoFinal, $cargaHoraria, $unidadePlano, "HORAS_UTEIS", null, $afastamentosUsuario)->tempoUtil;
-      $tempoProporcional = $tempoTotalDemanda == 0 ? 0 : ($homologadas ? $atividade['tempo_homologado'] : $atividade['tempo_pactuado']) * ($tempoDemandaNoPeriodo / $tempoTotalDemanda); 
-      $total += $tempoProporcional;
-    }
-    return $total;
-  } */
+  public function buscaCondicoes(array $entity): array
+  {
+    $planoTrabalho = !empty($entity['id']) ? PlanoTrabalho::with('entregas')->find($entity['id'])->toArray() : $entity;
+    $planoTrabalho['unidade'] = !empty($planoTrabalho['unidade_id']) ? Unidade::find($planoTrabalho['unidade_id'])->toArray() : null;
+    $result = [];
+    $result["planoValido"] = $this->isPlanoTrabalhoValido($planoTrabalho);
+    $result["planoAtivo"] = $this->isPlano("ATIVO", $planoTrabalho);
+    $result["planoAguardandoAssinatura"] = $this->isPlano("AGUARDANDO_ASSINATURA", $planoTrabalho);
+    $result["planoIncluido"] = $this->isPlano("INCLUIDO", $planoTrabalho);
+    $result["planoExecutado"] = $this->isPlano("EXECUTADO", $planoTrabalho);
+    $result["planoSuspenso"] = $this->isPlano("SUSPENSO", $planoTrabalho);
+    $result["nrEntregas"] = empty($planoTrabalho['entregas']) ? 0 : count($planoTrabalho['entregas']);
+    $result["planoArquivado"] = empty($planoTrabalho['id']) ? false : PlanoTrabalho::find($planoTrabalho['id'])->data_arquivamento != null;
+    $result["planoStatus"] = empty($planoTrabalho['id']) ? null : PlanoTrabalho::find($planoTrabalho['id'])->status;
+    $result["gestorUnidadeExecutora"] = $this->usuario->isGestorUnidade($planoTrabalho['unidade_id']);
+    $result["unidadePlanoEhLotacao"] = $this->usuario->isLotacao($planoTrabalho['unidade_id']);
+    return $result;
+  }
+
+  /**
+   * Informa se o plano de trabalho recebido como parâmetro é um plano válido.
+   * Um Plano de Trabalho é válido se não foi deletado, nem arquivado e não está no status de cancelado.
+   * @param array $planoTrabalho  
+   */
+  public function isPlanoTrabalhoValido($plano): bool
+  {
+    $planoTrabalho = !empty($plano['id']) ? PlanoTrabalho::where('id', $plano['id'])->first() : $plano;
+    return empty($plano['id']) ? false : (!$planoTrabalho->trashed() && !$plano['data_arquivamento'] && $planoTrabalho->status != 'CANCELADO');
+  }
+
+  /**
+   * Informa o status do plano de trabalho recebido como parâmetro.
+   * O Plano de Trabalho precisa ser VÁLIDO.
+   * @param string $status
+   * @param array $planoTrabalho  
+   */
+  public function isPlano($status, $plano): bool
+  {
+    $planoTrabalho = !empty($plano['id']) ? PlanoTrabalho::find($plano['id']) : $plano;
+    return empty($plano['id']) ? false : ($this->isPlanoTrabalhoValido($plano) && $planoTrabalho->status == $status);
+  }
 }

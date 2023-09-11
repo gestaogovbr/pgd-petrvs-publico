@@ -23,7 +23,7 @@ class CreateAtividadesTarefasTable extends Migration
             $table->text('descricao')->nullable()->comment("Descrição da tarefa");
             $table->dateTime('data_lancamento')->comment("Data hora do lançamento da tarefa");
             $table->float('tempo_estimado')->comment("Tempo estimado para a execução da tarefa (Horas decimais)");
-            $table->tinyInteger('concluido')->default(0)->comment("Se a tarefa foi concluída");
+            $table->dateTime('data_conclusao')->nullable()->comment("Data da conclusão");
             // Chaves estrangeiras:
             $table->foreignUuid('documento_id')->nullable()->constrained('documentos')->onDelete('restrict')->onUpdate('cascade')->comment("Documento");
             $table->foreignUuid('atividade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Atividade");

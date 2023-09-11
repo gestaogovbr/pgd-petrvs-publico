@@ -4,8 +4,9 @@
     <i *ngIf="hasIcon()" [class]="getIcon()"></i>{{getColumnText()}}
 </ng-container>
 <!-- Modo editando -->
-<ng-container *ngIf="(isRowEditing || (column.editing && isEditing)) && column.editTemplate" [ngTemplateOutlet]="column.editTemplate" [ngTemplateOutletContext]="{row: row, grid: grid, metadata: grid!.getMetadata(row)}"></ng-container>
-<ng-container *ngIf="(isRowEditing || (column.editing && isEditing)) && !column.editTemplate">
+<ng-container *ngIf="isRowEditing && column.editTemplate" [ngTemplateOutlet]="column.editTemplate" [ngTemplateOutletContext]="{row: row, grid: grid, metadata: grid!.getMetadata(row)}"></ng-container>
+<ng-container *ngIf="column.editing && isEditing && column.columnEditTemplate" [ngTemplateOutlet]="column.columnEditTemplate" [ngTemplateOutletContext]="{row: row, grid: grid, metadata: grid!.getMetadata(row)}"></ng-container>
+<ng-container *ngIf="(isRowEditing || (column.editing && isEditing)) && !column.editTemplate && !column.columnEditTemplate">
     <ng-container *ngIf="isType('template') && column.template" [ngTemplateOutlet]="column.template" [ngTemplateOutletContext]="{row: row, grid: grid, metadata: grid!.getMetadata(row)}"></ng-container>
     <input-search *ngIf="isType('search')" [size]="12" [controlName]="column.field" [control]="control" [dao]="column.dao" (change)="onChange($event)"></input-search>
     <input-display *ngIf="isType('display')" [size]="12" [controlName]="column.field" [control]="control"></input-display>
@@ -17,7 +18,7 @@
     <input-timer *ngIf="isType('timer')" [size]="12" [controlName]="column.field" [control]="control" [onlyHours]="column.onlyHours" [onlyDays]="column.onlyDays" (change)="onChange($event)"></input-timer>
     <input-textarea *ngIf="isType('textarea')" [rows]="3" [size]="12" [controlName]="column.field" [control]="control" (change)="onChange($event)"></input-textarea>
 </ng-container>
-<div *ngIf="column.isColumnEditable" class="grid-column-editable-options" [class.grid-column-editing]="column.editing">
+<div *ngIf="!isRowEditing && column.isColumnEditable" class="grid-column-editable-options" [class.grid-column-editing]="column.editing">
     <i *ngIf="!column.editing; else columnEditing" role="button" class="bi bi-pencil-square" (click)="onEdit($event)"></i>
     <ng-template #columnEditing>
         <i *ngIf="isEditing" [id]="grid?.getId('_' + index + '_' + row.id) + '_save'" class="bi bi-check-square" role="button" (click)="onSave($event)"></i><br>

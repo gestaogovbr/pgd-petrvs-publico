@@ -158,7 +158,7 @@ class TipoJustificativaListComponent extends src_app_modules_base_page_list_base
       let result = [];
       let form = filter.value;
       if (form.nome?.length) {
-        result.push(["nome", "like", "%" + form.nome + "%"]);
+        result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
       }
       return result;
     };

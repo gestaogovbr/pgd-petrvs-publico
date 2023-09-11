@@ -56,7 +56,7 @@ export class ProjetoListComponent extends PageListBase<Projeto, ProjetoDaoServic
     let form: any = filter.value;
 
     if (form.nome?.length) { 
-      result.push(["nome", "like", "%" + form.nome + "%"]);
+      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     } else if(form.status) {
       result.push(["status", "==", form.status]);
     } else if(form.data_inicio?.length) {

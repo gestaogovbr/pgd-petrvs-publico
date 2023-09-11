@@ -35,11 +35,11 @@ export class MaterialServicoListComponent extends PageListBase<MaterialServico, 
     if (form.tipo) { 
       result.push(["tipo", "==", form.tipo]);
     } else if(form.codigo?.length) {
-      result.push(["codigo", "like", "%" + form.codigo + "%"]);
+      result.push(["codigo", "like", "%" + form.codigo.trim().replace(" ", "%") + "%"]);
     } else if(form.referencia?.length) {
-      result.push(["referencia", "like", "%" + form.referencia + "%"]);
+      result.push(["referencia", "like", "%" + form.referencia.trim().replace(" ", "%") + "%"]);
     } else if(form.descricao?.length) {
-      result.push(["descricao", "like", "%" + form.descricao + "%"]);
+      result.push(["descricao", "like", "%" + form.descricao.trim().replace(" ", "%") + "%"]);
     }
 
     return result;

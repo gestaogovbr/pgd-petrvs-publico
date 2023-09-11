@@ -39,7 +39,6 @@
                 </div>
             </div>
         </tab>
-        <!-- *ngIf="checkFilled(['planejamento_id'])" -->
         <tab *ngIf="planejamentoId?.length" key="OBJETIVOS" label="Objetivos">
             <input-search [size]="12" #planejamento controlName="planejamento_id" [dao]="planejamentoDao" disabled></input-search>
             <grid [control]="form!.controls.objetivos" [form]="formObjetivos" #gridObjetivos editable [orderBy]="orderBy" 
@@ -56,13 +55,10 @@
                             <input-search [size]="12" #inputObjetivo label icon controlName="planejamento_objetivo_id" label icon [where]="[['planejamento_id', '==', planejamentoId]]" [dao]="planejamentoObjetivoDao" [selectRoute]="{route: ['gestao', 'planejamento', 'objetivoList'], params: {filter: {planejamento_id: planejamentoId}}}"></input-search>
                         </ng-template>
                     </column>
-                    <!--column type="options" [dynamicButtons]="dynamicButtonsObjetivos.bind(this)" [dynamicOptions]="dynamicOptionsObjetivos.bind(this)"></!--column//-->
                     <column type="options"></column>
                 </columns>
             </grid>
-            <!-- <planejamento-list-objetivos-entregas [planejamentoId]="planejamentoId"></planejamento-list-objetivos-entregas> -->
         </tab>
-        <!-- *ngIf="checkFilled(['cadeia_valor_id'])" -->
         <tab *ngIf="cadeiaValorId?.length" key="PROCESSOS" label="Processos">
             <input-search [size]="12" #cadeiaValor controlName="cadeia_valor_id" [dao]="cadeiaValorDao" disabled></input-search>
             <grid [control]="form!.controls.processos" [form]="formProcessos" #gridProcessos editable [orderBy]="orderBy" [hasDelete]="true" [hasEdit]="true"

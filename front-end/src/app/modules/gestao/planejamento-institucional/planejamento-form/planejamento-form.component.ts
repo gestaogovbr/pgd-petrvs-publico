@@ -34,6 +34,7 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
       this.join = [
         'objetivos',
         'objetivos.objetivo_pai:id,nome',
+        'objetivos.objetivo_superior:id,planejamento_id',
         'objetivos.eixo_tematico:id,nome',
         'planejamento_superior:id,nome',
         'planejamento_superior.objetivos'
@@ -59,6 +60,9 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
       */
       if(['nome','unidade_id','missao','visao'].indexOf(controlName) >= 0 && !control.value?.length) {
         result = "Obrigatório";
+      }
+      if(['missao','visao'].indexOf(controlName) >= 0 && control.value?.length > this.MAX_LENGTH_TEXT) {
+        result = "Conteúdo (" + control.value?.length + " caracteres) excede o comprimento máximo: " + this.MAX_LENGTH_TEXT + ".";
       }
       if(['data_inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
         result = "Inválido";
@@ -140,19 +144,21 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
 
     /**
      * @param event 
-     * Se o planejamento superior for alterado, e já houver objetivos na lista, avisar que eles serão desvinculados dos objetivos do planejamento anterior,
-     * para que novos objetivos superiores sejam selecionados.
+     * Se o planejamento superior for alterado, e já houver objetivos na lista vinculados a objetivos dele, avisar que eles perderão esses vínculos.
      */
     public async onPlanejamentoChange(event: Event){
-      if(this.form.controls.planejamento_superior_id.value != this.entity?.planejamento_superior_id && this.entity?.objetivos?.length) {
-        let confirm = await this.dialog.confirm("Alteração de Planejamento superior", "Como já existem objetivos neste Planejamento, eles serão desvinculados dos objetivos do Planejamento anterior, para que novos objetivos sejam selecionados! Deseja continuar?");
+      if(this.form.controls.planejamento_superior_id.value != this.entity?.planejamento_superior_id && this.entity?.objetivos?.length && this.entity?.objetivos.filter(x => x.objetivo_superior && x.objetivo_superior!.planejamento_id == this.entity?.planejamento_superior_id).length) {
+        let confirm = await this.dialog.confirm("Alteração de Planejamento Superior", "Como já existe(m) objetivo(s) neste Planejamento, vinculado(s) a objetivo(s) do Planejamento Superior anterior, seus vínculos serão perdidos! Deseja continuar?");
         if(confirm) {
-          this.entity?.objetivos?.forEach(obj => obj.objetivo_pai_id = null); 
+          this.entity?.objetivos?.forEach(obj => obj.objetivo_superior_id = null); 
           //atualizar a lista de objetivos superiores
         } else {
           this.form.controls.planejamento_superior_id.setValue(this.entity?.planejamento_superior_id);
         };
       };
+      this.objetivos!.planejamento_superior_id = this.form.controls.planejamento_superior_id.value;
+      this.objetivos?.grid?.loadColumns();
+      this.cdRef.detectChanges();
     }
 
     /**

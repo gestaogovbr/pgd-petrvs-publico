@@ -14,6 +14,7 @@ import { NotificacoesComponent } from './notificacoes/notificacoes.component';
 import { NotificacoesConfigComponent } from './notificacoes/notificacoes-config/notificacoes-config.component';
 import { NotificacoesTemplateComponent } from './notificacoes/notificacoes-template/notificacoes-template.component';
 import { DocumentosBadgeComponent } from './documentos/documentos-badge/documentos-badge.component';
+import { StatusFormComponent } from './status/status-form/status-form.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { DocumentosBadgeComponent } from './documentos/documentos-badge/document
     DocumentosBadgeComponent,
     NotificacoesComponent,
     NotificacoesConfigComponent,
-    NotificacoesTemplateComponent
+    NotificacoesTemplateComponent,
+    StatusFormComponent
   ],
   imports: [
     CommonModule,

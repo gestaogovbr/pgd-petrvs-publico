@@ -10,8 +10,9 @@
                 <span class="text-break w-100" [style.margin-left.px]="(row._metadata?.level || 0) * 20">{{ marcador(row) + row.nome }}</span>
             </ng-template>
         </column>
+        <column title="Eixo Temático" [template]="columnEixoTematico"><ng-template let-row="row" #columnEixoTematico><span>{{ row.eixo_tematico?.nome }}</span></ng-template></column>
         <column title="Fundamentação" [template]="columnFundamentacao"><ng-template let-row="row" #columnFundamentacao><span>{{ row.fundamentacao }}</span></ng-template></column>
-        <column title="Objetivo Superior" [template]="columnObjetivoSuperior"><ng-template let-row="row" #columnObjetivoSuperior><span>{{ row.objetivo_superior?.nome  || '' }}</span></ng-template></column>
+        <column *ngIf="planejamento_superior_id?.length" title="Objetivo Superior" [template]="columnObjetivoSuperior"><ng-template let-row="row" #columnObjetivoSuperior><span>{{ row.objetivo_superior?.nome  || '' }}</span></ng-template></column>
         <column type="options" [dynamicButtons]="dynamicButtons.bind(this)" [dynamicOptions]="dynamicOptions.bind(this)"></column>
     </columns>
 </grid>

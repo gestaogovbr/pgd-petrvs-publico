@@ -48,7 +48,7 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     if (filter?.controls.usuario?.value?.length) {
-      result.push(["nome", "like", "%" + filter?.controls.usuario?.value + "%"]);
+      result.push(["nome", "like", "%" + filter?.controls.usuario?.value.trim().replace(" ", "%") + "%"]);
     }
     if (filter?.controls.unidade_id?.value?.length) {
       result.push(["lotacao", "==", filter?.controls.unidade_id.value]);

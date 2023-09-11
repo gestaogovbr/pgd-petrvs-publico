@@ -23,6 +23,7 @@ class PlanejamentoObjetivo extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base
     this.planejamento_id = null;
     this.eixo_tematico_id = null;
     this.objetivo_pai_id = null;
+    this.objetivo_superior_id = null;
     this.initialization(data);
   }
 }
@@ -105,25 +106,15 @@ const _c1 = ["eixoTematico"];
 function PlanejamentoFormObjetivoComponent_div_7_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "div", 1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](1, "input-text", 9, 10);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](1, "input-text", 9, 10)(3, "input-select", 11);
     _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
     const ctx_r2 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 12)("icon", ctx_r2.entityService.getIcon("Planejamento"));
-  }
-}
-function PlanejamentoFormObjetivoComponent_div_12_Template(rf, ctx) {
-  if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "div", 1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](1, "input-select", 11);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
-  }
-  if (rf & 2) {
-    const ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("items", ctx_r3.objetivos_superiores)("size", 12)("control", ctx_r3.form.controls.objetivo_superior_id);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("items", ctx_r2.objetivos_superiores)("size", 12)("control", ctx_r2.form.controls.objetivo_superior_id);
   }
 }
 class PlanejamentoFormObjetivoComponent extends src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_6__.PageFormBase {
@@ -210,7 +201,7 @@ class PlanejamentoFormObjetivoComponent extends src_app_modules_base_page_form_b
     var _this3 = this;
     return new Promise( /*#__PURE__*/function () {
       var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (resolve, reject) {
-        const objetivo = _this3.util.fill(new src_app_models_planejamento_objetivo_model__WEBPACK_IMPORTED_MODULE_5__.PlanejamentoObjetivo(), _this3.entity);
+        const objetivo = Object.assign({}, _this3.entity);
         resolve(new src_app_services_navigate_service__WEBPACK_IMPORTED_MODULE_7__.NavigateResult(_this3.util.fillForm(objetivo, _this3.form.value)));
       });
       return function (_x, _x2) {
@@ -220,9 +211,6 @@ class PlanejamentoFormObjetivoComponent extends src_app_modules_base_page_form_b
   }
   isPlanejamentoUNEX() {
     return this.planejamento?.unidade_id != null;
-  }
-  onObjetivoPaiChange(objetivoPai) {
-    if (objetivoPai.selectedItem?.data?.eixo_tematico_id?.length) this.form.controls.eixo_tematico_id.setValue(objetivoPai.selectedItem?.data.eixo_tematico_id);
   }
 }
 _class = PlanejamentoFormObjetivoComponent;
@@ -246,51 +234,40 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdef
     }
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵInheritDefinitionFeature"]],
-  decls: 13,
-  vars: 15,
-  consts: [["initialFocus", "objetivo_pai_id", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["nullable", "", "label", "Objetivo", "icon", "fab fa-unity", "controlName", "objetivo_pai_id", 3, "size", "items", "change"], ["objetivoPai", ""], ["controlName", "eixo_tematico_id", "required", "", 3, "size", "disabled", "dao"], ["eixoTematico", ""], ["class", "row", 4, "ngIf"], ["icon", "bi bi-textarea-t", "label", "Nome", "controlName", "nome", "required", "", 3, "size", "control"], ["icon", "bi bi-textarea-t", "label", "Fundamenta\u00E7\u00E3o", "controlName", "fundamentacao", "required", "", 3, "size", "rows", "control"], ["disabled", "true", "label", "Planejamento superior vinculado", "controlName", "planejamento_superior_nome", 1, "disabled", 3, "size", "icon"], ["planejamento_superior_nome", ""], ["label", "Objetivo de planejamento superior (Vinculado)", "icon", "fab fa-unity", "controlName", "objetivo_superior_id", 3, "items", "size", "control"]],
+  decls: 12,
+  vars: 14,
+  consts: [["initialFocus", "eixo_tematico_id", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "eixo_tematico_id", "required", "", 3, "size", "disabled", "dao"], ["eixoTematico", ""], ["label", "Objetivo Pai", "icon", "fab fa-unity", "controlName", "objetivo_pai_id", 3, "size", "items"], ["objetivoPai", ""], ["class", "row", 4, "ngIf"], ["icon", "bi bi-textarea-t", "label", "Nome", "controlName", "nome", "required", "", 3, "size", "control"], ["icon", "bi bi-textarea-t", "label", "Fundamenta\u00E7\u00E3o", "controlName", "fundamentacao", "required", "", 3, "size", "rows", "control"], ["disabled", "true", "label", "Planejamento Superior vinculado", "controlName", "planejamento_superior_nome", 1, "disabled", 3, "size", "icon"], ["planejamento_superior_nome", ""], ["label", "Objetivo de Planejamento Superior (Vinculado)", "icon", "fab fa-unity", "controlName", "objetivo_superior_id", 3, "items", "size", "control"]],
   template: function PlanejamentoFormObjetivoComponent_Template(rf, ctx) {
     if (rf & 1) {
-      const _r5 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵgetCurrentView"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "editable-form", 0);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵlistener"]("submit", function PlanejamentoFormObjetivoComponent_Template_editable_form_submit_0_listener() {
         return ctx.onSaveData();
       })("cancel", function PlanejamentoFormObjetivoComponent_Template_editable_form_cancel_0_listener() {
         return ctx.onCancel();
       });
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](1, "div", 1)(2, "div", 1)(3, "input-select", 2, 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵlistener"]("change", function PlanejamentoFormObjetivoComponent_Template_input_select_change_3_listener() {
-        _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵrestoreView"](_r5);
-        const _r0 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵreference"](4);
-        return _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵresetView"](ctx.onObjetivoPaiChange(_r0));
-      });
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](1, "div", 1)(2, "div", 1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](3, "input-search", 2, 3)(5, "input-select", 4, 5);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](5, "input-search", 4, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](7, PlanejamentoFormObjetivoComponent_div_7_Template, 3, 2, "div", 6);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](7, PlanejamentoFormObjetivoComponent_div_7_Template, 4, 5, "div", 6);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](8, "div", 1);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](9, "input-text", 7);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](10, "div", 1);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](11, "input-textarea", 8);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](12, PlanejamentoFormObjetivoComponent_div_12_Template, 2, 3, "div", 6);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]()()();
     }
     if (rf & 2) {
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 6)("items", ctx.objetivos);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 6)("disabled", (ctx.form == null ? null : ctx.form.controls == null ? null : ctx.form.controls.objetivo_pai_id == null ? null : ctx.form.controls.objetivo_pai_id.value) ? "true" : undefined)("dao", ctx.eixoTematicoDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("ngIf", ctx.planejamento == null ? null : ctx.planejamento.unidade_id);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 6)("items", ctx.objetivos);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("ngIf", ctx.planejamento == null ? null : ctx.planejamento.planejamento_superior_id);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 12)("control", ctx.form.controls.nome);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 12)("rows", 4)("control", ctx.form.controls.fundamentacao);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("ngIf", ctx.planejamento == null ? null : ctx.planejamento.unidade_id);
     }
   },
   dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_13__.NgIf, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_8__.InputSearchComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_9__.InputTextComponent, _components_input_input_textarea_input_textarea_component__WEBPACK_IMPORTED_MODULE_10__.InputTextareaComponent, _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_11__.InputSelectComponent],
@@ -361,6 +338,9 @@ class PlanejamentoFormComponent extends src_app_modules_base_page_form_base__WEB
       if (['nome', 'unidade_id', 'missao', 'visao'].indexOf(controlName) >= 0 && !control.value?.length) {
         result = "Obrigatório";
       }
+      if (['missao', 'visao'].indexOf(controlName) >= 0 && control.value?.length > this.MAX_LENGTH_TEXT) {
+        result = "Conteúdo (" + control.value?.length + " caracteres) excede o comprimento máximo: " + this.MAX_LENGTH_TEXT + ".";
+      }
       if (['data_inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
         result = "Inválido";
       }
@@ -389,7 +369,7 @@ class PlanejamentoFormComponent extends src_app_modules_base_page_form_base__WEB
     };
     this.unidadeDao = injector.get(src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_4__.UnidadeDaoService);
     this.hasPermissionToUNEX = this.auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_LOTPRI') || this.auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_QQLOT') || this.auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_SUBORD') || this.auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_QUALQUER');
-    this.join = ['objetivos', 'objetivos.objetivo_pai:id,nome', 'objetivos.eixo_tematico:id,nome', 'planejamento_superior:id,nome', 'planejamento_superior.objetivos'];
+    this.join = ['objetivos', 'objetivos.objetivo_pai:id,nome', 'objetivos.objetivo_superior:id,planejamento_id', 'objetivos.eixo_tematico:id,nome', 'planejamento_superior:id,nome', 'planejamento_superior.objetivos'];
     this.form = this.fh.FormBuilder({
       nome: {
         default: ""
@@ -479,16 +459,15 @@ class PlanejamentoFormComponent extends src_app_modules_base_page_form_base__WEB
   }
   /**
    * @param event
-   * Se o planejamento superior for alterado, e já houver objetivos na lista, avisar que eles serão desvinculados dos objetivos do planejamento anterior,
-   * para que novos objetivos superiores sejam selecionados.
+   * Se o planejamento superior for alterado, e já houver objetivos na lista vinculados a objetivos dele, avisar que eles perderão esses vínculos.
    */
   onPlanejamentoChange(event) {
     var _this2 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      if (_this2.form.controls.planejamento_superior_id.value != _this2.entity?.planejamento_superior_id && _this2.entity?.objetivos?.length) {
-        let confirm = yield _this2.dialog.confirm("Alteração de Planejamento superior", "Como já existem objetivos neste Planejamento, eles serão desvinculados dos objetivos do Planejamento anterior, para que novos objetivos sejam selecionados! Deseja continuar?");
+      if (_this2.form.controls.planejamento_superior_id.value != _this2.entity?.planejamento_superior_id && _this2.entity?.objetivos?.length && _this2.entity?.objetivos.filter(x => x.objetivo_superior && x.objetivo_superior.planejamento_id == _this2.entity?.planejamento_superior_id).length) {
+        let confirm = yield _this2.dialog.confirm("Alteração de Planejamento Superior", "Como já existe(m) objetivo(s) neste Planejamento, vinculado(s) a objetivo(s) do Planejamento Superior anterior, seus vínculos serão perdidos! Deseja continuar?");
         if (confirm) {
-          _this2.entity?.objetivos?.forEach(obj => obj.objetivo_pai_id = null);
+          _this2.entity?.objetivos?.forEach(obj => obj.objetivo_superior_id = null);
           //atualizar a lista de objetivos superiores
         } else {
           _this2.form.controls.planejamento_superior_id.setValue(_this2.entity?.planejamento_superior_id);
@@ -496,6 +475,9 @@ class PlanejamentoFormComponent extends src_app_modules_base_page_form_base__WEB
         ;
       }
       ;
+      _this2.objetivos.planejamento_superior_id = _this2.form.controls.planejamento_superior_id.value;
+      _this2.objetivos?.grid?.loadColumns();
+      _this2.cdRef.detectChanges();
     })();
   }
   /**
@@ -537,8 +519,8 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵInheritDefinitionFeature"]],
   decls: 24,
-  vars: 27,
-  consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "DADOS", "label", "Dados"], [1, "row"], ["label", "Nome do Planejamento Institucional", "controlName", "nome", "required", "", 3, "size", "icon", "control"], ["controlName", "unidade_id", "labelInfo", "Unidade \u00E0 qual se refere o planejamento", "required", "", 3, "size", "control", "dao", "change"], ["date", "", "label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio", "labelInfo", "In\u00EDcio do Planejamento Institucional", 3, "size", "control"], ["date", "", "label", "Fim", "icon", "bi bi-calendar-date", "controlName", "data_fim", "labelInfo", "Fim do Planejamento Institucional", 3, "size", "control"], ["label", "Selecione um Planejamento Institucional Superior (opcional)", "controlName", "planejamento_superior_id", 3, "items", "control", "icon", "change"], ["planejamentoSuperior", ""], [1, "col-md-6"], ["label", "Miss\u00E3o", "controlName", "missao", "required", "", 3, "size", "rows", "control"], ["label", "Vis\u00E3o", "controlName", "visao", "required", "", 3, "size", "rows", "control"], ["label", "Valores", "controlName", "valores", 3, "size", "addItemHandle"], ["label", "Valor Institucional", "icon", "far fa-edit", "controlName", "valor_texto", 3, "control"], ["key", "OBJETIVOS", "label", "Objetivos"], ["noPersist", "", 3, "entity", "disabled"], ["objetivos", ""]],
+  vars: 28,
+  consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "DADOS", "label", "Dados"], [1, "row"], ["label", "Nome do Planejamento Institucional", "controlName", "nome", "required", "", 3, "size", "icon", "control"], ["controlName", "unidade_id", "labelInfo", "Unidade \u00E0 qual se refere o planejamento", "required", "", 3, "size", "control", "dao", "change"], ["date", "", "label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio", "labelInfo", "In\u00EDcio do Planejamento Institucional", 3, "size", "control"], ["date", "", "label", "Fim", "icon", "bi bi-calendar-date", "controlName", "data_fim", "labelInfo", "Fim do Planejamento Institucional", 3, "size", "control"], ["label", "Planejamento Institucional Superior", "controlName", "planejamento_superior_id", 3, "items", "control", "icon", "change"], ["planejamentoSuperior", ""], [1, "col-md-6"], ["label", "Miss\u00E3o", "controlName", "missao", "required", "", 3, "size", "rows", "control"], ["label", "Vis\u00E3o", "controlName", "visao", "required", "", 3, "size", "rows", "control"], ["label", "Valores", "controlName", "valores", 3, "size", "addItemHandle"], ["label", "Valor Institucional", "icon", "far fa-edit", "controlName", "valor_texto", 3, "control"], ["key", "OBJETIVOS", "label", "Objetivos"], ["noPersist", "", 3, "entity", "disabled", "planejamento_superior_id"], ["objetivos", ""]],
   template: function PlanejamentoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementStart"](0, "editable-form", 0);
@@ -593,7 +575,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("control", ctx.form.controls.valor_texto);
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("entity", ctx.entity)("disabled", ctx.action == "consult");
+      _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("entity", ctx.entity)("disabled", ctx.action == "consult")("planejamento_superior_id", ctx.form.controls.planejamento_superior_id.value);
     }
   },
   dependencies: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_7__.InputSearchComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_8__.InputTextComponent, _components_input_input_textarea_input_textarea_component__WEBPACK_IMPORTED_MODULE_9__.InputTextareaComponent, _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_10__.InputDatetimeComponent, _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_11__.InputSelectComponent, _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_12__.InputMultiselectComponent, _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_13__.TabsComponent, _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_14__.TabComponent, _planejamento_list_objetivo_planejamento_list_objetivo_component__WEBPACK_IMPORTED_MODULE_15__.PlanejamentoListObjetivoComponent],
@@ -622,6 +604,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_dao_planejamento_objetivo_dao_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! src/app/dao/planejamento-objetivo-dao.service */ 91058);
 /* harmony import */ var src_app_dao_eixo_tematico_dao_service__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! src/app/dao/eixo-tematico-dao.service */ 1240);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @angular/common */ 89650);
 /* harmony import */ var _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/grid/columns/columns.component */ 57224);
 /* harmony import */ var _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../../components/grid/column/column.component */ 83351);
 /* harmony import */ var _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../../components/badge/badge.component */ 95489);
@@ -640,34 +623,35 @@ var _class;
 
 
 
+
 function PlanejamentoListObjetivoComponent_ng_template_2_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "span", 10);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](1, "badge", 11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "span", 11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](1, "badge", 12);
     _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
-    const separator_r9 = ctx.separator;
+    const separator_r10 = ctx.separator;
     const ctx_r2 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵnextContext"]();
     let tmp_0_0;
     let tmp_1_0;
     let tmp_2_0;
     _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("icon", ((tmp_0_0 = ctx_r2.getEixo(separator_r9 == null ? null : separator_r9.text)) == null ? null : tmp_0_0.icone) || "bi bi-gear")("color", ((tmp_1_0 = ctx_r2.getEixo(separator_r9 == null ? null : separator_r9.text)) == null ? null : tmp_1_0.cor) || "primary")("label", ((tmp_2_0 = ctx_r2.getEixo(separator_r9 == null ? null : separator_r9.text)) == null ? null : tmp_2_0.nome) || "Desconhecido");
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("icon", ((tmp_0_0 = ctx_r2.getEixo(separator_r10 == null ? null : separator_r10.text)) == null ? null : tmp_0_0.icone) || "bi bi-gear")("color", ((tmp_1_0 = ctx_r2.getEixo(separator_r10 == null ? null : separator_r10.text)) == null ? null : tmp_1_0.cor) || "primary")("label", ((tmp_2_0 = ctx_r2.getEixo(separator_r10 == null ? null : separator_r10.text)) == null ? null : tmp_2_0.nome) || "Desconhecido");
   }
 }
 function PlanejamentoListObjetivoComponent_ng_template_6_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "span", 12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "span", 13);
     _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
-    const row_r10 = ctx.row;
+    const row_r11 = ctx.row;
     const ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵstyleProp"]("margin-left", ((row_r10._metadata == null ? null : row_r10._metadata.level) || 0) * 20, "px");
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵstyleProp"]("margin-left", ((row_r11._metadata == null ? null : row_r11._metadata.level) || 0) * 20, "px");
     _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtextInterpolate"](ctx_r4.marcador(row_r10) + row_r10.nome);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtextInterpolate"](ctx_r4.marcador(row_r11) + row_r11.nome);
   }
 }
 function PlanejamentoListObjetivoComponent_ng_template_9_Template(rf, ctx) {
@@ -677,9 +661,9 @@ function PlanejamentoListObjetivoComponent_ng_template_9_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
-    const row_r11 = ctx.row;
+    const row_r12 = ctx.row;
     _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtextInterpolate"](row_r11.fundamentacao);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtextInterpolate"](row_r12.eixo_tematico == null ? null : row_r12.eixo_tematico.nome);
   }
 }
 function PlanejamentoListObjetivoComponent_ng_template_12_Template(rf, ctx) {
@@ -689,9 +673,32 @@ function PlanejamentoListObjetivoComponent_ng_template_12_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
-    const row_r12 = ctx.row;
+    const row_r13 = ctx.row;
     _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtextInterpolate"]((row_r12.objetivo_superior == null ? null : row_r12.objetivo_superior.nome) || "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtextInterpolate"](row_r13.fundamentacao);
+  }
+}
+function PlanejamentoListObjetivoComponent_column_14_ng_template_1_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "span");
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
+  }
+  if (rf & 2) {
+    const row_r16 = ctx.row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtextInterpolate"]((row_r16.objetivo_superior == null ? null : row_r16.objetivo_superior.nome) || "");
+  }
+}
+function PlanejamentoListObjetivoComponent_column_14_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "column", 14);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](1, PlanejamentoListObjetivoComponent_column_14_ng_template_1_Template, 2, 1, "ng-template", null, 15, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
+  }
+  if (rf & 2) {
+    const _r14 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵreference"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("template", _r14);
   }
 }
 class PlanejamentoListObjetivoComponent extends src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_6__.PageFrameBase {
@@ -951,15 +958,16 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdef
     }
   },
   inputs: {
+    planejamento_superior_id: "planejamento_superior_id",
     control: "control",
     entity: "entity",
     disabled: "disabled",
     noPersist: "noPersist"
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵInheritDefinitionFeature"]],
-  decls: 15,
-  vars: 17,
-  consts: [["editable", "", 3, "items", "form", "selectable", "minHeight", "add", "remove", "hasDelete", "hasEdit", "hasAdd", "join", "groupBy", "groupTemplate"], ["gridObjetivos", ""], ["groupEixoTematico", ""], ["title", "Nome", 3, "template"], ["columnNome", ""], ["title", "Fundamenta\u00E7\u00E3o", 3, "template"], ["columnFundamentacao", ""], ["title", "Objetivo Superior", 3, "template"], ["columnObjetivoSuperior", ""], ["type", "options", 3, "dynamicButtons", "dynamicOptions"], [1, "text-wrap"], [3, "icon", "color", "label"], [1, "text-break", "w-100"]],
+  decls: 16,
+  vars: 18,
+  consts: [["editable", "", 3, "items", "form", "selectable", "minHeight", "add", "remove", "hasDelete", "hasEdit", "hasAdd", "join", "groupBy", "groupTemplate"], ["gridObjetivos", ""], ["groupEixoTematico", ""], ["title", "Nome", 3, "template"], ["columnNome", ""], ["title", "Eixo Tem\u00E1tico", 3, "template"], ["columnEixoTematico", ""], ["title", "Fundamenta\u00E7\u00E3o", 3, "template"], ["columnFundamentacao", ""], ["title", "Objetivo Superior", 3, "template", 4, "ngIf"], ["type", "options", 3, "dynamicButtons", "dynamicOptions"], [1, "text-wrap"], [3, "icon", "color", "label"], [1, "text-break", "w-100"], ["title", "Objetivo Superior", 3, "template"], ["columnObjetivoSuperior", ""]],
   template: function PlanejamentoListObjetivoComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "grid", 0, 1);
@@ -973,7 +981,8 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](11, "column", 7);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](12, PlanejamentoListObjetivoComponent_ng_template_12_Template, 2, 1, "ng-template", null, 8, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](14, "column", 9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](14, PlanejamentoListObjetivoComponent_column_14_Template, 3, 1, "column", 9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](15, "column", 10);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]()();
     }
     if (rf & 2) {
@@ -989,10 +998,12 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("template", _r7);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("ngIf", ctx.planejamento_superior_id == null ? null : ctx.planejamento_superior_id.length);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("dynamicButtons", ctx.dynamicButtons.bind(ctx))("dynamicOptions", ctx.dynamicOptions.bind(ctx));
     }
   },
-  dependencies: [src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_2__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_9__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_10__.ColumnComponent, _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_11__.BadgeComponent],
+  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_13__.NgIf, src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_2__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_9__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_10__.ColumnComponent, _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_11__.BadgeComponent],
   styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
 });
 
@@ -1081,7 +1092,7 @@ class PlanejamentoListObjetivosEntregasComponent extends src_app_modules_base_pa
         result.push(["planejamento_id", "==", form.planejamento_id]);
       }
       if (form.nome?.length) {
-        result.push(["or", ["nome", "like", "%" + form.nome.replace(" ", "%") + "%"], ["sigla", "like", "%" + form.nome.replace(" ", "%") + "%"]]);
+        result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
       }
       return result;
     };
@@ -1113,6 +1124,7 @@ class PlanejamentoListObjetivosEntregasComponent extends src_app_modules_base_pa
   }
   filterClear(filter) {
     super.filterClear(filter);
+    this.filter?.controls.nome.setValue("");
   }
 }
 _class = PlanejamentoListObjetivosEntregasComponent;
@@ -1164,7 +1176,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 7)("control", ctx.filter.controls.nome);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 12)("control", ctx.filter.controls.nome);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("template", _r2);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](4);
@@ -1432,7 +1444,7 @@ class PlanejamentoListComponent extends src_app_modules_base_page_list_base__WEB
         if (form.unidade_id) result.push(["unidade_id", "==", form.unidade_id]);
       }
       if (form.nome?.length) {
-        result.push(["nome", "like", "%" + form.nome + "%"]);
+        result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
       }
       if (form.data_inicio) {
         result.push(["data_inicio", ">=", form.data_inicio]);

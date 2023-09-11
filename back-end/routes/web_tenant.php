@@ -23,19 +23,44 @@ $actions = config('petrvs')['actions']['web'];
 /* Rotas do Angular *
 Route::any('/{any}', [AngularController::class, 'index'])->where('any', '^(?!api|web|download|environment-config).*$');
 */
+
 /* Rotas do login/logout */
 Route::post('/web/login-user-password', [LoginController::class, $actions['login-user-password']]);
 Route::post('/web/login-firebase-token', [LoginController::class, $actions['login-firebase-token']]);
 Route::post('/web/login-google-token', [LoginController::class, $actions['login-google-token']]);
 Route::post('/web/login-institucional', [LoginController::class, $actions['login-institucional']]);
+// Route::post('/web/login-unico', [LoginController::class, $actions['login-unico']]);
 Route::post('/web/login-session', [LoginController::class, 'authenticateSession']);
 Route::get('/web/logout', [LoginController::class, 'logout']);
 
-/* Rotas Login Azure*/
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/* Rotas Login Azure* */
 Route::view('/web/login-azure-popup', 'azure');
 Route::get('/web/login-azure-redirect', [LoginController::class, 'signInAzureRedirect']);
-Route::get('/web/login-azure-callback', [LoginController::class, 'signInAzureCallback']);
+
+/* Perdeu uso por motivo do tenancy */
+// Route::get('/web/login-azure-callback', [LoginController::class, 'signInAzureCallback']);
+
+Route::middleware([InitializeTenancyByPath::class])
+    ->get('/login-azure-callback/{tenant}', 
+          [LoginController::class, 'signInAzureCallback']);
+
+// Rota criada para teste por algum desenvolvedor.
 Route::get('/web/login-azure-simulate-callback', [LoginController::class, 'simulateAzureCallback']);
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/* Rotas GOVBR */
+Route::view('/web/login-govbr-popup', 'govbr');
+Route::get('/web/login-govbr-redirect', [LoginController::class, 'signInGovBrRedirect']);
+
+/* Perdeu usou por motivo do tenancy */
+// Route::get('/web/login-azure-callback', [LoginController::class, 'signInAzureCallback']);
+
+Route::middleware([InitializeTenancyByPath::class])
+    ->get('/login-govbr-callback/{tenant}', 
+          [LoginController::class, 'signInGovBrCallback']);
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /* Rotas diversas */
 //Route::get('environment-config', [PetrvsController::class, 'environmentConfig']);

@@ -340,7 +340,7 @@ export class UtilService {
     for(let nibble of temp) {
       result += result.length < 5 ? " " + nibble[0].toUpperCase() + nibble.substring(1).toLowerCase() : "";
     }
-    return result.trim();
+    return result.trim().replace(" ", "%");
   }
 
   public capitalCase(text: string): string {
@@ -359,6 +359,17 @@ export class UtilService {
       g: parseInt(color.substring(2, 4), 16),
       b: parseInt(color.substring(4, 6), 16)
     }
+  }
+
+  public getBackgroundColor(level: number = 0, numLevels: number = 20): string {
+    const palette = [];
+    for (let i = 0; i < numLevels; i++) {
+      const hue = (i * 360) / numLevels; 
+      const color = `hsl(${hue}, 70%, 60%)`;
+      palette.push(color);
+    }
+    // Retorna uma cor do array
+    return palette[level % numLevels]
   }
 
   public isTimeValid(timer: string): boolean {

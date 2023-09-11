@@ -22,11 +22,15 @@
         1. (RN_CSLD_5) Se as datas de início forem iguais o periodo existente será mantido.
         2. (RN_CSLD_6) Se as datas de início forem diferente, então será criado um novo perído entre o novo início e o início do período CONCLUIDO/AVALIADO, e o período CONCLUIDO/AVALIADO será mantido
     4. (RN_CSLD_7) Ocorrências e Atividades devem ser transferiadas para os novos perídos
-4. Após a data fim, e passado-se os dias determinado na Tolerância determinada no programa para lançamento da consolidação, o sistema automaticamente irá alterar o status de INCLUIDO para CONCLUIDO 
+4. Após a data fim, e passado-se os dias determinado na Tolerância determinada no programa para lançamento da consolidação, o sistema automaticamente irá alterar o status de INCLUIDO para CONCLUIDO
+5. Ao concluir (status CONCLUIDO), caso haja alguma atividade que possua periodo excedente a data de início e fim da consolidação, esta será então clonada
 
 ## REGRAS DE INTERFACE
 
 1. (RI_CSLD_1) Após a data fim da consolidação, e estando dentro da Tolerância determinada no programa para lançamento da consolidação, o sistema deve avisar ao usuário no grid quantos dias restam para ele lançar as consolidações.
+2. (RI_CSLD_2) Apenas será expansível (mostrando os períodos de consolidação) os planos de trabalho que não estiverem com status de "INCLUIDO"
+3. (RI_CSLD_3) Apenas será permitido realizar lançamentos para planos de trabalho "ATIVO"
+4. (RI_CSLD_4) Apenas será permitido realizar lançamentos para periodos de consolidação com status de "INCLUIDO"
 
 ## FLUXO DOS PLANOS DE TRABALHO  
 

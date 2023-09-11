@@ -1,14 +1,10 @@
-
 <div>
     <ng-template #dialogs></ng-template>
     <nav *ngIf="auth.logged || globals.isEmbedded || isConfig" class="navbar navbar-expand-lg fixed-top px-3">
-        
-        
         <div class="navbar-logo">
             <button *ngIf="!isConfig && !globals.isToolbar" class="navbar-toggler" type="button"  [attr.data-bs-toggle]="'collapse'"  [attr.data-bs-target]="'#navbarSupportedContent'" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Abri menu">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
             <a class="navbar-brand" role="button">
                 <div class="d-flex align-items-center">    
                     <img [src]="globals.getResourcePath('assets/images/icon-' + globals.theme + '.png')" alt="Logo Petrvs" width="30"  class="d-inline-block align-text-top"/>
@@ -16,7 +12,6 @@
                 </div>   
             </a>
         </div>
-        
         <div *ngIf="isMinimized" class="collapse navbar-collapse" id="navbarSupportedContent">
             <div class="d-flex"></div>
             <div class="btn-group" role="group" aria-label="Janelas">
@@ -51,11 +46,10 @@
                     </ul>
                 </div>
             </div>
-            <!--button class="btn btn-outline-success me-2" type="button">Main button</button/ -->
             <ul *ngIf="!globals.isToolbar && auth.logged" class="navbar-nav me-auto mb-2 mb-lg-0">
                 <!-- Lista do Menu Principal -->
                 <li class="nav-item">
-                    <a [class]="menuItemClass('nav-link', { route: ['home'] })" aria-current="page" role="button" (click)="goHome()">Home</a>
+                    <a [class]="menuItemClass('nav-link', { route: ['home'] })" aria-current="page" role="button" (click)="globals.goHome()">Home</a>
                 </li>
                 <ng-container *ngFor="let item of menu">
                     <li *ngIf="item && (!item.permition?.length || auth.hasPermissionTo(item.permition))" class="nav-item" [ngClass]="item.menu?.length ? 'dropdown' : '' ">
@@ -82,29 +76,27 @@
                     </li>
                 </ng-container>
             </ul>
-
             <div *ngIf="auth.logging" width="25" class="spinner-border spinner-border-sm m-0 ms-2" role="status">
                 <span class="visually-hidden"></span>
             </div>
         </div>
-
         <ul class="navbar-nav navbar-nav-icons flex-row align-items-center justify-content-end ">
             <li class="nav-item dropdown">                
                 <a class="nav-link" id="petrvs-context" href="#" role="button"  [attr.data-bs-toggle]="'dropdown'" aria-haspopup="true"  aria-expanded="false">
                     <span class="d-none d-md-block">
-                        {{ contexto.name || "Selecione..." }}
+                        {{ globals.contexto?.name || "Selecione..." }}
                         <i class="bi bi-chevron-down fs-6"></i>
                     </span>
                     <span class="d-block d-md-none">
-                        <i [class]="contexto.icon"></i>
+                        <i [class]="globals.contexto?.icon"></i>
                     </span>
                 </a>
                 <div class="dropdown-menu contextoDropdown navbar-dropdown-caret py-0 shadow border border-300" aria-labelledby="petrvs-context" >
                     <div class="card position-relative border-0">
                         <div class="card-body py-3 px-3">
                             <ul class="nav d-flex flex-column">
-                                <li *ngFor="let itemContexto2 of menuContexto" (click)="onContextoSelect(itemContexto2)" class="nav-item">                                    
-                                    <a [class.active]="contexto.name == itemContexto2.name" class="nav-link " role="button">
+                                <li *ngFor="let itemContexto2 of menuContexto" (click)="globals.setContexto(itemContexto2.key)" class="nav-item">                                    
+                                    <a [class.active]="globals.contexto?.name == itemContexto2.name" class="nav-link " role="button">
                                         <i [class]="itemContexto2.icon"></i> {{ itemContexto2.name }}
                                     </a>                                            
                                 </li>
@@ -113,13 +105,11 @@
                     </div>
                 </div>
             </li>
-
             <li class="nav-item ms-3 ms-lg-2">
                 <a *ngIf="globals.SUPPORT_URL" href="javascript:void(0)" class="nav-link" (click)="go.openNewTab(globals.SUPPORT_URL)"  [attr.data-bs-toggle]="'tooltip'" data-bs-placement="top" title="Suporte Petrvs">
                     <i class="bi bi-headset"></i>
                 </a>
             </li>
-
             <li class="nav-item ms-3 ms-lg-2">
                 <a class="nav-link position-relative" href="javascript:void(0)" (click)="go.navigate({ route: ['uteis', 'notificacoes'] })">
                     <i class="bi bi-bell"></i>
@@ -129,7 +119,6 @@
                     </span>
                 </a>
             </li>
-
             <ng-container *ngIf="!auth.logging && auth.logged">
                 <li class="nav-item ms-3 ms-lg-2">
                     <span class="nav-link">
@@ -141,7 +130,6 @@
                         {{ unidadeHora }}
                     </span>
                 </li>
-
                 <li class="nav-item dropdown ms-3 ms-lg-2">
                     <a class="nav-link" id="navbarDropdownBranch" href="#" role="button"  [attr.data-bs-toggle]="'dropdown'" aria-haspopup="true" data-bs-auto-close="outside" aria-expanded="false">
                         {{ auth.unidade?.sigla }}
@@ -159,7 +147,6 @@
                         </div>
                     </div>
                 </li>
-
                 <li class="nav-item dropdown">
                     <a class="nav-link " id="navbarDropdownUser" href="#!" role="button"  [attr.data-bs-toggle]="'dropdown'" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
                         <div class="">
@@ -176,7 +163,6 @@
                                     <h6 class="mt-2">{{ usuarioNome }}</h6>
                                 </div>
                             </div>
-
                             <ul class="nav d-flex flex-column mb-2 pb-1">
                                 <li class="nav-item">
                                     <a class="nav-link px-3" role="button" (click)="go.navigate({route: ['configuracoes', 'usuario', auth.usuario!.id, 'edit']}, { root: true, modal: true })">
@@ -191,7 +177,6 @@
                                     </a>
                                 </li>
                             </ul>
-
                             <div class="card-footer p-0 border-top">
                                 <div class="px-3 py-2">
                                     <li class="nav-item d-grid">
@@ -205,7 +190,6 @@
                         </div>
                     </div>
                 </li>
-
                 <button type="button" *ngIf="globals.isToolbar && !auth.logged && globals.requireLogged" class="btn btn-outline-danger" role="button" (click)="toolbarLogin()">
                     Login
                 </button>
@@ -214,7 +198,6 @@
                 </button>
             </ng-container>
         </ul>
-        
     </nav>
     <div *ngIf="error?.length" class="alert alert-danger mt-2" role="alert">
         {{ error }}

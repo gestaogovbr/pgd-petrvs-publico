@@ -61,7 +61,7 @@ export class ColumnRowComponent implements OnInit {
       result += " " + this.lookup.getColor(this.column.items, this.row[this.column.field]);
     }
 
-    return result.trim().length ? result.trim() : undefined;
+    return result.trim().replace(" ", "%").length ? result.trim().replace(" ", "%") : undefined;
   }
 
   public onChange(event: Event) {
