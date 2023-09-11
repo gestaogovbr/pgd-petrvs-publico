@@ -522,14 +522,16 @@ class AtividadeService {
     }
   }
   modalRefreshId(metadata, entity) {
-    var _ref;
     return {
       modal: true,
-      modalClose: function modalClose(_x) {
-        return (_ref = _ref || (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (modalResult) {
+      modalClose: function () {
+        var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (modalResult) {
           return metadata.refreshId(entity.id);
-        })).apply(this, arguments);
-      }
+        });
+        return function modalClose(_x) {
+          return _ref.apply(this, arguments);
+        };
+      }()
     };
   }
   modalRefresh(metadata) {
