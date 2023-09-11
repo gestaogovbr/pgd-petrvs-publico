@@ -22,6 +22,7 @@ class CreatePlanosTrabalhosConsolidacoesTable extends Migration
             // Campos:
             $table->date('data_inicio')->comment("Data inicial da consolidacão");
             $table->date('data_fim')->comment("Data final da consolidação");
+            $table->dateTime('data_conclusao')->nullable()->comment("Data da conclusão (usado como referência para o snapshot das atividades)");
             $table->enum('status', ["INCLUIDO", "CONCLUIDO","AVALIADO"])->default("INCLUIDO")->comment("Status atual da consolidação");
             // Chaves estrangeiras:
             $table->foreignUuid('plano_trabalho_id')->constrained("planos_trabalhos")->onDelete('restrict')->onUpdate('cascade')->comment("Plano de Trabalho ao qual se refere a consolidação");

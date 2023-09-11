@@ -75,7 +75,7 @@ export class EntregaFormComponent extends PageFormBase<Entrega, EntregaDaoServic
   }
 
   public incluirQualitativo(qualitativo: string) {
-    let item = qualitativo.trim();
+    let item = qualitativo.trim().replace(" ", "%");
     let listaQualitativos: string[] = this.form!.controls.lista_qualitativos.value;
     if(!listaQualitativos.find(x => x == item) && item.length){
       this.clearErros();

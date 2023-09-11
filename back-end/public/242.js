@@ -428,7 +428,7 @@ class TipoAtividadeListComponent extends src_app_modules_base_page_list_base__WE
     this.filterWhere = filter => {
       let form = filter.value;
       let result = [];
-      if (form.nome?.length) result.push(["nome", "like", "%" + form.nome.replace(" ", "%") + "%"]);
+      if (form.nome?.length) result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
       return result;
     };
     /* Inicializações */

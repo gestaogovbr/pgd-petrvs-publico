@@ -90,17 +90,13 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
 
   public saveData(form: IIndexable): Promise<NavigateResult> {
     return new Promise<NavigateResult>(async (resolve, reject) => {
-      const objetivo = this.util.fill(new PlanejamentoObjetivo(), this.entity!);
+      const objetivo = Object.assign({}, this.entity!);
       resolve(new NavigateResult(this.util.fillForm(objetivo, this.form!.value)));
     });
   }
 
   public isPlanejamentoUNEX(): boolean {
     return this.planejamento?.unidade_id != null;
-  }
-
-  public onObjetivoPaiChange(objetivoPai: InputSelectComponent) {
-    if(objetivoPai.selectedItem?.data?.eixo_tematico_id?.length) this.form!.controls.eixo_tematico_id.setValue(objetivoPai.selectedItem?.data.eixo_tematico_id); 
   }
 
 }

@@ -38,27 +38,28 @@ Route::get('/web/logout', [LoginController::class, 'logout']);
 Route::view('/web/login-azure-popup', 'azure');
 Route::get('/web/login-azure-redirect', [LoginController::class, 'signInAzureRedirect']);
 
-/* Perdeu usou por motivo do tenancy */
+/* Perdeu uso por motivo do tenancy */
 // Route::get('/web/login-azure-callback', [LoginController::class, 'signInAzureCallback']);
 
 Route::middleware([InitializeTenancyByPath::class])
     ->get('/login-azure-callback/{tenant}', 
           [LoginController::class, 'signInAzureCallback']);
 
+// Rota criada para teste por algum desenvolvedor.
 Route::get('/web/login-azure-simulate-callback', [LoginController::class, 'simulateAzureCallback']);
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/* Rotas Login Unico */
-Route::view('/web/login-unico-popup', 'login-unico');
-Route::get('/web/login-unico-redirect', [LoginController::class, 'signInLoginUnicoRedirect']);
+/* Rotas GOVBR */
+Route::view('/web/login-govbr-popup', 'govbr');
+Route::get('/web/login-govbr-redirect', [LoginController::class, 'signInGovBrRedirect']);
 
 /* Perdeu usou por motivo do tenancy */
 // Route::get('/web/login-azure-callback', [LoginController::class, 'signInAzureCallback']);
 
 Route::middleware([InitializeTenancyByPath::class])
-    ->get('/login-unico-callback/{tenant}', 
-          [LoginController::class, 'signInLoginUnicoCallback']);
+    ->get('/login-govbr-callback/{tenant}', 
+          [LoginController::class, 'signInGovBrCallback']);
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /* Rotas diversas */

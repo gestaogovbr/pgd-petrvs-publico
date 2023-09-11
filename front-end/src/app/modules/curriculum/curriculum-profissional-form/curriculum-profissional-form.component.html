@@ -40,13 +40,19 @@
                 <input-multiselect [size]="6" [control]="form!.controls.lotaces" controlName="lotacoes"
                     [addItemHandle]="addItemFuncao.bind(this)" noBox [bold]="true">
 
-                    <input-select [size]="12" label="Selecione todas as unidades em que já foi lotado"
+                    <!--<input-select [size]="12" label="Selecione todas as unidades em que já foi lotado"
                         icon="bi bi-check-circle-fill" controlName="selectLotacao" [control]="form!.controls.selectLotacao" [dao]="unidadeDao" liveSearch>
+                    </input-select>-->
+                    <input-select [size]="12" label="Selecione todas as unidades em que já foi lotado"
+                        icon="bi bi-check-circle-fill" controlName="selectLotacao" [control]="form!.controls.selectLotacao" [items]="this.unidade" liveSearch>
                     </input-select>
                 </input-multiselect>
 
-                <input-select [size]="6" label="Lotação atual" icon="bi bi-check-circle" controlName="lotacaoAtual"
+                <!--<input-select [size]="6" label="Lotação atual" icon="bi bi-check-circle" controlName="lotacaoAtual"
                     [control]="form!.controls.lotacaoAtual" [dao]="unidadeDao" liveSearch>
+                </input-select>-->
+                <input-select [size]="6" label="Lotação atual" icon="bi bi-check-circle" controlName="lotacaoAtual"
+                    [control]="form!.controls.lotacaoAtual" [items]="this.unidade"  liveSearch>
                 </input-select>
 
             </div>

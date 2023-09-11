@@ -53,7 +53,7 @@ export class AreaAtividadeExternaListComponent extends PageListBase<AreaAtividad
     let form: any = filter.value;
 
     if(form.nome_area?.length) {
-      result.push(["nome", "like", "%" + form.nome + "%"]);
+      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
 
     return result;

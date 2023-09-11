@@ -73,8 +73,6 @@ export class GridComponent extends ComponentBase implements OnInit {
   @Input() noHeader?: string;
   @Input() noMargin?: string;
   @Input() editable?: string;
-  @Input() hasEdit: boolean = true;
-  @Input() hasDelete: boolean = false;
   @Input() hasReport: boolean = true;
   @Input() scrollable: boolean = false;
   @Input() controlName: string | null = null;
@@ -105,6 +103,24 @@ export class GridComponent extends ComponentBase implements OnInit {
   }
   get hasAdd(): boolean {
     return this._hasAdd;
+  }
+  @Input() set hasEdit(value: boolean) {
+    if(value !== this._hasEdit) {
+      this._hasEdit = value;
+      this.reset();
+    }
+  }
+  get hasEdit(): boolean {
+    return this._hasEdit;
+  }
+  @Input() set hasDelete(value: boolean) {
+    if(value !== this._hasDelete) {
+      this._hasDelete = value;
+      this.reset();
+    }
+  }
+  get hasDelete(): boolean {
+    return this._hasDelete;
   }
   @Input() set disabled(value: string | undefined) {
     if(value != this._disabled) {
@@ -171,6 +187,8 @@ export class GridComponent extends ComponentBase implements OnInit {
   private _disabled?: string;
   private _loading: boolean = false;
   private _hasAdd: boolean = true;
+  private _hasEdit: boolean = true;
+  private _hasDelete: boolean = false;
   private _title: string = "";
   private _items?: IIndexable[];
   private _visible: boolean = true;
@@ -408,7 +426,9 @@ export class GridComponent extends ComponentBase implements OnInit {
     if(this.groupBy && items?.length) {
       let buffer = "";
       this.groupIds = { _qtdRows: items.length };
-      items = items.filter(x => !(x instanceof GridGroupSeparator)).map(x => Object.assign(x, {_group: this.groupBy!.map(g => Object.assign({}, g, { value: this.util.getNested(x, g.field) }))}));
+      let mapItems = items.filter(x => !(x instanceof GridGroupSeparator)).map(x => Object.assign(x, {_group: this.groupBy!.map(g => Object.assign({}, g, { value: this.util.getNested(x, g.field) }))}));
+      //items = items.filter(x => !(x instanceof GridGroupSeparator)).map(x => Object.assign(x, {_group: this.groupBy!.map(g => Object.assign({}, g, { value: this.util.getNested(x, g.field) }))}));
+      items.splice(0, items.length, ...mapItems);
       if(!this.query) items.sort((a: IIndexable, b: IIndexable) => JSON.stringify(a._group) > JSON.stringify(b._group) ? 1 : JSON.stringify(a._group) < JSON.stringify(b._group) ? -1 : 0);
       for(let i = 0; i < items.length; i++) {
         if(buffer != JSON.stringify(items[i]._group)) {
@@ -425,6 +445,19 @@ export class GridComponent extends ComponentBase implements OnInit {
         await this.reportRef!.reportExcel();
       })();
     }
+  }
+
+  public expand(id: string) {
+    this.expandedIds[id] = true;
+    this.cdRef.detectChanges();
+  }
+
+  public refreshExpanded(id: string) {
+    let expanded = this.expandedIds[id];
+    this.expandedIds[id] = false;
+    this.cdRef.detectChanges();
+    this.expandedIds[id] = expanded;
+    this.cdRef.detectChanges();
   }
 
   public refreshMultiselectToolbar() {

@@ -804,7 +804,7 @@ class UsuarioListComponent extends src_app_modules_base_page_list_base__WEBPACK_
     this.filterWhere = filter => {
       let result = [];
       if (filter?.controls.usuario?.value?.length) {
-        result.push(["nome", "like", "%" + filter?.controls.usuario?.value + "%"]);
+        result.push(["nome", "like", "%" + filter?.controls.usuario?.value.trim().replace(" ", "%") + "%"]);
       }
       if (filter?.controls.unidade_id?.value?.length) {
         result.push(["lotacao", "==", filter?.controls.unidade_id.value]);

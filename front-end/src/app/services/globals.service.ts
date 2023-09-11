@@ -2,9 +2,10 @@ import { Inject, Injectable, Injector } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { environment } from 'src/environments/environment';
 import { ToolbarButton } from '../components/toolbar/toolbar.component';
-import { AppComponent } from '../app.component';
+import { AppComponent, MenuContexto } from '../app.component';
 import { DOCUMENT } from '@angular/common';
 import { AuthService } from './auth.service';
+import { NavigateService } from './navigate.service';
 
 export type EntidadePetrvs = "ANTAQ" | "PRF" | "";
 
@@ -35,14 +36,32 @@ export class GlobalsService {
   };
 
   public auth: AuthService;
+  public go: NavigateService;
+  public contexto?: MenuContexto;
   
   constructor(@Inject(DOCUMENT) private document: any, public injector: Injector) {
     this.auth = injector.get<AuthService>(AuthService);
+    this.go = injector.get<NavigateService>(NavigateService);
    }
 
   public refresh() {
     this.document.getElementById("html-petrvs").setAttribute("data-bs-theme", this.theme)
     this.app!.cdRef.detectChanges();
+  }
+
+  public setContexto(context: string, goToContextoHome: boolean = true) {
+    if(this.contexto?.key != context) {
+      this.contexto = this.app!.menuContexto.find(x => x.key == context);
+      if(this.contexto && goToContextoHome) this.goHome();
+      this.app!.cdRef.detectChanges();
+    }
+    if(this.auth.usuario && this.auth.usuarioConfig.menu_contexto != context) {
+      this.auth.usuarioConfig = { menu_contexto: context };
+    }
+  }
+
+  public goHome() {
+    this.go.navigate({ route: ["home", this.contexto!.key.toLowerCase()] });
   }
 
   public get isEmbedded(): boolean {

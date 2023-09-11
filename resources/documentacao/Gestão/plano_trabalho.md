@@ -47,17 +47,18 @@ Campos obrigatórios:
 - (RN_PTR_I) Quando a Unidade Executora não for a unidade de lotação do servidor, seu gestor imediato deve ter acesso ao seu Plano de Trabalho (e à sua execução);
 - (RN_PTR_J) Quando todas as consolidações de um Plano de Trabalho forem avaliadas, informar que este está também avaliado (não é um status);
 - (RN_PTR_K) Quando um Plano de Trabalho é cancelado, todas as suas entregas são canceladas;
-- (RN_PTR_L) Um Plano de Trabalho adquire o status 'EXECUTADO' quando a sua última consolidação for avaliada;
+- (RN_PTR_L) Um Plano de Trabalho adquire o status 'CONCLUIDO' quando a sua última consolidação for avaliada;
 - (RN_PTR_Y) Para incluir um Plano de Trabalho para um participante, é necessário que este esteja lotado em uma das áreas de trabalho do usuário logado, a menos que este possua a capacidade MOD_PTR_USERS_INCL;
 - (RN_PTR_Z) Na inclusão de um Plano de Trabalho, é necessário que o participante esteja lotado na Unidade Executora, a menos que o usuário logado possua a capacidade MOD_PTR_INCL_SEM_LOT;
 - (RN_PTR_AA) Um Plano de Trabalho não pode ser incluído se apresentar período conflitante com outro Plano de Trabalho já existente para a mesma Unidade Executora, a menos que o usuário logado possua a capacidade MOD_PTR_INTSC_DATA;
+- (RN_PTR_AB) Um Plano de Trabalho não pode ser excluído;
 
 ## FLUXOS (STATUS & AÇÕES)
 
 ![Fig. 1 - Fluxos do Plano de Trabalho](../Imagens/Fluxos%20do%20Plano%20de%20Trabalho%20-%20JPEG.jpeg)
 
 ~~~text
-status possíveis = ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO', 'EXECUTADO', 'SUSPENSO', 'CANCELADO']
+status possíveis = ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO', 'CONCLUIDO', 'SUSPENSO', 'CANCELADO']
 -----------------------------------------------------------------------------------------------------------------------------------
 obrigatoriedade     | inclusão realizada  |  status     |  evento que                |  status      |  evento que       |  status
 da assinatura       | pelo                |  inicial    |  faz avançar               |  seguinte    |  faz avançar      |  seguinte
@@ -93,83 +94,72 @@ da assinatura       | pelo                |  inicial    |  faz avançar         
 Ação: ALTERAR -> não muda o status do plano se ele estiver com o status 'INCLUIDO' ou 'AGUARDANDO_ASSINATURA', mas retorna ao status 'AGUARDANDO_ASSINATURA' se ele estiver no status 'ATIVO';
 
 - (RN_PTR_M) Condições para que um Plano de Trabalho possa ser alterado:
-  - o usuário logado precisa possuir a capacidade "MOD_PTR_EDT", o Plano de Trabalho precisa ser válido (ou seja, nem deletado, nem arquivado), e:
-    - estando com o status 'INCLUIDO'
-      - o usuário logado precisa ser o participante do plano ou o gestor da Unidade Executora;
-    - estando com o status 'AGUARDANDO_ASSINATURA'
-      - o usuário logado precisa ser um dos que já assinaram o TCR e todas as assinaturas tornam-se sem efeito;
-    - estando com o status 'ATIVO'
-      - o usuário precisa ser gestor da Unidade Executora e possuir a capacidade MOD_PTR_EDT_ATV. Após alterado, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
+  - o usuário logado precisa possuir a capacidade "MOD_PTR_EDT", o Plano de Trabalho precisa ser válido (ou seja, nem deletado, nem arquivado, nem estar no status CANCELADO), e:
+    - estando com o status 'INCLUIDO', o usuário logado precisa ser o participante do plano ou o gestor da Unidade Executora;
+***************    - estando com o status 'AGUARDANDO_ASSINATURA', o usuário logado precisa ser um dos que já assinaram o TCR e todas as assinaturas tornam-se sem efeito;
+    - estando com o status 'ATIVO', o usuário precisa ser gestor da Unidade Executora e possuir a capacidade MOD_PTR_EDT_ATV.
+***************  - Após alterado, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
 
-Ação: ARQUIVAR -> não muda o status do plano ('EXECUTADO');
+*/*Ação: ARQUIVAR -> não muda o status do plano ('CONCLUIDO');
 
 - (RN_PTR_N) Condições para que um Plano de Trabalho possa ser arquivado:
-  - o plano precisa estar com o status EXECUTADO, não ter sido arquivado, e:
+  - o plano precisa estar com o status CONCLUIDO, não ter sido arquivado, e:
   - o usuário logado precisa ser o participante ou o gestor da Unidade Executora;
 
-Ação: ASSINAR -> enquanto faltar assinatura no TCR, o plano vai para o (ou permanece no) status de 'AGUARDANDO_ASSINATURA'. Quando o último assinar o TCR, o plano vai para o status 'ATIVO';
-
-- (RN_PTR_O) Condições para que um Plano de Trabalho possa ser assinado:
-  - o plano precisa estar com o status INCLUIDO, e:
-    - o usuário logado precisa ser o participante do plano ou o gestor da sua Unidade Executora, e
-    - a assinatura do usuário logado precisa ser uma das exigidas pelo Programa de Gestão, e ele não ter ainda assinado;
-  - o plano precisa estar com o status AGUARDANDO_ASSINATURA, e:
-    - a assinatura do usuário logado precisa ser uma das exigidas pelo Programa de Gestão, e ele não ter ainda assinado;
-
-Ação: ATIVAR -> o plano vai para o status 'ATIVO';
+*/*Ação: ATIVAR -> o plano vai para o status 'ATIVO';
 
 - (RN_PTR_P) Condições para que um Plano de Trabalho possa ser ativado:
   - o plano precisa estar no status 'INCLUIDO', e
     - o usuário logado precisa ser o participante do plano ou gestor da Unidade Executora, e
     - nenhuma assinatura no TCR ser exigida pelo programa;
 
-Ação: CANCELAR ASSINATURA -> o plano permanece no status 'AGUARDANDO_ASSINATURA' ou retorna ao status 'INCLUIDO';
+*****************Ação: CANCELAR ASSINATURA -> o plano permanece no status 'AGUARDANDO_ASSINATURA' ou retorna ao status 'INCLUIDO';
 
 - (RN_PTR_Q) Condições para que um Plano de Trabalho possa ter uma assinatura cancelada:
   - o plano precisa estar no status 'AGUARDANDO_ASSINATURA'; e
     - o usuário logado precisa já ter assinado o TCR;
 
-Ação: CANCELAR PLANO -> o plano adquire o status de 'CANCELADO';
+*/*Ação: CANCELAR PLANO -> o plano adquire o status de 'CANCELADO';
 
 - (RN_PTR_R) Condições para que um Plano de Trabalho possa ser cancelado:
   - o usuário logado precisa possuir a capacidade "MOD_PTR_CNC", e
-    - o plano precisa estar em um dos seguintes status: INCLUIDO, AGUARDANDO_ASSINATURA, ATIVO ou EXECUTADO; e
+    - o plano precisa estar em um dos seguintes status: INCLUIDO, AGUARDANDO_ASSINATURA, ATIVO ou CONCLUIDO; e
     - o usuário logado precisa ser gestor da Unidade Executora;
 
-Ação: CONSULTAR -> não muda o status do plano;
+*/*Ação: CONSULTAR -> não muda o status do plano;
 
 - (RN_PTR_S) Condições para que um Plano de Trabalho possa ser consultado:
   - todos os participantes podem visualizar todos os planos de trabalho, desde que possuam a capacidade "MOD_PTR";
 
-Ação: DESARQUIVAR -> o plano retorna ao status que estava quando foi arquivado ('EXECUTADO');
+*/*Ação: DESARQUIVAR -> o plano retorna ao status que estava quando foi arquivado ('CONCLUIDO');
 
 - (RN_PTR_T) Condições para que um Plano de Trabalho possa ser desarquivado:
   - o plano precisa estar arquivado, e:
     - o usuário logado precisa ser o participante ou gestor da Unidade Executora;
 
-Ação: ENVIAR PARA ASSINATURA -> o plano vai para o status 'AGUARDANDO_ASSINATURA';
+*****************Ação: ENVIAR PARA ASSINATURA -> o plano vai para o status 'AGUARDANDO_ASSINATURA';
 
 - (RN_PTR_U) Condições para que um Plano de Trabalho possa ser enviado para assinatura:
   - o plano precisa estar com o status INCLUIDO; e
     - o usuário logado precisa ser o participante do plano ou gestor da sua Unidade Executora; e
     - o programa de gestão precisa exigir não só a assinatura do usuário logado;
 
-Ação: INSERIR/INCLUIR -> o plano adquire o status de 'INCLUIDO';
+*/*Ação: INSERIR/INCLUIR -> o plano adquire o status de 'INCLUIDO';
 
 - (RN_PTR_V) Condições para que um Plano de Trabalho possa ser criado:
   - o usuário logado precisa possuir a capacidade "MOD_PTR_INCL", e:
     - o usuário logado precisa ser um participante do PGD, habilitado, ou ser gestor da Unidade Executora do plano; (RN_PTR_B); e
     - o participante do plano precisa estar lotado em uma das áreas de trabalho do usuário logado, ou este deve possuir a capacidade MOD_PTR_USERS_INCL; e
     - o participante do plano precisa estar lotado na Unidade Executora, ou o usuário logado possuir a capacidade MOD_PTR_INCL_SEM_LOT; e
-    - o novo Plano de Trabalho não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA
+    - o novo Plano de Trabalho não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA
 
-Ação: REATIVAR -> o plano adquire novamente o status de 'ATIVO';
+*/*Ação: REATIVAR -> o plano adquire novamente o status de 'ATIVO';
 
 - (RN_PTR_W) Condições para que um Plano de Trabalho possa ser reativado:
   - o plano precisa estar com o status SUSPENSO, e
     - o usuário logado precisa ser gestor da Unidade Executora;
 
-Ação: SUSPENDER -> o plano adquire o status de 'SUSPENSO';
+*/*Ação: SUSPENDER -> o plano adquire o status de 'SUSPENSO';
 
 - (RN_PTR_X) Condições para que um Plano de Trabalho possa ser suspenso:
   - o plano precisa estar com o status ATIVO, e
@@ -177,17 +167,17 @@ Ação: SUSPENDER -> o plano adquire o status de 'SUSPENSO';
 
 ## BOTÕES
 
-- 'Alterar'. Condições para ser exibido: vide RN_PTR_M;
-- 'Arquivar'. Condições para ser exibido: vide RN_PTR_N;
-- 'Assinar'. Condições para ser exibido: vide RN_PTR_O;
-- 'Ativar'. Condições para ser exibido: vide RN_PTR_P;
-- 'Cancelar assinatura'. Condições para ser exibido: vide RN_PTR_Q;
-- 'Cancelar plano'. Condições para ser exibido: vide RN_PTR_R;
-- 'Consultar'. Condições para ser exibido: vide RN_PTR_S;
-- 'Desarquivar'. Condições para ser exibido: vide RN_PTR_T;
-- 'Enviar para assinatura'. Condições para ser exibido: vide RN_PTR_U;
-- 'Incluir'. Condições para ser exibido: vide RN_PTR_V;
-- 'Reativar'. Condições para ser exibido: vide RN_PTR_W;
+*- 'Alterar'. Condições para ser exibido: vide RN_PTR_M;
+*- 'Arquivar'. Condições para ser exibido: vide RN_PTR_N;
+*- 'Assinar'. Condições para ser exibido: vide RN_PTR_O;
+*- 'Ativar'. Condições para ser exibido: vide RN_PTR_P;
+*- 'Cancelar assinatura'. Condições para ser exibido: vide RN_PTR_Q;
+*- 'Cancelar plano'. Condições para ser exibido: vide RN_PTR_R;
+*- 'Consultar'. Condições para ser exibido: vide RN_PTR_S;
+*- 'Desarquivar'. Condições para ser exibido: vide RN_PTR_T;
+*- 'Enviar para assinatura'. Condições para ser exibido: vide RN_PTR_U;
+*- 'Incluir'. Condições para ser exibido: vide RN_PTR_V;
+*- 'Reativar'. Condições para ser exibido: vide RN_PTR_W;
 - 'Suspender'. Condições para ser exibido: vide RN_PTR_X;
 
 ## REGRAS DE INTERFACE
@@ -227,7 +217,7 @@ Ação: SUSPENDER -> o plano adquire o status de 'SUSPENSO';
     - 'Consultar'. Condições para ser exibido: vide RN_PTR_S;
     - 'Suspender'. Condições para ser exibido: vide RN_PTR_X;
 
-- Estando no status "EXECUTADO"
+- Estando no status "CONCLUIDO"
   - botões-padrão:
     - 'Arquivar'. Condições para ser exibido: vide RN_PTR_N;
     - 'Consultar'. Condições para ser exibido: vide RN_PTR_S;
@@ -271,3 +261,14 @@ Ação: SUSPENDER -> o plano adquire o status de 'SUSPENSO';
 
 . a data final deve ser maior que a data inicial (não pode nem ser igual)
 . incluir na documentação do programa de gestão: quando um usuário for habilitado no PGD manualmente, deve ser automaticamente atribuída a ele a capacidade MOD_PTR_INCL
+
+## MÉTODO DESLOCADO PARA O DOCUMENTOSCONTROLLER/SERVICE
+
+Ação: ASSINAR -> enquanto faltar assinatura no TCR, o plano vai para o (ou permanece no) status de 'AGUARDANDO_ASSINATURA'. Quando o último assinar o TCR, o plano vai para o status 'ATIVO';
+
+- (RN_PTR_O) Condições para que um Plano de Trabalho possa ser assinado:
+  - o plano precisa estar com o status INCLUIDO, e:
+    - o usuário logado precisa ser o participante do plano ou o gestor da sua Unidade Executora, e
+    - a assinatura do usuário logado precisa ser uma das exigidas pelo Programa de Gestão, e ele não ter ainda assinado;
+  - ou o plano precisa estar com o status AGUARDANDO_ASSINATURA, e:
+    - a assinatura do usuário logado precisa ser uma das exigidas pelo Programa de Gestão, e ele não ter ainda assinado;

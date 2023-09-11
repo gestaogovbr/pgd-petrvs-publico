@@ -68,11 +68,11 @@ export class MateriaListComponent extends PageListBase<Materia, MateriaDaoServic
     let form: any = filter.value;
 
     if(form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome + "%"]);
+      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
 
     if(form.horas_aula?.length) {
-      result.push(["horas_aula", "like", "%" + form.horas_aula + "%"]);
+      result.push(["horas_aula", "like", "%" + form.horas_aula.trim().replace(" ", "%") + "%"]);
     }
 
     return result;

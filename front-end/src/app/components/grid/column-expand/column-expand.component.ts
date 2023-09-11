@@ -53,7 +53,7 @@ export class ColumnExpandComponent extends ComponentBase implements OnInit {
 
   public getClass(): string | undefined {
     let result = this.column.align == 'center' ? "text-center" : this.column.align == 'right' ? "text-end" : "";
-    return result.trim().length ? result.trim() : undefined;
+    return result.trim().replace(" ", "%").length ? result.trim().replace(" ", "%") : undefined;
   }
 
   public onExpand(event: Event) {

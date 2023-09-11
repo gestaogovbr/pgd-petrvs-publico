@@ -12,6 +12,7 @@ import { ModalPage } from './modal-page';
 import { Subject } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { EntityService } from 'src/app/services/entity.service';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 
 @Injectable()
 export abstract class PageBase implements OnInit, ModalPage {
@@ -52,6 +53,18 @@ export abstract class PageBase implements OnInit, ModalPage {
   public get submitting(): boolean {
     return this._submitting;
   } 
+  public get MAX_LENGTH_TEXT() { return 65500};
+  public get MIN_LENGTH_TEXT() { return 10};
+
+  /* Constantes */
+  public OPTION_INFORMACOES: ToolbarButton =  {
+    icon: "bi bi-info-circle",
+    label: "Informações",
+  };
+  public OPTION_EXCLUIR: ToolbarButton = {
+    icon: "bi bi-trash",
+    label: "Excluir",
+  };
 
   /* Injections */
   public lookup: LookupService;

@@ -72,7 +72,6 @@ export class AppComponent {
   public menuSchema: MenuSchema = {};
   public menuToolbar: any[] = [];
   public menuContexto: MenuContexto[] = [];
-  public contexto: MenuContexto;
   public menuProjeto: any;
   public menuGestao: any;
   public menuOperacional: any;
@@ -117,7 +116,7 @@ export class AppComponent {
     this.lex.cdRef = this.cdRef;
     /* Definição do menu do sistema */
     this.setMenuVars();
-    this.contexto = this.menuContexto[0];    
+    //this.globals.contexto = this.menuContexto[0];    
   }
 
   public setMenuVars() {
@@ -409,15 +408,13 @@ export class AppComponent {
    // this.contexto.key = "PGD"
   }
 
-  public onContextoSelect(item: any) {
-    this.contexto = item;
-    this.auth.usuarioConfig = {menu_contexto: item.key};
-    this.goHome();
-  }
-
-  public goHome() {
-    this.go.navigate({ route: ["home/"+this.contexto.key.toLowerCase( )] });
-  }
+  /*public onContextoSelect(item: any) {
+    if(this.globals.contexto = item) {
+      this.globals.contexto = item;
+      this.auth.usuarioConfig = {menu_contexto: item.key};
+      this.goHome();
+    }
+  }*/
 
   public orderMenu(a: any, b: any) {
     return a.nome < b.nome ? -1 : 1;
@@ -428,7 +425,7 @@ export class AppComponent {
   }
 
   public get menu(): any {
-    switch (this.contexto.key) {
+    switch (this.globals.contexto?.key) {
       case "GESTAO": return this.menuGestao;
       case "EXECUCAO": return this.menuExecucao;
       case "ADMINISTRADOR": return this.menuAdministrador;

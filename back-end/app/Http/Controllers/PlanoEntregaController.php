@@ -17,7 +17,8 @@ class PlanoEntregaController extends ControllerBase {
             $this->checkPermissions("ARQUIVAR", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
             $data = $request->validate([
                 'id' => ['required'],
-                'arquivar' => ['required']
+                'arquivar' => ['required'],
+                'justificativa' => ['required_if:arquivar,false']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
@@ -47,7 +48,8 @@ class PlanoEntregaController extends ControllerBase {
         try {
             $this->checkPermissions("CANCELAR_AVALIACAO", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
             $data = $request->validate([
-                'id' => ['required']
+                'id' => ['required'],
+                'justificativa' => ['present']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
@@ -62,7 +64,8 @@ class PlanoEntregaController extends ControllerBase {
         try {
             $this->checkPermissions("CANCELAR_CONCLUSAO", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
             $data = $request->validate([
-                'id' => ['required']
+                'id' => ['required'],
+                'justificativa' => ['present']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
@@ -77,7 +80,8 @@ class PlanoEntregaController extends ControllerBase {
         try {
             $this->checkPermissions("CANCELAR_HOMOLOGACAO", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
             $data = $request->validate([
-                'id' => ['required']
+                'id' => ['required'],
+                'justificativa' => ['present']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
@@ -92,7 +96,8 @@ class PlanoEntregaController extends ControllerBase {
         try {
             $this->checkPermissions("CANCELAR_PLANO", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
             $data = $request->validate([
-                'id' => ['required']
+                'id' => ['required'],
+                'justificativa' => ['present']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
@@ -106,14 +111,14 @@ class PlanoEntregaController extends ControllerBase {
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
             case 'QUERY':
-                if (!$usuario->hasPermissionTo('MOD_PENT')) throw new ServerException("CapacidadeSearchText", "Consulta não executada");
+                if (!$usuario->hasPermissionTo('MOD_PENT')) throw new ServerException("CapacidadeSearchText", "Consulta não realizada");
                 /*                 
                     (RN_PENT_V) CONSULTAR
                     - todos os participantes podem visualizar todos os planos de entrega, desde que possuam a capacidade "MOD_PENT"; 
                 */
                 break;
             case 'GETBYID':
-                if (!$usuario->hasPermissionTo('MOD_PENT')) throw new ServerException("CapacidadeSearchText", "Consulta não executada");
+                if (!$usuario->hasPermissionTo('MOD_PENT')) throw new ServerException("CapacidadeSearchText", "Consulta não realizada");
                 /*                 
                     (RN_PENT_V) CONSULTAR
                     - todos os participantes podem visualizar todos os planos de entrega, desde que possuam a capacidade "MOD_PENT"; 
@@ -126,7 +131,7 @@ class PlanoEntregaController extends ControllerBase {
                 $acao = UtilService::emptyEntry($data['entity'], "id") ? 'INSERT' : 'EDIT';
                 switch ($acao) {
                     case 'EDIT':    // alteração de um Plano de Entregas
-                        if (!$usuario->hasPermissionTo('MOD_PENT_EDT')) throw new ServerException("CapacidadeStore", "Alteração não executada");
+                        if (!$usuario->hasPermissionTo('MOD_PENT_EDT')) throw new ServerException("CapacidadeStore", "Alteração não realizada");
                         $canStore = false;
                         $condition1 = ($condicoes['planoIncluido'] || $condicoes['planoHomologando']) && ($condicoes['gestorUnidadePlano'] || $condicoes['unidadePlanoEhLotacao']);
                         $condition2 = $usuario->hasPermissionTo("MOD_PENT_EDT_FLH") && $condicoes['gestorUnidadePaiUnidadePlano'];
@@ -134,7 +139,7 @@ class PlanoEntregaController extends ControllerBase {
                         $condition4 = $condicoes['planoAtivo'] && $condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo(['MOD_PENT_EDT_ATV_HOMOL','MOD_PENT_EDT_ATV_ATV']);
                         $condition5 = $usuario->hasPermissionTo('MOD_PENT_QQR_UND');
                         if($condicoes['planoValido'] && ($condition1 || $condition2 || $condition3 || $condition4 || $condition5)) $canStore = true;
-                        if(!$canStore) throw new ServerException("CapacidadeStore", "Alteração não executada");
+                        if(!$canStore) throw new ServerException("CapacidadeStore", "Alteração não realizada");
                         /*  
                             (RN_PENT_L) Para ALTERAR um plano de entregas:
                                 - O usuário logado precisa possuir a capacidade "MOD_PENT_EDT", o plano de entregas precisa ser válido (ou seja, nem deletado, nem arquivado e com status diferente de 'CANCELADO'), e:
@@ -148,7 +153,7 @@ class PlanoEntregaController extends ControllerBase {
                         */
                         break;
                     case 'INSERT':  // inclusão de um novo Plano de Entregas
-                        if (!$usuario->hasPermissionTo('MOD_PENT_INCL')) throw new ServerException("CapacidadeStore", "Inclusão não executada");
+                        if (!$usuario->hasPermissionTo('MOD_PENT_INCL')) throw new ServerException("CapacidadeStore", "Inclusão não realizada");
                         $canStore = false;
                         if($condicoes['planoProprio']){
                             $condition1 = $condicoes['gestorUnidadePlano'] || $condicoes['gestorUnidadePaiUnidadePlano'];
@@ -182,11 +187,11 @@ class PlanoEntregaController extends ControllerBase {
                 $canDestroy = false;
                 $data = $request->validate(['id' => ['required']]);
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);                
-                if (!$usuario->hasPermissionTo('MOD_PENT_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não executada");
+                if (!$usuario->hasPermissionTo('MOD_PENT_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não realizada");
                 $condition1 = $condicoes['planoIncluido'] || $condicoes['planoHomologando'];
                 $condition2 = $condicoes['gestorUnidadePlano'] || $condicoes['unidadePlanoEhLotacao'];
                 if($condition1 && $condition2) $canDestroy = true;
-                if (!$canDestroy) throw new ServerException("CapacidadeStore", "Exclusão não executada");
+                if (!$canDestroy) throw new ServerException("CapacidadeStore", "Exclusão não realizada");
                 /*                 
                     (RN_PENT_X) EXCLUIR
                     - o usuário logado precisa possuir a capacidade "MOD_PENT_EXCL", o plano precisa estar com o status INCLUIDO ou HOMOLOGANDO; e
@@ -198,7 +203,7 @@ class PlanoEntregaController extends ControllerBase {
                 $data = $request->validate(['id' => ['required'], 'arquivar' => ['required']]);
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
                 if($data['arquivar']) {
-                    if (!(($condicoes['planoConcluido'] || $condicoes['planoAvaliado']) && !$condicoes['planoArquivado'] && ($condicoes['gestorUnidadePlano'] || ($condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo("MOD_PENT_ARQ"))))) throw new ServerException("CapacidadeStore", "Arquivamento não executado");
+                    if (!(($condicoes['planoConcluido'] || $condicoes['planoAvaliado']) && !$condicoes['planoArquivado'] && ($condicoes['gestorUnidadePlano'] || ($condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo("MOD_PENT_ARQ"))))) throw new ServerException("CapacidadeStore", "Arquivamento não realizado");
                     /*                 
                         (RN_PENT_N) ARQUIVAR
                         - o plano precisa estar com o status CONCLUIDO ou AVALIADO, não ter sido arquivado, e:
@@ -206,7 +211,7 @@ class PlanoEntregaController extends ControllerBase {
                             - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado e ele possuir a capacidade "MOD_PENT_ARQ";
                     */
                 } else {
-                    if (!($condicoes['planoArquivado'] && ($condicoes['gestorUnidadePlano'] || ($condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo("MOD_PENT_ARQ"))))) throw new ServerException("CapacidadeStore", "Desarquivamento não executado");
+                    if (!($condicoes['planoArquivado'] && ($condicoes['gestorUnidadePlano'] || ($condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo("MOD_PENT_ARQ"))))) throw new ServerException("CapacidadeStore", "Desarquivamento não realizado");
                     /*
                         (RN_PENT_W) DESARQUIVAR
                         - o plano precisa estar arquivado, e:
@@ -222,7 +227,7 @@ class PlanoEntregaController extends ControllerBase {
                 $condition2 = !empty($data['entity']['unidade']['id']) && UsuarioService::isIntegrante('AVALIADOR_PLANO_ENTREGA', $data['entity']['unidade']['id']);
                 $condition3 = $condicoes["unidadePaiUnidadePlanoEhLotacao"] && $usuario->hasPermissionTo("MOD_PENT_AVAL");
                 $condition4 = $condicoes['gestorLinhaAscendenteUnidadePlano'] && $usuario->hasPermissionTo("MOD_PENT_AVAL_SUBORD");
-                if (!($condicoes['planoConcluido'] && ($condition1 || $condition2 || $condition3 || $condition4))) throw new ServerException("CapacidadeStore", "Avaliação não executada");
+                if (!($condicoes['planoConcluido'] && ($condition1 || $condition2 || $condition3 || $condition4))) throw new ServerException("CapacidadeStore", "Avaliação não realizada");
                 /*                 
                     (RN_PENT_O) AVALIAR
                     - o plano precisa estar com o status CONCLUIDO, e:
@@ -250,7 +255,7 @@ class PlanoEntregaController extends ControllerBase {
             case 'CANCELAR_AVALIACAO':
                 $data = $request->validate(['id' => ['required']]);
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
-                if (!($condicoes['planoAvaliado'] && ($condicoes['gestorUnidadePaiUnidadePlano'] || (!empty($data['entity']['unidade']['id']) && UsuarioService::isIntegrante('AVALIADOR_PLANO_ENTREGA', $data['entity']['unidade']['id']))))) throw new ServerException("CapacidadeStore", "Cancelamento de Avaliação não executado");
+                if (!($condicoes['planoAvaliado'] && ($condicoes['gestorUnidadePaiUnidadePlano'] || (!empty($data['entity']['unidade']['id']) && UsuarioService::isIntegrante('AVALIADOR_PLANO_ENTREGA', $data['entity']['unidade']['id']))))) throw new ServerException("CapacidadeStore", "Cancelamento de Avaliação não realizado");
                 /*                 
                     (RN_PENT_R) CANCELAR AVALIAÇÃO
                     - o plano precisa estar com o status AVALIADO, e
@@ -261,7 +266,7 @@ class PlanoEntregaController extends ControllerBase {
             case 'CANCELAR_CONCLUSAO':
                 $data = $request->validate(['id' => ['required']]);
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
-                if (!($condicoes['planoConcluido'] && ($condicoes['gestorUnidadePlano'] || ($condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo("MOD_PENT_CANC_CONCL"))))) throw new ServerException("CapacidadeStore", "Cancelamento de Conclusão não executado");
+                if (!($condicoes['planoConcluido'] && ($condicoes['gestorUnidadePlano'] || ($condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo("MOD_PENT_CANC_CONCL"))))) throw new ServerException("CapacidadeStore", "Cancelamento de Conclusão não realizado");
                 /*                 
                     (RN_PENT_S) CANCELAR CONCLUSÃO
                     - o plano precisa estar com o status CONCLUIDO e o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
@@ -271,7 +276,7 @@ class PlanoEntregaController extends ControllerBase {
             case 'CANCELAR_HOMOLOGACAO':
                 $data = $request->validate(['id' => ['required']]);
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
-                if (!($condicoes['planoAtivo'] && ($condicoes['gestorUnidadePaiUnidadePlano'] || ($condicoes["unidadePaiUnidadePlanoEhLotacao"] && $usuario->hasPermissionTo("MOD_PENT_CANC_HOMOL")) || (!empty($data['entity']['unidade']['unidade_id']) && UsuarioService::isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $data['entity']['unidade']['unidade_id']))))) throw new ServerException("CapacidadeStore", "Cancelamento de Homologação não executado");
+                if (!($condicoes['planoAtivo'] && ($condicoes['gestorUnidadePaiUnidadePlano'] || ($condicoes["unidadePaiUnidadePlanoEhLotacao"] && $usuario->hasPermissionTo("MOD_PENT_CANC_HOMOL")) || (!empty($data['entity']['unidade']['unidade_id']) && UsuarioService::isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $data['entity']['unidade']['unidade_id']))))) throw new ServerException("CapacidadeStore", "Cancelamento de Homologação não realizado");
                 /*                 
                     (RN_PENT_T) CANCELAR HOMOLOGAÇÃO
                     - o plano precisa estar com o status ATIVO, e
@@ -283,7 +288,7 @@ class PlanoEntregaController extends ControllerBase {
             case 'CONCLUIR':
                 $data = $request->validate(['id' => ['required']]);
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
-                if (!($condicoes['planoAtivo'] && ($condicoes['gestorUnidadePlano'] || ($condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo("MOD_PENT_CONC"))))) throw new ServerException("CapacidadeStore", "Conclusão não executada");
+                if (!($condicoes['planoAtivo'] && ($condicoes['gestorUnidadePlano'] || ($condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo("MOD_PENT_CONC"))))) throw new ServerException("CapacidadeStore", "Conclusão não realizada");
                 /*  
                     (RN_PENT_U) CONCLUIR
                     - o plano precisa estar com o status ATIVO, e:
@@ -294,7 +299,7 @@ class PlanoEntregaController extends ControllerBase {
             case 'HOMOLOGAR':
                 $data = $request->validate(['id' => ['required']]);
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
-                if (!($condicoes['planoHomologando'] && ($condicoes['gestorUnidadePaiUnidadePlano'] || ($condicoes["unidadePaiUnidadePlanoEhLotacao"] && $usuario->hasPermissionTo("MOD_PENT_HOMOL")) || (!empty($data['entity']['unidade']['unidade_id']) && UsuarioService::isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $data['entity']['unidade']['unidade_id']))))) throw new ServerException("CapacidadeStore", "Homologação não executada");
+                if (!($condicoes['planoHomologando'] && ($condicoes['gestorUnidadePaiUnidadePlano'] || ($condicoes["unidadePaiUnidadePlanoEhLotacao"] && $usuario->hasPermissionTo("MOD_PENT_HOMOL")) || (!empty($data['entity']['unidade']['unidade_id']) && UsuarioService::isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $data['entity']['unidade']['unidade_id']))))) throw new ServerException("CapacidadeStore", "Homologação não realizada");
                 /*  
                     (RN_PENT_Y) HOMOLOGAR
                     - o plano precisa estar com o status HOMOLOGANDO, e:
@@ -307,7 +312,7 @@ class PlanoEntregaController extends ControllerBase {
             case 'LIBERAR_HOMOLOGACAO':
                 $data = $request->validate(['id' => ['required']]);
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
-                if (!($condicoes['planoIncluido'] && $condicoes['nrEntregas'] > 0 && ($condicoes['gestorUnidadePlano'] || ($condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo("MOD_PENT_LIB_HOMOL"))))) throw new ServerException("CapacidadeStore", "Liberação para Homologação não executada");
+                if (!($condicoes['planoIncluido'] && $condicoes['nrEntregas'] > 0 && ($condicoes['gestorUnidadePlano'] || ($condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo("MOD_PENT_LIB_HOMOL"))))) throw new ServerException("CapacidadeStore", "Liberação para Homologação não realizada");
                 /*  
                     (RN_PENT_AA) LIBERAR PARA HOMOLOGAÇÃO
                     - o plano precisa estar com o status INCLUIDO, conter ao menos uma entrega, e
@@ -318,7 +323,7 @@ class PlanoEntregaController extends ControllerBase {
             case 'REATIVAR':
                 $data = $request->validate(['id' => ['required']]);
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
-                if (!($condicoes['planoSuspenso'] && ($condicoes['gestorUnidadePlano'] || ($condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo("MOD_PENT_RTV")) || $condicoes['gestorLinhaAscendenteUnidadePlano']))) throw new ServerException("CapacidadeStore", "Reativação não executada");
+                if (!($condicoes['planoSuspenso'] && ($condicoes['gestorUnidadePlano'] || ($condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo("MOD_PENT_RTV")) || $condicoes['gestorLinhaAscendenteUnidadePlano']))) throw new ServerException("CapacidadeStore", "Reativação não realizada");
                 /*
                     (RN_PENT_AC) REATIVAR
                     - o plano precisa estar com o status SUSPENSO, e
@@ -330,7 +335,7 @@ class PlanoEntregaController extends ControllerBase {
             case 'RETIRAR_HOMOLOGACAO':
                 $data = $request->validate(['id' => ['required']]);
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
-                if (!($condicoes['planoHomologando'] && ($condicoes['gestorUnidadePlano'] || ($condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo("MOD_PENT_RET_HOMOL"))))) throw new ServerException("CapacidadeStore", "Retirada de Homologação não executada");                
+                if (!($condicoes['planoHomologando'] && ($condicoes['gestorUnidadePlano'] || ($condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo("MOD_PENT_RET_HOMOL"))))) throw new ServerException("CapacidadeStore", "Retirada de Homologação não realizada");                
                 /*  
                     (RN_PENT_AB) RETIRAR DE HOMOLOGAÇÃO
                     - o plano precisa estar com o status HOMOLOGANDO, e:
@@ -341,7 +346,7 @@ class PlanoEntregaController extends ControllerBase {
             case 'SUSPENDER':
                 $data = $request->validate(['id' => ['required']]);
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
-                if (!($condicoes['planoAtivo'] && ($condicoes['gestorUnidadePlano'] || ($condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo("MOD_PENT_SUSP")) || $condicoes['gestorLinhaAscendenteUnidadePlano']))) throw new ServerException("CapacidadeStore", "Suspensão não executada");
+                if (!($condicoes['planoAtivo'] && ($condicoes['gestorUnidadePlano'] || ($condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo("MOD_PENT_SUSP")) || $condicoes['gestorLinhaAscendenteUnidadePlano']))) throw new ServerException("CapacidadeStore", "Suspensão não realizada");
                 /*                 
                     (RN_PENT_AD) SUSPENDER
                     - o plano precisa estar com o status ATIVO, e
@@ -398,7 +403,8 @@ class PlanoEntregaController extends ControllerBase {
         try {
             $this->checkPermissions("REATIVAR", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
-                'id' => ['required']
+                'id' => ['required'],
+                'justificativa' => ['present']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
@@ -413,7 +419,8 @@ class PlanoEntregaController extends ControllerBase {
         try {
             $this->checkPermissions("RETIRAR_HOMOLOGACAO", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
             $data = $request->validate([
-                'id' => ['required']
+                'id' => ['required'],
+                'justificativa' => ['present']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
@@ -428,7 +435,8 @@ class PlanoEntregaController extends ControllerBase {
         try {
             $this->checkPermissions("SUSPENDER", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
             $data = $request->validate([
-                'id' => ['required']
+                'id' => ['required'],
+                'justificativa' => ['present']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([

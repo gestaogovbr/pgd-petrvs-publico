@@ -9,7 +9,7 @@ use Throwable;
 class TenantsLogsController extends ControllerBase {
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         /* Verifica se foi passada a credencial do administrador do sistema */
-        if(false) throw new ServerException("CapacidadeStore", "Inserção não executada");
+        if(false) throw new ServerException("CapacidadeStore", "Inserção não realizada");
     }
 
 }

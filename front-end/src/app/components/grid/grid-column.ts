@@ -21,6 +21,7 @@ export class GridColumn {
   public template?: TemplateRef<unknown>;
   public titleTemplate?: TemplateRef<unknown>;
   public editTemplate?: TemplateRef<unknown>;
+  public columnEditTemplate?: TemplateRef<unknown>;
   public expandTemplate?: TemplateRef<unknown>;
   public items: LookupItem[] = [];
   public onlyHours?: string;
@@ -28,9 +29,9 @@ export class GridColumn {
   public buttons?: ToolbarButton[];
   public save?: (row: any) => Promise<boolean>;
   public edit?: (row: any) => Promise<void>;
-  public dynamicButtons?: (row: any) => ToolbarButton[];
+  public dynamicButtons?: (row: any, metadata?: any) => ToolbarButton[];
   public options?: ToolbarButton[];
-  public dynamicOptions?: (row: any) => ToolbarButton[];
+  public dynamicOptions?: (row: any, metadata?: any) => ToolbarButton[];
   public onEdit?: (row: any) => void;
   public onDelete?: (row: any) => void;
   public onChange?: (row: any, form: FormGroup) => void;
@@ -44,6 +45,7 @@ export class GridColumn {
   public width?: number = undefined;
   public cellClass?: string;
   public always?: string;
+  public metadata?: any;
 
   public isType(type: ColumnType) {
     return (this.type + ":").startsWith(type + ":");
