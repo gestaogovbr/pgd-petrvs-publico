@@ -15,13 +15,13 @@ class UsuarioController extends ControllerBase
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
             case 'STORE':
-                if (!$usuario->hasPermissionTo('MOD_USER_INCL')) throw new ServerException("CapacidadeStore", "Inserção não executada");
+                if (!$usuario->hasPermissionTo('MOD_USER_INCL')) throw new ServerException("CapacidadeStore", "Inserção não realizada");
                 break;
             case 'EDIT':
-                if (!$usuario->hasPermissionTo('MOD_USER_EDT')) throw new ServerException("CapacidadeStore", "Edição não executada");
+                if (!$usuario->hasPermissionTo('MOD_USER_EDT')) throw new ServerException("CapacidadeStore", "Edição não realizada");
                 break;
             case 'DESTROY':
-                if (!$usuario->hasPermissionTo('MOD_USER_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não executada");
+                if (!$usuario->hasPermissionTo('MOD_USER_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não realizada");
                 break;
         }
     }
@@ -89,6 +89,21 @@ class UsuarioController extends ControllerBase
             return response()->json([
                 'success' => true,
                 'data' => CalendarioService::preparaParametros($data)
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function jaAssinouTCR(Request $request){
+        try {
+            $data = $request->validate([
+                'usuario_id' => ['present'],
+                'plano_trabalho_id' => ['required']
+            ]);
+            return response()->json([
+                'success' => true,
+                'data' => $this->service->jaAssinouTCR($data["usuario_id"],$data["plano_trabalho_id"])
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
