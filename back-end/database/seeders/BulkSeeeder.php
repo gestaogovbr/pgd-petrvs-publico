@@ -26,7 +26,7 @@ class BulkSeeeder{
             }
             else{
                 $this->iterator++;
-                $data[] = array_combine($this->header, array_map("utf8_encode", $row));
+                $data[] = array_combine($this->header, $row);
                 if($this->iterator != 0 && $this->iterator % 1000 == 0){
                     $is_mul_1000 = true;
                     $chunk = $data;
