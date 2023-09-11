@@ -27,6 +27,10 @@ class TipoAvaliacaoNota extends ModelBase
         "justificativas"
     ];
 
+    protected $casts = [
+      'nota' => 'array'
+    ];
+
     // Belongs
     public function tipoAvaliacao() { return $this->belongsTo(TipoAvaliacao::class); }    
     // Has
