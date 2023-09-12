@@ -360,7 +360,7 @@ class CadeiaValorListGridComponent extends src_app_modules_base_page_list_base__
       let result = [];
       let form = filter.value;
       if (form.nome?.length) {
-        result.push(["nome", "like", "%" + form.nome.replace(" ", "%") + "%"]);
+        result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
       }
       if (form.data_inicio) {
         result.push(["data_fim", ">=", form.data_inicio]);
@@ -579,7 +579,7 @@ class CadeiaValorListProcessosEntregasComponent extends src_app_modules_base_pag
         result.push(["cadeia_valor_id", "==", form.cadeia_valor_id]);
       }
       if (form.nome?.length) {
-        result.push(["or", ["nome", "like", "%" + form.nome.replace(" ", "%") + "%"], ["sigla", "like", "%" + form.nome.replace(" ", "%") + "%"]]);
+        result.push(["or", ["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"], ["sigla", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]]);
       }
       return result;
     };
@@ -1494,7 +1494,7 @@ class CadeiaValorMapaComponent extends src_app_modules_base_page_frame_base__WEB
             if (entity) result.dialog.close();
             yield _this2.refreshCadeiaValor();
           } catch (error) {
-            _this2.dialog.alert("Error", error.message ? error.message : error || "Erro deconhecido");
+            _this2.dialog.alert("Error", error.message ? error.message : error || "Erro desconhecido");
           } finally {
             _this2.submitting = false;
           }
@@ -1515,7 +1515,7 @@ class CadeiaValorMapaComponent extends src_app_modules_base_page_frame_base__WEB
           yield _this3.cadeiaValorProcessoDao.delete(processo.id);
           yield _this3.refreshCadeiaValor();
         } catch (error) {
-          _this3.dialog.alert("Erro", "Erro ao excluir: " + (error?.message ? error?.message : error || "Erro deconhecido"));
+          _this3.dialog.alert("Erro", "Erro ao excluir: " + (error?.message ? error?.message : error || "Erro desconhecido"));
         }
       }
     })();

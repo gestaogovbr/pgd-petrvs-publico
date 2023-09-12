@@ -60,10 +60,10 @@ export class PlanoEntregaListEntregaListComponent extends PageListBase<PlanoEntr
       result.push(["unidade_id", "==", form.unidade_id]);
     }
     if (form.descricao?.length) {
-      result.push(["descricao", "like", "%" + form.descricao.replace(" ", "%") + "%"]);
+      result.push(["descricao", "like", "%" + form.descricao.trim().replace(" ", "%") + "%"]);
     }
     if (form.destinatario?.length) {
-      result.push(["destinatario", "like", "%" + form.destinatario.replace(" ", "%") + "%"]);
+      result.push(["destinatario", "like", "%" + form.destinatario.trim().replace(" ", "%") + "%"]);
     }
     return result;
   }

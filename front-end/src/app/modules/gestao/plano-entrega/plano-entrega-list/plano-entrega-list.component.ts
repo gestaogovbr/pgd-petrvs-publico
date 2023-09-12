@@ -10,6 +10,7 @@ import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { PlanoEntregaService } from '../plano-entrega.service';
+import { FullRoute } from 'src/app/services/navigate.service';
 
 @Component({
   selector: 'plano-entrega-list',
@@ -29,6 +30,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   public habilitarAdesaoToolbar: boolean = false;
   public toolbarButtons: ToolbarButton[] = [];
   public botoes: ToolbarButton[] = [];
+  public routeStatus: FullRoute = {route: ["uteis","status"]};
   public BOTAO_ADERIR_TOOLBAR: ToolbarButton;
   public BOTAO_ADERIR_OPTION: ToolbarButton;
   public BOTAO_ALTERAR: ToolbarButton;
@@ -71,7 +73,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     });
     this.join = ['planejamento:id,nome', 'programa:id,nome', 'cadeia_valor:id,nome', 'unidade:id,sigla,path', 'entregas.entrega', 'entregas.demandante', 'unidade.gestor:id', 'unidade.gestor_substituto:id'];
     this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }];
-    this.BOTAO_ADERIR_OPTION = { label: "Aderir", icon: this.entityService.getIcon("Adesao"), onClick: (() => { this.go.navigate({route: ['gestao', 'plano-entrega', 'adesao']}, { metadata: { planoEntrega: this.linha }, modalClose: (modalResult) => { this.refresh(); } }); }).bind(this) };
+    this.BOTAO_ADERIR_OPTION = { label: "Aderir", icon: this.entityService.getIcon("Adesao"), onClick: (() => { this.go.navigate({ route: ['gestao', 'plano-entrega', 'adesao'] }, { metadata: { planoEntrega: this.linha }, modalClose: (modalResult) => { this.refresh(); } }); }).bind(this) };
     this.BOTAO_ADERIR_TOOLBAR = { label: "Aderir", disabled: !this.habilitarAdesaoToolbar, icon: this.entityService.getIcon("Adesao"), onClick: (() => { this.go.navigate({ route: ['gestao', 'plano-entrega', 'adesao'] }, { modalClose: (modalResult) => { this.refresh(); } }); }).bind(this) };
     this.BOTAO_ALTERAR = { label: "Alterar", icon: "bi bi-pencil-square", color: "btn-outline-info", onClick: (planoEntrega: PlanoEntrega) => this.go.navigate({ route: ['gestao', 'plano-entrega', planoEntrega.id, 'edit'] }, this.modalRefreshId(planoEntrega)) };
     this.BOTAO_ARQUIVAR = { label: "Arquivar", icon: "bi bi-inboxes", onClick: this.arquivar.bind(this) };
@@ -86,25 +88,27 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.BOTAO_EXCLUIR = { label: "Excluir", icon: "bi bi-trash", onClick: this.delete.bind(this) };
     this.BOTAO_HOMOLOGAR = { label: "Homologar", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "ATIVO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "ATIVO"), onClick: this.homologar.bind(this) };
     this.BOTAO_LIBERAR_HOMOLOGACAO = { label: "Liberar para homologação", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "HOMOLOGANDO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "HOMOLOGANDO"), onClick: this.liberarHomologacao.bind(this) };
-    this.BOTAO_LOGS = { label: "Logs", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), onClick: (planoEntrega: PlanoEntrega) => this.go.navigate({route: ['gestao', 'plano-entrega', planoEntrega.id, 'logs']}) };
+    this.BOTAO_LOGS = { label: "Logs", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), onClick: (planoEntrega: PlanoEntrega) => this.go.navigate({ route: ['gestao', 'plano-entrega', planoEntrega.id, 'logs'] }) };
     this.BOTAO_REATIVAR = { label: "Reativar", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "ATIVO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "ATIVO"), onClick: this.reativar.bind(this) };
     this.BOTAO_RETIRAR_HOMOLOGACAO = { label: "Retirar de homologação", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), onClick: this.retirarHomologacao.bind(this) };
     this.BOTAO_SUSPENDER = { label: "Suspender", id: "PAUSADO", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "SUSPENSO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "SUSPENSO"), onClick: this.suspender.bind(this) };
-    this.botoes = [this.BOTAO_ALTERAR, this.BOTAO_ARQUIVAR, this.BOTAO_AVALIAR, this.BOTAO_CANCELAR_AVALIACAO, this.BOTAO_CANCELAR_CONCLUSAO, 
-                  this.BOTAO_CANCELAR_HOMOLOGACAO, this.BOTAO_CONCLUIR, this.BOTAO_CONSULTAR, this.BOTAO_DESARQUIVAR, this.BOTAO_EXCLUIR, this.BOTAO_HOMOLOGAR, this.BOTAO_LIBERAR_HOMOLOGACAO, 
-                  this.BOTAO_LOGS, this.BOTAO_REATIVAR, this.BOTAO_RETIRAR_HOMOLOGACAO, this.BOTAO_SUSPENDER];
-                  //this.BOTAO_ADERIR_OPTION, this.BOTAO_ADERIR_TOOLBAR,
+    this.botoes = [this.BOTAO_ALTERAR, this.BOTAO_ARQUIVAR, this.BOTAO_AVALIAR, this.BOTAO_CANCELAR_AVALIACAO, this.BOTAO_CANCELAR_CONCLUSAO,
+    this.BOTAO_CANCELAR_HOMOLOGACAO, this.BOTAO_CONCLUIR, this.BOTAO_CONSULTAR, this.BOTAO_DESARQUIVAR, this.BOTAO_EXCLUIR, this.BOTAO_HOMOLOGAR, this.BOTAO_LIBERAR_HOMOLOGACAO,
+    this.BOTAO_LOGS, this.BOTAO_REATIVAR, this.BOTAO_RETIRAR_HOMOLOGACAO, this.BOTAO_SUSPENDER];
+    //this.BOTAO_ADERIR_OPTION, this.BOTAO_ADERIR_TOOLBAR,
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void 
+  {
     super.ngOnInit();
     this.showFilter = typeof this.queryParams?.showFilter != "undefined" ? (this.queryParams.showFilter == "true") : true;
     this.selectable = this.metadata?.selectable || this.selectable;
     this.checaBotaoAderirToolbar();
-    //this.toolbarButtons.push(this.BOTAO_ADERIR_TOOLBAR);
+    //this.toolbarButtons.push(this.BOTAO_ADERIR_TOOLBAR);  // Adesão de plano suspensa, por enquanto
   }
 
-  ngAfterContentChecked(): void {
+  ngAfterContentChecked(): void 
+  {
     if (this.auth.unidade != this.unidadeSelecionada) {
       this.unidadeSelecionada = this.auth.unidade!;
       this.checaBotaoAderirToolbar();
@@ -113,12 +117,12 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   }
 
   public checaBotaoAderirToolbar() {
-    let planos_ativos_unidade_pai = this.planosEntregasAtivosUnidadePai().map(x => x.id);
+    /* let planos_ativos_unidade_pai = this.planosEntregasAtivosUnidadePai().length ? this.planosEntregasAtivosUnidadePai().map(x => x.id) : [];
     let planos_superiores_vinculados_pela_unidade_selecionada = this.planosEntregasAtivosUnidadeSelecionada().map(x => x.plano_entrega_id).filter(x => x != null);
     let condition1 = this.auth.isGestorUnidade() || this.auth.isGestorUnidade(this.auth.unidade?.unidade_pai_id) || (this.auth.isLotacaoUsuario(this.auth.unidade) && this.auth.hasPermissionTo("MOD_PENT_ADR"));
     let condition2 = !!planos_ativos_unidade_pai.filter(x => !planos_superiores_vinculados_pela_unidade_selecionada.includes(x)).length;
     this.habilitarAdesaoToolbar = condition1 && condition2;
-    this.BOTAO_ADERIR_TOOLBAR.disabled = !this.habilitarAdesaoToolbar;
+    this.BOTAO_ADERIR_TOOLBAR.disabled = !this.habilitarAdesaoToolbar; */
     /*  (RI_PENT_1)
         O botão Aderir, na toolbar, deverá ser exibido sempre, mas para ficar habilitado:
         1. o usuário logado precisa ser gestor da unidade selecionada ou da sua unidade-pai, ou uma destas ser sua unidade de lotação principal e ele 
@@ -146,7 +150,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     super.filterClear(filter);
   }
 
-  public filterWhere = (filter: FormGroup) => {
+  public filterWhere = (filter: FormGroup) => 
+  {
     let result: any[] = [];
     let form: any = filter.value;
     /*
@@ -160,52 +165,29 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       let unidadesUsuarioEhGestor = this.auth.unidades?.filter(x => this.auth.isGestorUnidade(x));
       let w1 = ["unidade_id", "in", this.auth.unidades?.map(u => u.id)];
       let w2 = ["unidade_id", "in", unidadesUsuarioEhGestor?.map(u => u.unidade_pai?.id)];
-      //let w3 = ["unidade.unidade_pai_id", "in", unidadesUsuarioEhGestor?.map(u => u.id)];
-      //if (this.auth.isGestorAlgumaAreaTrabalho()) result.push(["or", w1, w2, w3]); else result.push(w1);
-      if (this.auth.isGestorAlgumaAreaTrabalho()) result.push(["or", w1, w2]); else result.push(w1);
-      if (form.nome?.length) {
-        result.push(["nome", "like", "%" + form.nome + "%"]);
-      }
-      if (form.data_inicio) {
-        result.push(["data_inicio", ">=", form.data_inicio]);
-      }
-      if (form.data_fim) {
-        result.push(["data_fim", "<=", form.data_fim]);
-      }
-      if (form.unidade_id) {
-        result.push(["unidade_id", "==", form.unidade_id]);
-      }
-      if (form.planejamento_id) {
-        result.push(["planejamento_id", "==", form.planejamento_id]);
-      }
-      if (form.cadeia_valor_id) {
-        result.push(["cadeia_valor_id", "==", form.cadeia_valor_id]);
-      }
-      if (form.status) {
-        result.push(["status", "==", form.status]);
-      }
-    } else {
-      if (form.nome?.length) {
-        result.push(["nome", "like", "%" + form.nome + "%"]);
-      }
-      if (form.data_inicio) {
-        result.push(["data_inicio", ">=", form.data_inicio]);
-      }
-      if (form.data_fim) {
-        result.push(["data_fim", "<=", form.data_fim]);
-      }
-      if (form.unidade_id) {
-        result.push(["unidade_id", "==", form.unidade_id]);
-      }
-      if (form.planejamento_id) {
-        result.push(["planejamento_id", "==", form.planejamento_id]);
-      }
-      if (form.cadeia_valor_id) {
-        result.push(["cadeia_valor_id", "==", form.cadeia_valor_id]);
-      }
-      if (form.status) {
-        result.push(["status", "==", form.status]);
-      }
+      let w3 = ["unidade.unidade_pai_id", "in", unidadesUsuarioEhGestor?.map(u => u.id)];
+      if (this.auth.isGestorAlgumaAreaTrabalho()) result.push(["or", w1, w2, w3]); else result.push(w1);
+    }
+    if (form.nome?.length) {
+      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
+    }
+    if (form.data_inicio) {
+      result.push(["data_inicio", ">=", form.data_inicio]);
+    }
+    if (form.data_fim) {
+      result.push(["data_fim", "<=", form.data_fim]);
+    }
+    if (form.unidade_id) {
+      result.push(["unidade_id", "==", form.unidade_id]);
+    }
+    if (form.planejamento_id) {
+      result.push(["planejamento_id", "==", form.planejamento_id]);
+    }
+    if (form.cadeia_valor_id) {
+      result.push(["cadeia_valor_id", "==", form.cadeia_valor_id]);
+    }
+    if (form.status) {
+      result.push(["status", "==", form.status]);
     }
     //  (RI_PENT_5) Por padrão, os planos de entregas retornados na listagem do grid são os que não foram arquivados nem cancelados.
     //  O não-arquivamento é tratado abaixo. A condição de não-cancelado é tratada no back-end.
@@ -213,7 +195,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     return result;
   }
 
-  public onAgruparChange(event: Event) {
+  public onAgruparChange(event: Event) 
+  {
     const agrupar = this.filter!.controls.agrupar.value;
     if ((agrupar && !this.groupBy?.length) || (!agrupar && this.groupBy?.length)) {
       this.groupBy = agrupar ? [{ field: "unidade.sigla", label: "Unidade" }] : [];
@@ -221,35 +204,36 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     }
   }
 
-  public dynamicButtons(row: PlanoEntrega): ToolbarButton[] {
+  public dynamicButtons(row: PlanoEntrega): ToolbarButton[] 
+  {
     let result: ToolbarButton[] = [];
     let planoEntrega: PlanoEntrega = row as PlanoEntrega;
     switch (this.planoEntregaService.situacaoPlano(planoEntrega)) {
       case 'INCLUIDO':
-        if(this.botaoAtendeCondicoes(this.BOTAO_LIBERAR_HOMOLOGACAO, row)) result.push(this.BOTAO_LIBERAR_HOMOLOGACAO); else result.push(this.BOTAO_CONSULTAR);
+        if (this.botaoAtendeCondicoes(this.BOTAO_LIBERAR_HOMOLOGACAO, row)) result.push(this.BOTAO_LIBERAR_HOMOLOGACAO); else result.push(this.BOTAO_CONSULTAR);
         break;
       case 'HOMOLOGANDO':
-        if(this.botaoAtendeCondicoes(this.BOTAO_HOMOLOGAR, row)) result.push(this.BOTAO_HOMOLOGAR);
+        if (this.botaoAtendeCondicoes(this.BOTAO_HOMOLOGAR, row)) result.push(this.BOTAO_HOMOLOGAR);
         break;
       case 'ATIVO':
-        if(this.botaoAtendeCondicoes(this.BOTAO_CONCLUIR, row)) result.push(this.BOTAO_CONCLUIR);
+        if (this.botaoAtendeCondicoes(this.BOTAO_CONCLUIR, row)) result.push(this.BOTAO_CONCLUIR);
         break;
       case 'CONCLUIDO':
-        if(this.botaoAtendeCondicoes(this.BOTAO_AVALIAR, row)) result.push(this.BOTAO_AVALIAR);
+        if (this.botaoAtendeCondicoes(this.BOTAO_AVALIAR, row)) result.push(this.BOTAO_AVALIAR);
         break;
       case 'SUSPENSO':
-        if(this.botaoAtendeCondicoes(this.BOTAO_REATIVAR, row)) result.push(this.BOTAO_REATIVAR);
+        if (this.botaoAtendeCondicoes(this.BOTAO_REATIVAR, row)) result.push(this.BOTAO_REATIVAR);
         break;
       case 'AVALIADO':
-        if(this.botaoAtendeCondicoes(this.BOTAO_ARQUIVAR, row)) result.push(this.BOTAO_ARQUIVAR);
+        if (this.botaoAtendeCondicoes(this.BOTAO_ARQUIVAR, row)) result.push(this.BOTAO_ARQUIVAR);
         break;
       case 'ARQUIVADO':
-        if(this.botaoAtendeCondicoes(this.BOTAO_DESARQUIVAR, row)) result.push(this.BOTAO_DESARQUIVAR);
+        if (this.botaoAtendeCondicoes(this.BOTAO_DESARQUIVAR, row)) result.push(this.BOTAO_DESARQUIVAR);
         break;
       case 'CANCELADO':
         break;
     }
-    if(!result.length) result.push(this.BOTAO_CONSULTAR);
+    if (!result.length) result.push(this.BOTAO_CONSULTAR);
     return result;
   }
 
@@ -257,13 +241,13 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     let result: ToolbarButton[] = [];
     this.linha = row;
     this.botoes.forEach(botao => {
-      if(this.botaoAtendeCondicoes(botao, row)) result.push(botao);
+      if (this.botaoAtendeCondicoes(botao, row)) result.push(botao);
     });
     return result;
   }
 
   public botaoAtendeCondicoes(botao: ToolbarButton, planoEntrega: PlanoEntrega): boolean {
-    switch(botao){
+    switch (botao) {
       case this.BOTAO_ADERIR_OPTION:
         /*         
           (RI_PENT_2) O botão Aderir, nas linhas do grid, deverá aparecer num plano somente se:
@@ -289,7 +273,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
         let condicao1 = ['INCLUIDO', 'HOMOLOGANDO'].includes(this.planoEntregaService.situacaoPlano(planoEntrega)) && (this.auth.isGestorUnidade(planoEntrega.unidade) || this.auth.isLotacaoUsuario(planoEntrega.unidade));
         let condicao2 = this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id) && this.auth.hasPermissionTo("MOD_PENT_EDT_FLH");
         let condicao3 = this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', planoEntrega.unidade!.unidade_pai_id!);
-        let condicao4 = this.planoEntregaService.situacaoPlano(planoEntrega) == 'ATIVO' && this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo(["MOD_PENT_EDT_ATV_HOMOL","MOD_PENT_EDT_ATV_ATV"]);
+        let condicao4 = this.planoEntregaService.situacaoPlano(planoEntrega) == 'ATIVO' && this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo(["MOD_PENT_EDT_ATV_HOMOL", "MOD_PENT_EDT_ATV_ATV"]);
         let condicao5 = this.auth.hasPermissionTo("MOD_PENT_QQR_UND");
         return this.auth.hasPermissionTo("MOD_PENT_EDT") && this.planoEntregaService.isValido(planoEntrega) && (condicao1 || condicao2 || condicao3 || condicao4 || condicao5);
       case this.BOTAO_ARQUIVAR:
@@ -310,11 +294,11 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
               - o usuário logado precisa ser gestor de alguma Unidade da linha hierárquica ascendente da Unidade do plano (Unidade A e superiores), e possuir a capacidade "MOD_PENT_AVAL_SUBORD";
               - sugerir arquivamento automático (vide RI_PENT_A); 
         */
-       let condic1 = this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id);
-       let condic2 = this.auth.isIntegrante('AVALIADOR_PLANO_ENTREGA', planoEntrega.unidade!.id!);
-       let condic3 = this.auth.isLotacaoUsuario(planoEntrega.unidade?.unidade_pai) && this.auth.hasPermissionTo("MOD_PENT_AVAL");
-       let condic4 = this.auth.isGestorLinhaAscendente(planoEntrega.unidade!) && this.auth.hasPermissionTo("MOD_PENT_AVAL_SUBORD");
-       return this.planoEntregaService.situacaoPlano(planoEntrega) == 'CONCLUIDO' && (condic1 || condic2 || condic3 || condic4);
+        let condic1 = this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id);
+        let condic2 = this.auth.isIntegrante('AVALIADOR_PLANO_ENTREGA', planoEntrega.unidade!.id!);
+        let condic3 = this.auth.isLotacaoUsuario(planoEntrega.unidade?.unidade_pai) && this.auth.hasPermissionTo("MOD_PENT_AVAL");
+        let condic4 = this.auth.isGestorLinhaAscendente(planoEntrega.unidade!) && this.auth.hasPermissionTo("MOD_PENT_AVAL_SUBORD");
+        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'CONCLUIDO' && (condic1 || condic2 || condic3 || condic4);
       case this.BOTAO_CANCELAR_AVALIACAO:
         /*
           (RN_PENT_R) Para CANCELAR a AVALIAÇÃO de um plano de entregas:
@@ -330,22 +314,22 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
           - a Unidade do plano (Unidade B) precisa ser sua Unidade de lotação e o usuário logado precisa possuir a capacidade "**MOD_PENT_CANC_CONCL";        */
         return this.planoEntregaService.situacaoPlano(planoEntrega) == 'CONCLUIDO' && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_CANC_CONCL")));
       case this.BOTAO_CANCELAR_HOMOLOGACAO:
-          /*
-            (RN_PENT_T) Para CANCELAR a HOMOLOGAÇÃO de um plano de entregas:
-            - o plano precisa estar com o status ATIVO, e
-              - o usuário logado precisa ser gestor da Unidade-pai (Unidade A) da Unidade do plano (Unidade B), ou
-              - a Unidade-pai (Unidade A) precisa ser a Unidade de lotação do usuário logado, e ele possuir a capacidade "MOD_PENT_CANC_HOMOL"; ou
-              - o usuário logado precisa possuir a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para a Unidade-pai (Unidade A) da Unidade do plano (Unidade B);
-          */
-          return this.planoEntregaService.situacaoPlano(planoEntrega) == 'ATIVO' && (this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id) || (this.auth.isLotacaoUsuario(planoEntrega.unidade?.unidade_pai) && this.auth.hasPermissionTo("MOD_PENT_CANC_HOMOL")) || this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', planoEntrega.unidade!.unidade_pai_id!));
+        /*
+          (RN_PENT_T) Para CANCELAR a HOMOLOGAÇÃO de um plano de entregas:
+          - o plano precisa estar com o status ATIVO, e
+            - o usuário logado precisa ser gestor da Unidade-pai (Unidade A) da Unidade do plano (Unidade B), ou
+            - a Unidade-pai (Unidade A) precisa ser a Unidade de lotação do usuário logado, e ele possuir a capacidade "MOD_PENT_CANC_HOMOL"; ou
+            - o usuário logado precisa possuir a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para a Unidade-pai (Unidade A) da Unidade do plano (Unidade B);
+        */
+        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'ATIVO' && (this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id) || (this.auth.isLotacaoUsuario(planoEntrega.unidade?.unidade_pai) && this.auth.hasPermissionTo("MOD_PENT_CANC_HOMOL")) || this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', planoEntrega.unidade!.unidade_pai_id!));
       case this.BOTAO_CANCELAR_PLANO:
-          /*
-            (RN_PENT_P) Para CANCELAR UM PLANO DE ENTREGAS:
-            - o usuário logado precisa possuir a capacidade "MOD_PENT_CNC", o plano precisa estar em um dos seguintes status: INCLUIDO, HOMOLOGANDO, ATIVO ou CONCLUIDO; e
-              - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
-              - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado;
-          */
-          return this.auth.hasPermissionTo("MOD_PENT_CNC") && ['INCLUIDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO'].includes(this.planoEntregaService.situacaoPlano(planoEntrega)) && (this.auth.isGestorUnidade(planoEntrega.unidade?.id) || this.auth.isLotacaoUsuario(planoEntrega.unidade));
+        /*
+          (RN_PENT_P) Para CANCELAR UM PLANO DE ENTREGAS:
+          - o usuário logado precisa possuir a capacidade "MOD_PENT_CNC", o plano precisa estar em um dos seguintes status: INCLUIDO, HOMOLOGANDO, ATIVO ou CONCLUIDO; e
+            - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
+            - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado;
+        */
+        return this.auth.hasPermissionTo("MOD_PENT_CNC") && ['INCLUIDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO'].includes(this.planoEntregaService.situacaoPlano(planoEntrega)) && (this.auth.isGestorUnidade(planoEntrega.unidade?.id) || this.auth.isLotacaoUsuario(planoEntrega.unidade));
       case this.BOTAO_CONCLUIR:
         /*
           (RN_PENT_U) Para CONCLUIR um plano de entregas:
@@ -353,13 +337,13 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
             - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
             - a Unidade do plano (Unidade B) precisa ser sua Unidade de lotação e o usuário logado precisa possuir a capacidade "MOD_PENT_CONC";
         */
-        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'ATIVO' && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_CONC")));        
+        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'ATIVO' && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_CONC")));
       case this.BOTAO_CONSULTAR:
         /*
           (RN_PENT_V) CONSULTAR
           - todos os participantes podem visualizar todos os planos de entrega, desde que possuam a capacidade "MOD_PENT";
         */
-        return this.auth.hasPermissionTo("MOD_PENT");          
+        return this.auth.hasPermissionTo("MOD_PENT");
       case this.BOTAO_DESARQUIVAR:
         /*
           (RN_PENT_W) Para DESARQUIVAR um plano de entregas:
@@ -375,7 +359,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
               - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
               - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado;
         */
-        return this.auth.hasPermissionTo("MOD_PENT_EXCL") && ['INCLUIDO', 'HOMOLOGANDO'].includes(this.planoEntregaService.situacaoPlano(planoEntrega)) && (this.auth.isGestorUnidade(planoEntrega.unidade) || this.auth.isLotacaoUsuario(planoEntrega.unidade));  ;  
+        return this.auth.hasPermissionTo("MOD_PENT_EXCL") && ['INCLUIDO', 'HOMOLOGANDO'].includes(this.planoEntregaService.situacaoPlano(planoEntrega)) && (this.auth.isGestorUnidade(planoEntrega.unidade) || this.auth.isLotacaoUsuario(planoEntrega.unidade));;
       case this.BOTAO_HOMOLOGAR:
         /*
           (RN_PENT_Y) Para HOMOLOGAR um plano de entregas:
@@ -385,7 +369,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
               - o usuário logado precisa possuir a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para a Unidade-pai (Unidade A); (RN_PENT_E)
           - A homologação do plano de entregas não se aplica à Unidade instituidora.
         */
-        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'HOMOLOGANDO' && (this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id) || (this.auth.isLotacaoUsuario(planoEntrega.unidade!.unidade_pai) && this.auth.hasPermissionTo("MOD_PENT_HOMOL")) || this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', planoEntrega.unidade!.unidade_pai_id!));  
+        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'HOMOLOGANDO' && (this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id) || (this.auth.isLotacaoUsuario(planoEntrega.unidade!.unidade_pai) && this.auth.hasPermissionTo("MOD_PENT_HOMOL")) || this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', planoEntrega.unidade!.unidade_pai_id!));
       case this.BOTAO_LIBERAR_HOMOLOGACAO:
         /*
           (RN_PENT_AA) Para LIBERAR PARA HOMOLOGAÇÃO um plano de entregas:
@@ -393,12 +377,12 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
               - o usuário logado precisa ser gestor da Unidade do plano (Unidade B); ou
               - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado, e este possuir a capacidade "MOD_PENT_LIB_HOMOL"
         */
-        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'INCLUIDO' && planoEntrega.entregas.length > 0 && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_LIB_HOMOL")));  
+        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'INCLUIDO' && planoEntrega.entregas.length > 0 && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_LIB_HOMOL")));
       case this.BOTAO_LOGS:
         /*
         
         */
-        return this.auth.isGestorUnidade(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_AVAL_SUBORD");  
+        return this.auth.isGestorUnidade(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_AVAL_SUBORD");
       case this.BOTAO_REATIVAR:
         /*
           (RN_PENT_AC) Para REATIVAR um plano de entregas:
@@ -407,7 +391,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
               - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado, e ele possuir a capacidade "MOD_PENT_RTV"; ou
               - o usuário logado precisa ser gestor de alguma Unidade da linha hierárquica ascendente (Unidade A e superiores) da Unidade do plano (Unidade B);
         */
-        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'SUSPENSO' && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_RTV")) || this.auth.isGestorLinhaAscendente(planoEntrega.unidade!) );  
+        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'SUSPENSO' && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_RTV")) || this.auth.isGestorLinhaAscendente(planoEntrega.unidade!));
       case this.BOTAO_RETIRAR_HOMOLOGACAO:
         /*
           (RN_PENT_AB) Para RETIRAR DE HOMOLOGAÇÃO um plano de entregas:
@@ -415,7 +399,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
               - o usuário logado precisa ser gestor da Unidade do plano (Unidade B); ou
               - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado, e este possuir a capacidade "MOD_PENT_RET_HOMOL"
         */
-        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'HOMOLOGANDO' && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_RET_HOMOL"))); 
+        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'HOMOLOGANDO' && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_RET_HOMOL")));
       case this.BOTAO_SUSPENDER:
         /*
           (RN_PENT_AD) Para SUSPENDER um plano de entregas:
@@ -424,206 +408,195 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
               - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado, e ele possuir a capacidade "MOD_PENT_SUSP"; ou
               - o usuário logado precisa ser gestor de alguma Unidade da linha hierárquica ascendente (Unidade A e superiores) da Unidade do plano (Unidade B);
         */
-        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'ATIVO' && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_SUSP")) || this.auth.isGestorLinhaAscendente(planoEntrega.unidade!));  
+        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'ATIVO' && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_SUSP")) || this.auth.isGestorLinhaAscendente(planoEntrega.unidade!));
     }
     return false;
   }
 
   public arquivar(planoEntrega: PlanoEntrega) {
-    this.dialog.confirm("Arquivar?", "Deseja realmente arquivar o Plano de Entregas?").then(confirm => {
-      if (confirm) {
-        this.dao!.arquivar(planoEntrega.id, true).then(() => {
-          if (this.filter?.controls.arquivadas?.value) {
-            this.grid!.query!.refreshId(planoEntrega.id);
-          } else {
-            (this.grid?.query || this.query!).removeId(planoEntrega.id);
-          }
-        }).catch(error => this.dialog.alert("Erro", "Erro ao arquivar o Plano de Entregas: " + error?.message ? error?.message : error));
+    this.go.navigate(this.routeStatus, {
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: planoEntrega.status, onClick: this.dao!.arquivar.bind(this.dao)},
+      title: "Arquivar Plano de Entregas",
+      modalClose: (modalResult) => {
+        if(modalResult) {
+            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+              this.checaBotaoAderirToolbar();
+            });
+        };
       }
     });
   }
 
   public avaliar(planoEntrega: PlanoEntrega) {
-    const self = this;
-    this.dao!.avaliar(planoEntrega.id).then(function () {
-      (self.grid?.query || self.query!).refreshId(planoEntrega.id);
-      self.dialog.alert("Sucesso", "Avaliado com sucesso!");
-    }).catch(function (error) {
-      self.dialog.alert("Erro", "Erro ao avaliar: " + error?.message ? error?.message : error);
+    this.go.navigate(this.routeStatus, {
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "AVALIADO", onClick: this.dao!.avaliar.bind(this.dao)},
+      title: "Avaliar Plano de Entregas",
+      modalClose: (modalResult) => {
+        if(modalResult) {
+            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+              this.checaBotaoAderirToolbar();
+            });
+        };
+      }
     });
-    this.auth.selecionaUnidade(this.auth!.unidade!.id);
-    this.checaBotaoAderirToolbar();
   }
 
   public cancelarAvaliacao(planoEntrega: PlanoEntrega) {
-    const self = this;
-    this.dialog.confirm("Cancelar avaliacao ?", "Deseja realmente cancelar a avaliação?").then(confirm => {
-      if (confirm) {
-        this.dao!.cancelarAvaliacao(planoEntrega.id).then(function () {
-          (self.grid?.query || self.query!).refreshId(planoEntrega.id);
-          self.dialog.alert("Sucesso", "Cancelado com sucesso!");
-        }).catch(function (error) {
-          self.dialog.alert("Erro", "Erro ao cancelar avaliacao: " + error?.message ? error?.message : error);
-        });
+    this.go.navigate(this.routeStatus, {
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "CONCLUIDO", onClick: this.dao!.cancelarAvaliacao.bind(this.dao)},
+      title: "Cancelar Avaliação",
+      modalClose: (modalResult) => {
+        if(modalResult) {
+            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+              this.checaBotaoAderirToolbar();
+            });
+        };
       }
     });
-    this.auth.selecionaUnidade(this.auth!.unidade!.id);
-    this.checaBotaoAderirToolbar();
   }
 
   public cancelarConclusao(planoEntrega: PlanoEntrega) {
-    const self = this;
-    this.dialog.confirm("Cancelar conclusão ?", "Deseja realmente cancelar a conclusão?").then(confirm => {
-      if (confirm) {
-        this.dao!.cancelarConclusao(planoEntrega.id).then(function () {
-          (self.grid?.query || self.query!).refreshId(planoEntrega.id);
-          self.dialog.alert("Sucesso", "Cancelado com sucesso!");
-        }).catch(function (error) {
-          self.dialog.alert("Erro", "Erro ao cancelar conclusão: " + error?.message ? error?.message : error);
-        });
+    this.go.navigate(this.routeStatus, {
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "ATIVO", onClick: this.dao!.cancelarConclusao.bind(this.dao)},
+      title: "Cancelar Conclusão",
+      modalClose: (modalResult) => {
+        if(modalResult) {
+            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+              this.checaBotaoAderirToolbar();
+            });
+        };
       }
     });
-    this.auth.selecionaUnidade(this.auth!.unidade!.id);
-    this.checaBotaoAderirToolbar();
   }
 
   public cancelarHomologacao(planoEntrega: PlanoEntrega) {
-    const self = this;
-    this.dialog.confirm("Cancelar homologacao ?", "Deseja realmente cancelar a homologacao?").then(confirm => {
-      if (confirm) {
-        this.dao!.cancelarHomologacao(planoEntrega.id).then(function () {
-          (self.grid?.query || self.query!).refreshId(planoEntrega.id);
-          self.dialog.alert("Sucesso", "Cancelado com sucesso!");
-        }).catch(function (error) {
-          self.dialog.alert("Erro", "Erro ao cancelar a homologação: " + error?.message ? error?.message : error);
-        });
+    this.go.navigate(this.routeStatus, {
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "HOMOLOGANDO", onClick: this.dao!.cancelarHomologacao.bind(this.dao)},
+      title: "Cancelar Homologação",
+      modalClose: (modalResult) => {
+        if(modalResult) {
+            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+              this.checaBotaoAderirToolbar();
+            });
+        };
       }
     });
-    this.auth.selecionaUnidade(this.auth!.unidade!.id);
-    this.checaBotaoAderirToolbar();
   }
 
   public cancelarPlano(planoEntrega: PlanoEntrega) {
-    const self = this;
-    this.dialog.confirm("Cancelar plano ?", "Deseja realmente cancelar o plano de entregas?").then(confirm => {
-      if (confirm) {
-        this.dao!.cancelarPlano(planoEntrega.id).then(function () {
-          (self.grid?.query || self.query!).refreshId(planoEntrega.id);
-          self.dialog.alert("Sucesso", "Plano cancelado com sucesso!");
-        }).catch(function (error) {
-          self.dialog.alert("Erro", "Erro ao cancelar o plano: " + error?.message ? error?.message : error);
-        });
+    this.go.navigate(this.routeStatus, {
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "CANCELADO", onClick: this.dao!.cancelarPlano.bind(this.dao)},
+      title: "Cancelar Plano de Entregas",
+      modalClose: (modalResult) => {
+        if(modalResult) {
+            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+              this.checaBotaoAderirToolbar();
+            });
+        };
       }
     });
-    this.auth.selecionaUnidade(this.auth!.unidade!.id);
-    this.checaBotaoAderirToolbar();
   }
 
   public concluir(planoEntrega: PlanoEntrega) {
-    const self = this;
-    this.dialog.confirm("Concluir ?", "Deseja realmente concluir este Plano de Entregas?").then(confirm => {
-      if (confirm) {
-        this.dao!.concluir(planoEntrega.id).then(function () {
-          (self.grid?.query || self.query!).refreshId(planoEntrega.id);
-          self.dialog.alert("Sucesso", "Concluído com sucesso!");
-        }).catch(function (error) {
-          self.dialog.alert("Erro", "Erro ao concluir: " + error?.message ? error?.message : error);
-        });
+    this.go.navigate(this.routeStatus, {
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "CONCLUIDO", onClick: this.dao!.concluir.bind(this.dao)},
+      title: "Concluir Plano de Entregas",
+      modalClose: (modalResult) => {
+        if(modalResult) {
+            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+              this.checaBotaoAderirToolbar();
+            });
+        };
       }
     });
-    this.auth.selecionaUnidade(this.auth!.unidade!.id);
-    this.checaBotaoAderirToolbar();
   }
 
   public desarquivar(planoEntrega: PlanoEntrega) {
-    this.dialog.confirm("Desarquivar ?", "Deseja realmente desarquivar o Plano de Entregas?").then(confirm => {
-      if (confirm) {
-        this.dao!.arquivar(planoEntrega.id, false).then(() => {
-          this.grid!.query!.refreshId(planoEntrega.id);
-        }).catch(error => this.dialog.alert("Erro", "Erro ao desarquivar o Plano de Entregas: " + error?.message ? error?.message : error));
+    this.go.navigate(this.routeStatus, {
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: planoEntrega.status, onClick: this.dao!.desarquivar.bind(this.dao)},
+      title: "Desarquivar Plano de Entregas",
+      modalClose: (modalResult) => {
+        if(modalResult) {
+            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+              this.checaBotaoAderirToolbar();
+            });
+        };
       }
     });
-    this.auth.selecionaUnidade(this.auth!.unidade!.id);
-    this.checaBotaoAderirToolbar();
   }
 
   public homologar(planoEntrega: PlanoEntrega) {
-    const self = this;
-    this.dialog.confirm("Homologar ?", "Deseja realmente homologar este Plano de Entregas?").then(confirm => {
-      if (confirm) {
-        this.dao!.homologar(planoEntrega.id).then(function () {
-          (self.grid?.query || self.query!).refreshId(planoEntrega.id);
-          self.dialog.alert("Sucesso", "Homologado com sucesso!");
-        }).catch(function (error) {
-          self.dialog.alert("Erro", "Erro ao homologar: " + error?.message ? error?.message : error);
-        });
-        this.auth.selecionaUnidade(this.auth!.unidade!.id);
-        this.checaBotaoAderirToolbar();
+    this.go.navigate(this.routeStatus, {
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "ATIVO", onClick: this.dao!.homologar.bind(this.dao)},
+      title: "Homologar Plano de Entregas",
+      modalClose: (modalResult) => {
+        if(modalResult) {
+            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+              this.checaBotaoAderirToolbar();
+            });
+        };
       }
     });
   }
 
   public liberarHomologacao(planoEntrega: PlanoEntrega) {
-    const self = this;
-    this.dialog.confirm("Liberar para homologação ?", "Deseja realmente liberar para a homologação?").then(confirm => {
-      if (confirm) {
-        this.dao!.liberarHomologacao(planoEntrega.id).then(function () {
-          (self.grid?.query || self.query!).refreshId(planoEntrega.id);
-          self.dialog.alert("Sucesso", "Liberado com sucesso!");
-        }).catch(function (error) {
-          self.dialog.alert("Erro", "Erro ao liberar para homologação: " + error?.message ? error?.message : error);
-        });
+    this.go.navigate(this.routeStatus, {
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "HOMOLOGANDO", onClick: this.dao!.liberarHomologacao.bind(this.dao)},
+      title: "Liberar para Homologação",
+      modalClose: (modalResult) => {
+        if(modalResult) {
+            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+              this.checaBotaoAderirToolbar();
+            });
+        };
       }
     });
-    this.auth.selecionaUnidade(this.auth!.unidade!.id);
-    this.checaBotaoAderirToolbar();
   }
 
   public reativar(planoEntrega: PlanoEntrega) {
-    const self = this;
-    this.dialog.confirm("Reativar ?", "Deseja realmente reativar este Plano de Entregas?").then(confirm => {
-      if (confirm) {
-        this.dao!.reativar(planoEntrega.id).then(function () {
-          (self.grid?.query || self.query!).refreshId(planoEntrega.id);
-          self.dialog.alert("Sucesso", "Reativado com sucesso!");
-        }).catch(function (error) {
-          self.dialog.alert("Erro", "Erro ao reativar: " + error?.message ? error?.message : error);
-        });
+    this.go.navigate(this.routeStatus, {
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "ATIVO", onClick: this.dao!.reativar.bind(this.dao)},
+      title: "Reativar Plano de Entregas",
+      modalClose: (modalResult) => {
+        if(modalResult) {
+            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+              this.checaBotaoAderirToolbar();
+            });
+        };
       }
     });
-    this.auth.selecionaUnidade(this.auth!.unidade!.id);
-    this.checaBotaoAderirToolbar();
   }
 
   public retirarHomologacao(planoEntrega: PlanoEntrega) {
-    const self = this;
-    this.dialog.confirm("Retirar da homologação ?", "Deseja realmente retirar da homologação?").then(confirm => {
-      if (confirm) {
-        this.dao!.retirarHomologacao(planoEntrega.id).then(function () {
-          (self.grid?.query || self.query!).refreshId(planoEntrega.id);
-          self.dialog.alert("Sucesso", "Retirado com sucesso!");
-        }).catch(function (error) {
-          self.dialog.alert("Erro", "Erro ao retirar da homologação: " + error?.message ? error?.message : error);
-        });
+    this.go.navigate(this.routeStatus, {
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "INCLUIDO", onClick: this.dao!.retirarHomologacao.bind(this.dao)},
+      title: "Retirar de Homologação",
+      modalClose: (modalResult) => {
+        if(modalResult) {
+            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+              this.checaBotaoAderirToolbar();
+            });
+        };
       }
     });
-    this.auth.selecionaUnidade(this.auth!.unidade!.id);
-    this.checaBotaoAderirToolbar();
   }
 
   public suspender(planoEntrega: PlanoEntrega) {
-    const self = this;
-    this.dialog.confirm("Suspender ?", "Deseja realmente suspender este Plano de Entregas?").then(confirm => {
-      if (confirm) {
-        this.dao!.suspender(planoEntrega.id).then(function () {
-          (self.grid?.query || self.query!).refreshId(planoEntrega.id);
-          self.dialog.alert("Sucesso", "Suspenso com sucesso!");
-        }).catch(function (error) {
-          self.dialog.alert("Erro", "Erro ao suspender: " + error?.message ? error?.message : error);
-        });
+    this.go.navigate(this.routeStatus, {
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "SUSPENSO", onClick: this.dao!.suspender.bind(this.dao)},
+      title: "Suspender Plano de Entregas",
+      modalClose: (modalResult) => {
+        if(modalResult) {
+            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+              this.checaBotaoAderirToolbar();
+            });
+        };
       }
     });
-    this.auth.selecionaUnidade(this.auth!.unidade!.id);
-    this.checaBotaoAderirToolbar();
+  }
+
+  public canAdd(){
+    return this.auth.hasPermissionTo('MOD_PENT_INCL');
+    //IMPLEMENTAR AS DEMAIS CONDIÇÕES*******************
   }
 }

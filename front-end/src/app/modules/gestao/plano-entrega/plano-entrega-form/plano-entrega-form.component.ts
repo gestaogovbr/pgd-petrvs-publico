@@ -145,9 +145,13 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     return result;
   }
 
-  public onDataChange(){
+  public onDataChange(){ this.sugereNome(); }
+
+  public onUnidadeChange(){ this.sugereNome(); }
+
+  public sugereNome() {
     if(this.action == 'new') {
-      const sigla = this.auth.unidade?.sigla;
+      const sigla = this.unidade?.selectedItem ? this.unidade?.selectedItem?.entity.sigla : this.auth.unidade?.sigla;
       const di = new Date(this.form!.controls.data_inicio.value).toLocaleDateString();
       const df = new Date(this.form!.controls.data_fim.value).toLocaleDateString();
       this.form!.controls.nome.setValue(sigla + " - " + di + " - " + df)      

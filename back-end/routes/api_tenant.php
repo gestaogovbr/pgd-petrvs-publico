@@ -62,6 +62,7 @@ use App\Http\Controllers\MateriaController;
 use App\Http\Controllers\CurriculumProfissionalController;
 use App\Http\Controllers\AreaAtividadeExternaController;
 use App\Http\Controllers\AreaTematicaController;
+use App\Http\Controllers\AtividadeTarefaController;
 use App\Http\Controllers\CapacidadeTecnicaController;
 use App\Http\Controllers\HistoricoAtividadeExternaCurriculumController;
 use App\Http\Controllers\HistoricoAtividadeInternaCurriculumController;
@@ -71,6 +72,7 @@ use App\Http\Controllers\HistoricoDocenciaExternaCurriculumController;
 use App\Http\Controllers\HistoricoDocenciaInternaCurriculumController;
 use App\Http\Controllers\HistoricoFuncaoCurriculumController;
 use App\Http\Controllers\HistoricoLotacaoCurriculumController;
+use App\Http\Controllers\PlanoTrabalhoConsolidacaoOcorrenciaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -170,7 +172,10 @@ Route::middleware(['auth:sanctum'])->prefix('Entrega')->group(function () { defa
 Route::middleware(['auth:sanctum'])->prefix('Feriado')->group(function () { defaultRoutes(FeriadoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('MaterialServico')->group(function () { defaultRoutes(MaterialServicoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('PlanejamentoObjetivo')->group(function () { defaultRoutes(PlanejamentoObjetivoController::class); });
-Route::middleware(['auth:sanctum'])->prefix('Programa')->group(function () { defaultRoutes(ProgramaController::class); });
+Route::middleware(['auth:sanctum'])->prefix('Programa')->group(function () { 
+    Route::post('assinaturas-exigidas', [ProgramaController::class, 'assinaturasExigidas']);
+    defaultRoutes(ProgramaController::class);
+ });
 Route::middleware(['auth:sanctum'])->prefix('ProgramaParticipante')->group(function () {
      defaultRoutes(ProgramaParticipanteController::class); 
      Route::post('habilitar', [ProgramaParticipanteController::class, 'habilitar']);
@@ -214,15 +219,25 @@ Route::middleware(['auth:sanctum'])->prefix('Planejamento')->group(function () {
 Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalho')->group(function () {
     defaultRoutes(PlanoTrabalhoController::class);
     Route::post('avaliar', [PlanoTrabalhoController::class, 'avaliar']);
+    Route::post('cancelar-plano', [PlanoTrabalhoController::class, 'cancelarPlano']);
+    Route::post('cancelar-assinatura', [PlanoTrabalhoController::class, 'cancelarAssinatura']);
     Route::post('cancelar-avaliacao', [PlanoTrabalhoController::class, 'cancelarAvaliacao']);
+    Route::post('ativar', [PlanoTrabalhoController::class, 'ativar']);
+    Route::post('reativar', [PlanoTrabalhoController::class, 'reativar']);
+    Route::post('suspender', [PlanoTrabalhoController::class, 'suspender']);
     Route::post('arquivar', [PlanoTrabalhoController::class, 'arquivar']);
+    Route::post('desarquivar', [PlanoTrabalhoController::class, 'desarquivar']);
+    Route::post('enviar-para-assinatura', [PlanoTrabalhoController::class, 'enviarParaAssinatura']);
     Route::post('metadados-plano', [PlanoTrabalhoController::class, 'metadadosPlano']);
     Route::post('get-by-usuario', [PlanoTrabalhoController::class, 'getByUsuario']);
 });
 Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoEntrega')->group(function () { defaultRoutes(PlanoTrabalhoEntregaController::class); });
+Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoConsolidacaoOcorrencia')->group(function () { defaultRoutes(PlanoTrabalhoConsolidacaoOcorrenciaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoConsolidacao')->group(function () {
     defaultRoutes(PlanoTrabalhoConsolidacaoController::class);
     Route::post('consolidacao-dados', [PlanoTrabalhoConsolidacaoController::class, 'consolidacaoDados']);
+    Route::post('concluir', [PlanoTrabalhoConsolidacaoController::class, 'concluir']);
+    Route::post('cancelar-conclusao', [PlanoTrabalhoConsolidacaoController::class, 'cancelarConclusao']);
 });
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
     defaultRoutes(PlanoEntregaController::class);
@@ -233,6 +248,7 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
     Route::post('cancelar-homologacao', [PlanoEntregaController::class, 'cancelarHomologacao']);
     Route::post('cancelar-plano', [PlanoEntregaController::class, 'cancelarPlano']);
     Route::post('concluir', [PlanoEntregaController::class, 'concluir']);
+    Route::post('desativar', [PlanoEntregaController::class, 'desativar']);
     Route::post('homologar', [PlanoEntregaController::class, 'homologar']);
     Route::post('liberar-homologacao', [PlanoEntregaController::class, 'liberarHomologacao']);
     Route::post('reativar', [PlanoEntregaController::class, 'reativar']);
@@ -240,7 +256,6 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
     Route::post('suspender', [PlanoEntregaController::class, 'suspender']);
 });
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntrega')->group(function () { defaultRoutes(PlanoEntregaEntregaController::class); });
-
 
 Route::middleware(['auth:sanctum'])->prefix('Adesao')->group(function () {
     defaultRoutes(AdesaoController::class);
@@ -253,6 +268,7 @@ Route::middleware(['auth:sanctum'])->prefix('Usuario')->group(function () {
     defaultRoutes(UsuarioController::class);
     Route::post('dashboard', [UsuarioController::class, 'dashboard']);
     Route::post('dashboard_gestor', [UsuarioController::class, 'dashboard_gestor']);
+    Route::post('ja-assinou-tcr', [UsuarioController::class, 'jaAssinouTCR']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Perfil')->group(function () { defaultRoutes(PerfilController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Entidade')->group(function () {

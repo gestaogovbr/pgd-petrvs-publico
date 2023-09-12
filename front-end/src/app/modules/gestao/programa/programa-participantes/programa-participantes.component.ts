@@ -51,7 +51,7 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
         onClick: this.habilitarParticipantes.bind(this)
       }
     ];
-    this.join = ["usuario:id,nome,apelido,url_foto", "usuario.lotacao:id,nome,unidade_id",];
+    this.join = ["usuario:id,nome,apelido,url_foto", "usuario.lotacao:id,nome,unidade_id","usuario.planos_trabalho"];
   }
 
   public ngOnInit(): void {
@@ -67,7 +67,7 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
       result.push([["todos", '==', true]]);
     } else {
       result.push(["programa_id", "==", this.programaId]);
-      if (form.nome?.length) result.push(["usuario.nome", "like", "%" + form.nome + "%"]);
+      if (form.nome?.length) result.push(["usuario.nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
       if (form.unidade_id?.length) result.push(["usuario.areas_trabalho.unidade.id", "==", form.unidade_id]);
     }
 
@@ -141,5 +141,11 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
     }
   }
 
+  public onHabilitadoChange(row: ProgramaParticipante, habilitado: boolean) {
+    console.log(habilitado);
+    if (!habilitado && row.usuario?.planos_trabalho?.length){
+      this.dialog.alert("Atenção", "Usuário com " + row.usuario?.planos_trabalho?.length + " plano(s) de trabalho ativo.");
+    }
+  }
 }
 

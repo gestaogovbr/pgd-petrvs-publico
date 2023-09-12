@@ -379,31 +379,34 @@ export class DaoBaseService<T extends Base> {
     return this.contextQuery(context).asPromise();
   }
 
-  public prepareToSave(data: any): any {
+  public prepareToSave(data: any, relations?: string[]): any {
+    let result: any = data;
     if(data instanceof Date) {
-      return UtilService.dateToIso8601(data);
+      result = UtilService.dateToIso8601(data);
     } else if(typeof data == "object" && data) {
       if(Array.isArray(data)){
-        data.forEach((item, index) => data[index] = this.prepareToSave(item));
+        data.forEach((item, index) => result[index] = this.prepareToSave(item));
       } else {
+        result = typeof relations != "undefined" ? {} : result;
         Object.entries(data).forEach(([key, value]) => {
           try { 
-              (data as IIndexable)[key] = typeof value == "object" && value instanceof DaoBaseService ? undefined : this.prepareToSave(value);
+            let found = (relations || []).filter(x => (x + ".").substring(0, key.length + 1) == key + ".");
+            let newRelations = found.map(x => x.substring(key.length + 1)).filter(x => x.length);
+            let isObject = typeof value == "object" && !(value instanceof Date);
+            if(!relations || !isObject || found.length) (result as IIndexable)[key] = typeof value == "object" && value instanceof DaoBaseService ? undefined : this.prepareToSave(value, newRelations.length ? newRelations : undefined);
           } catch (erro) {
             console.log("Erro ao tentar atribuir valor a " + key);
           }
         });
       }
-      return data;
-    } else {
-      return data;
     }
+    return result;
   }
 
-  public save(entity: T, join: string[] = []): Promise<T> {
+  public save(entity: T, join: string[] = [], rellations?: string[]): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       this.server.post(this.PREFIX_URL + '/' + this.collection + '/store', {
-        entity: this.prepareToSave(entity),
+        entity: this.prepareToSave(entity, rellations),
         with: join
       }).subscribe(response => {
         if(response.error){

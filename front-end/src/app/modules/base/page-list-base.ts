@@ -13,16 +13,6 @@ import { QueryOptions } from 'src/app/dao/query-options';
 
 @Injectable()
 export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> extends PageBase implements OnInit {
-  /* Constantes */
-  public OPTION_INFORMACOES: ToolbarButton =  {
-    icon: "bi bi-info-circle",
-    label: "Informações",
-  };
-  public OPTION_EXCLUIR: ToolbarButton = {
-    icon: "bi bi-trash",
-    label: "Excluir",
-  };
-
   /* Poderá utilizar o componente Grid ou ser genérico, mas precisa fornecer o QueryContext */
   public grid?: GridComponent;
   public query?: QueryContext<M>;

@@ -231,15 +231,6 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_PTR_INTSC_DATA", "Permite incluir planos de trabalho que possuam períodos conflitantes com outro plano já existente na mesma unidade executora"]
             ]
         ], [ 
-            "codigo"=> "MOD_PTR_CSLD", //ok
-            "descricao"=> "Módulo de consolidações do Plano de Trabalho",
-            "capacidades"=> [
-                ["MOD_PTR_CSLD_EDT", "Permite editar a consolidação do planos de trabalho"],
-                ["MOD_PTR_CSLD_EXCL", "Permite excluir a consolidação do planos de trabalho"],
-                ["MOD_PTR_CSLD_INCL", "Permite incluir a consolidação do planos de trabalho"],
-                ["MOD_PTR_CSLD_DES_CONCL", "Permite desfazer conclusão da consolidação do planos de trabalho"],
-            ]
-        ], [ 
             "codigo"=> "MOD_PTR_ENTR",
             "descricao"=> "Módulo de Plano de Trabalho - Entregas",
             "capacidades"=> [
@@ -247,6 +238,26 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_PTR_ENTR_EDT", "Permite editar entregas de um plano de trabalho"],
                 ["MOD_PTR_ENTR_EXCL", "Permite excluir entregas de um plano de trabalho"],
                 ["MOD_PTR_ENTR_INCL", "Permite incluir entregas de um plano de trabalho"],
+            ]
+        ], [ 
+            "codigo"=> "MOD_PTR_CSLD", //ok
+            "descricao"=> "Módulo de consolidações do Plano de Trabalho",
+            "capacidades"=> [
+                ["MOD_PTR_CSLD_EDT", "Permite editar a consolidação do planos de trabalho"],
+                ["MOD_PTR_CSLD_EXCL", "Permite excluir a consolidação do planos de trabalho"],
+                ["MOD_PTR_CSLD_INCL", "Persmite incluir a consolidação do planos de trabalho"],
+                ["MOD_PTR_CSLD_CONCL", "Permite realizar conclusão (independete de ser o usuário da consolidação)"],
+                ["MOD_PTR_CSLD_DES_CONCL", "Permite desfazer conclusão (independete de ser o usuário da consolidação)"],
+                ["MOD_PTR_CSLD_AVALIAR", "Permite avaliar (independete de ser o usuário da consolidação)"]
+            ]
+        ], [ 
+            "codigo"=> "MOD_PTR_CSLD_OCOR",
+            "descricao"=> "Módulo de Plano de Trabalho - Ocorrências",
+            "capacidades"=> [
+                /* Capacidades do módulo PLANO DE TRABALHO */
+                ["MOD_PTR_CSLD_OCOR_EDT", "Permite editar ocorrência de um plano de trabalho"],
+                ["MOD_PTR_CSLD_OCOR_EXCL", "Permite excluir ocorrência de um plano de trabalho"],
+                ["MOD_PTR_CSLD_OCOR_INCL", "Permite incluir ocorrência de um plano de trabalho"],
             ]
         ], [ 
             "codigo"=> "MOD_PENT",

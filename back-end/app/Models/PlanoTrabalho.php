@@ -51,6 +51,7 @@ class PlanoTrabalho extends ModelBase
 
     // Has
     public function statusHistorico() { return $this->hasMany(StatusJustificativa::class, "plano_trabalho_id"); }
+    public function latestStatus() { return $this->hasOne(StatusJustificativa::class, "plano_trabalho_id")->latestOfMany();}
     public function entregas() { return $this->hasMany(PlanoTrabalhoEntrega::class); }
     public function documentos() { return $this->hasMany(Documento::class); }
     public function atividades() { return $this->hasMany(Atividade::class); }

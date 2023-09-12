@@ -55,7 +55,7 @@ export class AreaConhecimentoListComponent extends PageListBase<AreaConhecimento
     let form: any = filter.value;
 
     if(form.nome_area?.length) {
-      result.push(["nome", "like", "%" + form.nome_area + "%"]);
+      result.push(["nome", "like", "%" + form.nome_area.trim().replace(" ", "%") + "%"]);
     }
 
     return result;

@@ -4,12 +4,11 @@ namespace App\Services;
 
 use App\Models\Usuario;
 use App\Models\Unidade;
-use App\Models\UnidadeIntegrante;
+use App\Models\Programa;
 use App\Models\Atividade;
 use App\Models\PlanoTrabalho;
 use App\Services\ServiceBase;
 use App\Services\RawWhere;
-use App\Services\UtilService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use Exception;
@@ -43,34 +42,17 @@ class UsuarioService extends ServiceBase
         $result = [];
         $planosTrabalhoAtivos = $this->planoTrabalhoService->planosAtivosPorData($data_inicial, $data_final, $usuario_id);
         $planos_ids = $planosTrabalhoAtivos->map(function($plano){return $plano->id;});
-        //$notas_validas = TipoAvaliacao::where('aceita_entrega', true)->get()->pluck('nota_atribuida');
-  
-        /*         $media_avaliacao = Demanda::doUsuario($usuario_id)->dosPlanosTrabalho($planos_ids)->avaliadas()->with(['avaliacao'])->get()->avg(function($demanda){
-            return $demanda["avaliacao"]["nota_atribuida"];
-        }); */
-        
         foreach ($planosTrabalhoAtivos as $plano) {
-        /*             $total_consolidadas = Demanda::doUsuario($usuario_id)->dosPlanosTrabalho([$plano->id])->avaliadas()->with(['avaliacao'])->get()->sum(function($demanda) use ($notas_validas){
-                return in_array($demanda["avaliacao"]["nota_atribuida"], $notas_validas->all()) ? $demanda['tempo_pactuado'] : 0;
-            }); */
-
-            //$horas_alocadas = $plano->demandas->sum('tempo_pactuado');
             $result['planos'][] = [
                 'data_inicio' => $plano['data_inicio'],
                 'data_fim' => $plano['data_fim'],
                 'total_horas' => $plano['tempo_total'],
-        /*                 'horas_alocadas' => $horas_alocadas,
-                'horas_consolidadas' => $total_consolidadas,
-                'progresso' => $total_consolidadas > 0 ? round((float)(($total_consolidadas / $plano['tempo_total']) * 100), 2) : 0 */
             ];           
         }
-
-        //$avaliadas = Demanda::doUsuario($usuario_id)->dosPlanosTrabalho($planos_ids)->avaliadas()->get();
         $nao_iniciadas = Atividade::doUsuario($usuario_id)->dosPlanosTrabalho($planos_ids)->naoIniciadas()->get();
         $concluidas = Atividade::doUsuario($usuario_id)->dosPlanosTrabalho($planos_ids)->concluidas()->get();
         $nao_concluidas = Atividade::doUsuario($usuario_id)->dosPlanosTrabalho($planos_ids)->naoConcluidas()->get();
         $atrasadas = Atividade::doUsuario($usuario_id)->dosPlanosTrabalho($planos_ids)->atrasadas()->get();
-
         $result['atividades'] = [
             'nao_iniciadas' => $nao_iniciadas->count(),
             'horas_nao_iniciadas' => $nao_iniciadas->sum('tempo_pactuado'),
@@ -83,7 +65,6 @@ class UsuarioService extends ServiceBase
             'total_atividades' => Atividade::doUsuario($usuario_id)->dosPlanosTrabalho($planos_ids)->get()->count()
         ];
         $result['horas_afastamentos'] = 0;
-
         return $result;
     }
 
@@ -97,40 +78,18 @@ class UsuarioService extends ServiceBase
      */
     public function dashboard_gestor($data_inicial, $data_final, $unidade_ids) {
         $result = [];
-        // $lotacoes = Lotacao::whereIn("unidade_id", $unidade_ids)->with(['usuario'])->get();
-
-        /*         $usuarios = Usuario::select('usuarios.*')
-                    ->distinct()
-                    ->join('lotacoes', 'lotacoes.usuario_id', '=', 'usuarios.id')
-                    ->whereIn('lotacoes.unidade_id', $unidade_ids)->get(); */
-        //$usuarios = Usuario::with(["areasTrabalho" => function ($query) use ($unidade_ids) { $query->whereIn("unidade_id", $unidade_ids); }])->get();
         $usuarios = [];
-        //foreach(Unidade::whereIn('id',$unidade_ids)->get() as $u) { array_push($usuarios, ...$u->lotados, ...$u->colaboradores); }
         foreach(Unidade::whereIn('id',$unidade_ids)->get() as $u) { array_push($usuarios, ...$u->integrantes); }
         foreach ($usuarios as $usuario) {
             $planosTrabalhoAtivos = $this->planoTrabalhoService->planosAtivosPorData($data_inicial, $data_final, $usuario->id);
             $planos_ids = $planosTrabalhoAtivos->map(function($plano){return $plano->id;});
-            //$notas_validas = TipoAvaliacao::where('aceita_entrega', true)->get()->pluck('nota_atribuida');
-    
-        /*             $total_consolidadas = Demanda::doUsuario($usuario->id)->dosPlanosTrabalho($planos_ids)->avaliadas()->with(['avaliacao'])->get()->sum(function($demanda) use ($notas_validas){
-                return in_array($demanda["avaliacao"]["nota_atribuida"], $notas_validas->all()) ? $demanda['tempo_pactuado'] : 0;
-            }); */
             $total_consolidadas = Atividade::doUsuario($usuario->id)->dosPlanosTrabalho($planos_ids)->concluidas()->get()->sum(['tempo_planejado']);
-
-        /*             $media_avaliacao = Demanda::doUsuario($usuario->id)->dosPlanosTrabalho($planos_ids)->avaliadas()->with(['avaliacao'])->get()->avg(function($demanda){
-                return $demanda["avaliacao"]["nota_atribuida"];
-            }); */
-
             $planos = [];
-
             foreach ($planosTrabalhoAtivos as $plano) {
-                //$horas_alocadas = $plano->atividades->sum('tempo_pactuado');
                 $planos[] = [
                     'data_inicio' => $plano['data_inicio'],
                     'data_fim' => $plano['data_fim'],
                     'total_horas' => $plano['tempo_total'],
-                    //'horas_alocadas' => $horas_alocadas,
-                    //'horas_consolidadas' => $total_consolidadas,
                     'progresso' => $total_consolidadas > 0 ? round((float)(($total_consolidadas / $plano['tempo_total']) * 100), 2) : 0
                 ];           
             }
@@ -165,19 +124,36 @@ class UsuarioService extends ServiceBase
 
     public function hasLotacao($id, $usuario = null, $subordinadas = true) {
         return Unidade::where("id", $id)->whereRaw($this->areasTrabalhoWhere($subordinadas, $usuario, ""))->count() > 0;
-        /*
-        CONFERIR ESTE TRECHO ...
-        Usuario::where("id", $usuario->id)->whereHas('lotacoes', function (Builder $query) use ($id) {
-            $query->where('id', $id);
-        })->count() > 0;*/
     }
 
     /**
-     * Informa se o usuário logado é gestor(titular ou substituto) da unidade repassada como parâmetro.
+     * Informa se o usuário logado é gestor(titular ou substituto) da unidade recebida como parâmetro.
      * @param string $unidade_id 
      */
     public function isGestorUnidade(string $unidade_id): bool {
         return $this->isIntegrante('GESTOR',$unidade_id) || $this->isIntegrante('GESTOR_SUBSTITUTO',$unidade_id);
+    }
+
+    /**
+     * Informa se o usuário logado é participante do plano de trabalho recebido como parâmetro.
+     * @param string $unidade_id 
+     */
+    public function isParticipante($planoTrabalho){
+        return $planoTrabalho['usuario_id'] == self::loggedUser()->id;
+    }
+
+    /**
+     * Recebe os IDs de um usuário e de um PGD, e informa se o usuário é participante habilitado do Programa.
+     * Se o usuário não for informado, será utilizado o usuário logado.
+     * @param string $usuario_id 
+     * @param string $pgd_id 
+     * @return bool
+     */
+    public function isParticipantePgdHabilitado(string | null $usuario_id = null, string $pgd_id): bool {
+        $usuario_id = $usuario_id ?? parent::loggedUser()->id;
+        $programa = Programa::find($pgd_id);
+        $participante = $programa->participantes->where("usuario_id",$usuario_id)->first();
+        return $participante ? $participante->habilitado : false;
     }
 
     /**
@@ -195,16 +171,31 @@ class UsuarioService extends ServiceBase
     }
 
     /**
-     * Informa se a unidade repassada como parâmetro é a lotação do usuário logado.
+     * Recebe os IDs de um usuário e de uma unidade, e informa se a unidade é a lotação do usuário.
+     * Se o usuário não for informado, será utilizado o usuário logado.
      * @param string $unidade_id 
      */
-    public function isLotacao(string $unidade_id): bool {
-        return parent::loggedUser()->lotacao->id == $unidade_id;
+    public function isLotacao(string | null $usuario_id = null, string $unidade_id): bool {
+        $usuario = isset($usuario_id) ? Usuario::find($usuario_id) : parent::loggedUser();
+        return $usuario->lotacao->id == $unidade_id;
+    }
+
+    /**
+     * Recebe o ID de um usuário e o ID de um plano de trabalho como parâmetros e retorna um booleano indicando se o usuário já assinou ou não o TCR atual do plano.
+     * Se o usuário não for informado, será utilizado o usuário logado.
+     */
+    public function jaAssinouTCR(string | null $usuario_id, string $plano_trabalho_id){
+        $result = false;
+        $planoTrabalho = PlanoTrabalho::find($plano_trabalho_id);
+        if($planoTrabalho && $planoTrabalho->documento_id) {
+            $result = count(array_filter($planoTrabalho->documento->assinaturas, fn($a) => $a->usuario_id == $usuario_id ?? self::loggedUser()->id));
+        }
+        return $result;
     }
 
     /**
      * Informa se o usuário logado tem como lotação alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
-     * repassada como parâmetro.
+     * recebida como parâmetro.
      * @param string $unidade_id 
      * @returns 
      */

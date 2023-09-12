@@ -151,7 +151,7 @@ export class LexicalService {
     const regex = /^(\s*)(o\s|a\s|os\s|as\s|um\s|uma\s|uns\s|umas\s|ao\s|à\s|aos\s|às\s|do\s|da\s|dos\s|das\s|dum\s|duma\s|duns\s|dumas\s|no\s|na\s|nos\s|nas\s|num\s|numa\s|nuns\s|numas\s|pelo\s|pela\s|pelos\s|pelas|)(.*)$/i;
     let groups = regex.exec(phrase);
     let spaces = groups ? groups[1] : "";
-    let preposition = groups ? groups[2].trim() : "";
+    let preposition = groups ? groups[2].trim().replace(" ", "%") : "";
     let noun = groups ? groups[3] : "";
     let plural = this.plurals[noun];
     let key = plural || noun;

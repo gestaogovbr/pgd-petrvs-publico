@@ -53,7 +53,7 @@ export class PlanejamentoObjetivoListComponent extends PageListBase<Planejamento
     let form: any = filter.value;
 
     if(form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome + "%"]);
+      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
     if(form.eixo_tematico_id?.length) {
       result.push(["eixo_tematico_id", "==", form.eixo_tematico_id]);

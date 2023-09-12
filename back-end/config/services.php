@@ -29,15 +29,21 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
+    # Azure: token válido até 21/09/2024
     'azure' => [
-        'client_id' => env('AZURE_CLIENT_ID'),
-        'client_secret' => env('AZURE_CLIENT_SECRET'),
-        'redirect' => env('AZURE_REDIRECT_URI', "/web/login-azure-callback"),
-        'tenant' => env('AZURE_TENANT_ID')
+        'client_id' => '0b50b859-2615-403a-876e-05dbbd6aa240',
+        'client_secret' => 'QbD8Q~mMSFAmC~B-wYCL2BcHbb0TQO8xIf9redb3',
+        'redirect' => config('app.url') . '/web/login-azure-callback',
+        'tenant' => 'common',
     ],
-    'login-unico' => [
-        'client_id' => env('LOGIN_UNICO_CLIENT_ID'),
-        'client_secret' => env('LOGIN_UNICO_CLIENT_SECRET'),
-        'redirect' => env('LOGIN_UNICO_REDIRECT_URI'),
-    ]
+    # Login Único: Uhull..
+    'govbr' => [
+      'code_verifier' => 'pgd20',
+      'code_challenge' => 'LwIDqJyJEGgdSQuwygHlkQDKsUXFz6jMIfkM_Jlv94w',
+      'code_challenge_method' => 'S256',
+      'client_id' => 'pgd-pre.dth.api.gov.br',
+      'client_secret' => 'AO4Gx1ykBB_nQf0aSYEQ4DzEZ0q0XWq-i9ZbvkmD2DjbhjEVjjw1lwsIRNQsLaI6_YhsGkOov7PvHpVguW5bklI',
+      'redirect' => 'https://pgd-pre.dth.api.gov.br/api/login-govbr-callback/',
+      'environment' => 'staging' //staging ou production
+    ],
 ];

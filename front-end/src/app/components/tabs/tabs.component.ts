@@ -16,10 +16,12 @@ export class TabsComponent extends ComponentBase implements OnInit {
   @Input() class_span: string = "h3";
   @Input() set active(value: any) {
     if(this._active != value) {
-      this._active = value;
-      this.cdRef.detectChanges();
       let selected = this.items.find(x => x.key == value);
-      if(this.select && selected) this.select(selected);
+      if(selected) {
+        this._active = value;
+        this.cdRef.detectChanges();
+        if(this.select && selected) this.select(selected);
+      }
     }
   }
   get active(): any {

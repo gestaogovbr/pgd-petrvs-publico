@@ -61,11 +61,11 @@ export class CapacidadeTecnicaListComponent extends PageListBase<CapacidadeTecni
     let form: any = filter.value;
 
     if(form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome + "%"]);
+      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
 
     if(form.area_tematica_id?.length) {
-      result.push(["id", "like", "%" + form.area_tematica_id + "%"]);
+      result.push(["id", "like", "%" + form.area_tematica_id.trim().replace(" ", "%") + "%"]);
     }
 
   

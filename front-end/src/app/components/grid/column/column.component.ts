@@ -27,16 +27,17 @@ export class ColumnComponent implements OnInit {
   @Input() template?: TemplateRef<unknown>;
   @Input() titleTemplate?: TemplateRef<unknown>;
   @Input() editTemplate?: TemplateRef<unknown>;
+  @Input() columnEditTemplate?: TemplateRef<unknown>;
   @Input() expandTemplate?: TemplateRef<unknown>;
   @Input() items?: LookupItem[];
   @Input() onlyHours?: string;
   @Input() onlyDays?: string;
   @Input() buttons?: ToolbarButton[];
-  @Input() dynamicButtons?: (row: any) => ToolbarButton[];
+  @Input() dynamicButtons?: (row: any, metadata?: any) => ToolbarButton[];
   @Input() options?: ToolbarButton[];
   @Input() save?: (row: any) => Promise<boolean>;
   @Input() edit?: (row: any) => Promise<void>;
-  @Input() dynamicOptions?: (row: any) => ToolbarButton[];
+  @Input() dynamicOptions?: (row: any, metadata?: any) => ToolbarButton[];
   @Input() onEdit?: (row: any) => void;
   @Input() onDelete?: (row: any) => void;
   @Input() onChange?: (row: any, form: FormGroup) => void;
@@ -49,6 +50,7 @@ export class ColumnComponent implements OnInit {
   @Input() width?: number = undefined;
   @Input() cellClass?: string;
   @Input() always?: string;
+  @Input() metadata?: any;
 
   constructor() { }
 

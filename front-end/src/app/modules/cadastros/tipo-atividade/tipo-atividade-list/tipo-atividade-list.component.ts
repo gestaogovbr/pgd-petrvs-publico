@@ -47,7 +47,7 @@ export class TipoAtividadeListComponent extends PageListBase<TipoAtividade, Tipo
   public filterWhere = (filter: FormGroup) => {
     let form: any = filter.value;
     let result: any[] = [];
-    if (form.nome?.length) result.push(["nome", "like", "%" + form.nome.replace(" ", "%") + "%"]);
+    if (form.nome?.length) result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     return result;
   }
 

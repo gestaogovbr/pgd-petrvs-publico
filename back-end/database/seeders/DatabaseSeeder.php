@@ -22,9 +22,11 @@ class DatabaseSeeder extends Seeder
             EntidadeSeeder::class,
             UnidadePrfSeeder::class,
             UsuarioSeeder::class,
-          /*   TipoAvaliacaoSeeder::class,
+            /*
+            TipoAvaliacaoSeeder::class,
             TipoJustificativaSeeder::class,
-            TipoAvaliacaoJustificativaSeeder::class,*/
+            TipoAvaliacaoJustificativaSeeder::class,
+            */
             AreaConhecimentoSeeder::class,
             TipoCursoSeeder::class,
             CursoSeeder::class,
@@ -33,9 +35,10 @@ class DatabaseSeeder extends Seeder
             FuncaoSeeder::class,
             CentroTreinamentoSeeder::class,
             GrupoEspecializadoSeeder::class,
-            
+            IN24_2023Seeder::class,
 
-            /*Após a execução das Seeds acima, executar a rotina de integração com o comando
+            /*
+            Após a execução das Seeds acima, executar a rotina de integração com o comando
             http://localhost[:porta]/api/integracao?servidores=true&unidades=true&entidade=[ID da entidade]
             ou sudo curl -G 'http://localhost/api/integracao' -d servidores=true -d unidades=true -d entidade=[ID da entidade]
             */

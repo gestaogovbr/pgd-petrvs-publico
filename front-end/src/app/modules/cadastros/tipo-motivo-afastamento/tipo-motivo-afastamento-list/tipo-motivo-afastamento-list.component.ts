@@ -56,7 +56,7 @@ export class TipoMotivoAfastamentoListComponent extends PageListBase<TipoMotivoA
     let form: any = filter.value;
 
     if(form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome + "%"]);
+      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
 
     return result;
