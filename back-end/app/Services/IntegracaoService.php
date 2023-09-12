@@ -96,6 +96,7 @@ class IntegracaoService extends ServiceBase {
         ];
 
         if(empty($unidade->id)) { /* Só entra aqui se a Unidade ainda não existir. Nesse caso, insere a Unidade */
+            $timenow = now();
             if(empty($this->unidadesInseridas[$unidade->id_servo])) {       /* Insere somente se já não tiver sido inserido */
                 $dados_path_pai = $this->buscaOuInserePai($unidade, $entidade_id);
                 $values[':id'] = Uuid::uuid4();
@@ -119,13 +120,14 @@ class IntegracaoService extends ServiceBase {
                         'planos_tipo_prazo_comparecimento' => 'DIAS',
                         'distribuicao_forma_contagem_prazos' => 'HORAS_UTEIS',
                         'autoedicao_subordinadas' => 1,
-                        'checklist' => '[]'
+                        'checklist' => '[]',
+                        'created_at' => $timenow,
+                        'updated_at' => $timenow
                     ]);
                     $this->atualizaLogs($this->logged_user_id, 'unidades', $id, 'ADD', ['Rotina' => 'Integração', 'Observação' => 'Unidade nova inserida informada pelo SIAPE: ' . $values[':nome'], 'Valores inseridos' => DB::table('unidades')->where('id', $id)->first()]);
                 } catch (Throwable $e) {
                     LogError::newWarn("Erro ao inserir Unidade", $values);
                 }
-
                 return $this->unidadesInseridas[$unidade->id_servo];
             }
         }

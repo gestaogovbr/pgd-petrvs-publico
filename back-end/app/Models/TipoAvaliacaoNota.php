@@ -4,6 +4,7 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\TipoAvaliacao;
 use App\Models\TipoAvaliacaoJustificativa;
+use App\Casts\AsJson;
 
 class TipoAvaliacaoNota extends ModelBase
 {
@@ -25,6 +26,10 @@ class TipoAvaliacaoNota extends ModelBase
 
     public $fillable_relations = [
         "justificativas"
+    ];
+
+    protected $casts = [
+      'nota' => AsJson::class
     ];
 
     // Belongs

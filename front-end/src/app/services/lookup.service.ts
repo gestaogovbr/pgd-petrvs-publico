@@ -542,7 +542,7 @@ export class LookupService {
     { key: "INCLUIDO", value: "Incluído", icon: "bi bi-pencil-square", color: "secondary" },
     { key: "AGUARDANDO_ASSINATURA", value: "Aguardando assinatura", icon: "bi bi-clock", color: "warning" },
     { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success" },
-    { key: "EXECUTADO", value: "Executado", icon: "bi bi-clipboard2-check", color: "primary" },
+    { key: "CONCLUIDO", value: "Executado", icon: "bi bi-clipboard2-check", color: "primary" },
     { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info" },
     { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "bg-warning text-dark" },
     { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "danger" }

@@ -12,7 +12,7 @@ import { Atividade, AtividadeChecklist } from 'src/app/models/atividade.model';
 import { PlanoTrabalhoConsolidacaoOcorrencia } from 'src/app/models/plano-trabalho-consolidacao-ocorrencia.model';
 import { Afastamento } from 'src/app/models/afastamento.model';
 import { PlanoTrabalhoEntrega } from 'src/app/models/plano-trabalho-entrega.model';
-import { BadgeEntrega, PlanoTrabalhoService } from '../plano-trabalho.service';
+import { BadgeTrabalho, PlanoTrabalhoService } from '../plano-trabalho.service';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { TipoAtividadeDaoService } from 'src/app/dao/tipo-atividade-dao.service';
 import { PlanoEntregaService } from '../../plano-entrega/plano-entrega.service';
@@ -29,7 +29,7 @@ import { Programa } from 'src/app/models/programa.model';
 export type ConsolidacaoEntrega = {
   id: string,
   entrega: PlanoTrabalhoEntrega,
-  badge: BadgeEntrega,
+  badge: BadgeTrabalho,
   atividades: Atividade[]
 };
 

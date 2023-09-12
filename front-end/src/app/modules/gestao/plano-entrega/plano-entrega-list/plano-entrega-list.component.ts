@@ -594,4 +594,9 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       }
     });
   }
+
+  public canAdd(){
+    return this.auth.hasPermissionTo('MOD_PENT_INCL');
+    //IMPLEMENTAR AS DEMAIS CONDIÇÕES*******************
+  }
 }
