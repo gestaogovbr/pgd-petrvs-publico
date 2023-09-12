@@ -2,7 +2,7 @@
     <div *ngIf="error?.length" class="alert alert-danger mt-2" role="alert">
         {{error}}
     </div>
-    <form [formGroup]="form!" class="grid-list-container" [style.min-height.px]="minHeight">
+    <form [formGroup]="form!" class="grid-list-container">
         <div class="row m-0 p-0">
             <div [class]="classColTable">
                 <ng-content></ng-content>
