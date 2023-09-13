@@ -92,22 +92,18 @@ class AtividadeService extends ServiceBase
         $status = $metadados["pausado"] ? "PAUSADO" : 
             ($metadados["concluido"] ? "CONCLUIDO" : 
             ($metadados["iniciado"] ? "INICIADO" : "INCLUIDO"));
-        if($entity->status != $status) {
-/*             $status = new StatusJustificativa([
-                "codigo" => $status,
-                "atividade_id" => $entity->id
-            ]);
-            $status->save(); */
+        $this->status->atualizaStatus($entity, $status);
+        /*if($entity->status != $status) {
             $entity->status = $status;
             $entity->save();
             $entity->refresh();
-        }
+        }*/
     }
 
     public function afterStore($entity, $action) {
         if($action == ServiceBase::ACTION_INSERT) {
             $this->notificacoesService->send("ATV_DISTRIBUICAO", ["atividade" => $entity]);
-            $this->status->atualizaStatus($entity, $entity->status, 'A atividade foi criada nesta data.');
+            //$this->status->atualizaStatus($entity, $entity->status, 'A atividade foi criada nesta data.');
         } else {
             $this->notificacoesService->send("ATV_MODIFICACAO", ["atividade" => $entity]);
         }
@@ -365,6 +361,7 @@ class AtividadeService extends ServiceBase
             }*/
             $this->validateIniciar($data);
             $this->update($data, $unidade, false);
+            $this->status->atualizaStatus($atividade, "INICIADO", "Iniciada nessa data manualmente");
             if($suspender) {
                 $unidadeService = new UnidadeService();
                 $dataHora = $unidadeService->hora($unidade->id);
@@ -397,6 +394,7 @@ class AtividadeService extends ServiceBase
                 "data_arquivamento" => null,
                 "data_inicio" => null
             ], $unidade, false);
+            $this->status->atualizaStatus($atividade, "INCLUIDO", "Cancelado o inínio nessa data");
             DB::commit();
         } catch (Throwable $e) {
             DB::rollback();
@@ -422,6 +420,7 @@ class AtividadeService extends ServiceBase
             }
             $conclusao["data_arquivamento"] = $arquivar ? Carbon::now() : null;
             $this->update($conclusao, $unidade, false);
+            $this->status->atualizaStatus($atividade, "CONCLUIDO", "Concluído nessa data");
             $comentarioTecnico = Comentario::where("atividade_id", $conclusao["id"])->where("tipo", "TECNICO")->first();
             if(!empty($comentarioTecnico)) {
                 $comentarioService->destroy($comentarioTecnico->id);
@@ -459,6 +458,7 @@ class AtividadeService extends ServiceBase
                 "tempo_despendido" => null,
                 "documento_entrega_id" => null
             ], $unidade, false);
+            $this->status->atualizaStatus($atividade, "INICIADO", "Cancelado conclusão nessa data");
             $comentarioTecnico = Comentario::where("atividade_id", $atividade->id)->where("tipo", "TECNICO")->first();
             if(!empty($comentarioTecnico)) {
                 $comentarioService->destroy($comentarioTecnico->id);
@@ -503,7 +503,8 @@ class AtividadeService extends ServiceBase
                 throw new ServerException("ValidateAtividade", "Demanda já pausada!");
             }
             /* Atualiza o status da atividade */
-            $this->extraStore($atividade, $unidade, ServiceBase::ACTION_EDIT);
+            //$this->extraStore($atividade, $unidade, ServiceBase::ACTION_EDIT);
+            $this->status->atualizaStatus($atividade, "PAUSADO", "Pausado nessa data");
             DB::commit();
         } catch (Throwable $e) {
             DB::rollback();
@@ -537,7 +538,8 @@ class AtividadeService extends ServiceBase
                     "data_fim" => $pausa["data"]
                 ], $unidade, false);
                 /* Atualiza o status da atividade */
-                $this->extraStore($atividade, $unidade, ServiceBase::ACTION_EDIT);
+                $this->status->atualizaStatus($atividade, "INICIADO", "Reiniciado nessa data");
+                //$this->extraStore($atividade, $unidade, ServiceBase::ACTION_EDIT);
             } else {
                 throw new ServerException("ValidateAtividade", "Não há pausa para reiniciar");
             }
@@ -559,7 +561,7 @@ class AtividadeService extends ServiceBase
                     "data_estipulada_entrega" => $data["data_estipulada_entrega"]
                 ], $unidade, false);
                 /* Atualiza o status da atividade */
-                $this->extraStore($atividade, $unidade, ServiceBase::ACTION_EDIT);
+                //$this->extraStore($atividade, $unidade, ServiceBase::ACTION_EDIT);
             } else {
                 throw new ServerException("ValidateAtividade", "Atividade não encontrada!");
             }

@@ -12,9 +12,7 @@ use App\Services\CalendarioService;
 use App\Services\UtilService;
 use App\Exceptions\ServerException;
 use App\Models\Documento;
-use App\Models\Programa;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\Programa;
 use Carbon\Carbon;
@@ -329,7 +327,8 @@ class PlanoTrabalhoService extends ServiceBase
       "unidade.gestor:id,unidade_id,usuario_id",
       "unidade.gestorSubstituto:id,unidade_id,usuario_id",
       "tipoModalidade:id,nome", 
-      "consolidacoes"
+      "consolidacoes",
+      "usuario:id,nome,apelido,url_foto"
     ])->where("usuario_id", $usuarioId);
     if (!$arquivados) $query->whereNull("data_arquivamento");
     $planos = $query->get()->all();
