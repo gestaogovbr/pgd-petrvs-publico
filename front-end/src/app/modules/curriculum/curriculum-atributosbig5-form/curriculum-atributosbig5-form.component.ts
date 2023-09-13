@@ -74,8 +74,8 @@ export class CurriculumAtributosbig5FormComponent implements OnInit {
     $('#lblPerma').text(value!.toString())
   }
 
-  public onChangeValorSoft(){
-    
+  public onChangeValorSoft(soft:any){
+    console.log(soft)
   }
 
   public voltarb5(){}
