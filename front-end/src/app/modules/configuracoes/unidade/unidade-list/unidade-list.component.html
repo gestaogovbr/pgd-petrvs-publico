@@ -7,7 +7,7 @@
         [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-search #entidade [size]="4" controlName="entidade_id" [dao]="entidadeDao"></input-search>
-            <input-switch [size]="2" label="Instituidora" labelClass="text-nowrap" controlName="instituidora" [control]="filter!.controls.instituidora" [labelInfo]="'Se lista SOMENTE as ' + lex.noun('unidades') + ' instituidoras de ' + lex.noun('programa', true)"></input-switch>
+            <input-switch #instituidora [size]="2" [label]="instituidora.value ? 'Instit.' : 'Exec.'" labelClass="text-nowrap" controlName="instituidora" [control]="filter!.controls.instituidora" [labelInfo]="'Se lista SOMENTE as ' + lex.noun('unidades') + ' instituidoras de ' + lex.noun('programa', true)"></input-switch>
             <input-text [size]="4" label="Nome" controlName="nome" [control]="filter!.controls.nome" placeholder="Nome ou sigla..."></input-text>
             <input-switch [size]="2" label="Inativos" controlName="inativos" [control]="filter!.controls.inativos" labelInfo="Se lista também as unidade inativas"></input-switch>
         </div>
