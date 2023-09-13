@@ -1,6 +1,7 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
+import { InputSwitchComponent } from 'src/app/components/input/input-switch/input-switch.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
@@ -15,6 +16,7 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 })
 export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
+  @ViewChild('instituidora', { static: false }) public instituidora?: InputSwitchComponent;
 
   public cidadeDao: CidadeDaoService;
   public entidadeDao: EntidadeDaoService;
