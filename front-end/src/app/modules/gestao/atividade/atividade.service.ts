@@ -175,7 +175,7 @@ export class AtividadeService {
       if (confirm) {
         this.dao!.cancelarInicio(atividade.id).then(() => {
           metadata.refreshId(atividade.id);
-          this.dialog.alert("Sucesso", "Cancelado com sucesso!");
+          this.dialog.topAlert("Cancelado a inicialização com sucesso!", 5000);
         }).catch((error) => this.dialog.alert("Erro", "Erro ao cancelar inicio: " + error?.message ? error?.message : error));
       }
     });
@@ -186,7 +186,7 @@ export class AtividadeService {
       if (confirm) {
         this.dao!.cancelarConclusao(atividade.id).then(() => {
           metadata.refreshId(atividade.id);
-          this.dialog.alert("Sucesso", "Cancelado com sucesso!");
+          this.dialog.topAlert("Cancelado a conclusão com sucesso!", 5000);
         }).catch((error) => this.dialog.alert("Erro", "Erro ao cancelar conclusão: " + error?.message ? error?.message : error));
       }
     });
