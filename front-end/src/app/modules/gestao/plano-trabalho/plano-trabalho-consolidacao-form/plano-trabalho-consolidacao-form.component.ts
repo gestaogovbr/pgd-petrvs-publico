@@ -102,8 +102,11 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       comentarios: { default: [] },
       esforco: { default: 0 },
       tempo_planejado: { default: 0 },
+      data_distribuicao: {default: new Date()},
+      data_estipulada_entrega: {default: new Date()},
+      data_entrega: {default: new Date()},
       tipo_atividade_id: {default: null}
-    }, this.cdRef, this.validateEntrega);
+    }, this.cdRef, this.validateAtividade);
     this.formOcorrencia = this.fh.FormBuilder({
       data_inicio: { default: new Date() },
       data_fim: { default: new Date() },
@@ -161,10 +164,16 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     })();
   }
 
-  public validateEntrega = (control: AbstractControl, controlName: string) => {
+  public validateAtividade = (control: AbstractControl, controlName: string) => {
     let result = null;
     if (['descricao'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
+    } else if(['data_distribuicao', 'data_estipulada_entrega', 'data_entrega'].includes(controlName) && !this.util.isDataValid(control.value)) {
+      result = "Inválido";
+    } else if(controlName == 'data_estipulada_entrega' && control.value.getTime() < this.formAtividade?.controls.data_distribuicao.value.getTime()) {
+      result = "Menor que distribuição";
+    } else if(controlName == 'data_entrega' && control.value.getTime() < this.formAtividade?.controls.data_distribuicao.value.getTime()) {
+      result = "Menor que distribuição";
     }
     return result;
   }
@@ -176,7 +185,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     } else if(['data_inicio', 'data_fim'].includes(controlName) && !this.util.isDataValid(control.value)) {
       result = "Inválido";
     } else if(controlName == 'data_fim' && control.value.getTime() < this.formOcorrencia?.controls.data_inicio.value.getTime()) {
-        result = "Menor que início";
+      result = "Menor que início";
     } 
     return result;
   }
@@ -240,6 +249,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       progresso: 100,
       plano_trabalho_id: this.entity!.plano_trabalho_id,
       plano_trabalho_entrega_id: entrega.id,
+      plano_trabalho_consolidacao_id: this.entity!.id,
       demandante_id: this.auth.usuario!.id,
       usuario_id: this.auth.usuario!.id,
       unidade_id: this.unidade!.id,

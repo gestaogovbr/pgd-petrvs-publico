@@ -102,7 +102,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
       const diffTime = Math.abs(inicio - fim);
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       const entregas = this.form!.controls.entregas.value || [];
-      if (programa.prazo_max_plano_entrega > 0 && diffDays > programa.prazo_max_plano_entrega) return "A data de início e término" + this.lex.translate("do Plano de Entrega") + " deve respeitar o período previsto no " + this.lex.translate("Programa");
+      if (programa.prazo_max_plano_entrega > 0 && diffDays > programa.prazo_max_plano_entrega) return "A data de início e término" + this.lex.translate(" do Plano de Entrega") + " deve respeitar o período previsto no " + this.lex.translate("Programa ") + "("+ programa.data_inicio.toLocaleDateString() +" até "+ programa.data_fim.toLocaleDateString() + ")";
       for (let entrega of entregas) {
         if (entrega.data_inicio < inicio) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data inicial anterior à " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(inicio);
         if (entrega.data_fim > fim) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data fim posterior à " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(fim);

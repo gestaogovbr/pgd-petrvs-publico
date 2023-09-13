@@ -392,7 +392,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("label", ctx.lex.translate("Tipo de avalia\u00E7\u00E3o do Plano de trabalho"))("size", 12)("dao", ctx.tipoAvaliacaoDao)("labelInfo", ctx.lex.noun("Tipo de avalia\u00E7\u00E3o") + " que especifica a forma que ser\u00E1 avaliado " + ctx.lex.noun("plano de trabalho") + " e " + ctx.lex.noun("plano de entrega"));
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("title", ctx.lex.translate("Consolida\u00E7\u00E3o") + ctx.lex.translate(" do Plano de trablaho"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("title", ctx.lex.translate("Consolida\u00E7\u00E3o") + ctx.lex.translate(" do Plano de trabalho"));
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.periodicidade_consolidacao)("items", ctx.lookup.PERIODICIDADE_CONSOLIDACAO);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
@@ -404,7 +404,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 3)("control", ctx.form.controls.dias_tolerancia_consolidacao);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("title", ctx.lex.translate("Avalia\u00E7\u00E3o") + ctx.lex.translate(" da Consolida\u00E7\u00E3o") + ctx.lex.translate(" do Plano de trablaho"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("title", ctx.lex.translate("Avalia\u00E7\u00E3o") + ctx.lex.translate(" da Consolida\u00E7\u00E3o") + ctx.lex.translate(" do Plano de trabalho"));
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 3)("control", ctx.form.controls.dias_tolerancia_avaliacao);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);

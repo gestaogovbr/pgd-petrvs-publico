@@ -6,9 +6,15 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\BulkSeeeder;
 
 use App\Models\TipoAtividade;
+use App\Models\TipoAvaliacao;
 use App\Models\TipoModalidade;
 use App\Models\TipoJustificativa;
 use App\Models\TipoAvaliacaoJustificativa;
+use App\Models\TipoAvaliacaoNota;
+use App\Models\TipoDocumento;
+use App\Models\Programa;
+use App\Models\Template;
+use App\Models\Unidade;
 
 class IN24_2023Seeder extends Seeder
 {
@@ -228,608 +234,838 @@ class IN24_2023Seeder extends Seeder
                 "created_at" => $this->timenow,
                 "updated_at" => $this->timenow,
             ],
+            [
+              "id" => "f2aef225-a391-4667-9c41-6bb537b18778",
+              "nome" => "Avaliação fora do prazo (registro sistêmico)",
+              "created_at" => $this->timenow,
+              "updated_at" => $this->timenow,
+            ],
         );
 
-        $tipos_avaliacoes_justificativas = array(
+        $tipos_avaliacoes = array(
+            [
+              "id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
+              "created_at" => $this->timenow,
+              "updated_at" => $this->timenow,
+              "deleted_at" => null,
+              "nome" => "Plano de Trabalho",
+              "tipo" => "QUANTITATIVO"
+            ],
+            [
+              "id" => "b0db190d-823d-4222-bc92-abff634f5390",
+              "created_at" => $this->timenow,
+              "updated_at" => $this->timenow,
+              "deleted_at" => null,
+              "nome" => "Plano de Entrega",
+              "tipo" => "QUANTITATIVO"],
+        );
+      
+        $tipos_avaliacoes_notas = array(
           [
-            "id" => "0910087f-4178-4de4-a093-ff6d31d513e4",
+            "id" => "084221e6-d68e-4bfa-a7ab-dd5f1bc9a3a9",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "2a736446-f3fc-4414-a8c2-91d40d6413dd",
+            "sequencia" => 2,
+            "nota" => "\"8\"",
+            "descricao" => "(Alto desempenho) Plano de trabalho executado acima do esperado",
+            "pergunta" => "O que pode melhorar?",
+            "aprova" => 0,
+            "justifica" => 1,
+            "icone" => "bi bi-building",
+            "cor" => "#42f09f",
+            "codigo" => "8",
+            "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5"
+          ],
+          [
+            "id" => "1084fb8d-20ea-4fd2-bf30-8aa70f2f55f6",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "sequencia" => 1,
+            "nota" => "\"10\"",
+            "descricao" => "(Excepcional) Plano de entregas executado com desempenho muito acima do esperado",
+            "pergunta" => "Do que você gostou?",
+            "aprova" => 0,
+            "justifica" => 1,
+            "icone" => "bi bi-award",
+            "cor" => "#198754",
+            "codigo" => "10",
+            "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390"
+          ],
+          [
+            "id" => "428f6d53-2ae1-49cb-b8bd-8cd76be2da05",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "sequencia" => 5,
+            "nota" => "\"1\"",
+            "descricao" => "Plano de entregas não executado",
+            "pergunta" => "Por quê não aceitar a atividade?",
+            "aprova" => 0,
+            "justifica" => 1,
+            "icone" => "bi bi-camera-video-off",
+            "cor" => "#dc3545",
+            "codigo" => "1",
+            "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390"
+          ],
+          [
+            "id" => "43c3b0e8-b25c-4b2a-bc5c-67d1b0e3cb86",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "sequencia" => 4,
+            "nota" => "\"4\"",
+            "descricao" => "(Inadequado) Plano de trabalho executado abaixo do esperado ou parcialmente executado",
+            "pergunta" => "Por quê não aceitar a atividade?",
+            "aprova" => 0,
+            "justifica" => 1,
+            "icone" => "bi bi-bug",
+            "cor" => "#fd7e14",
+            "codigo" => "4",
+            "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5"
+          ],
+          [
+            "id" => "5c7d6f5a-5990-4f76-add0-3290613b9ef2",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "sequencia" => 3,
+            "nota" => "\"7\"",
+            "descricao" => "(Adequado) Plano de trabalho executado dentro do esperado",
+            "pergunta" => "O que pode melhorar?",
+            "aprova" => 0,
+            "justifica" => 1,
+            "icone" => "bi bi-brightness-alt-high",
+            "cor" => "#ffc107",
+            "codigo" => "7",
+            "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5"
+          ],
+          [
+            "id" => "62a6ef53-b7c7-4fb9-b1c5-8261d60956c0",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "sequencia" => 1,
+            "nota" => "\"10\"",
+            "descricao" => "(Excepcional) Plano de trabalho executado muito acima do esperado",
+            "pergunta" => "O que pode melhorar?",
+            "aprova" => 0,
+            "justifica" => 1,
+            "icone" => "bi bi-award",
+            "cor" => "#198754",
+            "codigo" => "10",
+            "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5"
+          ],
+          [
+            "id" => "788b122a-e444-41c4-89b4-440b47cb6fa5",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "sequencia" => 3,
+            "nota" => "\"7\"",
+            "descricao" => "(Adequado) Plano de entregas executado dentro do esperado",
+            "pergunta" => "Do que você gostou?",
+            "aprova" => 0,
+            "justifica" => 1,
+            "icone" => "bi bi-brightness-alt-high",
+            "cor" => "#ffc107",
+            "codigo" => "7",
+            "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390"
+          ],
+          [
+            "id" => "869b9687-e61d-4260-8178-aa8d9dab8a10",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "sequencia" => 5,
+            "nota" => "\"1\"",
+            "descricao" => "(Inadequado) Plano de trabalho executado abaixo do esperado ou parcialmente executado",
+            "pergunta" => "Por quê não aceitar a atividade?",
+            "aprova" => 0,
+            "justifica" => 1,
+            "icone" => "bi bi-bug",
+            "cor" => "#dc3545",
+            "codigo" => "1",
+            "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5"
+          ],
+          [
+            "id" => "960d1216-ba21-4ac3-a35e-9553766d8f4b",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "sequencia" => 2,
+            "nota" => "\"8\"",
+            "descricao" => "(Alto desempenho) Plano de entregas executado com desempenho acima do esperado",
+            "pergunta" => "Do que você gostou?",
+            "aprova" => 0,
+            "justifica" => 1,
+            "icone" => "bi bi-building",
+            "cor" => "#1de286",
+            "codigo" => "8",
+            "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390"
+          ],
+          [
+            "id" => "fd9e3a0c-cd82-49ec-8dc4-f6127d0fbad8",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "sequencia" => 4,
+            "nota" => "\"4\"",
+            "descricao" => "(Inadequado) Plano de entregas executado abaixo do esperado",
+            "pergunta" => "O que pode melhorar?",
+            "aprova" => 0,
+            "justifica" => 1,
+            "icone" => "bi bi-bug",
+            "cor" => "#fd7e14",
+            "codigo" => "4",
+            "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390"
+          ]
+        );
+
+        $tipos_avaliacoes_justificativas= array(
+          [
+            "id" => "0006b44a-1eba-45a4-a64f-a3199dcd2264",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "788b122a-e444-41c4-89b4-440b47cb6fa5",
+            "tipo_justificativa_id" => "50bf425c-efeb-4c4c-9330-f5408a59edd9"
+          ],
+          [
+            "id" => "034d31d8-8a44-4d9c-8852-99755eab71fe",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "5c7d6f5a-5990-4f76-add0-3290613b9ef2",
             "tipo_justificativa_id" => "c84c4217-492f-4efe-bce7-c923372cf6c0"
           ],
           [
-            "id" => "0be54ed4-a626-4ef7-826b-647fa507f2f2",
+            "id" => "047a028c-1bda-4b40-ba66-de458d606f25",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "86cd7fea-a740-45a0-887c-4929e07591b1",
+            "tipo_avaliacao_nota_id" => "1084fb8d-20ea-4fd2-bf30-8aa70f2f55f6",
             "tipo_justificativa_id" => "376813c6-8797-41f5-9c6e-436555b66d19"
           ],
           [
-            "id" => "0e23e9f0-6a35-4a70-b7ae-3607f9fb748a",
+            "id" => "052f4c64-5cd9-4fc8-996d-034cabae19ef",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "7198fbe4-cca7-44cb-bce6-6f755b703303",
-            "tipo_justificativa_id" => "1f1d6720-0dcd-455e-8b8f-ecb653e821ad"
-          ],
-          [
-            "id" => "15eef565-633f-4eca-bac1-e00d01a6c559",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "2f0b5bcf-a4c7-44a6-925a-2019b31f5b0d",
+            "tipo_avaliacao_nota_id" => "084221e6-d68e-4bfa-a7ab-dd5f1bc9a3a9",
             "tipo_justificativa_id" => "fd3ff2f9-bd96-46a2-a45d-c68281174bca"
           ],
           [
-            "id" => "1a6e64e3-50fa-4118-b08c-1df25b44ccc7",
+            "id" => "0794a269-e8c9-4568-9322-e19611575f34",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "c1aad84f-93ff-44c5-8eec-88d904f29aa1",
-            "tipo_justificativa_id" => "c4dd38f7-6281-4c93-85f0-678b5fb9f397"
-          ],
-          [
-            "id" => "1a7eaaf0-c527-4031-bb7f-f598d98b98d3",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "7198fbe4-cca7-44cb-bce6-6f755b703303",
+            "tipo_avaliacao_nota_id" => "62a6ef53-b7c7-4fb9-b1c5-8261d60956c0",
             "tipo_justificativa_id" => "fd3ff2f9-bd96-46a2-a45d-c68281174bca"
           ],
           [
-            "id" => "1af539e2-9dbc-4641-8016-b629419e9f73",
+            "id" => "08acf046-68b9-4409-a7b1-9ff312294e20",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "2a736446-f3fc-4414-a8c2-91d40d6413dd",
-            "tipo_justificativa_id" => "ea1adc6f-892b-42eb-acce-74ea40eda1c2"
+            "tipo_avaliacao_nota_id" => "084221e6-d68e-4bfa-a7ab-dd5f1bc9a3a9",
+            "tipo_justificativa_id" => "50bf425c-efeb-4c4c-9330-f5408a59edd9"
           ],
           [
-            "id" => "1bcf9191-fd10-418b-8329-2c32bc2331cc",
+            "id" => "0c9ce375-19f4-4807-87b3-9b80a6ee86b0",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "86cd7fea-a740-45a0-887c-4929e07591b1",
+            "tipo_avaliacao_nota_id" => "5c7d6f5a-5990-4f76-add0-3290613b9ef2",
             "tipo_justificativa_id" => "c4dd38f7-6281-4c93-85f0-678b5fb9f397"
           ],
           [
-            "id" => "22b3faa2-50b5-4071-90fc-2d0469bc5930",
+            "id" => "0cabba5f-3d8b-40d8-83f3-3217ef9a540e",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "2f0b5bcf-a4c7-44a6-925a-2019b31f5b0d",
+            "tipo_avaliacao_nota_id" => "869b9687-e61d-4260-8178-aa8d9dab8a10",
             "tipo_justificativa_id" => "c4dd38f7-6281-4c93-85f0-678b5fb9f397"
           ],
           [
-            "id" => "22bd5f2b-6d5e-4e40-bc11-d078dc17cd8b",
+            "id" => "0e9fd5b2-fcb0-4a0a-b7cf-967b8a43ec19",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "c1aad84f-93ff-44c5-8eec-88d904f29aa1",
-            "tipo_justificativa_id" => "c84c4217-492f-4efe-bce7-c923372cf6c0"
-          ],
-          [
-            "id" => "23ad00b3-295b-4569-bac2-ae23ee6693d4",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "c1aad84f-93ff-44c5-8eec-88d904f29aa1",
-            "tipo_justificativa_id" => "e970fcbc-51d7-49d7-ad6f-21907a45bae6"
-          ],
-          [
-            "id" => "23f03fee-73d7-434c-854b-a4e638ee56ad",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "a8b9232d-1bb7-4aab-8e44-8b7ad46f3c19",
-            "tipo_justificativa_id" => "ea1adc6f-892b-42eb-acce-74ea40eda1c2"
-          ],
-          [
-            "id" => "27a107ce-258d-44a8-be45-64d77051cac1",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "690be20f-7b74-4208-8efe-2db2e0183575",
-            "tipo_justificativa_id" => "c84c4217-492f-4efe-bce7-c923372cf6c0"
-          ],
-          [
-            "id" => "2a76b38f-08ab-4328-a220-75942c40442b",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "2f0b5bcf-a4c7-44a6-925a-2019b31f5b0d",
-            "tipo_justificativa_id" => "376813c6-8797-41f5-9c6e-436555b66d19"
-          ],
-          [
-            "id" => "2f8b2cfb-2986-4635-af16-59d1ff1a4c69",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "c1aad84f-93ff-44c5-8eec-88d904f29aa1",
-            "tipo_justificativa_id" => "ea1adc6f-892b-42eb-acce-74ea40eda1c2"
-          ],
-          [
-            "id" => "3054b2d4-4a5d-480e-a4bc-531012e3230a",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "a8b9232d-1bb7-4aab-8e44-8b7ad46f3c19",
-            "tipo_justificativa_id" => "e970fcbc-51d7-49d7-ad6f-21907a45bae6"
-          ],
-          [
-            "id" => "32ad790e-217d-4d21-8a17-2e22e0c245cc",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "c20d3cf1-b4a3-4d72-a2b5-f3ed48e62602",
-            "tipo_justificativa_id" => "a5f2d721-86d0-4cd5-8c36-b64ea2764186"
-          ],
-          [
-            "id" => "3cbc5d6c-05b2-40ec-b1b4-fd5dfbbcc9c0",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "2f0b5bcf-a4c7-44a6-925a-2019b31f5b0d",
+            "tipo_avaliacao_nota_id" => "fd9e3a0c-cd82-49ec-8dc4-f6127d0fbad8",
             "tipo_justificativa_id" => "d47efadf-15d5-43e7-b39f-0b2ebaec449b"
           ],
           [
-            "id" => "3cccd4fa-fe2b-490b-bebb-9b155bba9503",
+            "id" => "0ee5bfae-9515-4720-b1cf-baf0637d2a42",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "2a736446-f3fc-4414-a8c2-91d40d6413dd",
-            "tipo_justificativa_id" => "7de1b22c-41e1-424d-9c74-5c756411222e"
+            "tipo_avaliacao_nota_id" => "62a6ef53-b7c7-4fb9-b1c5-8261d60956c0",
+            "tipo_justificativa_id" => "a5f2d721-86d0-4cd5-8c36-b64ea2764186"
           ],
           [
-            "id" => "44d09691-94b5-4db7-905f-c202cd087a59",
+            "id" => "10d43f50-57a1-4806-b1a9-ae38a26f138f",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "690be20f-7b74-4208-8efe-2db2e0183575",
-            "tipo_justificativa_id" => "1e13ca59-d9de-4a35-a9c1-d3fc0f9342e0"
-          ],
-          [
-            "id" => "48d5fa7a-9988-460b-b2fd-93c265b50351",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "690be20f-7b74-4208-8efe-2db2e0183575",
-            "tipo_justificativa_id" => "35a960fe-a33e-4eef-a53b-3ea275622024"
-          ],
-          [
-            "id" => "4aaa1cb4-c515-47e1-8d92-2dbdec12c61e",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "c74eb7a0-05c2-4ac7-8ab8-33337136009d",
-            "tipo_justificativa_id" => "1f1d6720-0dcd-455e-8b8f-ecb653e821ad"
-          ],
-          [
-            "id" => "4f638460-9f81-4e76-83f6-7d68e3259ef8",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "c74eb7a0-05c2-4ac7-8ab8-33337136009d",
-            "tipo_justificativa_id" => "376813c6-8797-41f5-9c6e-436555b66d19"
-          ],
-          [
-            "id" => "56b2a67a-472a-476f-97c7-ff6cbc7dca5c",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "2f0b5bcf-a4c7-44a6-925a-2019b31f5b0d",
+            "tipo_avaliacao_nota_id" => "869b9687-e61d-4260-8178-aa8d9dab8a10",
             "tipo_justificativa_id" => "c84c4217-492f-4efe-bce7-c923372cf6c0"
           ],
           [
-            "id" => "6110b598-0899-4407-9d71-3ab3c36ed320",
+            "id" => "18efc0f0-a697-4ee4-9211-1c40f2e438c0",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "c74eb7a0-05c2-4ac7-8ab8-33337136009d",
+            "tipo_avaliacao_nota_id" => "428f6d53-2ae1-49cb-b8bd-8cd76be2da05",
+            "tipo_justificativa_id" => "c84c4217-492f-4efe-bce7-c923372cf6c0"
+          ],
+          [
+            "id" => "1bce5170-b9d8-4460-9f7d-9895dc8cffd0",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "1084fb8d-20ea-4fd2-bf30-8aa70f2f55f6",
+            "tipo_justificativa_id" => "50bf425c-efeb-4c4c-9330-f5408a59edd9"
+          ],
+          [
+            "id" => "270a632c-1cb4-4940-907f-0451162c1ce0",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "788b122a-e444-41c4-89b4-440b47cb6fa5",
+            "tipo_justificativa_id" => "c84c4217-492f-4efe-bce7-c923372cf6c0"
+          ],
+          [
+            "id" => "2843e028-9939-4dc3-9049-5c0f9e444103",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "1084fb8d-20ea-4fd2-bf30-8aa70f2f55f6",
             "tipo_justificativa_id" => "fd3ff2f9-bd96-46a2-a45d-c68281174bca"
           ],
           [
-            "id" => "62f6cf0c-a7d4-4dda-85fb-8d9993b83fb8",
+            "id" => "31d384e8-b8e2-42a2-b3c2-f32640073b69",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "86cd7fea-a740-45a0-887c-4929e07591b1",
+            "tipo_avaliacao_nota_id" => "62a6ef53-b7c7-4fb9-b1c5-8261d60956c0",
             "tipo_justificativa_id" => "93adf83c-4f1a-4e9c-8e9d-f0788d11382c"
           ],
           [
-            "id" => "697e31c9-758c-4d89-9c34-31ba3ece1e16",
+            "id" => "396aa966-c1d9-4ef1-b7e1-aff69e7c17ae",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "2a736446-f3fc-4414-a8c2-91d40d6413dd",
-            "tipo_justificativa_id" => "c4dd38f7-6281-4c93-85f0-678b5fb9f397"
-          ],
-          [
-            "id" => "6ea57c17-cd47-4131-8163-56cc335bcf15",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "a8b9232d-1bb7-4aab-8e44-8b7ad46f3c19",
-            "tipo_justificativa_id" => "c4dd38f7-6281-4c93-85f0-678b5fb9f397"
-          ],
-          [
-            "id" => "6f7220a6-960f-4589-8ebe-6028f73ecacc",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "c20d3cf1-b4a3-4d72-a2b5-f3ed48e62602",
-            "tipo_justificativa_id" => "376813c6-8797-41f5-9c6e-436555b66d19"
-          ],
-          [
-            "id" => "71f9d08f-c451-4238-afd3-496656f0776f",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "2f0b5bcf-a4c7-44a6-925a-2019b31f5b0d",
-            "tipo_justificativa_id" => "50bf425c-efeb-4c4c-9330-f5408a59edd9"
-          ],
-          [
-            "id" => "729c94f3-fdd0-4650-885f-1286d7e94942",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "86cd7fea-a740-45a0-887c-4929e07591b1",
-            "tipo_justificativa_id" => "6e7b42b2-6e92-47b7-86ec-206a1f9b3591"
-          ],
-          [
-            "id" => "7880e3fe-5ca7-4371-9e06-ad65f0129a26",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "cc0d4dcb-827a-4c49-a762-add61b1c0956",
-            "tipo_justificativa_id" => "6e7b42b2-6e92-47b7-86ec-206a1f9b3591"
-          ],
-          [
-            "id" => "7b20d943-580b-48be-b55c-c94afda1e478",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "7198fbe4-cca7-44cb-bce6-6f755b703303",
-            "tipo_justificativa_id" => "a5f2d721-86d0-4cd5-8c36-b64ea2764186"
-          ],
-          [
-            "id" => "7de153cd-9696-4063-95c8-688a5f525698",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "c74eb7a0-05c2-4ac7-8ab8-33337136009d",
-            "tipo_justificativa_id" => "6e7b42b2-6e92-47b7-86ec-206a1f9b3591"
-          ],
-          [
-            "id" => "7ee781ea-4eda-4d0e-b2fb-8ed66295299e",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "2a736446-f3fc-4414-a8c2-91d40d6413dd",
-            "tipo_justificativa_id" => "1e13ca59-d9de-4a35-a9c1-d3fc0f9342e0"
-          ],
-          [
-            "id" => "8a4220fe-4bda-434c-8ae4-84c2e0b266a4",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "c20d3cf1-b4a3-4d72-a2b5-f3ed48e62602",
-            "tipo_justificativa_id" => "50bf425c-efeb-4c4c-9330-f5408a59edd9"
-          ],
-          [
-            "id" => "98906ae2-0f63-45e6-a313-ba66f0488efd",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "c20d3cf1-b4a3-4d72-a2b5-f3ed48e62602",
-            "tipo_justificativa_id" => "6e7b42b2-6e92-47b7-86ec-206a1f9b3591"
-          ],
-          [
-            "id" => "9f9e71c3-0603-4d25-b0c3-6ea15b2b6c39",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "86cd7fea-a740-45a0-887c-4929e07591b1",
-            "tipo_justificativa_id" => "fd3ff2f9-bd96-46a2-a45d-c68281174bca"
-          ],
-          [
-            "id" => "a2afecf1-7a77-4248-9e8f-1a4b32f776a6",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "cc0d4dcb-827a-4c49-a762-add61b1c0956",
-            "tipo_justificativa_id" => "fd3ff2f9-bd96-46a2-a45d-c68281174bca"
-          ],
-          [
-            "id" => "a2bb0873-c664-47f9-ad32-ade53f5fd24d",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "86cd7fea-a740-45a0-887c-4929e07591b1",
+            "tipo_avaliacao_nota_id" => "43c3b0e8-b25c-4b2a-bc5c-67d1b0e3cb86",
             "tipo_justificativa_id" => "c84c4217-492f-4efe-bce7-c923372cf6c0"
           ],
           [
-            "id" => "a745dfe4-b5a9-4f3a-b373-019a6b8332ae",
+            "id" => "39d54ee6-b119-425b-8352-592f4066a0dd",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "690be20f-7b74-4208-8efe-2db2e0183575",
-            "tipo_justificativa_id" => "ea1adc6f-892b-42eb-acce-74ea40eda1c2"
-          ],
-          [
-            "id" => "a7c7c2bf-111c-40a8-a5e2-87273cab365e",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "c74eb7a0-05c2-4ac7-8ab8-33337136009d",
-            "tipo_justificativa_id" => "50bf425c-efeb-4c4c-9330-f5408a59edd9"
-          ],
-          [
-            "id" => "ac4b1616-b583-4971-a178-444fe5ce7501",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "c74eb7a0-05c2-4ac7-8ab8-33337136009d",
-            "tipo_justificativa_id" => "a5f2d721-86d0-4cd5-8c36-b64ea2764186"
-          ],
-          [
-            "id" => "adaf9ab9-33b2-49ed-82e9-ed5f447d72d2",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "7198fbe4-cca7-44cb-bce6-6f755b703303",
-            "tipo_justificativa_id" => "50bf425c-efeb-4c4c-9330-f5408a59edd9"
-          ],
-          [
-            "id" => "adeed0d8-b725-48c6-9fec-4e44a6f5b3f1",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "2f0b5bcf-a4c7-44a6-925a-2019b31f5b0d",
-            "tipo_justificativa_id" => "6e7b42b2-6e92-47b7-86ec-206a1f9b3591"
-          ],
-          [
-            "id" => "ae8764ed-dd1a-480e-baca-8d06de9480a5",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "2a736446-f3fc-4414-a8c2-91d40d6413dd",
+            "tipo_avaliacao_nota_id" => "43c3b0e8-b25c-4b2a-bc5c-67d1b0e3cb86",
             "tipo_justificativa_id" => "e970fcbc-51d7-49d7-ad6f-21907a45bae6"
           ],
           [
-            "id" => "bd8443f7-e33f-4b23-bf31-efb692686b1a",
+            "id" => "3ab4e5a1-34c5-4473-9e90-3ed5b6d11c65",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "2f0b5bcf-a4c7-44a6-925a-2019b31f5b0d",
-            "tipo_justificativa_id" => "1f1d6720-0dcd-455e-8b8f-ecb653e821ad"
-          ],
-          [
-            "id" => "bf2b0da7-33a1-4813-baad-feb5c91b9d8a",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "86cd7fea-a740-45a0-887c-4929e07591b1",
-            "tipo_justificativa_id" => "1e13ca59-d9de-4a35-a9c1-d3fc0f9342e0"
-          ],
-          [
-            "id" => "c26a1ec1-0456-42ec-b016-7c8e278a41de",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "86cd7fea-a740-45a0-887c-4929e07591b1",
-            "tipo_justificativa_id" => "7de1b22c-41e1-424d-9c74-5c756411222e"
-          ],
-          [
-            "id" => "c2a4f084-8ccd-4637-869b-872ac94f693b",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "2f0b5bcf-a4c7-44a6-925a-2019b31f5b0d",
-            "tipo_justificativa_id" => "1e13ca59-d9de-4a35-a9c1-d3fc0f9342e0"
-          ],
-          [
-            "id" => "c46d5431-e533-4d08-a1e0-c01cb60f2841",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "690be20f-7b74-4208-8efe-2db2e0183575",
+            "tipo_avaliacao_nota_id" => "084221e6-d68e-4bfa-a7ab-dd5f1bc9a3a9",
             "tipo_justificativa_id" => "ccb41bcb-3478-40d7-affd-afa0b1ce98d9"
           ],
           [
-            "id" => "c547d648-5594-45be-a3e8-5200f468073e",
+            "id" => "43240e7f-a335-4c0f-8387-211eca68cbe2",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "cc0d4dcb-827a-4c49-a762-add61b1c0956",
-            "tipo_justificativa_id" => "1f1d6720-0dcd-455e-8b8f-ecb653e821ad"
-          ],
-          [
-            "id" => "c9633b4b-c360-4141-a615-d3b90c7de007",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "cc0d4dcb-827a-4c49-a762-add61b1c0956",
-            "tipo_justificativa_id" => "376813c6-8797-41f5-9c6e-436555b66d19"
-          ],
-          [
-            "id" => "c9a9c382-e5b9-4a78-94a1-5833733903d2",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "690be20f-7b74-4208-8efe-2db2e0183575",
-            "tipo_justificativa_id" => "c4dd38f7-6281-4c93-85f0-678b5fb9f397"
-          ],
-          [
-            "id" => "d0ef8a70-0050-48c4-9cd6-cb4da2ab5d9f",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "86cd7fea-a740-45a0-887c-4929e07591b1",
-            "tipo_justificativa_id" => "a5f2d721-86d0-4cd5-8c36-b64ea2764186"
-          ],
-          [
-            "id" => "d3787f8e-117d-41cd-bbbd-38cdf99bae36",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "7198fbe4-cca7-44cb-bce6-6f755b703303",
-            "tipo_justificativa_id" => "6e7b42b2-6e92-47b7-86ec-206a1f9b3591"
-          ],
-          [
-            "id" => "d496f9b7-f54c-4350-9e1d-5f1a3fb301af",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "2f0b5bcf-a4c7-44a6-925a-2019b31f5b0d",
-            "tipo_justificativa_id" => "a5f2d721-86d0-4cd5-8c36-b64ea2764186"
-          ],
-          [
-            "id" => "d63d0ef3-51e7-4044-a340-d4b64e2ecfa3",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "86cd7fea-a740-45a0-887c-4929e07591b1",
-            "tipo_justificativa_id" => "1f1d6720-0dcd-455e-8b8f-ecb653e821ad"
-          ],
-          [
-            "id" => "d9de2a5f-dd18-42fa-b75a-c722bc5b6235",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "cc0d4dcb-827a-4c49-a762-add61b1c0956",
+            "tipo_avaliacao_nota_id" => "62a6ef53-b7c7-4fb9-b1c5-8261d60956c0",
             "tipo_justificativa_id" => "50bf425c-efeb-4c4c-9330-f5408a59edd9"
           ],
           [
-            "id" => "db3659b7-2957-46ff-8b7f-2a67b218a1cc",
+            "id" => "480bb721-effc-4c11-8c52-f18833e03c92",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "690be20f-7b74-4208-8efe-2db2e0183575",
-            "tipo_justificativa_id" => "e970fcbc-51d7-49d7-ad6f-21907a45bae6"
-          ],
-          [
-            "id" => "dddd8575-7269-4c49-97e1-790c9daf80ee",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "c74eb7a0-05c2-4ac7-8ab8-33337136009d",
-            "tipo_justificativa_id" => "93adf83c-4f1a-4e9c-8e9d-f0788d11382c"
-          ],
-          [
-            "id" => "e0b288d1-296d-41e3-8bd3-86c09197a2ae",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "690be20f-7b74-4208-8efe-2db2e0183575",
-            "tipo_justificativa_id" => "d47efadf-15d5-43e7-b39f-0b2ebaec449b"
-          ],
-          [
-            "id" => "e7d52241-07ef-4be8-8d4d-e10cd7644360",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "86cd7fea-a740-45a0-887c-4929e07591b1",
-            "tipo_justificativa_id" => "50bf425c-efeb-4c4c-9330-f5408a59edd9"
-          ],
-          [
-            "id" => "e9335d8e-b44f-4988-a08b-6096fe37141a",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "7198fbe4-cca7-44cb-bce6-6f755b703303",
-            "tipo_justificativa_id" => "93adf83c-4f1a-4e9c-8e9d-f0788d11382c"
-          ],
-          [
-            "id" => "ebd896ac-adda-4ca8-98e5-f46baa28c800",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "a8b9232d-1bb7-4aab-8e44-8b7ad46f3c19",
-            "tipo_justificativa_id" => "c84c4217-492f-4efe-bce7-c923372cf6c0"
-          ],
-          [
-            "id" => "f031d8d3-f84e-44a8-bbf9-8c4cae7bbb26",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "690be20f-7b74-4208-8efe-2db2e0183575",
-            "tipo_justificativa_id" => "7de1b22c-41e1-424d-9c74-5c756411222e"
-          ],
-          [
-            "id" => "f0aa6ee9-05b5-4b96-a89b-e26f3b29be0d",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "86cd7fea-a740-45a0-887c-4929e07591b1",
-            "tipo_justificativa_id" => "d47efadf-15d5-43e7-b39f-0b2ebaec449b"
-          ],
-          [
-            "id" => "f1b22a9e-785a-43ec-9905-681eda1326cc",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "c20d3cf1-b4a3-4d72-a2b5-f3ed48e62602",
-            "tipo_justificativa_id" => "93adf83c-4f1a-4e9c-8e9d-f0788d11382c"
-          ],
-          [
-            "id" => "f22878af-aed7-4abb-b02f-ad888bb7ac48",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "cc0d4dcb-827a-4c49-a762-add61b1c0956",
+            "tipo_avaliacao_nota_id" => "960d1216-ba21-4ac3-a35e-9553766d8f4b",
             "tipo_justificativa_id" => "a5f2d721-86d0-4cd5-8c36-b64ea2764186"
           ],
           [
-            "id" => "f2c4ffec-2822-460f-b0bf-49dc6f7a8fb7",
+            "id" => "4fa902ff-f5df-4397-a04a-f2458c9d8cb8",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "c20d3cf1-b4a3-4d72-a2b5-f3ed48e62602",
-            "tipo_justificativa_id" => "fd3ff2f9-bd96-46a2-a45d-c68281174bca"
+            "tipo_avaliacao_nota_id" => "43c3b0e8-b25c-4b2a-bc5c-67d1b0e3cb86",
+            "tipo_justificativa_id" => "1e13ca59-d9de-4a35-a9c1-d3fc0f9342e0"
           ],
           [
-            "id" => "f352e6a0-a075-4950-a71f-a08cd9ad9c15",
+            "id" => "5cf344e5-0f03-463c-8f3b-758361f99eb6",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "a8b9232d-1bb7-4aab-8e44-8b7ad46f3c19",
+            "tipo_avaliacao_nota_id" => "960d1216-ba21-4ac3-a35e-9553766d8f4b",
+            "tipo_justificativa_id" => "50bf425c-efeb-4c4c-9330-f5408a59edd9"
+          ],
+          [
+            "id" => "5dfb971d-544a-4eed-9293-79c9155b2a33",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "084221e6-d68e-4bfa-a7ab-dd5f1bc9a3a9",
+            "tipo_justificativa_id" => "1e13ca59-d9de-4a35-a9c1-d3fc0f9342e0"
+          ],
+          [
+            "id" => "620b43c8-55ff-49dc-bac9-52b0ea40f344",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "869b9687-e61d-4260-8178-aa8d9dab8a10",
             "tipo_justificativa_id" => "35a960fe-a33e-4eef-a53b-3ea275622024"
           ],
           [
-            "id" => "f3fd7333-501a-4047-b424-01d4d383c0f0",
+            "id" => "65068de2-07db-47ce-b62e-98efbcb60c69",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "c20d3cf1-b4a3-4d72-a2b5-f3ed48e62602",
-            "tipo_justificativa_id" => "1f1d6720-0dcd-455e-8b8f-ecb653e821ad"
+            "tipo_avaliacao_nota_id" => "788b122a-e444-41c4-89b4-440b47cb6fa5",
+            "tipo_justificativa_id" => "7de1b22c-41e1-424d-9c74-5c756411222e"
           ],
           [
-            "id" => "f5151a97-5859-4c99-9845-47a8079dc584",
+            "id" => "67621bd1-96f3-4942-ade4-7bd6e6c7a29f",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "cc0d4dcb-827a-4c49-a762-add61b1c0956",
+            "tipo_avaliacao_nota_id" => "5c7d6f5a-5990-4f76-add0-3290613b9ef2",
+            "tipo_justificativa_id" => "a5f2d721-86d0-4cd5-8c36-b64ea2764186"
+          ],
+          [
+            "id" => "693f2c9c-3dca-4edb-97dc-8ff17993e035",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "084221e6-d68e-4bfa-a7ab-dd5f1bc9a3a9",
+            "tipo_justificativa_id" => "6e7b42b2-6e92-47b7-86ec-206a1f9b3591"
+          ],
+          [
+            "id" => "6df57dff-cdc9-427e-adc4-a32829181bca",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "62a6ef53-b7c7-4fb9-b1c5-8261d60956c0",
+            "tipo_justificativa_id" => "376813c6-8797-41f5-9c6e-436555b66d19"
+          ],
+          [
+            "id" => "75fe7e1d-bcb8-4d08-84c7-a83bddbb3858",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "1084fb8d-20ea-4fd2-bf30-8aa70f2f55f6",
             "tipo_justificativa_id" => "93adf83c-4f1a-4e9c-8e9d-f0788d11382c"
           ],
           [
-            "id" => "fdd881ce-563e-48db-b063-f78e2aec3f70",
+            "id" => "79e6899f-7052-40fd-8031-7a9319cf4e8e",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => null,
-            "tipo_avaliacao_nota_id" => "7198fbe4-cca7-44cb-bce6-6f755b703303",
+            "tipo_avaliacao_nota_id" => "788b122a-e444-41c4-89b4-440b47cb6fa5",
             "tipo_justificativa_id" => "376813c6-8797-41f5-9c6e-436555b66d19"
+          ],
+          [
+            "id" => "7b1d6b4f-64ed-4937-a317-fd1c4a68ed71",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "428f6d53-2ae1-49cb-b8bd-8cd76be2da05",
+            "tipo_justificativa_id" => "35a960fe-a33e-4eef-a53b-3ea275622024"
+          ],
+          [
+            "id" => "7b3c7221-dd7b-437d-b13f-32bd9c1ffdf2",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "960d1216-ba21-4ac3-a35e-9553766d8f4b",
+            "tipo_justificativa_id" => "fd3ff2f9-bd96-46a2-a45d-c68281174bca"
+          ],
+          [
+            "id" => "7b84e818-e826-441e-82e7-bdb9a5cf09e1",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "960d1216-ba21-4ac3-a35e-9553766d8f4b",
+            "tipo_justificativa_id" => "1f1d6720-0dcd-455e-8b8f-ecb653e821ad"
+          ],
+          [
+            "id" => "7d4fbcf5-9350-41d7-813c-ec4949d990db",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "fd9e3a0c-cd82-49ec-8dc4-f6127d0fbad8",
+            "tipo_justificativa_id" => "c84c4217-492f-4efe-bce7-c923372cf6c0"
+          ],
+          [
+            "id" => "80cb5adb-774e-4fe4-985b-52ca46207feb",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "788b122a-e444-41c4-89b4-440b47cb6fa5",
+            "tipo_justificativa_id" => "a5f2d721-86d0-4cd5-8c36-b64ea2764186"
+          ],
+          [
+            "id" => "834c70b6-c8da-491f-8507-12633ce265f9",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "788b122a-e444-41c4-89b4-440b47cb6fa5",
+            "tipo_justificativa_id" => "1f1d6720-0dcd-455e-8b8f-ecb653e821ad"
+          ],
+          [
+            "id" => "8a9624ae-d231-4a79-a91e-08f23c38d092",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "084221e6-d68e-4bfa-a7ab-dd5f1bc9a3a9",
+            "tipo_justificativa_id" => "d47efadf-15d5-43e7-b39f-0b2ebaec449b"
+          ],
+          [
+            "id" => "8aa090d9-df73-4f4a-951c-bf14dc22695c",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "084221e6-d68e-4bfa-a7ab-dd5f1bc9a3a9",
+            "tipo_justificativa_id" => "93adf83c-4f1a-4e9c-8e9d-f0788d11382c"
+          ],
+          [
+            "id" => "8dda4453-cb81-4362-9f3c-e1cba1745fdc",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "084221e6-d68e-4bfa-a7ab-dd5f1bc9a3a9",
+            "tipo_justificativa_id" => "a5f2d721-86d0-4cd5-8c36-b64ea2764186"
+          ],
+          [
+            "id" => "9a0b1c07-814d-4795-a163-33149efd9abf",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "788b122a-e444-41c4-89b4-440b47cb6fa5",
+            "tipo_justificativa_id" => "c4dd38f7-6281-4c93-85f0-678b5fb9f397"
+          ],
+          [
+            "id" => "9b6c086e-d9f2-4873-b69f-8c31945c7ae3",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "fd9e3a0c-cd82-49ec-8dc4-f6127d0fbad8",
+            "tipo_justificativa_id" => "ea1adc6f-892b-42eb-acce-74ea40eda1c2"
+          ],
+          [
+            "id" => "9e1aa0be-0f75-47b7-9159-5278fcf842b7",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "fd9e3a0c-cd82-49ec-8dc4-f6127d0fbad8",
+            "tipo_justificativa_id" => "ccb41bcb-3478-40d7-affd-afa0b1ce98d9"
+          ],
+          [
+            "id" => "a02054c8-63d5-4082-b5e3-3a4afacb406f",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "43c3b0e8-b25c-4b2a-bc5c-67d1b0e3cb86",
+            "tipo_justificativa_id" => "d47efadf-15d5-43e7-b39f-0b2ebaec449b"
+          ],
+          [
+            "id" => "a24e675d-84c6-4f7b-858a-191e1f6c828f",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "869b9687-e61d-4260-8178-aa8d9dab8a10",
+            "tipo_justificativa_id" => "ea1adc6f-892b-42eb-acce-74ea40eda1c2"
+          ],
+          [
+            "id" => "a2840f38-6e28-4532-982e-14d57a15be30",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "5c7d6f5a-5990-4f76-add0-3290613b9ef2",
+            "tipo_justificativa_id" => "ea1adc6f-892b-42eb-acce-74ea40eda1c2"
+          ],
+          [
+            "id" => "a879c6ea-5c1a-4efd-8c44-7c846a2977f1",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "43c3b0e8-b25c-4b2a-bc5c-67d1b0e3cb86",
+            "tipo_justificativa_id" => "7de1b22c-41e1-424d-9c74-5c756411222e"
+          ],
+          [
+            "id" => "a8848ee5-0f5e-4867-9596-0bbd485bcf00",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "788b122a-e444-41c4-89b4-440b47cb6fa5",
+            "tipo_justificativa_id" => "d47efadf-15d5-43e7-b39f-0b2ebaec449b"
+          ],
+          [
+            "id" => "aa5b02d5-b53a-4d7e-a8ba-173b4226fe6a",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "fd9e3a0c-cd82-49ec-8dc4-f6127d0fbad8",
+            "tipo_justificativa_id" => "c4dd38f7-6281-4c93-85f0-678b5fb9f397"
+          ],
+          [
+            "id" => "ada8fe86-b36b-4a41-88cc-29cd362c8530",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "62a6ef53-b7c7-4fb9-b1c5-8261d60956c0",
+            "tipo_justificativa_id" => "1f1d6720-0dcd-455e-8b8f-ecb653e821ad"
+          ],
+          [
+            "id" => "aee58d54-b94a-478e-8cea-fcd1e8bdbc5d",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "62a6ef53-b7c7-4fb9-b1c5-8261d60956c0",
+            "tipo_justificativa_id" => "6e7b42b2-6e92-47b7-86ec-206a1f9b3591"
+          ],
+          [
+            "id" => "b5407340-6a08-4271-964b-f163e2c10388",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "788b122a-e444-41c4-89b4-440b47cb6fa5",
+            "tipo_justificativa_id" => "1e13ca59-d9de-4a35-a9c1-d3fc0f9342e0"
+          ],
+          [
+            "id" => "be1d1209-a140-440e-90c0-c053fbcccbc5",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "869b9687-e61d-4260-8178-aa8d9dab8a10",
+            "tipo_justificativa_id" => "e970fcbc-51d7-49d7-ad6f-21907a45bae6"
+          ],
+          [
+            "id" => "be98b374-dd28-401a-9057-e84ea198fb54",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "1084fb8d-20ea-4fd2-bf30-8aa70f2f55f6",
+            "tipo_justificativa_id" => "a5f2d721-86d0-4cd5-8c36-b64ea2764186"
+          ],
+          [
+            "id" => "becba76f-4d42-47a0-b232-36990e83c682",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "084221e6-d68e-4bfa-a7ab-dd5f1bc9a3a9",
+            "tipo_justificativa_id" => "376813c6-8797-41f5-9c6e-436555b66d19"
+          ],
+          [
+            "id" => "c18112d3-bbf8-4a23-8500-56b45c80ed09",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "428f6d53-2ae1-49cb-b8bd-8cd76be2da05",
+            "tipo_justificativa_id" => "c4dd38f7-6281-4c93-85f0-678b5fb9f397"
+          ],
+          [
+            "id" => "c5d91a6e-f05b-4f13-8024-2b8e2425a7ae",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "5c7d6f5a-5990-4f76-add0-3290613b9ef2",
+            "tipo_justificativa_id" => "376813c6-8797-41f5-9c6e-436555b66d19"
+          ],
+          [
+            "id" => "c8480a3f-1209-485f-a992-21c5b4f3000e",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "960d1216-ba21-4ac3-a35e-9553766d8f4b",
+            "tipo_justificativa_id" => "376813c6-8797-41f5-9c6e-436555b66d19"
+          ],
+          [
+            "id" => "c9e28a3f-c5a6-4d73-bb57-0f3ed9911328",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "1084fb8d-20ea-4fd2-bf30-8aa70f2f55f6",
+            "tipo_justificativa_id" => "1f1d6720-0dcd-455e-8b8f-ecb653e821ad"
+          ],
+          [
+            "id" => "cda778fa-1173-4e4f-b11c-8974af4a68f0",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "5c7d6f5a-5990-4f76-add0-3290613b9ef2",
+            "tipo_justificativa_id" => "d47efadf-15d5-43e7-b39f-0b2ebaec449b"
+          ],
+          [
+            "id" => "d4c097b7-e713-464c-86d2-6df01d0e4d66",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "084221e6-d68e-4bfa-a7ab-dd5f1bc9a3a9",
+            "tipo_justificativa_id" => "1f1d6720-0dcd-455e-8b8f-ecb653e821ad"
+          ],
+          [
+            "id" => "dc437ba6-a4e6-42b6-a8fa-f105d42b8c21",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "5c7d6f5a-5990-4f76-add0-3290613b9ef2",
+            "tipo_justificativa_id" => "7de1b22c-41e1-424d-9c74-5c756411222e"
+          ],
+          [
+            "id" => "defabc53-46fe-48da-88b5-d834307e23fe",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "43c3b0e8-b25c-4b2a-bc5c-67d1b0e3cb86",
+            "tipo_justificativa_id" => "35a960fe-a33e-4eef-a53b-3ea275622024"
+          ],
+          [
+            "id" => "e82a1c73-26dd-4b69-91d5-fe7fecd29f67",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "5c7d6f5a-5990-4f76-add0-3290613b9ef2",
+            "tipo_justificativa_id" => "1e13ca59-d9de-4a35-a9c1-d3fc0f9342e0"
+          ],
+          [
+            "id" => "e9bb8ff2-967c-411c-bb29-18057734f1ad",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "1084fb8d-20ea-4fd2-bf30-8aa70f2f55f6",
+            "tipo_justificativa_id" => "6e7b42b2-6e92-47b7-86ec-206a1f9b3591"
+          ],
+          [
+            "id" => "ea235d82-f47d-4fc2-b27c-6b518a91ebdd",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "fd9e3a0c-cd82-49ec-8dc4-f6127d0fbad8",
+            "tipo_justificativa_id" => "1e13ca59-d9de-4a35-a9c1-d3fc0f9342e0"
+          ],
+          [
+            "id" => "ec095dd2-ce18-40de-a2c9-db3b4c936842",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "43c3b0e8-b25c-4b2a-bc5c-67d1b0e3cb86",
+            "tipo_justificativa_id" => "c4dd38f7-6281-4c93-85f0-678b5fb9f397"
+          ],
+          [
+            "id" => "f6d72ac2-74bf-4e69-ae31-98c795eb0037",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "960d1216-ba21-4ac3-a35e-9553766d8f4b",
+            "tipo_justificativa_id" => "93adf83c-4f1a-4e9c-8e9d-f0788d11382c"
+          ],
+          [
+            "id" => "f7f0b929-6210-4816-bc7b-69f3d77e1621",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "fd9e3a0c-cd82-49ec-8dc4-f6127d0fbad8",
+            "tipo_justificativa_id" => "35a960fe-a33e-4eef-a53b-3ea275622024"
+          ],
+          [
+            "id" => "fc8dd5db-2f48-466a-be34-a4d633cbba15",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "fd9e3a0c-cd82-49ec-8dc4-f6127d0fbad8",
+            "tipo_justificativa_id" => "7de1b22c-41e1-424d-9c74-5c756411222e"
+          ],
+          [
+            "id" => "fd3525e6-c3b0-4250-a680-290909198a4f",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "788b122a-e444-41c4-89b4-440b47cb6fa5",
+            "tipo_justificativa_id" => "6e7b42b2-6e92-47b7-86ec-206a1f9b3591"
+          ],
+          [
+            "id" => "fffee814-231a-4e7d-93ad-eccb3357c6ed",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => null,
+            "tipo_avaliacao_nota_id" => "960d1216-ba21-4ac3-a35e-9553766d8f4b",
+            "tipo_justificativa_id" => "6e7b42b2-6e92-47b7-86ec-206a1f9b3591"
           ],
         );
 
-        TipoModalidade::insertOrIgnore($tipos_modalidades);
-        TipoAtividade::insertOrIgnore($tipos_atividades);
-        TipoJustificativa::insertOrIgnore($tipos_justificativas);
-        TipoAvaliacaoJustificativa::insertOrIgnore($tipos_avaliacoes_justificativas);
+        $tipos_documentos = array(
+            [
+              "id" => "48bc6f30-a634-4a21-9717-6fe0dc0d4f2a",
+              "created_at" => $this->timenow,
+              "updated_at" => $this->timenow,
+              "deleted_at" => NULL,
+              "codigo" => NULL,
+              "nome" => "TCR",
+              "entregavel" => 0,
+            ]
+        );
+
+        // Encontra unidade inicial (instituidora) para registro de programa
+        $unidade = Unidade::where('codigo', 1)->first();
+        $programas = array(
+            [ 
+                "id" => "9ebed914-1b82-4df0-95da-b0c8fadbb6f2",
+                "created_at" => $this->timenow,
+                "updated_at" => $this->timenow,
+                "deleted_at" => NULL,
+                "nome" => "PGD",
+                "normativa" => "Portaria XXX XXX XXX XXX",
+                "prazo_max_plano_entrega" => 365,
+                "termo_obrigatorio" => 1,
+                "config" => NULL,
+                "data_inicio" => $this->timenow,
+                "data_fim" => date('Y-m-d H:i:s', strtotime('+1 year', strtotime($this->timenow))),
+                "periodicidade_consolidacao" => "MENSAL",
+                "periodicidade_valor" => 1,
+                "dias_tolerancia_consolidacao" => 10,
+                "dias_tolerancia_avaliacao" => 20,
+                "nota_padrao_avaliacao" => "7",
+                "plano_trabalho_assinatura_participante" => 1,
+                "plano_trabalho_assinatura_gestor_lotacao" => 0,
+                "plano_trabalho_assinatura_gestor_unidade" => 0,
+                "plano_trabalho_assinatura_gestor_entidade" => 0,
+                "tipo_avaliacao_plano_trabalho_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
+                "tipo_avaliacao_plano_entrega_id" => "b0db190d-823d-4222-bc92-abff634f5390",
+                "tipo_justificativa_id" => "f2aef225-a391-4667-9c41-6bb537b18778",
+                "unidade_id" => $unidade->id,
+                "template_tcr_id" => "39f087ce-8816-4be2-a28e-18e8a8e83010",
+                "tipo_documento_tcr_id" => "48bc6f30-a634-4a21-9717-6fe0dc0d4f2a",
+                "documento_id" => NULL,
+            ]
+        );
+
+        $templates = array(
+          [
+            "id" => "39f087ce-8816-4be2-a28e-18e8a8e83010",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "codigo" => "1",
+            "numero" => 1,
+            "especie" => "TCR",
+            "titulo" => "TCR (Termo de ciência e responsabilidade)",
+            "conteudo" => "<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">Pelo presente termo de ci&ecirc;ncia e responsabilidade, em raz&atilde;o da solicita&ccedil;&atilde;o de ades&atilde;o ao Programa de Gest&atilde;o e Desempenho da Secretaria X do Minist&eacute;rio Y, eu, PARTICIPANTE,</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">DECLARO assinar e cumprir o plano de trabalho e o TCR;</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">DECLARO atender &agrave;s convoca&ccedil;&otilde;es para comparecimento presencial, nos termos do art. 14&nbsp;desta Portaria;</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">DECLARO estar dispon&iacute;vel para ser contatado no hor&aacute;rio de funcionamento do &oacute;rg&atilde;o ou da entidade, pelos meios de comunica&ccedil;&atilde;o definidos em TCR, exceto se acordado de forma distinta com a chefia da unidade de execu&ccedil;&atilde;o;</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">DECLARO informar &agrave; chefia da unidade de execu&ccedil;&atilde;o as atividades realizadas, a ocorr&ecirc;ncia de afastamentos, licen&ccedil;as e outros impedimentos, bem como eventual dificuldade, d&uacute;vida ou informa&ccedil;&atilde;o que possa atrasar ou prejudicar a realiza&ccedil;&atilde;o dos trabalhos;</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">DECLARO ter ci&ecirc;ncia das veda&ccedil;&otilde;es contidas nos termos do art. 18&nbsp;desta Portaria;</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">DECLARO zelar pela guarda e manuten&ccedil;&atilde;o dos equipamentos cuja retirada tenha sido autorizada nos termos do art. 22 desta Portaria;</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">DECLARO executar o plano de trabalho, temporariamente, em modalidade distinta, na hip&oacute;tese de caso fortuito ou for&ccedil;a maior que impe&ccedil;a o cumprimento do plano de trabalho na modalidade pactuada;</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">DECLARO comprometer-me a providenciar e manter a infraestrutura f&iacute;sica e tecnol&oacute;gica necess&aacute;ria &agrave; eficiente realiza&ccedil;&atilde;o de suas atividades fora das depend&ecirc;ncias f&iacute;sicas da Secretaria X, mediante o uso de equipamentos e instala&ccedil;&otilde;es que permitam o acesso, o tr&aacute;fego e a utiliza&ccedil;&atilde;o de informa&ccedil;&otilde;es de maneira segura e tempestiva, al&eacute;m de condi&ccedil;&otilde;es adequadas de ergonomia, bem como assumindo pessoalmente quaisquer custos decorrentes relacionados ao teletrabalho, como conex&atilde;o &agrave; internet, &agrave; energia el&eacute;trica e &agrave; rede de telefonia;</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">DECLARO zelar pelas informa&ccedil;&otilde;es acessadas de forma remota, mediante observ&acirc;ncia &agrave;s normas internas e externas de seguran&ccedil;a da informa&ccedil;&atilde;o;</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">DECLARO ter ci&ecirc;ncia de que a participa&ccedil;&atilde;o no programa de gest&atilde;o n&atilde;o constitui direito adquirido, podendo ser desligado nas condi&ccedil;&otilde;es da Portaria que regulamenta o PGD da Secretaria X</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">DECLARO ter ci&ecirc;ncia da veda&ccedil;&atilde;o de utiliza&ccedil;&atilde;o de terceiros para a execu&ccedil;&atilde;o dos trabalhos acordados como parte das metas;</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">DECLARO ter ci&ecirc;ncia do dever de observar as disposi&ccedil;&otilde;es constantes da Lei n&ordm; 13.709, de 14.8.2018, Lei Geral de Prote&ccedil;&atilde;o de Dados Pessoas (LGPD), no que couber;</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">DECLARO ter ci&ecirc;ncia das orienta&ccedil;&otilde;es do DECRETO N&ordm; 1.171, DE 22 DE JUNHO DE 1994, que divulga o C&oacute;digo de &Eacute;tica Profissional do Servidor P&uacute;blico Civil do Poder Executivo Federal;</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">DECLARO ter ci&ecirc;ncia de que a chefia imediata e o dirigente da unidade dever&atilde;o acompanhar a qualidade e a adapta&ccedil;&atilde;o dos participantes do programa de gest&atilde;o;</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">DECLARO ter ci&ecirc;ncia de que a chefia imediata dever&aacute; aferir o cumprimento das metas estabelecidas bem como avaliar a qualidade das entregas;</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">DECLARO ter ci&ecirc;ncia de que a altera&ccedil;&atilde;o no c&aacute;lculo das metas ou atividades constantes do plano de trabalho n&atilde;o enseja o dever de assinar novo termo de ci&ecirc;ncia e responsabilidade, bastando ser notificado quanto ao teor da altera&ccedil;&atilde;o promovida.</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">DECLARO ter ci&ecirc;ncia de que a chefia imediata poder&aacute; redefinir minhas metas por necessidade do servi&ccedil;o, na hip&oacute;tese de surgimento de demanda priorit&aacute;ria cujas atividades n&atilde;o tenham sido previamente acordadas;</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">DECLARO manter dados cadastrais e de contato, especialmente telef&ocirc;nicos, permanentemente atualizados e ativos;</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">DECLARO operar diariamente a&nbsp;caixa postal individual de correio eletr&ocirc;nico institucional, a Intranet e demais formas de comunica&ccedil;&atilde;o da unidade;</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">DECLARO permanecer em disponibilidade constante para contato por meios telem&aacute;ticos pelo per&iacute;odo acordado com a chefia imediata, n&atilde;o podendo extrapolar o hor&aacute;rio de funcionamento da unidade;</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">DECLARO ter ci&ecirc;ncia de que, em caso de mudan&ccedil;a de modalidade, teletrabalho para presencial,&nbsp;ser&aacute; firmado um novo TCR em at&eacute;&nbsp;trinta dias ap&oacute;s o ato de notifica&ccedil;&atilde;o;</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">DECLARO ter ci&ecirc;ncia de que a chefia imediata dever&aacute; manter contato permanente com os participantes do programa de gest&atilde;o para repassar instru&ccedil;&otilde;es de servi&ccedil;o e manifestar considera&ccedil;&otilde;es sobre sua atua&ccedil;&atilde;o;</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">&nbsp;</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">Com a assinatura deste termo, o participante:</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">I - autoriza o fornecimento do n&uacute;mero de telefone pessoal &agrave;s&nbsp;pessoas que fa&ccedil;am chamadas telef&ocirc;nicas para a sua unidade de exerc&iacute;cio na Secretaria X, sem necessidade de avalia&ccedil;&atilde;o, pelo atendente, a respeito da pertin&ecirc;ncia do fornecimento; e</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">II - autoriza o fornecimento do n&uacute;mero de telefone pessoal aos servidores em exerc&iacute;cio na Secretaria X que indiquem necessidade de contato telef&ocirc;nico relacionado &agrave;s suas atividades profissionais.</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">&nbsp;</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">Telefone Celular:</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">Telefone Residencial (opcional):</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">Endere&ccedil;o:</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">E-mail pessoal:</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">&nbsp;</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">DECLARO que os n&uacute;meros de telefone e e-mail pessoal listados neste formul&aacute;rio est&atilde;o ativos e atualizados.</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">&nbsp;</p>\n<p class=\"Texto_Justificado_Recuo_Primeira_Linha\" style=\"text-align: justify;\">*Classifique este documento, quanto ao n&iacute;vel de acesso, como restrito, por conter informa&ccedil;&atilde;o pessoal (art. 31 da Lei n&ordm; 12.527, de 18.11.2011).</p>",
+            "dataset" => "[{\"field\": \"carga_horaria\", \"label\": \"Carga horária diária\"}, {\"field\": \"tempo_total\", \"label\": \"Tempo total do plano\"}, {\"field\": \"tempo_proporcional\", \"label\": \"Tempo proporcional (descontando afastamentos)\"}, {\"type\": \"DATETIME\", \"field\": \"data_inicio\", \"label\": \"Data inicial do plano\"}, {\"type\": \"DATETIME\", \"field\": \"data_fim\", \"label\": \"Data final do plano\"}, {\"type\": \"OBJECT\", \"field\": \"tipo_modalidade\", \"label\": \"tipo_modalidade\", \"fields\": [{\"field\": \"nome\", \"label\": \"Nome\"}]}, {\"type\": \"OBJECT\", \"field\": \"unidade\", \"label\": \"unidade\", \"fields\": [{\"field\": \"codigo\", \"label\": \"Código\"}, {\"field\": \"sigla\", \"label\": \"Sigla\"}, {\"field\": \"nome\", \"label\": \"Nome\"}, {\"type\": \"OBJECT\", \"field\": \"gestor\", \"label\": \"Gestor\", \"fields\": [{\"field\": \"nome\", \"label\": \"Nome\"}, {\"field\": \"email\", \"label\": \"E-mail\"}, {\"field\": \"cpf\", \"label\": \"CPF\"}, {\"field\": \"matricula\", \"label\": \"Matrícula\"}, {\"field\": \"apelido\", \"label\": \"Apelido\"}, {\"field\": \"telefone\", \"label\": \"Telefone\"}, {\"field\": \"sexo\", \"label\": \"Sexo\", \"lookup\": [{\"key\": \"MASCULINO\", \"value\": \"Masculino\"}, {\"key\": \"FEMININO\", \"value\": \"Feminino\"}]}, {\"field\": \"situacao_funcional\", \"label\": \"Situação Funcional\", \"lookup\": [{\"key\": \"SERVIDOR_EFETIVO\", \"value\": \"Servidor público cargo efetivo\"}, {\"key\": \"SERVIDOR_COMISSIONADO\", \"value\": \"Servidor público cargo em comissão\"}, {\"key\": \"EMPREGADO\", \"value\": \"Empregado público\"}, {\"key\": \"CONTRATADO_TEMPORARIO\", \"value\": \"Contratado temporário\"}]}, {\"type\": \"TEMPLATE\", \"field\": \"texto_complementar_plano\", \"label\": \"Mensagem do Plano de trabalho\"}]}, {\"type\": \"OBJECT\", \"field\": \"gestor_substituto\", \"label\": \"Gestor substituto\", \"fields\": [{\"field\": \"nome\", \"label\": \"Nome\"}, {\"field\": \"email\", \"label\": \"E-mail\"}, {\"field\": \"cpf\", \"label\": \"CPF\"}, {\"field\": \"matricula\", \"label\": \"Matrícula\"}, {\"field\": \"apelido\", \"label\": \"Apelido\"}, {\"field\": \"telefone\", \"label\": \"Telefone\"}, {\"field\": \"sexo\", \"label\": \"Sexo\", \"lookup\": [{\"key\": \"MASCULINO\", \"value\": \"Masculino\"}, {\"key\": \"FEMININO\", \"value\": \"Feminino\"}]}, {\"field\": \"situacao_funcional\", \"label\": \"Situação Funcional\", \"lookup\": [{\"key\": \"SERVIDOR_EFETIVO\", \"value\": \"Servidor público cargo efetivo\"}, {\"key\": \"SERVIDOR_COMISSIONADO\", \"value\": \"Servidor público cargo em comissão\"}, {\"key\": \"EMPREGADO\", \"value\": \"Empregado público\"}, {\"key\": \"CONTRATADO_TEMPORARIO\", \"value\": \"Contratado temporário\"}]}, {\"type\": \"TEMPLATE\", \"field\": \"texto_complementar_plano\", \"label\": \"Mensagem do Plano de trabalho\"}]}, {\"field\": \"entidade\", \"label\": \"Entidade\"}, {\"field\": \"cidade\", \"label\": \"Cidade\"}, {\"type\": \"TEMPLATE\", \"field\": \"texto_complementar_plano\", \"label\": \"Mensagem do Plano de trabalho\"}]}, {\"type\": \"OBJECT\", \"field\": \"usuario\", \"label\": \"usuario\", \"fields\": [{\"field\": \"nome\", \"label\": \"Nome\"}, {\"field\": \"email\", \"label\": \"E-mail\"}, {\"field\": \"cpf\", \"label\": \"CPF\"}, {\"field\": \"matricula\", \"label\": \"Matrícula\"}, {\"field\": \"apelido\", \"label\": \"Apelido\"}, {\"field\": \"telefone\", \"label\": \"Telefone\"}, {\"field\": \"sexo\", \"label\": \"Sexo\", \"lookup\": [{\"key\": \"MASCULINO\", \"value\": \"Masculino\"}, {\"key\": \"FEMININO\", \"value\": \"Feminino\"}]}, {\"field\": \"situacao_funcional\", \"label\": \"Situação Funcional\", \"lookup\": [{\"key\": \"SERVIDOR_EFETIVO\", \"value\": \"Servidor público cargo efetivo\"}, {\"key\": \"SERVIDOR_COMISSIONADO\", \"value\": \"Servidor público cargo em comissão\"}, {\"key\": \"EMPREGADO\", \"value\": \"Empregado público\"}, {\"key\": \"CONTRATADO_TEMPORARIO\", \"value\": \"Contratado temporário\"}]}, {\"type\": \"TEMPLATE\", \"field\": \"texto_complementar_plano\", \"label\": \"Mensagem do Plano de trabalho\"}]}, {\"type\": \"OBJECT\", \"field\": \"programa\", \"label\": \"programa\", \"fields\": [{\"field\": \"nome\", \"label\": \"Nome\"}, {\"field\": \"normativo\", \"label\": \"Normativo\"}, {\"field\": \"data_inicio\", \"label\": \"Data início\"}, {\"field\": \"data_fim\", \"label\": \"Data término\"}]}, {\"type\": \"ARRAY\", \"field\": \"entregas\", \"label\": \"entregas\", \"fields\": [{\"field\": \"descricao\", \"label\": \"Descrição da entrega\"}, {\"field\": \"forca_trabalho\", \"label\": \"Percentual da força de trabalho\"}, {\"field\": \"orgao\", \"label\": \"Orgão externo vinculado a entrega\"}, {\"field\": \"meta\", \"label\": \"Meta extipulada para a entrega\"}]}]",
+            "entidade_id" => NULL,
+            "unidade_id" => NULL,
+          ],
+        );
         
+        // Existe uma sequência no Seeder. Se alterar vai dar ruim
         /*
         $this->call([
           CidadeSeeder=>=>class,
@@ -849,6 +1085,15 @@ class IN24_2023Seeder extends Seeder
           GrupoEspecializadoSeeder=>=>class,
         ]);
         */
+
+        TipoModalidade::insertOrIgnore($tipos_modalidades);
+        TipoAtividade::insertOrIgnore($tipos_atividades);
+        TipoJustificativa::insertOrIgnore($tipos_justificativas);
+        TipoAvaliacao::insertOrIgnore($tipos_avaliacoes);
+        TipoAvaliacaoNota::insertOrIgnore($tipos_avaliacoes_notas);
+        TipoAvaliacaoJustificativa::insertOrIgnore($tipos_avaliacoes_justificativas);
+        TipoDocumento::insertOrIgnore($tipos_documentos);
+        Template::insertOrIgnore($templates);
+        Programa::insertOrIgnore($programas);
     }
-  
 }

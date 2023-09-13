@@ -22,11 +22,16 @@
                                     <input-textarea label="Descrição" [size]="12" [rows]="2" controlName="descricao" [control]="formAtividade!.controls.descricao" required></input-textarea>
                                 </ng-template>
                             </column>
-                            <column [title]="'Tempos'" [template]="columnTempos" [editTemplate]="columnTempos">
+                            <column [title]="'Tempos'" [width]="300" [template]="columnTempos" [editTemplate]="editTempos">
                                 <ng-template let-row="row" #columnTempos>
                                     <div class="one-per-line">
                                         <badge *ngFor="let tempo of atividadeService.temposAtividade(row)" [badge]="tempo"></badge>
                                     </div>
+                                </ng-template>
+                                <ng-template let-row="row" #editTempos>
+                                    <input-datetime icon="bi bi-file-earmark-plus" [label]="lex.translate('Data de distribuição')" controlName="data_distribuicao" [control]="formAtividade!.controls.data_distribuicao" labelInfo="Data de inclusão/distribuição/lançamento"></input-datetime>
+                                    <input-datetime icon="bi bi-calendar-check" [label]="lex.translate('Prazo de entrega')" controlName="data_estipulada_entrega" [control]="formAtividade!.controls.data_estipulada_entrega" labelInfo="Data estipulada para entrega da atividade"></input-datetime>
+                                    <input-datetime icon="bi bi-check-circle" label="Conclusão" controlName="data_entrega" [control]="formAtividade!.controls.data_entrega" labelInfo="Data da conclusão da atividade"></input-datetime>
                                 </ng-template>
                             </column>
                             <column [title]="'Progresso\nEtiquetas/Checklist'" [width]="200" [template]="columnProgressoEtiquetasChecklist" [editTemplate]="columnProgressoEtiquetasChecklist" [columnEditTemplate]="columnProgressoEtiquetasChecklistEdit" [edit]="onColumnProgressoEtiquetasChecklistEdit.bind(this)" [save]="onColumnProgressoEtiquetasChecklistSave.bind(this)">
@@ -92,8 +97,8 @@
         [add]="addOcorrencia.bind(this)" [load]="loadOcorrencia.bind(this)" 
         [remove]="removeOcorrencia.bind(this)" [save]="saveOcorrencia.bind(this)" editable>
         <columns>
-            <column title="Início" type="datetime" field="data_inicio"></column>
-            <column title="Fim" type="datetime" field="data_fim"></column>
+            <column title="Início" [width]="300" type="datetime" field="data_inicio"></column>
+            <column title="Fim" [width]="300" type="datetime" field="data_fim"></column>
             <column title="Descrição" type="textarea" field="descricao"></column>
             <column type="options" [dynamicButtons]="ocorrenciaDynamicButtons.bind(this)"></column>
         </columns>
@@ -102,8 +107,8 @@
 <separator [title]="lex.translate('Afastamentos')" [icon]="entityService.getIcon('Afastamento')">
     <grid [items]="itemsAfastamentos" [minHeight]="0" #gridAfastamento [add]="addAfastamento.bind(this)" [hasEdit]="false" [hasDelete]="false" [hasAdd]="!disabled" editable>
         <columns>
-            <column title="Início" type="datetime" field="data_inicio"></column>
-            <column title="Fim" type="datetime" field="data_fim"></column>
+            <column title="Início" [width]="300" type="datetime" field="data_inicio"></column>
+            <column title="Fim" [width]="300" type="datetime" field="data_fim"></column>
             <column title="Motivo/Observação" [template]="columnMotivoObservacao">
                 <ng-template let-row="row" #columnMotivoObservacao>
                     <badge [color]="row.tipo_motivo_afastamento.cor" [icon]="row.tipo_motivo_afastamento.icone" [label]="row.tipo_motivo_afastamento.nome"></badge>
