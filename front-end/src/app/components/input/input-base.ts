@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, ElementRef, Injectable, InjectionToken, Injector } from "@angular/core";
-import { AbstractControl, ControlContainer, FormBuilder, FormControl, FormGroup, FormGroupDirective } from "@angular/forms";
+import { AbstractControl, ControlContainer, FormBuilder, FormControl, FormGroup, FormGroupDirective, ValidationErrors, Validators } from "@angular/forms";
 import { UtilService } from "src/app/services/util.service";
 import { ComponentBase } from "../component-base";
 
@@ -97,14 +97,22 @@ export abstract class InputBase extends ComponentBase {
     }
 
     public ngOnInit() {
-        if(this.size > 0) this.class += " " + this.hostClass + " col-md-" + this.size;
+        if(this.size > 0) this.class += " " + this.hostClass + " col-md-" + this.size;       
     }
 
     public ngAfterViewInit() {
         super.ngAfterViewInit();
         try { this.formDirective = this.injector.get<FormGroupDirective>(FormGroupDirective); } catch {}
-        this.form = this.form || this.formDirective?.form;
+        this.form = this.form || this.formDirective?.form;      
+        if(this.isRequired){
+            this.control!.setValidators(this.requiredValidator.bind(this))
+            this.control?.updateValueAndValidity();
+        }
         this.cdRef.detectChanges();
+    }
+
+    public requiredValidator(control: AbstractControl): ValidationErrors | null { 
+        return this.util.empty(control.value) ? { errorMessage: "Obrigatório" } : null;
     }
 
     public get isDisabled(): boolean {
