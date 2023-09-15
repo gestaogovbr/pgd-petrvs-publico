@@ -6,7 +6,7 @@
         </h5>
         <div [class.card-body]="!isNoBox">
             <div class="multiselect">
-                <div class="container-fluid border rounded multiselect-list px-1 " [style.max-height.px]="maxListHeight > 0 ? maxListHeight : undefined">
+                <div class="border rounded multiselect-list px-1 d-flex flex-wrap" [style.max-height.px]="maxListHeight > 0 ? maxListHeight : undefined">
                     <ng-container *ngFor="let item of items">
                         <!--button *ngIf="item.data?._status != 'DELETE'" type="button" [id]="generatedId(controlName) + '_button_' + item.key" class="btn btn-light m-1 multiselect-item" [class.multiselect-has-edit]="canEdit" [class.multiselect-item-row]="multiselectStyle == 'rows'" [style.max-width.px]="multiselectStyle == 'inline' ? maxItemWidth : undefined" data-bs-toggle="tooltip" [attr.title]="item.value">
                             <i *ngIf="item.icon" [class]="'multiselect-icon ' + item.icon"></i>
@@ -14,16 +14,16 @@
                             <span *ngIf="!isDisabled && !editing && canEdit" class="badge bg-primary ms-1 multiselect-delete-button" role="button" (click)="onEdit(item)"><i class="bi bi-pencil-square"></i></span>
                             <span *ngIf="!isDisabled && !editing" class="badge bg-danger ms-1 multiselect-delete-button" role="button" (click)="onDelete(item)">X</span>
                         </button/-->
-                        <button *ngIf="item.data?._status != 'DELETE'" type="button" [id]="generatedId(controlName) + '_button_' + item.key" class="btn btn-light m-1 multiselect-item d-flex" [class.multiselect-item-row]="multiselectStyle == 'rows'" [style.max-width.px]="multiselectStyle == 'inline' ? maxItemWidth : undefined" data-bs-toggle="tooltip" [attr.title]="item.value">
-                            <div class="flex-grow-1">
-                                <i *ngIf="item.icon" [class]="'multiselect-icon ' + item.icon"></i>
-                                <div class="text-truncate text-start" [class.muiltiselect-text-icon]="item.icon" [style.color]="getHexColor(item.color)">{{item.value}}</div>
+                        <div *ngIf="item.data?._status != 'DELETE'" type="button" [id]="generatedId(controlName) + '_button_' + item.key" class="btn btn-light m-1 multiselect-item " [class.multiselect-item-row]="multiselectStyle == 'rows'" [style.max-width.px]="multiselectStyle == 'inline' ? maxItemWidth : undefined" data-bs-toggle="tooltip" [attr.title]="item.value">
+                                <div class="d-flex align-items-center" [ngClass]="multiselectStyle == 'rows' ? 'justify-content-between' : ''">
+                                    <i *ngIf="item.icon" [class]="'multiselect-icon ' + item.icon"></i>
+                                    <div class="mx-1 text-start" [class.muiltiselect-text-icon]="item.icon" [style.color]="getHexColor(item.color)">{{item.value}}</div>
+                        
+                                    <span *ngIf="!isDisabled && !editing && canEdit" class="badge bg-primary ms-1 multiselect-delete-button" role="button" (click)="onEdit(item)"><i class="bi bi-pencil-square"></i></span>
+                                    <span *ngIf="!isDisabled && !editing" class="badge bg-danger ms-1 multiselect-delete-button" role="button" (click)="onDelete(item)">X</span>
+                                </div>
+                            
                             </div>
-                            <div class="text-nowrap">
-                                <span *ngIf="!isDisabled && !editing && canEdit" class="badge bg-primary ms-1 multiselect-delete-button" role="button" (click)="onEdit(item)"><i class="bi bi-pencil-square"></i></span>
-                                <span *ngIf="!isDisabled && !editing" class="badge bg-danger ms-1 multiselect-delete-button" role="button" (click)="onDelete(item)">X</span>
-                            </div>
-                        </button>
                     </ng-container>
                 </div>    
                 <!--div *ngIf="!isDisabled && !isNoForm" class="multiselect-container">

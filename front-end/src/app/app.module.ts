@@ -16,6 +16,8 @@ import { LogModule } from './modules/logs/log.module';
 import { UteisModule } from './modules/uteis/uteis.module';
 import { RotinaModule } from './modules/rotinas/rotina.module';
 import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
+import { NgScrollbarModule } from 'ngx-scrollbar';
+
 
 @NgModule({
   declarations: [
@@ -38,6 +40,7 @@ import { TesteFormComponent } from './modules/teste/teste-form/teste-form.compon
     UteisModule,
     LogModule,
     RotinaModule,
+    NgScrollbarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

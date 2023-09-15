@@ -1,3 +1,17 @@
+<<<<<<< 955a2fd673caea18c7e348fba524a8e48a29dbb6
+<tabs right [title]="isModal ? '' : title" [select]="onSelectTab.bind(this)">
+    <tab key="TABELA" icon="bi bi-table" label="Lista" [template]="grid">
+        <ng-template #grid>
+            <unidade-list-grid [selectable]="selectable" [snapshot]="snapshot || modalRoute || route.snapshot"></unidade-list-grid>
+        </ng-template>
+    </tab>
+    <tab *ngIf="!selectable" key="MAPA" icon="bi bi-card-heading" label="Mapa" [template]="mapa">
+        <ng-template #mapa>
+            <unidade-mapa></unidade-mapa>
+        </ng-template>
+    </tab>
+</tabs>
+=======
 <h3 *ngIf="!isModal" class="my-2">{{title}}</h3>
 <grid [dao]="dao" [add]="add" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="selectable"
     (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_UND_INCL')"
@@ -43,3 +57,4 @@
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>
+>>>>>>> 65d1ee1109dfab421991abf0d8ce81bf742a23dc
