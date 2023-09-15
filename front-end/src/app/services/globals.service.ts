@@ -46,6 +46,9 @@ export class GlobalsService {
 
   public refresh() {
     this.document.getElementById("html-petrvs").setAttribute("data-bs-theme", this.theme)
+    const ngTheme = this.document.getElementById("primeng-thme") as HTMLLinkElement
+    if (ngTheme)
+      ngTheme.href = this.theme +".css"
     this.app!.cdRef.detectChanges();
   }
 

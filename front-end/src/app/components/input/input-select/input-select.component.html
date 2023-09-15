@@ -9,7 +9,7 @@
         <ng-container *ngIf="!loading">
             <div class="d-flex w-100">
                 <div class="flex-grow-1 w-100" data-bs-toggle="tooltip" [attr.title]="current.value">
-                    <button #dropdownButton [id]="generatedId(controlName)" class="btn btn-light dropdown-toggle w-100" [style.color]="isNoColor ? undefined : (current.color || '#000000')" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button #dropdownButton [id]="generatedId(controlName)" class="btn btn-light dropdown-toggle w-100" [style.color]="isNoColor ? undefined : (current.color || '#000000')" type="button" data-bs-toggle="dropdown" aria-expanded="false" [disabled]="isDisabled">
                         <i *ngIf="!isNoIcon && current.icon" [class]="current.icon"></i>
                         <span class="input-select-label ms-1" [class.input-select-label-icon]="!isNoIcon && current.icon">{{current.value}}</span>
                     </button>
