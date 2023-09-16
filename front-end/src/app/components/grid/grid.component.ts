@@ -78,6 +78,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   @Input() controlName: string | null = null;
   @Input() control?: AbstractControl = undefined;
   @Input() expanded?: string;
+  @Input() noToggleable?: string;
   @Input() minHeight: number = 300;
   @Input() multiselect?: string;
   @Input() multiselectEnabled?: string;
@@ -158,6 +159,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   }
   @Input() set items(value: IIndexable[]) {
     this._items = value;
+    if(this.isExpanded) this.expandAll();
     this.group(value);
     this.control?.setValue(value);
     this.cdRef.detectChanges();
@@ -366,6 +368,10 @@ export class GridComponent extends ComponentBase implements OnInit {
     return this.noHeader != undefined;
   }
 
+  public get isNoToggleable(): boolean {
+    return this.noToggleable != undefined;
+  }
+
   public get isNoMargin(): boolean {
     return this.noMargin != undefined;
   }
@@ -450,6 +456,10 @@ export class GridComponent extends ComponentBase implements OnInit {
   public expand(id: string) {
     this.expandedIds[id] = true;
     this.cdRef.detectChanges();
+  }
+
+  public expandAll() {
+    this.items.forEach(v => this.expandedIds[v.id] = true);
   }
 
   public refreshExpanded(id: string) {

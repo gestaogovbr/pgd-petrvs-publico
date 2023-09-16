@@ -8,12 +8,14 @@
                 <button *ngIf="gb.isToolbar" type="button" class="btn-close btn-minimize" data-bs-dismiss="modal" aria-label="Minimize" (click)="minimize()"></button>
                 <button type="button" class="btn-close" [class.btn-no-left-margin]="gb.isEmbedded" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <document-preview *ngIf="html?.length" noMargin [html]="html"></document-preview>
-                <ng-template #body></ng-template>
-                <ng-container *ngIf="template" [ngTemplateOutlet]="template" [ngTemplateOutletContext]="templateContext"></ng-container>
-                {{message}}
-            </div>
+            <ng-scrollbar style="height: 500px">
+                <div class="modal-body">                
+                    <document-preview *ngIf="html?.length" noMargin [html]="html"></document-preview>
+                    <ng-template #body></ng-template>
+                    <ng-container *ngIf="template" [ngTemplateOutlet]="template" [ngTemplateOutletContext]="templateContext"></ng-container>
+                    {{message}}
+                </div>
+            </ng-scrollbar>
             <div *ngIf="buttons.length" class="modal-footer">
                 <button *ngFor="let button of buttons" type="button" [class]="'btn ' + (button.color || 'btn-primary')" (click)="buttonClick(button)">
                     <i *ngIf="button.icon" [class]="button.icon"></i>

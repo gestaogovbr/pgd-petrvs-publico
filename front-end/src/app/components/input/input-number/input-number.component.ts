@@ -97,4 +97,13 @@ export class InputNumberComponent extends InputBase implements OnInit {
     if(this.change) this.change.emit(event); 
   }
 
+  public converteNumero(event: any) {
+    let value = event.target.value
+    if(event.target.value){
+      this.formControl.patchValue(value*1)
+    }
+   
+    
+  }
+
 }

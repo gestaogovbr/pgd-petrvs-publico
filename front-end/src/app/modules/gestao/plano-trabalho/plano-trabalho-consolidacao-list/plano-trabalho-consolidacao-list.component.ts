@@ -119,6 +119,7 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
     this.submitting = true;
     try {
       let response = await this.dao!.cancelarConclusao(consolidacao.id);
+      consolidacao.status = response.status as PlanoTrabalhoConsolidacaoStatus;
       if(consolidacao._metadata?.planoTrabalhoConsolidacaoFormComponent) {
         let consolidacaoForm = consolidacao._metadata?.planoTrabalhoConsolidacaoFormComponent as PlanoTrabalhoConsolidacaoFormComponent;
         consolidacaoForm.loadConsolidacao(response);
