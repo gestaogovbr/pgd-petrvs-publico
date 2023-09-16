@@ -48,8 +48,8 @@ class IntegracaoService extends ServiceBase {
         $this->validaCertificado = $this->integracao_config['validaCertificado'];
         $this->useLocalFiles = $this->integracao_config['useLocalFiles'];
         $this->storeLocalFiles = $this->integracao_config['storeLocalFiles'];
-        $this->localUnidades = $this->integracao_config['localUnidades'];
-        $this->localServidores = $this->integracao_config['localServidores'];
+        $this->localUnidades = $this->integracao_config['localUnidades']; // "unidades.xml";
+        $this->localServidores = $this->integracao_config['localServidores']; // "servidores.xml"; 
     }
 
     /** Preenche os campos de uma lotação para o novo Usuário, se sua lotação já vier definida pelo SIAPE */
@@ -96,6 +96,7 @@ class IntegracaoService extends ServiceBase {
         ];
 
         if(empty($unidade->id)) { /* Só entra aqui se a Unidade ainda não existir. Nesse caso, insere a Unidade */
+            $timenow = now();
             if(empty($this->unidadesInseridas[$unidade->id_servo])) {       /* Insere somente se já não tiver sido inserido */
                 $dados_path_pai = $this->buscaOuInserePai($unidade, $entidade_id);
                 $values[':id'] = Uuid::uuid4();
@@ -119,13 +120,14 @@ class IntegracaoService extends ServiceBase {
                         'planos_tipo_prazo_comparecimento' => 'DIAS',
                         'distribuicao_forma_contagem_prazos' => 'HORAS_UTEIS',
                         'autoedicao_subordinadas' => 1,
-                        'checklist' => '[]'
+                        'checklist' => '[]',
+                        'created_at' => $timenow,
+                        'updated_at' => $timenow
                     ]);
                     $this->atualizaLogs($this->logged_user_id, 'unidades', $id, 'ADD', ['Rotina' => 'Integração', 'Observação' => 'Unidade nova inserida informada pelo SIAPE: ' . $values[':nome'], 'Valores inseridos' => DB::table('unidades')->where('id', $id)->first()]);
                 } catch (Throwable $e) {
                     LogError::newWarn("Erro ao inserir Unidade", $values);
                 }
-
                 return $this->unidadesInseridas[$unidade->id_servo];
             }
         }
@@ -288,7 +290,10 @@ class IntegracaoService extends ServiceBase {
                     $uos = $this->IntegracaoSiapeService->retornarUorgs()["uorg"];
                 } else {
                     if($this->useLocalFiles) { // Se for para usar os arquivos locais, a rotina lê os dados do arquivo salvo localmente.
-                        $xmlStream = file_get_contents(base_path($this->localUnidades));
+                        // Ajuste na forma antiga
+                            // $xmlStream = utf8_encode(file_get_contents(base_path($this->localUnidades)));
+                        // Ajuste na forma nova.
+                        $xmlStream = mb_convert_encoding(file_get_contents(base_path($this->localUnidades)), 'UTF-8', 'ISO-8859-1' );
                     } else { // Caso contrário, a rotina vai buscar no servidor do SIGEPE.
                         $url = $this->integracao_config["baseUrlunidades"];
                         $response = $this->consultarApiSigepe($token, $url);
@@ -459,7 +464,10 @@ class IntegracaoService extends ServiceBase {
                     $servidores = $this->IntegracaoSiapeService->retornarPessoas()["Pessoas"];
                 } else {
                     if($this->useLocalFiles) {
-                        $xmlStream = file_get_contents(base_path($this->localServidores));
+                        // Ajuste na forma antiga
+                            // $xmlStream = utf8_encode(file_get_contents(base_path($this->localServidores)));
+                        // Ajuste na forma nova.
+                        $xmlStream = mb_convert_encoding(file_get_contents(base_path($this->localServidores)), 'UTF-8', 'ISO-8859-1' );
                     } else {
                         $url = $this->integracao_config["baseUrlpessoas"];
                         $response = $this->consultarApiSigepe($token, $url);
@@ -497,20 +505,25 @@ class IntegracaoService extends ServiceBase {
                                 $email = str_contains($email, "@") ? $email : $email . "@prf.gov.br";
                                 $email = mb_strtolower($email, 'UTF-8');
 
-                                // Trata nome de guerra
-                                $nomeguerra = null;
-                                $nomeguerra ? $nomeguerra = $self->UtilService->valueOrDefault($ativo['nomeguerra']) : 
-                                              $nomeguerra = $self->UtilService->getApelido($servidor['nome']);
+                                // Trata nomedeguerra
+                                // Caso não exista variável (SIAPE WEB SERVICE não tem)
+                                // pega primeiro nome e vai.
+                                if(!empty($ativo['nomeguerra'])) {
+                                    $nomeguerra = $ativo['nomeguerra'];
+                                } else {
+                                    $nomeguerra = $self->UtilService->getApelido($servidor['nome']);
+                                }
 
                                 // Trata $ativo['funcoes'] para registro na integracao_servidores
                                 // e posteriores consultas aos códigos de função/unidade.
 
-                                if(is_array($ativo['funcoes'])){
-                                  foreach($ativo['funcoes'] as &$at){
-                                    $at['uorg_funcao'] = strval(intval($at['uorg_funcao']));
-                                  }
-                                  $ativo['funcoes'] = json_encode(($ativo['funcoes']));
-                                  
+                                if(is_array($ativo['funcoes']) && !empty($ativo['funcoes'])){
+                                    foreach($ativo['funcoes'] as &$at){
+                                        if (array_key_exists('uorg_funcao', $at)){
+                                            $at['uorg_funcao'] = strval(intval($at['uorg_funcao']));
+                                        }
+                                    }
+                                    $ativo['funcoes'] = json_encode(($ativo['funcoes']));
                                 } else{
                                     $ativo['funcoes'] = null;
                                 }
@@ -523,7 +536,18 @@ class IntegracaoService extends ServiceBase {
                                 // Formata nome dos servidores
                                 $nome = $self->UtilService->valueOrDefault($servidor['nome'], null);
                                 if(!is_null($nome)) $nome = $self->UtilService->getNomeFormatado($nome);
-      
+
+                                // Trata campo sexo. Model aguarda MASCULINO ou FEMININO.
+                                if($servidor['sexo'] == 'M' || $servidor['sexo'] == 'm'){
+                                    $servidor['sexo'] = 'MASCULINO';
+                                };
+                                if($servidor['sexo'] == 'F' || $servidor['sexo'] == 'f'){
+                                  $servidor['sexo'] = 'FEMININO';
+                                };
+                                if(empty($servidor['sexo']) || is_null($servidor['sexo'])){
+                                    $servidor['sexo'] = 'MASCULINO';
+                                }
+
                                 $servidor = [
                                     'cpf_ativo' => $self->UtilService->valueOrDefault($servidor['cpf_ativo']),
                                     'data_modificacao' => $self->UtilService->valueOrDefault($servidor['data_modificacao'], null),
@@ -645,7 +669,6 @@ class IntegracaoService extends ServiceBase {
                       
                         foreach($vinculos_isr as $v_isr){
                             $v_isr = $this->UtilService->object2array($v_isr);
-                            
                             $registro = new Usuario([
                                 'id' => Uuid::uuid4(),
                                 'email' => $this->UtilService->valueOrDefault($v_isr['emailfuncional']),
@@ -665,6 +688,14 @@ class IntegracaoService extends ServiceBase {
                             $id_user = $registro->id;
                             $unidade_exercicio = Unidade::where("codigo", $v_isr["exercicio"])->first();
                             
+                            // Alguns servidores possuem unidades de exercícios não válidas (provavelmente aposentados).
+                            // Dessa forma, como resolução, alocar eles na unidade 
+                            // instituidora para ciência dos administradores do sistema e posterior remanejamento.
+
+                            if(is_null($unidade_exercicio)){
+                                $unidade_exercicio = Unidade::where("codigo", "1")->first();
+                            }
+
                             $vinculo = array([
                               'usuario_id' => $id_user,
                               'unidade_id' => $unidade_exercicio->id,

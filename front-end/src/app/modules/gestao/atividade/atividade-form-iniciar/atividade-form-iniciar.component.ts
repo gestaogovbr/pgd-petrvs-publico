@@ -105,7 +105,7 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
 
   public onPlanoChange(event: Event) {
     (async () => {
-      if(this.entity) {
+      if(this.entity && this.planoTrabalho?.selectedItem?.data) {
         const planoTrabalho = this.planoTrabalho?.selectedItem?.data as PlanoTrabalho;
         if(this.planoTrabalhoSelecionado?.id != planoTrabalho.id) {
           this.planoTrabalhoSelecionado = await this.planoTrabalhoDao.getById(planoTrabalho.id, this.planoTrabalhoJoin);

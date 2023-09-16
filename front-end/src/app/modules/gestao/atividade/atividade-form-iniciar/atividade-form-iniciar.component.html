@@ -9,7 +9,7 @@
     </div>
     <div class="row">
         <input-select [label]="lex.translate('Plano de trabalho')" [size]="7" controlName="plano_trabalho_id" #planoTrabalho [control]="form!.controls.plano_trabalho_id" [items]="planosTrabalhos" (change)="onPlanoChange($event)" [labelInfo]="lex.translate('Plano de trabalho')" required></input-select>
-        <input-select [label]="lex.translate('Entrega do plano')" [size]="5" controlName="plano_trabalho_entrega_id" #entrega [control]="form!.controls.plano_trabalho_entrega_id" [items]="planosTrabalhosEntregas" [labelInfo]="lex.translate('Entrega') + ' do ' + lex.translate('plano de trabalho') + ' que a ' + lex.translate('atividade') + ' é referente'"></input-select>
+        <input-select [label]="lex.translate('Entrega do plano')" [size]="5" controlName="plano_trabalho_entrega_id" #entrega [control]="form!.controls.plano_trabalho_entrega_id" [items]="planosTrabalhosEntregas" [labelInfo]="lex.translate('Entrega') + ' do ' + lex.translate('plano de trabalho') + ' que a ' + lex.translate('atividade') + ' é referente'" required></input-select>
     </div>
     <separator></separator>
     <div class="row">

@@ -13,6 +13,8 @@
   <link href="assets/css/bootstrap-load-fonts.css" rel="stylesheet" type="text/css"> 
   <link href="assets/css/fontawesome-load-fonts.css" rel="stylesheet" type="text/css"> 
 
+  <link rel="stylesheet" type="text/css" href="blue.css" id="primeng-thme">
+
 
 
   <link rel="preconnect" href="https://fonts.cdnfonts.com">

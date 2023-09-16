@@ -15,6 +15,7 @@ RUN apt-get install -y libxml2-dev
 RUN apt-get install -y nano
 RUN apt-get install -y iputils-ping
 RUN apt-get install -y dnsutils
+RUN apt-get install -y telnet
 # Bibliotecas php
 RUN docker-php-ext-install zip
 RUN docker-php-ext-install pdo_mysql

@@ -1,4 +1,4 @@
-<div class="mb-3 position-relative">
+<div class="mt-2 position-relative">
     <label *ngIf="labelPosition == 'top' && label.length" for="{{controlName}}" class="d-flex align-items-center mb-1" [class]="labelClass" [class.radio]="isRadio" [class.fw-bold]="bold" [class.control-label]="isRadio">
         <i *ngIf="icon.length" [class]="icon"></i>
         <span class="mx-1">{{label}} <span class="required-field" *ngIf="isRequired">*</span></span>

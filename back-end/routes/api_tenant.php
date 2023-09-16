@@ -283,6 +283,8 @@ Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
     Route::post('dashboards', [UnidadeController::class, 'dashboards']);
     Route::post('inativo', [UnidadeController::class, 'inativo']);
     Route::post('lotados', [UnidadeController::class, 'lotados']);
+    Route::post('hierarquia', [UnidadeController::class, 'hierarquia']);
+    Route::post('filhas', [UnidadeController::class, 'filhas']);
 });
 Route::middleware(['auth:sanctum'])->prefix('UnidadeIntegrante')->group(function () {
     Route::post('load-integrantes', [UnidadeIntegranteController::class, 'loadIntegrantes']);
