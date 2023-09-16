@@ -1049,10 +1049,6 @@ class IN24_2023Seeder extends Seeder
         );
 
         $templates = array(
-
-        
-
-        $templates = array(
           [
             "id" => "39f087ce-8816-4be2-a28e-18e8a8e83010",
             "created_at" => $this->timenow,
