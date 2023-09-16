@@ -214,7 +214,7 @@ const _c2 = function (a0, a1) {
   };
 };
 const _c3 = function () {
-  return ["gestao/plano-trabalho/consolidacao"];
+  return ["gestao/plano-entrega"];
 };
 const _c4 = function (a0) {
   return {
