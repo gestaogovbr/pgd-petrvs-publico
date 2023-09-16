@@ -1143,6 +1143,7 @@ class AtividadeFormTarefaComponent extends src_app_modules_base_page_form_base__
       let formValue = Object.assign({}, form.value);
       formValue = _this.util.fillForm(formValue, entity);
       yield _this.tipoTarefa?.loadSearch(entity.tipo_tarefa || formValue.tipo_tarefa_id);
+      formValue.concluido = !!entity.data_conclusao;
       formValue.comentarios = _this.comentario.orderComentarios(formValue.comentarios || []);
       form.patchValue(formValue);
     })();
@@ -1162,6 +1163,7 @@ class AtividadeFormTarefaComponent extends src_app_modules_base_page_form_base__
       _this3.comentarios?.confirm();
       _this3.util.fillForm(_this3.entity, _this3.form.value);
       _this3.entity.tipo_tarefa = _this3.tipoTarefa?.selectedEntity;
+      _this3.entity.data_conclusao = _this3.form.controls.concluido.value && !_this3.entity.data_conclusao ? _this3.auth.hora : _this3.entity.data_conclusao;
       return new src_app_services_navigate_service__WEBPACK_IMPORTED_MODULE_9__.NavigateResult(_this3.entity);
     })();
   }
@@ -1264,12 +1266,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/dao/unidade-dao.service */ 81214);
 /* harmony import */ var src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/dao/usuario-dao.service */ 35255);
 /* harmony import */ var src_app_services_calendar_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! src/app/services/calendar.service */ 6551);
-/* harmony import */ var src_app_models_comentario__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! src/app/models/comentario */ 11597);
-/* harmony import */ var src_app_models_atividade_tarefa_model__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! src/app/models/atividade-tarefa.model */ 88543);
-/* harmony import */ var src_app_services_comentario_service__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! src/app/services/comentario.service */ 2124);
-/* harmony import */ var src_app_dao_tipo_atividade_dao_service__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! src/app/dao/tipo-atividade-dao.service */ 22981);
-/* harmony import */ var src_app_models_documento_model__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! src/app/models/documento.model */ 43972);
-/* harmony import */ var src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! src/app/dao/plano-trabalho-dao.service */ 87744);
+/* harmony import */ var src_app_models_atividade_tarefa_model__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! src/app/models/atividade-tarefa.model */ 88543);
+/* harmony import */ var src_app_services_comentario_service__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! src/app/services/comentario.service */ 2124);
+/* harmony import */ var src_app_dao_tipo_atividade_dao_service__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! src/app/dao/tipo-atividade-dao.service */ 22981);
+/* harmony import */ var src_app_models_documento_model__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! src/app/models/documento.model */ 43972);
+/* harmony import */ var src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! src/app/dao/plano-trabalho-dao.service */ 87744);
+/* harmony import */ var _atividade_service__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../atividade.service */ 57338);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! @angular/core */ 51197);
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! @angular/common */ 89650);
 /* harmony import */ var _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../../../components/grid/grid.component */ 73150);
@@ -1489,18 +1491,19 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
       const etiquetasKeys = this.etiquetas.map(x => x.key);
       const checklistKeys = this.checklist.map(x => x.key);
       const etiqueta = (this.form.controls.etiquetas.value || []).find(x => !etiquetasKeys.includes(x.key));
-      const checklst = (this.form.controls.checklist.value || []).find(x => !etiquetasKeys.includes(x.id) && x.checked);
+      const checklst = (this.form.controls.checklist.value || []).find(x => !checklistKeys.includes(x.id) && x.checked);
       if (etiqueta) result = "Etiqueta " + etiqueta.value + "não pode ser utilizada!";
       if (checklst) result = "Checklist " + checklst.texto + "não pode ser utilizado!";
       return result;
     };
     const horaInicial = this.auth.hora;
-    this.tipoAtividadeDao = injector.get(src_app_dao_tipo_atividade_dao_service__WEBPACK_IMPORTED_MODULE_11__.TipoAtividadeDaoService);
+    this.tipoAtividadeDao = injector.get(src_app_dao_tipo_atividade_dao_service__WEBPACK_IMPORTED_MODULE_10__.TipoAtividadeDaoService);
     this.unidadeDao = injector.get(src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_5__.UnidadeDaoService);
     this.usuarioDao = injector.get(src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_6__.UsuarioDaoService);
-    this.planoTrabalhoDao = injector.get(src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_13__.PlanoTrabalhoDaoService);
+    this.planoTrabalhoDao = injector.get(src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_12__.PlanoTrabalhoDaoService);
+    this.atividadeService = injector.get(_atividade_service__WEBPACK_IMPORTED_MODULE_13__.AtividadeService);
     this.calendar = injector.get(src_app_services_calendar_service__WEBPACK_IMPORTED_MODULE_7__.CalendarService);
-    this.comentario = injector.get(src_app_services_comentario_service__WEBPACK_IMPORTED_MODULE_10__.ComentarioService);
+    this.comentario = injector.get(src_app_services_comentario_service__WEBPACK_IMPORTED_MODULE_9__.ComentarioService);
     this.form = this.fh.FormBuilder({
       numero: {
         default: 0
@@ -1584,10 +1587,10 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
         default: []
       },
       documento_requisicao: {
-        default: new src_app_models_documento_model__WEBPACK_IMPORTED_MODULE_12__.Documento()
+        default: new src_app_models_documento_model__WEBPACK_IMPORTED_MODULE_11__.Documento()
       },
       documento_entrega: {
-        default: new src_app_models_documento_model__WEBPACK_IMPORTED_MODULE_12__.Documento()
+        default: new src_app_models_documento_model__WEBPACK_IMPORTED_MODULE_11__.Documento()
       }
     }, this.cdRef, this.validate);
     this.formChecklist = this.fh.FormBuilder({
@@ -1674,28 +1677,12 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
     })();
   }
   loadEtiquetas() {
-    const unidade = this.unidade?.selectedEntity;
-    const tipoAtividade = this.tipoAtividade?.selectedEntity;
-    this.etiquetas = this.util.merge(tipoAtividade?.etiquetas, unidade?.etiquetas, (a, b) => a.key == b.key);
+    this.etiquetas = this.atividadeService.buildEtiquetas(this.unidade?.selectedEntity, this.tipoAtividade?.selectedEntity);
   }
   loadChecklist() {
     const tipoAtividade = this.tipoAtividade?.selectedEntity;
     this.checklist = tipoAtividade?.checklist || [];
-    let checks = this.util.merge(this.checklist.map(a => {
-      return {
-        id: a.key,
-        texto: a.value,
-        checked: false
-      };
-    }), (this.form.controls.checklist.value || []).filter(b => b.checked), (a, b) => {
-      if (a.id == b.id) {
-        a.checked = b.checked;
-        return true;
-      } else {
-        return false;
-      }
-    });
-    this.form.controls.checklist.setValue(checks);
+    this.atividadeService.buildChecklist(tipoAtividade, this.form.controls.checklist);
   }
   loadTipoAtividade(tipoAtividade) {
     if (tipoAtividade) {
@@ -1734,25 +1721,26 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
   onTipoAtividadeSelect(item) {
     const tipoAtividade = item.entity;
     this.loadTipoAtividade(tipoAtividade);
-    this.comentarioAtividade(tipoAtividade);
+    this.atividadeService.comentarioAtividade(tipoAtividade, this.form.controls.comentarios);
+    this.cdRef.detectChanges();
   }
-  comentarioAtividade(tipoAtividade) {
-    const comentarios = this.form.controls.comentarios.value || [];
+  /*public comentarioAtividade(tipoAtividade?: TipoAtividade) {
+    const comentarios: Comentario[] = this.form.controls.comentarios.value || [];
     const index = comentarios.findIndex(x => x.tipo == "TIPO_ATIVIDADE");
-    if (index >= 0) {
-      if (comentarios[index]._status == "ADD") {
+    if(index >= 0) {
+      if(comentarios[index]._status == "ADD") {
         comentarios.splice(index, 1);
       } else {
         comentarios[index]._status == "DELETE";
       }
     }
-    if (tipoAtividade?.comentario?.length) {
-      const comentario = new src_app_models_comentario__WEBPACK_IMPORTED_MODULE_8__.Comentario();
-      comentario.id = this.dao.generateUuid();
+    if(tipoAtividade?.comentario?.length) {
+      const comentario = new Comentario();
+      comentario.id = this.dao!.generateUuid();
       comentario.path = "";
       comentario.texto = tipoAtividade.comentario;
       comentario.data_comentario = this.auth.hora;
-      comentario.usuario_id = this.auth.usuario.id;
+      comentario.usuario_id = this.auth.usuario!.id;
       comentario.comentario_id = null;
       comentario.tipo = "TIPO_ATIVIDADE";
       comentario.usuario = this.auth.usuario;
@@ -1761,7 +1749,7 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
       this.form.controls.comentarios.setValue(this.comentario.orderComentarios(comentarios));
       this.cdRef.detectChanges();
     }
-  }
+  }*/
   onTipoAtividadeChange(event) {
     if (!this.form?.controls.tipo_atividade_id.value?.length) this.loadTipoAtividade(undefined);
   }
@@ -1822,16 +1810,16 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
           checklist: source.checklist,
           plano_trabalho_entrega_id: source.plano_trabalho_entrega_id,
           progresso: source.progresso,
-          tarefas: (source.tarefas || []).map(tarefa => new src_app_models_atividade_tarefa_model__WEBPACK_IMPORTED_MODULE_9__.AtividadeTarefa(Object.assign({}, tarefa, {
+          tarefas: (source.tarefas || []).map(tarefa => new src_app_models_atividade_tarefa_model__WEBPACK_IMPORTED_MODULE_8__.AtividadeTarefa(Object.assign({}, tarefa, {
             id: _this3.dao.generateUuid(),
             comentarios: [],
             _status: "ADD"
           }))),
-          documento_requisicao: !source.documento_requisicao ? undefined : Object.assign({}, new src_app_models_documento_model__WEBPACK_IMPORTED_MODULE_12__.Documento(Object.assign({}, source.documento_requisicao, {
+          documento_requisicao: !source.documento_requisicao ? undefined : Object.assign({}, new src_app_models_documento_model__WEBPACK_IMPORTED_MODULE_11__.Documento(Object.assign({}, source.documento_requisicao, {
             id: _this3.dao.generateUuid(),
             _status: "ADD"
           }))),
-          documento_entrega: !source.documento_entrega ? undefined : Object.assign({}, new src_app_models_documento_model__WEBPACK_IMPORTED_MODULE_12__.Documento(Object.assign({}, source.documento_entrega, {
+          documento_entrega: !source.documento_entrega ? undefined : Object.assign({}, new src_app_models_documento_model__WEBPACK_IMPORTED_MODULE_11__.Documento(Object.assign({}, source.documento_entrega, {
             id: _this3.dao.generateUuid(),
             _status: "ADD"
           })))
@@ -2471,7 +2459,7 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
     this.cdRef.detectChanges();
   }
   loadEtiquetas() {
-    //this.etiquetas = this.util.merge(row.atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key); 
+    //this.etiquetas = this.util.merge(row.tipo_atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key); 
     this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario.config?.etiquetas, (a, b) => a.key == b.key);
   }
   getLabelStyle(label) {
@@ -2662,7 +2650,7 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
     }
   }
   dynamicCardMenu(card) {
-    const menu = this.dynamicButtons(card.data);
+    const menu = this.atividadeService.dynamicButtons.bind(this)(card.data, this.optionsMetadata);
     menu.push({
       icon: "bi bi-three-dots",
       hint: "Opções",
@@ -2674,7 +2662,7 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
   cardDynamicOptions(card) {
     const olders = card.menu?.find(x => x.hint == "Opções");
     if (olders) {
-      const options = this.dynamicOptions.bind(this)(card.data);
+      const options = this.atividadeService.dynamicOptions.bind(this)(card.data, this.optionsMetadata);
       if (!olders.items || olders?.items.map(x => x.label).join() != options.map(x => x.label).join()) olders.items = options;
     }
     return olders?.items;
@@ -2685,7 +2673,7 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
       if (self.isEtiquetas) {
         return true;
       } else {
-        const buttons = self.dynamicOptions(drag.data);
+        const buttons = self.atividadeService.dynamicOptions.bind(self)(drag.data, self.optionsMetadata);
         return !!buttons.find(x => x.id == status);
       }
     };
@@ -2726,7 +2714,7 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
         }
       };
       if (!this.isEtiquetas) {
-        const buttons = this.dynamicOptions(atividade);
+        const buttons = this.atividadeService.dynamicOptions.bind(this)(atividade, this.optionsMetadata);
         const docker = this.cards.indexOf(list);
         if (docker >= 0) {
           const action = buttons.find(x => x.id == this.DOCKERS[docker]);
@@ -2958,7 +2946,7 @@ function AtividadeListTarefaComponent_ng_template_10_Template(rf, ctx) {
   if (rf & 2) {
     const row_r15 = ctx.row;
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", row_r15.concluido);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", row_r15.data_conclusao);
   }
 }
 function AtividadeListTarefaComponent_ng_template_12_Template(rf, ctx) {
@@ -3175,15 +3163,16 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
   onColumnConcluidoEdit(row) {
     var _this4 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      _this4.formEdit.controls.concluido.setValue(row.concluido);
+      _this4.formEdit.controls.concluido.setValue(!!row.data_conclusao);
     })();
   }
   onColumnConcluidoSave(row) {
     var _this5 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       try {
+        const data_conclusao = _this5.formEdit.controls.concluido.value && !!row.data_conclusao ? _this5.auth.hora : row.data_conclusao;
         const saved = yield _this5.dao.update(row.id, {
-          concluido: _this5.formEdit.controls.concluido.value
+          data_conclusao
         });
         row.concluido = _this5.formEdit.controls.concluido.value;
         return !!saved;
@@ -3241,7 +3230,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵInheritDefinitionFeature"]],
   decls: 18,
   vars: 16,
-  consts: [[3, "control", "add", "disabled", "minHeight", "hasDelete", "editable"], [3, "title", "template"], ["tipoTarefaDescricao", ""], ["type", "timer", "title", "Tempo estimado", "onlyHours", "", "field", "tempo_estimado"], ["title", "Documento", 3, "template"], ["documento", ""], ["title", "Conclu\u00EDdo", 3, "align", "template", "editTemplate", "edit", "save"], ["concluido", ""], ["editConcluido", ""], ["title", "Informa\u00E7\u00F5es adicionais", 3, "template"], ["tarefaComentarios", ""], ["type", "options", 3, "onEdit", "onDelete", 4, "ngIf"], ["class", "d-block", 4, "ngIf"], [1, "d-block"], [3, "documento"], [1, "text-center"], ["class", "bi bi-check-circle", 4, "ngIf"], [1, "bi", "bi-check-circle"], ["controlName", "concluido", 3, "size", "control"], ["origem", "ATIVIDADE_TAREFA", 3, "entity", "noPersist", "selectable", "grid", "save"], ["type", "options", 3, "onEdit", "onDelete"]],
+  consts: [[3, "control", "add", "disabled", "minHeight", "hasDelete", "editable"], [3, "title", "template"], ["tipoTarefaDescricao", ""], ["type", "timer", "title", "Tempo estimado", "onlyHours", "", "field", "tempo_estimado"], ["title", "Documento", 3, "template"], ["documento", ""], ["title", "Conclu\u00EDdo", 3, "align", "template", "columnEditTemplate", "edit", "save"], ["concluido", ""], ["editConcluido", ""], ["title", "Informa\u00E7\u00F5es adicionais", 3, "template"], ["tarefaComentarios", ""], ["type", "options", 3, "onEdit", "onDelete", 4, "ngIf"], ["class", "d-block", 4, "ngIf"], [1, "d-block"], [3, "documento"], [1, "text-center"], ["class", "bi bi-check-circle", 4, "ngIf"], [1, "bi", "bi-check-circle"], ["controlName", "concluido", 3, "size", "control"], ["origem", "ATIVIDADE_TAREFA", 3, "entity", "noPersist", "selectable", "grid", "save"], ["type", "options", 3, "onEdit", "onDelete"]],
   template: function AtividadeListTarefaComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "grid", 0)(1, "columns")(2, "column", 1);
@@ -3273,7 +3262,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](4);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("template", _r2);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("align", "center")("template", _r4)("editTemplate", _r6)("edit", ctx.editable ? ctx.onColumnConcluidoEdit.bind(ctx) : undefined)("save", ctx.editable ? ctx.onColumnConcluidoSave.bind(ctx) : undefined);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("align", "center")("template", _r4)("columnEditTemplate", _r6)("edit", ctx.editable ? ctx.onColumnConcluidoEdit.bind(ctx) : undefined)("save", ctx.editable ? ctx.onColumnConcluidoSave.bind(ctx) : undefined);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](5);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("template", _r8);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](3);

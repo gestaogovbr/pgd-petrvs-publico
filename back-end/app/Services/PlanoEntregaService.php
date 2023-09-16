@@ -258,7 +258,7 @@ class PlanoEntregaService extends ServiceBase
         array_push($where, empty($result) ? ["data_arquivamento", "==", null] : $result);
         $result = $this->extractWhere($data, "status");
         array_push($where, empty($result) ? ["status", "!=", 'CANCELADO'] : $result);
-        $data["where"] = $where;
+        array_push($data["where"],...$where);
         return $data;
     }
 
