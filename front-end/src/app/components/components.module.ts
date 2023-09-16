@@ -202,7 +202,8 @@ const maskConfigFunction: () => Partial<IConfig> = () => {
     AccordionComponent,
     SectionComponent,
     CollapseCardComponent,
-    ButtonDashboardComponent
+    ButtonDashboardComponent,
+    DoubleScrollbarComponent
   ],
   providers: [
     { 

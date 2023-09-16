@@ -231,6 +231,9 @@
         border-color:  var(--bs-border-color);
         color: var(--bs-body-color) !important;
       }
+      &:disabled {
+        background-color: var(--bs-secondary-bg) !important;
+      }
     }
 
     .dropdown-item {
@@ -253,6 +256,14 @@
     i {
       margin: 5px;
     }
+  }
+
+  input:read-only, 
+  input:disabled,
+  textarea:read-only,
+  button:disabled {
+    background-color: var(--bs-secondary-bg) !important;
+    /*background-color:#e9ecef;*/
   }
 
   
@@ -308,4 +319,12 @@ body {
   iframe {
     display: inline !important;
   }
+}
+
+
+.p-organizationchart .p-organizationchart-line-down {
+  margin: 0 auto;
+}
+.p-organizationchart-node-content .p-node-toggler .p-node-toggler-icon {
+  vertical-align: inherit;
 }
