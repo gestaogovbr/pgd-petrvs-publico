@@ -15,16 +15,15 @@ class AreaConhecimentoSeeder extends Seeder
     public function run()
     {
         $areas = [
-            ['nome'=>'Ciências Humanas'],
+            ['nome'=>'Ciências Agrárias'],
             ['nome'=>'Ciências Biológicas'],
             ['nome'=>'Ciências Exatas e da Terra'],
-            ['nome'=>'Linguística, Letras e Artes'],
-            ['nome'=>'Ciências Agrárias'],
+            ['nome'=>'Ciências Humanas'],
             ['nome'=>'Ciências da Saúde'],
-            ['nome'=>'Engenharias'],
             ['nome'=>'Ciências Sociais Aplicadas'],
+            ['nome'=>'Engenharias'],
+            ['nome'=>'Linguística, Letras e Artes'],
             ['nome'=>'Institucional'],
-            ['nome'=>'Ciências Humanas'],   
          ];
         foreach($areas as $a) {
             $area = new AreaConhecimento();
