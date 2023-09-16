@@ -4,7 +4,7 @@
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
         <div class="row">
-            <input-text [size]="12" [label]="'Nome ' + lex.translate('tipo de avaliação')" controlName="nome" [control]="filter!.controls.nome" placeholder="Nome..."></input-text>
+            <input-text [size]="12" [label]="'Nome ' + lex.translate('tipo de avaliação')" controlName="nome" [control]="filter!.controls.nome" placeholder="Nome..." [attr.maxlength]=250></input-text>
         </div>
     </filter>
     <columns>

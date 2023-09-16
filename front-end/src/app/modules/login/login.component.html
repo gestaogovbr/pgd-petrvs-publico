@@ -46,10 +46,10 @@
                         <ng-template #dprfSeguranca>
                             <form [formGroup]="login">
                                 <div class="form-group form-primary mb-2">
-                                    <input-text controlName="usuario" maskFormat="000.000.000-00" placeholder="CPF"></input-text>
+                                    <input-text controlName="usuario" maskFormat="000.000.000-00" placeholder="CPF" [attr.maxlength]=15></input-text>
                                 </div>
                                 <div class="form-group form-primary mb-2">
-                                    <input-text password="password" controlName="senha" placeholder="Senha"></input-text>
+                                    <input-text password="password" controlName="senha" placeholder="Senha" [attr.maxlength]=250></input-text>
                                 </div>
                                 <div class="form-group form-primary mb-2">
                                     <input-text controlName="token" maskFormat="000000" placeholder="Token"></input-text>

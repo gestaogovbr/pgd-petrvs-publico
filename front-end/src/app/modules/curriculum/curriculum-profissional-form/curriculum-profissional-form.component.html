@@ -97,7 +97,7 @@
                     [addItemHandle]="addItemFuncao.bind(this)" noBox [bold]="true">
 
                     <input-text [size]="12" label="Especifique" icon="bi bi-list-stars"
-                        controlName="inputEspecifique" liveSearch [control]="form!.controls.inputEspecifique">
+                        controlName="inputEspecifique" liveSearch [control]="form!.controls.inputEspecifique" [attr.maxlength]=250>
                     </input-text>
 
                 </input-multiselect>
@@ -116,7 +116,7 @@
                     [addItemHandle]="addItemFuncao.bind(this)" noBox>
 
                     <input-text [size]="8" label="Qual/Quais" icon="bi bi-mortarboard-fill" controlName="docenciaFora"
-                        liveSearch [control]="form!.controls.docenciaFora">
+                        liveSearch [control]="form!.controls.docenciaFora" [attr.maxlength]=250>
                     </input-text>
 
                 </input-multiselect>
@@ -217,7 +217,7 @@
                     </input-radio>
                     <input-text *ngIf="form!.controls.radioInteressePG.value" [size]="4"
                         label="Telefone de contato do Chefe Imediato" icon="fas fa-phone" controlName="telefone"
-                        [control]="form!.controls.telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'"></input-text>
+                        [control]="form!.controls.telefone" [maskFormat]="'(00) 0000-0000 || (00) 0 0000-0000'" [attr.maxlength]=250></input-text>
         
                
                 <div class="row">

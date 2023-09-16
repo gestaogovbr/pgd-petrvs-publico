@@ -3,7 +3,7 @@
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="12" label="Nome da área de conhecimento" controlName="nome_area"
+            <input-text [size]="12" label="Nome da área de conhecimento" controlName="nome_area" [attr.maxlength]=250
                 [control]="filter!.controls.nome_area" placeholder="Nome da área de conhecimento"></input-text>
         </div>
     </filter>

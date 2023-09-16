@@ -3,7 +3,7 @@
         <tab key="DADOS" label="Dados">
             <div class="row">
                 <div class="row">
-                    <input-text [size]="12" label="Nome do Planejamento Institucional" [icon]="entityService.getIcon('Planejamento')" controlName="nome" [control]="form!.controls.nome" required></input-text>
+                    <input-text [size]="12" label="Nome do Planejamento Institucional" [icon]="entityService.getIcon('Planejamento')" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250 required></input-text>
                 </div>
                 <div class="row">
                     <!-- <input-search [size]="6" [disabled]="hasPermissionToUNEX ? undefined : 'true'" controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" [selectParams]="{filter: {instituidora: true}}" (change)="onUnidadeChange($event)" labelInfo="Unidade responsável pelo planejamento, caso vazio será considerado a Entidade"></input-search> -->
@@ -22,7 +22,7 @@
                     <div class="col-md-6">
                         <div class="row">
                             <input-multiselect [size]="12" label="Valores" controlName="valores" [addItemHandle]="addValorHandle.bind(this)">
-                                <input-text label="Valor Institucional" icon="far fa-edit" controlName="valor_texto" [control]="form!.controls.valor_texto"></input-text>
+                                <input-text label="Valor Institucional" icon="far fa-edit" controlName="valor_texto" [control]="form!.controls.valor_texto" [attr.maxlength]=250></input-text>
                             </input-multiselect>        
                         </div>
                     </div>
