@@ -25,7 +25,7 @@ class ProgramaController extends ControllerBase {
         }
     }
 
-    public function assinaturasExigidas(Request $request){
+/*     public function assinaturasExigidas(Request $request){
         try {
             $data = $request->validate([
                 'programa_id' => ['required']
@@ -37,5 +37,5 @@ class ProgramaController extends ControllerBase {
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
-    }
+    } */
 }

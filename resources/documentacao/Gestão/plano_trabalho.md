@@ -79,11 +79,11 @@ da assinatura       | pelo                |  inicial    |  faz avançar         
                     |                     |             |  envia para                |  AGUARDANDO  |  gestores assinam |  ATIVO 
                     |                     |             |  assinatura do TCR         |  ASSINATURA  |  o TCR            |  
     gestor(es)      +--------------------------------------------------------------------------------------------------------------
-                    | gestor              |  INCLUIDO   |  gestor ativa              |  ATIVO       |                   |  
+                    | gestor              |  INCLUIDO   |  gestor ativa (e assina)   |  ATIVO       |                   |  
                     |                     |             |  o plano                   |              |                   |  
 --------------------+--------------------------------------------------------------------------------------------------------------
                     | participante        |  INCLUIDO   |  participante              |  ATIVO       |                   |  
-                    |                     |             |  ativa o plano             |              |                   |  
+                    |                     |             |  ativa (e assina) o plano  |              |                   |  
     participante    +--------------------------------------------------------------------------------------------------------------
                     | gestor              |  INCLUIDO   |  gestor envia              |              |                   |  
                     |                     |             |  para                      |  AGUARDANDO  |  participante     |  ATIVO
@@ -113,11 +113,12 @@ Ação: ALTERAR -> não muda o status do plano se ele estiver com o status 'INCL
     - o usuário logado precisa ser o participante do plano ou gestor da Unidade Executora, e
     - nenhuma assinatura no TCR ser exigida pelo programa;
 
-*****************Ação: CANCELAR ASSINATURA -> o plano permanece no status 'AGUARDANDO_ASSINATURA' ou retorna ao status 'INCLUIDO';
+Ação: CANCELAR ASSINATURA -> o plano permanece no status 'AGUARDANDO_ASSINATURA' ou retorna ao status 'INCLUIDO';
 
 - (RN_PTR_Q) Condições para que um Plano de Trabalho possa ter uma assinatura cancelada:
   - o plano precisa estar no status 'AGUARDANDO_ASSINATURA'; e
     - o usuário logado precisa já ter assinado o TCR;
+  - Após o cancelamento da assinatura do usuário logado, se existir assinatura(s) de outro(s) usuário(s), o plano permanece no status 'AGUARDANDO_ASSINATURA'. Caso contrário, retrocessará para o status 'INCLUIDO';
 
 */*Ação: CANCELAR PLANO -> o plano adquire o status de 'CANCELADO';
 

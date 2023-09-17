@@ -144,7 +144,7 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
     });
   }
 
-  public jaAssinouTCR(usuario_id: string | null, plano_trabalho_id : string): Promise<boolean> {
+/*   public jaAssinouTCR(usuario_id: string | null, plano_trabalho_id : string): Promise<boolean> {
     return new Promise<boolean>((resolve,reject) => {
       this.server.post('api/Usuario/ja-assinou-tcr',{ usuario_id: usuario_id, plano_trabalho_id: plano_trabalho_id})
         .subscribe(response => {
@@ -154,5 +154,5 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
           resolve(false);
         });
     });
-  }
+  } */
 }

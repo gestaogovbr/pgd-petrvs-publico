@@ -15,7 +15,6 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { FullRoute } from 'src/app/services/navigate.service';
 import { PlanoTrabalhoService } from '../plano-trabalho.service';
 import { DocumentoService } from 'src/app/modules/uteis/documentos/documento.service';
-import { Unidade } from 'src/app/models/unidade.model';
 
 @Component({
   selector: 'plano-trabalho-list',
@@ -167,9 +166,6 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
         */
         break;
     }
-/*     if (this.planoTrabalhoService.needSign(planoTrabalho)) result.push(this.BOTAO_ASSINAR);
-    else if (this.auth.hasPermissionTo('MOD_PTR_EDT')) result.push(this.BOTAO_ALTERAR);
-    else if (this.auth.hasPermissionTo("MOD_PTR_CONS")) result.push(this.BOTAO_INFORMACOES); */
     if (!result.length) result.push(this.BOTAO_INFORMACOES);
     return result;
   }
@@ -235,24 +231,10 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
   }
 
   public botaoAtendeCondicoes(botao: ToolbarButton, planoTrabalho: PlanoTrabalho): boolean {
-    //let unidadeExecutora: Unidade | null;
-    let assinaturasExigidas: string[] = [];
+    let assinaturasExigidas: string[] = planoTrabalho.assinaturasExigidas;
     let usuarioEhGestorUnidadeExecutora: boolean = this.auth.usuario?.id == planoTrabalho.unidade?.gestor?.usuario?.id;
-    let usuarioJaAssinouTCR: boolean = false;
+    let usuarioJaAssinouTCR: boolean = planoTrabalho.jaAssinaramTCR.includes(this.auth.usuario?.id!);
     let assinaturaUsuarioEhExigida: boolean = false;
-    (async () => {
-/*       this.unidadeDao.getById(planoTrabalho.unidade_id, ["gestor.usuario:id"]).then(response => { 
-        unidadeExecutora = response;
-        usuarioEhGestorUnidadeExecutora = this.auth.usuario?.id == unidadeExecutora?.gestor?.usuario?.id; 
-      }); */
-      this.programaDao.assinaturasExigidas(planoTrabalho.programa_id).then(response => { 
-        assinaturasExigidas = response;
-        assinaturaUsuarioEhExigida = this.auth.usuario ? assinaturasExigidas.includes(this.auth.usuario!.id) : false; 
-      });
-      this.usuarioDao.jaAssinouTCR(this.auth.usuario?.id ?? null,planoTrabalho.id).then(response => { 
-        usuarioJaAssinouTCR = response; 
-      });
-    })();
     let planoIncluido = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'INCLUIDO'; 
     let usuarioEhParticipante = this.auth.usuario?.id == planoTrabalho.usuario_id; 
     let planoAguardandoAssinatura = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'AGUARDANDO_ASSINATURA'; 

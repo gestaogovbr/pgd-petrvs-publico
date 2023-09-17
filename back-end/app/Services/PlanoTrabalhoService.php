@@ -15,6 +15,7 @@ use App\Models\Documento;
 use Illuminate\Support\Facades\DB;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\Programa;
+use App\Models\DocumentoAssinatura;
 use Carbon\Carbon;
 use DateTime;
 use Throwable;
@@ -523,6 +524,14 @@ class PlanoTrabalhoService extends ServiceBase
     ];
   }
 
+  public function proxyRows(&$rows) {
+    foreach($rows as $row) {
+        $row->assinaturasExigidas = $this->programa->assinaturasExigidas($row->id);
+        $row->jaAssinaramTCR = $this->usuario->jaAssinaramTCR($row->id);
+    }
+    return $rows;
+}
+
   /**
    * Retorna um array com várias informações sobre o plano recebido como parâmetro que serão auxiliares na definição das permissões para as diversas operações possíveis com um Plano de Trabalho.
    * Se o plano recebido como parâmetro possuir ID, as informações devolvidas serão baseadas nos dados armazenados no banco. Caso contrário, as informações devolvidas serão baseadas nos dados
@@ -555,7 +564,7 @@ class PlanoTrabalhoService extends ServiceBase
     $result["unidadePlanoEhLotacao"] = $this->usuario->isLotacao(null, $planoTrabalho['unidade_id']);
     $result["usuarioEhParticipantePgdHabilitado"] = $this->usuario->isParticipantePgdHabilitado(null, $planoTrabalho["programa_id"]);
     $result["usuarioEhParticipantePlano"] = parent::loggedUser()->id == $planoTrabalho["usuario_id"];
-    $result["usuarioJaAssinouTCR"] = $this->usuario->jaAssinouTCR(null, $planoTrabalho["id"]);
+    $result["usuarioJaAssinouTCR"] = in_array(parent::loggedUser()->id, $this->usuario->jaAssinaramTCR($planoTrabalho["id"]));
     return $result;
   }
 
@@ -618,8 +627,14 @@ class PlanoTrabalhoService extends ServiceBase
   public function cancelarAssinatura($data, $unidade) {    
     try {
         DB::beginTransaction();
+        /*
+            (RN_PTR_Q)  
+            - Após o cancelamento da assinatura do usuário logado, se existir assinatura(s) de outro(s) usuário(s), o plano permanece no status 'AGUARDANDO_ASSINATURA'. 
+              Caso contrário, retrocessará para o status 'INCLUIDO';
+        */
         $planoTrabalho = PlanoTrabalho::find($data["id"]);
-        //FALTA IMPLEMENTAR: o plano permanece no status 'AGUARDANDO_ASSINATURA' ou retorna ao status 'INCLUIDO';
+        DocumentoAssinatura::where("usuario_id",parent::loggedUser()->id)->where("documento_id",$planoTrabalho->documento_id)->first()->delete();
+        $this->status->atualizaStatus($planoTrabalho, count($planoTrabalho->documento->assinaturas->toArray()) > 0 ? 'AGUARDANDO_ASSINATURA' : 'INCLUIDO', 'CANCELAMENTO DA ASSINATURA DO USUÁRIO: ' . parent::loggedUser()->nome . 'JUSTIFICATIVA: ' . $data["justificativa"]);
         DB::commit();
     } catch (Throwable $e) {
         DB::rollback();
