@@ -26,49 +26,6 @@ class ProgramaParticipante extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base
 
 /***/ }),
 
-/***/ 90758:
-/*!******************************************!*\
-  !*** ./src/app/models/programa.model.ts ***!
-  \******************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Programa: () => (/* binding */ Programa)
-/* harmony export */ });
-/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
-
-class Programa extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
-  constructor(data) {
-    super();
-    this.nome = ""; /* Nome do programa */
-    this.normativa = ""; /* Normativa que regula o programa */
-    this.config = null; /* Configuração extra de programa */
-    this.data_inicio = new Date(); /* Data de início vigência */
-    this.data_fim = new Date(); /* Data de fim vigência */
-    this.termo_obrigatorio = false; /* tinyint; NOT NULL; */
-    this.prazo_max_plano_entrega = 365; /*Limite máximo de dias corridos para o plano de entregas (Zero para não limitar) */
-    this.periodicidade_consolidacao = 'MENSAL'; /* Período para avaliação do plano de trabalho */
-    this.periodicidade_valor = 1; /* Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do mês para o restante */
-    this.dias_tolerancia_consolidacao = 10; /* Dias de tolerância para o lançamento do registro das atividades na consolidação, após esses dias será liberado automaticamente para avaliação */
-    this.dias_tolerancia_avaliacao = 20; /* Dias de tolerância para realizar a avaliação, considerando a tolerância da consolidação. Caso seja zero não fará nada, caso contrário após esse prazo a consolidação será automaticamente avaliada com a nota padrão */
-    this.nota_padrao_avaliacao = null; /* Nota padrão de avaliação, para quando o gestor não realizar a avaliação dentro do prazo */
-    this.plano_trabalho_assinatura_participante = 1; /* Exigir assinatura do usuário no plano de trabalho */
-    this.plano_trabalho_assinatura_gestor_lotacao = 0; /* Exigir assinatura do gestor da unidade de lotação do servidor */
-    this.plano_trabalho_assinatura_gestor_unidade = 0; /* Exigir assinatura do gestor da unidade */
-    this.plano_trabalho_assinatura_gestor_entidade = 0; /* Exigir assinatura do gestor da entidade */
-    this.tipo_avaliacao_plano_trabalho_id = ""; /* Tipo de avaliação do plano de trabalho */
-    this.tipo_avaliacao_plano_entrega_id = ""; /* Tipo de avaliação do plano de entrega */
-    this.tipo_justificativa_id = null; /* Tipo de justificativa, para quando o gestor não realizar a avaliação dentro do prazo */
-    this.unidade_id = ""; /* Unidade vinculada ao programa */
-    this.template_tcr_id = null; /* Template do TCR */
-    this.tipo_documento_tcr_id = null; /* Tipo de documento do TCR */
-    this.initialization(data);
-  }
-}
-
-/***/ }),
-
 /***/ 10997:
 /*!**********************************************************************************!*\
   !*** ./src/app/modules/gestao/programa/programa-form/programa-form.component.ts ***!

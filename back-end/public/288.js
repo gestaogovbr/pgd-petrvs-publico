@@ -796,6 +796,9 @@ class CadeiaValorListProcessosComponent extends src_app_modules_base_page_frame_
       if (['nome'].indexOf(controlName) >= 0 && !control.value?.length) {
         result = "Obrigatório";
       }
+      if (['nivel'].indexOf(controlName) >= 0) {
+        result = this.existePai(control);
+      }
       return result;
     };
     this.validateLevel = (parents, item, children) => {
@@ -835,6 +838,46 @@ class CadeiaValorListProcessosComponent extends src_app_modules_base_page_frame_
         default: ""
       }
     }, this.cdRef, this.validate);
+  }
+  existePai(control) {
+    let result = null;
+    let niveis = control.value.split(".");
+    let todos = this.items;
+    if (niveis.length > 1) {
+      let ultimoCriado = todos.reduce((a, b) => a.created_at > b.created_at ? a : b);
+      let pais = this.processos(niveis.slice(0, niveis.length - 1));
+      if (!ultimoCriado.processo_pai_id) {
+        if (pais[0].id == ultimoCriado.id) {
+          result = "Não existe o nível pai";
+        } else {
+          result = pais.length + 1 == niveis.length ? "Adicione o nível filho pelo botão 'Adicionar filho'" : "Não existe o nível pai";
+        }
+      } else {
+        let paiId = ultimoCriado.processo_pai_id;
+        let niveisPai = "";
+        while (paiId) {
+          let atual = this.items.find(x => x.id == paiId);
+          niveisPai = (atual?.sequencia || "") + "." + niveisPai;
+          paiId = atual?.processo_pai_id || null;
+        }
+        let controleNiveis = niveisPai.split(".");
+        controleNiveis.pop();
+        controleNiveis.push((ultimoCriado.sequencia - 1).toString());
+        if (this.JSON.stringify(niveis) <= this.JSON.stringify(controleNiveis)) {
+          result = "Nível já existente";
+        } else if (niveis.length > controleNiveis.length) {
+          result = pais.length + 1 == niveis.length ? "Adicione o nível filho pelo botão 'Adicionar filho'" : "Não existe o nível pai";
+        }
+      }
+    } else if (todos.length > 0) {
+      let ultimoCriado = todos.reduce((a, b) => a.created_at > b.created_at ? a : b);
+      if (niveis[0] < ultimoCriado.sequencia) {
+        result = "Nível já existente";
+      } else {
+        result = ultimoCriado.processo_pai_id == null ? null : "Adicione este nível pelo botão 'Adicionar nível'";
+      }
+    }
+    return result;
   }
   loadData(entity, form) {
     this.cdRef.detectChanges();
@@ -939,7 +982,6 @@ class CadeiaValorListProcessosComponent extends src_app_modules_base_page_frame_
         row.id = row.id == "NEW" ? _this5.dao.generateUuid() : row.id;
         row.sequencia = sequencia;
         row.cadeia_valor_id = _this5.entity?.id;
-        row.sequencia = sequencia;
         row.processo_pai_id = parentId;
         row.nome = form.controls.nome.value;
         result = row;

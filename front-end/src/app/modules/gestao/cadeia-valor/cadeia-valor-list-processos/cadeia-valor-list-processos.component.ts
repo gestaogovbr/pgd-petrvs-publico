@@ -91,8 +91,9 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
       let ultimoCriado = todos.reduce((a, b) => (a.created_at > b.created_at ? a : b));
       if (niveis[0] < ultimoCriado.sequencia) { 
         result = "Nível já existente"; 
-      } 
-      else { 
+      } else if (niveis[0] > ultimoCriado.sequencia) {
+        result = "Insira o nível em sequência numérica"; 
+      } else {
         result = ultimoCriado.processo_pai_id == null ? null : "Adicione este nível pelo botão 'Adicionar nível'";
       }
       

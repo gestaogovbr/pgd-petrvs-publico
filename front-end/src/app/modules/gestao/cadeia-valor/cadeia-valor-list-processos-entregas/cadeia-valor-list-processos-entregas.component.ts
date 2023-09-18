@@ -53,4 +53,28 @@ export class CadeiaValorListProcessosEntregasComponent extends PageListBase<Cade
     return result;
   }
 
+  public getSequencia(metadata: any, row: CadeiaValorProcesso) {//
+    if (!metadata.nivel) {
+      let paiId: string | null = row.processo_pai_id;
+      let niveis = "";
+      while (paiId) {
+        let atual = this.grid?.items.find(x => x.id == paiId);
+        niveis = (atual?.sequencia || "") + "." + niveis;
+        paiId = atual?.processo_pai_id || null;
+      }
+      niveis += row.sequencia;
+      if (metadata.nivel != niveis) metadata.nivel = niveis;
+    }
+    this.sortProcessos();
+    return metadata.nivel;
+  }
+
+  public sortProcessos() {
+    this.grid?.items.sort((a, b) => {
+      const sa = (this.grid!.getMetadata(a)?.nivel || "").split(".").map((x: string) => ("000" + x).substr(-3)).join(".");
+      const sb = (this.grid!.getMetadata(b)?.nivel || "").split(".").map((x: string) => ("000" + x).substr(-3)).join(".");
+      return sa < sb ? -1 : sa > sb ? 1 : 0;
+    });
+  }
+
 }
