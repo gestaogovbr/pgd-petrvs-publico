@@ -1603,7 +1603,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../components/input/input-select/input-select.component */ 64603);
 /* harmony import */ var _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../components/separator/separator.component */ 25560);
 /* harmony import */ var _components_action_button_action_button_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/action-button/action-button.component */ 28032);
-/* harmony import */ var ngx_drag_drop__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ngx-drag-drop */ 40499);
+/* harmony import */ var ngx_drag_drop__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ngx-drag-drop */ 51474);
 
 var _class;
 
@@ -2249,7 +2249,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _planejamento_list_objetivo_planejamento_list_objetivo_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./planejamento-list-objetivo/planejamento-list-objetivo.component */ 17726);
 /* harmony import */ var _planejamento_form_objetivo_planejamento_form_objetivo_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./planejamento-form-objetivo/planejamento-form-objetivo.component */ 74768);
 /* harmony import */ var _planejamento_mapa_planejamento_mapa_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./planejamento-mapa/planejamento-mapa.component */ 23195);
-/* harmony import */ var ngx_drag_drop__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ngx-drag-drop */ 40499);
+/* harmony import */ var ngx_drag_drop__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ngx-drag-drop */ 51474);
 /* harmony import */ var _planejamento_list_objetivos_entregas_planejamento_list_objetivos_entregas_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./planejamento-list-objetivos-entregas/planejamento-list-objetivos-entregas.component */ 10812);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/core */ 51197);
 var _class;

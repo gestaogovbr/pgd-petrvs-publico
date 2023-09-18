@@ -1211,7 +1211,7 @@ class PlanoEntregaFormComponent extends src_app_modules_base_page_form_base__WEB
         const diffTime = Math.abs(inicio - fim);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         const entregas = this.form.controls.entregas.value || [];
-        if (programa.prazo_max_plano_entrega > 0 && diffDays > programa.prazo_max_plano_entrega) return "A data de início e término" + this.lex.translate("do Plano de Entrega") + " deve respeitar o período previsto no " + this.lex.translate("Programa");
+        if (programa.prazo_max_plano_entrega > 0 && diffDays > programa.prazo_max_plano_entrega) return "A data de início e término" + this.lex.translate(" do Plano de Entrega") + " deve respeitar o período previsto no " + this.lex.translate("Programa ") + "(" + programa.data_inicio.toLocaleDateString() + " até " + programa.data_fim.toLocaleDateString() + ")";
         for (let entrega of entregas) {
           if (entrega.data_inicio < inicio) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data inicial anterior à " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(inicio);
           if (entrega.data_fim > fim) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data fim posterior à " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(fim);
@@ -3522,6 +3522,10 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
       }
     });
   }
+  canAdd() {
+    return this.auth.hasPermissionTo('MOD_PENT_INCL');
+    //IMPLEMENTAR AS DEMAIS CONDIÇÕES*******************
+  }
 }
 _class = PlanoEntregaListComponent;
 _class.ɵfac = function PlanoEntregaListComponent_Factory(t) {
@@ -3594,7 +3598,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵdef
       const _r17 = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵreference"](35);
       const _r19 = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵreference"](37);
       const _r21 = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵreference"](40);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("selectable", ctx.selectable)("hasAdd", ctx.auth.hasPermissionTo("MOD_PENT_INCL"))("hasEdit", false);
+      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("selectable", ctx.selectable)("hasAdd", ctx.canAdd())("hasEdit", false);
       _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("ngIf", !ctx.selectable);
       _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);

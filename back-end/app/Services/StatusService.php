@@ -7,10 +7,10 @@ use Throwable;
 
 class StatusService extends ServiceBase
 {
-    public function atualizaStatus($entity, $novoStatus, $justificativa, $usuarioId = null) {
+    public function atualizaStatus($entity, $novoStatus, $justificativa = "", $usuarioId = null) {
         try {
             if(!empty($entity)) {
-                if($entity->latestStatus?->codigo != $novoStatus){
+                if(isset($entity->latestStatus) && $entity->latestStatus->codigo != $novoStatus){
                     $entity->statusHistorico()->create([
                         'codigo' => $novoStatus,
                         'justificativa' => $justificativa,
@@ -19,6 +19,7 @@ class StatusService extends ServiceBase
                 }
                 $entity->status = $novoStatus;
                 $entity->save();
+                $entity->refresh();
             }
         } catch (Throwable $e) { 
             throw $e;

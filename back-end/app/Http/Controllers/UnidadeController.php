@@ -14,16 +14,46 @@ class UnidadeController extends ControllerBase {
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
             case 'STORE':
-                if (!$usuario->hasPermissionTo('MOD_UND_INCL')) throw new ServerException("CapacidadeStore", "Inserção não executada");
+                if (!$usuario->hasPermissionTo('MOD_UND_INCL')) throw new ServerException("CapacidadeStore", "Inserção não realizada");
                 break;
             case 'EDIT':
-                if (!$usuario->hasPermissionTo('MOD_UND_EDT')) throw new ServerException("CapacidadeStore", "Edição não executada");
+                if (!$usuario->hasPermissionTo('MOD_UND_EDT')) throw new ServerException("CapacidadeStore", "Edição não realizada");
                 break;
             case 'DESTROY':
-                if (!$usuario->hasPermissionTo('MOD_UND_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não executada");
+                if (!$usuario->hasPermissionTo('MOD_UND_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não realizada");
                 break;
         }
     }
+
+    public function hierarquia(Request $request) {
+        try {
+            $data = $request->validate([
+                'unidade_id' => ['nullable']
+            ]);
+            $unidadeId = $data["unidade_id"] ?? null;
+            return response()->json([
+                'success' => true,
+                'unidades' => $this->service->hierarquia($unidadeId)
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function filhas(Request $request) {
+        try {
+            $data = $request->validate([
+                'unidade_id' => ['required']
+            ]);
+            return response()->json([
+                'success' => true,
+                'unidades' => $this->service->filhas($data["unidade_id"])
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
 
     public function linhaAscendente(Request $request) {
         try {

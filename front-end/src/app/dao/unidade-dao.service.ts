@@ -8,6 +8,8 @@ import { UsuarioDaoService } from './usuario-dao.service';
 import { PlanoEntregaDaoService } from './plano-entrega-dao.service';
 import { TemplateDataset } from '../modules/uteis/templates/template.service';
 import { Usuario } from '../models/usuario.model';
+import { TreeNode } from 'primeng/api';
+
 
 export type UnidadeDashboard = {
   sigla: string,                                    // nome da Unidade
@@ -98,6 +100,22 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
     return new Promise<Unidade[]>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/subordinadas', { unidade_id }).subscribe(response => {
         resolve(response?.subordinadas || []);
+      }, error => reject(error));
+    });
+  }
+
+  public hierarquiaUnidades(unidade_id: string | null | undefined): Promise<Unidade[]>{
+    return new Promise<Unidade[]>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/hierarquia', {unidade_id}).subscribe(response => {
+        resolve(response?.unidades || []);
+      }, error => reject(error));
+    });
+  }
+
+  public unidadesFilhas(unidade_id: string): Promise<Unidade[]>{
+    return new Promise<Unidade[]>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/filhas', {unidade_id}).subscribe(response => {
+        resolve(response?.unidades || []);
       }, error => reject(error));
     });
   }

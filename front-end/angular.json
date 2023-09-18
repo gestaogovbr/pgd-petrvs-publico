@@ -80,14 +80,30 @@
               }
             ],
             "styles": [
-              "node_modules/bootstrap/dist/css/bootstrap.css",
+              {
+                "input": "src/bootstrap4-light-blue.scss",
+                "bundleName": "blue",
+                "inject": false
+              },
+              {
+                "input": "src/bootstrap4-light-blue.scss",
+                "bundleName": "light",
+                "inject": false
+              },
+              {
+                "input": "src/bootstrap4-dark-blue.scss",
+                "bundleName": "dark",
+                "inject": false
+              },
+              "./node_modules/bootstrap/dist/css/bootstrap.css",
               "./node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss",
               "./node_modules/@fortawesome/fontawesome-free/scss/regular.scss",
               "./node_modules/@fortawesome/fontawesome-free/scss/solid.scss",
               "./node_modules/@fortawesome/fontawesome-free/scss/brands.scss",
               "./node_modules/@fortawesome/fontawesome-free/css/all.min.css",
+              "./node_modules/primeng/resources/primeng.min.css",
               "src/styles.scss",
-              "node_modules/bootstrap-icons/font/bootstrap-icons.css"
+              "./node_modules/bootstrap-icons/font/bootstrap-icons.css"
               
             ],
             "scripts": [

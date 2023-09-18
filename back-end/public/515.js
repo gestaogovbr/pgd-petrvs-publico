@@ -244,7 +244,9 @@ class CurriculumAtributosbig5FormComponent {
     let value = $('#rangePerma').val();
     $('#lblPerma').text(value.toString());
   }
-  onChangeValorSoft() {}
+  onChangeValorSoft(soft) {
+    console.log(soft);
+  }
   voltarb5() {}
   resposta() {}
   proxb5() {}
@@ -258,7 +260,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefi
   selectors: [["curriculum-atributosbig5-form"]],
   decls: 189,
   vars: 10,
-  consts: [["display", "", "right", ""], ["key", "BIG5", "label", "Big-Five", 1, "fw-bold"], ["id", "b5exp", 1, "my-3"], ["id", "pb5exp", 1, "text-justify", "fw-bold"], [1, "row", "justify-content-center"], [1, "col-md-5"], [1, "card", "text-center", "mt-5"], [1, "card-header"], ["id", "imgBigIco", "alt", "...", 1, "card-img-top", "me-2", 3, "src"], [1, "card-body"], [1, "row", "my-2"], [1, "col-lg-12"], ["for", "escolheRelatorioIFR", 1, "label", "mb-3"], [1, "btn-group", "d-grid", "justify-content-md-center"], [1, "col-12", "mb-1"], ["type", "radio", "name", "escolheRelatorioIFR", "id", "dataIF", "autocomplete", "off", "value", "dataIF", "checked", "", 1, "btn-check", "btnRadio"], ["for", "dataIF", 1, "btn", "btn-outline-primary", "mb-1", "w-100", "text-center"], ["type", "radio", "name", "escolheRelatorioIFR", "id", "mesAno", "autocomplete", "off", "value", "mesAno", 1, "btn-check", "btnRadio"], ["for", "mesAno", 1, "btn", "btn-outline-primary", "mb-1", "w-100", "text-center"], ["type", "radio", "name", "escolheRelatorioIFR", "id", "total", "autocomplete", "off", "value", "total", 1, "btn-check", "btnRadio"], ["for", "total", 1, "btn", "btn-outline-primary", "mb-1", "w-100", "text-center"], [1, "card-footer"], [1, "row"], [1, "col-md-12", "d-flex", "justify-content-between"], [1, "col-md-3"], ["type", "button", "id", "btnv", "disabled", "", 1, "btn", "btn-primary", 3, "click"], ["type", "button", "id", "btne", "disabled", "", 1, "btn", "btn-primary", 3, "click"], [1, "btn-group", "d-flex", "flex-wrap"], ["for", "dataIF", 1, "btn", "btn-outline-primary", "btnRadio"], ["for", "mesAno", 1, "btn", "btn-outline-primary", "mx-2", "btnRadio"], ["for", "total", 1, "btn", "btn-outline-primary", "btnRadio"], ["key", "DISC", "label", "Disc", 1, "fw-bold"], ["key", "PERMA", "label", "M\u00E9todo PERMA", 1, "fw-bold"], [1, "col-md-7"], [1, "card", "mt-5"], [1, "card-header", "hperma"], [1, "card-body-perma"], [1, "range-wrap", "divSlidePerma", "w-100", "box"], ["name", "lblPerma", "id", "lblPerma", 1, "me-2", "lperma"], ["id", "rangePerma", "name", "rangePerma", "type", "range", "min", "0", "max", "10", "value", "0", "step", "1", 1, "ms-2", "rperma", 3, "change"], [1, "card-footer", "fperma"], [1, "d-flex", "justify-content-between"], ["type", "button", "id", "btnv", "disabled", "", 1, "btn", "btnpermav", 3, "click"], ["type", "button", "id", "btne", "disabled", "", 1, "btn", "btnpermap", 3, "click"], ["key", "SRQ19", "label", "SRQ-19", 1, "fw-bold"], ["key", "SOFTSKILLS", "label", "Soft-Skills", 1, "fw-bold"], [1, "my-5"], [1, "row", "justify-content-between", "g-4"], [1, "col-lg-3"], [1, "card", "h-100"], ["id", "imgComunica", "alt", "...", 1, "card-img-top", 3, "src"], [1, "card-title", "text-center"], [1, "col-md-6"], [1, "card-text"], ["type", "number", "dir", "rtl", "value", "0", 1, "form-control"], ["id", "imgLideranca", "alt", "...", 1, "card-img-top", 3, "src"], ["id", "imgResolucao", "alt", "...", 1, "card-img-top", 3, "src"], ["id", "imgCriatividade", "alt", "...", 1, "card-img-top", 3, "src"], [1, "row", "justify-content-between", "g-4", "mt-3"], ["id", "imgPensamento", "alt", "...", 1, "card-img-top", 3, "src"], ["id", "imgHabilidade", "alt", "...", 1, "card-img-top", 3, "src"], [1, "col-md-4"], ["id", "imgAdaptabilidade", "alt", "...", 1, "card-img-top", 3, "src"], ["id", "imgEtica", "alt", "...", 1, "card-img-top", 3, "src"]],
+  consts: [["display", "", "right", ""], ["key", "BIG5", "label", "Big-Five", 1, "fw-bold"], ["id", "b5exp", 1, "my-3"], ["id", "pb5exp", 1, "text-justify", "fw-bold"], [1, "row", "justify-content-center"], [1, "col-md-5"], [1, "card", "text-center", "mt-5"], [1, "card-header"], ["id", "imgBigIco", "alt", "...", 1, "card-img-top", "me-2", 3, "src"], [1, "card-body"], [1, "row", "my-2"], [1, "col-lg-12"], ["for", "escolheRelatorioIFR", 1, "label", "mb-3"], [1, "btn-group", "d-grid", "justify-content-md-center"], [1, "col-12", "mb-1"], ["type", "radio", "name", "escolheRelatorioIFR", "id", "dataIF", "autocomplete", "off", "value", "dataIF", "checked", "", 1, "btn-check", "btnRadio"], ["for", "dataIF", 1, "btn", "btn-outline-primary", "mb-1", "w-100", "text-center"], ["type", "radio", "name", "escolheRelatorioIFR", "id", "mesAno", "autocomplete", "off", "value", "mesAno", 1, "btn-check", "btnRadio"], ["for", "mesAno", 1, "btn", "btn-outline-primary", "mb-1", "w-100", "text-center"], ["type", "radio", "name", "escolheRelatorioIFR", "id", "total", "autocomplete", "off", "value", "total", 1, "btn-check", "btnRadio"], ["for", "total", 1, "btn", "btn-outline-primary", "mb-1", "w-100", "text-center"], [1, "card-footer"], [1, "row"], [1, "col-md-12", "d-flex", "justify-content-between"], [1, "col-md-3"], ["type", "button", "id", "btnv", "disabled", "", 1, "btn", "btn-primary", 3, "click"], ["type", "button", "id", "btne", "disabled", "", 1, "btn", "btn-primary", 3, "click"], [1, "btn-group", "d-flex", "flex-wrap"], ["for", "dataIF", 1, "btn", "btn-outline-primary", "btnRadio"], ["for", "mesAno", 1, "btn", "btn-outline-primary", "mx-2", "btnRadio"], ["for", "total", 1, "btn", "btn-outline-primary", "btnRadio"], ["key", "DISC", "label", "Disc", 1, "fw-bold"], ["key", "PERMA", "label", "M\u00E9todo PERMA", 1, "fw-bold"], [1, "col-md-7"], [1, "card", "mt-5"], [1, "card-header", "hperma"], [1, "card-body-perma"], [1, "range-wrap", "divSlidePerma", "w-100", "box"], ["name", "lblPerma", "id", "lblPerma", 1, "me-2", "lperma"], ["id", "rangePerma", "name", "rangePerma", "type", "range", "min", "0", "max", "10", "value", "0", "step", "1", 1, "ms-2", "rperma", 3, "change"], [1, "card-footer", "fperma"], [1, "d-flex", "justify-content-between"], ["type", "button", "id", "btnv", "disabled", "", 1, "btn", "btnpermav", 3, "click"], ["type", "button", "id", "btne", "disabled", "", 1, "btn", "btnpermap", 3, "click"], ["key", "SRQ19", "label", "SRQ-19", 1, "fw-bold"], ["key", "SOFTSKILLS", "label", "Soft-Skills", 1, "fw-bold"], [1, "my-5"], [1, "row", "justify-content-between", "g-4"], [1, "col-lg-3"], [1, "card", "h-100"], ["id", "imgComunica", "alt", "...", 1, "card-img-top", 3, "src"], [1, "card-title", "text-center"], [1, "col-md-6"], [1, "card-text"], ["type", "number", "dir", "rtl", "value", "0", "name", "comunica", 1, "form-control", 3, "change"], ["id", "imgLideranca", "alt", "...", 1, "card-img-top", 3, "src"], ["type", "number", "dir", "rtl", "value", "0", 1, "form-control", 3, "change"], ["id", "imgResolucao", "alt", "...", 1, "card-img-top", 3, "src"], ["id", "imgCriatividade", "alt", "...", 1, "card-img-top", 3, "src"], [1, "row", "justify-content-between", "g-4", "mt-3"], ["id", "imgPensamento", "alt", "...", 1, "card-img-top", 3, "src"], ["id", "imgHabilidade", "alt", "...", 1, "card-img-top", 3, "src"], [1, "col-md-4"], ["id", "imgAdaptabilidade", "alt", "...", 1, "card-img-top", 3, "src"], ["id", "imgEtica", "alt", "...", 1, "card-img-top", 3, "src"]],
   template: function CurriculumAtributosbig5FormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](0, "tabs", 0)(1, "tab", 1)(2, "div", 2)(3, "p", 3);
@@ -383,65 +385,81 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefi
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](111, "div", 9)(112, "h5", 51);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](113, "Comunica\u00E7\u00E3o");
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](114, "div", 4)(115, "div", 52)(116, "p", 53);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](117, "input", 54);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()()()()()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](114, "div", 4)(115, "div", 52)(116, "p", 53)(117, "input", 54);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_Template_input_change_117_listener() {
+        return ctx.onChangeValorSoft(ctx);
+      });
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()()()()()()();
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](118, "div", 48)(119, "div", 49);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](120, "img", 55);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](121, "div", 9)(122, "h5", 51);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](123, "Lideran\u00E7a");
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](124, "div", 4)(125, "div", 52)(126, "p", 53);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](127, "input", 54);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()()()()()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](124, "div", 4)(125, "div", 52)(126, "p", 53)(127, "input", 56);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_Template_input_change_127_listener() {
+        return ctx.onChangeValorSoft(ctx);
+      });
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()()()()()()();
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](128, "div", 48)(129, "div", 49);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](130, "img", 56);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](130, "img", 57);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](131, "div", 9)(132, "h5", 51);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](133, "Resolu\u00E7\u00E3o de Problemas");
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](134, "div", 4)(135, "div", 52)(136, "p", 53);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](137, "input", 54);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()()()()()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](134, "div", 4)(135, "div", 52)(136, "p", 53)(137, "input", 56);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_Template_input_change_137_listener() {
+        return ctx.onChangeValorSoft(ctx);
+      });
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()()()()()()();
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](138, "div", 48)(139, "div", 49);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](140, "img", 57);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](140, "img", 58);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](141, "div", 9)(142, "h5", 51);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](143, "Criatividade e Curiosidade");
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](144, "div", 4)(145, "div", 5)(146, "p", 53);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](147, "input", 54);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()()()()()()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](148, "div", 58)(149, "div", 48)(150, "div", 49);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](151, "img", 59);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](144, "div", 4)(145, "div", 5)(146, "p", 53)(147, "input", 56);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_Template_input_change_147_listener() {
+        return ctx.onChangeValorSoft(ctx);
+      });
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()()()()()()()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](148, "div", 59)(149, "div", 48)(150, "div", 49);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](151, "img", 60);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](152, "div", 9)(153, "h5", 51);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](154, "Pensamento Cr\u00EDtico");
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](155, "div", 4)(156, "div", 52)(157, "p", 53);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](158, "input", 54);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()()()()()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](155, "div", 4)(156, "div", 52)(157, "p", 53)(158, "input", 56);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_Template_input_change_158_listener() {
+        return ctx.onChangeValorSoft(ctx);
+      });
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()()()()()()();
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](159, "div", 48)(160, "div", 49);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](161, "img", 60);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](161, "img", 61);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](162, "div", 9)(163, "h5", 51);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](164, "Habilidade com Pessoas e Equipes");
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](165, "div", 4)(166, "div", 61)(167, "p", 53);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](168, "input", 54);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()()()()()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](165, "div", 4)(166, "div", 62)(167, "p", 53)(168, "input", 56);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_Template_input_change_168_listener() {
+        return ctx.onChangeValorSoft(ctx);
+      });
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()()()()()()();
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](169, "div", 48)(170, "div", 49);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](171, "img", 62);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](171, "img", 63);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](172, "div", 9)(173, "h5", 51);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](174, "Adaptabilidade e Resili\u00EAncia");
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](175, "div", 4)(176, "div", 5)(177, "p", 53);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](178, "input", 54);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()()()()()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](175, "div", 4)(176, "div", 5)(177, "p", 53)(178, "input", 56);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_Template_input_change_178_listener() {
+        return ctx.onChangeValorSoft(ctx);
+      });
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()()()()()()();
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](179, "div", 48)(180, "div", 49);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](181, "img", 63);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](181, "img", 64);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](182, "div", 9)(183, "h5", 51);
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtext"](184, "\u00C9tica");
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](185, "div", 4)(186, "div", 52)(187, "p", 53);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](188, "input", 54);
-      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()()()()()()()()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](185, "div", 4)(186, "div", 52)(187, "p", 53)(188, "input", 56);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_Template_input_change_188_listener() {
+        return ctx.onChangeValorSoft(ctx);
+      });
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()()()()()()()()()();
     }
     if (rf & 2) {
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](10);

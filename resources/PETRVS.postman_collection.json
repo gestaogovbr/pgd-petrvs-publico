@@ -1,0 +1,56 @@
+{
+	"info": {
+		"_postman_id": "bb7dcd6e-6a1d-4c6d-8d63-6a60146a3ebf",
+		"name": "PETRVS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4676344"
+	},
+	"item": [
+		{
+			"name": "http://localhost/api/integracao?unidades=true&servidores=false&entidade=52d78c7d-e0c1-422b-b094-2ca5958d5ac1",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-ENTIDADE",
+						"value": "PRF",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "http://localhost/api/integracao?unidades=true&servidores=true&entidade=52d78c7d-e0c1-422b-b094-2ca5958d5ac1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"integracao"
+					],
+					"query": [
+						{
+							"key": "unidades",
+							"value": "true"
+						},
+						{
+							"key": "servidores",
+							"value": "true"
+						},
+						{
+							"key": "entidade",
+							"value": "52d78c7d-e0c1-422b-b094-2ca5958d5ac1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
