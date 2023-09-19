@@ -127,8 +127,10 @@ function OptionsComponent_div_7_Template(rf, ctx) {
   if (rf & 2) {
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵattribute"]("maxlength", 250);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("size", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵattribute"]("maxlength", 250);
   }
 }
 class OptionsComponent {
@@ -198,7 +200,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefi
       _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](4, "separator", 4)(5, "div", 1);
       _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](6, "input-switch", 5);
       _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](7, OptionsComponent_div_7_Template, 3, 2, "div", 6);
+      _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](7, OptionsComponent_div_7_Template, 3, 4, "div", 6);
       _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]()();
     }
     if (rf & 2) {

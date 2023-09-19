@@ -426,7 +426,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵInheritDefinitionFeature"]],
   decls: 10,
-  vars: 7,
+  vars: 10,
   consts: [["class", "my-2", 4, "ngIf"], ["initialFocus", "nome", 3, "form", "disabled", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], ["label", "Nome", "controlName", "nome", "required", "", 3, "size"], ["numbers", "", "label", "N\u00EDvel", "controlName", "nivel", 3, "size"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", "required", "", 3, "size"], ["key", "CAPACIDADES", 3, "label", 4, "ngIf"], [1, "my-2"], ["key", "CAPACIDADES", 3, "label"], [3, "items", "scrollable"], ["gridPai", ""], ["type", "expand", "icon", "bi bi-shield-lock", 3, "align", "hint", "template", "expandTemplate", "minWidth"], ["columnCapacidades", ""], ["style", "justify-content: inherit;"], ["columnExpandedCapacidades", ""], ["title", "C\u00F3digo", "orderBy", "codigo", 3, "template", "minWidth", "maxWidth"], ["columnCodCapacidade", ""], [3, "title", "template", "minWidth"], ["columnTipoCapacidade", ""], ["title", "Habilitado", 3, "template"], ["columnSelecionado", ""], ["class", "badge rounded-pill bg-light text-dark", 4, "ngIf"], [1, "badge", "rounded-pill", "bg-light", "text-dark"], [1, "bi", "bi-grid"], [1, "table", "table-hover"], [4, "ngFor", "ngForOf"], [2, "width", "220px"], [1, "text-wrap", "text-center"], [1, "micro-text", "fw-light"], [1, "bi", "bi-key"], [1, "badge", "bg-light", "text-dark"], [2, "width", "450px"], [1, "badge", "bg-light", "text-dark", "text-wrap"], [2, "text-align", "right"], [2, "width", "60px", "margin-left", "40px"], [1, "text-align"], ["scale", "medium", "path", "_metadata.habilitado", 1, "text-align", 2, "right", "10px", 3, "size", "disabled", "source", "change"], ["habilitado", ""], [1, "text-wrap"], [1, "grid-group-text"], ["path", "_metadata.habilitado", 2, "width", "45px", "margin-right", "70px", 3, "disabled", "source", "change"]],
   template: function PerfilFormComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -452,10 +452,13 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](4);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("size", 10);
+      _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("size", 2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("size", 12);
+      _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("ngIf", ctx.auth.hasPermissionTo("MOD_TIPO_CAP_CONS"));
     }
@@ -569,7 +572,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
   decls: 14,
-  vars: 20,
+  vars: 21,
   consts: [["class", "my-2", 4, "ngIf"], [3, "dao", "add", "orderBy", "groupBy", "join", "hasAdd", "hasEdit"], [3, "form", "where", "submit", "collapseChange", "collapsed"], [1, "row"], ["controlName", "nome", "placeholder", "Nome...", 3, "size", "label", "control"], ["title", "Nome", "field", "nome"], ["title", "Descri\u00E7\u00E3o", "field", "descricao"], ["title", "N\u00EDvel de acesso", 3, "template"], ["columnNivel", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"], [1, "my-2"]],
   template: function PerfilListComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -598,6 +601,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 12)("label", "Nome " + ctx.lex.translate("Perfil"))("control", ctx.filter.controls.nome);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](4);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("template", _r1);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](3);
