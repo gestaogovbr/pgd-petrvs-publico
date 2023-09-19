@@ -51,7 +51,53 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
     if (['nome'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
+    if (['nivel'].indexOf(controlName) >= 0) {
+      result = this.existePai(control);
+    }
+    return result;
+  }
 
+  public existePai (control: AbstractControl) {
+    let result = null;
+    let niveis = control.value.split(".");
+    let todos = this.items;
+    if (niveis.length > 1) {
+      let ultimoCriado = todos.reduce((a, b) => (a.created_at > b.created_at ? a : b));
+      let pais = this.processos(niveis.slice(0, niveis.length-1));
+      if (!ultimoCriado.processo_pai_id) {
+        if (pais[0].id == ultimoCriado.id) {
+          result = "Não existe o nível pai";
+        } else {
+          result = pais.length + 1 == niveis.length ? "Adicione o nível filho pelo botão 'Adicionar filho'" : "Não existe o nível pai";
+        }
+      } else {
+        let paiId: string | null = ultimoCriado.processo_pai_id;
+        let niveisPai = "";
+        while (paiId) {
+          let atual = this.items.find(x => x.id == paiId);
+          niveisPai = (atual?.sequencia || "") + "." + niveisPai;
+          paiId = atual?.processo_pai_id || null;
+        }
+        let controleNiveis = niveisPai.split(".");
+        controleNiveis.pop();
+        controleNiveis.push((ultimoCriado.sequencia - 1).toString());
+        if (this.JSON.stringify(niveis) <= this.JSON.stringify(controleNiveis)) {
+          result = "Nível já existente";
+        } else if (niveis.length > controleNiveis.length) {
+          result = pais.length + 1 == niveis.length ? "Adicione o nível filho pelo botão 'Adicionar filho'" : "Não existe o nível pai";
+        }
+      } 
+    } else if (todos.length > 0){
+      let ultimoCriado = todos.reduce((a, b) => (a.created_at > b.created_at ? a : b));
+      if (niveis[0] < ultimoCriado.sequencia) { 
+        result = "Nível já existente"; 
+      } else if (niveis[0] > ultimoCriado.sequencia) {
+        result = "Insira o nível em sequência numérica"; 
+      } else {
+        result = ultimoCriado.processo_pai_id == null ? null : "Adicione este nível pelo botão 'Adicionar nível'";
+      }
+      
+    }
     return result;
   }
 
@@ -126,13 +172,12 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
   public async removeProcesso(row: any) {
     let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir o item ?");
     if (confirm) {
-        let processo = row as CadeiaValorProcesso;
-        let filhos = this.items.filter(x => x.processo_pai_id == processo.id) || [];
-        filhos.forEach(x => this.removeProcesso(x));
-        this.items.splice(this.items.findIndex(x => x.id == processo.id), 1);
-        if (!this.isNoPersist)  await this.processosDao?.delete(row);
-        return true;
-      
+      let processo = row as CadeiaValorProcesso;
+      let filhos = this.items.filter(x => x.processo_pai_id == processo.id) || [];
+      filhos.forEach(x => this.removeProcesso(x));
+      this.items.splice(this.items.findIndex(x => x.id == processo.id), 1);
+      if (!this.isNoPersist)  await this.processosDao?.delete(row);
+      return true;
     } else {
       return false;
     }
@@ -151,7 +196,6 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
       row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
       row.sequencia = sequencia;
       row.cadeia_valor_id = this.entity?.id;
-      row.sequencia = sequencia;
       row.processo_pai_id = parentId;
       row.nome = form.controls.nome.value;
       result = row;
