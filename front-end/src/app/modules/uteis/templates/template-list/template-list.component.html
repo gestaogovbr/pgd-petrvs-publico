@@ -10,7 +10,7 @@
           <input-select [size]="12" disabled label="Espécie" controlName="especie" [items]="lookup.TEMPLATE_ESPECIE"></input-select>
         </div>
         <div class="row">
-            <input-text [size]="12" label="Título" controlName="titulo" [control]="filter!.controls.titulo" placeholder="Título ..."></input-text>
+            <input-text [size]="12" label="Título" controlName="titulo" [control]="filter!.controls.titulo" placeholder="Título ..." [attr.maxlength]=250></input-text>
         </div>
       </filter>
       <columns>
@@ -29,7 +29,7 @@
   <div class="col-8">
     <editable-form *ngIf="selected; else noSelected" noButtons [disabled]="true" [form]="form!">
       <div class="row">
-        <input-text [size]="12" label="Título" [control]="form!.controls.titulo"></input-text>
+        <input-text [size]="12" label="Título" [control]="form!.controls.titulo" [attr.maxlength]=250></input-text>
       </div>
       <div>
         <input-editor [size]="12" label="Pre-view do template" [control]="form!.controls.conteudo"></input-editor>

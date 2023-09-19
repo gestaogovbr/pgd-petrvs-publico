@@ -10,8 +10,8 @@
         <input-number [size]="4" label="Duração Máx P.E." icon="bi bi-blockquote-left" controlName="prazo_max_plano_entrega" [control]="form!.controls.prazo_max_plano_entrega" labelInfo="Limite máximo de dias corridos para a duração do plano de entregas a partir da sua data de criação (Zero para não limitar)"></input-number>
     </div>
     <div class="row">
-        <input-text [size]="6" label="Título" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome" required></input-text>
-        <input-text [size]="6" label="Normativa" icon="bi bi-blockquote-left" controlName="normativa" [control]="form!.controls.normativa" labelInfo="Normativa que regula o Programa"></input-text>
+        <input-text [size]="6" label="Título" icon="bi bi-textarea-t" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250 required></input-text>
+        <input-text [size]="6" label="Normativa" icon="bi bi-blockquote-left" controlName="normativa" [control]="form!.controls.normativa" labelInfo="Normativa que regula o Programa" [attr.maxlength]=250></input-text>
     </div>
     <separator [title]="'Configurações ' + lex.translate('do Plano de entrega')">
         <input-search [label]="lex.translate('Tipo de avaliação do Plano de entrega')" [size]="12" #tipoAvaliacao controlName="tipo_avaliacao_plano_entrega_id" [dao]="tipoAvaliacaoDao" [labelInfo]="lex.noun('Tipo de avaliação') + ' que especifica a forma que será avaliado ' + lex.noun('plano de trabalho') + ' e ' + lex.noun('plano de entrega')" required></input-search>

@@ -4,7 +4,7 @@
         <input *ngIf="viewInit" #inputElement [type]="isNumbers ? 'number' : isPassword ? 'password' : 'text'" class="form-control {{hostClass}}" [attr.min]="minValue" [attr.max]="maxValue" [attr.step]="stepValue"
             [class.text-uppercase]="textCase == 'upper'" [class.text-lowercase]="textCase == 'lower'" [class.text-end]="isNumbers || isRight" (change)="onChange($event)" (keyup)="onKeyUp($event)"
             [formControl]="formControl" [id]="generatedId(controlName)" [class.is-invalid]="isInvalid()" [mask]="maskFormat" [dropSpecialCharacters]="maskDropSpecialCharacters" (keydown.enter)="onEnterKeyDown($event)"
-            [specialCharacters]="maskSpecialCharacters" [readonly]="isDisabled" [attr.placeholder]="placeholder?.length ? placeholder : undefined" [attr.value]="control ? undefined : value" [attr.maxlength]="maxLength ? maxLength : undefined">
+            [specialCharacters]="maskSpecialCharacters" [readonly]="isDisabled" [attr.placeholder]="placeholder?.length ? placeholder : undefined" [attr.value]="control ? undefined : value" [attr.maxlength]="maxLength ? maxLength : 250">
         <span *ngIf="sufix" class="input-group-text">{{sufix}}</span>
     </div>    
 </input-container>

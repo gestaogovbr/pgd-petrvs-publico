@@ -7,7 +7,7 @@
          [addRoute]="{route: ['raiox','cadastros','gerais','curso','new']}" required></input-select>
     </div>
     <div class="row">
-        <input-text [size]="5" label="Nome da Matéria" controlName="nome" required></input-text>
+        <input-text [size]="5" label="Nome da Matéria" controlName="nome" [attr.maxlength]=250 required></input-text>
         <input-number [size]="2" label="Horas Aula" controlName="horas_aula" required></input-number>
         <input-switch [size]="2" labelPosition="left" label="Ativo" controlName="ativo"></input-switch>
     </div>    

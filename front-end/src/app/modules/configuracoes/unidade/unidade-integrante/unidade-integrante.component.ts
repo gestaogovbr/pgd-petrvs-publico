@@ -16,13 +16,18 @@ import { LookupItem } from 'src/app/services/lookup.service';
 })
 export class UnidadeIntegranteComponent extends PageFrameBase {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
-  @Input() public unidadeId: string = "";
+  @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
+  @Input() set entity(value: Unidade | undefined) { super.entity = value; } get entity(): Unidade | undefined { return super.entity; }
+  @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
+  @Input() public entity_id?: string;
+  //@Input() public unidadeId: string = "";
 
   public integranteDao: UnidadeIntegranteDaoService;
   public usuarioDao: UsuarioDaoService;
   public items: IntegranteConsolidado[] = [];
-  
   public unidade?: Unidade;
+  public tiposAtribuicao: LookupItem[] = [];
+  public usuariosJaVinculados: string[] = [];
 
   constructor(public injector: Injector) {
     super(injector);
@@ -37,7 +42,11 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
 
   ngOnInit() {
     super.ngOnInit();
-    this.unidadeId = this.urlParams?.has("idUnidade") ? this.urlParams!.get("idUnidade") : this.metadata?.idUnidade || this.unidadeId;
+    //this.unidadeId = this.urlParams?.has("idUnidade") ? this.urlParams!.get("idUnidade") : this.metadata?.idUnidade || this.unidadeId;
+    //this.entity = this.unidade
+    this.entity = this.metadata?.entity || this.entity;
+    this.entity_id = this.metadata?.entity_id || this.entity_id;
+    this.tiposAtribuicao = this.isNoPersist ? this.lookup.UNIDADE_INTEGRANTE_TIPO.filter((atribuicao) => atribuicao.key != "LOTADO") : this.lookup.UNIDADE_INTEGRANTE_TIPO;
   }
 
   ngAfterViewInit() {
@@ -54,7 +63,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
   public async loadData(entity: IIndexable, form?: FormGroup | undefined) {
     this.grid!.loading = true;
     try {
-      let result = await this.integranteDao!.loadIntegrantes(this.unidadeId, "");
+      let result = await this.integranteDao!.loadIntegrantes(this.entity!.id, "");
       this.items = result.integrantes.filter(x => x.atribuicoes.length > 0);
       this.unidade = result.unidade;
     } finally {

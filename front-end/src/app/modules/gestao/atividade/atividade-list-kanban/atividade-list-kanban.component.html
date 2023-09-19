@@ -12,7 +12,7 @@
         <input-switch [size]="1" label="Sub." controlName="unidades_subordinadas" [control]="filter!.controls.unidades_subordinadas" labelInfo="Incluir as unidades subordinadas"></input-switch>      
     </div>
     <div class="row">
-        <input-text [size]="4" [label]="'Nº '+ lex.translate('Processo')+' (Sei)'" maskFormat="00000.000000/0000-00" controlName="numero_processo" [control]="filter!.controls.numero_processo" labelInfo="Pesquisa no documento de requisição, conclusão e nos documentos das tarefas"></input-text>
+        <input-text [size]="4" [label]="'Nº '+ lex.translate('Processo')+' (Sei)'" maskFormat="00000.000000/0000-00" controlName="numero_processo" [control]="filter!.controls.numero_processo" labelInfo="Pesquisa no documento de requisição, conclusão e nos documentos das tarefas" [attr.maxlength]=250></input-text>
         <input-select [size]="4" label="Status" itemTodos="- Todos -" [valueTodos]="null" [disabled]="fixedFilter?.length && fixedFilter![0]![0] == 'status' ? 'true' : undefined" controlName="status" [control]="filter!.controls.status" [items]="lookup.ATIVIDADE_STATUS"></input-select>
         <input-multiselect noForm noBox [size]="4" label="Etiquetas" controlName="etiquetas" [control]="filter!.controls.etiquetas"></input-multiselect>
     </div>

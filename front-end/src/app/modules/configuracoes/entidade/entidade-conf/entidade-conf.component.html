@@ -6,7 +6,7 @@
                 <input-workload [size]="4" #cargaHoraria [unit]="formaContagemCargaHoraria" label="Carga Horária" icon="bi bi-hourglass-split" controlName="carga_horaria_padrao" [unitChange]="onFormaContagemCargaHorariaChange.bind(this)" labelInfo="Carga horária e forma de contagem (horas por dia, semana ou mês) padrão utilizada ao criar plano de trabalho."></input-workload>
             </div>
             <div class="row">
-                <input-text [size]="6" label="Url do Sei/SUPER" icon="bi bi-lin" controlName="url_sei" [control]="form!.controls.url_sei" labelInfo="Url base do Sei/SUPER, deve ser semelhante a: https://sei.minha-entidade.gov.br/"></input-text>
+                <input-text [size]="6" label="Url do Sei/SUPER" icon="bi bi-lin" controlName="url_sei" [control]="form!.controls.url_sei" labelInfo="Url base do Sei/SUPER, deve ser semelhante a: https://sei.minha-entidade.gov.br/" [attr.maxlength]=250></input-text>
                 <input-button [size]="6" label="Chave de API" icon="bi bi-lin" placeholder="Visível somente no momento em que foi gerado" iconButton="bi bi-arrow-clockwise" controlName="api_public_key" (buttonClick)="onApiKeyClick($event)" labelInfo="Chave publica para comunicação por API, o valor é visível somente no momento em que for gerado."></input-button>
             </div>
         </tab>

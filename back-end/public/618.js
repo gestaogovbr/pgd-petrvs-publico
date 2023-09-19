@@ -310,7 +310,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵInheritDefinitionFeature"]],
   decls: 37,
-  vars: 70,
+  vars: 72,
   consts: [["initialFocus", "unidade_id", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Unidade Instituidora", "controlName", "unidade_id", "required", "", 3, "size", "dao", "selectParams"], ["unidade", ""], ["date", "", "label", "Data de In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio", "labelInfo", "Data de in\u00EDcio da vig\u00EAncia do programa de gest\u00E3o na unidade instituidora", 3, "size", "control"], ["date", "", "label", "Data de Fim", "icon", "bi bi-calendar-date", "controlName", "data_fim", "labelInfo", "Data de fim da vig\u00EAncia do programa de gest\u00E3o na unidade instituidora", 3, "size", "control"], ["label", "Dura\u00E7\u00E3o M\u00E1x P.E.", "icon", "bi bi-blockquote-left", "controlName", "prazo_max_plano_entrega", "labelInfo", "Limite m\u00E1ximo de dias corridos para a dura\u00E7\u00E3o do plano de entregas a partir da sua data de cria\u00E7\u00E3o (Zero para n\u00E3o limitar)", 3, "size", "control"], ["label", "T\u00EDtulo", "icon", "bi bi-textarea-t", "controlName", "nome", "required", "", 3, "size", "control"], ["label", "Normativa", "icon", "bi bi-blockquote-left", "controlName", "normativa", "labelInfo", "Normativa que regula o Programa", 3, "size", "control"], [3, "title"], ["controlName", "tipo_avaliacao_plano_entrega_id", "required", "", 3, "label", "size", "dao", "labelInfo"], ["tipoAvaliacao", ""], ["label", "Se o termo \u00E9 obrigat\u00F3rio", "controlName", "termo_obrigatorio", "scale", "small", "labelPosition", "right", 3, "size"], ["scale", "small", "labelPosition", "right", "controlName", "plano_trabalho_assinatura_participante", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "plano_trabalho_assinatura_gestor_lotacao", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "plano_trabalho_assinatura_gestor_unidade", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "plano_trabalho_assinatura_gestor_entidade", 3, "size", "label"], ["detailsButton", "", "labelInfo", "Template do termo utilizado no plano de trabalho", "controlName", "template_tcr_id", 3, "label", "size", "dao", "where", "selectRoute", "details"], ["controlName", "tipo_documento_tcr_id", "labelInfo", "Tipo de documento utilizado para exportar o termo para o SEI/SUPER", 3, "label", "size", "dao"], ["tipoDocumento", ""], ["controlName", "tipo_avaliacao_plano_trabalho_id", "required", "", 3, "label", "size", "dao", "labelInfo"], ["label", "Periodicidade", "controlName", "periodicidade_consolidacao", "labelInfo", "Per\u00EDodo para avalia\u00E7\u00E3o do plano de trabalho", 3, "size", "control", "items"], ["label", "Dia da semana", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", "items", 4, "ngIf"], ["label", "Dia do m\u00EAs", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", 4, "ngIf"], ["label", "Qtd. de Dias", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", 4, "ngIf"], ["label", "Toler\u00E2ncia", "controlName", "dias_tolerancia_consolidacao", "labelInfo", "Dias de toler\u00E2ncia para o lan\u00E7amento do registro das atividades na consolida\u00E7\u00E3o, ap\u00F3s esses dias ser\u00E1 liberado automaticamente para avalia\u00E7\u00E3o", 3, "size", "control"], ["label", "Toler\u00E2ncia", "controlName", "dias_tolerancia_avaliacao", "labelInfo", "Dias de toler\u00E2ncia para realizar a avalia\u00E7\u00E3o, considerando a toler\u00E2ncia da consolida\u00E7\u00E3o. Caso seja zero n\u00E3o far\u00E1 nada, caso contr\u00E1rio ap\u00F3s esse prazo a consolida\u00E7\u00E3o ser\u00E1 automaticamente avaliada com a nota padr\u00E3o", 3, "size", "control"], ["label", "Nota", "labelInfo", "Nota que ser\u00E1 atribu\u00EDdo automaticamente caso a toler\u00E2ncia seja alcan\u00E7ada", 3, "size", "control", 4, "ngIf"], ["label", "Nota", "labelInfo", "Nota que ser\u00E1 atribu\u00EDdo automaticamente caso a toler\u00E2ncia seja alcan\u00E7ada", 3, "size", "control", "items", 4, "ngIf"], ["controlName", "tipo_justificativa_id", "labelInfo", "Tipo de justificativa, para quando o gestor n\u00E3o realizar a avalia\u00E7\u00E3o dentro do prazo", 3, "label", "size", "emptyValue", "dao"], ["tipoJustificativa", ""], ["label", "Dia da semana", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", "items"], ["label", "Dia do m\u00EAs", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control"], ["label", "Qtd. de Dias", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control"], ["label", "Nota", "labelInfo", "Nota que ser\u00E1 atribu\u00EDdo automaticamente caso a toler\u00E2ncia seja alcan\u00E7ada", 3, "size", "control"], ["label", "Nota", "labelInfo", "Nota que ser\u00E1 atribu\u00EDdo automaticamente caso a toler\u00E2ncia seja alcan\u00E7ada", 3, "size", "control", "items"]],
   template: function ProgramaFormComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -358,7 +358,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdef
     if (rf & 2) {
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 12)("dao", ctx.unidadeDao)("selectParams", _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction1"](62, _c3, _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction0"](61, _c2)));
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 12)("dao", ctx.unidadeDao)("selectParams", _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction1"](64, _c3, _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction0"](63, _c2)));
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.data_inicio);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
@@ -367,8 +367,10 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.prazo_max_plano_entrega);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.nome);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.normativa);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("title", "Configura\u00E7\u00F5es " + ctx.lex.translate("do Plano de entrega"));
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
@@ -386,7 +388,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 12)("label", "Exige assinatura do gestor " + ctx.lex.translate("da entidade"));
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("label", "Template " + ctx.lex.translate("termo") + " (TCR)")("size", 12)("dao", ctx.templateDao)("where", _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction1"](65, _c5, _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction0"](64, _c4)))("selectRoute", ctx.templateService.selectRoute("TCR"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("label", "Template " + ctx.lex.translate("termo") + " (TCR)")("size", 12)("dao", ctx.templateDao)("where", _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction1"](67, _c5, _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction0"](66, _c4)))("selectRoute", ctx.templateService.selectRoute("TCR"));
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("label", "Tipo de documento " + ctx.lex.translate("termo"))("size", 12)("dao", ctx.tipoDocumentoDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](2);
@@ -396,11 +398,11 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.periodicidade_consolidacao)("items", ctx.lookup.PERIODICIDADE_CONSOLIDACAO);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction0"](67, _c6).includes(ctx.form.controls.periodicidade_consolidacao.value));
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction0"](69, _c6).includes(ctx.form.controls.periodicidade_consolidacao.value));
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction0"](68, _c7).includes(ctx.form.controls.periodicidade_consolidacao.value));
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction0"](70, _c7).includes(ctx.form.controls.periodicidade_consolidacao.value));
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction0"](69, _c8).includes(ctx.form.controls.periodicidade_consolidacao.value));
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction0"](71, _c8).includes(ctx.form.controls.periodicidade_consolidacao.value));
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 3)("control", ctx.form.controls.dias_tolerancia_consolidacao);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
@@ -579,7 +581,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
   decls: 20,
-  vars: 26,
+  vars: 27,
   consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "collapseChange", "collapsed"], [1, "row"], ["controlName", "nome", 3, "size", "label", "control", "placeholder"], ["title", "T\u00EDtulo/Normativa", 3, "template"], ["columnTituloNormativa", ""], ["title", "Unidade instituidora", 3, "template"], ["columnUnidadeInstituidora", ""], ["title", "In\u00EDcio da Vig\u00EAncia", 3, "template"], ["columnInicioVigencia", ""], ["title", "Fim da Vig\u00EAncia", 3, "template"], ["columnFimVigencia", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"]],
   template: function ProgramaListComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -620,6 +622,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 12)("label", "Nome do " + ctx.lex.translate("programa"))("control", ctx.filter.controls.nome)("placeholder", "Nome do " + ctx.lex.translate("programa"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("template", _r1);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](3);
@@ -937,7 +940,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵInheritDefinitionFeature"]],
   decls: 25,
-  vars: 34,
+  vars: 35,
   consts: [["multiselect", "", "editable", "", 3, "dao", "form", "title", "orderBy", "groupBy", "join", "add", "load", "remove", "save", "selectable", "hasAdd", "hasEdit", "hasDelete", "multiselectMenu", "select"], [4, "ngIf"], [3, "form", "where", "submit", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome", "controlName", "nome", 3, "size", "control", "placeholder"], ["controlName", "unidade_id", 3, "size", "dao"], ["unidade", ""], ["icon", "bi-person", 3, "align", "template", "editTemplate"], ["columnFoto", ""], ["editFoto", ""], ["title", "Usu\u00E1rio", 3, "template", "editTemplate"], ["columnUsuario", ""], ["editUsuario", ""], ["title", "Habilitado", 3, "template", "editTemplate"], ["columnHabilitado", ""], ["editHabilitado", ""], ["type", "options"], [3, "rows"], ["labelPosition", "left", "label", "Todos", "controlName", "todos", 3, "size", "control", "change"], [3, "url", "size", "hint"], [3, "url", "size"], ["label", "", "icon", "", 3, "size", "control", "dao"], ["usuario", ""], ["class", "bi bi-person-check", 4, "ngIf"], [1, "bi", "bi-person-check"], ["controlName", "habilitado", 3, "size", "control", "change"], ["habilitado", ""]],
   template: function ProgramaParticipantesComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -980,6 +983,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("size", 6)("control", ctx.filter.controls.nome)("placeholder", "Nome do " + ctx.lex.translate("usuario") + "...");
+      _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("size", 6)("dao", ctx.unidadeDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵadvance"](3);

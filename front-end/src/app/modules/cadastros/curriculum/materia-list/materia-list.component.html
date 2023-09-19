@@ -4,9 +4,9 @@
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-text [size]="5" label="Nome da Matéria" controlName="nome"
-                [control]="filter!.controls.nome" placeholder="Nome da Matéria"></input-text>
+                [control]="filter!.controls.nome" placeholder="Nome da Matéria" [attr.maxlength]=250></input-text>
             <input-text [size]="5" label="Área" controlName="area_id"
-                [control]="filter!.controls.area_id" placeholder="Nome da Área"></input-text>
+                [control]="filter!.controls.area_id" placeholder="Nome da Área" [attr.maxlength]=250></input-text>
         </div>
     </filter>
     <columns>

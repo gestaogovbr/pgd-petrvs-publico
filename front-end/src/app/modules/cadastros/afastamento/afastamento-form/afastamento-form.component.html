@@ -9,6 +9,6 @@
         <input-datetime [date]="isHoras() ? undefined : ''" [size]="6" label="Fim" controlName="data_fim"></input-datetime>
     </div>
     <div class="row">
-        <input-textarea [size]="12" [rows]="3" label="Observações" controlName="observacoes"></input-textarea>
+        <input-textarea [size]="12" [rows]="3" label="Observações" controlName="observacoes" [attr.maxlength]=250></input-textarea>
     </div>
 </editable-form>

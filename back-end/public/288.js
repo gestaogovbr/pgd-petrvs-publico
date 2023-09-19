@@ -177,7 +177,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefi
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵInheritDefinitionFeature"]],
   decls: 10,
-  vars: 14,
+  vars: 15,
   consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["icon", "bi bi-textarea-t", "controlName", "nome", "required", "", 3, "size", "label", "control"], ["date", "", "label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio", "required", "", 3, "size", "control", "labelInfo"], ["date", "", "label", "Fim", "icon", "bi bi-calendar-date", "controlName", "data_fim", "required", "", 3, "size", "control", "labelInfo"], ["noPersist", "", 3, "entity", "cdRef"], ["processos", ""]],
   template: function CadeiaValorFormComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -200,6 +200,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefi
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 12)("label", "Nome da " + ctx.lex.translate("cadeia de valor"))("control", ctx.form.controls.nome);
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.data_inicio)("labelInfo", "In\u00EDcio da " + ctx.lex.translate("cadeia de valor"));
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
@@ -427,7 +428,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵInheritDefinitionFeature"]],
   decls: 20,
-  vars: 30,
+  vars: 31,
   consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome", "icon", "bi bi-textarea-t", "controlName", "nome", 3, "size", "control", "labelInfo"], ["date", "", "label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio", 3, "size", "control", "labelInfo", "change"], ["date", "", "label", "Fim", "icon", "bi bi-calendar-date", "controlName", "data_fim", 3, "size", "control", "labelInfo", "change"], ["type", "expand", "icon", "bi bi-boxes", 3, "align", "hint", "template", "expandTemplate", 4, "ngIf"], ["title", "Nome", "orderBy", "nome", 3, "template"], ["columnNome", ""], ["title", "In\u00EDcio", 3, "template"], ["columnInicio", ""], ["title", "Fim", 3, "template"], ["columnFim", ""], ["type", "options", 3, "onEdit", "options", 4, "ngIf"], [3, "rows"], ["type", "expand", "icon", "bi bi-boxes", 3, "align", "hint", "template", "expandTemplate"], ["columnProcessos", ""], ["columnExpandedProcessos", ""], ["class", "badge rounded-pill bg-light text-dark", 4, "ngIf"], [1, "badge", "rounded-pill", "bg-light", "text-dark"], [1, "bi", "bi-boxes"], [3, "entity", "cdRef"], ["processos", ""], [1, "text-break", "w-100"], ["type", "options", 3, "onEdit", "options"]],
   template: function CadeiaValorListGridComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -475,6 +476,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 6)("control", ctx.filter.controls.nome)("labelInfo", "Nome " + ctx.lex.translate("cadeia de valor"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.data_inicio)("labelInfo", "In\u00EDcio " + ctx.lex.translate("cadeia de valor"));
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
@@ -670,7 +672,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵInheritDefinitionFeature"]],
   decls: 15,
-  vars: 21,
+  vars: 22,
   consts: [["class", "my-2", 4, "ngIf"], [3, "dao", "add", "orderBy", "groupBy", "join", "selectable", "select"], [3, "buttons", 4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome", "controlName", "nome", "placeholder", "Nome", 3, "size", "control"], ["title", "N\u00EDvel", 3, "template"], ["columnNivel", ""], ["title", "Nome", "orderBy", "nome", 3, "template"], ["columnNome", ""], ["type", "options", 3, "onEdit", "dynamicOptions"], [3, "rows"], [1, "my-2"], [3, "buttons"], [1, "d-block"]],
   template: function CadeiaValorListProcessosEntregasComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -706,6 +708,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 7)("control", ctx.filter.controls.nome);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("template", _r2);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](3);
@@ -807,6 +810,7 @@ function CadeiaValorListProcessosComponent_ng_template_12_Template(rf, ctx) {
   if (rf & 2) {
     const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 6)("control", ctx_r7.form.controls.nome);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵattribute"]("maxlength", 250);
   }
 }
 class CadeiaValorListProcessosComponent extends src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_7__.PageFrameBase {
@@ -1089,7 +1093,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](9, "column", 6);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](10, CadeiaValorListProcessosComponent_ng_template_10_Template, 2, 3, "ng-template", null, 7, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](12, CadeiaValorListProcessosComponent_ng_template_12_Template, 1, 2, "ng-template", null, 8, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](12, CadeiaValorListProcessosComponent_ng_template_12_Template, 1, 3, "ng-template", null, 8, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](14, "column", 9);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]()()()();
@@ -1301,6 +1305,7 @@ function CadeiaValorMapaComponent_ng_template_0_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("form", ctx_r1.form);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 12)("label", "Nome do " + ctx_r1.lex.translate("processo"))("control", ctx_r1.form.controls.nome);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵattribute"]("maxlength", 250);
   }
 }
 const _c2 = function (a0) {
@@ -1699,7 +1704,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefi
   consts: [["editProcessoForm", ""], ["noButtons", "", 3, "form"], [1, "row", "my-2"], ["controlName", "cadeia_valor_id", 3, "size", "control", "items", "change"], ["cadeiaValorInstitucional", ""], [1, "row", "my-2", 3, "dndDropzone", "dndDrop"], ["dndPlaceholderRef", "", 1, "row", "cadeia-valor"], [1, "nivel-1"], [1, "d-flex", "justify-content-between"], [1, "card-text", "placeholder-glow"], [1, "placeholder", "col-2"], [1, "placeholder", "col-4"], [1, "placeholder", "col-6"], ["class", "row cadeia-valor", "dndType", "processo", "dndEffectAllowed", "move", 3, "dndDisableIf", "dndDraggable", "dndEnd", "dndMoved", "dndStart", 4, "ngFor", "ngForOf"], [1, "row"], ["icon", "bi bi-textarea-t", "controlName", "nome", 3, "size", "label", "control"], ["dndType", "processo", "dndEffectAllowed", "move", 1, "row", "cadeia-valor", 3, "dndDisableIf", "dndDraggable", "dndEnd", "dndMoved", "dndStart"], [1, "texto", "text-break"], [1, "btn-group", "dropstart", "dropdown-menu-button", "ms-2"], ["noArrow", "", "icon", "bi bi-wrench-adjustable-circle", "color", "transparent-black p-1 py-0", 3, "data", "items"], [1, "d-flex", "align-content-stretch", "flex-wrap", 3, "dndDropzone", "dndDrop"], ["dndPlaceholderRef", "", 1, "nivel-2"], [1, "d-flex", "justify-content-between", "mb-2"], [1, "placeholder", "col-5"], [1, "placeholder", "col-7"], ["class", "nivel-2", "dndType", "processo", "dndEffectAllowed", "move", 3, "style", "dndDisableIf", "dndDraggable", "dndEnd", "dndMoved", "dndStart", 4, "ngFor", "ngForOf"], ["dndType", "processo", "dndEffectAllowed", "move", 1, "nivel-2", 3, "dndDisableIf", "dndDraggable", "dndEnd", "dndMoved", "dndStart"], [3, "ngTemplateOutlet", "ngTemplateOutletContext"], ["innerProcessos", ""], [3, "dndDropzone", "dndDrop"], ["dndPlaceholderRef", "", 1, "nivel-3"], ["class", "nivel-3", "dndType", "processo", "dndEffectAllowed", "move", 3, "style", "dndDisableIf", "dndDraggable", "dndEnd", "dndMoved", "dndStart", 4, "ngFor", "ngForOf"], ["dndType", "processo", "dndEffectAllowed", "move", 1, "nivel-3", 3, "dndDisableIf", "dndDraggable", "dndEnd", "dndMoved", "dndStart"], [1, "btn-group", "dropstart", "dropdown-menu-button", "ms-2", "align-button"]],
   template: function CadeiaValorMapaComponent_Template(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](0, CadeiaValorMapaComponent_ng_template_0_Template, 3, 4, "ng-template", null, 0, _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](0, CadeiaValorMapaComponent_ng_template_0_Template, 3, 5, "ng-template", null, 0, _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](2, "editable-form", 1)(3, "div", 2)(4, "input-select", 3, 4);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("change", function CadeiaValorMapaComponent_Template_input_select_change_4_listener() {
         return ctx.onCadeiaValorChange();

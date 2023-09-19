@@ -6,7 +6,7 @@
         [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-text [size]="7" label="Nome" controlName="nome" [control]="filter!.controls.nome"
-                placeholder="Nome"></input-text>
+                placeholder="Nome" [attr.maxlength]=250></input-text>
         </div>
     </filter>
     <columns>

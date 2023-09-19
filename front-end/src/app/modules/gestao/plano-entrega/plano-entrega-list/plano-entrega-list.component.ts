@@ -166,7 +166,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       let w1 = ["unidade_id", "in", this.auth.unidades?.map(u => u.id)];
       let w2 = ["unidade_id", "in", unidadesUsuarioEhGestor?.map(u => u.unidade_pai?.id)];
       let w3 = ["unidade.unidade_pai_id", "in", unidadesUsuarioEhGestor?.map(u => u.id)];
-      if (this.auth.isGestorAlgumaAreaTrabalho()) result.push(["or", w1, w2, w3]); else result.push(w1);
+      if (this.auth.isGestorAlgumaAreaTrabalho()) result.push(["or", w1, w2]); else result.push(w1);
     }
     if (form.nome?.length) {
       result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);

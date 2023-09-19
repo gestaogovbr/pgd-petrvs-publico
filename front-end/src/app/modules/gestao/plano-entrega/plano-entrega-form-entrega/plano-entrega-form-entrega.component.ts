@@ -108,16 +108,12 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
 
   public ngOnInit() {
     super.ngOnInit();
+    let unidade: Unidade | null = null;
     this.planoEntrega = this.metadata?.plano_entrega;
     this.planejamentoId = this.metadata?.planejamento_id;
     this.cadeiaValorId = this.metadata?.cadeia_valor_id;
     this.unidadeId = this.metadata?.unidade_id;
     this.entity = this.metadata?.entrega as PlanoEntregaEntrega; 
-  }
-
-  ngAfterViewInit() {
-    super.ngAfterViewInit();
-    let unidade: Unidade | null = null;
     (async () => {
       await this.unidade?.loadSearch(this.unidadeId);
       await this.planejamento?.loadSearch(this.planejamentoId);

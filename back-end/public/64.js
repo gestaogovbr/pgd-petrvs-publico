@@ -387,7 +387,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]],
   decls: 4,
-  vars: 5,
+  vars: 6,
   consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome da \u00C1rea da Atividade Externa", "controlName", "nome", "required", "", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
   template: function AreaAtividadeExternaFormComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -405,6 +405,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 10);
+      _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 2);
     }
@@ -517,7 +518,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
   decls: 9,
-  vars: 21,
+  vars: 22,
   consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome da \u00C1rea da Atividade Externa", "controlName", "nome", "placeholder", "Nome da \u00C1rea da Atividade Externa", 3, "size", "control"], ["title", "Nome da \u00C1rea da Atividade Externa", "field", "nome", "orderBy", "nome"], ["type", "options", 3, "onEdit", "options"], [3, "rows"]],
   template: function AreaAtividadeExternaListComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -543,6 +544,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 12)("control", ctx.filter.controls.nome);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("onEdit", ctx.edit)("options", ctx.options);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
@@ -636,7 +638,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]],
   decls: 4,
-  vars: 5,
+  vars: 6,
   consts: [["initialFocus", "nome_area", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome da \u00E1rea de conhecimento", "controlName", "nome_area", "required", "", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
   template: function AreaConhecimentoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -654,6 +656,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 10);
+      _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 2);
     }
@@ -766,7 +769,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
   decls: 9,
-  vars: 21,
+  vars: 22,
   consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome da \u00E1rea de conhecimento", "controlName", "nome_area", "placeholder", "Nome da \u00E1rea de conhecimento", 3, "size", "control"], ["title", "Nome da \u00E1rea", "field", "nome", "orderBy", "nome"], ["type", "options", 3, "onEdit", "options"], [3, "rows"]],
   template: function AreaConhecimentoListComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -792,6 +795,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 12)("control", ctx.filter.controls.nome_area);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("onEdit", ctx.edit)("options", ctx.options);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
@@ -885,7 +889,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]],
   decls: 4,
-  vars: 5,
+  vars: 6,
   consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome da \u00C1rea Tematica", "controlName", "nome", "required", "", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
   template: function AreaTematicaFormComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -903,6 +907,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 10);
+      _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 2);
     }
@@ -1015,7 +1020,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
   decls: 9,
-  vars: 21,
+  vars: 22,
   consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome da \u00C1rea Tem\u00E1tica", "controlName", "nome", "placeholder", "Nome da \u00C1rea Tem\u00E1tica", 3, "size", "control"], ["title", "Nome da \u00C1rea Tem\u00E1tica", "field", "nome", "orderBy", "nome"], ["type", "options", 3, "onEdit", "options"], [3, "rows"]],
   template: function AreaTematicaListComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -1041,6 +1046,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 12)("control", ctx.filter.controls.nome);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("onEdit", ctx.edit)("options", ctx.options);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
@@ -1151,7 +1157,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵdefi
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵInheritDefinitionFeature"]],
   decls: 6,
-  vars: 12,
+  vars: 13,
   consts: [["initialFocus", "areaTematica", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "\u00C1rea Tem\u00E1tica", "icon", "fas fa-layer-group", "controlName", "areaTematica", "liveSearch", "", 3, "size", "control", "dao", "addRoute"], ["curso", ""], ["label", "Nome da Capacidade T\u00E9cnica", "controlName", "nome", "required", "", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
   template: function CapacidadeTecnicaFormComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -1168,9 +1174,10 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵdefi
     if (rf & 2) {
       _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
       _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("size", 5)("control", ctx.form.controls.areaTematica)("dao", ctx.areaTematicaDao)("addRoute", _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵpureFunction1"](10, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵpureFunction0"](9, _c0)));
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("size", 5)("control", ctx.form.controls.areaTematica)("dao", ctx.areaTematicaDao)("addRoute", _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵpureFunction1"](11, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵpureFunction0"](10, _c0)));
       _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("size", 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("size", 2);
     }
@@ -1317,7 +1324,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
   decls: 17,
-  vars: 27,
+  vars: 30,
   consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome da Capacidade T\u00E9cnica", "controlName", "nome", "placeholder", "Nome da Capacidade T\u00E9cnica", 3, "size", "control"], ["label", "Nome da \u00C1rea Tem\u00E1tica", "controlName", "area_tematica_id", "placeholder", "Nome da \u00C1rea Tem\u00E1tica", 3, "size", "control"], ["label", "Ativo", "controlName", "ativo", "placeholder", "", 3, "size", "control"], ["title", "Capacidade T\u00E9cnica", "field", "nome", "orderBy", "nome"], ["title", "\u00C1rea Tem\u00E1tica", 3, "template"], ["columnAreaTematica", ""], ["title", "Ativo", 3, "template"], ["columnAtivo", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"]],
   template: function CapacidadeTecnicaListComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -1352,10 +1359,13 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 5)("control", ctx.filter.controls.nome);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.area_tematica_id);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 2)("control", ctx.filter.controls.ativo);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("template", _r1);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](3);
@@ -1470,7 +1480,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]],
   decls: 9,
-  vars: 10,
+  vars: 15,
   consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome do Cargo", "controlName", "nome", "required", "", 3, "size"], ["label", "N\u00EDvel do Cargo", "controlName", "nivel", 3, "size"], ["label", "C\u00F3digo SIAPE do Cargo", "controlName", "siape", 3, "size"], ["label", "C\u00F3digo CBO do Cargo", "controlName", "cbo", 3, "size"], ["label", "Descri\u00E7\u00E3o do Cargo", "controlName", "descricao", 3, "size"], ["labelPosition", "left", "label", "Efetivo", "controlName", "efetivo", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
   template: function CargoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -1488,14 +1498,19 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 8);
+      _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 2);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
@@ -1675,7 +1690,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵInheritDefinitionFeature"]],
   decls: 25,
-  vars: 35,
+  vars: 40,
   consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome do Cargo", "controlName", "nome", "placeholder", "Nome da \u00E1rea de conhecimento", 3, "size", "control"], ["label", "N\u00EDvel", "controlName", "nivel", "placeholder", "", 3, "size", "control"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", "placeholder", "", 3, "size", "control"], ["label", "C\u00F3digo SIAPE", "controlName", "siape", "placeholder", "", 3, "size", "control"], ["label", "C\u00F3digo CBO", "controlName", "cbo", "placeholder", "", 3, "size", "control"], ["label", "Efetivo", "controlName", "efetivo", "placeholder", "", 3, "size", "control"], ["label", "Ativo", "controlName", "ativo", "placeholder", "", 3, "size", "control"], ["title", "Cargos", "field", "nome", "orderBy", "nome"], ["title", "N\u00EDvel", "field", "nivel"], ["title", "Descri\u00E7\u00E3o", "field", "descricao"], ["title", "SIAPE", "field", "siape"], ["title", "CBO", "field", "cbo"], ["title", "Efetivo", 3, "template"], ["columnEfetivo", ""], ["title", "Ativo", 3, "template"], ["columnAtivo", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"]],
   template: function CargoListComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -1708,14 +1723,19 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.nome);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.nivel);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.descricao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.siape);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.cbo);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.efetivo);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
@@ -1819,7 +1839,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]],
   decls: 4,
-  vars: 5,
+  vars: 6,
   consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome do Centro de Treinamento", "controlName", "nome", "required", "", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
   template: function CentroTreinamentoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -1837,6 +1857,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 10);
+      _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 2);
     }
@@ -1949,7 +1970,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
   decls: 9,
-  vars: 21,
+  vars: 22,
   consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome do Centro de Treinamento", "controlName", "nome", "placeholder", "Nome do CT", 3, "size", "control"], ["title", "Nome do Centro de Treinamento", "field", "nome", "orderBy", "nome"], ["type", "options", 3, "onEdit", "options"], [3, "rows"]],
   template: function CentroTreinamentoListComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -1975,6 +1996,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 6)("control", ctx.filter.controls.nome);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("onEdit", ctx.edit)("options", ctx.options);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
@@ -2952,7 +2974,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
   decls: 8,
-  vars: 16,
+  vars: 17,
   consts: [["initialFocus", "area_curso_id", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "area_curso_id", 3, "size", "dao"], ["label", "Nome do Curso", "controlName", "nome", "required", "", 3, "size"], ["label", "Titulo", "controlName", "titulo", 3, "size", "items"], ["label", "Tipo de Curso", "icon", "fas fa-layer-group", "controlName", "tipo_curso_id", "liveSearch", "", 3, "size", "control", "dao", "addRoute"], ["curso", ""], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
   template: function CursoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -2972,10 +2994,11 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 5)("dao", ctx.areaDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 5)("items", ctx.lookup.TITULOS_CURSOS_INST);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 5)("control", ctx.form.controls.tipo_curso_id)("dao", ctx.tipoCursoDao)("addRoute", _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵpureFunction1"](14, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵpureFunction0"](13, _c0)));
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 5)("control", ctx.form.controls.tipo_curso_id)("dao", ctx.tipoCursoDao)("addRoute", _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵpureFunction1"](15, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵpureFunction0"](14, _c0)));
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 2);
     }
@@ -3148,7 +3171,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
   decls: 21,
-  vars: 30,
+  vars: 35,
   consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome da \u00E1rea de conhecimento", "controlName", "nome_area", "placeholder", "Nome da \u00E1rea de conhecimento", 3, "size", "control"], ["label", "Nome do curso", "controlName", "nome_curso", "placeholder", "Nome do curso", 3, "size", "control"], ["label", "Titulo", "controlName", "titulo", "placeholder", "", 3, "size", "control"], ["label", "Tipo do Curso", "controlName", "nome_tipo", "placeholder", "", 3, "size", "control"], ["title", "Curso", "field", "nome", "orderBy", "nome"], ["title", "\u00C1rea do Conhecimento", 3, "template"], ["columnNomeArea", ""], ["title", "T\u00EDtulo", 3, "template"], ["columnTitulo", ""], ["title", "Tipo", 3, "template"], ["columnTipo", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"]],
   template: function CursoListComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -3187,12 +3210,16 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 5)("control", ctx.filter.controls.nome_area);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵattribute"]("maxlength", 250)("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.nome_curso);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 2)("control", ctx.filter.controls.titulo);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 2)("control", ctx.filter.controls.nome_tipo);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("template", _r1);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](3);
@@ -3306,7 +3333,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]],
   decls: 8,
-  vars: 9,
+  vars: 15,
   consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome da Fun\u00E7\u00E3o", "controlName", "nome", "required", "", 3, "size"], ["label", "N\u00EDvel da Fun\u00E7\u00E3o", "controlName", "nivel", 3, "size"], ["label", "C\u00F3digo SIAPE da Fun\u00E7\u00E3o", "controlName", "siape", 3, "size"], ["label", "C\u00F3digo CBO da Fun\u00E7\u00E3o", "controlName", "cbo", 3, "size"], ["label", "Descri\u00E7\u00E3o da Fun\u00E7\u00E3o", "controlName", "descricao", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
   template: function FuncaoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -3324,16 +3351,22 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 8);
+      _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵattribute"]("maxlength", 250);
     }
   },
   dependencies: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_0__.EditableFormComponent, _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_4__.InputSwitchComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_5__.InputTextComponent],
@@ -3491,7 +3524,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵInheritDefinitionFeature"]],
   decls: 21,
-  vars: 32,
+  vars: 37,
   consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome da Fun\u00E7\u00E3o", "controlName", "nome", "placeholder", "Nome da \u00E1rea de conhecimento", 3, "size", "control"], ["label", "N\u00EDvel", "controlName", "nivel", "placeholder", "", 3, "size", "control"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", "placeholder", "", 3, "size", "control"], ["label", "C\u00F3digo SIAPE", "controlName", "siape", "placeholder", "", 3, "size", "control"], ["label", "C\u00F3digo CBO", "controlName", "cbo", "placeholder", "", 3, "size", "control"], ["label", "Ativo", "controlName", "ativo", "placeholder", "", 3, "size", "control"], ["title", "Fun\u00E7\u00F5es", "field", "nome", "orderBy", "nome"], ["title", "N\u00EDvel", "field", "nivel"], ["title", "Descri\u00E7\u00E3o", "field", "descricao"], ["title", "SIAPE", "field", "siape"], ["title", "CBO", "field", "cbo"], ["title", "Ativo", 3, "template"], ["columnAtivo", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"]],
   template: function FuncaoListComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -3522,14 +3555,19 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.nome);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.nivel);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.descricao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.siape);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.cbo);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.ativo);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](7);
@@ -3629,7 +3667,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]],
   decls: 4,
-  vars: 5,
+  vars: 6,
   consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome do Grupo Especializado", "controlName", "nome", "required", "", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
   template: function GrupoEspecializadoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -3647,6 +3685,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 10);
+      _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 2);
     }
@@ -3758,7 +3797,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
   decls: 9,
-  vars: 21,
+  vars: 22,
   consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome do Centro de Treinamento", "controlName", "nome", "placeholder", "Nome/Sigla", 3, "size", "control"], ["title", "Nome/Sigla do Grupo Especializado", "field", "nome", "orderBy", "nome"], ["type", "options", 3, "onEdit", "options"], [3, "rows"]],
   template: function GrupoEspecializadoListComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -3784,6 +3823,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 6)("control", ctx.filter.controls.nome);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("onEdit", ctx.edit)("options", ctx.options);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
@@ -3941,7 +3981,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵInheritDefinitionFeature"]],
   decls: 9,
-  vars: 18,
+  vars: 19,
   consts: [["initialFocus", "area_id", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "area_id", "required", "", 3, "size", "dao", "change"], ["label", "Titulo", "controlName", "titulo", "required", "", 3, "size", "items", "change"], ["label", "Curso", "icon", "fas fa-user-graduate", "controlName", "curso_id", "liveSearch", "", "required", "", 3, "size", "control", "dao", "where", "addRoute"], ["label", "Nome da Mat\u00E9ria", "controlName", "nome", "required", "", 3, "size"], ["label", "Horas Aula", "controlName", "horas_aula", "required", "", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
   template: function MateriaFormComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -3974,9 +4014,10 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 3)("items", ctx.lookup.TITULOS_CURSOS_INST);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 5)("control", ctx.form.controls.curso_id)("dao", ctx.cursoDao)("where", ctx.cursoWhere)("addRoute", _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵpureFunction1"](16, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵpureFunction0"](15, _c0)));
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 5)("control", ctx.form.controls.curso_id)("dao", ctx.cursoDao)("where", ctx.cursoWhere)("addRoute", _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵpureFunction1"](17, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵpureFunction0"](16, _c0)));
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 2);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
@@ -4132,7 +4173,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵInheritDefinitionFeature"]],
   decls: 17,
-  vars: 25,
+  vars: 27,
   consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome da Mat\u00E9ria", "controlName", "nome", "placeholder", "Nome da Mat\u00E9ria", 3, "size", "control"], ["label", "\u00C1rea", "controlName", "area_id", "placeholder", "Nome da \u00C1rea", 3, "size", "control"], ["title", "Nome da Mat\u00E9ria", "field", "nome"], ["title", "\u00C1rea do Conhecimento", 3, "template"], ["columnNomeArea", ""], ["title", "Curso", 3, "template"], ["columnCurso", ""], ["title", "Horas Aula", "field", "horas_aula"], ["type", "options", 3, "onEdit", "options"], [3, "rows"]],
   template: function MateriaListComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -4167,8 +4208,10 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 5)("control", ctx.filter.controls.nome);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 5)("control", ctx.filter.controls.area_id);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("template", _r1);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](3);
@@ -4415,7 +4458,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]],
   decls: 4,
-  vars: 5,
+  vars: 6,
   consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Nome do tipo do curso", "controlName", "nome", "required", "", 3, "size"], ["labelPosition", "left", "label", "Ativo", "controlName", "ativo", 3, "size"]],
   template: function TipoCursoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -4433,6 +4476,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("size", 2);
     }
@@ -4545,7 +4589,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
   decls: 8,
-  vars: 19,
+  vars: 20,
   consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome do tipo de curso", "controlName", "nome", "placeholder", "Nome do tipo de curso", 3, "size", "control"], ["title", "Tipo de Curso", "field", "nome", "orderBy", "nome"], [3, "rows"]],
   template: function TipoCursoListComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -4571,6 +4615,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 9)("control", ctx.filter.controls.nome);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("rows", ctx.rowsLimit);
     }

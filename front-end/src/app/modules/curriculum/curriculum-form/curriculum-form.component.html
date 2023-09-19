@@ -17,7 +17,7 @@
             [control]="form!.controls.cidade_id" [items]="municipios">
         </input-select>
         <input-text [size]="4" label="Telefone de contato WhatsAPP" icon="fas fa-phone" controlName="telefone"
-            [control]="form!.controls.telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'"></input-text>
+            [control]="form!.controls.telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'" [attr.maxlength]=250></input-text>
     </div>
 
 

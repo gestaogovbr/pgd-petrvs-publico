@@ -75,6 +75,8 @@ function EntregaFormComponent_div_7_Template(rf, ctx) {
     const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](4);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("addItemHandle", ctx_r0.addItemHandleItemQualitativo.bind(ctx_r0));
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵattribute"]("maxlength", 250);
   }
 }
 class EntregaFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_4__.PageFormBase {
@@ -198,8 +200,8 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefi
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵInheritDefinitionFeature"]],
   decls: 8,
-  vars: 12,
-  consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "nome", "required", "", 3, "size", "label"], ["controlName", "descricao", "required", "", 3, "size", "label"], ["icon", "bi bi-arrow-up-right-circle", "controlName", "tipo_indicador", 3, "size", "label", "items", "disabled"], ["class", "row col-6", 4, "ngIf"], [1, "row", "col-6"], [1, "col-12"], ["for", "itemQualitativo", 1, "radio", "control-label"], ["label", "Itens Qualitativos", "controlName", "lista_qualitativos", 3, "addItemHandle"], ["icon", "far fa-edit", "controlName", "item_qualitativo"]],
+  vars: 13,
+  consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "nome", "required", "", 3, "size", "label"], ["controlName", "descricao", "required", "", 3, "size", "label"], ["icon", "bi bi-arrow-up-right-circle", "controlName", "tipo_indicador", 3, "size", "label", "items"], ["class", "row col-6", 4, "ngIf"], [1, "row", "col-6"], [1, "col-12"], ["for", "itemQualitativo", 1, "radio", "control-label"], ["label", "Itens Qualitativos", "controlName", "lista_qualitativos", 3, "addItemHandle"], ["icon", "far fa-edit", "controlName", "item_qualitativo"]],
   template: function EntregaFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "editable-form", 0);
@@ -213,17 +215,19 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefi
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](5, "div", 1);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](6, "input-select", 4);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](7, EntregaFormComponent_div_7_Template, 6, 1, "div", 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](7, EntregaFormComponent_div_7_Template, 6, 2, "div", 5);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()()();
     }
     if (rf & 2) {
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 12)("label", "Nome " + ctx.lex.translate("entrega"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 12)("label", "Descri\u00E7\u00E3o " + ctx.lex.translate("entrega"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 6)("label", ctx.lex.translate("Tipo de indicador"))("items", ctx.lookup.TIPO_INDICADOR)("disabled", (ctx.form == null ? null : ctx.form.controls == null ? null : ctx.form.controls.tipo_indicador == null ? null : ctx.form.controls.tipo_indicador.value) ? "true" : undefined);
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 6)("label", ctx.lex.translate("Tipo de indicador"))("items", ctx.lookup.TIPO_INDICADOR);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("ngIf", (ctx.form == null ? null : ctx.form.controls.tipo_indicador.value) == "QUALITATIVO" || null);
     }
@@ -367,7 +371,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵInheritDefinitionFeature"]],
   decls: 18,
-  vars: 28,
+  vars: 29,
   consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "collapseChange", "collapsed"], [1, "row"], ["controlName", "nome", 3, "size", "label", "control", "placeholder"], ["label", "Tipo de indicador", "controlName", "tipo_indicador", 3, "size", "items"], ["title", "Nome", "field", "nome", "orderBy", "nome"], ["title", "Descri\u00E7\u00E3o", "field", "descricao", "orderBy", "descricao"], ["title", "Unidade", 3, "template"], ["columnUnidade", ""], ["type", "select", "field", "tipo_indicador", 3, "title", "items"], ["title", "Qualitativos", 3, "template"], ["columnQualitativos", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"], ["color", "light", 3, "icon", "label", "hint", 4, "ngIf"], ["color", "light", 3, "icon", "label", "hint"], [1, "one-per-line"], ["color", "light", "icon", "bi bi-check2-square", 3, "label", 4, "ngFor", "ngForOf"], ["color", "light", "icon", "bi bi-check2-square", 3, "label"]],
   template: function EntregaListComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -403,6 +407,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 8)("label", ctx.lex.translate("Entrega"))("control", ctx.filter.controls.nome)("placeholder", "Nome " + ctx.lex.translate("entrega") + "...");
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 4)("items", ctx.lookup.TIPO_INDICADOR);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](4);
