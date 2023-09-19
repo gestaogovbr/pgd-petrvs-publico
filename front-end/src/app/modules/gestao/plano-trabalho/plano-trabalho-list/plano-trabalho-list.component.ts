@@ -234,7 +234,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     let assinaturasExigidas: string[] = planoTrabalho.assinaturasExigidas;
     let usuarioEhGestorUnidadeExecutora: boolean = this.auth.usuario?.id == planoTrabalho.unidade?.gestor?.usuario?.id;
     let usuarioJaAssinouTCR: boolean = planoTrabalho.jaAssinaramTCR.includes(this.auth.usuario?.id!);
-    let assinaturaUsuarioEhExigida: boolean = false;
+    let assinaturaUsuarioEhExigida: boolean = planoTrabalho.assinaturasExigidas.includes(this.auth.usuario?.id!);
     let planoIncluido = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'INCLUIDO'; 
     let usuarioEhParticipante = this.auth.usuario?.id == planoTrabalho.usuario_id; 
     let planoAguardandoAssinatura = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'AGUARDANDO_ASSINATURA'; 
@@ -444,7 +444,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
 
   public canAdd() {
     return this.auth.hasPermissionTo('MOD_PTR_INCL');
-    //IMPLEMENTAR AS DEMAIS CONDIÇÕES*******************
+    //IMPLEMENTAR AS DEMAIS CONDIÇÕES NA VALIDAÇÃO DO FORM *******************
     /*
     (RN_PTR_V) INCLUIR/INSERIR
     O usuário logado precisa possuir a capacidade "MOD_PTR_INCL", e:
@@ -453,7 +453,6 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
         - o participante do plano precisa estar lotado na Unidade Executora, ou o usuário logado possuir a capacidade MOD_PTR_INCL_SEM_LOT; e
         - o novo Plano de Trabalho não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA
     */
-
   }
 
 }

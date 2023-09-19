@@ -524,7 +524,7 @@ class PlanoTrabalhoService extends ServiceBase
     ];
   }
 
-  public function proxyRows(&$rows) {
+  public function proxyRows($rows) {
     foreach($rows as $row) {
         $row->assinaturasExigidas = $this->programa->assinaturasExigidas($row->id);
         $row->jaAssinaramTCR = $this->usuario->jaAssinaramTCR($row->id);

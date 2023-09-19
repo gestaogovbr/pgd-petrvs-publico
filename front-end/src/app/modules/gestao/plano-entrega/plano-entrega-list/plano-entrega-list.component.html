@@ -26,7 +26,7 @@
                 <span *ngIf="row.entregas?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-list-check"></i> {{row.entregas?.length}}</span>
             </ng-template>
             <ng-template let-row="row" #columnExpandedEntregas>
-                <plano-entrega-list-entrega [entity]="row" [cdRef]="cdRef"></plano-entrega-list-entrega>
+                <plano-entrega-list-entrega [entity]="row" [cdRef]="cdRef" [planejamentoId]="row.planejamento_id" [cadeiaValorId]="row.cadeia_valor_id" [unidadeId]="row.unidade_id"></plano-entrega-list-entrega>
             </ng-template>
         </column>
         <column [titleTemplate]="titleIdNumeroStatus" [template]="columnNumero">

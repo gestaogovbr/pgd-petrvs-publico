@@ -128,7 +128,7 @@ class Usuario extends Authenticatable
     public function notificacoesWhatsapp() { return $this->hasMany(NotificacaoWhatsapp::class); }
     public function notificacoesDestinatario() { return $this->hasMany(NotificacaoDestinatario::class); }
     public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }
-    public function participantesPrograma() { return $this->hasMany(ProgramaParticipante::class); }
+    public function participacoesProgramas() { return $this->hasMany(ProgramaParticipante::class); }
     public function integracoes() { return $this->hasMany(Integracao::class); }
     public function planosEntregaCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }  
     public function planosTrabalhoCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); } 
