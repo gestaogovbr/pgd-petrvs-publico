@@ -9,6 +9,7 @@ import { PlanoEntregaDaoService } from './plano-entrega-dao.service';
 import { TemplateDataset } from '../modules/uteis/templates/template.service';
 import { Usuario } from '../models/usuario.model';
 import { TreeNode } from 'primeng/api';
+import { LookupItem } from '../services/lookup.service';
 
 
 export type UnidadeDashboard = {
@@ -18,6 +19,10 @@ export type UnidadeDashboard = {
   qdeServidores: number,                            // quantidade de servidores vinculados aos Planos de Trabalho da Unidade
   modalidadesPlanos: string[]
 };
+
+export type TodasUnidades = {
+  unidades : LookupItem[];
+}
 
 @Injectable({
   providedIn: 'root'
@@ -124,6 +129,15 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
     return new Promise<Usuario[]>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/lotados', { unidade_id }).subscribe(response => {
         resolve(response?.usuarios || []);
+      }, error => reject(error));
+    });
+  }
+
+  public lookupTodasUnidades(): Promise<LookupItem[]>{
+    return new Promise<LookupItem[]>((resolve, reject) => {
+      this.server.post('api/Unidade/lookup-todas-unidades',{}).subscribe(response => {
+        resolve(response?.unidades || []);
+        console.log(response.unidades);
       }, error => reject(error));
     });
   }

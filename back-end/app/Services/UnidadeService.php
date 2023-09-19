@@ -407,4 +407,9 @@ class UnidadeService extends ServiceBase
     public function linhaAscendente($unidade_id): array {
         return array_filter(explode('/',Unidade::find($unidade_id)->path),fn($x) => $x != "");
     }
+
+    public function lookupTodasUnidades(): array
+    {
+        return Unidade::all()->map(fn($u) => ["key" => $u->id, "value" => $u->sigla])->toArray();
+    }
 }

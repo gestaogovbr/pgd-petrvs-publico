@@ -4,7 +4,7 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { IIndexable } from 'src/app/models/base.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
-import { LookupItem } from 'src/app/services/lookup.service';
+import { LookupItem, LookupService } from 'src/app/services/lookup.service';
 import { Curriculum } from 'src/app/models/currriculum.model';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { InputSwitchComponent } from 'src/app/components/input/input-switch/input-switch.component';
@@ -20,6 +20,8 @@ import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
 import { NavigateResult } from 'src/app/services/navigate.service';
 import { UnidadesService } from 'src/app/services/unidades.service';
+import { Funcao } from 'src/app/models/funcao.model';
+import { CurriculumDaoService } from 'src/app/dao/curriculum-dao.service';
 
 @Component({
   selector: 'curriculum-profissional-form',
@@ -41,16 +43,23 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   @ViewChild('radioViajaI', { static: false }) public radioViajaI?: InputSwitchComponent;
   @ViewChild('escolhaRadioPG', { static: false }) public escolhaRadioPG?: InputRadioComponent;
   @ViewChild('escolhaInteressePG', { static: false }) public escolhaInteressePG?: InputRadioComponent;
-
+  @ViewChild('funcoes', { static: false }) public funcoes?: InputSelectComponent;
+  @ViewChild('unidades', { static: false }) public unidades?: InputSelectComponent;
+  @ViewChild('lotacaoAtual', { static: false }) public lotacaoAtual?: InputSelectComponent;
+  @ViewChild('grupos', { static: false }) public grupos?: InputSelectComponent;
+  @ViewChild('ct', { static: false }) public ct?: InputSelectComponent;
+  @ViewChild('cargos', { static: false }) public cargos?: InputSelectComponent;
+  
    
   public testeLookup: LookupItem[] = [{ 'key': 'key 1', 'value': 'value 1' }];
   public anos: LookupItem[] = [];
-  public ct: LookupItem[] = [];
+  //public ct: LookupItem[] = [];
   public cargo: LookupItem[] = [];
   public funcao: LookupItem[] = [];
   public grupo: LookupItem[] = [];
   public unidade: LookupItem[] = [];
   public usuarioUnidade: LookupItem[] = [];
+  public curriculumDao?: CurriculumDaoService;
   public userDao?: UsuarioDaoService;
   public lotacaoDao?: UnidadeIntegranteDaoService;
   public unidadeDao?: UnidadeDaoService;
@@ -58,11 +67,12 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   public ctDao?: CentroTreinamentoDaoService;
   public grupoDao?: GrupoEspecializadoDaoService;
   public unidadeService?: UnidadesService;
+  public lookupService?: LookupService;
+  public unidadesArray?:any;
   
-  
- 
   constructor(public injector: Injector) {
     super(injector, CurriculumProfissional, CurriculumProfissionalDaoService);
+    this.curriculumDao = injector.get<CurriculumDaoService>(CurriculumDaoService);
     this.userDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.lotacaoDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
     this.ctDao = injector.get<CentroTreinamentoDaoService>(CentroTreinamentoDaoService);
@@ -70,6 +80,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     this.grupoDao = injector.get<GrupoEspecializadoDaoService>(GrupoEspecializadoDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.unidadeService = injector.get<UnidadesService>(UnidadesService);
+    this.lookupService = injector.get<LookupService>(LookupService);
     this.form = this.fh.FormBuilder({
       radioDocenciaFora: { default: false },
       radioDocenciaPRF: { default: false },
@@ -107,7 +118,28 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
         this.anos.push(Object.assign({}, { key: i, value: (i.toString()) }));
       }
 
-      this.getAllUnidades();
+      this.curriculumDao?.lookupsCurriculum().then((lookups) => {
+        this.unidades!.items = lookups.unidades;
+        this.lotacaoAtual!.items = lookups.unidades;
+        this.funcoes!.items = lookups.funcoes;
+        this.grupos!.items = lookups.grupos;
+        this.ct!.items = lookups.ct;
+        this.cargos!.items = lookups.cargos;
+      });
+      /*(async () => {
+       
+        this.unidadesArray = await this.unidadeDao?.lookupTodasUnidades()
+        this.unidade = this.unidadesArray.map((x: { id: any; sigla: any; }) => Object.assign({}, { key: x.id, value: x.sigla }));
+        setTimeout(() => 
+        {
+         
+          console.log('Todas Unidades', this.unidade);
+          
+        },
+        1000);
+      })();*/
+
+      
       
       const userUnidade=this.auth.unidade;
       console.log(userUnidade)

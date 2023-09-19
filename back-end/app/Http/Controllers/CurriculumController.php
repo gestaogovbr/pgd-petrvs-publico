@@ -20,6 +20,22 @@ class CurriculumController extends ControllerBase {
             case 'DESTROY':
                 if (!$usuario->hasPermissionTo('MOD_RX_EDT_SUP')) throw new ServerException("CapacidadeDestroy");
                 break;
+            case 'QUERY':
+                if (!$usuario->hasPermissionTo('MOD_RX')) throw new ServerException("CapacidadeDestroy");
+                break;
         }
      }
+
+     public function lookupsCurriculum(Request $request) {
+        try {
+            //$this->checkPermissions('QUERY', $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
+            $result = response()->json([
+                'success' => true,
+                'lookups' => $this->service->lookupsCurriculum()
+            ]);
+            return $result;
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
 }
