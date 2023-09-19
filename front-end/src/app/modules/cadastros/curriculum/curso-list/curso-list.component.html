@@ -3,11 +3,11 @@
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="5" label="Nome da área de conhecimento" controlName="nome_area"
-                [control]="filter!.controls.nome_area" placeholder="Nome da área de conhecimento"></input-text>
-            <input-text [size]="3" label="Nome do curso" controlName="nome_curso" [control]="filter!.controls.nome_curso" placeholder="Nome do curso"></input-text>
-            <input-text [size]="2" label="Titulo" controlName="titulo" [control]="filter!.controls.titulo" placeholder=""></input-text>
-            <input-text [size]="2" label="Tipo do Curso" controlName="nome_tipo" [control]="filter!.controls.nome_tipo" placeholder=""></input-text>
+            <input-text [size]="5" label="Nome da área de conhecimento" controlName="nome_area" [attr.maxlength]=250
+                [control]="filter!.controls.nome_area" placeholder="Nome da área de conhecimento" [attr.maxlength]=250></input-text>
+            <input-text [size]="3" label="Nome do curso" controlName="nome_curso" [control]="filter!.controls.nome_curso" placeholder="Nome do curso" [attr.maxlength]=250></input-text>
+            <input-text [size]="2" label="Titulo" controlName="titulo" [control]="filter!.controls.titulo" placeholder="" [attr.maxlength]=250></input-text>
+            <input-text [size]="2" label="Tipo do Curso" controlName="nome_tipo" [control]="filter!.controls.nome_tipo" placeholder="" [attr.maxlength]=250></input-text>
         </div>
     </filter>
     <columns>

@@ -9,7 +9,7 @@
     </toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed" [visible]="showFilter">
         <div class="row">
-            <input-text [size]="5" label="Nome" controlName="nome" [control]="filter!.controls.nome" [placeholder]="'Nome do '+lex.translate('plano de entrega')"></input-text>
+            <input-text [size]="5" label="Nome" controlName="nome" [control]="filter!.controls.nome" [placeholder]="'Nome do '+lex.translate('plano de entrega')" [attr.maxlength]=250></input-text>
             <input-search #unidade [size]="4" controlName="unidade_id" [dao]="unidadeDao"></input-search>
             <input-select [size]="3" label="Status" controlName="status" [items]="lookup.PLANO_ENTREGA_STATUS" itemTodos="- Todos -" [valueTodos]="null"></input-select>
         </div>

@@ -1,17 +1,17 @@
 <!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="codigo" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
     <div class="row">
-        <input-text [size]="3" label="Código" controlName="codigo" required></input-text>
-        <input-text [size]="9" label="Nome" controlName="nome" required></input-text>
+        <input-text [size]="3" label="Código" controlName="codigo" [attr.maxlength]=250 required></input-text>
+        <input-text [size]="9" label="Nome" controlName="nome" [attr.maxlength]=250 required></input-text>
     </div>
     <div class="row">
         <input-multiselect label="Etiquetas" controlName="etiquetas" [size]="8" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
-            <input-text [size]="5" label="Texto" controlName="etiqueta_texto"></input-text>
+            <input-text [size]="5" label="Texto" controlName="etiqueta_texto" [attr.maxlength]=250></input-text>
             <input-select [size]="3" label="Ícone" icon="fas fa-sign-out-alt" controlName="etiqueta_icone" liveSearch [items]="lookup.ICONES"></input-select>
             <input-color [size]="4" label="Cor" controlName="etiqueta_cor"></input-color>
         </input-multiselect>
         <input-multiselect label="Checklists" controlName="checklist" [size]="4" [addItemHandle]="addItemHandleChecklist.bind(this)">
-            <input-text [size]="12" controlName="checklist_texto"></input-text>
+            <input-text [size]="12" controlName="checklist_texto" [attr.maxlength]=250></input-text>
         </input-multiselect>
     </div>
 </editable-form>

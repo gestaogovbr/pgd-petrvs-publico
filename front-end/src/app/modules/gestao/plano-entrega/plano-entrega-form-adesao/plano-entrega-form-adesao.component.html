@@ -11,11 +11,11 @@
             <separator></separator>
         </div>
         <div class="row">
-            <input-text [size]="12" label="Nome deste Plano de Entregas" controlName="nome" required></input-text>
+            <input-text [size]="12" label="Nome deste Plano de Entregas" controlName="nome" [attr.maxlength]=250 required></input-text>
         </div>
         <div class="row">
             <input-search disabled [size]="9" [label]="lex.translate('Unidade')" controlName="unidade_id" [dao]="unidadeDao"></input-search>
-            <input-text disabled [size]="3" label="Status" controlName="status"></input-text>
+            <input-text disabled [size]="3" label="Status" controlName="status" [attr.maxlength]=250></input-text>
         </div>
         <div class="row mt-4">
             <separator title="Dados herdados do Plano de Entregas da Unidade-pai" [collapse]="'collapse'">
