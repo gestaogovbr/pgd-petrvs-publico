@@ -135,7 +135,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵdefi
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵInheritDefinitionFeature"]],
   decls: 9,
-  vars: 13,
+  vars: 15,
   consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "Descri\u00E7\u00E3o", "controlName", "nome", "required", "", 3, "size"], ["label", "Integra\u00E7\u00E3o", "controlName", "integracao", "labelInfo", "Se esse motivo \u00E9 integrado a outro sistema. ", "required", "", 3, "size", "items"], ["label", "C\u00F3digo", "controlName", "codigo", "labelInfo", "C\u00F3digo do Motivo de Afastamento vindo de outro sistema. ", 3, "size", "disabled"], ["label", "Formato", "controlName", "horas", "labelInfo", "Se o afastamento ser\u00E1 contado em Dias ou em Horas. ", 3, "size", "items"], ["label", "\u00CDcone", "controlName", "icone", 3, "size", "items"], ["label", "Cor", "controlName", "cor", 3, "size"]],
   template: function TipoMotivoAfastamentoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -156,10 +156,12 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵdefi
       _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
       _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("size", 7);
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("size", 2)("items", ctx.lookup.SIMNAO);
       _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("size", 3)("disabled", ctx.checkIntegracao());
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("size", 3)("items", ctx.lookup.FORMATO_HORA);
       _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](1);
@@ -337,7 +339,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
   decls: 17,
-  vars: 25,
+  vars: 26,
   consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["controlName", "nome", "placeholder", "Nome...", 3, "size", "label", "control"], ["title", "Descri\u00E7\u00E3o", 3, "template"], ["columnDescricao", ""], ["title", "Formato", 3, "template"], ["columnEmHoras", ""], ["title", "Integrado", 3, "template"], ["columnIntegrado", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"]],
   template: function TipoMotivoAfastamentoListComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -374,6 +376,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 12)("label", "Nome " + ctx.lex.translate("motivo de afastamento"))("control", ctx.filter.controls.nome);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("template", _r1);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](3);

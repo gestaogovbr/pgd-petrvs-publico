@@ -336,7 +336,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵInheritDefinitionFeature"]],
   decls: 42,
-  vars: 52,
+  vars: 56,
   consts: [["initialFocus", "codigo", 3, "title", "form", "disabled", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], ["labelClass", "text-nowrap", "controlName", "instituidora", 3, "size", "label", "labelInfo", "change"], ["instituidora", ""], ["label", "C\u00F3digo", "controlName", "codigo", "required", "", 3, "size"], ["label", "Sigla", "controlName", "sigla", "required", "", 3, "size"], ["label", "Nome", "controlName", "nome", "required", "", 3, "size"], ["label", "Gestor", "controlName", "gestor_id", "labelInfo", "Respons\u00E1vel pela unidade", 3, "size", "emptyValue", "control", "dao"], ["gestor", ""], ["label", "Gestor Substituto", "controlName", "gestor_substituto_id", "labelInfo", "Respons\u00E1vel substituto pela unidade", 3, "size", "emptyValue", "control", "dao"], ["gestorSubstituto", ""], ["controlName", "cidade_id", "required", "", 3, "size", "dao"], ["cidade", ""], ["controlName", "unidade_pai_id", "required", "", 3, "size", "label", "where", "dao"], ["unidade_pai", ""], ["disabled", "", "controlName", "entidade_id", "required", "", 3, "size", "dao"], ["entidade", ""], ["key", "CONFIGURACOES", "label", "Configura\u00E7\u00F5es"], ["controlName", "distribuicao_forma_contagem_prazos", "labelInfo", "A forma da contagem dos prazos para a distribui\u00E7\u00E3o (lan\u00E7amento da demanda).", 3, "size", "label", "items"], ["controlName", "entrega_forma_contagem_prazos", "labelInfo", "A forma da contagem dos prazos na entrega da demanda (data da entrega e tempo despendido)", 3, "size", "label", "items"], ["label", "Arquivamento autom\u00E1tico", "controlName", "atividades_arquivamento_automatico", "labelInfo", "Se ap\u00F3s a avalia\u00E7\u00E3o, arquivar\u00E1 automaticamente a atividade.", 3, "size", "items"], ["clss", "row"], ["label", "Etiquetas", "multiselectStyle", "inline", "controlName", "etiquetas", 3, "maxItemWidth", "size", "addItemHandle"], ["label", "Texto", "controlName", "etiqueta_texto", 3, "size"], ["label", "\u00CDcone", "controlName", "etiqueta_icone", 3, "size", "items"], ["label", "Cor", "controlName", "etiqueta_cor", 3, "size"], ["controlName", "texto_complementar_plano", 3, "label", "dataset"], ["key", "EXPEDIENTE", "label", "Expediente"], ["labelPosition", "right", "icon", "bi bi-check2", "controlName", "usar_expediente_entidade", "labelInfo", "Se utiliza o expediente configurado na entidade ao inv\u00E9s de especificar na unidade", 3, "label", "size", "change"], ["usarExpedienteEntidade", ""], [3, "disabled", "expedienteDisabled", "control"], ["expediente", ""], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es", 4, "ngIf"], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es"], [3, "unidadeId", "entity", "disabled"], ["notificacoes", ""]],
   template: function UnidadeFormComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -387,10 +387,13 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 1)("label", _r0.value ? "Instit." : "Exec.")("labelInfo", "Se a " + ctx.lex.noun("unidade") + " \u00E9 instituidora ou executora de Programas.");
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 7);
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 6)("emptyValue", null)("control", ctx.formGestor.controls.gestor_id)("dao", ctx.usuarioDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](2);
@@ -398,7 +401,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 4)("dao", ctx.cidadeDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 4)("label", ctx.lex.translate("Unidade") + " pai")("where", _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵpureFunction1"](50, _c8, _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵpureFunction1"](48, _c7, ctx.form.controls.entidade_id.value)))("dao", ctx.dao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 4)("label", ctx.lex.translate("Unidade") + " pai")("where", _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵpureFunction1"](54, _c8, _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵpureFunction1"](52, _c7, ctx.form.controls.entidade_id.value)))("dao", ctx.dao);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 4)("dao", ctx.entidadeDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](4);
@@ -411,6 +414,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("maxItemWidth", 250)("size", 12)("addItemHandle", ctx.addItemHandle.bind(ctx));
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 6);
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 3)("items", ctx.lookup.ICONES);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](1);
@@ -1049,7 +1053,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵInheritDefinitionFeature"]],
   decls: 25,
-  vars: 33,
+  vars: 34,
   consts: [["class", "my-2", 4, "ngIf"], [3, "dao", "add", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [3, "buttons", 4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["controlName", "entidade_id", 3, "size", "dao"], ["entidade", ""], ["labelClass", "text-nowrap", "controlName", "instituidora", 3, "size", "label", "control", "labelInfo"], ["instituidora", ""], ["label", "Nome", "controlName", "nome", "placeholder", "Nome ou sigla...", 3, "size", "control"], ["label", "Inativos", "controlName", "inativos", "labelInfo", "Se lista tamb\u00E9m as unidade inativas", 3, "size", "control"], ["title", "Sigla", "field", "sigla"], ["title", "Nome", "orderBy", "nome", 3, "template"], ["columnNome", ""], ["title", "C\u00F3digo", "field", "codigo"], [3, "title", "template"], ["columnCidade", ""], ["title", "Situa\u00E7\u00E3o", 3, "template"], ["columnSituacao", ""], ["type", "options", 3, "onEdit", "dynamicOptions"], [3, "rows"], [1, "my-2"], [3, "buttons"], [1, "d-block"], ["class", "badge bg-light text-dark", 4, "ngIf"], [1, "badge", "bg-light", "text-dark"], [1, "bi", "bi-arrow-return-right"], [1, "one-per-line"], ["color", "primary", "icon", "bi bi-star", "label", "Instituidora", 4, "ngIf"], [3, "color", "icon", "label"], ["color", "primary", "icon", "bi bi-star", "label", "Instituidora"]],
   template: function UnidadeListGridComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -1097,6 +1101,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("size", 2)("label", _r3.value ? "Instit." : "Exec.")("control", ctx.filter.controls.instituidora)("labelInfo", "Se lista SOMENTE as " + ctx.lex.noun("unidades") + " instituidoras de " + ctx.lex.noun("programa", true));
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("size", 4)("control", ctx.filter.controls.nome);
+      _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("size", 2)("control", ctx.filter.controls.inativos);
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵadvance"](3);

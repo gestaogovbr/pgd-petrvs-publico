@@ -219,7 +219,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵInheritDefinitionFeature"]],
   decls: 28,
-  vars: 32,
+  vars: 38,
   consts: [["initialFocus", "cpf", 3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], [1, "form-group", "col-md-3", "text-center"], [1, "mt-5", 3, "url", "size"], [1, "form-group", "col-md-9"], ["label", "CPF", "controlName", "cpf", "required", "", 3, "disabled", "size", "maskFormat"], ["label", "Matr\u00EDcula", "controlName", "matricula", "required", "", 3, "disabled", "size"], ["label", "E-mail", "controlName", "email", "textCase", "lower", "required", "", 3, "disabled", "size"], ["label", "Nome", "controlName", "nome", "required", "", 3, "size"], ["label", "Apelido", "controlName", "apelido", "required", "", 3, "size"], ["label", "Perfil", "controlName", "perfil_id", "required", "", 3, "disabled", "size", "dao"], ["label", "Lota\u00E7\u00E3o", "controlName", "unidade_lotacao_id", "labelInfo", "Unidade de lota\u00E7\u00E3o do Usu\u00E1rio", 3, "size", "emptyValue", "control", "dao", "change"], ["lotacao", ""], ["label", "UF", "icon", "bi bi-flag", "controlName", "uf", 3, "size", "items"], ["label", "Sexo", "controlName", "sexo", 3, "size", "items"], ["label", "Telefone", "controlName", "telefone", 3, "size", "maskFormat"], ["key", "CONFIGURACOES", "label", "Configura\u00E7\u00F5es"], ["controlName", "texto_complementar_plano", 3, "label", "dataset"], ["key", "ATRIBUICOES", 3, "label"], ["noPersist", "", 3, "entity", "entity_id"], ["unidadesIntegrantes", ""]],
   template: function UsuarioFormComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -261,14 +261,19 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("url", ctx.form.controls.url_foto.value)("size", 150);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("disabled", !ctx.auth.hasPermissionTo("MOD_CFG_USER_CPF") ? "true" : undefined)("size", 4)("maskFormat", "000.000.000-00");
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵattribute"]("maxlength", 15);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("disabled", !ctx.auth.hasPermissionTo("MOD_CFG_USER_MAT") ? "true" : undefined)("size", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("disabled", !ctx.auth.hasPermissionTo("MOD_CFG_USER_MAIL") ? "true" : undefined)("size", 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 8);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 4);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("disabled", !ctx.auth.hasPermissionTo("MOD_CFG_USER_PERFIL") ? "true" : undefined)("size", 4)("dao", ctx.perfilDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
@@ -279,6 +284,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 4)("items", ctx.lookup.SEXO);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 4)("maskFormat", "(00) 0000-0000||(00) 0 0000-0000");
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("label", "Texto complementar " + ctx.lex.translate("Plano de Trabalho"))("dataset", ctx.planoDataset);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
@@ -865,7 +871,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵInheritDefinitionFeature"]],
   decls: 20,
-  vars: 32,
+  vars: 33,
   consts: [["class", "my-2", 4, "ngIf"], [3, "dao", "add", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "collapseChange", "collapsed"], [1, "row"], ["controlName", "usuario", "placeholder", "Nome", 3, "size", "label", "control"], ["controlName", "unidade_id", 3, "size", "label", "dao"], ["controlName", "perfil_id", "nullable", "", 3, "size", "label", "control", "dao"], ["icon", "bi-person", 3, "align", "template"], ["columnFoto", ""], ["title", "CPF", "field", "cpf"], ["title", "Matr\u00EDcula", "field", "matricula"], ["title", "Nome", "field", "nome", "orderBy", "nome"], [3, "title", "template"], ["columnPerfil", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"], [1, "my-2"], [3, "url", "size", "hint"]],
   template: function UsuarioListComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -902,6 +908,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("size", 4)("label", ctx.lex.translate("Usu\u00E1rio"))("control", ctx.filter.controls.usuario);
+      _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("size", 4)("label", ctx.lex.translate("Lota\u00E7\u00E3o"))("dao", ctx.unidadeDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](1);

@@ -230,7 +230,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵInheritDefinitionFeature"]],
   decls: 23,
-  vars: 18,
+  vars: 19,
   consts: [[3, "form", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "GERAL", "label", "Geral"], [1, "row"], ["controlName", "tipo_modalidade_id", "labelInfo", "Tipo de modalidade padr\u00E3o utilizada ao criar plano de trabalho.", 3, "size", "dao"], ["label", "Carga Hor\u00E1ria", "icon", "bi bi-hourglass-split", "controlName", "carga_horaria_padrao", "labelInfo", "Carga hor\u00E1ria e forma de contagem (horas por dia, semana ou m\u00EAs) padr\u00E3o utilizada ao criar plano de trabalho.", 3, "size", "unit", "unitChange"], ["cargaHoraria", ""], ["label", "Url do Sei/SUPER", "icon", "bi bi-lin", "controlName", "url_sei", "labelInfo", "Url base do Sei/SUPER, deve ser semelhante a: https://sei.minha-entidade.gov.br/", 3, "size", "control"], ["label", "Chave de API", "icon", "bi bi-lin", "placeholder", "Vis\u00EDvel somente no momento em que foi gerado", "iconButton", "bi bi-arrow-clockwise", "controlName", "api_public_key", "labelInfo", "Chave publica para comunica\u00E7\u00E3o por API, o valor \u00E9 vis\u00EDvel somente no momento em que for gerado.", 3, "size", "buttonClick"], ["key", "EXPEDIENTE", "label", "Expediente"], [3, "control"], ["expediente", ""], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es", 4, "ngIf"], ["key", "NOMENCLATURA", "label", "Nomenclatura"], ["clss", "row"], ["editable", "", 3, "control", "form", "hasAdd"], ["type", "text", "title", "Nome", "field", "nome", 3, "editable"], ["type", "text", "title", "Singular", "field", "singular", 3, "onChange"], ["type", "text", "title", "Plural", "field", "plural", 3, "onChange"], ["type", "switch", "title", "Feminino", "field", "feminino"], ["type", "options"], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es"], [3, "entity", "entidadeId", "disabled"], ["notificacoes", ""]],
   template: function EntidadeConfComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -266,6 +266,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("unit", ctx.formaContagemCargaHoraria)("unitChange", ctx.onFormaContagemCargaHorariaChange.bind(ctx));
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.url_sei);
+      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 6);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](2);
@@ -477,7 +478,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵInheritDefinitionFeature"]],
   decls: 16,
-  vars: 16,
+  vars: 18,
   consts: [["initialFocus", "sigla", 3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], ["label", "Sigla", "controlName", "sigla", "required", "", 3, "size"], ["label", "Nome", "controlName", "nome", "required", "", 3, "size"], ["label", "Gestor", "controlName", "gestor_id", "labelInfo", "Respons\u00E1vel pela unidade", 3, "size", "emptyValue", "dao"], ["gestor", ""], ["label", "Gestor Substituto", "controlName", "gestor_substituto_id", "labelInfo", "Respons\u00E1vel substituto pela unidade", 3, "size", "emptyValue", "dao"], ["gestorSubstituto", ""], ["label", "Abrang\u00EAncia", "controlName", "abrangencia", 3, "size", "items"], ["controlName", "cidade_id", 3, "size", "dao", 4, "ngIf"], ["label", "UF", "icon", "bi bi-flag", "controlName", "uf", 3, "size", "items", 4, "ngIf"], ["label", "\u00C2mbito", "icon", "bi bi-shield-fill-check", "value", "Nacional", 3, "size", 4, "ngIf"], ["controlName", "cidade_id", 3, "size", "dao"], ["cidade", ""], ["label", "UF", "icon", "bi bi-flag", "controlName", "uf", 3, "size", "items"], ["label", "\u00C2mbito", "icon", "bi bi-shield-fill-check", "value", "Nacional", 3, "size"]],
   template: function EntidadeFormComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -504,8 +505,10 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
       _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵadvance"](4);
       _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵproperty"]("size", 2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵproperty"]("size", 10);
+      _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵproperty"]("size", 6)("emptyValue", null)("dao", ctx.usuarioDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵadvance"](2);
@@ -636,7 +639,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
   decls: 12,
-  vars: 21,
+  vars: 22,
   consts: [["class", "my-2", 4, "ngIf"], [3, "dao", "add", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "collapseChange", "collapsed"], [1, "row"], ["controlName", "nome", "placeholder", "Nome...", 3, "size", "label", "control"], ["title", "Sigla", "field", "sigla"], ["title", "Nome", "field", "nome"], ["title", "Abrang\u00EAncia", "field", "abrangencia"], ["type", "options", 3, "onEdit", "options"], [3, "rows"], [1, "my-2"]],
   template: function EntidadeListComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -665,6 +668,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 12)("label", "Nome " + ctx.lex.translate("entidade"))("control", ctx.filter.controls.nome);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](5);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("onEdit", ctx.edit)("options", ctx.options);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);

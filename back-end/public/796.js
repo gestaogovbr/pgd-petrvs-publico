@@ -1833,7 +1833,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵInheritDefinitionFeature"]],
   decls: 25,
-  vars: 38,
+  vars: 40,
   consts: [["initialFocus", "programa_id", 3, "form", "disabled", "title", "submit", "cancel"], ["collapse", "", 3, "title", "collapsed"], [1, "row"], ["disabled", "", "controlName", "programa_id", 3, "size", "dao"], ["programa", ""], ["disabled", "", "controlName", "usuario_id", 3, "size", "dao"], ["usuario", ""], ["disabled", "", "controlName", "unidade_id", 3, "size", "dao"], ["unidade", ""], ["disabled", "", "controlName", "tipo_modalidade_id", 3, "size", "dao"], ["tipoModalidade", ""], ["numbers", "", "disabled", "", "label", "% prod.", "icon", "bi bi-hourglass-split", "controlName", "ganho_produtividade", 3, "size", "control", "labelInfo"], ["label", "H. Parciais", "icon", "bi bi-clock", "controlName", "tempo_proporcional", "labelInfo", "Total de horas menos os afastamentos.", 3, "size", "control"], ["disabled", "", "label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio", "labelInfo", "In\u00EDcio da Vig\u00EAncia do Programa", 3, "size", "control"], ["disabled", "", "label", "Final", "icon", "bi bi-calendar-date", "controlName", "data_fim", "labelInfo", "Final da Vig\u00EAncia do Programa", 3, "size", "control"], ["disabled", "", "label", "C. Hor\u00E1ria", "icon", "bi bi-hourglass-split", "controlName", "carga_horaria", "labelInfo", "Carga hor\u00E1ria do usu\u00E1rio", 3, "size", "unit", "control"], ["label", "H. Totais", "icon", "bi bi-clock", "controlName", "tempo_total", "labelInfo", "Horas \u00FAteis de trabalho no per\u00EDodo de vig\u00EAncia considerando a carga hor\u00E1ria, feriados e fins de semana", 3, "size", "control"], ["disabled", "", "label", "Data e hora", "controlName", "data_inicio", "labelInfo", "Data de cadastro do termo", 3, "size", "control"], ["controlName", "numero_processo", "disabled", "", "labelInfo", "N\u00FAmero do processo, com a formata\u00E7\u00E3o de origem", 3, "label", "size", "control"], ["controlName", "tipo_documento_id", "required", "", 3, "size", "disabled", "dao"], ["tipoDocumento", ""], ["label", "Vinculadas", "controlName", "vinculadas", "labelInfo", "Se inclui as atividades das unidades vinculadas a unidade do plano", 3, "disabled", "size", "control", "change"]],
   template: function PlanoTrabalhoFormTermoComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -1874,6 +1874,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 3)("dao", ctx.tipoModalidadeDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 2)("control", ctx.form.controls.ganho_produtividade)("labelInfo", "Percentual de ganho de produtividade (Ser\u00E1 descontado do " + ctx.lex.translate("tempo pactuado") + ")");
+      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 2)("control", ctx.form.controls.tempo_proporcional);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](2);
@@ -1888,6 +1889,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 3)("control", ctx.form.controls.data_inicio);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("label", "N\u00FAmero " + ctx.lex.translate("Processo"))("size", 3)("control", ctx.form.controls.numero_processo);
+      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("disabled", !(ctx.form.controls.numero_processo.value == null ? null : ctx.form.controls.numero_processo.value.length) ? "true" : undefined)("dao", ctx.tipoDocumentoDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](2);
@@ -2823,6 +2825,9 @@ function PlanoTrabalhoListEntregaComponent_ng_template_10_input_text_3_Template(
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelement"](0, "input-text", 34, 35);
   }
+  if (rf & 2) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵattribute"]("maxlength", 250);
+  }
 }
 const _c8 = function () {
   return ["PROPRIA_UNIDADE", "OUTRA_UNIDADE"];
@@ -2839,7 +2844,7 @@ function PlanoTrabalhoListEntregaComponent_ng_template_10_Template(rf, ctx) {
     });
     _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplate"](2, PlanoTrabalhoListEntregaComponent_ng_template_10_input_search_2_Template, 2, 14, "input-search", 30);
-    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplate"](3, PlanoTrabalhoListEntregaComponent_ng_template_10_input_text_3_Template, 2, 0, "input-text", 31);
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplate"](3, PlanoTrabalhoListEntregaComponent_ng_template_10_input_text_3_Template, 2, 1, "input-text", 31);
   }
   if (rf & 2) {
     const _r32 = _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵreference"](1);
@@ -2974,6 +2979,7 @@ function PlanoTrabalhoListEntregaComponent_ng_template_24_Template(rf, ctx) {
   if (rf & 2) {
     const ctx_r18 = _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("control", ctx_r18.form.controls.forca_trabalho);
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵattribute"]("maxlength", 250);
   }
 }
 function PlanoTrabalhoListEntregaComponent_ng_template_27_Template(rf, ctx) {
@@ -3002,6 +3008,7 @@ function PlanoTrabalhoListEntregaComponent_ng_template_31_Template(rf, ctx) {
   if (rf & 2) {
     const ctx_r24 = _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("control", ctx_r24.form.controls.descricao);
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵattribute"]("maxlength", 250);
   }
 }
 class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_3__.PageFrameBase {
@@ -3360,12 +3367,12 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementStart"](19, "column", 12);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplate"](20, PlanoTrabalhoListEntregaComponent_ng_template_20_Template, 7, 2, "ng-template", null, 13, _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplate"](22, PlanoTrabalhoListEntregaComponent_ng_template_22_Template, 2, 1, "ng-template", null, 14, _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplateRefExtractor"]);
-      _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplate"](24, PlanoTrabalhoListEntregaComponent_ng_template_24_Template, 1, 1, "ng-template", null, 15, _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplate"](24, PlanoTrabalhoListEntregaComponent_ng_template_24_Template, 1, 2, "ng-template", null, 15, _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementStart"](26, "column", 8);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplate"](27, PlanoTrabalhoListEntregaComponent_ng_template_27_Template, 4, 0, "ng-template", null, 16, _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplate"](29, PlanoTrabalhoListEntregaComponent_ng_template_29_Template, 2, 1, "ng-template", null, 17, _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplateRefExtractor"]);
-      _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplate"](31, PlanoTrabalhoListEntregaComponent_ng_template_31_Template, 1, 1, "ng-template", null, 18, _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplate"](31, PlanoTrabalhoListEntregaComponent_ng_template_31_Template, 1, 2, "ng-template", null, 18, _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelement"](33, "column", 19);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementEnd"]()()()();

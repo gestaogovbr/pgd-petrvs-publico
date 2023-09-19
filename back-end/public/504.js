@@ -155,7 +155,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵInheritDefinitionFeature"]],
   decls: 12,
-  vars: 15,
+  vars: 16,
   consts: [["type", "warning", 3, "message", 4, "ngIf"], ["initialFocus", "usuario_id", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "usuario_id", "required", "", 3, "size", "disabled", "dao"], ["usuario", ""], ["controlName", "tipo_motivo_afastamento_id", "required", "", 3, "size", "dao"], ["tipoMotivoAfastamento", ""], ["label", "In\u00EDcio", "controlName", "data_inicio", 3, "date", "size"], ["label", "Fim", "controlName", "data_fim", 3, "date", "size"], ["label", "Observa\u00E7\u00F5es", "controlName", "observacoes", 3, "size", "rows"], ["type", "warning", 3, "message"]],
   template: function AfastamentoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -190,6 +190,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("date", ctx.isHoras() ? undefined : "")("size", 6);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 12)("rows", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("maxlength", 250);
     }
   },
   dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_12__.NgIf, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_7__.InputSearchComponent, _components_input_input_textarea_input_textarea_component__WEBPACK_IMPORTED_MODULE_8__.InputTextareaComponent, _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_9__.InputDatetimeComponent, _components_top_alert_top_alert_component__WEBPACK_IMPORTED_MODULE_10__.TopAlertComponent],
