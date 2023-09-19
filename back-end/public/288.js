@@ -14,6 +14,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
 
 class CadeiaValorProcesso extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
+  find(arg0) {
+    throw new Error('Method not implemented.');
+  }
   constructor(data) {
     super();
     this.path = ""; /* Unidade à qual está vinculado o plano de gestão/entregas */
@@ -536,7 +539,7 @@ var _class;
 
 function CadeiaValorListProcessosEntregasComponent_h3_0_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "h3", 10);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "h3", 12);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
   }
@@ -548,7 +551,7 @@ function CadeiaValorListProcessosEntregasComponent_h3_0_Template(rf, ctx) {
 }
 function CadeiaValorListProcessosEntregasComponent_toolbar_2_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "toolbar", 11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "toolbar", 13);
   }
   if (rf & 2) {
     const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
@@ -557,14 +560,28 @@ function CadeiaValorListProcessosEntregasComponent_toolbar_2_Template(rf, ctx) {
 }
 function CadeiaValorListProcessosEntregasComponent_ng_template_8_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "span", 12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "span", 14);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
-    const row_r4 = ctx.row;
+    const row_r6 = ctx.row;
+    const metadata_r7 = ctx.metadata;
+    const ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate"](row_r4.nome);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate"](ctx_r3.getSequencia(metadata_r7, row_r6));
+  }
+}
+function CadeiaValorListProcessosEntregasComponent_ng_template_11_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "span", 14);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
+  }
+  if (rf & 2) {
+    const row_r8 = ctx.row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate"](row_r8.nome);
   }
 }
 class CadeiaValorListProcessosEntregasComponent extends src_app_modules_base_page_list_base__WEBPACK_IMPORTED_MODULE_4__.PageListBase {
@@ -612,6 +629,28 @@ class CadeiaValorListProcessosEntregasComponent extends src_app_modules_base_pag
   filterClear(filter) {
     super.filterClear(filter);
   }
+  getSequencia(metadata, row) {
+    if (!metadata.nivel) {
+      let paiId = row.processo_pai_id;
+      let niveis = "";
+      while (paiId) {
+        let atual = this.grid?.items.find(x => x.id == paiId);
+        niveis = (atual?.sequencia || "") + "." + niveis;
+        paiId = atual?.processo_pai_id || null;
+      }
+      niveis += row.sequencia;
+      if (metadata.nivel != niveis) metadata.nivel = niveis;
+    }
+    this.sortProcessos();
+    return metadata.nivel;
+  }
+  sortProcessos() {
+    this.grid?.items.sort((a, b) => {
+      const sa = (this.grid.getMetadata(a)?.nivel || "").split(".").map(x => ("000" + x).substr(-3)).join(".");
+      const sb = (this.grid.getMetadata(b)?.nivel || "").split(".").map(x => ("000" + x).substr(-3)).join(".");
+      return sa < sb ? -1 : sa > sb ? 1 : 0;
+    });
+  }
 }
 _class = CadeiaValorListProcessosEntregasComponent;
 _class.ɵfac = function CadeiaValorListProcessosEntregasComponent_Factory(t) {
@@ -630,9 +669,9 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
     }
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵInheritDefinitionFeature"]],
-  decls: 12,
-  vars: 20,
-  consts: [["class", "my-2", 4, "ngIf"], [3, "dao", "add", "orderBy", "groupBy", "join", "selectable", "select"], [3, "buttons", 4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome", "controlName", "nome", "placeholder", "Nome", 3, "size", "control"], ["title", "Nome", "orderBy", "nome", 3, "template"], ["columnNome", ""], ["type", "options", 3, "onEdit", "dynamicOptions"], [3, "rows"], [1, "my-2"], [3, "buttons"], [1, "d-block"]],
+  decls: 15,
+  vars: 21,
+  consts: [["class", "my-2", 4, "ngIf"], [3, "dao", "add", "orderBy", "groupBy", "join", "selectable", "select"], [3, "buttons", 4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome", "controlName", "nome", "placeholder", "Nome", 3, "size", "control"], ["title", "N\u00EDvel", 3, "template"], ["columnNivel", ""], ["title", "Nome", "orderBy", "nome", 3, "template"], ["columnNome", ""], ["type", "options", 3, "onEdit", "dynamicOptions"], [3, "rows"], [1, "my-2"], [3, "buttons"], [1, "d-block"]],
   template: function CadeiaValorListProcessosEntregasComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](0, CadeiaValorListProcessosEntregasComponent_h3_0_Template, 2, 1, "h3", 0);
@@ -647,13 +686,17 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](6, "columns")(7, "column", 6);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](8, CadeiaValorListProcessosEntregasComponent_ng_template_8_Template, 2, 1, "ng-template", null, 7, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](10, "column", 8);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](10, "column", 8);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](11, CadeiaValorListProcessosEntregasComponent_ng_template_11_Template, 2, 1, "ng-template", null, 9, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](11, "pagination", 9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](13, "column", 10);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](14, "pagination", 11);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
     }
     if (rf & 2) {
       const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵreference"](9);
+      const _r4 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵreference"](12);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", !ctx.isModal);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("selectable", ctx.selectable);
@@ -665,6 +708,8 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 7)("control", ctx.filter.controls.nome);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("template", _r2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("template", _r4);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("onEdit", ctx.edit)("dynamicOptions", ctx.dynamicOptions.bind(ctx));
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
@@ -873,6 +918,8 @@ class CadeiaValorListProcessosComponent extends src_app_modules_base_page_frame_
       let ultimoCriado = todos.reduce((a, b) => a.created_at > b.created_at ? a : b);
       if (niveis[0] < ultimoCriado.sequencia) {
         result = "Nível já existente";
+      } else if (niveis[0] > ultimoCriado.sequencia) {
+        result = "Insira o nível em sequência numérica";
       } else {
         result = ultimoCriado.processo_pai_id == null ? null : "Adicione este nível pelo botão 'Adicionar nível'";
       }
