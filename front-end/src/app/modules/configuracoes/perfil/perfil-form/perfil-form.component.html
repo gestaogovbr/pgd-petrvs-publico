@@ -3,11 +3,11 @@
     <tabs display right>
         <tab key="PRINCIPAL" label="Principal">
             <div class="row">
-                <input-text [size]="10" label="Nome" controlName="nome" required></input-text>
-                <input-text numbers [size]="2" label="Nível" controlName="nivel"></input-text>
+                <input-text [size]="10" label="Nome" controlName="nome" [attr.maxlength]=250 required></input-text>
+                <input-text numbers [size]="2" label="Nível" controlName="nivel" [attr.maxlength]=250></input-text>
             </div>
             <div class="row">
-                <input-text [size]="12" label="Descrição" controlName="descricao" required></input-text>
+                <input-text [size]="12" label="Descrição" controlName="descricao" [attr.maxlength]=250 required></input-text>
             </div>
         </tab>
         <tab key="CAPACIDADES" *ngIf="auth.hasPermissionTo('MOD_TIPO_CAP_CONS')" [label]="lex.noun('Capacidade',true)">

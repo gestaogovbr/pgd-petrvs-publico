@@ -1,6 +1,6 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="titulo" (submit)="onSaveData()" (cancel)="onCancel()">
     <div class="row">
-        <input-text [size]="8" label="Título" icon="bi bi-upc" controlName="titulo" required></input-text>
+        <input-text [size]="8" label="Título" icon="bi bi-upc" controlName="titulo" [attr.maxlength]=250 required></input-text>
         <input-select [size]="4" disabled label="Espécie" controlName="especie" [items]="lookup.TEMPLATE_ESPECIE"></input-select>
     </div>
     <separator title="Design"></separator>

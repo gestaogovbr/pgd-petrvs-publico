@@ -2,6 +2,9 @@ import { Base } from './base.model';
 import { CadeiaValor } from './cadeia-valor.model';
 
 export class CadeiaValorProcesso extends Base {
+  find(arg0: (x: any) => boolean) {
+    throw new Error('Method not implemented.');
+  }
   public cadeia_valor?: CadeiaValor;
   public processo_pai?: CadeiaValorProcesso;
 

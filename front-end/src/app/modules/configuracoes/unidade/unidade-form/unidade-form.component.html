@@ -3,9 +3,9 @@
         <tab key="PRINCIPAL" label="Principal">
             <div class="row">
                 <input-switch #instituidora [size]="1" [label]="instituidora.value ? 'Instit.' : 'Exec.'" labelClass="text-nowrap" controlName="instituidora" [labelInfo]="'Se a ' + lex.noun('unidade') + ' é instituidora ou executora de Programas.'" (change)="onChangeInstituidora()"></input-switch>
-                <input-text [size]="2" label="Código" controlName="codigo" required></input-text>
-                <input-text [size]="2" label="Sigla" controlName="sigla" required></input-text>
-                <input-text [size]="7" label="Nome" controlName="nome" required></input-text>
+                <input-text [size]="2" label="Código" controlName="codigo" [attr.maxlength]=250 required></input-text>
+                <input-text [size]="2" label="Sigla" controlName="sigla" [attr.maxlength]=250 required></input-text>
+                <input-text [size]="7" label="Nome" controlName="nome" [attr.maxlength]=250 required></input-text>
             </div>
             <div class="row">
                 <input-search #gestor label="Gestor" [size]="6" [emptyValue]="null" [control]="formGestor!.controls.gestor_id" controlName="gestor_id" [dao]="usuarioDao" labelInfo="Responsável pela unidade"></input-search>
@@ -26,7 +26,7 @@
             <separator></separator>
             <div clss="row">
                 <input-multiselect label="Etiquetas" multiselectStyle="inline" [maxItemWidth]="250" controlName="etiquetas" [size]="12" [addItemHandle]="addItemHandle.bind(this)">
-                    <input-text [size]="6" label="Texto" controlName="etiqueta_texto"></input-text>
+                    <input-text [size]="6" label="Texto" controlName="etiqueta_texto" [attr.maxlength]=250></input-text>
                     <input-select [size]="3" label="Ícone" controlName="etiqueta_icone" [items]="lookup.ICONES"></input-select>
                     <input-color [size]="3" label="Cor" controlName="etiqueta_cor"></input-color>
                 </input-multiselect>

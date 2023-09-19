@@ -2,8 +2,8 @@
   <tabs display right>
     <tab key="PRINCIPAL" label="Principal">
       <div class="row">
-        <input-text [size]="2" label="Sigla" controlName="sigla" required></input-text>
-        <input-text [size]="10" label="Nome" controlName="nome" required></input-text>
+        <input-text [size]="2" label="Sigla" controlName="sigla" [attr.maxlength]=250 required></input-text>
+        <input-text [size]="10" label="Nome" controlName="nome" [attr.maxlength]=250 required></input-text>
       </div>
       <div class="row">
         <input-search #gestor label="Gestor" [size]="6" [emptyValue]="null" controlName="gestor_id" [dao]="usuarioDao" labelInfo="Responsável pela unidade"></input-search>

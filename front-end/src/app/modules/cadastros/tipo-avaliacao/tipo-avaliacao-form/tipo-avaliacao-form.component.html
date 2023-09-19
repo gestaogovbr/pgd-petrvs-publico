@@ -1,7 +1,7 @@
 <!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="nome" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form> (submit)="onSaveData()" (cancel)="onCancel()">-->
     <div class="row">
-        <input-text [size]="8" label="Título" controlName="nome" required></input-text>
+        <input-text [size]="8" label="Título" controlName="nome" [attr.maxlength]=250 required></input-text>
         <input-select [size]="4" label="Tipo da nota" #tipo controlName="tipo" [items]="lookup.TIPO_AVALIACAO_TIPO"></input-select>
     </div>
     <separator title="Notas">
@@ -17,8 +17,8 @@
                     </ng-template>
                     <ng-template let-row="row" #editNota>
                         <input-number *ngIf="form!.controls.tipo.value == 'QUANTITATIVO'" [control]="formNota!.controls.nota"></input-number>
-                        <input-text *ngIf="form!.controls.tipo.value == 'QUALITATIVO'" [control]="formNota!.controls.nota"></input-text>
-                        <input-text [control]="formNota!.controls.codigo" placeholder="Código integração"></input-text>
+                        <input-text *ngIf="form!.controls.tipo.value == 'QUALITATIVO'" [control]="formNota!.controls.nota" [attr.maxlength]=250></input-text>
+                        <input-text [control]="formNota!.controls.codigo" placeholder="Código integração" [attr.maxlength]=250></input-text>
                     </ng-template>
                 </column>
                 <column title="Descrição/Icone/Cor" [template]="columnDescricao" [editTemplate]="editDescricao">
@@ -26,7 +26,7 @@
                         <badge [label]="row.descricao" [icon]="row.icone" [color]="row.cor"></badge>
                     </ng-template>
                     <ng-template let-row="row" #editDescricao>
-                        <input-text [control]="formNota!.controls.descricao" placeholder="Descrição"></input-text>
+                        <input-text [control]="formNota!.controls.descricao" placeholder="Descrição" [attr.maxlength]=250></input-text>
                         <input-select [size]="6" icon="fas fa-sign-out-alt" [control]="formNota.controls.icone" [items]="lookup.ICONES"></input-select>
                         <input-color [size]="6" [control]="formNota.controls.cor"></input-color>
                     </ng-template>
@@ -36,7 +36,7 @@
                         <strong>{{ row.pergunta }}</strong>
                     </ng-template>
                     <ng-template let-row="row" #editPergunta>
-                        <input-text [control]="formNota!.controls.pergunta"></input-text>
+                        <input-text [control]="formNota!.controls.pergunta" [attr.maxlength]=250></input-text>
                     </ng-template>
                 </column>
                 <column title="Configurações" [template]="columnConfiguracoes" [editTemplate]="editConfiguracoes">

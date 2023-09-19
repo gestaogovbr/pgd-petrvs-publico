@@ -4,7 +4,7 @@
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-text [size]="6" label="Nome do Centro de Treinamento" controlName="nome"
-                [control]="filter!.controls.nome" placeholder="Nome/Sigla"></input-text>
+                [control]="filter!.controls.nome" placeholder="Nome/Sigla" [attr.maxlength]=250></input-text>
         </div>
     </filter>
     <columns>
