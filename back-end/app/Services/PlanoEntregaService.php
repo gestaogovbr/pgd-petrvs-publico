@@ -235,7 +235,12 @@ class PlanoEntregaService extends ServiceBase
 
     public function proxyQuery($query, &$data) {
         $where = [];
-        foreach($data["where"] as $condition) {
+        //  (RI_PENT_5) Garante que, se não houver um interesse específico na data de arquivamento, só retornarão os planos de entrega não arquivados e não cancelados.
+        $result = $this->extractWhere($data, "data_arquivamento");
+        array_push($where, empty($result) ? ["data_arquivamento", "==", null] : $result);
+        $result = $this->extractWhere($data, "status");
+        array_push($where, empty($result) ? ["status", "!=", 'CANCELADO'] : $result);
+        /*foreach($data["where"] as $condition) {
             if(is_array($condition) && $condition[0] == "or" && count($condition) == 4 && $condition[3][0] == "unidade.unidade_pai_id") { 
                 $query->whereHas('unidade', function (Builder $query) use ($condition) {
                     $query->whereIn('unidade_pai_id', $condition[3][2]);
@@ -245,12 +250,7 @@ class PlanoEntregaService extends ServiceBase
             } else {
                 array_push($where, $condition);
             }
-        }
-        //  (RI_PENT_5) Garante que, se não houver um interesse específico na data de arquivamento, só retornarão os planos de entrega não arquivados e não cancelados.
-        $result = $this->extractWhere($data, "data_arquivamento");
-        array_push($where, empty($result) ? ["data_arquivamento", "==", null] : $result);
-        $result = $this->extractWhere($data, "status");
-        array_push($where, empty($result) ? ["status", "!=", 'CANCELADO'] : $result);
+        }*/
         $data["where"] = $where;
         return $data;
     }

@@ -48,6 +48,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   } get unidadeId(): string | undefined {
     return this._unidadeId;
   }
+  @Input() execucao: boolean = false;
 
   public get items(): PlanoEntregaEntrega[] {
     if (!this.gridControl.value) this.gridControl.setValue([]);
@@ -67,7 +68,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   constructor(public injector: Injector) {
     super(injector);
     this.title = this.lex.translate("Entregas");
-    this.join = ["unidade", "entidade", "entrega"];
+    this.join = ["unidade", "entrega"];
     this.code = "MOD_PENT";
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
     this.dao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
@@ -85,7 +86,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
       destinatario: { default: null },
     }, this.cdRef, this.validate);
     // Testa se o usuário possui permissão para exibir dados da entrega do plano de entregas
-    if (true || this.auth.hasPermissionTo("MOD_PENT")) {
+    if (this.auth.hasPermissionTo("MOD_PENT")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",
@@ -93,7 +94,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
       });
     }
     // Testa se o usuário possui permissão para excluir a entrega do plano de entregas
-    if (true || this.auth.hasPermissionTo("MOD_PENT_ENTR_EXCL")) {
+    if (this.auth.hasPermissionTo("MOD_PENT_ENTR_EXCL")) {
       this.options.push({
         icon: "bi bi-trash",
         label: "Excluir",
@@ -139,7 +140,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
       modalClose: async (modalResult) => {
         if (modalResult) {
           try {
-            this.isNoPersist ? this.items.push(modalResult) : this.items.push(await this.dao!.save(modalResult));
+            this.isNoPersist ? this.items.push(modalResult) : this.items.push(await this.dao!.save(modalResult, this.join));
             this.cdRef.detectChanges();
           } catch (error: any) {
             this.error(error?.error || error?.message || error);
@@ -149,24 +150,56 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     });
   }
 
+  public dynamicOptions(row: any): ToolbarButton[] {
+    return !this.execucao ? this.options : [];
+  }
+
   public async edit(entrega: PlanoEntregaEntrega) {
-    entrega._status = entrega._status == "ADD" ? "ADD" : "EDIT";
-    let index = this.items.indexOf(entrega);
-    this.go.navigate({ route: ['gestao', 'plano-entrega', 'entrega'] }, {
-      metadata: {
-        plano_entrega: this.entity!,
-        planejamento_id: this.planejamentoId,
-        cadeia_valor_id: this.cadeiaValorId,
-        unidade_id: this.unidadeId,
-        entrega: entrega,
-      },
-      modalClose: async (modalResult) => {
-        if (modalResult) {
-          if (!this.isNoPersist) await this.dao?.save(modalResult);
-          this.items[index] = modalResult;
-        };
+    if(this.execucao) {
+      this.grid!.edit(entrega);
+    } else {
+      entrega._status = entrega._status == "ADD" ? "ADD" : "EDIT";
+      let index = this.items.indexOf(entrega);
+      this.go.navigate({ route: ['gestao', 'plano-entrega', 'entrega'] }, {
+        metadata: {
+          plano_entrega: this.entity!,
+          planejamento_id: this.planejamentoId,
+          cadeia_valor_id: this.cadeiaValorId,
+          unidade_id: this.unidadeId,
+          entrega: entrega,
+        },
+        modalClose: async (modalResult) => {
+          if (modalResult) {
+            if (!this.isNoPersist) await this.dao?.save(modalResult);
+            this.items[index] = modalResult;
+          };
+        }
+      });
+    }
+  }
+
+  public async load(form: FormGroup, row: any) {
+    this.form!.patchValue(row);
+    this.form!.controls.meta.setValue(this.planoEntregaService.getValor(row.meta));
+    this.form!.controls.realizado.setValue(this.planoEntregaService.getValor(row.realizado));
+    this.cdRef.detectChanges();
+  }
+
+  public async save(form: FormGroup, row: any) {
+    let result = undefined;
+    this.form!.markAllAsTouched();
+    if (form.valid) {
+      this.submitting = true;
+      try {
+        result = await this.dao?.update(row.id, {
+          realizado: this.planoEntregaService.getEntregaValor(row.entrega, form.controls.realizado.value),
+          progresso_realizado: form.controls.progresso_realizado.value
+        }, this.join);
+      } finally {
+        this.submitting = false;
       }
-    });
+    }
+    return result;
   }
 
   public async delete(entrega: PlanoEntregaEntrega) {
@@ -185,4 +218,9 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', entrega.id, "consult"]});
   }
 
+  public refreshComentarios(modalResult: any) {
+    /* Atualiza os comentários após ser salvo pela própria tela de comentarios (persistent) */
+    let row: PlanoEntregaEntrega | undefined = this.items.find(x => x.id == modalResult.id);
+    if(row) row.comentarios = modalResult.comentarios || [];
+  }
 }

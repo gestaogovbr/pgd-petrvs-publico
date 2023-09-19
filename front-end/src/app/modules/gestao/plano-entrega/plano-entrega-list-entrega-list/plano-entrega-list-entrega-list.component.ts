@@ -34,7 +34,7 @@ export class PlanoEntregaListEntregaListComponent extends PageListBase<PlanoEntr
       unidade_id: { default: "" },
       destinatario: { default: "" },
     });
-    this.join = ["entrega:id,nome","entrega_pai:id,descricao","demandante:id,sigla"];
+    this.join = ["entrega:id,nome","entrega_pai:id,descricao","unidade:id,sigla"];
   }
 
   ngOnInit(): void {

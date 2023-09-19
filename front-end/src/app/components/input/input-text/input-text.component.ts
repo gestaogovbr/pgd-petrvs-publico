@@ -52,8 +52,6 @@ export class InputTextComponent extends InputBase implements OnInit {
   @Input() set control(value: AbstractControl | undefined) {
     this._control = value;
   }
-  
-
   get control(): AbstractControl | undefined {
     return this.getControl();
   }
