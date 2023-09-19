@@ -1,4 +1,4 @@
-<editable-form [form]="form!" [disabled]="disabled" noButtons>
+<editable-form [form]="form!" [disabled]="disabled" noButtons [withScroll]="false">
     <separator transparent title="Formas de notificação">
         <input-switch *ngIf="templateService.notifica.petrvs" [size]="4" scale="small" icon="bi bi-bell" labelPosition="right" label="Notificar no Petrvs" controlName="enviar_petrvs" (change)="updateNotificacoes()"></input-switch>
         <input-switch *ngIf="templateService.notifica.email" [size]="4" scale="small" icon="bi bi-envelope-at" labelPosition="right" label="Notificar por e-mail" controlName="enviar_email" (change)="updateNotificacoes()"></input-switch>
