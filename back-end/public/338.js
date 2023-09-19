@@ -62,7 +62,7 @@ class AtividadeService {
         if (confirm) {
           this.dao.cancelarInicio(atividade.id).then(() => {
             metadata.refreshId(atividade.id);
-            this.dialog.alert("Sucesso", "Cancelado com sucesso!");
+            this.dialog.topAlert("Cancelado a inicialização com sucesso!", 5000);
           }).catch(error => this.dialog.alert("Erro", "Erro ao cancelar inicio: " + error?.message ? error?.message : 0));
         }
       });
@@ -72,7 +72,7 @@ class AtividadeService {
         if (confirm) {
           this.dao.cancelarConclusao(atividade.id).then(() => {
             metadata.refreshId(atividade.id);
-            this.dialog.alert("Sucesso", "Cancelado com sucesso!");
+            this.dialog.topAlert("Cancelado a conclusão com sucesso!", 5000);
           }).catch(error => this.dialog.alert("Erro", "Erro ao cancelar conclusão: " + error?.message ? error?.message : 0));
         }
       });
@@ -97,7 +97,7 @@ class AtividadeService {
       const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || this.auth.usuario?.id == atividade.unidade?.gestor_substituto?.id;
       const isDemandante = this.auth.usuario?.id == atividade.demandante_id;
       const isResponsavel = this.auth.usuario?.id == atividade.usuario_id;
-      const hasConsolidacao = !!row.metadados?.consolidacoes?.length;
+      const lastConsolidacao = this.lastConsolidacao(row.metadados?.consolidacoes);
       const BOTAO_INFORMACOES = {
         label: "Informações",
         icon: "bi bi-info-circle",
@@ -235,14 +235,16 @@ class AtividadeService {
         } else if (atividade.metadados?.concluido) {
           /* Concluído -> Gestor ou substituto pode avaliar */
           if (isGestor || isResponsavel) result.push(BOTAO_ARQUIVAR);
-          if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT_CONCL')) {
-            result.push(BOTAO_ALTERAR_CONCLUSAO);
-          }
-          if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CANC_CONCL')) {
-            if (result.length) result.push({
-              divider: true
-            });
-            result.push(BOTAO_CANCELAR_CONCLUSAO);
+          if (lastConsolidacao?.status != "CONCLUIDO") {
+            if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT_CONCL')) {
+              result.push(BOTAO_ALTERAR_CONCLUSAO);
+            }
+            if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CANC_CONCL')) {
+              if (result.length) result.push({
+                divider: true
+              });
+              result.push(BOTAO_CANCELAR_CONCLUSAO);
+            }
           }
         } else if (atividade.metadados?.iniciado) {
           /* Iniciado */
@@ -255,8 +257,10 @@ class AtividadeService {
             /* Iniciada e não Suspensa */
             if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CONCL')) result.push(BOTAO_CONCLUIR);
             if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_PAUSA')) result.push(BOTAO_PAUSAR);
-            if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CANC_INICIAR')) result.push(BOTAO_CANCELAR_INICIO);
-            if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) result.push(BOTAO_ALTERAR_INICIO);
+            if (!lastConsolidacao || lastConsolidacao?.status == "INCLUIDO") {
+              if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CANC_INICIAR')) result.push(BOTAO_CANCELAR_INICIO);
+              if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) result.push(BOTAO_ALTERAR_INICIO);
+            }
           }
           if (isGestor || isDemandante || this.auth.hasPermissionTo('MOD_DMD_USERS_PPRZO')) {
             result.push(BOTAO_PRORROGAR_PRAZO);
@@ -270,6 +274,7 @@ class AtividadeService {
       let atividade = row;
       const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || this.auth.usuario?.id == atividade.unidade?.gestor_substituto?.id;
       const isResponsavel = this.auth.usuario?.id == atividade.usuario_id;
+      const lastConsolidacao = this.lastConsolidacao(row.metadados?.consolidacoes);
       const BOTAO_ALTERAR_AVALIACAO = {
         hint: "Alterar avaliação",
         icon: "bi bi-check-all",
@@ -342,14 +347,8 @@ class AtividadeService {
           /* Concluído */
           if (isGestor || isResponsavel) {
             result.push(atividade.metadados?.arquivado ? BOTAO_DESARQUIVAR : BOTAO_ARQUIVAR);
-          } else if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT_CONCL')) {
+          } else if (lastConsolidacao?.status != "CONCLUIDO" && (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT_CONCL'))) {
             result.push(BOTAO_ALTERAR_CONCLUSAO);
-          }
-        } else if (atividade.metadados?.avaliado) {
-          /* Avaliado */
-          if (isGestor) {
-            /* Usuário logado é gestor da Unidade ou substituto */
-            result.push(BOTAO_ALTERAR_AVALIACAO);
           }
         } else if (atividade.metadados?.iniciado) {
           /* Iniciado */
@@ -539,6 +538,9 @@ class AtividadeService {
       modal: true,
       modalClose: metadata.refresh
     };
+  }
+  lastConsolidacao(consolidacoes) {
+    return consolidacoes?.reduce((a, v) => a = !a || this.util.asDate(v.data_conclusao).getTime() > this.util.asDate(a.data_conclusao).getTime() ? v : a, undefined);
   }
 }
 _class = AtividadeService;

@@ -316,10 +316,61 @@ class UnidadeService extends ServiceBase
      * @param string $unidade_id    O ID de uma Unidade-mãe.
      * @return array    
      */
-    public function unidadesFilhas($unidade_id): array {
-        $path = DB::table('unidades')->select('path')->where('id',$unidade_id)->first()->path . '/' . $unidade_id;
+    public function unidadesFilhas($unidadeId): array {
+        $path = DB::table('unidades')->select('path')->where('id',$unidadeId)->first()->path . '/' . $unidadeId;
         return array_map(fn($x) => $x->id,DB::table('unidades')->select('id')->where('path', 'like', $path)->orWhere('path', 'like', $path . '/%')->get()->toArray());
     }
+
+    /**
+     * @param string | null $unidadeId Unidade de refêrneica (caso null, então irá retornar somente a unidade raiz)
+     */
+    function hierarquia($unidadeId) {
+        $unidades = [];
+        $unidades_irmaos = [];
+        $irmaos = [];
+        $unidade = null;
+    
+        if (!empty($unidadeId)) {
+            $unidade = Unidade::find($unidadeId);
+            if ($unidade) {
+                $unidades = Unidade::whereIn("id", array_filter(explode('/', $unidade->path), fn($x) => $x != ""))->get()->toArray();
+                $this->obterIrmaosRecursivamente($unidade, $irmaos);
+                
+            }
+        } else {
+            $unidade = Unidade::where('unidade_pai_id', null)->first();
+            if ($unidade) {
+                $unidades = Unidade::whereIn("id", array_filter(explode('/', $unidade->path), fn($x) => $x != ""))->get();
+                $unidades = $unidades->toArray();
+                $unidades[] = $unidade;
+            }
+        }
+        $mergedArray = array_merge($unidades, $irmaos, $unidades_irmaos, [$unidade]);
+    
+        return $mergedArray;
+    }
+
+    function filhas($unidadeId){
+        return Unidade::where("unidade_pai_id", $unidadeId)->get()->toArray();
+    }
+
+    function obterIrmaosRecursivamente($unidade, &$irmaos) {
+        $irmaosDaUnidade = Unidade::where("unidade_pai_id", $unidade->unidade_pai_id)
+            ->where('id', '!=', $unidade->id)
+            ->get()
+            ->toArray();
+    
+        $irmaos = array_merge($irmaos, $irmaosDaUnidade);
+    
+        // Chamada recursiva para obter os irmãos das unidades superiores
+        $unidadePai = Unidade::find($unidade->unidade_pai_id);
+    
+        if ($unidadePai) {
+            $this->obterIrmaosRecursivamente($unidadePai, $irmaos);
+        }
+    }
+    
+    
 
     public function unificar($correspondencias, $exclui) {
         DB::beginTransaction();

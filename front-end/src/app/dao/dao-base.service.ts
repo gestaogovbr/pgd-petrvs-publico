@@ -329,7 +329,7 @@ export class DaoBaseService<T extends Base> {
     context.loading = true;
     context.enablePrior = false;
     context.enableNext = false;
-    if(!context.cumulate || context.page <= 1) context.subject.next();
+    if(!context.cumulate || context.page <= 1) context.subject.next(null);
     const subscriber = this.server.post(this.PREFIX_URL + '/' + context.collection + '/query', {
       where: this.prepareWhere(context.options.where || []),
       orderBy: context.options.orderBy || [],

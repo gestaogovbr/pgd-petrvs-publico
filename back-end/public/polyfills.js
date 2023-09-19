@@ -1,10 +1,10 @@
 "use strict";
 (self["webpackChunkpetrvs"] = self["webpackChunkpetrvs"] || []).push([[429],{
 
-/***/ 38663:
-/*!*******************************************!*\
-  !*** ./node_modules/zone.js/dist/zone.js ***!
-  \*******************************************/
+/***/ 1696:
+/*!**************************************************!*\
+  !*** ./node_modules/zone.js/bundles/zone.umd.js ***!
+  \**************************************************/
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;
@@ -34,7 +34,6 @@ var __assign = this && this.__assign || function () {
   'use strict';
 
   (function (global) {
-    var _this = this;
     var _a;
     var performance = global['performance'];
     function mark(name) {
@@ -82,7 +81,7 @@ var __assign = this && this.__assign || function () {
       };
       Object.defineProperty(Zone, "root", {
         get: function () {
-          var zone = Zone.current;
+          var zone = _a.current;
           while (zone.parent) {
             zone = zone.parent;
           }
@@ -120,7 +119,7 @@ var __assign = this && this.__assign || function () {
         } else if (!global['__Zone_disable_' + name]) {
           var perfName = 'Zone:' + name;
           mark(perfName);
-          patches[name] = fn(global, Zone, _api);
+          patches[name] = fn(global, _a, _api);
           performanceMeasure(perfName, perfName);
         }
       };
@@ -2839,7 +2838,7 @@ var __assign = this && this.__assign || function () {
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var zone_js_dist_zone__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! zone.js/dist/zone */ 38663);
+/* harmony import */ var zone_js_dist_zone__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! zone.js/dist/zone */ 1696);
 /* harmony import */ var zone_js_dist_zone__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(zone_js_dist_zone__WEBPACK_IMPORTED_MODULE_0__);
 /**
  * This file includes polyfills needed by Angular and is loaded before the app.
