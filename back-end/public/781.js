@@ -1006,7 +1006,7 @@ const routes = [{
   },
   runGuardsAndResolvers: 'always',
   data: {
-    title: "Unidades Integrantes",
+    title: "Atribuições do Usuário",
     modal: true
   }
 }];
