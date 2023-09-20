@@ -133,6 +133,14 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
     }
   }
 
+  public anterior(consolidacao: PlanoTrabalhoConsolidacao): PlanoTrabalhoConsolidacao | undefined {
+    return this.entity!.consolidacoes.reduce((a: PlanoTrabalhoConsolidacao | undefined, v: PlanoTrabalhoConsolidacao) => this.util.asDate(v.data_inicio)!.getTime() < this.util.asDate(consolidacao.data_inicio)!.getTime() && (!a || this.util.asDate(a.data_inicio)!.getTime() < this.util.asDate(v.data_inicio)!.getTime()) ? v : a, undefined);
+  }
+
+  public proximo(consolidacao: PlanoTrabalhoConsolidacao): PlanoTrabalhoConsolidacao | undefined {
+    return this.entity!.consolidacoes.reduce((a: PlanoTrabalhoConsolidacao | undefined, v: PlanoTrabalhoConsolidacao) => this.util.asDate(v.data_fim)!.getTime() > this.util.asDate(consolidacao.data_fim)!.getTime() && (!a || this.util.asDate(a.data_fim)!.getTime() > this.util.asDate(v.data_fim)!.getTime()) ? v : a, undefined);
+  }
+
   public isDisabled(row?: PlanoTrabalhoConsolidacao): boolean {
     return (row && row.status != "INCLUIDO") || this.entity?.status != "ATIVO";
   }
@@ -156,6 +164,8 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
   public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let consolidacao: PlanoTrabalhoConsolidacao = row as PlanoTrabalhoConsolidacao;
+    const anterior = this.anterior(row as PlanoTrabalhoConsolidacao);
+    const proximo = this.proximo(row as PlanoTrabalhoConsolidacao);
     const isUsuarioConsolidacao = this.auth.usuario!.id == this.entity!.usuario_id;
     const isGestor = [this.entity!.unidade!.gestor?.usuario_id, this.entity!.unidade!.gestor_substituto?.usuario_id].includes(this.auth.usuario?.id);
     const BOTAO_CONCLUIR = { hint: "Concluir", icon: "bi bi-check-circle", color: "btn-outline-success", onClick: this.concluir.bind(this) };
@@ -164,18 +174,27 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
     const BOTAO_EDITAR_AVALIACAO = { hint: "Editar avaliação", icon: "bi bi-star-half", color: "btn-outline-warning", onClick: this.editarAvaliacao.bind(this) };
     const BOTAO_FAZER_RECURSO = { hint: "Fazer recurso", id: "RECORRIDO", icon: "bi bi-journal-medical", color: "btn-outline-warning", onClick: this.fazerRecurso.bind(this) };
     const BOTAO_CANCELAR_AVALIACAO = { hint: "Cancelar avaliação", id: "INCLUIDO", icon: "bi bi-backspace", color: "btn-outline-warning", onClick: this.cancelarAvaliacao.bind(this) };
+    /* (RN_CSLD_11) Não pode concluir a consolidação antes que a anterior não esteja concluida, e não pode retornar status da consolidação se a posterior estiver a frente (em status); */
+    const canConcluir = !anterior || ["CONCLUIDO", "AVALIADO"].includes(anterior!.status);
+    const canCancelarConclusao = !proximo || ["INCLUIDO"].includes(proximo!.status);
+    const canAvaliar = !anterior || ["AVALIADO"].includes(anterior!.status);
+    const canCancelarAvaliacao = !proximo || ["INCLUIDO", "CONCLUIDO"].includes(proximo!.status);
     if(!this.isDisabled()) {
-      if(consolidacao.status == "INCLUIDO" && (isUsuarioConsolidacao || this.auth.hasPermissionTo("MOD_PTR_CSLD_CONCL"))) {
+      if(consolidacao.status == "INCLUIDO" && canConcluir && (isUsuarioConsolidacao || this.auth.hasPermissionTo("MOD_PTR_CSLD_CONCL"))) {
         result.push(BOTAO_CONCLUIR);
       }
-      if(consolidacao.status == "CONCLUIDO" && this.planoTrabalhoService.diasParaConcluirConsolidacao(row, this.entity!.programa) >= 0 && (isUsuarioConsolidacao || this.auth.hasPermissionTo("MOD_PTR_CSLD_DES_CONCL"))) {
+      if(consolidacao.status == "CONCLUIDO" && canCancelarConclusao && this.planoTrabalhoService.diasParaConcluirConsolidacao(row, this.entity!.programa) >= 0 && (isUsuarioConsolidacao || this.auth.hasPermissionTo("MOD_PTR_CSLD_DES_CONCL"))) {
         result.push(BOTAO_CANCELAR_CONCLUSAO);
       }
-      if(consolidacao.status == "CONCLUIDO" && (isGestor || this.auth.hasPermissionTo("MOD_PTR_CSLD_AVALIAR"))) {
+      if(consolidacao.status == "CONCLUIDO" && canAvaliar && (isGestor || this.auth.hasPermissionTo("MOD_PTR_CSLD_AVALIAR"))) {
         result.push(BOTAO_AVALIAR);
       }
       if(consolidacao.status == "AVALIADO") {
-        /* TODO: Fazer as condições para avaliado */
+        /* TODO: Fazer as condições para avaliado
+          - Se for o usuário do plano, opção de recurso
+          - Se for o chefe, opção de cancelar avaliacao ou Reavaliar caso tenha tido recurso
+         */
+        //if(canCancelarAvaliacao) result.push(BOTAO_CANCELAR_AVALIACAO);
       }
     }
     return result;

@@ -37,6 +37,7 @@ export class ColumnComponent implements OnInit {
   @Input() options?: ToolbarButton[];
   @Input() save?: (row: any) => Promise<boolean>;
   @Input() edit?: (row: any) => Promise<void>;
+  @Input() canEdit?: (row: any) => boolean;
   @Input() dynamicOptions?: (row: any, metadata?: any) => ToolbarButton[];
   @Input() onEdit?: (row: any) => void;
   @Input() onDelete?: (row: any) => void;

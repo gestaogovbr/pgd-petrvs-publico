@@ -21,6 +21,7 @@ export type Schema = {
   permition?: string, 
   route: string[],
   metadata?: RouteMetadata,
+  params?: any,
   icon: string
 };
 export type MenuSchema = {[key: string]: Schema};
@@ -147,6 +148,8 @@ export class AppComponent {
       PROGRAMAS_GESTAO: { name: this.lex.translate("Programas de Gestão"), permition: 'MOD_PRGT', route: ['gestao', 'programa'], icon: this.entity.getIcon('Programa') },
       PORTIFOLIOS: { name: this.lex.translate("Portifólios"), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: this.entity.getIcon('Projeto') },
       PROJETOS: { name: this.lex.translate("Projetos"), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: this.entity.getIcon('Projeto') },
+      /* Execucao */
+      EXECUCAO_PLANOS_ENTREGAS: { name: this.lex.translate("Planos de Entregas"), permition: 'MOD_PENT', route: ['execucao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega'), params: { execucao: true }},
       /* Relatórios */
       FORCAS_TRABALHOS_SERVIDORES: { name: "Força de Trabalho - Servidor", permition: 'MOD_PTR_CONS', route: ['relatorios', 'forca-de-trabalho', 'servidor'], icon: this.entity.getIcon('RelatorioServidor') },
       FORCAS_TRABALHOS_AREAS: { name: "Força de Trabalho - Área", permition: 'MOD_PTR_CONS', route: ['relatorios', 'forca-de-trabalho', 'area'], icon: this.entity.getIcon('RelatorioArea') },
@@ -215,7 +218,7 @@ export class AppComponent {
       menu: [
         this.menuSchema.ATIVIDADES,
         this.menuSchema.AFASTAMENTOS,
-        this.menuSchema.PLANOS_ENTREGAS,//Carlos
+        this.menuSchema.EXECUCAO_PLANOS_ENTREGAS,
         Object.assign({}, this.menuSchema.CONSOLIDACOES, {params: {tab: "USUARIO"}})
       ].sort(this.orderMenu)
     }, {

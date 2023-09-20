@@ -231,8 +231,7 @@ class PlanoTrabalhoService extends ServiceBase
   }
 
   /**
-   * (RN_CSLD_1) Inclui ou atualiza as consolidações com base no período do plano de trabalho
-   *
+   * (RN_CSLD_1) Após criado ou alterado um plano de trabalho, os períodos de consolidação são automaticamente gerados ou recriados com base na periodicidade configurada no programa;
    * @param   string  $usuario_id
    * @return  Illuminate\Database\Eloquent\Collection      
    */

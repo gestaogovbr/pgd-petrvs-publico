@@ -1,4 +1,4 @@
-<grid [control]="control" [add]="addTarefa.bind(this)" [disabled]="disabled ? 'true' : undefined" [minHeight]="isPersist ? 50 : 300" [hasDelete]="true" [editable]="editable ? 'true' : undefined">
+<grid [control]="control" [add]="addTarefa.bind(this)" [disabled]="disabled ? 'true' : undefined" [minHeight]="300" [hasEdit]="false" [hasDelete]="false" [editable]="editable ? 'true' : undefined">
     <columns>
         <column [title]="lex.translate('Tipo de Tarefa') + ' e Descrição'" [template]="tipoTarefaDescricao">
             <ng-template let-row="row" #tipoTarefaDescricao>
@@ -17,7 +17,7 @@
                 </span/-->
             </ng-template>
         </column>
-        <column title="Concluído" [align]="'center'" [template]="concluido" [columnEditTemplate]="editConcluido" [edit]="editable ? onColumnConcluidoEdit.bind(this) : undefined" [save]="editable ? onColumnConcluidoSave.bind(this) : undefined">
+        <column title="Concluído" [align]="'center'" [template]="concluido" [columnEditTemplate]="editConcluido" [canEdit]="canConcluidoEdit.bind(this)" [edit]="editable ? onColumnConcluidoEdit.bind(this) : undefined" [save]="editable ? onColumnConcluidoSave.bind(this) : undefined">
             <ng-template let-row="row" #concluido>
                 <div class="text-center"><i *ngIf="row.data_conclusao" class="bi bi-check-circle"></i></div>
             </ng-template>
@@ -30,6 +30,6 @@
                 <comentarios-widget [entity]="row" [noPersist]="isPersist ? undefined : 'true'" [selectable]="selectable" origem="ATIVIDADE_TAREFA" [grid]="grid" [save]="addComentarioResult.bind(this)"></comentarios-widget>
             </ng-template>
         </column>
-        <column *ngIf="editable && !selectable && !id_processo" type="options" [onEdit]="editEntrega.bind(this)" [onDelete]="deleteEntrega.bind(this)"></column>
+        <column *ngIf="editable && !selectable && !id_processo" type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
     </columns>
 </grid>

@@ -1,9 +1,12 @@
 <input-container [labelPosition]="labelPosition" [labelClass]="labelClass" [controlName]="controlName" [required]="required" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
     <div class="input-group">
         <span *ngIf="prefix" class="input-group-text">{{prefix}}</span>
-        <input *ngIf="viewInit" #inputElement [type]="isInteger ? 'number' : 'text'" class="form-control text-end" [attr.min]="minValue" [attr.max]="maxValue" [attr.step]="stepValue"
-            (change)="onChange($event)" (blur)="converteNumero($event)" [formControl]="formControl" [id]="generatedId(controlName)" [class.is-invalid]="isInvalid()" [mask]="maskFormat" [dropSpecialCharacters]="false" thousandSeparator="."
-            [readonly]="isDisabled" [attr.value]="control ? undefined : value" (keydown.enter)="onEnterKeyDown($event)">
+        <input *ngIf="viewInit && !maskFormat" #inputElement [type]="isInteger ? 'number' : 'text'" class="form-control text-end" [attr.min]="minValue" [attr.max]="maxValue" [attr.step]="stepValue"
+            [formControl]="formControl" [id]="generatedId(controlName)" [class.is-invalid]="isInvalid()"
+            [readonly]="isDisabled" [attr.value]="control ? undefined : value" (change)="onChange($event)" (blur)="converteNumero($event)" (keydown.enter)="onEnterKeyDown($event)">
+        <input *ngIf="viewInit && maskFormat" #inputElement [type]="isInteger ? 'number' : 'text'" class="form-control text-end" [attr.min]="minValue" [attr.max]="maxValue" [attr.step]="stepValue"
+            [formControl]="formControl" [id]="generatedId(controlName)" [class.is-invalid]="isInvalid()" [mask]="maskFormat" [dropSpecialCharacters]="false" thousandSeparator="."
+            [readonly]="isDisabled" [attr.value]="control ? undefined : value" (change)="onChange($event)" (blur)="converteNumero($event)" (keydown.enter)="onEnterKeyDown($event)">
         <span *ngIf="sufix" class="input-group-text">{{sufix}}</span>
     </div>    
 </input-container>

@@ -255,7 +255,7 @@ export class AtividadeService {
         }
       } else if (atividade.metadados?.concluido) { /* Concluído -> Gestor ou substituto pode avaliar */
         if (isGestor || isResponsavel) result.push(BOTAO_ARQUIVAR);
-        if(lastConsolidacao?.status != "CONCLUIDO") {
+        if(lastConsolidacao?.status != "CONCLUIDO") { /* (RN_CSLD_9) */
           if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT_CONCL')) {
             result.push(BOTAO_ALTERAR_CONCLUSAO);
           }
@@ -272,7 +272,7 @@ export class AtividadeService {
         } else { /* Iniciada e não Suspensa */
           if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CONCL')) result.push(BOTAO_CONCLUIR);
           if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_PAUSA')) result.push(BOTAO_PAUSAR);
-          if (!lastConsolidacao || lastConsolidacao?.status == "INCLUIDO") {
+          if (!lastConsolidacao || lastConsolidacao?.status == "INCLUIDO") { /* (RN_CSLD_9) */
             if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CANC_INICIAR')) result.push(BOTAO_CANCELAR_INICIO);
             if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) result.push(BOTAO_ALTERAR_INICIO);
           }
@@ -308,7 +308,7 @@ export class AtividadeService {
       } else if (atividade.metadados?.concluido) { /* Concluído */
         if (isGestor || isResponsavel) {
           result.push(atividade.metadados?.arquivado ? BOTAO_DESARQUIVAR : BOTAO_ARQUIVAR);
-        } else if (lastConsolidacao?.status != "CONCLUIDO" && (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT_CONCL'))) {
+        } else if (lastConsolidacao?.status != "CONCLUIDO" && (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT_CONCL'))) { /* (RN_CSLD_9) */
           result.push(BOTAO_ALTERAR_CONCLUSAO);
         }
       } else if (atividade.metadados?.iniciado) { /* Iniciado */

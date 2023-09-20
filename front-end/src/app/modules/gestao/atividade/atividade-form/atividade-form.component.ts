@@ -371,6 +371,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
         plano_trabalho_id: source.plano_trabalho_id,
         etiquetas: source.etiquetas,
         checklist: source.checklist,
+        metadados: source.metadados,
         plano_trabalho_entrega_id: source.plano_trabalho_entrega_id,
         progresso: source.progresso,
         tarefas: (source.tarefas || []).map((tarefa: AtividadeTarefa) => new AtividadeTarefa(Object.assign({}, tarefa, {
@@ -395,6 +396,18 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
       this.entity.demandante_id = this.auth.usuario?.id || "";
       this.entity.unidade_id = this.auth.unidade?.id || "";
       this.entity.unidade = this.auth.unidade;
+      this.entity.metadados = {
+        atrasado: false,
+        tempo_despendido: 0, 
+        tempo_atraso: 0,
+        pausado: false,
+        iniciado: false,
+        concluido: false,
+        avaliado: false,
+        arquivado: false,
+        produtividade: 0,
+        consolidacoes: []
+      };
       /* Verificar isso (TODO)
       if(this.queryParams?.numero_requisicao?.length) {
         this.entity.numero_requisicao = this.queryParams?.numero_requisicao;
