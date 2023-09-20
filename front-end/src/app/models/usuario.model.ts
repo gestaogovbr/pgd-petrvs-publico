@@ -55,7 +55,7 @@ export class Usuario extends Base implements HasNotificacao {
     public notificacoes_destinatario?: NotificacaoDestinatario[];
     public notificacoes_enviadas?: Notificacao[];
     //public notificacoes_whatsapp?: NotificacaoWhatsapp[];
-    public participantes_programa?: ProgramaParticipante[];
+    public participacoes_programas: ProgramaParticipante[] = [];
     public planos_entrega_criados?: PlanoEntrega[];
     public planos_trabalho?: PlanoTrabalho[];
     public planos_trabalho_criados?: PlanoEntrega[];

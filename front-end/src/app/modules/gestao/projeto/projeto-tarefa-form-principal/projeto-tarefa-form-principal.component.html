@@ -5,7 +5,7 @@
         <input-select [size]="3" [label]="'Status da '+ lex.translate('tarefa')" icon="bi bi-arrow-up-right-circle" controlName="status_tarefa" [items]="lookup.PROJETO_TAREFA_STATUS"></input-select>
     </div>
     <div class="row">
-        <input-text [size]="12" label="Nome" controlName="nome" labelInfo="Nome da tarefa"></input-text>
+        <input-text [size]="12" label="Nome" controlName="nome" labelInfo="Nome da tarefa" [attr.maxlength]=250></input-text>
     </div>
     <div class="row">
         <input-search [size]="12" displayOnlySelected #atividade controlName="atividade_id" [dao]="atividadeDao" [displayTemplate]="displayAtividade">
@@ -35,8 +35,8 @@
         <input-datetime date [size]="4" label="Início realizado" icon="bi bi-calendar-date" controlName="inicio_realizado"></input-datetime>
         <input-datetime date [size]="4" label="Término realizado" icon="bi bi-calendar-date" controlName="termino_relizado"></input-datetime>
         <!--input-workload daysOrHours [size]="3" [unit]="unitDuracao" [disabled]="" label="Duração" controlName="duracao_realizado" [unitChange]="onUnitDuracaoChange.bind(this)" labelInfo="Se o projeto será calculado em horas ou dias"></input-workload/-->
-        <input-text number [label]="'Custo da '+ lex.translate('tarefa')" prefix="R$" [size]="4" icon="bi bi-clock" controlName="custo" labelInfo="Custo associado à tarefa"></input-text>
-        <input-text number label="Progresso" sufix="%" [size]="4" icon="bi bi-clock" controlName="progresso" labelInfo="Progresso do projeto (% Concluído)"></input-text>
+        <input-text number [label]="'Custo da '+ lex.translate('tarefa')" prefix="R$" [size]="4" icon="bi bi-clock" controlName="custo" labelInfo="Custo associado à tarefa" [attr.maxlength]=250></input-text>
+        <input-text number label="Progresso" sufix="%" [size]="4" icon="bi bi-clock" controlName="progresso" labelInfo="Progresso do projeto (% Concluído)" [attr.maxlength]=250></input-text>
     </div>
 
 <!--input-switch label="Auto" [size]="1" controlName="intervalo_automatico" (change)="onIntervaloAutomaticoChange($event)" labelInfo="Se o período do projeto será calculado automaticamente pelas tarefas"></input-switch>

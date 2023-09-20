@@ -1,6 +1,6 @@
 <editable-form [form]="form!" [noButtons]="!entity_id ? 'true' : undefined" [disabled]="formDisabled" initialFocus="nome" (submit)="onSaveData()" (cancel)="onCancel()">
     <div class="row">
-        <input-text [size]="6" label="Nome" controlName="nome" labelInfo="Nome do projeto" required></input-text>
+        <input-text [size]="6" label="Nome" controlName="nome" labelInfo="Nome do projeto" [attr.maxlength]=250 required></input-text>
         <input-select [size]="3" label="Fase" icon="bi bi-puzzle" controlName="fase_id" [items]="fases"></input-select>
         <input-select [size]="3" label="Status" icon="bi bi-arrow-up-right-circle" controlName="status" [items]="lookup.PROJETO_STATUS"></input-select>
     </div>

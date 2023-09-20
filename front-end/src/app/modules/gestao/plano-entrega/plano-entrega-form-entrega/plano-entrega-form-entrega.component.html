@@ -7,7 +7,7 @@
                         <input-search #entrega [size]="12" label="Entrega do Catálogo" controlName="entrega_id" [dao]="entregaDao" (change)="onEntregaChange($event)" placeholder="Selecione ou cadastre uma entrega do catálogo usando a lupa" required></input-search>
                     </div>
                     <div class="row">
-                        <input-text [size]="12" label="Título/Detalhamento" controlName="descricao" placeholder="Descreva melhor a entrega"></input-text>
+                        <input-text [size]="12" label="Título/Detalhamento" controlName="descricao" placeholder="Descreva melhor a entrega" [attr.maxlength]=250></input-text>
                     </div>
                     <div class="row">
                         <input-search [size]="12" [label]="lex.translate('Entrega') + ' de ' + lex.translate('plano de entrega')+ ' superior'" controlName="entrega_pai_id" 
@@ -21,7 +21,7 @@
                     </div>
                     <div class="row">
                         <input-search [size]="6" #unidade label="Demandante" controlName="unidade_id" [dao]="unidadeDao" required></input-search>
-                        <input-text [size]="6" label="Destinatário" controlName="destinatario"></input-text>
+                        <input-text [size]="6" label="Destinatário" controlName="destinatario" [attr.maxlength]=250></input-text>
                     </div>
                 </separator>
                 <separator title="Planejamento"></separator>

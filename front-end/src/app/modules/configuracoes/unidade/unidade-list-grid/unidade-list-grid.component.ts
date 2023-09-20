@@ -66,7 +66,7 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
     // Testa se o usuário possui permissão de inativar a unidade
     if (this.auth.hasPermissionTo("MOD_UND_INATV")) result.push({icon: unidade.data_inativacao ? "bi bi-check-circle" : "bi bi-x-circle", label: unidade.data_inativacao ? 'Reativar' : 'Inativar', onClick: async (unidade: Unidade) => await this.inativo(unidade, !unidade.data_inativacao)});
     // Testa se o usuário possui permissão para gerenciar integrantes da unidade
-    if (this.auth.hasPermissionTo("MOD_UND_INTG")) result.push({icon: "bi bi-people", label: "Integrantes", onClick: (unidade: Unidade) => this.go.navigate({ route: ['configuracoes', 'unidade', 'NOPERSIST', unidade.id, 'integrante'] })});
+    if (this.auth.hasPermissionTo("MOD_UND_INTG")) result.push({icon: "bi bi-people", label: "Integrantes", onClick: (unidade: Unidade) => this.go.navigate({ route: ['configuracoes', 'unidade', '', unidade.id, 'integrante'] }, {metadata: {entity: row}})});
     // Testa se o usuário possui permissão para excluir unidade
     if (this.auth.hasPermissionTo("MOD_UND_EXCL")) result.push({ icon: "bi bi-trash", label: "Excluir", onClick: this.delete.bind(this) });
     return result;

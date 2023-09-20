@@ -4,7 +4,7 @@
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-text [size]="12" [label]="lex.translate('Eixo temático')" controlName="nome"
-                [control]="filter!.controls.nome" [placeholder]="'Nome ' + lex.translate('eixo temático') + '...'"></input-text>
+                [control]="filter!.controls.nome" [placeholder]="'Nome ' + lex.translate('eixo temático') + '...'" [attr.maxlength]=250></input-text>
         </div>
     </filter>
     <columns>

@@ -24,7 +24,7 @@
                             <input-search *ngIf="isHumanoDepartamento(tipoRecurso?.value, ['HUMANO'])" label icon hostClass="p-0" [size]="12" #usuario controlName="usuario_id" [dao]="usuarioDao"></input-search>
                             <input-search *ngIf="isHumanoDepartamento(tipoRecurso?.value, ['DEPARTAMENTO'])" label icon hostClass="p-0" [size]="12" #unidade controlName="unidade_id" [dao]="unidadeDao" ></input-search>
                             <input-search *ngIf="isMaterialServico(tipoRecurso?.value)" hostClass="p-0" [size]="6" label icon #materialServico controlName="material_servico_id" [dao]="materialServicoDao" [where]="[['tipo', '==', tipoRecurso?.value]]"></input-search>
-                            <input-text *ngIf="!isHumanoDepartamento(tipoRecurso?.value)" hostClass="p-0" prefix="Descrição" [size]="isMaterialServico(tipoRecurso?.value) ? 6 : 12" controlName="nome" [control]="form!.controls.nome"></input-text>
+                            <input-text *ngIf="!isHumanoDepartamento(tipoRecurso?.value)" hostClass="p-0" prefix="Descrição" [size]="isMaterialServico(tipoRecurso?.value) ? 6 : 12" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250></input-text>
                         </div>
                     </ng-template>
                 </column>

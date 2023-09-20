@@ -171,4 +171,17 @@ class UnidadeController extends ControllerBase {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
+
+    public function lookupTodasUnidades(Request $request) {
+        try {
+           // $data = $request->validate([]);
+            $result = response()->json([
+                'success' => true,
+                'unidades' => $this->service->lookupTodasUnidades()
+            ]);
+            return $result;
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
 }

@@ -1,18 +1,18 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="nome" (submit)="onSaveData()" (cancel)="onCancel()">
     <div class="row">
-        <input-text [size]="6" label="Nome" controlName="nome" required></input-text>
+        <input-text [size]="6" label="Nome" controlName="nome" [attr.maxlength]=250 required></input-text>
         <input-timer onlyHours icon="bi bi-stopwatch" [label]="lex.translate('Esforço')" [size]="3" controlName="esforco" labelInfo="Tempo em horas correntes previsto para a execução da atividade"></input-timer>
-        <input-text numbers icon="bi bi-calendar2-check" [label]="lex.translate('Tempo planejado')" sufix="dias" [size]="3" icon="bi bi-calendar-date" controlName="dias_planejado" [control]="form!.controls.dias_planejado" labelInfo="Tempo em dias previsto para realizar a atividade"></input-text>
+        <input-text numbers icon="bi bi-calendar2-check" [label]="lex.translate('Tempo planejado')" sufix="dias" [size]="3" icon="bi bi-calendar-date" controlName="dias_planejado" [control]="form!.controls.dias_planejado" labelInfo="Tempo em dias previsto para realizar a atividade" [attr.maxlength]=250></input-text>
     </div>
     <separator title="Etiquetas/Check-list/Comentário"></separator>
     <div class="row">
         <input-multiselect label="Etiquetas" controlName="etiquetas" [size]="8" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
-            <input-text [size]="5" label="Texto" controlName="etiqueta_texto"></input-text>
+            <input-text [size]="5" label="Texto" controlName="etiqueta_texto" [attr.maxlength]=250></input-text>
             <input-select [size]="3" label="Ícone" icon="fas fa-sign-out-alt" controlName="etiqueta_icone" liveSearch [items]="lookup.ICONES"></input-select>
             <input-color [size]="4" label="Cor" controlName="etiqueta_cor"></input-color>
         </input-multiselect>
         <input-multiselect label="Checklists" controlName="checklist" [size]="4" [addItemHandle]="addItemHandleChecklist.bind(this)">
-            <input-text [size]="12" controlName="checklist_texto"></input-text>
+            <input-text [size]="12" controlName="checklist_texto" [attr.maxlength]=250></input-text>
         </input-multiselect>
     </div>
     <div class="row">

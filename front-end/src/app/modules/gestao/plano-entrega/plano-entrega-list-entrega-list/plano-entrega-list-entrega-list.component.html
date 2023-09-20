@@ -6,12 +6,12 @@
         [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-text label="Descrição" controlName="descricao" [control]="filter!.controls.descricao"
-                placeholder="Descrição"></input-text>
+                placeholder="Descrição" [attr.maxlength]=250></input-text>
         </div>
         <div class="row"> 
                 <input-search [size]="6" label="Unidade demandante" controlName="unidade_id" [dao]="unidadeDao"></input-search>
                 <input-text [size]="6" label="Destinatário" controlName="destinatario" [control]="filter!.controls.destinatario"
-                placeholder="Destinatário"></input-text>
+                placeholder="Destinatário" [attr.maxlength]=250></input-text>
         </div>
     </filter>
     <columns>

@@ -1,19 +1,20 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="nome" (submit)="onSaveData()" (cancel)="onCancel()">
     <div class="row">
         <div class="row">
-            <input-text [size]="12" [label]="'Nome ' + lex.translate('entrega')" controlName="nome" required></input-text>
-            <input-text [size]="12" [label]="'Descrição ' + lex.translate('entrega')" controlName="descricao" required></input-text>
+            <input-text [size]="12" [label]="'Nome ' + lex.translate('entrega')" controlName="nome" [attr.maxlength]=250 required></input-text>
+            <input-text [size]="12" [label]="'Descrição ' + lex.translate('entrega')" controlName="descricao" [attr.maxlength]=250 required></input-text>
         </div>
         <div class="row">
-            <input-select [size]="6" [label]="lex.translate('Tipo de indicador')" icon="bi bi-arrow-up-right-circle" controlName="tipo_indicador" [items]="lookup.TIPO_INDICADOR" [disabled]="form?.controls?.tipo_indicador?.value ? 'true' : undefined"></input-select>
+            <input-select [size]="6" [label]="lex.translate('Tipo de indicador')" icon="bi bi-arrow-up-right-circle" controlName="tipo_indicador" [items]="lookup.TIPO_INDICADOR"></input-select>
             <div *ngIf="form?.controls!.tipo_indicador.value == 'QUALITATIVO' || null"  class="row col-6">
                 <div class="col-12">
                     <label for="itemQualitativo" class="radio control-label">&nbsp;</label>
                     <input-multiselect label="Itens Qualitativos" controlName="lista_qualitativos" [addItemHandle]="addItemHandleItemQualitativo.bind(this)">
-                        <input-text icon="far fa-edit" controlName="item_qualitativo"></input-text>
+                        <input-text icon="far fa-edit" controlName="item_qualitativo" [attr.maxlength]=250></input-text>
                     </input-multiselect>
                 </div>
             </div>
         </div>
     </div>
 </editable-form>
+<!-- [disabled]="form?.controls?.tipo_indicador?.value ? 'true' : undefined" -->

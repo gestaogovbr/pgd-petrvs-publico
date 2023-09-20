@@ -8,7 +8,7 @@
                     </ng-template>
                     <ng-template let-row="row" #editFaseNome>
                         <div class="row">
-                            <input-text [size]="8" controlName="nome" [control]="form!.controls.nome"></input-text>
+                            <input-text [size]="8" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250></input-text>
                             <input-color [size]="4" controlName="cor" [control]="form!.controls.cor"></input-color>
                         </div>
                     </ng-template>
@@ -18,7 +18,7 @@
                         <small class="d-block">{{row.descricao || ""}}</small>
                     </ng-template>
                     <ng-template let-row="row" #editFaseDescricao>
-                        <input-text [size]="12" controlName="descricao" [control]="form!.controls.descricao"></input-text>
+                        <input-text [size]="12" controlName="descricao" [control]="form!.controls.descricao" [attr.maxlength]=250></input-text>
                     </ng-template>
                 </column>
                 <column title="Início" [template]="faseInicio" [editTemplate]="editFaseInicio">

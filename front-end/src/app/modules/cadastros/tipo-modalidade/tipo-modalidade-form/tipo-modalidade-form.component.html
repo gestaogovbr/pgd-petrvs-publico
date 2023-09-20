@@ -1,7 +1,7 @@
 <!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="nome" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form> (submit)="onSaveData()" (cancel)="onCancel()">-->
     <div class="row">
-        <input-text [size]="12" label="Título" controlName="nome" required></input-text>
+        <input-text [size]="12" label="Título" controlName="nome" [attr.maxlength]=250 required></input-text>
     </div>
     <separator transparent [title]="'Configurações ' + lex.translate('plano de trabalho')">
         <input-switch [size]="12" scale="small" labelPosition="right" controlName="plano_trabalho_calcula_horas" [label]="'Se o ' + lex.translate('plano de trabalho') + ' calcula horas (considerando a carga horária e os dias)'"></input-switch>

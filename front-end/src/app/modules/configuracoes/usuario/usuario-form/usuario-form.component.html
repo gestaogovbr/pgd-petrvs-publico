@@ -7,13 +7,13 @@
                 </div>
                 <div class="form-group col-md-9">
                     <div class="row">
-                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_CPF') ? 'true' : undefined" [size]="4" label="CPF" controlName="cpf" [maskFormat]="'000.000.000-00'" required></input-text>
-                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAT') ? 'true' : undefined" [size]="3" label="Matrícula" controlName="matricula" required></input-text>
-                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAIL') ? 'true' : undefined" [size]="5" label="E-mail" controlName="email" textCase="lower" required></input-text>
+                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_CPF') ? 'true' : undefined" [size]="4" label="CPF" controlName="cpf" [maskFormat]="'000.000.000-00'" [attr.maxlength]=15 required></input-text>
+                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAT') ? 'true' : undefined" [size]="3" label="Matrícula" controlName="matricula" [attr.maxlength]=250 required></input-text>
+                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAIL') ? 'true' : undefined" [size]="5" label="E-mail" controlName="email" textCase="lower" [attr.maxlength]=250 required></input-text>
                     </div>
                     <div class="row">
-                        <input-text [size]="8" label="Nome" controlName="nome" required></input-text>
-                        <input-text [size]="4" label="Apelido" controlName="apelido" required></input-text>
+                        <input-text [size]="8" label="Nome" controlName="nome" [attr.maxlength]=250 required></input-text>
+                        <input-text [size]="4" label="Apelido" controlName="apelido" [attr.maxlength]=250 required></input-text>
                     </div>
                     <div class="row">
                         <input-select [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_PERFIL') ? 'true' : undefined" [size]="4" label="Perfil" controlName="perfil_id" [dao]="perfilDao" required></input-select>
@@ -22,7 +22,7 @@
                     <div class="row">
                         <input-select [size]="4" label="UF" icon="bi bi-flag" controlName="uf" [items]="lookup.UF"></input-select>
                         <input-radio [size]="4" label="Sexo" controlName="sexo" [items]="lookup.SEXO"></input-radio>
-                        <input-text [size]="4" label="Telefone" controlName="telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'"></input-text>
+                        <input-text [size]="4" label="Telefone" controlName="telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'" [attr.maxlength]=250></input-text>
                     </div>
                 </div>
             </div>

@@ -36,6 +36,8 @@ export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
     public atividades: Atividade[] = [];
     public status_historico: StatusJustificativa[] = [];  // Mudanças de status sofridas pelo plano de trabalho (histórico)
     public consolidacoes: PlanoTrabalhoConsolidacao[] = [];
+    public assinaturasExigidas: string[] = [];
+    public jaAssinaramTCR: string[] = [];
     
     public programa_id: string = "";
     public usuario_id: string = "";

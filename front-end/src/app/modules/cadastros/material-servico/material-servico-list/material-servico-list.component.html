@@ -6,11 +6,11 @@
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-select [size]="4" label="Tipo" itemTodos="- Todos -" [valueTodos]="null" controlName="tipo" [control]="filter!.controls.tipo" [items]="lookup.MATERIAL_SERVICO_TIPO"></input-select>
-            <input-text [size]="4" label="Código" controlName="codigo" [control]="filter!.controls.codigo"></input-text>
-            <input-text [size]="4" label="Referência" controlName="referencia" [control]="filter!.controls.referencia"></input-text>
+            <input-text [size]="4" label="Código" controlName="codigo" [control]="filter!.controls.codigo" [attr.maxlength]=250></input-text>
+            <input-text [size]="4" label="Referência" controlName="referencia" [control]="filter!.controls.referencia" [attr.maxlength]=250></input-text>
         </div>
         <div class="row">
-            <input-text [size]="12" label="Descrição" controlName="descricao" [control]="filter!.controls.descricao"></input-text>
+            <input-text [size]="12" label="Descrição" controlName="descricao" [control]="filter!.controls.descricao" [attr.maxlength]=250></input-text>
         </div>
     </filter>
     <columns>

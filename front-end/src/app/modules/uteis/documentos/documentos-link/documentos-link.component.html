@@ -11,7 +11,7 @@
             <input-search [label]="lex.translate('Tipo de Documento')" [size]="8" #tipoDocumento controlName="tipo_documento_id"  disabled [dao]="tipoDocumentoDao"></input-search>
         </div>
         <div class="row">
-            <input-text label="Título do documento" [size]="12" controlName="titulo_documento" [control]="form!.controls.titulo_documento" disabled labelInfo="Título do documento no Sei/SUPER"></input-text>
+            <input-text label="Título do documento" [size]="12" controlName="titulo_documento" [control]="form!.controls.titulo_documento" disabled labelInfo="Título do documento no Sei/SUPER" [attr.maxlength]=250></input-text>
         </div>
     </separator>
 </editable-form>

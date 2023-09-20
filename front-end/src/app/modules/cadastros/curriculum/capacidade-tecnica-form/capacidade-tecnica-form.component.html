@@ -3,7 +3,7 @@
         <input-select [size]="5" #curso label="Área Temática" icon="fas fa-layer-group" controlName="areaTematica" liveSearch
                 [control]="form!.controls.areaTematica" [dao]="areaTematicaDao"  [addRoute]="{route: ['raiox','cadastros','gerais','areatematica','new']}">
         </input-select>
-        <input-text [size]="5" label="Nome da Capacidade Técnica" controlName="nome" required></input-text>
+        <input-text [size]="5" label="Nome da Capacidade Técnica" controlName="nome" [attr.maxlength]=250 required></input-text>
         <input-switch [size]="2" labelPosition="left" label="Ativo" controlName="ativo"></input-switch>
     </div>    
 </editable-form>

@@ -1,13 +1,13 @@
 <editable-form [form]="form!" [disabled]="true" [title]="isModal ? '' : title" (cancel)="onCancel()">
   <div class="row">
       <div class="row">
-        <input-text [size]="3" label="Tipo de alteração" icon="bi bi-upc" controlName="type" [control]="form!.controls.type"></input-text>
+        <input-text [size]="3" label="Tipo de alteração" icon="bi bi-upc" controlName="type" [control]="form!.controls.type" [attr.maxlength]=250></input-text>
         <input-datetime [size]="4" datetime label="Data do registro" controlName="date_time" [control]="form!.controls.date_time"></input-datetime>
       </div>
       <div class="row">
-        <input-text [size]="4" label="Responsável pelo registro" icon="bi bi-upc" controlName="user_nome" [control]="form!.controls.user_nome"></input-text>
-        <input-text [size]="4" label="ID" icon="bi bi-upc" controlName="user_id" [control]="form!.controls.user_id"></input-text>
-        <input-text [size]="4" label="E-mail" icon="bi bi-upc" controlName="user_email" [control]="form!.controls.user_email"></input-text>
+        <input-text [size]="4" label="Responsável pelo registro" icon="bi bi-upc" controlName="user_nome" [control]="form!.controls.user_nome" [attr.maxlength]=250></input-text>
+        <input-text [size]="4" label="ID" icon="bi bi-upc" controlName="user_id" [control]="form!.controls.user_id" [attr.maxlength]=250></input-text>
+        <input-text [size]="4" label="E-mail" icon="bi bi-upc" controlName="user_email" [control]="form!.controls.user_email" [attr.maxlength]=250></input-text>
       </div>
       <div class="row">
         <input-textarea [size]="12" [rows]="3" label="Mensagem" icon="bi bi-textarea-t" controlName="message" [control]="form!.controls.message"></input-textarea>

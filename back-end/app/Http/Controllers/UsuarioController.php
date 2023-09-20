@@ -95,7 +95,7 @@ class UsuarioController extends ControllerBase
         }
     }
 
-    public function jaAssinouTCR(Request $request){
+/*     public function jaAssinouTCR(Request $request){
         try {
             $data = $request->validate([
                 'usuario_id' => ['present'],
@@ -108,7 +108,7 @@ class UsuarioController extends ControllerBase
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
-    }
+    } */
 
 } 
 

@@ -33,8 +33,8 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   @Input() set cadeiaValorId(value: string | undefined) {
     if(this._cadeiaValorId != value) {
       this._cadeiaValorId = value;
-      // verificar nas entregas quais objetivos não são desse planjemaneot e remove-los
-      // será remvido somente da lista de itens (em memória), independente de persistente ou não, MAS NO BACKEND HAVERÀ ESSA VALIDAÇÂO!
+      // verificar nas entregas quais objetivos não são desse planejamento e remove-los
+      // será removido somente da lista de itens (em memória), independente de persistente ou não, MAS NO BACKEND HAVERÀ ESSA VALIDAÇÂO!
     }
   } get cadeiaValorId(): string | undefined {
     return this._cadeiaValorId;
