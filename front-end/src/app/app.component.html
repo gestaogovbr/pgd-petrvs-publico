@@ -106,7 +106,7 @@
                 </div>
             </li>
             <li class="nav-item ms-3 ms-lg-2">
-                <a *ngIf="globals.SUPPORT_URL" href="javascript:void(0)" class="nav-link" (click)="go.openNewTab(globals.SUPPORT_URL)"  [attr.data-bs-toggle]="'tooltip'" data-bs-placement="top" title="Suporte Petrvs">
+                <a class="nav-link" role="button" (click)="openModule({route: ['suporte']})"  [attr.data-bs-toggle]="'tooltip'" data-bs-placement="top" title="Suporte Petrvs">
                     <i class="bi bi-headset"></i>
                 </a>
             </li>

@@ -3,7 +3,7 @@
     <toolbar></toolbar>
      <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
         <div class="row">
-            <input-text [size]="12" [label]="lex.translate('Capacidade')" controlName="descricao" [control]="filter!.controls.descricao"></input-text>
+            <input-text [size]="12" [label]="lex.translate('Capacidade')" controlName="descricao" [control]="filter!.controls.descricao" [attr.maxlength]=250></input-text>
         </div>
     </filter> 
     <columns>

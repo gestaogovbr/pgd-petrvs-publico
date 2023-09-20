@@ -5,7 +5,7 @@
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)">
         <div class="row">
-            <input-text [size]="12" label="Nome" controlName="nome" [control]="filter!.controls.nome"></input-text>
+            <input-text [size]="12" label="Nome" controlName="nome" [control]="filter!.controls.nome" [attr.maxlength]=250></input-text>
         </div>
     </filter>
     <columns>

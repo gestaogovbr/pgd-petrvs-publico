@@ -2,8 +2,8 @@
                (submit)="onSaveData()" (cancel)="onCancel()">
     <div class="row">
         <div class="row" *ngIf="formDisabled">
-            <input-text #entidade [size]="4" label="Entidade" icon="bi bi-upc" controlName="entidade_id" [control]="form!.controls.entidade_id"></input-text>
-            <input-text #usuario [size]="5" label="Usuário" icon="bi bi-upc" controlName="usuario_id" [control]="form!.controls.usuario_id"></input-text>
+            <input-text #entidade [size]="4" label="Entidade" icon="bi bi-upc" controlName="entidade_id" [control]="form!.controls.entidade_id" [attr.maxlength]=250></input-text>
+            <input-text #usuario [size]="5" label="Usuário" icon="bi bi-upc" controlName="usuario_id" [control]="form!.controls.usuario_id" [attr.maxlength]=250></input-text>
             <input-datetime datetime [size]="3" label="Execução" icon="bi bi-calendar-date" controlName="data_execucao" [control]="form!.controls.data_execucao"></input-datetime>
         </div>
         <div class="row" *ngIf="formDisabled">

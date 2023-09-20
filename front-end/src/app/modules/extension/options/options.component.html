@@ -8,8 +8,8 @@
             <input-switch [size]="12" scale="small" labelPosition="right" label="Modo do desenvolvedor" controlName="desenvolvimento"></input-switch>
         </div>
         <div *ngIf="form.controls.desenvolvimento.value" class="row">
-            <input-text [size]="6" label="URL da Aplicação (Deploy)" controlName="baseUrl"></input-text>
-            <input-text [size]="6" label="URL do Servidor (API)" controlName="servidorUrl"></input-text>
+            <input-text [size]="6" label="URL da Aplicação (Deploy)" controlName="baseUrl" [attr.maxlength]=250></input-text>
+            <input-text [size]="6" label="URL do Servidor (API)" controlName="servidorUrl" [attr.maxlength]=250></input-text>
         </div>
     </separator>
 </editable-form>

@@ -1,14 +1,14 @@
 <!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="nome" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
     <div class="row">
-        <input-text [size]="8" label="Descrição" icon="far fa-edit" controlName="nome" required></input-text>
+        <input-text [size]="8" label="Descrição" icon="far fa-edit" controlName="nome" [attr.maxlength]=250 required></input-text>
         <input-select [size]="4" label="Abrangência" controlName="abrangencia" icon="bi bi-globe-americas" [items]="lookup.ABRANGENCIA"></input-select>
     </div>
     <div class="row">
         <input-radio [size]="3" label="Recorrente" icon="fas fa-redo" controlName="recorrente" [items]="lookup.SIMNAO" labelInfo="Se o feriado é recorrente todos os anos... se não, informar o ano."></input-radio>
         <input-select [size]="3" label="Dia" icon="bi bi-calendar-date" controlName="dia" [items]="lookup.DIA_MES"></input-select>
         <input-select [size]="3" label="Mês" icon="bi bi-calendar-date" controlName="mes" [items]="lookup.MESES"></input-select>
-        <input-text numbers [size]="3" label="Ano" icon="bi bi-calendar-date" controlName="ano" [disabled]="checkAnoDisabled()"></input-text>
+        <input-text numbers [size]="3" label="Ano" icon="bi bi-calendar-date" controlName="ano" [disabled]="checkAnoDisabled()" [attr.maxlength]=250></input-text>
     </div>
     <div class="row">
         <input-search #cidade *ngIf="form!.controls.abrangencia.value == 'MUNICIPAL'" [size]="6" controlName="cidade_id" [dao]="cidadeDao"></input-search>

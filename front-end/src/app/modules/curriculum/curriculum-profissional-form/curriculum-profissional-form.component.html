@@ -7,12 +7,11 @@
                 <input-select [size]="4" label="Ingresso na Instituição" icon="bi bi-calendar-check-fill"
                     controlName="ano_ingresso" [control]="form!.controls.ano_ingresso" [items]="this.anos">
                 </input-select>
-                <input-select [size]="4" label="Centro de Treinamento" icon="bi bi-building-fill"
-                    controlName="centro_treinamento" [control]="form!.controls.centro_treinamento"
-                    [dao]="ctDao">
+                <input-select #ct [size]="4" label="Centro de Treinamento" icon="bi bi-building-fill"
+                    controlName="centro_treinamento" [control]="form!.controls.centro_treinamento">
                 </input-select>
-                <input-select [size]="4" label="Cargo" icon="bi bi-person-badge" controlName="cargo"
-                    [control]="form!.controls.cargo" [items]="this.lookup.CARGOS_PRF">
+                <input-select #cargos [size]="4" label="Cargo" icon="bi bi-person-badge" controlName="cargo"
+                    [control]="form!.controls.cargo">
                 </input-select>
 
             </div>
@@ -24,14 +23,14 @@
                 <input-multiselect [size]="6" [control]="form!.controls.funcoes" controlName="funcoes"
                     [addItemHandle]="addItemFuncao.bind(this)" noBox [bold]="true">
 
-                    <input-select [size]="12" label="Funções ocupadas como titular ou substituto"
+                    <input-select #funcoes [size]="12" label="Funções ocupadas como titular ou substituto"
                         icon="bi bi-check-circle-fill" controlName="funcoesOcupadas" liveSearch
-                        [control]="form!.controls.funcoesOcupadas" [dao]="funcaoDao">
+                        [control]="form!.controls.funcoesOcupadas">
                     </input-select>
                 </input-multiselect>
 
-                <input-select [size]="6" label="Você faz parte de algum grupo especializado?" icon="bi bi-check-circle"
-                    controlName="grupo" [control]="form!.controls.grupo" [dao]="grupoDao" id="testeID" liveSearch>
+                <input-select #grupos [size]="6" label="Você faz parte de algum grupo especializado?" icon="bi bi-check-circle"
+                    controlName="grupo" [control]="form!.controls.grupo" id="testeID" liveSearch>
                 </input-select>
 
             </div>
@@ -43,7 +42,7 @@
                     <!--<input-select [size]="12" label="Selecione todas as unidades em que já foi lotado"
                         icon="bi bi-check-circle-fill" controlName="selectLotacao" [control]="form!.controls.selectLotacao" [dao]="unidadeDao" liveSearch>
                     </input-select>-->
-                    <input-select [size]="12" label="Selecione todas as unidades em que já foi lotado"
+                    <input-select #unidades [size]="12" label="Selecione todas as unidades em que já foi lotado"
                         icon="bi bi-check-circle-fill" controlName="selectLotacao" [control]="form!.controls.selectLotacao" [items]="this.unidade" liveSearch>
                     </input-select>
                 </input-multiselect>
@@ -51,8 +50,8 @@
                 <!--<input-select [size]="6" label="Lotação atual" icon="bi bi-check-circle" controlName="lotacaoAtual"
                     [control]="form!.controls.lotacaoAtual" [dao]="unidadeDao" liveSearch>
                 </input-select>-->
-                <input-select [size]="6" label="Lotação atual" icon="bi bi-check-circle" controlName="lotacaoAtual"
-                    [control]="form!.controls.lotacaoAtual" [items]="this.unidade"  liveSearch>
+                <input-select #lotacaoAtual [size]="6" label="Lotação atual" icon="bi bi-check-circle" controlName="lotacaoAtual"
+                    [control]="form!.controls.lotacaoAtual" liveSearch>
                 </input-select>
 
             </div>
@@ -97,7 +96,7 @@
                     [addItemHandle]="addItemFuncao.bind(this)" noBox [bold]="true">
 
                     <input-text [size]="12" label="Especifique" icon="bi bi-list-stars"
-                        controlName="inputEspecifique" liveSearch [control]="form!.controls.inputEspecifique">
+                        controlName="inputEspecifique" liveSearch [control]="form!.controls.inputEspecifique" [attr.maxlength]=250>
                     </input-text>
 
                 </input-multiselect>
@@ -116,7 +115,7 @@
                     [addItemHandle]="addItemFuncao.bind(this)" noBox>
 
                     <input-text [size]="8" label="Qual/Quais" icon="bi bi-mortarboard-fill" controlName="docenciaFora"
-                        liveSearch [control]="form!.controls.docenciaFora">
+                        liveSearch [control]="form!.controls.docenciaFora" [attr.maxlength]=250>
                     </input-text>
 
                 </input-multiselect>
@@ -217,7 +216,7 @@
                     </input-radio>
                     <input-text *ngIf="form!.controls.radioInteressePG.value" [size]="4"
                         label="Telefone de contato do Chefe Imediato" icon="fas fa-phone" controlName="telefone"
-                        [control]="form!.controls.telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'"></input-text>
+                        [control]="form!.controls.telefone" [maskFormat]="'(00) 0000-0000 || (00) 0 0000-0000'" [attr.maxlength]=250></input-text>
         
                
                 <div class="row">

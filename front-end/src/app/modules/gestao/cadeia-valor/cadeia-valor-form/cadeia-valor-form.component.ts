@@ -17,7 +17,7 @@ import { CadeiaValorListProcessosComponent } from '../cadeia-valor-list-processo
 export class CadeiaValorFormComponent extends PageFormBase<CadeiaValor, CadeiaValorDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('processos', { static: false }) public processos?: CadeiaValorListProcessosComponent;
-
+  
   constructor(public injector: Injector) {
     super(injector, CadeiaValor, CadeiaValorDaoService);
     this.join = ['processos'];

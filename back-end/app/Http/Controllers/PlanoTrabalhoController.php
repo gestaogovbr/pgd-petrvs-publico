@@ -141,6 +141,7 @@ class PlanoTrabalhoController extends ControllerBase {
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         $can = false;
+        $usuarioService = new UsuarioService();
         switch ($action) {
             case 'QUERY':
                 if (!$usuario->hasPermissionTo('MOD_PTR')) throw new ServerException("CapacidadeSearchText", "Consulta não realizada");
@@ -165,7 +166,7 @@ class PlanoTrabalhoController extends ControllerBase {
                 switch ($acao) {
                     case 'EDIT':    // alteração de um Plano de Trabalho
                         if (!$usuario->hasPermissionTo('MOD_PTR_EDT')) throw new ServerException("CapacidadeStore", "Alteração não realizada");
-                        $condition1 = $condicoes['planoIncluido'] && ($usuario->isParticipante($planoTrabalho) || $condicoes['gestorUnidadeExecutora']);
+                        $condition1 = $condicoes['planoIncluido'] && ($usuarioService->isParticipante($planoTrabalho) || $condicoes['gestorUnidadeExecutora']);
                         $condition2 = $condicoes['planoAguardandoAssinatura'] && $condicoes['usuarioJaAssinouTCR'];
                         $condition3 = $condicoes['planoAtivo'] && $condicoes['gestorUnidadeExecutora'] && $usuario->hasPermissionTo('MOD_PTR_EDT_ATV');
                         if($condicoes['planoValido'] && ($condition1 || $condition2 || $condition3))  $can = true;

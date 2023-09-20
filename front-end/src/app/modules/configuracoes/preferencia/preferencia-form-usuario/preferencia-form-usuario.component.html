@@ -21,7 +21,7 @@
             </div>
             <div [class]="etiquetas ? 'col-md-12' : 'col-md-6'">
                 <input-multiselect label="Etiquetas" multiselectStyle="inline" controlName="etiquetas" [size]="12" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
-                    <input-text [size]="5" label="Texto" controlName="etiqueta_texto"></input-text>
+                    <input-text [size]="5" label="Texto" controlName="etiqueta_texto" [attr.maxlength]=250></input-text>
                     <input-select [size]="3" label="Ícone" icon="fas fa-sign-out-alt" controlName="etiqueta_icone" liveSearch [items]="lookup.ICONES"></input-select>
                     <input-color [size]="4" label="Cor" controlName="etiqueta_cor"></input-color>
                 </input-multiselect>
