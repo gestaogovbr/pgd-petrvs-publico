@@ -1,6 +1,7 @@
 import { Component, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { AccordionComponent } from 'src/app/components/accordion/accordion.component';
+import { BadgeButton } from 'src/app/components/badge/badge.component';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
@@ -57,6 +58,34 @@ export class PlanoTrabalhoListAccordeonComponent extends PageFrameBase {
       this.accordion!.loading = false;
       this.cdRef.detectChanges();
     }
+  }
+
+  public getPlanoBadges(plano: PlanoTrabalho): BadgeButton[] {
+    let result: BadgeButton[] = [];
+    let concluidos = plano.consolidacoes.filter(x => x.status == "CONCLUIDO");
+    let avaliados = plano.consolidacoes.filter(x => x.status == "AVALIADO");
+    if(concluidos.length) {
+      const concluido = this.lookup.getLookup(this.lookup.CONSOLIDACAO_STATUS, "CONCLUIDO");
+      result.push({
+        icon: concluido?.icon,
+        label: concluido?.value,
+        color: concluido?.color,
+        textValue: concluidos.length.toString()
+      });
+    }
+    if(avaliados.length) {
+      const avaliado = this.lookup.getLookup(this.lookup.CONSOLIDACAO_STATUS, "AVALIADO");
+      result.push({
+        icon: avaliado?.icon,
+        label: avaliado?.value,
+        color: avaliado?.color,
+        textValue: avaliados.length.toString()
+      });
+    }
+    if(JSON.stringify(plano._metadata?.badges) != this.JSON.stringify(result)) {
+      plano._metadata = Object.assign(plano._metadata || {}, { badges: result });
+    }
+    return plano._metadata.badges;
   }
 
 }

@@ -11,7 +11,7 @@ export class PlanoTrabalhoConsolidacao extends Base implements HasAvaliacao, Has
 
     public data_inicio: Date = new Date();
     public data_fim: Date = new Date();
-    public status: PlanoTrabalhoConsolidacaoStatus | null = null; // Status atual da consolidação
+    public status: PlanoTrabalhoConsolidacaoStatus = "INCLUIDO"; // Status atual da consolidação
     public avaliacoes: Avaliacao[] = [];
     public status_historico: StatusJustificativa[] = [];
 

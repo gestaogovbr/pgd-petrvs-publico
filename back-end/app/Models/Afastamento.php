@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\Usuario;
 use App\Models\TipoMotivoAfastamento;
+use App\Models\PlanoTrabalhoConsolidacaoAfastamento;
 
 class Afastamento extends ModelBase
 {
@@ -21,6 +22,8 @@ class Afastamento extends ModelBase
         //'deleted_at', /* timestamp; */
     ];
 
+    // Has
+    public function consolidacoes() { return $this->hasMany(PlanoTrabalhoConsolidacaoAfastamento::class); }
     // Belongs
     public function usuario() { return $this->belongsTo(Usuario::class); }    
     public function tipoMotivoAfastamento() { return $this->belongsTo(TipoMotivoAfastamento::class); }    

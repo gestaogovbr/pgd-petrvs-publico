@@ -8,6 +8,7 @@ import { Comentario } from 'src/app/models/comentario';
 import { AtividadeTarefa } from 'src/app/models/atividade-tarefa.model';
 import { Atividade } from 'src/app/models/atividade.model';
 import { PageBase } from 'src/app/modules/base/page-base';
+import { AtividadeService } from '../atividade.service';
 
 @Component({
   selector: 'atividade-list-tarefa',
@@ -36,6 +37,7 @@ export class AtividadeListTarefaComponent extends PageBase {
 
   public formEdit: FormGroup;
   public dao: AtividadeTarefaDaoService;
+  public atividadeService: AtividadeService;
   public allPages: ListenerAllPagesService;
   public join: string[];
   public addComentarioButton: ToolbarButton = {
@@ -48,6 +50,7 @@ export class AtividadeListTarefaComponent extends PageBase {
   constructor(public injector: Injector) {
     super(injector);
     this.dao = injector.get<AtividadeTarefaDaoService>(AtividadeTarefaDaoService);
+    this.atividadeService = injector.get<AtividadeService>(AtividadeService);
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.formEdit = this.fh.FormBuilder({
       concluido: {default: false}
@@ -117,7 +120,7 @@ export class AtividadeListTarefaComponent extends PageBase {
     return undefined;
   }
 
-  public editEntrega = async (row: any) => {
+  public editTarefa = async (row: any) => {
     this.go.navigate({route: ['gestao', 'atividade', 'tarefa']}, {metadata: {tarefa: row, atividade: this.atividade}, modalClose: (modalResult) => {
       if(modalResult) {
         (async () => {
@@ -149,7 +152,7 @@ export class AtividadeListTarefaComponent extends PageBase {
     return undefined;
   }
 
-  public async deleteEntrega(row: any) {
+  public async deleteTarefa(row: any) {
     const confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
     this.grid!.error = undefined;
     if(confirm) {
@@ -216,6 +219,26 @@ export class AtividadeListTarefaComponent extends PageBase {
         modalResult._status = changed && !["ADD", "EDIT", "DELETE"].includes(modalResult._status || "") ? "EDIT" : modalResult._status;
       }
     }
+  }
+
+  public dynamicButtons(row: any): ToolbarButton[] {
+    let result: ToolbarButton[] = [];
+    let tarefa: AtividadeTarefa = row as AtividadeTarefa;
+    let lastConsolidacao = this.atividadeService.lastConsolidacao(this.atividade!.metadados!.consolidacoes);
+    /* (RN_CSLD_12) Tarefas concluidas de atividades em consolidação CONCLUIDO ou AVALIADO não poderão mais ser alteradas/excluidas, nem Remover conclusão.
+       (RN_CSLD_13) Tarefas de atividades em consolidação CONCLUIDO ou AVALIADO não poderão mais ser alteradas/excluidas, somente a opção de Concluir ficará disponível. */
+    if(!lastConsolidacao || lastConsolidacao.status == "INCLUIDO" || this.util.asDate(lastConsolidacao.data_conclusao)!.getTime() < this.util.asDate(tarefa.created_at)!.getTime()) {
+      result.push(Object.assign(this.grid!.BUTTON_EDIT, { onClick: this.editTarefa.bind(this) }));
+      result.push(Object.assign(this.grid!.BUTTON_DELETE, { onClick: this.deleteTarefa.bind(this) }));
+    }
+    return result;
+  }
+
+  public canConcluidoEdit(row: any): boolean {
+    let tarefa: AtividadeTarefa = row as AtividadeTarefa;
+    let lastConsolidacao = this.atividadeService.lastConsolidacao(this.atividade!.metadados!.consolidacoes);
+    /* (RN_CSLD_12) e (RN_CSLD_13) */
+    return !lastConsolidacao || lastConsolidacao.status == "INCLUIDO" || this.util.asDate(lastConsolidacao.data_conclusao)!.getTime() < this.util.asDate(tarefa.data_conclusao)!.getTime();
   }
 
 }
