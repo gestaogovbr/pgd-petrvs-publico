@@ -36,7 +36,7 @@ class CreateProgramasTable extends Migration
             $table->tinyInteger('registra_comparecimento')->default(1)->comment("Se utiliza registro de comparecimento nas consolidações do plano de trabalho");
             $table->tinyInteger('plano_trabalho_assinatura_participante')->default(1)->comment("Exigir assinatura do usuário no plano de trabalho");
             $table->tinyInteger('plano_trabalho_assinatura_gestor_lotacao')->default(0)->comment("Exigir assinatura do gestor da unidade de lotação do servidor");
-            $table->tinyInteger('plano_trabalho_assinatura_gestor_unidade')->default(0)->comment("Exigir assinatura do gestor da unidade do plano de trabalho");
+            $table->tinyInteger('plano_trabalho_assinatura_gestor_unidade')->default(0)->comment("Exigir assinatura do gestor da unidade executora do plano de trabalho");
             $table->tinyInteger('plano_trabalho_assinatura_gestor_entidade')->default(0)->comment("Exigir assinatura do gestor da entidade do plano de trabalho");
             // Chaves estrangeiras:
             $table->foreignUuid('tipo_avaliacao_plano_trabalho_id')->constrained("tipos_avaliacoes")->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de avaliação do plano de trabalho");

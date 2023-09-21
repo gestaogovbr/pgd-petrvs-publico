@@ -77,15 +77,15 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
       data_filtro_fim: { default: new Date() }
     }, this.cdRef, this.filterValidate);
     this.join = [
-      "unidade.entidade", 
-      "unidade.gestor.usuario:id", 
-      "usuario", 
-      "programa.template_tcr", 
-      "documento.assinaturas.usuario:id,nome,url_foto", 
-      "tipo_modalidade", 
-      "entregas.plano_entrega_entrega.entrega", 
-      "entregas.plano_entrega_entrega.plano_entrega:id,unidade_id", 
-      "entregas.plano_entrega_entrega.plano_entrega.unidade", 
+      "unidade.entidade",
+      "unidade.gestor.usuario:id",
+      "usuario",
+      "programa.template_tcr",
+      "documento.assinaturas.usuario:id,nome,url_foto",
+      "tipo_modalidade",
+      "entregas.plano_entrega_entrega.entrega",
+      "entregas.plano_entrega_entrega.plano_entrega:id,unidade_id",
+      "entregas.plano_entrega_entrega.plano_entrega.unidade",
       "entregas.entrega"
     ];
     this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }];
@@ -103,7 +103,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     this.BOTAO_REATIVAR = { label: "Reativar", icon: this.lookup.getIcon(this.lookup.PLANO_TRABALHO_STATUS, "ATIVO"), color: this.lookup.getColor(this.lookup.PLANO_TRABALHO_STATUS, "ATIVO"), onClick: this.reativar.bind(this) };
     this.BOTAO_SUSPENDER = { label: "Suspender", icon: this.lookup.getIcon(this.lookup.PLANO_TRABALHO_STATUS, "SUSPENSO"), color: this.lookup.getColor(this.lookup.PLANO_TRABALHO_STATUS, "SUSPENSO"), onClick: this.suspender.bind(this) };
     this.botoes = [this.BOTAO_ALTERAR, this.BOTAO_ARQUIVAR, this.BOTAO_ASSINAR, this.BOTAO_ATIVAR, this.BOTAO_CANCELAR_ASSINATURA, this.BOTAO_CANCELAR_PLANO,
-      this.BOTAO_DESARQUIVAR, this.BOTAO_ENVIAR_ASSINATURA, this.BOTAO_INFORMACOES, this.BOTAO_TERMOS, this.BOTAO_CONSOLIDACOES, this.BOTAO_REATIVAR, this.BOTAO_SUSPENDER];
+    this.BOTAO_DESARQUIVAR, this.BOTAO_ENVIAR_ASSINATURA, this.BOTAO_INFORMACOES, this.BOTAO_TERMOS, this.BOTAO_CONSOLIDACOES, this.BOTAO_REATIVAR, this.BOTAO_SUSPENDER];
   }
 
   ngOnInit(): void {
@@ -118,7 +118,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     this.botoes.forEach(botao => {
       if (this.botaoAtendeCondicoes(botao, row)) result.push(botao);
     });
-    return result;    
+    return result;
   }
 
   public dynamicButtons(row: any): ToolbarButton[] {
@@ -126,19 +126,19 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     let planoTrabalho: PlanoTrabalho = row as PlanoTrabalho;
     switch (this.planoTrabalhoService.situacaoPlano(planoTrabalho)) {
       case 'INCLUIDO':
-        if(this.botaoAtendeCondicoes(this.BOTAO_ASSINAR, row)) result.push(this.BOTAO_ASSINAR)
-        else if(this.botaoAtendeCondicoes(this.BOTAO_ATIVAR, row)) result.push(this.BOTAO_ATIVAR)
-        else if(this.botaoAtendeCondicoes(this.BOTAO_ENVIAR_ASSINATURA, row)) result.push(this.BOTAO_ENVIAR_ASSINATURA);
+        if (this.botaoAtendeCondicoes(this.BOTAO_ASSINAR, row)) result.push(this.BOTAO_ASSINAR)
+        else if (this.botaoAtendeCondicoes(this.BOTAO_ATIVAR, row)) result.push(this.BOTAO_ATIVAR)
+        else if (this.botaoAtendeCondicoes(this.BOTAO_ENVIAR_ASSINATURA, row)) result.push(this.BOTAO_ENVIAR_ASSINATURA);
         /*         
           - botões-padrão:
             - 'Assinar'. Condições para ser exibido: vide RN_PTR_O;                  (quando for exigida apenas a assinatura do usuário logado no TCR)
             - 'Ativar'. Condições para ser exibido: vide RN_PTR_P;                   (quando não for exigida nenhuma assinatura no TCR)
             - 'Enviar para Assinatura'. Condições para ser exibido: vide RN_PTR_U;
             - 'Consultar'. Condições para ser exibido: vide RN_PTR_S; 
-        */        
+        */
         break;
       case 'AGUARDANDO_ASSINATURA':
-        if(this.botaoAtendeCondicoes(this.BOTAO_ASSINAR, row)) result.push(this.BOTAO_ASSINAR);
+        if (this.botaoAtendeCondicoes(this.BOTAO_ASSINAR, row)) result.push(this.BOTAO_ASSINAR);
         /**
           - botões-padrão:
             - 'Assinar'. Condições para ser exibido: vide RN_PTR_O;
@@ -152,7 +152,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
         */
         break;
       case 'CONCLUIDO':
-        if(this.botaoAtendeCondicoes(this.BOTAO_ARQUIVAR, row)) result.push(this.BOTAO_ARQUIVAR);
+        if (this.botaoAtendeCondicoes(this.BOTAO_ARQUIVAR, row)) result.push(this.BOTAO_ARQUIVAR);
         /**
           - botões-padrão:
             - 'Arquivar'. Condições para ser exibido: vide RN_PTR_N;
@@ -247,14 +247,15 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     let usuarioEhGestorUnidadeExecutora: boolean = this.auth.usuario?.id == planoTrabalho.unidade?.gestor?.usuario?.id;
     let usuarioJaAssinouTCR: boolean = planoTrabalho.jaAssinaramTCR.includes(this.auth.usuario?.id!);
     let assinaturaUsuarioEhExigida: boolean = planoTrabalho.assinaturasExigidas.includes(this.auth.usuario?.id!);
-    let planoIncluido = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'INCLUIDO'; 
-    let usuarioEhParticipante = this.auth.usuario?.id == planoTrabalho.usuario_id; 
-    let planoAguardandoAssinatura = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'AGUARDANDO_ASSINATURA'; 
-    let planoAtivo = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'ATIVO'; 
-    let planoConcluido = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'CONCLUIDO'; 
-    let planoArquivado = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'ARQUIVADO'; 
+    let planoIncluido = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'INCLUIDO';
+    let usuarioEhParticipante = this.auth.usuario?.id == planoTrabalho.usuario_id;
+    let planoAguardandoAssinatura = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'AGUARDANDO_ASSINATURA';
+    let planoAtivo = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'ATIVO';
+    let planoConcluido = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'CONCLUIDO';
+    let planoArquivado = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'ARQUIVADO';
     let programaExigeOutrasAssinaturas = !!assinaturasExigidas.filter(a => a != this.auth.usuario?.id).length;
-    let planoSuspenso = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'SUSPENSO'; 
+    let planoSuspenso = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'SUSPENSO';
+    let planoPossuiEntrega = planoTrabalho.entregas.length > 0;
     switch (botao) {
       case this.BOTAO_ALTERAR:
         /*
@@ -264,8 +265,12 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
               - estando com o status 'AGUARDANDO_ASSINATURA', o usuário logado precisa ser um dos que já assinaram o TCR e todas as assinaturas tornam-se sem efeito;
               - estando com o status 'ATIVO', o usuário precisa ser gestor da Unidade Executora e possuir a capacidade MOD_PTR_EDT_ATV. Após alterado, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
         */
-        return this.auth.hasPermissionTo("MOD_PTR_EDT") && this.planoTrabalhoService.isValido(planoTrabalho) && 
-               ((planoIncluido && usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) || (planoAguardandoAssinatura && usuarioJaAssinouTCR) || (planoAtivo && usuarioEhGestorUnidadeExecutora && this.auth.hasPermissionTo("MOD_PTR_EDT_ATV")));
+        let condition1 = this.auth.hasPermissionTo("MOD_PTR_EDT");
+        let condition2 = this.planoTrabalhoService.isValido(planoTrabalho);
+        let condition3 = planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora);
+        let condition4 = planoAguardandoAssinatura && usuarioJaAssinouTCR;
+        let condition5 = planoAtivo && usuarioEhGestorUnidadeExecutora && this.auth.hasPermissionTo("MOD_PTR_EDT_ATV");
+        return condition1 && condition2 && (condition3 || condition4 || condition5);
       case this.BOTAO_ARQUIVAR:
         /*
           (RN_PTR_N) ARQUIVAR
@@ -276,21 +281,25 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
       case this.BOTAO_ASSINAR:
         /*
           (RN_PTR_O) ASSINAR
+            - o plano precisa possuir ao menos uma entrega, e:
             - o plano precisa estar com o status INCLUIDO, e:
               - o usuário logado precisa ser o participante do plano ou o gestor da sua Unidade Executora, e
               - a assinatura do usuário logado precisa ser uma das exigidas pelo Programa de Gestão, e ele não ter ainda assinado;
             - ou o plano precisa estar com o status AGUARDANDO_ASSINATURA, e:
               - a assinatura do usuário logado precisa ser uma das exigidas pelo Programa de Gestão, e ele não ter ainda assinado;
         */
-        return !!planoTrabalho.documento_id?.length && ((planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && assinaturaUsuarioEhExigida && !usuarioJaAssinouTCR) || (planoAguardandoAssinatura && assinaturaUsuarioEhExigida && !usuarioJaAssinouTCR));
+        let condicao1 = usuarioEhParticipante || usuarioEhGestorUnidadeExecutora;
+        let condicao2 = assinaturaUsuarioEhExigida && !usuarioJaAssinouTCR;
+        return planoPossuiEntrega && ((planoIncluido && condicao1 && condicao2) || (planoAguardandoAssinatura && condicao2));
       case this.BOTAO_ATIVAR:
         /*
           (RN_PTR_P) ATIVAR
           O plano precisa estar no status 'INCLUIDO', e
               - o usuário logado precisa ser o participante do plano ou gestor da Unidade Executora, e
-              - nenhuma assinatura no TCR ser exigida pelo programa;        
+              - nenhuma assinatura no TCR ser exigida pelo programa, e
+              - o plano de trabalho precisa ter ao menos uma entrega;        
         */
-        return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && !assinaturasExigidas.length;
+        return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && !assinaturasExigidas.length && planoPossuiEntrega;
       case this.BOTAO_CANCELAR_ASSINATURA:
         /*
           (RN_PTR_Q) CANCELAR ASSINATURA
@@ -324,9 +333,10 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
           (RN_PTR_U) ENVIAR PARA ASSINATURA
           O plano precisa estar com o status INCLUIDO; e
             - o usuário logado precisa ser o participante do plano ou gestor da sua Unidade Executora; e
-            - o programa de gestão precisa exigir não só a assinatura do usuário logado;
+            - o programa de gestão precisa exigir não só a assinatura do usuário logado, e
+            - o plano precisa possui ao menos uma entrega;
         */
-        return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && programaExigeOutrasAssinaturas;
+        return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && programaExigeOutrasAssinaturas && planoPossuiEntrega;
       case this.BOTAO_REATIVAR:
         /*
           (RN_PTR_W) REATIVAR

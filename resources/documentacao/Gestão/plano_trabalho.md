@@ -98,6 +98,7 @@ Ação: ALTERAR -> não muda o status do plano se ele estiver com o status 'INCL
     - estando com o status 'INCLUIDO', o usuário logado precisa ser o participante do plano ou o gestor da Unidade Executora;
 ***************    - estando com o status 'AGUARDANDO_ASSINATURA', o usuário logado precisa ser um dos que já assinaram o TCR e todas as assinaturas tornam-se sem efeito;
     - estando com o status 'ATIVO', o usuário precisa ser gestor da Unidade Executora e possuir a capacidade MOD_PTR_EDT_ATV.
+  - Como a alteração pode ser no participante, e nas datas de início e fim do plano, faz-se necessário revalidar as respectivas regras da inserção do plano.
 ***************  - Após alterado, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
 
 */*Ação: ARQUIVAR -> não muda o status do plano ('CONCLUIDO');
@@ -112,7 +113,7 @@ Ação: ALTERAR -> não muda o status do plano se ele estiver com o status 'INCL
   - o plano precisa estar no status 'INCLUIDO', e
     - o usuário logado precisa ser o participante do plano ou gestor da Unidade Executora, e
     - nenhuma assinatura no TCR ser exigida pelo programa, e
-********************    - o plano de trabalho precisa ter ao menos uma entrega;
+    - o plano de trabalho precisa ter ao menos uma entrega;
 
 Ação: CANCELAR ASSINATURA -> o plano permanece no status 'AGUARDANDO_ASSINATURA' ou retorna ao status 'INCLUIDO';
 
@@ -139,12 +140,13 @@ Ação: CANCELAR ASSINATURA -> o plano permanece no status 'AGUARDANDO_ASSINATUR
   - o plano precisa estar arquivado, e:
     - o usuário logado precisa ser o participante ou gestor da Unidade Executora;
 
-*****************Ação: ENVIAR PARA ASSINATURA -> o plano vai para o status 'AGUARDANDO_ASSINATURA';
+Ação: ENVIAR PARA ASSINATURA -> o plano vai para o status 'AGUARDANDO_ASSINATURA';
 
 - (RN_PTR_U) Condições para que um Plano de Trabalho possa ser enviado para assinatura:
   - o plano precisa estar com o status INCLUIDO; e
     - o usuário logado precisa ser o participante do plano ou gestor da sua Unidade Executora; e
-    - o programa de gestão precisa exigir não só a assinatura do usuário logado;
+    - o programa de gestão precisa exigir não só a assinatura do usuário logado, e
+***************    - o plano precisa possuir ao menos uma entrega, e:
 
 */*Ação: INSERIR/INCLUIR -> o plano adquire o status de 'INCLUIDO';
 
@@ -169,17 +171,17 @@ Ação: CANCELAR ASSINATURA -> o plano permanece no status 'AGUARDANDO_ASSINATUR
 
 ## BOTÕES
 
-*- 'Alterar'. Condições para ser exibido: vide RN_PTR_M;
-*- 'Arquivar'. Condições para ser exibido: vide RN_PTR_N;
-*- 'Assinar'. Condições para ser exibido: vide RN_PTR_O;
-*- 'Ativar'. Condições para ser exibido: vide RN_PTR_P;
-*- 'Cancelar assinatura'. Condições para ser exibido: vide RN_PTR_Q;
-*- 'Cancelar plano'. Condições para ser exibido: vide RN_PTR_R;
-*- 'Consultar'. Condições para ser exibido: vide RN_PTR_S;
-*- 'Desarquivar'. Condições para ser exibido: vide RN_PTR_T;
-*- 'Enviar para assinatura'. Condições para ser exibido: vide RN_PTR_U;
-*- 'Incluir'. Condições para ser exibido: vide RN_PTR_V;
-*- 'Reativar'. Condições para ser exibido: vide RN_PTR_W;
+- 'Alterar'. Condições para ser exibido: vide RN_PTR_M;
+- 'Arquivar'. Condições para ser exibido: vide RN_PTR_N;
+- 'Assinar'. Condições para ser exibido: vide RN_PTR_O;
+- 'Ativar'. Condições para ser exibido: vide RN_PTR_P;
+- 'Cancelar assinatura'. Condições para ser exibido: vide RN_PTR_Q;
+- 'Cancelar plano'. Condições para ser exibido: vide RN_PTR_R;
+- 'Consultar'. Condições para ser exibido: vide RN_PTR_S;
+- 'Desarquivar'. Condições para ser exibido: vide RN_PTR_T;
+- 'Enviar para assinatura'. Condições para ser exibido: vide RN_PTR_U;
+- 'Incluir'. Condições para ser exibido: vide RN_PTR_V;
+- 'Reativar'. Condições para ser exibido: vide RN_PTR_W;
 - 'Suspender'. Condições para ser exibido: vide RN_PTR_X;
 
 ## REGRAS DE INTERFACE
@@ -266,10 +268,11 @@ Ação: CANCELAR ASSINATURA -> o plano permanece no status 'AGUARDANDO_ASSINATUR
 
 ## MÉTODO DESLOCADO PARA O DOCUMENTOSCONTROLLER/SERVICE
 
-Ação: ASSINAR -> enquanto faltar assinatura no TCR, o plano vai para o (ou permanece no) status de 'AGUARDANDO_ASSINATURA'. Quando o último assinar o TCR, o plano vai para o status 'ATIVO';
+(RN_PTR_O) Ação: ASSINAR
 
-- (RN_PTR_O) Condições para que um Plano de Trabalho possa ser assinado:
-****************  - o plano precisa possuir ao menos uma entrega, e:
+- Enquanto faltar assinatura no TCR, o plano vai para o (ou permanece no) status de 'AGUARDANDO_ASSINATURA'. Quando o último assinar o TCR, o plano vai para o status 'ATIVO';
+- Condições para que um Plano de Trabalho possa ser assinado:
+  - o plano precisa possuir ao menos uma entrega, e:
   - o plano precisa estar com o status INCLUIDO, e:
     - o usuário logado precisa ser o participante do plano ou o gestor da sua Unidade Executora, e
     - a assinatura do usuário logado precisa ser uma das exigidas pelo Programa de Gestão, e ele não ter ainda assinado;

@@ -394,7 +394,7 @@ class AtividadeService {
       icon: "bi bi-alarm",
       color: "danger"
     });
-    if (consolidacao && (atividade.data_inicio && this.util.asDate(atividade.data_inicio).getTime() < this.util.asDate(consolidacao.data_inicio).getTime() || atividade.data_entrega && this.util.asDate(atividade.data_entrega).getTime() > this.util.asDate(consolidacao.data_fim).getTime())) {
+    if (consolidacao && (atividade.data_inicio && this.util.asTimestamp(atividade.data_inicio) < this.util.asTimestamp(consolidacao.data_inicio) || atividade.data_entrega && this.util.asTimestamp(atividade.data_entrega) > this.util.asTimestamp(consolidacao.data_fim))) {
       result.push({
         data: {
           status: "EXTRAPOLADO",
@@ -458,7 +458,7 @@ class AtividadeService {
           data: row
         });
       }
-      if (!row.metadados.concluido && this.util.asDate(row.data_estipulada_entrega).getTime() < this.auth.hora.getTime()) {
+      if (!row.metadados.concluido && this.util.asTimestamp(row.data_estipulada_entrega) < this.auth.hora.getTime()) {
         const atrasado = this.calendar.horasAtraso(row.data_estipulada_entrega, row.unidade);
         tempos.push({
           color: "danger",
@@ -543,7 +543,7 @@ class AtividadeService {
     };
   }
   lastConsolidacao(consolidacoes) {
-    return consolidacoes?.reduce((a, v) => a = !a || this.util.asDate(v.data_conclusao).getTime() > this.util.asDate(a.data_conclusao).getTime() ? v : a, undefined);
+    return consolidacoes?.reduce((a, v) => a = !a || this.util.asTimestamp(v.data_conclusao) > this.util.asTimestamp(a.data_conclusao) ? v : a, undefined);
   }
 }
 _class = AtividadeService;
