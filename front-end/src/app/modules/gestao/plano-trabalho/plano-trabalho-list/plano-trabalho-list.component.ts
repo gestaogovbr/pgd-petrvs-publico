@@ -47,6 +47,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
   public BOTAO_REATIVAR: ToolbarButton;
   public BOTAO_SUSPENDER: ToolbarButton;
   public BOTAO_TERMOS: ToolbarButton;
+  public BOTAO_CONSOLIDACOES: ToolbarButton;
   public DATAS_FILTRO: LookupItem[] = [
     { key: "VIGENTE", value: "Vigente" },
     { key: "NAOVIGENTE", value: "Não vigente" },
@@ -75,8 +76,18 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
       data_filtro_inicio: { default: new Date() },
       data_filtro_fim: { default: new Date() }
     }, this.cdRef, this.filterValidate);
-    this.join = ["unidade.entidade", "unidade.gestor.usuario:id", "usuario", "programa", "documento.assinaturas.usuario:id,nome,url_foto", "tipo_modalidade", 
-                "entregas.plano_entrega_entrega.entrega", "entregas.plano_entrega_entrega.plano_entrega:id,unidade_id", "entregas.plano_entrega_entrega.plano_entrega.unidade", "entregas.entrega"];
+    this.join = [
+      "unidade.entidade", 
+      "unidade.gestor.usuario:id", 
+      "usuario", 
+      "programa.template_tcr", 
+      "documento.assinaturas.usuario:id,nome,url_foto", 
+      "tipo_modalidade", 
+      "entregas.plano_entrega_entrega.entrega", 
+      "entregas.plano_entrega_entrega.plano_entrega:id,unidade_id", 
+      "entregas.plano_entrega_entrega.plano_entrega.unidade", 
+      "entregas.entrega"
+    ];
     this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }];
     this.BOTAO_ALTERAR = { label: "Alterar", icon: "bi bi-pencil-square", color: "btn-outline-info", onClick: this.edit.bind(this) };
     this.BOTAO_ARQUIVAR = { label: "Arquivar", icon: "bi bi-inboxes", onClick: this.arquivar.bind(this) };
@@ -87,11 +98,12 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     this.BOTAO_DESARQUIVAR = { label: "Desarquivar", icon: "bi bi-reply", onClick: this.desarquivar.bind(this) };
     this.BOTAO_ENVIAR_ASSINATURA = { label: "Enviar para assinatura", icon: this.lookup.getIcon(this.lookup.PLANO_TRABALHO_STATUS, "AGUARDANDO_ASSINATURA"), color: this.lookup.getColor(this.lookup.PLANO_TRABALHO_STATUS, "AGUARDANDO_ASSINATURA"), onClick: this.enviarParaAssinatura.bind(this) };
     this.BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: this.consult.bind(this) };
-    this.BOTAO_TERMOS = { label: "Termos", icon: "bi bi-file-earmark-check", onClick: ((row: PlanoTrabalho) => this.go.navigate({ route: ['uteis', 'documentos', 'TCR', row.id] }, { modalClose: (modalResult) => console.log(modalResult?.conteudo), metadata: this.planoTrabalhoService.metadados(row) })).bind(this) };
+    this.BOTAO_TERMOS = { label: "Termos", icon: "bi bi-file-earmark-check", onClick: ((row: PlanoTrabalho) => this.go.navigate({ route: ['uteis', 'documentos', 'TCR', row.id] }, { modalClose: (modalResult) => (this.grid?.query || this.query!).refreshId(row.id), metadata: this.planoTrabalhoService.metadados(row) })).bind(this) };
+    this.BOTAO_CONSOLIDACOES = { label: "Consolidações", icon: this.entityService.getIcon('PlanoTrabalhoConsolidacao'), onClick: ((row: PlanoTrabalho) => this.go.navigate({ route: ['gestao', 'plano-trabalho', 'consolidacao', row.usuario_id, row.id] }, { modalClose: (modalResult) => (this.grid?.query || this.query!).refreshId(row.id), modal: true })).bind(this) };
     this.BOTAO_REATIVAR = { label: "Reativar", icon: this.lookup.getIcon(this.lookup.PLANO_TRABALHO_STATUS, "ATIVO"), color: this.lookup.getColor(this.lookup.PLANO_TRABALHO_STATUS, "ATIVO"), onClick: this.reativar.bind(this) };
     this.BOTAO_SUSPENDER = { label: "Suspender", icon: this.lookup.getIcon(this.lookup.PLANO_TRABALHO_STATUS, "SUSPENSO"), color: this.lookup.getColor(this.lookup.PLANO_TRABALHO_STATUS, "SUSPENSO"), onClick: this.suspender.bind(this) };
     this.botoes = [this.BOTAO_ALTERAR, this.BOTAO_ARQUIVAR, this.BOTAO_ASSINAR, this.BOTAO_ATIVAR, this.BOTAO_CANCELAR_ASSINATURA, this.BOTAO_CANCELAR_PLANO,
-      this.BOTAO_DESARQUIVAR, this.BOTAO_ENVIAR_ASSINATURA, this.BOTAO_INFORMACOES, this.BOTAO_TERMOS, this.BOTAO_REATIVAR, this.BOTAO_SUSPENDER];
+      this.BOTAO_DESARQUIVAR, this.BOTAO_ENVIAR_ASSINATURA, this.BOTAO_INFORMACOES, this.BOTAO_TERMOS, this.BOTAO_CONSOLIDACOES, this.BOTAO_REATIVAR, this.BOTAO_SUSPENDER];
   }
 
   ngOnInit(): void {
@@ -270,7 +282,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
             - ou o plano precisa estar com o status AGUARDANDO_ASSINATURA, e:
               - a assinatura do usuário logado precisa ser uma das exigidas pelo Programa de Gestão, e ele não ter ainda assinado;
         */
-        return (planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && assinaturaUsuarioEhExigida && !usuarioJaAssinouTCR) || (planoAguardandoAssinatura && assinaturaUsuarioEhExigida && !usuarioJaAssinouTCR);
+        return !!planoTrabalho.documento_id?.length && ((planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && assinaturaUsuarioEhExigida && !usuarioJaAssinouTCR) || (planoAguardandoAssinatura && assinaturaUsuarioEhExigida && !usuarioJaAssinouTCR));
       case this.BOTAO_ATIVAR:
         /*
           (RN_PTR_P) ATIVAR
@@ -331,6 +343,8 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
         return planoAtivo && usuarioEhGestorUnidadeExecutora;
       case this.BOTAO_TERMOS:
         return this.auth.hasPermissionTo("MOD_PTR");
+      case this.BOTAO_CONSOLIDACOES:
+        return true;
     }
     return false;
   }

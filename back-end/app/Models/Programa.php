@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\Unidade;
 use App\Models\PlanoEntrega;
@@ -49,6 +50,10 @@ class Programa extends ModelBase
     public $delete_cascade = ['documento'];
 
     public $fillable_changes = ['participantes'];
+
+    protected $casts = [
+        "nota_padrao_avaliacao" => AsJson::class
+    ];
     
     // Has
     public function participantes() { return $this->hasMany(ProgramaParticipante::class); }

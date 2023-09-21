@@ -28,7 +28,7 @@
             <separator [title]="lex.translate('Entregas') + lex.translate(' do plano de trabalho')">
                 <top-alert *ngIf="!form!.controls.programa_id.value?.length || !form!.controls.unidade_id.value?.length" type="warning" [message]="'Antes de incluir ' + lex.translate('entrega') + ' neste ' + lex.translate('Plano de Trabalho') + ', é necessário selecionar ' + lex.translate('a Unidade') + ' e ' + lex.translate('o Programa') + '!'"></top-alert>
                 <div *ngIf="form!.controls.programa_id.value?.length && form!.controls.unidade_id.value?.length">
-                    <plano-trabalho-list-entrega noPersist [entity]="entity"></plano-trabalho-list-entrega>
+                    <plano-trabalho-list-entrega noPersist [disabled]="formDisabled" [entity]="entity"></plano-trabalho-list-entrega>
                 </div>
             </separator>
         </tab>
@@ -53,8 +53,8 @@
         <tab *ngIf="checkFilled(['usuario_id', 'programa_id', 'tipo_modalidade_id'])" key="TERMO" label="Termo">
             <!--top-alert *ngIf="!isTermos" type="warning" message="Para [INSERIR] ou [ASSINAR] termos escolha opção Termos de adesão na tela de listagem, ou utilize o Sei"></top-alert/-->
             <div clss="row">
-                <documentos #documentos [entity]="entity" noPersist [cdRef]="cdRef" [needSign]="planoTrabalhoService.needSign" [extraTags]="planoTrabalhoService.extraTags" especie="TCR" 
-                    [editingId]="editingId" [datasource]="datasource" [template]="programa?.selectedEntity?.template_tcr"></documentos>
+                <documentos #documentos [entity]="entity" [disabled]="formDisabled" noPersist [cdRef]="cdRef" [needSign]="planoTrabalhoService.needSign" [extraTags]="planoTrabalhoService.extraTags" especie="TCR" 
+                    [editingId]="formDisabled ? undefined : editingId" [datasource]="datasource" [template]="programa?.selectedEntity?.template_tcr"></documentos>
             </div>
         </tab>
     </tabs>
