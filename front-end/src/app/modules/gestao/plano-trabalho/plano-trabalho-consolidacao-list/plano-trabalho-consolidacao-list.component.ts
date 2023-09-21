@@ -44,7 +44,7 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
     let agora = (new Date()).getTime();
     this.items.forEach(v => {
       if(!v.plano_trabalho) v.plano_trabalho = this.entity;
-      if(this.util.asDate(v.data_inicio)!.getTime() <= agora && agora <= this.util.asDate(v.data_fim)!.getTime()) this.grid!.expand(v.id);
+      if(this.util.asTimestamp(v.data_inicio) <= agora && agora <= this.util.asTimestamp(v.data_fim)) this.grid!.expand(v.id);
     });
   }
 
@@ -134,11 +134,11 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
   }
 
   public anterior(consolidacao: PlanoTrabalhoConsolidacao): PlanoTrabalhoConsolidacao | undefined {
-    return this.entity!.consolidacoes.reduce((a: PlanoTrabalhoConsolidacao | undefined, v: PlanoTrabalhoConsolidacao) => this.util.asDate(v.data_inicio)!.getTime() < this.util.asDate(consolidacao.data_inicio)!.getTime() && (!a || this.util.asDate(a.data_inicio)!.getTime() < this.util.asDate(v.data_inicio)!.getTime()) ? v : a, undefined);
+    return this.entity!.consolidacoes.reduce((a: PlanoTrabalhoConsolidacao | undefined, v: PlanoTrabalhoConsolidacao) => this.util.asTimestamp(v.data_inicio) < this.util.asTimestamp(consolidacao.data_inicio) && (!a || this.util.asTimestamp(a.data_inicio) < this.util.asTimestamp(v.data_inicio)) ? v : a, undefined);
   }
 
   public proximo(consolidacao: PlanoTrabalhoConsolidacao): PlanoTrabalhoConsolidacao | undefined {
-    return this.entity!.consolidacoes.reduce((a: PlanoTrabalhoConsolidacao | undefined, v: PlanoTrabalhoConsolidacao) => this.util.asDate(v.data_fim)!.getTime() > this.util.asDate(consolidacao.data_fim)!.getTime() && (!a || this.util.asDate(a.data_fim)!.getTime() > this.util.asDate(v.data_fim)!.getTime()) ? v : a, undefined);
+    return this.entity!.consolidacoes.reduce((a: PlanoTrabalhoConsolidacao | undefined, v: PlanoTrabalhoConsolidacao) => this.util.asTimestamp(v.data_fim) > this.util.asTimestamp(consolidacao.data_fim) && (!a || this.util.asTimestamp(a.data_fim) > this.util.asTimestamp(v.data_fim)) ? v : a, undefined);
   }
 
   public isDisabled(row?: PlanoTrabalhoConsolidacao): boolean {

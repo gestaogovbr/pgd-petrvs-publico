@@ -58,6 +58,9 @@ class AtividadeService extends ServiceBase
 
     public function validateStore($data, $unidade, $action) {
         $unidade = Unidade::find($data["unidade_id"]);
+        if($action != ServiceBase::ACTION_INSERT) {
+            $this->validateBackward($data["id"], "STORE");
+        }
         if(!$this->usuarioService->hasLotacao($data["unidade_id"])) {
             throw new ServerException("ValidateAtividade", $unidade->sigla . " não é uma unidade do usuário logado nem subordinada a ele.");
         }
@@ -366,6 +369,7 @@ class AtividadeService extends ServiceBase
         if(!empty($lastConsolidacao)) {
             $lastStatus = $lastConsolidacao->snapshot->status;
             $msgConsolidacao = "(Consolidação de " + UtilService::getDateFormatted($lastConsolidacao->consolidacao->data_inicio) + " até " + UtilService::getDateFormatted($lastConsolidacao->consolidacao->data_fim) + ")";
+            if($newStatus == "STORE" && $lastStatus != "INCLUIDO") throw new ServerException("ValidateAtividade", "Já existe uma consolidação com esta atividade como INICIADO, não podendo ser modificada. " + $msgConsolidacao);
             if($newStatus == "INCLUIDO" && $lastStatus == "INICIADO") throw new ServerException("ValidateAtividade", "Já existe uma consolidação com esta atividade como INICIADO, não podendo retroagir. " + $msgConsolidacao);
             if($newStatus == "INICIADO" && $lastStatus == "CONCLUIDO") throw new ServerException("ValidateAtividade", "Já existe uma consolidação com esta atividade como CONCLUIDO, não podendo retroagir. " + $msgConsolidacao);
             if($newStatus == "PAUSADO" && UtilService::asTimestamp($entity["data"]) < UtilService::asTimestamp($lastConsolidacao->data_conclusao)) throw new ServerException("ValidateAtividade", "Data para pausa deverá ser superior da última consolidação concluída. " + "Já existe uma consolidação com esta atividade como INICIADO, não podendo retroagir. " + $msgConsolidacao);

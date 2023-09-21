@@ -31,6 +31,7 @@ class Programa extends ModelBase
         'dias_tolerancia_avaliacao', /* int; NOT NULL; DEFAULT: '10'; */// Dias de tolerância para o lançamento do registro das atividades na consolidação, após esses dias será liberado automaticamente para avaliação
         'nota_padrao_avaliacao', 
         'plano_trabalho_assinatura_participante', /* tinyint; NOT NULL; DEFAULT: '1'; */// Exigir assinatura do usuário no plano de trabalho
+        'plano_trabalho_assinatura_gestor_lotacao', /* tinyint; NOT NULL; DEFAULT: '1'; */// Exigir assinatura do usuário no plano de trabalho
         'plano_trabalho_assinatura_gestor_unidade', /* tinyint; NOT NULL; */// Exigir assinatura do gestor da unidade do plano de trabalho
         'plano_trabalho_assinatura_gestor_entidade', /* tinyint; NOT NULL; */// Exigir assinatura do gestor da entidade do plano de trabalho
         'tipo_documento_tcr_id', /* char(36); */
