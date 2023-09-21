@@ -23,7 +23,7 @@ class CreateProgramasTable extends Migration
             $table->string('nome')->comment("Nome do programa");
             $table->string('normativa')->nullable()->comment("Normativa que regula o programa de gestão");
             $table->integer('prazo_max_plano_entrega')->comment("Limite máximo de dias corridos para o plano de entregas (Zero para não limitar)");
-            $table->tinyInteger('termo_obrigatorio')->default(0)->comment("Se o termo é ou não obrigatório");
+            $table->tinyInteger('termo_obrigatorio')->default(1)->comment("Se o termo é ou não obrigatório");
             $table->json('config')->nullable()->comment("Configurações do programa");
             $table->dateTime('data_inicio')->comment("Inicio da vigência do programa");
             $table->dateTime('data_fim')->comment("Fim da vigência do programa");
