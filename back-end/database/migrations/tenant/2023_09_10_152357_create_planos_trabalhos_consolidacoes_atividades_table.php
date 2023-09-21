@@ -38,6 +38,6 @@ class CreatePlanosTrabalhosConsolidacoesAtividadesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('status_justificativas');
+        Schema::dropIfExists('planos_trabalhos_consolidacoes_atividades');
     }
 }

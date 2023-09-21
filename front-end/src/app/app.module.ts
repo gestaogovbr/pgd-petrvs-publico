@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { NgModule, SecurityContext } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgChartsModule } from 'ng2-charts';
 import { BrowserModule } from '@angular/platform-browser';
@@ -17,7 +17,6 @@ import { UteisModule } from './modules/uteis/uteis.module';
 import { RotinaModule } from './modules/rotinas/rotina.module';
 import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
 import { NgScrollbarModule } from 'ngx-scrollbar';
-
 
 @NgModule({
   declarations: [
@@ -40,7 +39,7 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
     UteisModule,
     LogModule,
     RotinaModule,
-    NgScrollbarModule
+    NgScrollbarModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

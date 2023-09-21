@@ -3,7 +3,7 @@ import { Usuario } from './usuario.model';
 
 export type ComentarioTipo = "COMENTARIO" | "TECNICO" | "GERENCIAL" | "AVALIACAO" | "TAREFA" | "TIPO_ATIVIDADE";
 export type ComentarioPrivacidade = "PUBLICO" | "PRIVADO";
-export type ComentarioOrigem = undefined | "ATIVIDADE" | "ATIVIDADE_TAREFA" | "PROJETO" | "PROJETO_TAREFA";
+export type ComentarioOrigem = undefined | "ATIVIDADE" | "ATIVIDADE_TAREFA" | "PROJETO" | "PROJETO_TAREFA" | "PLANO_ENTREGA_ENTREGA";
 
 export interface HasComentarios {
     id: string;
@@ -25,6 +25,7 @@ export class Comentario extends Base {
     public atividade_tarefa_id: string | null = null; /* ID da tarefa que gerou o comentário */
     public projeto_id: string | null = null; /* ID do projeto que gerou o comentário */
     public projeto_tarefa_id: string | null = null; /* ID da tarefa que gerou o comentário */
+    public plano_entrega_entrega_id: string | null = null; /* ID da etrega do plano de entrega */
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

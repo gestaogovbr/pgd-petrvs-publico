@@ -54,7 +54,7 @@ class PlanoTrabalhoConsolidacao extends _base_model__WEBPACK_IMPORTED_MODULE_0__
     super();
     this.data_inicio = new Date();
     this.data_fim = new Date();
-    this.status = null; // Status atual da consolidação
+    this.status = "INCLUIDO"; // Status atual da consolidação
     this.avaliacoes = [];
     this.status_historico = [];
     this.plano_trabalho_id = "";
@@ -1262,6 +1262,12 @@ class PlanoTrabalhoConsolidacaoListComponent extends src_app_modules_base_page_f
       }
     })();
   }
+  anterior(consolidacao) {
+    return this.entity.consolidacoes.reduce((a, v) => this.util.asDate(v.data_inicio).getTime() < this.util.asDate(consolidacao.data_inicio).getTime() && (!a || this.util.asDate(a.data_inicio).getTime() < this.util.asDate(v.data_inicio).getTime()) ? v : a, undefined);
+  }
+  proximo(consolidacao) {
+    return this.entity.consolidacoes.reduce((a, v) => this.util.asDate(v.data_fim).getTime() > this.util.asDate(consolidacao.data_fim).getTime() && (!a || this.util.asDate(a.data_fim).getTime() > this.util.asDate(v.data_fim).getTime()) ? v : a, undefined);
+  }
   isDisabled(row) {
     return row && row.status != "INCLUIDO" || this.entity?.status != "ATIVO";
   }
@@ -1280,6 +1286,8 @@ class PlanoTrabalhoConsolidacaoListComponent extends src_app_modules_base_page_f
   dynamicButtons(row) {
     let result = [];
     let consolidacao = row;
+    const anterior = this.anterior(row);
+    const proximo = this.proximo(row);
     const isUsuarioConsolidacao = this.auth.usuario.id == this.entity.usuario_id;
     const isGestor = [this.entity.unidade.gestor?.usuario_id, this.entity.unidade.gestor_substituto?.usuario_id, this.entity.unidade.gestor_delegado?.usuario_id].includes(this.auth.usuario?.id);
     const BOTAO_CONCLUIR = {
@@ -1320,18 +1328,27 @@ class PlanoTrabalhoConsolidacaoListComponent extends src_app_modules_base_page_f
       color: "btn-outline-warning",
       onClick: this.cancelarAvaliacao.bind(this)
     };
+    /* (RN_CSLD_11) Não pode concluir a consolidação antes que a anterior não esteja concluida, e não pode retornar status da consolidação se a posterior estiver a frente (em status); */
+    const canConcluir = !anterior || ["CONCLUIDO", "AVALIADO"].includes(anterior.status);
+    const canCancelarConclusao = !proximo || ["INCLUIDO"].includes(proximo.status);
+    const canAvaliar = !anterior || ["AVALIADO"].includes(anterior.status);
+    const canCancelarAvaliacao = !proximo || ["INCLUIDO", "CONCLUIDO"].includes(proximo.status);
     if (!this.isDisabled()) {
-      if (consolidacao.status == "INCLUIDO" && (isUsuarioConsolidacao || this.auth.hasPermissionTo("MOD_PTR_CSLD_CONCL"))) {
+      if (consolidacao.status == "INCLUIDO" && canConcluir && (isUsuarioConsolidacao || this.auth.hasPermissionTo("MOD_PTR_CSLD_CONCL"))) {
         result.push(BOTAO_CONCLUIR);
       }
-      if (consolidacao.status == "CONCLUIDO" && this.planoTrabalhoService.diasParaConcluirConsolidacao(row, this.entity.programa) >= 0 && (isUsuarioConsolidacao || this.auth.hasPermissionTo("MOD_PTR_CSLD_DES_CONCL"))) {
+      if (consolidacao.status == "CONCLUIDO" && canCancelarConclusao && this.planoTrabalhoService.diasParaConcluirConsolidacao(row, this.entity.programa) >= 0 && (isUsuarioConsolidacao || this.auth.hasPermissionTo("MOD_PTR_CSLD_DES_CONCL"))) {
         result.push(BOTAO_CANCELAR_CONCLUSAO);
       }
-      if (consolidacao.status == "CONCLUIDO" && (isGestor || this.auth.hasPermissionTo("MOD_PTR_CSLD_AVALIAR"))) {
+      if (consolidacao.status == "CONCLUIDO" && canAvaliar && (isGestor || this.auth.hasPermissionTo("MOD_PTR_CSLD_AVALIAR"))) {
         result.push(BOTAO_AVALIAR);
       }
       if (consolidacao.status == "AVALIADO") {
-        /* TODO: Fazer as condições para avaliado */
+        /* TODO: Fazer as condições para avaliado
+          - Se for o usuário do plano, opção de recurso
+          - Se for o chefe, opção de cancelar avaliacao ou Reavaliar caso tenha tido recurso
+         */
+        //if(canCancelarAvaliacao) result.push(BOTAO_CANCELAR_AVALIACAO);
       }
     }
     return result;
@@ -2147,7 +2164,7 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
               - estando com o status 'ATIVO', o usuário precisa ser gestor da Unidade Executora e possuir a capacidade MOD_PTR_EDT_ATV.
           Após alterado, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
         */
-        let result = null;
+        let result = "";
         let participantePlanoEhLotadoUnidadeExecutora = false;
         let participantePlanoEhLotadoAlgumaAreaTrabalho = false;
         let periodoPlanoNaoConflitaOutroMesmaUnidadeMesmoParticipante = false;
@@ -2165,7 +2182,7 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
           participantePlanoEhLotadoUnidadeExecutora = participante ? participante.lotacao.unidade_id == _this.entity.unidade_id : false;
         });
         yield _this.dao?.query({
-          where: [["unidade_id", "==", _this.entity.unidade_id], ["usuario_id", "==", _this.entity.usuario_id]]
+          where: [["unidade_id", "==", _this.entity.unidade_id], ["usuario_id", "==", _this.form?.controls.usuario_id.value]]
         }).getAll().then(planosTrabalho => {
           let naoConflita = true;
           planosTrabalho.forEach(pt => {
@@ -2184,18 +2201,20 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
         let usuarioPossuiCapacidadeInclusaoPlanoConflitante = _this.auth.hasPermissionTo("MOD_PTR_INTSC_DATA");
         let usuarioPossuiCapacidadeAlteracaoPlanoAtivo = _this.auth.hasPermissionTo("MOD_PTR_EDT_ATV");
         if (_this.action == "new") {
-          if (!usuarioPossuiCapacidadeInclusao) result = "Você não possui a capacidade de inserir planos de trabalho (MOD_PTR_INCL)! ";
-          if (!(usuarioEhParticipantePgdHabilitado || usuarioEhGestorUnidadeExecutora)) result += "Para inserir um plano de trabalho, você precisa ser um participante habilitado do programa do plano, ou um dos gestores da sua unidade executora! ";
-          if (!(participantePlanoEhLotadoAlgumaAreaTrabalho || usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoAreasTrabalho)) result += "Para inserir um plano de trabalho, o participante deste deve estar lotado em alguma das suas áreas de trabalho, ou você precisa possuir a capacidade de não obedecer a essa regra (MOD_PTR_USERS_INCL)! ";
-          if (!(participantePlanoEhLotadoUnidadeExecutora || usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoUnidadeExecutora)) result += "Para inserir um plano de trabalho, o participante deste deve estar lotado na sua unidade executora, ou você precisa possuir a capacidade de não obedecer a essa regra (MOD_PTR_INCL_SEM_LOT)! ";
-          if (!(periodoPlanoNaoConflitaOutroMesmaUnidadeMesmoParticipante || usuarioPossuiCapacidadeInclusaoPlanoConflitante)) result += "O período de duração de um plano de um novo plano de trabalho não pode coincidir com o de outro plano já existente para a mesma unidade executora e mesmo participante, ou você precisa possuir a capacidade de não obedecer a essa regra (MOD_PTR_INTSC_DATA)! ";
+          if (!usuarioPossuiCapacidadeInclusao) result = "Você não possui a capacidade de inserir planos de trabalho (MOD_PTR_INCL). ";
+          if (!(usuarioEhParticipantePgdHabilitado || usuarioEhGestorUnidadeExecutora)) result += "Para inserir um plano de trabalho, você precisa ser um participante habilitado do programa do plano, ou um dos gestores da sua unidade executora. ";
+          if (!(participantePlanoEhLotadoAlgumaAreaTrabalho || usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoAreasTrabalho)) result += "Para inserir um plano de trabalho, o participante deste deve estar lotado em alguma das suas áreas de trabalho, ou você precisa possuir a capacidade de ser dispensado dessa regra (MOD_PTR_USERS_INCL). ";
+          if (!(participantePlanoEhLotadoUnidadeExecutora || usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoUnidadeExecutora)) result += "Para inserir um plano de trabalho, o participante deste deve estar lotado na sua unidade executora, ou você precisa possuir a capacidade de ser dispensado dessa regra (MOD_PTR_INCL_SEM_LOT). ";
+          if (!(periodoPlanoNaoConflitaOutroMesmaUnidadeMesmoParticipante || usuarioPossuiCapacidadeInclusaoPlanoConflitante)) result += "O período de duração de um novo plano de trabalho não pode coincidir com o de outro plano já existente para a mesma unidade executora e mesmo participante, ou você precisa possuir a capacidade de ser dispensado dessa regra (MOD_PTR_INTSC_DATA). ";
         } else if (_this.action == "edit") {
-          if (!usuarioPossuiCapacidadeAlteracao) result = "Você não possui a capacidade de alterar/editar planos de trabalho (MOD_PTR_EDT)! ";
-          if (!_this.planoTrabalhoService.isValido(_this.entity)) result += "O plano de trabalho não é válido, ou seja, foi cancelado, apagado ou arquivado! ";
-          if (planoIncluido && !(usuarioEhParticipantePlano || usuarioEhGestorUnidadeExecutora)) result += "Para alterar um plano de trabalho no status INCLUIDO, você precisaria ser o participante do plano ! ";
-          if (planoAguardandoAssinatura && !usuarioJaAssinouTCR) result += "Para alterar um plano de trabalho no status AGUARDANDO ASSINATURA, você precisa já ter assinado o TCR!";
-          if (planoAtivo && !(usuarioEhGestorUnidadeExecutora && usuarioPossuiCapacidadeAlteracaoPlanoAtivo)) result += "Para alterar um plano de trabalho no status ATIVO, você precisa ser gestor da unidade executora do plano e possuir a capacidade específica (MOD_PTR_EDT_ATV)! ";
+          if (!usuarioPossuiCapacidadeAlteracao) result = "Você não possui a capacidade de alterar/editar planos de trabalho (MOD_PTR_EDT). ";
+          if (!_this.planoTrabalhoService.isValido(_this.entity)) result += "O plano de trabalho não é válido, ou seja, foi cancelado, apagado ou arquivado. ";
+          if (planoIncluido && !(usuarioEhParticipantePlano || usuarioEhGestorUnidadeExecutora)) result += "Para alterar um plano de trabalho no status INCLUIDO, você precisaria ser o participante do plano. ";
+          if (planoAguardandoAssinatura && !usuarioJaAssinouTCR) result += "Para alterar um plano de trabalho no status AGUARDANDO ASSINATURA, você precisa já ter assinado o TCR. ";
+          if (planoAtivo && !(usuarioEhGestorUnidadeExecutora && usuarioPossuiCapacidadeAlteracaoPlanoAtivo)) result += "Para alterar um plano de trabalho no status ATIVO, você precisa ser gestor da unidade executora do plano e possuir a capacidade específica (MOD_PTR_EDT_ATV). ";
+          // checar novamente usuario e datas
         }
+
         return result;
         // TODO:
         // Validar se as entregas pertencem ao plano de entregas da unidade
@@ -2606,6 +2625,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/dao/plano-trabalho-dao.service */ 87744);
 /* harmony import */ var src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/modules/base/page-frame-base */ 76298);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common */ 89650);
 /* harmony import */ var _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../components/badge/badge.component */ 95489);
 /* harmony import */ var _components_accordion_accordion_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../components/accordion/accordion.component */ 90058);
 /* harmony import */ var _plano_trabalho_consolidacao_list_plano_trabalho_consolidacao_list_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../plano-trabalho-consolidacao-list/plano-trabalho-consolidacao-list.component */ 72132);
@@ -2617,7 +2637,17 @@ var _class;
 
 
 
+
 const _c0 = ["accordion"];
+function PlanoTrabalhoListAccordeonComponent_ng_template_2_badge_10_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](0, "badge", 12);
+  }
+  if (rf & 2) {
+    const badge_r7 = ctx.$implicit;
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("badge", badge_r7);
+  }
+}
 function PlanoTrabalhoListAccordeonComponent_ng_template_2_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "div", 4)(1, "div", 5);
@@ -2630,7 +2660,10 @@ function PlanoTrabalhoListAccordeonComponent_ng_template_2_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](8);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](9, "div", 9);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](10, "badge", 10);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](10, PlanoTrabalhoListAccordeonComponent_ng_template_2_badge_10_Template, 1, 1, "badge", 10);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](11, "div", 9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](12, "badge", 11);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]()();
   }
   if (rf & 2) {
@@ -2647,16 +2680,18 @@ function PlanoTrabalhoListAccordeonComponent_ng_template_2_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate1"](" ", ctx_r2.dao.getDateFormatted(item_r5.data_inicio) + " at\u00E9 " + ctx_r2.dao.getDateFormatted(item_r5.data_fim), " ");
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngForOf", ctx_r2.getPlanoBadges(item_r5));
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("label", ctx_r2.lookup.getValue(ctx_r2.lookup.PLANO_TRABALHO_STATUS, item_r5.status))("icon", ctx_r2.lookup.getIcon(ctx_r2.lookup.PLANO_TRABALHO_STATUS, item_r5.status))("color", ctx_r2.lookup.getColor(ctx_r2.lookup.PLANO_TRABALHO_STATUS, item_r5.status));
   }
 }
 function PlanoTrabalhoListAccordeonComponent_ng_template_4_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](0, "plano-trabalho-consolidacao-list", 11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](0, "plano-trabalho-consolidacao-list", 13);
   }
   if (rf & 2) {
-    const item_r6 = ctx.item;
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("entity", item_r6);
+    const item_r8 = ctx.item;
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("entity", item_r8);
   }
 }
 class PlanoTrabalhoListAccordeonComponent extends src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_2__.PageFrameBase {
@@ -2703,6 +2738,35 @@ class PlanoTrabalhoListAccordeonComponent extends src_app_modules_base_page_fram
       }
     })();
   }
+  getPlanoBadges(plano) {
+    let result = [];
+    let concluidos = plano.consolidacoes.filter(x => x.status == "CONCLUIDO");
+    let avaliados = plano.consolidacoes.filter(x => x.status == "AVALIADO");
+    if (concluidos.length) {
+      const concluido = this.lookup.getLookup(this.lookup.CONSOLIDACAO_STATUS, "CONCLUIDO");
+      result.push({
+        icon: concluido?.icon,
+        label: concluido?.value,
+        color: concluido?.color,
+        textValue: concluidos.length.toString()
+      });
+    }
+    if (avaliados.length) {
+      const avaliado = this.lookup.getLookup(this.lookup.CONSOLIDACAO_STATUS, "AVALIADO");
+      result.push({
+        icon: avaliado?.icon,
+        label: avaliado?.value,
+        color: avaliado?.color,
+        textValue: avaliados.length.toString()
+      });
+    }
+    if (JSON.stringify(plano._metadata?.badges) != this.JSON.stringify(result)) {
+      plano._metadata = Object.assign(plano._metadata || {}, {
+        badges: result
+      });
+    }
+    return plano._metadata.badges;
+  }
 }
 _class = PlanoTrabalhoListAccordeonComponent;
 _class.ɵfac = function PlanoTrabalhoListAccordeonComponent_Factory(t) {
@@ -2727,11 +2791,11 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]],
   decls: 6,
   vars: 4,
-  consts: [[3, "items", "selectedIndex", "titleTemplate", "template"], ["accordion", ""], ["planoTrabalhoSectionTitle", ""], ["planoTrabalhoSection", ""], [1, "row", "w-100"], [1, "col-md-1"], [1, "col-md-5"], ["color", "light", 3, "icon", "label", "hint"], [1, "col-md-4"], [1, "col-md-2"], [3, "label", "icon", "color"], [3, "entity"]],
+  consts: [[3, "items", "selectedIndex", "titleTemplate", "template"], ["accordion", ""], ["planoTrabalhoSectionTitle", ""], ["planoTrabalhoSection", ""], [1, "row", "w-100"], [1, "col-md-1"], [1, "col-md-4"], ["color", "light", 3, "icon", "label", "hint"], [1, "col-md-3"], [1, "col-md-2"], [3, "badge", 4, "ngFor", "ngForOf"], [3, "label", "icon", "color"], [3, "badge"], [3, "entity"]],
   template: function PlanoTrabalhoListAccordeonComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "accordion", 0, 1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](2, PlanoTrabalhoListAccordeonComponent_ng_template_2_Template, 11, 14, "ng-template", null, 2, _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](2, PlanoTrabalhoListAccordeonComponent_ng_template_2_Template, 13, 15, "ng-template", null, 2, _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](4, PlanoTrabalhoListAccordeonComponent_ng_template_4_Template, 1, 1, "ng-template", null, 3, _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
     }
@@ -2741,7 +2805,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("items", ctx.planos)("selectedIndex", ctx.selectedIndex)("titleTemplate", _r1)("template", _r3);
     }
   },
-  dependencies: [_components_badge_badge_component__WEBPACK_IMPORTED_MODULE_3__.BadgeComponent, _components_accordion_accordion_component__WEBPACK_IMPORTED_MODULE_4__.AccordionComponent, _plano_trabalho_consolidacao_list_plano_trabalho_consolidacao_list_component__WEBPACK_IMPORTED_MODULE_5__.PlanoTrabalhoConsolidacaoListComponent],
+  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_7__.NgForOf, _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_3__.BadgeComponent, _components_accordion_accordion_component__WEBPACK_IMPORTED_MODULE_4__.AccordionComponent, _plano_trabalho_consolidacao_list_plano_trabalho_consolidacao_list_component__WEBPACK_IMPORTED_MODULE_5__.PlanoTrabalhoConsolidacaoListComponent],
   styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
 });
 

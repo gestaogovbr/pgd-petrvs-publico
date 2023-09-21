@@ -44,7 +44,7 @@ export class InputTextComponent extends InputBase implements OnInit {
   @Input() path?: string;
   @Input() placeholder?: string;
   @Input() maxLength?: number = 250;
-  @Input() maskFormat: string = "";
+  @Input() maskFormat?: string;
   @Input() right?: string;
   @Input() maskDropSpecialCharacters: boolean = false; 
   @Input() required?: string;
@@ -52,8 +52,6 @@ export class InputTextComponent extends InputBase implements OnInit {
   @Input() set control(value: AbstractControl | undefined) {
     this._control = value;
   }
-  
-
   get control(): AbstractControl | undefined {
     return this.getControl();
   }

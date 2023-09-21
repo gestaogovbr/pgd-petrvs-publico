@@ -74,6 +74,7 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
   @Input() noButtons?: string;
   @Input() noMargin?: string;
   @Input() initialFocus?: string;
+  @Input() withScroll: boolean = true;
   @Input() forceInvalid: boolean = false;
   @Input() set disabled(value: boolean) {
     if(this._disabled != value) {
