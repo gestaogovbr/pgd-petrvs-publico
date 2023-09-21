@@ -243,6 +243,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     let planoArquivado = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'ARQUIVADO'; 
     let programaExigeOutrasAssinaturas = !!assinaturasExigidas.filter(a => a != this.auth.usuario?.id).length;
     let planoSuspenso = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'SUSPENSO'; 
+    let planoPossuiEntrega = planoTrabalho.entregas.length > 0; 
     switch (botao) {
       case this.BOTAO_ALTERAR:
         /*
@@ -252,8 +253,12 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
               - estando com o status 'AGUARDANDO_ASSINATURA', o usuário logado precisa ser um dos que já assinaram o TCR e todas as assinaturas tornam-se sem efeito;
               - estando com o status 'ATIVO', o usuário precisa ser gestor da Unidade Executora e possuir a capacidade MOD_PTR_EDT_ATV. Após alterado, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
         */
-        return this.auth.hasPermissionTo("MOD_PTR_EDT") && this.planoTrabalhoService.isValido(planoTrabalho) && 
-               ((planoIncluido && usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) || (planoAguardandoAssinatura && usuarioJaAssinouTCR) || (planoAtivo && usuarioEhGestorUnidadeExecutora && this.auth.hasPermissionTo("MOD_PTR_EDT_ATV")));
+       let condition1 = this.auth.hasPermissionTo("MOD_PTR_EDT");
+       let condition2 = this.planoTrabalhoService.isValido(planoTrabalho);
+       let condition3 = planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora);
+       let condition4 = planoAguardandoAssinatura && usuarioJaAssinouTCR;
+       let condition5 = planoAtivo && usuarioEhGestorUnidadeExecutora && this.auth.hasPermissionTo("MOD_PTR_EDT_ATV");
+        return  condition1 && condition2 && (condition3 || condition4 || condition5);
       case this.BOTAO_ARQUIVAR:
         /*
           (RN_PTR_N) ARQUIVAR
@@ -264,21 +269,25 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
       case this.BOTAO_ASSINAR:
         /*
           (RN_PTR_O) ASSINAR
+            - o plano precisa possuir ao menos uma entrega, e:
             - o plano precisa estar com o status INCLUIDO, e:
               - o usuário logado precisa ser o participante do plano ou o gestor da sua Unidade Executora, e
               - a assinatura do usuário logado precisa ser uma das exigidas pelo Programa de Gestão, e ele não ter ainda assinado;
             - ou o plano precisa estar com o status AGUARDANDO_ASSINATURA, e:
               - a assinatura do usuário logado precisa ser uma das exigidas pelo Programa de Gestão, e ele não ter ainda assinado;
         */
-        return (planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && assinaturaUsuarioEhExigida && !usuarioJaAssinouTCR) || (planoAguardandoAssinatura && assinaturaUsuarioEhExigida && !usuarioJaAssinouTCR);
+       let condicao1 = usuarioEhParticipante || usuarioEhGestorUnidadeExecutora;
+       let condicao2 = assinaturaUsuarioEhExigida && !usuarioJaAssinouTCR;
+        return planoPossuiEntrega && ((planoIncluido && condicao1 && condicao2) || (planoAguardandoAssinatura && condicao2));
       case this.BOTAO_ATIVAR:
         /*
           (RN_PTR_P) ATIVAR
           O plano precisa estar no status 'INCLUIDO', e
               - o usuário logado precisa ser o participante do plano ou gestor da Unidade Executora, e
-              - nenhuma assinatura no TCR ser exigida pelo programa;        
+              - nenhuma assinatura no TCR ser exigida pelo programa, e
+              - o plano de trabalho precisa ter ao menos uma entrega;        
         */
-        return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && !assinaturasExigidas.length;
+        return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && !assinaturasExigidas.length && planoPossuiEntrega;
       case this.BOTAO_CANCELAR_ASSINATURA:
         /*
           (RN_PTR_Q) CANCELAR ASSINATURA
@@ -312,9 +321,10 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
           (RN_PTR_U) ENVIAR PARA ASSINATURA
           O plano precisa estar com o status INCLUIDO; e
             - o usuário logado precisa ser o participante do plano ou gestor da sua Unidade Executora; e
-            - o programa de gestão precisa exigir não só a assinatura do usuário logado;
+            - o programa de gestão precisa exigir não só a assinatura do usuário logado, e
+            - o plano precisa possui ao menos uma entrega;
         */
-        return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && programaExigeOutrasAssinaturas;
+        return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && programaExigeOutrasAssinaturas && planoPossuiEntrega;
       case this.BOTAO_REATIVAR:
         /*
           (RN_PTR_W) REATIVAR

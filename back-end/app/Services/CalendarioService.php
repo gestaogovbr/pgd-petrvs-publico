@@ -408,7 +408,7 @@ class CalendarioService
                 $a = UtilService::asTimestamp($afastamento['data_inicio']);
                 $b = UtilService::asTimestamp($afastamento['data_fim']);
                 $intervalo = UtilService::intersection([new Interval(['start' => $start, 'end' => $end]), new Interval(['start' => $a, 'end' => $b])]);
-                if($intervalo && $intervalo->start != $intervalo->end) {
+                if($intervalo && $intervalo["start"] != $intervalo["end"]) {
                     /* Caso tenha uma intersecção, adiciona o período para retorno e insere em $result->afastamentos */
                     array_push($periodos, $intervalo);
                     if(gettype(array_search($afastamento, $result->afastamentos)) != 'integer') {array_push($result->afastamentos, $afastamento);}
@@ -425,7 +425,7 @@ class CalendarioService
                         new Interval(['start' =>$start, 'end' => $end]), 
                         new Interval(['start' => UtilService::asTimestamp($pausa['data_inicio']), 'end' => $pausa['data_fim'] ? UtilService::asTimestamp($pausa['data_fim']) : $end])
                     ]);
-                if($intervalo && $intervalo->start != $intervalo->end) {
+                if($intervalo && $intervalo["start"] != $intervalo["end"]) {
                     array_push($periodos, $intervalo);
                     if(!array_search($pausa, $result->pausas)) {array_push($result->pausas, $pausa);}
                 }
