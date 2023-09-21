@@ -328,7 +328,9 @@ const _c0 = ["planejamentoSuperior"];
 const _c1 = ["objetivos"];
 class PlanejamentoFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_6__.PageFormBase {
   constructor(injector) {
+    var _this;
     super(injector, src_app_models_planejamento_model__WEBPACK_IMPORTED_MODULE_5__.Planejamento, src_app_dao_planejamento_dao_service__WEBPACK_IMPORTED_MODULE_3__.PlanejamentoDaoService);
+    _this = this;
     this.injector = injector;
     this.planejamentosSuperiores = [];
     this.hasPermissionToUNEX = false;
@@ -351,21 +353,34 @@ class PlanejamentoFormComponent extends src_app_modules_base_page_form_base__WEB
       }
       return result;
     };
-    this.formValidation = form => {
-      /*  (RN_PLAN_INST_A)
-          Para a criação de um planejamento institucional são informações obrigatórias: nome, missão, visão, data de início, unidade responsável e ao menos um dos valores institucionais.
-      */
-      if (this.form.controls.data_fim.value && this.form.controls.data_inicio.value > this.form.controls.data_fim.value) return "A data do início não pode ser maior que a data do fim!";
-      if (this.form.controls.valores.value.length == 0) return "É obrigatória a inclusão de ao menos um valor institucional!";
-      /*  (RN_PLAN_INST_B) Não pode existir mais de um planejamento institucional para uma mesma unidade em um mesmo período de tempo;
-          GitLab #651: aguardando definição do assunto
-      if(!form!.controls.unidade_id.value.length) {
-        this.dao?.query({where: [['unidade_id', "==", null],["data_inicio", "<=", form!.controls.data_inicio.value]]})
-      } else {
-        this.dao?.query({where: [['unidade_id', "==", form!.controls.unidade_id.value]]})
-      } */
-      return undefined;
-    };
+    this.formValidation = /*#__PURE__*/function () {
+      var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (form) {
+        /*  (RN_PLAN_INST_A)
+            Para a criação de um planejamento institucional são informações obrigatórias: nome, missão, visão, data de início, unidade responsável e ao menos um dos valores institucionais.
+        */
+        let result = undefined;
+        if (_this.form.controls.data_fim.value && _this.form.controls.data_inicio.value > _this.form.controls.data_fim.value) return "A data do início não pode ser maior que a data do fim!";
+        if (_this.form.controls.valores.value.length == 0) return "É obrigatória a inclusão de ao menos um valor institucional!";
+        /*  (RN_PLAN_INST_B) Não pode existir mais de um planejamento institucional para uma mesma unidade em um mesmo período de tempo;
+            GitLab #651: aguardando definição do assunto
+        if(!form!.controls.unidade_id.value.length) {
+          this.dao?.query({where: [['unidade_id', "==", null],["data_inicio", "<=", form!.controls.data_inicio.value]]})
+        } else {
+          this.dao?.query({where: [["unidade_id", "==", form!.controls.unidade_id.value]]})
+        }
+        */
+        yield _this.dao?.query({
+          where: [['unidade_id', '==', _this.form.controls.unidade_id.value]]
+        }).getAll().then(unidade => {
+          console.log("unidade", unidade);
+          result = unidade.length > 0 ? "Unidade já possui planejamento para as datas selecionadas" : undefined;
+        });
+        return result;
+      });
+      return function (_x) {
+        return _ref.apply(this, arguments);
+      };
+    }();
     this.titleEdit = entity => {
       return "Editando " + this.lex.translate("Planejamento Institucional") + ': ' + (entity?.nome || "");
     };
@@ -416,13 +431,13 @@ class PlanejamentoFormComponent extends src_app_modules_base_page_form_base__WEB
     this.loadData(this.entity, form);
   }
   saveData(form) {
-    var _this = this;
+    var _this2 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       return new Promise((resolve, reject) => {
-        _this.objetivos.grid.confirm();
-        let planejamento = _this.util.fill(new src_app_models_planejamento_model__WEBPACK_IMPORTED_MODULE_5__.Planejamento(), _this.entity);
-        planejamento = _this.util.fillForm(planejamento, _this.form.value);
-        planejamento.objetivos = _this.objetivos.items;
+        _this2.objetivos.grid.confirm();
+        let planejamento = _this2.util.fill(new src_app_models_planejamento_model__WEBPACK_IMPORTED_MODULE_5__.Planejamento(), _this2.entity);
+        planejamento = _this2.util.fillForm(planejamento, _this2.form.value);
+        planejamento.objetivos = _this2.objetivos.items;
         resolve(planejamento);
       });
     })();
@@ -464,22 +479,22 @@ class PlanejamentoFormComponent extends src_app_modules_base_page_form_base__WEB
    * Se o planejamento superior for alterado, e já houver objetivos na lista vinculados a objetivos dele, avisar que eles perderão esses vínculos.
    */
   onPlanejamentoChange(event) {
-    var _this2 = this;
+    var _this3 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      if (_this2.form.controls.planejamento_superior_id.value != _this2.entity?.planejamento_superior_id && _this2.entity?.objetivos?.length && _this2.entity?.objetivos.filter(x => x.objetivo_superior && x.objetivo_superior.planejamento_id == _this2.entity?.planejamento_superior_id).length) {
-        let confirm = yield _this2.dialog.confirm("Alteração de Planejamento Superior", "Como já existe(m) objetivo(s) neste Planejamento, vinculado(s) a objetivo(s) do Planejamento Superior anterior, seus vínculos serão perdidos! Deseja continuar?");
+      if (_this3.form.controls.planejamento_superior_id.value != _this3.entity?.planejamento_superior_id && _this3.entity?.objetivos?.length && _this3.entity?.objetivos.filter(x => x.objetivo_superior && x.objetivo_superior.planejamento_id == _this3.entity?.planejamento_superior_id).length) {
+        let confirm = yield _this3.dialog.confirm("Alteração de Planejamento Superior", "Como já existe(m) objetivo(s) neste Planejamento, vinculado(s) a objetivo(s) do Planejamento Superior anterior, seus vínculos serão perdidos! Deseja continuar?");
         if (confirm) {
-          _this2.entity?.objetivos?.forEach(obj => obj.objetivo_superior_id = null);
+          _this3.entity?.objetivos?.forEach(obj => obj.objetivo_superior_id = null);
           //atualizar a lista de objetivos superiores
         } else {
-          _this2.form.controls.planejamento_superior_id.setValue(_this2.entity?.planejamento_superior_id);
+          _this3.form.controls.planejamento_superior_id.setValue(_this3.entity?.planejamento_superior_id);
         }
         ;
       }
       ;
-      _this2.objetivos.planejamento_superior_id = _this2.form.controls.planejamento_superior_id.value;
-      _this2.objetivos?.grid?.loadColumns();
-      _this2.cdRef.detectChanges();
+      _this3.objetivos.planejamento_superior_id = _this3.form.controls.planejamento_superior_id.value;
+      _this3.objetivos?.grid?.loadColumns();
+      _this3.cdRef.detectChanges();
     })();
   }
   /**
@@ -522,7 +537,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵInheritDefinitionFeature"]],
   decls: 24,
   vars: 30,
-  consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "DADOS", "label", "Dados"], [1, "row"], ["label", "Nome do Planejamento Institucional", "controlName", "nome", "required", "", 3, "size", "icon", "control"], ["controlName", "unidade_id", "labelInfo", "Unidade \u00E0 qual se refere o planejamento", "required", "", 3, "size", "control", "dao", "change"], ["date", "", "label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio", "labelInfo", "In\u00EDcio do Planejamento Institucional", 3, "size", "control"], ["date", "", "label", "Fim", "icon", "bi bi-calendar-date", "controlName", "data_fim", "labelInfo", "Fim do Planejamento Institucional", 3, "size", "control"], ["label", "Planejamento Institucional Superior", "controlName", "planejamento_superior_id", 3, "items", "control", "icon", "change"], ["planejamentoSuperior", ""], [1, "col-md-6"], ["label", "Miss\u00E3o", "controlName", "missao", "required", "", 3, "size", "rows", "control"], ["label", "Vis\u00E3o", "controlName", "visao", "required", "", 3, "size", "rows", "control"], ["label", "Valores", "controlName", "valores", 3, "size", "addItemHandle"], ["label", "Valor Institucional", "icon", "far fa-edit", "controlName", "valor_texto", 3, "control"], ["key", "OBJETIVOS", "label", "Objetivos"], ["noPersist", "", 3, "entity", "disabled", "planejamento_superior_id"], ["objetivos", ""]],
+  consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "DADOS", "label", "Dados"], [1, "row"], ["label", "Nome do Planejamento Institucional", "controlName", "nome", "required", "", 3, "size", "icon", "control"], ["controlName", "unidade_id", "labelInfo", "Unidade \u00E0 qual se refere o planejamento", "required", "", 3, "size", "control", "dao", "change"], ["date", "", "label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio", "labelInfo", "In\u00EDcio do Planejamento Institucional", "required", "", 3, "size", "control"], ["date", "", "label", "Fim", "icon", "bi bi-calendar-date", "controlName", "data_fim", "labelInfo", "Fim do Planejamento Institucional", "required", "", 3, "size", "control"], ["label", "Planejamento Institucional Superior", "controlName", "planejamento_superior_id", 3, "items", "control", "icon", "change"], ["planejamentoSuperior", ""], [1, "col-md-6"], ["label", "Miss\u00E3o", "controlName", "missao", "required", "", 3, "size", "rows", "control"], ["label", "Vis\u00E3o", "controlName", "visao", "required", "", 3, "size", "rows", "control"], ["label", "Valores", "controlName", "valores", 3, "size", "addItemHandle"], ["label", "Valor Institucional", "icon", "far fa-edit", "controlName", "valor_texto", 3, "control"], ["key", "OBJETIVOS", "label", "Objetivos"], ["noPersist", "", 3, "entity", "disabled", "planejamento_superior_id"], ["objetivos", ""]],
   template: function PlanejamentoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementStart"](0, "editable-form", 0);

@@ -6,7 +6,7 @@
                 <input-text [size]="2" label="SIGLA" controlName="id" [disabled]="action == 'new' ? undefined : 'true'" [attr.maxlength]=250></input-text>
                 <input-text [size]="4" label="Nome" controlName="nome_entidade" [attr.maxlength]=250></input-text>
                 <input-select [size]="3" label="Abrangência" controlName="abrangencia" [items]="lookup.ABRANGENCIA"></input-select>
-                <input-number [size]="3" label="Cod. IBGE" controlName="codigo_cidade"></input-number>
+                <input-number [size]="3" label="Cod. IBGE" icon="bi bi-clock" [control]="form!.controls.codigo_cidade"></input-number>
             </div>
             <div class="row">
                 <input-text [size]="12" label="Domínio" controlName="dominio_url" [disabled]="action == 'new' ? undefined : 'true'" [attr.maxlength]=250></input-text>
