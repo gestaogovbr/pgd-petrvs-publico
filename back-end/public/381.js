@@ -1431,6 +1431,7 @@ function ProjetoFormAlocacoesComponent_ng_template_19_Template(rf, ctx) {
   if (rf & 2) {
     const ctx_r13 = _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("size", 12)("control", ctx_r13.form.controls.descricao);
+    _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵattribute"]("maxlength", 250);
   }
 }
 function ProjetoFormAlocacoesComponent_ng_template_22_Template(rf, ctx) {
@@ -1706,7 +1707,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelementStart"](16, "column", 10);
       _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵtemplate"](17, ProjetoFormAlocacoesComponent_ng_template_17_Template, 2, 1, "ng-template", null, 11, _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵtemplateRefExtractor"]);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵtemplate"](19, ProjetoFormAlocacoesComponent_ng_template_19_Template, 1, 2, "ng-template", null, 12, _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵtemplate"](19, ProjetoFormAlocacoesComponent_ng_template_19_Template, 1, 3, "ng-template", null, 12, _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelementStart"](21, "column", 13);
       _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵtemplate"](22, ProjetoFormAlocacoesComponent_ng_template_22_Template, 2, 1, "ng-template", null, 14, _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵtemplateRefExtractor"]);
@@ -1805,6 +1806,7 @@ function ProjetoFormFasesComponent_ng_template_7_Template(rf, ctx) {
     const ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 8)("control", ctx_r3.form.controls.nome);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵattribute"]("maxlength", 250);
     _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 4)("control", ctx_r3.form.controls.cor);
   }
@@ -1828,6 +1830,7 @@ function ProjetoFormFasesComponent_ng_template_12_Template(rf, ctx) {
   if (rf & 2) {
     const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 12)("control", ctx_r7.form.controls.descricao);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵattribute"]("maxlength", 250);
   }
 }
 function ProjetoFormFasesComponent_ng_template_15_Template(rf, ctx) {
@@ -2015,11 +2018,11 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdef
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "editable-form", 0)(1, "div", 1)(2, "grid", 2)(3, "columns")(4, "column", 3);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](5, ProjetoFormFasesComponent_ng_template_5_Template, 1, 2, "ng-template", null, 4, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](7, ProjetoFormFasesComponent_ng_template_7_Template, 3, 4, "ng-template", null, 5, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](7, ProjetoFormFasesComponent_ng_template_7_Template, 3, 5, "ng-template", null, 5, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](9, "column", 6);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](10, ProjetoFormFasesComponent_ng_template_10_Template, 2, 1, "ng-template", null, 7, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](12, ProjetoFormFasesComponent_ng_template_12_Template, 1, 2, "ng-template", null, 8, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](12, ProjetoFormFasesComponent_ng_template_12_Template, 1, 3, "ng-template", null, 8, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](14, "column", 9);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](15, ProjetoFormFasesComponent_ng_template_15_Template, 2, 1, "ng-template", null, 10, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
@@ -2331,7 +2334,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵInheritDefinitionFeature"]],
   decls: 40,
-  vars: 48,
+  vars: 49,
   consts: [["initialFocus", "nome", 3, "form", "noButtons", "disabled", "submit", "cancel"], [1, "row"], ["label", "Nome", "controlName", "nome", "labelInfo", "Nome do projeto", "required", "", 3, "size"], ["label", "Fase", "icon", "bi bi-puzzle", "controlName", "fase_id", 3, "size", "items"], ["label", "Status", "icon", "bi bi-arrow-up-right-circle", "controlName", "status", 3, "size", "items"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", 3, "size", "rows"], ["label", "Finalidade", "controlName", "finalidade", 3, "size", "rows"], [1, "col-md-4"], ["title", "Usa Baseline (planejado)?", "labelInfo", "Se o utiliza baseline no projeto (planejamento inicial)", 3, "control", "change"], ["noIcon", "", "label", "In\u00EDcio planejado", "icon", "bi bi-calendar-date", "controlName", "data_inicio_baseline", 3, "date", "size", "disabled"], ["noIcon", "", "label", "T\u00E9rmino planejado", "icon", "bi bi-calendar-date", "controlName", "data_fim_baseline", 3, "date", "size", "disabled"], [1, "col-md-6"], ["title", "Cronograma autom\u00E1tico?", "transparent", "", "labelInfo", "Se o per\u00EDodo do projeto ser\u00E1 calculado automaticamente pelas tarefas", 3, "control", "change"], ["noIcon", "", "label", "In\u00EDcio real", "icon", "bi bi-calendar-date", "controlName", "data_inicio", 3, "date", "size", "disabled"], ["noIcon", "", "label", "T\u00E9rmino real", "icon", "bi bi-calendar-date", "controlName", "data_fim", 3, "date", "size", "disabled"], ["daysOrHours", "", "label", "Dura\u00E7\u00E3o", "controlName", "duracao", "labelInfo", "Se o projeto ser\u00E1 calculado em horas ou dias", 3, "size", "unit", "disabled", "control", "unitChange"], [1, "col-md-2"], ["title", "Autom\u00E1tico?", "labelInfo", "Se o progresso ser\u00E1 calculado automaticamente pela soma dos progressos das tarefas", 3, "control", "change"], ["label", "Progresso", "sufix", "%", "icon", "bi bi-clock", "controlName", "progresso", "labelInfo", "Progresso do projeto (% Conclu\u00EDdo)", 3, "decimals", "size", "disabled"], ["title", "Configura\u00E7\u00F5es", "collapse", "", "transparent", "", 3, "collapsed"], ["label", "Tempo corrido", "scale", "small", "labelPosition", "right", "controlName", "tempo_corrido", "labelInfo", "Se o calculo do tempo \u00E9 cont\u00EDnuo, sem considerar fins de semana e feriados", 3, "size"], ["label", "Usa horas", "scale", "small", "labelPosition", "right", "controlName", "usa_horas", "labelInfo", "Se utiliza as datas com horas (todos os calculos mudam de dias para horas)", 3, "size"], ["label", "Intervalo autom\u00E1tico", "scale", "small", "labelPosition", "right", "controlName", "calcula_intervalo", "labelInfo", "Se o intervalo entre a data de inicio e t\u00E9rmino s\u00E3o calculados automaticamente utilizando as tarefas", 3, "size"], ["label", "Progresso autom\u00E1tico", "scale", "small", "labelPosition", "right", "controlName", "soma_progresso_filhos", "labelInfo", "Se o progresso \u00E9 calculado automaticamente pela soma dos processos das tarefas", 3, "size"], ["label", "Agrupador", "scale", "small", "labelPosition", "right", "controlName", "agrupador", "labelInfo", "Se o projeto agrupa as tarefas dentro dele", 3, "size"], ["label", "Usa custo", "scale", "small", "labelPosition", "right", "controlName", "calcula_custos", "labelInfo", "Se o projeto gerencia custos", 3, "size"], ["label", "Aloca recursos no projeto", "scale", "small", "labelPosition", "right", "controlName", "aloca_proprios_recursos", "labelInfo", "Se o projeto aloca recursos nele pr\u00F3prio, independente das tarefas", 3, "size"], ["label", "Soma aloca\u00E7\u00F5es autom\u00E1tico", "scale", "small", "labelPosition", "right", "controlName", "soma_recusos_alocados_filhos", "labelInfo", "Se os recursos das tarefas totalizam no projeto", 3, "size"], ["label", "Possui custos no projeto", "scale", "small", "labelPosition", "right", "controlName", "custos_proprios", "labelInfo", "Se o projeto possui custos pr\u00F3prios, independente das tarefas", 3, "size"], ["label", "Soma custos autom\u00E1tico", "scale", "small", "labelPosition", "right", "controlName", "soma_custos_filhos", "labelInfo", "Se os custos das tarefas totalizam no projeto", 3, "size"], ["label", "Utiliza baseline", "scale", "small", "labelPosition", "right", "controlName", "usa_baseline", "labelInfo", "Utiliza baseline (planejamento inicial)", 3, "size"], ["title", "Expediente", "collapse", "", "transparent", "", 3, "collapsed", 4, "ngIf"], ["title", "Expediente", "collapse", "", "transparent", "", 3, "collapsed"], ["label", "Usar do escrit\u00F3rio:", "labelPosition", "right", "controlName", "usar_escritorio", "labelInfo", "Aloca recursos no projeto", 3, "size"], ["hostClass", "p-0", "label", "", "icon", "", "disabled", "", "controlName", "escritorio_id", 3, "size", "dao"], ["escritorio", ""], ["expediente", ""]],
   template: function ProjetoFormPrincipalComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -2390,6 +2393,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("form", ctx.form)("noButtons", !ctx.entity_id ? "true" : undefined)("disabled", ctx.formDisabled);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("size", 6);
+      _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("size", 3)("items", ctx.fases);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](1);
@@ -2631,6 +2635,7 @@ function ProjetoFormRecursosComponent_ng_template_14_input_text_4_Template(rf, c
   if (rf & 2) {
     const ctx_r33 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵnextContext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", ctx_r33.isMaterialServico(ctx_r33.tipoRecurso == null ? null : ctx_r33.tipoRecurso.value) ? 6 : 12)("control", ctx_r33.form.controls.nome);
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵattribute"]("maxlength", 250);
   }
 }
 const _c6 = function () {
@@ -2645,7 +2650,7 @@ function ProjetoFormRecursosComponent_ng_template_14_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](1, ProjetoFormRecursosComponent_ng_template_14_input_search_1_Template, 2, 2, "input-search", 22);
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](2, ProjetoFormRecursosComponent_ng_template_14_input_search_2_Template, 2, 2, "input-search", 23);
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](3, ProjetoFormRecursosComponent_ng_template_14_input_search_3_Template, 2, 7, "input-search", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](4, ProjetoFormRecursosComponent_ng_template_14_input_text_4_Template, 1, 2, "input-text", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](4, ProjetoFormRecursosComponent_ng_template_14_input_text_4_Template, 1, 3, "input-text", 25);
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
@@ -3015,6 +3020,7 @@ function ProjetoFormRegrasComponent_ng_template_9_Template(rf, ctx) {
   if (rf & 2) {
     const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 12)("control", ctx_r5.form.controls.nome);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵattribute"]("maxlength", 250);
   }
 }
 function ProjetoFormRegrasComponent_ng_template_12_Template(rf, ctx) {
@@ -3253,7 +3259,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](3, ProjetoFormRegrasComponent_ng_template_3_Template, 1, 1, "ng-template", null, 3, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](5, "columns")(6, "column", 4);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](7, ProjetoFormRegrasComponent_ng_template_7_Template, 2, 1, "ng-template", null, 5, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](9, ProjetoFormRegrasComponent_ng_template_9_Template, 1, 2, "ng-template", null, 6, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](9, ProjetoFormRegrasComponent_ng_template_9_Template, 1, 3, "ng-template", null, 6, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](11, "column", 7);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](12, ProjetoFormRegrasComponent_ng_template_12_Template, 1, 3, "ng-template", null, 8, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
@@ -3939,7 +3945,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵInheritDefinitionFeature"]],
   decls: 38,
-  vars: 39,
+  vars: 40,
   consts: [["right", "", 3, "title"], ["projetos", ""], ["key", "FOLD", "icon", "bi bi-table", "label", "Portif\u00F3lio"], ["key", "GANTT", "icon", "bi bi-bar-chart-steps", "label", "Gantt"], [3, "dao", "add", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome", "controlName", "nome", 3, "size", "control"], ["controlName", "usuario_id", 3, "size", "dao"], ["controlName", "unidade_id", 3, "size", "dao"], ["title", "#ID", 3, "template"], ["columnNumero", ""], ["titleHint", "Somente os recursos humanos/departamentais que possuem' lex.translate('perfil') 'para acessar o projeto ser\u00E3o listados aqui", 3, "title", "template"], ["columnNomeEnvolvidos", ""], ["title", "Descri\u00E7\u00E3o", 3, "template"], ["columnDescricao", ""], ["title", "Datas", 3, "template"], ["columnDatas", ""], ["title", "Custo", 3, "template"], ["columnCusto", ""], ["title", "Progresso", 3, "template"], ["columnProgresso", ""], ["title", "Status", 3, "template"], ["columnStatus", ""], ["type", "options", 3, "onEdit", "onDelete", "dynamicOptions", "dynamicButtons"], [3, "rows"], [1, "d-block"], [3, "url", "hint", 4, "ngFor", "ngForOf"], [3, "url", "hint"], ["color", "light", "icon", "bi bi-box-arrow-right", "hint", "Data de in\u00EDcio", 3, "label"], ["color", "light", "icon", "bi bi-box-arrow-in-right", "hint", "Data de t\u00E9rmino", 3, "label"], ["color", "warning", "icon", "bi bi-dash-square", "label", "N\u00E3o calcula", "hint", "Projeto configurado para n\u00E3o calcular custos", 4, "ngIf"], ["color", "light", "icon", "bi bi-cash-coin", "hint", "Projeto configurado para calcular custos", 3, "label", 4, "ngIf"], ["color", "warning", "icon", "bi bi-dash-square", "label", "N\u00E3o calcula", "hint", "Projeto configurado para n\u00E3o calcular custos"], ["color", "light", "icon", "bi bi-cash-coin", "hint", "Projeto configurado para calcular custos", 3, "label"], ["color", "success", 3, "value"], [1, "text-wrap"], [3, "icon", "label"], [3, "color", "label", 4, "ngIf"], [3, "color", "label"]],
   template: function ProjetoListComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -4003,6 +4009,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("size", 4)("control", ctx.filter.controls.nome);
+      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("size", 4)("dao", ctx.usuarioDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](1);
@@ -5175,6 +5182,7 @@ function ProjetoRecursoWidgetComponent_input_text_13_Template(rf, ctx) {
     const ctx_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵnextContext"]();
     const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵreference"](6);
     _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", ctx_r6.projetoService.isMaterialServico(_r2 == null ? null : _r2.value) ? 6 : 12)("control", ctx_r6.form.controls.nome);
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵattribute"]("maxlength", 250);
   }
 }
 const _c8 = function () {
@@ -5306,7 +5314,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](10, ProjetoRecursoWidgetComponent_input_search_10_Template, 2, 2, "input-search", 9);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](11, ProjetoRecursoWidgetComponent_input_search_11_Template, 2, 2, "input-search", 10);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](12, ProjetoRecursoWidgetComponent_input_search_12_Template, 2, 7, "input-search", 11);
-      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](13, ProjetoRecursoWidgetComponent_input_text_13_Template, 1, 2, "input-text", 12);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](13, ProjetoRecursoWidgetComponent_input_text_13_Template, 1, 3, "input-text", 12);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]()()();
     }
     if (rf & 2) {
@@ -5910,7 +5918,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵInheritDefinitionFeature"]],
   decls: 43,
-  vars: 47,
+  vars: 50,
   consts: [[3, "form", "noButtons", "disabled", "submit", "cancel"], [1, "row"], ["label", "Pai", "controlName", "tem_filhos", "labelInfo", "Se possui filhos, se \u00E9 uma tarefa sint\u00E9tica (resumo)", 3, "size"], ["controlName", "tipo", 3, "size", "label", "control", "items"], ["icon", "bi bi-arrow-up-right-circle", "controlName", "status_tarefa", 3, "size", "label", "items"], ["label", "Nome", "controlName", "nome", "labelInfo", "Nome da tarefa", 3, "size"], ["displayOnlySelected", "", "controlName", "atividade_id", 3, "size", "dao", "displayTemplate"], ["atividade", ""], ["displayAtividade", ""], ["controlName", "numero_processo", "labelInfo", "N\u00FAmero do processo, com a formata\u00E7\u00E3o de origem", 3, "label", "size", "control", "disabled"], ["procRequisicao", ""], ["controlName", "numero_documento", "labelInfo", "Numero do documento de requisi\u00E7\u00E3o, caso seja o Sei \u00E9 o numero Sei", 3, "label", "size", "control", "disabled"], ["docRequisicao", ""], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", 3, "size", "rows"], ["title", "Cronograma e progresso"], ["label", "Marco", "controlName", "marco_inicio", "labelInfo", "Marco in\u00EDcio", 3, "size"], ["label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio", 3, "date", "size"], ["label", "Marco", "controlName", "marco_termino", "labelInfo", "Marco t\u00E9rmino", 3, "size"], ["label", "T\u00E9rmino", "icon", "bi bi-calendar-date", "controlName", "data_fim", 3, "date", "size"], ["date", "", "label", "In\u00EDcio realizado", "icon", "bi bi-calendar-date", "controlName", "inicio_realizado", 3, "size"], ["date", "", "label", "T\u00E9rmino realizado", "icon", "bi bi-calendar-date", "controlName", "termino_relizado", 3, "size"], ["number", "", "prefix", "R$", "icon", "bi bi-clock", "controlName", "custo", "labelInfo", "Custo associado \u00E0 tarefa", 3, "label", "size"], ["number", "", "label", "Progresso", "sufix", "%", "icon", "bi bi-clock", "controlName", "progresso", "labelInfo", "Progresso do projeto (% Conclu\u00EDdo)", 3, "size"], ["title", "Configura\u00E7\u00F5es"], ["label", "Possui custos pr\u00F3prios", "scale", "small", "labelPosition", "right", "controlName", "ten_filhos", "labelInfo", "Define se a tarefa tem custos pr[oprios associados", 3, "size"], ["label", "Aloca recursos no projeto", "scale", "small", "labelPosition", "right", "controlName", "aloca_recursos_proprios", "labelInfo", "Aloca recursos pr\u00F3prios da tarefa", 3, "size"], ["scale", "small", "labelPosition", "right", "controlName", "possui_custos_proprios", "labelInfo", "Define se a tarefa tem custos pr[oprios associados", 3, "label", "size"], ["scale", "small", "labelPosition", "right", "controlName", "calcula_intervalo", "labelInfo", "Calculo intervalo de execu\u00E7\u00E3o da tarefa", 3, "label", "size"], ["label", "Contra\u00EDda", "scale", "small", "labelPosition", "right", "controlName", "contraido", "labelInfo", "Define se a tarefa tem custos pr[oprios associados", 3, "size"], ["label", "Agrupadora", "scale", "small", "labelPosition", "right", "controlName", "agrupador", "labelInfo", "A tarefa tem fun\u00E7\u00E3o agrupadora", 3, "size"], ["label", "Soma progresso das filhas", "scale", "small", "labelPosition", "right", "controlName", "soma_progresso_filhos", "labelInfo", "Calcula o progresso das tarefas filhas", 3, "size"], ["scale", "small", "labelPosition", "right", "controlName", "soma_recursos_alocados_filhos", "labelInfo", "Soma recursos das tarefas filhas", 3, "label", "size"]],
   template: function ProjetoTarefaFormPrincipalComponent_Template(rf, ctx) {
     if (rf & 1) {
@@ -5966,6 +5974,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 3)("label", "Status da " + ctx.lex.translate("tarefa"))("items", ctx.lookup.PROJETO_TAREFA_STATUS);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 12);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 12)("dao", ctx.atividadeDao)("displayTemplate", _r1);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](5);
@@ -5988,8 +5997,10 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 4);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("label", "Custo da " + ctx.lex.translate("tarefa"))("size", 4);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 4);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 6);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);

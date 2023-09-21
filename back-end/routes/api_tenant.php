@@ -73,6 +73,7 @@ use App\Http\Controllers\HistoricoDocenciaInternaCurriculumController;
 use App\Http\Controllers\HistoricoFuncaoCurriculumController;
 use App\Http\Controllers\HistoricoLotacaoCurriculumController;
 use App\Http\Controllers\PlanoTrabalhoConsolidacaoOcorrenciaController;
+use App\Models\Comparecimento;
 
 /*
 |--------------------------------------------------------------------------
@@ -173,7 +174,7 @@ Route::middleware(['auth:sanctum'])->prefix('Feriado')->group(function () { defa
 Route::middleware(['auth:sanctum'])->prefix('MaterialServico')->group(function () { defaultRoutes(MaterialServicoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('PlanejamentoObjetivo')->group(function () { defaultRoutes(PlanejamentoObjetivoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Programa')->group(function () { 
-    Route::post('assinaturas-exigidas', [ProgramaController::class, 'assinaturasExigidas']);
+    //Route::post('assinaturas-exigidas', [ProgramaController::class, 'assinaturasExigidas']);
     defaultRoutes(ProgramaController::class);
  });
 Route::middleware(['auth:sanctum'])->prefix('ProgramaParticipante')->group(function () {
@@ -268,7 +269,7 @@ Route::middleware(['auth:sanctum'])->prefix('Usuario')->group(function () {
     defaultRoutes(UsuarioController::class);
     Route::post('dashboard', [UsuarioController::class, 'dashboard']);
     Route::post('dashboard_gestor', [UsuarioController::class, 'dashboard_gestor']);
-    Route::post('ja-assinou-tcr', [UsuarioController::class, 'jaAssinouTCR']);
+    //Route::post('ja-assinou-tcr', [UsuarioController::class, 'jaAssinouTCR']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Perfil')->group(function () { defaultRoutes(PerfilController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Entidade')->group(function () {
@@ -324,3 +325,6 @@ Route::middleware(['auth:sanctum'])->prefix('HistoricoDocenciaExternaCurriculumP
 Route::middleware(['auth:sanctum'])->prefix('HistoricoDocenciaInternaCurriculumProfissional')->group(function () { defaultRoutes(HistoricoDocenciaInternaCurriculumController::class); });
 Route::middleware(['auth:sanctum'])->prefix('HistoricoFuncaoCurriculumProfissional')->group(function () { defaultRoutes(HistoricoFuncaoCurriculumController::class); });
 Route::middleware(['auth:sanctum'])->prefix('HistoricoLotacaoCurriculumProfissional')->group(function () { defaultRoutes(HistoricoLotacaoCurriculumController::class); });
+
+/* IN24_2023 - Comparecimento */
+Route::middleware(['auth:sanctum'])->prefix('Comparecimento')->group(function () { defaultRoutes(ComparecimentoController::class); });

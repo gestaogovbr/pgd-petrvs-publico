@@ -40,25 +40,19 @@ class LoginController extends Controller
                 $usuario->fresh();
             }
             $entidadeId = $request->session()->has("entidade_id") ? $request->session()->get("entidade_id") : null;
-                        /*             $usuario = Usuario::where("id", $usuario->id)->with(["vinculosUnidades" => function($query) use ($entidadeId) {
-                            $query->with(['unidade'])->whereHas('unidade', function ($query) use ($entidadeId) {
-                                return $query->where('entidade_id', '=', $entidadeId); });
-                        },"perfil.capacidades.tipoCapacidade", "unidades.usuarios.atribuicoes", "gerenciaTitular.usuarios.atribuicoes", "gerenciasSubstitutas.usuarios.atribuicoes",
-                            "vinculosUnidades.unidade" => function($query) {
-                                $query->with(["planosEntrega","unidade.planosEntrega"]);
-                        }])->first(); */
             $usuario = Usuario::where("id", $usuario->id)->with([
                 "areasTrabalho" => function($query) use ($entidadeId) {
                     $query->with(["unidade.gestor.usuario", "unidade.gestorSubstituto.usuario", "unidade.cidade", "unidade.planosEntrega", "unidade.unidadePai.planosEntrega", "atribuicoes"])->whereHas('unidade', function ($query) use ($entidadeId) {
                         return  $query->where('entidade_id', '=', $entidadeId);
-                    });             // Acredito que seja possível reduzir a qde de relacionamentos solicitados
+                    });             
+                },
+                "participacoesProgramas" => function($query) {
+                    $query->where("habilitado", 1);
                 },
                 "perfil.capacidades.tipoCapacidade",
                 "gerenciaTitular.atribuicoes",
                 "gerenciasSubstitutas.atribuicoes",
-                /*"vinculosUnidades.unidade" => function($query) {
-                    $query->with(["planosEntrega","unidade.planosEntrega"]);
-                }*/
+                "gerenciasDelegadas.atribuicoes"
             ])->first();
             $request->session()->put("unidade_id", $usuario->lotacao?->id);
         }

@@ -8,6 +8,8 @@ use App\Exceptions\ServerException;
 
 class PlanoEntregaEntregaController extends ControllerBase {
 
+    public $updatable = ["realizado", "progresso_realizado", "comentarios"];
+
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
             case 'STORE':

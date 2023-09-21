@@ -108,22 +108,18 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
 
   public ngOnInit() {
     super.ngOnInit();
+    let unidade: Unidade | null = null;
     this.planoEntrega = this.metadata?.plano_entrega;
     this.planejamentoId = this.metadata?.planejamento_id;
     this.cadeiaValorId = this.metadata?.cadeia_valor_id;
     this.unidadeId = this.metadata?.unidade_id;
     this.entity = this.metadata?.entrega as PlanoEntregaEntrega; 
-  }
-
-  ngAfterViewInit() {
-    super.ngAfterViewInit();
-    let unidade: Unidade | null = null;
     (async () => {
       await this.unidade?.loadSearch(this.unidadeId);
       await this.planejamento?.loadSearch(this.planejamentoId);
       await this.cadeiaValor?.loadSearch(this.cadeiaValorId);
       unidade = this.unidadeId?.length ? (await this.unidadeDao.getById(this.unidadeId!) as Unidade) : null;
-      this.idsUnidadesAscendentes = unidade!.path?.split('/').slice(1) || [];
+      this.idsUnidadesAscendentes = unidade?.path?.split('/').slice(1) || [];
     })();
   }
 
@@ -200,7 +196,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       this.gridProcessos?.confirm();
       let {meta, realizado, ...valueWithout} = this.form!.value;
       entrega = this.util.fillForm(entrega, valueWithout);
-      entrega.demandante = this.unidade?.selectedEntity;
+      entrega.unidade = this.unidade?.selectedEntity;
       entrega.entrega = this.entrega?.selectedEntity;
       entrega.meta = this.planoEntregaService.getEntregaValor(entrega.entrega!, meta);
       entrega.realizado = this.planoEntregaService.getEntregaValor(entrega.entrega!, realizado);
@@ -208,7 +204,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     });
   }
 
-  public onRealizadoChange(event: Event) {
+  public onRealizadoChange(value: any, entrega?: Entrega) {
     this.calculaRealizado();
   }
 
@@ -219,10 +215,6 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       let totalRealizado = !isNaN(realizado) ? ((realizado / meta) * 100).toFixed(2) || 0 : 0;
       this.form?.controls.progresso_realizado.setValue(totalRealizado);
     }
-  }
-
-  public checkTipoIndicador(tipos: string[]): boolean {
-    return tipos.includes((this.entrega?.selectedEntity as Entrega).tipo_indicador);
   }
 
   public dynamicOptionsObjetivos(row: any): ToolbarButton[] {

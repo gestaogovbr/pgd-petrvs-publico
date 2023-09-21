@@ -1,11 +1,9 @@
 <grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
     [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="canAdd()"
-    [hasEdit]="false">
+    [hasEdit]="false" [loadList]="onGridLoad.bind(this)">
     <toolbar *ngIf="!selectable" [buttons]="toolbarButtons">
-        <input-switch [size]="3" labelPosition="left" label="Agrupar por Un." controlName="agrupar"
-            [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
-        <input-switch [size]="2" labelPosition="left" label="Principais" controlName="principais"
-            [control]="filter!.controls.principais" (change)="grid!.reloadFilter()" [labelInfo]="lex.noun('Unidade', true) + ' onde o ' + lex.noun('usuario') + ' é integrante, incluindo unidades superiores das geridas por ele'"></input-switch>
+        <input-switch [size]="3" labelPosition="left" label="Agrupar por Un." controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
+        <input-switch [size]="2" labelPosition="left" label="Principais" controlName="principais" [control]="filter!.controls.principais" (change)="onPrincipaisChange($event)" [labelInfo]="lex.noun('Unidade', true) + ' onde o ' + lex.noun('usuario') + ' é integrante, incluindo unidades superiores das geridas por ele'"></input-switch>
     </toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed" [visible]="showFilter">
         <div class="row">
@@ -26,7 +24,7 @@
                 <span *ngIf="row.entregas?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-list-check"></i> {{row.entregas?.length}}</span>
             </ng-template>
             <ng-template let-row="row" #columnExpandedEntregas>
-                <plano-entrega-list-entrega [entity]="row" [cdRef]="cdRef" [cadeiaValorId]="row.cadeia_valor_id"></plano-entrega-list-entrega>
+                <plano-entrega-list-entrega [entity]="row" [execucao]="execucao" [cdRef]="cdRef" [planejamentoId]="row.planejamento_id" [cadeiaValorId]="row.cadeia_valor_id" [unidadeId]="row.unidade_id"></plano-entrega-list-entrega>
             </ng-template>
         </column>
         <column [titleTemplate]="titleIdNumeroStatus" [template]="columnNumero">

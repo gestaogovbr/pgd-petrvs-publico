@@ -15,6 +15,7 @@ use App\Models\Documento;
 use Illuminate\Support\Facades\DB;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\Programa;
+use App\Models\DocumentoAssinatura;
 use Carbon\Carbon;
 use DateTime;
 use Throwable;
@@ -230,8 +231,7 @@ class PlanoTrabalhoService extends ServiceBase
   }
 
   /**
-   * (RN_CSLD_1) Inclui ou atualiza as consolidações com base no período do plano de trabalho
-   *
+   * (RN_CSLD_1) Após criado ou alterado um plano de trabalho, os períodos de consolidação são automaticamente gerados ou recriados com base na periodicidade configurada no programa;
    * @param   string  $usuario_id
    * @return  Illuminate\Database\Eloquent\Collection      
    */
@@ -523,6 +523,14 @@ class PlanoTrabalhoService extends ServiceBase
     ];
   }
 
+  public function proxyRows($rows) {
+    foreach($rows as $row) {
+        $row->assinaturasExigidas = $this->programa->assinaturasExigidas($row->id);
+        $row->jaAssinaramTCR = $this->usuario->jaAssinaramTCR($row->id);
+    }
+    return $rows;
+}
+
   /**
    * Retorna um array com várias informações sobre o plano recebido como parâmetro que serão auxiliares na definição das permissões para as diversas operações possíveis com um Plano de Trabalho.
    * Se o plano recebido como parâmetro possuir ID, as informações devolvidas serão baseadas nos dados armazenados no banco. Caso contrário, as informações devolvidas serão baseadas nos dados
@@ -549,13 +557,13 @@ class PlanoTrabalhoService extends ServiceBase
     $result["planoStatus"] = empty($planoTrabalho['id']) ? null : PlanoTrabalho::find($planoTrabalho['id'])->status;
     $result["planoSuspenso"] = $this->isPlano("SUSPENSO", $planoTrabalho);
     $result["planoValido"] = $this->isPlanoTrabalhoValido($planoTrabalho);
-    $result["possuiPeriodoConflitanteOutroPlano"] = PlanoTrabalho::where("unidade_id",$planoTrabalho['unidade_id'])->where("usuario_id",$planoTrabalho['usuario_id'])->get()
-            ->find(fn($p) => $this->util->intersection([['start' => UtilService::asDateTime($p->data_inicio), 'end' => UtilService::asDateTime($p->data_fim)],
-            ['start' => UtilService::asDateTime($planoTrabalho["data_inicio"]), 'end' => UtilService::asDateTime($planoTrabalho["data_fim"])]]) != null) != null;
+    $result["naoPossuiPeriodoConflitanteOutroPlano"] = count(PlanoTrabalho::where("unidade_id",$planoTrabalho['unidade_id'])->where("usuario_id",$planoTrabalho['usuario_id'])->get()
+            ->filter(fn($p) => $this->util->intersection([['start' => UtilService::asDateTime($p->data_inicio), 'end' => UtilService::asDateTime($p->data_fim)],
+            ['start' => UtilService::asDateTime($planoTrabalho["data_inicio"]), 'end' => UtilService::asDateTime($planoTrabalho["data_fim"])]]) != null)) == 0;
     $result["unidadePlanoEhLotacao"] = $this->usuario->isLotacao(null, $planoTrabalho['unidade_id']);
     $result["usuarioEhParticipantePgdHabilitado"] = $this->usuario->isParticipantePgdHabilitado(null, $planoTrabalho["programa_id"]);
     $result["usuarioEhParticipantePlano"] = parent::loggedUser()->id == $planoTrabalho["usuario_id"];
-    $result["usuarioJaAssinouTCR"] = $this->usuario->jaAssinouTCR(null, $planoTrabalho["id"]);
+    $result["usuarioJaAssinouTCR"] = in_array(parent::loggedUser()->id, $this->usuario->jaAssinaramTCR($planoTrabalho["id"]));
     return $result;
   }
 
@@ -618,8 +626,14 @@ class PlanoTrabalhoService extends ServiceBase
   public function cancelarAssinatura($data, $unidade) {    
     try {
         DB::beginTransaction();
+        /*
+            (RN_PTR_Q)  
+            - Após o cancelamento da assinatura do usuário logado, se existir assinatura(s) de outro(s) usuário(s), o plano permanece no status 'AGUARDANDO_ASSINATURA'. 
+              Caso contrário, retrocessará para o status 'INCLUIDO';
+        */
         $planoTrabalho = PlanoTrabalho::find($data["id"]);
-        //FALTA IMPLEMENTAR: o plano permanece no status 'AGUARDANDO_ASSINATURA' ou retorna ao status 'INCLUIDO';
+        DocumentoAssinatura::where("usuario_id",parent::loggedUser()->id)->where("documento_id",$planoTrabalho->documento_id)->first()->delete();
+        $this->status->atualizaStatus($planoTrabalho, count($planoTrabalho->documento->assinaturas->toArray()) > 0 ? 'AGUARDANDO_ASSINATURA' : 'INCLUIDO', 'CANCELAMENTO DA ASSINATURA DO USUÁRIO: ' . parent::loggedUser()->nome . 'JUSTIFICATIVA: ' . $data["justificativa"]);
         DB::commit();
     } catch (Throwable $e) {
         DB::rollback();

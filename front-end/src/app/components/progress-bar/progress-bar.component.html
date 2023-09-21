@@ -1,6 +1,15 @@
-<div class="progress" [style.height.px]="height" [style.min-width.px]="minWidth">
-    <div [class]="progressClass" role="progressbar" [style.width.%]="percentage" 
-        [attr.aria-valuenow]="value" [attr.aria-valuemin]="min" [attr.aria-valuemax]="max">
+<div *ngIf="!isGoal; else stacked" class="progress" [style.height.px]="height" [style.min-width.px]="minWidth">
+    <div [class]="progressClass" role="progressbar" [style.width.%]="percentage" [attr.aria-valuenow]="value" [attr.aria-valuemin]="min" [attr.aria-valuemax]="max">
         <ng-container *ngIf="!isNoPercentage">{{percentage}}%</ng-container>
     </div>
 </div>
+<ng-template #stacked>
+    <div class="progress-stacked" [style.height.px]="height" [style.min-width.px]="minWidth">
+        <div class="progress" role="progressbar" aria-label="Valor"  [style.width.%]="percentage" [attr.aria-valuenow]="value" [attr.aria-valuemin]="min" [attr.aria-valuemax]="max">
+            <div [class]="progressClass"></div>
+        </div>
+        <div class="progress" role="progressbar" aria-label="Meta" [style.width.%]="goalPercentage" [attr.aria-valuenow]="goalValue" [attr.aria-valuemin]="min" [attr.aria-valuemax]="max">
+            <div class="progress-bar progress-bar-striped bg-warning"></div>
+        </div>
+    </div>
+</ng-template>

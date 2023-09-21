@@ -17,6 +17,7 @@ class ServerException extends Exception
         "CapacidadeStore" => "Usuário não tem permissão para gravar nessa tabela",
         "CapacidadeUpdate" => "Usuário não tem permissão para realizar esta alteração",
         "ValidateAtividade" => "Erro ao validar atividade",
+        "ValidateAtividadeTarefa" => "Erro ao validar tarefa da atividade",
         "ValidatePlanoTrabalho" => "Erro ao validar Plano de Trabalho",
         "ValidatePlanejamentoInstitucional" => "Erro ao validar Planejamento Institucional",
         "ValidateUnidade" => "Erro ao validar Unidade",

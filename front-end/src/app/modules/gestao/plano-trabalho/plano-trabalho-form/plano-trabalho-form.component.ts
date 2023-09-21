@@ -30,6 +30,7 @@ import { PlanoTrabalhoService } from '../plano-trabalho.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { TemplateDataset, TemplateService } from 'src/app/modules/uteis/templates/template.service';
 import { Template } from 'src/app/models/template.model';
+import { UtilService } from 'src/app/services/util.service';
 
 @Component({
   selector: 'plano-trabalho-form',
@@ -51,19 +52,16 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   @ViewChild('entrega', { static: false }) public entrega?: InputSelectComponent;
   @ViewChild('documentos', { static: false }) public documentos?: DocumentosComponent;
 
-  //public formAtividades: FormGroup;
-  //public formEntregas: FormGroup;
   public programaDao: ProgramaDaoService;
   public usuarioDao: UsuarioDaoService;
   public unidadeDao: UnidadeDaoService;
-  //public atividadeDao: AtividadeDaoService;
   public documentoDao: DocumentoDaoService;
   public documentoService: DocumentoService;
   public templateService: TemplateService;
+  public utilService: UtilService;
   public allPages: ListenerAllPagesService;
   public calendar: CalendarService;
   public tipoModalidadeDao: TipoModalidadeDaoService;
-  //public planoEntregaDao: PlanoEntregaDaoService;
   public planoTrabalhoService: PlanoTrabalhoService;
   public horasTotais?: Efemerides;
   public horasParciais?: Efemerides;
@@ -74,19 +72,19 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   public datasource: any;
   public template?: Template;
   public editingId?: string;
-
-  /*private _datasource: any;
-  private _entityDocumentos: PlanoTrabalho = new PlanoTrabalho();*/
+  public gestoresUnidadeExecutora: string[] = [];
 
   constructor(public injector: Injector) {
     super(injector, PlanoTrabalho, PlanoTrabalhoDaoService);
-    this.join = ["unidade.entidade", "entregas.entrega", "entregas.plano_entrega_entrega:id,plano_entrega_id", "usuario", "programa.template_tcr", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "entregas.plano_entrega_entrega.entrega"];
+    this.join = ["unidade.entidade", "unidade.gestor:id,usuario_id", "unidade.gestor_substituto:id,usuario_id", "unidade.gestor_delegado:id,usuario_id", "entregas.entrega", "entregas.plano_entrega_entrega:id,plano_entrega_id", 
+                "usuario", "programa.template_tcr", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "entregas.plano_entrega_entrega.entrega"];
     this.joinPrograma = ["template_tcr"];
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.documentoService = injector.get<DocumentoService>(DocumentoService);
     this.templateService = injector.get<TemplateService>(TemplateService);
+    this.utilService = injector.get<UtilService>(UtilService);
     this.calendar = injector.get<CalendarService>(CalendarService);
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
@@ -95,38 +93,34 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.modalWidth = 1200;
     this.planoDataset = this.dao!.dataset();
     this.form = this.fh.FormBuilder({
-      carga_horaria: {default: ""},
-      tempo_total: {default: ""},
-      tempo_proporcional: {default: ""},
-      data_inicio: {default: new Date()},
-      data_fim: {default: new Date()},
-      usuario_id: {default: ""},
-      unidade_id: {default: ""},
-      programa_id: {default: ""},
-      documento_id: {default: null},
-      documentos: {default: []},
-      atividades: {default: []},
-      entregas: {default: []},
-      tipo_modalidade_id: {default: ""},
-      forma_contagem_carga_horaria: {default: "DIA"},
-      editar_texto_complementar_unidade: {default: false},
-      editar_texto_complementar_usuario: {default: false},
-      unidade_texto_complementar: {default: ""},
-      usuario_texto_complementar: {default: ""}
+      carga_horaria: { default: "" },
+      tempo_total: { default: "" },
+      tempo_proporcional: { default: "" },
+      data_inicio: { default: new Date() },
+      data_fim: { default: new Date() },
+      usuario_id: { default: "" },
+      unidade_id: { default: "" },
+      programa_id: { default: "" },
+      documento_id: { default: null },
+      documentos: { default: [] },
+      atividades: { default: [] },
+      entregas: { default: [] },
+      tipo_modalidade_id: { default: "" },
+      forma_contagem_carga_horaria: { default: "DIA" },
+      editar_texto_complementar_unidade: { default: false },
+      editar_texto_complementar_usuario: { default: false },
+      unidade_texto_complementar: { default: "" },
+      usuario_texto_complementar: { default: "" }
     }, this.cdRef, this.validate);
-    /*this.formAtividades = this.fh.FormBuilder({
-      atividade_id: {default: ""}
-    }, this.cdRef, this.validateAtividades);
-    this.formEntregas = this.fh.FormBuilder({
-      nome: {default: ""},
-      entrega_id: {default: ""}
-    }, this.cdRef, this.validateEntregas);*/
   }
 
   public ngOnInit() {
     super.ngOnInit();
-    const segment = (this.url ? this.url[this.url.length-1]?.path : "") || "";
+    const segment = (this.url ? this.url[this.url.length - 1]?.path : "") || "";
     this.action = ["termos"].includes(segment) ? segment : this.action;
+    if(this.entity) [this.entity!.unidade!.gestor?.usuario_id, this.entity!.unidade!.gestor_substituto?.usuario_id, this.entity!.unidade!.gestor_delegado?.usuario_id].forEach(g => {
+      if(g) this.gestoresUnidadeExecutora.push(g);
+    });
   }
 
   public atualizarTcr() {
@@ -142,84 +136,88 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.cdRef.detectChanges();
   }
 
-  /* SUBSTITUIDO pela proriedade public de mesmo nome
-  public get datasource(): any {
-    /* _entityDocumentos é atualizado pelo angular na chamada do get entityDocumentos() * /
-    let data = this.dao!.datasource(this._entityDocumentos);
-    let programa = this.programa?.selectedEntity as Programa;
-    /* Atualiza os campos de texto complementar do usuário e da unidade * /
-    data.usuario.texto_complementar_plano = this.form!.controls.usuario_texto_complementar.value || "";
-    data.unidade.texto_complementar_plano = this.form!.controls.unidade_texto_complementar.value || "";
-    if(JSON.stringify(data) != this.JSON.stringify(this._datasource)) {
-      this._datasource = data;
-      /* Se o termo for um documento obrigatório, então será gerado um termo automaticamente * /
-      this.documentoId = undefined;
-      if(programa?.termo_obrigatorio) {
-        this.documentoId = this.form!.controls.documento_id.value;
-        let documentos: Documento[] = this.form!.controls.documentos.value || [];
-        let documento = documentos?.find((x: Documento) => x.id == this.documentoId);
-        if(!this.documentoId?.length || !documento || documento.assinaturas?.length || documento.tipo == "LINK") {
-          this.documentoId = this.dao?.generateUuid(),
-          documentos.push(new Documento({
-            id: this.documentoId, 
-            tipo: "HTML",
-            especie: "TCR",
-            titulo: "Termo de Ciência e Responsabilidade",
-            conteudo: this.templateService.renderTemplate(programa.template_tcr?.conteudo || "", this._datasource),
-            status: "GERADO",
-            _status: "ADD",
-            template: programa.template_tcr?.conteudo,
-            dataset: this.dao!.dataset(),
-            datasource: this._datasource,
-            entidade_id: this.auth.entidade?.id,
-            plano_trabalho_id: this.entity?.id,
-            template_id: programa.template_tcr_id
-          }));
-          this.form!.controls.documento_id.setValue(this.documentoId);
-          this.form!.controls.documentos.setValue(documentos);
-        }
-      }
-    }
-    return this._datasource;
-  }*/
-
-  /*public get template(): Template | undefined {
-    /* _entityDocumentos é atualizado pelo angular na chamada do get entityDocumentos() * /
-    return this.planoTrabalhoService.template(this._entityDocumentos);
-  }*/
-
   public get isTermos(): boolean {
     return this.action == "termos";
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-
-    if(['unidade_id', 'programa_id', 'usuario_id', 'tipo_modalidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if (['unidade_id', 'programa_id', 'usuario_id', 'tipo_modalidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    } else if(['carga_horaria'].indexOf(controlName) >= 0 && !control.value) {
+    } else if (['carga_horaria'].indexOf(controlName) >= 0 && !control.value) {
       result = "Valor não pode ser zero.";
-    } else if(['data_inicio', 'data_fim'].includes(controlName) && !this.util.isDataValid(control.value)) {
+    } else if (['data_inicio', 'data_fim'].includes(controlName) && !this.util.isDataValid(control.value)) {
       result = "Inválido";
-    } else if(this.programa && controlName == 'data_inicio' && (control.value as Date).getTime() < this.programa!.selectedEntity?.data_inicio.getTime()) {
+    } else if (this.programa && controlName == 'data_inicio' && (control.value as Date).getTime() < this.programa!.selectedEntity?.data_inicio.getTime()) {
       result = "Menor que programa";
-    } else if(this.programa && controlName == 'data_fim' && (control.value as Date).getTime() > this.programa!.selectedEntity?.data_fim.getTime()) {
+    } else if (this.programa && controlName == 'data_fim' && (control.value as Date).getTime() > this.programa!.selectedEntity?.data_fim.getTime()) {
       result = "Maior que programa";
-    } 
-
+    }
     return result;
   }
 
-  public formValidation = (form?: FormGroup) => {
+  public formValidation = async (form?: FormGroup) => {
+    /*
+      (RN_PTR_V) INCLUIR/INSERIR
+      O usuário logado precisa possuir a capacidade "MOD_PTR_INCL", e:
+          - o usuário logado precisa ser um participante do PGD, habilitado, ou ser gestor da Unidade Executora do plano; (RN_PTR_B); e
+          - o participante do plano precisa estar lotado em uma das áreas de trabalho do usuário logado, ou este deve possuir a capacidade MOD_PTR_USERS_INCL; e
+          - o participante do plano precisa estar lotado na Unidade Executora, ou o usuário logado possuir a capacidade MOD_PTR_INCL_SEM_LOT; e
+          - o novo Plano de Trabalho não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA
+
+      (RN_PTR_M) ALTERAR
+      O usuário logado precisa possuir a capacidade "MOD_PTR_EDT", o Plano de Trabalho precisa ser válido (ou seja, nem deletado, nem arquivado, nem estar no status CANCELADO), e:
+          - estando com o status 'INCLUIDO', o usuário logado precisa ser o participante do plano ou o gestor da Unidade Executora;
+          - estando com o status 'AGUARDANDO_ASSINATURA', o usuário logado precisa ser um dos que já assinaram o TCR e todas as assinaturas tornam-se sem efeito;
+          - estando com o status 'ATIVO', o usuário precisa ser gestor da Unidade Executora e possuir a capacidade MOD_PTR_EDT_ATV.
+      Após alterado, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
+    */
+    let result = "";
+    let participantePlanoEhLotadoUnidadeExecutora: boolean = false;
+    let participantePlanoEhLotadoAlgumaAreaTrabalho: boolean = false;
+    let periodoPlanoNaoConflitaOutroMesmaUnidadeMesmoParticipante: boolean = false;
+    let usuarioPossuiCapacidadeInclusao: boolean = this.auth.hasPermissionTo("MOD_PTR_INCL");
+    let usuarioPossuiCapacidadeAlteracao: boolean = this.auth.hasPermissionTo("MOD_PTR_EDT");
+    let usuarioEhParticipantePgdHabilitado: boolean = this.auth.usuario!.participacoes_programas.map(pp => pp.programa_id).includes(this.entity!.programa_id);
+    let usuarioEhGestorUnidadeExecutora: boolean = this.gestoresUnidadeExecutora.includes(this.auth.usuario!.id);
+    let planoAtivo: boolean = this.planoTrabalhoService.situacaoPlano(this.entity!) == 'ATIVO';
+    let planoIncluido: boolean = this.planoTrabalhoService.situacaoPlano(this.entity!) == 'INCLUIDO';
+    let planoAguardandoAssinatura: boolean = this.planoTrabalhoService.situacaoPlano(this.entity!) == 'AGUARDANDO_ASSINATURA';
+    let usuarioJaAssinouTCR: boolean = this.entity!.jaAssinaramTCR.includes(this.auth.usuario?.id!);
+    let usuarioEhParticipantePlano: boolean = this.entity!.usuario_id == this.auth.usuario?.id;
+    await this.usuarioDao.getById(this.entity!.usuario_id, ["lotacao"]).then((participante) => {
+      participantePlanoEhLotadoAlgumaAreaTrabalho = participante ? this.auth.usuario!.areas_trabalho!.map(at => at.unidade_id).includes(participante!.lotacao!.unidade_id) : false;
+      participantePlanoEhLotadoUnidadeExecutora = participante ? participante!.lotacao!.unidade_id == this.entity!.unidade_id : false;
+    });
+    await this.dao?.query({where: [["unidade_id","==",this.entity!.unidade_id],["usuario_id","==",this.form?.controls.usuario_id.value]]}).getAll().then((planosTrabalho) => {
+      let naoConflita = true;
+      planosTrabalho.forEach(pt => {
+        if(this.utilService.intersection([{start: this.utilService.asDate(pt.data_inicio)!, end: this.utilService.asDate(pt.data_fim)!}, {start: this.utilService.asDate(this.entity?.data_inicio)!, end: this.utilService.asDate(this.entity?.data_fim)!}])) naoConflita = false;
+      });
+      periodoPlanoNaoConflitaOutroMesmaUnidadeMesmoParticipante = naoConflita;
+    });
+    let usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoAreasTrabalho: boolean = this.auth.hasPermissionTo("MOD_PTR_USERS_INCL");
+    let usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoUnidadeExecutora: boolean = this.auth.hasPermissionTo("MOD_PTR_INCL_SEM_LOT");
+    let usuarioPossuiCapacidadeInclusaoPlanoConflitante: boolean = this.auth.hasPermissionTo("MOD_PTR_INTSC_DATA");
+    let usuarioPossuiCapacidadeAlteracaoPlanoAtivo: boolean = this.auth.hasPermissionTo("MOD_PTR_EDT_ATV");
+    if(this.action == "new") {
+      if(! usuarioPossuiCapacidadeInclusao) result = "Você não possui a capacidade de inserir planos de trabalho (MOD_PTR_INCL). ";
+      if(!(usuarioEhParticipantePgdHabilitado || usuarioEhGestorUnidadeExecutora)) result += "Para inserir um plano de trabalho, você precisa ser um participante habilitado do programa do plano, ou um dos gestores da sua unidade executora. ";
+      if(!(participantePlanoEhLotadoAlgumaAreaTrabalho || usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoAreasTrabalho)) result += "Para inserir um plano de trabalho, o participante deste deve estar lotado em alguma das suas áreas de trabalho, ou você precisa possuir a capacidade de ser dispensado dessa regra (MOD_PTR_USERS_INCL). ";
+      if(!(participantePlanoEhLotadoUnidadeExecutora || usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoUnidadeExecutora)) result += "Para inserir um plano de trabalho, o participante deste deve estar lotado na sua unidade executora, ou você precisa possuir a capacidade de ser dispensado dessa regra (MOD_PTR_INCL_SEM_LOT). ";
+      if(!(periodoPlanoNaoConflitaOutroMesmaUnidadeMesmoParticipante || usuarioPossuiCapacidadeInclusaoPlanoConflitante)) result += "O período de duração de um novo plano de trabalho não pode coincidir com o de outro plano já existente para a mesma unidade executora e mesmo participante, ou você precisa possuir a capacidade de ser dispensado dessa regra (MOD_PTR_INTSC_DATA). ";
+    } else if(this.action == "edit"){
+      if(! usuarioPossuiCapacidadeAlteracao) result = "Você não possui a capacidade de alterar/editar planos de trabalho (MOD_PTR_EDT). ";
+      if(! this.planoTrabalhoService.isValido(this.entity!)) result += "O plano de trabalho não é válido, ou seja, foi cancelado, apagado ou arquivado. ";
+      if(planoIncluido && (!(usuarioEhParticipantePlano || usuarioEhGestorUnidadeExecutora))) result += "Para alterar um plano de trabalho no status INCLUIDO, você precisaria ser o participante do plano. ";
+      if(planoAguardandoAssinatura && (!usuarioJaAssinouTCR)) result += "Para alterar um plano de trabalho no status AGUARDANDO ASSINATURA, você precisa já ter assinado o TCR. ";
+      if(planoAtivo && (!(usuarioEhGestorUnidadeExecutora && usuarioPossuiCapacidadeAlteracaoPlanoAtivo))) result += "Para alterar um plano de trabalho no status ATIVO, você precisa ser gestor da unidade executora do plano e possuir a capacidade específica (MOD_PTR_EDT_ATV). ";
+// checar novamente usuario e datas
+    }
+    return result;
     // TODO:
     // Validar se as entregas pertencem ao plano de entregas da unidade
-    // Validar se o usuários está habilitado no programa
-    return undefined;
   };
-
-  /*public updateEntregas(planoEntrega: PlanoEntrega | undefined) {
-    this.entregas = planoEntrega?.entregas?.map(x => Object.assign({}, { key: x.id, value: x.entrega?.nome || x.descricao, data: x })) || [];
-  }*/
 
   public onUnidadeSelect(selected: SelectItem) {
     let unidade = this.unidade?.selectedEntity as Unidade;
@@ -246,29 +244,23 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public onDataInicioChange(event: Event) {
-         
     const di = new Date(this.form!.controls.data_inicio.value).getTime();
     const df = new Date(this.form!.controls.data_fim.value).getTime();
-
-    if(df < di){
+    if (df < di) {
       let diaI = new Date(di);
       diaI.setDate(diaI.getDate() + 1);
-      this.form!.controls.data_fim.setValue(diaI)   
+      this.form!.controls.data_fim.setValue(diaI)
     }
-   
-   
     this.calculaTempos();
   }
 
   public onDataFimChange(event: Event) {
-
     const di = new Date(this.form!.controls.data_inicio.value).getTime();
     const df = new Date(this.form!.controls.data_fim.value).getTime();
-
-    if(df < di){
+    if (df < di) {
       let diaI = new Date(di);
       diaI.setDate(diaI.getDate() + 1);
-      this.form!.controls.data_fim.setValue(diaI)   
+      this.form!.controls.data_fim.setValue(diaI)
     }
     this.calculaTempos();
   }
@@ -283,7 +275,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     const carga = this.form?.controls.carga_horaria.value || 8;
     const usuario = this.usuario?.selectedEntity as Usuario;
     const unidade = this.unidade?.selectedEntity as Unidade;
-    if(usuario && unidade && this.util.isDataValid(inicio) && this.util.isDataValid(fim)) {
+    if (usuario && unidade && this.util.isDataValid(inicio) && this.util.isDataValid(fim)) {
       this.calendar.loadFeriadosCadastrados(unidade.id).then((feriados) => {
         this.horasTotais = this.calendar.calculaDataTempoUnidade(inicio, fim, carga, unidade, "ENTREGA", [], []);
         this.horasParciais = this.calendar.calculaDataTempoUnidade(inicio, fim, carga, unidade, "ENTREGA", [], usuario.afastamentos);
@@ -311,7 +303,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public async initializeData(form: FormGroup) {
-    if(this.isTermos) {
+    if (this.isTermos) {
       this.entity = (await this.dao!.getById(this.urlParams!.get("id")!, this.join))!;
     } else {
       this.entity = new PlanoTrabalho();
@@ -320,87 +312,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     }
     await this.loadData(this.entity, this.form!);
   }
-
-  /* Atividades *
-  public async addAtividades() {
-    return new PlanoTrabalhoAtividade({ plano_trabalho_id: this.entity?.id, _status: "ADD" }) as IIndexable;
-  }
-
-  public async loadAtividades(form: FormGroup, row: any) {
-    form.controls.atividade_id.setValue(row.atividade_id);
-  }
-
-  public async removeAtividades(row: any) {
-    row._status = "DELETE";
-    return false;
-  }
- 
-  public async saveAtividades(form: FormGroup, row: any) {
-    row.atividade_id = form.controls.atividade_id.value;
-    row.atividade = this.atividade?.selectedEntity as Atividade;
-    row._status = row._status == "ADD" ? row._status : "EDIT";
-    /*this.dialog.showSppinerOverlay("Carregando dados da atividade...");
-    try {
-      row.atividade = await this.atividadeDao?.getById(row.atividade_id)!;
-    } finally {
-      this.dialog.closeSppinerOverlay();
-    }* /
-    return row;
-  }
-
-  public validateAtividades = (control: AbstractControl, controlName: string) => {
-    let result = null;
-    if(controlName == 'atividade_id' && !control.value?.length) {
-      result = "Obrigatório";
-    }
-    return result;
-  }*/
-
-  /* Entregas * /
-  public async addEntregas() {
-    return new PlanoTrabalhoEntrega({ plano_trabalho_id: this.entity?.id, _status: "ADD" }) as IIndexable;
-  }
-
-  public async loadEntregas(form: FormGroup, row: any) {
-    form.controls.entrega_id.setValue(row.entrega_id);
-    form.controls.nome.setValue(row.nome);
-  }
-
-  public async removeEntregas(row: any) {
-    row._status = "DELETE";
-    return false;
-  }
- 
-  public async saveEntregas(form: FormGroup, row: any) {
-    row.entrega_id = form.controls.entrega_id.value;
-    row.entrega = this.entrega?.selectedItem?.data as PlanoTrabalhoEntrega;
-    row.nome = form.controls.nome.value;
-    row._status = row._status == "ADD" ? row._status : "EDIT";
-    return row;
-  }
-
-  public validateEntregas = (control: AbstractControl, controlName: string) => {
-    let result = null;
-    if(controlName == 'entrega_id' && !control.value?.length) {
-      result = "Obrigatório";
-    }
-    return result;
-  }*/
-
-  /* Gera o objeto entity baseado nas informações atuais do formulário para ser utilizado por Documentos * /
-  SUBSTITUIDO POR entity
-  public get entityDocumentos(): PlanoTrabalho {
-    let plano = this.loadEntity();
-    /* Remove campo de documentos para comparar * /
-    plano.documentos = [];
-    this._entityDocumentos.documentos = [];
-    if(JSON.stringify(plano) != JSON.stringify(this._entityDocumentos)) {
-      this._entityDocumentos = plano;  
-    }
-    /* Atribui novamente o campo de documentos * /
-    this._entityDocumentos.documentos = this.form!.controls.documentos.value;
-    return this._entityDocumentos;
-  }*/
 
   /* Cria um objeto Plano baseado nos dados do formulário */
   public loadEntity(): PlanoTrabalho {
@@ -426,8 +337,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.submitting = true;
     try {
       let requests: Promise<any>[] = [this.dao!.save(this.entity!, this.join)];
-      if(this.form!.controls.editar_texto_complementar_unidade.value) requests.push(this.unidadeDao.update(this.entity!.unidade_id, {texto_complementar_plano: this.form!.controls.unidade_texto_complementar.value}));
-      if(this.form!.controls.editar_texto_complementar_usuario.value) requests.push(this.usuarioDao.update(this.entity!.usuario_id, {texto_complementar_plano: this.form!.controls.usuario_texto_complementar.value}));
+      if (this.form!.controls.editar_texto_complementar_unidade.value) requests.push(this.unidadeDao.update(this.entity!.unidade_id, { texto_complementar_plano: this.form!.controls.unidade_texto_complementar.value }));
+      if (this.form!.controls.editar_texto_complementar_usuario.value) requests.push(this.usuarioDao.update(this.entity!.usuario_id, { texto_complementar_plano: this.form!.controls.usuario_texto_complementar.value }));
       let responses = await Promise.all(requests);
       this.entity = responses[0] as PlanoTrabalho;
     } finally {
@@ -437,7 +348,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public onTabSelect(tab: LookupItem) {
-    if(tab.key == "TERMO") this.atualizarTcr();
+    if (tab.key == "TERMO") this.atualizarTcr();
   }
 
   public titleEdit = (entity: PlanoTrabalho): string => {
@@ -448,49 +359,20 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     let result: ToolbarButton[] = [];
     let documento: Documento = row as Documento;
 
-    if(this.isTermos && this.planoTrabalhoService.needSign(this.entity, documento)) {
-      result.push({hint: "Assinar", icon: "bi bi-pen", onClick: this.signDocumento.bind(this) });
+    if (this.isTermos && this.planoTrabalhoService.needSign(this.entity, documento)) {
+      result.push({ hint: "Assinar", icon: "bi bi-pen", onClick: this.signDocumento.bind(this) });
     }
-    result.push({hint: "Preview", icon: "bi bi-zoom-in", onClick: ((documento: Documento) => { this.dialog.html({title: "Termo de adesão", modalWidth: 1000}, documento.conteudo || ""); }).bind(this) });
+    result.push({ hint: "Preview", icon: "bi bi-zoom-in", onClick: ((documento: Documento) => { this.dialog.html({ title: "Termo de adesão", modalWidth: 1000 }, documento.conteudo || ""); }).bind(this) });
 
     return result;
   }
 
-  /*public needSign(documento: Documento): boolean {
-    const tipoModalidade = this.entity!.tipo_modalidade!; //(this.tipoModalidade?.selectedEntity as TipoModalidade);
-    const usuario = this.entity!.usuario!; // (this.usuario?.selectedEntity as Usuario);
-    const unidade = this.entity!.unidade!; // (this.unidade?.selectedEntity as Unidade);
-    const entidade = unidade?.entidade;
-    const alredySigned = !!documento.assinaturas.find(x => x.usuario_id == this.auth.usuario!.id);
-    let ids: string[] = [];
-    if(tipoModalidade?.exige_assinatura && usuario) ids.push(usuario.id);
-    if(tipoModalidade?.exige_assinatura_gestor_unidade && unidade) ids.push(unidade.gestor_id || "", unidade.gestor_substituto_id || "");
-    if(tipoModalidade?.exige_assinatura_gestor_entidade && entidade) ids.push(entidade.gestor_id || "", entidade.gestor_substituto_id || "");
-    return !alredySigned && tipoModalidade && ids.includes(this.auth.usuario!.id);
-  }*/
-
   public async signDocumento(documento: Documento) {
     await this.documentoService.sign([documento]);
     this.cdRef.detectChanges();
-    /*this.dialog.confirm("Assinar", "Deseja realmente assinar o documento?").then(response => {
-      if(response) {
-        this.loading = true;
-        this.documentoDao.assinar([documento.id]).then(response => {
-          if(response?.length) {
-            let documentos = (this.form!.controls.documentos.value || []) as Documento[];
-            let found = documentos.find(x => x.id == documento?.id);
-            if(found) found.assinaturas = response[0].assinaturas;
-            this.form!.controls.documentos.setValue(documentos);
-            this.gridDocumentos?.reset();
-          }
-        }).finally(() => this.loading = false);
-      }
-    });*/
   }
 
   public get formaContagemCargaHoraria(): UnitWorkload {
-    //const forma = (this.unidade?.selectedEntity as Unidade)?.entidade?.forma_contagem_carga_horaria || this.auth.unidade?.entidade?.forma_contagem_carga_horaria || "DIA";
-    //console.log("FORMA: ", (this.unidade?.selectedEntity as Unidade)?.entidade?.forma_contagem_carga_horaria, this.auth.unidade?.entidade?.forma_contagem_carga_horaria);
     const forma = this.form?.controls.forma_contagem_carga_horaria.value || "DIA";
     return forma == "DIA" ? "day" : forma == "SEMANA" ? "week" : "mouth";
   }
@@ -499,54 +381,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.form!.controls.forma_contagem_carga_horaria.setValue(unit == "day" ? "DIA" : unit == "week" ? "SEMANA" : "MES");
   }
 
-  /*public async addDocumento() {
-    const documento = new Documento();
-    documento.id = this.dao!.generateUuid();
-    documento.plano_trabalho_id = this.entity!.id;
-    documento.especie = "TCR";
-    documento._status = "ADD";
-    this.go.navigate({route: ['gestao', 'plano-trabalho', 'termo']}, {metadata: {documento: documento, plano_trabalho: this.entity}, modalClose: (modalResult) => {
-      if(modalResult) {
-        (async () => {
-          let documentos = (this.form!.controls.documentos.value || []) as Documento[];
-          if(this.isTermos) {
-            this.clearErros();
-            this.dialog.showSppinerOverlay("Salvando dados do formulário");
-            try {
-              modalResult = await this.documentoDao.save(Object.assign(new Documento(), {
-                especie: "TCR",
-                conteudo: modalResult?.termo,
-                plano_trabalho_id: this.entity!.id,
-                status: "GERADO"
-              }), ["assinaturas.usuario:id,nome,apelido"]);
-            } catch (error: any) {
-              this.error(error.message ? error.message : error);
-              modalResult = undefined;
-            } finally {
-              this.dialog.closeSppinerOverlay();
-            }
-          }
-          if(modalResult) {
-            documentos.push(modalResult);
-            this.form!.controls.documentos.setValue(documentos);
-            this.dialog.showSppinerOverlay("Recarregando dados do plano");
-            await this.initializeData(this.form!);
-            this.dialog.closeSppinerOverlay();
-          }
-          this.cdRef.detectChanges();
-        })();
-      }
-    }});
-    return undefined;
-  }*/
-
   public isVigente(documento: Documento): boolean {
     return this.form!.controls.documento_id.value == documento.id;
   }
-
-  /*public onProcessoClick(row: any) {
-    this.allPages.openDocumentoSei(row.id_processo, row.id_documento);
-  }*/
 
 }
 

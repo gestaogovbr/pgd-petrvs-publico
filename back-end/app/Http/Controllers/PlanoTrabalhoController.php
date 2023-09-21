@@ -141,6 +141,7 @@ class PlanoTrabalhoController extends ControllerBase {
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         $can = false;
+        $usuarioService = new UsuarioService();
         switch ($action) {
             case 'QUERY':
                 if (!$usuario->hasPermissionTo('MOD_PTR')) throw new ServerException("CapacidadeSearchText", "Consulta não realizada");
@@ -164,12 +165,11 @@ class PlanoTrabalhoController extends ControllerBase {
                 $acao = UtilService::emptyEntry($planoTrabalho, "id") ? 'INSERT' : 'EDIT';
                 switch ($acao) {
                     case 'EDIT':    // alteração de um Plano de Trabalho
-                        if (!$usuario->hasPermissionTo('MOD_PTR_EDT')) throw new ServerException("CapacidadeStore", "Alteração não realizada");
-                        $condition1 = $condicoes['planoIncluido'] && ($usuario->isParticipante($planoTrabalho) || $condicoes['gestorUnidadeExecutora']);
-                        $condition2 = $condicoes['planoAguardandoAssinatura'] && $condicoes['usuarioJaAssinouTCR'];
-                        $condition3 = $condicoes['planoAtivo'] && $condicoes['gestorUnidadeExecutora'] && $usuario->hasPermissionTo('MOD_PTR_EDT_ATV');
-                        if($condicoes['planoValido'] && ($condition1 || $condition2 || $condition3))  $can = true;
-                        if(!$can) throw new ServerException("CapacidadeStore", "Alteração não realizada");
+                        if(!$usuario->hasPermissionTo('MOD_PTR_EDT')) throw new ServerException("ValidatePlanoTrabalho", "Usuário não possui a capacidade de alterar/editar planos de trabalho (MOD_PTR_EDT).");
+                        if(!$condicoes['planoValido']) throw new ServerException("ValidatePlanoTrabalho", "O plano de trabalho não é válido, ou seja, foi apagado, cancelado ou arquivado.");
+                        if($condicoes['planoIncluido'] && (!($usuarioService->isParticipante($planoTrabalho) || $condicoes['gestorUnidadeExecutora']))) throw new ServerException("ValidatePlanoTrabalho", "Para alterar um plano de trabalho no status INCLUIDO, o usuário logado precisa ser o participante do plano ou o gestor da sua unidade executora.");
+                        if($condicoes['planoAguardandoAssinatura'] && !$condicoes['usuarioJaAssinouTCR']) throw new ServerException("ValidatePlanoTrabalho", "Para alterar um plano de trabalho no status AGUARDANDO ASSINATURA, o usuário logado precisa já ter assinado o TCR.");
+                        if($condicoes['planoAtivo'] && !($condicoes['gestorUnidadeExecutora'] && $usuario->hasPermissionTo('MOD_PTR_EDT_ATV'))) throw new ServerException("ValidatePlanoTrabalho", "Para alterar um plano de trabalho no status ATIVO, o usuário logado precisa ser gestor da sua unidade executora e possuir a capacidade específica (MOD_PTR_EDT_ATV).");
                         /*  
                             (RN_PTR_M) Condições para que um Plano de Trabalho possa ser alterado:
                             O usuário logado precisa possuir a capacidade "MOD_PTR_EDT", o Plano de Trabalho precisa ser válido (ou seja, nem deletado, nem arquivado, nem estar no status CANCELADO), e:
@@ -179,12 +179,11 @@ class PlanoTrabalhoController extends ControllerBase {
                         */
                         break;
                     case 'INSERT':  // inclusão de um novo Plano de Trabalho
-                        if (!$usuario->hasPermissionTo('MOD_PTR_INCL')) throw new ServerException("CapacidadeStore", "Inclusão não realizada");
-                        $condition1 = $condicoes['usuarioEhParticipantePgdHabilitado'] || $condicoes['gestorUnidadeExecutora'];
-                        $condition2 = $condicoes['participanteLotadoAreaTrabalho'] || $usuario->hasPermissionTo('MOD_PTR_USERS_INCL');
-                        $condition3 = $condicoes['participanteLotadoUnidadeExecutora'] || $usuario->hasPermissionTo('MOD_PTR_INCL_SEM_LOT');
-                        $condition4 = !$condicoes['possuiPeriodoConflitanteOutroPlano'] || $usuario->hasPermissionTo('MOD_PTR_INTSC_DATA');
-                        if($condition1 && $condition2 && $condition3 && $condition4) $can = true;
+                        if(!$usuario->hasPermissionTo('MOD_PTR_INCL')) throw new ServerException("ValidatePlanoTrabalho", "Usuário não possui a capacidade de inserir planos de trabalho (MOD_PTR_INCL).");
+                        if(!($condicoes['usuarioEhParticipantePgdHabilitado'] || $condicoes['gestorUnidadeExecutora'])) throw new ServerException("ValidatePlanoTrabalho", "O usuário não é um participante habilitado no programa do plano de trabalho nem é gestor da sua unidade executora.");
+                        if(!($condicoes['participanteLotadoAreaTrabalho'] || $usuario->hasPermissionTo('MOD_PTR_USERS_INCL'))) throw new ServerException("ValidatePlanoTrabalho", "O participante do plano de trabalho não é lotado em nenhuma das áreas de trabalho do usuário logado, e este não possui a capacidade para ser dispensado dessa regra (MOD_PTR_USERS_INCL).");
+                        if(!($condicoes['participanteLotadoUnidadeExecutora'] || $usuario->hasPermissionTo('MOD_PTR_INCL_SEM_LOT'))) throw new ServerException("ValidatePlanoTrabalho", "O participante do plano de trabalho não é lotado na unidade executora do plano, e o usuário logado não possui a capacidade para ser dispensado dessa regra (MOD_PTR_INCL_SEM_LOT).");
+                        if(!($condicoes['naoPossuiPeriodoConflitanteOutroPlano'] || $usuario->hasPermissionTo('MOD_PTR_INTSC_DATA'))) throw new ServerException("ValidatePlanoTrabalho", "O período de duração do plano de trabalho apresenta conflito com a duração de outro plano da mesma unidade executora e mesmo participante, e o usuário logado não possui a capacidade para ser dispensado dessa regra (MOD_PTR_INTSC_DATA).");
                         /*  (RN_PTR_V) INCLUIR/INSERIR
                             O usuário logado precisa possuir a capacidade "MOD_PTR_INCL", e:
                                 - o usuário logado precisa ser um participante do PGD, habilitado, ou ser gestor da Unidade Executora do plano; (RN_PTR_B); e
@@ -192,7 +191,6 @@ class PlanoTrabalhoController extends ControllerBase {
                                 - o participante do plano precisa estar lotado na Unidade Executora, ou o usuário logado possuir a capacidade MOD_PTR_INCL_SEM_LOT; e
                                 - o novo Plano de Trabalho não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA
                         */
-                        if(!$can) throw new ServerException("CapacidadeStore", "Inserção não realizada"); 
                         break;              
                 }
                 break;
