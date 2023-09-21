@@ -1808,6 +1808,7 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
           plano_trabalho_id: source.plano_trabalho_id,
           etiquetas: source.etiquetas,
           checklist: source.checklist,
+          metadados: source.metadados,
           plano_trabalho_entrega_id: source.plano_trabalho_entrega_id,
           progresso: source.progresso,
           tarefas: (source.tarefas || []).map(tarefa => new src_app_models_atividade_tarefa_model__WEBPACK_IMPORTED_MODULE_8__.AtividadeTarefa(Object.assign({}, tarefa, {
@@ -1832,6 +1833,18 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
         _this3.entity.demandante_id = _this3.auth.usuario?.id || "";
         _this3.entity.unidade_id = _this3.auth.unidade?.id || "";
         _this3.entity.unidade = _this3.auth.unidade;
+        _this3.entity.metadados = {
+          atrasado: false,
+          tempo_despendido: 0,
+          tempo_atraso: 0,
+          pausado: false,
+          iniciado: false,
+          concluido: false,
+          avaliado: false,
+          arquivado: false,
+          produtividade: 0,
+          consolidacoes: []
+        };
         /* Verificar isso (TODO)
         if(this.queryParams?.numero_requisicao?.length) {
           this.entity.numero_requisicao = this.queryParams?.numero_requisicao;
@@ -2871,19 +2884,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   AtividadeListTarefaComponent: () => (/* binding */ AtividadeListTarefaComponent)
 /* harmony export */ });
 /* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
-/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/forms */ 70997);
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @angular/forms */ 70997);
 /* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/grid/grid.component */ 73150);
 /* harmony import */ var src_app_dao_atividade_tarefa_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/atividade-tarefa-dao.service */ 949);
 /* harmony import */ var src_app_listeners_listener_all_pages_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/listeners/listener-all-pages.service */ 79084);
 /* harmony import */ var src_app_models_atividade_tarefa_model__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/models/atividade-tarefa.model */ 88543);
 /* harmony import */ var src_app_modules_base_page_base__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/modules/base/page-base */ 17112);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/core */ 51197);
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @angular/common */ 89650);
-/* harmony import */ var _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../components/grid/columns/columns.component */ 57224);
-/* harmony import */ var _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../components/grid/column/column.component */ 83351);
-/* harmony import */ var _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../components/input/input-switch/input-switch.component */ 88820);
-/* harmony import */ var _uteis_comentarios_comentarios_widget_comentarios_widget_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../uteis/comentarios/comentarios-widget/comentarios-widget.component */ 81419);
-/* harmony import */ var _uteis_documentos_documentos_badge_documentos_badge_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../uteis/documentos/documentos-badge/documentos-badge.component */ 72504);
+/* harmony import */ var _atividade_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../atividade.service */ 57338);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @angular/common */ 89650);
+/* harmony import */ var _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../components/grid/columns/columns.component */ 57224);
+/* harmony import */ var _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../components/grid/column/column.component */ 83351);
+/* harmony import */ var _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/input/input-switch/input-switch.component */ 88820);
+/* harmony import */ var _uteis_comentarios_comentarios_widget_comentarios_widget_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../uteis/comentarios/comentarios-widget/comentarios-widget.component */ 81419);
+/* harmony import */ var _uteis_documentos_documentos_badge_documentos_badge_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../uteis/documentos/documentos-badge/documentos-badge.component */ 72504);
 
 var _class;
 
@@ -2900,82 +2914,83 @@ var _class;
 
 
 
+
 function AtividadeListTarefaComponent_ng_template_3_strong_0_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "strong", 13);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "strong", 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
-    const row_r11 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]().row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate"]((row_r11.tipo_tarefa == null ? null : row_r11.tipo_tarefa.nome) || "");
+    const row_r11 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵnextContext"]().row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtextInterpolate"]((row_r11.tipo_tarefa == null ? null : row_r11.tipo_tarefa.nome) || "");
   }
 }
 function AtividadeListTarefaComponent_ng_template_3_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](0, AtividadeListTarefaComponent_ng_template_3_strong_0_Template, 2, 1, "strong", 12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](0, AtividadeListTarefaComponent_ng_template_3_strong_0_Template, 2, 1, "strong", 12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtext"](1);
   }
   if (rf & 2) {
     const row_r11 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", row_r11.tipo_tarefa == null ? null : row_r11.tipo_tarefa.nome == null ? null : row_r11.tipo_tarefa.nome.length);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate1"](" ", row_r11.descricao, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("ngIf", row_r11.tipo_tarefa == null ? null : row_r11.tipo_tarefa.nome == null ? null : row_r11.tipo_tarefa.nome.length);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtextInterpolate1"](" ", row_r11.descricao, " ");
   }
 }
 function AtividadeListTarefaComponent_ng_template_7_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "documentos-badge", 14);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](0, "documentos-badge", 14);
   }
   if (rf & 2) {
     const row_r14 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("documento", row_r14.documento);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("documento", row_r14.documento);
   }
 }
 function AtividadeListTarefaComponent_ng_template_10_i_1_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "i", 17);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](0, "i", 17);
   }
 }
 function AtividadeListTarefaComponent_ng_template_10_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "div", 15);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](1, AtividadeListTarefaComponent_ng_template_10_i_1_Template, 1, 0, "i", 16);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "div", 15);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](1, AtividadeListTarefaComponent_ng_template_10_i_1_Template, 1, 0, "i", 16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
     const row_r15 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", row_r15.data_conclusao);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("ngIf", row_r15.data_conclusao);
   }
 }
 function AtividadeListTarefaComponent_ng_template_12_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "input-switch", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](0, "input-switch", 18);
   }
   if (rf & 2) {
-    const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 12)("control", ctx_r7.formEdit.controls.concluido);
+    const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 12)("control", ctx_r7.formEdit.controls.concluido);
   }
 }
 function AtividadeListTarefaComponent_ng_template_15_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "comentarios-widget", 19);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](0, "comentarios-widget", 19);
   }
   if (rf & 2) {
     const row_r18 = ctx.row;
-    const ctx_r9 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("entity", row_r18)("noPersist", ctx_r9.isPersist ? undefined : "true")("selectable", ctx_r9.selectable)("grid", ctx_r9.grid)("save", ctx_r9.addComentarioResult.bind(ctx_r9));
+    const ctx_r9 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("entity", row_r18)("noPersist", ctx_r9.isPersist ? undefined : "true")("selectable", ctx_r9.selectable)("grid", ctx_r9.grid)("save", ctx_r9.addComentarioResult.bind(ctx_r9));
   }
 }
 function AtividadeListTarefaComponent_column_17_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](0, "column", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](0, "column", 20);
   }
   if (rf & 2) {
-    const ctx_r10 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("onEdit", ctx_r10.editEntrega.bind(ctx_r10))("onDelete", ctx_r10.deleteEntrega.bind(ctx_r10));
+    const ctx_r10 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("dynamicButtons", ctx_r10.dynamicButtons.bind(ctx_r10));
   }
 }
 class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPACK_IMPORTED_MODULE_5__.PageBase {
@@ -2995,7 +3010,7 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
     super(injector);
     _this = this;
     this.injector = injector;
-    this.control = new _angular_forms__WEBPACK_IMPORTED_MODULE_12__.FormControl();
+    this.control = new _angular_forms__WEBPACK_IMPORTED_MODULE_13__.FormControl();
     this.disabled = false;
     this.editable = true;
     this.selectable = false;
@@ -3004,7 +3019,7 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
       icon: "bi bi-plus-circle",
       hint: "Incluir comentário"
     };
-    this.editEntrega = /*#__PURE__*/function () {
+    this.editTarefa = /*#__PURE__*/function () {
       var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (row) {
         _this.go.navigate({
           route: ['gestao', 'atividade', 'tarefa']
@@ -3049,6 +3064,7 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
       };
     }();
     this.dao = injector.get(src_app_dao_atividade_tarefa_dao_service__WEBPACK_IMPORTED_MODULE_2__.AtividadeTarefaDaoService);
+    this.atividadeService = injector.get(_atividade_service__WEBPACK_IMPORTED_MODULE_6__.AtividadeService);
     this.allPages = injector.get(src_app_listeners_listener_all_pages_service__WEBPACK_IMPORTED_MODULE_3__.ListenerAllPagesService);
     this.formEdit = this.fh.FormBuilder({
       concluido: {
@@ -3128,7 +3144,7 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
       return undefined;
     })();
   }
-  deleteEntrega(row) {
+  deleteTarefa(row) {
     var _this3 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       const confirm = yield _this3.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
@@ -3202,21 +3218,43 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
       }
     }
   }
+  dynamicButtons(row) {
+    let result = [];
+    let tarefa = row;
+    let lastConsolidacao = this.atividadeService.lastConsolidacao(this.atividade.metadados.consolidacoes);
+    /* (RN_CSLD_12) Tarefas concluidas de atividades em consolidação CONCLUIDO ou AVALIADO não poderão mais ser alteradas/excluidas, nem Remover conclusão.
+       (RN_CSLD_13) Tarefas de atividades em consolidação CONCLUIDO ou AVALIADO não poderão mais ser alteradas/excluidas, somente a opção de Concluir ficará disponível. */
+    if (!lastConsolidacao || lastConsolidacao.status == "INCLUIDO" || this.util.asDate(lastConsolidacao.data_conclusao).getTime() < this.util.asDate(tarefa.created_at).getTime()) {
+      result.push(Object.assign(this.grid.BUTTON_EDIT, {
+        onClick: this.editTarefa.bind(this)
+      }));
+      result.push(Object.assign(this.grid.BUTTON_DELETE, {
+        onClick: this.deleteTarefa.bind(this)
+      }));
+    }
+    return result;
+  }
+  canConcluidoEdit(row) {
+    let tarefa = row;
+    let lastConsolidacao = this.atividadeService.lastConsolidacao(this.atividade.metadados.consolidacoes);
+    /* (RN_CSLD_12) e (RN_CSLD_13) */
+    return !lastConsolidacao || lastConsolidacao.status == "INCLUIDO" || this.util.asDate(lastConsolidacao.data_conclusao).getTime() < this.util.asDate(tarefa.data_conclusao).getTime();
+  }
 }
 _class = AtividadeListTarefaComponent;
 _class.ɵfac = function AtividadeListTarefaComponent_Factory(t) {
-  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_11__.Injector));
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_12__.Injector));
 };
-_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdefineComponent"]({
+_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdefineComponent"]({
   type: _class,
   selectors: [["atividade-list-tarefa"]],
   viewQuery: function AtividadeListTarefaComponent_Query(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵviewQuery"](src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__.GridComponent, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵviewQuery"](src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__.GridComponent, 5);
     }
     if (rf & 2) {
       let _t;
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵloadQuery"]()) && (ctx.grid = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵloadQuery"]()) && (ctx.grid = _t.first);
     }
   },
   inputs: {
@@ -3228,49 +3266,49 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
     id_processo: "id_processo",
     atividade: "atividade"
   },
-  features: [_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵInheritDefinitionFeature"]],
+  features: [_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵInheritDefinitionFeature"]],
   decls: 18,
-  vars: 16,
-  consts: [[3, "control", "add", "disabled", "minHeight", "hasDelete", "editable"], [3, "title", "template"], ["tipoTarefaDescricao", ""], ["type", "timer", "title", "Tempo estimado", "onlyHours", "", "field", "tempo_estimado"], ["title", "Documento", 3, "template"], ["documento", ""], ["title", "Conclu\u00EDdo", 3, "align", "template", "columnEditTemplate", "edit", "save"], ["concluido", ""], ["editConcluido", ""], ["title", "Informa\u00E7\u00F5es adicionais", 3, "template"], ["tarefaComentarios", ""], ["type", "options", 3, "onEdit", "onDelete", 4, "ngIf"], ["class", "d-block", 4, "ngIf"], [1, "d-block"], [3, "documento"], [1, "text-center"], ["class", "bi bi-check-circle", 4, "ngIf"], [1, "bi", "bi-check-circle"], ["controlName", "concluido", 3, "size", "control"], ["origem", "ATIVIDADE_TAREFA", 3, "entity", "noPersist", "selectable", "grid", "save"], ["type", "options", 3, "onEdit", "onDelete"]],
+  vars: 18,
+  consts: [[3, "control", "add", "disabled", "minHeight", "hasEdit", "hasDelete", "editable"], [3, "title", "template"], ["tipoTarefaDescricao", ""], ["type", "timer", "title", "Tempo estimado", "onlyHours", "", "field", "tempo_estimado"], ["title", "Documento", 3, "template"], ["documento", ""], ["title", "Conclu\u00EDdo", 3, "align", "template", "columnEditTemplate", "canEdit", "edit", "save"], ["concluido", ""], ["editConcluido", ""], ["title", "Informa\u00E7\u00F5es adicionais", 3, "template"], ["tarefaComentarios", ""], ["type", "options", 3, "dynamicButtons", 4, "ngIf"], ["class", "d-block", 4, "ngIf"], [1, "d-block"], [3, "documento"], [1, "text-center"], ["class", "bi bi-check-circle", 4, "ngIf"], [1, "bi", "bi-check-circle"], ["controlName", "concluido", 3, "size", "control"], ["origem", "ATIVIDADE_TAREFA", 3, "entity", "noPersist", "selectable", "grid", "save"], ["type", "options", 3, "dynamicButtons"]],
   template: function AtividadeListTarefaComponent_Template(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "grid", 0)(1, "columns")(2, "column", 1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](3, AtividadeListTarefaComponent_ng_template_3_Template, 2, 2, "ng-template", null, 2, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](5, "column", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](6, "column", 4);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](7, AtividadeListTarefaComponent_ng_template_7_Template, 1, 1, "ng-template", null, 5, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](9, "column", 6);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](10, AtividadeListTarefaComponent_ng_template_10_Template, 2, 1, "ng-template", null, 7, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](12, AtividadeListTarefaComponent_ng_template_12_Template, 1, 2, "ng-template", null, 8, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](14, "column", 9);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](15, AtividadeListTarefaComponent_ng_template_15_Template, 1, 5, "ng-template", null, 10, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](17, AtividadeListTarefaComponent_column_17_Template, 1, 2, "column", 11);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "grid", 0)(1, "columns")(2, "column", 1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](3, AtividadeListTarefaComponent_ng_template_3_Template, 2, 2, "ng-template", null, 2, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](5, "column", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](6, "column", 4);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](7, AtividadeListTarefaComponent_ng_template_7_Template, 1, 1, "ng-template", null, 5, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](9, "column", 6);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](10, AtividadeListTarefaComponent_ng_template_10_Template, 2, 1, "ng-template", null, 7, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](12, AtividadeListTarefaComponent_ng_template_12_Template, 1, 2, "ng-template", null, 8, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](14, "column", 9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](15, AtividadeListTarefaComponent_ng_template_15_Template, 1, 5, "ng-template", null, 10, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](17, AtividadeListTarefaComponent_column_17_Template, 1, 1, "column", 11);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]()();
     }
     if (rf & 2) {
-      const _r0 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵreference"](4);
-      const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵreference"](8);
-      const _r4 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵreference"](11);
-      const _r6 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵreference"](13);
-      const _r8 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵreference"](16);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("control", ctx.control)("add", ctx.addTarefa.bind(ctx))("disabled", ctx.disabled ? "true" : undefined)("minHeight", ctx.isPersist ? 50 : 300)("hasDelete", true)("editable", ctx.editable ? "true" : undefined);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("title", ctx.lex.translate("Tipo de Tarefa") + " e Descri\u00E7\u00E3o")("template", _r0);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](4);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("template", _r2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("align", "center")("template", _r4)("columnEditTemplate", _r6)("edit", ctx.editable ? ctx.onColumnConcluidoEdit.bind(ctx) : undefined)("save", ctx.editable ? ctx.onColumnConcluidoSave.bind(ctx) : undefined);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("template", _r8);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", ctx.editable && !ctx.selectable && !ctx.id_processo);
+      const _r0 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵreference"](4);
+      const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵreference"](8);
+      const _r4 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵreference"](11);
+      const _r6 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵreference"](13);
+      const _r8 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵreference"](16);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("control", ctx.control)("add", ctx.addTarefa.bind(ctx))("disabled", ctx.disabled ? "true" : undefined)("minHeight", 300)("hasEdit", false)("hasDelete", false)("editable", ctx.editable ? "true" : undefined);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("title", ctx.lex.translate("Tipo de Tarefa") + " e Descri\u00E7\u00E3o")("template", _r0);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](4);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("template", _r2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("align", "center")("template", _r4)("columnEditTemplate", _r6)("canEdit", ctx.canConcluidoEdit.bind(ctx))("edit", ctx.editable ? ctx.onColumnConcluidoEdit.bind(ctx) : undefined)("save", ctx.editable ? ctx.onColumnConcluidoSave.bind(ctx) : undefined);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("template", _r8);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("ngIf", ctx.editable && !ctx.selectable && !ctx.id_processo);
     }
   },
-  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_13__.NgIf, src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_6__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_7__.ColumnComponent, _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_8__.InputSwitchComponent, _uteis_comentarios_comentarios_widget_comentarios_widget_component__WEBPACK_IMPORTED_MODULE_9__.ComentariosWidgetComponent, _uteis_documentos_documentos_badge_documentos_badge_component__WEBPACK_IMPORTED_MODULE_10__.DocumentosBadgeComponent],
+  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_14__.NgIf, src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_7__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_8__.ColumnComponent, _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_9__.InputSwitchComponent, _uteis_comentarios_comentarios_widget_comentarios_widget_component__WEBPACK_IMPORTED_MODULE_10__.ComentariosWidgetComponent, _uteis_documentos_documentos_badge_documentos_badge_component__WEBPACK_IMPORTED_MODULE_11__.DocumentosBadgeComponent],
   styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
 });
 

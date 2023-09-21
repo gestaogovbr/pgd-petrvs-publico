@@ -231,8 +231,7 @@ class PlanoTrabalhoService extends ServiceBase
   }
 
   /**
-   * (RN_CSLD_1) Inclui ou atualiza as consolidações com base no período do plano de trabalho
-   *
+   * (RN_CSLD_1) Após criado ou alterado um plano de trabalho, os períodos de consolidação são automaticamente gerados ou recriados com base na periodicidade configurada no programa;
    * @param   string  $usuario_id
    * @return  Illuminate\Database\Eloquent\Collection      
    */
@@ -558,9 +557,9 @@ class PlanoTrabalhoService extends ServiceBase
     $result["planoStatus"] = empty($planoTrabalho['id']) ? null : PlanoTrabalho::find($planoTrabalho['id'])->status;
     $result["planoSuspenso"] = $this->isPlano("SUSPENSO", $planoTrabalho);
     $result["planoValido"] = $this->isPlanoTrabalhoValido($planoTrabalho);
-    $result["possuiPeriodoConflitanteOutroPlano"] = PlanoTrabalho::where("unidade_id",$planoTrabalho['unidade_id'])->where("usuario_id",$planoTrabalho['usuario_id'])->get()
-            ->find(fn($p) => $this->util->intersection([['start' => UtilService::asDateTime($p->data_inicio), 'end' => UtilService::asDateTime($p->data_fim)],
-            ['start' => UtilService::asDateTime($planoTrabalho["data_inicio"]), 'end' => UtilService::asDateTime($planoTrabalho["data_fim"])]]) != null) != null;
+    $result["naoPossuiPeriodoConflitanteOutroPlano"] = count(PlanoTrabalho::where("unidade_id",$planoTrabalho['unidade_id'])->where("usuario_id",$planoTrabalho['usuario_id'])->get()
+            ->filter(fn($p) => $this->util->intersection([['start' => UtilService::asDateTime($p->data_inicio), 'end' => UtilService::asDateTime($p->data_fim)],
+            ['start' => UtilService::asDateTime($planoTrabalho["data_inicio"]), 'end' => UtilService::asDateTime($planoTrabalho["data_fim"])]]) != null)) == 0;
     $result["unidadePlanoEhLotacao"] = $this->usuario->isLotacao(null, $planoTrabalho['unidade_id']);
     $result["usuarioEhParticipantePgdHabilitado"] = $this->usuario->isParticipantePgdHabilitado(null, $planoTrabalho["programa_id"]);
     $result["usuarioEhParticipantePlano"] = parent::loggedUser()->id == $planoTrabalho["usuario_id"];

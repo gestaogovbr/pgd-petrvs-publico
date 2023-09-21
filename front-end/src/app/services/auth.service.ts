@@ -336,19 +336,13 @@ export class AuthService {
   }
 
   /**
-<<<<<<< HEAD
-   * Informa se o usuário logado é gestor(titular ou substituto) da unidade recebida como parâmetro. Se nenhuma unidade for repassada, 
-=======
-   * Informa se o usuário logado é gestor(titular ou substituto) da unidade repassada como parâmetro. Se nenhuma unidade for repassada,
->>>>>>> remotes/origin/develop
+   * Informa se o usuário logado é gestor(titular, substituto ou delegado) da unidade recebida como parâmetro. Se nenhuma unidade for repassada, 
    * será adotada a unidade selecionada pelo servidor na homepage.
    * @param pUnidade
    * @returns
    */
   public isGestorUnidade(pUnidade: Unidade | string | null = null): boolean {
-    /*       let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? this.unidades?.find(x => x.id == pUnidade) : pUnidade;
-          return !!unidade && [unidade.gestor_substituto_id, unidade.gestor_id].includes(this.usuario!.id);  */
-    let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? [this.usuario!.gerencia_titular?.unidade, ...(this.usuario!.gerencias_substitutas!.map(x => x.unidade))].find(x => x && x.id == pUnidade) : pUnidade;
+    let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? [this.usuario!.gerencia_titular?.unidade, ...(this.usuario!.gerencias_substitutas!.map(x => x.unidade)), ...(this.usuario!.gerencias_delegadas!.map(x => x.unidade))].find(x => x && x.id == pUnidade) : pUnidade;
     return !!unidade && [unidade.gestor_substituto?.usuario_id, unidade.gestor?.usuario_id].includes(this.usuario!.id);
   }
 
@@ -389,11 +383,7 @@ export class AuthService {
   }
 
   /**
-<<<<<<< HEAD
    * Informa se a unidade recebida como parâmetro é a lotação do usuário logado. Se nenhuma unidade for recebida, 
-=======
-   * Informa se a unidade repassada como parâmetro é a lotação do usuário logado. Se nenhuma unidade for repassada,
->>>>>>> remotes/origin/develop
    * será adotada a unidade selecionada pelo servidor na homepage.
    * @param pUnidade
    * @returns
@@ -415,17 +405,10 @@ export class AuthService {
   }
 
   /**
-<<<<<<< HEAD
    * Informa se o usuário logado tem como área de trabalho alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
    * recebida como parâmetro.
    * @param unidade 
    * @returns 
-=======
-   * Informa se o usuário logado tem como área de trabalho alguma das unidades pertencentes à linha hierárquica ascendente da unidade
-   * repassada como parâmetro.
-   * @param unidade
-   * @returns
->>>>>>> remotes/origin/develop
    */
   public isLotadoNaLinhaAscendente(unidade: Unidade): boolean {
     let result = false;
@@ -434,23 +417,18 @@ export class AuthService {
   }
 
   /**
-<<<<<<< HEAD
-   * Informa se o usuário logado é gestor (titular ou substituto) de alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
+   * Informa se o usuário logado é gestor (titular, substituto ou delegado) de alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
    * recebida como parâmetro.
    * @param unidade 
    * @returns 
-=======
-   * Informa se o usuário logado é gestor (titular ou substituto) de alguma das unidades pertencentes à linha hierárquica ascendente da unidade
-   * repassada como parâmetro.
-   * @param unidade
-   * @returns
->>>>>>> remotes/origin/develop
    */
   public isGestorLinhaAscendente(unidade: Unidade): boolean {
     let result = false;
-    let $ids_unidades = this.usuario?.gerencias_substitutas?.map(x => x.unidade_id) || [];
-    if(this.usuario?.gerencia_titular?.unidade?.id) $ids_unidades.push(this.usuario?.gerencia_titular!.unidade_id);
-    $ids_unidades.forEach(x => { if (!!unidade.path && unidade.path.split('/').slice(1).includes(x)) result = true; });
+    let $ids_gerencias_substitutas = this.usuario?.gerencias_substitutas?.map(x => x.unidade_id) || [];
+    let $ids_gerencias_delegadas = this.usuario?.gerencias_delegadas?.map(x => x.unidade_id) || [];
+    let $ids_gerencias = [...$ids_gerencias_delegadas, ...$ids_gerencias_substitutas];
+    if(this.usuario?.gerencia_titular?.unidade?.id) $ids_gerencias.push(this.usuario?.gerencia_titular!.unidade_id);
+    $ids_gerencias.forEach(x => { if (!!unidade.path && unidade.path.split('/').slice(1).includes(x)) result = true; });
     return false;
   }
 

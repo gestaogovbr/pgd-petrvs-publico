@@ -34,7 +34,7 @@ class PlanoEntregaEntrega extends ModelBase
         //'deleted_at', /* timestamp; */
     ];
 
-    public $fillable_changes = ['objetivos', 'processos']; 
+    public $fillable_changes = ['objetivos', 'processos', 'comentarios']; 
 
     // Casting
     protected $casts = [
@@ -45,10 +45,11 @@ class PlanoEntregaEntrega extends ModelBase
     // HasMany
     public function objetivos() { return $this->hasMany(PlanoEntregaEntregaObjetivo::class, 'entrega_id'); }  //ok
     public function processos() { return $this->hasMany(PlanoEntregaEntregaProcesso::class, 'entrega_id'); }  //ok
+    public function comentarios() { return $this->hasMany(Comentario::class); }
     public function entregasPlanoTrabalho() { return $this->hasMany(PlanoTrabalhoEntrega::class); }     
     // Belongs
     public function planoEntrega() { return $this->belongsTo(PlanoEntrega::class); }    
     public function entrega() { return $this->belongsTo(Entrega::class); }      //nullable
-    public function demandante() { return $this->belongsTo(Unidade::class, 'unidade_id'); }  
+    public function unidade() { return $this->belongsTo(Unidade::class, 'unidade_id'); }  
     public function entregaPai() { return $this->belongsTo(PlanoEntregaEntrega::class, 'entrega_pai_id'); }        //nullable
 }

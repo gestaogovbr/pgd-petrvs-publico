@@ -36,7 +36,7 @@ export class PlanoEntrega extends Base implements HasStatus {
   public numero?: number;                                           // Número do plano de entrega (Gerado pelo sistema)
   public data_arquivamento?: Date | null;
   public metadados: PlanoEntregaMetadados | undefined = undefined;  // Campo virtual contendo informações calculadas pelo servidor
-  public status: PlanoEntregaStatus | null = null;                  // Status atual do plano de entregas
+  public status: PlanoEntregaStatus = "INCLUIDO";                   // Status atual do plano de entregas
 
   public unidade_id: string = '';
   public plano_entrega_id: string | null = null;

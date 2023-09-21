@@ -141,6 +141,7 @@ class Usuario extends Authenticatable
     // Others relationships
     public function gerenciaTitular() { return $this->hasOne(UnidadeIntegrante::class)->has('gestor'); }
     public function gerenciasSubstitutas() { return $this->hasMany(UnidadeIntegrante::class)->has('gestorSubstituto'); }
+    public function gerenciasDelegadas() { return $this->hasMany(UnidadeIntegrante::class)->has('gestorDelegado'); }
     public function lotacao() { return $this->hasOne(UnidadeIntegrante::class)->has('lotado'); }
     //public function areasTrabalho() { return $this->hasMany(UnidadeIntegrante::class)->has('lotado')->orHas('colaborador'); }
     public function areasTrabalho() { return $this->hasMany(UnidadeIntegrante::class)->has('atribuicoes'); }

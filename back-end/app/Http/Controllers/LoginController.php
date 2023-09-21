@@ -52,6 +52,7 @@ class LoginController extends Controller
                 "perfil.capacidades.tipoCapacidade",
                 "gerenciaTitular.atribuicoes",
                 "gerenciasSubstitutas.atribuicoes",
+                "gerenciasDelegadas.atribuicoes"
             ])->first();
             $request->session()->put("unidade_id", $usuario->lotacao?->id);
         }

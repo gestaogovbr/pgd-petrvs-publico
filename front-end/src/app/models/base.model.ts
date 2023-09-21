@@ -4,7 +4,7 @@ export interface IIndexable {
 
 export type EntityStatus = "ADD" | "EDIT" | "DELETE";
 
-export type IntegranteAtribuicao = "LOTADO" | "GESTOR" | "GESTOR_SUBSTITUTO" | "AVALIADOR_PLANO_ENTREGA" | "AVALIADOR_PLANO_TRABALHO" | "HOMOLOGADOR_PLANO_ENTREGA";
+export type IntegranteAtribuicao = "LOTADO" | "GESTOR" | "GESTOR_DELEGADO" | "GESTOR_SUBSTITUTO" | "AVALIADOR_PLANO_ENTREGA" | "AVALIADOR_PLANO_TRABALHO" | "HOMOLOGADOR_PLANO_ENTREGA";
 
 export abstract class Base implements IIndexable {
     public id: string = "";

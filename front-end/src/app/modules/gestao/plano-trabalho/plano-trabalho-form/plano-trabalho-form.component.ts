@@ -30,6 +30,7 @@ import { PlanoTrabalhoService } from '../plano-trabalho.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { TemplateDataset, TemplateService } from 'src/app/modules/uteis/templates/template.service';
 import { Template } from 'src/app/models/template.model';
+import { UtilService } from 'src/app/services/util.service';
 
 @Component({
   selector: 'plano-trabalho-form',
@@ -57,6 +58,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   public documentoDao: DocumentoDaoService;
   public documentoService: DocumentoService;
   public templateService: TemplateService;
+  public utilService: UtilService;
   public allPages: ListenerAllPagesService;
   public calendar: CalendarService;
   public tipoModalidadeDao: TipoModalidadeDaoService;
@@ -70,16 +72,19 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   public datasource: any;
   public template?: Template;
   public editingId?: string;
+  public gestoresUnidadeExecutora: string[] = [];
 
   constructor(public injector: Injector) {
     super(injector, PlanoTrabalho, PlanoTrabalhoDaoService);
-    this.join = ["unidade.entidade", "entregas.entrega", "entregas.plano_entrega_entrega:id,plano_entrega_id", "usuario", "programa.template_tcr", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "entregas.plano_entrega_entrega.entrega"];
+    this.join = ["unidade.entidade", "unidade.gestor:id,usuario_id", "unidade.gestor_substituto:id,usuario_id", "unidade.gestor_delegado:id,usuario_id", "entregas.entrega", "entregas.plano_entrega_entrega:id,plano_entrega_id", 
+                "usuario", "programa.template_tcr", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "entregas.plano_entrega_entrega.entrega"];
     this.joinPrograma = ["template_tcr"];
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.documentoService = injector.get<DocumentoService>(DocumentoService);
     this.templateService = injector.get<TemplateService>(TemplateService);
+    this.utilService = injector.get<UtilService>(UtilService);
     this.calendar = injector.get<CalendarService>(CalendarService);
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
@@ -113,6 +118,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     super.ngOnInit();
     const segment = (this.url ? this.url[this.url.length - 1]?.path : "") || "";
     this.action = ["termos"].includes(segment) ? segment : this.action;
+    if(this.entity) [this.entity!.unidade!.gestor?.usuario_id, this.entity!.unidade!.gestor_substituto?.usuario_id, this.entity!.unidade!.gestor_delegado?.usuario_id].forEach(g => {
+      if(g) this.gestoresUnidadeExecutora.push(g);
+    });
   }
 
   public atualizarTcr() {
@@ -134,7 +142,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-
     if (['unidade_id', 'programa_id', 'usuario_id', 'tipo_modalidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     } else if (['carga_horaria'].indexOf(controlName) >= 0 && !control.value) {
@@ -146,27 +153,70 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     } else if (this.programa && controlName == 'data_fim' && (control.value as Date).getTime() > this.programa!.selectedEntity?.data_fim.getTime()) {
       result = "Maior que programa";
     }
-
     return result;
   }
 
-  public formValidation = (form?: FormGroup) => {
+  public formValidation = async (form?: FormGroup) => {
     /*
-    (RN_PTR_V) INCLUIR/INSERIR
-    O usuário logado precisa possuir a capacidade "MOD_PTR_INCL", e:
-        - o usuário logado precisa ser um participante do PGD, habilitado, ou ser gestor da Unidade Executora do plano; (RN_PTR_B); e
-        - o participante do plano precisa estar lotado em uma das áreas de trabalho do usuário logado, ou este deve possuir a capacidade MOD_PTR_USERS_INCL; e
-        - o participante do plano precisa estar lotado na Unidade Executora, ou o usuário logado possuir a capacidade MOD_PTR_INCL_SEM_LOT; e
-        - o novo Plano de Trabalho não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA
+      (RN_PTR_V) INCLUIR/INSERIR
+      O usuário logado precisa possuir a capacidade "MOD_PTR_INCL", e:
+          - o usuário logado precisa ser um participante do PGD, habilitado, ou ser gestor da Unidade Executora do plano; (RN_PTR_B); e
+          - o participante do plano precisa estar lotado em uma das áreas de trabalho do usuário logado, ou este deve possuir a capacidade MOD_PTR_USERS_INCL; e
+          - o participante do plano precisa estar lotado na Unidade Executora, ou o usuário logado possuir a capacidade MOD_PTR_INCL_SEM_LOT; e
+          - o novo Plano de Trabalho não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA
+
+      (RN_PTR_M) ALTERAR
+      O usuário logado precisa possuir a capacidade "MOD_PTR_EDT", o Plano de Trabalho precisa ser válido (ou seja, nem deletado, nem arquivado, nem estar no status CANCELADO), e:
+          - estando com o status 'INCLUIDO', o usuário logado precisa ser o participante do plano ou o gestor da Unidade Executora;
+          - estando com o status 'AGUARDANDO_ASSINATURA', o usuário logado precisa ser um dos que já assinaram o TCR e todas as assinaturas tornam-se sem efeito;
+          - estando com o status 'ATIVO', o usuário precisa ser gestor da Unidade Executora e possuir a capacidade MOD_PTR_EDT_ATV.
+      Após alterado, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
     */
-    let result = null;
-    let usuarioPossuiCapacidade: boolean = this.auth.hasPermissionTo("MOD_PTR_INCL");
+    let result = "";
+    let participantePlanoEhLotadoUnidadeExecutora: boolean = false;
+    let participantePlanoEhLotadoAlgumaAreaTrabalho: boolean = false;
+    let periodoPlanoNaoConflitaOutroMesmaUnidadeMesmoParticipante: boolean = false;
+    let usuarioPossuiCapacidadeInclusao: boolean = this.auth.hasPermissionTo("MOD_PTR_INCL");
+    let usuarioPossuiCapacidadeAlteracao: boolean = this.auth.hasPermissionTo("MOD_PTR_EDT");
     let usuarioEhParticipantePgdHabilitado: boolean = this.auth.usuario!.participacoes_programas.map(pp => pp.programa_id).includes(this.entity!.programa_id);
-    let usuarioEhGestorUnidadeExecutora: boolean = this.auth.usuario?.id == this.entity!.unidade?.gestor?.usuario?.id;  //************************** */
+    let usuarioEhGestorUnidadeExecutora: boolean = this.gestoresUnidadeExecutora.includes(this.auth.usuario!.id);
+    let planoAtivo: boolean = this.planoTrabalhoService.situacaoPlano(this.entity!) == 'ATIVO';
+    let planoIncluido: boolean = this.planoTrabalhoService.situacaoPlano(this.entity!) == 'INCLUIDO';
+    let planoAguardandoAssinatura: boolean = this.planoTrabalhoService.situacaoPlano(this.entity!) == 'AGUARDANDO_ASSINATURA';
+    let usuarioJaAssinouTCR: boolean = this.entity!.jaAssinaramTCR.includes(this.auth.usuario?.id!);
+    let usuarioEhParticipantePlano: boolean = this.entity!.usuario_id == this.auth.usuario?.id;
+    await this.usuarioDao.getById(this.entity!.usuario_id, ["lotacao"]).then((participante) => {
+      participantePlanoEhLotadoAlgumaAreaTrabalho = participante ? this.auth.usuario!.areas_trabalho!.map(at => at.unidade_id).includes(participante!.lotacao!.unidade_id) : false;
+      participantePlanoEhLotadoUnidadeExecutora = participante ? participante!.lotacao!.unidade_id == this.entity!.unidade_id : false;
+    });
+    await this.dao?.query({where: [["unidade_id","==",this.entity!.unidade_id],["usuario_id","==",this.form?.controls.usuario_id.value]]}).getAll().then((planosTrabalho) => {
+      let naoConflita = true;
+      planosTrabalho.forEach(pt => {
+        if(this.utilService.intersection([{start: this.utilService.asDate(pt.data_inicio)!, end: this.utilService.asDate(pt.data_fim)!}, {start: this.utilService.asDate(this.entity?.data_inicio)!, end: this.utilService.asDate(this.entity?.data_fim)!}])) naoConflita = false;
+      });
+      periodoPlanoNaoConflitaOutroMesmaUnidadeMesmoParticipante = naoConflita;
+    });
+    let usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoAreasTrabalho: boolean = this.auth.hasPermissionTo("MOD_PTR_USERS_INCL");
+    let usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoUnidadeExecutora: boolean = this.auth.hasPermissionTo("MOD_PTR_INCL_SEM_LOT");
+    let usuarioPossuiCapacidadeInclusaoPlanoConflitante: boolean = this.auth.hasPermissionTo("MOD_PTR_INTSC_DATA");
+    let usuarioPossuiCapacidadeAlteracaoPlanoAtivo: boolean = this.auth.hasPermissionTo("MOD_PTR_EDT_ATV");
+    if(this.action == "new") {
+      if(! usuarioPossuiCapacidadeInclusao) result = "Você não possui a capacidade de inserir planos de trabalho (MOD_PTR_INCL). ";
+      if(!(usuarioEhParticipantePgdHabilitado || usuarioEhGestorUnidadeExecutora)) result += "Para inserir um plano de trabalho, você precisa ser um participante habilitado do programa do plano, ou um dos gestores da sua unidade executora. ";
+      if(!(participantePlanoEhLotadoAlgumaAreaTrabalho || usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoAreasTrabalho)) result += "Para inserir um plano de trabalho, o participante deste deve estar lotado em alguma das suas áreas de trabalho, ou você precisa possuir a capacidade de ser dispensado dessa regra (MOD_PTR_USERS_INCL). ";
+      if(!(participantePlanoEhLotadoUnidadeExecutora || usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoUnidadeExecutora)) result += "Para inserir um plano de trabalho, o participante deste deve estar lotado na sua unidade executora, ou você precisa possuir a capacidade de ser dispensado dessa regra (MOD_PTR_INCL_SEM_LOT). ";
+      if(!(periodoPlanoNaoConflitaOutroMesmaUnidadeMesmoParticipante || usuarioPossuiCapacidadeInclusaoPlanoConflitante)) result += "O período de duração de um novo plano de trabalho não pode coincidir com o de outro plano já existente para a mesma unidade executora e mesmo participante, ou você precisa possuir a capacidade de ser dispensado dessa regra (MOD_PTR_INTSC_DATA). ";
+    } else if(this.action == "edit"){
+      if(! usuarioPossuiCapacidadeAlteracao) result = "Você não possui a capacidade de alterar/editar planos de trabalho (MOD_PTR_EDT). ";
+      if(! this.planoTrabalhoService.isValido(this.entity!)) result += "O plano de trabalho não é válido, ou seja, foi cancelado, apagado ou arquivado. ";
+      if(planoIncluido && (!(usuarioEhParticipantePlano || usuarioEhGestorUnidadeExecutora))) result += "Para alterar um plano de trabalho no status INCLUIDO, você precisaria ser o participante do plano. ";
+      if(planoAguardandoAssinatura && (!usuarioJaAssinouTCR)) result += "Para alterar um plano de trabalho no status AGUARDANDO ASSINATURA, você precisa já ter assinado o TCR. ";
+      if(planoAtivo && (!(usuarioEhGestorUnidadeExecutora && usuarioPossuiCapacidadeAlteracaoPlanoAtivo))) result += "Para alterar um plano de trabalho no status ATIVO, você precisa ser gestor da unidade executora do plano e possuir a capacidade específica (MOD_PTR_EDT_ATV). ";
+// checar novamente usuario e datas
+    }
     return result;
     // TODO:
     // Validar se as entregas pertencem ao plano de entregas da unidade
-    // Validar se o usuários está habilitado no programa
   };
 
   public onUnidadeSelect(selected: SelectItem) {

@@ -15,6 +15,12 @@ import { PlanoTrabalhoConsolidacao } from './plano-trabalho-consolidacao.model';
 
 export type AtividadeStatus = "INCLUIDO" | "INICIADO" | "PAUSADO" | "CONCLUIDO";
 
+export type AtividadeMetadadosConsolidacao = {
+    id: string,
+    status: AtividadeStatus,
+    data_conclusao: Date
+}
+
 export type AtividadeMetadados = {
     atrasado: boolean,
     tempo_despendido: number,
@@ -25,7 +31,8 @@ export type AtividadeMetadados = {
     avaliado: boolean,
     arquivado: boolean,
     produtividade: number,
-    extra?: any
+    consolidacoes: AtividadeMetadadosConsolidacao[],
+    extra?: any,
     _status?: BadgeButton[],
 }
 
