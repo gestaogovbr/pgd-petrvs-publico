@@ -32,6 +32,8 @@ class CreateProgramasTable extends Migration
             $table->integer('dias_tolerancia_consolidacao')->default("10")->comment("Dias de tolerância para o lançamento do registro das atividades na consolidação, após esses dias será liberado automaticamente para avaliação");
             $table->integer('dias_tolerancia_avaliacao')->default("20")->comment("Dias de tolerância para realizar a avaliação, considerando a tolerância da consolidação. Caso seja zero não fará nada, caso contrário após esse prazo a consolidação será automaticamente avaliada com a nota padrão");
             $table->json('nota_padrao_avaliacao')->nullable()->comment("Nota padrão de avaliação, para quando o gestor não realizar a avaliação dentro do prazo");
+            $table->json('checklist_avaliacao_entregas')->nullable()->comment("Checklist para avaliar as entregas");
+            $table->tinyInteger('registra_comparecimento')->default(1)->comment("Se utiliza registro de comparecimento nas consolidações do plano de trabalho");
             $table->tinyInteger('plano_trabalho_assinatura_participante')->default(1)->comment("Exigir assinatura do usuário no plano de trabalho");
             $table->tinyInteger('plano_trabalho_assinatura_gestor_lotacao')->default(0)->comment("Exigir assinatura do gestor da unidade de lotação do servidor");
             $table->tinyInteger('plano_trabalho_assinatura_gestor_unidade')->default(0)->comment("Exigir assinatura do gestor da unidade do plano de trabalho");

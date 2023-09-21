@@ -16,11 +16,12 @@ class PlanoTrabalhoController extends ControllerBase {
         try {
             $data = $request->validate([
                 'usuario_id' => ['required'],
-                'arquivados' => ['required']
+                'arquivados' => ['required'],
+                'plano_trabalho_id' => ['nullable']
             ]);
             return response()->json([
                 'success' => true,
-                'dados' => $this->service->getByUsuario($data["usuario_id"], $data["arquivados"])
+                'dados' => $this->service->getByUsuario($data["usuario_id"], $data["arquivados"], $data["plano_trabalho_id"])
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
@@ -144,14 +145,14 @@ class PlanoTrabalhoController extends ControllerBase {
         $usuarioService = new UsuarioService();
         switch ($action) {
             case 'QUERY':
-                if (!$usuario->hasPermissionTo('MOD_PTR')) throw new ServerException("CapacidadeSearchText", "Consulta não realizada");
+                if (!$usuario->hasPermissionTo('MOD_PTR')) throw new ServerException("CapacidadeSearchText", "Consulta não realizada. [RN_PTR_S]");
                 /*                 
                     (RN_PTR_S) CONSULTAR
                     Todos os participantes podem visualizar todos os planos de trabalho, desde que possuam a capacidade "MOD_PTR";
                 */
                 break;
             case 'GETBYID':
-                if (!$usuario->hasPermissionTo('MOD_PTR')) throw new ServerException("CapacidadeSearchText", "Consulta não realizada");
+                if (!$usuario->hasPermissionTo('MOD_PTR')) throw new ServerException("CapacidadeSearchText", "Consulta não realizada. [RN_PTR_S]");
                 /*                 
                     (RN_PTR_S) CONSULTAR
                     Todos os participantes podem visualizar todos os planos de trabalho, desde que possuam a capacidade "MOD_PTR";
@@ -170,7 +171,7 @@ class PlanoTrabalhoController extends ControllerBase {
                         $condition2 = $condicoes['planoAguardandoAssinatura'] && $condicoes['usuarioJaAssinouTCR'];
                         $condition3 = $condicoes['planoAtivo'] && $condicoes['gestorUnidadeExecutora'] && $usuario->hasPermissionTo('MOD_PTR_EDT_ATV');
                         if($condicoes['planoValido'] && ($condition1 || $condition2 || $condition3))  $can = true;
-                        if(!$can) throw new ServerException("CapacidadeStore", "Alteração não realizada");
+                        if(!$can) throw new ServerException("CapacidadeStore", "Alteração não realizada. [RN_PTR_M]");
                         /*  
                             (RN_PTR_M) Condições para que um Plano de Trabalho possa ser alterado:
                             O usuário logado precisa possuir a capacidade "MOD_PTR_EDT", o Plano de Trabalho precisa ser válido (ou seja, nem deletado, nem arquivado, nem estar no status CANCELADO), e:
@@ -193,12 +194,12 @@ class PlanoTrabalhoController extends ControllerBase {
                                 - o participante do plano precisa estar lotado na Unidade Executora, ou o usuário logado possuir a capacidade MOD_PTR_INCL_SEM_LOT; e
                                 - o novo Plano de Trabalho não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA
                         */
-                        if(!$can) throw new ServerException("CapacidadeStore", "Inserção não realizada"); 
+                        if(!$can) throw new ServerException("CapacidadeStore", "Inserção não realizada. [RN_PTR_V]"); 
                         break;              
                 }
                 break;
             case 'DESTROY':
-                throw new ServerException("CapacidadeStore", "Um Plano de Trabalho não pode ser excluído!");
+                throw new ServerException("CapacidadeStore", "Um Plano de Trabalho não pode ser excluído! [RN_PTR_AB]");
                 /*                 
                     (RN_PTR_AB) EXCLUIR
                     Um Plano de Trabalho não pode ser excluído;
@@ -215,7 +216,7 @@ class PlanoTrabalhoController extends ControllerBase {
                     O plano precisa estar com o status CONCLUIDO, não ter sido arquivado, e:
                         - o usuário logado precisa ser o participante ou o gestor da Unidade Executora;
                 */
-                if(!$can) throw new ServerException("CapacidadeStore", "Arquivamento não realizado");
+                if(!$can) throw new ServerException("CapacidadeStore", "Arquivamento não realizado. [RN_PTR_N]");
                 break;
             case 'ATIVAR':
                 $data = $request->validate(['id' => ['required']]);
@@ -230,7 +231,7 @@ class PlanoTrabalhoController extends ControllerBase {
                         - o usuário logado precisa ser o participante do plano ou gestor da Unidade Executora, e
                         - nenhuma assinatura no TCR ser exigida pelo programa;
                 */
-                if(!$can) throw new ServerException("CapacidadeStore", "Ativação não realizada");
+                if(!$can) throw new ServerException("CapacidadeStore", "Ativação não realizada. [RN_PTR_P]");
                 break;
             case 'CANCELAR_ASSINATURA':
                 $data = $request->validate(['id' => ['required']]);
@@ -242,7 +243,7 @@ class PlanoTrabalhoController extends ControllerBase {
                     O plano precisa estar no status 'AGUARDANDO_ASSINATURA'; e
                       - o usuário logado precisa já ter assinado o TCR;
                 */
-                if(!$can) throw new ServerException("CapacidadeStore", "Cancelamento de assinatura não realizado");                
+                if(!$can) throw new ServerException("CapacidadeStore", "Cancelamento de assinatura não realizado. [RN_PTR_Q]");
                 break;
             case 'CANCELAR_PLANO':
                 if (!$usuario->hasPermissionTo('MOD_PTR_CNC')) throw new ServerException("CapacidadeStore", "Cancelamento não realizado");
@@ -257,7 +258,7 @@ class PlanoTrabalhoController extends ControllerBase {
                       - o plano precisa estar em um dos seguintes status: INCLUIDO, AGUARDANDO_ASSINATURA, ATIVO ou CONCLUIDO; e
                       - o usuário logado precisa ser gestor da Unidade Executora;
                 */
-                if(!$can) throw new ServerException("CapacidadeStore", "Cancelamento não realizado");
+                if(!$can) throw new ServerException("CapacidadeStore", "Cancelamento não realizado. [RN_PTR_R]");
                 break; 
             case 'DESARQUIVAR':
                 $data = $request->validate(['id' => ['required']]);
@@ -270,7 +271,7 @@ class PlanoTrabalhoController extends ControllerBase {
                     O plano precisa estar arquivado, e:
                         - o usuário logado precisa ser o participante ou gestor da Unidade Executora;
                 */ 
-                if(!$can) throw new ServerException("CapacidadeStore", "Desarquivamento não realizado");
+                if(!$can) throw new ServerException("CapacidadeStore", "Desarquivamento não realizado. [RN_PTR_T]");
                 break;
             case 'REATIVAR':
                 $data = $request->validate(['id' => ['required']]);
@@ -283,7 +284,7 @@ class PlanoTrabalhoController extends ControllerBase {
                     O plano precisa estar com o status SUSPENSO, e
                       - o usuário logado precisa ser gestor da Unidade Executora;
                 */
-                if(!$can) throw new ServerException("CapacidadeStore", "Reativação não realizada");
+                if(!$can) throw new ServerException("CapacidadeStore", "Reativação não realizada. [RN_PTR_W]");
                 break;   
             case 'ENVIAR_ASSINATURA':
                 $data = $request->validate(['id' => ['required']]);
@@ -298,7 +299,7 @@ class PlanoTrabalhoController extends ControllerBase {
                       - o usuário logado precisa ser o participante do plano ou gestor da sua Unidade Executora; e
                       - o programa de gestão precisa exigir não só a assinatura do usuário logado;
                 */
-                if(!$can) throw new ServerException("CapacidadeStore", "Envio para assinatura não realizado"); 
+                if(!$can) throw new ServerException("CapacidadeStore", "Envio para assinatura não realizado. [RN_PTR_U]"); 
                 break;
             case 'SUSPENDER':
                 $data = $request->validate(['id' => ['required']]);
@@ -311,7 +312,7 @@ class PlanoTrabalhoController extends ControllerBase {
                     O plano precisa estar com o status ATIVO, e
                       - o usuário logado precisa ser gestor da Unidade Executora;
                 */ 
-                if(!$can) throw new ServerException("CapacidadeStore", "Suspensão não realizada");               
+                if(!$can) throw new ServerException("CapacidadeStore", "Suspensão não realizada. [RN_PTR_X]");               
                 break; 
         }
     }

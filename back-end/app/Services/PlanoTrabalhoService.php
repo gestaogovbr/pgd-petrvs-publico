@@ -319,7 +319,7 @@ class PlanoTrabalhoService extends ServiceBase
    * @param   string  $arquivadas  Se o resultado deve incluir os planos arquivados
    * @return  array
    */
-  public function getByUsuario($usuarioId, $arquivados)
+  public function getByUsuario($usuarioId, $arquivados, $planoTrabalhoId)
   {
     // TODO: validar permissoes
     $query = PlanoTrabalho::with([
@@ -331,6 +331,7 @@ class PlanoTrabalhoService extends ServiceBase
       "usuario:id,nome,apelido,url_foto"
     ])->where("usuario_id", $usuarioId);
     if (!$arquivados) $query->whereNull("data_arquivamento");
+    if (!empty($planoTrabalhoId)) $query->where("id", $planoTrabalhoId);
     $planos = $query->get()->all();
     $programasIds = array_unique(array_map(fn($v) => $v["programa_id"], $planos));
     $programas = Programa::whereIn("id", $programasIds)->get()->all();
