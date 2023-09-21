@@ -7,11 +7,13 @@ import { PlanoTrabalhoFormComponent } from './plano-trabalho-form/plano-trabalho
 import { PlanoTrabalhoListComponent } from './plano-trabalho-list/plano-trabalho-list.component';
 import { PlanoTrabalhoListEntregaComponent } from './plano-trabalho-list-entrega/plano-trabalho-list-entrega.component';
 import { PlanoTrabalhoConsolidacaoComponent } from './plano-trabalho-consolidacao/plano-trabalho-consolidacao.component';
+import { PlanoTrabalhoConsolidacaoListComponent } from './plano-trabalho-consolidacao-list/plano-trabalho-consolidacao-list.component';
 
 const routes: Routes = [
   { path: '', component: PlanoTrabalhoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Planos de Trabalho" } },
   { path: 'new', component: PlanoTrabalhoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Plano de Trabalho", modal: true } },
   { path: 'termo', component: PlanoTrabalhoFormTermoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Termo de adesão", modal: true } },
+  { path: 'consolidacao/:usuarioId/:planoTrabalhoId', component: PlanoTrabalhoConsolidacaoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consolidações do Plano de Trabalho" } },
   { path: 'consolidacao', component: PlanoTrabalhoConsolidacaoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consolidações" } },
   { path: ':id/edit', component: PlanoTrabalhoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de Plano de Trabalho", modal: true } },
   { path: ':id/consult', component: PlanoTrabalhoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Plano de Trabalho", modal: true } },

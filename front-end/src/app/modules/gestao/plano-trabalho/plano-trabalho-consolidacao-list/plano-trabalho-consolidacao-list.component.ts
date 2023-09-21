@@ -9,6 +9,7 @@ import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { PlanoTrabalhoService } from '../plano-trabalho.service';
 import { PlanoTrabalhoConsolidacaoFormComponent } from '../plano-trabalho-consolidacao-form/plano-trabalho-consolidacao-form.component';
+import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 
 @Component({
   selector: 'plano-trabalho-consolidacao-list',
@@ -24,6 +25,7 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
   }
 
   public dao?: PlanoTrabalhoConsolidacaoDaoService;
+  public planoTrabalhoDao?: PlanoTrabalhoDaoService;
   public planoTrabalhoService: PlanoTrabalhoService;
 
   constructor(public injector: Injector) {
@@ -31,8 +33,10 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
     /* Inicializações */
     this.dao = injector.get<PlanoTrabalhoConsolidacaoDaoService>(PlanoTrabalhoConsolidacaoDaoService);
     this.planoTrabalhoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
+    this.planoTrabalhoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
     this.title = this.lex.translate("Consolidações");
     this.code = "MOD_PTR_CSLD";
+    this.modalWidth = 1200;
     this.form = this.fh.FormBuilder({
       'data_inicio': {default: new Date()},
       'data_fim': {default: new Date()}
@@ -41,11 +45,17 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
 
   ngAfterViewInit(): void {
     super.ngAfterViewInit();
-    let agora = (new Date()).getTime();
-    this.items.forEach(v => {
-      if(!v.plano_trabalho) v.plano_trabalho = this.entity;
-      if(this.util.asDate(v.data_inicio)!.getTime() <= agora && agora <= this.util.asDate(v.data_fim)!.getTime()) this.grid!.expand(v.id);
-    });
+    (async () => {
+      if (this.urlParams?.has("usuarioId") && this.urlParams?.has("planoTrabalhoId")) {
+        let dados = await this.planoTrabalhoDao!.getByUsuario(this.urlParams!.get("usuarioId")!, true, this.urlParams!.get("planoTrabalhoId")!);
+        if (dados.planos.length == 1) this.entity = dados.planos[0];
+      }
+      let agora = (new Date()).getTime();
+      this.items.forEach(v => {
+        if(!v.plano_trabalho) v.plano_trabalho = this.entity;
+        if(this.util.asTimestamp(v.data_inicio) <= agora && agora <= this.util.asTimestamp(v.data_fim)) this.grid!.expand(v.id);
+      });
+    })();
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -133,6 +143,14 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
     }
   }
 
+  public anterior(consolidacao: PlanoTrabalhoConsolidacao): PlanoTrabalhoConsolidacao | undefined {
+    return this.entity!.consolidacoes.reduce((a: PlanoTrabalhoConsolidacao | undefined, v: PlanoTrabalhoConsolidacao) => this.util.asTimestamp(v.data_inicio) < this.util.asTimestamp(consolidacao.data_inicio) && (!a || this.util.asTimestamp(a.data_inicio) < this.util.asTimestamp(v.data_inicio)) ? v : a, undefined);
+  }
+
+  public proximo(consolidacao: PlanoTrabalhoConsolidacao): PlanoTrabalhoConsolidacao | undefined {
+    return this.entity!.consolidacoes.reduce((a: PlanoTrabalhoConsolidacao | undefined, v: PlanoTrabalhoConsolidacao) => this.util.asTimestamp(v.data_fim) > this.util.asTimestamp(consolidacao.data_fim) && (!a || this.util.asTimestamp(a.data_fim) > this.util.asTimestamp(v.data_fim)) ? v : a, undefined);
+  }
+
   public isDisabled(row?: PlanoTrabalhoConsolidacao): boolean {
     return (row && row.status != "INCLUIDO") || this.entity?.status != "ATIVO";
   }
@@ -156,26 +174,37 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
   public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let consolidacao: PlanoTrabalhoConsolidacao = row as PlanoTrabalhoConsolidacao;
+    const anterior = this.anterior(row as PlanoTrabalhoConsolidacao);
+    const proximo = this.proximo(row as PlanoTrabalhoConsolidacao);
     const isUsuarioConsolidacao = this.auth.usuario!.id == this.entity!.usuario_id;
-    const isGestor = [this.entity!.unidade!.gestor?.usuario_id, this.entity!.unidade!.gestor_substituto?.usuario_id].includes(this.auth.usuario?.id);
+    const isGestor = [this.entity!.unidade!.gestor?.usuario_id, this.entity!.unidade!.gestor_substituto?.usuario_id, this.entity!.unidade!.gestor_delegado?.usuario_id].includes(this.auth.usuario?.id);
     const BOTAO_CONCLUIR = { hint: "Concluir", icon: "bi bi-check-circle", color: "btn-outline-success", onClick: this.concluir.bind(this) };
     const BOTAO_CANCELAR_CONCLUSAO = { hint: "Cancelar conclusão", icon: "bi bi-backspace", color: "btn-outline-danger", onClick: this.cancelarConclusao.bind(this) };
     const BOTAO_AVALIAR = { hint: "Avaliar", icon: "bi bi-star", color: "btn-outline-warning", onClick: this.avaliar.bind(this) };
     const BOTAO_EDITAR_AVALIACAO = { hint: "Editar avaliação", icon: "bi bi-star-half", color: "btn-outline-warning", onClick: this.editarAvaliacao.bind(this) };
     const BOTAO_FAZER_RECURSO = { hint: "Fazer recurso", id: "RECORRIDO", icon: "bi bi-journal-medical", color: "btn-outline-warning", onClick: this.fazerRecurso.bind(this) };
     const BOTAO_CANCELAR_AVALIACAO = { hint: "Cancelar avaliação", id: "INCLUIDO", icon: "bi bi-backspace", color: "btn-outline-warning", onClick: this.cancelarAvaliacao.bind(this) };
+    /* (RN_CSLD_11) Não pode concluir a consolidação antes que a anterior não esteja concluida, e não pode retornar status da consolidação se a posterior estiver a frente (em status); */
+    const canConcluir = !anterior || ["CONCLUIDO", "AVALIADO"].includes(anterior!.status);
+    const canCancelarConclusao = !proximo || ["INCLUIDO"].includes(proximo!.status);
+    const canAvaliar = !anterior || ["AVALIADO"].includes(anterior!.status);
+    const canCancelarAvaliacao = !proximo || ["INCLUIDO", "CONCLUIDO"].includes(proximo!.status);
     if(!this.isDisabled()) {
-      if(consolidacao.status == "INCLUIDO" && (isUsuarioConsolidacao || this.auth.hasPermissionTo("MOD_PTR_CSLD_CONCL"))) {
+      if(consolidacao.status == "INCLUIDO" && canConcluir && (isUsuarioConsolidacao || this.auth.hasPermissionTo("MOD_PTR_CSLD_CONCL"))) {
         result.push(BOTAO_CONCLUIR);
       }
-      if(consolidacao.status == "CONCLUIDO" && this.planoTrabalhoService.diasParaConcluirConsolidacao(row, this.entity!.programa) >= 0 && (isUsuarioConsolidacao || this.auth.hasPermissionTo("MOD_PTR_CSLD_DES_CONCL"))) {
+      if(consolidacao.status == "CONCLUIDO" && canCancelarConclusao && this.planoTrabalhoService.diasParaConcluirConsolidacao(row, this.entity!.programa) >= 0 && (isUsuarioConsolidacao || this.auth.hasPermissionTo("MOD_PTR_CSLD_DES_CONCL"))) {
         result.push(BOTAO_CANCELAR_CONCLUSAO);
       }
-      if(consolidacao.status == "CONCLUIDO" && (isGestor || this.auth.hasPermissionTo("MOD_PTR_CSLD_AVALIAR"))) {
+      if(consolidacao.status == "CONCLUIDO" && canAvaliar && (isGestor || this.auth.hasPermissionTo("MOD_PTR_CSLD_AVALIAR"))) {
         result.push(BOTAO_AVALIAR);
       }
       if(consolidacao.status == "AVALIADO") {
-        /* TODO: Fazer as condições para avaliado */
+        /* TODO: Fazer as condições para avaliado
+          - Se for o usuário do plano, opção de recurso
+          - Se for o chefe, opção de cancelar avaliacao ou Reavaliar caso tenha tido recurso
+         */
+        //if(canCancelarAvaliacao) result.push(BOTAO_CANCELAR_AVALIACAO);
       }
     }
     return result;

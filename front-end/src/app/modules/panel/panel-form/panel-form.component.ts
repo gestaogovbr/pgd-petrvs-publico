@@ -36,8 +36,6 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
     { Tipo: 'Institucional', Web: '', API: '', Habilitado: true }
   ];
 
-  // public minHeight: number = 350;
-
   constructor(public injector: Injector) {
     super(injector, Tenant, TenantDaoService);
     this.form = this.fh.FormBuilder({
@@ -114,12 +112,13 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       API: { default: "" },
       Habilitado: { default: false }
     });
-
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if (['id', 'tenancy_db_name', 'nome_entidade', 'codigo_cidade', 'abrangencia', 'email', 'cpf', 'nome_usuario', 'apelido'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if (['id', 'tenancy_db_name', 'nome_entidade', 'abrangencia', 'email', 'cpf', 'nome_usuario', 'apelido'].indexOf(controlName) >= 0 && !control.value?.length) {
+      result = "Obrigatório";
+    } else if (controlName == "codigo_cidade" && !control.value) {
       result = "Obrigatório";
     } else if (controlName == "cpf" && !this.util.validarCPF(control.value)) {
       result = "Inválido";

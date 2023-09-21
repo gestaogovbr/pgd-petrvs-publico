@@ -12,6 +12,7 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { PageFrameBase } from '../../base/page-frame-base';
 import { ProjetoTarefaDaoService } from 'src/app/dao/projeto-tarefa-dao.service';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
+import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
 
 @Component({
   selector: 'comentarios',
@@ -83,6 +84,7 @@ export class ComentariosComponent extends PageFrameBase {
       case 'ATIVIDADE_TAREFA': this.dao = this.injector.get<AtividadeTarefaDaoService>(AtividadeTarefaDaoService); break;
       case 'PROJETO': this.dao = this.injector.get<ProjetoDaoService>(ProjetoDaoService); break;
       case 'PROJETO_TAREFA': this.dao = this.injector.get<ProjetoTarefaDaoService>(ProjetoTarefaDaoService); break;
+      case 'PLANO_ENTREGA_ENTREGA': this.dao = this.injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService); break;
     }
   }
 
@@ -146,22 +148,4 @@ export class ComentariosComponent extends PageFrameBase {
     return { comentarios: this.gridControl.value };
   }
 
-  /*public async onSaveData() {
-    this.submitting = true;
-    try {
-      this.confirm();
-      const modalResult = this.isNoPersist ? this.entity : await this.dao?.update(this.entity!.id, { comentarios: this.gridControl.value }, this.join);
-      if(this.modalRoute?.queryParams?.idroute?.length) this.go.setModalResult(this.modalRoute?.queryParams?.idroute, modalResult);
-      this.go.back(undefined, this.backRoute);
-    } catch (erro) {
-      this.error("Erro ao carregar dados: " + erro);
-    } finally {
-      this.submitting = false;
-    }
-  }
-
-  public onCancel() {
-    this.go.back(undefined, this.backRoute);
-  }
-*/
 }

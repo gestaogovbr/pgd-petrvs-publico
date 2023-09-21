@@ -1,15 +1,16 @@
 import { Base } from './base.model';
+import { Comentario, HasComentarios } from './comentario';
 import { Entrega, EntregaValor } from './entrega.model';
 import { PlanoEntregaEntregaObjetivo } from './plano-entrega-entrega-objetivo.model';
 import { PlanoEntregaEntregaProcesso } from './plano-entrega-entrega-processo.model';
 import { PlanoEntrega } from './plano-entrega.model';
 import { Unidade } from './unidade.model';
 
-export class PlanoEntregaEntrega extends Base {
+export class PlanoEntregaEntrega extends Base implements HasComentarios {
   public entrega?: Entrega;
   public entrega_pai?: Entrega;
   public plano_entrega?: PlanoEntrega;
-  public demandante?: Unidade;
+  public unidade?: Unidade;
   public objetivos: PlanoEntregaEntregaObjetivo[] = [];
   public processos: PlanoEntregaEntregaProcesso[] = [];
 
@@ -22,6 +23,7 @@ export class PlanoEntregaEntrega extends Base {
   public progresso_esperado: number = 100;
   public progresso_realizado: number = 0;
   public destinatario: string = '';
+  public comentarios: Comentario[] = []; /* Comentarios da etrega */
 
   public entrega_id: string = '';
   public unidade_id: string = '';                        

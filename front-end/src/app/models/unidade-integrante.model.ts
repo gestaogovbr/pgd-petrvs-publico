@@ -20,7 +20,7 @@ export class UnidadeIntegrante extends Base {
     public lotado?: UnidadeIntegranteAtribuicao; 
     public gestor?: UnidadeIntegranteAtribuicao; 
     public gestor_substituto?: UnidadeIntegranteAtribuicao; 
-    //public colaborador?: UnidadeIntegranteAtribuicao; 
+    public gestor_delegado?: UnidadeIntegranteAtribuicao; 
     public homologador_plano_entrega?: UnidadeIntegranteAtribuicao; 
     public avaliador_plano_entrega?: UnidadeIntegranteAtribuicao; 
     public avaliador_plano_trabalho?: UnidadeIntegranteAtribuicao; 

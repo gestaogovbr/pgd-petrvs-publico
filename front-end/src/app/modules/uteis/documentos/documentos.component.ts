@@ -27,6 +27,7 @@ export class DocumentosComponent extends PageFrameBase {
   @Input() extraTags: ((entity: HasDocumentos, documento: Documento, metadata: any) => LookupItem[]) = (e: HasDocumentos, d: Documento, m: any) => [];
   @Input() especie: DocumentoEspecie = 'OUTRO';
   @Input() dataset?: TemplateDataset[];
+  @Input() disabled: boolean = false;
   @Input() canEditTemplate: boolean = false;
   @Input() template?: Template;
   @Input() set datasource(value: any) {

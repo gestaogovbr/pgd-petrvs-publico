@@ -14,7 +14,6 @@ export class StatusFormComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
 
   public novoStatus: string = "";
-  public statusAtual: string = "";
   public tipo: string = "";
   public lookup: LookupService;
   public statusService: StatusService;
@@ -43,7 +42,7 @@ export class StatusFormComponent extends PageFrameBase {
     let valueLength = control.value?.trim().length;
     if (['justificativa'].indexOf(controlName) >= 0) {
       if(!valueLength) {
-        if(this.exigeJustificativa()) result = "Obrigatório";
+        if(this.exigeJustificativa) result = "Obrigatório";
       } else {
         if(valueLength < this.MIN_LENGTH_TEXT) result = "Texto muito curto. Mínimo: " + this.MIN_LENGTH_TEXT + " caracteres.";
         if(valueLength > this.MAX_LENGTH_TEXT) result = "Conteúdo (" + valueLength + " caracteres) excede o comprimento máximo: " + this.MAX_LENGTH_TEXT + ".";
@@ -72,9 +71,9 @@ export class StatusFormComponent extends PageFrameBase {
    * se o status atual é um deles.
    * @returns boolean 
    */
-  public exigeJustificativa() {
+  public get exigeJustificativa() {
     let result = this.lookup.getData(this.statusService.getItem(this.tipo), this.form?.controls.novo_status?.value);
-    return !Array.from(result).includes(this.statusAtual);
+    return !Array.from(result?.naoJustificar || []).includes(this.entity?.status);
   }
 
 }

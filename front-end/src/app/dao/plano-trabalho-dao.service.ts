@@ -61,9 +61,9 @@ export class PlanoTrabalhoDaoService extends DaoBaseService<PlanoTrabalho> {
     });
   }
 
-  public getByUsuario(usuarioId: string, arquivados: boolean) {
+  public getByUsuario(usuarioId: string, arquivados: boolean, planoTrabalhoId: string | null = null) {
     return new Promise<PlanoTrabalhoByUsuario>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/get-by-usuario', {usuario_id: usuarioId, arquivados}).subscribe(response => {
+      this.server.post('api/' + this.collection + '/get-by-usuario', {usuario_id: usuarioId, arquivados, plano_trabalho_id: planoTrabalhoId}).subscribe(response => {
         if(response?.error) {
           reject(response?.error);
         } else {

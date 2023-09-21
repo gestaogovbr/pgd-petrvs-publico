@@ -1,0 +1,3 @@
+<input-number *ngIf="checkTipoIndicador(['PORCENTAGEM'])" [disabled]="disabled" [icon]="icon" [label]="label || 'Porcentagem'" [control]="control" sufix="%" (change)="onValueChange($event)"></input-number>
+<input-number *ngIf="checkTipoIndicador(['QUANTIDADE', 'VALOR'])" [disabled]="disabled" [icon]="icon" [label]="label || 'Numérico'" [control]="control"  (change)="onValueChange($event)"></input-number>
+<input-select *ngIf="checkTipoIndicador(['QUALITATIVO'])" [disabled]="disabled" [icon]="icon" [label]="label || 'Qualitativo'" [control]="control" [items]="entrega?.lista_qualitativos || []" (change)="onValueChange($event)"></input-select>

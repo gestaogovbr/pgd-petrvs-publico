@@ -5,7 +5,7 @@
             <input-select [size]="12" label="Novo status" icon="" controlName="novo_status" [items]="this.statusService.getItem(this.tipo) || []" [disabled]="novoStatus.length ? 'true' : undefined"></input-select>
         </div>            
         <div class="row">
-            <input-textarea *ngIf="exigeJustificativa()" [size]="12" [rows]="3" label="Justificativa" controlName="justificativa"></input-textarea>
+            <input-textarea *ngIf="exigeJustificativa" [size]="12" [rows]="3" label="Justificativa" controlName="justificativa"></input-textarea>
         </div>
     </div>
 </editable-form>

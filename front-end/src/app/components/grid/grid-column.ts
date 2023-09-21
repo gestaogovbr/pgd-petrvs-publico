@@ -29,6 +29,7 @@ export class GridColumn {
   public buttons?: ToolbarButton[];
   public save?: (row: any) => Promise<boolean>;
   public edit?: (row: any) => Promise<void>;
+  public canEdit?: (row: any) => boolean;
   public dynamicButtons?: (row: any, metadata?: any) => ToolbarButton[];
   public options?: ToolbarButton[];
   public dynamicOptions?: (row: any, metadata?: any) => ToolbarButton[];

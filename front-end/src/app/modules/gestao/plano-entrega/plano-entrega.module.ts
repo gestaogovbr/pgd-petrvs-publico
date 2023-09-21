@@ -12,6 +12,8 @@ import { PlanejamentoModule } from '../planejamento-institucional/planejamento.m
 import { CadeiaValorModule } from '../cadeia-valor/cadeia-valor.module';
 import { PlanoEntregaListEntregaListComponent } from './plano-entrega-list-entrega-list/plano-entrega-list-entrega-list.component';
 import { PlanoEntregaListLogsComponent } from './plano-entrega-list-logs/plano-entrega-list-logs.component';
+import { UteisModule } from '../../uteis/uteis.module';
+import { PlanoEntregaValorMetaInputComponent } from './plano-entrega-valor-meta-input/plano-entrega-valor-meta-input.component';
 
 @NgModule({
   declarations: [
@@ -24,13 +26,15 @@ import { PlanoEntregaListLogsComponent } from './plano-entrega-list-logs/plano-e
     PlanoEntregaFormEntregaComponent,
     PlanoEntregaListEntregaListComponent,
     PlanoEntregaListLogsComponent,
+    PlanoEntregaValorMetaInputComponent,
   ],
   imports: [
     CommonModule,
     ComponentsModule,
     PlanoEntregaRoutingModule,
     PlanejamentoModule,
-    CadeiaValorModule
+    CadeiaValorModule,
+    UteisModule
   ]
 })
 export class PlanoEntregaModule { }
