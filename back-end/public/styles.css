@@ -29377,6 +29377,9 @@ a > .petrvs code {
   background-color: var(--bs-secondary-bg) !important;
   /*background-color:#e9ecef;*/
 }
+.petrvs .markdownContent p img {
+  width: 100%;
+}
 
 /* Define variáveis do bootstrap */
 :root {

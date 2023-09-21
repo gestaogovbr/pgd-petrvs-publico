@@ -177,7 +177,7 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
     const anterior = this.anterior(row as PlanoTrabalhoConsolidacao);
     const proximo = this.proximo(row as PlanoTrabalhoConsolidacao);
     const isUsuarioConsolidacao = this.auth.usuario!.id == this.entity!.usuario_id;
-    const isGestor = [this.entity!.unidade!.gestor?.usuario_id, this.entity!.unidade!.gestor_substituto?.usuario_id].includes(this.auth.usuario?.id);
+    const isGestor = [this.entity!.unidade!.gestor?.usuario_id, this.entity!.unidade!.gestor_substituto?.usuario_id, this.entity!.unidade!.gestor_delegado?.usuario_id].includes(this.auth.usuario?.id);
     const BOTAO_CONCLUIR = { hint: "Concluir", icon: "bi bi-check-circle", color: "btn-outline-success", onClick: this.concluir.bind(this) };
     const BOTAO_CANCELAR_CONCLUSAO = { hint: "Cancelar conclusão", icon: "bi bi-backspace", color: "btn-outline-danger", onClick: this.cancelarConclusao.bind(this) };
     const BOTAO_AVALIAR = { hint: "Avaliar", icon: "bi bi-star", color: "btn-outline-warning", onClick: this.avaliar.bind(this) };
