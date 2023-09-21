@@ -9,6 +9,7 @@ import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { PlanoTrabalhoService } from '../plano-trabalho.service';
 import { PlanoTrabalhoConsolidacaoFormComponent } from '../plano-trabalho-consolidacao-form/plano-trabalho-consolidacao-form.component';
+import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 
 @Component({
   selector: 'plano-trabalho-consolidacao-list',
@@ -24,6 +25,7 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
   }
 
   public dao?: PlanoTrabalhoConsolidacaoDaoService;
+  public planoTrabalhoDao?: PlanoTrabalhoDaoService;
   public planoTrabalhoService: PlanoTrabalhoService;
 
   constructor(public injector: Injector) {
@@ -31,8 +33,10 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
     /* Inicializações */
     this.dao = injector.get<PlanoTrabalhoConsolidacaoDaoService>(PlanoTrabalhoConsolidacaoDaoService);
     this.planoTrabalhoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
+    this.planoTrabalhoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
     this.title = this.lex.translate("Consolidações");
     this.code = "MOD_PTR_CSLD";
+    this.modalWidth = 1200;
     this.form = this.fh.FormBuilder({
       'data_inicio': {default: new Date()},
       'data_fim': {default: new Date()}
@@ -41,11 +45,17 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
 
   ngAfterViewInit(): void {
     super.ngAfterViewInit();
-    let agora = (new Date()).getTime();
-    this.items.forEach(v => {
-      if(!v.plano_trabalho) v.plano_trabalho = this.entity;
-      if(this.util.asDate(v.data_inicio)!.getTime() <= agora && agora <= this.util.asDate(v.data_fim)!.getTime()) this.grid!.expand(v.id);
-    });
+    (async () => {
+      if (this.urlParams?.has("usuarioId") && this.urlParams?.has("planoTrabalhoId")) {
+        let dados = await this.planoTrabalhoDao!.getByUsuario(this.urlParams!.get("usuarioId")!, true, this.urlParams!.get("planoTrabalhoId")!);
+        if (dados.planos.length == 1) this.entity = dados.planos[0];
+      }
+      let agora = (new Date()).getTime();
+      this.items.forEach(v => {
+        if(!v.plano_trabalho) v.plano_trabalho = this.entity;
+        if(this.util.asTimestamp(v.data_inicio) <= agora && agora <= this.util.asTimestamp(v.data_fim)) this.grid!.expand(v.id);
+      });
+    })();
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -134,11 +144,11 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
   }
 
   public anterior(consolidacao: PlanoTrabalhoConsolidacao): PlanoTrabalhoConsolidacao | undefined {
-    return this.entity!.consolidacoes.reduce((a: PlanoTrabalhoConsolidacao | undefined, v: PlanoTrabalhoConsolidacao) => this.util.asDate(v.data_inicio)!.getTime() < this.util.asDate(consolidacao.data_inicio)!.getTime() && (!a || this.util.asDate(a.data_inicio)!.getTime() < this.util.asDate(v.data_inicio)!.getTime()) ? v : a, undefined);
+    return this.entity!.consolidacoes.reduce((a: PlanoTrabalhoConsolidacao | undefined, v: PlanoTrabalhoConsolidacao) => this.util.asTimestamp(v.data_inicio) < this.util.asTimestamp(consolidacao.data_inicio) && (!a || this.util.asTimestamp(a.data_inicio) < this.util.asTimestamp(v.data_inicio)) ? v : a, undefined);
   }
 
   public proximo(consolidacao: PlanoTrabalhoConsolidacao): PlanoTrabalhoConsolidacao | undefined {
-    return this.entity!.consolidacoes.reduce((a: PlanoTrabalhoConsolidacao | undefined, v: PlanoTrabalhoConsolidacao) => this.util.asDate(v.data_fim)!.getTime() > this.util.asDate(consolidacao.data_fim)!.getTime() && (!a || this.util.asDate(a.data_fim)!.getTime() > this.util.asDate(v.data_fim)!.getTime()) ? v : a, undefined);
+    return this.entity!.consolidacoes.reduce((a: PlanoTrabalhoConsolidacao | undefined, v: PlanoTrabalhoConsolidacao) => this.util.asTimestamp(v.data_fim) > this.util.asTimestamp(consolidacao.data_fim) && (!a || this.util.asTimestamp(a.data_fim) > this.util.asTimestamp(v.data_fim)) ? v : a, undefined);
   }
 
   public isDisabled(row?: PlanoTrabalhoConsolidacao): boolean {

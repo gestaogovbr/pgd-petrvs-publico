@@ -3224,7 +3224,7 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
     let lastConsolidacao = this.atividadeService.lastConsolidacao(this.atividade.metadados.consolidacoes);
     /* (RN_CSLD_12) Tarefas concluidas de atividades em consolidação CONCLUIDO ou AVALIADO não poderão mais ser alteradas/excluidas, nem Remover conclusão.
        (RN_CSLD_13) Tarefas de atividades em consolidação CONCLUIDO ou AVALIADO não poderão mais ser alteradas/excluidas, somente a opção de Concluir ficará disponível. */
-    if (!lastConsolidacao || lastConsolidacao.status == "INCLUIDO" || this.util.asDate(lastConsolidacao.data_conclusao).getTime() < this.util.asDate(tarefa.created_at).getTime()) {
+    if (!lastConsolidacao || lastConsolidacao.status == "INCLUIDO" || this.util.asTimestamp(lastConsolidacao.data_conclusao) < this.util.asTimestamp(tarefa.created_at)) {
       result.push(Object.assign(this.grid.BUTTON_EDIT, {
         onClick: this.editTarefa.bind(this)
       }));
@@ -3238,7 +3238,7 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
     let tarefa = row;
     let lastConsolidacao = this.atividadeService.lastConsolidacao(this.atividade.metadados.consolidacoes);
     /* (RN_CSLD_12) e (RN_CSLD_13) */
-    return !lastConsolidacao || lastConsolidacao.status == "INCLUIDO" || this.util.asDate(lastConsolidacao.data_conclusao).getTime() < this.util.asDate(tarefa.data_conclusao).getTime();
+    return !lastConsolidacao || lastConsolidacao.status == "INCLUIDO" || this.util.asTimestamp(lastConsolidacao.data_conclusao) < this.util.asTimestamp(tarefa.data_conclusao);
   }
 }
 _class = AtividadeListTarefaComponent;

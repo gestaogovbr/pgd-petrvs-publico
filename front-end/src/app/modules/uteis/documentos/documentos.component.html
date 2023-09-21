@@ -1,7 +1,7 @@
-<grid [items]="items" [form]="form!" #gridDocumentos editable [selectable]="true"
+<grid [items]="items" [form]="form!" #gridDocumentos [editable]="disabled ? undefined : 'true'" [selectable]="true"
   [add]="addDocumento.bind(this)" [load]="loadDocumento.bind(this)" [remove]="removeDocumento.bind(this)" [save]="saveDocumento.bind(this)" [editEnd]="editEndDocumento.bind(this)"
-  [hasAdd]="true"
-  [hasEdit]="true"
+  [hasAdd]="!disabled"
+  [hasEdit]="!disabled"
   [hasDelete]="false">
   <side-panel [size]="8" fullSizeOnEdit [noToolbar]="editingId ? 'true' : undefined" [template]="panelDocumento" [editTemplate]="panelDocumentoEdit">
     <ng-template let-row="row" #panelDocumento>

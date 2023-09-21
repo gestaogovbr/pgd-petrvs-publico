@@ -422,6 +422,10 @@ export class UtilService {
     return result;
   }
 
+  public asTimestamp(dateTime: any, result: number = -1): number {
+    return this.asDate(dateTime)?.getTime() || result;
+  }
+
   public asDateInterval(interval: Interval): DateInterval {
     return {
       start: interval.start instanceof Date ? interval.start : new Date(interval.start),
