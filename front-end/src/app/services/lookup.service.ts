@@ -689,7 +689,7 @@ export class LookupService {
     return itens.find(x => x.key == key)?.icon || "";
   }
 
-  public getData(itens: LookupItem[], key: any): string[] {
-    return itens?.find(x => x.key == key)?.data || [];
+  public getData(itens: LookupItem[], key: any): any {
+    return itens?.find(x => x.key == key)?.data;
   }
 }

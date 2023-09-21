@@ -277,9 +277,11 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
       unidade.notificacoes = this.entity.notificacoes;
       let salvarGestor = !!this.formGestor.controls.gestor_id?.value && (!this.entity?.gestor?.id.length || !!this.entity?.gestor?.id.length && this.entity?.gestor?.usuario?.id != this.formGestor.controls.gestor_id?.value);
       let salvarGestorSubstituto = !!this.formGestor.controls.gestor_substituto_id?.value && (!this.entity?.gestor_substituto?.id.length || !!this.entity?.gestor_substituto?.id.length && this.entity?.gestor_substituto?.usuario?.id != this.formGestor.controls.gestor_substituto_id?.value);
+      let salvarGestorDelegado = !!this.formGestor.controls.gestor_delegado_id?.value && (!this.entity?.gestor_delegado?.id.length || !!this.entity?.gestor_delegado?.id.length && this.entity?.gestor_delegado?.usuario?.id != this.formGestor.controls.gestor_delegado_id?.value);
       let apagarGestor = !this.formGestor.controls.gestor_id?.value && !!this.entity?.gestor?.id.length;
       let apagarGestorSubstituto = !this.formGestor.controls.gestor_substituto_id?.value && !!this.entity?.gestor_substituto?.id.length;
-      this.dao?.save(unidade, ["gestor.gestor:id", "gestor_substituto.gestor_substituto:id"]).then( /*#__PURE__*/function () {
+      let apagarGestorDelegado = !this.formGestor.controls.gestor_delegado_id?.value && !!this.entity?.gestor_delegado?.id.length;
+      this.dao?.save(unidade, ["gestor.gestor:id", "gestor_substituto.gestor_substituto:id", "gestor_delegado.gestor_delegado:id"]).then( /*#__PURE__*/function () {
         var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (unidade) {
           _this2.entity = unidade;
           if (salvarGestor) yield _this2.integranteDao.saveIntegrante([{
@@ -292,8 +294,14 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
             'usuario_id': _this2.formGestor.controls.gestor_substituto_id.value,
             'atribuicoes': ["GESTOR_SUBSTITUTO"]
           }]);
+          if (salvarGestorDelegado) yield _this2.integranteDao.saveIntegrante([{
+            'unidade_id': _this2.entity.id,
+            'usuario_id': _this2.formGestor.controls.gestor_delegado_id.value,
+            'atribuicoes': ["GESTOR_DELEGADO"]
+          }]);
           if (apagarGestor) yield _this2.integranteAtribuicaoDao.delete(_this2.entity?.gestor.gestor.id);
           if (apagarGestorSubstituto) yield _this2.integranteAtribuicaoDao.delete(_this2.entity?.gestor_substituto.gestor_substituto.id);
+          if (apagarGestorDelegado) yield _this2.integranteAtribuicaoDao.delete(_this2.entity?.gestor_delegado.gestor_delegado.id);
           resolve(true);
         });
         return function (_x) {

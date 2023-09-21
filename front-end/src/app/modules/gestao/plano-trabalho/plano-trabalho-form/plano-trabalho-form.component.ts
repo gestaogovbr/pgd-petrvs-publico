@@ -172,7 +172,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
           - estando com o status 'ATIVO', o usuário precisa ser gestor da Unidade Executora e possuir a capacidade MOD_PTR_EDT_ATV.
       Após alterado, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
     */
-    let result = null;
+    let result = "";
     let participantePlanoEhLotadoUnidadeExecutora: boolean = false;
     let participantePlanoEhLotadoAlgumaAreaTrabalho: boolean = false;
     let periodoPlanoNaoConflitaOutroMesmaUnidadeMesmoParticipante: boolean = false;
@@ -189,7 +189,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       participantePlanoEhLotadoAlgumaAreaTrabalho = participante ? this.auth.usuario!.areas_trabalho!.map(at => at.unidade_id).includes(participante!.lotacao!.unidade_id) : false;
       participantePlanoEhLotadoUnidadeExecutora = participante ? participante!.lotacao!.unidade_id == this.entity!.unidade_id : false;
     });
-    await this.dao?.query({where: [["unidade_id","==",this.entity!.unidade_id],["usuario_id","==",this.entity!.usuario_id]]}).getAll().then((planosTrabalho) => {
+    await this.dao?.query({where: [["unidade_id","==",this.entity!.unidade_id],["usuario_id","==",this.form?.controls.usuario_id.value]]}).getAll().then((planosTrabalho) => {
       let naoConflita = true;
       planosTrabalho.forEach(pt => {
         if(this.utilService.intersection([{start: this.utilService.asDate(pt.data_inicio)!, end: this.utilService.asDate(pt.data_fim)!}, {start: this.utilService.asDate(this.entity?.data_inicio)!, end: this.utilService.asDate(this.entity?.data_fim)!}])) naoConflita = false;
@@ -201,17 +201,18 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     let usuarioPossuiCapacidadeInclusaoPlanoConflitante: boolean = this.auth.hasPermissionTo("MOD_PTR_INTSC_DATA");
     let usuarioPossuiCapacidadeAlteracaoPlanoAtivo: boolean = this.auth.hasPermissionTo("MOD_PTR_EDT_ATV");
     if(this.action == "new") {
-      if(! usuarioPossuiCapacidadeInclusao) result = "Você não possui a capacidade de inserir planos de trabalho (MOD_PTR_INCL)! ";
-      if(!(usuarioEhParticipantePgdHabilitado || usuarioEhGestorUnidadeExecutora)) result += "Para inserir um plano de trabalho, você precisa ser um participante habilitado do programa do plano, ou um dos gestores da sua unidade executora! ";
-      if(!(participantePlanoEhLotadoAlgumaAreaTrabalho || usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoAreasTrabalho)) result += "Para inserir um plano de trabalho, o participante deste deve estar lotado em alguma das suas áreas de trabalho, ou você precisa possuir a capacidade de não obedecer a essa regra (MOD_PTR_USERS_INCL)! ";
-      if(!(participantePlanoEhLotadoUnidadeExecutora || usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoUnidadeExecutora)) result += "Para inserir um plano de trabalho, o participante deste deve estar lotado na sua unidade executora, ou você precisa possuir a capacidade de não obedecer a essa regra (MOD_PTR_INCL_SEM_LOT)! ";
-      if(!(periodoPlanoNaoConflitaOutroMesmaUnidadeMesmoParticipante || usuarioPossuiCapacidadeInclusaoPlanoConflitante)) result += "O período de duração de um plano de um novo plano de trabalho não pode coincidir com o de outro plano já existente para a mesma unidade executora e mesmo participante, ou você precisa possuir a capacidade de não obedecer a essa regra (MOD_PTR_INTSC_DATA)! ";
+      if(! usuarioPossuiCapacidadeInclusao) result = "Você não possui a capacidade de inserir planos de trabalho (MOD_PTR_INCL). ";
+      if(!(usuarioEhParticipantePgdHabilitado || usuarioEhGestorUnidadeExecutora)) result += "Para inserir um plano de trabalho, você precisa ser um participante habilitado do programa do plano, ou um dos gestores da sua unidade executora. ";
+      if(!(participantePlanoEhLotadoAlgumaAreaTrabalho || usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoAreasTrabalho)) result += "Para inserir um plano de trabalho, o participante deste deve estar lotado em alguma das suas áreas de trabalho, ou você precisa possuir a capacidade de ser dispensado dessa regra (MOD_PTR_USERS_INCL). ";
+      if(!(participantePlanoEhLotadoUnidadeExecutora || usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoUnidadeExecutora)) result += "Para inserir um plano de trabalho, o participante deste deve estar lotado na sua unidade executora, ou você precisa possuir a capacidade de ser dispensado dessa regra (MOD_PTR_INCL_SEM_LOT). ";
+      if(!(periodoPlanoNaoConflitaOutroMesmaUnidadeMesmoParticipante || usuarioPossuiCapacidadeInclusaoPlanoConflitante)) result += "O período de duração de um novo plano de trabalho não pode coincidir com o de outro plano já existente para a mesma unidade executora e mesmo participante, ou você precisa possuir a capacidade de ser dispensado dessa regra (MOD_PTR_INTSC_DATA). ";
     } else if(this.action == "edit"){
-      if(! usuarioPossuiCapacidadeAlteracao) result = "Você não possui a capacidade de alterar/editar planos de trabalho (MOD_PTR_EDT)! ";
-      if(! this.planoTrabalhoService.isValido(this.entity!)) result += "O plano de trabalho não é válido, ou seja, foi cancelado, apagado ou arquivado! ";
-      if(planoIncluido && (!(usuarioEhParticipantePlano || usuarioEhGestorUnidadeExecutora))) result += "Para alterar um plano de trabalho no status INCLUIDO, você precisaria ser o participante do plano ! ";
-      if(planoAguardandoAssinatura && (!usuarioJaAssinouTCR)) result += "Para alterar um plano de trabalho no status AGUARDANDO ASSINATURA, você precisa já ter assinado o TCR!";
-      if(planoAtivo && (!(usuarioEhGestorUnidadeExecutora && usuarioPossuiCapacidadeAlteracaoPlanoAtivo))) result += "Para alterar um plano de trabalho no status ATIVO, você precisa ser gestor da unidade executora do plano e possuir a capacidade específica (MOD_PTR_EDT_ATV)! ";
+      if(! usuarioPossuiCapacidadeAlteracao) result = "Você não possui a capacidade de alterar/editar planos de trabalho (MOD_PTR_EDT). ";
+      if(! this.planoTrabalhoService.isValido(this.entity!)) result += "O plano de trabalho não é válido, ou seja, foi cancelado, apagado ou arquivado. ";
+      if(planoIncluido && (!(usuarioEhParticipantePlano || usuarioEhGestorUnidadeExecutora))) result += "Para alterar um plano de trabalho no status INCLUIDO, você precisaria ser o participante do plano. ";
+      if(planoAguardandoAssinatura && (!usuarioJaAssinouTCR)) result += "Para alterar um plano de trabalho no status AGUARDANDO ASSINATURA, você precisa já ter assinado o TCR. ";
+      if(planoAtivo && (!(usuarioEhGestorUnidadeExecutora && usuarioPossuiCapacidadeAlteracaoPlanoAtivo))) result += "Para alterar um plano de trabalho no status ATIVO, você precisa ser gestor da unidade executora do plano e possuir a capacidade específica (MOD_PTR_EDT_ATV). ";
+// checar novamente usuario e datas
     }
     return result;
     // TODO:
