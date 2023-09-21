@@ -50,7 +50,7 @@ export class PlanoTrabalhoListAccordeonComponent extends PageFrameBase {
       let agora = (new Date()).getTime();
       this.planos = dados.planos;
       for(var i = 0; i < this.planos.length; i++) {
-        if(this.util.asDate(this.planos[i].data_inicio)!.getTime() <= agora && agora <= this.util.asDate(this.planos[i].data_fim)!.getTime() && ["ATIVO", "CONCLUIDO"].includes(this.planos[i].status)) {
+        if(this.util.asTimestamp(this.planos[i].data_inicio) <= agora && agora <= this.util.asTimestamp(this.planos[i].data_fim) && ["ATIVO", "CONCLUIDO"].includes(this.planos[i].status)) {
           this.selectedIndex = i;
         }
       }
