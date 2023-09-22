@@ -102,14 +102,14 @@ class UsuarioSeeder extends Seeder
             [
                 'email' => 'alexdiasprojetos@gmail.com',
                 'nome' => 'Alex Dias Ferreira',
-                'cpf' => '94577536153',
+                'cpf' => '94577536153', 
                 'apelido' => 'Alex',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
             ],
             [
                 'email' => 'karinahellen.eng@gmail.com',
                 'nome' => 'Karina Silva',
-                'cpf' => '94577536153',
+                'cpf' => '05182319177',
                 'apelido' => 'Karina',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
             ],
@@ -141,7 +141,13 @@ class UsuarioSeeder extends Seeder
                 'apelido' => 'Jonata',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
             ],
-
+            [
+                'email' => 'pauloflausino@gmail.com',
+                'nome' => 'Paulo Flausino',
+                'cpf' => '22374479854',
+                'apelido' => 'Paulo',
+                'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+            ],
         ];
 
         $unidade_pai = Unidade::first();
