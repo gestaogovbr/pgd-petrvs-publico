@@ -19,7 +19,7 @@ export class Programa extends Base {
     public config: string | null = null; /* Configuração extra de programa */
     public data_inicio: Date = new Date(); /* Data de início vigência */
     public data_fim: Date = new Date(); /* Data de fim vigência */
-    public termo_obrigatorio: boolean = false; /* tinyint; NOT NULL; */
+    public termo_obrigatorio: boolean = true; /* tinyint; NOT NULL; */
     public prazo_max_plano_entrega: number = 365; /*Limite máximo de dias corridos para o plano de entregas (Zero para não limitar) */
     public periodicidade_consolidacao: ProgramaPeriodicidadeConsolidacao = 'MENSAL'; /* Período para avaliação do plano de trabalho */
     public periodicidade_valor: number = 1; /* Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do mês para o restante */
@@ -29,9 +29,9 @@ export class Programa extends Base {
     public checklist_avaliacao_entregas: LookupItem[] = []; //Checklist para avaliação das entregas de plano de trabalho e plano de entrega
     public registra_comparecimento: number = 1; /* Se registra comparecimento na consolidação do plano de trabalho */
     public plano_trabalho_assinatura_participante: number = 1; /* Exigir assinatura do usuário no plano de trabalho */
-    public plano_trabalho_assinatura_gestor_lotacao: number = 0; /* Exigir assinatura do gestor da unidade de lotação do servidor */
-    public plano_trabalho_assinatura_gestor_unidade: number = 0; /* Exigir assinatura do gestor da unidade */
-    public plano_trabalho_assinatura_gestor_entidade: number = 0; /* Exigir assinatura do gestor da entidade */
+    public plano_trabalho_assinatura_gestor_lotacao: number = 1; /* Exigir assinatura do gestor da unidade de lotação do servidor */
+    public plano_trabalho_assinatura_gestor_unidade: number = 1; /* Exigir assinatura do gestor da unidade */
+    public plano_trabalho_assinatura_gestor_entidade: number = 1; /* Exigir assinatura do gestor da entidade */
 
     public tipo_avaliacao_plano_trabalho_id: string = ""; /* Tipo de avaliação do plano de trabalho */
     public tipo_avaliacao_plano_entrega_id: string = ""; /* Tipo de avaliação do plano de entrega */

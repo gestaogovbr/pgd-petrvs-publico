@@ -80,7 +80,7 @@
               },
               {
                 "glob": "**/*", 
-                "input": "src/documentacao",
+                "input": "src/assets/documentacao",
                 "output": "/docs/"
               }
             ],

@@ -11,7 +11,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AtividadeService: () => (/* binding */ AtividadeService)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_models_comentario__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/models/comentario */ 11597);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/core */ 51197);
 /* harmony import */ var src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/services/lookup.service */ 39702);
@@ -394,7 +394,7 @@ class AtividadeService {
       icon: "bi bi-alarm",
       color: "danger"
     });
-    if (consolidacao && (atividade.data_inicio && this.util.asDate(atividade.data_inicio).getTime() < this.util.asDate(consolidacao.data_inicio).getTime() || atividade.data_entrega && this.util.asDate(atividade.data_entrega).getTime() > this.util.asDate(consolidacao.data_fim).getTime())) {
+    if (consolidacao && (atividade.data_inicio && this.util.asTimestamp(atividade.data_inicio) < this.util.asTimestamp(consolidacao.data_inicio) || atividade.data_entrega && this.util.asTimestamp(atividade.data_entrega) > this.util.asTimestamp(consolidacao.data_fim))) {
       result.push({
         data: {
           status: "EXTRAPOLADO",
@@ -458,7 +458,7 @@ class AtividadeService {
           data: row
         });
       }
-      if (!row.metadados.concluido && this.util.asDate(row.data_estipulada_entrega).getTime() < this.auth.hora.getTime()) {
+      if (!row.metadados.concluido && this.util.asTimestamp(row.data_estipulada_entrega) < this.auth.hora.getTime()) {
         const atrasado = this.calendar.horasAtraso(row.data_estipulada_entrega, row.unidade);
         tempos.push({
           color: "danger",
@@ -524,16 +524,14 @@ class AtividadeService {
     }
   }
   modalRefreshId(metadata, entity) {
+    var _ref;
     return {
       modal: true,
-      modalClose: function () {
-        var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (modalResult) {
+      modalClose: function modalClose(_x) {
+        return (_ref = _ref || (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (modalResult) {
           return metadata.refreshId(entity.id);
-        });
-        return function modalClose(_x) {
-          return _ref.apply(this, arguments);
-        };
-      }()
+        })).apply(this, arguments);
+      }
     };
   }
   modalRefresh(metadata) {
@@ -543,7 +541,7 @@ class AtividadeService {
     };
   }
   lastConsolidacao(consolidacoes) {
-    return consolidacoes?.reduce((a, v) => a = !a || this.util.asDate(v.data_conclusao).getTime() > this.util.asDate(a.data_conclusao).getTime() ? v : a, undefined);
+    return consolidacoes?.reduce((a, v) => a = !a || this.util.asTimestamp(v.data_conclusao) > this.util.asTimestamp(a.data_conclusao) ? v : a, undefined);
   }
 }
 _class = AtividadeService;

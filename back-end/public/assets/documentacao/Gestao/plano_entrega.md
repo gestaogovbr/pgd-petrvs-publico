@@ -77,7 +77,7 @@ Consideremos também que o Plano de Entregas é da Unidade B.
 
 ## FLUXOS (STATUS & AÇÕES)
 
-![Fig. 1 - Análise dos Fluxos dos Planos de Entrega](docs/Imagens/Fluxo_dos_Planos_Entregas.jpg)
+![Fig. 1 - Análise dos Fluxos dos Planos de Entrega](docs/Imagens/Fluxo_Planos_Entregas.jpg)
 
 ~~~text
 status possíveis: "INCLUIDO", "HOMOLOGANDO", "ATIVO", "CONCLUIDO", "AVALIADO", "SUSPENSO", "CANCELADO"

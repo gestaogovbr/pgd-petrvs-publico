@@ -96,7 +96,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AtividadeFormConcluirComponent: () => (/* binding */ AtividadeFormConcluirComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/modules/base/page-form-base */ 1184);
 /* harmony import */ var src_app_dao_atividade_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/atividade-dao.service */ 84971);
@@ -303,7 +303,7 @@ class AtividadeFormConcluirComponent extends src_app_modules_base_page_form_base
   }
   loadData(entity, form) {
     var _this = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = Object.assign({}, form.value);
       formValue = _this.util.fillForm(formValue, entity);
       formValue.data_entrega = _this.auth.hora;
@@ -324,7 +324,7 @@ class AtividadeFormConcluirComponent extends src_app_modules_base_page_form_base
   }
   initializeData(form) {
     var _this2 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.entity = yield _this2.dao.getAtividade(_this2.urlParams.get("id"));
       yield _this2.loadData(_this2.entity, form);
     })();
@@ -460,7 +460,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AtividadeFormIniciarComponent: () => (/* binding */ AtividadeFormIniciarComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_dao_atividade_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/atividade-dao.service */ 84971);
 /* harmony import */ var src_app_models_atividade_model__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/models/atividade.model */ 73101);
@@ -585,7 +585,7 @@ class AtividadeFormIniciarComponent extends src_app_modules_base_page_form_base_
   }
   onPlanoChange(event) {
     var _this = this;
-    (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (_this.entity && _this.planoTrabalho?.selectedItem?.data) {
         const planoTrabalho = _this.planoTrabalho?.selectedItem?.data;
         if (_this.planoTrabalhoSelecionado?.id != planoTrabalho.id) {
@@ -610,7 +610,7 @@ class AtividadeFormIniciarComponent extends src_app_modules_base_page_form_base_
   }
   loadData(entity, form) {
     var _this2 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = Object.assign({}, form.value);
       formValue = _this2.util.fillForm(formValue, entity);
       if (!formValue.usuario_id?.length) {
@@ -628,7 +628,7 @@ class AtividadeFormIniciarComponent extends src_app_modules_base_page_form_base_
   }
   initializeData(form) {
     var _this3 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this3.entity = yield _this3.dao.getById(_this3.urlParams.get("id"), _this3.join);
       yield _this3.loadData(_this3.entity, form);
     })();
@@ -732,7 +732,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AtividadeFormPausarComponent: () => (/* binding */ AtividadeFormPausarComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_dao_atividade_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/atividade-dao.service */ 84971);
 /* harmony import */ var src_app_models_atividade_model__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/models/atividade.model */ 73101);
@@ -805,7 +805,7 @@ class AtividadeFormPausarComponent extends src_app_modules_base_page_form_base__
   }
   loadData(entity, form) {
     var _this = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       //this.reiniciar = !!this.queryParams?.reiniciar;
       let pausado = _this.entity?.pausas?.find(x => !x.data_fim);
       if (_this.reiniciar && !pausado) {
@@ -823,7 +823,7 @@ class AtividadeFormPausarComponent extends src_app_modules_base_page_form_base__
   }
   initializeData(form) {
     var _this2 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.entity = yield _this2.dao.getAtividade(_this2.urlParams.get("id"));
       yield _this2.loadData(_this2.entity, form);
     })();
@@ -902,7 +902,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AtividadeFormProrrogarComponent: () => (/* binding */ AtividadeFormProrrogarComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_dao_atividade_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/atividade-dao.service */ 84971);
 /* harmony import */ var src_app_models_atividade_model__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/models/atividade.model */ 73101);
@@ -945,7 +945,7 @@ class AtividadeFormProrrogarComponent extends src_app_modules_base_page_form_bas
   }
   loadData(entity, form) {
     var _this = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = {
         data_distribuicao: entity.data_distribuicao,
         data_estipulada_entrega: entity.data_estipulada_entrega
@@ -958,7 +958,7 @@ class AtividadeFormProrrogarComponent extends src_app_modules_base_page_form_bas
   }
   initializeData(form) {
     var _this2 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.entity = yield _this2.dao.getAtividade(_this2.urlParams.get("id"));
       yield _this2.loadData(_this2.entity, form);
     })();
@@ -1032,7 +1032,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AtividadeFormTarefaComponent: () => (/* binding */ AtividadeFormTarefaComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/modules/base/page-form-base */ 1184);
 /* harmony import */ var src_app_listeners_listener_all_pages_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/listeners/listener-all-pages.service */ 79084);
@@ -1139,7 +1139,7 @@ class AtividadeFormTarefaComponent extends src_app_modules_base_page_form_base__
   }
   loadData(entity, form) {
     var _this = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = Object.assign({}, form.value);
       formValue = _this.util.fillForm(formValue, entity);
       yield _this.tipoTarefa?.loadSearch(entity.tipo_tarefa || formValue.tipo_tarefa_id);
@@ -1150,7 +1150,7 @@ class AtividadeFormTarefaComponent extends src_app_modules_base_page_form_base__
   }
   initializeData(form) {
     var _this2 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.entity = _this2.metadata.tarefa;
       _this2.atividade = _this2.metadata.atividade;
       _this2.sei = _this2.metadata.sei;
@@ -1159,7 +1159,7 @@ class AtividadeFormTarefaComponent extends src_app_modules_base_page_form_base__
   }
   saveData(form) {
     var _this3 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this3.comentarios?.confirm();
       _this3.util.fillForm(_this3.entity, _this3.form.value);
       _this3.entity.tipo_tarefa = _this3.tipoTarefa?.selectedEntity;
@@ -1243,7 +1243,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵdef
     }
   },
   dependencies: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_11__.InputSwitchComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_12__.InputSearchComponent, _components_input_input_textarea_input_textarea_component__WEBPACK_IMPORTED_MODULE_13__.InputTextareaComponent, _components_input_input_timer_input_timer_component__WEBPACK_IMPORTED_MODULE_14__.InputTimerComponent, _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_15__.TabsComponent, _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_16__.TabComponent, _uteis_comentarios_comentarios_component__WEBPACK_IMPORTED_MODULE_17__.ComentariosComponent, _uteis_documentos_documentos_link_documentos_link_component__WEBPACK_IMPORTED_MODULE_18__.DocumentosLinkComponent],
-  styles: ["@charset \"UTF-8\";\n.comentario-table[_ngcontent-%COMP%] {\n  width: 100%;\n}\n\n.comentario-user[_ngcontent-%COMP%] {\n  width: 50px;\n  vertical-align: top;\n  padding: 8px;\n}\n\n.comentario-container[_ngcontent-%COMP%] {\n  padding-left: 10px;\n  width: auto;\n  border-left: var(--bs-gray-400) 2px solid;\n  position: relative;\n}\n\n.comentario-user-indicator[_ngcontent-%COMP%] {\n  content: \"\";\n  position: absolute;\n  width: 0px;\n  height: 0px;\n  top: 0px;\n  left: -12px;\n  border-top: 0.75rem solid var(--bs-gray-400);\n  border-left: 0.75rem solid transparent;\n  border-bottom: none;\n  border-right: none;\n}\n\n.comentario-level[_ngcontent-%COMP%] {\n  color: var(--bs-gray);\n}\n\n.comentario-message-title[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  font-size: 0.7em;\n  color: var(--bs-gray);\n}\n.comentario-message-title[_ngcontent-%COMP%]   span[_ngcontent-%COMP%]::before {\n  content: \" \u2022 \";\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvbW9kdWxlcy9nZXN0YW8vYXRpdmlkYWRlL2F0aXZpZGFkZS1mb3JtLXRhcmVmYS9hdGl2aWRhZGUtZm9ybS10YXJlZmEuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUEsZ0JBQWdCO0FBQWhCO0VBQ0ksV0FBQTtBQUVKOztBQUFBO0VBQ0ksV0FBQTtFQUNBLG1CQUFBO0VBQ0EsWUFBQTtBQUdKOztBQURBO0VBQ0ksa0JBQUE7RUFDQSxXQUFBO0VBQ0EseUNBQUE7RUFDQSxrQkFBQTtBQUlKOztBQUZBO0VBQ0ksV0FBQTtFQUNBLGtCQUFBO0VBQ0EsVUFBQTtFQUNBLFdBQUE7RUFDQSxRQUFBO0VBQ0EsV0FBQTtFQUNBLDRDQUFBO0VBQ0Esc0NBQUE7RUFDQSxtQkFBQTtFQUNBLGtCQUFBO0FBS0o7O0FBSEE7RUFDSSxxQkFBQTtBQU1KOztBQUhJO0VBQ0ksZ0JBQUE7RUFDQSxxQkFBQTtBQU1SO0FBSkk7RUFDSSxjQUFBO0FBTVIiLCJzb3VyY2VzQ29udGVudCI6WyIuY29tZW50YXJpby10YWJsZSB7XHJcbiAgICB3aWR0aDogMTAwJTtcclxufVxyXG4uY29tZW50YXJpby11c2VyIHtcclxuICAgIHdpZHRoOiA1MHB4OyBcclxuICAgIHZlcnRpY2FsLWFsaWduOiB0b3A7IFxyXG4gICAgcGFkZGluZzogOHB4O1xyXG59XHJcbi5jb21lbnRhcmlvLWNvbnRhaW5lciB7XHJcbiAgICBwYWRkaW5nLWxlZnQ6IDEwcHg7XHJcbiAgICB3aWR0aDogYXV0bztcclxuICAgIGJvcmRlci1sZWZ0OiB2YXIoLS1icy1ncmF5LTQwMCkgMnB4IHNvbGlkO1xyXG4gICAgcG9zaXRpb246IHJlbGF0aXZlO1xyXG59XHJcbi5jb21lbnRhcmlvLXVzZXItaW5kaWNhdG9yIHtcclxuICAgIGNvbnRlbnQ6IFwiXCI7XHJcbiAgICBwb3NpdGlvbjogYWJzb2x1dGU7XHJcbiAgICB3aWR0aDogMHB4O1xyXG4gICAgaGVpZ2h0OiAwcHg7XHJcbiAgICB0b3A6IDBweDtcclxuICAgIGxlZnQ6IC0xMnB4O1xyXG4gICAgYm9yZGVyLXRvcDogLjc1cmVtIHNvbGlkIHZhcigtLWJzLWdyYXktNDAwKTtcclxuICAgIGJvcmRlci1sZWZ0OiAuNzVyZW0gc29saWQgdHJhbnNwYXJlbnQ7XHJcbiAgICBib3JkZXItYm90dG9tOiBub25lO1xyXG4gICAgYm9yZGVyLXJpZ2h0OiBub25lO1xyXG59XHJcbi5jb21lbnRhcmlvLWxldmVsIHtcclxuICAgIGNvbG9yOiB2YXIoLS1icy1ncmF5KTtcclxufVxyXG4uY29tZW50YXJpby1tZXNzYWdlLXRpdGxlIHtcclxuICAgIHNwYW4ge1xyXG4gICAgICAgIGZvbnQtc2l6ZTogMC43ZW07XHJcbiAgICAgICAgY29sb3I6IHZhcigtLWJzLWdyYXkpO1xyXG4gICAgfVxyXG4gICAgc3Bhbjo6YmVmb3JlIHtcclxuICAgICAgICBjb250ZW50OiBcIiDDosKAwqIgXCI7XHJcbiAgICB9XHJcbn0iXSwic291cmNlUm9vdCI6IiJ9 */"]
+  styles: ["@charset \"UTF-8\";\n.comentario-table[_ngcontent-%COMP%] {\n  width: 100%;\n}\n\n.comentario-user[_ngcontent-%COMP%] {\n  width: 50px;\n  vertical-align: top;\n  padding: 8px;\n}\n\n.comentario-container[_ngcontent-%COMP%] {\n  padding-left: 10px;\n  width: auto;\n  border-left: var(--bs-gray-400) 2px solid;\n  position: relative;\n}\n\n.comentario-user-indicator[_ngcontent-%COMP%] {\n  content: \"\";\n  position: absolute;\n  width: 0px;\n  height: 0px;\n  top: 0px;\n  left: -12px;\n  border-top: 0.75rem solid var(--bs-gray-400);\n  border-left: 0.75rem solid transparent;\n  border-bottom: none;\n  border-right: none;\n}\n\n.comentario-level[_ngcontent-%COMP%] {\n  color: var(--bs-gray);\n}\n\n.comentario-message-title[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  font-size: 0.7em;\n  color: var(--bs-gray);\n}\n.comentario-message-title[_ngcontent-%COMP%]   span[_ngcontent-%COMP%]::before {\n  content: \" \u2022 \";\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvbW9kdWxlcy9nZXN0YW8vYXRpdmlkYWRlL2F0aXZpZGFkZS1mb3JtLXRhcmVmYS9hdGl2aWRhZGUtZm9ybS10YXJlZmEuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUEsZ0JBQWdCO0FBQWhCO0VBQ0ksV0FBQTtBQUVKOztBQUFBO0VBQ0ksV0FBQTtFQUNBLG1CQUFBO0VBQ0EsWUFBQTtBQUdKOztBQURBO0VBQ0ksa0JBQUE7RUFDQSxXQUFBO0VBQ0EseUNBQUE7RUFDQSxrQkFBQTtBQUlKOztBQUZBO0VBQ0ksV0FBQTtFQUNBLGtCQUFBO0VBQ0EsVUFBQTtFQUNBLFdBQUE7RUFDQSxRQUFBO0VBQ0EsV0FBQTtFQUNBLDRDQUFBO0VBQ0Esc0NBQUE7RUFDQSxtQkFBQTtFQUNBLGtCQUFBO0FBS0o7O0FBSEE7RUFDSSxxQkFBQTtBQU1KOztBQUhJO0VBQ0ksZ0JBQUE7RUFDQSxxQkFBQTtBQU1SO0FBSkk7RUFDSSxjQUFBO0FBTVIiLCJzb3VyY2VzQ29udGVudCI6WyIuY29tZW50YXJpby10YWJsZSB7XG4gICAgd2lkdGg6IDEwMCU7XG59XG4uY29tZW50YXJpby11c2VyIHtcbiAgICB3aWR0aDogNTBweDsgXG4gICAgdmVydGljYWwtYWxpZ246IHRvcDsgXG4gICAgcGFkZGluZzogOHB4O1xufVxuLmNvbWVudGFyaW8tY29udGFpbmVyIHtcbiAgICBwYWRkaW5nLWxlZnQ6IDEwcHg7XG4gICAgd2lkdGg6IGF1dG87XG4gICAgYm9yZGVyLWxlZnQ6IHZhcigtLWJzLWdyYXktNDAwKSAycHggc29saWQ7XG4gICAgcG9zaXRpb246IHJlbGF0aXZlO1xufVxuLmNvbWVudGFyaW8tdXNlci1pbmRpY2F0b3Ige1xuICAgIGNvbnRlbnQ6IFwiXCI7XG4gICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgIHdpZHRoOiAwcHg7XG4gICAgaGVpZ2h0OiAwcHg7XG4gICAgdG9wOiAwcHg7XG4gICAgbGVmdDogLTEycHg7XG4gICAgYm9yZGVyLXRvcDogLjc1cmVtIHNvbGlkIHZhcigtLWJzLWdyYXktNDAwKTtcbiAgICBib3JkZXItbGVmdDogLjc1cmVtIHNvbGlkIHRyYW5zcGFyZW50O1xuICAgIGJvcmRlci1ib3R0b206IG5vbmU7XG4gICAgYm9yZGVyLXJpZ2h0OiBub25lO1xufVxuLmNvbWVudGFyaW8tbGV2ZWwge1xuICAgIGNvbG9yOiB2YXIoLS1icy1ncmF5KTtcbn1cbi5jb21lbnRhcmlvLW1lc3NhZ2UtdGl0bGUge1xuICAgIHNwYW4ge1xuICAgICAgICBmb250LXNpemU6IDAuN2VtO1xuICAgICAgICBjb2xvcjogdmFyKC0tYnMtZ3JheSk7XG4gICAgfVxuICAgIHNwYW46OmJlZm9yZSB7XG4gICAgICAgIGNvbnRlbnQ6IFwiIMOiwoDCoiBcIjtcbiAgICB9XG59Il0sInNvdXJjZVJvb3QiOiIifQ== */"]
 });
 
 /***/ }),
@@ -1258,7 +1258,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AtividadeFormComponent: () => (/* binding */ AtividadeFormComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_dao_atividade_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/atividade-dao.service */ 84971);
 /* harmony import */ var src_app_models_atividade_model__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/models/atividade.model */ 73101);
@@ -1647,7 +1647,7 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
   }
   onPlanoTrabalhoChange(event) {
     var _this = this;
-    (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (_this.entity) {
         const planoTrabalho = _this.usuario?.selectedEntity?.planos_trabalho?.find(x => x.id == _this.form.controls.plano_trabalho_id.value);
         if (planoTrabalho) {
@@ -1767,7 +1767,7 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
   }
   loadData(entity, form) {
     var _this2 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = Object.assign({}, form.value);
       formValue = _this2.util.fillForm(formValue, entity);
       _this2.planoTrabalhoSelecionado = entity.plano_trabalho;
@@ -1786,7 +1786,7 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
   }
   initializeData(form) {
     var _this3 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (_this3.isClonar) {
         const source = yield _this3.dao.getAtividade(_this3.urlParams.get("id"));
         _this3.entity = new src_app_models_atividade_model__WEBPACK_IMPORTED_MODULE_3__.Atividade();
@@ -2028,7 +2028,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AtividadeListKanbanComponent: () => (/* binding */ AtividadeListKanbanComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var _atividade_list_base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../atividade-list-base */ 94180);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ 51197);
 
@@ -2252,7 +2252,7 @@ function AtividadeListKanbanComponent_kanban_24_Template(rf, ctx) {
 }
 class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTED_MODULE_1__.AtividadeListBase {
   constructor(injector) {
-    var _this;
+    var _this, _ref, _ref2;
     super(injector);
     _this = this;
     this.injector = injector;
@@ -2284,14 +2284,11 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
       icon: "bi bi-plus-circle",
       color: "btn-outline-success",
       label: "Incluir",
-      onClick: function () {
-        var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      onClick: function onClick() {
+        return (_ref = _ref || (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
           return yield _this.add();
-        });
-        return function onClick() {
-          return _ref.apply(this, arguments);
-        };
-      }()
+        })).apply(this, arguments);
+      }
     }];
     this.outrasButtons = [{
       icon: "bi bi-plus-circle",
@@ -2309,14 +2306,11 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
       icon: "bi bi-plus-circle",
       color: "btn-outline-primary",
       hint: "Incluir",
-      onClick: function () {
-        var _ref2 = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      onClick: function onClick() {
+        return (_ref2 = _ref2 || (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
           return yield _this.add();
-        });
-        return function onClick() {
-          return _ref2.apply(this, arguments);
-        };
-      }()
+        })).apply(this, arguments);
+      }
     }];
     this.filterWhere = filter => {
       let result = this.fixedFilter || [];
@@ -2499,7 +2493,7 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
   }
   editEtiquetas(docker) {
     var _this2 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       const label = _this2.labels[docker.key];
       const allUsed = _this2.labels.reduce((a, v, i) => {
         if (v.labels.length && i != docker.key) a.push(v.labels[0].key);
@@ -2533,7 +2527,7 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
   }
   saveEtiquetas(docker) {
     var _this3 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       const key = _this3.formEdit.controls.etiqueta.value;
       if (key?.length) {
         const label = _this3.labels[docker.key];
@@ -2548,7 +2542,7 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
   }
   cancelEtiquetas(docker) {
     var _this4 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       const label = _this4.labels[docker.key];
       if (!label.labels?.length) {
         _this4.labels.splice(docker.key, 1);
@@ -2558,7 +2552,7 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
   }
   deleteEtiquetas(docker) {
     var _this5 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this5.labels.splice(docker.key, 1);
       _this5.kanbanEtiquetas?.refreshDoubleScrollbar();
       if (_this5.query) _this5.onQueryLoad(_this5.query.rows);
@@ -2868,7 +2862,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefi
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("ngIf", ctx.isEtiquetas);
     }
   },
-  styles: [".comentario-badge[data-expanded=true][_ngcontent-%COMP%]   .comentario-title[_ngcontent-%COMP%] {\n  display: initial;\n  white-space: normal;\n}\n.comentario-badge[data-expanded=true][_ngcontent-%COMP%]   .comentario-text[_ngcontent-%COMP%] {\n  font-size: 12px;\n  height: auto;\n  display: block;\n  max-width: 290px;\n  white-space: initial;\n}\n\n.atividade-atividade[_ngcontent-%COMP%], .atividade-descricao[_ngcontent-%COMP%] {\n  height: auto;\n  display: block;\n  max-width: 200px;\n  white-space: initial;\n}\n\n.comentario-badge[_ngcontent-%COMP%] {\n  white-space: nowrap;\n  display: block;\n  background-color: #ffe69c !important;\n  margin-bottom: 1px;\n  text-align: left;\n}\n.comentario-badge[_ngcontent-%COMP%]   .comentario-title[_ngcontent-%COMP%] {\n  display: none;\n}\n.comentario-badge[_ngcontent-%COMP%]   .comentario-text[_ngcontent-%COMP%] {\n  display: inline-block;\n  max-width: 290px;\n  white-space: nowrap;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  font-size: 12px;\n}\n\n.docker-border[_ngcontent-%COMP%] {\n  border-width: 1px;\n}\n\n.card-status-container[_ngcontent-%COMP%] {\n  width: 330px;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvbW9kdWxlcy9nZXN0YW8vYXRpdmlkYWRlL2F0aXZpZGFkZS1saXN0LWthbmJhbi9hdGl2aWRhZGUtbGlzdC1rYW5iYW4uY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQ0k7RUFDSSxnQkFBQTtFQUNBLG1CQUFBO0FBQVI7QUFFSTtFQUNJLGVBQUE7RUFDQSxZQUFBO0VBQ0EsY0FBQTtFQUNBLGdCQUFBO0VBQ0Esb0JBQUE7QUFBUjs7QUFJQTtFQUNJLFlBQUE7RUFDQSxjQUFBO0VBQ0EsZ0JBQUE7RUFDQSxvQkFBQTtBQURKOztBQUlBO0VBQ0ksbUJBQUE7RUFDQSxjQUFBO0VBRUEsb0NBQUE7RUFDQSxrQkFBQTtFQUNBLGdCQUFBO0FBRko7QUFHSTtFQUNJLGFBQUE7QUFEUjtBQUdJO0VBQ0kscUJBQUE7RUFDQSxnQkFBQTtFQUNBLG1CQUFBO0VBQ0EsdUJBQUE7RUFDQSxnQkFBQTtFQUNBLGVBQUE7QUFEUjs7QUFLQTtFQUNJLGlCQUFBO0FBRko7O0FBS0E7RUFDSSxZQUFBO0FBRkoiLCJzb3VyY2VzQ29udGVudCI6WyIuY29tZW50YXJpby1iYWRnZVtkYXRhLWV4cGFuZGVkPXRydWVdIHtcclxuICAgIC5jb21lbnRhcmlvLXRpdGxlIHtcclxuICAgICAgICBkaXNwbGF5OiBpbml0aWFsO1xyXG4gICAgICAgIHdoaXRlLXNwYWNlOiBub3JtYWw7XHJcbiAgICB9XHJcbiAgICAuY29tZW50YXJpby10ZXh0IHtcclxuICAgICAgICBmb250LXNpemU6IDEycHg7XHJcbiAgICAgICAgaGVpZ2h0OiBhdXRvO1xyXG4gICAgICAgIGRpc3BsYXk6IGJsb2NrO1xyXG4gICAgICAgIG1heC13aWR0aDogMjkwcHg7XHJcbiAgICAgICAgd2hpdGUtc3BhY2U6IGluaXRpYWw7XHJcbiAgICB9XHJcbn1cclxuXHJcbi5hdGl2aWRhZGUtYXRpdmlkYWRlLCAuYXRpdmlkYWRlLWRlc2NyaWNhbyB7XHJcbiAgICBoZWlnaHQ6IGF1dG87XHJcbiAgICBkaXNwbGF5OiBibG9jaztcclxuICAgIG1heC13aWR0aDogMjAwcHg7XHJcbiAgICB3aGl0ZS1zcGFjZTogaW5pdGlhbDtcclxufVxyXG5cclxuLmNvbWVudGFyaW8tYmFkZ2Uge1xyXG4gICAgd2hpdGUtc3BhY2U6IG5vd3JhcDtcclxuICAgIGRpc3BsYXk6IGJsb2NrO1xyXG4gICAgLy93aWR0aDogMjAwcHg7XHJcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjZmZlNjljICFpbXBvcnRhbnQ7XHJcbiAgICBtYXJnaW4tYm90dG9tOiAxcHg7XHJcbiAgICB0ZXh0LWFsaWduOiBsZWZ0O1xyXG4gICAgLmNvbWVudGFyaW8tdGl0bGUge1xyXG4gICAgICAgIGRpc3BsYXk6IG5vbmU7XHJcbiAgICB9XHJcbiAgICAuY29tZW50YXJpby10ZXh0IHtcclxuICAgICAgICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XHJcbiAgICAgICAgbWF4LXdpZHRoOiAyOTBweDtcclxuICAgICAgICB3aGl0ZS1zcGFjZTogbm93cmFwO1xyXG4gICAgICAgIHRleHQtb3ZlcmZsb3c6IGVsbGlwc2lzO1xyXG4gICAgICAgIG92ZXJmbG93OiBoaWRkZW47XHJcbiAgICAgICAgZm9udC1zaXplOiAxMnB4O1xyXG4gICAgfVxyXG59XHJcblxyXG4uZG9ja2VyLWJvcmRlciB7XHJcbiAgICBib3JkZXItd2lkdGg6IDFweDtcclxufVxyXG5cclxuLmNhcmQtc3RhdHVzLWNvbnRhaW5lciB7XHJcbiAgICB3aWR0aDogMzMwcHg7XHJcbn0iXSwic291cmNlUm9vdCI6IiJ9 */"]
+  styles: [".comentario-badge[data-expanded=true][_ngcontent-%COMP%]   .comentario-title[_ngcontent-%COMP%] {\n  display: initial;\n  white-space: normal;\n}\n.comentario-badge[data-expanded=true][_ngcontent-%COMP%]   .comentario-text[_ngcontent-%COMP%] {\n  font-size: 12px;\n  height: auto;\n  display: block;\n  max-width: 290px;\n  white-space: initial;\n}\n\n.atividade-atividade[_ngcontent-%COMP%], .atividade-descricao[_ngcontent-%COMP%] {\n  height: auto;\n  display: block;\n  max-width: 200px;\n  white-space: initial;\n}\n\n.comentario-badge[_ngcontent-%COMP%] {\n  white-space: nowrap;\n  display: block;\n  background-color: #ffe69c !important;\n  margin-bottom: 1px;\n  text-align: left;\n}\n.comentario-badge[_ngcontent-%COMP%]   .comentario-title[_ngcontent-%COMP%] {\n  display: none;\n}\n.comentario-badge[_ngcontent-%COMP%]   .comentario-text[_ngcontent-%COMP%] {\n  display: inline-block;\n  max-width: 290px;\n  white-space: nowrap;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  font-size: 12px;\n}\n\n.docker-border[_ngcontent-%COMP%] {\n  border-width: 1px;\n}\n\n.card-status-container[_ngcontent-%COMP%] {\n  width: 330px;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvbW9kdWxlcy9nZXN0YW8vYXRpdmlkYWRlL2F0aXZpZGFkZS1saXN0LWthbmJhbi9hdGl2aWRhZGUtbGlzdC1rYW5iYW4uY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQ0k7RUFDSSxnQkFBQTtFQUNBLG1CQUFBO0FBQVI7QUFFSTtFQUNJLGVBQUE7RUFDQSxZQUFBO0VBQ0EsY0FBQTtFQUNBLGdCQUFBO0VBQ0Esb0JBQUE7QUFBUjs7QUFJQTtFQUNJLFlBQUE7RUFDQSxjQUFBO0VBQ0EsZ0JBQUE7RUFDQSxvQkFBQTtBQURKOztBQUlBO0VBQ0ksbUJBQUE7RUFDQSxjQUFBO0VBRUEsb0NBQUE7RUFDQSxrQkFBQTtFQUNBLGdCQUFBO0FBRko7QUFHSTtFQUNJLGFBQUE7QUFEUjtBQUdJO0VBQ0kscUJBQUE7RUFDQSxnQkFBQTtFQUNBLG1CQUFBO0VBQ0EsdUJBQUE7RUFDQSxnQkFBQTtFQUNBLGVBQUE7QUFEUjs7QUFLQTtFQUNJLGlCQUFBO0FBRko7O0FBS0E7RUFDSSxZQUFBO0FBRkoiLCJzb3VyY2VzQ29udGVudCI6WyIuY29tZW50YXJpby1iYWRnZVtkYXRhLWV4cGFuZGVkPXRydWVdIHtcbiAgICAuY29tZW50YXJpby10aXRsZSB7XG4gICAgICAgIGRpc3BsYXk6IGluaXRpYWw7XG4gICAgICAgIHdoaXRlLXNwYWNlOiBub3JtYWw7XG4gICAgfVxuICAgIC5jb21lbnRhcmlvLXRleHQge1xuICAgICAgICBmb250LXNpemU6IDEycHg7XG4gICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgICAgZGlzcGxheTogYmxvY2s7XG4gICAgICAgIG1heC13aWR0aDogMjkwcHg7XG4gICAgICAgIHdoaXRlLXNwYWNlOiBpbml0aWFsO1xuICAgIH1cbn1cblxuLmF0aXZpZGFkZS1hdGl2aWRhZGUsIC5hdGl2aWRhZGUtZGVzY3JpY2FvIHtcbiAgICBoZWlnaHQ6IGF1dG87XG4gICAgZGlzcGxheTogYmxvY2s7XG4gICAgbWF4LXdpZHRoOiAyMDBweDtcbiAgICB3aGl0ZS1zcGFjZTogaW5pdGlhbDtcbn1cblxuLmNvbWVudGFyaW8tYmFkZ2Uge1xuICAgIHdoaXRlLXNwYWNlOiBub3dyYXA7XG4gICAgZGlzcGxheTogYmxvY2s7XG4gICAgLy93aWR0aDogMjAwcHg7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogI2ZmZTY5YyAhaW1wb3J0YW50O1xuICAgIG1hcmdpbi1ib3R0b206IDFweDtcbiAgICB0ZXh0LWFsaWduOiBsZWZ0O1xuICAgIC5jb21lbnRhcmlvLXRpdGxlIHtcbiAgICAgICAgZGlzcGxheTogbm9uZTtcbiAgICB9XG4gICAgLmNvbWVudGFyaW8tdGV4dCB7XG4gICAgICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgICAgICAgbWF4LXdpZHRoOiAyOTBweDtcbiAgICAgICAgd2hpdGUtc3BhY2U6IG5vd3JhcDtcbiAgICAgICAgdGV4dC1vdmVyZmxvdzogZWxsaXBzaXM7XG4gICAgICAgIG92ZXJmbG93OiBoaWRkZW47XG4gICAgICAgIGZvbnQtc2l6ZTogMTJweDtcbiAgICB9XG59XG5cbi5kb2NrZXItYm9yZGVyIHtcbiAgICBib3JkZXItd2lkdGg6IDFweDtcbn1cblxuLmNhcmQtc3RhdHVzLWNvbnRhaW5lciB7XG4gICAgd2lkdGg6IDMzMHB4O1xufSJdLCJzb3VyY2VSb290IjoiIn0= */"]
 });
 
 /***/ }),
@@ -2883,7 +2877,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AtividadeListTarefaComponent: () => (/* binding */ AtividadeListTarefaComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @angular/forms */ 70997);
 /* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/grid/grid.component */ 73150);
 /* harmony import */ var src_app_dao_atividade_tarefa_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/atividade-tarefa-dao.service */ 949);
@@ -3006,7 +3000,7 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
     return this._atividade;
   }
   constructor(injector) {
-    var _this;
+    var _this, _ref;
     super(injector);
     _this = this;
     this.injector = injector;
@@ -3019,8 +3013,8 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
       icon: "bi bi-plus-circle",
       hint: "Incluir comentário"
     };
-    this.editTarefa = /*#__PURE__*/function () {
-      var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (row) {
+    this.editTarefa = function (_x) {
+      return (_ref = _ref || (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (row) {
         _this.go.navigate({
           route: ['gestao', 'atividade', 'tarefa']
         }, {
@@ -3030,7 +3024,7 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
           },
           modalClose: modalResult => {
             if (modalResult) {
-              (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+              (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
                 const tarefas = _this.control.value;
                 const index = tarefas.findIndex(x => x.id == row.id);
                 if (index >= 0) {
@@ -3058,11 +3052,8 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
           }
         });
         return undefined;
-      });
-      return function (_x) {
-        return _ref.apply(this, arguments);
-      };
-    }();
+      })).apply(this, arguments);
+    };
     this.dao = injector.get(src_app_dao_atividade_tarefa_dao_service__WEBPACK_IMPORTED_MODULE_2__.AtividadeTarefaDaoService);
     this.atividadeService = injector.get(_atividade_service__WEBPACK_IMPORTED_MODULE_6__.AtividadeService);
     this.allPages = injector.get(src_app_listeners_listener_all_pages_service__WEBPACK_IMPORTED_MODULE_3__.ListenerAllPagesService);
@@ -3101,7 +3092,7 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
   }
   addTarefa() {
     var _this2 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       const tarefa = new src_app_models_atividade_tarefa_model__WEBPACK_IMPORTED_MODULE_4__.AtividadeTarefa();
       tarefa.id = _this2.dao.generateUuid();
       tarefa.usuario = _this2.auth.usuario;
@@ -3118,7 +3109,7 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
         },
         modalClose: modalResult => {
           if (modalResult) {
-            (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+            (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
               const tarefas = _this2.control.value || [];
               if (_this2.isPersist && _this2.atividade?.tarefas) {
                 _this2.grid.error = undefined;
@@ -3146,7 +3137,7 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
   }
   deleteTarefa(row) {
     var _this3 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       const confirm = yield _this3.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
       _this3.grid.error = undefined;
       if (confirm) {
@@ -3179,13 +3170,13 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
   }*/
   onColumnConcluidoEdit(row) {
     var _this4 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this4.formEdit.controls.concluido.setValue(!!row.data_conclusao);
     })();
   }
   onColumnConcluidoSave(row) {
     var _this5 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       try {
         const data_conclusao = _this5.formEdit.controls.concluido.value && !!row.data_conclusao ? _this5.auth.hora : row.data_conclusao;
         const saved = yield _this5.dao.update(row.id, {
@@ -3224,7 +3215,7 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
     let lastConsolidacao = this.atividadeService.lastConsolidacao(this.atividade.metadados.consolidacoes);
     /* (RN_CSLD_12) Tarefas concluidas de atividades em consolidação CONCLUIDO ou AVALIADO não poderão mais ser alteradas/excluidas, nem Remover conclusão.
        (RN_CSLD_13) Tarefas de atividades em consolidação CONCLUIDO ou AVALIADO não poderão mais ser alteradas/excluidas, somente a opção de Concluir ficará disponível. */
-    if (!lastConsolidacao || lastConsolidacao.status == "INCLUIDO" || this.util.asDate(lastConsolidacao.data_conclusao).getTime() < this.util.asDate(tarefa.created_at).getTime()) {
+    if (!lastConsolidacao || lastConsolidacao.status == "INCLUIDO" || this.util.asTimestamp(lastConsolidacao.data_conclusao) < this.util.asTimestamp(tarefa.created_at)) {
       result.push(Object.assign(this.grid.BUTTON_EDIT, {
         onClick: this.editTarefa.bind(this)
       }));
@@ -3238,7 +3229,7 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
     let tarefa = row;
     let lastConsolidacao = this.atividadeService.lastConsolidacao(this.atividade.metadados.consolidacoes);
     /* (RN_CSLD_12) e (RN_CSLD_13) */
-    return !lastConsolidacao || lastConsolidacao.status == "INCLUIDO" || this.util.asDate(lastConsolidacao.data_conclusao).getTime() < this.util.asDate(tarefa.data_conclusao).getTime();
+    return !lastConsolidacao || lastConsolidacao.status == "INCLUIDO" || this.util.asTimestamp(lastConsolidacao.data_conclusao) < this.util.asTimestamp(tarefa.data_conclusao);
   }
 }
 _class = AtividadeListTarefaComponent;
@@ -3324,7 +3315,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AtividadeListComponent: () => (/* binding */ AtividadeListComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_modules_base_page_base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/modules/base/page-base */ 17112);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ 51197);
 
@@ -3384,7 +3375,7 @@ class AtividadeListComponent extends src_app_modules_base_page_base__WEBPACK_IMP
   }
   onSelectTab(tab) {
     var _this = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this.activeTab = tab.key;
       _this.saveUsuarioConfig({
         active_tab: _this.activeTab

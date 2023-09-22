@@ -23,7 +23,7 @@ class CreateProgramasTable extends Migration
             $table->string('nome')->comment("Nome do programa");
             $table->string('normativa')->nullable()->comment("Normativa que regula o programa de gestão");
             $table->integer('prazo_max_plano_entrega')->comment("Limite máximo de dias corridos para o plano de entregas (Zero para não limitar)");
-            $table->tinyInteger('termo_obrigatorio')->default(0)->comment("Se o termo é ou não obrigatório");
+            $table->tinyInteger('termo_obrigatorio')->default(1)->comment("Se o termo é ou não obrigatório");
             $table->json('config')->nullable()->comment("Configurações do programa");
             $table->dateTime('data_inicio')->comment("Inicio da vigência do programa");
             $table->dateTime('data_fim')->comment("Fim da vigência do programa");
@@ -36,7 +36,7 @@ class CreateProgramasTable extends Migration
             $table->tinyInteger('registra_comparecimento')->default(1)->comment("Se utiliza registro de comparecimento nas consolidações do plano de trabalho");
             $table->tinyInteger('plano_trabalho_assinatura_participante')->default(1)->comment("Exigir assinatura do usuário no plano de trabalho");
             $table->tinyInteger('plano_trabalho_assinatura_gestor_lotacao')->default(0)->comment("Exigir assinatura do gestor da unidade de lotação do servidor");
-            $table->tinyInteger('plano_trabalho_assinatura_gestor_unidade')->default(0)->comment("Exigir assinatura do gestor da unidade do plano de trabalho");
+            $table->tinyInteger('plano_trabalho_assinatura_gestor_unidade')->default(0)->comment("Exigir assinatura do gestor da unidade executora do plano de trabalho");
             $table->tinyInteger('plano_trabalho_assinatura_gestor_entidade')->default(0)->comment("Exigir assinatura do gestor da entidade do plano de trabalho");
             // Chaves estrangeiras:
             $table->foreignUuid('tipo_avaliacao_plano_trabalho_id')->constrained("tipos_avaliacoes")->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de avaliação do plano de trabalho");

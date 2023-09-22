@@ -33,6 +33,15 @@ export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoSer
         onClick: (programa: Programa) => this.go.navigate({route: ["gestao", "programa", programa.id, "participantes"]})
       });
     }
+
+    if (this.auth.hasPermissionTo("MOD_PRGT_PART")) {
+      this.options.push({
+        icon: "bi bi-folder",
+        label: "Desdobramentos",
+        onClick: (programa: Programa) => this.go.navigate({route: ["gestao", "desdobramento", programa.id, "programa"]})
+      });
+    }
+   
   }
 
   public filterWhere = (filter: FormGroup) => {
