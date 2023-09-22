@@ -119,4 +119,5 @@ class Unidade extends ModelBase
         }
         return $result;
     }
+
 }

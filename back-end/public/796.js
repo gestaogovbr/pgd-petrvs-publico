@@ -2237,7 +2237,7 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
     this.titleEdit = entity => {
       return "Editando " + this.lex.translate("Plano de Trabalho") + ': ' + (entity?.usuario?.apelido || "");
     };
-    this.join = ["unidade.entidade", "unidade.gestor:id,usuario_id", "unidade.gestor_substituto:id,usuario_id", "unidade.gestor_delegado:id,usuario_id", "entregas.entrega", "entregas.plano_entrega_entrega:id,plano_entrega_id", "usuario", "programa.template_tcr", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "entregas.plano_entrega_entrega.entrega", "entregas.plano_entrega_entrega.plano_entrega.unidade:id,nome,sigla"];
+    this.join = ["unidade.entidade", "entregas.entrega", "entregas.plano_entrega_entrega:id,plano_entrega_id", "usuario", "programa.template_tcr", "tipo_modalidade", "documento", "documentos.assinaturas.usuario:id,nome,apelido", "entregas.plano_entrega_entrega.entrega", "entregas.plano_entrega_entrega.plano_entrega.unidade:id,nome,sigla"];
     this.joinPrograma = ["template_tcr"];
     this.programaDao = injector.get(src_app_dao_programa_dao_service__WEBPACK_IMPORTED_MODULE_4__.ProgramaDaoService);
     this.usuarioDao = injector.get(src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_6__.UsuarioDaoService);
@@ -2313,9 +2313,7 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
     super.ngOnInit();
     const segment = (this.url ? this.url[this.url.length - 1]?.path : "") || "";
     this.action = ["termos"].includes(segment) ? segment : this.action;
-    if (this.entity) [this.entity.unidade.gestor?.usuario_id, this.entity.unidade.gestor_substituto?.usuario_id, this.entity.unidade.gestor_delegado?.usuario_id].forEach(g => {
-      if (g) this.gestoresUnidadeExecutora.push(g);
-    });
+    this.buscaGestoresUnidadeExecutora(this.entity?.unidade ?? null);
   }
   atualizarTcr() {
     this.entity = this.loadEntity();
@@ -2338,6 +2336,9 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
     this.entity.unidade_id = unidade.id;
     this.form.controls.forma_contagem_carga_horaria.setValue(unidade?.entidade?.forma_contagem_carga_horaria || "DIA");
     this.form.controls.unidade_texto_complementar.setValue(unidade?.texto_complementar_plano || "");
+    this.unidadeDao.getById(unidade.id, ['gestor:id,usuario_id', 'gestor_substituto:id,usuario_id', 'gestor_delegado:id,usuario_id']).then(unidade => {
+      this.buscaGestoresUnidadeExecutora(unidade);
+    });
   }
   onProgramaSelect(selected) {
     let programa = selected.entity;
@@ -2497,6 +2498,12 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
   }
   isVigente(documento) {
     return this.form.controls.documento_id.value == documento.id;
+  }
+  buscaGestoresUnidadeExecutora(unidade) {
+    if (unidade) [unidade.gestor?.usuario_id, unidade.gestor_substituto?.usuario_id, unidade.gestor_delegado?.usuario_id].forEach(gestor => {
+      if (gestor) this.gestoresUnidadeExecutora.push(gestor);
+    });
+    return this.gestoresUnidadeExecutora;
   }
 }
 _class = PlanoTrabalhoFormComponent;

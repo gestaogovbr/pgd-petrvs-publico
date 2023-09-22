@@ -22,8 +22,8 @@ class ProgramaService extends ServiceBase {
           $lotacao = $plano->usuario->lotacao->unidade;
           $entidade = $unidade->entidade;
           if($programa->plano_trabalho_assinatura_participante && isset($servidor)) $ids[] = $servidor->id;
-          if($programa->plano_trabalho_assinatura_gestor_unidade && isset($unidade)) array_merge($ids, array_filter([$unidade->gestor->usuario_id, $unidade->gestorSubstituto->usuario_id, $unidade->gestorDelegado->usuario_id]));
-          if($programa->plano_trabalho_assinatura_gestor_lotacao && isset($lotacao)) array_merge($ids, array_filter([$lotacao->gestor->usuario_id, $lotacao->gestorSubstituto->usuario_id, $lotacao->gestorDelegado->usuario_id]));
+          if($programa->plano_trabalho_assinatura_gestor_unidade && isset($unidade)) array_merge($ids, array_filter([$unidade->gestor ? $unidade->gestor->usuario_id : null, $unidade->gestorSubstituto ? $unidade->gestorSubstituto->usuario_id : null, $unidade->gestorDelegado ? $unidade->gestorDelegado->usuario_id : null]));
+          if($programa->plano_trabalho_assinatura_gestor_lotacao && isset($lotacao)) array_merge($ids, array_filter([$lotacao->gestor ? $lotacao->gestor->usuario_id : null, $lotacao->gestorSubstituto ? $lotacao->gestorSubstituto->usuario_id : null, $lotacao->gestorDelegado ? $lotacao->gestorDelegado->usuario_id : null]));
           if($programa->plano_trabalho_assinatura_gestor_entidade && isset($entidade)) array_merge($ids, array_filter([$entidade->gestor_id, $entidade->gestor_substituto_id]));
         }
         return array_values($ids);
