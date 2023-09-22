@@ -408,6 +408,10 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
         produtividade: 0,
         consolidacoes: []
       };
+      if(!this.auth.isGestorUnidade(this.entity.unidade_id)) {
+        this.entity.usuario_id = this.auth.usuario!.id;
+        this.entity.usuario = this.auth.usuario;
+      }
       /* Verificar isso (TODO)
       if(this.queryParams?.numero_requisicao?.length) {
         this.entity.numero_requisicao = this.queryParams?.numero_requisicao;

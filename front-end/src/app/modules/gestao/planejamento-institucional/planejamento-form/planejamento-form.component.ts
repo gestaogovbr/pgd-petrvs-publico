@@ -26,6 +26,7 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
     public planejamentosSuperiores: LookupItem[] = [];
     public hasPermissionToUNEX: boolean = false;
     public form: FormGroup;
+    public joinPlanejamentoSuperior: string[] = [];
     
     constructor(public injector: Injector) {
       super(injector, Planejamento, PlanejamentoDaoService);
@@ -38,6 +39,9 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
         'objetivos.eixo_tematico:id,nome',
         'planejamento_superior:id,nome',
         'planejamento_superior.objetivos'
+      ];
+      this.joinPlanejamentoSuperior = [
+        "objetivos"
       ];
       this.form = this.fh.FormBuilder({
         nome: {default: ""},
@@ -77,33 +81,20 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
       /*  (RN_PLAN_INST_A) 
           Para a criação de um planejamento institucional são informações obrigatórias: nome, missão, visão, data de início, unidade responsável e ao menos um dos valores institucionais.
       */
-      let result = undefined;
-      if(this.form!.controls.data_fim.value && this.form!.controls.data_inicio.value > this.form!.controls.data_fim.value) return "A data do início não pode ser maior que a data do fim!";
-      if(this.form!.controls.valores.value.length == 0) return "É obrigatória a inclusão de ao menos um valor institucional!";
+      let result: string | undefined = undefined;
+      if(this.form!.controls.data_fim.value && this.form!.controls.data_inicio.value > this.form!.controls.data_fim.value) result = "A data do início não pode ser maior que a data do fim! [RN_PLAN_INST_A]";
+      if(this.form!.controls.valores.value.length == 0) result = "É obrigatória a inclusão de ao menos um valor institucional! [RN_PLAN_INST_A]";
       /*  (RN_PLAN_INST_B) Não pode existir mais de um planejamento institucional para uma mesma unidade em um mesmo período de tempo;
-          GitLab #651: aguardando definição do assunto
-      if(!form!.controls.unidade_id.value.length) {
-        this.dao?.query({where: [['unidade_id', "==", null],["data_inicio", "<=", form!.controls.data_inicio.value]]})
-      } else {
-        this.dao?.query({where: [["unidade_id", "==", form!.controls.unidade_id.value]]})
-      }
-      */
-
-
-       await this.dao?.query({ where: [['unidade_id','==',this.form!.controls.unidade_id.value]]}).getAll().then(unidade => {
-          console.log("unidade", unidade);
-          result = unidade.length > 0 ? "Unidade já possui planejamento para as datas selecionadas" : undefined; 
-         });
-         
-
-
+          GitLab #651: aguardando definição do assunto */
+      let unidade = await this.dao?.query({ where: [['unidade_id','==',this.form!.controls.unidade_id.value]]}).asPromise();
+      if(unidade?.length) result = "Unidade já possui planejamento para as datas selecionadas [RN_PLAN_INST_B]"; 
       return result;
     }
   
-    public loadData(entity: Planejamento, form: FormGroup) {
+    public async loadData(entity: Planejamento, form: FormGroup) {
       let formValue = Object.assign({}, form.value);
+      await this.carregaPlanejamentosSuperiores(entity.unidade_id);
       form.patchValue(this.util.fillForm(formValue, entity));
-      this.carregaPlanejamentosSuperiores();
       this.form.controls.planejamento_superior_id.setValue(entity.planejamento_superior_id);
     }
 
@@ -140,17 +131,18 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
       return result;
     }; 
     
-    public onUnidadeChange(event: Event){
-      if(this.entity!.unidade_id != this.form.controls.unidade_id.value) this.carregaPlanejamentosSuperiores();
+    public async onUnidadeChange(event: Event){
+      if(this.entity!.unidade_id != this.form.controls.unidade_id.value) await this.carregaPlanejamentosSuperiores(this.form.controls.unidade_id.value);
     }
 
-    public carregaPlanejamentosSuperiores(){
-      this.dao?.query({where: [['unidade_executora_id', '==', this.form.controls.unidade_id.value], ['manut_planej_unidades_executoras','==',true]]}).getAll().then((pls) => {
-        this.planejamentosSuperiores = pls.map(x => Object.assign({},{key: x.id, value: x.nome}) as LookupItem);
+    public async carregaPlanejamentosSuperiores(unidadeId?: string | null){
+      if(unidadeId?.length) {
+        let pls = await this.dao?.query({where: [['unidade_executora_id', '==', unidadeId], ['manut_planej_unidades_executoras','==',true]], join: this.joinPlanejamentoSuperior}).asPromise();
+        this.planejamentosSuperiores = (pls || []).map(x => Object.assign({},{key: x.id, value: x.nome, data: x}) as LookupItem);
         this.planejamentosSuperiores.unshift({key: null, value: 'Escolha um Planejamento superior...'});
         this.objetivos!.loadData(this.entity!, this.form!);
         this.cdRef.detectChanges();
-      });
+      }
     }
 
     /**
@@ -167,6 +159,8 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
           this.form.controls.planejamento_superior_id.setValue(this.entity?.planejamento_superior_id);
         };
       };
+      this.entity!.planejamento_superior_id = this.form.controls.planejamento_superior_id.value;
+      this.entity!.planejamento_superior = this.planejamentoSuperior!.selectedItem?.data;
       this.objetivos!.planejamento_superior_id = this.form.controls.planejamento_superior_id.value;
       this.objetivos?.grid?.loadColumns();
       this.cdRef.detectChanges();
