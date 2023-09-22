@@ -26,7 +26,7 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
     DialogComponent,
     SpinnerOverlayComponent,
     TesteComponent,
-    TesteFormComponent,
+    TesteFormComponent
   ],
   imports: [
     BrowserModule,

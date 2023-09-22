@@ -43,7 +43,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   UsuarioFormComponent: () => (/* binding */ UsuarioFormComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_dao_perfil_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/perfil-dao.service */ 65298);
 /* harmony import */ var src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/plano-trabalho-dao.service */ 87744);
@@ -177,20 +177,18 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
   }
   saveData(form) {
     return new Promise((resolve, reject) => {
+      var _ref;
       this.unidadesIntegrantes.grid.confirm();
       let usuario = this.util.fill(new src_app_models_usuario_model__WEBPACK_IMPORTED_MODULE_6__.Usuario(), this.entity);
       usuario = this.util.fillForm(usuario, this.form.value);
       //usuario.unidades_integrante = usuario.atribuicoes.filter((x: { _status: any; unidade_id: string; nome: string; }) => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.unidade_id?.length && x.nome?.length);
       usuario.unidades_integrante = this.unidadesIntegrantes?.grid?.items.filter(x => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.unidade_id?.length && x.nome?.length);
-      this.dao?.save(usuario).then( /*#__PURE__*/function () {
-        var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (usuario) {
+      this.dao?.save(usuario).then(function (_x) {
+        return (_ref = _ref || (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (usuario) {
           //if(this.formLotacao.controls.unidade_lotacao_id.value != usuario.lotacao?.unidade_id) this.integranteDao.saveIntegrante([{'unidade_id': this.formLotacao!.controls.unidade_lotacao_id!.value, 'usuario_id': usuario.id, 'atribuicoes': ["LOTADO"]}]);
           resolve(true);
-        });
-        return function (_x) {
-          return _ref.apply(this, arguments);
-        };
-      }());
+        })).apply(this, arguments);
+      });
     });
   }
   onLotacaoChange() {
@@ -309,7 +307,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   UsuarioIntegranteComponent: () => (/* binding */ UsuarioIntegranteComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/grid/grid.component */ 73150);
 /* harmony import */ var src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/unidade-dao.service */ 81214);
 /* harmony import */ var src_app_dao_unidade_integrante_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/unidade-integrante-dao.service */ 88631);
@@ -504,7 +502,7 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
   }
   initializeData(form) {
     var _this = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       form.patchValue(new src_app_models_usuario_model__WEBPACK_IMPORTED_MODULE_6__.Usuario());
       yield _this.loadData(_this.entity, form);
     })();
@@ -516,7 +514,7 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
    */
   loadData(entity, form) {
     var _this2 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = Object.assign({}, form.value);
       form.patchValue(_this2.util.fillForm(formValue, entity));
       _this2.grid.loading = true;
@@ -557,7 +555,7 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
    */
   addAtribuicao() {
     var _this3 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       return Object.assign(new src_app_models_unidade_integrante_model__WEBPACK_IMPORTED_MODULE_5__.IntegranteConsolidado(), {
         id: _this3.dao.generateUuid(),
         atribuicoes: []
@@ -572,7 +570,7 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
    */
   loadAtribuicao(form, row) {
     var _this4 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       form.controls.atribuicoes.setValue(_this4.converterAtribuicoes(row.atribuicoes));
       form.controls.unidade_id.setValue(row.id);
       form.controls.atribuicao.setValue("");
@@ -585,7 +583,7 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
    */
   removeAtribuicao(row) {
     var _this5 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let a = row.usuario_nome;
       let b = row.unidade_nome;
       let nome = row.usuario_nome || row.unidade_nome;
@@ -616,7 +614,7 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
   */
   saveAtribuicao(form, row) {
     var _this6 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_geisimar_Petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this6.loading = true;
       let novoIntegrante = new src_app_models_unidade_integrante_model__WEBPACK_IMPORTED_MODULE_5__.IntegranteConsolidado();
       try {
