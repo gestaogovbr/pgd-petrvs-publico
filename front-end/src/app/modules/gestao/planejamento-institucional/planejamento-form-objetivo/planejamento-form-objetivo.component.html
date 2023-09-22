@@ -4,7 +4,7 @@
             <input-text [size]="12" icon="bi bi-textarea-t" label="Nome" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250 required></input-text>
         </div>
         <div class="row">
-            <input-search [size]="6" #eixoTematico [disabled]="form?.controls?.objetivo_pai_id?.value ? 'true' : undefined" controlName="eixo_tematico_id" [dao]="eixoTematicoDao" required></input-search>
+            <input-search [size]="6" #eixoTematico [disabled]="form?.controls?.objetivo_pai_id?.value ? 'true' : undefined" controlName="eixo_tematico_id" [dao]="eixoTematicoDao" required (change)="onObjetivoPaiChange($event)"></input-search>
             <input-select [size]="6" #objetivoPai [items]="objetivos" label="Objetivo Pai" icon="fab fa-unity" controlName="objetivo_pai_id"></input-select>
         </div>
         <separator *ngIf="planejamento?.planejamento_superior_id" [margin]="2" title="Vinculo com Planejamento Superior">

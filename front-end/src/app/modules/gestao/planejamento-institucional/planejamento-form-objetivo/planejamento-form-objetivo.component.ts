@@ -97,5 +97,14 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
   public isPlanejamentoUNEX(): boolean {
     return this.planejamento?.unidade_id != null;
   }
+  public onObjetivoPaiChange(row: any) {
+    const objetivoPai = this.form!.controls.objetivo_pai_id.value as PlanejamentoObjetivo
+    const eixoTematico = this.objetivos.find(x => x.key === objetivoPai);
+    if (eixoTematico) {
+      this.form!.controls.eixo_tematico_id.setValue(eixoTematico?.data.eixo_tematico_id);
+    }
+    this.cdRef.detectChanges();
+  }
+
 
 }
