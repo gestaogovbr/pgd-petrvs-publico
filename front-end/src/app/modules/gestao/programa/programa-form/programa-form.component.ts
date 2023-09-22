@@ -60,6 +60,7 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
       periodicidade_consolidacao: {default: 'MENSAL'},
       periodicidade_valor: {default: 1},
       dias_tolerancia_consolidacao: {default: 10},
+      registra_comparecimento: { default: true },
       plano_trabalho_assinatura_participante: { default: true },
       plano_trabalho_assinatura_gestor_lotacao: { default: true },
       plano_trabalho_assinatura_gestor_unidade: { default: true },

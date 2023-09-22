@@ -27,6 +27,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
   {
     $consolidacao = PlanoTrabalhoConsolidacao::with([
       'ocorrencias', 
+      'comparecimentos.unidade:id,nome,sigla',
       'avaliacao',
       'avaliacoes',
       'planoTrabalho.programa',
@@ -75,6 +76,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       'planoTrabalho' => $consolidacao->planoTrabalho,
       'planosEntregas' => PlanoEntrega::whereIn("id", $planosEntregasIds)->get(),
       'ocorrencias' => $consolidacao->ocorrencias ?? [],
+      'comparecimentos' => $consolidacao->comparecimentos ?? [],
       'afastamentos' => $afastamentos,
       'status' => $consolidacao->status
     ];
