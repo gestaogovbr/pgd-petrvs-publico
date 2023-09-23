@@ -724,7 +724,7 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
     if (!documentos.length) {
       this.dialog.alert("Selecione", "Nenhum plano selecionado!");
     } else {
-      this.documentoService.sign(documentos).then(() => this.grid.reset());
+      this.documentoService.sign(documentos).then(() => (this.grid?.query || this.query).refreshId(planoTrabalho.id));
     }
   }
   ativar(planoTrabalho) {

@@ -119,7 +119,6 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
     return "Editando " + this.lex.translate("Planejamento Institucional") + ': ' + (entity?.nome || "");
   }
 
-
   public addValorHandle(): LookupItem | undefined {
     let result = undefined;
     const value = this.form.controls.valor_texto.value;

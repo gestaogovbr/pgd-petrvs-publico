@@ -3,10 +3,11 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use App\Models\Unidade;
 use App\Models\Usuario;
 
-class UnidadeIntegrante extends ModelBase
+class UnidadeIntegrante extends ModelBase //Pivot //ModelBase
 {
     protected $table = 'unidades_integrantes';
 

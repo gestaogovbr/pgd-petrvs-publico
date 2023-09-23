@@ -78,9 +78,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     super(injector, PlanoTrabalho, PlanoTrabalhoDaoService);
     this.join = [
       "unidade.entidade", 
-      "unidade.gestor:id,usuario_id", 
-      "unidade.gestor_substituto:id,usuario_id", 
-      "unidade.gestor_delegado:id,usuario_id", 
       "entregas.entrega", 
       "entregas.plano_entrega_entrega:id,plano_entrega_id", 
       "usuario", 
@@ -131,9 +128,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     super.ngOnInit();
     const segment = (this.url ? this.url[this.url.length - 1]?.path : "") || "";
     this.action = ["termos"].includes(segment) ? segment : this.action;
-    if (this.entity) [this.entity!.unidade!.gestor?.usuario_id, this.entity!.unidade!.gestor_substituto?.usuario_id, this.entity!.unidade!.gestor_delegado?.usuario_id].forEach(g => {
-      if (g) this.gestoresUnidadeExecutora.push(g);
-    });
+    this.buscaGestoresUnidadeExecutora(this.entity?.unidade ?? null);
   }
 
   public atualizarTcr() {
@@ -239,6 +234,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.entity!.unidade_id = unidade.id;
     this.form!.controls.forma_contagem_carga_horaria.setValue(unidade?.entidade?.forma_contagem_carga_horaria || "DIA");
     this.form!.controls.unidade_texto_complementar.setValue(unidade?.texto_complementar_plano || "");
+    this.unidadeDao.getById(unidade.id, ['gestor:id,usuario_id','gestor_substituto:id,usuario_id','gestor_delegado:id,usuario_id']).then( unidade => {
+      this.buscaGestoresUnidadeExecutora(unidade);
+    });
   }
 
   public onProgramaSelect(selected: SelectItem) {
@@ -397,6 +395,13 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
   public isVigente(documento: Documento): boolean {
     return this.form!.controls.documento_id.value == documento.id;
+  }
+
+  public buscaGestoresUnidadeExecutora(unidade: Unidade | null){
+    if (unidade) [unidade.gestor?.usuario_id, unidade.gestor_substituto?.usuario_id, unidade!.gestor_delegado?.usuario_id].forEach(gestor => {
+      if (gestor) this.gestoresUnidadeExecutora.push(gestor);
+    });
+    return this.gestoresUnidadeExecutora;
   }
 
 }
