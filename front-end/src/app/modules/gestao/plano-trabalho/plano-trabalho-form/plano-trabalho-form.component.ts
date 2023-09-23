@@ -100,7 +100,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
     this.documentoDao = injector.get<DocumentoDaoService>(DocumentoDaoService);
     this.planoTrabalhoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
-    this.modalWidth = 1200;
+    this.modalWidth = 1300;
     this.planoDataset = this.dao!.dataset();
     this.form = this.fh.FormBuilder({
       carga_horaria: { default: "" },

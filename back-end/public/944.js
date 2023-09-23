@@ -1845,6 +1845,10 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
           produtividade: 0,
           consolidacoes: []
         };
+        if (!_this3.auth.isGestorUnidade(_this3.entity.unidade_id)) {
+          _this3.entity.usuario_id = _this3.auth.usuario.id;
+          _this3.entity.usuario = _this3.auth.usuario;
+        }
         /* Verificar isso (TODO)
         if(this.queryParams?.numero_requisicao?.length) {
           this.entity.numero_requisicao = this.queryParams?.numero_requisicao;

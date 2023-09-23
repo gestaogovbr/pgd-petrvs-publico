@@ -73,7 +73,7 @@ use App\Http\Controllers\HistoricoDocenciaInternaCurriculumController;
 use App\Http\Controllers\HistoricoFuncaoCurriculumController;
 use App\Http\Controllers\HistoricoLotacaoCurriculumController;
 use App\Http\Controllers\PlanoTrabalhoConsolidacaoOcorrenciaController;
-use App\Models\Comparecimento;
+use App\Http\Controllers\ComparecimentoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -232,6 +232,7 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalho')->group(function () 
     Route::post('metadados-plano', [PlanoTrabalhoController::class, 'metadadosPlano']);
     Route::post('get-by-usuario', [PlanoTrabalhoController::class, 'getByUsuario']);
 });
+Route::middleware(['auth:sanctum'])->prefix('Comparecimento')->group(function () { defaultRoutes(ComparecimentoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoEntrega')->group(function () { defaultRoutes(PlanoTrabalhoEntregaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoConsolidacaoOcorrencia')->group(function () { defaultRoutes(PlanoTrabalhoConsolidacaoOcorrenciaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoConsolidacao')->group(function () {
@@ -325,6 +326,3 @@ Route::middleware(['auth:sanctum'])->prefix('HistoricoDocenciaExternaCurriculumP
 Route::middleware(['auth:sanctum'])->prefix('HistoricoDocenciaInternaCurriculumProfissional')->group(function () { defaultRoutes(HistoricoDocenciaInternaCurriculumController::class); });
 Route::middleware(['auth:sanctum'])->prefix('HistoricoFuncaoCurriculumProfissional')->group(function () { defaultRoutes(HistoricoFuncaoCurriculumController::class); });
 Route::middleware(['auth:sanctum'])->prefix('HistoricoLotacaoCurriculumProfissional')->group(function () { defaultRoutes(HistoricoLotacaoCurriculumController::class); });
-
-/* IN24_2023 - Comparecimento */
-Route::middleware(['auth:sanctum'])->prefix('Comparecimento')->group(function () { defaultRoutes(ComparecimentoController::class); });

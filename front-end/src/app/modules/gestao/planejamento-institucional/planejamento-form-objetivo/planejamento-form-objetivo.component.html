@@ -1,16 +1,18 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="eixo_tematico_id" (submit)="onSaveData()" (cancel)="onCancel()">
     <div class="row">
         <div class="row">
-            <input-search [size]="6" #eixoTematico [disabled]="form?.controls?.objetivo_pai_id?.value ? 'true' : undefined" controlName="eixo_tematico_id" [dao]="eixoTematicoDao" required></input-search>
-            <input-select [size]="6" #objetivoPai [items]="objetivos" label="Objetivo Pai" icon="fab fa-unity" controlName="objetivo_pai_id"></input-select>
-        </div>
-        <div *ngIf="planejamento?.planejamento_superior_id" class="row">
-            <input-text #planejamento_superior_nome [size]="12" class="disabled" disabled="true" label="Planejamento Superior vinculado" [icon]="entityService.getIcon('Planejamento')" controlName="planejamento_superior_nome" [attr.maxlength]=250></input-text>
-            <input-select [items]="objetivos_superiores" [size]="12" label="Objetivo de Planejamento Superior (Vinculado)" icon="fab fa-unity" controlName="objetivo_superior_id" [control]="form!.controls.objetivo_superior_id"></input-select>
-        </div>
-        <div class="row">
             <input-text [size]="12" icon="bi bi-textarea-t" label="Nome" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250 required></input-text>
         </div>
+        <div class="row">
+            <input-search [size]="6" #eixoTematico [disabled]="form?.controls?.objetivo_pai_id?.value ? 'true' : undefined" controlName="eixo_tematico_id" [dao]="eixoTematicoDao" required (change)="onObjetivoPaiChange($event)"></input-search>
+            <input-select [size]="6" #objetivoPai [items]="objetivos" label="Objetivo Pai" icon="fab fa-unity" controlName="objetivo_pai_id"></input-select>
+        </div>
+        <separator *ngIf="planejamento?.planejamento_superior_id" [margin]="2" title="Vinculo com Planejamento Superior">
+            <div class="row">
+                <input-text #planejamento_superior_nome [size]="6" disabled label="Planejamento Superior vinculado" [icon]="entityService.getIcon('Planejamento')" controlName="planejamento_superior_nome" [attr.maxlength]=250></input-text>
+                <input-select [items]="objetivos_superiores" [size]="6" label="Objetivo de Planejamento Superior (Vinculado)" icon="fab fa-unity" controlName="objetivo_superior_id" [control]="form!.controls.objetivo_superior_id"></input-select>
+            </div>
+        </separator>
         <div class="row">
             <input-textarea icon="bi bi-textarea-t" label="Fundamentação" [size]="12" [rows]="4" controlName="fundamentacao" [control]="form!.controls.fundamentacao" required></input-textarea>
         </div>

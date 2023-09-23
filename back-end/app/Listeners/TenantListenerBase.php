@@ -43,7 +43,7 @@ class TenantListenerBase
         Config::set('database.connections.log.host', $config["log_host"]);
         Config::set('database.connections.log.port', $config["log_port"]);
         Config::set('database.connections.log.database', $config["log_database"]);
-        Config::set('database.connections.log.username', $config["log_username"]);
+        Config::set('database.connections.log.username', $config["log_username"]); 
         Config::set('database.connections.log.password', $config["log_password"]);
         Config::set('log.traffic', $config["log_traffic"]);
         Config::set('log.changes', $config["log_changes"]);
@@ -86,7 +86,38 @@ class TenantListenerBase
             'notification_mail_encryption' => $tenant->notification_mail_encryption ?? "SSL",
             'notification_whatsapp' => $tenant->notification_whatsapp ?? false,
             'notification_whatsapp_url' => $tenant->notification_whatsapp_url ?? "",
-            'notification_whatsapp_token' => $tenant->notification_whatsapp_token ?? ""
+            'notification_whatsapp_token' => $tenant->notification_whatsapp_token ?? "",
+
+            'login_select_entidade' => $tenant ->login_select_entidade ?? "",
+            'login_google_client_id' => $tenant ->login_google_client_id?? "",
+            'login_firebase_client_id' => $tenant ->login_firebase_client_id?? "",
+            'login_azure_client_id' => $tenant ->login_azure_client_id?? "",
+            'login_azure_secret' => $tenant ->login_azure_secret?? "",
+            'login_azure_redirect_uri' => $tenant ->login_azure_redirect_uri?? "",
+            'login_login_unico_client_id' => $tenant ->login_login_unico_client_id?? "",
+            'login_login_unico_secret' => $tenant ->login_login_unico_secret?? "",
+
+            'tipo_integracao' => $tenant->tipo_integracao ?? "",
+            'integracao_auto_incluir' => $tenant->integracao_auto_incluir ?? "",
+            'integracao_cod_unidade_raiz' => $tenant->integracao_cod_unidade_raiz ?? "",
+            'integracao_siape_url' => $tenant->integracao_siape_url ?? "",
+            'integracao_siape_upag' => $tenant->integracao_siape_upag ?? "",
+            'integracao_siape_sigla' => $tenant->integracao_siape_sigla ?? "",
+            'integracao_siape_nome' => $tenant->integracao_siape_nome ?? "",
+            'integracao_siape_cpf' => $tenant->integracao_siape_cpf ?? "",
+            'integracao_siape_senha' => $tenant->integracao_siape_senha ?? "",
+            'integracao_siape_codorgao' => $tenant->integracao_siape_codorgao ?? "",
+            'integracao_siape_uorg' => $tenant->integracao_siape_uorg ?? "",
+            'integracao_siape_existepag' => $tenant->integracao_siape_existepag ?? "",
+            'integracao_siape_tipovinculo' => $tenant->integracao_siape_tipovinculo ?? "",
+            'integracao_wso2_url' => $tenant->integracao_wso2_url ?? "",
+            'integracao_wso2_unidades' => $tenant->integracao_wso2_unidades ?? "",
+            'integracao_wso2_pessoas'  => $tenant->integracao_wso2_pessoas ?? "",
+            'integracao_wso2_token_url' => $tenant->integracao_wso2_token_url ?? "",
+            'integracao_wso2_token_authorization' => $tenant->integracao_wso2_token_authorization ?? "",
+            'integracao_wso2_token_acesso' => $tenant->integracao_wso2_token_acesso ?? "",
+            'integracao_wso2_token_user' => $tenant->integracao_wso2_token_user ?? "",
+            'integracao_wso2_token_password' => $tenant->integracao_wso2_token_password ?? "",
         ];
         if(json_encode($config) != json_encode($this->getLogConfig())) {
             $this->setLogConfig($config);

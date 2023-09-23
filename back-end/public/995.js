@@ -32,7 +32,7 @@ class DocumentacaoComponent {
     this.content = '';
   }
   ngOnInit() {
-    this.openMd('docs/index.md');
+    this.openMd('docs/manual.md');
     document.addEventListener('click', event => {
       if (event.target instanceof HTMLAnchorElement) {
         const link = event.target;
@@ -46,7 +46,7 @@ class DocumentacaoComponent {
     this.items = [{
       label: 'Início',
       icon: 'bi bi-house',
-      target: 'docs/index.md'
+      target: 'docs/manual.md'
     }, {
       label: 'Gestão',
       items: [{

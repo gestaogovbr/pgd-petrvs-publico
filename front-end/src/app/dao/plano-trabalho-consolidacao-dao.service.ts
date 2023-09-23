@@ -9,6 +9,7 @@ import { PlanoTrabalhoConsolidacaoOcorrencia } from '../models/plano-trabalho-co
 import { PlanoEntrega } from '../models/plano-entrega.model';
 import { PlanoTrabalho } from '../models/plano-trabalho.model';
 import { Programa } from '../models/programa.model';
+import { Comparecimento } from '../models/comparecimento.model';
 
 export type ConsolidacaoDados = {
   atividades: Atividade[],
@@ -16,6 +17,7 @@ export type ConsolidacaoDados = {
   planosEntregas: PlanoEntrega[],
   planoTrabalho: PlanoTrabalho,
   ocorrencias: PlanoTrabalhoConsolidacaoOcorrencia[],
+  comparecimentos: Comparecimento[],
   entregas: PlanoTrabalhoEntrega[],
   afastamentos: Afastamento[],
   status: string
@@ -43,6 +45,7 @@ export class PlanoTrabalhoConsolidacaoDaoService extends DaoBaseService<PlanoTra
     dados.atividades = dados.atividades.map(x => new Atividade(Object.assign(this.getRow(x), {plano_trabalho: dados.planoTrabalho})));
     dados.entregas = dados.planoTrabalho.entregas;
     dados.ocorrencias = dados.ocorrencias.map(x => new PlanoTrabalhoConsolidacaoOcorrencia(this.getRow(x)));
+    dados.comparecimentos = dados.comparecimentos.map(x => new Comparecimento(this.getRow(x)));
     return dados;
   }
 
