@@ -137,6 +137,21 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
     return result;
   };
 
+  public addResultadoHandle(): LookupItem | undefined {
+    console.log("2");
+    let result = undefined;
+    const value = this.form.controls.resultados_texto.value;
+    const key = this.util.textHash(value);
+    if (value?.length && this.util.validateLookupItem(this.form.controls.resultados_institucionais.value, key)) {
+      result = {
+        key: key,
+        value: this.form.controls.resultados_texto.value
+      };
+      this.form.controls.resultados_texto.setValue("");
+    }    
+    return result;
+  };
+
   public async onUnidadeChange(event: Event) {
     if (this.entity!.unidade_id != this.form.controls.unidade_id.value) await this.carregaPlanejamentosSuperiores(this.form.controls.unidade_id.value);
   }

@@ -596,8 +596,12 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
     this.idsUnidadesAscendentes = [];
     this.validate = (control, controlName) => {
       let result = null;
-      if (['descricao'].indexOf(controlName) >= 0 && !control.value?.length) {
-        result = "Obrigatório";
+      if (['descricao'].indexOf(controlName) >= 0) {
+        if (!control.value?.length) {
+          result = "Obrigatório";
+        } else if (this.entrega.selectedEntity && this.entrega.selectedEntity.descricao == control.value) {
+          result = "É necessário incrementar ou modificar a descrição da entrega";
+        }
       } else if (['progresso_realizado', 'realizado'].indexOf(controlName) >= 0 && !(control.value >= 0 || control.value?.length > 0)) {
         result = "Obrigatório";
       } else if (['progresso_esperado', 'meta'].indexOf(controlName) >= 0 && !(control.value > 0 || control.value?.length > 0)) {
@@ -653,6 +657,7 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
     this.planejamentoObjetivoDao = injector.get(src_app_dao_planejamento_objetivo_dao_service__WEBPACK_IMPORTED_MODULE_9__.PlanejamentoObjetivoDaoService);
     this.planoEntregaService = injector.get(_plano_entrega_service__WEBPACK_IMPORTED_MODULE_12__.PlanoEntregaService);
     this.modalWidth = 600;
+    this.join = ["entrega"];
     this.form = this.fh.FormBuilder({
       descricao: {
         default: ""
@@ -750,6 +755,7 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
         realizado,
         ...entityWithout
       } = entity;
+      yield _this2.entrega?.loadSearch(entity.entrega || formValue.entrega_id, false);
       form.patchValue(_this2.util.fillForm(formValue, entityWithout));
       form.controls.meta.setValue(_this2.planoEntregaService.getValor(entity.meta));
       form.controls.realizado.setValue(_this2.planoEntregaService.getValor(entity.realizado));
@@ -760,6 +766,8 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
   initializeData(form) {
     var _this3 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      _this3.entity.unidade_id = _this3.auth.unidade.id;
+      _this3.entity.unidade = _this3.auth.unidade;
       yield _this3.loadData(_this3.entity, form);
     })();
   }
