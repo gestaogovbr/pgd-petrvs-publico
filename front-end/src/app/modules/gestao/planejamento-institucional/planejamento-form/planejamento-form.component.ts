@@ -123,7 +123,6 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
   }
 
   public addValorHandle(): LookupItem | undefined {
-    console.log("1");
     let result = undefined;
     const value = this.form.controls.valor_texto.value;
     const key = this.util.textHash(value);
@@ -138,7 +137,6 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
   };
 
   public addResultadoHandle(): LookupItem | undefined {
-    console.log("2");
     let result = undefined;
     const value = this.form.controls.resultados_texto.value;
     const key = this.util.textHash(value);
@@ -163,6 +161,17 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
       this.planejamentosSuperiores.unshift({ key: null, value: 'Escolha um Planejamento superior...' });
       this.objetivos!.loadData(this.entity!, this.form!);
       this.cdRef.detectChanges();
+    }
+  }
+
+  public async onUtilizarSuperiorChange(event: Event) {
+    let unidade_superior_id = this.form.controls.planejamento_superior_id.value;
+    if (this.form.controls.utilizar_superior.value && unidade_superior_id?.length) {
+      let pls = await this.dao?.query({ where: [['id', '==', unidade_superior_id]]}).asPromise();
+      this.form.controls.missao.setValue(pls![0].missao);
+      this.form.controls.visao.setValue(pls![0].visao);
+      this.form.controls.valores.setValue(pls![0].valores);
+      this.form.controls.resultados_institucionais.setValue(pls![0].resultados_institucionais);
     }
   }
 
