@@ -77,6 +77,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.planejamentoObjetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
     this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
     this.modalWidth = 600;
+    this.join = ["entrega"];
     this.form = this.fh.FormBuilder({
       descricao: { default: "" },
       data_inicio: { default: new Date() },
@@ -125,8 +126,12 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if (['descricao'].indexOf(controlName) >= 0 && !control.value?.length) {
-      result = "Obrigatório";
+    if (['descricao'].indexOf(controlName) >= 0) {
+      if(!control.value?.length) {
+        result = "Obrigatório";
+      } else if(this.entrega!.selectedEntity && (this.entrega!.selectedEntity as Entrega).descricao == control.value) {
+        result = "É necessário incrementar ou modificar a descrição da entrega";
+      }
     } else if (['progresso_realizado', 'realizado'].indexOf(controlName) >= 0 && !(control.value >= 0 || control.value?.length > 0)) {
       result = "Obrigatório";
     } else if (['progresso_esperado', 'meta'].indexOf(controlName) >= 0 && !(control.value > 0 || control.value?.length > 0)) {
@@ -178,6 +183,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     let formValue = Object.assign({}, form.value);
     this.onEntregaChange(form.value);
     let {meta, realizado, ...entityWithout} = entity;
+    await this.entrega?.loadSearch(entity.entrega || formValue.entrega_id, false);
     form.patchValue(this.util.fillForm(formValue, entityWithout));
     form.controls.meta.setValue(this.planoEntregaService.getValor(entity.meta));
     form.controls.realizado.setValue(this.planoEntregaService.getValor(entity.realizado));
@@ -186,6 +192,8 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   }
 
   public async initializeData(form: FormGroup) {
+    this.entity!.unidade_id = this.auth.unidade!.id;
+    this.entity!.unidade = this.auth.unidade;
     await this.loadData(this.entity!, form);
   }
 
@@ -258,7 +266,6 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     }
     return undefined;
   }
-
 
   public async addProcesso() {
     return {

@@ -48,6 +48,7 @@ export class PlanoTrabalhoListAccordeonComponent extends PageFrameBase {
     try {
       let dados = await this.dao!.getByUsuario(this.usuarioId!, this.arquivados);
       let agora = (new Date()).getTime();
+      let self = this;
       this.planos = dados.planos;
       for(var i = 0; i < this.planos.length; i++) {
         if(this.util.asTimestamp(this.planos[i].data_inicio) <= agora && agora <= this.util.asTimestamp(this.planos[i].data_fim) && ["ATIVO", "CONCLUIDO"].includes(this.planos[i].status)) {

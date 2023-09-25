@@ -6,6 +6,7 @@ import { ComponentBase } from "../component-base";
 export type LabelPosition = "top" | "right" | "left" | "none";
 export type MultiselectStyle = "inline" | "rows";
 export type InputScale = "small" | "medium" | "large";
+export type ValidatorHandle = (control: AbstractControl) => ValidationErrors | null;
 export type SelectItem = {
   value: any,
   text: string,
@@ -33,6 +34,7 @@ export abstract class InputBase extends ComponentBase {
     public abstract labelClass?: string;
     public abstract source?: any;
     public abstract path?: string;
+    public validators: ValidatorHandle[] = [];
     /* Protected get e set */
     protected _control?: AbstractControl;
     protected _fakeControl: FormControl = new FormControl();
@@ -105,10 +107,20 @@ export abstract class InputBase extends ComponentBase {
         try { this.formDirective = this.injector.get<FormGroupDirective>(FormGroupDirective); } catch {}
         this.form = this.form || this.formDirective?.form;      
         if(this.isRequired){
-            this.control!.setValidators(this.requiredValidator.bind(this))
+            this.validators.push(this.requiredValidator.bind(this));
+            if(this.control!.validator) this.validators.push(this.control!.validator);
+            this.control!.setValidators(this.proxyValidator.bind(this))
             this.control?.updateValueAndValidity();
         }
         this.cdRef.detectChanges();
+    }
+
+    public proxyValidator(control: AbstractControl): ValidationErrors | null {
+        for(let validator of this.validators) {
+            let result = validator(control);
+            if(result) return result;
+        }
+        return null;
     }
 
     public requiredValidator(control: AbstractControl): ValidationErrors | null { 

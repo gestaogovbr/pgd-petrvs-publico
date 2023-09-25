@@ -644,6 +644,7 @@ class PlanoTrabalhoService extends ServiceBase
       DB::beginTransaction();
       $planoTrabalho = PlanoTrabalho::find($data["id"]);
       $this->status->atualizaStatus($planoTrabalho, 'CANCELADO', $data["justificativa"]);
+      $this->arquivar($data, $unidade);
       DB::commit();
     } catch (Throwable $e) {
       DB::rollback();

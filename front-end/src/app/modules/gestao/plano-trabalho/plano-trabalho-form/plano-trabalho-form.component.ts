@@ -156,6 +156,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       result = "Valor não pode ser zero.";
     } else if (['data_inicio', 'data_fim'].includes(controlName) && !this.util.isDataValid(control.value)) {
       result = "Inválido";
+    } else if (controlName == 'data_fim' && this.util.isDataValid(this.form?.controls.data_inicio.value) && this.util.asTimestamp(control.value) < this.util.asTimestamp(this.form!.controls.data_inicio.value)) {
+      result = "Menor que o início";
     } else if (this.programa && controlName == 'data_inicio' && (control.value as Date).getTime() < this.programa!.selectedEntity?.data_inicio.getTime()) {
       result = "Menor que programa";
     } else if (this.programa && controlName == 'data_fim' && (control.value as Date).getTime() > this.programa!.selectedEntity?.data_fim.getTime()) {
@@ -256,24 +258,24 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public onDataInicioChange(event: Event) {
-    const di = new Date(this.form!.controls.data_inicio.value).getTime();
+    /*const di = new Date(this.form!.controls.data_inicio.value).getTime();
     const df = new Date(this.form!.controls.data_fim.value).getTime();
     if (df < di) {
       let diaI = new Date(di);
       diaI.setDate(diaI.getDate() + 1);
       this.form!.controls.data_fim.setValue(diaI)
-    }
+    }*/
     this.calculaTempos();
   }
 
   public onDataFimChange(event: Event) {
-    const di = new Date(this.form!.controls.data_inicio.value).getTime();
+    /*const di = new Date(this.form!.controls.data_inicio.value).getTime();
     const df = new Date(this.form!.controls.data_fim.value).getTime();
     if (df < di) {
       let diaI = new Date(di);
       diaI.setDate(diaI.getDate() + 1);
       this.form!.controls.data_fim.setValue(diaI)
-    }
+    }*/
     this.calculaTempos();
   }
 
@@ -287,7 +289,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     const carga = this.form?.controls.carga_horaria.value || 8;
     const usuario = this.usuario?.selectedEntity as Usuario;
     const unidade = this.unidade?.selectedEntity as Unidade;
-    if (usuario && unidade && this.util.isDataValid(inicio) && this.util.isDataValid(fim)) {
+    if (usuario && unidade && this.util.isDataValid(inicio) && this.util.isDataValid(fim) && this.util.asTimestamp(inicio) < this.util.asTimestamp(fim)) {
       this.calendar.loadFeriadosCadastrados(unidade.id).then((feriados) => {
         this.horasTotais = this.calendar.calculaDataTempoUnidade(inicio, fim, carga, unidade, "ENTREGA", [], []);
         this.horasParciais = this.calendar.calculaDataTempoUnidade(inicio, fim, carga, unidade, "ENTREGA", [], usuario.afastamentos);
