@@ -5,6 +5,7 @@ return [
         'type' => env('PETRVS_TENANT_TYPE', 'request')
     ],
     'entidade' => env('PETRVS_ENTIDADE', 'PRF'),
+    'auto-login' => env('PETRVS_AUTO_LOGIN', ''),
     'suporte' => env('PETRVS_SUPORTE', ''),
     'logo' => env('PETRVS_LOGO', ''),
     'timezone' => env('PETRVS_SERVIDOR_TIMEZONE', -3),

@@ -23,7 +23,7 @@ class CreateComentariosTable extends Migration
             $table->text('texto')->comment("Texto do comentário");
             $table->text('path')->nullable()->comment("Path dos ids dos comentários");
             $table->dateTime('data_comentario')->comment("Data e horário em que foi feito o comentário");
-            $table->enum('tipo', ["COMENTARIO", "TECNICO", "GERENCIAL", "AVALIACAO", 'TAREFA', 'ATIVIDADE'])->default("COMENTARIO")->comment("Tipo do comentário");
+            $table->enum('tipo', ["COMENTARIO", "TECNICO", "GERENCIAL", "AVALIACAO", 'TAREFA', 'ATIVIDADE', 'TIPO_ATIVIDADE'])->default("COMENTARIO")->comment("Tipo do comentário");
             $table->enum('privacidade', ["PUBLICO", "PRIVADO"])->default("PUBLICO")->comment("Nível de acesso ao comentário");
             // Chaves estrangeiras:
             $table->foreignUuid('usuario_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Usuário do comentário");

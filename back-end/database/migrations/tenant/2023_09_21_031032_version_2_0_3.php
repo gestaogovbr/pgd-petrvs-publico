@@ -15,11 +15,12 @@ class UpdateVersion203 extends Migration
      */
     public function up()
     {
-        $tenants = Tenant::all();
+        /* Deverá ser executado somente para a Tenant atual, o código abaixo não faz nenhum sentido */
+        /*$tenants = Tenant::all();
     
         foreach ($tenants as $tenant) {
             DB::connection('mysql')->getPdo()->exec("UPDATE tenants SET version = '2.0.3' where id = $tenant->id");
-        }
+        }*/
     }
 
     /**

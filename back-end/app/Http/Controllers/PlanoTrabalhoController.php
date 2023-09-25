@@ -129,7 +129,8 @@ class PlanoTrabalhoController extends ControllerBase {
         try {
             $this->checkPermissions("CANCELAR_PLANO", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
             $data = $request->validate([
-                'id' => ['required']
+                'id' => ['required'],
+                'justificativa' => ['required']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
@@ -250,7 +251,7 @@ class PlanoTrabalhoController extends ControllerBase {
                 if (!$usuario->hasPermissionTo('MOD_PTR_CNC')) throw new ServerException("CapacidadeStore", "Cancelamento não realizado");
                 $data = $request->validate(['id' => ['required']]);
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
-                $condition1 = in_array(['INCLUIDO','AGUARDANDO_ASSINATURA','ATIVO','CONCLUIDO'],$condicoes['planoStatus']);
+                $condition1 = in_array($condicoes['planoStatus'], ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO', 'CONCLUIDO']);
                 $condition2 = $condicoes['gestorUnidadeExecutora'];
                 if ($condition1 && $condition2) $can = true;
                 /*
