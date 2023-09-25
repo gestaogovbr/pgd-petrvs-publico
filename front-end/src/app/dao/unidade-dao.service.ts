@@ -10,6 +10,7 @@ import { TemplateDataset } from '../modules/uteis/templates/template.service';
 import { Usuario } from '../models/usuario.model';
 import { TreeNode } from 'primeng/api';
 import { LookupItem } from '../services/lookup.service';
+import { Planejamento } from '../models/planejamento.model';
 
 
 export type UnidadeDashboard = {
@@ -137,9 +138,21 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
     return new Promise<LookupItem[]>((resolve, reject) => {
       this.server.post('api/Unidade/lookup-todas-unidades',{}).subscribe(response => {
         resolve(response?.unidades || []);
-        console.log(response.unidades);
       }, error => reject(error));
     });
   }
+
+/*   public planejamentosSuperiores(unidade_id: string): Promise<Planejamento[]>{
+    return new Promise<Planejamento[]>((resolve, reject) => {
+      this.server.post('api/Unidade/planejamentos-superiores',{ unidade_id }).subscribe(response => {
+        resolve(response?.planejamentos || []);
+      }, error => reject(error));
+    });
+  }
+
+  public query(options: QueryOptions = {}, events: queryEvents = {}): QueryContext<T> {
+    return this.contextQuery(new QueryContext<T>(this, this.collection, new Subject<T[]>(), options, events));
+  } */
+
 
 }

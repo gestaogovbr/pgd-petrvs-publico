@@ -64,8 +64,17 @@ class EixoTematicoFormComponent extends src_app_modules_base_page_form_base__WEB
     this.injector = injector;
     this.validate = (control, controlName) => {
       let result = null;
-      if (['nome', 'descricao', 'cor', 'icone'].indexOf(controlName) >= 0 && !control.value?.length) {
+      let valueLength = control.value?.trim().length;
+      if (['nome', 'cor', 'icone'].indexOf(controlName) >= 0 && !control.value?.length) {
         result = "Obrigatório";
+      }
+      if (!valueLength) {
+        if (['descricao'].indexOf(controlName) >= 0 && !control.value?.length) {
+          result = "Obrigatório";
+        }
+      } else {
+        if (valueLength < this.MIN_LENGTH_TEXT) result = "Texto muito curto. Mínimo: " + this.MIN_LENGTH_TEXT + " caracteres.";
+        if (valueLength > this.MAX_LENGTH_TEXT) result = "Conteúdo (" + valueLength + " caracteres) excede o comprimento máximo: " + this.MAX_LENGTH_TEXT + ".";
       }
       return result;
     };

@@ -40,7 +40,7 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
     });
     this.options.push({
       icon: "bi bi-info-circle",
-      label: "Executar Database",
+      label: "Executar Database", 
       onClick: this.databaseSeeder.bind(this)
     });
     this.options.push({
@@ -53,7 +53,7 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
       label: "Executar Tipos Capacidades",
       onClick: this.tipoCapacidadeSeeder.bind(this)
     });
-    this.options.push({
+    this.options.push({ 
       icon: "bi bi-list-check",
       label: "Executar Entidades",
       onClick: this.entidadesSeeder.bind(this)
@@ -67,6 +67,11 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
       icon: "bi bi-trash",
       label: "Excluir",
       onClick: this.delete.bind(this)
+    });
+    this.options.push({
+      icon: "bi bi-trash",
+      label: "Ver Logs",
+      onClick: (tenant: Tenant) => this.go.navigate({route: ["panel","panel-list", tenant.id, "logs"]})
     });
    
   }
@@ -114,7 +119,7 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
       }
     });
   }
-
+ 
   public tipoCapacidadeSeeder(row: any) {
     const self = this;
     this.dialog.confirm("Executar Seeder?", "Deseja realmente atualizar as capacidades?").then(confirm => {

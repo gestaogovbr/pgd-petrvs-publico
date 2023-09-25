@@ -1,4 +1,6 @@
 const fs = require('fs');
+const path = require('path');
+
 console.log("POST-BUILD:");
 /* Cria o angular.blade.php e edita o app.json para colocar os arquivos com hash do build angular */ 
 if(fs.existsSync("../back-end/public/index.html")) {
@@ -24,6 +26,13 @@ if(fs.existsSync("../back-end/public/index.html")) {
     console.log("Arquivo index.html não encontrado");
 }
 
+// documentacao
+const origem = '../resources/documentacao/';
+const destino = '../front-end/src/assets/documentacao/';
+
+copiarDiretorio(origem, destino);
+
+
 function preg_match_all(regex, str) {
     return [...str.matchAll(new RegExp(regex, 'g'))].reduce((acc, group) => {
         group.filter((element) => typeof element === 'string').forEach((element, i) => {
@@ -33,3 +42,37 @@ function preg_match_all(regex, str) {
         return acc;
     }, []);
 }
+
+
+function copiarDiretorio(origem, destino) {
+    if (!fs.existsSync(origem)) {
+      console.error(`O diretório de origem '${origem}' não existe.`);
+      return;
+    }
+  
+    try {
+      if (!fs.existsSync(destino)) {
+        fs.mkdirSync(destino, { recursive: true });
+      }
+  
+      const arquivosDiretorios = fs.readdirSync(origem);
+  
+      for (const item of arquivosDiretorios) {
+        const origemItem = path.join(origem, item);
+        const destinoItem = path.join(destino, item);
+  
+        const ehDiretorio = fs.statSync(origemItem).isDirectory();
+  
+        if (ehDiretorio) {
+          copiarDiretorio(origemItem, destinoItem);
+        } else {
+          fs.copyFileSync(origemItem, destinoItem);
+          console.log(`Arquivo '${origemItem}' copiado para '${destinoItem}'.`);
+        }
+      }
+  
+      console.log(`Diretório '${origem}' copiado para '${destino}' com sucesso!`);
+    } catch (error) {
+      console.error(`Erro ao copiar '${origem}' para '${destino}': ${error.message}`);
+    }
+  }

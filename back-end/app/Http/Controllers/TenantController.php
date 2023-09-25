@@ -20,7 +20,7 @@ class TenantController extends ControllerBase {
             ]);
             return response()->json([
                 'success' => true,
-                'data' => $this->service->cidades($data['tenant_id'])
+                'data' => $this->service->cidadeSeeder($data['tenant_id'])
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);

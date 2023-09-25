@@ -7,11 +7,13 @@ use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
 use Throwable;
 
-class UnidadeController extends ControllerBase {
+class UnidadeController extends ControllerBase
+{
 
     public $updatable = ["texto_complementar_plano"];
 
-    public function checkPermissions($action, $request, $service, $unidade, $usuario) {
+    public function checkPermissions($action, $request, $service, $unidade, $usuario)
+    {
         switch ($action) {
             case 'STORE':
                 if (!$usuario->hasPermissionTo('MOD_UND_INCL')) throw new ServerException("CapacidadeStore", "Inserção não realizada");
@@ -25,7 +27,8 @@ class UnidadeController extends ControllerBase {
         }
     }
 
-    public function hierarquia(Request $request) {
+    public function hierarquia(Request $request)
+    {
         try {
             $data = $request->validate([
                 'unidade_id' => ['nullable']
@@ -40,7 +43,8 @@ class UnidadeController extends ControllerBase {
         }
     }
 
-    public function filhas(Request $request) {
+    public function filhas(Request $request)
+    {
         try {
             $data = $request->validate([
                 'unidade_id' => ['required']
@@ -55,7 +59,8 @@ class UnidadeController extends ControllerBase {
     }
 
 
-    public function linhaAscendente(Request $request) {
+    public function linhaAscendente(Request $request)
+    {
         try {
             $data = $request->validate([
                 'unidade_id' => ['required']
@@ -69,7 +74,8 @@ class UnidadeController extends ControllerBase {
         }
     }
 
-    public function metadadosUnidade(Request $request) {
+    public function metadadosUnidade(Request $request)
+    {
         try {
             $data = $request->validate([
                 'unidade_id' => ['required']
@@ -83,7 +89,8 @@ class UnidadeController extends ControllerBase {
         }
     }
 
-    public function lotados(Request $request) {
+    public function lotados(Request $request)
+    {
         try {
             $data = $request->validate([
                 'unidade_id' => ['required']
@@ -97,7 +104,8 @@ class UnidadeController extends ControllerBase {
         }
     }
 
-    public function metadadosArea(Request $request) {
+    public function metadadosArea(Request $request)
+    {
         try {
             $data = $request->validate([
                 'unidade_id' => ['required'],
@@ -112,7 +120,8 @@ class UnidadeController extends ControllerBase {
         }
     }
 
-    public function mesmaSigla(Request $request) {
+    public function mesmaSigla(Request $request)
+    {
         try {
             if (!parent::loggedUser()->hasPermissionTo('MOD_UND_UNIR')) throw new ServerException("ValidateUnidade", "Usuário precisa ter capacidade MOD_UND_UNIR");
             //$data = $request->validate([]);
@@ -125,7 +134,8 @@ class UnidadeController extends ControllerBase {
         }
     }
 
-    public function unificar(Request $request) {
+    public function unificar(Request $request)
+    {
         try {
             if (!parent::loggedUser()->hasPermissionTo('MOD_UND_UNIR')) throw new ServerException("ValidateUnidade", "Usuário precisa ter capacidade MOD_UND_UNIR");
             $data = $request->validate([
@@ -140,7 +150,8 @@ class UnidadeController extends ControllerBase {
         }
     }
 
-    public function inativo(Request $request) {
+    public function inativo(Request $request)
+    {
         try {
             if (!parent::loggedUser()->hasPermissionTo('MOD_UND_INATV')) throw new ServerException("ValidateUnidade", "Usuário precisa ter capacidade MOD_UND_INATV");
             $data = $request->validate([
@@ -155,7 +166,8 @@ class UnidadeController extends ControllerBase {
         }
     }
 
-    public function dashboards(Request $request) {
+    public function dashboards(Request $request)
+    {
         try {
             $data = $request->validate([
                 'idsUnidades' => ['required'],
@@ -172,9 +184,10 @@ class UnidadeController extends ControllerBase {
         }
     }
 
-    public function lookupTodasUnidades(Request $request) {
+    public function lookupTodasUnidades(Request $request)
+    {
         try {
-           // $data = $request->validate([]);
+            // $data = $request->validate([]);
             $result = response()->json([
                 'success' => true,
                 'unidades' => $this->service->lookupTodasUnidades()

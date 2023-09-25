@@ -15,11 +15,13 @@ use App\Models\Documento;
 use Illuminate\Support\Facades\DB;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\Programa;
+use App\Models\ProgramaParticipante;
 use App\Models\DocumentoAssinatura;
 use Carbon\Carbon;
 use DateTime;
 use Throwable;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Builder;
 
 class PlanoTrabalhoService extends ServiceBase
 {
@@ -165,6 +167,10 @@ class PlanoTrabalhoService extends ServiceBase
         'atribuicao' => 'COLABORADOR'
       ], $unidade, false);
     }
+    /* Adiciona o usuário como participante habilitado do programa, se ainda não o for */
+    $programa = Programa::find($plano->programa_id);
+    $usuarioHabilitado = ProgramaParticipante::where('programa_id',$plano->programa_id)->where('habilitado',1)->get()->map(fn($p) => $p->usuario_id)->contains($plano->usuario_id);
+    if(!$usuarioHabilitado) $programa->participantes()->save(new ProgramaParticipante(['usuario_id' => $plano->usuario_id, 'habilitado' => 1]));
   }
 
   /* Será a data_inicio, ou a data_fim do último período CONCLUIDO ou AVALIADO, ou a data_fim da última ocorrência, ou data_inicio do último perído com entregas. O que for maior. */
@@ -638,6 +644,7 @@ class PlanoTrabalhoService extends ServiceBase
       DB::beginTransaction();
       $planoTrabalho = PlanoTrabalho::find($data["id"]);
       $this->status->atualizaStatus($planoTrabalho, 'CANCELADO', $data["justificativa"]);
+      $this->arquivar($data, $unidade);
       DB::commit();
     } catch (Throwable $e) {
       DB::rollback();

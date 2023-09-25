@@ -22,6 +22,7 @@ class CreateComparecimentosTable extends Migration
             
             // Campos:
             $table->date('data_comparecimento')->comment("Data do comparecimento");
+            $table->string('detalhamento')->comment("Detalhamento do comparecimento");
             // Chaves estrangeiras:
             $table->foreignUuid('plano_trabalho_consolidacao_id')->constrained('planos_trabalhos_consolidacoes')->onDelete('restrict')->onUpdate('cascade')->comment("Plano de trabalho consolidado onde foi inserido o registro de frequência.");
             $table->foreignUuid('unidade_id')->constrained('unidades')->onDelete('restrict')->onUpdate('cascade')->comment("Unidade de comparecimento.");

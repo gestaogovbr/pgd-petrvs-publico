@@ -9,6 +9,7 @@ use DateTime;
 use DateTimeZone;
 use App\Models\Unidade;
 use App\Models\Programa;
+use App\Models\Planejamento;
 use App\Services\ServiceBase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -370,8 +371,6 @@ class UnidadeService extends ServiceBase
         }
     }
     
-    
-
     public function unificar($correspondencias, $exclui) {
         DB::beginTransaction();
         try {

@@ -78,9 +78,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     super(injector, PlanoTrabalho, PlanoTrabalhoDaoService);
     this.join = [
       "unidade.entidade", 
-      "unidade.gestor:id,usuario_id", 
-      "unidade.gestor_substituto:id,usuario_id", 
-      "unidade.gestor_delegado:id,usuario_id", 
       "entregas.entrega", 
       "entregas.plano_entrega_entrega:id,plano_entrega_id", 
       "usuario", 
@@ -131,9 +128,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     super.ngOnInit();
     const segment = (this.url ? this.url[this.url.length - 1]?.path : "") || "";
     this.action = ["termos"].includes(segment) ? segment : this.action;
-    if (this.entity) [this.entity!.unidade!.gestor?.usuario_id, this.entity!.unidade!.gestor_substituto?.usuario_id, this.entity!.unidade!.gestor_delegado?.usuario_id].forEach(g => {
-      if (g) this.gestoresUnidadeExecutora.push(g);
-    });
+    this.buscaGestoresUnidadeExecutora(this.entity?.unidade ?? null);
   }
 
   public atualizarTcr() {
@@ -161,6 +156,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       result = "Valor não pode ser zero.";
     } else if (['data_inicio', 'data_fim'].includes(controlName) && !this.util.isDataValid(control.value)) {
       result = "Inválido";
+    } else if (controlName == 'data_fim' && this.util.isDataValid(this.form?.controls.data_inicio.value) && this.util.asTimestamp(control.value) < this.util.asTimestamp(this.form!.controls.data_inicio.value)) {
+      result = "Menor que o início";
     } else if (this.programa && controlName == 'data_inicio' && (control.value as Date).getTime() < this.programa!.selectedEntity?.data_inicio.getTime()) {
       result = "Menor que programa";
     } else if (this.programa && controlName == 'data_fim' && (control.value as Date).getTime() > this.programa!.selectedEntity?.data_fim.getTime()) {
@@ -239,6 +236,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.entity!.unidade_id = unidade.id;
     this.form!.controls.forma_contagem_carga_horaria.setValue(unidade?.entidade?.forma_contagem_carga_horaria || "DIA");
     this.form!.controls.unidade_texto_complementar.setValue(unidade?.texto_complementar_plano || "");
+    this.unidadeDao.getById(unidade.id, ['gestor:id,usuario_id','gestor_substituto:id,usuario_id','gestor_delegado:id,usuario_id']).then( unidade => {
+      this.buscaGestoresUnidadeExecutora(unidade);
+    });
   }
 
   public onProgramaSelect(selected: SelectItem) {
@@ -258,24 +258,24 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public onDataInicioChange(event: Event) {
-    const di = new Date(this.form!.controls.data_inicio.value).getTime();
+    /*const di = new Date(this.form!.controls.data_inicio.value).getTime();
     const df = new Date(this.form!.controls.data_fim.value).getTime();
     if (df < di) {
       let diaI = new Date(di);
       diaI.setDate(diaI.getDate() + 1);
       this.form!.controls.data_fim.setValue(diaI)
-    }
+    }*/
     this.calculaTempos();
   }
 
   public onDataFimChange(event: Event) {
-    const di = new Date(this.form!.controls.data_inicio.value).getTime();
+    /*const di = new Date(this.form!.controls.data_inicio.value).getTime();
     const df = new Date(this.form!.controls.data_fim.value).getTime();
     if (df < di) {
       let diaI = new Date(di);
       diaI.setDate(diaI.getDate() + 1);
       this.form!.controls.data_fim.setValue(diaI)
-    }
+    }*/
     this.calculaTempos();
   }
 
@@ -289,7 +289,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     const carga = this.form?.controls.carga_horaria.value || 8;
     const usuario = this.usuario?.selectedEntity as Usuario;
     const unidade = this.unidade?.selectedEntity as Unidade;
-    if (usuario && unidade && this.util.isDataValid(inicio) && this.util.isDataValid(fim)) {
+    if (usuario && unidade && this.util.isDataValid(inicio) && this.util.isDataValid(fim) && this.util.asTimestamp(inicio) < this.util.asTimestamp(fim)) {
       this.calendar.loadFeriadosCadastrados(unidade.id).then((feriados) => {
         this.horasTotais = this.calendar.calculaDataTempoUnidade(inicio, fim, carga, unidade, "ENTREGA", [], []);
         this.horasParciais = this.calendar.calculaDataTempoUnidade(inicio, fim, carga, unidade, "ENTREGA", [], usuario.afastamentos);
@@ -397,6 +397,13 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
   public isVigente(documento: Documento): boolean {
     return this.form!.controls.documento_id.value == documento.id;
+  }
+
+  public buscaGestoresUnidadeExecutora(unidade: Unidade | null){
+    if (unidade) [unidade.gestor?.usuario_id, unidade.gestor_substituto?.usuario_id, unidade!.gestor_delegado?.usuario_id].forEach(gestor => {
+      if (gestor) this.gestoresUnidadeExecutora.push(gestor);
+    });
+    return this.gestoresUnidadeExecutora;
   }
 
 }

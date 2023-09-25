@@ -2853,7 +2853,7 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
         default: null
       }
     });
-    this.join = ['planejamento:id,nome', 'programa:id,nome', 'cadeia_valor:id,nome', 'unidade:id,sigla,path', 'entregas.entrega', 'entregas.unidade', 'entregas.comentarios.usuario:id,nome,apelido', 'unidade.gestor:id', 'unidade.gestor_substituto:id'];
+    this.join = ['planejamento:id,nome', 'programa:id,nome', 'cadeia_valor:id,nome', 'unidade:id,sigla,path', 'entregas.entrega', 'entregas.unidade', 'entregas.comentarios.usuario:id,nome,apelido', 'unidade.gestor:id', 'unidade.gestor_substituto:id', 'unidade.unidade_pai'];
     this.groupBy = [{
       field: "unidade.sigla",
       label: "Unidade"
@@ -3240,7 +3240,11 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
               - o usuário logado precisa possuir a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para a Unidade-pai (Unidade A); (RN_PENT_E)
           - A homologação do plano de entregas não se aplica à Unidade instituidora.
         */
-        return !this.execucao && this.planoEntregaService.situacaoPlano(planoEntrega) == 'HOMOLOGANDO' && (this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id) || this.auth.isLotacaoUsuario(planoEntrega.unidade.unidade_pai) && this.auth.hasPermissionTo("MOD_PENT_HOMOL") || this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', planoEntrega.unidade.unidade_pai_id));
+        let condition1 = this.planoEntregaService.situacaoPlano(planoEntrega) == 'HOMOLOGANDO';
+        let condition2 = this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id);
+        let condition3 = this.auth.isLotacaoUsuario(planoEntrega.unidade.unidade_pai) && this.auth.hasPermissionTo("MOD_PENT_HOMOL");
+        let condition4 = this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', planoEntrega.unidade.unidade_pai_id);
+        return !this.execucao && condition1 && (condition2 || condition3 || condition4);
       case this.BOTAO_LIBERAR_HOMOLOGACAO:
         /*
           (RN_PENT_AA) Para LIBERAR PARA HOMOLOGAÇÃO um plano de entregas:
@@ -4219,7 +4223,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefi
   },
   decls: 3,
   vars: 6,
-  consts: [["sufix", "%", 3, "disabled", "icon", "label", "control", "change", 4, "ngIf"], [3, "disabled", "icon", "label", "control", "change", 4, "ngIf"], [3, "disabled", "icon", "label", "control", "items", "change", 4, "ngIf"], ["sufix", "%", 3, "disabled", "icon", "label", "control", "change"], [3, "disabled", "icon", "label", "control", "change"], [3, "disabled", "icon", "label", "control", "items", "change"]],
+  consts: [["sufix", "%", "required", "", 3, "disabled", "icon", "label", "control", "change", 4, "ngIf"], ["required", "", 3, "disabled", "icon", "label", "control", "change", 4, "ngIf"], ["required", "", 3, "disabled", "icon", "label", "control", "items", "change", 4, "ngIf"], ["sufix", "%", "required", "", 3, "disabled", "icon", "label", "control", "change"], ["required", "", 3, "disabled", "icon", "label", "control", "change"], ["required", "", 3, "disabled", "icon", "label", "control", "items", "change"]],
   template: function PlanoEntregaValorMetaInputComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵtemplate"](0, PlanoEntregaValorMetaInputComponent_input_number_0_Template, 1, 4, "input-number", 0);

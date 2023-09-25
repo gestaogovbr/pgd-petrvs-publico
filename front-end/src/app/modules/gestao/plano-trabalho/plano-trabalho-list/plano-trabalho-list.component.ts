@@ -377,7 +377,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     if (!documentos.length) {
       this.dialog.alert("Selecione", "Nenhum plano selecionado!");
     } else {
-      this.documentoService.sign(documentos).then(() => this.grid!.reset());
+      this.documentoService.sign(documentos).then(() => (this.grid?.query || this.query!).refreshId(planoTrabalho!.id));
     }
   }
 
