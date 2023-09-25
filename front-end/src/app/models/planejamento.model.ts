@@ -17,6 +17,7 @@ export class Planejamento extends Base {
     public missao: string = ""; /* Missão da Instituição/Unidade */
     public visao: string = ""; /* Visão da Instituição/Unidade */
     public valores: LookupItem[] = []; /* Valores da Instituição/Unidade */
+    public resultados_institucionais: LookupItem[] = []; /* Resultados da Instituição/Unidade */
     
     public unidade_id: string | null = null; /* Unidade à qual está vinculado o planejamento institucional */
     public entidade_id: string | null = null; /* Entidade à qual está vinculado o planejamento institucional */

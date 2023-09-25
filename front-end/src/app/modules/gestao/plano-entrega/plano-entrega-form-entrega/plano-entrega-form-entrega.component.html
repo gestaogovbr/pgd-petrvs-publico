@@ -7,11 +7,10 @@
                         <input-search #entrega [size]="12" label="Entrega do Catálogo" controlName="entrega_id" [dao]="entregaDao" (change)="onEntregaChange($event)" placeholder="Selecione ou cadastre uma entrega do catálogo usando a lupa" required></input-search>
                     </div>
                     <div class="row">
-                        <input-text [size]="12" label="Título/Detalhamento" controlName="descricao" placeholder="Descreva melhor a entrega" [attr.maxlength]=250></input-text>
+                        <input-text [size]="12" label="Título/Detalhamento" controlName="descricao" placeholder="Descreva melhor a entrega" [attr.maxlength]=250 required></input-text>
                     </div>
                     <div class="row">
-                        <input-search [size]="12" [label]="lex.translate('Entrega') + ' de ' + lex.translate('plano de entrega')+ ' superior'" controlName="entrega_pai_id" 
-                                        [dao]="planoEntregaEntregaDao" [where]="['plano_entrega.unidade_id', 'in', idsUnidadesAscendentes]" [selectRoute]="{route: ['gestao', 'plano-entrega', 'entregaList']}" [metadata]="{'idsUnidadesAscendentes': idsUnidadesAscendentes}"></input-search>
+                        <input-search [size]="12" [label]="lex.translate('Entrega') + ' de ' + lex.translate('plano de entrega') + ' superior'" controlName="entrega_pai_id" [dao]="planoEntregaEntregaDao" [where]="['plano_entrega.unidade_id', 'in', idsUnidadesAscendentes]" [selectRoute]="{route: ['gestao', 'plano-entrega', 'entregaList']}" [metadata]="{'idsUnidadesAscendentes': idsUnidadesAscendentes}"></input-search>
                     </div>
                 </separator>
                 <separator title="Especificações da Entrega" collapse [collapsed]="false">
@@ -28,12 +27,6 @@
                 <div *ngIf="this.entrega?.selectedEntity" class="row">
                     <plano-entrega-valor-meta-input icon="bi bi-graph-up-arrow" [entrega]="entrega?.selectedEntity" [size]="6" [control]="form!.controls.meta" label="Meta"></plano-entrega-valor-meta-input>
                     <plano-entrega-valor-meta-input icon="bi bi-check-lg" [entrega]="entrega?.selectedEntity" [size]="6" [control]="form!.controls.realizado" label="Realizado" [change]="onRealizadoChange.bind(this)"></plano-entrega-valor-meta-input>
-                    <!--input-number *ngIf="checkTipoIndicador(['PORCENTAGEM'])" [size]="6" icon="bi bi-graph-up-arrow" label="Meta" controlName="meta" sufix="%" required></input-number>
-                    <input-number *ngIf="checkTipoIndicador(['QUANTIDADE', 'VALOR'])" [size]="6" icon="bi bi-graph-up-arrow" label="Meta" controlName="meta"></input-number>
-                    <input-select *ngIf="checkTipoIndicador(['QUALITATIVO'])" [size]="6" icon="bi bi-graph-up-arrow" label="Meta" controlName="meta" [items]="itensQualitativo"></input-select>
-                    <input-number *ngIf="checkTipoIndicador(['PORCENTAGEM'])" [size]="6" icon="bi bi-check-lg" label="Já Realizado" (change)="onRealizadoChange($event)" controlName="realizado" sufix="%"></input-number>
-                    <input-number *ngIf="checkTipoIndicador(['QUANTIDADE', 'VALOR'])" [size]="6" icon="bi bi-check-lg" label="Já Realizado" (change)="onRealizadoChange($event)" controlName="realizado" required></input-number>
-                    <input-select *ngIf="checkTipoIndicador(['QUALITATIVO'])" [size]="6" icon="bi bi-check-lg" label="Já Realizado" (change)="onRealizadoChange($event)" controlName="realizado" [items]="itensQualitativo"></input-select//-->
                 </div>
                 <div class="row">
                     <input-number [size]="6" [decimals]="2" label="Progresso Esperado" controlName="progresso_esperado" sufix="%"></input-number>

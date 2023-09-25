@@ -15,11 +15,13 @@ use App\Models\Documento;
 use Illuminate\Support\Facades\DB;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\Programa;
+use App\Models\ProgramaParticipante;
 use App\Models\DocumentoAssinatura;
 use Carbon\Carbon;
 use DateTime;
 use Throwable;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Builder;
 
 class PlanoTrabalhoService extends ServiceBase
 {
@@ -165,6 +167,10 @@ class PlanoTrabalhoService extends ServiceBase
         'atribuicao' => 'COLABORADOR'
       ], $unidade, false);
     }
+    /* Adiciona o usuário como participante habilitado do programa, se ainda não o for */
+    $programa = Programa::find($plano->programa_id);
+    $usuarioHabilitado = ProgramaParticipante::where('programa_id',$plano->programa_id)->where('habilitado',1)->get()->map(fn($p) => $p->usuario_id)->contains($plano->usuario_id);
+    if(!$usuarioHabilitado) $programa->participantes()->save(new ProgramaParticipante(['usuario_id' => $plano->usuario_id, 'habilitado' => 1]));
   }
 
   /* Será a data_inicio, ou a data_fim do último período CONCLUIDO ou AVALIADO, ou a data_fim da última ocorrência, ou data_inicio do último perído com entregas. O que for maior. */
@@ -319,20 +325,21 @@ class PlanoTrabalhoService extends ServiceBase
    * @param   string  $arquivadas  Se o resultado deve incluir os planos arquivados
    * @return  array
    */
-  public function getByUsuario($usuarioId, $arquivados)
+  public function getByUsuario($usuarioId, $arquivados, $planoTrabalhoId)
   {
     // TODO: validar permissoes
     $query = PlanoTrabalho::with([
-      "unidade:id,sigla,nome", 
+      "unidade:id,sigla,nome",
       "unidade.gestor:id,unidade_id,usuario_id",
       "unidade.gestorSubstituto:id,unidade_id,usuario_id",
-      "tipoModalidade:id,nome", 
+      "tipoModalidade:id,nome",
       "consolidacoes",
       "usuario:id,nome,apelido,url_foto"
     ])->where("usuario_id", $usuarioId);
     if (!$arquivados) $query->whereNull("data_arquivamento");
+    if (!empty($planoTrabalhoId)) $query->where("id", $planoTrabalhoId);
     $planos = $query->get()->all();
-    $programasIds = array_unique(array_map(fn($v) => $v["programa_id"], $planos));
+    $programasIds = array_unique(array_map(fn ($v) => $v["programa_id"], $planos));
     $programas = Programa::whereIn("id", $programasIds)->get()->all();
     return [
       "planos" => $planos,
@@ -404,36 +411,19 @@ class PlanoTrabalhoService extends ServiceBase
     $result['horasAtividadesNaoIniciadas'] = $this->somaTemposPactuados($result['atividadesNaoIniciadas']);
     $result['horasAtividadesEmAndamento'] = $this->somaTemposPactuados($result['atividadesEmAndamento']);
     $result['horasAtividadesConcluidas'] = $this->somaTemposPactuados($result['atividadesConcluidas']);
-    //$result['horasAtividadesAvaliadas'] = $this->somaTemposPactuados($result['atividadesAvaliadas']);
     $result['horasTotaisAlocadas'] = $result['horasAtividadesNaoIniciadas'] + $result['horasAtividadesEmAndamento'] + $result['horasAtividadesConcluidas'] + $result['horasAtividadesAvaliadas'];
-    /* Média das avaliações das atividades já avaliadas */
-    //$result['mediaAvaliacoes'] = (count($result['atividadesAvaliadas']) == 0) ? null : $this->utilService->avg(array_map(fn ($d) => $d['avaliacao']['nota_atribuida'], $result['atividadesAvaliadas']));
-    /* Cálculo das estatísticas limitadas pelo período estabelecido, se houver um. */
     if ($inicioPeriodo) { // se for solicitada a análise de um determinado período, obrigatoriamente serão fornecidos as datas inicial e final desse período
       $result['noPeriodo']['atividadesDistribuidas'] = $this->atividadesDistribuidas($plano, $inicioPeriodo, $fimPeriodo);
       $result['noPeriodo']['atividadesNaoIniciadas'] = $this->atividadesNaoIniciadas($plano, $inicioPeriodo, $fimPeriodo);
       $result['noPeriodo']['atividadesEmAndamento'] = $this->atividadesEmAndamento($plano, $inicioPeriodo, $fimPeriodo);
-      //$result['noPeriodo']['atividadesSoConcluidas'] = $this->atividadesSoConcluidas($plano, $inicioPeriodo, $fimPeriodo);
-      //$result['noPeriodo']['atividadesReprovadas'] = $this->atividadesReprovadas($plano, $inicioPeriodo, $fimPeriodo);
-      //$result['noPeriodo']['atividadesAprovadas'] = $this->atividadesAprovadas($plano, $inicioPeriodo, $fimPeriodo);
       $result['noPeriodo']['horasUteisDisponiveisServidor'] = CalendarioService::calculaDataTempoUnidade(new DateTime($inicioPeriodo), new DateTime($fimPeriodo), $plano['carga_horaria'], $unidadePlano, "HORAS_UTEIS", null, $afastamentosUsuario)->tempoUtil;
       $result['noPeriodo']['tempoTotalAlocado'] = $this->somaTemposPactuados($result['noPeriodo']['atividadesDistribuidas']);
       $result['noPeriodo']['tempoTotalNaoIniciadas'] = $this->somaTemposPactuados($result['noPeriodo']['atividadesNaoIniciadas']);
       $result['noPeriodo']['tempoTotalEmAndamento'] = $this->somaTemposPactuados($result['noPeriodo']['atividadesEmAndamento']);
-      //$result['noPeriodo']['tempoTotalSoConcluidas'] = $this->somaTemposPactuados($result['noPeriodo']['atividadesSoConcluidas']);
-      //$result['noPeriodo']['tempoTotalReprovadas'] = $this->somaTemposPactuados($result['noPeriodo']['atividadesReprovadas']);
-      //$result['noPeriodo']['tempoTotalAprovadas'] = $this->somaTemposPactuados($result['noPeriodo']['atividadesAprovadas']);
       $result['noPeriodo']['tempoPrevistoNaoIniciadasNoPeriodo'] = $this->somaTemposPactuados($result['noPeriodo']['atividadesNaoIniciadas'], $inicioPeriodo, $fimPeriodo, $plano['carga_horaria'], $unidadePlano, $afastamentosUsuario);
       $result['noPeriodo']['tempoPrevistoEmAndamentoNoPeriodo'] = $this->somaTemposPactuados($result['noPeriodo']['atividadesEmAndamento'], $inicioPeriodo, $fimPeriodo, $plano['carga_horaria'], $unidadePlano, $afastamentosUsuario);
-      //$result['noPeriodo']['tempoPrevistoSoConcluidasNoPeriodo'] = $this->somaTemposPactuados($result['noPeriodo']['atividadesSoConcluidas'], $inicioPeriodo, $fimPeriodo, $plano['carga_horaria'], $unidadePlano, $afastamentosUsuario);
-      //$result['noPeriodo']['tempoPrevistoReprovadasNoPeriodo'] = $this->somaTemposPactuados($result['noPeriodo']['atividadesReprovadas'], $inicioPeriodo, $fimPeriodo, $plano['carga_horaria'], $unidadePlano, $afastamentosUsuario);
-      //$result['noPeriodo']['tempoPrevistoAprovadasNoPeriodo'] = $this->somaTemposPactuados($result['noPeriodo']['atividadesAprovadas'], $inicioPeriodo, $fimPeriodo, $plano['carga_horaria'], $unidadePlano, $afastamentosUsuario);
       $result['noPeriodo']['tempoTotalPrevistoNoPeriodo'] = $result['noPeriodo']['tempoPrevistoNaoIniciadasNoPeriodo'] + $result['noPeriodo']['tempoPrevistoEmAndamentoNoPeriodo'] + $result['noPeriodo']['tempoPrevistoSoConcluidasNoPeriodo'] +
-        $result['noPeriodo']['tempoPrevistoReprovadasNoPeriodo'] + $result['noPeriodo']['tempoPrevistoAprovadasNoPeriodo'];
-      //$result['noPeriodo']['tempoTrabalhadoHomologado'] = $this->tempoAvaliado($result['noPeriodo']['atividadesAprovadas'], true, $inicioPeriodo, $fimPeriodo, $plano['carga_horaria'], $unidadePlano, $afastamentosUsuario);
-      //$result['noPeriodo']['tempoTrabalhadoNaoHomologado'] = $this->tempoAvaliado($result['noPeriodo']['atividadesReprovadas'], false, $inicioPeriodo, $fimPeriodo, $plano['carga_horaria'], $unidadePlano, $afastamentosUsuario);
-      //$result['noPeriodo']['tempoDespendidoSoConcluidas'] = $this->tempoAvaliado($result['noPeriodo']['atividadesSoConcluidas'], false, $inicioPeriodo, $fimPeriodo, $plano['carga_horaria'], $unidadePlano, $afastamentosUsuario);
-      //$result['noPeriodo']['tempoTotalRealizadoNoPeriodo'] = $result['noPeriodo']['tempoTrabalhadoHomologado'] + $result['noPeriodo']['tempoTrabalhadoNaoHomologado'] + $result['noPeriodo']['tempoDespendidoSoConcluidas']; 
+      $result['noPeriodo']['tempoPrevistoReprovadasNoPeriodo'] + $result['noPeriodo']['tempoPrevistoAprovadasNoPeriodo'];
     }
     return $result;
   }
@@ -523,13 +513,14 @@ class PlanoTrabalhoService extends ServiceBase
     ];
   }
 
-  public function proxyRows($rows) {
-    foreach($rows as $row) {
-        $row->assinaturasExigidas = $this->programa->assinaturasExigidas($row->id);
-        $row->jaAssinaramTCR = $this->usuario->jaAssinaramTCR($row->id);
+  public function proxyRows($rows)
+  {
+    foreach ($rows as $row) {
+      $row->assinaturasExigidas = $this->programa->assinaturasExigidas($row->id);
+      $row->jaAssinaramTCR = $this->usuario->jaAssinaramTCR($row->id);
     }
     return $rows;
-}
+  }
 
   /**
    * Retorna um array com várias informações sobre o plano recebido como parâmetro que serão auxiliares na definição das permissões para as diversas operações possíveis com um Plano de Trabalho.
@@ -544,11 +535,11 @@ class PlanoTrabalhoService extends ServiceBase
     $planoTrabalho['unidade'] = !empty($planoTrabalho['unidade_id']) ? Unidade::find($planoTrabalho['unidade_id'])->toArray() : null;
     $result = [];
     $result["assinaturasExigidas"] = $this->programa->assinaturasExigidas($planoTrabalho["id"]);
-    $result["assinaturaUsuarioExigida"] = in_array(parent::loggedUser()->id,$this->programa->assinaturasExigidas($planoTrabalho["id"]));
+    $result["assinaturaUsuarioExigida"] = in_array(parent::loggedUser()->id, $this->programa->assinaturasExigidas($planoTrabalho["id"]));
     $result["gestorUnidadeExecutora"] = $this->usuario->isGestorUnidade($planoTrabalho['unidade_id']);
     $result["nrEntregas"] = empty($planoTrabalho['entregas']) ? 0 : count($planoTrabalho['entregas']);
-    $result["participanteLotadoAreaTrabalho"] = parent::loggedUser()->areasTrabalho->find(fn($at) => $this->usuario->isLotacao($planoTrabalho["usuario_id"],$at->unidade->id)) != null;
-    $result["participanteLotadoUnidadeExecutora"] = $this->usuario->isLotacao($planoTrabalho["usuario_id"],$planoTrabalho["unidade_id"]);
+    $result["participanteLotadoAreaTrabalho"] = parent::loggedUser()->areasTrabalho->find(fn ($at) => $this->usuario->isLotacao($planoTrabalho["usuario_id"], $at->unidade->id)) != null;
+    $result["participanteLotadoUnidadeExecutora"] = $this->usuario->isLotacao($planoTrabalho["usuario_id"], $planoTrabalho["unidade_id"]);
     $result["planoAguardandoAssinatura"] = $this->isPlano("AGUARDANDO_ASSINATURA", $planoTrabalho);
     $result["planoArquivado"] = empty($planoTrabalho['id']) ? false : PlanoTrabalho::find($planoTrabalho['id'])->data_arquivamento != null;
     $result["planoAtivo"] = $this->isPlano("ATIVO", $planoTrabalho);
@@ -557,9 +548,11 @@ class PlanoTrabalhoService extends ServiceBase
     $result["planoStatus"] = empty($planoTrabalho['id']) ? null : PlanoTrabalho::find($planoTrabalho['id'])->status;
     $result["planoSuspenso"] = $this->isPlano("SUSPENSO", $planoTrabalho);
     $result["planoValido"] = $this->isPlanoTrabalhoValido($planoTrabalho);
-    $result["naoPossuiPeriodoConflitanteOutroPlano"] = count(PlanoTrabalho::where("unidade_id",$planoTrabalho['unidade_id'])->where("usuario_id",$planoTrabalho['usuario_id'])->get()
-            ->filter(fn($p) => $this->util->intersection([['start' => UtilService::asDateTime($p->data_inicio), 'end' => UtilService::asDateTime($p->data_fim)],
-            ['start' => UtilService::asDateTime($planoTrabalho["data_inicio"]), 'end' => UtilService::asDateTime($planoTrabalho["data_fim"])]]) != null)) == 0;
+    $result["naoPossuiPeriodoConflitanteOutroPlano"] = count(PlanoTrabalho::where("unidade_id", $planoTrabalho['unidade_id'])->where("usuario_id", $planoTrabalho['usuario_id'])->where("id", "!=", $planoTrabalho["id"])->get()
+      ->filter(fn ($p) => $this->util->intersection([
+        ['start' => UtilService::asDateTime($p->data_inicio), 'end' => UtilService::asDateTime($p->data_fim)],
+        ['start' => UtilService::asDateTime($planoTrabalho["data_inicio"]), 'end' => UtilService::asDateTime($planoTrabalho["data_fim"])]
+      ]) != null)) == 0;
     $result["unidadePlanoEhLotacao"] = $this->usuario->isLotacao(null, $planoTrabalho['unidade_id']);
     $result["usuarioEhParticipantePgdHabilitado"] = $this->usuario->isParticipantePgdHabilitado(null, $planoTrabalho["programa_id"]);
     $result["usuarioEhParticipantePlano"] = parent::loggedUser()->id == $planoTrabalho["usuario_id"];
@@ -590,131 +583,136 @@ class PlanoTrabalhoService extends ServiceBase
     return empty($plano['id']) ? false : ($this->isPlanoTrabalhoValido($plano) && $planoTrabalho->status == $status);
   }
 
-  public function arquivar($data, $unidade) { 
+  public function arquivar($data, $unidade)
+  {
     try {
-        DB::beginTransaction();
-        $planoTrabalho = PlanoTrabalho::find($data["id"]);
-        if(!empty($planoTrabalho)) {
-            $this->update([
-                "id" => $planoTrabalho->id,
-                "data_arquivamento" => Carbon::now()
-            ], $unidade, false);
-        } else {
-            throw new ServerException("ValidatePlanoTrabalho", "Plano de Trabalho não encontrado!");
-        }
-        DB::commit();
+      DB::beginTransaction();
+      $planoTrabalho = PlanoTrabalho::find($data["id"]);
+      if (!empty($planoTrabalho)) {
+        $this->update([
+          "id" => $planoTrabalho->id,
+          "data_arquivamento" => Carbon::now()
+        ], $unidade, false);
+      } else {
+        throw new ServerException("ValidatePlanoTrabalho", "Plano de Trabalho não encontrado!");
+      }
+      DB::commit();
     } catch (Throwable $e) {
-        DB::rollback();
-        throw $e;
+      DB::rollback();
+      throw $e;
     }
     return true;
   }
 
-  public function ativar($data, $unidade) {    
+  public function ativar($data, $unidade)
+  {
     try {
-        DB::beginTransaction();
-        $planoTrabalho = PlanoTrabalho::find($data["id"]);
-        $this->status->atualizaStatus($planoTrabalho, 'ATIVO', "O Plano de Trabalho foi ativado nesta data!");
-        DB::commit();
+      DB::beginTransaction();
+      $planoTrabalho = PlanoTrabalho::find($data["id"]);
+      $this->status->atualizaStatus($planoTrabalho, 'ATIVO', "O Plano de Trabalho foi ativado nesta data!");
+      DB::commit();
     } catch (Throwable $e) {
-        DB::rollback();
-        throw $e;
+      DB::rollback();
+      throw $e;
     }
-    return true;    
+    return true;
   }
 
-  public function cancelarAssinatura($data, $unidade) {    
+  public function cancelarAssinatura($data, $unidade)
+  {
     try {
-        DB::beginTransaction();
-        /*
+      DB::beginTransaction();
+      /*
             (RN_PTR_Q)  
             - Após o cancelamento da assinatura do usuário logado, se existir assinatura(s) de outro(s) usuário(s), o plano permanece no status 'AGUARDANDO_ASSINATURA'. 
               Caso contrário, retrocessará para o status 'INCLUIDO';
         */
-        $planoTrabalho = PlanoTrabalho::find($data["id"]);
-        DocumentoAssinatura::where("usuario_id",parent::loggedUser()->id)->where("documento_id",$planoTrabalho->documento_id)->first()->delete();
-        $this->status->atualizaStatus($planoTrabalho, count($planoTrabalho->documento->assinaturas->toArray()) > 0 ? 'AGUARDANDO_ASSINATURA' : 'INCLUIDO', 'CANCELAMENTO DA ASSINATURA DO USUÁRIO: ' . parent::loggedUser()->nome . 'JUSTIFICATIVA: ' . $data["justificativa"]);
-        DB::commit();
+      $planoTrabalho = PlanoTrabalho::find($data["id"]);
+      DocumentoAssinatura::where("usuario_id", parent::loggedUser()->id)->where("documento_id", $planoTrabalho->documento_id)->first()->delete();
+      $this->status->atualizaStatus($planoTrabalho, count($planoTrabalho->documento->assinaturas->toArray()) > 0 ? 'AGUARDANDO_ASSINATURA' : 'INCLUIDO', 'CANCELAMENTO DA ASSINATURA DO USUÁRIO: ' . parent::loggedUser()->nome . 'JUSTIFICATIVA: ' . $data["justificativa"]);
+      DB::commit();
     } catch (Throwable $e) {
-        DB::rollback();
-        throw $e;
+      DB::rollback();
+      throw $e;
     }
     return true;
   }
 
-  public function cancelarPlano($data, $unidade) {    
+  public function cancelarPlano($data, $unidade)
+  {
     try {
-        DB::beginTransaction();
-        $planoTrabalho = PlanoTrabalho::find($data["id"]);
-        $this->status->atualizaStatus($planoTrabalho,'CANCELADO', $data["justificativa"]);
-        DB::commit();
+      DB::beginTransaction();
+      $planoTrabalho = PlanoTrabalho::find($data["id"]);
+      $this->status->atualizaStatus($planoTrabalho, 'CANCELADO', $data["justificativa"]);
+      $this->arquivar($data, $unidade);
+      DB::commit();
     } catch (Throwable $e) {
-        DB::rollback();
-        throw $e;
+      DB::rollback();
+      throw $e;
     }
     return true;
   }
 
-  public function desarquivar($data, $unidade) { 
+  public function desarquivar($data, $unidade)
+  {
     try {
-        DB::beginTransaction();
-        $planoTrabalho = PlanoTrabalho::find($data["id"]);
-        if(!empty($planoTrabalho)) {
-            $this->update([
-                "id" => $planoTrabalho->id,
-                "data_arquivamento" => null
-            ], $unidade, false);
-        } else {
-            throw new ServerException("ValidatePlanoTrabalho", "Plano de Trabalho não encontrado!");
-        }
-        DB::commit();
+      DB::beginTransaction();
+      $planoTrabalho = PlanoTrabalho::find($data["id"]);
+      if (!empty($planoTrabalho)) {
+        $this->update([
+          "id" => $planoTrabalho->id,
+          "data_arquivamento" => null
+        ], $unidade, false);
+      } else {
+        throw new ServerException("ValidatePlanoTrabalho", "Plano de Trabalho não encontrado!");
+      }
+      DB::commit();
     } catch (Throwable $e) {
-        DB::rollback();
-        throw $e;
+      DB::rollback();
+      throw $e;
     }
     return true;
   }
 
-  public function enviarParaAssinatura($data, $unidade) {    
+  public function enviarParaAssinatura($data, $unidade)
+  {
     try {
-        DB::beginTransaction();
-        $planoTrabalho = PlanoTrabalho::find($data["id"]);
-        // FALTA IMPLEMENTAR. o plano vai para o status 'AGUARDANDO_ASSINATURA';
-        DB::commit();
+      DB::beginTransaction();
+      $planoTrabalho = PlanoTrabalho::find($data["id"]);
+      // FALTA IMPLEMENTAR. o plano vai para o status 'AGUARDANDO_ASSINATURA';
+      DB::commit();
     } catch (Throwable $e) {
-        DB::rollback();
-        throw $e;
+      DB::rollback();
+      throw $e;
     }
     return true;
   }
 
-  public function reativar($data, $unidade) {    
+  public function reativar($data, $unidade)
+  {
     try {
-        DB::beginTransaction();
-        $planoTrabalho = PlanoTrabalho::find($data["id"]);
-        $this->status->atualizaStatus($planoTrabalho, 'ATIVO', $data["justificativa"]);
-        DB::commit();
+      DB::beginTransaction();
+      $planoTrabalho = PlanoTrabalho::find($data["id"]);
+      $this->status->atualizaStatus($planoTrabalho, 'ATIVO', $data["justificativa"]);
+      DB::commit();
     } catch (Throwable $e) {
-        DB::rollback();
-        throw $e;
-    }
-    return true;    
-  }
-
-  public function suspender($data, $unidade){    
-    try {
-        DB::beginTransaction();
-        $planoTrabalho = PlanoTrabalho::find($data["id"]);
-        $this->status->atualizaStatus($planoTrabalho, 'SUSPENSO', $data["justificativa"]);
-        DB::commit();
-    } catch (Throwable $e) {
-        DB::rollback();
-        throw $e;
+      DB::rollback();
+      throw $e;
     }
     return true;
   }
 
-
-
-
+  public function suspender($data, $unidade)
+  {
+    try {
+      DB::beginTransaction();
+      $planoTrabalho = PlanoTrabalho::find($data["id"]);
+      $this->status->atualizaStatus($planoTrabalho, 'SUSPENSO', $data["justificativa"]);
+      DB::commit();
+    } catch (Throwable $e) {
+      DB::rollback();
+      throw $e;
+    }
+    return true;
+  }
 }

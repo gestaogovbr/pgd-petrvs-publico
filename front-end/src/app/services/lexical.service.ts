@@ -26,7 +26,7 @@ export class LexicalService {
     "afastamento": {single: "afastamento", plural: "afastamentos", female: false},
     "área de trabalho": {single: "área de trabalho", plural: "áreas de trabalho", female: true},
     "area do conhecimento": {single: "area do conhecimento", plural: "areas dos conhecimentos", female: true},
-    "atividade": {single: "atividade", plural: "atividades", female: true},
+    "atividade": {single: "registro de trabalho", plural: "registros de trabalho", female: false},
     "atribuição": {single: "atribuição", plural: "atribuições", female: true},
     "avaliação": {single: "avaliação", plural: "avaliações", female: true},
     "cadeiaValor": {single: "cadeia de valor", plural: "cadeias de valor", female: true},

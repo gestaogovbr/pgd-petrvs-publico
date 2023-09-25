@@ -44,30 +44,21 @@ class DocumentoService extends ServiceBase {
         $usuario = parent::loggedUser();
         $documentos = Documento::with(['assinaturas' => function ($query) use ($usuario) {
             $query->where('usuario_id', $usuario->id);
-        }])->whereIn('id', $data["documentos_ids"])->get();
+        }, 'planoTrabalho'])->whereIn('id', $data["documentos_ids"])->get();
         try {
             DB::beginTransaction();
             foreach($documentos as $documento) {
-                if(in_array($documento->especie, ["TCR"])) {
-                    $plano = PlanoTrabalho::with(["tipoModalidade", "programa", "usuario", "unidade.entidade"])->find($documento->plano_trabalho_id);
-                    $tipoModalidade = $plano->tipoModalidade;
-                    $programa = $plano->programa;
-                    $servidor = $plano->usuario;
-                    $unidade = $plano->unidade;
-                    $entidade = $unidade->entidade;
-                    $ids = [];
-                    if($programa->plano_trabalho_assinatura_participante && isset($servidor)) $ids[] = $servidor->id;
-                    if($programa->plano_trabalho_assinatura_gestor_unidade && isset($unidade)) array_merge($ids, array_filter([$unidade->gestor_id, $unidade->gestor_substituto_id]));
-                    if($programa->plano_trabalho_assinatura_gestor_entidade && isset($entidade)) array_merge($ids, array_filter([$entidade->gestor_id, $entidade->gestor_substituto_id]));
-                    if(!in_array($usuario->id, $ids)) throw new ServerException("ValidateDocumento", "Usuário não tem prerrogativas para asssinar o documento #" . $documento->numero);
-                }
-                if(count($documento->assinaturas) == 0) {
-                    $assinatura = new DocumentoAssinatura();
-                    $assinatura->data_assinatura = Carbon::now();
-                    $assinatura->documento_id = $documento->id;
-                    $assinatura->usuario_id = $usuario->id;
-                    $assinatura->assinatura = hash('md5', $assinatura->data_assinatura->toDateTimeString() . $usuario->id . $documento->conteudo);
-                    $assinatura->save();
+                $especie = $documento->especie;
+                if(count($documento->assinaturas) == 0) { 
+                    $this->registrarAssinatura($documento, $usuario->id); 
+                    if($especie == "TCR") {
+                        /*
+                            (RN_PTR_O)
+                            Enquanto faltar assinatura no TCR, o plano vai para o (ou permanece no) status de 'AGUARDANDO_ASSINATURA'. Quando o último assinar o TCR, o plano vai para o status 'ATIVO';
+                        */
+                        $status = count(array_diff($this->programa->assinaturasExigidas($documento->planoTrabalho->id),$this->usuario->jaAssinaramTCR($documento->planoTrabalho->id))) > 0 ? 'AGUARDANDO_ASSINATURA' : 'ATIVO';
+                        $this->status->atualizaStatus($documento->planoTrabalho, $status, 'Registrada a assinatura do servidor: ' . $usuario->nome . ' - CPF ' . $usuario->cpf . '.');                        
+                    }
                 } else {
                     /* Remove o documento que já foi assinado */
                     $data["documentos_ids"] = array_diff($data["documentos_ids"], [$documento->id]);
@@ -79,6 +70,15 @@ class DocumentoService extends ServiceBase {
             throw $e;
         }
         return Documento::with('assinaturas.usuario:id,nome,apelido')->whereIn('id', $data["documentos_ids"])->get()->all();
+    }
+
+    public function registrarAssinatura($documento, $usuario_id){
+        $assinatura = new DocumentoAssinatura();
+        $assinatura->data_assinatura = Carbon::now();
+        $assinatura->documento_id = $documento->id;
+        $assinatura->usuario_id = $usuario_id;
+        $assinatura->assinatura = hash('md5', $assinatura->data_assinatura->toDateTimeString() . $usuario_id . $documento->conteudo);
+        return $assinatura->save();
     }
 
 }

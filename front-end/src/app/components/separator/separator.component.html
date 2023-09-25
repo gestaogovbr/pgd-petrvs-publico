@@ -13,7 +13,7 @@
         <i [class]="'bi ' + (collapsed ? 'bi-arrow-down-circle' : 'bi-arrow-up-circle')" role="button" (click)="onExpandClick()"></i>
     </li>
 </ul>
-<div class="row" [class.separator-background]="!isTransparent" [class.d-none]="isCollapsed">
+<div class="row" [class]="margin ? 'pb-' + margin : undefined" [class.separator-background]="!isTransparent" [class.d-none]="isCollapsed">
     <ng-content></ng-content>
 </div>
 <ul *ngIf="isBottom" class="nav nav-tabs justify-content-end my-2">

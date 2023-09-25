@@ -12,11 +12,11 @@
     <columns>
         <column title="Nome" field="nome" orderBy="nome"></column>
         <column title="Descrição" field="descricao" orderBy="descricao"></column>
-        <column title="Unidade" [template]="columnUnidade">
+        <!--<column title="Unidade" [template]="columnUnidade">
             <ng-template let-row="row" #columnUnidade>
                 <badge *ngIf="row.unidade" [icon]="entityService.getIcon('Unidade')" [label]="row.unidade.sigla" color="light" [hint]="row.unidade.nome"></badge>
             </ng-template>
-        </column>
+        </column>-->
         <column [title]="lex.translate('Tipo do indicador')" type="select" field="tipo_indicador" [items]="lookup.TIPO_INDICADOR"></column>
         <column title="Qualitativos" [template]="columnQualitativos">
             <ng-template let-row="row" #columnQualitativos>

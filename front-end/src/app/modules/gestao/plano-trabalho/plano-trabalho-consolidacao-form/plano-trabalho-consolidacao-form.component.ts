@@ -25,6 +25,9 @@ import { SelectItem } from 'src/app/components/input/input-base';
 import { TipoAtividade } from 'src/app/models/tipo-atividade.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { Programa } from 'src/app/models/programa.model';
+import { Comparecimento } from 'src/app/models/comparecimento.model';
+import { ComparecimentoDaoService } from 'src/app/dao/comparecimento-dao.service';
+import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 
 export type ConsolidacaoEntrega = {
   id: string,
@@ -61,8 +64,11 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
 
   public consolidacaoOcorrenciaDao: PlanoTrabalhoConsolidacaoOcorrenciaDaoService;
   public ocorrenciaDao: PlanoTrabalhoConsolidacaoOcorrenciaDaoService;
+  public comparecimentoDao: ComparecimentoDaoService;
+  public unidadeDao: UnidadeDaoService;
   public formAtividade: FormGroup;
   public formOcorrencia: FormGroup;
+  public formComparecimento: FormGroup;
   public formEdit: FormGroup;
   public unidade?: Unidade;
   public dao: PlanoTrabalhoConsolidacaoDaoService;
@@ -77,6 +83,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   public etiquetas: LookupItem[] = [];
   public checklist?: AtividadeChecklist[];
   public itemsOcorrencias: PlanoTrabalhoConsolidacaoOcorrencia[] = [];
+  public itemsComparecimentos: Comparecimento[] = [];
   public itemsAfastamentos: Afastamento[] = [];
   public atividadeOptionsMetadata: AtividadeOptionsMetadata;
   public programa?: Programa;
@@ -88,6 +95,8 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
     this.dao = injector.get<PlanoTrabalhoConsolidacaoDaoService>(PlanoTrabalhoConsolidacaoDaoService);
     this.consolidacaoOcorrenciaDao = injector.get<PlanoTrabalhoConsolidacaoOcorrenciaDaoService>(PlanoTrabalhoConsolidacaoOcorrenciaDaoService);
+    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    this.comparecimentoDao = injector.get<ComparecimentoDaoService>(ComparecimentoDaoService);
     this.atividadeDao = injector.get<AtividadeDaoService>(AtividadeDaoService);
     this.atividadeService = injector.get<AtividadeService>(AtividadeService);
     this.calendar = injector.get<CalendarService>(CalendarService);
@@ -112,6 +121,11 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       data_fim: { default: new Date() },
       descricao: { default: "" }
     }, this.cdRef, this.validateOcorrencia);
+    this.formComparecimento = this.fh.FormBuilder({
+      data_comparecimento: { default: new Date() },
+      unidade_id: { default: "" },
+      detalhamento: { default: "" }
+    }, this.cdRef, this.validateComparecimento);
     this.formEdit = this.fh.FormBuilder({
       progresso: { default: 0 },
       etiquetas: { default: [] },
@@ -190,6 +204,16 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     return result;
   }
 
+  public validateComparecimento = (control: AbstractControl, controlName: string) => {
+    let result = null;
+    if (['detalhamento', 'unidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+      result = "Obrigatório";
+    } else if(controlName == 'data_comparecimento' && this.entity && !this.util.between(control.value, {start: this.entity!.data_inicio, end: this.entity!.data_fim})) {
+      result = "Inválido";
+    } 
+    return result;
+  }
+
   public loadConsolidacao(dados: ConsolidacaoDados) {
     this.itemsEntregas = dados.entregas.map(x => {
       x.plano_entrega_entrega!.plano_entrega = dados.planosEntregas.find(pe => pe.id == x.plano_entrega_entrega!.plano_entrega_id);
@@ -204,6 +228,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     this.programa = dados.programa;
     this.planoTrabalho = dados.planoTrabalho;
     this.itemsOcorrencias = dados.ocorrencias;
+    this.itemsComparecimentos = dados.comparecimentos;
     this.itemsAfastamentos = dados.afastamentos;
     this.unidade = dados.planoTrabalho.unidade || this.entity!.plano_trabalho?.unidade;
     this.cdRef.detectChanges();
@@ -296,7 +321,12 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     if (this.formAtividade!.valid) {
       row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
       this.util.fillForm(row, this.formAtividade!.value);
-      result = await this.atividadeDao?.save(row, this.joinAtividade, ['etiquetas', 'checklist', 'comentarios', 'pausas', 'tarefas']);
+      this.submitting = true;
+      try {
+        result = await this.atividadeDao?.save(row, this.joinAtividade, ['etiquetas', 'checklist', 'comentarios', 'pausas', 'tarefas']);
+      } finally {
+        this.submitting = false;
+      }
       this.atividadeRefreshId(row.id, result);
     }
     return result;
@@ -421,12 +451,78 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       row.data_inicio = form.controls.data_inicio.value;
       row.data_fim = form.controls.data_fim.value;
       row.descricao = form.controls.descricao.value;
-      result = await this.consolidacaoOcorrenciaDao?.save(row);
+      this.submitting = true;
+      try {
+        result = await this.consolidacaoOcorrenciaDao?.save(row);
+      } finally {
+        this.submitting = false;
+      }
     }
     return result;
   }
 
   public ocorrenciaDynamicButtons(row: any): ToolbarButton[] {
+    let result: ToolbarButton[] = [];
+    //result.push({ hint: "Adicionar filho", icon: "bi bi-plus-circle", onClick: this.addChildProcesso.bind(this) });
+    return result;
+  }  
+
+  /***************************************************************************************
+  * Comparecimento 
+  ****************************************************************************************/
+  public async addComparecimento() {
+    return new Comparecimento({
+      unidade_id: this.unidade?.id,
+      unidade: this.unidade,
+      plano_trabalho_consolidacao_id: this.entity!.id
+    });
+  }
+
+  public async loadComparecimento(form: FormGroup, row: any) {
+    this.formComparecimento.patchValue({
+      data_comparecimento: row.data_comparecimento,
+      unidade_id: row.unidade_id,
+      detalhamento: row.detalhamento
+    });
+    this.cdRef.detectChanges();
+  }
+
+  public async removeComparecimento(row: any) {
+    let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir o item ?");
+    if (confirm) {
+      try {
+        let comparecimento = row as Comparecimento;
+        await this.comparecimentoDao?.delete(comparecimento);
+        this.itemsComparecimentos.splice(this.itemsComparecimentos.findIndex(x => x.id == comparecimento.id), 1);
+        return true;
+      } catch {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  public async saveComparecimento(form: FormGroup, row: any) {
+    let result = undefined;
+    this.formComparecimento.markAllAsTouched();
+    if (this.formComparecimento!.valid) {
+      row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
+      row.data_comparecimento = form.controls.data_comparecimento.value;
+      row.detalhamento = form.controls.detalhamento.value;
+      row.plano_trabalho_consolidacao_id = this.entity!.id;
+      row.unidade_id = form.controls.unidade_id.value;
+      this.submitting = true;
+      try {
+        result = await this.comparecimentoDao?.save(row);
+      } finally {
+        this.submitting = false;
+      }
+    }
+    return result;
+  }
+
+  public comparecimentoDynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     //result.push({ hint: "Adicionar filho", icon: "bi bi-plus-circle", onClick: this.addChildProcesso.bind(this) });
     return result;

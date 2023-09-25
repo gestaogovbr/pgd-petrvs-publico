@@ -78,6 +78,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
    */
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
+    if (['forca_trabalho'].indexOf(controlName) >= 0 && control.value == 1) return result;
     if (['descricao', 'forca_trabalho'].indexOf(controlName) >= 0 && !control.value?.length) result = "Obrigatório!";
     if (['forca_trabalho'].indexOf(controlName) >= 0 && (control.value < 1 || control.value > 100)) result = "Deve estar entre 1 e 100";
     if (['plano_entrega_entrega_id'].indexOf(controlName) >= 0) {

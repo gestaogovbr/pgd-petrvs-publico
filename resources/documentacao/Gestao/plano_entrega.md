@@ -66,7 +66,7 @@ Consideremos também que o Plano de Entregas é da Unidade B.
 - (RN_PENT_F) O gestor de uma Unidade deve poder visualizar os planos de entregas de todas as Unidades hierarquicamente a ele subordinadas;
 - (RN_PENT_G) Uma vez homologado um Plano de Entregas, a Unidade do plano (Unidade B) está em PGD;
 - (RN_PENT_H) Os planos de entregas vão gerar dados que serão enviados ao órgão central (aguardando a definição do formato);
-- (RN_PENT_I) O participante poderá visualizar o Plano de Entregas de qualquer uma das suas áreas de trabalho. Área de Trabalho é qualquer unidade onde o participante esteja lotado ou tenha alguma atribuição a ela vinculada (ver [lista de atribuições possíveis](../Geral/informacoes-complementares.md));
+- (RN_PENT_I) O participante poderá visualizar o Plano de Entregas de qualquer uma das suas áreas de trabalho. Área de Trabalho é qualquer unidade onde o participante esteja lotado ou tenha alguma atribuição a ela vinculada (ver [lista de atribuições possíveis](docs/Geral/informacoes-complementares.md));
 - (RN_PENT_J) Uma Unidade de execução poderá ter mais de um Plano de Entregas com status 'HOMOLOGANDO' e 'ATIVO', desde que sejam para períodos diferentes;
 - (RN_PENT_K) Após criado um Plano de Entregas, os seguintes campos não poderão mais ser alterados: unidade_id, programa_id;
 - (RN_PENT_M) Qualquer alteração, depois de o Plano de Entregas ser homologado, precisa ser notificada ao gestor da Unidade-pai (Unidade A) ou à pessoa que homologou. Essa comunicação sobre eventuais ajustes, não se aplica à Unidade Instituidora, ou seja, alterações realizadas em planos de entregas de unidades instituidoras não precisam ser notificadas à sua Unidade-pai;
@@ -77,7 +77,7 @@ Consideremos também que o Plano de Entregas é da Unidade B.
 
 ## FLUXOS (STATUS & AÇÕES)
 
-![Fig. 1 - Análise dos Fluxos dos Planos de Entrega](../Imagens/Fluxo%20dos%20Planos%20de%20Entregas.jpg)
+![Fig. 1 - Análise dos Fluxos dos Planos de Entrega](docs/Imagens/Fluxo_Planos_Entregas.jpg)
 
 ~~~text
 status possíveis: "INCLUIDO", "HOMOLOGANDO", "ATIVO", "CONCLUIDO", "AVALIADO", "SUSPENSO", "CANCELADO"
@@ -324,7 +324,7 @@ MOD_PENT_CANC_CONCL_HOMOL/MOD_PENT_CANC_CONCL_ATV: o plano não deve retroagir m
 - Opções para o filtro: 'Incluir Unidades Superiores', 'Incluir Unidades Inferiores', 'Selecionar por Status'
 - Em que situações o Plano de Entregas sofrerá a ação UPDATE no back-end?
 
-[Documentação para ENTREGAS DO Plano de Entregas](plano_entrega_entrega.md)
+[Documentação para ENTREGAS DO Plano de Entregas](docs/Gestao/plano_entrega_entrega.md)
 
 ## EXEMPLOS DE GRIDS
 
