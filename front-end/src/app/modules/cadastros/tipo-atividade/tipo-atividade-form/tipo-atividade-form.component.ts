@@ -35,13 +35,10 @@ export class TipoAtividadeFormComponent extends PageFormBase<TipoAtividade, Tipo
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-
-    if(['nome'].indexOf(controlName) >= 0 && !control.value?.length) {
-      result = "Obrigatório";
-    }  else if(['esforco'].indexOf(controlName) >= 0 && !control.value) {
+    if(['nome'].indexOf(controlName) >= 0 && !control.value?.length) result = "Obrigatório";
+    /*else if(['esforco'].indexOf(controlName) >= 0 && !control.value) {
       result = "Valor não pode ser zero.";
-    }
-
+    }*/
     return result;
   }
 

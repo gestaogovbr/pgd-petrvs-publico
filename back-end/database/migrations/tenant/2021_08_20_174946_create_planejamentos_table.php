@@ -27,6 +27,7 @@ class CreatePlanejamentosTable extends Migration
             $table->dateTime('data_fim')->comment("Data final do planejamento institucional");
             $table->dateTime('data_arquivamento')->nullable()->comment("Data de arquivamento do planejamento institucional");
             $table->json('valores')->comment("Valores da unidade");
+            $table->json('resultados_institucionais')->nullable()->comment("Resultados da unidade");
             // Chaves estrangeiras:
             $table->foreignUuid('entidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Entidade do planejamento institucional");
             $table->foreignUuid('unidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Unidade do planejamento institucional");

@@ -2336,6 +2336,8 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
         result = "Valor não pode ser zero.";
       } else if (['data_inicio', 'data_fim'].includes(controlName) && !this.util.isDataValid(control.value)) {
         result = "Inválido";
+      } else if (controlName == 'data_fim' && this.util.isDataValid(this.form?.controls.data_inicio.value) && this.util.asTimestamp(control.value) < this.util.asTimestamp(this.form.controls.data_inicio.value)) {
+        result = "Menor que o início";
       } else if (this.programa && controlName == 'data_inicio' && control.value.getTime() < this.programa.selectedEntity?.data_inicio.getTime()) {
         result = "Menor que programa";
       } else if (this.programa && controlName == 'data_fim' && control.value.getTime() > this.programa.selectedEntity?.data_fim.getTime()) {
@@ -2539,23 +2541,23 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
     this.cdRef.detectChanges();
   }
   onDataInicioChange(event) {
-    const di = new Date(this.form.controls.data_inicio.value).getTime();
-    const df = new Date(this.form.controls.data_fim.value).getTime();
+    /*const di = new Date(this.form!.controls.data_inicio.value).getTime();
+    const df = new Date(this.form!.controls.data_fim.value).getTime();
     if (df < di) {
       let diaI = new Date(di);
       diaI.setDate(diaI.getDate() + 1);
-      this.form.controls.data_fim.setValue(diaI);
-    }
+      this.form!.controls.data_fim.setValue(diaI)
+    }*/
     this.calculaTempos();
   }
   onDataFimChange(event) {
-    const di = new Date(this.form.controls.data_inicio.value).getTime();
-    const df = new Date(this.form.controls.data_fim.value).getTime();
+    /*const di = new Date(this.form!.controls.data_inicio.value).getTime();
+    const df = new Date(this.form!.controls.data_fim.value).getTime();
     if (df < di) {
       let diaI = new Date(di);
       diaI.setDate(diaI.getDate() + 1);
-      this.form.controls.data_fim.setValue(diaI);
-    }
+      this.form!.controls.data_fim.setValue(diaI)
+    }*/
     this.calculaTempos();
   }
   onCargaHorariaChenge(event) {
@@ -2567,7 +2569,7 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
     const carga = this.form?.controls.carga_horaria.value || 8;
     const usuario = this.usuario?.selectedEntity;
     const unidade = this.unidade?.selectedEntity;
-    if (usuario && unidade && this.util.isDataValid(inicio) && this.util.isDataValid(fim)) {
+    if (usuario && unidade && this.util.isDataValid(inicio) && this.util.isDataValid(fim) && this.util.asTimestamp(inicio) < this.util.asTimestamp(fim)) {
       this.calendar.loadFeriadosCadastrados(unidade.id).then(feriados => {
         this.horasTotais = this.calendar.calculaDataTempoUnidade(inicio, fim, carga, unidade, "ENTREGA", [], []);
         this.horasParciais = this.calendar.calculaDataTempoUnidade(inicio, fim, carga, unidade, "ENTREGA", [], usuario.afastamentos);
@@ -2928,6 +2930,7 @@ class PlanoTrabalhoListAccordeonComponent extends src_app_modules_base_page_fram
       try {
         let dados = yield _this2.dao.getByUsuario(_this2.usuarioId, _this2.arquivados);
         let agora = new Date().getTime();
+        let self = _this2;
         _this2.planos = dados.planos;
         for (var i = 0; i < _this2.planos.length; i++) {
           if (_this2.util.asTimestamp(_this2.planos[i].data_inicio) <= agora && agora <= _this2.util.asTimestamp(_this2.planos[i].data_fim) && ["ATIVO", "CONCLUIDO"].includes(_this2.planos[i].status)) {
