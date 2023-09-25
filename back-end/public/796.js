@@ -2250,7 +2250,7 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
     this.tipoModalidadeDao = injector.get(src_app_dao_tipo_modalidade_dao_service__WEBPACK_IMPORTED_MODULE_5__.TipoModalidadeDaoService);
     this.documentoDao = injector.get(src_app_dao_documento_dao_service__WEBPACK_IMPORTED_MODULE_2__.DocumentoDaoService);
     this.planoTrabalhoService = injector.get(_plano_trabalho_service__WEBPACK_IMPORTED_MODULE_12__.PlanoTrabalhoService);
-    this.modalWidth = 1200;
+    this.modalWidth = 1300;
     this.planoDataset = this.dao.dataset();
     this.form = this.fh.FormBuilder({
       carga_horaria: {
@@ -3193,6 +3193,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
      */
     this.validate = (control, controlName) => {
       let result = null;
+      if (['forca_trabalho'].indexOf(controlName) >= 0 && control.value == 1) return result;
       if (['descricao', 'forca_trabalho'].indexOf(controlName) >= 0 && !control.value?.length) result = "Obrigatório!";
       if (['forca_trabalho'].indexOf(controlName) >= 0 && (control.value < 1 || control.value > 100)) result = "Deve estar entre 1 e 100";
       if (['plano_entrega_entrega_id'].indexOf(controlName) >= 0) {

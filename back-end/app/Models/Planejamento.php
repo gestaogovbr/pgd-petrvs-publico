@@ -22,6 +22,7 @@ class Planejamento extends ModelBase
         'missao', /* text; NOT NULL; */// Missão da entidade/unidade
         'visao', /* text; NOT NULL; */// Visão da entidade/unidade
         'valores', /* json; NOT NULL; */// Valores da entidade/unidade
+        'resultados_institucionais', /* json; */// Resultados da entidade/unidade
         'data_arquivamento', /* datetime; */// Data de arquivamento do planejamento institucional
         'entidade_id', /* char(36); NOT NULL; */
         'unidade_id', /* char(36); */
@@ -32,6 +33,7 @@ class Planejamento extends ModelBase
     // Casting
     protected $casts = [
         'valores' => AsJson::class,
+        'resultados_institucionais' => AsJson::class,
     ];
 
     public $fillable_changes = ['objetivos'];

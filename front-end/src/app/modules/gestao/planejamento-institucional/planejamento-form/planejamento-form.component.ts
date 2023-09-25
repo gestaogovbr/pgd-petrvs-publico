@@ -51,7 +51,10 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
       missao: { default: "" },
       visao: { default: "" },
       valores: { default: [] },
-      valor_texto: { default: "" }
+      valor_texto: { default: "" },
+      resultados_institucionais: { default: [] },
+      resultados_texto: { default: "" },
+      utilizar_superior: {default: false}
     }, this.cdRef, this.validate);
     this.util = injector.get<UtilService>(UtilService);
   }
@@ -84,7 +87,7 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
     if (this.form!.controls.data_fim.value && this.form!.controls.data_inicio.value > this.form!.controls.data_fim.value) return "A data do início não pode ser maior que a data do fim!";
     if (this.form!.controls.valores.value.length == 0) return "É obrigatória a inclusão de ao menos um valor institucional!";
 
-    await this.dao?.query({ where: [['unidade_id', '==', this.form!.controls.unidade_id.value]] }).getAll().then((unidade) => {
+    await this.dao?.query({ where: [['unidade_id', '==', this.form!.controls.unidade_id.value]] }).asPromise().then((unidade) => {
       unidade.forEach(un => {
         if (un.id != this.entity!.id && this.util.intersection([{start: this.util.asDate(un.data_inicio)!, end: this.util.asDate(un.data_fim)!},
         {start: this.util.asDate(this.form!.controls.data_inicio.value)!, end: this.util.asDate(this.form!.controls.data_fim.value)!}])) {
@@ -122,6 +125,7 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
   }
 
   public addValorHandle(): LookupItem | undefined {
+    console.log("1");
     let result = undefined;
     const value = this.form.controls.valor_texto.value;
     const key = this.util.textHash(value);
@@ -132,6 +136,21 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
       };
       this.form.controls.valor_texto.setValue("");
     }
+    return result;
+  };
+
+  public addResultadoHandle(): LookupItem | undefined {
+    console.log("2");
+    let result = undefined;
+    const value = this.form.controls.resultados_texto.value;
+    const key = this.util.textHash(value);
+    if (value?.length && this.util.validateLookupItem(this.form.controls.resultados_institucionais.value, key)) {
+      result = {
+        key: key,
+        value: this.form.controls.resultados_texto.value
+      };
+      this.form.controls.resultados_texto.setValue("");
+    }    
     return result;
   };
 

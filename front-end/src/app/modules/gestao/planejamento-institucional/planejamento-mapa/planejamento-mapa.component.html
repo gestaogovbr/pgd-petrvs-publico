@@ -7,45 +7,66 @@
     </div>
 </editable-form>
 <!-- Cabeçalho -->
-<separator transparent collapse title="Valores, missão e visão">
+<separator transparent collapse title="Missão, visão, resultados e valores">
     <div *ngIf="planejamento" class="row">
-        <div class="col-4">
-            <div class="card h-100">
-                <div class="card-header">
-                    Valores
+        <div class="row mb-2">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        Missão
+                    </div>
+                    <div class="card-body">
+                        <blockquote class="blockquote mb-0">
+                            <p class="fst-italic">{{planejamento.missao}}</p>
+                        </blockquote>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <ul class="list-group list-group-flush">
-                        <li *ngFor="let valor of planejamento!.valores" class="list-group-item">
-                            <blockquote class="blockquote mb-0">
-                                <p>{{valor.value}}</p>
-                            </blockquote>
-                        </li>
-                    </ul>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        Visão
+                    </div>
+                    <div class="card-body">
+                        <blockquote class="blockquote mb-0">
+                            <p>{{planejamento!.visao}}</p>
+                        </blockquote>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-4">
-            <div class="card h-100">
-                <div class="card-header">
-                    Missão
-                </div>
-                <div class="card-body">
-                    <blockquote class="blockquote mb-0">
-                        <p class="fst-italic">{{planejamento.missao}}</p>
-                    </blockquote>
+        <div class="row mb-2">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        Resultados Institucionais
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li *ngFor="let resultado of planejamento!.resultados_institucionais"
+                                class="list-group-item">
+                                <blockquote class="blockquote mb-0">
+                                    <p>{{resultado.value}}</p>
+                                </blockquote>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-4">
-            <div class="card h-100">
-                <div class="card-header">
-                    Visão
-                </div>
-                <div class="card-body">
-                    <blockquote class="blockquote mb-0">
-                        <p>{{planejamento!.visao}}</p>
-                    </blockquote>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        Valores
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li *ngFor="let valor of planejamento!.valores" class="list-group-item">
+                                <blockquote class="blockquote mb-0">
+                                    <p>{{valor.value}}</p>
+                                </blockquote>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -88,32 +109,43 @@
                 <div class="objetivo shadow-sm d-flex flex-column align-content-between">
                     <div class="m-2">
                         <div dndHandle class="card-text text-break w-100">{{objetivo.nome}}</div>
-                        <div class="subobjetivo" [dndDropzone]="['objetivo']" (dndDrop)="onObjetivoDrop($event, objetivo)">
+                        <div class="subobjetivo" [dndDropzone]="['objetivo']"
+                            (dndDrop)="onObjetivoDrop($event, objetivo)">
                             <!-- Placehold -->
                             <div class="border mt-3 p-2" dndPlaceholderRef><span class="placeholder w-75"></span></div>
-                            <ng-container *ngFor="let subobjetivo of objetivo.objetivos" [ngTemplateOutlet]="subobjetivos" [ngTemplateOutletContext]="{objetivo: subobjetivo, pai: objetivo}"></ng-container>
+                            <ng-container *ngFor="let subobjetivo of objetivo.objetivos"
+                                [ngTemplateOutlet]="subobjetivos"
+                                [ngTemplateOutletContext]="{objetivo: subobjetivo, pai: objetivo}"></ng-container>
                         </div>
                     </div>
                     <ng-template #subobjetivos let-objetivo="objetivo" let-pai="pai">
-                        <div class="border mt-3 p-2" [dndDisableIf]="!canEdit"
-                            [dndDraggable]="objetivo" (dndEnd)="onObjetivoDragEnd($event)"
-                            (dndMoved)="onObjetivoDragged(objetivo, pai, 'move')" (dndStart)="onObjetivoDragStart($event)"
-                            dndType="objetivo" dndEffectAllowed="move">
+                        <div class="border mt-3 p-2" [dndDisableIf]="!canEdit" [dndDraggable]="objetivo"
+                            (dndEnd)="onObjetivoDragEnd($event)" (dndMoved)="onObjetivoDragged(objetivo, pai, 'move')"
+                            (dndStart)="onObjetivoDragStart($event)" dndType="objetivo" dndEffectAllowed="move">
                             <div class="d-flex justify-content-between">
                                 <div class="me-2 card-text text-break w-100">{{objetivo.nome}}</div>
                                 <action-button noArrow [button]="subObjetivosMenu" [data]="objetivo"></action-button>
                             </div>
-                            <div class="subobjetivo" [dndDropzone]="['objetivo']" (dndDrop)="onObjetivoDrop($event, objetivo)">
+                            <div class="subobjetivo" [dndDropzone]="['objetivo']"
+                                (dndDrop)="onObjetivoDrop($event, objetivo)">
                                 <!-- Placehold -->
-                                <div class="border mt-3 p-2" dndPlaceholderRef><span class="placeholder w-75"></span></div>
-                                <ng-container *ngFor="let subobjetivo of objetivo.objetivos" [ngTemplateOutlet]="subobjetivos" [ngTemplateOutletContext]="{objetivo: subobjetivo, pai: objetivo}"></ng-container>
+                                <div class="border mt-3 p-2" dndPlaceholderRef><span class="placeholder w-75"></span>
+                                </div>
+                                <ng-container *ngFor="let subobjetivo of objetivo.objetivos"
+                                    [ngTemplateOutlet]="subobjetivos"
+                                    [ngTemplateOutletContext]="{objetivo: subobjetivo, pai: objetivo}"></ng-container>
                             </div>
                         </div>
                     </ng-template>
                     <div class="buttons w-100 d-flex justify-content-end px-1">
-                        <action-button icon="bi bi-file-earmark-bar-graph" [data]="objetivo" [onClick]="this.onObjetivoClick.bind(this)" color="transparent-black px-1"></action-button>
-                        <action-button icon="bi bi-pencil-square" [data]="objetivo" [onClick]="this.onObjetivoEditClick.bind(this)" color="transparent-black px-1"></action-button>
-                        <action-button icon="bi bi-trash" [data]="objetivo" [onClick]="this.onObjetivoDeleteClick.bind(this)" color="transparent-black px-1"></action-button>
+                        <action-button icon="bi bi-file-earmark-bar-graph" [data]="objetivo"
+                            [onClick]="this.onObjetivoClick.bind(this)" color="transparent-black px-1"></action-button>
+                        <action-button icon="bi bi-pencil-square" [data]="objetivo"
+                            [onClick]="this.onObjetivoEditClick.bind(this)"
+                            color="transparent-black px-1"></action-button>
+                        <action-button icon="bi bi-trash" [data]="objetivo"
+                            [onClick]="this.onObjetivoDeleteClick.bind(this)"
+                            color="transparent-black px-1"></action-button>
                     </div>
                 </div>
             </div>
