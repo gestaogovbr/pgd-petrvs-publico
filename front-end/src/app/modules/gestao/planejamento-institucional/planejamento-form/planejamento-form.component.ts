@@ -55,7 +55,10 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
       missao: { default: "" },
       visao: { default: "" },
       valores: { default: [] },
-      valor_texto: { default: "" }
+      valor_texto: { default: "" },
+      resultados_institucionais: { default: [] },
+      resultados_texto: { default: "" },
+      utilizar_superior: {default: false}
     }, this.cdRef, this.validate);
     this.util = injector.get<UtilService>(UtilService);
   }
@@ -120,6 +123,7 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
   }
 
   public addValorHandle(): LookupItem | undefined {
+    console.log("1");
     let result = undefined;
     const value = this.form.controls.valor_texto.value;
     const key = this.util.textHash(value);
@@ -130,6 +134,21 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
       };
       this.form.controls.valor_texto.setValue("");
     }
+    return result;
+  };
+
+  public addResultadoHandle(): LookupItem | undefined {
+    console.log("2");
+    let result = undefined;
+    const value = this.form.controls.resultados_texto.value;
+    const key = this.util.textHash(value);
+    if (value?.length && this.util.validateLookupItem(this.form.controls.resultados_institucionais.value, key)) {
+      result = {
+        key: key,
+        value: this.form.controls.resultados_texto.value
+      };
+      this.form.controls.resultados_texto.setValue("");
+    }    
     return result;
   };
 
