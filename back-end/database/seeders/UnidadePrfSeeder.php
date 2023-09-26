@@ -19,9 +19,9 @@ class UnidadePrfSeeder extends Seeder
         //cria a Unidade 'PRF' que será a raiz de todas as outras.
         $prf = new Unidade();
         $prf->fill([
-            'codigo' => '30802',
+            'codigo' => '30802', // Código SIAPE da UORG
             'sigla' => 'PRF',
-            'nome' => 'POLÍCIA RODOVIÁRIA FEDERAL',
+            'nome' => 'Polícia Rodoviária Federal',
             'entidade_id' => '52d78c7d-e0c1-422b-b094-2ca5958d5ac1',
             'instituidora' => 1,
             'cidade_id' => $brasilia->id

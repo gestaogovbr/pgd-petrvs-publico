@@ -59,14 +59,6 @@ class UsuarioSeeder extends Seeder
                 'perfil_id' => $perfis->where('nome', 'Administrador')->first()->id,
             ],
             [
-                'email' => 'edson.dario@gmail.com',
-                'nome' => 'Edson Dario Silva de França',
-                'cpf' => '01380127416',
-                'apelido' => 'Dario',
-                'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
-            ],
-            
-            [
                 'email' => 'jonatas.ferreira@prf.gov.br',
                 'nome' => 'Jonata Cunha',
                 'cpf' => '09741166702',
@@ -145,6 +137,13 @@ class UsuarioSeeder extends Seeder
                 'cpf' => '03400125954',
                 'apelido' => 'Marco',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+            ],
+            [
+              'email' => 'edson.dario@gmail.com',
+              'nome' => 'Edson Dario Silva de França',
+              'cpf' => '01380127416',
+              'apelido' => 'Dario',
+              'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
             ],
         ];
 

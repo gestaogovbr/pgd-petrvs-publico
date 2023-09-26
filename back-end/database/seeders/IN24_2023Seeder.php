@@ -1298,7 +1298,7 @@ class IN24_2023Seeder extends Seeder
             "nome" => "Ministério da Gestão e da Inovação em Serviços Públicos",
             "abrangencia" => "NACIONAL",
             "codigo_ibge" => $this->brasilia->codigo_ibge,
-            "uf" => "DF",
+            "uf" => $this->brasilia->uf,
             "carga_horaria_padrao" => 8,
             "gravar_historico_processo" => 0,
             "layout_formulario_atividade" => "COMPLETO",
