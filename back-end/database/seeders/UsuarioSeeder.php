@@ -147,7 +147,7 @@ class UsuarioSeeder extends Seeder
             ],
         ];
 
-        // Inserindo exercício nos usuários
+        // Inserindo exercício (lotação) nos usuários
         $unidade_pai_prf = Unidade::where('SIGLA', 'PRF')->first();
         $unidade_pai_mgi = Unidade::where('SIGLA', 'MGI')->first();
 
@@ -162,11 +162,13 @@ class UsuarioSeeder extends Seeder
                 'perfil_id' => $usuario['perfil_id']
             ]);
             $user->save();
+
             $integrante = new UnidadeIntegrante([
                 'unidade_id' => $unidade_pai_prf->id,
                 'usuario_id' => $user->id
             ]);
             $integrante->save();
+
             $lotacao = new UnidadeIntegranteAtribuicao([
                 'atribuicao' => "LOTADO",
                 'unidade_integrante_id' => $integrante->id
@@ -185,11 +187,13 @@ class UsuarioSeeder extends Seeder
                 'perfil_id' => $usuario['perfil_id']
             ]);
             $user->save();
+
             $integrante = new UnidadeIntegrante([
                 'unidade_id' => $unidade_pai_mgi->id,
                 'usuario_id' => $user->id
             ]);
             $integrante->save();
+
             $lotacao = new UnidadeIntegranteAtribuicao([
                 'atribuicao' => "LOTADO",
                 'unidade_integrante_id' => $integrante->id

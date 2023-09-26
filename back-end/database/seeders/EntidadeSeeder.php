@@ -6,7 +6,6 @@ use Illuminate\Database\Seeder;
 use App\Models\Entidade;
 use App\Models\Cidade;
 use App\Models\TipoModalidade;
-use Carbon\Carbon;
 
 class EntidadeSeeder extends Seeder
 {
@@ -15,12 +14,78 @@ class EntidadeSeeder extends Seeder
      *
      * @return void
      */
+
+    public $timenow;
+    public $brasilia;
+    public $juiz_fora;
+    public $cuiaba;
+
+    public function __construct(){
+        $this->timenow = now();
+        $this->brasilia = Cidade::where('codigo_ibge', '5300108')->sole();
+        $this->juiz_fora = Cidade::where('codigo_ibge', '3136702')->sole();
+        $this->cuiaba = Cidade::where('codigo_ibge', '5103403')->sole();
+    }
+
     public function run()
     {
-        $brasilia = Cidade::where('codigo_ibge', '5300108')->sole();
-        $juiz_fora = Cidade::where('codigo_ibge', '3136702')->sole();
-        $cuiaba = Cidade::where('codigo_ibge', '5103403')->sole();
+        $entidades = array(
+          array(
+            "id" => "52d78c7d-e0c1-422b-b094-2ca5958d5ac1",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "sigla" => "PRF",
+            "nome" => "Polícia Rodoviária Federal",
+            "abrangencia" => "NACIONAL",
+            "codigo_ibge" => $this->brasilia->codigo_ibge,
+            "uf" => $this->brasilia->uf,
+            "carga_horaria_padrao" => 8,
+            "gravar_historico_processo" => 0,
+            "layout_formulario_atividade" => "COMPLETO",
+            "campos_ocultos_atividade" => NULL,
+            "nomenclatura" => NULL,
+            "url_sei" => "https://sei.prf.gov.br/",
+            "notificacoes" => "{\"enviar_email\": true, \"enviar_petrvs\": true, \"nao_notificar\": [], \"enviar_whatsapp\": true}",
+            "forma_contagem_carga_horaria" => "DIA",
+            "api_public_key" => NULL,
+            "api_private_key" => NULL,
+            "expediente" => "{\"sexta\": [], \"terca\": [], \"quarta\": [], \"quinta\": [], \"sabado\": [], \"domingo\": [], \"segunda\": [], \"especial\": []}",
+            "tipo_modalidade_id" => NULL,
+            "cidade_id" => $this->brasilia->id,
+            "gestor_id" => NULL,
+            "gestor_substituto_id" => NULL,
+          ),
+          array(
+            "id" => "1eec6bcb-28c9-4b2e-ad37-250a10439647",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "sigla" => "MGI",
+            "nome" => "Ministério da Gestão e da Inovação em Serviços Públicos",
+            "abrangencia" => "NACIONAL",
+            "codigo_ibge" => $this->brasilia->codigo_ibge,
+            "uf" => $this->brasilia->uf,
+            "carga_horaria_padrao" => 8,
+            "gravar_historico_processo" => 0,
+            "layout_formulario_atividade" => "COMPLETO",
+            "campos_ocultos_atividade" => NULL,
+            "nomenclatura" => NULL,
+            "url_sei" => "https://sei.economia.gov.br/",
+            "notificacoes" => "{\"enviar_email\": true, \"enviar_petrvs\": true, \"nao_notificar\": [], \"enviar_whatsapp\": true}",
+            "forma_contagem_carga_horaria" => "DIA",
+            "api_public_key" => NULL,
+            "api_private_key" => NULL,
+            "expediente" => "{\"sexta\": [], \"terca\": [], \"quarta\": [], \"quinta\": [], \"sabado\": [], \"domingo\": [], \"segunda\": [], \"especial\": []}",
+            "tipo_modalidade_id" => NULL,
+            "cidade_id" => $this->brasilia->id,
+            "gestor_id" => NULL,
+            "gestor_substituto_id" => NULL,
+          ),
+        );
+        Entidade::insertOrIgnore($entidades);
 
+        /*
         //cria a entidade PRF
         $ent1 = new Entidade();
         $ent1->fill([
@@ -34,7 +99,6 @@ class EntidadeSeeder extends Seeder
         ]);
         $ent1->save();
 
-        /*
         $tipo1 = new TipoModalidade();
         $tipo1->fill([
             'nome' => 'Modalidade 1',

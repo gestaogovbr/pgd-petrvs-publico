@@ -31,10 +31,16 @@ class IN24_2023Seeder extends Seeder
     
     public $timenow;
     public $brasilia;
+    public $unidade_prf;
+    public $unidade_mgi;
 
     public function __construct(){
         $this->timenow = now();
         $this->brasilia = Cidade::where('codigo_ibge', '5300108')->sole();
+
+        // Encontra unidade inicial (instituidora) para registro de programa
+        $this->unidade_prf = Unidade::where('codigo', '30802')->first();
+        $this->unidade_mgi = Unidade::where('codigo', '17500')->first();
     }
 
     public function run(){
@@ -278,7 +284,7 @@ class IN24_2023Seeder extends Seeder
             "descricao" => "(Alto desempenho) Plano de trabalho executado acima do esperado",
             "pergunta" => "O que pode melhorar?",
             "aprova" => 0,
-            "justifica" => 1,
+            "justifica" => 0,
             "icone" => "bi bi-building",
             "cor" => "#42f09f",
             "codigo" => "8",
@@ -342,7 +348,7 @@ class IN24_2023Seeder extends Seeder
             "descricao" => "(Adequado) Plano de trabalho executado dentro do esperado",
             "pergunta" => "O que pode melhorar?",
             "aprova" => 0,
-            "justifica" => 1,
+            "justifica" => 0,
             "icone" => "bi bi-brightness-alt-high",
             "cor" => "#ffc107",
             "codigo" => "7",
@@ -374,7 +380,7 @@ class IN24_2023Seeder extends Seeder
             "descricao" => "(Adequado) Plano de entregas executado dentro do esperado",
             "pergunta" => "Do que você gostou?",
             "aprova" => 0,
-            "justifica" => 1,
+            "justifica" => 0,
             "icone" => "bi bi-brightness-alt-high",
             "cor" => "#ffc107",
             "codigo" => "7",
@@ -406,7 +412,7 @@ class IN24_2023Seeder extends Seeder
             "descricao" => "(Alto desempenho) Plano de entregas executado com desempenho acima do esperado",
             "pergunta" => "Do que você gostou?",
             "aprova" => 0,
-            "justifica" => 1,
+            "justifica" => 0,
             "icone" => "bi bi-building",
             "cor" => "#1de286",
             "codigo" => "8",
@@ -1021,8 +1027,6 @@ class IN24_2023Seeder extends Seeder
             ]
         );
 
-        // Encontra unidade inicial (instituidora) para registro de programa
-        $unidade = Unidade::where('codigo', 1)->first();
         $programas = array(
             [ 
                 "id" => "9ebed914-1b82-4df0-95da-b0c8fadbb6f2",
@@ -1048,11 +1052,40 @@ class IN24_2023Seeder extends Seeder
                 "tipo_avaliacao_plano_trabalho_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
                 "tipo_avaliacao_plano_entrega_id" => "b0db190d-823d-4222-bc92-abff634f5390",
                 "tipo_justificativa_id" => "f2aef225-a391-4667-9c41-6bb537b18778",
-                "unidade_id" => $unidade->id,
+                "unidade_id" => $this->unidade_prf->id,
                 "template_tcr_id" => "39f087ce-8816-4be2-a28e-18e8a8e83010",
                 "tipo_documento_tcr_id" => "48bc6f30-a634-4a21-9717-6fe0dc0d4f2a",
                 "documento_id" => NULL,
-            ]
+            ],
+            [ 
+                "id" => "a81c3741-3b88-4fb1-ae11-b67745cf297b",
+                "created_at" => $this->timenow,
+                "updated_at" => $this->timenow,
+                "deleted_at" => NULL,
+                "nome" => "PGD",
+                "normativa" => "Portaria XXX XXX XXX XXX",
+                "prazo_max_plano_entrega" => 365,
+                "termo_obrigatorio" => 1,
+                "config" => NULL,
+                "data_inicio" => $this->timenow,
+                "data_fim" => date('Y-m-d H:i:s', strtotime('+1 year', strtotime($this->timenow))),
+                "periodicidade_consolidacao" => "MENSAL",
+                "periodicidade_valor" => 1,
+                "dias_tolerancia_consolidacao" => 10,
+                "dias_tolerancia_avaliacao" => 20,
+                "nota_padrao_avaliacao" => "7",
+                "plano_trabalho_assinatura_participante" => 1,
+                "plano_trabalho_assinatura_gestor_lotacao" => 0,
+                "plano_trabalho_assinatura_gestor_unidade" => 0,
+                "plano_trabalho_assinatura_gestor_entidade" => 0,
+                "tipo_avaliacao_plano_trabalho_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
+                "tipo_avaliacao_plano_entrega_id" => "b0db190d-823d-4222-bc92-abff634f5390",
+                "tipo_justificativa_id" => "f2aef225-a391-4667-9c41-6bb537b18778",
+                "unidade_id" => $this->unidade_mgi->id,
+                "template_tcr_id" => "39f087ce-8816-4be2-a28e-18e8a8e83010",
+                "tipo_documento_tcr_id" => "48bc6f30-a634-4a21-9717-6fe0dc0d4f2a",
+                "documento_id" => NULL,
+            ],
         );
 
         $templates = array(
@@ -1288,48 +1321,6 @@ class IN24_2023Seeder extends Seeder
           ),
         );
 
-        $entidades = array(
-          array(
-            "id" => "1eec6bcb-28c9-4b2e-ad37-250a10439647",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => NULL,
-            "sigla" => "MGI",
-            "nome" => "Ministério da Gestão e da Inovação em Serviços Públicos",
-            "abrangencia" => "NACIONAL",
-            "codigo_ibge" => $this->brasilia->codigo_ibge,
-            "uf" => $this->brasilia->uf,
-            "carga_horaria_padrao" => 8,
-            "gravar_historico_processo" => 0,
-            "layout_formulario_atividade" => "COMPLETO",
-            "campos_ocultos_atividade" => NULL,
-            "nomenclatura" => NULL,
-            "url_sei" => "https://sei.economia.gov.br/",
-            "notificacoes" => "{\"enviar_email\": true, \"enviar_petrvs\": true, \"nao_notificar\": [], \"enviar_whatsapp\": true}",
-            "forma_contagem_carga_horaria" => "DIA",
-            "api_public_key" => NULL,
-            "api_private_key" => NULL,
-            "expediente" => "{\"sexta\": [], \"terca\": [], \"quarta\": [], \"quinta\": [], \"sabado\": [], \"domingo\": [], \"segunda\": [], \"especial\": []}",
-            "tipo_modalidade_id" => NULL,
-            "cidade_id" => $this->brasilia->id,
-            "gestor_id" => NULL,
-            "gestor_substituto_id" => NULL,
-          ),
-        );
-
-        $unidades = array(
-          array(
-            "codigo" => '17500', //Código SIAPE da UORG
-            "sigla" => 'MGI',
-            "nome" => 'Ministério da Gestão e da Inovação em Serviços Públicos',
-            "entidade_id" => '1eec6bcb-28c9-4b2e-ad37-250a10439647',
-            "instituidora" => 1,
-            "cidade_id" => $this->brasilia->id
-          ),
-        );
-
-        
-        // Existe uma sequência no Seeder. Se alterar vai dar ruim
         /*
         $this->call([
           CidadeSeeder=>=>class,
@@ -1337,7 +1328,7 @@ class IN24_2023Seeder extends Seeder
           PerfilSeeder=>=>class,
           TipoCapacidadeSeeder=>=>class,
           EntidadeSeeder=>=>class,
-          UnidadePrfSeeder=>=>class,
+          UnidadeSeeder=>=>class,
           UsuarioSeeder=>=>class,
           AreaConhecimentoSeeder=>=>class,
           TipoCursoSeeder=>=>class,
@@ -1361,7 +1352,5 @@ class IN24_2023Seeder extends Seeder
         Programa::insertOrIgnore($programas);
         EixoTematico::insertOrIgnore($eixos_tematicos);
         Entrega::insertOrIgnore($entregas);
-        Entidade::insertOrIgnore($entidades);
-        Unidade::insertOrIgnore($unidades);
     }
 }
