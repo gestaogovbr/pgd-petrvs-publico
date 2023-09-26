@@ -13,7 +13,7 @@
                 </div>
                 <div class="row">
                     <input-select [size]="12" #planejamentoSuperior [items]="planejamentosSuperiores" label="Planejamento Institucional Superior" controlName="planejamento_superior_id" [control]="form!.controls.planejamento_superior_id" (change)="onPlanejamentoChange($event)" [icon]="entityService.getIcon('Planejamento')"></input-select>
-                    <input-switch [size]="12" scale="small" labelPosition="right" controlName="utilizar_superior" label="Utilizar missão, visão, resultados e valores da instituição superior?"></input-switch>
+                    <input-switch [size]="12" scale="small" labelPosition="right" controlName="utilizar_superior" (change)="onUtilizarSuperiorChange($event)" label="Utilizar missão, visão, resultados e valores da instituição superior?"></input-switch>
                 </div>                
                 <div class="row">
                     <div class="col-md-6">
