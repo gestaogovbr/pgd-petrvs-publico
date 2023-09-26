@@ -3,10 +3,11 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use App\Models\Unidade;
 use App\Models\Usuario;
 
-class UnidadeIntegrante extends ModelBase
+class UnidadeIntegrante extends ModelBase //Pivot //ModelBase
 {
     protected $table = 'unidades_integrantes';
 
@@ -23,6 +24,7 @@ class UnidadeIntegrante extends ModelBase
     public function lotado() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'LOTADO'); } 
     public function gestor() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'GESTOR'); } 
     public function gestorSubstituto() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'GESTOR_SUBSTITUTO'); } 
+    public function gestorDelegado() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'GESTOR_DELEGADO'); } 
     public function colaborador() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'COLABORADOR'); } // aquele que possui TCR
     public function homologadorPlanoEntrega() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'HOMOLOGADOR_PLANO_ENTREGA'); } 
     public function avaliadorPlanoEntrega() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'AVALIADOR_PLANO_ENTREGA'); } 

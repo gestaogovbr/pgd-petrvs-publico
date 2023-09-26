@@ -22,43 +22,39 @@ use DateTime;
 
 class LoginController extends Controller
 {
-    private function registrarEntidade($request, $session = false) {
+    private function registrarEntidade($request, $session = false)
+    {
         $with = ["feriados", "gestor", "gestorSubstituto"];
         $entidade = $session ? Entidade::with($with)->find($request->session()->put("entidade_id")) : null;
         $sigla = $request->has('entidade') ? $request->input('entidade') : config("petrvs")["entidade"];
-        if(empty($entidade) && !empty($sigla)) {
+        if (empty($entidade) && !empty($sigla)) {
             $entidade = Entidade::with($with)->where("sigla", $sigla)->first();
             $request->session()->put("entidade_id", $entidade->id);
         }
         return $entidade;
     }
 
-    private function registrarUsuario($request, $usuario, $update = null) {
-        if(isset($usuario)) {
-            if(isset($update) && count($update) > 0) {
+    private function registrarUsuario($request, $usuario, $update = null)
+    {
+        if (isset($usuario)) {
+            if (isset($update) && count($update) > 0) {
                 $usuario->update($update);
                 $usuario->fresh();
             }
             $entidadeId = $request->session()->has("entidade_id") ? $request->session()->get("entidade_id") : null;
-                        /*             $usuario = Usuario::where("id", $usuario->id)->with(["vinculosUnidades" => function($query) use ($entidadeId) {
-                            $query->with(['unidade'])->whereHas('unidade', function ($query) use ($entidadeId) {
-                                return $query->where('entidade_id', '=', $entidadeId); });
-                        },"perfil.capacidades.tipoCapacidade", "unidades.usuarios.atribuicoes", "gerenciaTitular.usuarios.atribuicoes", "gerenciasSubstitutas.usuarios.atribuicoes",
-                            "vinculosUnidades.unidade" => function($query) {
-                                $query->with(["planosEntrega","unidade.planosEntrega"]);
-                        }])->first(); */
             $usuario = Usuario::where("id", $usuario->id)->with([
-                "areasTrabalho" => function($query) use ($entidadeId) {
+                "areasTrabalho" => function ($query) use ($entidadeId) {
                     $query->with(["unidade.gestor.usuario", "unidade.gestorSubstituto.usuario", "unidade.cidade", "unidade.planosEntrega", "unidade.unidadePai.planosEntrega", "atribuicoes"])->whereHas('unidade', function ($query) use ($entidadeId) {
                         return  $query->where('entidade_id', '=', $entidadeId);
-                    });             // Acredito que seja possível reduzir a qde de relacionamentos solicitados
+                    });
+                },
+                "participacoesProgramas" => function ($query) {
+                    $query->where("habilitado", 1);
                 },
                 "perfil.capacidades.tipoCapacidade",
                 "gerenciaTitular.atribuicoes",
                 "gerenciasSubstitutas.atribuicoes",
-                /*"vinculosUnidades.unidade" => function($query) {
-                    $query->with(["planosEntrega","unidade.planosEntrega"]);
-                }*/
+                "gerenciasDelegadas.atribuicoes"
             ])->first();
             $request->session()->put("unidade_id", $usuario->lotacao?->id);
         }
@@ -70,7 +66,8 @@ class LoginController extends Controller
      *
      * @return App\Models\Usuario | null
      */
-    public static function loggedUser(): ?Usuario {
+    public static function loggedUser(): ?Usuario
+    {
         return Auth::user();
     }
 
@@ -85,12 +82,12 @@ class LoginController extends Controller
         $data = $request->validate([
             'unidade_id' => ['required'],
         ]);
-        if(Auth::check()) {
+        if (Auth::check()) {
             $usuario = Auth::user();
-            $usuario = Usuario::where("id", $usuario->id)->with(["areasTrabalho" => function($query) use ($data) {
-                            $query->where('unidade_id', $data["unidade_id"]);
-                        }])->first();
-            if(isset($usuario->areasTrabalho[0]) && !empty($usuario->areasTrabalho[0]->id)) {
+            $usuario = Usuario::where("id", $usuario->id)->with(["areasTrabalho" => function ($query) use ($data) {
+                $query->where('unidade_id', $data["unidade_id"]);
+            }])->first();
+            if (isset($usuario->areasTrabalho[0]) && !empty($usuario->areasTrabalho[0]->id)) {
                 $request->session()->put("unidade_id", $usuario->areasTrabalho[0]->id);
                 return response()->json([
                     "status" => "OK",
@@ -110,10 +107,11 @@ class LoginController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function horarioUnidade(Request $request) {
-        if(Auth::check()) {
+    public function horarioUnidade(Request $request)
+    {
+        if (Auth::check()) {
             $unidade_id = $request->session()->get("unidade_id");
-            if(!empty($unidade_id)) {
+            if (!empty($unidade_id)) {
                 $unidadeService = new UnidadeService();
                 return response()->json([
                     "status" => "OK",
@@ -136,7 +134,7 @@ class LoginController extends Controller
     public function logout(Request $request, FirebaseAuthService $auth)
     {
         $usuario = self::loggedUser();
-        if(!empty($usuario) && !empty($usuario->currentAccessToken())) $usuario->currentAccessToken()->delete();
+        if (!empty($usuario) && !empty($usuario->currentAccessToken())) $usuario->currentAccessToken()->delete();
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
@@ -149,8 +147,9 @@ class LoginController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function authenticateSession(Request $request) {
-        if(Auth::check()) {
+    public function authenticateSession(Request $request)
+    {
+        if (Auth::check()) {
             $entidade = $this->registrarEntidade($request, true);
             $usuario = $this->registrarUsuario($request, self::loggedUser());
             return response()->json([
@@ -160,8 +159,26 @@ class LoginController extends Controller
                 "entidade" => $entidade,
                 "horario_servidor" => CalendarioService::horarioServidor()
             ]);
+        } else if (!empty(config("petrvs.auto-login"))) {
+            $usuario = Usuario::where('email', config("petrvs.auto-login"))->first();
+            if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
+                $request->session()->regenerate();
+                $request->session()->put("kind", "SESSION");
+                $entidade = $this->registrarEntidade($request);
+                $usuario = $this->registrarUsuario($request, $usuario);
+                return response()->json([
+                    "success" => true,
+                    "kind" => $request->session()->get("kind"),
+                    "usuario" => $usuario,
+                    "entidade" => $entidade,
+                    "horario_servidor" => CalendarioService::horarioServidor()
+                ]);
+            } else {
+                return LogError::newError('Usuário não encontrado');
+            }
+        } else {
+            return LogError::newError('Sessão não encontrada');
         }
-        return LogError::newError('Sessão não encontrada');
     }
 
 
@@ -205,7 +222,7 @@ class LoginController extends Controller
             'token' => ['required']
         ]);
         $tokenData = $auth->verifyFirebaseToken($credentials['token']);
-        if(!isset($tokenData['error'])) {
+        if (!isset($tokenData['error'])) {
             $entidade = $this->registrarEntidade($request);
             $usuario = $this->registrarUsuario($request, Usuario::where('email', $tokenData['email'])->first());
             if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
@@ -237,7 +254,7 @@ class LoginController extends Controller
             'token' => ['required']
         ]);
         $tokenData = $auth->verifyToken($credentials['token']);
-        if(!isset($tokenData['error'])) {
+        if (!isset($tokenData['error'])) {
             $entidade = $this->registrarEntidade($request);
             $usuario = $this->registrarUsuario($request, Usuario::where('email', $tokenData['email'])->first());
             if (isset($usuario) && Auth::loginUsingId($usuario->id)) {
@@ -269,9 +286,9 @@ class LoginController extends Controller
             'token' => ['required']
         ]);
         $tokenData = $auth->verifyToken($credentials['token']);
-        if(!isset($tokenData['error'])) {
+        if (!isset($tokenData['error'])) {
             $usuario = Usuario::where('email', $tokenData['email'])->first();
-            if(!isset($usuario) && $integracao->autoIncluir) {
+            if (!isset($usuario) && $integracao->autoIncluir) {
                 $usuario = new Usuario();
                 $lotacao = new UnidadeIntegrante();
                 $service = new IntegracaoService();
@@ -311,10 +328,10 @@ class LoginController extends Controller
         ]);
         /* Usando temporariamente o loginCpf(), mas o correto é login()  */
         $profile = $auth->loginToken($credentials['cpf'], $credentials['senha'], $credentials['token']);
-        if(!isset($profile['error'])) {
+        if (!isset($profile['error'])) {
             $email = str_contains($profile['email'], "@") ? $profile['email'] : $profile["email"] . "@prf.gov.br";
             $usuario = Usuario::where('email', $email)->first();
-            if(!isset($usuario) && $auth->autoIncluir) {
+            if (!isset($usuario) && $auth->autoIncluir) {
                 $usuario = new Usuario();
                 $lotacao = new UnidadeIntegrante();
                 $service = new IntegracaoService();
@@ -342,8 +359,9 @@ class LoginController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function authenticateApiSession(Request $request) {
-        if(Auth::check()) {
+    public function authenticateApiSession(Request $request)
+    {
+        if (Auth::check()) {
             $user = self::loggedUser();
             $entidade = $this->registrarEntidade($request, true);
             $usuario = $this->registrarUsuario($request, $user);
@@ -402,7 +420,7 @@ class LoginController extends Controller
             'device_name' => ['required'],
         ]);
         $tokenData = $auth->verifyFirebaseToken($credentials['token']);
-        if(!isset($tokenData['error'])) {
+        if (!isset($tokenData['error'])) {
             $usuario = Usuario::where('email', $tokenData['email'])->first();
             if (isset($usuario)) { // && Hash::check($request->password, $user->password)
                 $usuarioService = new UsuarioService();
@@ -435,7 +453,7 @@ class LoginController extends Controller
             'device_name' => ['required'],
         ]);
         $tokenData = $auth->verifyToken($credentials['token']);
-        if(!isset($tokenData['error'])) {
+        if (!isset($tokenData['error'])) {
             $usuario = Usuario::where('email', $tokenData['email'])->first();
             if (isset($usuario)) { // && Hash::check($request->password, $user->password)
                 $usuarioService = new UsuarioService();
@@ -469,9 +487,9 @@ class LoginController extends Controller
             'device_name' => ['required'],
         ]);
         $tokenData = $auth->verifyToken($credentials['token']);
-        if(!isset($tokenData['error'])) {
+        if (!isset($tokenData['error'])) {
             $usuario = Usuario::where('email', $tokenData['email'])->first();
-            if(!isset($usuario) && $integracao->autoIncluir) {
+            if (!isset($usuario) && $integracao->autoIncluir) {
                 $usuario = new Usuario();
                 $lotacao = new UnidadeIntegrante();
                 $service = new IntegracaoService();
@@ -510,12 +528,12 @@ class LoginController extends Controller
             'entidade' => ['required']
         ]);
         $entidade = Entidade::where("sigla", $credentials["entidade"])->first();
-        if(empty($entidade) || empty($entidade->api_private_key)) return LogError::newError('Entidade inválida.');
+        if (empty($entidade) || empty($entidade->api_private_key)) return LogError::newError('Entidade inválida.');
         $tokenData = $api->verifyToken($credentials['token'], $entidade->api_private_key, $entidade->sigla);
-        if(!isset($tokenData['error'])) {
+        if (!isset($tokenData['error'])) {
             $usuario = !empty($tokenData['email']) ? Usuario::where('email', $tokenData['email'])->first() :
                 Usuario::where('cpf', $tokenData['cpf'])->first();
-            if(!isset($usuario) && $integracao->autoIncluir) {
+            if (!isset($usuario) && $integracao->autoIncluir) {
                 $usuario = new Usuario();
                 $lotacao = new UnidadeIntegrante();
                 $service = new IntegracaoService();
@@ -557,10 +575,10 @@ class LoginController extends Controller
         ]);
         /* Usando temporariamente o loginCpf(), mas o correto é login()  */
         $profile = $auth->loginToken($credentials['cpf'], $credentials['senha'], $credentials['token']);
-        if(!isset($profile['error'])) {
+        if (!isset($profile['error'])) {
             $email = str_contains($profile["email"], "@") ? $profile["email"] : $profile["email"] . "@prf.gov.br";
             $usuario = Usuario::where('email', $email)->first();
-            if(!isset($usuario) && $auth->autoIncluir) {
+            if (!isset($usuario) && $auth->autoIncluir) {
                 $usuario = new Usuario();
                 $lotacao = new UnidadeIntegrante();
                 $service = new IntegracaoService();
@@ -628,7 +646,8 @@ class LoginController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function validateApiFirebaseToken(Request $request, FirebaseAuthService $auth, $token) {
+    public function validateApiFirebaseToken(Request $request, FirebaseAuthService $auth, $token)
+    {
         return $auth->verifyFirebaseToken($token);
     }
 
@@ -638,20 +657,23 @@ class LoginController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function validateApiToken(Request $request) {
+    public function validateApiToken(Request $request)
+    {
         return response()->json([
             "valid" => Auth::check()
         ]);
     }
 
-    public function loginAzurePopup(){
+    public function loginAzurePopup()
+    {
         return redirect('<azure></azure>')->with('popup', 'open');
     }
 
-    public function azureProvider($config = null) {
-        if($config) {
-          // O método setConfig existe mesmo VSCode dizendo que não.
-          return Socialite::driver('azure')->setConfig($config);
+    public function azureProvider($config = null)
+    {
+        if ($config) {
+            // O método setConfig existe mesmo VSCode dizendo que não.
+            return Socialite::driver('azure')->setConfig($config);
         }
         return Socialite::driver('azure');
     }
@@ -666,7 +688,8 @@ class LoginController extends Controller
         );
     }
 
-    public function signInAzureRedirect(Request $request) {
+    public function signInAzureRedirect(Request $request)
+    {
         $entidade = $this->registrarEntidade($request);
         $url_dinamica_callback = config("app.url") .
             "/api/login-azure-callback/" . $entidade->sigla;
@@ -678,7 +701,8 @@ class LoginController extends Controller
             ->redirect();
     }
 
-    public function signInAzureCallback(Request $request) {
+    public function signInAzureCallback(Request $request)
+    {
         $entidade = $this->registrarEntidade($request);
 
         $url_dinamica_callback = config("app.url") .
@@ -690,7 +714,7 @@ class LoginController extends Controller
         // $user = $this->azureProvider($config = $azure_select_tenancy)->stateless()->user();
         $user = $this->azureProvider($config = $azure_select_tenancy)->user();
 
-        if(!empty($user)) {
+        if (!empty($user)) {
             $token = $user->token;
             $email = $user->email;
             $email = explode("#", $email);
@@ -703,98 +727,102 @@ class LoginController extends Controller
                 $request->session()->put("kind", "AZURE");
                 return view("azure");
             } else {
-                return LogError::newError('As credenciais fornecidas são inválidas. Email: '.$email);
+                return LogError::newError('As credenciais fornecidas são inválidas. Email: ' . $email);
             }
         } else {
-              return $this->azureProvider($config = $azure_select_tenancy)
-                  ->scopes(['openid', 'email', 'profile'])
-                  ->redirect();
+            return $this->azureProvider($config = $azure_select_tenancy)
+                ->scopes(['openid', 'email', 'profile'])
+                ->redirect();
         }
     }
 
     /* LoginUnico BackEnd */
 
-    public function loginGovBrPopup(){
+    public function loginGovBrPopup()
+    {
         return redirect('<govbr></govbr>')->with('popup', 'open');
-  }
+    }
 
-  public function govBrProvider($config = null) {
-      if($config) {
-        // O método setConfig existe mesmo VSCode dizendo que não.
-        return Socialite::driver('govbr')->setConfig($config);
-      }
-      return Socialite::driver('govbr');
-  }
+    public function govBrProvider($config = null)
+    {
+        if ($config) {
+            // O método setConfig existe mesmo VSCode dizendo que não.
+            return Socialite::driver('govbr')->setConfig($config);
+        }
+        return Socialite::driver('govbr');
+    }
 
-  function getConfigGovBr($url_dinamica_callback = null, $dados): \SocialiteProviders\Manager\Config
-  {
-      return new \SocialiteProviders\Manager\Config(
-          config("services.govbr.client_id"),
-          config("services.govbr.client_secret"),
-          $url_dinamica_callback,
-          [
-              'environment' => config("services.govbr.environment"),
-              'code' => $dados['code']??null,
-              'state' => $dados['state']??null,
-              'code_verifier' => $dados['code_verifier']??null,
-              'code_challenge' => $dados['code_challenge']??null,
-              'code_challenge_method' => $dados['code_challenge_method']??null
-          ]
-      );
-  }
+    function getConfigGovBr($url_dinamica_callback = null, $dados): \SocialiteProviders\Manager\Config
+    {
+        return new \SocialiteProviders\Manager\Config(
+            config("services.govbr.client_id"),
+            config("services.govbr.client_secret"),
+            $url_dinamica_callback,
+            [
+                'environment' => config("services.govbr.environment"),
+                'code' => $dados['code'] ?? null,
+                'state' => $dados['state'] ?? null,
+                'code_verifier' => $dados['code_verifier'] ?? null,
+                'code_challenge' => $dados['code_challenge'] ?? null,
+                'code_challenge_method' => $dados['code_challenge_method'] ?? null
+            ]
+        );
+    }
 
-  public function signInGovBrRedirect(Request $request) {
-      $entidade = $this->registrarEntidade($request);
-      $url_dinamica_callback =config("services.govbr.redirect") . $entidade->sigla;
+    public function signInGovBrRedirect(Request $request)
+    {
+        $entidade = $this->registrarEntidade($request);
+        $url_dinamica_callback = config("services.govbr.redirect") . $entidade->sigla;
 
-      $dados= [
-          "code_challenge" => config("services.govbr.code_challenge"),
-          "code_challenge_method" => config("services.govbr.code_challenge_method"),
-      ];
-      $login_govbr_select_tenancy = $this->getConfigGovBr($url_dinamica_callback,$dados);
+        $dados = [
+            "code_challenge" => config("services.govbr.code_challenge"),
+            "code_challenge_method" => config("services.govbr.code_challenge_method"),
+        ];
+        $login_govbr_select_tenancy = $this->getConfigGovBr($url_dinamica_callback, $dados);
 
-      return $this->govBrProvider($config = $login_govbr_select_tenancy)
-          ->scopes(['openid', 'email', 'profile'])
-          ->redirect();
-  }
+        return $this->govBrProvider($config = $login_govbr_select_tenancy)
+            ->scopes(['openid', 'email', 'profile'])
+            ->redirect();
+    }
 
-  public function signInGovBrCallback(Request $request) {
-      $entidade = $this->registrarEntidade($request);
+    public function signInGovBrCallback(Request $request)
+    {
+        $entidade = $this->registrarEntidade($request);
 
-      $url_dinamica_callback = config("services.govbr.redirect") .
-          $entidade->sigla;
+        $url_dinamica_callback = config("services.govbr.redirect") .
+            $entidade->sigla;
 
-      $dados= [
-          "code" => $request->code,
-          "state" => $request->state,
-          "code_verifier" => config("services.govbr.code_verifier")
-      ];
-      $login_govbr_select_tenancy = $this->getConfigGovBr($url_dinamica_callback,$dados);
+        $dados = [
+            "code" => $request->code,
+            "state" => $request->state,
+            "code_verifier" => config("services.govbr.code_verifier")
+        ];
+        $login_govbr_select_tenancy = $this->getConfigGovBr($url_dinamica_callback, $dados);
 
-      // $user = $this->azureProvider($config = $azure_select_tenancy)->stateless()->user();
-      $user= $this->govBrProvider($config = $login_govbr_select_tenancy)->stateless()
-        ->user();
+        // $user = $this->azureProvider($config = $azure_select_tenancy)->stateless()->user();
+        $user = $this->govBrProvider($config = $login_govbr_select_tenancy)->stateless()
+            ->user();
 
-      if(!empty($user)) {
-          $token = $user->token;
-          $cpf = $user->cpf;
-          $email = $user->email;
-          $email = explode("#", $email);
-          $email = $email[0];
-          $email = str_replace("_", "@", $email);
-          $usuario = $this->registrarUsuario($request, Usuario::where('cpf',$cpf)->first());
-          if (($usuario)) {
-              Auth::loginUsingId($usuario->id);
-              $request->session()->regenerate();
-              $request->session()->put("kind", "GOVBR");
-              return view("govbr");
-          } else {
-              return LogError::newError('As credenciais fornecidas são inválidas. CPF: '.$cpf);
-          }
-      } else {
-          return $this->govBrProvider($config = $login_govbr_select_tenancy)
-          ->scopes(['openid', 'email', 'profile'])
-          ->redirect();
-      }
-  }
+        if (!empty($user)) {
+            $token = $user->token;
+            $cpf = $user->cpf;
+            $email = $user->email;
+            $email = explode("#", $email);
+            $email = $email[0];
+            $email = str_replace("_", "@", $email);
+            $usuario = $this->registrarUsuario($request, Usuario::where('cpf', $cpf)->first());
+            if (($usuario)) {
+                Auth::loginUsingId($usuario->id);
+                $request->session()->regenerate();
+                $request->session()->put("kind", "GOVBR");
+                return view("govbr");
+            } else {
+                return LogError::newError('As credenciais fornecidas são inválidas. CPF: ' . $cpf);
+            }
+        } else {
+            return $this->govBrProvider($config = $login_govbr_select_tenancy)
+                ->scopes(['openid', 'email', 'profile'])
+                ->redirect();
+        }
+    }
 }

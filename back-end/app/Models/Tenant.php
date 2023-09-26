@@ -11,4 +11,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
     use HasDatabase, HasDomains;
 
     protected $table = "tenants";
+    
+    // Has
+    public function tenantsLogs() { return $this->hasMany(TenantsLogs::class); }
 }

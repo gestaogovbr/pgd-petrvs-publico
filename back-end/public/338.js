@@ -236,6 +236,7 @@ class AtividadeService {
           /* Concluído -> Gestor ou substituto pode avaliar */
           if (isGestor || isResponsavel) result.push(BOTAO_ARQUIVAR);
           if (lastConsolidacao?.status != "CONCLUIDO") {
+            /* (RN_CSLD_9) */
             if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT_CONCL')) {
               result.push(BOTAO_ALTERAR_CONCLUSAO);
             }
@@ -258,6 +259,7 @@ class AtividadeService {
             if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CONCL')) result.push(BOTAO_CONCLUIR);
             if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_PAUSA')) result.push(BOTAO_PAUSAR);
             if (!lastConsolidacao || lastConsolidacao?.status == "INCLUIDO") {
+              /* (RN_CSLD_9) */
               if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CANC_INICIAR')) result.push(BOTAO_CANCELAR_INICIO);
               if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) result.push(BOTAO_ALTERAR_INICIO);
             }
@@ -348,6 +350,7 @@ class AtividadeService {
           if (isGestor || isResponsavel) {
             result.push(atividade.metadados?.arquivado ? BOTAO_DESARQUIVAR : BOTAO_ARQUIVAR);
           } else if (lastConsolidacao?.status != "CONCLUIDO" && (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT_CONCL'))) {
+            /* (RN_CSLD_9) */
             result.push(BOTAO_ALTERAR_CONCLUSAO);
           }
         } else if (atividade.metadados?.iniciado) {
@@ -391,7 +394,7 @@ class AtividadeService {
       icon: "bi bi-alarm",
       color: "danger"
     });
-    if (consolidacao && (atividade.data_inicio && this.util.asDate(atividade.data_inicio).getTime() < this.util.asDate(consolidacao.data_inicio).getTime() || atividade.data_entrega && this.util.asDate(atividade.data_entrega).getTime() > this.util.asDate(consolidacao.data_fim).getTime())) {
+    if (consolidacao && (atividade.data_inicio && this.util.asTimestamp(atividade.data_inicio) < this.util.asTimestamp(consolidacao.data_inicio) || atividade.data_entrega && this.util.asTimestamp(atividade.data_entrega) > this.util.asTimestamp(consolidacao.data_fim))) {
       result.push({
         data: {
           status: "EXTRAPOLADO",
@@ -455,7 +458,7 @@ class AtividadeService {
           data: row
         });
       }
-      if (!row.metadados.concluido && this.util.asDate(row.data_estipulada_entrega).getTime() < this.auth.hora.getTime()) {
+      if (!row.metadados.concluido && this.util.asTimestamp(row.data_estipulada_entrega) < this.auth.hora.getTime()) {
         const atrasado = this.calendar.horasAtraso(row.data_estipulada_entrega, row.unidade);
         tempos.push({
           color: "danger",
@@ -540,7 +543,7 @@ class AtividadeService {
     };
   }
   lastConsolidacao(consolidacoes) {
-    return consolidacoes?.reduce((a, v) => a = !a || this.util.asDate(v.data_conclusao).getTime() > this.util.asDate(a.data_conclusao).getTime() ? v : a, undefined);
+    return consolidacoes?.reduce((a, v) => a = !a || this.util.asTimestamp(v.data_conclusao) > this.util.asTimestamp(a.data_conclusao) ? v : a, undefined);
   }
 }
 _class = AtividadeService;

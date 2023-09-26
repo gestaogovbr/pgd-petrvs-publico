@@ -5,14 +5,6 @@
       </toolbar>
     <filter hidden [form]="filter" [where]="filterWhere.bind(this)" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed"></filter>
     <columns>
-        <column *ngIf="!selectable" type="expand" icon="bi bi-list-check" [align]="'center'" [template]="columnLogs" [expandTemplate]="columnExpandedLogs">
-            <ng-template let-row="row" #columnLogs>
-                <span class="badge rounded-pill bg-light text-dark"><i class="bi bi-list-check"></i></span>
-            </ng-template>
-            <ng-template let-row="row" #columnExpandedLogs>
-                <panel-list-logs></panel-list-logs>
-            </ng-template>
-        </column>
         <column title="ID" [template]="columnId">
             <ng-template let-row="row" #columnId>
                 <strong>{{row.id}}</strong>
@@ -34,4 +26,4 @@
         <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
-</grid>
+</grid> 

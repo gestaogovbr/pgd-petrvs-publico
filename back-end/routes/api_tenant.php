@@ -73,6 +73,7 @@ use App\Http\Controllers\HistoricoDocenciaInternaCurriculumController;
 use App\Http\Controllers\HistoricoFuncaoCurriculumController;
 use App\Http\Controllers\HistoricoLotacaoCurriculumController;
 use App\Http\Controllers\PlanoTrabalhoConsolidacaoOcorrenciaController;
+use App\Http\Controllers\ComparecimentoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -173,7 +174,7 @@ Route::middleware(['auth:sanctum'])->prefix('Feriado')->group(function () { defa
 Route::middleware(['auth:sanctum'])->prefix('MaterialServico')->group(function () { defaultRoutes(MaterialServicoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('PlanejamentoObjetivo')->group(function () { defaultRoutes(PlanejamentoObjetivoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Programa')->group(function () { 
-    Route::post('assinaturas-exigidas', [ProgramaController::class, 'assinaturasExigidas']);
+    //Route::post('assinaturas-exigidas', [ProgramaController::class, 'assinaturasExigidas']);
     defaultRoutes(ProgramaController::class);
  });
 Route::middleware(['auth:sanctum'])->prefix('ProgramaParticipante')->group(function () {
@@ -231,6 +232,7 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalho')->group(function () 
     Route::post('metadados-plano', [PlanoTrabalhoController::class, 'metadadosPlano']);
     Route::post('get-by-usuario', [PlanoTrabalhoController::class, 'getByUsuario']);
 });
+Route::middleware(['auth:sanctum'])->prefix('Comparecimento')->group(function () { defaultRoutes(ComparecimentoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoEntrega')->group(function () { defaultRoutes(PlanoTrabalhoEntregaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoConsolidacaoOcorrencia')->group(function () { defaultRoutes(PlanoTrabalhoConsolidacaoOcorrenciaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoConsolidacao')->group(function () {
@@ -268,7 +270,7 @@ Route::middleware(['auth:sanctum'])->prefix('Usuario')->group(function () {
     defaultRoutes(UsuarioController::class);
     Route::post('dashboard', [UsuarioController::class, 'dashboard']);
     Route::post('dashboard_gestor', [UsuarioController::class, 'dashboard_gestor']);
-    Route::post('ja-assinou-tcr', [UsuarioController::class, 'jaAssinouTCR']);
+    //Route::post('ja-assinou-tcr', [UsuarioController::class, 'jaAssinouTCR']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Perfil')->group(function () { defaultRoutes(PerfilController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Entidade')->group(function () {

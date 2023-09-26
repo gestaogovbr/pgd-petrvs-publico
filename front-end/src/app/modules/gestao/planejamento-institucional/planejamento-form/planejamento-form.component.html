@@ -8,23 +8,31 @@
                 <div class="row">
                     <!-- <input-search [size]="6" [disabled]="hasPermissionToUNEX ? undefined : 'true'" controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" [selectParams]="{filter: {instituidora: true}}" (change)="onUnidadeChange($event)" labelInfo="Unidade responsável pelo planejamento, caso vazio será considerado a Entidade"></input-search> -->
                     <input-search [size]="6" controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" (change)="onUnidadeChange($event)" labelInfo="Unidade à qual se refere o planejamento" required></input-search>
-                    <input-datetime date [size]="3" label="Início" icon="bi bi-calendar-date" controlName="data_inicio" [control]="form!.controls.data_inicio" labelInfo="Início do Planejamento Institucional"></input-datetime>
-                    <input-datetime date [size]="3" label="Fim" icon="bi bi-calendar-date" controlName="data_fim" [control]="form!.controls.data_fim" labelInfo="Fim do Planejamento Institucional"></input-datetime>
+                    <input-datetime date [size]="3" label="Início" icon="bi bi-calendar-date" controlName="data_inicio" [control]="form!.controls.data_inicio" labelInfo="Início do Planejamento Institucional" required></input-datetime>
+                    <input-datetime date [size]="3" label="Fim" icon="bi bi-calendar-date" controlName="data_fim" [control]="form!.controls.data_fim" labelInfo="Fim do Planejamento Institucional" required></input-datetime>
                 </div>
                 <div class="row">
-                    <input-select #planejamentoSuperior [items]="planejamentosSuperiores" label="Planejamento Institucional Superior" controlName="planejamento_superior_id" [control]="form!.controls.planejamento_superior_id" (change)="onPlanejamentoChange($event)" [icon]="entityService.getIcon('Planejamento')"></input-select>
+                    <input-select [size]="12" #planejamentoSuperior [items]="planejamentosSuperiores" label="Planejamento Institucional Superior" controlName="planejamento_superior_id" [control]="form!.controls.planejamento_superior_id" (change)="onPlanejamentoChange($event)" [icon]="entityService.getIcon('Planejamento')"></input-select>
+                    <input-switch [size]="12" scale="small" labelPosition="right" controlName="utilizar_superior" (change)="onUtilizarSuperiorChange($event)" label="Utilizar missão, visão, resultados e valores da instituição superior?"></input-switch>
                 </div>                
                 <div class="row">
                     <div class="col-md-6">
                         <input-textarea [size]="12" label="Missão" [rows]="3" controlName="missao" [control]="form!.controls.missao" required></input-textarea>
-                        <input-textarea [size]="12" label="Visão" [rows]="3" controlName="visao" [control]="form!.controls.visao" required></input-textarea>
                     </div>
                     <div class="col-md-6">
-                        <div class="row">
+                        <input-textarea [size]="12" label="Visão" [rows]="3" controlName="visao" [control]="form!.controls.visao" required></input-textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                            <input-multiselect [size]="12" label="Resultados Institucionais" controlName="resultados_institucionais" [addItemHandle]="addResultadoHandle.bind(this)">
+                                <input-text label="Resultados Institucionais" icon="far fa-edit" controlName="resultados_texto" [control]="form!.controls.resultados_texto" [attr.maxlength]=250></input-text>
+                            </input-multiselect>
+                    </div>
+                    <div class="col-md-6">
                             <input-multiselect [size]="12" label="Valores" controlName="valores" [addItemHandle]="addValorHandle.bind(this)">
                                 <input-text label="Valor Institucional" icon="far fa-edit" controlName="valor_texto" [control]="form!.controls.valor_texto" [attr.maxlength]=250></input-text>
                             </input-multiselect>        
-                        </div>
                     </div>
                 </div>
             </div>

@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { NgModule, SecurityContext } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgChartsModule } from 'ng2-charts';
 import { BrowserModule } from '@angular/platform-browser';
@@ -17,6 +17,7 @@ import { UteisModule } from './modules/uteis/uteis.module';
 import { RotinaModule } from './modules/rotinas/rotina.module';
 import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
 import { NgScrollbarModule } from 'ngx-scrollbar';
+import { DynamicDialogModule } from 'primeng/dynamicdialog';
 
 
 @NgModule({
@@ -27,7 +28,7 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
     DialogComponent,
     SpinnerOverlayComponent,
     TesteComponent,
-    TesteFormComponent,
+    TesteFormComponent
   ],
   imports: [
     BrowserModule,
@@ -40,7 +41,8 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
     UteisModule,
     LogModule,
     RotinaModule,
-    NgScrollbarModule
+    NgScrollbarModule,
+    DynamicDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -71,6 +71,7 @@ class PlanoEntregaService extends ServiceBase
         $result = [];
         $result["planoValido"] = $this->isPlanoEntregaValido($planoEntrega);
         $result["planoAtivo"] = $this->isPlano("ATIVO", $planoEntrega);
+        $result["planoConcluido"] = $this->isPlano("CONCLUIDO", $planoEntrega);
         $result["planoPaiAtivo"] = $planoEntrega['plano_entrega_id'] ? $this->isPlano("ATIVO", $planoEntregaPai->toArray()) : false;
         $result["planoHomologando"] = $this->isPlano("HOMOLOGANDO", $planoEntrega);
         $result["planoIncluido"] = $this->isPlano("INCLUIDO", $planoEntrega);
@@ -84,7 +85,7 @@ class PlanoEntregaService extends ServiceBase
         $result["gestorUnidadePaiUnidadePlano"] = !empty($planoEntrega['unidade']['unidade_id']) && $this->usuario->isGestorUnidade($planoEntrega['unidade']['unidade_id']);
         $result["gestorLinhaAscendenteUnidadePlano"] = !!array_filter($this->unidade->linhaAscendente($planoEntrega['unidade_id']), fn($u) => $this->usuario->isGestorUnidade($u));
         $result["unidadePlanoPaiEhUnidadePaiUnidadePlano"] = $planoEntrega['plano_entrega_id'] ? $planoEntregaPai->unidade_id == $planoEntrega['unidade']['unidade_id'] : false;
-        $result["unidadePlanoEhLotacao"] = $this->usuario->isLotacao($planoEntrega['unidade_id']);
+        $result["unidadePlanoEhLotacao"] = $this->usuario->isLotacao(null, $planoEntrega['unidade_id']);
         $result["unidadePaiUnidadePlanoEhLotacao"] = !empty($planoEntrega['unidade']['unidade_id']) && $this->usuario->isLotacao($planoEntrega['unidade']['unidade_id']);
         $result["unidadePlanoEhAlgumaLotacaoUsuario"] = in_array($planoEntrega['unidade_id'], array_map(fn($u) => $u['id'], $this->usuario->loggedUser()->unidades->toArray()));
         $result["unidadePlanoEhPaiAlgumaLotacaoUsuario"] = $this->usuario->loggedUser()->unidades->map(fn($u) => $u->id)->map(fn($ul) => Unidade::find($ul)->unidade_id)->contains($planoEntrega['unidade_id']);
@@ -235,7 +236,12 @@ class PlanoEntregaService extends ServiceBase
 
     public function proxyQuery($query, &$data) {
         $where = [];
-        foreach($data["where"] as $condition) {
+        //  (RI_PENT_5) Garante que, se não houver um interesse específico na data de arquivamento, só retornarão os planos de entrega não arquivados e não cancelados.
+        $result = $this->extractWhere($data, "data_arquivamento");
+        array_push($where, empty($result) ? ["data_arquivamento", "==", null] : $result);
+        $result = $this->extractWhere($data, "status");
+        array_push($where, empty($result) ? ["status", "!=", 'CANCELADO'] : $result);
+        /*foreach($data["where"] as $condition) {
             if(is_array($condition) && $condition[0] == "or" && count($condition) == 4 && $condition[3][0] == "unidade.unidade_pai_id") { 
                 $query->whereHas('unidade', function (Builder $query) use ($condition) {
                     $query->whereIn('unidade_pai_id', $condition[3][2]);
@@ -245,12 +251,7 @@ class PlanoEntregaService extends ServiceBase
             } else {
                 array_push($where, $condition);
             }
-        }
-        //  (RI_PENT_5) Garante que, se não houver um interesse específico na data de arquivamento, só retornarão os planos de entrega não arquivados e não cancelados.
-        $result = $this->extractWhere($data, "data_arquivamento");
-        array_push($where, empty($result) ? ["data_arquivamento", "==", null] : $result);
-        $result = $this->extractWhere($data, "status");
-        array_push($where, empty($result) ? ["status", "!=", 'CANCELADO'] : $result);
+        }*/
         $data["where"] = $where;
         return $data;
     }

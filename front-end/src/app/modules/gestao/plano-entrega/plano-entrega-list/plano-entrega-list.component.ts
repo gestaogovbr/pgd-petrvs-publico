@@ -11,6 +11,7 @@ import { Unidade } from 'src/app/models/unidade.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { PlanoEntregaService } from '../plano-entrega.service';
 import { FullRoute } from 'src/app/services/navigate.service';
+import { Base } from 'src/app/models/base.model';
 
 @Component({
   selector: 'plano-entrega-list',
@@ -30,7 +31,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   public habilitarAdesaoToolbar: boolean = false;
   public toolbarButtons: ToolbarButton[] = [];
   public botoes: ToolbarButton[] = [];
-  public routeStatus: FullRoute = {route: ["uteis","status"]};
+  public routeStatus: FullRoute = { route: ["uteis", "status"] };
   public BOTAO_ADERIR_TOOLBAR: ToolbarButton;
   public BOTAO_ADERIR_OPTION: ToolbarButton;
   public BOTAO_ALTERAR: ToolbarButton;
@@ -50,6 +51,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   public BOTAO_REATIVAR: ToolbarButton;
   public BOTAO_RETIRAR_HOMOLOGACAO: ToolbarButton;
   public BOTAO_SUSPENDER: ToolbarButton;
+
+  public execucao: boolean = false;
 
   constructor(public injector: Injector) {
     super(injector, PlanoEntrega, PlanoEntregaDaoService);
@@ -71,7 +74,18 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       planejamento_id: { default: null },
       cadeia_valor_id: { default: null },
     });
-    this.join = ['planejamento:id,nome', 'programa:id,nome', 'cadeia_valor:id,nome', 'unidade:id,sigla,path', 'entregas.entrega', 'entregas.demandante', 'unidade.gestor:id', 'unidade.gestor_substituto:id'];
+    this.join = [
+      'planejamento:id,nome',
+      'programa:id,nome',
+      'cadeia_valor:id,nome',
+      'unidade:id,sigla,path',
+      'entregas.entrega',
+      'entregas.unidade',
+      'entregas.comentarios.usuario:id,nome,apelido',
+      'unidade.gestor:id',
+      'unidade.gestor_substituto:id',
+      'unidade.unidade_pai'
+    ];
     this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }];
     this.BOTAO_ADERIR_OPTION = { label: "Aderir", icon: this.entityService.getIcon("Adesao"), onClick: (() => { this.go.navigate({ route: ['gestao', 'plano-entrega', 'adesao'] }, { metadata: { planoEntrega: this.linha }, modalClose: (modalResult) => { this.refresh(); } }); }).bind(this) };
     this.BOTAO_ADERIR_TOOLBAR = { label: "Aderir", disabled: !this.habilitarAdesaoToolbar, icon: this.entityService.getIcon("Adesao"), onClick: (() => { this.go.navigate({ route: ['gestao', 'plano-entrega', 'adesao'] }, { modalClose: (modalResult) => { this.refresh(); } }); }).bind(this) };
@@ -98,21 +112,33 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     //this.BOTAO_ADERIR_OPTION, this.BOTAO_ADERIR_TOOLBAR,
   }
 
-  ngOnInit(): void 
-  {
+  ngOnInit(): void {
     super.ngOnInit();
+    this.execucao = !!this.queryParams?.execucao;
     this.showFilter = typeof this.queryParams?.showFilter != "undefined" ? (this.queryParams.showFilter == "true") : true;
     this.selectable = this.metadata?.selectable || this.selectable;
+    if (this.execucao) {
+      this.title = this.title + " (Execução)";
+      this.filter!.controls.unidade_id.setValue(this.auth.unidadeGestor()?.id || null);
+      this.filter!.controls.principais.setValue(false);
+    }
     this.checaBotaoAderirToolbar();
     //this.toolbarButtons.push(this.BOTAO_ADERIR_TOOLBAR);  // Adesão de plano suspensa, por enquanto
   }
 
-  ngAfterContentChecked(): void 
-  {
+  ngAfterContentChecked(): void {
     if (this.auth.unidade != this.unidadeSelecionada) {
       this.unidadeSelecionada = this.auth.unidade!;
       this.checaBotaoAderirToolbar();
       this.cdRef.detectChanges();
+    }
+  }
+
+  public onGridLoad(rows?: Base[]) {
+    if (rows && this.execucao) {
+      rows.forEach(v => {
+        if (["ATIVO", "SUSPENSO"].includes((v as PlanoEntrega).status)) this.grid!.expand(v.id);
+      });
     }
   }
 
@@ -150,8 +176,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     super.filterClear(filter);
   }
 
-  public filterWhere = (filter: FormGroup) => 
-  {
+  public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
     /*
@@ -162,11 +187,16 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
           - os ativos das unidades imediatamente subordinadas (w3);
     */
     if (this.filter?.controls.principais.value) {
-      let unidadesUsuarioEhGestor = this.auth.unidades?.filter(x => this.auth.isGestorUnidade(x));
-      let w1 = ["unidade_id", "in", this.auth.unidades?.map(u => u.id)];
-      let w2 = ["unidade_id", "in", unidadesUsuarioEhGestor?.map(u => u.unidade_pai?.id)];
-      let w3 = ["unidade.unidade_pai_id", "in", unidadesUsuarioEhGestor?.map(u => u.id)];
-      if (this.auth.isGestorAlgumaAreaTrabalho()) result.push(["or", w1, w2, w3]); else result.push(w1);
+      let w1: [string, string, string[]] = ["unidade_id", "in", (this.auth.unidades || []).map(u => u.id)];
+      if (this.auth.isGestorAlgumaAreaTrabalho()) {
+        let unidadesUsuarioEhGestor = this.auth.unidades?.filter(x => this.auth.isGestorUnidade(x));
+        let w2: string[] | undefined = unidadesUsuarioEhGestor?.map(u => u.unidade_pai?.id || "").filter(x => x.length);
+        if (w2?.length) w1[2].push(...w2);
+        let w3 = ["unidade.unidade_pai_id", "in", unidadesUsuarioEhGestor?.map(u => u.id)];
+        result.push(["or", w1, w3]);
+      } else {
+        result.push(w1)
+      }
     }
     if (form.nome?.length) {
       result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
@@ -195,8 +225,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     return result;
   }
 
-  public onAgruparChange(event: Event) 
-  {
+  public onAgruparChange(event: Event) {
     const agrupar = this.filter!.controls.agrupar.value;
     if ((agrupar && !this.groupBy?.length) || (!agrupar && this.groupBy?.length)) {
       this.groupBy = agrupar ? [{ field: "unidade.sigla", label: "Unidade" }] : [];
@@ -204,8 +233,12 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     }
   }
 
-  public dynamicButtons(row: PlanoEntrega): ToolbarButton[] 
-  {
+  public onPrincipaisChange(event: Event) {
+    if (this.filter!.controls.principais.value) this.filter!.controls.unidade_id.setValue(null);
+    this.grid!.reloadFilter();
+  }
+
+  public dynamicButtons(row: PlanoEntrega): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let planoEntrega: PlanoEntrega = row as PlanoEntrega;
     switch (this.planoEntregaService.situacaoPlano(planoEntrega)) {
@@ -256,7 +289,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
           - se o usuário for Gestor da unidade selecionada, ou ela for sua lotação principal e ele possuir a capacidade "MOD_PENT_ADR" ; e
           - se a unidade selecionada não possuir plano de entrega Ativo no mesmo período do plano em questão;
         */
-        return (this.planoEntregaService.situacaoPlano(planoEntrega) == 'ATIVO' && (planoEntrega.unidade_id == this.auth.unidade?.unidade_pai_id) && (this.auth.isGestorUnidade() || (this.auth.isLotacaoUsuario(this.auth.unidade) && this.auth.hasPermissionTo("MOD_PENT_ADR"))) &&
+        return !this.execucao && (this.planoEntregaService.situacaoPlano(planoEntrega) == 'ATIVO' && (planoEntrega.unidade_id == this.auth.unidade?.unidade_pai_id) && (this.auth.isGestorUnidade() || (this.auth.isLotacaoUsuario(this.auth.unidade) && this.auth.hasPermissionTo("MOD_PENT_ADR"))) &&
           (this.planosEntregasAtivosUnidadeSelecionada().filter(x => this.util.intersection([{ start: x.data_inicio, end: x.data_fim! }, { start: planoEntrega.data_inicio, end: planoEntrega.data_fim! }])).length == 0));
       case this.BOTAO_ALTERAR:
         /*
@@ -275,7 +308,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
         let condicao3 = this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', planoEntrega.unidade!.unidade_pai_id!);
         let condicao4 = this.planoEntregaService.situacaoPlano(planoEntrega) == 'ATIVO' && this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo(["MOD_PENT_EDT_ATV_HOMOL", "MOD_PENT_EDT_ATV_ATV"]);
         let condicao5 = this.auth.hasPermissionTo("MOD_PENT_QQR_UND");
-        return this.auth.hasPermissionTo("MOD_PENT_EDT") && this.planoEntregaService.isValido(planoEntrega) && (condicao1 || condicao2 || condicao3 || condicao4 || condicao5);
+        return !this.execucao && this.auth.hasPermissionTo("MOD_PENT_EDT") && this.planoEntregaService.isValido(planoEntrega) && (condicao1 || condicao2 || condicao3 || condicao4 || condicao5);
       case this.BOTAO_ARQUIVAR:
         /*
           (RN_PENT_N) Para ARQUIVAR um plano de entregas:
@@ -321,7 +354,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
             - a Unidade-pai (Unidade A) precisa ser a Unidade de lotação do usuário logado, e ele possuir a capacidade "MOD_PENT_CANC_HOMOL"; ou
             - o usuário logado precisa possuir a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para a Unidade-pai (Unidade A) da Unidade do plano (Unidade B);
         */
-        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'ATIVO' && (this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id) || (this.auth.isLotacaoUsuario(planoEntrega.unidade?.unidade_pai) && this.auth.hasPermissionTo("MOD_PENT_CANC_HOMOL")) || this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', planoEntrega.unidade!.unidade_pai_id!));
+        return !this.execucao && this.planoEntregaService.situacaoPlano(planoEntrega) == 'ATIVO' && (this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id) || (this.auth.isLotacaoUsuario(planoEntrega.unidade?.unidade_pai) && this.auth.hasPermissionTo("MOD_PENT_CANC_HOMOL")) || this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', planoEntrega.unidade!.unidade_pai_id!));
       case this.BOTAO_CANCELAR_PLANO:
         /*
           (RN_PENT_P) Para CANCELAR UM PLANO DE ENTREGAS:
@@ -359,7 +392,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
               - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
               - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado;
         */
-        return this.auth.hasPermissionTo("MOD_PENT_EXCL") && ['INCLUIDO', 'HOMOLOGANDO'].includes(this.planoEntregaService.situacaoPlano(planoEntrega)) && (this.auth.isGestorUnidade(planoEntrega.unidade) || this.auth.isLotacaoUsuario(planoEntrega.unidade));;
+        return !this.execucao && this.auth.hasPermissionTo("MOD_PENT_EXCL") && ['INCLUIDO', 'HOMOLOGANDO'].includes(this.planoEntregaService.situacaoPlano(planoEntrega)) && (this.auth.isGestorUnidade(planoEntrega.unidade) || this.auth.isLotacaoUsuario(planoEntrega.unidade));;
       case this.BOTAO_HOMOLOGAR:
         /*
           (RN_PENT_Y) Para HOMOLOGAR um plano de entregas:
@@ -369,7 +402,11 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
               - o usuário logado precisa possuir a atribuição de HOMOLOGADOR DE PLANOS DE ENTREGAS para a Unidade-pai (Unidade A); (RN_PENT_E)
           - A homologação do plano de entregas não se aplica à Unidade instituidora.
         */
-        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'HOMOLOGANDO' && (this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id) || (this.auth.isLotacaoUsuario(planoEntrega.unidade!.unidade_pai) && this.auth.hasPermissionTo("MOD_PENT_HOMOL")) || this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', planoEntrega.unidade!.unidade_pai_id!));
+        let condition1 = this.planoEntregaService.situacaoPlano(planoEntrega) == 'HOMOLOGANDO';
+        let condition2 = this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id);
+        let condition3 = this.auth.isLotacaoUsuario(planoEntrega.unidade!.unidade_pai) && this.auth.hasPermissionTo("MOD_PENT_HOMOL");
+        let condition4 = this.auth.isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', planoEntrega.unidade!.unidade_pai_id!);
+        return !this.execucao && condition1 && (condition2 || condition3 || condition4);
       case this.BOTAO_LIBERAR_HOMOLOGACAO:
         /*
           (RN_PENT_AA) Para LIBERAR PARA HOMOLOGAÇÃO um plano de entregas:
@@ -377,7 +414,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
               - o usuário logado precisa ser gestor da Unidade do plano (Unidade B); ou
               - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado, e este possuir a capacidade "MOD_PENT_LIB_HOMOL"
         */
-        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'INCLUIDO' && planoEntrega.entregas.length > 0 && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_LIB_HOMOL")));
+        return !this.execucao && this.planoEntregaService.situacaoPlano(planoEntrega) == 'INCLUIDO' && planoEntrega.entregas.length > 0 && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_LIB_HOMOL")));
       case this.BOTAO_LOGS:
         /*
         
@@ -399,7 +436,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
               - o usuário logado precisa ser gestor da Unidade do plano (Unidade B); ou
               - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado, e este possuir a capacidade "MOD_PENT_RET_HOMOL"
         */
-        return this.planoEntregaService.situacaoPlano(planoEntrega) == 'HOMOLOGANDO' && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_RET_HOMOL")));
+        return !this.execucao && this.planoEntregaService.situacaoPlano(planoEntrega) == 'HOMOLOGANDO' && (this.auth.isGestorUnidade(planoEntrega.unidade) || (this.auth.isLotacaoUsuario(planoEntrega.unidade) && this.auth.hasPermissionTo("MOD_PENT_RET_HOMOL")));
       case this.BOTAO_SUSPENDER:
         /*
           (RN_PENT_AD) Para SUSPENDER um plano de entregas:
@@ -415,13 +452,13 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public arquivar(planoEntrega: PlanoEntrega) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: planoEntrega.status, onClick: this.dao!.arquivar.bind(this.dao)},
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: planoEntrega.status, onClick: this.dao!.arquivar.bind(this.dao) },
       title: "Arquivar Plano de Entregas",
       modalClose: (modalResult) => {
-        if(modalResult) {
-            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
-              this.checaBotaoAderirToolbar();
-            });
+        if (modalResult) {
+          (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
+          });
         };
       }
     });
@@ -429,13 +466,13 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public avaliar(planoEntrega: PlanoEntrega) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "AVALIADO", onClick: this.dao!.avaliar.bind(this.dao)},
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "AVALIADO", onClick: this.dao!.avaliar.bind(this.dao) },
       title: "Avaliar Plano de Entregas",
       modalClose: (modalResult) => {
-        if(modalResult) {
-            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
-              this.checaBotaoAderirToolbar();
-            });
+        if (modalResult) {
+          (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
+          });
         };
       }
     });
@@ -443,13 +480,13 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public cancelarAvaliacao(planoEntrega: PlanoEntrega) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "CONCLUIDO", onClick: this.dao!.cancelarAvaliacao.bind(this.dao)},
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "CONCLUIDO", onClick: this.dao!.cancelarAvaliacao.bind(this.dao) },
       title: "Cancelar Avaliação",
       modalClose: (modalResult) => {
-        if(modalResult) {
-            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
-              this.checaBotaoAderirToolbar();
-            });
+        if (modalResult) {
+          (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
+          });
         };
       }
     });
@@ -457,13 +494,13 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public cancelarConclusao(planoEntrega: PlanoEntrega) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "ATIVO", onClick: this.dao!.cancelarConclusao.bind(this.dao)},
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "ATIVO", onClick: this.dao!.cancelarConclusao.bind(this.dao) },
       title: "Cancelar Conclusão",
       modalClose: (modalResult) => {
-        if(modalResult) {
-            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
-              this.checaBotaoAderirToolbar();
-            });
+        if (modalResult) {
+          (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
+          });
         };
       }
     });
@@ -471,13 +508,13 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public cancelarHomologacao(planoEntrega: PlanoEntrega) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "HOMOLOGANDO", onClick: this.dao!.cancelarHomologacao.bind(this.dao)},
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "HOMOLOGANDO", onClick: this.dao!.cancelarHomologacao.bind(this.dao) },
       title: "Cancelar Homologação",
       modalClose: (modalResult) => {
-        if(modalResult) {
-            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
-              this.checaBotaoAderirToolbar();
-            });
+        if (modalResult) {
+          (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
+          });
         };
       }
     });
@@ -485,13 +522,13 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public cancelarPlano(planoEntrega: PlanoEntrega) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "CANCELADO", onClick: this.dao!.cancelarPlano.bind(this.dao)},
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "CANCELADO", onClick: this.dao!.cancelarPlano.bind(this.dao) },
       title: "Cancelar Plano de Entregas",
       modalClose: (modalResult) => {
-        if(modalResult) {
-            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
-              this.checaBotaoAderirToolbar();
-            });
+        if (modalResult) {
+          (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
+          });
         };
       }
     });
@@ -499,13 +536,13 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public concluir(planoEntrega: PlanoEntrega) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "CONCLUIDO", onClick: this.dao!.concluir.bind(this.dao)},
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "CONCLUIDO", onClick: this.dao!.concluir.bind(this.dao) },
       title: "Concluir Plano de Entregas",
       modalClose: (modalResult) => {
-        if(modalResult) {
-            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
-              this.checaBotaoAderirToolbar();
-            });
+        if (modalResult) {
+          (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
+          });
         };
       }
     });
@@ -513,13 +550,13 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public desarquivar(planoEntrega: PlanoEntrega) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: planoEntrega.status, onClick: this.dao!.desarquivar.bind(this.dao)},
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: planoEntrega.status, onClick: this.dao!.desarquivar.bind(this.dao) },
       title: "Desarquivar Plano de Entregas",
       modalClose: (modalResult) => {
-        if(modalResult) {
-            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
-              this.checaBotaoAderirToolbar();
-            });
+        if (modalResult) {
+          (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
+          });
         };
       }
     });
@@ -527,13 +564,13 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public homologar(planoEntrega: PlanoEntrega) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "ATIVO", onClick: this.dao!.homologar.bind(this.dao)},
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "ATIVO", onClick: this.dao!.homologar.bind(this.dao) },
       title: "Homologar Plano de Entregas",
       modalClose: (modalResult) => {
-        if(modalResult) {
-            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
-              this.checaBotaoAderirToolbar();
-            });
+        if (modalResult) {
+          (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
+          });
         };
       }
     });
@@ -541,13 +578,13 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public liberarHomologacao(planoEntrega: PlanoEntrega) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "HOMOLOGANDO", onClick: this.dao!.liberarHomologacao.bind(this.dao)},
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "HOMOLOGANDO", onClick: this.dao!.liberarHomologacao.bind(this.dao) },
       title: "Liberar para Homologação",
       modalClose: (modalResult) => {
-        if(modalResult) {
-            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
-              this.checaBotaoAderirToolbar();
-            });
+        if (modalResult) {
+          (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
+          });
         };
       }
     });
@@ -555,13 +592,13 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public reativar(planoEntrega: PlanoEntrega) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "ATIVO", onClick: this.dao!.reativar.bind(this.dao)},
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "ATIVO", onClick: this.dao!.reativar.bind(this.dao) },
       title: "Reativar Plano de Entregas",
       modalClose: (modalResult) => {
-        if(modalResult) {
-            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
-              this.checaBotaoAderirToolbar();
-            });
+        if (modalResult) {
+          (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
+          });
         };
       }
     });
@@ -569,13 +606,13 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public retirarHomologacao(planoEntrega: PlanoEntrega) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "INCLUIDO", onClick: this.dao!.retirarHomologacao.bind(this.dao)},
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "INCLUIDO", onClick: this.dao!.retirarHomologacao.bind(this.dao) },
       title: "Retirar de Homologação",
       modalClose: (modalResult) => {
-        if(modalResult) {
-            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
-              this.checaBotaoAderirToolbar();
-            });
+        if (modalResult) {
+          (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
+          });
         };
       }
     });
@@ -583,19 +620,19 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public suspender(planoEntrega: PlanoEntrega) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "SUSPENSO", onClick: this.dao!.suspender.bind(this.dao)},
+      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "SUSPENSO", onClick: this.dao!.suspender.bind(this.dao) },
       title: "Suspender Plano de Entregas",
       modalClose: (modalResult) => {
-        if(modalResult) {
-            (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
-              this.checaBotaoAderirToolbar();
-            });
+        if (modalResult) {
+          (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+            this.checaBotaoAderirToolbar();
+          });
         };
       }
     });
   }
 
-  public canAdd(){
+  public canAdd() {
     return this.auth.hasPermissionTo('MOD_PENT_INCL');
     //IMPLEMENTAR AS DEMAIS CONDIÇÕES*******************
   }

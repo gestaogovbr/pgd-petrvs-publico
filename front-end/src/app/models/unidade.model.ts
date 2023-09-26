@@ -25,6 +25,7 @@ export class Unidade extends Base implements HasNotificacao {
     public unidade_pai?: Unidade; /* Objeto da unidade pai */
     public gestor: UnidadeIntegrante | null = null; /* Objeto do vinculo entre unidade/usuario que possui a atribuição de gestor */
     public gestor_substituto: UnidadeIntegrante | null = null; /* Objeto do vinculo entre unidade/usuario que possui a atribuição de gestor_substituto */
+    public gestor_delegado: UnidadeIntegrante | null = null; /* Objeto do vinculo entre unidade/usuario que possui a atribuição de gestor_delegado */
     public atividades?: Atividade[]; /* Lista de atividades */
     public planos_trabalho?: PlanoTrabalho[]; /* Lista de planos de trabalho */
     public planos_entrega?: PlanoEntrega[]; /* Lista de planos de entrega */

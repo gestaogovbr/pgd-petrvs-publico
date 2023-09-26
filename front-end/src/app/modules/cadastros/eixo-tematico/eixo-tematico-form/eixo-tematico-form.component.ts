@@ -23,12 +23,9 @@ export class EixoTematicoFormComponent extends PageFormBase<EixoTematico, EixoTe
       descricao: {default: ""},
     }, this.cdRef, this.validate);
   }
-
+  
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if(['nome','descricao','cor','icone'].indexOf(controlName) >= 0 && !control.value?.length) {
-      result = "Obrigatório";
-    }
     return result;
   }
 

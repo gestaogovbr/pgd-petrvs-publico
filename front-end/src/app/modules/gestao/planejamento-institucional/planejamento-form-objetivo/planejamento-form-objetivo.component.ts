@@ -72,8 +72,7 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
     await this.eixoTematico?.loadSearch(entity.eixo_tematico || entity.eixo_tematico_id);
     this.title = entity._status == 'ADD' ? 'Inclusão de Objetivo' : 'Editando objetivo...';
     this.planejamento = this.metadata?.planejamento as Planejamento;
-    if(this.planejamento) this.planejamento.planejamento_superior = this.metadata.planejamento_superior as Planejamento || null;
-    if(this.planejamento.planejamento_superior) this.planejamento.planejamento_superior.objetivos = this.metadata?.objetivos_superiores || null; 
+    if(this.metadata?.planejamento_superior) this.planejamento.planejamento_superior = this.metadata.planejamento_superior as Planejamento;
     this.form?.controls.planejamento_superior_nome.setValue(this.planejamento?.planejamento_superior?.nome || '');
     this.objetivos_superiores = this.planejamento?.planejamento_superior?.objetivos?.map(x => Object.assign({}, { key: x.id, value: x.nome, data: x })) || [];
   }
@@ -98,5 +97,14 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
   public isPlanejamentoUNEX(): boolean {
     return this.planejamento?.unidade_id != null;
   }
+  public onObjetivoPaiChange(row: any) {
+    const objetivoPai = this.form!.controls.objetivo_pai_id.value as PlanejamentoObjetivo
+    const eixoTematico = this.objetivos.find(x => x.key === objetivoPai);
+    if (eixoTematico) {
+      this.form!.controls.eixo_tematico_id.setValue(eixoTematico?.data.eixo_tematico_id);
+    }
+    this.cdRef.detectChanges();
+  }
+
 
 }

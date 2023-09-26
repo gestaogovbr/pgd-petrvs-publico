@@ -58,6 +58,9 @@ class AtividadeService extends ServiceBase
 
     public function validateStore($data, $unidade, $action) {
         $unidade = Unidade::find($data["unidade_id"]);
+        if($action != ServiceBase::ACTION_INSERT) {
+            $this->validateBackward($data["id"], "STORE");
+        }
         if(!$this->usuarioService->hasLotacao($data["unidade_id"])) {
             throw new ServerException("ValidateAtividade", $unidade->sigla . " não é uma unidade do usuário logado nem subordinada a ele.");
         }
@@ -349,13 +352,37 @@ class AtividadeService extends ServiceBase
         }
     }
 
+    public function lastConsolidacao($atividadeId) {
+        return PlanoTrabalhoConsolidacaoAtividade::where("atividade_id", $atividadeId)->orderBy("data_conclusao", "DESC")->first();
+    }
+
+    /**
+     * (RN_CSLD_9) Se uma atividade for iniciada em uma outra consolidação anterior (CONCLUIDO ou AVALIADO), não poderá mais retroceder nem editar o inicio (Exemplo.: Retroceder de INICIADO para INCLUIDO, ou de CONCLUIDO para INICIADO);
+     * (RN_CSLD_10) A atividade já iniciado so não pode pausar com data retroativa da última consolidação CONCLUIDO ou AVALIADO
+     * 
+     * @param string       $atividadeId  Id da atividade para validação
+     * @param string       $newStatus    Novo status que se deseja atualizar
+     * @param array | null $entity       Objeto da Pausa
+     */
+    public function validateBackward($atividadeId, $newStatus, $entity = null) {
+        $lastConsolidacao = $this->lastConsolidacao($atividadeId);
+        if(!empty($lastConsolidacao)) {
+            $lastStatus = $lastConsolidacao->snapshot->status;
+            $msgConsolidacao = "(Consolidação de " + UtilService::getDateFormatted($lastConsolidacao->consolidacao->data_inicio) + " até " + UtilService::getDateFormatted($lastConsolidacao->consolidacao->data_fim) + ")";
+            if($newStatus == "STORE" && $lastStatus != "INCLUIDO") throw new ServerException("ValidateAtividade", "Já existe uma consolidação com esta atividade como INICIADO, não podendo ser modificada. " + $msgConsolidacao);
+            if($newStatus == "INCLUIDO" && $lastStatus == "INICIADO") throw new ServerException("ValidateAtividade", "Já existe uma consolidação com esta atividade como INICIADO, não podendo retroagir. " + $msgConsolidacao);
+            if($newStatus == "INICIADO" && $lastStatus == "CONCLUIDO") throw new ServerException("ValidateAtividade", "Já existe uma consolidação com esta atividade como CONCLUIDO, não podendo retroagir. " + $msgConsolidacao);
+            if($newStatus == "PAUSADO" && UtilService::asTimestamp($entity["data"]) < UtilService::asTimestamp($lastConsolidacao->data_conclusao)) throw new ServerException("ValidateAtividade", "Data para pausa deverá ser superior da última consolidação concluída. " + "Já existe uma consolidação com esta atividade como INICIADO, não podendo retroagir. " + $msgConsolidacao);
+        }
+    }
+
     public function iniciar($data, $unidade) {
         $suspender = $data["suspender"];
         unset($data["suspender"]);
         try {
             DB::beginTransaction();
             $atividade = Atividade::find($data["id"]);
-            $this->validateStore(["unidade_id" => $atividade->unidade_id, "plano_trabalho_id" => $data["plano_trabalho_id"], "usuario_id" => $data["usuario_id"]], $unidade, ServiceBase::ACTION_EDIT);
+            $this->validateStore(["id" => $data["id"], "unidade_id" => $atividade->unidade_id, "plano_trabalho_id" => $data["plano_trabalho_id"], "usuario_id" => $data["usuario_id"]], $unidade, ServiceBase::ACTION_EDIT);
             /*if(CalendarioService::getTimestemp($data["data_inicio"]) < CalendarioService::getTimestemp($demanda->data_distribuicao)) {
                 throw new ServerException("ValidateDemanda", "Data de início menor que a data de distribuição.");
             }*/
@@ -388,6 +415,7 @@ class AtividadeService extends ServiceBase
     public function cancelarInicio($data, $unidade) {
         try {
             DB::beginTransaction();
+            $this->validateBackward($data["id"], "INCLUIDO");
             $atividade = Atividade::find($data["id"]);
             $this->update([
                 "id" => $atividade->id,
@@ -450,6 +478,7 @@ class AtividadeService extends ServiceBase
         $comentarioService = new ComentarioService();
         try {
             DB::beginTransaction();
+            $this->validateBackward($data["id"], "INICIADO");
             $atividade = Atividade::find($data["id"]);
             $this->update([
                 "id" => $atividade->id,
@@ -475,6 +504,7 @@ class AtividadeService extends ServiceBase
         $atividadePausaService = new AtividadePausaService();
         try {
             DB::beginTransaction();
+            $this->validateBackward($pausa["atividade_id"], "PAUSADO", $pausa);
             $atividade = Atividade::find($pausa["atividade_id"]);
             if(empty($atividade)) {
                 throw new ServerException("ValidateAtividade", "Atividade não encontrada");

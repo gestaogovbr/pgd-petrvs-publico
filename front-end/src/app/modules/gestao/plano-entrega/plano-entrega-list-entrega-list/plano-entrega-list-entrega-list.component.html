@@ -18,7 +18,7 @@
         <column [title]="'Entrega\nDemandante\nDestinatário'" [template]="columnEntregaCliente">
             <ng-template let-row="row" #columnEntregaCliente>
                 <badge icon="bi bi-textarea-t" [label]="row.descricao || '(não informado)'" color="light"></badge><br>
-                <badge [icon]="entityService.getIcon('Unidade')" [label]="row.demandante.sigla || '(não informado)'" color="success"></badge><br>
+                <badge [icon]="entityService.getIcon('Unidade')" [label]="row.unidade.sigla || '(não informado)'" color="success"></badge><br>
                 <badge icon="bi bi-mailbox" [label]="row.destinatario || '(não informado)'" color="light"></badge>
             </ng-template>
         </column>

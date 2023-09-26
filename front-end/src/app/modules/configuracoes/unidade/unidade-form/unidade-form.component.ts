@@ -149,14 +149,18 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       unidade.notificacoes = this.entity!.notificacoes;
       let salvarGestor = !!this.formGestor!.controls.gestor_id?.value && (!this.entity?.gestor?.id.length || (!!this.entity?.gestor?.id.length && this.entity?.gestor?.usuario?.id != this.formGestor!.controls.gestor_id?.value));
       let salvarGestorSubstituto = !!this.formGestor!.controls.gestor_substituto_id?.value && (!this.entity?.gestor_substituto?.id.length || (!!this.entity?.gestor_substituto?.id.length && this.entity?.gestor_substituto?.usuario?.id != this.formGestor!.controls.gestor_substituto_id?.value));
+      let salvarGestorDelegado = !!this.formGestor!.controls.gestor_delegado_id?.value && (!this.entity?.gestor_delegado?.id.length || (!!this.entity?.gestor_delegado?.id.length && this.entity?.gestor_delegado?.usuario?.id != this.formGestor!.controls.gestor_delegado_id?.value));
       let apagarGestor = !this.formGestor!.controls.gestor_id?.value && !!this.entity?.gestor?.id.length;
       let apagarGestorSubstituto = !this.formGestor!.controls.gestor_substituto_id?.value && !!this.entity?.gestor_substituto?.id.length;
-      this.dao?.save(unidade, ["gestor.gestor:id","gestor_substituto.gestor_substituto:id"]).then(async unidade => {
+      let apagarGestorDelegado = !this.formGestor!.controls.gestor_delegado_id?.value && !!this.entity?.gestor_delegado?.id.length;
+      this.dao?.save(unidade, ["gestor.gestor:id","gestor_substituto.gestor_substituto:id","gestor_delegado.gestor_delegado:id"]).then(async unidade => {
         this.entity = unidade;
         if(salvarGestor) await this.integranteDao.saveIntegrante([{'unidade_id': this.entity.id, 'usuario_id': this.formGestor!.controls.gestor_id!.value, 'atribuicoes': ["GESTOR"]}]);
         if(salvarGestorSubstituto) await this.integranteDao.saveIntegrante([{'unidade_id': this.entity.id, 'usuario_id': this.formGestor!.controls.gestor_substituto_id!.value, 'atribuicoes': ["GESTOR_SUBSTITUTO"]}]);
+        if(salvarGestorDelegado) await this.integranteDao.saveIntegrante([{'unidade_id': this.entity.id, 'usuario_id': this.formGestor!.controls.gestor_delegado_id!.value, 'atribuicoes': ["GESTOR_DELEGADO"]}]);
         if(apagarGestor) await this.integranteAtribuicaoDao.delete(this.entity?.gestor!.gestor!.id);
         if(apagarGestorSubstituto) await this.integranteAtribuicaoDao.delete(this.entity?.gestor_substituto!.gestor_substituto!.id);
+        if(apagarGestorDelegado) await this.integranteAtribuicaoDao.delete(this.entity?.gestor_delegado!.gestor_delegado!.id);
         resolve(true);
       });
     });
@@ -164,10 +168,6 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
 
   public titleEdit = (entity: Unidade): string => {
     return "Editando " + this.lex.translate("Unidade") + ': ' + (entity?.sigla || "");
-  }
-
-  public onChangeInstituidora(){
-
   }
 
 }

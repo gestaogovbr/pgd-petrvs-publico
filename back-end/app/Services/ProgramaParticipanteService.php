@@ -87,7 +87,6 @@ class ProgramaParticipanteService extends ServiceBase {
 
     public function notificar($data)
     {
-        $data;
         $this->notificacoesService->send("PRG_PART_HABILITACAO", 
         [
             "programa" => Programa::find($data['programa_id']), 
