@@ -39,7 +39,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       'planoTrabalho.tipoModalidade'
     ])->find($id);
     $concluido = in_array($consolidacao->status, ["CONCLUIDO", "AVALIADO"]);
-    $planosEntregasIds = array_map(fn($pe) => $pe->planoEntregaEntrega->plano_entrega_id, $consolidacao->planoTrabalho->entregas?->all() ?? []);
+    $planosEntregasIds = array_map(fn($pe) => $pe->planoEntregaEntrega?->plano_entrega_id, $consolidacao->planoTrabalho->entregas?->all() ?? []);
     $planoTrabalho = $consolidacao->planoTrabalho;
     $atividades = Atividade::with([
       'demandante', 
