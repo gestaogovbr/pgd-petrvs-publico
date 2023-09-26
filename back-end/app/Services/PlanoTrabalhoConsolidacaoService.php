@@ -27,6 +27,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
   {
     $consolidacao = PlanoTrabalhoConsolidacao::with([
       'ocorrencias', 
+      'comparecimentos.unidade:id,nome,sigla',
       'avaliacao',
       'avaliacoes',
       'planoTrabalho.programa',
@@ -38,7 +39,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       'planoTrabalho.tipoModalidade'
     ])->find($id);
     $concluido = in_array($consolidacao->status, ["CONCLUIDO", "AVALIADO"]);
-    $planosEntregasIds = array_map(fn($pe) => $pe->planoEntregaEntrega->plano_entrega_id, $consolidacao->planoTrabalho->entregas?->all() ?? []);
+    $planosEntregasIds = array_map(fn($pe) => $pe->planoEntregaEntrega?->plano_entrega_id, $consolidacao->planoTrabalho->entregas?->all() ?? []);
     $planoTrabalho = $consolidacao->planoTrabalho;
     $atividades = Atividade::with([
       'demandante', 
@@ -75,6 +76,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       'planoTrabalho' => $consolidacao->planoTrabalho,
       'planosEntregas' => PlanoEntrega::whereIn("id", $planosEntregasIds)->get(),
       'ocorrencias' => $consolidacao->ocorrencias ?? [],
+      'comparecimentos' => $consolidacao->comparecimentos ?? [],
       'afastamentos' => $afastamentos,
       'status' => $consolidacao->status
     ];

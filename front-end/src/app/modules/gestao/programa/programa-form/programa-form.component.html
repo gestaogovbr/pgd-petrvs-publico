@@ -1,7 +1,6 @@
 <!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="unidade_id" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
     <div class="row">
-
         <input-search #unidade [size]="12" label="Unidade Instituidora" controlName="unidade_id" [dao]="unidadeDao" [selectParams]="{filter: {instituidora: true}}" required></input-search>
     </div>
     <div class="row">
@@ -16,27 +15,29 @@
     <separator [title]="'Configurações ' + lex.translate('do Plano de entrega')">
         <input-search [label]="lex.translate('Tipo de avaliação do Plano de entrega')" [size]="12" #tipoAvaliacao controlName="tipo_avaliacao_plano_entrega_id" [dao]="tipoAvaliacaoDao" [labelInfo]="lex.noun('Tipo de avaliação') + ' que especifica a forma que será avaliado ' + lex.noun('plano de trabalho') + ' e ' + lex.noun('plano de entrega')" required></input-search>
     </separator>
-    <separator [title]="'Configurações ' + lex.translate('do Plano de trabalho')">
+    <separator [title]="'Configurações ' + lex.translate('do Plano de trabalho')" collapse [collapsed]="false">
         <input-switch label="Se o termo é obrigatório" [size]="12" controlName="termo_obrigatorio" scale="small" labelPosition="right"></input-switch>
+        <input-switch [size]="12" scale="small" labelPosition="right" controlName="termo_obrigatorio" label="Se o termo é obrigatório"></input-switch>
         <input-switch [size]="12" scale="small" labelPosition="right" controlName="plano_trabalho_assinatura_participante" [label]="'Exige assinatura ' + lex.translate('do usuário') + lex.translate(' do plano de trabalho')"></input-switch>
         <input-switch [size]="12" scale="small" labelPosition="right" controlName="plano_trabalho_assinatura_gestor_lotacao" [label]="'Exige assinatura do gestor da lotação ' + lex.translate('do usuário') + ' (para ' + lex.translate('unidade') + ' distinta)'"></input-switch>
         <input-switch [size]="12" scale="small" labelPosition="right" controlName="plano_trabalho_assinatura_gestor_unidade" [label]="'Exige assinatura do gestor ' + lex.translate('da unidade')"></input-switch>
         <input-switch [size]="12" scale="small" labelPosition="right" controlName="plano_trabalho_assinatura_gestor_entidade" [label]="'Exige assinatura do gestor ' + lex.translate('da entidade')"></input-switch>
-        <input-search [label]="'Template ' + lex.translate('termo') + ' (TCR)'" [size]="12" detailsButton labelInfo="Template do termo utilizado no plano de trabalho" controlName="template_tcr_id" [dao]="templateDao" [where]="[['especie', '==', 'TCR']]" [selectRoute]="templateService.selectRoute('TCR')" (details)="templateService.details($event)"></input-search>
+        <input-search [label]="'Template ' + lex.translate('termo') + ' (TCR)'" [size]="12" detailsButton labelInfo="Template do termo utilizado no plano de trabalho" controlName="template_tcr_id" [dao]="templateDao" [where]="[['especie', '==', 'TCR']]" [selectRoute]="templateService.selectRoute('TCR')" (details)="templateService.details($event)" required></input-search>
         <input-search [label]="'Tipo de documento ' + lex.translate('termo')" [size]="12" #tipoDocumento controlName="tipo_documento_tcr_id" [dao]="tipoDocumentoDao" labelInfo="Tipo de documento utilizado para exportar o termo para o SEI/SUPER"></input-search>
         <input-search [label]="lex.translate('Tipo de avaliação do Plano de trabalho')" [size]="12" #tipoAvaliacao controlName="tipo_avaliacao_plano_trabalho_id" [dao]="tipoAvaliacaoDao" [labelInfo]="lex.noun('Tipo de avaliação') + ' que especifica a forma que será avaliado ' + lex.noun('plano de trabalho') + ' e ' + lex.noun('plano de entrega')" required></input-search>
+        <separator [title]="lex.translate('Consolidação') + lex.translate(' do Plano de trabalho')">
+            <input-select [size]="6" label="Periodicidade" controlName="periodicidade_consolidacao" [control]="form!.controls.periodicidade_consolidacao" [items]="lookup.PERIODICIDADE_CONSOLIDACAO" labelInfo="Período para avaliação do plano de trabalho"></input-select>
+            <input-select *ngIf="['SEMANAL', 'QUINZENAL'].includes(form!.controls.periodicidade_consolidacao.value)" [size]="3" label="Dia da semana" controlName="periodicidade_valor" [control]="form!.controls.periodicidade_valor" [items]="lookup.DIA_SEMANA" labelInfo="Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do mês para o restante"></input-select>
+            <input-number *ngIf="['MENSAL', 'BIMESTRAL', 'TRIMESTRAL', 'SEMESTRAL'].includes(form!.controls.periodicidade_consolidacao.value)" [size]="3" label="Dia do mês" controlName="periodicidade_valor" [control]="form!.controls.periodicidade_valor" labelInfo="Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do mês para o restante"></input-number>
+            <input-number *ngIf="['DIAS'].includes(form!.controls.periodicidade_consolidacao.value)" [size]="3" label="Qtd. de Dias" controlName="periodicidade_valor" [control]="form!.controls.periodicidade_valor" labelInfo="Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do mês para o restante"></input-number>
+            <input-number [size]="3" label="Tolerância" controlName="dias_tolerancia_consolidacao" [control]="form!.controls.dias_tolerancia_consolidacao" labelInfo="Dias de tolerância para o lançamento do registro das atividades na consolidação, após esses dias será liberado automaticamente para avaliação"></input-number>
+        </separator>
+        <separator [title]="lex.translate('Avaliação') + lex.translate(' da Consolidação') + lex.translate(' do Plano de trabalho')">
+            <input-number [size]="3" label="Tolerância" controlName="dias_tolerancia_avaliacao" [control]="form!.controls.dias_tolerancia_avaliacao" labelInfo="Dias de tolerância para realizar a avaliação, considerando a tolerância da consolidação. Caso seja zero não fará nada, caso contrário após esse prazo a consolidação será automaticamente avaliada com a nota padrão"></input-number>
+            <input-number [size]="3" label="Nota" *ngIf="isTipoAvaliacao('QUANTITATIVO')" [control]="form!.controls.nota_padrao_avaliacao" labelInfo="Nota que será atribuído automaticamente caso a tolerância seja alcançada"></input-number>
+            <input-select [size]="3" label="Nota" *ngIf="isTipoAvaliacao('QUALITATIVO')" [control]="form!.controls.nota_padrao_avaliacao" [items]="tipoAvaliacaoQualitativo" labelInfo="Nota que será atribuído automaticamente caso a tolerância seja alcançada"></input-select>
+            <input-search [label]="lex.translate('Tipo de justificativa')" [size]="6" [emptyValue]="null" #tipoJustificativa controlName="tipo_justificativa_id" [dao]="tipoJustificativaDao" labelInfo="Tipo de justificativa, para quando o gestor não realizar a avaliação dentro do prazo"></input-search>
+        </separator>
     </separator>
-    <separator [title]="lex.translate('Consolidação') + lex.translate(' do Plano de trabalho')">
-        <input-select [size]="6" label="Periodicidade" controlName="periodicidade_consolidacao" [control]="form!.controls.periodicidade_consolidacao" [items]="lookup.PERIODICIDADE_CONSOLIDACAO" labelInfo="Período para avaliação do plano de trabalho"></input-select>
-        <input-select *ngIf="['SEMANAL', 'QUINZENAL'].includes(form!.controls.periodicidade_consolidacao.value)" [size]="3" label="Dia da semana" controlName="periodicidade_valor" [control]="form!.controls.periodicidade_valor" [items]="lookup.DIA_SEMANA" labelInfo="Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do mês para o restante"></input-select>
-        <input-number *ngIf="['MENSAL', 'BIMESTRAL', 'TRIMESTRAL', 'SEMESTRAL'].includes(form!.controls.periodicidade_consolidacao.value)" [size]="3" label="Dia do mês" controlName="periodicidade_valor" [control]="form!.controls.periodicidade_valor" labelInfo="Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do mês para o restante"></input-number>
-        <input-number *ngIf="['DIAS'].includes(form!.controls.periodicidade_consolidacao.value)" [size]="3" label="Qtd. de Dias" controlName="periodicidade_valor" [control]="form!.controls.periodicidade_valor" labelInfo="Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do mês para o restante"></input-number>
-        <input-number [size]="3" label="Tolerância" controlName="dias_tolerancia_consolidacao" [control]="form!.controls.dias_tolerancia_consolidacao" labelInfo="Dias de tolerância para o lançamento do registro das atividades na consolidação, após esses dias será liberado automaticamente para avaliação"></input-number>
-    </separator>
-    <separator [title]="lex.translate('Avaliação') + lex.translate(' da Consolidação') + lex.translate(' do Plano de trabalho')">
-        <input-number [size]="3" label="Tolerância" controlName="dias_tolerancia_avaliacao" [control]="form!.controls.dias_tolerancia_avaliacao" labelInfo="Dias de tolerância para realizar a avaliação, considerando a tolerância da consolidação. Caso seja zero não fará nada, caso contrário após esse prazo a consolidação será automaticamente avaliada com a nota padrão"></input-number>
-        <input-number [size]="3" label="Nota" *ngIf="isTipoAvaliacao('QUANTITATIVO')" [control]="form!.controls.nota_padrao_avaliacao" labelInfo="Nota que será atribuído automaticamente caso a tolerância seja alcançada"></input-number>
-        <input-select [size]="3" label="Nota" *ngIf="isTipoAvaliacao('QUALITATIVO')" [control]="form!.controls.nota_padrao_avaliacao" [items]="tipoAvaliacaoQualitativo" labelInfo="Nota que será atribuído automaticamente caso a tolerância seja alcançada"></input-select>
-        <input-search [label]="lex.translate('Tipo de justificativa')" [size]="6" [emptyValue]="null" #tipoJustificativa controlName="tipo_justificativa_id" [dao]="tipoJustificativaDao" labelInfo="Tipo de justificativa, para quando o gestor não realizar a avaliação dentro do prazo"></input-search>
-    </separator>
+
 </editable-form>

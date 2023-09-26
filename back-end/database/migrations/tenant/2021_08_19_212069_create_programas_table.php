@@ -23,7 +23,7 @@ class CreateProgramasTable extends Migration
             $table->string('nome')->comment("Nome do programa");
             $table->string('normativa')->nullable()->comment("Normativa que regula o programa de gestão");
             $table->integer('prazo_max_plano_entrega')->comment("Limite máximo de dias corridos para o plano de entregas (Zero para não limitar)");
-            $table->tinyInteger('termo_obrigatorio')->default(0)->comment("Se o termo é ou não obrigatório");
+            $table->tinyInteger('termo_obrigatorio')->default(1)->comment("Se o termo é ou não obrigatório");
             $table->json('config')->nullable()->comment("Configurações do programa");
             $table->dateTime('data_inicio')->comment("Inicio da vigência do programa");
             $table->dateTime('data_fim')->comment("Fim da vigência do programa");
@@ -32,9 +32,11 @@ class CreateProgramasTable extends Migration
             $table->integer('dias_tolerancia_consolidacao')->default("10")->comment("Dias de tolerância para o lançamento do registro das atividades na consolidação, após esses dias será liberado automaticamente para avaliação");
             $table->integer('dias_tolerancia_avaliacao')->default("20")->comment("Dias de tolerância para realizar a avaliação, considerando a tolerância da consolidação. Caso seja zero não fará nada, caso contrário após esse prazo a consolidação será automaticamente avaliada com a nota padrão");
             $table->json('nota_padrao_avaliacao')->nullable()->comment("Nota padrão de avaliação, para quando o gestor não realizar a avaliação dentro do prazo");
+            $table->json('checklist_avaliacao_entregas')->nullable()->comment("Checklist para avaliar as entregas");
+            $table->tinyInteger('registra_comparecimento')->default(1)->comment("Se utiliza registro de comparecimento nas consolidações do plano de trabalho");
             $table->tinyInteger('plano_trabalho_assinatura_participante')->default(1)->comment("Exigir assinatura do usuário no plano de trabalho");
             $table->tinyInteger('plano_trabalho_assinatura_gestor_lotacao')->default(0)->comment("Exigir assinatura do gestor da unidade de lotação do servidor");
-            $table->tinyInteger('plano_trabalho_assinatura_gestor_unidade')->default(0)->comment("Exigir assinatura do gestor da unidade do plano de trabalho");
+            $table->tinyInteger('plano_trabalho_assinatura_gestor_unidade')->default(0)->comment("Exigir assinatura do gestor da unidade executora do plano de trabalho");
             $table->tinyInteger('plano_trabalho_assinatura_gestor_entidade')->default(0)->comment("Exigir assinatura do gestor da entidade do plano de trabalho");
             // Chaves estrangeiras:
             $table->foreignUuid('tipo_avaliacao_plano_trabalho_id')->constrained("tipos_avaliacoes")->onDelete('restrict')->onUpdate('cascade')->comment("Tipo de avaliação do plano de trabalho");

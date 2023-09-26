@@ -2,7 +2,7 @@
     <tabs display right>
         <tab key="PRINCIPAL" label="Principal">
             <div class="row">
-                <input-switch #instituidora [size]="1" [label]="instituidora.value ? 'Instit.' : 'Exec.'" labelClass="text-nowrap" controlName="instituidora" [labelInfo]="'Se a ' + lex.noun('unidade') + ' é instituidora ou executora de Programas.'" (change)="onChangeInstituidora()"></input-switch>
+                <input-switch [size]="1" label="Instit." labelClass="text-nowrap" controlName="instituidora" [labelInfo]="'Se a ' + lex.noun('unidade') + ' é instituidora de Programas.'"></input-switch>
                 <input-text [size]="2" label="Código" controlName="codigo" [attr.maxlength]=250 required></input-text>
                 <input-text [size]="2" label="Sigla" controlName="sigla" [attr.maxlength]=250 required></input-text>
                 <input-text [size]="7" label="Nome" controlName="nome" [attr.maxlength]=250 required></input-text>

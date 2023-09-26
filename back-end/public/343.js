@@ -64,9 +64,6 @@ class EixoTematicoFormComponent extends src_app_modules_base_page_form_base__WEB
     this.injector = injector;
     this.validate = (control, controlName) => {
       let result = null;
-      if (['nome', 'descricao', 'cor', 'icone'].indexOf(controlName) >= 0 && !control.value?.length) {
-        result = "Obrigatório";
-      }
       return result;
     };
     this.titleEdit = entity => {
@@ -123,7 +120,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefi
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵInheritDefinitionFeature"]],
   decls: 10,
   vars: 12,
-  consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "nome", "required", "", 3, "size", "label"], [1, "col"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", "required", "", 3, "size", "rows"], ["label", "\u00CDcone", "icon", "fas fa-sign-out-alt", "controlName", "icone", 3, "size", "items"], ["background", "", "label", "Cor", "controlName", "cor", "required", "", 3, "size"]],
+  consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "nome", "required", "", 3, "size", "label"], [1, "col"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", "required", "", 3, "size", "rows"], ["label", "\u00CDcone", "icon", "fas fa-sign-out-alt", "controlName", "icone", "required", "", 3, "size", "items"], ["background", "", "label", "Cor", "controlName", "cor", "required", "", 3, "size"]],
   template: function EixoTematicoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "editable-form", 0);
@@ -145,7 +142,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefi
     if (rf & 2) {
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 12)("label", "Nome " + ctx.lex.translate("eixos tem\u00E1ticos"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 12)("label", "Nome " + ctx.lex.translate("do eixo tem\u00E1tico"));
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 8)("rows", 4);

@@ -71,6 +71,7 @@ class PlanoEntregaService extends ServiceBase
         $result = [];
         $result["planoValido"] = $this->isPlanoEntregaValido($planoEntrega);
         $result["planoAtivo"] = $this->isPlano("ATIVO", $planoEntrega);
+        $result["planoConcluido"] = $this->isPlano("CONCLUIDO", $planoEntrega);
         $result["planoPaiAtivo"] = $planoEntrega['plano_entrega_id'] ? $this->isPlano("ATIVO", $planoEntregaPai->toArray()) : false;
         $result["planoHomologando"] = $this->isPlano("HOMOLOGANDO", $planoEntrega);
         $result["planoIncluido"] = $this->isPlano("INCLUIDO", $planoEntrega);

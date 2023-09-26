@@ -15,14 +15,14 @@
                 <small *ngIf="row.comentario">{{row.comentario}}</small>
             </ng-template>
         </column>
-        <column title="Tempos" [template]="columnTempos">
+        <!--<column title="Tempos" [template]="columnTempos">
             <ng-template let-row="row" #columnTempos>
                 <div class="one-per-line">
                     <badge icon="bi bi-stopwatch" [hint]="lex.translate('Esforço')" color="light" [label]="util.decimalToTimerFormated(row.esforco, true)"></badge>
                     <badge icon="bi bi-calendar2-check" [hint]="lex.translate('Tempo planejado') + ' em dias'" color="light" [label]="row.dias_planejado + ' dias'"></badge>
                 </div>
             </ng-template>
-        </column>
+        </column>-->
         <column title="Etiquetas" [template]="columnEtiquetas">
             <ng-template let-row="row" #columnEtiquetas>
                 <div class="one-per-line text-break w-100">

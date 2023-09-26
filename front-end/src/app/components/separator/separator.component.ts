@@ -22,6 +22,7 @@ export class SeparatorComponent extends ComponentBase {
   @Input() collapsed: boolean = true;  
   @Input() control?: AbstractControl;
   @Input() labelInfo?: string;
+  @Input() margin: number = 0;
  
   constructor(injector: Injector) {
     super(injector);

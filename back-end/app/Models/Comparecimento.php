@@ -13,7 +13,9 @@ class Comparecimento extends ModelBase
 
     public $fillable = [ 
         'data_comparecimento', 
-        'unidade_id', 
+        'detalhamento',
+        'plano_trabalho_consolidacao_id', 
+        'unidade_id',
         //'usuario_id',
         //'deleted_at',
     ];

@@ -20,13 +20,15 @@ export class LexicalService {
   public PREPOSITIONS_FEMALE = ["a", "as", "à", "às", "da", "das", "duma", "dumas", "na", "nas", "uma", "numa", "umas", "numas", "pela", "pelas"];
   public app?: AppComponent;
 
-  /* Colocar single e plural em minúsculo (Sempre seguir a ordem Alfabética)*/
+  /* Colocar single e plural em minúsculo (Sempre seguir a ordem Alfabética)
+  * ATENÇÃO: os campos single e plural do defaults não deverá ser mudados, pois o código faz referência a eles,
+  * caso queira fazer a modificação, utilizar seeders alterando na entidade as nomenclaturas. */
   public defaults: Translate = {
     "adesao": {single: "adesão", plural: "adesões", female: true},
     "afastamento": {single: "afastamento", plural: "afastamentos", female: false},
     "área de trabalho": {single: "área de trabalho", plural: "áreas de trabalho", female: true},
     "area do conhecimento": {single: "area do conhecimento", plural: "areas dos conhecimentos", female: true},
-    "atividade": {single: "atividade", plural: "atividades", female: true},
+    "atividade": {single: "atividade", plural: "atividades", female: false},
     "atribuição": {single: "atribuição", plural: "atribuições", female: true},
     "avaliação": {single: "avaliação", plural: "avaliações", female: true},
     "cadeiaValor": {single: "cadeia de valor", plural: "cadeias de valor", female: true},
@@ -153,8 +155,8 @@ export class LexicalService {
     let spaces = groups ? groups[1] : "";
     let preposition = groups ? groups[2].trim().replace(" ", "%") : "";
     let noun = groups ? groups[3] : "";
-    let plural = this.plurals[noun];
-    let key = plural || noun;
+    let plural = this.plurals[noun.toLowerCase()];
+    let key = (plural || noun).toLowerCase();
     let native = this.defaults[key];
     let database = this.vocabulary[key];
     /* Verifica se é necessário fazer a transformação */

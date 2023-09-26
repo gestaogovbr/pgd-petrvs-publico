@@ -107,7 +107,17 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
       texto: {default: ""},
       checked: {default: false}
     }, this.cdRef, this.validateChecklist);
-    this.join = ["usuario.planos_trabalho.tipo_modalidade:id,nome", "pausas", "tipo_atividade", "unidade", "comentarios.usuario", "tarefas.tipo_tarefa", "tarefas.comentarios.usuario", "documento_requisicao", "documento_entrega"];
+    this.join = [
+      "usuario.planos_trabalho.tipo_modalidade:id,nome", 
+      "pausas", 
+      "tipo_atividade", 
+      "unidade", 
+      "comentarios.usuario", 
+      "tarefas.tipo_tarefa", 
+      "tarefas.comentarios.usuario", 
+      "documento_requisicao", 
+      "documento_entrega"
+    ];
   }
 //"usuario.planos_trabalho.entregas.plano_entrega_entrega:id,descricao", 
   public ngOnInit() {
@@ -345,7 +355,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     if(entity.unidade_id != this.auth.unidade!.id) await this.auth.selecionaUnidade(entity.unidade_id);
     entity.comentarios = this.comentario.orderComentarios(entity.comentarios || []);
     entity.pausas = this.orderPausas(entity.pausas || []);
-    form.patchValue(formValue); /* Carrega os valores e dispara os eventos */
+    form.patchValue(this.util.fillForm(formValue, this.form.value)); /* Carrega os valores e dispara os eventos */
     this.loadEtiquetas();
   }
 
@@ -408,6 +418,11 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
         produtividade: 0,
         consolidacoes: []
       };
+      if(!this.auth.isGestorUnidade(this.entity.unidade_id)) {
+        let usuario = await this.usuarioDao.getById(this.auth.usuario!.id, this.usuarioJoin);
+        this.entity.usuario_id = usuario?.id || null;
+        this.entity.usuario = usuario || undefined;
+      }
       /* Verificar isso (TODO)
       if(this.queryParams?.numero_requisicao?.length) {
         this.entity.numero_requisicao = this.queryParams?.numero_requisicao;
