@@ -216,7 +216,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
 
   public loadConsolidacao(dados: ConsolidacaoDados) {
     this.itemsEntregas = dados.entregas.map(x => {
-      x.plano_entrega_entrega!.plano_entrega = dados.planosEntregas.find(pe => pe.id == x.plano_entrega_entrega!.plano_entrega_id);
+      if(x.plano_entrega_entrega) x.plano_entrega_entrega.plano_entrega = dados.planosEntregas.find(pe => pe.id == x.plano_entrega_entrega?.plano_entrega_id);
       let result = {
         id: x.id,
         entrega: x,

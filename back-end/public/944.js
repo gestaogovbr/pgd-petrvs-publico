@@ -1780,7 +1780,7 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
       if (entity.unidade_id != _this2.auth.unidade.id) yield _this2.auth.selecionaUnidade(entity.unidade_id);
       entity.comentarios = _this2.comentario.orderComentarios(entity.comentarios || []);
       entity.pausas = _this2.orderPausas(entity.pausas || []);
-      form.patchValue(formValue); /* Carrega os valores e dispara os eventos */
+      form.patchValue(_this2.util.fillForm(formValue, _this2.form.value)); /* Carrega os valores e dispara os eventos */
       _this2.loadEtiquetas();
     })();
   }
@@ -1846,8 +1846,9 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
           consolidacoes: []
         };
         if (!_this3.auth.isGestorUnidade(_this3.entity.unidade_id)) {
-          _this3.entity.usuario_id = _this3.auth.usuario.id;
-          _this3.entity.usuario = _this3.auth.usuario;
+          let usuario = yield _this3.usuarioDao.getById(_this3.auth.usuario.id, _this3.usuarioJoin);
+          _this3.entity.usuario_id = usuario?.id || null;
+          _this3.entity.usuario = usuario || undefined;
         }
         /* Verificar isso (TODO)
         if(this.queryParams?.numero_requisicao?.length) {
