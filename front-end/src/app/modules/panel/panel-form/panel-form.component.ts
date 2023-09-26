@@ -44,7 +44,7 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       id: { default: "" },
       tenancy_db_name: { default: "" },
       tenancy_db_host: { default: null },
-      tenancy_db_port: { default: null },
+      tenancy_db_port: { default: 3308 },
       tenancy_db_username: { default: null },
       tenancy_db_password: { default: null },
       log_traffic: { default: false },
@@ -52,7 +52,7 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       log_errors: { default: false },
       log_host: { default: null },
       log_database: { default: null },
-      log_port: { default: null },
+      log_port: { default: 3308 },
       log_username: { default: null },
       log_password: { default: null },
       notification_petrvs: { default: true },
@@ -72,7 +72,7 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       apelido: { default: "" },
       nome_entidade: { default: "" },
       abrangencia: { default: "" },
-      codigo_cidade: { default: null },
+      codigo_cidade: { default: 5300108 },
       login: { default: [] },
       dominio_url: { default: "" },
       // LOGIN
@@ -119,7 +119,7 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if (['id', 'tenancy_db_name', 'nome_entidade', 'codigo_cidade', 'abrangencia', 'email', 'cpf', 'nome_usuario', 'apelido'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if (['id', 'tenancy_db_name', 'nome_entidade', 'abrangencia', 'email', 'cpf', 'nome_usuario', 'apelido'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     } else if (controlName == "cpf" && !this.util.validarCPF(control.value)) {
       result = "Inválido";
