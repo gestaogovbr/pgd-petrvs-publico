@@ -19,7 +19,7 @@ const routes: Routes = [
   { path: 'login-retorno', component: LoginRetornoComponent, data: { title: "Retorno de login", login: true } },
   { path: 'login-unico', component: LoginUnicoComponent, data: { title: "Retorno de login"} },
   { path: 'config', component: ConfigComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Configurações", modal: true } },
-  { path: 'suporte', loadChildren: () => import('./modules/suporte/suporte.module').then(m => m.SuporteModule), canActivate: [AuthGuard] },
+  { path: 'suporte', loadChildren: () => import('./modules/suporte/suporte.module').then(m => m.SuporteModule), resolve: { config: ConfigResolver }},
   { path: 'uteis', loadChildren: () => import('./modules/uteis/uteis.module').then(m => m.UteisModule), canActivate: [AuthGuard] },
   { path: 'cadastros/afastamento', loadChildren: () => import('./modules/cadastros/afastamento/afastamento.module').then(m => m.AfastamentoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/cidade', loadChildren: () => import('./modules/cadastros/cidade/cidade.module').then(m => m.CidadeModule), canActivate: [AuthGuard] },
