@@ -21,7 +21,8 @@ class UsuarioSeeder extends Seeder
     {
         $perfis = Perfil::all();
         //
-        $usuarios = [
+
+        $usuarios_prf = [
             [
                 'email' => 'henrique.alves@prf.gov.br',
                 'nome' => 'Carlos Henrique Alves Lopes',
@@ -58,19 +59,30 @@ class UsuarioSeeder extends Seeder
                 'perfil_id' => $perfis->where('nome', 'Administrador')->first()->id,
             ],
             [
-                'email' => 'edson.franca@mj.gov.br',
-                'nome' => 'Edson Dario Silva de França',
-                'cpf' => '01380127416',
-                'apelido' => 'Dario',
-                'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
-            ],
-            [
                 'email' => 'edson.dario@gmail.com',
                 'nome' => 'Edson Dario Silva de França',
                 'cpf' => '01380127416',
                 'apelido' => 'Dario',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
             ],
+            
+            [
+                'email' => 'jonatas.ferreira@prf.gov.br',
+                'nome' => 'Jonata Cunha',
+                'cpf' => '09741166702',
+                'apelido' => 'Jonata',
+                'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+            ],
+            [
+                'email' => 'pauloflausino@gmail.com',
+                'nome' => 'Paulo Flausino',
+                'cpf' => '22374479854',
+                'apelido' => 'Paulo',
+                'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+            ],
+        ];
+
+        $usuarios_mgi = [
             [
                 'email' => 'geisimar.rech87@gmail.com',
                 'nome' => 'Geisimar Rech',
@@ -134,25 +146,13 @@ class UsuarioSeeder extends Seeder
                 'apelido' => 'Marco',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
             ],
-            [
-                'email' => 'jonatas.ferreira@prf.gov.br',
-                'nome' => 'Jonata Cunha',
-                'cpf' => '09741166702',
-                'apelido' => 'Jonata',
-                'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
-            ],
-            [
-                'email' => 'pauloflausino@gmail.com',
-                'nome' => 'Paulo Flausino',
-                'cpf' => '22374479854',
-                'apelido' => 'Paulo',
-                'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
-            ],
         ];
 
-        $unidade_pai = Unidade::first();
+        // Inserindo exercício nos usuários
+        $unidade_pai_prf = Unidade::where('SIGLA', 'PRF')->first();
+        $unidade_pai_mgi = Unidade::where('SIGLA', 'MGI')->first();
 
-        foreach($usuarios as $usuario)
+        foreach($usuarios_prf as $usuario)
         {
             $user = Usuario::where('cpf', $usuario['cpf'])->first() ?? new Usuario();
             $user->fill([
@@ -164,7 +164,30 @@ class UsuarioSeeder extends Seeder
             ]);
             $user->save();
             $integrante = new UnidadeIntegrante([
-                'unidade_id' => $unidade_pai->id,
+                'unidade_id' => $unidade_pai_prf->id,
+                'usuario_id' => $user->id
+            ]);
+            $integrante->save();
+            $lotacao = new UnidadeIntegranteAtribuicao([
+                'atribuicao' => "LOTADO",
+                'unidade_integrante_id' => $integrante->id
+            ]);
+            $lotacao->save();
+        }
+
+        foreach($usuarios_mgi as $usuario)
+        {
+            $user = Usuario::where('cpf', $usuario['cpf'])->first() ?? new Usuario();
+            $user->fill([
+                'email' => $usuario['email'],
+                'nome' => $usuario['nome'],
+                'cpf' => $usuario['cpf'],
+                'apelido' => $usuario['apelido'],
+                'perfil_id' => $usuario['perfil_id']
+            ]);
+            $user->save();
+            $integrante = new UnidadeIntegrante([
+                'unidade_id' => $unidade_pai_mgi->id,
                 'usuario_id' => $user->id
             ]);
             $integrante->save();

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
 use Database\Seeders\BulkSeeeder;
 
+use App\Models\Cidade;
 use App\Models\TipoAtividade;
 use App\Models\TipoAvaliacao;
 use App\Models\TipoModalidade;
@@ -16,6 +17,9 @@ use App\Models\TipoDocumento;
 use App\Models\Programa;
 use App\Models\Template;
 use App\Models\Unidade;
+use App\Models\EixoTematico;
+use App\Models\Entrega;
+use App\Models\Entidade;
 
 class IN24_2023Seeder extends Seeder
 {
@@ -26,9 +30,11 @@ class IN24_2023Seeder extends Seeder
      */
     
     public $timenow;
+    public $brasilia;
 
     public function __construct(){
         $this->timenow = now();
+        $this->brasilia = Cidade::where('codigo_ibge', '5300108')->sole();
     }
 
     public function run(){
@@ -1079,6 +1085,249 @@ class IN24_2023Seeder extends Seeder
             "unidade_id" => NULL,
           ],
         );
+
+        $eixos_tematicos = array(
+          array(
+            "id" => "0a80af0f-cae3-409f-9df9-195721587acd",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Engajamento",
+            "icone" => "bi bi-bell",
+            "cor" => "#FAEDCD",
+            "descricao" => "...",
+          ),
+          array(
+            "id" => "10837269-6f23-4978-a86e-b5d280af389a",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Criatividade",
+            "icone" => "bi bi-bell",
+            "cor" => "#E9EDC9",
+            "descricao" => "...",
+          ),
+          array(
+            "id" => "4634cec2-f829-46f7-9dfe-29f094bc807a",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Respeito",
+            "icone" => "bi bi-bell",
+            "cor" => "#FAEDCD",
+            "descricao" => "...",
+          ),
+          array(
+            "id" => "6c930a94-f778-4943-925d-7812c33258cc",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Diversidade",
+            "icone" => "bi bi-bell",
+            "cor" => "#FAEDCD",
+            "descricao" => "...",
+          ),
+          array(
+            "id" => "a28d8bf1-30b9-496e-b903-9568829ba3c1",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Colaboração",
+            "icone" => "bi bi-bell",
+            "cor" => "#FAEDCD",
+            "descricao" => "...",
+          ),
+          array(
+            "id" => "06e244eb-bb98-470f-8846-575e4dab16ee",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Pessoas",
+            "icone" => "bi bi-brightness-alt-high",
+            "cor" => "#50bf31",
+            "descricao" => "Fomentar o bem-estar, o desenvolvimento de competências, a disciplina e o desempenho dos servidores",
+          ),
+          array(
+            "id" => "13903305-91a2-4515-bb6e-4bc7883c147a",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Geral",
+            "icone" => "bi bi-book",
+            "cor" => "#55dd97",
+            "descricao" => "Eixo utilizado no órgão/entidade que não utilize os eixos-temáticos.",
+          ),
+          array(
+            "id" => "524f043f-cafd-4bd1-8687-643ef6be7c9b",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Logística e Infraestrutura",
+            "icone" => "bi bi-building",
+            "cor" => "#AEE2FF",
+            "descricao" => "Prover recursos, infraestrutura e soluções tecnológicas inovadoras.",
+          ),
+          array(
+            "id" => "6b867a0a-9349-447a-a4b9-cdacd44e317b",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Comunicação",
+            "icone" => "bi bi-camera-reels",
+            "cor" => "#FAEDCD",
+            "descricao" => "Fortalecer a imagem e a transparência institucional",
+          ),
+          array(
+            "id" => "c49516a9-d457-4c68-b3a3-5a4de3edda14",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Integração",
+            "icone" => "bi bi-diagram-3",
+            "cor" => "#FFEB99",
+            "descricao" => "Aprimorar a articulação e integração interinstitucional.",
+          ),
+          array(
+            "id" => "c68ea6e6-2b40-42c8-bb46-8b5b27ee6766",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Segurança Pública com Cidadania",
+            "icone" => "bi bi-heart",
+            "cor" => "#d73c3c",
+            "descricao" => "Potencializar ações de educação para o trânsito. Intensificar a fiscalização e o policiamento ostensivo. Aprimorar o atendimento de acidentes de trânsito. Fomentar ações preventivas de promoção a mobilidade. Intensificar ações responsivas de promoção da livre circulação. Potencializar ações de enfrentamento à criminalidade. Intensificar o enfrentamento a crimes ambientais. Otimizar o policiamento por inteligência. Intensificar ações de garantia e promoção dos direitos humanos.",
+          ),
+          array(
+            "id" => "d543188b-67f4-4a7a-9282-f5f20757ea79",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Sistema Penitenciário",
+            "icone" => "fa-solid fa-check-double",
+            "cor" => "#D0C9C0",
+            "descricao" => "Gerir o Sistema Penitenciário Federal, promovendo o isolamento das lideranças criminosas.",
+          ),
+          array(
+            "id" => "de6d350e-9a51-4549-9104-a00d6125290e",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Gestão e Inovação",
+            "icone" => "bi bi-award",
+            "cor" => "#FFD4B2",
+            "descricao" => "Aprimorar a governança e a gestão por resultados.",
+          ),
+        );
+
+        $entregas = array(
+          array(
+            "id" => "23bf3c25-016f-4b9c-9a61-f0fba2a701ab",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Modelo - Valor",
+            "descricao" => "Modelo de entrega na qual a meta espec´´ifica valor. Ex.: Financeiro.",
+            "tipo_indicador" => "VALOR",
+            "lista_qualitativos" => NULL,
+            "unidade_id" => NULL,
+          ),
+          array(
+            "id" => "375520ce-b147-441e-8b5f-688ccd65e1a1",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Modelo - Percentual",
+            "descricao" => "Modelo de entrega com meta em percentual",
+            "tipo_indicador" => "PORCENTAGEM",
+            "lista_qualitativos" => NULL,
+            "unidade_id" => NULL,
+          ),
+          array(
+            "id" => "4ef8f42e-3753-471f-b984-ad75cd596aa6",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Modelo - Avaliação do público",
+            "descricao" => "Modelo de entrega onde o público destinatário avalia a entrega.",
+            "tipo_indicador" => "QUALITATIVO",
+            "lista_qualitativos" => "[{\"key\": \"AVALIAOEXCELENTE\", \"value\": \"Avaliação Excelente\"}, {\"key\": \"AVALIAOBOA\", \"value\": \"Avaliação boa\"}, {\"key\": \"NOAVALIADA\", \"value\": \"Não avaliada\"}, {\"key\": \"AVALIADACOMORUIM\", \"value\": \"Avaliada como ruim\"}, {\"key\": \"AVALIADACOMOPSSIMA\", \"value\": \"Avaliada como péssima\"}]",
+            "unidade_id" => NULL,
+          ),
+          array(
+            "id" => "7aeef185-4e4c-4007-af81-0d0b5d82f45b",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Modelo - Quantidade",
+            "descricao" => "Modelo de entrega na qual a meta permite aferição por quantidade.",
+            "tipo_indicador" => "QUANTIDADE",
+            "lista_qualitativos" => NULL,
+            "unidade_id" => NULL,
+          ),
+          array(
+            "id" => "9ce92424-5b04-453a-af9d-7297641315c5",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Modelo - Qualitativo - Ordinal",
+            "descricao" => "Modelo de entrega na qual a meta é aferida através de níveis de qualidade",
+            "tipo_indicador" => "QUALITATIVO",
+            "lista_qualitativos" => "[{\"key\": \"EXCELENTE\", \"value\": \"Excelente\"}, {\"key\": \"MUITOBOM\", \"value\": \"Muito bom\"}, {\"key\": \"BOM\", \"value\": \"Bom\"}, {\"key\": \"RAZOVEL\", \"value\": \"Razoável\"}, {\"key\": \"RUIMNOENTREGUE\", \"value\": \"Ruim (Não entregue)\"}, {\"key\": \"NEUTRO\", \"value\": \"Neutro\"}]",
+            "unidade_id" => NULL,
+          ),
+          array(
+            "id" => "a08cb8f5-1b08-4e59-8a50-81962adf273b",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Modelo - Entrega com variação na execução",
+            "descricao" => "Modelo de entrega onde ocorrerá aferição de execução ao final do prazo da respectiva entrega",
+            "tipo_indicador" => "QUALITATIVO",
+            "lista_qualitativos" => "[{\"key\": \"CONCLUDATOTALMENTE\", \"value\": \"Concluída totalmente\"}, {\"key\": \"CONCLUDAPARCIALMENTE\", \"value\": \"Concluída parcialmente\"}, {\"key\": \"NOINICIADA\", \"value\": \"Não iniciada\"}, {\"key\": \"COMDEPENDNCIAS\", \"value\": \"Com dependências\"}, {\"key\": \"COMPROBLEMAS\", \"value\": \"Com problemas\"}]",
+            "unidade_id" => NULL,
+          ),
+        );
+
+        $entidades = array(
+          array(
+            "id" => "1eec6bcb-28c9-4b2e-ad37-250a10439647",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "sigla" => "MGI",
+            "nome" => "Ministério da Gestão e da Inovação em Serviços Públicos",
+            "abrangencia" => "NACIONAL",
+            "codigo_ibge" => $this->brasilia->codigo_ibge,
+            "uf" => "DF",
+            "carga_horaria_padrao" => 8,
+            "gravar_historico_processo" => 0,
+            "layout_formulario_atividade" => "COMPLETO",
+            "campos_ocultos_atividade" => NULL,
+            "nomenclatura" => NULL,
+            "url_sei" => "https://sei.economia.gov.br/",
+            "notificacoes" => "{\"enviar_email\": true, \"enviar_petrvs\": true, \"nao_notificar\": [], \"enviar_whatsapp\": true}",
+            "forma_contagem_carga_horaria" => "DIA",
+            "api_public_key" => NULL,
+            "api_private_key" => NULL,
+            "expediente" => "{\"sexta\": [], \"terca\": [], \"quarta\": [], \"quinta\": [], \"sabado\": [], \"domingo\": [], \"segunda\": [], \"especial\": []}",
+            "tipo_modalidade_id" => NULL,
+            "cidade_id" => $this->brasilia->id,
+            "gestor_id" => NULL,
+            "gestor_substituto_id" => NULL,
+          ),
+        );
+
+        $unidades = array(
+          array(
+            "codigo" => '17500', //Código SIAPE da UORG
+            "sigla" => 'MGI',
+            "nome" => 'Ministério da Gestão e da Inovação em Serviços Públicos',
+            "entidade_id" => '1eec6bcb-28c9-4b2e-ad37-250a10439647',
+            "instituidora" => 1,
+            "cidade_id" => $this->brasilia->id
+          ),
+        );
+
         
         // Existe uma sequência no Seeder. Se alterar vai dar ruim
         /*
@@ -1110,5 +1359,9 @@ class IN24_2023Seeder extends Seeder
         TipoDocumento::insertOrIgnore($tipos_documentos);
         Template::insertOrIgnore($templates);
         Programa::insertOrIgnore($programas);
+        EixoTematico::insertOrIgnore($eixos_tematicos);
+        Entrega::insertOrIgnore($entregas);
+        Entidade::insertOrIgnore($entidades);
+        Unidade::insertOrIgnore($unidades);
     }
 }

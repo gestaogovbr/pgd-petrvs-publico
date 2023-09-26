@@ -19,7 +19,7 @@ class UnidadePrfSeeder extends Seeder
         //cria a Unidade 'PRF' que será a raiz de todas as outras.
         $prf = new Unidade();
         $prf->fill([
-            'codigo' => '1',
+            'codigo' => '30802',
             'sigla' => 'PRF',
             'nome' => 'POLÍCIA RODOVIÁRIA FEDERAL',
             'entidade_id' => '52d78c7d-e0c1-422b-b094-2ca5958d5ac1',
