@@ -1,0 +1,311 @@
+C�digo,Sigla,Afastamento,Data In�cio,Data Fim,Situa��o
+0001,ABCARAUINT,ABANDONO DE CARGO AUSENCIA INTENCIONAL - EST,12/12/1990,,Ativa
+0002,ABCARINAIN,Abandono Cargo Inassiduidade Habitual - EST,12/12/1990,,Ativa
+0003,AFARGOEFET,Afas. Cargo Efetivo Art. 120 Lei 8.112/1990 - EST,12/12/1990,,Ativa
+0004,AFPACNFICA,Afas. Aperfei�. CNPq, FINEP e CAPES Fora Pa�s C/�nus - EST,12/12/1990,,Ativa
+0005,AFACFCNPCO,Afas. Aperfei�. CNPq, FINEP e CAPES No Pa�s C/�nus  -  EST,12/12/1990,,Ativa
+0006,AFCOMINQUE,Afas. Comiss�o de Inquer�to - EST,12/12/1990,,Ativa
+0007,AFCOMPDESP,Afas. Competi��o Desportiva - EST,12/12/1990,,Ativa
+0008,AFCUFOROAF,Afas. Curso de Forma��o Op��o Auxilio Financeiro - EST,04/12/1997,,Ativa
+0009,AFCUFOROCE,AFAS. CURSO FORMACAO OPCAO CARGO EFETIVO- C/ REMUN. -  EST,04/12/1997,,Ativa
+0010,AFESSUGUER,Afas. Escola Superior de Guerra - EST,12/12/1990,,Ativa
+0011,AFESTUEXCO,Afas. Estudo Exterior C/�nus - EST,12/12/1990,,Ativa
+0012,AFESTEXCOL,Afas. Estudo Exterior C/�nus Limitado - EST,12/12/1990,,Ativa
+0013,AFMISSEXSO,Afas. Estudo Exterior Sem �nus - EST,12/12/1990,,Ativa
+0014,AFEMELGVGD,Afas. Exer. Mand. Elet. Gov, Vice-Gov e  Dep S/Rem - EST,12/12/1990,,Ativa
+0015,AFEMAELEPR,Afas. Exer. Mand. Elet. Prefeito e Vice-Pref.  C/Rem. - EST,12/12/1990,,Ativa
+0016,AFEMAELPSR,Afas. Exer. Mand. Elet. Prefeito e Vice-Pref. S/Remun. - EST,12/12/1990,,Ativa
+0017,AFEMAELSEN,Afas. Exer. Mand. Elet. Senador 4 anos S/Remun - EST,12/12/1990,,Ativa
+0018,AFEMAELESR,Afas. Exer. Mand. Elet. Senador 8 anos S/Remun - EST,12/12/1990,,Ativa
+0019,AFEMAELEVE,Afas. Exer. Mand. Elet. Vereador C/Remun - EST,12/12/1990,,Ativa
+0020,AFEMAELVER,Afas. Exer. Mand. Elet. Vereador S/Remun - EST,12/12/1990,,Ativa
+0021,AFINTCOMIS,Afas. Integrar Comiss�o de Inquerito Administrativo - EST,12/12/1990,,Ativa
+0022,AFJUROUSER,Afas. Juri e Outros Servi�os - EST,12/12/1990,,Ativa
+0023,AFJUSTELEI,Afas. (Cess�o) para Justi�a Eleitoral - EST,12/12/1990,,Ativa
+0024,AFMISEXCON,Afas. Miss�o Exterior Com �nus - EST,12/12/1990,,Ativa
+0025,AFMISEXCOL,Afas. Miss�o Exterior Com �nus Limitado - EST,12/12/1990,,Ativa
+0026,AFMISEXSON,AFAS. MISSAO EXTERIOR SEM ONUS - EST,12/12/1990,,Ativa
+0028,AFPPPOGRCO,Afas.  Programa de P�s-Gradua��o Stricto-Sensu C/�nus - EST,10/04/1987,,Ativa
+0029,AFPPTRFPCO,Afas. Part.Prog.Trein.(Cong-Encont) Fora Pa�s C/�nus - EST,12/12/1990,,Ativa
+0030,AFPTRFPCOL,Afas. Part.Prog.Trein. (Congr) Fora  Pa�s C/�nus Limit - EST,12/12/1990,,Ativa
+0031,AFPPTRFPSO,Afas. Part.Prog.Trein.(Congr-Encont )Fora  Pa�s S/�nus - EST,12/12/1990,,Ativa
+0032,AFTRPPTPOL,Afas. Programa Treinamento Com �nus Limitado  - EST,12/12/1990,,Ativa
+0033,AFPPTRPCON,Afas. Programa de Treinamento Com �nus - EST,12/12/1990,,Ativa
+0034,AFPPTROSON,Afas. Programa de Treinamento  Sem �nus - EST,12/12/1990,,Ativa
+0035,AFPCPCMAG,Afas. Prestar Colabora��o, PCCTAE e Magist�rio Federal - EST,12/12/1990,,Ativa
+0036,AFPCOUTICT,Afas. Prestar Colabora��o a Outra ICT - EST,03/12/2004,,Ativa
+0038,AFPSOOCCON,CESSAO (COM ONUS) PARA OUTROS ORGAOS - EST,12/12/1990,,Ativa
+0039,AFSORINTSO,Afas. Servir Organ. Internacional S/�nus - EST,16/12/1998,,Ativa
+0040,AFVIASEPCO,Afas. Viagem/Serv Fora do Pa�s Com �nus - EST,12/12/1990,,Ativa
+0041,AFVISFPCOL,Afas. Viagem /Serv Fora do Pa�s Com �nus Limitado - EST,12/12/1990,,Ativa
+0042,AFVISEPACO,Afas. Viagem/Serv Pa�s Com �nus - EST,12/12/1990,,Ativa
+0043,AFVISPACOL,Afas. Viagem/Serv Pa�s Com �nus Limit. - EST,12/12/1990,,Ativa
+0044,AFPREVENTI,Afas. Preventivo - EST,12/12/1990,,Ativa
+0045,AFTEMPSERV,Afas. Tempor�rio Serv. Art. 20 Lei 8429/1992 - EST,03/06/1992,,Ativa
+0046,AUSALELEIT,Aus�ncia Alistamento Eleitoral - EST,12/12/1990,,Ativa
+0047,ATRSAIANTE,Atraso ou Sa�da Antecipada - EST,12/12/1990,,Ativa
+0048,CARREIDESC,CARREIRA DESCENTRALIZADA - EST,12/12/1990,,Ativa
+0049,AUSCASAMEN,Casamento / Uni�o Est�vel (Lic. Gala) - EST,12/12/1990,,Ativa
+0050,DESJUDICIA,Decis�o Judicial  (C/Rem.) -  EST,01/09/2006,,Ativa
+0051,DESAMAMENT,Descanso Amamenta��o - EST,12/12/1990,,Ativa
+0052,DENSSIETRA,Deslocam. Nova Sede Situa��o em Transito - EST,12/12/1990,,Ativa
+0053,DISPONIBID,Disponibilidade Constitui��o Federal - EST,12/12/1990,,Ativa
+0054,DOACSANGUE,Doa��o de Sangue - EST,12/12/1990,,Ativa
+0055,ELEICONSER,Eleitoral Convoca��o Servidores - Lei 9.504 /1997,12/12/1990,,Ativa
+0056,ELSUSPAGTO,Eleitoral Suspens�o Pagamento - EST,06/05/1966,,Ativa
+0057,EXERCEXTER,EXER. EXTER. PAR. 6  E 7 , ART. 93, LEI 8.112/1990 - EST,12/05/1994,,Ativa
+0058,EXERPROVIS,EXER. PROVIS. PARAG 2 , ART. 84, LEI 8112/1990 - EST,12/12/1990,,Ativa
+0059,EXEPROVISO,EXER. PROVISORIO ART. 37, LEI 8.112 DE 1990 - EST,05/05/1997,,Ativa
+0060,AFALPESFAM,Falecimento Pessoa da  Familia - EST,12/12/1990,,Ativa
+0061,AFPAONESTD,Afast. no Pa�s (Com �nus) Est/Dout/Mestrado - EST,10/04/1987,,Ativa
+0062,FAGRABDEJU,Falta Motivo Greve Abonada Dec. Jud./Admin. - EST,12/12/1990,,Ativa
+0063,FANOABDEAD,Falta Justificada Decis�o Administrativa - EST,12/12/1990,,Ativa
+0064,FANOABDEJU,Falta Justificada Decis�o Judicial - EST,12/12/1990,,Ativa
+0065,FPOMOGREVE,Falta Motivo Greve - EST,12/12/1990,,Ativa
+0066,FALTA,Falta - EST,12/12/1990,,Ativa
+0067,LICADOTANT,Lic. Adotante Crian�as At� 1 ano - EST,12/12/1990,,Ativa
+0068,LICADOTPRO,Lic. Adotante Crian�as At� 1 Ano Prorrog. - EST,10/09/2008,,Ativa
+0069,LICADOPROR,Lic. Adotante Crian�a Maior 1 Ano Prorrog. - EST,10/09/2008,,Ativa
+0070,LICADOCRMA,Lic. Adotante Maior 1 Ano - EST,12/12/1990,,Ativa
+0071,LICADOSEJU,Lic. Adotante Senten�a judicial - EST,12/12/1990,,Ativa
+0072,LICATIVEMP,Lic. Atividade Empresarial - EST,03/12/2004,,Ativa
+0073,LICGESTPRO,Lic. Gestante Prorroga��o - EST,12/12/1990,,Ativa
+0074,LICGESTANT,Lic. Gestante  ( Concedida Administrat.) - EST,12/12/1990,,Ativa
+0075,LICGESTABO,Lic. Gestante Aborto - EST,12/12/1990,,Ativa
+0076,LICGESTNAT,Lic. Gestante Natimorto - EST,12/12/1990,,Ativa
+0079,LICATPOCRE,Lic. Atividade Politica Com Remunera��o - EST,05/05/1997,,Ativa
+0080,LICATIPOSR,Lic. Atividade Politica Sem Remunera��o - EST,05/05/1997,,Ativa
+0082,LICDMCLREM,Lic. Desemp. Mand. Classista (Com Ressarcimento) - EST,14/10/1997,,Ativa
+0083,LICSEMILIT,Lic. Servi�o Militar - EST,12/12/1990,,Ativa
+0084,LICTRSAUDE,LIC. TRATAMENTO DE SAUDE - EST,12/12/1990,,Ativa
+0085,LICTINPART,Lic. Tratar de Interesses Particulares - EST,12/12/1990,,Ativa
+0086,LICPATERNI,Lic. Paternidade - EST,12/12/1990,,Ativa
+0087,LICACIDSER,Lic. Acidente em Servi�o - EST,12/12/1990,,Ativa
+0088,LICAFACONJ,LIC. MOTIVO ACOMPANHAMENTO CONJUGE OU COMPANHEIRO- EST,12/12/1990,,Ativa
+0089,LICDPESFAM,Lic. Motiv. Doen. Pes. Fam. Ap�s 60 dias S/Remunera��o - EST,12/12/1990,,Ativa
+0090,LICMDPEFAM,Lic. por Motivo de Doen�a em Pessoa da Fam�lia - EST,05/05/1997,,Ativa
+0091,OPCARACULI,Op��o Por Outro Cargo, Acumula��o Licita IF'S - EST,12/12/1990,,Ativa
+0092,PSNACNEPER,Participa��o Sist. Nac. Negocia��o Permanente - EST,10/06/2003,,Ativa
+0093,PESUCONMUL,Penalidade Suspens�o Convertida em Multa - EST,12/12/1990,,Ativa
+0094,PSUSPENSAO,Penalidade Suspens�o - EST,12/12/1990,,Ativa
+0095,DISESTDFMU,CESS�O SUS - Disp. Estados, D.F.  e   Mun.  -  EST,19/12/1991,,Ativa
+0096,SUSTEMADMI,Suspens�o Tempor�ria Administrativa - EST,12/12/1990,,Ativa
+0097,SUPOFALREC,Suspens�o por Falta de  Recadastramento - EST,13/06/1997,,Ativa
+0098,TRADOESLEI,Tratamento Doen�a Especificada em Lei - EST,12/12/1990,,Ativa
+0099,AFATIVESIN,Afas. Atividades de Eventos Sindicais - CLT,10/11/1943,,Ativa
+0100,AFATIVSOCI,Afas. Atividades Socias - CLT,10/11/1943,,Ativa
+0101,AFSREDSIEM,Afas. Dirigente Sindical Empresa S/Remunera��o - CLT,10/11/1943,,Ativa
+0102,AFEMAELECR,Afas. Exerc�cio Mandato Eletivo Com Remunera��o - CLT,10/11/1943,,Ativa
+0103,AFEXMELSRE,Afas. Exerc. Mandato Eletivo Sem Remunera��o - CLT,10/11/1943,,Ativa
+0104,AFAPPTPCON,Afas. Part. Prog. Trein. (Congr) No e Fora Pa�s C/�nus - CLT,10/11/1943,,Ativa
+0105,AFATPPTPOL,Afas. Part. Prog. Trein(Congr) No e Fora Pa�s C/�nus Lim-CLT,10/11/1943,,Ativa
+0106,AFAPPTPSON,Afas. Part. Prog. Trein.(Congr) No e Fora Pa�s Sem �nus-CLT,10/11/1943,,Ativa
+0107,AFTRABCAMP,Afas. Trabalho de Campo - CLT,10/11/1943,,Ativa
+0108,AFSEREXTER,Afas. Servi�o Externo - CLT,10/11/1943,,Ativa
+0109,AFVISEFPCO,Afas. Viagem Servi�o Fora Pa�s Com �nus - CLT,10/11/1943,,Ativa
+0110,AFVISEPCON,Afas. Viagem Servi�o No Pa�s Com �nus - CLT,10/11/1943,,Ativa
+0111,AFVISEPCOL,Afas. Viagem Servi�o Pa�s Com �nus Limitado - CLT,10/11/1943,,Ativa
+0112,ATRASAIANT,Atraso ou Sa�da Antecipada - CLT,10/11/1943,,Ativa
+0113,AUALUSELEI,Aus�ncia Alistamento Eleitoral - CLT,28/02/1967,,Ativa
+0114,AUXDOEN�A,Aux�lio Doen�a - CLT,10/11/1943,,Ativa
+0115,AUXDOEN�CR,Aux�lio Doen�a Com Remunera��o - CLT,10/11/1943,,Ativa
+0116,CASAMENTO,Casamento - CLT,28/02/1967,,Ativa
+0117,COMJUSTI�A,Comparecimento Justi�a - CLT,28/02/1967,,Ativa
+0118,CONSERINAD,Convoca��o Servi�os Inadiaveis - CLT,10/11/1943,,Ativa
+0119,DESAMANENT,Descanso Amamenta��o - CLT,10/11/1943,,Ativa
+0120,DIREGFILHO,Dispensa Registro de Filho - CLT,10/11/1943,,Ativa
+0121,AFCMREMEX,AFAS. CARREIRA MRE MISSAO EXTERIOR (SUSP. PAGAM.) - EST,29/12/2006,,Ativa
+0122,DOASANGUE,Doa��o Sangue - CLT,28/02/1967,,Ativa
+0123,EXMEDPERIO,Exame M�dico Peri�dico - CLT,10/11/1943,,Ativa
+0124,FALPESFAMI,Falecimento Pessoa Familia - CLT,28/02/1967,,Ativa
+0125,FALTANORMA,Falta - CLT,10/11/1943,,Ativa
+0126,FNOABDEADM,Falta Justificada Decis�o Administrativa - CLT,10/11/1943,,Ativa
+0127,FNOABDEJUD,Falta Justificada Decis�o Judicial - CLT,10/11/1943,,Ativa
+0128,FAPOMOGREV,Falta Motivo Greve - CLT,10/11/1943,,Ativa
+0129,AFREMUCOMP,Afas. Remunera��o Compensat�ria - EST,08/04/2002,,Ativa
+0130,FMGABDEJUD,Falta Motivo Greve Abonada Dec. Jud./Admin. - CLT,10/11/1943,,Ativa
+0131,FOLG CAMPO,Folga Campo - CLT,10/11/1943,,Ativa
+0132,FOLCOMPENS,Folgas Compensat�rias - CLT,10/11/1943,,Ativa
+0133,FOLDOMINIC,Folgas Dominicais - CLT,10/11/1943,,Ativa
+0134,GALAPROFES,Gala -  Professores - CLT,10/11/1943,,Ativa
+0135,INVALPROVI,Invalidez Provis�ria - CLT,10/11/1943,,Ativa
+0136,LIBAPOPAGA,libera��o Ap�s Pagamento - CLT,10/11/1943,,Ativa
+0137,LIBDIANIVE,Libera��o Dia Anivers�rio - CLT,10/11/1943,,Ativa
+0138,LIBESTUDAN,Libera��o Estudante - CLT,10/11/1943,,Ativa
+0139,LICADOPROG,Lic. Adotante Prorroga��o - RGPS,10/09/2008,,Ativa
+0140,LICEADOTAN,Lic. Adotante - RGPS,16/04/2002,,Ativa
+0141,LICEADOTPR,Lic. Adot. Crian�a Maior de 4 a 8 anos Prorroga��o - CLT,10/09/2008,,Ativa
+0142,LICENADOTA,Lic. Adotante Crian�a de 4 a 8 anos - CLT,10/11/1943,,Ativa
+0143,LICEN�ADOT,Lic. Adotante Crian�a de 1 a 4 anos - CLT,10/09/2008,,Ativa
+0144,LICEADOPRO,Lic. Adot. Crian�a Maior de 1 e Menor de 4 anos Prorrog -CLT,10/09/2008,,Ativa
+0145,LICACDEFIL,Lic. Acomp. Desenvol. Evolutivo Filho - CLT,10/11/1943,,Ativa
+0146,LICADTPOSR,Lic. Disputa Atividade Politica Com Remunera��o - CLT,10/11/1943,,Ativa
+0147,LICESPECIA,Lic. Especial - CLT,10/11/1943,,Ativa
+0148,LICESPPAIS,Lic. Especial para Pa�s - CLT,10/11/1943,,Ativa
+0149,LICMATERNI,Lic. Maternidade -  RGPS,10/11/1943,,Ativa
+0150,LICMARTESO,Lic. Maternidade (S/Pgto) - RGPS,16/04/2002,,Ativa
+0151,LICMATEABO,Lic. Maternidade Aborto - RGPS,10/11/1943,,Ativa
+0152,LICMATABSO,Lic. Maternidade Aborto Sem Onus - RGPS,10/11/1943,,Ativa
+0153,LICMATEPRO,Lic. Maternidade Prorroga��o - RGPS,10/09/2008,,Ativa
+0154,LICMATERSO,Lic. Maternidade Prorroga��o (S/Pagto) - RGPS,10/09/2008,,Ativa
+0155,LICMAPRINS,Lic. Mater. Prorrog. S/Exclus�o  Pag. Conv. INSS - RGPS,10/09/2008,,Ativa
+0156,LICMSEPCIN,Lic. Martern. S/Exclus�o Conv�nio INSS - CLT,10/09/2008,,Ativa
+0157,LICPAIADOT,Lic. Pai Adotivo - CLT,10/11/1943,,Ativa
+0158,LICEPATERN,Lic. Paternidade - CLT,10/11/1943,,Ativa
+0159,LICACIDTRA,Lic. Acidente Trabalho - CLT,10/11/1943,,Ativa
+0160,LICATEMCIN,Lic. Acidente Trabalho Empresa - Conv�nio INSS - CLT,10/11/1943,,Ativa
+0161,LICMDOPEFA,Lic. Motivo Doen�a Pessoa Familia - CLT,10/11/1943,,Ativa
+0162,LICTRASAUD,LIC. TRATAMENTO SAUDE - (ATE 15 DIAS) -  RGPS,10/11/1943,,Ativa
+0163,LICTRATSAU,Lic. Tratamento Sa�de - Conv�nio INSS - CLT,10/11/1943,,Ativa
+0164,LICTSCECIN,Lic. Tratamento Sa�de Cid Especial - Conv�nio INSS - CLT,10/11/1943,,Ativa
+0165,LICTSCRECI,Lic. Tratamento Sa�de Cid Reincid Esp. Conv. INSS - CLT,10/11/1943,,Ativa
+0166,LICTSSCCIN,Lic. Tratamento Sa�de S/Complemento Conv. INSS - CLT,10/11/1943,,Ativa
+0167,LICTRSARGP,LIC. TRATAMENTO SAUDE  (+ DE 15 DIAS)  -  CONT. RGPS,10/11/1943,,Ativa
+0168,PROCONPUBL,Provas Concurso P�blico - CLT,10/11/1943,,Ativa
+0169,PROEXVESTI,Provas Exame Vestibular - CLT,28/02/1967,,Ativa
+0170,PUNI��ES,Puni��es - CLT,10/11/1943,,Ativa
+0171,SERVMILITA,Servi�o Militar - CLT,10/11/1943,,Ativa
+0172,SUSCONTRAB,Suspens�o Contrato Trabalho - CLT,10/11/1943,,Ativa
+0173,AFASSREMUN,AFastamento Sem Remunera��o - CLT,10/11/1943,,Ativa
+0174,SUTEMADMIN,Suspens�o Tempor�ria Administrativa - CLT/CDT,10/11/1943,,Ativa
+0214,HEDISPONIB,HIST. EST L1711/52- Disponibilidade,01/11/1952,,Ativa
+0221,HEFERIAS,F�rias - EST,12/12/1990,,Ativa
+0230,HELICINPAR,HIST. EST L1711/52- Lic. Interesse Particular,01/11/1952,,Ativa
+0261,LICGESTSAU,Lic. Gestante (Concedida SIASS) - EST,10/11/2009,,Ativa
+0262,AFACESSAO,CESSAO (SEM PAGTO)  OUTROS ORGAOS/PODERES ART. 93 - EST,12/12/1990,,Ativa
+0269,HEAFSORINT,HIST. EST- Afas. Servir em Organ. Internacional S/�nus,12/12/1990,,Ativa
+0270,LICTRATSIN,LICENCA TRATAMENTO SAUDE INFERIOR 15 DIAS - EST,12/12/1990,,Ativa
+0274,RECLUSAO,RECLUS�O (Pris�o) - EST,12/12/1990,,Ativa
+0286,AFMINESTAD,Afas. Ministro de Estado - Sem �nus - EST,12/12/1990,,Ativa
+0287,LICPRPAS,Lic. Pr�mio Por Assiduidade - EST,12/12/1990,,Ativa
+0292,TRATDOESLE,Tratamento Doen�a Especificado em Lei - EST,31/08/2001,,Ativa
+0293,LICDMCSREM,Lic. Desemp. Mand.  Classista (Sem Remunera��o) - EST,14/10/1997,,Ativa
+0294,RECESESTAG,RECESSO ESTAGIARIO - ETG,26/09/2008,,Ativa
+0295,CESSAOONU,CESSAO (SEM ONUS) PARA OUTROS ORGAOS - EST,12/12/1990,,Ativa
+0296,ELESUSPAGT,Eleitoral Suspens�o Pagamento - CLT,06/05/1966,,Ativa
+0298,PRISPROVIS,Pris�o Provis�ria - item III Dec 23390/2002 - RMI - GDF,26/11/2002,,Ativa
+0300,LICTRAINPA,Lic. Tratar de Interesses Particulares - RMI-GDF,18/12/1984,,Ativa
+0301,AFASDESERT,Deser��o - RMI,18/12/1984,,Ativa
+0302,AFASINDSUS,Afas. Sindic�ncia (Suspens�o - art. 145) - EST,12/12/1990,,Ativa
+0303,AFATEMPRMI,Afas. Tempor�rio art. 6 Lei 10486/02 - RMI,01/10/2001,,Ativa
+0304,LICDMCDECJ,Lic. Desemp. Mand. Classista  (C/Ressarc - Dec. Jud.) - EST,14/10/1997,,Ativa
+0305,AFPARTPLO,Afas. Participa��o em Proc. de Liq. de outro Orgao - EST,12/12/1990,,Ativa
+0310,AFALICEXTD,Licen�a Extraordin�ria (Serv. Ext. Bras) Lei 11440/06 - EST,30/06/1986,,Ativa
+0311,AFATRIQUAD,Afas. Trimestral ou Quadrimestral - Dec. 93325/86 - EST,03/10/1986,,Ativa
+0312,AFAVINDPER,Vinda Per��dica - Decreto 93325/86,10/10/1972,,Ativa
+0313,AFATRANSIT,Em Transito - art. 22 - Decreto 93325/86 - EST,03/10/1986,,Ativa
+0315,AFPCMAGIST,AFAS. P/ PRESTAR COLABORACAO, CARREIRA DO MAGISTERIO - EST,31/12/2012,,Ativa
+0316,AFEXMINEST,Afas.  exercer Cargo Pol�tico de Ministro de Estado - EST,12/12/1990,,Ativa
+0317,DEJUDICIAL,Decis�o Judicial  - S/Remun. - EST,01/09/2006,,Ativa
+0318,SUSPDISCIP,Suspens�o Disciplinar - CLT,10/11/1943,,Ativa
+0319,FALTAETG,Falta - Estagi�rio - ETG,08/07/2014,,Ativa
+0320,FALJUSTETG,Falta Justificada - Estagiario - ETG,08/07/2014,,Ativa
+0324,LICPATPROR,Lic. Paternidade Prorroga��o - EST,04/05/2016,,Ativa
+0325,LICPATPCLT,Lic. Paternidade  Prorroga��o - CLT,09/03/2016,,Ativa
+0326,LICGESTPR,Lic. Gestante Prorroga��o - Dec. Jud./Adm - EST,12/12/1990,,Ativa
+0327,LICADOT,Lic. Adotante - EST,13/12/2016,,Ativa
+0328,LICADOPRO,Lic. Adotante - Prorroga��o - EST,13/12/2016,,Ativa
+0329,LICPATDECJ,Lic. Paternidade - Dec. Jud. - EST,12/12/1990,,Ativa
+0330,AFACURFORM,Afas. Curso Form Op��o Cargo Efet (Dec. Judic)  C/Rem - EST,08/04/1998,,Ativa
+0332,HISTRECLUS,HIST. EST - Reclus�o (Pris�o),12/12/1990,,Ativa
+0333,LICMAPROJ,Lic. Matern. Prorrog.  - Dec. Jud./Adm. -  RGPS,10/09/2008,,Ativa
+0334,LIMAPROJSP,Lic. Matern. Prorrog. (S/Pagto) - Dec. Jud/Adm. -  RGPS,10/09/2008,,Ativa
+0335,LICINCSREM,Lic. Incentivada Sem Remunera��o - EST,13/09/2017,,Ativa
+0336,LICSREMPR,Lic. Incentivada Sem Rem.  Prorroga��o - EST,13/09/2017,,Ativa
+0337,AFCFORSRDJ,Afas. Curso de Form S/Rem. (Dec. Jud.) - EST,04/12/1997,,Ativa
+0338,LICAPCREMD,Lic. Ativ. Pol�tica C/Rem. (Desincompatibiliza��o) - EST,05/05/1997,,Ativa
+0339,LICTRATSDJ,Lic. Tratam. Sa�de (Dec. Judicial) - EST,12/12/1990,,Ativa
+0340,RECLDJUD,Reclus�o (Pris�o) - Dec. Jud -  Com/Pagto - EST,12/12/1990,,Ativa
+0341,AFASTCARF,Afastamento Conselheiro CARF - EST,09/03/2018,,Ativa
+0342,PRIPREVE,Pris�o Preventiva PCDF - EST,11/12/1990,,Ativa
+0343,AFCESSEMP,CESSAO   � 6 , ART 93, LEI 8112/90 - EST,12/12/1990,,Ativa
+0344,LICTINLTIP,Lic. para Tratar de Interesse Particular-LTIP - RMI,18/12/1984,,Ativa
+0345,LICTINPCE,Lic. Tratar de Interesse Particular-Cargo Eletivo - RMI,18/12/1984,,Ativa
+0346,LTSPROPRIA,Lic. para Tratamento de Sa�de Pr�pria-LTSP - RMI,18/12/1984,,Ativa
+0347,LTSPFAM,Lic.  Tratamento de Sa�de de Pessoa da Fam�lia - RMI,18/12/1984,,Ativa
+0348,DESERC,Deser��o - RMI,18/12/1984,,Ativa
+0349,AFCARGOEFE,AFAS CARGO EFETIVO ART. 120 LEI 8112/90 SEM REMUN. -  EST,12/12/1990,,Ativa
+0350,CSAPEXSR,CESS�O (Sem Pagto) Serv. Social Aut�nomo - Lei 13.844/2019,01/01/2019,,Ativa
+0352,AUARGECC,Aus�ncia para Atividades Relacionadas � GECC - EST,01/04/2019,,Ativa
+0353,AUATSIND,Aus�ncia para Atividades Sindicais - EST,01/04/2019,,Ativa
+0354,AUCOMED,Aus�ncia para Consulta M�dica - EST,01/04/2019,,Ativa
+0355,AUCOSOBRE,Aus�ncia para Compensar Sobreaviso  - EST,01/04/2019,,Ativa
+0356,AUDBANHO,Aus�ncia para d�bito em Banco de Horas - EST,01/04/2019,,Ativa
+0357,AURECESSO,Aus�ncia para Usufruto de Recesso - EST,01/04/2019,,Ativa
+0358,HEXCOATSIN,Horas Exced. para Compensar Ativ. Sindicais - EST,01/04/2019,,Ativa
+0359,HEXCOCOMED,Horas Exced. para Compensar Consulta M�dica - EST,01/04/2019,,Ativa
+0360,HEXCOGECC,Horas Exced. para  Compensar Horas de GECC - EST,01/04/2019,,Ativa
+0361,HEXCOREC,Horas Exced. para Compensar Recesso - EST,01/04/2019,,Ativa
+0362,HEXCREDBH,Horas Exced. para Cr�dito em Banco de Horas - EST,01/04/2019,,Ativa
+0363,HEXSOBRE,Horas Exced. em Decorr�ncia de Sobreaviso - EST,01/04/2019,,Ativa
+0364,HNCATRGECC,Horas n�o Compens. Ativ. Relacionadas � GECC - EST,01/04/2019,,Ativa
+0365,HNCATSIND,Horas n�o Compens.  de Ativ. Sindicais - EST,01/04/2019,,Ativa
+0366,HNCOCOMED,Horas n�o Compens. de Consulta M�dica - EST,01/04/2019,,Ativa
+0367,HNCOREC,Horas n�o Compens. de Recesso - EST,01/04/2019,,Ativa
+0368,CESSAOESPE,CESSAO ESPECIAL (O.S.) ART. 14, LEI 9637/98 E CORRELATAS,18/05/1998,,Ativa
+0369,REQUISSBDC,REQUISICAO  SBDC - Art. 122 - Lei 12529/2011,01/11/2011,,Ativa
+0370,REQUISICMP,REQUISICAO,20/03/1995,,Ativa
+0371,REQUISELEI,REQUISICAO (LEI ELEITORAL) - LEI 6.999/1982,12/12/1990,,Ativa
+0372,REQUISICLC,REQUISICAO (AGU) ART. 47 - LEI COMPLEMENTAR 73/1993,11/02/1993,,Ativa
+0373,REQUISMPU,REQUISICAO (MPU) LEI COMPLEM. N  75/93 E LEG. CORRELATAS,21/05/1993,,Ativa
+0374,REQUISAGLO,REQUISICAO (AGLO) LEI 13.474/2017,24/08/2017,,Ativa
+0375,REQUISDPU,REQUISIC�O (DPU) Lei n� 9.020/1995,31/03/1995,,Ativa
+0376,REQUISCMD,REQUISICAO (MINIST. DEFESA) - ART. 66, DEC. 9.570/2018,20/11/2018,,Ativa
+0377,COMAVALPER,Comparecimento para Avalia��o Pericial - EST,01/08/2019,,Ativa
+0378,AUJUSTCOMP,Aus�ncia Justificada Compens�vel - EST,12/09/2018,,Ativa
+0379,AUJUSNCOMP,Aus�ncia Justificada N�o Compensada - EST,12/12/1990,,Ativa
+0380,FALJUCFFOM,Falta Justificada por Caso Fortuito ou For�a Maior - EST,12/12/1990,,Ativa
+0381,AUCOMAUDI,Aus�ncia para Comparecimento em Audi�ncia - EST,12/12/1990,,Ativa
+0382,REQUIIBRAM,REQUISICAO (IBRAM)  LEI N  11.906/2009,21/01/2009,,Ativa
+0383,REQUISICAO,REQUISICAO,18/06/2019,,Ativa
+0384,REQUISCEPL,REQUISICAO (EPL)  ART. 51   1  E    2   - LEI 13.464/2017,11/07/2017,,Ativa
+0385,CESPEMBR,CESSAO ESP. (SEM ONUS)  MP 907/19 - EMBRATUR,27/11/2019,,Ativa
+0386,REQAGEREGU,REQUISICAO (AG. REGULAD.) - ART 16 - LEI 9986/2000,19/07/2000,,Ativa
+0389,TELETRABIN,TELETRABALHO INTEGRAL - PROGRAMA DE GEST�O,01/09/2020,,Ativa
+0390,TELETRABPA,TELETRABALHO PARCIAL - PROGRAMA DE GEST�O,01/09/2020,,Ativa
+0391,LICMDPFAMI,LIC. POR MOTIVO DE DOENCA EM PESSOA FAM. - EST  (DEC. JUD.),05/05/1997,,Ativa
+0393,ACDESSERVD,ACAO DE DESENVOLVIMENTO EM SERVICO - DIAS,06/09/2019,,Ativa
+0394,ACDESSERVH,ACAO DE DESENVOLVIMENTO EM SERVICO - HORAS,06/09/2019,,Ativa
+0395,EDINPGFAGU,EXERC DESCENT INTEGRACAO PGFN-AGU - EST,03/11/2020,,Ativa
+0396,LICCAP25I1,LIC CAPAC - ART 25, INC I - DEC 9991/2019,06/09/2019,,Ativa
+0397,LICCAP25II,LIC CAPAC - ART 25, INC II - DEC 9991/2019,06/09/2019,,Ativa
+0398,LICAP25IVA,LIC CAPAC - ART 25, INC IV-A - DEC 9991/2019,06/09/2019,,Ativa
+0399,LICAP25IVB,LIC CAPAC - ART 25, INC IV-B - DEC 9991/2019,06/09/2019,,Ativa
+0400,TRPRPROGES,TRAB PRESENCIAL PARCIAL OU CONVOCA��O EXCEPC -  PROGR GEST�O,01/09/2020,,Ativa
+0401,TRPRESGEST,TRABALHO PRESENCIAL INTEGRAL - PROGRAMA DE GEST�O,01/09/2020,,Ativa
+0402,CESSEBSERH,CESS�O EBSERH Art . 7� - Lei 12.550/2011,16/12/2011,,Ativa
+0403,EXEXTEXTER,EXERC. EXTER � 2� - ART. 17 - LEI 13681/2018,19/06/2018,,Ativa
+0404,LICIPPRORR,Lic. Tratar de Interesses Particulares Prorroga��o - EST,25/03/2021,,Ativa
+0405,LICIPEXCEP,Lic. Tratar de Interesses Partic. Autoriz. Ministro  - EST,10/06/2016,,Ativa
+0406,ADIDCIVPOL,ADIDO CIVIL/POLICIAL - SEM �NUS (ABIN/PF),12/12/1990,,Ativa
+0407,CESSAOPOLI,CESSAO SERVIDOR POLICIAL - PF/PRF,12/12/1990,,Ativa
+0408,TELETPOLIN,TELETRABALHO INTEGRAL SERVIDOR POLICIAL - PF/PRF,01/09/2020,,Ativa
+0409,TELETPOLPA,TELETRABALHO PARCIAL SERVIDOR POLICIAL - PF/PRF,01/09/2020,,Ativa
+0410,TRABREMETG,EST�GIO REMOTO AGU,13/07/2021,,Ativa
+0411,AFAESDOMES,Afast. no Pa�s (Com �nus) Est/Dout/Mest - DEC. JUD.,10/04/1987,,Ativa
+0412,RECESFOREN,RECESSO FORENSE -  DPU,23/12/2020,,Ativa
+0413,LICCASACOL,LIC. CASAMENTO/UNI�O EST�VEL - ACORDO COLETIVO,01/01/2020,,Ativa
+0414,AFREMCOMPS,AFAST REMUN COMPENSATORIA  S/PAGTO - EST,08/04/2002,,Ativa
+0415,ABOACTCLTE,ABONO (ACT) - CLT/EMPRESAS,02/01/2020,,Ativa
+0416,TRABREMDJU,TRABALHO REMOTO  COVID -19 (DEC JUD),06/06/2022,,Ativa
+0417,FALECCLTAC,FALECIMENTO PESSOA FAMILIA - CLT/ACORDO COLETIVO/RESOLU��O,04/09/2020,,Ativa
+0419,AFCOVDECJU,AFASTAMENTO COVID -19 (DEC JUD),06/06/2022,,Ativa
+0421,LICAPA25I1,LIC CAPAC - ART 25, INC I - DEC 9991/2019 (AT� 30 DIAS),06/09/2019,,Ativa
+0422,LICAPA25II,LIC CAPAC - ART 25, INC II - DEC 9991/2019  (AT� 30 DIAS),06/09/2019,,Ativa
+0423,LICCA25IVA,LIC CAPAC - ART 25, INC IV-A - DEC 9991/2019  (AT� 30 DIAS),06/09/2019,,Ativa
+0424,LICCP25IVB,LIC CAPAC - ART 25, INC IV-B - DEC 9991/2019 (AT� 30 DIAS),06/09/2019,,Ativa
+0425,LICACSERDJ,LIC ACIDENTE EM SERVI�O - (DEC JUD),12/12/1990,,Ativa
+0426,LITRATSADJ,LIC TRATAM SAUDE (DEC JUD) - EST,03/02/2009,,Ativa
+0427,LICMADIRJU,PRORROGA��O LIC GESTANTE POR INTERNA��O - ADI 6327/22 -  EST,08/03/2022,,Ativa
+0428,LICMADRGPS,PRORROGA��O LIC GESTANTE POR INTERNA��O - ADI 6327/22 - RGPS,08/03/2022,,Ativa
+0429,TELETRAEXT,TELETRABALHO EXTERIOR - PROGRAMA DE GEST�O,01/06/2022,,Ativa
+0430,ATRASAIETG,ATRASO OU SA�DA ANTECIPADA - ETG,08/04/2014,,Ativa
+0431,ESTEXTONUS,AFAS. ESTUDO EXTERIOR C/ �NUS - Art. 21 Dec. 9.991/19 - EST,06/09/2019,,Ativa
+0432,ESTEXTLTDO,AFAS. ESTUDO EXT. C/ �NUS LTDO - Art. 21 Dec. 9991/19 - EST,06/09/2019,,Ativa
+0433,ESTEXTSEMO,AFAS. ESTUDO EXTERIOR SEM �NUS - Art. 21 Dec. 9.991/19 - EST,06/09/2019,,Ativa
+0434,POSGRAMEST,AFAST. P�S-GRADUA��O STRICTO SENSU - MESTRADO  - EST,06/09/2019,,Ativa
+0435,POSGRADOUT,AFAST. P�S-GRADUA��O STRICTO SENSU - DOUTORADO - EST,06/09/2019,,Ativa
+0436,PGRAPOSDOU,AFAST. P�S-GRADUA��O STRICTO SENSU - P�S-DOUTORADO - EST,06/09/2019,,Ativa
+0437,MCLASEMREM,LIC. DESEMP. MAND. CLASSISTA (SEM REMUN) - DEC 11411/23- EST,31/03/2023,,Ativa
+0438,MCLASCOMRE,LIC. DES. MAND. CLASSISTA (COM RESSARC) - DEC 11411/23 - EST,31/03/2023,,Ativa
+0439,AFCURFOPOL,AFAS CURSO FORM POLICIAL OP��O CARGO EFETIVO - C/ REM. - EST,04/11/1997,,Ativa
