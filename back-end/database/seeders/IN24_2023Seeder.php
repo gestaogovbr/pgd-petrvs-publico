@@ -19,7 +19,6 @@ use App\Models\Template;
 use App\Models\Unidade;
 use App\Models\EixoTematico;
 use App\Models\Entrega;
-use App\Models\Entidade;
 
 class IN24_2023Seeder extends Seeder
 {
