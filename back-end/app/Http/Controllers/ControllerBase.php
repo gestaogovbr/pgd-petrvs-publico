@@ -182,6 +182,7 @@ abstract class ControllerBase extends Controller
                 'with' => ['array'],
                 'limit' => ['required'],
                 'orderBy' => ['array'],
+                'deleted' => ['nullable'],
                 'where' => ['array']
             ]);
             $result = $this->service->query($data);

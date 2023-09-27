@@ -18,6 +18,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @Input() cdRef: ChangeDetectorRef;
+  @Input() disabled: boolean = false;
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: PlanoEntregaEntrega | undefined) { super.entity = value; } get entity(): PlanoEntregaEntrega | undefined { return super.entity; }
@@ -86,21 +87,8 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
       destinatario: { default: null },
     }, this.cdRef, this.validate);
     // Testa se o usuário possui permissão para exibir dados da entrega do plano de entregas
-    if (this.auth.hasPermissionTo("MOD_PENT")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir a entrega do plano de entregas
-    if (this.auth.hasPermissionTo("MOD_PENT_ENTR_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
+    this.addOption(Object.assign({ onClick: this.consult.bind(this) }, this.OPTION_INFORMACOES), "MOD_PENT");
+    this.addOption(Object.assign({ onClick: this.delete.bind(this) }, this.OPTION_EXCLUIR), "MOD_PENT_ENTR_EXCL");
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -121,6 +109,10 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     let form: any = filter.value;
     result.push(["plano_entrega_id", "==", this.planoEntregaId]);
     return result;
+  }
+
+  public get isDisabled(): boolean {
+    return this.formDisabled || this.disabled;
   }
 
   public async add() {
@@ -151,7 +143,11 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   }
 
   public dynamicOptions(row: any): ToolbarButton[] {
-    return !this.execucao ? this.options : [];
+    return !this.execucao && !this.isDisabled ? this.options : [];
+  }
+
+  public dynamicButtons(row: any): ToolbarButton[] {
+    return this.isDisabled ? [Object.assign({ onClick: this.consult.bind(this) }, this.OPTION_INFORMACOES)] : [];
   }
 
   public async edit(entrega: PlanoEntregaEntrega) {
