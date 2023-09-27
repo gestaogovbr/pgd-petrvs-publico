@@ -29,16 +29,21 @@ export class TipoAvaliacaoListComponent extends PageListBase<TipoAvaliacao, Tipo
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
-
     if(form.nome?.length) {
       result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }
-
     return result;
   }
 
   public getNotasText(notas: TipoAvaliacaoNota[]) {
     return notas.map(x => x.nota).join(", ");
+  }
+
+  public notasOrdenadas (row: any) {
+    let notasOrdenadas: TipoAvaliacaoNota[] = row.notas;
+    notasOrdenadas.sort((a, b) => a.sequencia - b.sequencia);
+    row.notas = notasOrdenadas;
+    return row;
   }
 }
 

@@ -4,7 +4,7 @@
             <div class="row">
                 <separator title="Vínculos da Entrega" collapse [collapsed]="false">
                     <div class="row">
-                        <input-search #entrega [size]="12" label="Entrega do Catálogo" controlName="entrega_id" [dao]="entregaDao" (change)="onEntregaChange($event)" placeholder="Selecione ou cadastre uma entrega do catálogo usando a lupa" required></input-search>
+                        <input-search #entrega [size]="12" label="Modelo de Entrega" controlName="entrega_id" [dao]="entregaDao" (change)="onEntregaChange($event)" placeholder="Selecione ou cadastre uma entrega do catálogo usando a lupa" required></input-search>
                     </div>
                     <div class="row">
                         <input-text [size]="12" label="Título/Detalhamento" controlName="descricao" placeholder="Descreva melhor a entrega" [attr.maxlength]=250 required></input-text>
