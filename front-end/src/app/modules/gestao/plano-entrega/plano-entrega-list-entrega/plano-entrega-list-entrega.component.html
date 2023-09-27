@@ -31,7 +31,7 @@
                     </ng-template>
                     <ng-template let-row="row" #editMetaRealizado>
                         <plano-entrega-valor-meta-input icon="bi bi-graph-up-arrow" [entrega]="row.entrega" disabled [size]="6" [control]="form!.controls.meta" label="Meta"></plano-entrega-valor-meta-input>
-                        <plano-entrega-valor-meta-input icon="bi bi-check-lg" [entrega]="row.entrega" [size]="6" [control]="form!.controls.realizado" label="Realizado"></plano-entrega-valor-meta-input>
+                        <plano-entrega-valor-meta-input icon="bi bi-check-lg" [entrega]="row.entrega" [size]="6" [control]="form!.controls.realizado" label="Realizada"></plano-entrega-valor-meta-input>
                     </ng-template>
                 </column>
                 <column title="Progresso" [width]="200" [template]="columnProgresso" [editTemplate]="editProgresso">
@@ -40,7 +40,7 @@
                     </ng-template>
                     <ng-template let-row="row" #editProgresso>
                         <input-number [size]="12" disabled [decimals]="2" label="Esperado" sufix="%" icon="bi bi-clock" controlName="progresso_esperado" [control]="form!.controls.progresso_esperado" labelInfo="Progresso de execução (% Esperado)"></input-number>
-                        <input-number [size]="12" [decimals]="2" label="Progresso" sufix="%" icon="bi bi-clock" controlName="progresso_realizado" [control]="form!.controls.progresso_realizado" labelInfo="Progresso de execução (% Concluído)"></input-number>
+                        <input-number [size]="12" [decimals]="2" label="Realizado" sufix="%" icon="bi bi-clock" controlName="progresso_realizado" [control]="form!.controls.progresso_realizado" labelInfo="Progresso de execução (% Concluído)"></input-number>
                     </ng-template>
                 </column>
                 <column [title]="'Entrega do catálogo\nComentários'" [template]="columnEntregaCometario" [editTemplate]="columnEntregaCometario">
