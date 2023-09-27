@@ -129,7 +129,7 @@ export class AppComponent {
       ENTREGAS: { name: this.lex.translate("Entregas"), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: this.entity.getIcon('Entrega') },
       FERIADOS: { name: this.lex.translate("Feriados"), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: this.entity.getIcon('Feriado') },
       MATERIAIS_SERVICOS: { name: this.lex.translate("Materiais e Serviços"), permition: '', route: ['cadastros', 'material-servico'], icon: this.entity.getIcon('MaterialServico') },
-      TEMPLATES: { name: this.lex.translate("Templates"), permition: 'MOD_TEMP', route: ['cadastros', 'template'], icon: this.entity.getIcon('Template') },
+      TEMPLATES: { name: this.lex.translate("Templates"), permition: 'MOD_TEMP', route: ['cadastros', 'templates'], icon: this.entity.getIcon('Template'), params: {modo: "listagem"} },
       TIPOS_TAREFAS: { name: this.lex.translate("Tipos de Tarefas"), permition: 'MOD_TIPO_TRF', route: ['cadastros', 'tipo-tarefa'], icon: this.entity.getIcon('TipoTarefa') },
       TIPOS_ATIVIDADES: { name: this.lex.translate("Tipos de Atividade"), permition: 'MOD_TIPO_ATV', route: ['cadastros', 'tipo-atividade'], icon: this.entity.getIcon('TipoAtividade') },
       TIPOS_AVALIACOES: { name: this.lex.translate("Tipos de Avaliação"), permition: 'MOD_TIPO_AVAL', route: ['cadastros', 'tipo-avaliacao'], icon: this.entity.getIcon('TipoAvaliacao') },

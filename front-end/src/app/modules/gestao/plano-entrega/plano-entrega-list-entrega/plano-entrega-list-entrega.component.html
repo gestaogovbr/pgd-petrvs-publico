@@ -41,6 +41,20 @@
                 <input-number [size]="12" [decimals]="2" label="Progresso" sufix="%" icon="bi bi-clock" controlName="progresso_realizado" [control]="form!.controls.progresso_realizado" labelInfo="Progresso de execução (% Concluído)"></input-number>
             </ng-template>
         </column>
+        <column [title]="'Objetivos/Processos'" [width]="200" [template]="columnObjProc" [editTemplate]="columnObjProc">
+            <ng-template let-row="row" #columnObjProc>
+                <separator [title]="lex.translate('Objetivos')" *ngIf="row.objetivos?.length" collapse [collapsed]="true">
+                    <div *ngFor="let pObjetivo of row.objetivos" class="objetivo">
+                        <small>{{pObjetivo.objetivo.nome}}</small>
+                    </div>
+                </separator>
+                <separator [title]="lex.translate('Processos')" *ngIf="row.processos?.length" collapse [collapsed]="true">
+                    <div *ngFor="let pProcesso of row.processos" class="objetivo">
+                        <small>{{pProcesso.processo.nome}}</small>
+                    </div>
+                </separator>
+            </ng-template>
+        </column>
         <column [title]="'Entrega do catálogo\nComentários'" [template]="columnEntregaCometario" [editTemplate]="columnEntregaCometario">
             <ng-template let-row="row" #columnEntregaCometario>
                 <badge *ngIf="row.entrega" color="light" icon="bi bi-list-check" [label]="row.entrega?.nome"></badge>
