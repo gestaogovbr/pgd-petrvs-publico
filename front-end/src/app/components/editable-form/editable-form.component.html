@@ -1,6 +1,6 @@
 <toolbar *ngIf="title.length || toolbarButtons.length" [title]="title" [buttons]="toolbarButtons"></toolbar>
 <div *ngIf="error?.length" [id]="generatedId(title) + '_error'" class="alert alert-danger mt-2 break-spaces" role="alert">{{error}}</div>
-<ng-scrollbar [style.max-height]="withScroll ? 'calc(100vh - 250px)' : ''" autoHeightDisabled="false" [disabled]="!withScroll">
+<ng-scrollbar [style.max-height]="withScroll ? 'calc(100vh - 250px)' : ''" autoHeightDisabled="false" [disabled]="!withScroll" track="all">
     <div class="px-2">
     <form [class]="isNoMargin ? 'm-0 p-0' : 'mx-2 mt-2'" [id]="generatedId(title) + '_form'" [formGroup]="form!">
         <ng-content></ng-content>

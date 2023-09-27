@@ -179,13 +179,14 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   }
 
   public async load(form: FormGroup, row: any) {
+    console.log(row)
     this.form!.patchValue(row);
     this.form!.controls.meta.setValue(this.planoEntregaService.getValor(row.meta));
     this.form!.controls.realizado.setValue(this.planoEntregaService.getValor(row.realizado));
     this.cdRef.detectChanges();
   }
 
-  public async save(form: FormGroup, row: any) {
+  public async save(form: FormGroup, row: any) {    
     let result = undefined;
     this.form!.markAllAsTouched();
     if (form.valid) {
