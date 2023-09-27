@@ -88,6 +88,7 @@ export abstract class PageBase implements OnInit, ModalPage {
   public backRoute: FullRoute = { route: ['home'] };
   public modalWidth: number = 1000;
   public viewInit: boolean = false;
+  public options: ToolbarButton[] = [];
   public storeExtra?: () => any;
   private _title: string = "";
   public set title(value: string) { if(this._title != value) { this._title = value; this.titleSubscriber.next(value); }};
@@ -146,6 +147,10 @@ export abstract class PageBase implements OnInit, ModalPage {
 
   public defaultUsuarioConfig(): any {
     return {};
+  }
+
+  public addOption(button: ToolbarButton, capacidade?: string) {
+    if (!capacidade || this.auth.hasPermissionTo(capacidade)) this.options.push(button);
   }
 
   public isInvalid(control: AbstractControl): boolean {

@@ -6,8 +6,10 @@
                 <input-textarea label="Descrição" [size]="12" [rows]="2" controlName="descricao" [control]="form!.controls.descricao" required></input-textarea>
             </div>
             <div class="row">
-                <input-search [label]="lex.translate('Unidade')" [size]="6" #unidade controlName="unidade_id" [dao]="unidadeDao"  (change)="onUnidadeChange($event)" required></input-search>
-                <input-search [label]="lex.translate('Tipo de atividade')" #tipoAtividade [emptyValue]="null" [size]="6" controlName="tipo_atividade_id"  [dao]="tipoAtividadeDao" (select)="onTipoAtividadeSelect($event)" (change)="onTipoAtividadeChange($event)" [labelInfo]="lex.translate('Tipo de atividade') + ' utilizado para classificar a atividade'" [required]="!auth.hasPermissionTo('MOD_ATV_TIPO_ATV_VAZIO') ? 'true' : undefined"></input-search>
+                <input-search [label]="lex.translate('Unidade')" [size]="hasUsuarioActionNew ? 5 : 6" #unidade controlName="unidade_id" [dao]="unidadeDao"  (change)="onUnidadeChange($event)" required></input-search>
+                <input-search [label]="lex.translate('Tipo de atividade')" #tipoAtividade [emptyValue]="null" [size]="hasUsuarioActionNew ? 5 : 6" controlName="tipo_atividade_id"  [dao]="tipoAtividadeDao" (select)="onTipoAtividadeSelect($event)" (change)="onTipoAtividadeChange($event)" [labelInfo]="lex.translate('Tipo de atividade') + ' utilizado para classificar a atividade'" [required]="!auth.hasPermissionTo('MOD_ATV_TIPO_ATV_VAZIO') ? 'true' : undefined"></input-search>
+                <input-switch *ngIf="hasUsuarioActionNew" [size]="1" label="Iniciado" controlName="iniciado" [disabled]="form.controls.concluido.value ? 'true' : undefined"></input-switch>
+                <input-switch *ngIf="hasUsuarioActionNew" [size]="1" label="Concluído" controlName="concluido" (change)="onConcluidoChange($event)"></input-switch>
             </div>
             <div class="row">
                 <input-search label="Responsável" [size]="4" [emptyValue]="null" #usuario controlName="usuario_id" [dao]="usuarioDao" [join]="usuarioJoin" labelInfo="Responsável pela execução" (select)="onUsuarioSelect($event)" (change)="onUsuarioChange($event)"></input-search>

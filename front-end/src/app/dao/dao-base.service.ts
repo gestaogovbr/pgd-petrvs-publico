@@ -335,6 +335,7 @@ export class DaoBaseService<T extends Base> {
       orderBy: context.options.orderBy || [],
       limit: context.options.limit || 0,
       with: context.options.join || [],
+      deleted: context.options.deleted,
       page: context.page
     });
     subscriber.subscribe(response => {
