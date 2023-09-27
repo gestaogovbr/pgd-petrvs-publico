@@ -1,4 +1,4 @@
-<separator [title]="lex.translate('Atividades')" [icon]="entityService.getIcon('Atividade')">
+<separator collapse [collapsed]="false" [title]="lex.translate('Atividades')" [icon]="entityService.getIcon('Atividade')">
     <grid [items]="itemsEntregas" #gridEntregas [minHeight]="0" expanded>
         <columns>
             <column type="expand" [icon]="entityService.getIcon('PlanoTrabalhoConsolidacao')" [align]="'center'" [hint]="lex.translate('Consolidação')" [template]="columnConsolidacao" [expandTemplate]="columnExpandedConsolidacao">
@@ -92,7 +92,7 @@
         </columns>
     </grid>
 </separator>
-<separator [title]="lex.translate('Ocorrências')" [icon]="entityService.getIcon('PlanoTrabalhoConsolidacao')">
+<separator collapse [collapsed]="false" [title]="lex.translate('Ocorrências')" [icon]="entityService.getIcon('PlanoTrabalhoConsolidacao')">
     <grid [items]="itemsOcorrencias" [minHeight]="0" #gridOcorrencia [form]="formOcorrencia" 
         [hasDelete]="!disabled" [hasAdd]="!disabled" [hasEdit]="!disabled"
         [add]="addOcorrencia.bind(this)" [load]="loadOcorrencia.bind(this)" 
@@ -105,7 +105,7 @@
         </columns>
     </grid>
 </separator>
-<separator [title]="lex.translate('Afastamentos')" [icon]="entityService.getIcon('Afastamento')">
+<separator collapse [collapsed]="false" [title]="lex.translate('Afastamentos')" [icon]="entityService.getIcon('Afastamento')">
     <grid [items]="itemsAfastamentos" [minHeight]="0" #gridAfastamento [add]="addAfastamento.bind(this)" [hasEdit]="false" [hasDelete]="false" [hasAdd]="!disabled" editable>
         <columns>
             <column title="Início" [width]="300" type="datetime" field="data_inicio"></column>
@@ -120,7 +120,7 @@
         </columns>
     </grid>
 </separator>
-<separator [title]="lex.translate('Comparecimentos')" [icon]="entityService.getIcon('Comparecimento')">
+<separator collapse [collapsed]="false" [title]="lex.translate('Comparecimentos')" [icon]="entityService.getIcon('Comparecimento')">
     <grid [items]="itemsComparecimentos" [minHeight]="0" #gridComparecimento [form]="formComparecimento" 
         [hasDelete]="!disabled" [hasAdd]="!disabled" [hasEdit]="!disabled"
         [add]="addComparecimento.bind(this)" [load]="loadComparecimento.bind(this)" 
