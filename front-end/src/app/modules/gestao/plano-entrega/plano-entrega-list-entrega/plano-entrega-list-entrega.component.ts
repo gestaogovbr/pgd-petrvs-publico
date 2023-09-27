@@ -212,7 +212,15 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   }
 
   public async consult(entrega: PlanoEntregaEntrega) {
-    this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', entrega.id, "consult"]});
+    this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', entrega.id, "consult"]}, {
+      metadata: {
+        plano_entrega: this.entity!,
+        planejamento_id: this.planejamentoId,
+        cadeia_valor_id: this.cadeiaValorId,
+        unidade_id: this.unidadeId,
+        entrega: entrega
+      }
+    });
   }
 
   public refreshComentarios(modalResult: any) {
