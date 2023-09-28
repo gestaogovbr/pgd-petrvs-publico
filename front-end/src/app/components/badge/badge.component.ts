@@ -36,7 +36,7 @@ export class BadgeComponent extends ComponentBase implements OnInit {
   @Input() set textValue(value: string | undefined) { if(this._badge.textValue != value) this._badge.textValue = value; } get textValue(): string | undefined { return this._badge.textValue; }
   @Input() set color(value: ComponentColor | undefined) { if(this._badge.color != value) this._badge.color = value; } get color(): ComponentColor | undefined { return this._badge.color; }
   @Input() set class(value: string) { if(this._badge.class != value) this._badge.class = value; } get class(): string { return "badge " + (this.rounded ? "rounded-pill " : "") + (this.maxWidth ? "text-break text-wrap " : "") + this.getClassBgColor(this.color) + (this._badge.class ? " " + this._badge.class : ""); }
-  @Input() set maxWidth(value: number | undefined) { if(this._badge.maxWidth != value) this._badge.maxWidth = value; } get maxWidth(): number | undefined { return this._badge.maxWidth; }
+  @Input() set maxWidth(value: number | undefined) { if(this._badge.maxWidth != value) this._badge.maxWidth = value; } get maxWidth(): number | undefined { return this._badge.maxWidth || 150; }
   @Input() rounded: boolean = true;
 
   private _badge: BadgeButton = {};
