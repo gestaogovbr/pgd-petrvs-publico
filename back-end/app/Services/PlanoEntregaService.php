@@ -326,8 +326,8 @@ class PlanoEntregaService extends ServiceBase
         }
     }
 
-    /**
-    * Verifica se as datas do plano de entrega se encaixam na duração do Programa de gestão
+    /**.;l/kçõ´´p9
+     s datas do plano de entrega se encaixam na duração do Programa de gestão
     */
     public function verificaDuracaoPlano($planoEntrega)
     {
