@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Injector, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FormGroup, FormGroupDirective } from '@angular/forms';
+import { FormControl, FormGroup, FormGroupDirective } from '@angular/forms';
 import { QueryContext } from 'src/app/dao/query-context';
 import { QueryOptions } from 'src/app/dao/query-options';
 import { Base } from 'src/app/models/base.model';
@@ -30,12 +30,15 @@ export class FilterComponent extends ComponentBase implements OnInit {
   @Input() where?: (filter: FormGroup) => any[];
   @Input() collapseChange?: (filter: FormGroup) => void;
   @Input() visible: boolean = true;
+  @Input() deleted: boolean = false;
   @Input() noButtons?: string;
   @Input() collapsed: boolean = true;
   @Input() grid?: GridComponent;
   @Input() query?: QueryContext<Base>;
   @Input() queryOptions?: QueryOptions;
   @Input() hidden?: string;
+
+  public deletedControl: FormControl = new FormControl(false);
 
   constructor(injector: Injector) {
     super(injector);
@@ -61,6 +64,10 @@ export class FilterComponent extends ComponentBase implements OnInit {
     if(this.collapseChange) this.collapseChange(this.form!);
   }
 
+  public onDeletedChange(event: Event) {
+    this.onButtonFilterClick();
+  }
+
   public onButtonClearClick() {
     this.filterClear.emit();
     if(this.form) {
@@ -75,6 +82,8 @@ export class FilterComponent extends ComponentBase implements OnInit {
 
   public onButtonFilterClick() {
     let queryOptions = this.submit ? this.submit(this.form!) : undefined;
-    (this.grid?.query || this.query!).reload(queryOptions || this.grid?.queryOptions || this.queryOptions);
+    queryOptions = queryOptions || this.grid?.queryOptions || this.queryOptions || {};
+    if(this.deletedControl.value) queryOptions.deleted = true;
+    (this.grid?.query || this.query!).reload(queryOptions);
   }
 }

@@ -30,7 +30,6 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
   public join: string[] = [];
   public addRoute?: string[];
   public addParams?: any;
-  public options: ToolbarButton[] = [];
   public rowsLimit = QueryContext.DEFAULT_LIMIT;
   public selectable: boolean = false;
   public static selectRoute?: FullRoute;
@@ -70,10 +69,6 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
       orderBy: this.orderBy
     }
     super.saveUsuarioConfig(Object.assign(filter, order, config || {}));
-  }
-
-  public addOption(button: ToolbarButton, capacidade?: string) {
-    if (!capacidade || this.auth.hasPermissionTo(capacidade)) this.options.push(button);
   }
 
   public filterSubmit(filter: FormGroup): QueryOptions | undefined {

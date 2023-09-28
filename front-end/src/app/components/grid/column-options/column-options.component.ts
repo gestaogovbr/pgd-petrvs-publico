@@ -32,12 +32,19 @@ export class ColumnOptionsComponent extends ComponentBase implements OnInit {
   private _allButtons?: ToolbarButton[] = undefined;
   private _allOptions?: ToolbarButton[] = undefined;
 
+  public lastRow: boolean = false;
+
   constructor(public injector: Injector) {
     super(injector);
     this.go = injector.get<NavigateService>(NavigateService);
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if(this.grid && this.grid.items.length > 1){
+      const last = this.grid.items.slice(-1);
+      this.lastRow = this.row.id == last[0].id;      
+    }
+  }
 
   public onMoveClick(up: boolean) {
     const list = this.grid!.items;

@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-4">
+  <div [ngClass]="listagem ? 'col-12' : 'col-4'">
     <grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
       [selectable]="selectable" (select)="onTemplateSelect($event)"
       [hasAdd]="auth.hasPermissionTo('MOD_TEMP_INCL')"
@@ -7,7 +7,7 @@
       <toolbar *ngIf="!selectable"></toolbar>
       <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-          <input-select [size]="12" disabled label="Espécie" controlName="especie" [items]="lookup.TEMPLATE_ESPECIE"></input-select>
+          <input-select [size]="12" label="Espécie" controlName="especie" [items]="lookup.TEMPLATE_ESPECIE"></input-select>
         </div>
         <div class="row">
             <input-text [size]="12" label="Título" controlName="titulo" [control]="filter!.controls.titulo" placeholder="Título ..." [attr.maxlength]=250></input-text>
@@ -26,7 +26,7 @@
       <pagination [rows]="rowsLimit"></pagination>
     </grid>
   </div>
-  <div class="col-8">
+  <div [ngClass]="listagem ? 'd-none' : 'col-8'">
     <editable-form *ngIf="selected; else noSelected" noButtons [disabled]="true" [form]="form!">
       <div class="row">
         <input-text [size]="12" label="Título" [control]="form!.controls.titulo" [attr.maxlength]=250></input-text>

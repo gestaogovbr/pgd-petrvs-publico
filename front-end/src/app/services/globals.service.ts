@@ -107,7 +107,7 @@ export class GlobalsService {
   public get initialRoute(): string[] {
     //@ts-ignore
     const route = typeof PETRVS_EXTENSION_ROUTE != "undefined" ? PETRVS_EXTENSION_ROUTE : typeof PETRVS_ROUTE != "undefined" ? PETRVS_ROUTE : "/home";
-    const strRoute = this.isEmbedded ? route : "/home";
+    const strRoute = this.isEmbedded ? route : (this.contexto ? "/home/"+ this.contexto!.key.toLowerCase() : "/home");
     return strRoute.substring(strRoute.startsWith("/") ? 1 : 0).split("/");
   }
 
