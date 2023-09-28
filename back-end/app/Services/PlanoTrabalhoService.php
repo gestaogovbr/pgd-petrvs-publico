@@ -111,7 +111,7 @@ class PlanoTrabalhoService extends ServiceBase
     $unidade = Unidade::find($data["unidade_id"]);
     $usuario = Usuario::with("areasTrabalho")->find($data["usuario_id"]);
     $criador = Usuario::with("areasTrabalho")->find(parent::loggedUser()->id);
-    $planoTrabalho = $data['entity'];
+    $planoTrabalho = $data;
     $condicoes = $this->buscaCondicoes($planoTrabalho);
     if(!($condicoes['usuarioEhParticipantePgdHabilitado'] || $condicoes['gestorUnidadeExecutora'])) throw new ServerException("ValidateUsuario", "O usuário não é um participante habilitado no programa do plano de trabalho nem é gestor da sua unidade executora. [RN_PTR_V]");
     $usuario_lotacoes_ids = $usuario->areasTrabalho->map(function ($item, $key) {
