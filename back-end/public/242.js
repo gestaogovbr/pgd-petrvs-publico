@@ -413,7 +413,7 @@ class TipoAtividadeListComponent extends src_app_modules_base_page_list_base__WE
       return result;
     };
     /* Inicializações */
-    this.title = this.lex.translate("Tipos de Atividade");
+    this.title = this.lex.translate("Tipos de Atividades");
     this.code = "MOD_TIPO_ATV";
     this.filter = this.fh.FormBuilder({
       nome: {

@@ -1182,8 +1182,10 @@ function PlanejamentoListObjetivosEntregasComponent_ng_template_8_Template(rf, c
   }
   if (rf & 2) {
     const row_r4 = ctx.row;
+    const metadata_r5 = ctx.metadata;
+    const ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate"](row_r4.nome);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate"](ctx_r3.getNome(metadata_r5, row_r4));
   }
 }
 class PlanejamentoListObjetivosEntregasComponent extends src_app_modules_base_page_list_base__WEBPACK_IMPORTED_MODULE_4__.PageListBase {
@@ -1231,6 +1233,25 @@ class PlanejamentoListObjetivosEntregasComponent extends src_app_modules_base_pa
   filterClear(filter) {
     super.filterClear(filter);
     this.filter?.controls.nome.setValue("");
+  }
+  getNome(metadata, row) {
+    if (!metadata.path) {
+      let paiId = row.objetivo_pai_id;
+      let niveis = "";
+      while (paiId) {
+        let atual = this.grid?.items.find(x => x.id == paiId);
+        niveis = (atual?.sequencia || "") + "." + niveis;
+        paiId = atual?.objetivo_pai_id || null;
+      }
+      metadata.path = niveis + row.sequencia;
+    }
+    this.grid?.items.sort((a, b) => {
+      const sa = (this.grid.getMetadata(a)?.path || "").split(".").map(x => ("000" + x).substr(-3)).join(".");
+      const sb = (this.grid.getMetadata(b)?.path || "").split(".").map(x => ("000" + x).substr(-3)).join(".");
+      return sa < sb ? -1 : sa > sb ? 1 : 0;
+    });
+    if (metadata.path.length > 2) return '- ' + row.nome;else if (metadata.path.length > 4) return '-- ' + row.nome;
+    return row.nome;
   }
 }
 _class = PlanejamentoListObjetivosEntregasComponent;
@@ -2197,7 +2218,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("change", function PlanejamentoMapaComponent_Template_input_select_change_2_listener() {
         return ctx.onPlanejamentoChange();
       });
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](4, "separator", 4);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](5, PlanejamentoMapaComponent_div_5_Template, 33, 4, "div", 5);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
@@ -2208,6 +2229,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](8, PlanejamentoMapaComponent_div_8_Template, 19, 8, "div", 8);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](9, "div", 6);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
     }
     if (rf & 2) {
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("form", ctx.form);
