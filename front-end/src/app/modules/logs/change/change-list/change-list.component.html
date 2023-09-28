@@ -11,7 +11,7 @@
         <div class="row">
             <input-select #selectTabelas label="Tabela" [size]="4" controlName="tabela" [control]="filter!.controls.tabela" [items]="tabelas" (change)="onTabelaChange($event)" itemTodos="Todas as tabelas" valueTodos=""></input-select>
             <input-text [size]="4" label="ID do registro" controlName="row_id_text" [control]="filter!.controls.row_id_text" [attr.maxlength]=250></input-text>
-            <input-search *ngIf="entity" [size]="4" [label]="entity.label" controlName="row_id_search" [control]="filter!.controls.row_id_search" [dao]="entity.dao" [selectRoute]="entity.selectRoute!"></input-search>
+            <input-search *ngIf="entity" [size]="4" [label]="entity.label" [control]="filter!.controls.row_id_search" controlName="row_id_search" [control]="filter!.controls.row_id_search" [dao]="entity.dao" [selectRoute]="entity.selectRoute!"></input-search>
         </div>
         <div class="row">            
         </div>

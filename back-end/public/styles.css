@@ -29368,7 +29368,7 @@ a > .petrvs code {
   padding: 1px;
 }
 .petrvs .withTextValue i {
-  margin: 5px;
+  margin: 2px 5px;
 }
 .petrvs input:read-only,
 .petrvs input:disabled,

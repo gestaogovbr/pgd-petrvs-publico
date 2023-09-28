@@ -101,31 +101,53 @@ class PlanoTrabalhoService extends ServiceBase
 
   public function validateStore($data, $unidade, $action)
   {
-    $unidade_id = $data["unidade_id"];
+    /*  (RN_PTR_V) INCLUIR/INSERIR
+        O usuário logado precisa possuir a capacidade "MOD_PTR_INCL", e:
+            - o usuário logado precisa ser um participante do PGD, habilitado, ou ser gestor da Unidade Executora do plano; (RN_PTR_B); e
+            ************- o participante do plano precisa estar lotado em uma das áreas de trabalho do usuário logado, ou este deve possuir a capacidade MOD_PTR_USERS_INCL; e
+            ************- o participante do plano precisa estar lotado na Unidade Executora, ou o usuário logado possuir a capacidade MOD_PTR_INCL_SEM_LOT; e
+            - o novo Plano de Trabalho não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA
+    */
+    $unidade = Unidade::find($data["unidade_id"]);
     $usuario = Usuario::with("areasTrabalho")->find($data["usuario_id"]);
     $criador = Usuario::with("areasTrabalho")->find(parent::loggedUser()->id);
+    $planoTrabalho = $data['entity'];
+    $condicoes = $this->buscaCondicoes($planoTrabalho);
+    if(!($condicoes['usuarioEhParticipantePgdHabilitado'] || $condicoes['gestorUnidadeExecutora'])) throw new ServerException("ValidateUsuario", "O usuário não é um participante habilitado no programa do plano de trabalho nem é gestor da sua unidade executora. [RN_PTR_V]");
     $usuario_lotacoes_ids = $usuario->areasTrabalho->map(function ($item, $key) {
       return $item->unidade_id;
     })->all();
     $criador_lotacoes_ids = $criador->areasTrabalho->map(function ($item, $key) {
       return $item->unidade_id;
     })->all();
-    if (!count(array_intersect($usuario_lotacoes_ids, $criador_lotacoes_ids)) && !parent::loggedUser()->hasPermissionTo('MOD_PTR_USERS_INCL')) {
-      throw new ServerException("ValidatePlanoTrabalho", "Usuário do plano fora das lotações de quem está lançando o plano (MOD_PTR_USERS_INCL)");
-    }
-    if (!in_array($unidade_id, $usuario_lotacoes_ids) && !parent::loggedUser()->hasPermissionTo('MOD_PTR_INCL_SEM_LOT')) {
-      throw new ServerException("ValidatePlanoTrabalho", "Usuário não lotado na unidade do plano (MOD_PTR_INCL_SEM_LOT)");
-    }
-    $planos = PlanoTrabalho::where("usuario_id", $data["usuario_id"])->where("usuario_id", $data["unidade_id"])->where("tipo_modalidade_id", $data["tipo_modalidade_id"])->get();
+/*     if (!count(array_intersect($usuario_lotacoes_ids, $criador_lotacoes_ids)) && !parent::loggedUser()->hasPermissionTo('MOD_PTR_USERS_INCL')) {
+      throw new ServerException("ValidatePlanoTrabalho", "Participante do plano fora das áreas de trabalho de quem está lançando o plano (MOD_PTR_USERS_INCL)");
+    } */
+/*     if (!in_array($unidade->id, $usuario_lotacoes_ids) && !parent::loggedUser()->hasPermissionTo('MOD_PTR_INCL_SEM_LOT')) {
+      throw new ServerException("ValidatePlanoTrabalho", "Participante não lotado na unidade executora do plano (MOD_PTR_INCL_SEM_LOT)");
+    } */
+    $planos = PlanoTrabalho::where("usuario_id", $data["usuario_id"])->where("usuario_id", $data["unidade_id"])->get();
     foreach ($planos as $plano) {
       if (
         UtilService::intersect($plano->data_inicio, $plano->data_fim, $data["data_inicio"], $data["data_fim"]) &&
         UtilService::valueOrNull($data, "id") != $plano->id && !parent::loggedUser()->hasPermissionTo('MOD_PTR_INTSC_DATA')
       ) {
-        throw new ServerException("ValidatePlanoTrabalho", "O plano de trabalho #" . $plano->numero . " (" . UtilService::getDateTimeFormatted($plano->data_inicio) . " à " . UtilService::getDateTimeFormatted($plano->data_fim) . ") possui período conflitante para a mesma modalidade (MOD_PTR_INTSC_DATA)");
+        throw new ServerException("ValidatePlanoTrabalho", "O plano de trabalho #" . $plano->numero . " (" . UtilService::getDateTimeFormatted($plano->data_inicio) . " a " . UtilService::getDateTimeFormatted($plano->data_fim) . ") possui período conflitante para a mesma unidade/servidor (MOD_PTR_INTSC_DATA)");
       }
     }
     if ($action == ServiceBase::ACTION_EDIT) {
+      /*  
+          (RN_PTR_M) Condições para que um Plano de Trabalho possa ser alterado:
+          O usuário logado precisa possuir a capacidade "MOD_PTR_EDT", o Plano de Trabalho precisa ser válido (ou seja, nem deletado, nem arquivado, nem estar no status CANCELADO), e:
+              - estando com o status 'INCLUIDO', o usuário logado precisa ser o participante do plano ou o gestor da Unidade Executora;
+              - estando com o status 'AGUARDANDO_ASSINATURA', o usuário logado precisa ser um dos que já assinaram o TCR e todas as assinaturas tornam-se sem efeito;
+              - estando com o status 'ATIVO', o usuário precisa ser gestor da Unidade Executora e possuir a capacidade MOD_PTR_EDT_ATV. Após alterado, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
+          Como a alteração pode ser no participante, e nas datas de início e fim do plano, faz-se necessário revalidar as respectivas regras da inserção do plano.
+      */
+      if(!$condicoes['planoValido']) throw new ServerException("ValidatePlanoTrabalho", "O plano de trabalho não é válido, ou seja, foi apagado, cancelado ou arquivado. [RN_PTR_M]");
+      if($condicoes['planoIncluido'] && (!($this->usuario->isParticipante($planoTrabalho) || $condicoes['gestorUnidadeExecutora']))) throw new ServerException("ValidateUsuario", "Para alterar um plano de trabalho no status INCLUIDO, o usuário logado precisa ser o participante do plano ou o gestor da sua unidade executora. [RN_PTR_M]");
+      if($condicoes['planoAguardandoAssinatura'] && !$condicoes['usuarioJaAssinouTCR']) throw new ServerException("ValidateUsuario", "Para alterar um plano de trabalho no status AGUARDANDO ASSINATURA, o usuário logado precisa já ter assinado o TCR. [RN_PTR_M]");
+      if($condicoes['planoAtivo'] && !($condicoes['gestorUnidadeExecutora'] && $usuario->hasPermissionTo('MOD_PTR_EDT_ATV'))) throw new ServerException("ValidateUsuario", "Para alterar um plano de trabalho no status ATIVO, o usuário logado precisa ser gestor da sua unidade executora e possuir a capacidade específica (MOD_PTR_EDT_ATV). [RN_PTR_M]");
       $plano = PlanoTrabalho::find($data["id"]);
       /*  (RN_PTR_1)
           Após criado um plano de trabalho, o sua unidade e programa não podem mais ser alterados. Em consequência dessa regra, os seguintes campos 
@@ -535,6 +557,7 @@ class PlanoTrabalhoService extends ServiceBase
     $planoTrabalho['unidade'] = !empty($planoTrabalho['unidade_id']) ? Unidade::find($planoTrabalho['unidade_id'])->toArray() : null;
     $result = [];
     $result["assinaturasExigidas"] = $this->programa->assinaturasExigidas($planoTrabalho["id"]);
+    $result["assinaturasFaltantes"] = array_diff($this->programa->assinaturasExigidas($planoTrabalho["id"]),$this->usuario->jaAssinaramTCR($planoTrabalho["id"]));
     $result["assinaturaUsuarioExigida"] = in_array(parent::loggedUser()->id, $this->programa->assinaturasExigidas($planoTrabalho["id"]));
     $result["gestorUnidadeExecutora"] = $this->usuario->isGestorUnidade($planoTrabalho['unidade_id']);
     $result["nrEntregas"] = empty($planoTrabalho['entregas']) ? 0 : count($planoTrabalho['entregas']);
