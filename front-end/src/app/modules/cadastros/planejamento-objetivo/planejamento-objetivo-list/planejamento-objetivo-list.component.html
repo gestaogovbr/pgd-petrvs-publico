@@ -6,8 +6,8 @@
             <input-text [size]="12" label="Nome" controlName="nome" [control]="filter!.controls.nome" [attr.maxlength]=250></input-text>
         </div>
         <div class="row">
-            <input-search [size]="8" controlName="planejamento_id"  [dao]="planejamentoDao"></input-search>                
-            <input-search [size]="4" controlName="eixo_tematico_id" [dao]="eixoTematicoDao"></input-search>                
+            <input-search [size]="8" [control]="filter!.controls.planejamento_id" controlName="planejamento_id"  [dao]="planejamentoDao"></input-search>                
+            <input-search [size]="4" [control]="filter!.controls.eixo_tematico_id" controlName="eixo_tematico_id" [dao]="eixoTematicoDao"></input-search>                
         </div>
     </filter>
     <columns>

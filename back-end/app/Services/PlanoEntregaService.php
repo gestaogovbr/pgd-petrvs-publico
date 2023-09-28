@@ -315,11 +315,11 @@ class PlanoEntregaService extends ServiceBase
     */
     public function validateStore($dataOrEntity, $unidade, $action)
     {
-        if(!$this->verificaDuracaoPlano($dataOrEntity) || !$this->verificaDatasEntregas($dataOrEntity)) throw new Exception("O prazo das datas não satisfaz a duração estipulada no programa.");
+        if(!$this->verificaDuracaoPlano($dataOrEntity) || !$this->verificaDatasEntregas($dataOrEntity)) throw new ServerException("ValidatePlanoEntrega","O prazo das datas não satisfaz a duração estipulada no programa.");
         if($action == ServiceBase::ACTION_EDIT) {
             $planoEntrega = PlanoEntrega::find($dataOrEntity["id"]);
-            if($dataOrEntity["unidade_id"] != $planoEntrega->unidade_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Entregas, não é possível alterar a sua Unidade.");
-            if($dataOrEntity["programa_id"] != $planoEntrega->programa_id) throw new ServerException("ValidatePlanoTrabalho", "Depois de criado um Plano de Entregas, não é possível alterar o seu Programa.");
+            if($dataOrEntity["unidade_id"] != $planoEntrega->unidade_id) throw new ServerException("ValidatePlanoEntrega", "Depois de criado um Plano de Entregas, não é possível alterar a sua Unidade. [RN_PENT_K]");
+            if($dataOrEntity["programa_id"] != $planoEntrega->programa_id) throw new ServerException("ValidatePlanoEntrega", "Depois de criado um Plano de Entregas, não é possível alterar o seu Programa. [RN_PENT_K]");
              /* (RN_PENT_K)
                 Após criado um plano de entregas, os seguintes campos não poderão mais ser alterados: unidade_id, programa_id;
              */

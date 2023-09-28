@@ -6,9 +6,9 @@
 <filter [form]="filter" #filterRef [where]="filterWhere" [query]="query" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
     <div class="row">
         <input-switch [size]="1" label="Minhas" controlName="atribuidas_para_mim" [control]="filter!.controls.atribuidas_para_mim" (change)="onAtribuidasParaMimChange($event)"></input-switch>
-        <input-search [size]="5" [label]="lex.translate('Usuário')" #usuario controlName="usuario_id" [disabled]="filter!.controls.atribuidas_para_mim.value ? 'true' : undefined" [dao]="usuarioDao" ></input-search>
+        <input-search [size]="5" [label]="lex.translate('Usuário')" #usuario [control]="filter!.controls.usuario_id" controlName="usuario_id" [disabled]="filter!.controls.atribuidas_para_mim.value ? 'true' : undefined" [dao]="usuarioDao" ></input-search>
         <input-switch [size]="1" label="Atual" controlName="somente_unidade_atual" [control]="filter!.controls.somente_unidade_atual" (change)="onSomenteUnidadeAtualChange($event)" labelInfo="Somente as atividades da unidade selecionada"></input-switch>
-        <input-search [size]="4" [label]="lex.translate('Unidade')" #unidade controlName="unidade_id" [disabled]="filter!.controls.somente_unidade_atual.value ? 'true' : undefined" [dao]="unidadeDao"></input-search>
+        <input-search [size]="4" [label]="lex.translate('Unidade')" #unidade [control]="filter!.controls.unidade_id" controlName="unidade_id" [disabled]="filter!.controls.somente_unidade_atual.value ? 'true' : undefined" [dao]="unidadeDao"></input-search>
         <input-switch [size]="1" label="Sub." controlName="unidades_subordinadas" [control]="filter!.controls.unidades_subordinadas" labelInfo="Incluir as unidades subordinadas"></input-switch>      
     </div>
     <div class="row">
