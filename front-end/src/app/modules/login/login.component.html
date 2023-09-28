@@ -4,6 +4,11 @@
     </div>
 
     <div [class]="modalRoute ? 'col-12 col-lg-6' : 'col-12 col-lg-6'">
+
+        <button class="btn btn-outline-primary botao-suporte rounded btn-sm" (click)="openModal({route: ['suporte']})"  [attr.data-bs-toggle]="'tooltip'" data-bs-placement="top" title="Suporte Petrvs">
+            <i class="bi bi-headset"></i>
+        </button>
+
         <div class="d-flex align-items-center justify-content-center h-100 g-0 px-4 px-sm-0">
             <div class=".col col-sm-6 col-lg-7 col-xl-6">
                 <div *ngIf="error?.length" class="alert alert-danger mt-2 mb-5" role="alert">

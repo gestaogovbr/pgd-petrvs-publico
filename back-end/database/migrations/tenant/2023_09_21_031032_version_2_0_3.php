@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 use App\Models\Tenant;
 use Illuminate\Support\Facades\DB;
 
-class UpdateVersion203 extends Migration
+class Version203 extends Migration
 {
     /**
      * Run the migrations.

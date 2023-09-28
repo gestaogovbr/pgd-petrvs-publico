@@ -473,7 +473,6 @@ class PlanejamentoFormComponent extends src_app_modules_base_page_form_base__WEB
     })();
   }
   addValorHandle() {
-    console.log("1");
     let result = undefined;
     const value = this.form.controls.valor_texto.value;
     const key = this.util.textHash(value);
@@ -487,7 +486,6 @@ class PlanejamentoFormComponent extends src_app_modules_base_page_form_base__WEB
     return result;
   }
   addResultadoHandle() {
-    console.log("2");
     let result = undefined;
     const value = this.form.controls.resultados_texto.value;
     const key = this.util.textHash(value);
@@ -528,29 +526,44 @@ class PlanejamentoFormComponent extends src_app_modules_base_page_form_base__WEB
       }
     })();
   }
+  onUtilizarSuperiorChange(event) {
+    var _this6 = this;
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      let unidade_superior_id = _this6.form.controls.planejamento_superior_id.value;
+      if (_this6.form.controls.utilizar_superior.value && unidade_superior_id?.length) {
+        let pls = yield _this6.dao?.query({
+          where: [['id', '==', unidade_superior_id]]
+        }).asPromise();
+        _this6.form.controls.missao.setValue(pls[0].missao);
+        _this6.form.controls.visao.setValue(pls[0].visao);
+        _this6.form.controls.valores.setValue(pls[0].valores);
+        _this6.form.controls.resultados_institucionais.setValue(pls[0].resultados_institucionais);
+      }
+    })();
+  }
   /**
    * @param event
    * Se o planejamento superior for alterado, e já houver objetivos na lista vinculados a objetivos dele, avisar que eles perderão esses vínculos.
    */
   onPlanejamentoChange(event) {
-    var _this6 = this;
+    var _this7 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      if (_this6.form.controls.planejamento_superior_id.value != _this6.entity?.planejamento_superior_id && _this6.entity?.objetivos?.length && _this6.entity?.objetivos.filter(x => x.objetivo_superior && x.objetivo_superior.planejamento_id == _this6.entity?.planejamento_superior_id).length) {
-        let confirm = yield _this6.dialog.confirm("Alteração de Planejamento Superior", "Como já existe(m) objetivo(s) neste Planejamento, vinculado(s) a objetivo(s) do Planejamento Superior anterior, seus vínculos serão perdidos! Deseja continuar?");
+      if (_this7.form.controls.planejamento_superior_id.value != _this7.entity?.planejamento_superior_id && _this7.entity?.objetivos?.length && _this7.entity?.objetivos.filter(x => x.objetivo_superior && x.objetivo_superior.planejamento_id == _this7.entity?.planejamento_superior_id).length) {
+        let confirm = yield _this7.dialog.confirm("Alteração de Planejamento Superior", "Como já existe(m) objetivo(s) neste Planejamento, vinculado(s) a objetivo(s) do Planejamento Superior anterior, seus vínculos serão perdidos! Deseja continuar?");
         if (confirm) {
-          _this6.entity?.objetivos?.forEach(obj => obj.objetivo_superior_id = null);
+          _this7.entity?.objetivos?.forEach(obj => obj.objetivo_superior_id = null);
           //atualizar a lista de objetivos superiores
         } else {
-          _this6.form.controls.planejamento_superior_id.setValue(_this6.entity?.planejamento_superior_id);
+          _this7.form.controls.planejamento_superior_id.setValue(_this7.entity?.planejamento_superior_id);
         }
         ;
       }
       ;
-      _this6.entity.planejamento_superior_id = _this6.form.controls.planejamento_superior_id.value;
-      _this6.entity.planejamento_superior = _this6.planejamentoSuperior.selectedItem?.data;
-      _this6.objetivos.planejamento_superior_id = _this6.form.controls.planejamento_superior_id.value;
-      _this6.objetivos?.grid?.loadColumns();
-      _this6.cdRef.detectChanges();
+      _this7.entity.planejamento_superior_id = _this7.form.controls.planejamento_superior_id.value;
+      _this7.entity.planejamento_superior = _this7.planejamentoSuperior.selectedItem?.data;
+      _this7.objetivos.planejamento_superior_id = _this7.form.controls.planejamento_superior_id.value;
+      _this7.objetivos?.grid?.loadColumns();
+      _this7.cdRef.detectChanges();
     })();
   }
   /**
@@ -593,7 +606,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵInheritDefinitionFeature"]],
   decls: 29,
   vars: 36,
-  consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "DADOS", "label", "Dados"], [1, "row"], ["label", "Nome do Planejamento Institucional", "controlName", "nome", "required", "", 3, "size", "icon", "control"], ["controlName", "unidade_id", "labelInfo", "Unidade \u00E0 qual se refere o planejamento", "required", "", 3, "size", "control", "dao", "change"], ["date", "", "label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio", "labelInfo", "In\u00EDcio do Planejamento Institucional", "required", "", 3, "size", "control"], ["date", "", "label", "Fim", "icon", "bi bi-calendar-date", "controlName", "data_fim", "labelInfo", "Fim do Planejamento Institucional", "required", "", 3, "size", "control"], ["label", "Planejamento Institucional Superior", "controlName", "planejamento_superior_id", 3, "size", "items", "control", "icon", "change"], ["planejamentoSuperior", ""], ["scale", "small", "labelPosition", "right", "controlName", "utilizar_superior", "label", "Utilizar miss\u00E3o, vis\u00E3o, resultados e valores da institui\u00E7\u00E3o superior?", 3, "size"], [1, "col-md-6"], ["label", "Miss\u00E3o", "controlName", "missao", "required", "", 3, "size", "rows", "control"], ["label", "Vis\u00E3o", "controlName", "visao", "required", "", 3, "size", "rows", "control"], ["label", "Resultados Institucionais", "controlName", "resultados_institucionais", 3, "size", "addItemHandle"], ["label", "Resultados Institucionais", "icon", "far fa-edit", "controlName", "resultados_texto", 3, "control"], ["label", "Valores", "controlName", "valores", 3, "size", "addItemHandle"], ["label", "Valor Institucional", "icon", "far fa-edit", "controlName", "valor_texto", 3, "control"], ["key", "OBJETIVOS", "label", "Objetivos"], ["noPersist", "", 3, "entity", "disabled", "planejamento_superior_id"], ["objetivos", ""]],
+  consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "DADOS", "label", "Dados"], [1, "row"], ["label", "Nome do Planejamento Institucional", "controlName", "nome", "required", "", 3, "size", "icon", "control"], ["controlName", "unidade_id", "labelInfo", "Unidade \u00E0 qual se refere o planejamento", "required", "", 3, "size", "control", "dao", "change"], ["date", "", "label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio", "labelInfo", "In\u00EDcio do Planejamento Institucional", "required", "", 3, "size", "control"], ["date", "", "label", "Fim", "icon", "bi bi-calendar-date", "controlName", "data_fim", "labelInfo", "Fim do Planejamento Institucional", "required", "", 3, "size", "control"], ["label", "Planejamento Institucional Superior", "controlName", "planejamento_superior_id", 3, "size", "items", "control", "icon", "change"], ["planejamentoSuperior", ""], ["scale", "small", "labelPosition", "right", "controlName", "utilizar_superior", "label", "Utilizar miss\u00E3o, vis\u00E3o, resultados e valores da institui\u00E7\u00E3o superior?", 3, "size", "change"], [1, "col-md-6"], ["label", "Miss\u00E3o", "controlName", "missao", "required", "", 3, "size", "rows", "control"], ["label", "Vis\u00E3o", "controlName", "visao", "required", "", 3, "size", "rows", "control"], ["label", "Resultados Institucionais", "controlName", "resultados_institucionais", 3, "size", "addItemHandle"], ["label", "Resultados Institucionais", "icon", "far fa-edit", "controlName", "resultados_texto", 3, "control"], ["label", "Valores", "controlName", "valores", 3, "size", "addItemHandle"], ["label", "Valor Institucional", "icon", "far fa-edit", "controlName", "valor_texto", 3, "control"], ["key", "OBJETIVOS", "label", "Objetivos"], ["noPersist", "", 3, "entity", "disabled", "planejamento_superior_id"], ["objetivos", ""]],
   template: function PlanejamentoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](0, "editable-form", 0);
@@ -617,8 +630,11 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdef
         return ctx.onPlanejamentoChange($event);
       });
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](13, "input-switch", 10);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](13, "input-switch", 10);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵlistener"]("change", function PlanejamentoFormComponent_Template_input_switch_change_13_listener($event) {
+        return ctx.onUtilizarSuperiorChange($event);
+      });
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]()();
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](14, "div", 3)(15, "div", 11);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](16, "input-textarea", 12);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]();
@@ -1166,8 +1182,10 @@ function PlanejamentoListObjetivosEntregasComponent_ng_template_8_Template(rf, c
   }
   if (rf & 2) {
     const row_r4 = ctx.row;
+    const metadata_r5 = ctx.metadata;
+    const ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate"](row_r4.nome);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate"](ctx_r3.getNome(metadata_r5, row_r4));
   }
 }
 class PlanejamentoListObjetivosEntregasComponent extends src_app_modules_base_page_list_base__WEBPACK_IMPORTED_MODULE_4__.PageListBase {
@@ -1215,6 +1233,25 @@ class PlanejamentoListObjetivosEntregasComponent extends src_app_modules_base_pa
   filterClear(filter) {
     super.filterClear(filter);
     this.filter?.controls.nome.setValue("");
+  }
+  getNome(metadata, row) {
+    if (!metadata.path) {
+      let paiId = row.objetivo_pai_id;
+      let niveis = "";
+      while (paiId) {
+        let atual = this.grid?.items.find(x => x.id == paiId);
+        niveis = (atual?.sequencia || "") + "." + niveis;
+        paiId = atual?.objetivo_pai_id || null;
+      }
+      metadata.path = niveis + row.sequencia;
+    }
+    this.grid?.items.sort((a, b) => {
+      const sa = (this.grid.getMetadata(a)?.path || "").split(".").map(x => ("000" + x).substr(-3)).join(".");
+      const sb = (this.grid.getMetadata(b)?.path || "").split(".").map(x => ("000" + x).substr(-3)).join(".");
+      return sa < sb ? -1 : sa > sb ? 1 : 0;
+    });
+    if (metadata.path.length > 2) return '- ' + row.nome;else if (metadata.path.length > 4) return '-- ' + row.nome;
+    return row.nome;
   }
 }
 _class = PlanejamentoListObjetivosEntregasComponent;
@@ -2181,7 +2218,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("change", function PlanejamentoMapaComponent_Template_input_select_change_2_listener() {
         return ctx.onPlanejamentoChange();
       });
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](4, "separator", 4);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](5, PlanejamentoMapaComponent_div_5_Template, 33, 4, "div", 5);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
@@ -2192,6 +2229,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](8, PlanejamentoMapaComponent_div_8_Template, 19, 8, "div", 8);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](9, "div", 6);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
     }
     if (rf & 2) {
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("form", ctx.form);

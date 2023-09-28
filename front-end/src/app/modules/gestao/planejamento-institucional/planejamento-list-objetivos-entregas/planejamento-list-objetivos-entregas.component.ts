@@ -53,4 +53,25 @@ export class PlanejamentoListObjetivosEntregasComponent extends PageListBase<Pla
     }
     return result;
   }
+
+  public getNome (metadata: any, row: PlanejamentoObjetivo){
+    if (!metadata.path) {
+      let paiId: string | null = row.objetivo_pai_id;
+      let niveis = "";
+      while (paiId) {
+        let atual = this.grid?.items.find(x => x.id == paiId);
+        niveis = (atual?.sequencia || "") + "." + niveis;
+        paiId = atual?.objetivo_pai_id || null;
+      }
+      metadata.path = niveis + row.sequencia;
+    }
+    this.grid?.items.sort((a, b) => {
+      const sa = (this.grid!.getMetadata(a)?.path || "").split(".").map((x: string) => ("000" + x).substr(-3)).join(".");
+      const sb = (this.grid!.getMetadata(b)?.path || "").split(".").map((x: string) => ("000" + x).substr(-3)).join(".");
+      return sa < sb ? -1 : sa > sb ? 1 : 0;
+    });
+    if (metadata.path.length > 2) return '- ' + row.nome;
+    else if (metadata.path.length > 4) return '-- ' + row.nome;
+    return row.nome;
+  }
 }

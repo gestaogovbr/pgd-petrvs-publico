@@ -99,6 +99,8 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
       pausas: {default: []},
       etiqueta: {default: ""},
       tarefas: {default: []},
+      iniciado: {default: false},
+      concluido: {default: false},
       documento_requisicao: {default: new Documento()},
       documento_entrega: {default: new Documento()}
     }, this.cdRef, this.validate);
@@ -107,7 +109,17 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
       texto: {default: ""},
       checked: {default: false}
     }, this.cdRef, this.validateChecklist);
-    this.join = ["usuario.planos_trabalho.tipo_modalidade:id,nome", "pausas", "tipo_atividade", "unidade", "comentarios.usuario", "tarefas.tipo_tarefa", "tarefas.comentarios.usuario", "documento_requisicao", "documento_entrega"];
+    this.join = [
+      "usuario.planos_trabalho.tipo_modalidade:id,nome", 
+      "pausas", 
+      "tipo_atividade", 
+      "unidade", 
+      "comentarios.usuario", 
+      "tarefas.tipo_tarefa", 
+      "tarefas.comentarios.usuario", 
+      "documento_requisicao", 
+      "documento_entrega"
+    ];
   }
 //"usuario.planos_trabalho.entregas.plano_entrega_entrega:id,descricao", 
   public ngOnInit() {
@@ -268,6 +280,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
       const planoTrabalhoId = this.form.controls.plano_trabalho_id.value;
       const dataDistribuicao = this.form.controls.data_distribuicao.value || new Date();
       this.planosTrabalhos = this.getPlanosTrabalhos(usuario, dataDistribuicao, planoTrabalhoId); //usuario?.planos?.map(x => Object.assign({key: x.id, value: (x.tipo_modalidade?.nome || "") + " - " + this.usuarioDao.getDateFormatted(x.data_inicio)+ " a " + this.usuarioDao.getDateFormatted(x.data_fim), data: x})) || [];
+      if(this.hasUsuarioActionNew && this.auth.usuario!.id == this.form.controls.usuario_id.value) this.form!.controls.iniciado.setValue(true);
       this.cdRef.detectChanges();
       this.form.controls.plano_trabalho_id.setValue(!planoTrabalhoId?.length && this.planosTrabalhos.length > 0 ? this.planosTrabalhos[0].key : planoTrabalhoId);
     } else {
@@ -275,6 +288,10 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
       this.form.controls.plano_trabalho_id.setValue(null);
     }
     this.cdRef.detectChanges();
+  }
+
+  public get hasUsuarioActionNew(): boolean {
+    return this.form?.controls.usuario_id?.value?.length && this.action == "new";
   }
 
   public onTipoAtividadeSelect(item: SelectItem) {
@@ -324,6 +341,15 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     if(!this.form?.controls.usuario_id.value?.length) this.loadUsuario(undefined);
   }
 
+  public onConcluidoChange(event: Event) {
+    if(this.hasUsuarioActionNew && this.form!.controls.concluido.value) {
+      this.form!.controls.iniciado.setValue(true);
+      this.form!.controls.progresso.setValue(100);
+    } else {
+      this.form!.controls.progresso.setValue(0);
+    }
+  }
+
   public orderPausas(pausas: AtividadePausa[]) {
     return pausas.sort((a: AtividadePausa, b: AtividadePausa) => {
       return a.data_inicio < b.data_inicio ? -1 : 1;
@@ -345,7 +371,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     if(entity.unidade_id != this.auth.unidade!.id) await this.auth.selecionaUnidade(entity.unidade_id);
     entity.comentarios = this.comentario.orderComentarios(entity.comentarios || []);
     entity.pausas = this.orderPausas(entity.pausas || []);
-    form.patchValue(formValue); /* Carrega os valores e dispara os eventos */
+    form.patchValue(this.util.fillForm(formValue, this.form.value)); /* Carrega os valores e dispara os eventos */
     this.loadEtiquetas();
   }
 
@@ -409,8 +435,9 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
         consolidacoes: []
       };
       if(!this.auth.isGestorUnidade(this.entity.unidade_id)) {
-        this.entity.usuario_id = this.auth.usuario!.id;
-        this.entity.usuario = this.auth.usuario;
+        let usuario = await this.usuarioDao.getById(this.auth.usuario!.id, this.usuarioJoin);
+        this.entity.usuario_id = usuario?.id || null;
+        this.entity.usuario = usuario || undefined;
       }
       /* Verificar isso (TODO)
       if(this.queryParams?.numero_requisicao?.length) {
@@ -424,9 +451,22 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
 
   public saveData(form: IIndexable): Promise<Atividade | boolean> {
     return new Promise<Atividade | boolean>((resolve, reject) => {
-      let atividade = this.util.fill(new Atividade(), this.entity!);
+      let atividade = this.util.fill(new Atividade(), this.entity!) as Atividade;
       this.comentarios?.confirm();
       atividade = this.util.fillForm(atividade, this.form!.value);
+      if(this.hasUsuarioActionNew) {
+        if(this.form!.controls.iniciado.value) {
+          atividade.data_inicio = atividade.data_distribuicao;
+          atividade.status = 'INICIADO';
+          if(this.form!.controls.concluido.value) {
+            let efemerides = this.calendar.calculaDataTempoUnidade(atividade.data_inicio, atividade.data_estipulada_entrega, this.planoTrabalhoSelecionado!.carga_horaria, this.unidade?.selectedEntity, "ENTREGA");
+            atividade.data_entrega = atividade.data_estipulada_entrega;
+            atividade.progresso = 100;
+            atividade.tempo_despendido = efemerides?.tempoUtil || 0;
+            atividade.status = 'CONCLUIDO';
+          }
+        }
+      }
       atividade.comentarios = atividade.comentarios.filter((x: Comentario) => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.texto?.length);
       atividade.tarefas = atividade.tarefas.filter((tarefa: AtividadeTarefa) => {
         tarefa.comentarios = tarefa.comentarios.filter((x: Comentario) => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.texto?.length);

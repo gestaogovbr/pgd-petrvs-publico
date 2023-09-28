@@ -119,6 +119,10 @@ export class LoginComponent implements OnInit, ModalPage, OnDestroy {
     }
   };
 
+  public openModal(item: any) {
+    if(item.route) this.go.navigate({route: item.route, params: item.params}, {title: "Suporte Petrvs"});
+  }
+
   // public autoSignGoogle() {
   //   /* Faz login automaticamente caso esteja logado com o Google */
   //   if(!this.auth.logging && !this.auth.logged && this.auth.googleAuth?.isSignedIn.get()) {

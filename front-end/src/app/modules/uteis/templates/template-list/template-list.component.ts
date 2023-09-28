@@ -19,6 +19,7 @@ export class TemplateListComponent extends PageListBase<Template, TemplateDaoSer
   public selected?: Template;
   public form: FormGroup;
   public templateService: TemplateService;
+  public listagem: boolean = false;
   public selectButtons: ToolbarButton[] = [
     {
       color: "btn-outline-success",
@@ -40,6 +41,10 @@ export class TemplateListComponent extends PageListBase<Template, TemplateDaoSer
   constructor(public injector: Injector) {
     super(injector, Template, TemplateDaoService);
     this.templateService = injector.get<TemplateService>(TemplateService);
+
+    
+
+
     this.title = this.lex.translate("Termos de Ciência e Responsabilidade");
     this.code = "MOD_TEMP";
     this.modalWidth = 1200;
@@ -53,24 +58,36 @@ export class TemplateListComponent extends PageListBase<Template, TemplateDaoSer
     });
     this.addOption(this.OPTION_INFORMACOES)
     this.addOption(this.OPTION_EXCLUIR, "MOD_TEMP_EXCL")
-    if (this.auth.hasPermissionTo("MOD_TEMP_EDT")) {
-      this.options.push({
-        icon: "bi bi-check-all",
-        label: "Associar TCR",
-        onClick: ((row: Template) => this.go.navigate({ route: ['cadastros', 'template', row.id, 'termos'] }, { modalClose: (modalResult) => console.log(modalResult?.conteudo) })).bind(this)
-      });
-    }
+   
   }
 
   ngAfterViewInit(): void {
     super.ngAfterViewInit();
     this.addParams = { especie: this.filter?.controls.especie.value };
+    if(this.queryParams.modo == "listagem"){
+      this.title = this.lex.translate("Templates") + " - OUTRO";
+      this.listagem = true;
+      this.options = this.options.filter(option => option.label !== 'Associar TCR');
+    }else { 
+      this.filter?.controls['especie'].disable;
+      if (this.auth.hasPermissionTo("MOD_TEMP_EDT")) {
+        this.options.push({
+          icon: "bi bi-check-all",
+          label: "Associar TCR",
+          onClick: ((row: Template) => this.go.navigate({ route: ['cadastros', 'template', row.id, 'termos'] }, { modalClose: (modalResult) => console.log(modalResult?.conteudo) })).bind(this)
+        });
+      }
+    }
   }
 
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
-
+    if(this.listagem){
+     this.addParams = { especie: form.especie };
+     const especie = this.lookup.TEMPLATE_ESPECIE.find(item => item.key === form.especie)
+     this.title  = this.lex.translate("Templates") + " - " + especie?.value;
+    }
     result.push(["especie", "==", form.especie]);
     if (form.titulo?.length) {
       result.push(["titulo", "like", "%" + form.titulo.trim().replace(" ", "%") + "%"]);
@@ -79,25 +96,28 @@ export class TemplateListComponent extends PageListBase<Template, TemplateDaoSer
     return result;
   }
 
-  /*public get dataset(): TemplateDataset[] {
-    const dataset = this.templateService.dataset(this.filter!.controls.especie.value);
-    if(JSON.stringify(this._dataset) != JSON.stringify(dataset)) {
-      this._dataset = dataset;
-    }
-    return this._dataset;
-  }*/
+ 
 
-  /*public async addTemplate() {
-    const template = new Template();
-    template.id = this.dao!.generateUuid();
-    template.especie = this.filter!.controls.especie.value;
-    template.dataset = this.dataset;
-    template.usuario_id = this.auth.usuario!.id;
-    template.unidade_id = this.auth.unidade!.id;
-    template._status = "ADD";
-    this.onSelect(template);
-    return template;
-  }
+  // public get dataset(): TemplateDataset[] {
+  //   const dataset = this.templateService.dataset(this.filter!.controls.especie.value);
+  //   if(JSON.stringify(this._dataset) != JSON.stringify(dataset)) {
+  //     this._dataset = dataset;
+  //   }
+  //   return this._dataset;
+  // }
+
+  // public async addTemplate() {
+  //   const template = new Template();
+  //   template.id = this.dao!.generateUuid();
+  //   template.especie = this.filter!.controls.especie.value;
+  //   template.dataset = this.dataset;
+  //   template.unidade_id = this.auth.unidade!.id;
+  //   template._status = "ADD";
+  //   this.onSelect(template);
+  //   return template;
+  // }
+
+  /*
 
   public async saveDocumento(form: FormGroup, item: Template) {
     const entity = form.value;

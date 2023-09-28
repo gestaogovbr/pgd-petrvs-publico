@@ -17,6 +17,8 @@ import { UteisModule } from './modules/uteis/uteis.module';
 import { RotinaModule } from './modules/rotinas/rotina.module';
 import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
 import { NgScrollbarModule } from 'ngx-scrollbar';
+import { DynamicDialogModule } from 'primeng/dynamicdialog';
+
 
 @NgModule({
   declarations: [
@@ -40,6 +42,7 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
     LogModule,
     RotinaModule,
     NgScrollbarModule,
+    DynamicDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]
