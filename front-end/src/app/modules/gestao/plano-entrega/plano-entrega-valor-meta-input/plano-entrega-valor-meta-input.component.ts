@@ -13,6 +13,7 @@ export class PlanoEntregaValorMetaInputComponent {
   @Input() entrega?: Entrega;
   @Input() icon: string = "";
   @Input() label?: string;
+  @Input() labelInfo: string = "";
   @Input() disabled?: string;
   @Input() control?: AbstractControl;
   @Input() change?: (value: any, entrega?: Entrega) => void;

@@ -26,7 +26,7 @@
                 <separator title="Planejamento"></separator>
                 <div *ngIf="this.entrega?.selectedEntity" class="row">
                     <plano-entrega-valor-meta-input icon="bi bi-graph-up-arrow" [entrega]="entrega?.selectedEntity" [size]="6" [control]="form!.controls.meta" label="Meta"></plano-entrega-valor-meta-input>
-                    <plano-entrega-valor-meta-input icon="bi bi-check-lg" [entrega]="entrega?.selectedEntity" [size]="6" [control]="form!.controls.realizado" label="Realizado" [change]="onRealizadoChange.bind(this)"></plano-entrega-valor-meta-input>
+                    <plano-entrega-valor-meta-input icon="bi bi-check-lg" [entrega]="entrega?.selectedEntity" [size]="6" [control]="form!.controls.realizado" label="Valor Inicial" [change]="onRealizadoChange.bind(this)" labelInfo="Valor da meta verificado no início do plano de entrega"></plano-entrega-valor-meta-input>
                 </div>
                 <div class="row">
                     <input-number [size]="6" [decimals]="2" label="Progresso Esperado" controlName="progresso_esperado" sufix="%"></input-number>
@@ -35,7 +35,7 @@
             </div>
         </tab>
         <tab *ngIf="planejamentoId?.length" key="OBJETIVOS" label="Objetivos">
-            <input-search [size]="12" #planejamento controlName="planejamento_id" [dao]="planejamentoDao" disabled></input-search>
+            <input-search [size]="12" #planejamento controlName="planejamento_id" [dao]="planejamentoDao"></input-search>
             <grid [control]="form!.controls.objetivos" [form]="formObjetivos" #gridObjetivos editable [orderBy]="orderBy" 
                 [hasDelete]="true" [hasEdit]="true" [add]="addObjetivo.bind(this)" [remove]="removeObjetivo.bind(this)" [save]="saveObjetivo.bind(this)">
                 <columns>
@@ -47,7 +47,7 @@
                             <span>{{row.objetivo?.nome}}</span>
                         </ng-template>
                         <ng-template let-row="row" #editObjetivo>
-                            <input-search [size]="12" #inputObjetivo label icon controlName="planejamento_objetivo_id" label icon [where]="[['planejamento_id', '==', planejamentoId]]" [dao]="planejamentoObjetivoDao" [selectRoute]="{route: ['gestao', 'planejamento', 'objetivoList'], params: {filter: {planejamento_id: planejamentoId}}}"></input-search>
+                            <input-search [size]="12" #inputObjetivo controlName="planejamento_objetivo_id" [where]="[['planejamento_id', '==', planejamentoId]]" [dao]="planejamentoObjetivoDao" [selectRoute]="{route: ['gestao', 'planejamento', 'objetivoList'], params: {filter: {planejamento_id: planejamentoId}}}"></input-search>
                         </ng-template>
                     </column>
                     <column type="options"></column>
