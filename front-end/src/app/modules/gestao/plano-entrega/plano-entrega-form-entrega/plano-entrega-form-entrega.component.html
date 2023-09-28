@@ -35,7 +35,7 @@
             </div>
         </tab>
         <tab *ngIf="planejamentoId?.length" key="OBJETIVOS" label="Objetivos">
-            <input-search [size]="12" #planejamento controlName="planejamento_id" [dao]="planejamentoDao" disabled></input-search>
+            <input-search [size]="12" #planejamento controlName="planejamento_id" [dao]="planejamentoDao"></input-search>
             <grid [control]="form!.controls.objetivos" [form]="formObjetivos" #gridObjetivos editable [orderBy]="orderBy" 
                 [hasDelete]="true" [hasEdit]="true" [add]="addObjetivo.bind(this)" [remove]="removeObjetivo.bind(this)" [save]="saveObjetivo.bind(this)">
                 <columns>
@@ -47,7 +47,7 @@
                             <span>{{row.objetivo?.nome}}</span>
                         </ng-template>
                         <ng-template let-row="row" #editObjetivo>
-                            <input-search [size]="12" #inputObjetivo label icon controlName="planejamento_objetivo_id" label icon [where]="[['planejamento_id', '==', planejamentoId]]" [dao]="planejamentoObjetivoDao" [selectRoute]="{route: ['gestao', 'planejamento', 'objetivoList'], params: {filter: {planejamento_id: planejamentoId}}}"></input-search>
+                            <input-search [size]="12" #inputObjetivo controlName="planejamento_objetivo_id" [where]="[['planejamento_id', '==', planejamentoId]]" [dao]="planejamentoObjetivoDao" [selectRoute]="{route: ['gestao', 'planejamento', 'objetivoList'], params: {filter: {planejamento_id: planejamentoId}}}"></input-search>
                         </ng-template>
                     </column>
                     <column type="options"></column>

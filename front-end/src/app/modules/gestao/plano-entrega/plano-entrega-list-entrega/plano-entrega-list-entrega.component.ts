@@ -155,7 +155,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   }
 
   public async edit(entrega: PlanoEntregaEntrega) {
-    console.log(this.form?.controls.progresso_realizado.value);
+    //console.log(this.form?.controls.progresso_realizado.value);
     if(this.execucao) {
       this.grid!.edit(entrega);
     } else {
