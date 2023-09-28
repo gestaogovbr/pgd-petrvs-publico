@@ -15,6 +15,7 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { FullRoute } from 'src/app/services/navigate.service';
 import { PlanoTrabalhoService } from '../plano-trabalho.service';
 import { DocumentoService } from 'src/app/modules/uteis/documentos/documento.service';
+import { UtilService } from 'src/app/services/util.service';
 
 @Component({
   selector: 'plano-trabalho-list',
@@ -28,6 +29,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
   public unidadeDao: UnidadeDaoService;
   public documentoDao: DocumentoDaoService;
   public documentoService: DocumentoService;
+  public utilService: UtilService;
   public programaDao: ProgramaDaoService;
   public usuarioDao: UsuarioDaoService;
   public planoTrabalhoService: PlanoTrabalhoService;
@@ -61,6 +63,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.documentoDao = injector.get<DocumentoDaoService>(DocumentoDaoService);
     this.documentoService = injector.get<DocumentoService>(DocumentoService);
+    this.utilService = injector.get<UtilService>(UtilService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.planoTrabalhoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
     this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
@@ -244,6 +247,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
 
   public botaoAtendeCondicoes(botao: ToolbarButton, planoTrabalho: PlanoTrabalho): boolean {
     let assinaturasExigidas: string[] = planoTrabalho.assinaturasExigidas;
+    let assinaturasFaltantes: string[] = this.utilService.array_diff(planoTrabalho.assinaturasExigidas,planoTrabalho.jaAssinaramTCR);
     let usuarioEhGestorUnidadeExecutora: boolean = this.auth.usuario?.id == planoTrabalho.unidade?.gestor?.usuario?.id;
     let usuarioJaAssinouTCR: boolean = planoTrabalho.jaAssinaramTCR.includes(this.auth.usuario?.id!);
     let assinaturaUsuarioEhExigida: boolean = planoTrabalho.assinaturasExigidas.includes(this.auth.usuario?.id!);
@@ -253,7 +257,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     let planoAtivo = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'ATIVO';
     let planoConcluido = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'CONCLUIDO';
     let planoArquivado = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'ARQUIVADO';
-    let programaExigeOutrasAssinaturas = !!assinaturasExigidas.filter(a => a != this.auth.usuario?.id).length;
+    //let programaExigeOutrasAssinaturas = !!assinaturasExigidas.filter(a => a != this.auth.usuario?.id).length;
     let planoSuspenso = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'SUSPENSO';
     let planoPossuiEntrega = planoTrabalho.entregas.length > 0;
     switch (botao) {
@@ -333,10 +337,11 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
           (RN_PTR_U) ENVIAR PARA ASSINATURA
           O plano precisa estar com o status INCLUIDO; e
             - o usuário logado precisa ser o participante do plano ou gestor da sua Unidade Executora; e
-            - o programa de gestão precisa exigir não só a assinatura do usuário logado, e
+            - se a assinatura do usuário logado por exigida, ele já deve ter assinado o TCR; e
+            - devem existir assinaturas exigíveis ainda pendentes; e
             - o plano precisa possui ao menos uma entrega;
         */
-        return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && programaExigeOutrasAssinaturas && planoPossuiEntrega;
+        return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && (!assinaturaUsuarioEhExigida || usuarioJaAssinouTCR) && !!assinaturasFaltantes.length && planoPossuiEntrega;
       case this.BOTAO_REATIVAR:
         /*
           (RN_PTR_W) REATIVAR
