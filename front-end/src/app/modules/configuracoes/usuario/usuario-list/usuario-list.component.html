@@ -7,7 +7,7 @@
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-text [size]="4" [label]="lex.translate('Usuário')" controlName="usuario" [control]="filter!.controls.usuario" placeholder="Nome" [attr.maxlength]=250></input-text>
-            <input-search [size]="4" [label]="lex.translate('Lotação')" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+            <input-search [size]="4" [label]="lex.translate('Lotação')" [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao"></input-search>
             <input-select [size]="4" [label]="lex.translate('Perfil')" controlName="perfil_id" nullable [control]="filter!.controls.perfil_id" [dao]="perfilDao"></input-select>
         </div>
     </filter>

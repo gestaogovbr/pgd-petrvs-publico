@@ -10,7 +10,6 @@ import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { Unidade } from 'src/app/models/unidade.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
-
 @Component({
   selector: 'unidade-list-grid',
   templateUrl: './unidade-list-grid.component.html',

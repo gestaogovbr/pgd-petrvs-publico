@@ -9,7 +9,7 @@
                 placeholder="Descrição" [attr.maxlength]=250></input-text>
         </div>
         <div class="row"> 
-                <input-search [size]="6" label="Unidade demandante" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+                <input-search [size]="6" label="Unidade demandante" [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao"></input-search>
                 <input-text [size]="6" label="Destinatário" controlName="destinatario" [control]="filter!.controls.destinatario"
                 placeholder="Destinatário" [attr.maxlength]=250></input-text>
         </div>

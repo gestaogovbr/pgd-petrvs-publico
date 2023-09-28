@@ -383,8 +383,8 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵInheritDefinitionFeature"]],
   decls: 26,
-  vars: 30,
-  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "hasAdd", "hasEdit"], [4, "ngIf"], [3, "form", "where", "submit", "collapseChange", "collapsed", "deleted"], [1, "row"], ["controlName", "usuario_id", 3, "size", "dao"], ["usuario", ""], ["controlName", "tipo_motivo_afastamento_id", 3, "size", "dao"], ["tipoMotivoAfastamento", ""], ["date", "", "label", "In\u00EDcio", "controlName", "data_inicio", 3, "size", "click"], ["date", "", "label", "Fim", "controlName", "data_fim", 3, "size", "click"], [3, "title", "template"], ["columnUsuario", ""], ["columnMotivoAfastamento", ""], ["title", "In\u00EDcio", 3, "template"], ["columnInicioAfastamento", ""], ["title", "Fim", 3, "template"], ["columnFimAfastamento", ""], ["title", "Observa\u00E7\u00F5es", "field", "observacoes"], ["type", "options", 3, "onEdit", "options"], [3, "rows"]],
+  vars: 32,
+  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "hasAdd", "hasEdit"], [4, "ngIf"], [3, "form", "where", "submit", "collapseChange", "collapsed", "deleted"], [1, "row"], ["controlName", "usuario_id", 3, "size", "control", "dao"], ["usuario", ""], ["controlName", "tipo_motivo_afastamento_id", 3, "size", "control", "dao"], ["tipoMotivoAfastamento", ""], ["date", "", "label", "In\u00EDcio", "controlName", "data_inicio", 3, "size", "click"], ["date", "", "label", "Fim", "controlName", "data_fim", 3, "size", "click"], [3, "title", "template"], ["columnUsuario", ""], ["columnMotivoAfastamento", ""], ["title", "In\u00EDcio", 3, "template"], ["columnInicioAfastamento", ""], ["title", "Fim", 3, "template"], ["columnFimAfastamento", ""], ["title", "Observa\u00E7\u00F5es", "field", "observacoes"], ["type", "options", 3, "onEdit", "options"], [3, "rows"]],
   template: function AfastamentoListComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](0, "grid", 0);
@@ -429,9 +429,9 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", ctx.filterCollapsed)("deleted", true);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 3)("dao", ctx.usuarioDao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.usuario_id)("dao", ctx.usuarioDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 3)("dao", ctx.tipoMotivoAfastamentoDao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.tipo_motivo_afastamento_id)("dao", ctx.tipoMotivoAfastamentoDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 3);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
