@@ -705,4 +705,8 @@ export class UtilService {
       return array.indexOf(x) === i;
     });
   }
+
+  public array_diff(array1: any[], array2: any[]): any[]{
+    return array1.filter(elem => !array2.includes(elem));
+  }
 }
