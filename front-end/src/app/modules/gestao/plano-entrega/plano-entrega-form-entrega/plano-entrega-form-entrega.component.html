@@ -29,8 +29,8 @@
                     <plano-entrega-valor-meta-input icon="bi bi-check-lg" [entrega]="entrega?.selectedEntity" [size]="6" [control]="form!.controls.realizado" label="Valor Inicial" [change]="onRealizadoChange.bind(this)" labelInfo="Valor da meta verificado no início do plano de entrega"></plano-entrega-valor-meta-input>
                 </div>
                 <div class="row">
-                    <input-number [size]="6" [decimals]="2" label="Progresso Esperado" controlName="progresso_esperado" sufix="%"></input-number>
-                    <input-number [size]="6" [decimals]="2" label="Progresso Realizado" [stepValue]="0.01" controlName="progresso_realizado" sufix="%" disabled></input-number>
+                    <input-number [size]="6" label="Progresso Esperado" controlName="progresso_esperado" sufix="%"></input-number>
+                    <input-number [size]="6" label="Progresso Realizado" [stepValue]="0.01" controlName="progresso_realizado" sufix="%" disabled></input-number>
                 </div>
             </div>
         </tab>

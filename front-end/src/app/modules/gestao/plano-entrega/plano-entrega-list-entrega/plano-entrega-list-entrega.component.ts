@@ -229,4 +229,13 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     let row: PlanoEntregaEntrega | undefined = this.items.find(x => x.id == modalResult.id);
     if(row) row.comentarios = modalResult.comentarios || [];
   }
+
+  public onRealizadaChange() {
+    const meta = this.form?.controls.meta.value;
+    const realizado = this.form?.controls.realizado.value;
+    if (meta && realizado) {
+      let totalRealizado = !isNaN(realizado) ? ((realizado / meta) * 100).toFixed(0) || 0 : 0;
+      this.form?.controls.progresso_realizado.setValue(totalRealizado);
+    }
+  }
 }
