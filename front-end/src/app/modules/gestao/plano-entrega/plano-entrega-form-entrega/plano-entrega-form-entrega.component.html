@@ -35,7 +35,7 @@
             </div>
         </tab>
         <tab *ngIf="planejamentoId?.length" key="OBJETIVOS" label="Objetivos">
-            <input-search [size]="12" #planejamento controlName="planejamento_id" [dao]="planejamentoDao"></input-search>
+            <input-search [size]="12" #planejamento controlName="planejamento_id" [dao]="planejamentoDao" disabled></input-search>
             <grid [control]="form!.controls.objetivos" [form]="formObjetivos" #gridObjetivos editable [orderBy]="orderBy" 
                 [hasDelete]="true" [hasEdit]="true" [add]="addObjetivo.bind(this)" [remove]="removeObjetivo.bind(this)" [save]="saveObjetivo.bind(this)">
                 <columns>

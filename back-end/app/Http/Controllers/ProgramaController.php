@@ -24,18 +24,4 @@ class ProgramaController extends ControllerBase {
                 break;
         }
     }
-
-/*     public function assinaturasExigidas(Request $request){
-        try {
-            $data = $request->validate([
-                'programa_id' => ['required']
-            ]);
-            return response()->json([
-                'success' => true,
-                'data' => $this->service->assinaturasExigidas($data["programa_id"])
-            ]);
-        } catch (Throwable $e) {
-            return response()->json(['error' => $e->getMessage()]);
-        }
-    } */
 }

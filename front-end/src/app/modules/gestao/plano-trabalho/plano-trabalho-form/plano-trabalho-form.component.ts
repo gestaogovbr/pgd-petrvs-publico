@@ -167,64 +167,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public formValidation = async (form?: FormGroup) => {
-    /*
-      (RN_PTR_V) INCLUIR/INSERIR
-      O usuário logado precisa possuir a capacidade "MOD_PTR_INCL", e:
-          - o usuário logado precisa ser um participante do PGD, habilitado, ou ser gestor da Unidade Executora do plano; (RN_PTR_B); e
-          - o participante do plano precisa estar lotado em uma das áreas de trabalho do usuário logado, ou este deve possuir a capacidade MOD_PTR_USERS_INCL; e
-          - o participante do plano precisa estar lotado na Unidade Executora, ou o usuário logado possuir a capacidade MOD_PTR_INCL_SEM_LOT; e
-          - o novo Plano de Trabalho não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA
-
-      (RN_PTR_M) ALTERAR
-      O usuário logado precisa possuir a capacidade "MOD_PTR_EDT", o Plano de Trabalho precisa ser válido (ou seja, nem deletado, nem arquivado, nem estar no status CANCELADO), e:
-          - estando com o status 'INCLUIDO', o usuário logado precisa ser o participante do plano ou o gestor da Unidade Executora;
-          - estando com o status 'AGUARDANDO_ASSINATURA', o usuário logado precisa ser um dos que já assinaram o TCR e todas as assinaturas tornam-se sem efeito;
-          - estando com o status 'ATIVO', o usuário precisa ser gestor da Unidade Executora e possuir a capacidade MOD_PTR_EDT_ATV.
-      Como a alteração pode ser no participante, e nas datas de início e fim do plano, faz-se necessário revalidar as respectivas regras da inserção do plano.
-      Após alterado, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
-    */
     let result = "";
-    let participantePlanoEhLotadoUnidadeExecutora: boolean = false;
-    let participantePlanoEhLotadoAlgumaAreaTrabalho: boolean = false;
-    let periodoPlanoNaoConflitaOutroMesmaUnidadeMesmoParticipante: boolean = true;
-    let usuarioPossuiCapacidadeInclusao: boolean = this.auth.hasPermissionTo("MOD_PTR_INCL");
-    let usuarioPossuiCapacidadeAlteracao: boolean = this.auth.hasPermissionTo("MOD_PTR_EDT");
-    let usuarioEhParticipantePgdHabilitado: boolean = this.auth.usuario!.participacoes_programas.map(pp => pp.programa_id).includes(this.entity!.programa_id);
-    let usuarioEhGestorUnidadeExecutora: boolean = this.gestoresUnidadeExecutora.includes(this.auth.usuario!.id);
-    let planoAtivo: boolean = this.planoTrabalhoService.situacaoPlano(this.entity!) == 'ATIVO';
-    let planoIncluido: boolean = this.planoTrabalhoService.situacaoPlano(this.entity!) == 'INCLUIDO';
-    let planoAguardandoAssinatura: boolean = this.planoTrabalhoService.situacaoPlano(this.entity!) == 'AGUARDANDO_ASSINATURA';
-    let usuarioJaAssinouTCR: boolean = this.entity!.jaAssinaramTCR.includes(this.auth.usuario?.id!);
-    let usuarioEhParticipantePlano: boolean = this.entity!.usuario_id == this.auth.usuario?.id;
-    await this.usuarioDao.getById(this.entity!.usuario_id, ["lotacao"]).then((participante) => {
-      participantePlanoEhLotadoAlgumaAreaTrabalho = participante ? this.auth.usuario!.areas_trabalho!.map(at => at.unidade_id).includes(participante!.lotacao!.unidade_id) : false;
-      participantePlanoEhLotadoUnidadeExecutora = participante ? participante!.lotacao!.unidade_id == this.entity!.unidade_id : false;
-    });
-    await this.dao?.query({ where: [["unidade_id", "==", this.entity!.unidade_id], ["usuario_id", "==", this.form?.controls.usuario_id.value], ["id", "!=", this.entity?.id]]}).getAll().then((planosTrabalho) => {
-      planosTrabalho.forEach(pt => {
-        if (this.utilService.intersection([{ start: this.utilService.asDate(pt.data_inicio)!, end: this.utilService.asDate(pt.data_fim)! }, { start: this.utilService.asDate(this.entity?.data_inicio)!, end: this.utilService.asDate(this.entity?.data_fim)! }])) periodoPlanoNaoConflitaOutroMesmaUnidadeMesmoParticipante = false;
-      });
-    });
-    let usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoAreasTrabalho: boolean = this.auth.hasPermissionTo("MOD_PTR_USERS_INCL");
-    let usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoUnidadeExecutora: boolean = this.auth.hasPermissionTo("MOD_PTR_INCL_SEM_LOT");
-    let usuarioPossuiCapacidadeInclusaoPlanoConflitante: boolean = this.auth.hasPermissionTo("MOD_PTR_INTSC_DATA");
-    let usuarioPossuiCapacidadeAlteracaoPlanoAtivo: boolean = this.auth.hasPermissionTo("MOD_PTR_EDT_ATV");
-    if (this.action == "new") {
-      if (!usuarioPossuiCapacidadeInclusao) result = "Você não possui a capacidade de inserir planos de trabalho (MOD_PTR_INCL). ";
-      if (!(usuarioEhParticipantePgdHabilitado || usuarioEhGestorUnidadeExecutora)) result += "O usuário logado precisa ser um participante habilitado do programa do plano, ou ser um dos gestores da unidade executora. ";
-      if (!(participantePlanoEhLotadoAlgumaAreaTrabalho || usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoAreasTrabalho)) result += "O participante de um plano de trabalho deve estar lotado em alguma das áreas de trabalho do usuário logado, ou este precisa possuir a capacidade de ser dispensado dessa regra (MOD_PTR_USERS_INCL). ";
-      if (!(participantePlanoEhLotadoUnidadeExecutora || usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoUnidadeExecutora)) result += "O participante de um plano de trabalho deve estar lotado na unidade executora, ou o usuário logado precisa possuir a capacidade de ser dispensado dessa regra (MOD_PTR_INCL_SEM_LOT). ";
-      if (!(periodoPlanoNaoConflitaOutroMesmaUnidadeMesmoParticipante || usuarioPossuiCapacidadeInclusaoPlanoConflitante)) result += "O período de duração de um plano de trabalho não pode coincidir com o de outro plano já existente para a mesma unidade executora e mesmo participante, ou o usuário logado precisa possuir a capacidade de ser dispensado dessa regra (MOD_PTR_INTSC_DATA). ";
-    } else if (this.action == "edit") {
-      if (!usuarioPossuiCapacidadeAlteracao) result = "Você não possui a capacidade de alterar/editar planos de trabalho (MOD_PTR_EDT). ";
-      if (!this.planoTrabalhoService.isValido(this.entity!)) result += "O plano de trabalho não é válido, ou seja, foi cancelado, apagado ou arquivado. ";
-      if (planoIncluido && (!(usuarioEhParticipantePlano || usuarioEhGestorUnidadeExecutora))) result += "Para alterar um plano de trabalho no status INCLUIDO, você precisaria ser o participante do plano. ";
-      if (planoAguardandoAssinatura && (!usuarioJaAssinouTCR)) result += "Para alterar um plano de trabalho no status AGUARDANDO ASSINATURA, você precisa já ter assinado o TCR. ";
-      if (planoAtivo && (!(usuarioEhGestorUnidadeExecutora && usuarioPossuiCapacidadeAlteracaoPlanoAtivo))) result += "Para alterar um plano de trabalho no status ATIVO, você precisa ser gestor da unidade executora do plano e possuir a capacidade específica (MOD_PTR_EDT_ATV). ";
-      if (!(participantePlanoEhLotadoAlgumaAreaTrabalho || usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoAreasTrabalho)) result += "O participante de um plano de trabalho deve estar lotado em alguma das áreas de trabalho do usuário logado, ou este precisa possuir a capacidade de ser dispensado dessa regra (MOD_PTR_USERS_INCL). ";
-      if (!(participantePlanoEhLotadoUnidadeExecutora || usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoUnidadeExecutora)) result += "O participante de um plano de trabalho deve estar lotado na unidade executora, ou o usuário logado precisa possuir a capacidade de ser dispensado dessa regra (MOD_PTR_INCL_SEM_LOT). ";
-      if (!(periodoPlanoNaoConflitaOutroMesmaUnidadeMesmoParticipante || usuarioPossuiCapacidadeInclusaoPlanoConflitante)) result += "O período de duração de um plano de trabalho não pode coincidir com o de outro plano já existente para a mesma unidade executora e mesmo participante, ou o usuário logado precisa possuir a capacidade de ser dispensado dessa regra (MOD_PTR_INTSC_DATA). ";
-    }
     return result;
     // TODO:
     // Validar se as entregas pertencem ao plano de entregas da unidade
@@ -258,24 +201,10 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public onDataInicioChange(event: Event) {
-    /*const di = new Date(this.form!.controls.data_inicio.value).getTime();
-    const df = new Date(this.form!.controls.data_fim.value).getTime();
-    if (df < di) {
-      let diaI = new Date(di);
-      diaI.setDate(diaI.getDate() + 1);
-      this.form!.controls.data_fim.setValue(diaI)
-    }*/
     this.calculaTempos();
   }
 
   public onDataFimChange(event: Event) {
-    /*const di = new Date(this.form!.controls.data_inicio.value).getTime();
-    const df = new Date(this.form!.controls.data_fim.value).getTime();
-    if (df < di) {
-      let diaI = new Date(di);
-      diaI.setDate(diaI.getDate() + 1);
-      this.form!.controls.data_fim.setValue(diaI)
-    }*/
     this.calculaTempos();
   }
 

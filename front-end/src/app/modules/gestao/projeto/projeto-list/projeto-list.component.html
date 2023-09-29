@@ -12,8 +12,8 @@
         <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
             <div class="row">
                 <input-text [size]="4" label="Nome" controlName="nome" [control]="filter!.controls.nome" [attr.maxlength]=250></input-text>
-                <input-search [size]="4" controlName="usuario_id" [dao]="usuarioDao"></input-search>
-                <input-search [size]="4" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+                <input-search [size]="4" [control]="filter!.controls.usuario_id" controlName="usuario_id" [dao]="usuarioDao"></input-search>
+                <input-search [size]="4" [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao"></input-search>
             </div>
         </filter>
         <columns>

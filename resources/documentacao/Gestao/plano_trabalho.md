@@ -10,7 +10,7 @@
     MOD_PTR_CNC - Permite cancelar planos de trabalho
     MOD_PTR_USERS_INCL - Permite incluir planos de trabalho para usuários que não estão lotados nas áreas de trabalho do usuário logado
     MOD_PTR_INCL_SEM_LOT - Permite incluir planos de trabalho para usuários que não estão lotados na unidade executora
-    MOD_PTR_INTSC_DATA - Permite incluir planos de trabalho que possuam períodos conflitantes com outro plano já existente na mesma unidade executora
+    MOD_PTR_INTSC_DATA - Permite incluir plano de trabalho que possua período conflitante com outro já existente na mesma unidade/servidor
 ~~~
 
 ## BANCO DE DADOS
@@ -50,7 +50,7 @@ Campos obrigatórios:
 - (RN_PTR_L) Um Plano de Trabalho adquire o status 'CONCLUIDO' quando a sua última consolidação for avaliada;
 - (RN_PTR_Y) Para incluir um Plano de Trabalho para um participante, é necessário que este esteja lotado em uma das áreas de trabalho do usuário logado, a menos que este possua a capacidade MOD_PTR_USERS_INCL;
 - (RN_PTR_Z) Na inclusão de um Plano de Trabalho, é necessário que o participante esteja lotado na Unidade Executora, a menos que o usuário logado possua a capacidade MOD_PTR_INCL_SEM_LOT;
-- (RN_PTR_AA) Um Plano de Trabalho não pode ser incluído se apresentar período conflitante com outro Plano de Trabalho já existente para a mesma Unidade Executora, a menos que o usuário logado possua a capacidade MOD_PTR_INTSC_DATA;
+- (RN_PTR_AA) Um Plano de Trabalho não pode ser incluído se apresentar período conflitante com outro Plano de Trabalho já existente para a mesma unidade/servidor, a menos que o usuário logado possua a capacidade MOD_PTR_INTSC_DATA;
 - (RN_PTR_AB) Um Plano de Trabalho não pode ser excluído;
 
 ## FLUXOS (STATUS & AÇÕES)
@@ -146,8 +146,9 @@ Ação: ENVIAR PARA ASSINATURA -> o plano vai para o status 'AGUARDANDO_ASSINATU
 - (RN_PTR_U) Condições para que um Plano de Trabalho possa ser enviado para assinatura:
   - o plano precisa estar com o status INCLUIDO; e
     - o usuário logado precisa ser o participante do plano ou gestor da sua Unidade Executora; e
-    - o programa de gestão precisa exigir não só a assinatura do usuário logado, e
-***************    - o plano precisa possuir ao menos uma entrega, e:
+    - se a assinatura do usuário logado por exigida, ele já deve ter assinado o TCR; e
+    - devem existir assinaturas exigíveis ainda pendentes; e
+***************    - o plano precisa possuir ao menos uma entrega.
 
 */*Ação: INSERIR/INCLUIR -> o plano adquire o status de 'INCLUIDO';
 
