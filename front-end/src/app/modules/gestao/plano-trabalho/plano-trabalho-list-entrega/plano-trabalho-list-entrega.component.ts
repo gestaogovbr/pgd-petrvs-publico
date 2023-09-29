@@ -228,7 +228,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   public async carregarEntregas(idPlanoOuPlano: string | PlanoEntrega): Promise<void> {
     let planoEntrega = typeof idPlanoOuPlano == 'string' ? await this.planoEntregaDao!.getById(idPlanoOuPlano, ["entregas.entrega:id,nome", "unidade"]) : idPlanoOuPlano;
     let planoEntregaComUnidade = {id: planoEntrega?.id, unidade_id: planoEntrega?.unidade_id, unidade: planoEntrega?.unidade};
-    this.entregas = planoEntrega?.entregas.map(epe => Object.assign({}, { key: epe.id, value: epe.entrega?.nome || epe.descricao, data: Object.assign(epe, {plano_entrega: planoEntregaComUnidade}) })) || [];
+    this.entregas = planoEntrega?.entregas.map(epe => Object.assign({}, { key: epe.id, value: epe.descricao || epe.entrega?.nome || "Deconhecido", data: Object.assign(epe, {plano_entrega: planoEntregaComUnidade}) })) || [];
     if(!this.entregas.find(x => x.key == this.form!.controls.plano_entrega_entrega_id.value)) this.form!.controls.plano_entrega_entrega_id.setValue(null);
   }
 

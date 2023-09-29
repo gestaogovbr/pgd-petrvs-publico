@@ -3512,7 +3512,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
       };
       _this6.entregas = planoEntrega?.entregas.map(epe => Object.assign({}, {
         key: epe.id,
-        value: epe.entrega?.nome || epe.descricao,
+        value: epe.descricao || epe.entrega?.nome || "Deconhecido",
         data: Object.assign(epe, {
           plano_entrega: planoEntregaComUnidade
         })

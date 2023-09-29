@@ -81,7 +81,7 @@
             </column>
             <column title="Entrega" [template]="columnEntrega">
                 <ng-template let-row="row" #columnEntrega>
-                    <badge [icon]="entityService.getIcon('Entrega')" [label]="row.badge.nome" [textValue]="row.badge.descricao"></badge>
+                    <badge [icon]="entityService.getIcon('Entrega')" [textValue]="row.badge.descricao"></badge> <!--[label]="row.badge.nome"-->
                 </ng-template>
             </column>
             <column title="% Força Trab. Planejado" [template]="columnForcaTrabalho">
