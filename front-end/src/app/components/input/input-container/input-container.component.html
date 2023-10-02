@@ -1,19 +1,18 @@
-<div class="mt-2 position-relative">
-    <label *ngIf="labelPosition == 'top' && label.length" for="{{controlName}}" class="d-flex align-items-center mb-1" [class]="labelClass" [class.radio]="isRadio" [class.fw-bold]="bold" [class.control-label]="isRadio">
-        <i *ngIf="icon.length" [class]="icon"></i>
-        <span class="mx-1">{{label}} <span class="required-field" *ngIf="isRequired">*</span></span>
-        <i *ngIf="labelInfo.length" class="bi bi-info-circle label-info text-muted ms-auto" data-bs-toggle="tooltip" data-bs-placement="top" [attr.data-bs-title]="labelInfo"></i>
-    </label>
-    <!-- Container -->
-    <div *ngIf="loading; else content" class="spinner-border spinner-border-sm m-0" role="status">
-        <span class="visually-hidden"></span>
-    </div>
-    <ng-template #content>
-        <ng-content></ng-content>
-    </ng-template>
-    <!-- Mensagem de erro -->
-    <div *ngIf="viewInit && hasError()" class="invalid-feedback" [class.d-block]="isInvalid()">
-        <i *ngIf="errorMessageIcon" [class]="'bi ' + errorMessageIcon"></i>
-        {{errorMessage()}}
-    </div>
+
+<label *ngIf="labelPosition == 'top' && label.length" for="{{controlName}}" class="d-flex align-items-center mb-1" [class]="labelClass" [class.radio]="isRadio" [class.fw-bold]="bold" [class.control-label]="isRadio">
+    <i *ngIf="icon.length" [class]="icon"></i>
+    <span class="mx-1">{{label}} <span class="required-field" *ngIf="isRequired">*</span></span>
+    <i *ngIf="labelInfo.length" class="bi bi-info-circle label-info text-muted ms-auto" data-bs-toggle="tooltip" data-bs-placement="top" [attr.data-bs-title]="labelInfo"></i>
+</label>
+<!-- Container -->
+<div *ngIf="loading; else content" class="spinner-border spinner-border-sm m-0" role="status">
+    <span class="visually-hidden"></span>
+</div>
+<ng-template #content>
+    <ng-content></ng-content>
+</ng-template>
+<!-- Mensagem de erro -->
+<div *ngIf="viewInit && hasError()" class="invalid-feedback" [class.d-block]="isInvalid()">
+    <i *ngIf="errorMessageIcon" [class]="'bi ' + errorMessageIcon"></i>
+    {{errorMessage()}}
 </div>

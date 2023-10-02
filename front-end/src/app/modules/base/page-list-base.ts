@@ -58,6 +58,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
     this.dao = injector.get<D>(dType);
     this.OPTION_INFORMACOES.onClick = this.consult.bind(this);
     this.OPTION_EXCLUIR.onClick = this.delete.bind(this);
+    this.OPTION_LOGS.onClick = this.showLogs.bind(this);
   }
 
   public saveUsuarioConfig(config?: any) {
@@ -175,6 +176,10 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
 
   public consult = async (doc: M) => {
     this.go.navigate({route: [...this.go.currentOrDefault.route, doc.id, "consult"]});
+  }
+
+  public showLogs = async (doc: M) => {
+    this.go.navigate({route: ['logs', 'change', doc.id, "consult"]});
   }
 
   public edit = async (doc: M) => {
