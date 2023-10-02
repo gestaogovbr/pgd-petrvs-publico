@@ -225,5 +225,13 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     return result;
   };
 
+  /*public getRow(row: any) {
+    console.log("row", row);
+    console.log("grid", this.grid);
+    console.log("filter", this.filter);
+    console.log("filter value", this.filter?.value);
+    return row.descricao;
+  }*/
+
 }
 
