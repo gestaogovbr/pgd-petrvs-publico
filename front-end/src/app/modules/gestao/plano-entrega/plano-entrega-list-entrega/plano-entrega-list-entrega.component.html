@@ -55,7 +55,7 @@
                 </separator>
             </ng-template>
         </column>
-        <column [title]="'Entrega do catálogo\nComentários'" [template]="columnEntregaCometario" [editTemplate]="columnEntregaCometario">
+        <column [title]="'Modelo de Entrega\nComentários'" [template]="columnEntregaCometario" [editTemplate]="columnEntregaCometario">
             <ng-template let-row="row" #columnEntregaCometario>
                 <badge *ngIf="row.entrega" color="light" icon="bi bi-list-check" [label]="row.entrega?.nome"></badge>
                 <comentarios-widget [entity]="row" [selectable]="!execucao || !!grid?.editing" origem="PLANO_ENTREGA_ENTREGA" [grid]="grid" [save]="refreshComentarios.bind(this)"></comentarios-widget>
