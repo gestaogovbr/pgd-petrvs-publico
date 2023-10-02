@@ -2264,7 +2264,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](5);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("title", "Objetivos/Processos")("width", 200)("template", _r14)("editTemplate", _r14);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("title", "Entrega do cat\u00E1logo\nComent\u00E1rios")("template", _r16)("editTemplate", _r16);
+      _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("title", "Modelo de Entrega\nComent\u00E1rios")("template", _r16)("editTemplate", _r16);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("onEdit", ctx.edit.bind(ctx))("dynamicButtons", ctx.dynamicButtons.bind(ctx))("dynamicOptions", ctx.dynamicOptions.bind(ctx));
     }
