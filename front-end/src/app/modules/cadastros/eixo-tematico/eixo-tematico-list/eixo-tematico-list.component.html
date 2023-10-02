@@ -1,7 +1,7 @@
 <grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [hasAdd]="auth.hasPermissionTo('MOD_EXTM_INCL')" [hasEdit]="auth.hasPermissionTo('MOD_EXTM_EDT')" 
       [selectable]="selectable" (select)="onSelect($event)" [orderBy]="orderBy">
     <toolbar *ngIf="!selectable"></toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-text [size]="12" [label]="lex.translate('Eixo temático')" controlName="nome"
                 [control]="filter!.controls.nome" [placeholder]="'Nome ' + lex.translate('eixo temático') + '...'" [attr.maxlength]=250></input-text>

@@ -26,6 +26,7 @@ export class MaterialServicoListComponent extends PageListBase<MaterialServico, 
     });
     this.addOption(this.OPTION_INFORMACOES);
     this.addOption(this.OPTION_EXCLUIR, "MOD_MATSRV_EXCL");
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 
   public filterWhere = (filter: FormGroup) => {
