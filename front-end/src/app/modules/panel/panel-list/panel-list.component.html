@@ -1,12 +1,11 @@
-<!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
+<h3  class="my-2">{{title}}</h3>
 <grid [dao]="dao" [add]="add" title="Painel de entidades (SaaS)" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
     [hasAdd]="true" [hasEdit]="true">
-    <toolbar [buttons]="toolbarButtons">
-      </toolbar>
+    <toolbar [buttons]="toolbarButtons"></toolbar>
     <filter hidden [form]="filter" [where]="filterWhere.bind(this)" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed"></filter>
     <columns>
         <column title="ID" [template]="columnId">
-            <ng-template let-row="row" #columnId>
+            <ng-template let-row="row" #columnId>Painel de entidades
                 <strong>{{row.id}}</strong>
             </ng-template>
         </column>
@@ -26,4 +25,4 @@
         <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
-</grid> 
+</grid>
