@@ -46,6 +46,9 @@ class TenantService extends ServiceBase {
 
     public function extraStore($dataOrEntity, $unidade, $action) {
         $tenant = Tenant::find($dataOrEntity->id);
+        $tenant->createDomain([
+            'domain' => $dataOrEntity->dominio_url
+        ]);
         tenancy()->initialize($tenant);
 
         config('app.env') == 'production' ? $this->acoesProducao($dataOrEntity->id) : $this->acoesDev($dataOrEntity->id);
@@ -188,9 +191,11 @@ class TenantService extends ServiceBase {
     private function acoesDev($id = null)
     {
         try {
-            Artisan::call('tenants:migrate');logInfo();
+            Artisan::call('tenants:migrate');
+            logInfo();
             $seedCommand = 'tenants:run db:seed --option="class=DatabaseSeeder"' . (empty($id) ? '' : ' --tenants=' . $id);
-            Artisan::call($seedCommand);logInfo();
+            Artisan::call($seedCommand);
+            logInfo();
             return true;
         } catch (\Exception $e) {
             // Handle any exceptions that may occur during command execution

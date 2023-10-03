@@ -34,6 +34,7 @@ export class Tenant extends Base {
     public nome_entidade: string = "";
     public abrangencia: string = "";
     public codigo_cidade: string | null = null
+    public dominio_url: string | null = null
     // LOGIN
     public login_select_entidade: boolean = false;
     public login_google_client_id:string = "" ;
