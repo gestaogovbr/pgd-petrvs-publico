@@ -1239,7 +1239,7 @@ class IN24_2023Seeder extends Seeder
             "updated_at" => $this->timenow,
             "deleted_at" => NULL,
             "nome" => "Modelo - Valor",
-            "descricao" => "Modelo de entrega na qual a meta espec´´ifica valor. Ex.: Financeiro.",
+            "descricao" => "Modelo de entrega na qual a meta especifica valor. Ex.: Financeiro.",
             "tipo_indicador" => "VALOR",
             "lista_qualitativos" => NULL,
             "unidade_id" => NULL,
