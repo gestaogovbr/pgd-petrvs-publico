@@ -37,6 +37,7 @@ export class AfastamentoListComponent extends PageListBase<Afastamento, Afastame
     });
     this.addOption(this.OPTION_INFORMACOES);
     this.addOption(this.OPTION_EXCLUIR, "MOD_AFT_EXCL");
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 
   public filtro() {

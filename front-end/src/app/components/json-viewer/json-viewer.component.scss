@@ -1,0 +1,99 @@
+$type-colors: (
+  string: var(--json-string, #FF6B6B),
+  number: var(--json-number, #009688),
+  boolean: var(--json-boolean, #B938A4),
+  date: var(--json-date, #05668D),
+
+  array: var(--json-array, #999),
+  object: var(--json-object, #999),
+  function: var(--json-function, #999),
+
+  'null': var(--json-null, #fff),
+  undefined: var(--json-undefined, #fff)
+);
+
+:host {
+  height: 100%;
+}
+
+.json-viewer {
+  font-family: var(--json-font-family, monospace);
+  font-size: var(--json-font-size, 1em);
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+
+  .segment {
+    padding: 2px;
+    margin: 1px 1px 1px 12px;
+
+    .segment-main {
+      word-wrap: break-word;
+
+      .toggler {
+        position: absolute;
+        margin-left: -14px;
+        margin-top: 3px;
+        font-size: .8em;
+        line-height: 1.2em;
+        vertical-align: middle;
+        color: var(--json-toggler, #787878);
+
+        &::after {
+          display: inline-block;
+          content: "►";
+          transition: transform 0.1s ease-in;
+        }
+      }
+
+      .segment-key {
+        color: var(--json-key, #c2920d);
+      }
+
+      .segment-separator {
+        color: var(--json-separator, #999);
+      }
+
+      .segment-value {
+        color: var(--json-value, #000);
+      }
+    }
+
+    .children {
+      margin-left: 12px;
+    }
+  }
+
+  @each $type, $color in $type-colors {
+    .segment-type-#{$type} > .segment-main > .segment-value {
+      color: #{$color};
+    }
+  }
+
+  // special cases need highlighted
+  .segment-type-null > .segment-main > .segment-value {
+    background-color: var(--json-null-bg, red);
+  }
+  .segment-type-undefined > .segment-main {
+    & > .segment-key {
+      color: var(--json-undefined-key, #999);
+    }
+    & > .segment-value {
+      background-color: var(--json-undefined-key, #999);
+    }
+  }
+  .segment-type-object > .segment-main,
+  .segment-type-array > .segment-main {
+    white-space: nowrap;
+  }
+
+  .expanded > .toggler::after {
+    transform: rotate(90deg);
+  }
+
+  .expandable,
+  .expandable > .toggler {
+    cursor: pointer;
+  }
+}

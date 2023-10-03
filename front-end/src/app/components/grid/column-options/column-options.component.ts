@@ -66,6 +66,10 @@ export class ColumnOptionsComponent extends ComponentBase implements OnInit {
     return this.row["id"] == (this.grid?.editing || {id: undefined})["id"];
   }
 
+  public get isDeletedRow(): boolean {
+    return this.row['deleted_at']
+  }
+
   public get isUpDownButtons(): boolean {
     return this.upDownButtons != undefined;
   }
@@ -90,17 +94,20 @@ export class ColumnOptionsComponent extends ComponentBase implements OnInit {
 
   public get allButtons(): ToolbarButton[] {
     let hash = this.calcHashChanges();
-    if(!this._allButtons || this._hashButtons != hash) {
+    if(!this.isDeletedRow && (!this._allButtons || this._hashButtons != hash)) {
       this._hashButtons = hash;
       const dynamicButtons = this.dynamicButtons ? this.dynamicButtons(this.row, this.column.metadata) : [];
       this._allButtons = [...dynamicButtons, ...this.buttons];
       this.recalcWith();
-    }
+    }    
     return this._allButtons!;
   }
 
   public get allOptions(): ToolbarButton[] {
     let hash = this.calcHashChanges();
+    if(this.isDeletedRow){
+      this.options = this.options?.filter(o => o.label === "Logs");
+    }
     if(!this._allOptions || this._hashOptions != hash) {
       this._hashOptions = hash;
       const dynamicOptions = this.dynamicOptions ? this.dynamicOptions(this.row, this.column.metadata) : [];

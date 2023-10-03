@@ -254,7 +254,7 @@
   .withTextValue {
     padding: 1px;
     i {
-      margin: 5px;
+      margin: 2px 5px;
     }
   }
 
@@ -272,7 +272,11 @@
     }
   }
 
-  
+  .deleted_at {
+    td {
+      background: #4b04041c;
+    }
+  }
   
 }
 

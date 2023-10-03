@@ -7,6 +7,8 @@ import { ChangeListComponent } from './change/change-list/change-list.component'
 import { ChangeFormComponent } from './change/change-form/change-form.component';
 import { ErrorFormComponent } from './error/error-form/error-form.component';
 import { ErrorListComponent } from './error/error-list/error-list.component';
+import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
+
 
 @NgModule({
   declarations: [
@@ -19,7 +21,8 @@ import { ErrorListComponent } from './error/error-list/error-list.component';
     CommonModule,
     ComponentsModule,
     ReactiveFormsModule,
-    LogRoutingModule
+    LogRoutingModule,
+    MarkdownModule.forRoot()
   ]
 })
 export class LogModule { }

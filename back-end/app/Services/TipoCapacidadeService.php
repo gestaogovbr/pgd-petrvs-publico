@@ -439,6 +439,13 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_RX_VIS_OPO", "Permite visualizar oportunidades"],
                 ["MOD_RX_RES_ATR", "Permite resetar dados comportamentais"]
             ]
+        ], [ 
+            "codigo"=> "MOD_AUDIT",
+            "descricao"=> "Módulo Auditoria",
+            "capacidades"=> [
+                ["MOD_AUDIT_DEL", "Permite visualizar registros deletados"],
+                ["MOD_AUDIT_LOG", "Permite visualizar logs das tabelas"]
+            ]
         ]
     ];
 

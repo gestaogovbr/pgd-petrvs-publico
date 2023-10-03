@@ -413,7 +413,7 @@ class TipoAtividadeListComponent extends src_app_modules_base_page_list_base__WE
       return result;
     };
     /* Inicializações */
-    this.title = this.lex.translate("Tipos de Atividade");
+    this.title = this.lex.translate("Tipos de Atividades");
     this.code = "MOD_TIPO_ATV";
     this.filter = this.fh.FormBuilder({
       nome: {
@@ -436,6 +436,7 @@ class TipoAtividadeListComponent extends src_app_modules_base_page_list_base__WE
         onClick: this.delete.bind(this)
       });
     }
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
   filterClear(filter) {
     filter.controls.nome.setValue("");
@@ -474,8 +475,8 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵInheritDefinitionFeature"]],
   decls: 36,
-  vars: 30,
-  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "clear"], [1, "row"], ["label", "Nome", "controlName", "nome", 3, "size", "control"], ["title", "Nome", 3, "template"], ["columnNome", ""], ["title", "Etiquetas", 3, "template"], ["columnEtiquetas", ""], ["title", "Checklist", 3, "template"], ["columnChecklist", ""], ["type", "options", 3, "onEdit", "options"], ["reportNome", ""], [3, "title", "template"], ["reportEsforco", ""], ["title", "Dias planejamento", 3, "template"], ["reportDiasPlanejado", ""], ["reportEtiquetas", ""], ["title", "Check-list", 3, "template"], ["reportChecklist", ""], ["title", "Coment\u00E1rio", 3, "template"], ["reportComentario", ""], [3, "rows"], [1, "d-block"], [1, "one-per-line", "text-break", "w-100"], [3, "icon", "label", "color", 4, "ngFor", "ngForOf"], [3, "icon", "label", "color"], ["color", "light", "icon", "bi bi-check2-square", 3, "label", 4, "ngFor", "ngForOf"], ["color", "light", "icon", "bi bi-check2-square", 3, "label"]],
+  vars: 31,
+  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "deleted", "form", "where", "submit", "clear"], [1, "row"], ["label", "Nome", "controlName", "nome", 3, "size", "control"], ["title", "Nome", 3, "template"], ["columnNome", ""], ["title", "Etiquetas", 3, "template"], ["columnEtiquetas", ""], ["title", "Checklist", 3, "template"], ["columnChecklist", ""], ["type", "options", 3, "onEdit", "options"], ["reportNome", ""], [3, "title", "template"], ["reportEsforco", ""], ["title", "Dias planejamento", 3, "template"], ["reportDiasPlanejado", ""], ["reportEtiquetas", ""], ["title", "Check-list", 3, "template"], ["reportChecklist", ""], ["title", "Coment\u00E1rio", 3, "template"], ["reportComentario", ""], [3, "rows"], [1, "d-block"], [1, "one-per-line", "text-break", "w-100"], [3, "icon", "label", "color", 4, "ngFor", "ngForOf"], [3, "icon", "label", "color"], ["color", "light", "icon", "bi bi-check2-square", 3, "label", 4, "ngFor", "ngForOf"], ["color", "light", "icon", "bi bi-check2-square", 3, "label"]],
   template: function TipoAtividadeListComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "grid", 0);
@@ -532,7 +533,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("ngIf", !ctx.selectable);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx));
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("deleted", ctx.auth.hasPermissionTo("MOD_AUDIT_DEL"))("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx));
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 12)("control", ctx.filter.controls.nome);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵattribute"]("maxlength", 250);

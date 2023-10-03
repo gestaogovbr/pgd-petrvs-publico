@@ -305,6 +305,7 @@ class MaterialServicoListComponent extends src_app_modules_base_page_list_base__
     });
     this.addOption(this.OPTION_INFORMACOES);
     this.addOption(this.OPTION_EXCLUIR, "MOD_MATSRV_EXCL");
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 }
 _class = MaterialServicoListComponent;
@@ -325,8 +326,8 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵInheritDefinitionFeature"]],
   decls: 24,
-  vars: 35,
-  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "collapseChange", "collapsed"], [1, "row"], ["label", "Tipo", "itemTodos", "- Todos -", "controlName", "tipo", 3, "size", "valueTodos", "control", "items"], ["label", "C\u00F3digo", "controlName", "codigo", 3, "size", "control"], ["label", "Refer\u00EAncia", "controlName", "referencia", 3, "size", "control"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", 3, "size", "control"], ["title", "Tipo", 3, "template"], ["columnTipo", ""], ["title", "C\u00F3d./Ref.", 3, "template"], ["columnCodigoReferencia", ""], ["title", "Descri\u00E7\u00E3o", 3, "template"], ["columnDescricao", ""], ["title", "Unidades", 3, "template"], ["columnUnidade", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"], ["color", "light", 3, "icon", "label"], ["color", "light", "icon", "bi bi-upc-scan", "hint", "C\u00F3digo", 3, "label", 4, "ngIf"], ["color", "light", "icon", "bi bi-qr-code", "hint", "Refer\u00EAncia", 3, "label", 4, "ngIf"], ["color", "light", "icon", "bi bi-upc-scan", "hint", "C\u00F3digo", 3, "label"], ["color", "light", "icon", "bi bi-qr-code", "hint", "Refer\u00EAncia", 3, "label"]],
+  vars: 36,
+  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "deleted", "form", "where", "submit", "collapseChange", "collapsed"], [1, "row"], ["label", "Tipo", "itemTodos", "- Todos -", "controlName", "tipo", 3, "size", "valueTodos", "control", "items"], ["label", "C\u00F3digo", "controlName", "codigo", 3, "size", "control"], ["label", "Refer\u00EAncia", "controlName", "referencia", 3, "size", "control"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", 3, "size", "control"], ["title", "Tipo", 3, "template"], ["columnTipo", ""], ["title", "C\u00F3d./Ref.", 3, "template"], ["columnCodigoReferencia", ""], ["title", "Descri\u00E7\u00E3o", 3, "template"], ["columnDescricao", ""], ["title", "Unidades", 3, "template"], ["columnUnidade", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"], ["color", "light", 3, "icon", "label"], ["color", "light", "icon", "bi bi-upc-scan", "hint", "C\u00F3digo", 3, "label", 4, "ngIf"], ["color", "light", "icon", "bi bi-qr-code", "hint", "Refer\u00EAncia", 3, "label", 4, "ngIf"], ["color", "light", "icon", "bi bi-upc-scan", "hint", "C\u00F3digo", 3, "label"], ["color", "light", "icon", "bi bi-qr-code", "hint", "Refer\u00EAncia", 3, "label"]],
   template: function MaterialServicoListComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "grid", 0);
@@ -366,7 +367,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("ngIf", !ctx.selectable);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("deleted", ctx.auth.hasPermissionTo("MOD_AUDIT_DEL"))("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 4)("valueTodos", null)("control", ctx.filter.controls.tipo)("items", ctx.lookup.MATERIAL_SERVICO_TIPO);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);

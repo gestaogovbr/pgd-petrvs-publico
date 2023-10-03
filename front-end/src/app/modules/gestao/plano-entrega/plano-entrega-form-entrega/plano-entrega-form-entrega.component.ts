@@ -77,7 +77,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.planejamentoObjetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
     this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
     this.modalWidth = 600;
-    this.join = ["entrega"];
+    this.join = ["entrega", "objetivos.objetivo", "processos.processo"];
     this.form = this.fh.FormBuilder({
       descricao: { default: "" },
       data_inicio: { default: new Date() },
@@ -220,7 +220,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     const meta = this.form?.controls.meta.value;
     const realizado = this.form?.controls.realizado.value;
     if (meta && realizado) {
-      let totalRealizado = !isNaN(realizado) ? ((realizado / meta) * 100).toFixed(2) || 0 : 0;
+      let totalRealizado = !isNaN(realizado) ? ((realizado / meta) * 100).toFixed(0) || 0 : 0;
       this.form?.controls.progresso_realizado.setValue(totalRealizado);
     }
   }

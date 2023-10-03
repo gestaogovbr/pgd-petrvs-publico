@@ -1,13 +1,13 @@
 <grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [join]="join" [hasAdd]="auth.hasPermissionTo('MOD_PLAN_INST_INCL')"
       [hasEdit]="auth.hasPermissionTo('MOD_PLAN_INST_EDT')" [orderBy]="orderBy" [selectable]="selectable" (select)="onSelect($event)">
     <toolbar *ngIf="!selectable"></toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-text [size]="12" label="Nome" controlName="nome" [control]="filter!.controls.nome" [attr.maxlength]=250></input-text>
         </div>
         <div class="row">
-            <input-search [size]="8" controlName="planejamento_id"  [dao]="planejamentoDao"></input-search>                
-            <input-search [size]="4" controlName="eixo_tematico_id" [dao]="eixoTematicoDao"></input-search>                
+            <input-search [size]="8" [control]="filter!.controls.planejamento_id" controlName="planejamento_id"  [dao]="planejamentoDao"></input-search>                
+            <input-search [size]="4" [control]="filter!.controls.eixo_tematico_id" controlName="eixo_tematico_id" [dao]="eixoTematicoDao"></input-search>                
         </div>
     </filter>
     <columns>

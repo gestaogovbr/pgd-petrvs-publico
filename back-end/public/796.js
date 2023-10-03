@@ -490,17 +490,19 @@ function PlanoTrabalhoConsolidacaoFormComponent_ng_template_10_Template(rf, ctx)
 }
 function PlanoTrabalhoConsolidacaoFormComponent_ng_template_13_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelement"](0, "badge", 76);
+    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementStart"](0, "b");
+    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
     const row_r71 = ctx.row;
-    const ctx_r8 = _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("icon", ctx_r8.entityService.getIcon("Entrega"))("label", row_r71.badge.nome)("textValue", row_r71.badge.descricao);
+    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtextInterpolate"](row_r71.badge.descricao);
   }
 }
 function PlanoTrabalhoConsolidacaoFormComponent_ng_template_16_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelement"](0, "badge", 77);
+    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelement"](0, "badge", 76);
   }
   if (rf & 2) {
     const row_r72 = ctx.row;
@@ -509,7 +511,7 @@ function PlanoTrabalhoConsolidacaoFormComponent_ng_template_16_Template(rf, ctx)
 }
 function PlanoTrabalhoConsolidacaoFormComponent_ng_template_33_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelement"](0, "badge", 78);
+    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelement"](0, "badge", 77);
     _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtext"](1);
   }
   if (rf & 2) {
@@ -521,7 +523,7 @@ function PlanoTrabalhoConsolidacaoFormComponent_ng_template_33_Template(rf, ctx)
 }
 function PlanoTrabalhoConsolidacaoFormComponent_ng_template_42_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelement"](0, "badge", 79);
+    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelement"](0, "badge", 78);
   }
   if (rf & 2) {
     const row_r74 = ctx.row;
@@ -531,7 +533,7 @@ function PlanoTrabalhoConsolidacaoFormComponent_ng_template_42_Template(rf, ctx)
 }
 function PlanoTrabalhoConsolidacaoFormComponent_ng_template_44_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelement"](0, "input-search", 80, 81);
+    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelement"](0, "input-search", 79, 80);
   }
   if (rf & 2) {
     const ctx_r19 = _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵnextContext"]();
@@ -1140,8 +1142,8 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵInheritDefinitionFeature"]],
   decls: 48,
-  vars: 56,
-  consts: [[3, "title", "icon"], ["expanded", "", 3, "items", "minHeight"], ["gridEntregas", ""], ["type", "expand", 3, "icon", "align", "hint", "template", "expandTemplate"], ["columnConsolidacao", ""], ["columnExpandedConsolidacao", ""], ["title", "Origem", 3, "template", "width"], ["columnOrigem", ""], ["title", "Entrega", 3, "template"], ["columnEntrega", ""], ["title", "% For\u00E7a Trab. Planejado", 3, "template"], ["columnForcaTrabalho", ""], ["editable", "", 3, "items", "minHeight", "form", "hasDelete", "hasAdd", "hasEdit", "add", "load", "remove", "save"], ["gridOcorrencia", ""], ["title", "In\u00EDcio", "type", "datetime", "field", "data_inicio", 3, "width"], ["title", "Fim", "type", "datetime", "field", "data_fim", 3, "width"], ["title", "Descri\u00E7\u00E3o", "type", "textarea", "field", "descricao"], ["type", "options", 3, "dynamicButtons"], ["editable", "", 3, "items", "minHeight", "add", "hasEdit", "hasDelete", "hasAdd"], ["gridAfastamento", ""], ["title", "Motivo/Observa\u00E7\u00E3o", 3, "template"], ["columnMotivoObservacao", ""], ["gridComparecimento", ""], ["title", "Data", "type", "date", "field", "data_comparecimento", 3, "width"], ["title", "Unidade", 3, "template", "editTemplate"], ["columnUnidade", ""], ["editUnidade", ""], ["title", "Detalhamento", "type", "text", "field", "detalhamento"], ["editable", "", 3, "items", "minHeight", "form", "hasAdd", "hasDelete", "hasEdit", "add", "load", "remove", "save"], ["gridAtividade", ""], [3, "title", "template", "editTemplate"], ["columnAtividadeDescricao", ""], ["editAtividadeDescricao", ""], [3, "title", "width", "template", "editTemplate"], ["columnTempos", ""], ["editTempos", ""], [3, "title", "width", "template", "editTemplate", "columnEditTemplate", "edit", "save"], ["columnProgressoEtiquetasChecklist", ""], ["columnProgressoEtiquetasChecklistEdit", ""], ["columnNumero", ""], ["type", "options", 3, "metadata", "dynamicOptions", "dynamicButtons"], [1, "text-nowrap", "d-block"], ["icon", "bi bi-hash", "color", "light", 3, "label", "data", "click"], ["color", "light", 3, "icon", "label", 4, "ngIf"], [1, "micro-text", "fw-ligh", "atividade-descricao"], ["color", "light", 3, "icon", "label"], ["controlName", "tipo_atividade_id", 3, "label", "size", "emptyValue", "control", "dao", "labelInfo", "required", "select"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", "required", "", 3, "size", "rows", "control"], [1, "one-per-line"], [3, "badge", 4, "ngFor", "ngForOf"], [3, "badge"], ["icon", "bi bi-file-earmark-plus", "controlName", "data_distribuicao", "labelInfo", "Data de inclus\u00E3o/distribui\u00E7\u00E3o/lan\u00E7amento", 3, "label", "control"], ["icon", "bi bi-calendar-check", "controlName", "data_estipulada_entrega", "labelInfo", "Data estipulada para entrega da atividade", 3, "label", "control"], ["icon", "bi bi-check-circle", "label", "Conclus\u00E3o", "controlName", "data_entrega", "labelInfo", "Data da conclus\u00E3o da atividade", 3, "control"], ["color", "success", 3, "value"], [3, "lookup", 4, "ngFor", "ngForOf"], ["small", "", "title", "Checklist", 4, "ngIf"], [4, "ngIf"], [3, "lookup"], ["small", "", "title", "Checklist"], [4, "ngFor", "ngForOf"], ["class", "bi bi-check-circle", 4, "ngIf"], [1, "micro-text", "fw-ligh"], [1, "bi", "bi-check-circle"], ["label", "Progresso", "sufix", "%", "icon", "bi bi-clock", "controlName", "progresso", "labelInfo", "Progresso de execu\u00E7\u00E3o (% Conclu\u00EDdo)", 3, "size", "decimals", "control"], ["controlName", "etiquetas", 3, "size", "control", "addItemHandle"], ["label", "Etiqueta", "controlName", "etiqueta", "nullable", "", "itemNull", "- Selecione -", "detailsButton", "", "detailsButtonIcon", "bi bi-tools", 3, "size", "control", "items", "details"], ["etiqueta", ""], ["scale", "small", 3, "size", "source", "path"], [3, "documento"], [1, "d-block"], [3, "data", "color", "icon", "label", 4, "ngFor", "ngForOf"], ["origem", "ATIVIDADE", 3, "entity", "selectable", "grid", 4, "ngIf"], [3, "data", "color", "icon", "label"], ["origem", "ATIVIDADE", 3, "entity", "selectable", "grid"], [3, "label", "color"], [3, "icon", "label", "textValue"], ["color", "light", 3, "label"], [3, "color", "icon", "label"], ["color", "success", 3, "icon", "label", "textValue"], ["label", "", "icon", "", "controlName", "unidade_id", 3, "size", "dao"], ["unidade", ""]],
+  vars: 60,
+  consts: [["collapse", "", 3, "collapsed", "title", "icon"], ["expanded", "", 3, "items", "minHeight"], ["gridEntregas", ""], ["type", "expand", 3, "icon", "align", "hint", "template", "expandTemplate"], ["columnConsolidacao", ""], ["columnExpandedConsolidacao", ""], ["title", "Origem", 3, "template", "width"], ["columnOrigem", ""], ["title", "Entrega", 3, "template"], ["columnEntrega", ""], ["title", "% For\u00E7a Trab. Planejado", 3, "template"], ["columnForcaTrabalho", ""], ["editable", "", 3, "items", "minHeight", "form", "hasDelete", "hasAdd", "hasEdit", "add", "load", "remove", "save"], ["gridOcorrencia", ""], ["title", "In\u00EDcio", "type", "datetime", "field", "data_inicio", 3, "width"], ["title", "Fim", "type", "datetime", "field", "data_fim", 3, "width"], ["title", "Descri\u00E7\u00E3o", "type", "textarea", "field", "descricao"], ["type", "options", 3, "dynamicButtons"], ["editable", "", 3, "items", "minHeight", "add", "hasEdit", "hasDelete", "hasAdd"], ["gridAfastamento", ""], ["title", "Motivo/Observa\u00E7\u00E3o", 3, "template"], ["columnMotivoObservacao", ""], ["gridComparecimento", ""], ["title", "Data", "type", "date", "field", "data_comparecimento", 3, "width"], ["title", "Unidade", 3, "template", "editTemplate"], ["columnUnidade", ""], ["editUnidade", ""], ["title", "Detalhamento", "type", "text", "field", "detalhamento"], ["editable", "", 3, "items", "minHeight", "form", "hasAdd", "hasDelete", "hasEdit", "add", "load", "remove", "save"], ["gridAtividade", ""], [3, "title", "template", "editTemplate"], ["columnAtividadeDescricao", ""], ["editAtividadeDescricao", ""], [3, "title", "width", "template", "editTemplate"], ["columnTempos", ""], ["editTempos", ""], [3, "title", "width", "template", "editTemplate", "columnEditTemplate", "edit", "save"], ["columnProgressoEtiquetasChecklist", ""], ["columnProgressoEtiquetasChecklistEdit", ""], ["columnNumero", ""], ["type", "options", 3, "metadata", "dynamicOptions", "dynamicButtons"], [1, "text-nowrap", "d-block"], ["icon", "bi bi-hash", "color", "light", 3, "label", "data", "click"], ["color", "light", 3, "icon", "label", 4, "ngIf"], [1, "micro-text", "fw-ligh", "atividade-descricao"], ["color", "light", 3, "icon", "label"], ["controlName", "tipo_atividade_id", 3, "label", "size", "emptyValue", "control", "dao", "labelInfo", "required", "select"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", "required", "", 3, "size", "rows", "control"], [1, "one-per-line"], [3, "badge", 4, "ngFor", "ngForOf"], [3, "badge"], ["icon", "bi bi-file-earmark-plus", "controlName", "data_distribuicao", "labelInfo", "Data de inclus\u00E3o/distribui\u00E7\u00E3o/lan\u00E7amento", 3, "label", "control"], ["icon", "bi bi-calendar-check", "controlName", "data_estipulada_entrega", "labelInfo", "Data estipulada para entrega da atividade", 3, "label", "control"], ["icon", "bi bi-check-circle", "label", "Conclus\u00E3o", "controlName", "data_entrega", "labelInfo", "Data da conclus\u00E3o da atividade", 3, "control"], ["color", "success", 3, "value"], [3, "lookup", 4, "ngFor", "ngForOf"], ["small", "", "title", "Checklist", 4, "ngIf"], [4, "ngIf"], [3, "lookup"], ["small", "", "title", "Checklist"], [4, "ngFor", "ngForOf"], ["class", "bi bi-check-circle", 4, "ngIf"], [1, "micro-text", "fw-ligh"], [1, "bi", "bi-check-circle"], ["label", "Progresso", "sufix", "%", "icon", "bi bi-clock", "controlName", "progresso", "labelInfo", "Progresso de execu\u00E7\u00E3o (% Conclu\u00EDdo)", 3, "size", "decimals", "control"], ["controlName", "etiquetas", 3, "size", "control", "addItemHandle"], ["label", "Etiqueta", "controlName", "etiqueta", "nullable", "", "itemNull", "- Selecione -", "detailsButton", "", "detailsButtonIcon", "bi bi-tools", 3, "size", "control", "items", "details"], ["etiqueta", ""], ["scale", "small", 3, "size", "source", "path"], [3, "documento"], [1, "d-block"], [3, "data", "color", "icon", "label", 4, "ngFor", "ngForOf"], ["origem", "ATIVIDADE", 3, "entity", "selectable", "grid", 4, "ngIf"], [3, "data", "color", "icon", "label"], ["origem", "ATIVIDADE", 3, "entity", "selectable", "grid"], [3, "label", "color"], ["color", "light", 3, "label"], [3, "color", "icon", "label"], ["color", "success", 3, "icon", "label", "textValue"], ["label", "", "icon", "", "controlName", "unidade_id", 3, "size", "dao"], ["unidade", ""]],
   template: function PlanoTrabalhoConsolidacaoFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementStart"](0, "separator", 0)(1, "grid", 1, 2)(3, "columns")(4, "column", 3);
@@ -1152,7 +1154,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtemplate"](10, PlanoTrabalhoConsolidacaoFormComponent_ng_template_10_Template, 1, 2, "ng-template", null, 7, _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementStart"](12, "column", 8);
-      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtemplate"](13, PlanoTrabalhoConsolidacaoFormComponent_ng_template_13_Template, 1, 3, "ng-template", null, 9, _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtemplate"](13, PlanoTrabalhoConsolidacaoFormComponent_ng_template_13_Template, 2, 1, "ng-template", null, 9, _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementStart"](15, "column", 10);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtemplate"](16, PlanoTrabalhoConsolidacaoFormComponent_ng_template_16_Template, 1, 1, "ng-template", null, 11, _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtemplateRefExtractor"]);
@@ -1185,7 +1187,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵdef
       const _r13 = _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵreference"](34);
       const _r16 = _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵreference"](43);
       const _r18 = _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵreference"](45);
-      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("title", ctx.lex.translate("Atividades"))("icon", ctx.entityService.getIcon("Atividade"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("collapsed", false)("title", ctx.lex.translate("Atividades"))("icon", ctx.entityService.getIcon("Atividade"));
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("items", ctx.itemsEntregas)("minHeight", 0);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](3);
@@ -1197,7 +1199,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("template", _r9);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("title", ctx.lex.translate("Ocorr\u00EAncias"))("icon", ctx.entityService.getIcon("PlanoTrabalhoConsolidacao"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("collapsed", false)("title", ctx.lex.translate("Ocorr\u00EAncias"))("icon", ctx.entityService.getIcon("PlanoTrabalhoConsolidacao"));
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("items", ctx.itemsOcorrencias)("minHeight", 0)("form", ctx.formOcorrencia)("hasDelete", !ctx.disabled)("hasAdd", !ctx.disabled)("hasEdit", !ctx.disabled)("add", ctx.addOcorrencia.bind(ctx))("load", ctx.loadOcorrencia.bind(ctx))("remove", ctx.removeOcorrencia.bind(ctx))("save", ctx.saveOcorrencia.bind(ctx));
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](3);
@@ -1207,7 +1209,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("dynamicButtons", ctx.ocorrenciaDynamicButtons.bind(ctx));
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("title", ctx.lex.translate("Afastamentos"))("icon", ctx.entityService.getIcon("Afastamento"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("collapsed", false)("title", ctx.lex.translate("Afastamentos"))("icon", ctx.entityService.getIcon("Afastamento"));
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("items", ctx.itemsAfastamentos)("minHeight", 0)("add", ctx.addAfastamento.bind(ctx))("hasEdit", false)("hasDelete", false)("hasAdd", !ctx.disabled);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](3);
@@ -1219,7 +1221,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("dynamicButtons", ctx.afastamentoDynamicButtons.bind(ctx));
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("title", ctx.lex.translate("Comparecimentos"))("icon", ctx.entityService.getIcon("Comparecimento"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("collapsed", false)("title", ctx.lex.translate("Comparecimentos"))("icon", ctx.entityService.getIcon("Comparecimento"));
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("items", ctx.itemsComparecimentos)("minHeight", 0)("form", ctx.formComparecimento)("hasDelete", !ctx.disabled)("hasAdd", !ctx.disabled)("hasEdit", !ctx.disabled)("add", ctx.addComparecimento.bind(ctx))("load", ctx.loadComparecimento.bind(ctx))("remove", ctx.removeComparecimento.bind(ctx))("save", ctx.saveComparecimento.bind(ctx));
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](3);
@@ -2322,9 +2324,8 @@ const _c13 = function () {
 };
 class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_9__.PageFormBase {
   constructor(injector) {
-    var _this;
+    var _ref;
     super(injector, src_app_models_plano_trabalho_model__WEBPACK_IMPORTED_MODULE_8__.PlanoTrabalho, src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_3__.PlanoTrabalhoDaoService);
-    _this = this;
     this.injector = injector;
     this.entregas = [];
     this.gestoresUnidadeExecutora = [];
@@ -2345,81 +2346,14 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
       }
       return result;
     };
-    this.formValidation = /*#__PURE__*/function () {
-      var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (form) {
-        /*
-          (RN_PTR_V) INCLUIR/INSERIR
-          O usuário logado precisa possuir a capacidade "MOD_PTR_INCL", e:
-              - o usuário logado precisa ser um participante do PGD, habilitado, ou ser gestor da Unidade Executora do plano; (RN_PTR_B); e
-              - o participante do plano precisa estar lotado em uma das áreas de trabalho do usuário logado, ou este deve possuir a capacidade MOD_PTR_USERS_INCL; e
-              - o participante do plano precisa estar lotado na Unidade Executora, ou o usuário logado possuir a capacidade MOD_PTR_INCL_SEM_LOT; e
-              - o novo Plano de Trabalho não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA
-                   (RN_PTR_M) ALTERAR
-          O usuário logado precisa possuir a capacidade "MOD_PTR_EDT", o Plano de Trabalho precisa ser válido (ou seja, nem deletado, nem arquivado, nem estar no status CANCELADO), e:
-              - estando com o status 'INCLUIDO', o usuário logado precisa ser o participante do plano ou o gestor da Unidade Executora;
-              - estando com o status 'AGUARDANDO_ASSINATURA', o usuário logado precisa ser um dos que já assinaram o TCR e todas as assinaturas tornam-se sem efeito;
-              - estando com o status 'ATIVO', o usuário precisa ser gestor da Unidade Executora e possuir a capacidade MOD_PTR_EDT_ATV.
-          Como a alteração pode ser no participante, e nas datas de início e fim do plano, faz-se necessário revalidar as respectivas regras da inserção do plano.
-          Após alterado, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
-        */
+    this.formValidation = function (_x) {
+      return (_ref = _ref || (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (form) {
         let result = "";
-        let participantePlanoEhLotadoUnidadeExecutora = false;
-        let participantePlanoEhLotadoAlgumaAreaTrabalho = false;
-        let periodoPlanoNaoConflitaOutroMesmaUnidadeMesmoParticipante = true;
-        let usuarioPossuiCapacidadeInclusao = _this.auth.hasPermissionTo("MOD_PTR_INCL");
-        let usuarioPossuiCapacidadeAlteracao = _this.auth.hasPermissionTo("MOD_PTR_EDT");
-        let usuarioEhParticipantePgdHabilitado = _this.auth.usuario.participacoes_programas.map(pp => pp.programa_id).includes(_this.entity.programa_id);
-        let usuarioEhGestorUnidadeExecutora = _this.gestoresUnidadeExecutora.includes(_this.auth.usuario.id);
-        let planoAtivo = _this.planoTrabalhoService.situacaoPlano(_this.entity) == 'ATIVO';
-        let planoIncluido = _this.planoTrabalhoService.situacaoPlano(_this.entity) == 'INCLUIDO';
-        let planoAguardandoAssinatura = _this.planoTrabalhoService.situacaoPlano(_this.entity) == 'AGUARDANDO_ASSINATURA';
-        let usuarioJaAssinouTCR = _this.entity.jaAssinaramTCR.includes(_this.auth.usuario?.id);
-        let usuarioEhParticipantePlano = _this.entity.usuario_id == _this.auth.usuario?.id;
-        yield _this.usuarioDao.getById(_this.entity.usuario_id, ["lotacao"]).then(participante => {
-          participantePlanoEhLotadoAlgumaAreaTrabalho = participante ? _this.auth.usuario.areas_trabalho.map(at => at.unidade_id).includes(participante.lotacao.unidade_id) : false;
-          participantePlanoEhLotadoUnidadeExecutora = participante ? participante.lotacao.unidade_id == _this.entity.unidade_id : false;
-        });
-        yield _this.dao?.query({
-          where: [["unidade_id", "==", _this.entity.unidade_id], ["usuario_id", "==", _this.form?.controls.usuario_id.value], ["id", "!=", _this.entity?.id]]
-        }).getAll().then(planosTrabalho => {
-          planosTrabalho.forEach(pt => {
-            if (_this.utilService.intersection([{
-              start: _this.utilService.asDate(pt.data_inicio),
-              end: _this.utilService.asDate(pt.data_fim)
-            }, {
-              start: _this.utilService.asDate(_this.entity?.data_inicio),
-              end: _this.utilService.asDate(_this.entity?.data_fim)
-            }])) periodoPlanoNaoConflitaOutroMesmaUnidadeMesmoParticipante = false;
-          });
-        });
-        let usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoAreasTrabalho = _this.auth.hasPermissionTo("MOD_PTR_USERS_INCL");
-        let usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoUnidadeExecutora = _this.auth.hasPermissionTo("MOD_PTR_INCL_SEM_LOT");
-        let usuarioPossuiCapacidadeInclusaoPlanoConflitante = _this.auth.hasPermissionTo("MOD_PTR_INTSC_DATA");
-        let usuarioPossuiCapacidadeAlteracaoPlanoAtivo = _this.auth.hasPermissionTo("MOD_PTR_EDT_ATV");
-        if (_this.action == "new") {
-          if (!usuarioPossuiCapacidadeInclusao) result = "Você não possui a capacidade de inserir planos de trabalho (MOD_PTR_INCL). ";
-          if (!(usuarioEhParticipantePgdHabilitado || usuarioEhGestorUnidadeExecutora)) result += "O usuário logado precisa ser um participante habilitado do programa do plano, ou ser um dos gestores da unidade executora. ";
-          if (!(participantePlanoEhLotadoAlgumaAreaTrabalho || usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoAreasTrabalho)) result += "O participante de um plano de trabalho deve estar lotado em alguma das áreas de trabalho do usuário logado, ou este precisa possuir a capacidade de ser dispensado dessa regra (MOD_PTR_USERS_INCL). ";
-          if (!(participantePlanoEhLotadoUnidadeExecutora || usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoUnidadeExecutora)) result += "O participante de um plano de trabalho deve estar lotado na unidade executora, ou o usuário logado precisa possuir a capacidade de ser dispensado dessa regra (MOD_PTR_INCL_SEM_LOT). ";
-          if (!(periodoPlanoNaoConflitaOutroMesmaUnidadeMesmoParticipante || usuarioPossuiCapacidadeInclusaoPlanoConflitante)) result += "O período de duração de um plano de trabalho não pode coincidir com o de outro plano já existente para a mesma unidade executora e mesmo participante, ou o usuário logado precisa possuir a capacidade de ser dispensado dessa regra (MOD_PTR_INTSC_DATA). ";
-        } else if (_this.action == "edit") {
-          if (!usuarioPossuiCapacidadeAlteracao) result = "Você não possui a capacidade de alterar/editar planos de trabalho (MOD_PTR_EDT). ";
-          if (!_this.planoTrabalhoService.isValido(_this.entity)) result += "O plano de trabalho não é válido, ou seja, foi cancelado, apagado ou arquivado. ";
-          if (planoIncluido && !(usuarioEhParticipantePlano || usuarioEhGestorUnidadeExecutora)) result += "Para alterar um plano de trabalho no status INCLUIDO, você precisaria ser o participante do plano. ";
-          if (planoAguardandoAssinatura && !usuarioJaAssinouTCR) result += "Para alterar um plano de trabalho no status AGUARDANDO ASSINATURA, você precisa já ter assinado o TCR. ";
-          if (planoAtivo && !(usuarioEhGestorUnidadeExecutora && usuarioPossuiCapacidadeAlteracaoPlanoAtivo)) result += "Para alterar um plano de trabalho no status ATIVO, você precisa ser gestor da unidade executora do plano e possuir a capacidade específica (MOD_PTR_EDT_ATV). ";
-          if (!(participantePlanoEhLotadoAlgumaAreaTrabalho || usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoAreasTrabalho)) result += "O participante de um plano de trabalho deve estar lotado em alguma das áreas de trabalho do usuário logado, ou este precisa possuir a capacidade de ser dispensado dessa regra (MOD_PTR_USERS_INCL). ";
-          if (!(participantePlanoEhLotadoUnidadeExecutora || usuarioPossuiCapacidadeInclusaoParticipanteNaoLotadoUnidadeExecutora)) result += "O participante de um plano de trabalho deve estar lotado na unidade executora, ou o usuário logado precisa possuir a capacidade de ser dispensado dessa regra (MOD_PTR_INCL_SEM_LOT). ";
-          if (!(periodoPlanoNaoConflitaOutroMesmaUnidadeMesmoParticipante || usuarioPossuiCapacidadeInclusaoPlanoConflitante)) result += "O período de duração de um plano de trabalho não pode coincidir com o de outro plano já existente para a mesma unidade executora e mesmo participante, ou o usuário logado precisa possuir a capacidade de ser dispensado dessa regra (MOD_PTR_INTSC_DATA). ";
-        }
         return result;
         // TODO:
         // Validar se as entregas pertencem ao plano de entregas da unidade
-      });
-      return function (_x) {
-        return _ref.apply(this, arguments);
-      };
-    }();
+      })).apply(this, arguments);
+    };
     this.titleEdit = entity => {
       return "Editando " + this.lex.translate("Plano de Trabalho") + ': ' + (entity?.usuario?.apelido || "");
     };
@@ -2541,23 +2475,9 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
     this.cdRef.detectChanges();
   }
   onDataInicioChange(event) {
-    /*const di = new Date(this.form!.controls.data_inicio.value).getTime();
-    const df = new Date(this.form!.controls.data_fim.value).getTime();
-    if (df < di) {
-      let diaI = new Date(di);
-      diaI.setDate(diaI.getDate() + 1);
-      this.form!.controls.data_fim.setValue(diaI)
-    }*/
     this.calculaTempos();
   }
   onDataFimChange(event) {
-    /*const di = new Date(this.form!.controls.data_inicio.value).getTime();
-    const df = new Date(this.form!.controls.data_fim.value).getTime();
-    if (df < di) {
-      let diaI = new Date(di);
-      diaI.setDate(diaI.getDate() + 1);
-      this.form!.controls.data_fim.setValue(diaI)
-    }*/
     this.calculaTempos();
   }
   onCargaHorariaChenge(event) {
@@ -2579,29 +2499,29 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
     }
   }
   loadData(entity, form) {
-    var _this2 = this;
+    var _this = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      _this2.planoTrabalho = new src_app_models_plano_trabalho_model__WEBPACK_IMPORTED_MODULE_8__.PlanoTrabalho(entity);
-      yield Promise.all([_this2.calendar.loadFeriadosCadastrados(entity.unidade_id), _this2.usuario?.loadSearch(entity.usuario || entity.usuario_id), _this2.unidade?.loadSearch(entity.unidade || entity.unidade_id), _this2.programa?.loadSearch(entity.programa || entity.programa_id), _this2.tipoModalidade?.loadSearch(entity.tipo_modalidade || entity.tipo_modalidade_id)]);
+      _this.planoTrabalho = new src_app_models_plano_trabalho_model__WEBPACK_IMPORTED_MODULE_8__.PlanoTrabalho(entity);
+      yield Promise.all([_this.calendar.loadFeriadosCadastrados(entity.unidade_id), _this.usuario?.loadSearch(entity.usuario || entity.usuario_id), _this.unidade?.loadSearch(entity.unidade || entity.unidade_id), _this.programa?.loadSearch(entity.programa || entity.programa_id), _this.tipoModalidade?.loadSearch(entity.tipo_modalidade || entity.tipo_modalidade_id)]);
       let formValue = Object.assign({}, form.value);
-      form.patchValue(_this2.util.fillForm(formValue, entity));
+      form.patchValue(_this.util.fillForm(formValue, entity));
       /*let documento = entity.documentos.find(x => x.id == entity.documento_id);
       if(documento) this._datasource = documento.datasource;*/
-      _this2.calculaTempos();
-      _this2.atualizarTcr();
+      _this.calculaTempos();
+      _this.atualizarTcr();
     })();
   }
   initializeData(form) {
-    var _this3 = this;
+    var _this2 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      if (_this3.isTermos) {
-        _this3.entity = yield _this3.dao.getById(_this3.urlParams.get("id"), _this3.join);
+      if (_this2.isTermos) {
+        _this2.entity = yield _this2.dao.getById(_this2.urlParams.get("id"), _this2.join);
       } else {
-        _this3.entity = new src_app_models_plano_trabalho_model__WEBPACK_IMPORTED_MODULE_8__.PlanoTrabalho();
-        _this3.entity.carga_horaria = _this3.auth.entidade?.carga_horaria_padrao || 8;
-        _this3.entity.forma_contagem_carga_horaria = _this3.auth.entidade?.forma_contagem_carga_horaria || "DIA";
+        _this2.entity = new src_app_models_plano_trabalho_model__WEBPACK_IMPORTED_MODULE_8__.PlanoTrabalho();
+        _this2.entity.carga_horaria = _this2.auth.entidade?.carga_horaria_padrao || 8;
+        _this2.entity.forma_contagem_carga_horaria = _this2.auth.entidade?.forma_contagem_carga_horaria || "DIA";
       }
-      yield _this3.loadData(_this3.entity, _this3.form);
+      yield _this2.loadData(_this2.entity, _this2.form);
     })();
   }
   /* Cria um objeto Plano baseado nos dados do formulário */
@@ -2615,30 +2535,30 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
     return plano;
   }
   saveData(form) {
-    var _this4 = this;
+    var _this3 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       //let plano = this.loadEntity();
       /* Atualiza o documento */
-      _this4.atualizarTcr();
+      _this3.atualizarTcr();
       /* Confirma dados do documento */
-      _this4.documentos?.saveData();
-      _this4.entity.documentos = _this4.entity.documentos.filter(documento => {
+      _this3.documentos?.saveData();
+      _this3.entity.documentos = _this3.entity.documentos.filter(documento => {
         return ["ADD", "EDIT", "DELETE"].includes(documento._status || "");
       });
       /* Salva separadamente as informações do plano */
-      _this4.submitting = true;
+      _this3.submitting = true;
       try {
-        let requests = [_this4.dao.save(_this4.entity, _this4.join)];
-        if (_this4.form.controls.editar_texto_complementar_unidade.value) requests.push(_this4.unidadeDao.update(_this4.entity.unidade_id, {
-          texto_complementar_plano: _this4.form.controls.unidade_texto_complementar.value
+        let requests = [_this3.dao.save(_this3.entity, _this3.join)];
+        if (_this3.form.controls.editar_texto_complementar_unidade.value) requests.push(_this3.unidadeDao.update(_this3.entity.unidade_id, {
+          texto_complementar_plano: _this3.form.controls.unidade_texto_complementar.value
         }));
-        if (_this4.form.controls.editar_texto_complementar_usuario.value) requests.push(_this4.usuarioDao.update(_this4.entity.usuario_id, {
-          texto_complementar_plano: _this4.form.controls.usuario_texto_complementar.value
+        if (_this3.form.controls.editar_texto_complementar_usuario.value) requests.push(_this3.usuarioDao.update(_this3.entity.usuario_id, {
+          texto_complementar_plano: _this3.form.controls.usuario_texto_complementar.value
         }));
         let responses = yield Promise.all(requests);
-        _this4.entity = responses[0];
+        _this3.entity = responses[0];
       } finally {
-        _this4.submitting = false;
+        _this3.submitting = false;
       }
       return true;
     })();
@@ -2669,10 +2589,10 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
     return result;
   }
   signDocumento(documento) {
-    var _this5 = this;
+    var _this4 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      yield _this5.documentoService.sign([documento]);
-      _this5.cdRef.detectChanges();
+      yield _this4.documentoService.sign([documento]);
+      _this4.cdRef.detectChanges();
     })();
   }
   get formaContagemCargaHoraria() {
@@ -3592,7 +3512,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
       };
       _this6.entregas = planoEntrega?.entregas.map(epe => Object.assign({}, {
         key: epe.id,
-        value: epe.entrega?.nome || epe.descricao,
+        value: epe.descricao || epe.entrega?.nome || "Deconhecido",
         data: Object.assign(epe, {
           plano_entrega: planoEntregaComUnidade
         })

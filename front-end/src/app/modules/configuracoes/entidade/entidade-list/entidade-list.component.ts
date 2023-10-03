@@ -26,6 +26,7 @@ export class EntidadeListComponent extends PageListBase<Entidade, EntidadeDaoSer
     });
     this.addOption(this.OPTION_INFORMACOES);
     this.addOption(this.OPTION_EXCLUIR, "MOD_ENTD_EXCL");
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
     // Testa se o usuário possui permissão para configurar a entidade
     if (this.auth.hasPermissionTo("MOD_CFG_ENTD")){
       this.options.push({

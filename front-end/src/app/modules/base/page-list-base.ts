@@ -30,7 +30,6 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
   public join: string[] = [];
   public addRoute?: string[];
   public addParams?: any;
-  public options: ToolbarButton[] = [];
   public rowsLimit = QueryContext.DEFAULT_LIMIT;
   public selectable: boolean = false;
   public static selectRoute?: FullRoute;
@@ -59,6 +58,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
     this.dao = injector.get<D>(dType);
     this.OPTION_INFORMACOES.onClick = this.consult.bind(this);
     this.OPTION_EXCLUIR.onClick = this.delete.bind(this);
+    this.OPTION_LOGS.onClick = this.showLogs.bind(this);
   }
 
   public saveUsuarioConfig(config?: any) {
@@ -70,10 +70,6 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
       orderBy: this.orderBy
     }
     super.saveUsuarioConfig(Object.assign(filter, order, config || {}));
-  }
-
-  public addOption(button: ToolbarButton, capacidade?: string) {
-    if (!capacidade || this.auth.hasPermissionTo(capacidade)) this.options.push(button);
   }
 
   public filterSubmit(filter: FormGroup): QueryOptions | undefined {
@@ -180,6 +176,10 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
 
   public consult = async (doc: M) => {
     this.go.navigate({route: [...this.go.currentOrDefault.route, doc.id, "consult"]});
+  }
+
+  public showLogs = async (doc: M) => {
+    this.go.navigate({route: ['logs', 'change', doc.id, "consult"]});
   }
 
   public edit = async (doc: M) => {

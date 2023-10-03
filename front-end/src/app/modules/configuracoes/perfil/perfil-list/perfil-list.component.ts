@@ -26,6 +26,7 @@ export class PerfilListComponent extends PageListBase<Perfil, PerfilDaoService> 
     });
     this.addOption(this.OPTION_INFORMACOES);
     this.addOption(this.OPTION_EXCLUIR, "MOD_PERF_EXCL");
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 
   public filterWhere = (filter: FormGroup) => {

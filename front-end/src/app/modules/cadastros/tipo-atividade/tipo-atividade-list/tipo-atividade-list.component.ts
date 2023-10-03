@@ -16,7 +16,7 @@ export class TipoAtividadeListComponent extends PageListBase<TipoAtividade, Tipo
   constructor(public injector: Injector) {
     super(injector, TipoAtividade, TipoAtividadeDaoService);
     /* Inicializações */
-    this.title = this.lex.translate("Tipos de Atividade");
+    this.title = this.lex.translate("Tipos de Atividades");
     this.code = "MOD_TIPO_ATV";
     this.filter = this.fh.FormBuilder({
       nome: { default: "" }
@@ -37,6 +37,7 @@ export class TipoAtividadeListComponent extends PageListBase<TipoAtividade, Tipo
         onClick: this.delete.bind(this)
       });
     }
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 
   public filterClear(filter: FormGroup) {
