@@ -52,9 +52,9 @@ class LoginController extends Controller
                     $query->where("habilitado", 1);
                 },
                 "perfil.capacidades.tipoCapacidade",
-                "gerenciaTitular.atribuicoes",
-                "gerenciasSubstitutas.atribuicoes",
-                "gerenciasDelegadas.atribuicoes"
+                "gerenciaTitular.atribuicoes","gerenciaTitular.unidade",
+                "gerenciasSubstitutas.atribuicoes","gerenciasSubstitutas.unidade",
+                "gerenciasDelegadas.atribuicoes","gerenciasDelegadas.unidade"
             ])->first();
             $request->session()->put("unidade_id", $usuario->lotacao?->id);
         }

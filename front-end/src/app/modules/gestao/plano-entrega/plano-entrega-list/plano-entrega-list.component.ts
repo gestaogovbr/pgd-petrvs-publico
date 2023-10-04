@@ -66,6 +66,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.filter = this.fh.FormBuilder({
       agrupar: { default: true },
       principais: { default: true },
+      arquivadas: { default: false },
       nome: { default: '' },
       data_inicio: { default: '' },
       data_fim: { default: '' },
@@ -182,7 +183,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     let result: any[] = [];
     let form: any = filter.value;
     /*
-        (RI_PENT_4) A consulta do grid retornará inicialmente os principais Planos de Entrega do usuário logado (a opção "principais" já vem marcada), que são:
+        (RI_PENT_B) A consulta do grid retornará inicialmente os principais Planos de Entrega do usuário logado (a opção "principais" já vem marcada), que são:
         - os válidos das unidades onde ele possui algum vínculo (áreas de trabalho) (w1), e
         - se ele for gestor:
           - os ativos das unidades-pai de onde ele é gestor (w2), e 
@@ -221,9 +222,9 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     if (form.status) {
       result.push(["status", "==", form.status]);
     }
-    //  (RI_PENT_5) Por padrão, os planos de entregas retornados na listagem do grid são os que não foram arquivados nem cancelados.
-    //  O não-arquivamento é tratado abaixo. A condição de não-cancelado é tratada no back-end.
-    result.push(["data_arquivamento", "==", null]);
+    //  (RI_PENT_C) Por padrão, os planos de entregas retornados na listagem do grid são os que não foram arquivados nem cancelados.
+    //  A condição de não-cancelado é tratada no back-end.
+    result.push(["incluir_arquivados", "==", this.filter!.controls.arquivadas.value]);
     return result;
   }
 
@@ -339,6 +340,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
           (RN_PENT_R) Para CANCELAR a AVALIAÇÃO de um plano de entregas:
           - o plano precisa estar com o status AVALIADO, e
           - o usuário logado precisa ser gestor da Unidade-pai (Unidade A) da Unidade do plano (Unidade B), ou
+          - a Unidade-pai (Unidade A) precisa ser a Unidade de lotação do usuário logado, e ele possuir a capacidade "MOD_PENT_CANC_AVAL"; ou
           - possuir a atribuição de AVALIADOR DE PLANOS DE ENTREGAS para a Unidade do plano (Unidade B);
         */
         return this.planoEntregaService.situacaoPlano(planoEntrega) == 'AVALIADO' && (this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id) || this.auth.isIntegrante('AVALIADOR_PLANO_ENTREGA', planoEntrega.unidade!.id!));
@@ -376,7 +378,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       case this.BOTAO_CONSULTAR:
         /*
           (RN_PENT_V) CONSULTAR
-          - todos os participantes podem visualizar todos os planos de entrega, desde que possuam a capacidade "MOD_PENT";
+          - todos os participantes podem visualizar todos os planos de entrega, desde que possuam a capacidade "MOD_PENT" (RN_PENT_F, RN_PENT_I);
         */
         return this.auth.hasPermissionTo("MOD_PENT");
       case this.BOTAO_DESARQUIVAR:
@@ -412,7 +414,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       case this.BOTAO_LIBERAR_HOMOLOGACAO:
         /*
           (RN_PENT_AA) Para LIBERAR PARA HOMOLOGAÇÃO um plano de entregas:
-          - o plano precisa estar com o status INCLUIDO, conter ao menos uma entrega, e
+          - o plano precisa estar com o status INCLUIDO, conter ao menos uma entrega (RN_PENT_D), e
               - o usuário logado precisa ser gestor da Unidade do plano (Unidade B); ou
               - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado, e este possuir a capacidade "MOD_PENT_LIB_HOMOL"
         */
@@ -636,6 +638,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public canAdd() {
     return this.auth.hasPermissionTo('MOD_PENT_INCL');
-    //IMPLEMENTAR AS DEMAIS CONDIÇÕES*******************
+    /*
+    - (RN_PENT_Z) ... O usuário logado precisa possuir a capacidade "MOD_PENT_INCL"
+     */
   }
 }
