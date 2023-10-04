@@ -89,7 +89,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     // Testa se o usuário possui permissão para exibir dados da entrega do plano de entregas
     this.addOption(Object.assign({ onClick: this.consult.bind(this) }, this.OPTION_INFORMACOES), "MOD_PENT");
     this.addOption(Object.assign({ onClick: this.delete.bind(this) }, this.OPTION_EXCLUIR), "MOD_PENT_ENTR_EXCL");
-    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
+    this.addOption(Object.assign({ onClick: this.showLogs.bind(this) }, this.OPTION_LOGS), "MOD_AUDIT_LOG");
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -223,6 +223,10 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
         entrega: entrega
       }
     });
+  }
+
+  public async showLogs(entrega: PlanoEntregaEntrega){
+    this.go.navigate({ route: ['logs', 'change', entrega.id, 'consult'] })
   }
 
   public refreshComentarios(modalResult: any) {

@@ -23,7 +23,7 @@ import { PlanoTrabalhoConsolidacaoFormComponent } from './plano-trabalho-consoli
     PlanoTrabalhoConsolidacaoComponent,
     PlanoTrabalhoConsolidacaoListComponent,
     PlanoTrabalhoConsolidacaoFormComponent,
-    PlanoTrabalhoListAccordeonComponent
+    PlanoTrabalhoListAccordeonComponent    
   ],
   imports: [
     CommonModule,
