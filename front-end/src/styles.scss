@@ -1,6 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 
 .petrvs {
+
+  html, body {
+    height:100%;
+  }
   /* Reseta todas as propriedades anteriores */
   all: initial;
   cursor: inherit;
@@ -276,6 +280,10 @@
     td {
       background: #4b04041c;
     }
+  }
+
+  .table-responsive {
+    height: 100%;
   }
   
 }
