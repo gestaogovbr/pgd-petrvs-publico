@@ -319,7 +319,7 @@ class EntregaListComponent extends src_app_modules_base_page_list_base__WEBPACK_
     };
     /* Inicializações */
     this.join = ["unidade:id,sigla,nome"];
-    this.title = this.lex.translate('Entregas');
+    this.title = this.lex.translate('Modelos de Entregas');
     this.code = "MOD_ENTRG";
     this.unidadeDao = injector.get(src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_2__.UnidadeDaoService);
     this.filter = this.fh.FormBuilder({
