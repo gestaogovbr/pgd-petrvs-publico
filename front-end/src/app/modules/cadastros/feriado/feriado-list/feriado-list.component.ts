@@ -39,6 +39,7 @@ export class FeriadoListComponent extends PageListBase<Feriado, FeriadoDaoServic
         onClick: this.delete.bind(this)
       });
     }
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 
   public filterClear(filter: FormGroup) {

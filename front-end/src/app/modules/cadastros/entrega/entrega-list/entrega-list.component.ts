@@ -29,6 +29,7 @@ export class EntregaListComponent extends PageListBase<Entrega, EntregaDaoServic
      });
      this.addOption(this.OPTION_INFORMACOES);
      this.addOption(this.OPTION_EXCLUIR, "MOD_ENTRG_EXCL");
+     this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 
   public filterWhere = (filter: FormGroup) => {

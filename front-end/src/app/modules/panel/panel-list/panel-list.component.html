@@ -3,7 +3,7 @@
     [hasAdd]="true" [hasEdit]="true">
     <toolbar [buttons]="toolbarButtons">
       </toolbar>
-    <filter hidden [form]="filter" [where]="filterWhere.bind(this)" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed"></filter>
+    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" hidden [form]="filter" [where]="filterWhere.bind(this)" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed"></filter>
     <columns>
         <column title="ID" [template]="columnId">
             <ng-template let-row="row" #columnId>

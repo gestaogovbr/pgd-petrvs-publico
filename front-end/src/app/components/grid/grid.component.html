@@ -27,7 +27,7 @@
                                         <strong *ngIf="!groupTemplate" class="grid-group-text px-2">{{getGroupSeparator(row)!.text}}</strong>
                                     </td>
                                 </tr>
-                                <tr *ngIf="!isSeparator(row)" [class.d-none]="row._status == 'DELETE'" [class.table-active]="(row || [])['id'] == (selected || [])['id']" (click)="onRowClick($event, row)" [attr.role]="isSelectable ? 'button' : undefined">
+                                <tr *ngIf="!isSeparator(row)" [class.d-none]="row._status == 'DELETE'" [class.deleted_at]="row.deleted_at" [class.table-active]="(row || [])['id'] == (selected || [])['id']" (click)="onRowClick($event, row)" [attr.role]="isSelectable ? 'button' : undefined">
                                     <td *ngIf="multiselecting" class="grid-multiselect-column">
                                         <input *ngIf="!canSelect || canSelect(row)" class="form-check-input" type="checkbox" name="gird_multiselect_ids[]" [attr.checked]="isMultiselectChecked(row)" (change)="onMultiselectChange($event, row)">
                                     </td>                    

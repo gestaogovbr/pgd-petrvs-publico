@@ -6,7 +6,7 @@
                 [hasAdd]="auth.hasPermissionTo('MOD_PLAN_INST_INCL')"
                 [hasEdit]="auth.hasPermissionTo('MOD_PLAN_INST_EDT')">
                 <toolbar *ngIf="!selectable"></toolbar>
-                <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+                <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
                     <div class="row">
                         <input-text [size]="12" [label]="lex.translate('Planejamento Institucional')" controlName="nome"
                             [control]="filter!.controls.nome" [placeholder]="'Nome ' + lex.translate('Planejamento Institucional') + '...'" [attr.maxlength]=250></input-text>

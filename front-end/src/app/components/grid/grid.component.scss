@@ -43,21 +43,6 @@
     display: none;
 }
 
-.scrollable {
-
-    table-layout: fixed;
-    display: block;
-    tbody {
-        overflow: auto;
-        height: 350px;
-        width: 100%;
-        display: block;
-    }
-   
-    thead {
-        display: inline-table;
-        width: 100%;
-    }
-
-
+.table-responsive {
+    padding-bottom: 50px;
 }

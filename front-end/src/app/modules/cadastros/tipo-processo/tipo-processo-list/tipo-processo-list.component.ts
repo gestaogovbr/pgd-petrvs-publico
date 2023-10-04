@@ -37,6 +37,7 @@ export class TipoProcessoListComponent extends PageListBase<TipoProcesso, TipoPr
     }
     this.addOption(this.OPTION_INFORMACOES);
     this.addOption(this.OPTION_EXCLUIR, "MOD_TIPO_PROC_EXCL");
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 
   public async atualizarPeloSei() {

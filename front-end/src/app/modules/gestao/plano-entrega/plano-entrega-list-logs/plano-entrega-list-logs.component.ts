@@ -46,11 +46,11 @@ export class PlanoEntregaListLogsComponent extends PageListBase<Change, ChangeDa
 
   ngAfterViewInit() {
     super.ngAfterViewInit();
-    this.selectResponsaveis!.loading = true;
-    this.dao?.showResponsaveis().then(responsaveis => {
-      this.responsaveis = responsaveis || [];
-      this.selectResponsaveis!.loading = false;
-    });
+    // this.selectResponsaveis!.loading = true;
+    // this.dao?.showResponsaveis().then(responsaveis => {
+    //   this.responsaveis = responsaveis || [];
+    //   this.selectResponsaveis!.loading = false;
+    // });
   }
   
   public filterClear(filter: FormGroup) {

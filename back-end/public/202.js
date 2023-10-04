@@ -290,6 +290,7 @@ class TemplateListComponent extends src_app_modules_base_page_list_base__WEBPACK
     });
     this.addOption(this.OPTION_INFORMACOES);
     this.addOption(this.OPTION_EXCLUIR, "MOD_TEMP_EXCL");
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
   ngAfterViewInit() {
     super.ngAfterViewInit();
@@ -369,8 +370,8 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵInheritDefinitionFeature"]],
   decls: 20,
-  vars: 29,
-  consts: [[1, "row"], [3, "ngClass"], [3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "form", "where", "submit", "collapseChange", "collapsed"], ["label", "Esp\u00E9cie", "controlName", "especie", 3, "size", "items"], ["label", "T\u00EDtulo", "controlName", "titulo", "placeholder", "T\u00EDtulo ...", 3, "size", "control"], ["title", "Template", 3, "template"], ["columnTemplate", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"], ["noButtons", "", 3, "disabled", "form", 4, "ngIf", "ngIfElse"], ["noSelected", ""], [3, "buttons", 4, "ngIf"], ["icon", "bi bi-hash", 3, "label"], [3, "icon", "label", "color"], ["noButtons", "", 3, "disabled", "form"], ["label", "T\u00EDtulo", 3, "size", "control"], ["label", "Pre-view do template", 3, "size", "control"], [1, "block", "w-100", "text-center"], [3, "buttons"]],
+  vars: 30,
+  consts: [[1, "row"], [3, "ngClass"], [3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "deleted", "form", "where", "submit", "collapseChange", "collapsed"], ["label", "Esp\u00E9cie", "controlName", "especie", 3, "size", "items"], ["label", "T\u00EDtulo", "controlName", "titulo", "placeholder", "T\u00EDtulo ...", 3, "size", "control"], ["title", "Template", 3, "template"], ["columnTemplate", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"], ["noButtons", "", 3, "disabled", "form", 4, "ngIf", "ngIfElse"], ["noSelected", ""], [3, "buttons", 4, "ngIf"], ["icon", "bi bi-hash", 3, "label"], [3, "icon", "label", "color"], ["noButtons", "", 3, "disabled", "form"], ["label", "T\u00EDtulo", 3, "size", "control"], ["label", "Pre-view do template", 3, "size", "control"], [1, "block", "w-100", "text-center"], [3, "buttons"]],
   template: function TemplateListComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵelementStart"](0, "div", 0)(1, "div", 1)(2, "grid", 2);
@@ -407,7 +408,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("ngIf", !ctx.selectable);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
+      _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("deleted", ctx.auth.hasPermissionTo("MOD_AUDIT_DEL"))("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("size", 12)("items", ctx.lookup.TEMPLATE_ESPECIE);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](2);

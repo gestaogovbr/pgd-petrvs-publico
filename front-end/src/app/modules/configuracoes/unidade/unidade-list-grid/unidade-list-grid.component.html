@@ -3,7 +3,7 @@
     (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_UND_INCL')"
     [hasEdit]="auth.hasPermissionTo('MOD_UND_EDT')">
     <toolbar *ngIf="!selectable" [buttons]="buttons"></toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)"
+    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)"
         [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-search #entidade [size]="5" [control]="filter!.controls.entidade_id" controlName="entidade_id" [control]="filter!.controls.entidade_id" [dao]="entidadeDao"></input-search>

@@ -36,6 +36,7 @@ export class CadeiaValorListGridComponent  extends PageListBase<CadeiaValor, Cad
      });
      this.addOption(this.OPTION_INFORMACOES);
      this.addOption(this.OPTION_EXCLUIR, "MOD_CADV_EXCL");
+     this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 
   public filterWhere = (filter: FormGroup) => {

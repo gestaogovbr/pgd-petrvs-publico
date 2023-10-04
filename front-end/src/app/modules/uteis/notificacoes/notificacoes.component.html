@@ -1,6 +1,6 @@
 <grid [dao]="dao" [hasAdd]="false" [hasEdit]="false" [hasDelete]="false" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join">
   <toolbar [buttons]="toolbarButtons"></toolbar>
-  <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
+  <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
       <div class="row">
         <input-switch [size]="2" label="Todas" controlName="todas" [control]="filter!.controls.todas" labelInfo="Todas as notificações incluindo as já lidas"></input-switch>
         <input-datetime [size]="5" label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" labelInfo="Data início"></input-datetime>

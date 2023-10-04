@@ -1,7 +1,7 @@
 <grid [dao]="dao" [hasEdit]="false" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join">
     <span><strong>{{ planoEntrega?.numero + ' - ' + planoEntrega?.nome }}</strong></span>
     <toolbar></toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-select #selectResponsaveis label="Responsável pelo registro" controlName="responsavel_id" [control]="filter!.controls.responsavel_id" 
             [items]="responsaveis"></input-select>

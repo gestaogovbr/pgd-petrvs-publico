@@ -58,7 +58,7 @@ export class TemplateListComponent extends PageListBase<Template, TemplateDaoSer
     });
     this.addOption(this.OPTION_INFORMACOES)
     this.addOption(this.OPTION_EXCLUIR, "MOD_TEMP_EXCL")
-   
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 
   ngAfterViewInit(): void {
