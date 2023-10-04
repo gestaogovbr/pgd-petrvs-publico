@@ -5,7 +5,7 @@
     <toolbar *ngIf="!fixedFilter && !selectable">
         <input-switch [size]="4" labelPosition="left" label="Agrupar por Un." controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
     </toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && !queryParams?.filter && filterCollapsed">
+    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && !queryParams?.filter && filterCollapsed">
         <div class="row">
             <input-switch [size]="1" label="Minhas" controlName="atribuidas_para_mim" [control]="filter!.controls.atribuidas_para_mim" (change)="onAtribuidasParaMimChange($event)"></input-switch>
             <input-search [size]="5" label="Usuário" #usuario [control]="filter!.controls.usuario_id" controlName="usuario_id"  [disabled]="filter!.controls.atribuidas_para_mim.value ? 'true' : undefined" [dao]="usuarioDao" ></input-search>

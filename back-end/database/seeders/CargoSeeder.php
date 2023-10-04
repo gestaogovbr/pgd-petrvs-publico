@@ -49,7 +49,6 @@ class CargoSeeder extends Seeder
 }
 
 // Códigos modelos
-
         // Leitura de arquivo original do SIAPE
         /*
         foreach($csv_reader->csvToArray($bulk = 1000) as $data){

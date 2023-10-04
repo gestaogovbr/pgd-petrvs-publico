@@ -3,7 +3,7 @@
     <input-switch [size]="2" labelPosition="left" label="Resumido" controlName="resumido" [control]="filter!.controls.resumido" (change)="onResumidoChange($event)"></input-switch>
     <input-switch [size]="2" labelPosition="left" label="Usar etiquetas" class="me-2" controlName="usarEtiquetas" [control]="filter!.controls.usarEtiquetas" (change)="onUsarEtiquetasChange($event)"></input-switch>
 </toolbar>
-<filter [form]="filter" #filterRef [where]="filterWhere" [query]="query" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
+<filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" #filterRef [where]="filterWhere" [query]="query" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed">
     <div class="row">
         <input-switch [size]="1" label="Minhas" controlName="atribuidas_para_mim" [control]="filter!.controls.atribuidas_para_mim" (change)="onAtribuidasParaMimChange($event)"></input-switch>
         <input-search [size]="5" [label]="lex.translate('Usuário')" #usuario [control]="filter!.controls.usuario_id" controlName="usuario_id" [disabled]="filter!.controls.atribuidas_para_mim.value ? 'true' : undefined" [dao]="usuarioDao" ></input-search>

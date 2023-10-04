@@ -177,7 +177,7 @@ class UsuarioService extends ServiceBase
      */
     public function isLotacao(string | null $usuario_id = null, string $unidade_id): bool {
         $usuario = isset($usuario_id) ? Usuario::find($usuario_id) : parent::loggedUser();
-        return $usuario->lotacao->id == $unidade_id;
+        return $usuario->lotacao->unidade_id == $unidade_id;
     }
 
     /**

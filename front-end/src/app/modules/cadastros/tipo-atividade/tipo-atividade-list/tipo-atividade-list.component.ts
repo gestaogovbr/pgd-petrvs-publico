@@ -37,6 +37,7 @@ export class TipoAtividadeListComponent extends PageListBase<TipoAtividade, Tipo
         onClick: this.delete.bind(this)
       });
     }
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 
   public filterClear(filter: FormGroup) {

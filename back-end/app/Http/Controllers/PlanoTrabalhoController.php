@@ -146,14 +146,14 @@ class PlanoTrabalhoController extends ControllerBase {
         $usuarioService = new UsuarioService();
         switch ($action) {
             case 'QUERY':
-                if (!$usuario->hasPermissionTo('MOD_PTR')) throw new ServerException("CapacidadeSearchText", "Consulta não realizada. [RN_PTR_S]");
+                if (!$usuario->hasPermissionTo('MOD_PTR')) throw new ServerException("CapacidadeSearchText", "O usuário logado não tem permissão para consultar planos de trabalho (MOD_PTR). [RN_PTR_S]");
                 /*                 
                     (RN_PTR_S) CONSULTAR
                     Todos os participantes podem visualizar todos os planos de trabalho, desde que possuam a capacidade "MOD_PTR";
                 */
                 break;
             case 'GETBYID':
-                if (!$usuario->hasPermissionTo('MOD_PTR')) throw new ServerException("CapacidadeSearchText", "Consulta não realizada. [RN_PTR_S]");
+                if (!$usuario->hasPermissionTo('MOD_PTR')) throw new ServerException("CapacidadeSearchText", "O usuário logado não tem permissão para consultar planos de trabalho (MOD_PTR). [RN_PTR_S]");
                 /*                 
                     (RN_PTR_S) CONSULTAR
                     Todos os participantes podem visualizar todos os planos de trabalho, desde que possuam a capacidade "MOD_PTR";
@@ -267,7 +267,7 @@ class PlanoTrabalhoController extends ControllerBase {
                     (RN_PTR_U) ENVIAR PARA ASSINATURA
                     O plano precisa estar com o status INCLUIDO; e
                       - o usuário logado precisa ser o participante do plano ou gestor da sua Unidade Executora; e
-                      - se a assinatura do usuário logado por exigida, ele já deve ter assinado o TCR; e
+                      - se a assinatura do usuário logado for exigida, ele já deve ter assinado o TCR; e
                       - devem existir assinaturas exigíveis ainda pendentes; e
                       - o plano precisa possuir ao menos uma entrega.
                 */

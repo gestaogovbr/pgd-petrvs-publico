@@ -37,6 +37,7 @@ export class TipoTarefaListComponent extends PageListBase<TipoTarefa, TipoTarefa
         onClick: this.delete.bind(this)
       });
     }
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 
   public filterClear(filter: FormGroup) {

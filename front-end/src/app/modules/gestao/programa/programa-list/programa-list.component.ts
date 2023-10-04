@@ -25,6 +25,7 @@ export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoSer
 
     this.addOption(this.OPTION_INFORMACOES);
     this.addOption(this.OPTION_EXCLUIR, "MOD_PRGT_EXCL");
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
     // Testa se o usuário possui permissão para excluir o programa de gestão
     if (this.auth.hasPermissionTo("MOD_PRGT_PART")) {
       this.options.push({

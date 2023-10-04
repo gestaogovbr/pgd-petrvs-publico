@@ -3,7 +3,7 @@
     [hasAdd]="auth.hasPermissionTo('MOD_TIPO_ATV_INCL')"
     [hasEdit]="auth.hasPermissionTo('MOD_TIPO_ATV_EDT')">
     <toolbar *ngIf="!selectable"></toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)">
+    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)">
         <div class="row">
             <input-text [size]="12" label="Nome" controlName="nome" [control]="filter!.controls.nome" [attr.maxlength]=250></input-text>
         </div>

@@ -49,7 +49,8 @@ trait MergeRelations
         }, ARRAY_FILTER_USE_KEY);
     }
 
-    public function fillableRelations()
+    public function 
+    fillableRelations()
     {
         $fillable = [];
         if(isset($this->fillable_relations)) $fillable = array_merge($fillable, $this->fillable_relations);

@@ -19,13 +19,11 @@ import { LookupItem } from 'src/app/services/lookup.service';
 })
 export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
-  @ViewChild('selectTabelas', { static: false }) public selectTabelas?: InputSelectComponent;
   @ViewChild('selectResponsaveis', { static: false }) public selectResponsaveis?: InputSelectComponent;
 
   public toolbarButtons: ToolbarButton[] = [];
   public allPages: ListenerAllPagesService;
   public usuarioDao: UsuarioDaoService;
-  public tabelas: LookupItem[] = [];
   public entityService: EntityService;
   public entity?: EntityItem;
   public responsaveis: LookupItem[] = [];
@@ -38,7 +36,7 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.title = this.lex.translate("Logs das Alterações");
     this.filter = this.fh.FormBuilder({
-      responsavel_id: {default: ""},
+      usuario_id: {default: ""},
       data_inicio: {default: ""},
       data_fim: {default: ""},
       tabela: {default: ""},
@@ -50,45 +48,25 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     this.orderBy = [['id', 'desc']];
   }
 
-  async ngAfterViewInit() {
-    super.ngAfterViewInit();
-    this.selectTabelas!.loading = true;
-    this.selectResponsaveis!.loading = true;
-    await Promise.all([
-      this.dao?.showTables().then(tabelas => {
-        this.tabelas = tabelas || []}),
-      this.dao?.showResponsaveis().then(responsaveis => {
-        this.responsaveis = responsaveis || []})
-    ]).finally(() => {
-      this.cdRef.detectChanges();
-      this.selectTabelas!.loading = false;
-      this.selectResponsaveis!.loading = false;
-    });
-  }
-  
-  ngAfterViewChecked(){
-    this.cdRef.detectChanges();
+  ngOnInit(){
+    super.ngOnInit();
+    this.filter?.controls.row_id_text.setValue(this.urlParams?.get('id'));
   }
 
-  public onRowClick(row: Change) {
-    if(row){
-      let change = row as Change;
-      this.entity = this.entityService.list.find(x => x.table == change!.table_name.toLowerCase());
-      this.go.navigate({route: ['logs', 'change', change!.id, 'consult']}, {
-        metadata: {entity: this.entity, entity_id: change!.row_id},
-        modal: true, 
-        modalClose: (modalResult?: string) => {
-          if(modalResult?.length) this.go.navigate({route: ['logs', 'change']});
-        }
-      });
+  carregaResposaveis(user_ids: string[]){
+    this.selectResponsaveis!.loading = true;
+    this.dao?.showResponsaveis(user_ids).then(responsaveis => {
+      this.responsaveis = responsaveis.map((r: any) => ({ key: r.id, value: r.nome }));
+    }).finally(() => this.selectResponsaveis!.loading = false);
+  }
+
+  public async loadChanges(changes: any){
+    if(changes){
+      const user_ids = changes.map((change: any) => {return change.user_id})
+      this.carregaResposaveis(user_ids)
     }
   }
 
-  public onTabelaChange(event: Event) {
-    this.filter!.controls.row_id.setValue("");
-    this.entity = this.entityService.list.find(x => x.table == this.filter?.controls.tabela.value);
-    this.cdRef.detectChanges();
-  }
 
   public filterClear(filter: FormGroup) {
     filter.controls.responsavel_id.setValue("");
@@ -96,9 +74,6 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     filter.controls.data_fim.setValue("");
     filter.controls.tabela.setValue("");
     filter.controls.tipo.setValue("");
-    filter.controls.row_id.setValue("");
-    filter.controls.row_id_text.setValue("");
-    filter.controls.row_id_search.setValue("");
     filter.controls.opcao_filtro.setValue("ID do registro");
     super.filterClear(filter);
   }
@@ -107,8 +82,8 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     let result: any[] = [];
     let form: any = filter.value;
 
-    if(form.responsavel_id?.length){
-      result.push(["user_id", "==", form.responsavel_id == "null" ? null : form.responsavel_id]);
+    if(form.usuario_id?.length){
+      result.push(["user_id", "==", form.usuario_id == "null" ? null : form.usuario_id]);
     };
     if(form.data_inicio){
       result.push(["date_time", ">=", form.data_inicio]);
@@ -131,10 +106,5 @@ export class ChangeListComponent extends PageListBase<Change, ChangeDaoService> 
     return result;
   }
 
-  public dynamicButtons(row: any): ToolbarButton[] {
-    let result: ToolbarButton[] = [];
-    result.push({icon: "bi bi-info-circle", label: "Informações", onClick: this.onRowClick.bind(this)});
-    return result;
-  }
 
 }

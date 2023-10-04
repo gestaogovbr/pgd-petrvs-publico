@@ -14,6 +14,9 @@ import { PlanoEntregaListEntregaListComponent } from './plano-entrega-list-entre
 import { PlanoEntregaListLogsComponent } from './plano-entrega-list-logs/plano-entrega-list-logs.component';
 import { UteisModule } from '../../uteis/uteis.module';
 import { PlanoEntregaValorMetaInputComponent } from './plano-entrega-valor-meta-input/plano-entrega-valor-meta-input.component';
+import { PlanoEntregaEntregasPlanoTrabalhoComponent } from './plano-entrega-entregas-plano-trabalho/plano-entrega-entregas-plano-trabalho.component';
+import { PlanoTrabalhoEntregaAtividadesComponent } from './plano-trabalho-entrega-atividades/plano-trabalho-entrega-atividades.component';
+
 
 @NgModule({
   declarations: [
@@ -27,6 +30,8 @@ import { PlanoEntregaValorMetaInputComponent } from './plano-entrega-valor-meta-
     PlanoEntregaListEntregaListComponent,
     PlanoEntregaListLogsComponent,
     PlanoEntregaValorMetaInputComponent,
+    PlanoEntregaEntregasPlanoTrabalhoComponent,
+    PlanoTrabalhoEntregaAtividadesComponent
   ],
   imports: [
     CommonModule,

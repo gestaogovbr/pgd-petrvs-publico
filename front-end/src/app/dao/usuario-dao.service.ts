@@ -8,6 +8,7 @@ import { DaoBaseService } from './dao-base.service';
 import { AtividadePausa } from '../models/atividade-pausa.model';
 import { PlanoTrabalho } from '../models/plano-trabalho.model';
 import { TemplateDataset } from '../modules/uteis/templates/template.service';
+import { PlanoTrabalhoEntrega } from '../models/plano-trabalho-entrega.model';
 
 export type UsuarioDashboard = {
   planos: [

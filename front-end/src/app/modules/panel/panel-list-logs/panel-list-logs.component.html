@@ -1,6 +1,6 @@
 <grid [dao]="dao" [add]="add" title="Painel de entidades (SaaS)" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
     [hasAdd]="true" [hasEdit]="true">
-    <!-- <filter hidden [form]="filter" [where]="filterWhere.bind(this)" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed"></filter> -->
+    <!-- <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" hidden [form]="filter" [where]="filterWhere.bind(this)" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed"></filter> -->
     <columns>
         <column title="Tipo" [template]="columnTipo">
             <ng-template let-row="row" #columnTipo>

@@ -65,6 +65,10 @@ export abstract class PageBase implements OnInit, ModalPage {
     icon: "bi bi-trash",
     label: "Excluir",
   };
+  public OPTION_LOGS: ToolbarButton = {
+    icon: "bi bi-list-ul",
+    label: "Logs",
+  };
 
   /* Injections */
   public lookup: LookupService;

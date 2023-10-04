@@ -24,9 +24,9 @@ export class ChangeDaoService extends DaoBaseService<Change> {
     });
   }
 
-  public showResponsaveis(): Promise<LookupItem[]> {
+  public showResponsaveis(ids: string[]): Promise<LookupItem[]> {
     return new Promise<LookupItem[]>((resolve, reject) => {
-      this.server.post('api/Change/showResponsaveis', []).subscribe(response => {
+      this.server.post('api/Change/showResponsaveis', { usuario_ids: ids }).subscribe(response => {
         resolve(response.responsaveis);
       }, error => {
         console.log("Erro ao buscar a lista dos responsáveis pelas alterações no Banco de Dados-!", error);
