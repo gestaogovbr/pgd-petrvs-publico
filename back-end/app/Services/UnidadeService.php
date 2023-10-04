@@ -13,6 +13,7 @@ use App\Models\Planejamento;
 use App\Services\ServiceBase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Builder;
 use Exception;
 use Throwable;
 
@@ -410,5 +411,15 @@ class UnidadeService extends ServiceBase
     public function lookupTodasUnidades(): array
     {
         return Unidade::all()->map(fn($u) => ["key" => $u->id, "value" => $u->sigla])->toArray();
+    }
+
+    /**
+     * Retorna o ID das unidades que possuem algum plano de entregas no status ATIVO
+     */
+    public function unidadesEmPgd(): array {
+        // (RN_PENT_G) Uma vez homologado um Plano de Entregas, a Unidade do plano está em PGD;
+        return Unidade::with(['planosEntrega' => function ($query) {
+            $query->where('status','ATIVO');
+        }])->whereHas('planosEntrega')->get()->map(fn($u) => $u->id)->toArray();
     }
 }

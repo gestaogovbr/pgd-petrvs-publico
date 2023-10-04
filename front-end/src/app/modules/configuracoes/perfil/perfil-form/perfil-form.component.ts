@@ -28,6 +28,7 @@ export class PerfilFormComponent extends PageFormBase<Perfil, PerfilDaoService> 
     this.tipoCapacidadeDao = injector.get<TipoCapacidadeDaoService>(TipoCapacidadeDaoService);
     this.form = this.fh.FormBuilder({
       nome: {default: ""},
+      capacidades: {default: []},
       descricao: {default: ""},
       nivel: {default: ""},
       data_inicio: {default: ""},
