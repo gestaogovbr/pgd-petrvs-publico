@@ -57,8 +57,7 @@ Campos obrigatórios:
 
 ## FLUXOS (STATUS & AÇÕES)
 
-![Fig. 1 - Fluxos do Plano de Trabalho](docs/Imagens/Fluxo_Planos_Trabalhos
-.jpeg)
+![Fig. 1 - Fluxos do Plano de Trabalho](../Imagens/Fluxos_Planos_Trabalhos.jpeg)
 
 ~~~text
 status possíveis = ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO', 'CONCLUIDO', 'SUSPENSO', 'CANCELADO']

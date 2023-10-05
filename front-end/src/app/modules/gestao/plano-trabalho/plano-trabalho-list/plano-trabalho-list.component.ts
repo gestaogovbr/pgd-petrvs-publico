@@ -366,7 +366,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
 
   public arquivar(planoTrabalho: PlanoTrabalho) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoTrabalho", entity: planoTrabalho, novoStatus: planoTrabalho.status, onClick: this.dao!.arquivar.bind(this.dao) },
+      metadata: { tipo: "PlanoTrabalho", entity: Object.assign({},planoTrabalho, {arquivar: true}), novoStatus: planoTrabalho.status, onClick: this.dao!.arquivar.bind(this.dao) },
       title: "Arquivar Plano de Trabalho",
       modalClose: (modalResult) => {
         if (modalResult) {
@@ -425,7 +425,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
 
   public desarquivar(planoTrabalho: PlanoTrabalho) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoTrabalho", entity: planoTrabalho, novoStatus: planoTrabalho.status, onClick: this.dao!.desarquivar.bind(this.dao) },
+      metadata: { tipo: "PlanoTrabalho", entity: Object.assign({},planoTrabalho, {arquivar: false}), novoStatus: planoTrabalho.status, onClick: this.dao!.arquivar.bind(this.dao) },
       title: "Desarquivar Plano de Trabalho",
       modalClose: (modalResult) => {
         if (modalResult) {

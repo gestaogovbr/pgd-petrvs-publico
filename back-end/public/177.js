@@ -59,7 +59,7 @@ class PlanoEntrega extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
     this.data_fim = null; // Data final do plano de entrega
     this.nome = ""; // Nome do plano de entrega
     this.metadados = undefined; // Campo virtual contendo informações calculadas pelo servidor
-    this.arquivar = false; // Campo virtual utilizado pelo método avaliar
+    this.arquivar = false; // Campo virtual utilizado pelos métodos arquivar/desarquivar/avaliar
     this.status = "INCLUIDO"; // Status atual do plano de entregas
     this.unidade_id = '';
     this.plano_entrega_id = null;
@@ -3812,7 +3812,9 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
     this.go.navigate(this.routeStatus, {
       metadata: {
         tipo: "PlanoEntrega",
-        entity: planoEntrega,
+        entity: Object.assign({}, planoEntrega, {
+          arquivar: true
+        }),
         novoStatus: planoEntrega.status,
         onClick: this.dao.arquivar.bind(this.dao)
       },
@@ -3947,9 +3949,11 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
     this.go.navigate(this.routeStatus, {
       metadata: {
         tipo: "PlanoEntrega",
-        entity: planoEntrega,
+        entity: Object.assign({}, planoEntrega, {
+          arquivar: false
+        }),
         novoStatus: planoEntrega.status,
-        onClick: this.dao.desarquivar.bind(this.dao)
+        onClick: this.dao.arquivar.bind(this.dao)
       },
       title: "Desarquivar Plano de Entregas",
       modalClose: modalResult => {
