@@ -84,9 +84,36 @@
                     <b>{{row.badge.descricao}}</b>
                 </ng-template>
             </column>
-            <column title="% Força Trab. Planejado" [template]="columnForcaTrabalho">
+            <column title="% Força Trab. Planejado" [template]="columnForcaTrabalho" [width]="100">
                 <ng-template let-row="row" #columnForcaTrabalho>
                     <badge color="light" [label]="row.entrega.forca_trabalho + '%'"></badge>
+                </ng-template>
+            </column>
+            <column [title]="'Meta\nRealizado'" [template]="columnMetaRealizado" [width]="100">
+                <ng-template let-row="row" #columnMetaRealizado>
+                    <badge icon="bi bi-graph-up-arrow" [textValue]="row.meta" color="light" hint="Meta"></badge><br>
+                    <badge icon="bi bi-check-lg" [textValue]="row.metaRealizado" color="light" hint="Realizado"></badge>
+                </ng-template>
+            </column>
+            <column title="Progresso" [template]="columnProgresso" [width]="150">
+                <ng-template let-row="row" #columnProgresso>
+                    <progress-bar [value]="row.progresso_realizado" color="success"></progress-bar>
+                </ng-template>
+            </column>
+            <column [title]="'Objetivos/Processos'" [template]="columnObjProc" [editTemplate]="columnObjProc" [width]="200">
+                <ng-template let-row="row" #columnObjProc>
+                    <separator [title]="lex.translate('Objetivos')" *ngIf="row.objetivos?.length" collapse [collapsed]="true">
+                        <div *ngFor="let pObjetivo of row.objetivos" class="objetivo d-flex align-items-center">
+                            <button class="btn btn-sm btn-outline-info me-2" (click)="showPlanejamento(pObjetivo.objetivo.planejamento_id)"><i class="bi bi-eye"></i></button>
+                            <small>{{pObjetivo.objetivo.nome}}</small>
+                        </div>
+                    </separator>
+                    <separator [title]="lex.translate('Processos')" *ngIf="row.processos?.length" collapse [collapsed]="true">
+                        <div *ngFor="let pProcesso of row.processos" class="objetivo d-flex align-items-center">
+                            <button class="btn btn-sm btn-outline-info me-2" (click)="showCadeiaValor(pProcesso.processo.cadeia_valor_id)"><i class="bi bi-eye"></i></button>
+                            <small>{{pProcesso.processo.nome}}</small>
+                        </div>
+                    </separator>
                 </ng-template>
             </column>
         </columns>
