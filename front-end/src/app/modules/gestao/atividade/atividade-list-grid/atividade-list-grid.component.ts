@@ -58,6 +58,7 @@ export class AtividadeListGridComponent extends AtividadeListBase {
       etiqueta: { default: null }
     });
     this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }];
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 
   public storeFilter = (filter?: FormGroup) => {
@@ -224,14 +225,6 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     }
     return result;
   };
-
-  /*public getRow(row: any) {
-    console.log("row", row);
-    console.log("grid", this.grid);
-    console.log("filter", this.filter);
-    console.log("filter value", this.filter?.value);
-    return row.descricao;
-  }*/
 
 }
 

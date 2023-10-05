@@ -7,6 +7,15 @@
         </span>
     </ng-template>
     <columns>
+        <column type="expand" icon="bi bi-list-check" [align]="'center'" [hint]="lex.translate('Entrega')" [template]="columnEntregas" [expandTemplate]="columnExpandedEntregas">
+            <ng-template let-row="row" #columnEntregas>
+                <span *ngIf="row.entregas?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-list-check"></i> {{row.entregas?.length}}</span>
+            </ng-template>
+            <ng-template let-row="row" #columnExpandedEntregas>
+                <plano-entrega-entregas-plano-trabalho [entregaId]="row.id"></plano-entrega-entregas-plano-trabalho>
+            </ng-template>
+        </column>
+
         <column [title]="'Entrega\nDemandante/Destinatário'" [template]="columnEntregaCliente" [editTemplate]="columnEntregaCliente">
             <ng-template let-row="row" #columnEntregaCliente>
                 <badge *ngIf="row.descricao" color="light" icon="bi bi-textarea-t" [label]="row.descricao"></badge><br>

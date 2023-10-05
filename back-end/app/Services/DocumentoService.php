@@ -54,7 +54,7 @@ class DocumentoService extends ServiceBase {
                     if($especie == "TCR") {
                         /*
                             (RN_PTR_O)
-                            Enquanto faltar assinatura no TCR, o plano vai para o (ou permanece no) status de 'AGUARDANDO_ASSINATURA'. Quando o último assinar o TCR, o plano vai para o status 'ATIVO';
+                            Enquanto faltar assinatura no TCR, o plano vai para o (ou permanece no) status de 'AGUARDANDO_ASSINATURA'. Quando o último assinar o TCR, o plano vai para o status 'ATIVO' (RN_PTR_D);
                         */
                         $status = count(array_diff($this->programa->assinaturasExigidas($documento->planoTrabalho->id),$this->usuario->jaAssinaramTCR($documento->planoTrabalho->id))) > 0 ? 'AGUARDANDO_ASSINATURA' : 'ATIVO';
                         $this->status->atualizaStatus($documento->planoTrabalho, $status, 'Registrada a assinatura do servidor: ' . $usuario->nome . ' - CPF ' . $usuario->cpf . '.');                        

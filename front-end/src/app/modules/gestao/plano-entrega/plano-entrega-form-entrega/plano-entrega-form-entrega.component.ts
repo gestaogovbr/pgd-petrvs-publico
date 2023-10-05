@@ -116,9 +116,11 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.unidadeId = this.metadata?.unidade_id;
     this.entity = this.metadata?.entrega as PlanoEntregaEntrega; 
     (async () => {
+      let planejamento = await this.planejamentoDao.getById(this.planejamentoId!);
+      let cadeiaValor = await this.cadeiaValorDao.getById(this.cadeiaValorId!);
       await this.unidade?.loadSearch(this.unidadeId);
-      await this.planejamento?.loadSearch(this.planejamentoId);
-      await this.cadeiaValor?.loadSearch(this.cadeiaValorId);
+      await this.planejamento?.loadSearch(planejamento);
+      await this.cadeiaValor?.loadSearch(cadeiaValor);
       unidade = this.unidadeId?.length ? (await this.unidadeDao.getById(this.unidadeId!) as Unidade) : null;
       this.idsUnidadesAscendentes = unidade?.path?.split('/').slice(1) || [];
     })();

@@ -9,7 +9,7 @@ export class PlanejamentoDaoService extends DaoBaseService<Planejamento> {
 
   constructor(protected injector: Injector) {
     super("Planejamento", injector);
-    this.searchFields = ["nome", "data_inicio", "data_fim"];
+    this.searchFields = ["nome"];
   }
 
 }

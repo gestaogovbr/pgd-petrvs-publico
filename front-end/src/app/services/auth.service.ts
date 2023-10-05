@@ -342,8 +342,9 @@ export class AuthService {
    * @returns
    */
   public isGestorUnidade(pUnidade: Unidade | string | null = null): boolean {
-    let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? [this.usuario!.gerencia_titular?.unidade, ...(this.usuario!.gerencias_substitutas!.map(x => x.unidade)), ...(this.usuario!.gerencias_delegadas!.map(x => x.unidade))].find(x => x && x.id == pUnidade) : pUnidade;
-    return !!unidade && [unidade.gestor_substituto?.usuario_id, unidade.gestor?.usuario_id].includes(this.usuario!.id);
+    let gerencias = [this.usuario!.gerencia_titular?.unidade, ...(this.usuario!.gerencias_substitutas!.map(x => x.unidade)), ...(this.usuario!.gerencias_delegadas!.map(x => x.unidade))].filter(x => x).map(x => x?.id);
+    let unidade_id = pUnidade == null ? this.unidade!.id : typeof pUnidade == "string" ? pUnidade : pUnidade.id;
+    return gerencias.includes(unidade_id);
   }
 
   /**
