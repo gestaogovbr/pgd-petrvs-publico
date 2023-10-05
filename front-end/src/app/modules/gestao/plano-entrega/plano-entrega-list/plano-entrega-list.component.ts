@@ -470,7 +470,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public avaliar(planoEntrega: PlanoEntrega) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "AVALIADO", onClick: this.dao!.avaliar.bind(this.dao) },
+      metadata: { tipo: "PlanoEntrega", entity: Object.assign({},planoEntrega, {arquivar: true}), novoStatus: "AVALIADO", onClick: this.dao!.avaliar.bind(this.dao) },
       title: "Avaliar Plano de Entregas",
       modalClose: (modalResult) => {
         if (modalResult) {
