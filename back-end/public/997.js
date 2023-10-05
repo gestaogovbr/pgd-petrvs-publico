@@ -710,7 +710,9 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
     this.go.navigate(this.routeStatus, {
       metadata: {
         tipo: "PlanoTrabalho",
-        entity: planoTrabalho,
+        entity: Object.assign({}, planoTrabalho, {
+          arquivar: true
+        }),
         novoStatus: planoTrabalho.status,
         onClick: this.dao.arquivar.bind(this.dao)
       },
@@ -788,9 +790,11 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
     this.go.navigate(this.routeStatus, {
       metadata: {
         tipo: "PlanoTrabalho",
-        entity: planoTrabalho,
+        entity: Object.assign({}, planoTrabalho, {
+          arquivar: false
+        }),
         novoStatus: planoTrabalho.status,
-        onClick: this.dao.desarquivar.bind(this.dao)
+        onClick: this.dao.arquivar.bind(this.dao)
       },
       title: "Desarquivar Plano de Trabalho",
       modalClose: modalResult => {

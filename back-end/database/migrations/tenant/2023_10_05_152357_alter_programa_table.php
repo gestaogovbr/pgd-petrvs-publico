@@ -13,7 +13,7 @@ class AlterProgramaTable extends Migration
      */
     public function up()
     {
-        Schema::table('programa', function (Blueprint $table) {
+        Schema::table('programas', function (Blueprint $table) {
             $table->integer('dias_tolerancia_recurso_avaliacao')->default("20")->comment("Dias de tolerância para recorrer da avaliação");
         });
     }
@@ -25,7 +25,7 @@ class AlterProgramaTable extends Migration
      */
     public function down()
     {
-        Schema::table('programa', function (Blueprint $table) {
+        Schema::table('programas', function (Blueprint $table) {
             $table->dropColumn('dias_tolerancia_recurso_avaliacao');
         });
     }

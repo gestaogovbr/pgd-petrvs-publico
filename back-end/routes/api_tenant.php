@@ -233,7 +233,6 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalho')->group(function () 
     Route::post('reativar', [PlanoTrabalhoController::class, 'reativar']);
     Route::post('suspender', [PlanoTrabalhoController::class, 'suspender']);
     Route::post('arquivar', [PlanoTrabalhoController::class, 'arquivar']);
-    Route::post('desarquivar', [PlanoTrabalhoController::class, 'desarquivar']);
     Route::post('enviar-para-assinatura', [PlanoTrabalhoController::class, 'enviarParaAssinatura']);
     Route::post('metadados-plano', [PlanoTrabalhoController::class, 'metadadosPlano']);
     Route::post('get-by-usuario', [PlanoTrabalhoController::class, 'getByUsuario']);
