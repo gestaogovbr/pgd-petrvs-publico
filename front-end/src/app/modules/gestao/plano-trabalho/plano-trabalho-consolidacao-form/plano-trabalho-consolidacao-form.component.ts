@@ -8,7 +8,7 @@ import { PlanoTrabalhoConsolidacaoOcorrenciaDaoService } from 'src/app/dao/plano
 import { IIndexable } from 'src/app/models/base.model';
 import { PlanoTrabalhoConsolidacao } from 'src/app/models/plano-trabalho-consolidacao.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
-import { Atividade, AtividadeChecklist } from 'src/app/models/atividade.model';
+import { Atividade, Checklist } from 'src/app/models/atividade.model';
 import { PlanoTrabalhoConsolidacaoOcorrencia } from 'src/app/models/plano-trabalho-consolidacao-ocorrencia.model';
 import { Afastamento } from 'src/app/models/afastamento.model';
 import { PlanoTrabalhoEntrega } from 'src/app/models/plano-trabalho-entrega.model';
@@ -81,7 +81,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   public planoEntregaService: PlanoEntregaService;
   public itemsEntregas: ConsolidacaoEntrega[] = [];
   public etiquetas: LookupItem[] = [];
-  public checklist?: AtividadeChecklist[];
+  public checklist?: Checklist[];
   public itemsOcorrencias: PlanoTrabalhoConsolidacaoOcorrencia[] = [];
   public itemsComparecimentos: Comparecimento[] = [];
   public itemsAfastamentos: Afastamento[] = [];

@@ -65,7 +65,8 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
       plano_trabalho_assinatura_gestor_lotacao: { default: true },
       plano_trabalho_assinatura_gestor_unidade: { default: true },
       plano_trabalho_assinatura_gestor_entidade: { default: true },
-      dias_tolerancia_avaliacao: {default: 10},
+      dias_tolerancia_avaliacao: {default: 20},
+      dias_tolerancia_recurso_avaliacao: {default: 20},
       nota_padrao_avaliacao: {default: 0},
       tipo_justificativa_id: {default: null}
     }, this.cdRef, this.validate);

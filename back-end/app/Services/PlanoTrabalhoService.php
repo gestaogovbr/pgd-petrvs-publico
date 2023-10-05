@@ -355,14 +355,14 @@ class PlanoTrabalhoService extends ServiceBase
       "unidade.gestor:id,unidade_id,usuario_id",
       "unidade.gestorSubstituto:id,unidade_id,usuario_id",
       "tipoModalidade:id,nome",
-      "consolidacoes",
+      "consolidacoes.avaliacao",
       "usuario:id,nome,apelido,url_foto"
     ])->where("usuario_id", $usuarioId);
     if (!$arquivados) $query->whereNull("data_arquivamento");
     if (!empty($planoTrabalhoId)) $query->where("id", $planoTrabalhoId);
     $planos = $query->get()->all();
     $programasIds = array_unique(array_map(fn ($v) => $v["programa_id"], $planos));
-    $programas = Programa::whereIn("id", $programasIds)->get()->all();
+    $programas = Programa::with(["tipoAvaliacaoPlanoTrabalho.notas.justificativas"])->whereIn("id", $programasIds)->get()->all();
     return [
       "planos" => $planos,
       "programas" => $programas

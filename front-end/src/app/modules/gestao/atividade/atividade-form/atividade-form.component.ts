@@ -3,7 +3,7 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
-import { Atividade, AtividadeChecklist } from 'src/app/models/atividade.model';
+import { Atividade, Checklist } from 'src/app/models/atividade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { LookupItem } from 'src/app/services/lookup.service';
@@ -13,7 +13,6 @@ import { SelectItem } from 'src/app/components/input/input-base';
 import { Usuario } from 'src/app/models/usuario.model';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { CalendarService } from 'src/app/services/calendar.service';
-import { Unidade } from 'src/app/models/unidade.model';
 import { Comentario } from 'src/app/models/comentario';
 import { AtividadeTarefa } from 'src/app/models/atividade-tarefa.model';
 import { ComentarioService } from 'src/app/services/comentario.service';
@@ -26,8 +25,6 @@ import { SeiKeys } from 'src/app/listeners/procedimento-trabalhar/procedimento-t
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { AtividadeService } from '../atividade.service';
-
-export type Checklist = {id: string, texto: string, checked: boolean};
 
 @Component({
   selector: 'app-atividade-form',
@@ -178,7 +175,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     const etiquetasKeys = this.etiquetas.map(x => x.key);
     const checklistKeys = this.checklist.map(x => x.key);
     const etiqueta = (this.form.controls.etiquetas.value || []).find((x: LookupItem) => !etiquetasKeys.includes(x.key)) as LookupItem;
-    const checklst = (this.form.controls.checklist.value || []).find((x: AtividadeChecklist) => !checklistKeys.includes(x.id) && x.checked) as AtividadeChecklist;
+    const checklst = (this.form.controls.checklist.value || []).find((x: Checklist) => !checklistKeys.includes(x.id) && x.checked) as Checklist;
     if(etiqueta) result = "Etiqueta " + etiqueta.value + "não pode ser utilizada!";
     if(checklst) result = "Checklist " + checklst.texto + "não pode ser utilizado!";
     return result;

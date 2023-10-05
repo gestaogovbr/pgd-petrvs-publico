@@ -1,3 +1,4 @@
+import { Avaliacao, HasAvaliacao } from './avaliacao.model';
 import { Base } from './base.model';
 import { Comentario, HasComentarios } from './comentario';
 import { Entrega, EntregaValor } from './entrega.model';
@@ -6,10 +7,11 @@ import { PlanoEntregaEntregaProcesso } from './plano-entrega-entrega-processo.mo
 import { PlanoEntrega } from './plano-entrega.model';
 import { Unidade } from './unidade.model';
 
-export class PlanoEntregaEntrega extends Base implements HasComentarios {
+export class PlanoEntregaEntrega extends Base implements HasAvaliacao, HasComentarios {
   public entrega?: Entrega;
   public entrega_pai?: Entrega;
   public plano_entrega?: PlanoEntrega;
+  public avaliacao?: Avaliacao;
   public unidade?: Unidade;
   public objetivos: PlanoEntregaEntregaObjetivo[] = [];
   public processos: PlanoEntregaEntregaProcesso[] = [];
@@ -23,11 +25,13 @@ export class PlanoEntregaEntrega extends Base implements HasComentarios {
   public progresso_esperado: number = 100;
   public progresso_realizado: number = 0;
   public destinatario: string = '';
+  public avaliacoes: Avaliacao[] = [];
   public comentarios: Comentario[] = []; /* Comentarios da etrega */
 
   public entrega_id: string = '';
   public unidade_id: string = '';                        
   public entrega_pai_id: string | null = null;                      
+  public avaliacao_id: string | null = null;
   public plano_entrega_id: string | null = null;
   
   public constructor(data?: any) { super(); this.initialization(data); }

@@ -30,6 +30,7 @@ class Programa extends ModelBase
         'periodicidade_valor', /* int; NOT NULL; DEFAULT: '1'; */// Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do mês para o restante
         'dias_tolerancia_consolidacao', /* int; NOT NULL; DEFAULT: '10'; */// Dias de tolerância para o lançamento do registro das atividades na consolidação, após esses dias será liberado automaticamente para avaliação
         'dias_tolerancia_avaliacao', /* int; NOT NULL; DEFAULT: '10'; */// Dias de tolerância para o lançamento do registro das atividades na consolidação, após esses dias será liberado automaticamente para avaliação
+        'dias_tolerancia_recurso_avaliacao', /* int; NOT NULL; DEFAULT: '10'; */// Dias de tolerância para o lançamento do registro das atividades na consolidação, após esses dias será liberado automaticamente para avaliação
         'nota_padrao_avaliacao', 
         'checklist_avaliacao_entregas_plano_entrega',
         'checklist_avaliacao_entregas_plano_trabalho',

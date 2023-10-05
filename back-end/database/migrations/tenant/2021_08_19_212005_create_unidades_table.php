@@ -20,7 +20,7 @@ class CreateUnidadesTable extends Migration
             $table->timestamps();
             $table->softDeletes();
             // Campos
-            $table->string('codigo', 12)->comment('Código da unidade');
+            $table->string('codigo', 12)->nullable()->comment('Código da unidade');
             $table->string('sigla', 100)->comment("Sigla da unidade");
             $table->string('nome', 256)->comment("Nome da unidade");
             $table->tinyInteger('instituidora')->default(0)->comment("Se a unidade é instituidora (Programas)");

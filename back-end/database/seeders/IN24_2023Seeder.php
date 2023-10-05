@@ -1043,6 +1043,7 @@ class IN24_2023Seeder extends Seeder
                 "periodicidade_valor" => 1,
                 "dias_tolerancia_consolidacao" => 10,
                 "dias_tolerancia_avaliacao" => 20,
+                "dias_tolerancia_recurso_avaliacao" => 20,
                 "nota_padrao_avaliacao" => "7",
                 "plano_trabalho_assinatura_participante" => 1,
                 "plano_trabalho_assinatura_gestor_lotacao" => 0,

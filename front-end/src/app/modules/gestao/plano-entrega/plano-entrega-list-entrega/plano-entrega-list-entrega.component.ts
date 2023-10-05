@@ -21,11 +21,11 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   @Input() disabled: boolean = false;
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
-  @Input() set entity(value: PlanoEntregaEntrega | undefined) { super.entity = value; } get entity(): PlanoEntregaEntrega | undefined { return super.entity; }
+  @Input() set entity(value: PlanoEntrega | undefined) { super.entity = value; } get entity(): PlanoEntrega | undefined { return super.entity; }
   @Input() set planejamentoId(value: string | undefined) {
     if(this._planejamentoId != value) {
       this._planejamentoId = value;
-      // verificar nas entregas quais objetivos não são desse planjemaneot e remove-los
+      // TODO: verificar nas entregas quais objetivos não são desse planjemaneot e remove-los
       // será remvido somente da lista de itens (em memória), independente de persistente ou não, MAS NO BACKEND HAVERÀ ESSA VALIDAÇÂO!
     }
   } get planejamentoId(): string | undefined {
@@ -34,7 +34,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   @Input() set cadeiaValorId(value: string | undefined) {
     if(this._cadeiaValorId != value) {
       this._cadeiaValorId = value;
-      // verificar nas entregas quais objetivos não são desse planejamento e remove-los
+      // TODO: verificar nas entregas quais objetivos não são desse planejamento e remove-los
       // será removido somente da lista de itens (em memória), independente de persistente ou não, MAS NO BACKEND HAVERÀ ESSA VALIDAÇÂO!
     }
   } get cadeiaValorId(): string | undefined {
@@ -43,7 +43,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   @Input() set unidadeId(value: string | undefined) {
     if(this._unidadeId != value) {
       this._unidadeId = value;
-      // verificar nas entregas quais objetivos não são desse planjemaneot e remove-los
+      // TODO: verificar nas entregas quais objetivos não são desse planjemaneot e remove-los
       // será remvido somente da lista de itens (em memória), independente de persistente ou não, MAS NO BACKEND HAVERÀ ESSA VALIDAÇÂO!
     }
   } get unidadeId(): string | undefined {

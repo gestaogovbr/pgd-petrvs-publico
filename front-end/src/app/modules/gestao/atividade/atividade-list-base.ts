@@ -2,7 +2,7 @@ import { Injector, TemplateRef } from '@angular/core';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
-import { Atividade, AtividadeChecklist } from 'src/app/models/atividade.model';
+import { Atividade, Checklist } from 'src/app/models/atividade.model';
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
 import { CalendarService, Efemerides, FeriadoList } from 'src/app/services/calendar.service';
 import { Afastamento } from 'src/app/models/afastamento.model';
@@ -28,7 +28,7 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
   public comentario: ComentarioService;
   public extra: ExtraAtividade;
   public etiquetas: LookupItem[] = [];
-  public checklist?: AtividadeChecklist[];
+  public checklist?: Checklist[];
   public efemerides?: Efemerides;
   public optionsMetadata: AtividadeOptionsMetadata;
   public addComentarioButton: ToolbarButton = {
