@@ -7,6 +7,7 @@ use App\Models\PlanoTrabalho;
 use App\Models\DocumentoAssinatura;
 use App\Services\ServiceBase;
 use App\Exceptions\ServerException;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -40,7 +41,7 @@ class DocumentoService extends ServiceBase {
         return Documento::where("id_documento", $id_documento)->where("status", "AGUARDANDO_SEI")->first();
     }
 
-    public function assinar($data) {
+    public function assinar($data,$request) {
         $usuario = parent::loggedUser();
         $documentos = Documento::with(['assinaturas' => function ($query) use ($usuario) {
             $query->where('usuario_id', $usuario->id);
@@ -50,7 +51,7 @@ class DocumentoService extends ServiceBase {
             foreach($documentos as $documento) {
                 $especie = $documento->especie;
                 if(count($documento->assinaturas) == 0) { 
-                    $this->registrarAssinatura($documento, $usuario->id); 
+                    $this->registrarAssinatura($documento, $usuario->id,$request); 
                     if($especie == "TCR") {
                         /*
                             (RN_PTR_O)
@@ -72,9 +73,10 @@ class DocumentoService extends ServiceBase {
         return Documento::with('assinaturas.usuario:id,nome,apelido')->whereIn('id', $data["documentos_ids"])->get()->all();
     }
 
-    public function registrarAssinatura($documento, $usuario_id){
+    public function registrarAssinatura($documento, $usuario_id,$request){
+        $unidadeLogin = Auth::user()->areasTrabalho[0]->unidade;
         $assinatura = new DocumentoAssinatura();
-        $assinatura->data_assinatura = Carbon::now();
+        $assinatura->data_assinatura = $this->unidadeService->hora($unidadeLogin->id);
         $assinatura->documento_id = $documento->id;
         $assinatura->usuario_id = $usuario_id;
         $assinatura->assinatura = hash('md5', $assinatura->data_assinatura->toDateTimeString() . $usuario_id . $documento->conteudo);
