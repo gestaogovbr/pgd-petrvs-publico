@@ -33,14 +33,14 @@ export class PlanoEntregaEntregasPlanoTrabalhoComponent extends PageFrameBase {
   public PlanosTrabalho!: PlanoTrabalho[];
   public items: Usuario[] = [];
   public loader: boolean = false;
-
+  
 
   constructor(public injector: Injector){
     super(injector);
     this.PlanoTrabalhoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
     this.PlanoTrabalhoEntregaDao = injector.get<PlanoTrabalhoEntregaDaoService>(PlanoTrabalhoEntregaDaoService);
     this.planoTrabalhoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
-    this.join = ["plano_trabalho.usuario"];
+    this.join = ["plano_trabalho.usuario","plano_entrega_entrega.plano_entrega.unidade"];
     this.groupBy = [{ field: "plano_trabalho.usuario", label: "Usuário"}];
   }
 
@@ -93,7 +93,6 @@ export class PlanoEntregaEntregasPlanoTrabalhoComponent extends PageFrameBase {
             };
             planoTrabalho.entregas.push(entrega);
           }
-
         });
 
       }).finally(() => {
@@ -108,6 +107,11 @@ export class PlanoEntregaEntregasPlanoTrabalhoComponent extends PageFrameBase {
   public totalForcaTrabalho(entregas: PlanoTrabalhoEntrega[] = []): number {
     const forca = entregas.map(x => x.forca_trabalho * 1).reduce((a, b) => a + b, 0);
     return Math.round(forca * 100) / 100;
+  }
+
+  public planoAtivo(planos: PlanoTrabalho[]): PlanoTrabalho {
+    const planoAtivo = planos.find((plano) => plano.status === "ATIVO");
+    return planoAtivo || {} as PlanoTrabalho;
   }
 
 
