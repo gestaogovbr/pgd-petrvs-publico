@@ -549,13 +549,13 @@ export class LookupService {
   ];
 
   public PLANO_TRABALHO_STATUS: LookupItem[] = [
-    { key: "INCLUIDO", value: "Incluído", icon: "bi bi-pencil-square", color: "secondary" },
-    { key: "AGUARDANDO_ASSINATURA", value: "Aguardando assinatura", icon: "bi bi-clock", color: "warning" },
-    { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success" },
-    { key: "CONCLUIDO", value: "Executado", icon: "bi bi-clipboard2-check", color: "primary" },
-    { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info" },
-    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "dark" },
-    { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "danger" }
+    { key: "INCLUIDO", value: "Incluído", icon: "bi bi-pencil-square", color: "secondary", data: { naoJustificar: [] } },
+    { key: "AGUARDANDO_ASSINATURA", value: "Aguardando assinatura", icon: "bi bi-clock", color: "warning", data: { naoJustificar: ["INCLUIDO"] } },
+    { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success", data: { naoJustificar: ["INCLUIDO","AGUARDANDO_ASSINATURA"] } },
+    { key: "CONCLUIDO", value: "Executado", icon: "bi bi-clipboard2-check", color: "primary", data: { naoJustificar: [] } },
+    //{ key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info", data: { naoJustificar: [] } },
+    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "dark", data: { naoJustificar: [] } },
+    { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "danger", data: { naoJustificar: [] } }
   ];
 
   public PROJETO_PERFIS: LookupItem[] = [
