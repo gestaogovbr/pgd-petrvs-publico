@@ -175,8 +175,10 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
         */
         break;
       case 'CANCELADO':
+        if (this.botaoAtendeCondicoes(this.BOTAO_ARQUIVAR, row)) result.push(this.BOTAO_ARQUIVAR);
         /**
           - botões-padrão:
+            - 'Arquivar'. Condições para ser exibido: vide RN_PTR_N;
             - 'Consultar'. Condições para ser exibido: vide RN_PTR_S;
         */
         break;
@@ -256,6 +258,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     let planoAguardandoAssinatura = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'AGUARDANDO_ASSINATURA';
     let planoAtivo = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'ATIVO';
     let planoConcluido = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'CONCLUIDO';
+    let planoCancelado = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'CANCELADO';
     let planoArquivado = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'ARQUIVADO';
     //let programaExigeOutrasAssinaturas = !!assinaturasExigidas.filter(a => a != this.auth.usuario?.id).length;
     let planoSuspenso = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'SUSPENSO';
@@ -278,10 +281,10 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
       case this.BOTAO_ARQUIVAR:
         /*
           (RN_PTR_N) ARQUIVAR
-          O plano precisa estar com o status CONCLUIDO, não ter sido arquivado, e:
+          O plano precisa estar com o status CONCLUIDO ou CANCELADO, não ter sido arquivado, e:
             - o usuário logado precisa ser o participante ou o gestor da Unidade Executora;
         */
-        return planoConcluido && !planoArquivado && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora);
+        return (planoConcluido || planoCancelado) && !planoArquivado && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora);
       case this.BOTAO_ASSINAR:
         /*
           (RN_PTR_O) ASSINAR
@@ -413,7 +416,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
 
   public cancelarPlano(planoTrabalho: PlanoTrabalho) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoTrabalho", entity: planoTrabalho, novoStatus: "CANCELADO", onClick: this.dao!.cancelarPlano.bind(this.dao) },
+      metadata: { tipo: "PlanoTrabalho", entity: Object.assign({},planoTrabalho, {arquivar: true}), novoStatus: "CANCELADO", onClick: this.dao!.cancelarPlano.bind(this.dao) },
       title: "Cancelar Plano de Trabalho",
       modalClose: (modalResult) => {
         if (modalResult) {

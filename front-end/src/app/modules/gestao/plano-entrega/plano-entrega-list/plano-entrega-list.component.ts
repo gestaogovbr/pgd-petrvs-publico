@@ -456,7 +456,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public arquivar(planoEntrega: PlanoEntrega) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoEntrega", entity: Object.assign({},planoEntrega, {arquivar: true}), novoStatus: planoEntrega.status, onClick: this.dao!.arquivar.bind(this.dao) },
+      metadata: { tipo: "PlanoEntrega", entity: Object.assign({}, planoEntrega, {arquivar: true}), novoStatus: planoEntrega.status, onClick: this.dao!.arquivar.bind(this.dao) },
       title: "Arquivar Plano de Entregas",
       modalClose: (modalResult) => {
         if (modalResult) {
