@@ -57,6 +57,7 @@ __webpack_require__.r(__webpack_exports__);
 class Perfil extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
   constructor(data) {
     super();
+    this.capacidades = []; /* Objecto com lista de capacidades */
     this.nivel = 0; /* Nível de permissões */
     this.nome = ""; /* Nome do perfil */
     this.descricao = ""; /* Descrição sobre o perfil */
@@ -290,6 +291,9 @@ class PerfilFormComponent extends src_app_modules_base_page_form_base__WEBPACK_I
     this.form = this.fh.FormBuilder({
       nome: {
         default: ""
+      },
+      capacidades: {
+        default: []
       },
       descricao: {
         default: ""

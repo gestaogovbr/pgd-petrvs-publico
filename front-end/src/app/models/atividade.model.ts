@@ -36,7 +36,7 @@ export type AtividadeMetadados = {
     _status?: BadgeButton[],
 }
 
-export type AtividadeChecklist = {
+export type Checklist = {
     id: string,
     texto: string,
     checked: boolean
@@ -67,7 +67,7 @@ export class Atividade extends Base implements HasComentarios, HasStatus {
     public data_arquivamento: Date | null = null; /* Data de arquivamento da atividade */
     public status: AtividadeStatus | null = null; /* Status atual da atividade */
     public etiquetas: LookupItem[] = []; /* Etiquetas */
-    public checklist: AtividadeChecklist[] = []; /* Checklist */
+    public checklist: Checklist[] = []; /* Checklist */
     public prioridade: number | null = null; /* Nível de prioridade */
     public progresso: number = 0; /* Progresso a execução da atividade */
     public metadados: AtividadeMetadados | undefined = undefined; /* Campo virtual contendo informações calculadas pelo servidor */

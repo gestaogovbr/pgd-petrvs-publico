@@ -680,9 +680,9 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
           (RN_PTR_U) ENVIAR PARA ASSINATURA
           O plano precisa estar com o status INCLUIDO; e
             - o usuário logado precisa ser o participante do plano ou gestor da sua Unidade Executora; e
-            - se a assinatura do usuário logado por exigida, ele já deve ter assinado o TCR; e
+            - se a assinatura do usuário logado for exigida, ele já deve ter assinado o TCR; e
             - devem existir assinaturas exigíveis ainda pendentes; e
-            - o plano precisa possui ao menos uma entrega;
+            - o plano precisa possuir ao menos uma entrega;
         */
         return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && (!assinaturaUsuarioEhExigida || usuarioJaAssinouTCR) && !!assinaturasFaltantes.length && planoPossuiEntrega;
       case this.BOTAO_REATIVAR:

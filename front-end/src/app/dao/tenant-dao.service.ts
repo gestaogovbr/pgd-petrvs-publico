@@ -10,14 +10,14 @@ import { Cidade } from '../models/cidade.model';
 export class TenantDaoService extends DaoBaseService<Tenant> {
   public PREFIX_URL: string = "config";
 
-  constructor(protected injector: Injector) { 
+  constructor(protected injector: Injector) {
     super("Tenant", injector);
   }
 
 
   public cidadesSeeder(item: Cidade) {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('config/' + this.collection + '/cidades', { 
+      this.server.post('config/' + this.collection + '/cidades', {
         tenant_id: item.id
       }).subscribe(response => {
         if (response.error) {
@@ -31,7 +31,7 @@ export class TenantDaoService extends DaoBaseService<Tenant> {
 
   public tiposCapacidadesSeeder(item: TipoCapacidade) {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('config/' + this.collection + '/tipo-capacidade', { 
+      this.server.post('config/' + this.collection + '/tipo-capacidade', {
         tenant_id: item.id,
       }).subscribe(response => {
         if (response.error) {
@@ -46,7 +46,7 @@ export class TenantDaoService extends DaoBaseService<Tenant> {
 
   public seeders(item: TipoCapacidade) {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('config/' + this.collection + '/seeders', { 
+      this.server.post('config/' + this.collection + '/seeders', {
         tenant_id: item.id,
       }).subscribe(response => {
         if (response.error) {
@@ -60,7 +60,7 @@ export class TenantDaoService extends DaoBaseService<Tenant> {
 
   public migrations(item: TipoCapacidade) {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('config/' + this.collection + '/migrations', { 
+      this.server.post('config/' + this.collection + '/migrations', {
         tenant_id: item.id,
       }).subscribe(response => {
         if (response.error) {
@@ -72,9 +72,20 @@ export class TenantDaoService extends DaoBaseService<Tenant> {
     });
   }
 
+  public resetDB() {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.get('config/' + this.collection + '/resetdb').subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }
+      }, error => reject(error));
+    });
+  }
   public usuarioSeeder(item: Cidade) {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('config/' + this.collection + '/cidades', { 
+      this.server.post('config/' + this.collection + '/cidades', {
         tenant_id: item.id
       }).subscribe(response => {
         if (response.error) {
@@ -88,7 +99,7 @@ export class TenantDaoService extends DaoBaseService<Tenant> {
 
   public entidadeSeeder(item: Cidade) {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('config/' + this.collection + '/cidades', { 
+      this.server.post('config/' + this.collection + '/cidades', {
         tenant_id: item.id
       }).subscribe(response => {
         if (response.error) {
@@ -102,7 +113,7 @@ export class TenantDaoService extends DaoBaseService<Tenant> {
 
   public databaseSeeder(item: Cidade) {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('config/' + this.collection + '/database', { 
+      this.server.post('config/' + this.collection + '/database', {
         tenant_id: item.id
       }).subscribe(response => {
         if (response.error) {

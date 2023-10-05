@@ -20,7 +20,7 @@ export class EntregaListComponent extends PageListBase<Entrega, EntregaDaoServic
     super(injector, Entrega, EntregaDaoService);
     /* Inicializações */
     this.join = ["unidade:id,sigla,nome"];
-    this.title = this.lex.translate('Entregas');
+    this.title = this.lex.translate('Modelos de Entregas');
     this.code = "MOD_ENTRG";
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.filter = this.fh.FormBuilder({

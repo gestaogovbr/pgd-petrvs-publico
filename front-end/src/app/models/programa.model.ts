@@ -25,6 +25,7 @@ export class Programa extends Base {
     public periodicidade_valor: number = 1; /* Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do mês para o restante */
     public dias_tolerancia_consolidacao: number = 10; /* Dias de tolerância para o lançamento do registro das atividades na consolidação, após esses dias será liberado automaticamente para avaliação */
     public dias_tolerancia_avaliacao: number = 20; /* Dias de tolerância para realizar a avaliação, considerando a tolerância da consolidação. Caso seja zero não fará nada, caso contrário após esse prazo a consolidação será automaticamente avaliada com a nota padrão */
+    public dias_tolerancia_recurso_avaliacao: number = 20; /* Dias de tolerância para realizar a avaliação, considerando a tolerância da consolidação. Caso seja zero não fará nada, caso contrário após esse prazo a consolidação será automaticamente avaliada com a nota padrão */
     public nota_padrao_avaliacao: any | null = null; /* Nota padrão de avaliação, para quando o gestor não realizar a avaliação dentro do prazo */
     public checklist_avaliacao_entregas_plano_entrega: LookupItem[] = []; //Checklist para avaliação das entregas do plano de entrega
     public checklist_avaliacao_entregas_plano_trabalho: LookupItem[] = []; //Checklist para avaliação das entregas do plano de trabalho

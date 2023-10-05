@@ -5,7 +5,6 @@ import { TipoJustificativa } from './tipo-justificativa.model';
 
 export class TipoAvaliacaoNota extends Base {
     public tipo_avaliacao?: TipoAvaliacao;
-    public justificativas?: TipoAvaliacaoJustificativa;
 
     public sequencia: number = 0;
     public nota: any = 0;
@@ -16,6 +15,7 @@ export class TipoAvaliacaoNota extends Base {
     public icone: string = "";
     public cor: string = "";
     public codigo: string = "";
+    public justificativas: TipoAvaliacaoJustificativa[] = [];
 
     public tipo_avaliacao_id: string = "";
 

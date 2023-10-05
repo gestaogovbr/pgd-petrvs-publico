@@ -292,7 +292,8 @@ class UtilService
      *          extraindo a diferença de fusos horários. Sem essa extração, poderia ocorrer o seguinte:
      *          a data 01/01/2023 20:00 (GMT-03:00) -> dia 01/01/2023, mas a data 01/01/2023 23:00 (GMT-03:00) -> dia 02/01/2023
      */
-    public static function daystamp(DateTime $dateRef) {
+    public static function daystamp($dateRef) {
+        $dateRef = UtilService::asDateTime($dateRef);
         return intval(floor(($dateRef->getTimestamp() + $dateRef->getOffset()) / CalendarioService::DIA_EM_SEGUNDOS));
     }
 

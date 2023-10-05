@@ -64,6 +64,7 @@ use App\Http\Controllers\AreaAtividadeExternaController;
 use App\Http\Controllers\AreaTematicaController;
 use App\Http\Controllers\AtividadeTarefaController;
 use App\Http\Controllers\CapacidadeTecnicaController;
+use App\Http\Controllers\AvaliacaoController;
 use App\Http\Controllers\HistoricoAtividadeExternaCurriculumController;
 use App\Http\Controllers\HistoricoAtividadeInternaCurriculumController;
 use App\Http\Controllers\HistoricoCursoExternoCurriculumController;
@@ -216,6 +217,11 @@ Route::middleware(['auth:sanctum'])->prefix('Atividade')->group(function () {
     Route::post('arquivar', [AtividadeController::class, 'arquivar']);
 });
 Route::middleware(['auth:sanctum'])->prefix('AtividadeTarefa')->group(function () { defaultRoutes(AtividadeTarefaController::class); });
+Route::middleware(['auth:sanctum'])->prefix('Avaliacao')->group(function () {
+    defaultRoutes(AvaliacaoController::class);
+    Route::post('cancelar-avaliacao', [AvaliacaoController::class, 'cancelarAvaliacao']);
+    Route::post('recorrer', [AvaliacaoController::class, 'recorrer']);
+});
 Route::middleware(['auth:sanctum'])->prefix('Planejamento')->group(function () { defaultRoutes(PlanejamentoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalho')->group(function () {
     defaultRoutes(PlanoTrabalhoController::class);

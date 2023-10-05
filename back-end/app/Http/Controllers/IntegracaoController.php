@@ -64,7 +64,7 @@ class IntegracaoController extends ControllerBase {
                 'entity.entidade_id' => ['required'],
                 'with' => ['array']
             ]);
-            $entity = $this->service->sincronizarPetrvs($data,self::loggedUser()->id);
+            $entity = $this->service->sincronizarPetrvs($data,self::loggedUser()->id,$request);
             $result = $this->service->getById([
                 'id' => $entity->id,
                 'with' => ['entidade','usuario']

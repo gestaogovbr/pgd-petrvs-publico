@@ -1,4 +1,4 @@
-<div class="accordion-item">
+<div class="accordion-item mb-3">
     <h2 class="accordion-header" [attr.id]="generatedId('heading' + index)">
         <button class="accordion-button" [class.collapsed]="!selected" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#' + generatedId('collapse' + index)" [attr.aria-expanded]="selected ? 'true' : 'false'" [attr.aria-controls]="generatedId('collapse' + index)" (click)="onClick()">
             <ng-container *ngIf="titleTemplate" [ngTemplateOutlet]="titleTemplate" [ngTemplateOutletContext]="{item: item, data: data, accordion: accordion}"></ng-container>

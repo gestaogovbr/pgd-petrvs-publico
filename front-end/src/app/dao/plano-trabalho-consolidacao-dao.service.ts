@@ -84,5 +84,6 @@ export class PlanoTrabalhoConsolidacaoDaoService extends DaoBaseService<PlanoTra
       }, error => reject(error));
     });
   }
+
 }
 

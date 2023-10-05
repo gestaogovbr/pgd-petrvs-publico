@@ -343,7 +343,8 @@ export class AuthService {
    */
   public isGestorUnidade(pUnidade: Unidade | string | null = null): boolean {
     let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? [this.usuario!.gerencia_titular?.unidade, ...(this.usuario!.gerencias_substitutas!.map(x => x.unidade)), ...(this.usuario!.gerencias_delegadas!.map(x => x.unidade))].find(x => x && x.id == pUnidade) : pUnidade;
-    return !!unidade && [unidade.gestor_substituto?.usuario_id, unidade.gestor?.usuario_id].includes(this.usuario!.id);
+    let areaTrabalho = this.unidades?.find(x => x.id == unidade?.id);
+    return !!unidade && [areaTrabalho?.gestor_substituto?.usuario_id, areaTrabalho?.gestor?.usuario_id, areaTrabalho?.gestor_delegado?.usuario_id].includes(this.usuario!.id);
   }
 
   /**

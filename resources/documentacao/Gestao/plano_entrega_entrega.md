@@ -23,15 +23,16 @@
 
 ## Entregas de um Plano de Entregas
 
-(RN_PENT_ENT_A) As entregas que compõem um Plano de Entregas pertencem todas à Unidade Executora do Plano;
-(RN_PENT_ENT_B) As entregas incluídas/alteradas na criação/edição de um Plano de Entregas precisam ser homologadas pelo gestor da unidade hierarquicamente superior;
-(RN_PENT_ENT_C) As entregas incluídas/alteradas na criação/edição de um Plano de Entregas precisam estar dentro do prazo de execução de um plano de entregas;
-
-(RN_PENT_ENT_D) Quando um Plano de Entregas for CANCELADO, suas entregas automaticamente também o serão;
-(RN_PENT_ENT_E) A entregas de planos de entregas canceladas não poderão mais ser adicionadas novas atividades;
-(RN_PENT_ENT_F) Na alteração de uma entrega do plano de entregas, deve-se limitar o período a ser editado, impedindo que a alteração afete qualquer entrega de plano de trabalho a ela vinculada; e não permitir editar a entrega do catálogo à qual ela se vinculou;
-(RN_PENT_ENT_G) Na exclusão de uma entrega do plano de entregas, apenas marcá-la como cancelada caso ela já tenha sido utilizada, criando um novo TCR para os planos de trabalho afetados, e excluí-la de fato caso ainda não tenha sido utilizada em nenhum plano de trabalho;
-(RN_PENT_ENT_H) A inclusão de novas entregas em um plano de entregas não afeta as entregas dos planos de trabalho relacionados;
+(RN_PENT_ENT_A) As entregas incluídas/alteradas na criação/edição de um Plano de Entregas precisam estar dentro do prazo de execução de um plano de entregas;
+(RN_PENT_ENT_B) Quando um Plano de Entregas for CANCELADO, suas entregas automaticamente também o serão;
+(RN_PENT_ENT_C) A entregas de planos de entregas canceladas não poderão mais ser adicionadas novas atividades;
+(RN_PENT_ENT_D) As alterações nas entregas de um plano de entregas devem ser tratadas como alterações do próprio plano, em termos de validações e consequências;
+(RN_PENT_ENT_E) Se a alteração do período de uma entrega do plano de entregas afetar alguma entrega de plano de trabalho a ela vinculada, de modo que esta venha a perder total interseção com o novo período:
+    a. exibir alerta informando as entregas de plano de trabalho afetadas;
+    b. colher a decisão do usuário logado: continuar com a alteração ou desistir dela;
+    c. no caso de continuar, ...
+(RN_PENT_ENT_) Na exclusão de uma entrega do plano de entregas, apenas marcá-la como cancelada caso ela já tenha sido utilizada, criando um novo TCR para os planos de trabalho afetados, e excluí-la de fato caso ainda não tenha sido utilizada em nenhum plano de trabalho;
+(RN_PENT_ENT_) A inclusão de novas entregas em um plano de entregas não afeta as entregas dos planos de trabalho relacionados;
 
 ## REGRAS DE INTERFACE
 

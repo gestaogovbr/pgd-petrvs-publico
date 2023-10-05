@@ -67,6 +67,15 @@ class NotificacoesService
                 "dataset" => [["field" => "programa_nome", "label" => "Nome do Programa"]],
                 "datasource" => (fn(&$params) => ["programa_nome" => $params["programa"]->nome]),
                 "template" => "Você foi habilitado no programa {{programa_nome}}, acesse o PETRVS para continuar o seu trabalho!"
+            ],
+            "PENT_ALTERACAO" => [
+                "descricao" => "Notificação de alteração no plano de entregas",
+                "destinatarios" => (fn(&$params) => $params["destinatarios"]),
+                "unidade" => (fn(&$params) => $params["plano_entrega"]->unidade),
+                "validacao" => (fn(&$params) => true),
+                "dataset" => [["field" => "plano_numero", "label" => "Número do plano de entregas"],["field" => "servidor_nome", "label" => "Nome do Servidor"],["field" => "servidor_matricula", "label" => "Matrícula do Servidor"]],
+                "datasource" => (fn(&$params) => ["plano_numero" => $params["plano_entrega"]->numero, "servidor_nome" => $params["servidor"]->nome, "servidor_matricula" => $params["servidor"]->matricula]),
+                "template" => "O plano de entregas #{{ plano_numero }} foi alterado nesta data pelo servidor {{ servidor_nome }}, matricula {{ servidor_matricula }}."
             ]
         ];
     }

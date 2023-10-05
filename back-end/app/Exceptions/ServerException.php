@@ -17,6 +17,7 @@ class ServerException extends Exception
         "CapacidadeStore" => "Usuário não tem permissão para inserir/alterar nessa tabela",
         "CapacidadeUpdate" => "Usuário não tem permissão para realizar esta alteração",
         "CapacidadeDestroy" => "Usuário não tem permissão para excluir registros desta tabela",
+        "ValidateAvaliacao" => "Erro ao validar avaliacao",
         "ValidateAtividade" => "Erro ao validar atividade",
         "ValidateAtividadeTarefa" => "Erro ao validar tarefa da atividade",
         "ValidateDocumento" => "Erro ao validar Documento",
