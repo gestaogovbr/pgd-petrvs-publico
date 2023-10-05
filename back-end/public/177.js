@@ -27,10 +27,12 @@ class PlanoEntregaEntrega extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base 
     this.progresso_esperado = 100;
     this.progresso_realizado = 0;
     this.destinatario = '';
+    this.avaliacoes = [];
     this.comentarios = []; /* Comentarios da etrega */
     this.entrega_id = '';
     this.unidade_id = '';
     this.entrega_pai_id = null;
+    this.avaliacao_id = null;
     this.plano_entrega_id = null;
     this.initialization(data);
   }
@@ -1102,7 +1104,6 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
     }, this.cdRef, this.validate);
   }
   ngOnInit() {
-    var _this = this;
     super.ngOnInit();
     let unidade = null;
     this.planoEntrega = this.metadata?.plano_entrega;
@@ -1110,40 +1111,36 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
     this.cadeiaValorId = this.metadata?.cadeia_valor_id;
     this.unidadeId = this.metadata?.unidade_id;
     this.entity = this.metadata?.entrega;
-    (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      let planejamento = yield _this.planejamentoDao.getById(_this.planejamentoId);
-      let cadeiaValor = yield _this.cadeiaValorDao.getById(_this.cadeiaValorId);
-      yield _this.unidade?.loadSearch(_this.unidadeId);
-      yield _this.planejamento?.loadSearch(planejamento);
-      yield _this.cadeiaValor?.loadSearch(cadeiaValor);
-      unidade = _this.unidadeId?.length ? yield _this.unidadeDao.getById(_this.unidadeId) : null;
-      _this.idsUnidadesAscendentes = unidade?.path?.split('/').slice(1) || [];
-    })();
   }
   loadData(entity, form) {
-    var _this2 = this;
+    var _this = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = Object.assign({}, form.value);
-      _this2.onEntregaChange(form.value);
+      _this.onEntregaChange(form.value);
       let {
         meta,
         realizado,
         ...entityWithout
       } = entity;
-      yield _this2.entrega?.loadSearch(entity.entrega || formValue.entrega_id, false);
-      form.patchValue(_this2.util.fillForm(formValue, entityWithout));
-      form.controls.meta.setValue(_this2.planoEntregaService.getValor(entity.meta));
-      form.controls.realizado.setValue(_this2.planoEntregaService.getValor(entity.realizado));
+      yield _this.entrega?.loadSearch(entity.entrega || formValue.entrega_id, false);
+      yield _this.unidade?.loadSearch(_this.unidadeId);
+      yield _this.planejamento?.loadSearch(_this.planejamentoId);
+      yield _this.cadeiaValor?.loadSearch(_this.cadeiaValorId);
+      let unidade = _this.unidadeId?.length ? yield _this.unidadeDao.getById(_this.unidadeId) : null;
+      _this.idsUnidadesAscendentes = unidade?.path?.split('/').slice(1) || [];
+      form.patchValue(_this.util.fillForm(formValue, entityWithout));
+      form.controls.meta.setValue(_this.planoEntregaService.getValor(entity.meta));
+      form.controls.realizado.setValue(_this.planoEntregaService.getValor(entity.realizado));
       form.controls.objetivos.setValue(entity.objetivos);
       form.controls.processos.setValue(entity.processos);
     })();
   }
   initializeData(form) {
-    var _this3 = this;
+    var _this2 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      _this3.entity.unidade_id = _this3.auth.unidade.id;
-      _this3.entity.unidade = _this3.auth.unidade;
-      yield _this3.loadData(_this3.entity, form);
+      _this2.entity.unidade_id = _this2.auth.unidade.id;
+      _this2.entity.unidade = _this2.auth.unidade;
+      yield _this2.loadData(_this2.entity, form);
     })();
   }
   saveData(form) {
@@ -1199,94 +1196,94 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
     return result;
   }
   addObjetivo() {
-    var _this4 = this;
+    var _this3 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       return {
-        id: _this4.dao.generateUuid(),
+        id: _this3.dao.generateUuid(),
         _status: "ADD"
       };
     })();
   }
   removeObjetivo(row) {
-    var _this5 = this;
+    var _this4 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      let confirm = yield _this5.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
+      let confirm = yield _this4.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
       if (confirm) row._status = "DELETE";
       return false;
     })();
   }
   saveObjetivo(form, row) {
-    var _this6 = this;
+    var _this5 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let consolidado = row;
-      if (form.controls.planejamento_objetivo_id.value.length && _this6.inputObjetivo.selectedItem) {
+      if (form.controls.planejamento_objetivo_id.value.length && _this5.inputObjetivo.selectedItem) {
         consolidado.planejamento_objetivo_id = form.controls.planejamento_objetivo_id.value;
-        consolidado.objetivo = _this6.inputObjetivo.selectedItem.entity;
+        consolidado.objetivo = _this5.inputObjetivo.selectedItem.entity;
         return consolidado;
       }
       return undefined;
     })();
   }
   addProcesso() {
-    var _this7 = this;
+    var _this6 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       return {
-        id: _this7.dao.generateUuid(),
+        id: _this6.dao.generateUuid(),
         _status: "ADD"
       };
     })();
   }
   removeProcesso(row) {
-    var _this8 = this;
+    var _this7 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      let confirm = yield _this8.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
+      let confirm = yield _this7.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
       if (confirm) row._status = "DELETE";
       return false;
     })();
   }
   saveProcesso(form, row) {
-    var _this9 = this;
+    var _this8 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let consolidado = row;
-      if (form.controls.cadeia_processo_id.value.length && _this9.inputProcesso.selectedItem) {
+      if (form.controls.cadeia_processo_id.value.length && _this8.inputProcesso.selectedItem) {
         consolidado.cadeia_processo_id = form.controls.cadeia_processo_id.value;
-        consolidado.processo = _this9.inputProcesso.selectedItem.entity;
+        consolidado.processo = _this8.inputProcesso.selectedItem.entity;
         return consolidado;
       }
       return undefined;
     })();
   }
   onEntregaChange(row) {
-    var _this10 = this;
+    var _this9 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      if (_this10.entrega && _this10.entrega.selectedItem) {
-        const entregaItem = _this10.entrega?.selectedEntity;
+      if (_this9.entrega && _this9.entrega.selectedItem) {
+        const entregaItem = _this9.entrega?.selectedEntity;
         const tipoIndicador = entregaItem.tipo_indicador;
-        if (!_this10.form.controls.descricao.value.length) {
-          _this10.form.controls.descricao.setValue(entregaItem?.descricao || "");
+        if (!_this9.form.controls.descricao.value.length) {
+          _this9.form.controls.descricao.setValue(entregaItem?.descricao || "");
         }
         switch (tipoIndicador) {
           case 'QUALITATIVO':
-            _this10.itensQualitativo = entregaItem.lista_qualitativos || [];
-            _this10.form?.controls.meta.setValue(_this10.itensQualitativo.length ? _this10.itensQualitativo[0].key : null);
-            _this10.form?.controls.realizado.setValue(_this10.itensQualitativo.length ? _this10.itensQualitativo[0].key : null);
+            _this9.itensQualitativo = entregaItem.lista_qualitativos || [];
+            _this9.form?.controls.meta.setValue(_this9.itensQualitativo.length ? _this9.itensQualitativo[0].key : null);
+            _this9.form?.controls.realizado.setValue(_this9.itensQualitativo.length ? _this9.itensQualitativo[0].key : null);
             break;
           case 'VALOR':
-            _this10.form?.controls.meta.setValue('');
-            _this10.form?.controls.realizado.setValue(0);
+            _this9.form?.controls.meta.setValue('');
+            _this9.form?.controls.realizado.setValue(0);
             break;
           case 'QUANTIDADE':
-            _this10.form?.controls.meta.setValue('');
-            _this10.form?.controls.realizado.setValue(0);
+            _this9.form?.controls.meta.setValue('');
+            _this9.form?.controls.realizado.setValue(0);
             break;
           case 'PORCENTAGEM':
-            _this10.form?.controls.meta.setValue(100);
-            _this10.form?.controls.realizado.setValue(0);
+            _this9.form?.controls.meta.setValue(100);
+            _this9.form?.controls.realizado.setValue(0);
             break;
           default:
             break;
         }
-        _this10.calculaRealizado();
+        _this9.calculaRealizado();
       }
     })();
   }
@@ -2313,7 +2310,7 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
   set planejamentoId(value) {
     if (this._planejamentoId != value) {
       this._planejamentoId = value;
-      // verificar nas entregas quais objetivos não são desse planjemaneot e remove-los
+      // TODO: verificar nas entregas quais objetivos não são desse planjemaneot e remove-los
       // será remvido somente da lista de itens (em memória), independente de persistente ou não, MAS NO BACKEND HAVERÀ ESSA VALIDAÇÂO!
     }
   }
@@ -2324,7 +2321,7 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
   set cadeiaValorId(value) {
     if (this._cadeiaValorId != value) {
       this._cadeiaValorId = value;
-      // verificar nas entregas quais objetivos não são desse planejamento e remove-los
+      // TODO: verificar nas entregas quais objetivos não são desse planejamento e remove-los
       // será removido somente da lista de itens (em memória), independente de persistente ou não, MAS NO BACKEND HAVERÀ ESSA VALIDAÇÂO!
     }
   }
@@ -2335,7 +2332,7 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
   set unidadeId(value) {
     if (this._unidadeId != value) {
       this._unidadeId = value;
-      // verificar nas entregas quais objetivos não são desse planjemaneot e remove-los
+      // TODO: verificar nas entregas quais objetivos não são desse planjemaneot e remove-los
       // será remvido somente da lista de itens (em memória), independente de persistente ou não, MAS NO BACKEND HAVERÀ ESSA VALIDAÇÂO!
     }
   }

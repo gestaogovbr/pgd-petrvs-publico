@@ -3,6 +3,7 @@ import { Injectable, Injector } from '@angular/core';
 export type LookupItem = {
   key: any,
   value: string,
+  hint?: string,
   code?: string,
   color?: string,
   icon?: string,

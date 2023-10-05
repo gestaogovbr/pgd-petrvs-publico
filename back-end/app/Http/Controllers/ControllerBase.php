@@ -52,6 +52,7 @@ abstract class ControllerBase extends Controller
         $result = null;
         $headers = $this->getPetrvsHeader($request);
         $unidade_id = !empty($headers) && !empty($headers["unidade_id"]) ? $headers["unidade_id"] : ($request->hasSession() ? $request->session()->get("unidade") : "");
+        $lotacao = Usuario::find(self::loggedUser()->id)?->lotacao?->unidade;
         if(!empty($unidade_id)) {
             $usuario = Usuario::where("id", self::loggedUser()->id)->with(["areasTrabalho" => function ($query) use ($unidade_id) {
                 $query->where("unidade_id", $unidade_id);
@@ -59,6 +60,8 @@ abstract class ControllerBase extends Controller
             if(isset($usuario->areasTrabalho[0]) && !empty($usuario->areasTrabalho[0]->unidade_id)) {
                 return $usuario->areasTrabalho[0]->unidade;
             }
+        } else if(!empty($lotacao)){ /* Caso não haja nenhuma unidade selecionada, utiliza a lotação (essa situação não deverá acontecer) */
+            return $lotacao;
         }
         return $result;
     }
