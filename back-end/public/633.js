@@ -48,6 +48,7 @@ class TipoAvaliacaoNota extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
     this.icone = "";
     this.cor = "";
     this.codigo = "";
+    this.justificativas = [];
     this.tipo_avaliacao_id = "";
     this.initialization(data);
   }

@@ -1,199 +1,197 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, UntypedFormGroup } from '@angular/forms';
+import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { IIndexable } from 'src/app/models/base.model';
 import { Atividade } from 'src/app/models/atividade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { SelectItem } from 'src/app/components/input/input-base';
-import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { TipoAvaliacaoDaoService } from 'src/app/dao/tipo-avaliacao-dao.service';
-import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
-import { CalendarService, Efemerides } from 'src/app/services/calendar.service';
-import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
-import { InputButtonComponent } from 'src/app/components/input/input-button/input-button.component';
 import { TipoAvaliacao } from 'src/app/models/tipo-avaliacao.model';
 import { InputMultitoggleComponent } from 'src/app/components/input/input-multitoggle/input-multitoggle.component';
-import { Avaliacao } from 'src/app/models/avaliacao.model';
+import { Avaliacao, HasAvaliacao } from 'src/app/models/avaliacao.model';
+import { AvaliarNotaInputComponent } from './avaliar-nota-input/avaliar-nota-input.component';
+import { AvaliacaoDaoService } from 'src/app/dao/avaliacao-dao.service';
+import { TipoAvaliacaoNota } from 'src/app/models/tipo-avaliacao-nota';
+import { PlanoTrabalhoConsolidacaoDaoService } from 'src/app/dao/plano-trabalho-consolidacao-dao.service';
+import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
+import { PlanoTrabalhoConsolidacao } from 'src/app/models/plano-trabalho-consolidacao.model';
+import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
+import { Programa } from 'src/app/models/programa.model';
+import { NavigateResult } from 'src/app/services/navigate.service';
+import { AvaliacaoJustificativa } from 'src/app/models/avaliacao-justificativa.model';
+import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
+import { PlanoTrabalhoEntrega } from 'src/app/models/plano-trabalho-entrega.model';
+import { Usuario } from 'src/app/models/usuario.model';
+import { PlanoEntregaService } from '../../gestao/plano-entrega/plano-entrega.service';
+import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
+import { PlanoTrabalhoEntregaDaoService } from 'src/app/dao/plano-trabalho-entrega-dao.service';
+
+export type OrigemAvaliacao = "PLANO_ENTREGA" | "CONSOLIDACAO";
 
 @Component({
-  selector: 'app-atividade-form-avaliar',
+  selector: 'avaliar',
   templateUrl: './avaliar.component.html',
   styleUrls: ['./avaliar.component.scss']
 })
 export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoService> implements OnInit {
-  @ViewChild('atividade', { static: false }) public atividade?: InputSearchComponent;
-  @ViewChild('docEntregue', { static: false }) public docEntregue?: InputButtonComponent;
+  @ViewChild('notaInput', { static: false }) public notaInput?: AvaliarNotaInputComponent;
   @ViewChild('justificativas', { static: false }) public justificativas?: InputMultitoggleComponent;
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   
-  public atividadeDao: AtividadeDaoService;
+  public planoTrabalhoEntregaDao: PlanoTrabalhoEntregaDaoService;
+  public consolidacaoDao: PlanoTrabalhoConsolidacaoDaoService;
+  public consolidacao?: PlanoTrabalhoConsolidacao;
+  public planoEntregaEntregaDao: PlanoEntregaEntregaDaoService;
+  public planoEntregaDao: PlanoEntregaDaoService;
+  public planoEntrega?: PlanoEntrega;
   public tipoAvaliacaoDao: TipoAvaliacaoDaoService;
-  public tiposAvaliacoes: TipoAvaliacao[] = [];
+  public planoEntregaService: PlanoEntregaService;
+  public programa?: Programa;
+  public usuario?: Usuario;
+  public recurso: boolean = false;
+  public tipoAvaliacao?: TipoAvaliacao; 
   public tiposJustificativas: LookupItem[] = [];
-  public tipoAvaliacao?: LookupItem; 
-  public allPages: ListenerAllPagesService;
-  public form: UntypedFormGroup;
-  public efemerides?: Efemerides;
+  public form: FormGroup;
+  public entregas: (PlanoEntregaEntrega | PlanoTrabalhoEntrega)[] = [];
+  public checklist: LookupItem[] = [];
+  public origem?: OrigemAvaliacao;
+  public avaliacoes: Avaliacao[] = [];
   public modalWidth: number = 900;
-  public complexidades: LookupItem[] = [];
-  public calendar: CalendarService;
-  public atrasado: boolean = false;
-  public despendidoMinimo: number = 0;
+  public joinConsolidacao: string[] = [];
+  public joinPlanoEntrega: string[] = [];
+  public joinPlanoEntregaEntrega: string[] = ['entrega', 'objetivos.objetivo', 'processos.processo', 'unidade', 'comentarios.usuario:id,nome,apelido',];
+  public joinPlanoTrabalhoEntrega: string[] = ['entrega', 'planoEntregaEntrega:id,descricao,plano_entrega_id,entrega_id', 'planoEntregaEntrega.entrega:id,nome,tipo_indicador'];
 
   constructor(public injector: Injector) {
-    super(injector, Atividade, AtividadeDaoService);
-    this.atividadeDao = injector.get<AtividadeDaoService>(AtividadeDaoService);
+    super(injector, Avaliacao, AvaliacaoDaoService);
+    this.planoTrabalhoEntregaDao = injector.get<PlanoTrabalhoEntregaDaoService>(PlanoTrabalhoEntregaDaoService);
     this.tipoAvaliacaoDao = injector.get<TipoAvaliacaoDaoService>(TipoAvaliacaoDaoService); 
-    this.calendar = injector.get<CalendarService>(CalendarService);
-    this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
+    this.consolidacaoDao = injector.get<PlanoTrabalhoConsolidacaoDaoService>(PlanoTrabalhoConsolidacaoDaoService);
+    this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
+    this.planoEntregaEntregaDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
+    this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
     this.form = this.fh.FormBuilder({
-      tipo_documento_entrega_id: {default: null},
-      numero_documento_entrega: {default: null},
-      titulo_documento_entrega: {default: null},
-      atividade_id: {default: null},
-      fator_complexidade: {default: 1},
-      data_distribuicao: {default: null},
-      tempo_pactuado: {default: 0},
-      data_estipulada_entrega: {default: null},
-      diferenca_prazo_entrega: {default: 0},
-      data_inicio: {default: null},
-      tempo_despendido: {default: 0},
-      data_entrega: {default: null},
-      produtividade: {default: 0},
-      nota_atribuida: {default: null},
-      arquivar: {default: true},
+      nota: {default: null},
+      recurso: {default: ""},
       justificativas: {default: []},
-      tipo_avaliacao_id: {default: null},
-      comentario_avaliacao: {default: ""}
+      justificativa: {default: ""},
+      arquivar: {default: true},
     }, this.cdRef, this.validate);
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-
-    if((controlName == "atividade_id" && !control.value?.length) || 
-      (controlName == "fator_complexidade" && !(control.value > 0))) {
-      result = "Obrigatório";
-    } else if(controlName == "nota_atribuida" && !(control.value >= 0)) {
-      result = "Obrigatório selecionar. Caso queira selecionar ZERO, clique 2x em qualquer estrela!"
+    if(this.recurso) {
+      if(controlName == 'recurso' && !control.value?.length) {
+        result = "Obrigatório";
+      }
+    } else {
+      if(controlName == "nota" && ([null, undefined].includes(control.value) || !this.nota)) {
+        result = "Obrigatório";
+      }
     }
-
     return result;
   }
 
-  public async loadData(entity: Atividade, form: UntypedFormGroup) {
-    let formValue = Object.assign({}, form.value);
-    formValue = this.util.fillForm(formValue, entity);
-    this.atrasado = !!entity.metadados?.atrasado;
-    formValue.diferenca_prazo_entrega = this.atrasado ? 
-      this.calendar.horasAtraso(formValue.data_estipulada_entrega, entity.unidade!) :
-      this.calendar.horasAdiantado(formValue.data_entrega, formValue.data_estipulada_entrega, entity.plano_trabalho!.carga_horaria, entity.unidade!);
-    await this.atividade!.loadSearch(entity.tipo_atividade || formValue.atividade_id);
-    if(entity.unidade_id != this.auth.unidade!.id) {
-      await this.auth.selecionaUnidade(entity.unidade_id);
+  public formValidation = (form?: FormGroup) => {
+    const values = form!.value;
+    if(!this.recurso) {
+      if(this.nota?.justifica && !values.justificativa?.length && !values.justificativas?.length) {
+        return "Para a nota seleciona será necessário ao menos uma justificativa.";
+      }
     }
-/*     if(entity.avaliacao) {
-      formValue.nota_atribuida = entity.avaliacao.nota_atribuida;
-      formValue.justificativas = entity.avaliacao.justificativas;
-      formValue.tipo_avaliacao_id = entity.avaliacao.tipo_avaliacao_id;
-    } */
-    formValue.comentario_avaliacao = (entity.comentarios || []).find(x => x.tipo == "AVALIACAO")?.texto || "";
-    this.form.controls.nota_atribuida.setValue(formValue.nota_atribuida);
+    return undefined;
+  }
+
+  public async loadData(entity: Avaliacao, form: FormGroup) {
+    let formValue = Object.assign({}, form.value);
+    this.consolidacao = this.urlParams?.has("consolidacaoId") || this.metadata?.consolidacao ? this.metadata?.consolidacao || await this.consolidacaoDao.getById(this.urlParams!.get("consolidacaoId")!, this.joinConsolidacao) : undefined;
+    this.planoEntrega = this.urlParams?.has("planoEntregaId") || this.metadata?.planoEntrega ? this.metadata?.planoEntrega || await this.planoEntregaDao.getById(this.urlParams!.get("planoEntregaId")!, this.joinPlanoEntrega) : undefined;
+    this.avaliacoes = await this.dao!.query({where: this.consolidacao ? ["plano_trabalho_consolidacao_id", "==", this.consolidacao.id] : ["plano_entrega_id", "==", this.planoEntrega?.id]}).asPromise();
+    this.entity = this.avaliacoes.find(x => x.id == ((this.consolidacao || this.planoEntrega) as HasAvaliacao)?.avaliacao_id) || this.entity;
+    this.programa = this.metadata?.programa || this.consolidacao?.plano_trabalho?.programa || this.planoEntrega?.programa;
+    this.origem = !!this.consolidacao ? "CONSOLIDACAO" : "PLANO_ENTREGA";
+    this.tipoAvaliacao = this.isConsolidacao ? this.programa?.tipo_avaliacao_plano_trabalho : this.programa?.tipo_avaliacao_plano_entrega;
+    this.checklist = (this.isConsolidacao ? this.programa!.checklist_avaliacao_entregas_plano_trabalho : this.programa!.checklist_avaliacao_entregas_plano_entrega) || [];
+    this.recurso = !!this.metadata?.recurso;
+    this.entregas = this.metadata?.entregas || (this.isConsolidacao ? 
+      await this.planoTrabalhoEntregaDao.query({where: [["plano_trabalho_id", "==", this.consolidacao!.plano_trabalho_id]], join: this.joinPlanoTrabalhoEntrega}).asPromise() : 
+      await this.planoEntregaEntregaDao.query({where: [["plano_entrega_id", "==", this.planoEntrega!.id]], join: this.joinPlanoEntregaEntrega}).asPromise());
+    this.usuario = this.consolidacao?.plano_trabalho?.usuario;
+    formValue = this.util.fillForm(formValue, entity);
+    this.form.controls.nota.setValue(formValue.nota);
     this.onNotaChange(new Event('change'));
     form.patchValue(formValue);
   }
 
-  public async initializeData(form: UntypedFormGroup) {
-    const results = await Promise.all([
-      this.dao!.getAtividade(this.urlParams!.get("id")!),
-      this.tipoAvaliacaoDao.query({join: ["tipos_avaliacoes_justificativas.tipo_justificativa"]}).asPromise()
-    ]);
-    this.entity = results[0]!;
-    this.tiposAvaliacoes = results[1];
+  public async initializeData(form: FormGroup) {
+    this.entity = new Avaliacao();
     await this.loadData(this.entity, form);
   }
 
-  public get styleButtonTipoAvaliacao(): string {
-    const rgb = this.util.colorHexToRGB(this.tipoAvaliacao?.color || "#000000");
+  public get nota(): TipoAvaliacaoNota | undefined {
+    return this.notaInput?.nota;
+  }
+
+  public get labelNota(): string {
+    return 'Como foi a entrega ' + (this.isConsolidacao ? 'de ' + this.util.apelidoOuNome(this.usuario) : 'da ' + this.planoEntrega?.unidade?.sigla) + '?';
+  }
+
+  public get styleButtonNota(): string {
+    const rgb = this.util.colorHexToRGB(this.nota?.cor || "#000000");
     return "background-color: rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + ", 0.2);";
   }
 
+  public get isConsolidacao(): boolean {
+    return this.origem == 'CONSOLIDACAO';
+  }
+
+  public get isPlanoEntrega(): boolean {
+    return this.origem == 'PLANO_ENTREGA';
+  }
+
   public onNotaChange(event: Event) {
-/*     const nota = this.form.controls.nota_atribuida.value;
-    const tipoAvaliacao = this.tiposAvaliacoes.find(x => x.nota_atribuida == nota);
-    if(tipoAvaliacao) {
-      this.tipoAvaliacao = {
-        key: tipoAvaliacao.id,
-        value: tipoAvaliacao.nome,
-        icon: tipoAvaliacao.icone,
-        color: tipoAvaliacao.cor,
-        data: {
-          nota: nota,
-          pergunta: tipoAvaliacao.pergunta
-        }
-      };
-      this.form.controls.tipo_avaliacao_id.setValue(tipoAvaliacao.id);
-      this.tiposJustificativas = tipoAvaliacao.tipos_avaliacoes_justificativas.map(x => {
-        return {
-          key: x.tipo_justificativa_id,
-          value: x.tipo_justificativa!.nome || ""
-        }
-      })
-    }
-    this.cdRef.detectChanges();  */ 
+    this.tiposJustificativas = this.nota?.justificativas?.map(x => {
+      return {
+        key: x.tipo_justificativa_id,
+        value: x.tipo_justificativa!.nome || ""
+      }
+    }) || [];
   }
 
-  public onComplexidadeChange(event: Event) {
-    if(this.atividade?.selectedEntity) {
-      const form = this.form.value;
-      const atividade = this.atividade?.selectedEntity as Atividade;
-      /* Carrega tempo pactuado */
-      const fator = form.fator_complexidade || 1;
-      const fator_ganho_produtivade = 1 - ((this.entity?.plano?.ganho_produtividade || 0) / 100);
-      //this.form.controls.tempo_pactuado.setValue((atividade?.tempo_pactuado || 0) * fator * fator_ganho_produtivade || 0);
-      this.form.controls.produtividade.setValue(this.entity?.plano?.tipo_modalidade?.calcula_tempo_despendido ? this.calendar.produtividade(this.form.controls.tempo_pactuado.value, form.tempo_despendido) : 0);
-    }
-  }
-
-  public onAtividadeSelect(item: SelectItem) {
-    const atividade: Atividade | undefined = item.entity as Atividade;
-    if(atividade) {
-      /* Carrega complexidades */
-/*       this.complexidades = atividade.complexidade?.map(x => {
-        return {
-          key: x.fator,
-          value: x.grau + ' (Fator: ' + x.fator + ')'
-        };
-      }) || []; */
-      /* Atualiza fator de complexidade */
-      //if(!atividade.complexidade?.find(x => x.fator == this.form.controls.fator_complexidade.value)) this.form.controls.fator_complexidade.setValue(1);
-      this.onComplexidadeChange(new Event("change")); 
-      /* Calcula o tempo despendido mínimo */
-      //this.despendidoMinimo = (atividade.tempo_minimo / 100) * (this.entity?.tempo_despendido || 0);
+  public async saveData(form: IIndexable) {
+    if(this.recurso) {
+      await this.dao!.recorrer(this.consolidacao!.avaliacao!, form.recurso);
+      return new NavigateResult(this.consolidacao!.avaliacao);
     } else {
-      this.form.controls.tempo_pactuado.setValue(0);
-      this.complexidades = [];
+      let justificativasIds: string[] = (form.justificativas as LookupItem[]).map(x => x.key);
+      this.entity!.id = ""; /* Todo save da avaliação é uma nova avaliação (Exceto o recurso) */
+      this.entity!.data_avaliacao = this.auth.hora;
+      this.entity!.nota = form.nota;
+      this.entity!.justificativa = form.justificativa;
+      this.entity!.avaliador_id = this.auth.usuario!.id;
+      this.entity!.plano_entrega_id = this.planoEntrega?.id || null;
+      this.entity!.plano_trabalho_consolidacao_id = this.consolidacao?.id || null;
+      this.entity!.tipo_avaliacao_id = this.tipoAvaliacao!.id;
+      /* Atualiza as justificativas */
+      /*this.entity!.justificativas.forEach(x => {
+        if(!justificativasIds.includes(x.tipo_justificativa_id)) x._status = "DELETE";
+      });*/
+      this.entity!.justificativas = [];
+      justificativasIds.forEach(x => {
+        //if(!this.entity!.justificativas.find(y => y.tipo_justificativa_id == x)) 
+        this.entity!.justificativas.push(new AvaliacaoJustificativa({
+          avaliacao_id: this.entity!.id,
+          tipo_justificativa_id: x,
+          _status: "ADD"
+        }));
+      });
+      /* Atualiza os checklist das entregas */
+      if(this.checklist.length) {
+        /* TODO */
+      }
+      return new NavigateResult(await this.dao!.save(this.entity!, this.join));
     }
-    this.cdRef.detectChanges();
-  }
-
-  public saveData(form: IIndexable): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-      const form = this.form!.value;
-      const avaliacao = {
-        atividade_id: this.entity?.id,
-        //atividade_id: form.atividade_id,
-        tipo_avaliacao_id: this.tipoAvaliacao!.key,
-        fator_complexidade: form.fator_complexidade,
-        tempo_pactuado: form.tempo_pactuado,
-        produtividade: this.entity?.plano?.tipo_modalidade?.calcula_tempo_despendido ? form.produtividade : null,
-        nota_atribuida: form.nota_atribuida,
-        arquivar: form.arquivar,
-        comentario_avaliacao: form.comentario_avaliacao, 
-        justificativas: form.justificativas || [] //this.justificativas?.items?.map(x => x.key) || []
-      };
-      //this.dao!.avaliar(avaliacao).then(saved => resolve(saved)).catch(reject);
-    });
   }
 }
