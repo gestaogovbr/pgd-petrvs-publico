@@ -130,6 +130,7 @@
       <path value="$PROJECT_DIR$/back-end/vendor/dragonmantank/cron-expression" />
       <path value="$PROJECT_DIR$/back-end/vendor/socialiteproviders/microsoft-azure" />
       <path value="$PROJECT_DIR$/back-end/vendor/ricorocks-digital-agency/soap" />
+      <path value="$PROJECT_DIR$/back-end/vendor/socialiteproviders/govbr" />
     </include_path>
   </component>
 </project>

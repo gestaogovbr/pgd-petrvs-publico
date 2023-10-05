@@ -15,7 +15,8 @@ class FeriadoSeeder extends Seeder
     public function run()
     {
         // carrega o arquivo FERIADOS.CSV para a tabela FERIADOS no banco de dados
-        $csv = array_map('str_getcsv', file('database/seeders/arquivos_csv/feriados.csv'));
+        $csvFilePath = base_path('database/seeders/arquivos_csv/feriados.csv');
+        $csv = array_map('str_getcsv', file($csvFilePath));
         array_shift($csv); // exclui a primeira linha do arquivo (os cabeçalhos)
         foreach($csv as $linha)
         {
