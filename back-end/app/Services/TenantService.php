@@ -12,10 +12,12 @@ use Illuminate\Support\Facades\Artisan;
 use Carbon\Carbon;
 use App\Models\Tenant;
 
+
+use Illuminate\Support\Facades\Log;
 use function App\Models\usuario;
 
 class TenantService extends ServiceBase {
-    
+
    /**
      * Store a newly created resource in storage.
      *
@@ -44,21 +46,41 @@ class TenantService extends ServiceBase {
 
     public function extraStore($dataOrEntity, $unidade, $action) {
         $tenant = Tenant::find($dataOrEntity->id);
+        $tenant->createDomain([
+            'domain' => $dataOrEntity->dominio_url
+        ]);
         tenancy()->initialize($tenant);
-        if($tenant) {   
-            $tenant->run(function () use ($dataOrEntity) {  
+
+        config('app.env') == 'production' ? $this->acoesProducao($dataOrEntity->id) : $this->acoesDev($dataOrEntity->id);
+
+        if($tenant) {
+            $tenant->run(function () use ($dataOrEntity) {
                 $entidade = Entidade::where('sigla', $dataOrEntity->id)->first();
                 $usuario = Usuario::where('nome', $dataOrEntity->nome_usuario)->first();
 
                 if (!$entidade) {
+                    try {
+                        $cidade=Cidade::where('codigo_ibge', $dataOrEntity->codigo_cidade)->first()->id;
+                    } catch (\Exception $e) {
+                        // Se uma exceção for lançada, o código IBGE não foi encontrado
+                        $errorMessage = 'Código IBGE não encontrado';
+
+                        // Registre o erro
+                        Log::error($errorMessage);
+                        Log::channel('daily')->error($errorMessage);
+
+                        // Lançe uma nova exceção com a mensagem de erro personalizada
+                        throw new \Exception($errorMessage);
+                    }
+
                     $entidade = new Entidade([
                         'sigla' => $dataOrEntity->id,
-                        'nome' => $dataOrEntity->nome_entidade, 
+                        'nome' => $dataOrEntity->nome_entidade,
                         'abrangencia' => $dataOrEntity->abrangencia,
                         'layout_formulario_demanda' => 'COMPLETO',
                         'campos_ocultos_demanda' => [],
                         'nomenclatura' => [],
-                        'cidade_id' => Cidade::where('codigo_ibge', $dataOrEntity['codigo_cidade'])->first()->id, 
+                        'cidade_id' => $cidade,
                     ]);
                     $entidade->save();
                 }
@@ -71,12 +93,12 @@ class TenantService extends ServiceBase {
                         'perfil_id' => Perfil::where('nome', 'Desenvolvedor')->first()->id,
                         'data_inicio' => Carbon::now()
                     ]);
-                    $usuario->save();  
-                } 
+                    $usuario->save();
+                }
             });
         }
     }
-    
+
     public function cidade($id) {
         Artisan::call('tenants:run db:seed --option="class=CidadeSeeder"' . (empty($id) ? '' : ' --tenants=' . $id));
         return Artisan::output();
@@ -88,11 +110,11 @@ class TenantService extends ServiceBase {
     }
 
     public function entidadeSeeder($id) {
-        Artisan::call('tenants:run db:seed --option="class=UsuarioSeeder"' . (empty($id) ? '' : ' --tenants=' . $id));
+        Artisan::call('tenants:run db:seed --option="class=EntidadeSeeder"' . (empty($id) ? '' : ' --tenants=' . $id));
         return Artisan::output();
     }
     public function usuarioSeeder($id) {
-        Artisan::call('tenants:run db:seed --option="class=EntidadeSeeder"' . (empty($id) ? '' : ' --tenants=' . $id));
+        Artisan::call('tenants:run db:seed --option="class=UsuarioSeeder"' . (empty($id) ? '' : ' --tenants=' . $id));
         return Artisan::output();
     }
     public function databaseSeeder($id) {
@@ -104,11 +126,83 @@ class TenantService extends ServiceBase {
         Artisan::call('tenants:seed' . (empty($id) ? '' : ' --tenants=' . $id));
         return Artisan::output();
     }
- 
+
     public function migrate($id) {
-        Artisan::call('tenants:migrate' . (empty($id) ? '' : ' --tenants=' . $id));
-        return Artisan::output();
+        try {
+            if($id){
+                Artisan::call('tenant:migrate ' . $id);
+            }else{
+                Artisan::call('tenants:migrate', ['--force' => true]);
+            }
+
+            logInfo();
+            return true;
+        } catch (\Exception $e) {
+            // Handle any exceptions that may occur during command execution
+            Log::error('Error executing commands: ' . $e->getMessage());
+            Log::channel('daily')->error('Error executing commands: ' . $e->getMessage());
+            // Optionally, rethrow the exception to let it be handled elsewhere
+            throw $e;
+        }
     }
 
+    public function resetBD() {
+        try {
+            Artisan::call('db:delete-all');
+            logInfo();
+            Artisan::call('db:truncate-all');
+            logInfo();
+            return true;
+        } catch (\Exception $e) {
+            // Handle any exceptions that may occur during command execution
+            Log::error('Error executing commands: ' . $e->getMessage());
+            Log::channel('daily')->error('Error executing commands: ' . $e->getMessage());
+            // Optionally, rethrow the exception to let it be handled elsewhere
+            throw $e;
+        }
+    }
 
+    private function acoesProducao($id=null){
+        try {
+            Artisan::call('cache:clear');
+            logInfo();
+            Artisan::call('queue:clear', ['--force' => true]);
+            logInfo();
+            Artisan::call('optimize:clear');
+            logInfo();
+            // Execute the 'tenants:migrate' command
+            Artisan::call('tenants:migrate', ['--force' => true,'-n'=>true]);
+            logInfo();
+            Artisan::call('db:seed --class=CidadeSeeder --force');
+            logInfo();
+            Artisan::call('db:seed --class=PerfilSeeder --force');
+            logInfo();
+            return true;
+        } catch (\Exception $e) {
+            // Handle any exceptions that may occur during command execution
+            Log::error('Error executing commands: ' . $e->getMessage());
+            Log::channel('daily')->error('Error executing commands: ' . $e->getMessage());
+            // Optionally, rethrow the exception to let it be handled elsewhere
+            throw $e;
+        }
+
+    }
+
+    private function acoesDev($id = null)
+    {
+        try {
+            Artisan::call('tenants:migrate');
+            logInfo();
+            $seedCommand = 'tenants:run db:seed --option="class=DatabaseSeeder"' . (empty($id) ? '' : ' --tenants=' . $id);
+            Artisan::call($seedCommand);
+            logInfo();
+            return true;
+        } catch (\Exception $e) {
+            // Handle any exceptions that may occur during command execution
+            Log::error('Error executing commands: ' . $e->getMessage());
+            Log::channel('daily')->error('Error executing commands: ' . $e->getMessage());
+            // Optionally, rethrow the exception to let it be handled elsewhere
+            throw $e;
+        }
+    }
 }

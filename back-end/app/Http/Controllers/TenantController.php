@@ -13,6 +13,32 @@ class TenantController extends ControllerBase {
         if(false) throw new ServerException("CapacidadeStore", "Inserção não realizada");
     }
 
+    public function store(Request $request) {
+        try{
+            try {
+                $this->checkPermissions("STORE", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
+                $data = $request->validate([
+                    'entity' => ['required'],
+                    'with' => ['array']
+                ]);
+                $unidade = $this->getUnidade($request);
+                $entity = $this->service->store($data['entity'], $unidade);
+                $entity=$entity??(object)$data['entity'];
+                $result = $this->service->getById([
+                    'id' => $entity->id,
+                    'with' => $data['with']
+                ]);
+                return response()->json([
+                    'success' => true,
+                    'rows' => [$result]
+                ]);
+            } catch (Throwable $e) {
+                return response()->json(['error' => $e->getMessage()]);
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
     public function cidades(Request $request) {
         try {
             $data = $request->validate([
@@ -43,12 +69,21 @@ class TenantController extends ControllerBase {
 
     public function migrations(Request $request) {
         try {
-            $data = $request->validate([
-                'tenant_id' => ['string'],
-            ]);
+            $data = $request->tenant_id??null;
             return response()->json([
                 'success' => true,
-                'data' => $this->service->migrate($data['tenant_id'])
+                'data' => $this->service->migrate($data)
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function resetdb(Request $request) {
+        try {
+            return response()->json([
+                'success' => true,
+                'data' => $this->service->resetBD()
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
