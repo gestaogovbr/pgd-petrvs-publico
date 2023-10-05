@@ -14,8 +14,8 @@ import { InputBase, LabelPosition } from '../input-base';
   ]
 })
 export class InputContainerComponent extends InputBase implements OnInit {
-  @HostBinding('class') class = 'form-group';
-  @Input() hostClass: string = ""; 
+  @HostBinding('class') class = '';
+  @Input() hostClass: string = "mt-2"; 
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
   @Input() disabled?: string;

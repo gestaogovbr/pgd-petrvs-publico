@@ -51,7 +51,7 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
     this.atividadeService = injector.get<AtividadeService>(AtividadeService);
     this.calendar = injector.get<CalendarService>(CalendarService);
     this.comentario = injector.get<ComentarioService>(ComentarioService);
-    this.join = ["tipo_atividade", "plano_trabalho_entrega", "demandante", "pausas", "usuario", "unidade", "comentarios.usuario:id,nome,apelido", "tarefas.tipo_tarefa", "tarefas.comentarios.usuario:id,nome,apelido"];
+    this.join = ["tipo_atividade", "plano_trabalho_entrega:id,descricao", "demandante", "pausas", "usuario", "unidade", "comentarios.usuario:id,nome,apelido", "tarefas.tipo_tarefa", "tarefas.comentarios.usuario:id,nome,apelido"];
     /* Inicializações */
     this.extra = { planos_trabalho: {}, afastamentos: {} };
     this.optionsMetadata = {

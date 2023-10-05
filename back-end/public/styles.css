@@ -18073,6 +18073,9 @@ readers do not read off random characters that represent icons */
   /* rtl:end:remove */
   /* Sobrecarrega classes com problema após compilação */
 }
+.petrvs html, .petrvs body {
+  height: 100%;
+}
 .petrvs * {
   --bs-body-font-size: 1rem;
   font-family: var(--bs-body-font-family);
@@ -29379,6 +29382,12 @@ a > .petrvs code {
 }
 .petrvs .markdownContent p img {
   width: 100%;
+}
+.petrvs .deleted_at td {
+  background: rgba(75, 4, 4, 0.1098039216);
+}
+.petrvs .table-responsive {
+  height: 100%;
 }
 
 /* Define variáveis do bootstrap */

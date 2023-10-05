@@ -6,7 +6,7 @@ use App\Http\Controllers\TenantController;
 use App\Http\Controllers\TenantsLogsController;
 
 /* Painel de controle */
-Route::middleware(['panel'])->prefix('Tenant')->group(function () { 
+Route::middleware(['panel'])->prefix('Tenant')->group(function () {
     Route::post('store', [TenantController::class, 'store']);
     Route::post('destroy', [TenantController::class, 'destroy']);
     Route::post('get-by-id', [TenantController::class, 'getById']);
@@ -18,8 +18,9 @@ Route::middleware(['panel'])->prefix('Tenant')->group(function () {
     Route::post('tipo-capacidade', [TenantController::class, 'tiposCapacidades']);
     Route::post('migrations', [TenantController::class, 'migrations']);
     Route::post('seeders', [TenantController::class, 'seeders']);
+    Route::get('resetdb', [TenantController::class, 'resetdb']);
 });
-Route::middleware(['panel'])->prefix('TenantLogs')->group(function () { 
+Route::middleware(['panel'])->prefix('TenantLogs')->group(function () {
     Route::post('store', [TenantsLogsController::class, 'store']);
     Route::post('destroy', [TenantsLogsController::class, 'destroy']);
     Route::post('get-by-id', [TenantsLogsController::class, 'getById']);

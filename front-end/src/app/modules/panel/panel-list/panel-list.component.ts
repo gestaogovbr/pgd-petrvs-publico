@@ -18,19 +18,21 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
     {
       icon: "bi bi-building",
       label: "Executar Migrations",
+
       onClick: this.executaMigrations.bind(this)
     },
     {
       icon: "bi bi-building",
-      label: "Executar Seeders",
-      onClick: this.executaSeeders.bind(this)
+      label: "Resetar DB",
+      disabled: this.gb.ENV==='production',
+      onClick: this.resetDB.bind(this)
     }
   ];
 
   constructor(public injector: Injector, dao: TenantDaoService) {
     super(injector, Tenant, TenantDaoService);
     /* Inicializações */
-    this.title = "Painel Petrvs";
+    this.title = "Ambiente "+this.gb.ENV;
     this.code = "PANEL";
     this.filter = this.fh.FormBuilder({});
     this.options.push({
@@ -40,29 +42,10 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
     });
     this.options.push({
       icon: "bi bi-info-circle",
-      label: "Executar Database", 
-      onClick: this.databaseSeeder.bind(this)
+      label: "Executar Migrations",
+      onClick: this.executaMigrations.bind(this)
     });
-    this.options.push({
-      icon: "bi bi-building",
-      label: "Executar Cidades",
-      onClick: this.cidadeSeeder.bind(this)
-    });
-    this.options.push({
-      icon: "bi bi-list-check",
-      label: "Executar Tipos Capacidades",
-      onClick: this.tipoCapacidadeSeeder.bind(this)
-    });
-    this.options.push({ 
-      icon: "bi bi-list-check",
-      label: "Executar Entidades",
-      onClick: this.entidadesSeeder.bind(this)
-    });
-    this.options.push({
-      icon: "bi bi-list-check",
-      label: "Executar Usuarios",
-      onClick: this.usuariosSeeder.bind(this)
-    });
+
     this.options.push({
       icon: "bi bi-trash",
       label: "Excluir",
@@ -73,14 +56,29 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
       label: "Ver Logs",
       onClick: (tenant: Tenant) => this.go.navigate({route: ["panel","panel-list", tenant.id, "logs"]})
     });
-   
+
   }
 
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     return result;
   }
-
+  public resetDB(row: any) {
+    const self = this;
+    this.dialog.confirm("Deseja Resetar o DB?", "Deseja realmente executar o reset?").then(confirm => {
+      if (confirm) {
+        self.loading = true;
+        this.dao!.resetDB().then(function () {
+          self.loading = false;
+          self.dialog.alert("Sucesso", "Executado com sucesso!");
+          window.location.reload();
+        }).catch(function (error) {
+          self.loading = false;
+          self.dialog.alert("Erro", "Erro ao executar: " + error?.message ? error?.message : error);
+        });
+      }
+    });
+  }
   public executaMigrations(row: any) {
     const self = this;
     this.dialog.confirm("Executar Migration?", "Deseja realmente executar as migrations?").then(confirm => {
@@ -119,7 +117,7 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
       }
     });
   }
- 
+
   public tipoCapacidadeSeeder(row: any) {
     const self = this;
     this.dialog.confirm("Executar Seeder?", "Deseja realmente atualizar as capacidades?").then(confirm => {

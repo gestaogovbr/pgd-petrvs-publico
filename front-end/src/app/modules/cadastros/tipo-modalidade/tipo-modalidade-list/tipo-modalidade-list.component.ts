@@ -28,6 +28,7 @@ export class TipoModalidadeListComponent extends PageListBase<TipoModalidade, Ti
     });
     this.addOption(this.OPTION_INFORMACOES);
     this.addOption(this.OPTION_EXCLUIR, "MOD_TIPO_MDL_EXCL");
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 
   public filterWhere = (filter: FormGroup) => {

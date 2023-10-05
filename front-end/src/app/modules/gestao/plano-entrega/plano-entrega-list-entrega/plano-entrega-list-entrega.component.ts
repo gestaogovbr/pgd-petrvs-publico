@@ -89,6 +89,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     // Testa se o usuário possui permissão para exibir dados da entrega do plano de entregas
     this.addOption(Object.assign({ onClick: this.consult.bind(this) }, this.OPTION_INFORMACOES), "MOD_PENT");
     this.addOption(Object.assign({ onClick: this.delete.bind(this) }, this.OPTION_EXCLUIR), "MOD_PENT_ENTR_EXCL");
+    this.addOption(Object.assign({ onClick: this.showLogs.bind(this) }, this.OPTION_LOGS), "MOD_AUDIT_LOG");
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -224,9 +225,22 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     });
   }
 
+  public async showLogs(entrega: PlanoEntregaEntrega){
+    this.go.navigate({ route: ['logs', 'change', entrega.id, 'consult'] })
+  }
+
   public refreshComentarios(modalResult: any) {
     /* Atualiza os comentários após ser salvo pela própria tela de comentarios (persistent) */
     let row: PlanoEntregaEntrega | undefined = this.items.find(x => x.id == modalResult.id);
     if(row) row.comentarios = modalResult.comentarios || [];
+  }
+
+  public onRealizadaChange() {
+    const meta = this.form?.controls.meta.value;
+    const realizado = this.form?.controls.realizado.value;
+    if (meta && realizado) {
+      let totalRealizado = !isNaN(realizado) ? ((realizado / meta) * 100).toFixed(0) || 0 : 0;
+      this.form?.controls.progresso_realizado.setValue(totalRealizado);
+    }
   }
 }

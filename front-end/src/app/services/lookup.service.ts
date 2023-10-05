@@ -544,7 +544,7 @@ export class LookupService {
     { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success", data: { naoJustificar: ["HOMOLOGANDO"] } },
     { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-clipboard2-check", color: "primary", data: { naoJustificar: ["ATIVO","CONCLUIDO"] } },
     { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info", data: { naoJustificar: ["CONCLUIDO","AVALIADO"] } },
-    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "bg-warning text-dark", data: { naoJustificar: [] } },
+    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "dark", data: { naoJustificar: [] } },
     { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "danger", data: { naoJustificar: [] } }
   ];
 
@@ -554,7 +554,7 @@ export class LookupService {
     { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success" },
     { key: "CONCLUIDO", value: "Executado", icon: "bi bi-clipboard2-check", color: "primary" },
     { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info" },
-    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "bg-warning text-dark" },
+    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "dark" },
     { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "danger" }
   ];
 

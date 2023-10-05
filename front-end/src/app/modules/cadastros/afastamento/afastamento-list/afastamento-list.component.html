@@ -3,7 +3,7 @@
     [hasAdd]="auth.hasPermissionTo('MOD_AFT_INCL')"
     [hasEdit]="auth.hasPermissionTo('MOD_AFT_EDT')">
     <toolbar *ngIf="!selectable"></toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed" [deleted]="true">
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed" [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')">
         <div class="row">
             <input-search [size]="3" #usuario [control]="filter!.controls.usuario_id" controlName="usuario_id" [dao]="usuarioDao"></input-search>
             <input-search [size]="3" #tipoMotivoAfastamento [control]="filter!.controls.tipo_motivo_afastamento_id" controlName="tipo_motivo_afastamento_id" [dao]="tipoMotivoAfastamentoDao"></input-search>

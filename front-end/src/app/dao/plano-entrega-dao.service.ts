@@ -27,7 +27,7 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
 
   public avaliar(planoEntrega: PlanoEntrega): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/avaliar', { id: planoEntrega.id }).subscribe(response => {
+      this.server.post('api/' + this.collection + '/avaliar', { id: planoEntrega.id, arquivar: planoEntrega.arquivar  }).subscribe(response => {
         if (response.error) {
           reject(response.error);
         } else {
