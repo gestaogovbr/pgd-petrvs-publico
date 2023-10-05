@@ -212,7 +212,7 @@ class IntegracaoService extends ServiceBase {
     /**
      * Método usado quando a rotina de Integração é chamada de dentro do Petrvs, pelo grid de Integrações
      */
-    public function sincronizarPetrvs($data,$usuario_id) {
+    public function sincronizarPetrvs($data,$usuario_id,$request) {
         $dados = $data['entity'];
         $this->logged_user_id = Auth::user() ? Auth::user()->id : null;
         $this->useLocalFiles = config('app')['env'] == 'local' ? $dados['usar_arquivos_locais'] : false;
@@ -224,7 +224,8 @@ class IntegracaoService extends ServiceBase {
         $dados['usar_arquivos_locais'] = $this->useLocalFiles;              // atualiza esse parâmetro para que seja salvo no banco corretamente
         $dados['gravar_arquivos_locais'] = $this->storeLocalFiles;          // atualiza esse parâmetro para que seja salvo no banco corretamente
         $this->sincronizacao($inputs);
-        return $this->store(array_merge($dados, ['usuario_id' => $usuario_id,'data_execucao' => Carbon::now(),'resultado' => json_encode($this->result)]), null);
+        $unidadeLogin = Auth::user()->areasTrabalho[0]->unidade;
+        return $this->store(array_merge($dados, ['usuario_id' => $usuario_id,'data_execucao' => $this->unidadeService->hora($unidadeLogin->id),'resultado' => json_encode($this->result)]), null);
     }
 
     /**
