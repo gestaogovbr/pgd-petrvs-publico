@@ -36,7 +36,8 @@ class PlanoEntregaController extends ControllerBase
         try {
             $this->checkPermissions("AVALIAR", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
-                'id' => ['required']
+                'id' => ['required'], 
+                'arquivar' => ['required']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([

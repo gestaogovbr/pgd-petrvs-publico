@@ -64,7 +64,7 @@ class PlanoEntregaService extends ServiceBase
             if (!empty($planoEntrega)) {
                 $this->update([
                     "id" => $planoEntrega->id,
-                    "data_arquivamento" => $data["arquivar"] ? Carbon::now() : null
+                    "data_arquivamento" => $data["arquivar"] ? $this->unidadeService->nota() : null
                 ], $unidade, false);
             } else {
                 throw new ServerException("ValidatePlanoTrabalho", "Plano de Entrega não encontrado!");
@@ -118,6 +118,7 @@ class PlanoEntregaService extends ServiceBase
         $result["planoVinculado"] = $planoEntrega['plano_entrega_id'] != null;
         $result["nrEntregas"] = empty($planoEntrega['entregas']) ? 0 : count($planoEntrega['entregas']);
         $result["planoArquivado"] = empty($planoEntrega['id']) ? false : PlanoEntrega::find($planoEntrega['id'])->data_arquivamento != null;
+        $result["planoSuspenso"] = $this->isPlano("SUSPENSO", $planoEntrega);
         $result["planoStatus"] = empty($planoEntrega['id']) ? null : PlanoEntrega::find($planoEntrega['id'])->status;
         $result["gestorUnidadePlano"] = $this->usuario->isGestorUnidade($planoEntrega['unidade_id']);
         $result["gestorUnidadePaiUnidadePlano"] = !empty($planoEntrega['unidade']['unidade_pai_id']) && $this->usuario->isGestorUnidade($planoEntrega['unidade']['unidade_pai_id']);
@@ -467,15 +468,16 @@ class PlanoEntregaService extends ServiceBase
      */
     public function verificaUnicidadeMesmaUnidade($status, $data)
     {
-        $planos = PlanoEntrega::where("unidade_id", $data["unidade_id"])->where("status", $status)->get();
+        $planoEntrega = PlanoEntrega::find($data["id"]);
+        $planos = PlanoEntrega::where("unidade_id", $planoEntrega->unidade_id)->where("status", $status)->get();
         foreach ($planos as $plano) {
             if (
-                UtilService::intersect($plano->data_inicio, $plano->data_fim, $data["data_inicio"], $data["data_fim"]) &&
-                UtilService::valueOrNull($data, "id") != $plano->id
+                UtilService::intersect($plano->data_inicio, $plano->data_fim, $planoEntrega->data_inicio, $planoEntrega->data_fim) &&
+                $planoEntrega->id != $plano->id
             ) {
                 throw new ServerException("ValidatePlanoEntrega", "Com base na capacidade do usuário logado (" . ($status == 'HOMOLOGANDO' ? "MOD_PENT_EDT_ATV_HOMOL" : "MOD_PENT_EDT_ATV_ATV)") .
                     ", a alteração do plano retornaria o seu status para " . ($status == 'HOMOLOGANDO' ? "AGUARDANDO HOMOLOGAÇÃO" : "ATIVO") .
-                    ", mas seu período de vigência (" . UtilService::getDateTimeFormatted($data["data_inicio"]) . " a " . UtilService::getDateTimeFormatted($data["data_fim"]) .
+                    ", mas seu período de vigência (" . UtilService::getDateTimeFormatted($planoEntrega->data_inicio) . " a " . UtilService::getDateTimeFormatted($planoEntrega->data_fim) .
                     ") entraria em conflito com o do plano de entregas #" . $plano->numero . " (" . UtilService::getDateTimeFormatted($plano->data_inicio) . " a " . UtilService::getDateTimeFormatted($plano->data_fim) . "). [RN_PENT_J]");
             }
         }
