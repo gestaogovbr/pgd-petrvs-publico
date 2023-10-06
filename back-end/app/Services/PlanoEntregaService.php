@@ -8,6 +8,7 @@ use App\Models\Usuario;
 use App\Models\StatusJustificativa;
 use App\Exceptions\ServerException;
 use App\Models\Programa;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use DateTime;
@@ -56,15 +57,16 @@ class PlanoEntregaService extends ServiceBase
         }
     }
 
-    public function arquivar($data, $unidade)
+    public function arquivar($data, $unidade,$request)
     { // ou 'desarquivar'
         try {
             DB::beginTransaction();
             $planoEntrega = PlanoEntrega::find($data["id"]);
+            $unidadeLogin = Auth::user()->areasTrabalho[0]->unidade;
             if (!empty($planoEntrega)) {
                 $this->update([
                     "id" => $planoEntrega->id,
-                    "data_arquivamento" => $data["arquivar"] ? $this->unidadeService->nota() : null
+                    "data_arquivamento" => $data["arquivar"] ? $this->unidadeService->hora($unidadeLogin->id) : null
                 ], $unidade, false);
             } else {
                 throw new ServerException("ValidatePlanoTrabalho", "Plano de Entrega não encontrado!");
@@ -77,7 +79,7 @@ class PlanoEntregaService extends ServiceBase
         return true;
     }
 
-    public function avaliar($data, $unidade)
+    public function avaliar($data, $unidade,$request)
     {
         try {
             DB::beginTransaction();
@@ -85,7 +87,8 @@ class PlanoEntregaService extends ServiceBase
             // IMPLEMENTAR CODIGO DE AVALIAÇÃO DO PLANO DE ENTREGAS
             $this->status->atualizaStatus($planoEntrega, 'AVALIADO', 'A avaliação do plano de entregas foi realizada nesta data.');
             // (RN_PENT_O) ... sugerir arquivamento automático (vide RI_PENT_A);
-            if ($data["arquivar"]) $this->update(["id" => $planoEntrega->id, "data_arquivamento" => Carbon::now()], $unidade, false);
+            $unidadeLogin = Auth::user()->areasTrabalho[0]->unidade;
+            if ($data["arquivar"]) $this->update(["id" => $planoEntrega->id, "data_arquivamento" => $this->unidadeService->hora($unidadeLogin->id)], $unidade, false);
             DB::commit();
         } catch (Throwable $e) {
             DB::rollback();
@@ -114,6 +117,7 @@ class PlanoEntregaService extends ServiceBase
         $result["planoPaiAtivo"] = $planoEntrega['plano_entrega_id'] ? $this->isPlano("ATIVO", $planoEntregaPai->toArray()) : false;
         $result["planoHomologando"] = $this->isPlano("HOMOLOGANDO", $planoEntrega);
         $result["planoIncluido"] = $this->isPlano("INCLUIDO", $planoEntrega);
+        $result["planoAvaliado"] = $this->isPlano("AVALIADO", $planoEntrega);
         $result["planoProprio"] = $planoEntrega['plano_entrega_id'] == null;
         $result["planoVinculado"] = $planoEntrega['plano_entrega_id'] != null;
         $result["nrEntregas"] = empty($planoEntrega['entregas']) ? 0 : count($planoEntrega['entregas']);

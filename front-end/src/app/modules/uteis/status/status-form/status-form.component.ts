@@ -31,7 +31,7 @@ export class StatusFormComponent extends PageFrameBase {
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.tipo = this.metadata?.tipo || this.tipo;
+    this.tipo = this.metadata?.tipo//; || this.tipo;
     this.entity = this.metadata?.entity || this.entity;
     this.novoStatus = this.metadata?.novoStatus || this.novoStatus;
     if (this.novoStatus.length) this.form?.controls.novo_status?.setValue(this.novoStatus);
@@ -73,7 +73,8 @@ export class StatusFormComponent extends PageFrameBase {
    */
   public get exigeJustificativa() {
     let result = this.lookup.getData(this.statusService.getItem(this.tipo), this.form?.controls.novo_status?.value);
-    return !Array.from(result?.naoJustificar || []).includes(this.entity?.status);
+    //return !Array.from(result?.naoJustificar || []).includes(this.entity?.status);
+    return this.entity?.hasOwnProperty('arquivar') ? false : !(result?.naoJustificar || []).includes(this.entity?.status);
   }
 
 }

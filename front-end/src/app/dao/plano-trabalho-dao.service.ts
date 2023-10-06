@@ -79,7 +79,7 @@ export class PlanoTrabalhoDaoService extends DaoBaseService<PlanoTrabalho> {
 
   public arquivar(planoTrabalho: PlanoTrabalho, justificativa: string | null): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/arquivar', { id: planoTrabalho.id, justificativa: justificativa }).subscribe(response => {
+      this.server.post('api/' + this.collection + '/arquivar', { id: planoTrabalho.id, justificativa: justificativa, arquivar: planoTrabalho.arquivar }).subscribe(response => {
         if (response.error) {
           reject(response.error);
         } else {
@@ -115,19 +115,7 @@ export class PlanoTrabalhoDaoService extends DaoBaseService<PlanoTrabalho> {
 
   public cancelarPlano(planoTrabalho: PlanoTrabalho, justificativa: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/cancelar-plano', { id: planoTrabalho.id, justificativa: justificativa }).subscribe(response => {
-        if (response.error) {
-          reject(response.error);
-        } else {
-          resolve(!!response?.success);
-        }
-      }, error => reject(error));
-    });
-  }
-
-  public desarquivar(planoTrabalho: PlanoTrabalho, justificativa: string | null): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/desarquivar', { id: planoTrabalho.id, justificativa: justificativa }).subscribe(response => {
+      this.server.post('api/' + this.collection + '/cancelar-plano', { id: planoTrabalho.id, justificativa: justificativa, arquivar: planoTrabalho.arquivar }).subscribe(response => {
         if (response.error) {
           reject(response.error);
         } else {

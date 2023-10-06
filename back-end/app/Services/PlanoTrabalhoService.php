@@ -14,6 +14,7 @@ use App\Exceptions\ServerException;
 use App\Models\Documento;
 use Illuminate\Support\Facades\DB;
 use App\Models\PlanoTrabalhoConsolidacao;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Programa;
 use App\Models\ProgramaParticipante;
 use App\Models\DocumentoAssinatura;
@@ -562,6 +563,7 @@ class PlanoTrabalhoService extends ServiceBase
     $result["planoArquivado"] = empty($planoTrabalho['id']) ? false : PlanoTrabalho::find($planoTrabalho['id'])->data_arquivamento != null;
     $result["planoAtivo"] = $this->isPlano("ATIVO", $planoTrabalho);
     $result["planoConcluido"] = $this->isPlano("CONCLUIDO", $planoTrabalho);
+    $result["planoCancelado"] = $planoTrabalho['status'] == "CANCELADO";
     $result["planoIncluido"] = $this->isPlano("INCLUIDO", $planoTrabalho);
     $result["planoStatus"] = empty($planoTrabalho['id']) ? null : PlanoTrabalho::find($planoTrabalho['id'])->status;
     $result["planoSuspenso"] = $this->isPlano("SUSPENSO", $planoTrabalho);
@@ -601,15 +603,16 @@ class PlanoTrabalhoService extends ServiceBase
     return empty($plano['id']) ? false : ($this->isPlanoTrabalhoValido($plano) && $planoTrabalho->status == $status);
   }
 
-  public function arquivar($data, $unidade)
+  public function arquivar($data, $unidade,$request)
   {
     try {
       DB::beginTransaction();
       $planoTrabalho = PlanoTrabalho::find($data["id"]);
+      $unidadeLogin = Auth::user()->areasTrabalho[0]->unidade;
       if (!empty($planoTrabalho)) {
         $this->update([
           "id" => $planoTrabalho->id,
-          "data_arquivamento" => Carbon::now()
+          "data_arquivamento" => $data['arquivar'] ? $this->unidadeService->hora($unidadeLogin->id) : null
         ], $unidade, false);
       } else {
         throw new ServerException("ValidatePlanoTrabalho", "Plano de Trabalho não encontrado!");
@@ -656,13 +659,13 @@ class PlanoTrabalhoService extends ServiceBase
     return true;
   }
 
-  public function cancelarPlano($data, $unidade)
+  public function cancelarPlano($data, $unidade,$request)
   {
     try {
       DB::beginTransaction();
       $planoTrabalho = PlanoTrabalho::find($data["id"]);
       $this->status->atualizaStatus($planoTrabalho, 'CANCELADO', $data["justificativa"]);
-      $this->arquivar($data, $unidade);
+      $this->arquivar($data, $unidade,$request);
       DB::commit();
     } catch (Throwable $e) {
       DB::rollback();

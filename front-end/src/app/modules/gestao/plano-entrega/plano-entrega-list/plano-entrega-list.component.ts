@@ -456,7 +456,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public arquivar(planoEntrega: PlanoEntrega) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: planoEntrega.status, onClick: this.dao!.arquivar.bind(this.dao) },
+      metadata: { tipo: "PlanoEntrega", entity: Object.assign({}, planoEntrega, {arquivar: true}), novoStatus: planoEntrega.status, onClick: this.dao!.arquivar.bind(this.dao) },
       title: "Arquivar Plano de Entregas",
       modalClose: (modalResult) => {
         if (modalResult) {
@@ -554,7 +554,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public desarquivar(planoEntrega: PlanoEntrega) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: planoEntrega.status, onClick: this.dao!.desarquivar.bind(this.dao) },
+      metadata: { tipo: "PlanoEntrega", entity: Object.assign({},planoEntrega, {arquivar: false}), novoStatus: planoEntrega.status, onClick: this.dao!.arquivar.bind(this.dao) },
       title: "Desarquivar Plano de Entregas",
       modalClose: (modalResult) => {
         if (modalResult) {

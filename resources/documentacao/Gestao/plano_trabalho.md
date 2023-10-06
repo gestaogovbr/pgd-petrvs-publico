@@ -57,8 +57,7 @@ Campos obrigatórios:
 
 ## FLUXOS (STATUS & AÇÕES)
 
-![Fig. 1 - Fluxos do Plano de Trabalho](docs/Imagens/Fluxo_Planos_Trabalhos
-.jpeg)
+![Fig. 1 - Fluxos do Plano de Trabalho](../Imagens/Fluxos_Planos_Trabalhos.jpeg)
 
 ~~~text
 status possíveis = ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO', 'CONCLUIDO', 'SUSPENSO', 'CANCELADO']
@@ -107,7 +106,7 @@ Ação: ALTERAR -> não muda o status do plano se ele estiver com o status 'INCL
 */*Ação: ARQUIVAR -> não muda o status do plano ('CONCLUIDO');
 
 - (RN_PTR_N) Condições para que um Plano de Trabalho possa ser arquivado:
-  - o plano precisa estar com o status CONCLUIDO, não ter sido arquivado, e:
+  - o plano precisa estar com o status CONCLUIDO ou CANCELADO, não ter sido arquivado, e:
   - o usuário logado precisa ser o participante ou o gestor da Unidade Executora;
 
 */*Ação: ATIVAR -> o plano vai para o status 'ATIVO';
