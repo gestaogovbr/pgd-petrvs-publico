@@ -1,6 +1,5 @@
 import { LookupItem } from '../services/lookup.service';
 import { Checklist } from './atividade.model';
-import { AvaliacaoJustificativa } from './avaliacao-justificativa.model';
 import { Base } from './base.model';
 import { PlanoEntrega } from './plano-entrega.model';
 import { PlanoTrabalhoConsolidacao } from './plano-trabalho-consolidacao.model';
@@ -24,7 +23,7 @@ export class Avaliacao extends Base {
     public nota: any = 0; /* Nota atribuida */
     public justificativa: string | null = null; /* Justificativa da nota atribuida */
     public recurso: string | null = null; /* Recurso */
-    public justificativas: AvaliacaoJustificativa[] = []; /* Justificativas */
+    public justificativas: LookupItem[] = []; /* Justificativas */
     public entregas_checklist: Checklist[] = []; /* Justificativas */
 
     public avaliador_id: string = ""; /* ID do avaliador */

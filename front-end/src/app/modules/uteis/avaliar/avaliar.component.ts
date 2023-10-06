@@ -19,7 +19,6 @@ import { PlanoTrabalhoConsolidacao } from 'src/app/models/plano-trabalho-consoli
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { Programa } from 'src/app/models/programa.model';
 import { NavigateResult } from 'src/app/services/navigate.service';
-import { AvaliacaoJustificativa } from 'src/app/models/avaliacao-justificativa.model';
 import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
 import { PlanoTrabalhoEntrega } from 'src/app/models/plano-trabalho-entrega.model';
 import { Usuario } from 'src/app/models/usuario.model';
@@ -71,6 +70,7 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
     this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
     this.planoEntregaEntregaDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
     this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
+    this.join = ["avaliador", "entregas-checklist"];
     this.form = this.fh.FormBuilder({
       nota: {default: null},
       recurso: {default: ""},
@@ -108,7 +108,7 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
     let formValue = Object.assign({}, form.value);
     this.consolidacao = this.urlParams?.has("consolidacaoId") || this.metadata?.consolidacao ? this.metadata?.consolidacao || await this.consolidacaoDao.getById(this.urlParams!.get("consolidacaoId")!, this.joinConsolidacao) : undefined;
     this.planoEntrega = this.urlParams?.has("planoEntregaId") || this.metadata?.planoEntrega ? this.metadata?.planoEntrega || await this.planoEntregaDao.getById(this.urlParams!.get("planoEntregaId")!, this.joinPlanoEntrega) : undefined;
-    this.avaliacoes = await this.dao!.query({where: this.consolidacao ? ["plano_trabalho_consolidacao_id", "==", this.consolidacao.id] : ["plano_entrega_id", "==", this.planoEntrega?.id]}).asPromise();
+    this.avaliacoes = await this.dao!.query({where: this.consolidacao ? [["plano_trabalho_consolidacao_id", "==", this.consolidacao.id]] : [["plano_entrega_id", "==", this.planoEntrega?.id]], join: this.join, orderBy: [["data_avaliacao", "desc"]]}).asPromise();
     this.entity = this.avaliacoes.find(x => x.id == ((this.consolidacao || this.planoEntrega) as HasAvaliacao)?.avaliacao_id) || this.entity;
     this.programa = this.metadata?.programa || this.consolidacao?.plano_trabalho?.programa || this.planoEntrega?.programa;
     this.origem = !!this.consolidacao ? "CONSOLIDACAO" : "PLANO_ENTREGA";
@@ -119,7 +119,7 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
       await this.planoTrabalhoEntregaDao.query({where: [["plano_trabalho_id", "==", this.consolidacao!.plano_trabalho_id]], join: this.joinPlanoTrabalhoEntrega}).asPromise() : 
       await this.planoEntregaEntregaDao.query({where: [["plano_entrega_id", "==", this.planoEntrega!.id]], join: this.joinPlanoEntregaEntrega}).asPromise());
     this.usuario = this.consolidacao?.plano_trabalho?.usuario;
-    formValue = this.util.fillForm(formValue, entity);
+    formValue = this.util.fillForm(formValue, this.entity);
     this.form.controls.nota.setValue(formValue.nota);
     this.onNotaChange(new Event('change'));
     form.patchValue(formValue);
@@ -165,28 +165,16 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
       await this.dao!.recorrer(this.consolidacao!.avaliacao!, form.recurso);
       return new NavigateResult(this.consolidacao!.avaliacao);
     } else {
-      let justificativasIds: string[] = (form.justificativas as LookupItem[]).map(x => x.key);
+      //let justificativasIds: string[] = (form.justificativas as LookupItem[]).map(x => x.key);
       this.entity!.id = ""; /* Todo save da avaliação é uma nova avaliação (Exceto o recurso) */
       this.entity!.data_avaliacao = this.auth.hora;
       this.entity!.nota = form.nota;
       this.entity!.justificativa = form.justificativa;
+      this.entity!.justificativas = form.justificativas;
       this.entity!.avaliador_id = this.auth.usuario!.id;
       this.entity!.plano_entrega_id = this.planoEntrega?.id || null;
       this.entity!.plano_trabalho_consolidacao_id = this.consolidacao?.id || null;
       this.entity!.tipo_avaliacao_id = this.tipoAvaliacao!.id;
-      /* Atualiza as justificativas */
-      /*this.entity!.justificativas.forEach(x => {
-        if(!justificativasIds.includes(x.tipo_justificativa_id)) x._status = "DELETE";
-      });*/
-      this.entity!.justificativas = [];
-      justificativasIds.forEach(x => {
-        //if(!this.entity!.justificativas.find(y => y.tipo_justificativa_id == x)) 
-        this.entity!.justificativas.push(new AvaliacaoJustificativa({
-          avaliacao_id: this.entity!.id,
-          tipo_justificativa_id: x,
-          _status: "ADD"
-        }));
-      });
       /* Atualiza os checklist das entregas */
       if(this.checklist.length) {
         /* TODO */

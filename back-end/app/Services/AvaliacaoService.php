@@ -26,7 +26,10 @@ class AvaliacaoService extends ServiceBase {
     {
       /* (RN_AVL_5) [PT] Ao realizar qualquer avaliação o status da consolidação deverá ir para AVALIADO; */
       if(!empty($avaliacao->plano_trabalho_consolidacao_id)) {
-        $this->status->atualizaStatus($avaliacao->planoTrabalhoConsolidacao, 'AVALIADO');
+        $consolidacao = $avaliacao->planoTrabalhoConsolidacao;
+        $consolidacao->avaliacao_id = $avaliacao->id;
+        $consolidacao->save();
+        $this->status->atualizaStatus($consolidacao, 'AVALIADO');
       }
     }    
 
@@ -46,7 +49,7 @@ class AvaliacaoService extends ServiceBase {
                 DB::beginTransaction();
                 $consolidacao->avaliacao_id = null;
                 $consolidacao->save();
-                $this->status->atualizaStatus($consolidacao, 'AVALIADO');
+                $this->status->atualizaStatus($consolidacao, 'CONCLUIDO');
                 DB::commit();
             } catch (Throwable $e) {
                 DB::rollback();
