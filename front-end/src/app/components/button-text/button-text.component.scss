@@ -1,0 +1,31 @@
+.button_avaliation {
+    border: 3px solid;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-right: 10px;
+    max-width: 150px;
+    min-width: 100px;
+
+    i {
+        font-size: 1.8rem;
+    }
+    span {
+        display: block;
+        font-size: 12px;
+    }
+
+    &:hover {
+        background-color: #ddd;
+
+        i::before {
+            animation: bouncetop .3s alternate ease infinite;
+        }
+    }
+}
+
+@keyframes bouncetop {
+    from { -webkit-transform: translateY(0); }
+    to   { -webkit-transform: translateY(3px); }
+  }
+  
