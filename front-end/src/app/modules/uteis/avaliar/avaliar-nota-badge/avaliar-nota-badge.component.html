@@ -1,0 +1,6 @@
+<div *ngIf="isQuantitativo; else qualitativo" class="row">
+    <input-rate small disabled [align]="align" [size]="12"[control]="fakeControl"></input-rate>
+</div>
+<ng-template #qualitativo>
+    <badge *ngIf="tipoAvaliacaoNota" disabled [icon]="tipoAvaliacaoNota!.icone" [label]="tipoAvaliacaoNota!.descricao"></badge>
+</ng-template>

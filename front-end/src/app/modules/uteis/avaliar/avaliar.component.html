@@ -47,5 +47,45 @@
         </grid>
     </separator>
     <separator *ngIf="avaliacoes.length" title="Histórico de avaliações" collapse>
+        <grid [items]="avaliacoes" [minHeight]="0" #gridEntregas>
+            <columns>
+                <column title="Data" type="datetime" field="data_avaliacao"></column>
+                <column title="Avaliador" [template]="columnAvaliador">
+                    <ng-template let-row="row" #columnAvaliador>
+                        <div class="row">
+                            <div class="col-2">
+                                <profile-picture [url]="row.avaliador.url_foto || ''" [size]="40" [hint]="row.avaliador.nome || ''"></profile-picture>
+                            </div>
+                            <div class="col-10">
+                                <strong>{{row.avaliador.nome || ""}}</strong><br>
+                                <small>{{row.avaliador.apelido || ""}}</small>
+                            </div>
+                        </div>
+                    </ng-template>
+                </column>
+                <column [title]="'Nota\nJustificativas'" [template]="columnNotaJustificativa">
+                    <ng-template let-row="row" #columnNotaJustificativa>
+                        <avaliar-nota-badge [align]="'left'" [tipoAvaliacao]="tipoAvaliacao" [nota]="row.nota"></avaliar-nota-badge>
+                        <small>{{row.justificativa || ''}}</small>
+                        <div class="one-per-line">
+                            <badge *ngFor="let justificativa of row.justificativas" [icon]="entityService.getIcon('TipoJustificativa')" [label]="justificativa.value"></badge>
+                        </div>
+                    </ng-template>
+                </column>
+                <column title="Recurso" [template]="columnRecurso">
+                    <ng-template let-row="row" #columnRecurso>
+                        <small>{{row.recurso || ''}}</small>
+                    </ng-template>
+                </column>
+                <column title="Status" [template]="columnStatus">
+                    <ng-template let-row="row" #columnStatus>
+                        <div class="one-per-line">
+                            <badge *ngIf="row.recurso?.length" icon="bi bi-journal-medical" color="warning" label="Recorrido"></badge>
+                            <badge *ngIf="row.id == entity?.id" icon="bi bi-check-circle" color="success" label="Vigente"></badge>
+                        </div>
+                    </ng-template>
+                </column>
+            </columns>
+        </grid>
     </separator>
 </editable-form>

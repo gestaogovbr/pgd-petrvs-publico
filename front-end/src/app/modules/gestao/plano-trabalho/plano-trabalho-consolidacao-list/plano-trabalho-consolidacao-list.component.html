@@ -19,13 +19,20 @@
                 <strong>{{util.getDateFormatted(row.data_fim)}}</strong>
             </ng-template>
         </column>
-        <column title="Estatísticas" [template]="columnEstatisticas">
+        <column title="Estatísticas/Avaliações" [template]="columnEstatisticas" [width]="300">
             <ng-template let-row="row" #columnEstatisticas>
+                <avaliar-nota-badge *ngIf="row.avaliacao" [align]="'left'" [tipoAvaliacao]="this.entity!.programa!.tipo_avaliacao_plano_trabalho" [nota]="row.avaliacao.nota"></avaliar-nota-badge>
+                <separator *ngIf="row.avaliacao?.recurso?.length" title="Recurso da avaliação" collapse [collapsed]="false">
+                    <small>{{row.avaliacao.recurso}}</small>
+                </separator>
             </ng-template>
         </column>
         <column title="Status" [template]="columnStatus">
             <ng-template let-row="row" #columnStatus>
-                <badge [color]="lookup.getColor(lookup.CONSOLIDACAO_STATUS, row.status)" [icon]="lookup.getIcon(lookup.CONSOLIDACAO_STATUS, row.status)" [label]="lookup.getValue(lookup.CONSOLIDACAO_STATUS, row.status)"></badge>
+                <div class="one-per-line">
+                    <badge [color]="lookup.getColor(lookup.CONSOLIDACAO_STATUS, row.status)" [icon]="lookup.getIcon(lookup.CONSOLIDACAO_STATUS, row.status)" [label]="lookup.getValue(lookup.CONSOLIDACAO_STATUS, row.status)"></badge>
+                    <badge *ngIf="row.avaliacao?.recurso?.length" icon="bi bi-journal-medical" color="warning" label="Recorrido"></badge>
+                </div>
             </ng-template>
         </column>
         <column type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
