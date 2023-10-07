@@ -351,7 +351,7 @@ class PlanoTrabalhoService extends ServiceBase
       "unidade.gestor:id,unidade_id,usuario_id",
       "unidade.gestorSubstituto:id,unidade_id,usuario_id",
       "tipoModalidade:id,nome",
-      "consolidacoes.avaliacao",
+      "consolidacoes.avaliacao.tipoAvaliacao.notas",
       "usuario:id,nome,apelido,url_foto"
     ])->where("usuario_id", $usuarioId);
     if (!$arquivados) $query->whereNull("data_arquivamento");

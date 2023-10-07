@@ -1,4 +1,4 @@
 <input-rate *ngIf="isQuantitativo; else qualitativo" [disabled]="disabled" [size]="12" [label]="label" (change)="onValueChange($event)" [control]="control"></input-rate>
 <ng-template #qualitativo>
-    <input-radio [label]="label" [control]="control" [disabled]="disabled" [items]="items" [change]="onValueChange.bind(this)"></input-radio>
+    <input-choose [label]="label" [control]="control" [disabled]="disabled" [items]="items" [change]="onValueChange.bind(this)"></input-choose>
 </ng-template>

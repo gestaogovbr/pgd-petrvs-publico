@@ -32,11 +32,11 @@ class Avaliacao extends ModelBase
     ];
 
     public $delete_cascade = [
-        "entregasChecklist"
+        "entregas_checklist"
     ];
 
-    public $fillable_changes = [
-        "entregasChecklist"
+    public $fillable_relations = [
+        "entregas_checklist"
     ];
 
     // Casting

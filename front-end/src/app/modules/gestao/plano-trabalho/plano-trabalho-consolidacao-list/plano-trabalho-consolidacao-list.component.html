@@ -21,7 +21,7 @@
         </column>
         <column title="Estatísticas/Avaliações" [template]="columnEstatisticas" [width]="300">
             <ng-template let-row="row" #columnEstatisticas>
-                <avaliar-nota-badge *ngIf="row.avaliacao" [align]="'left'" [tipoAvaliacao]="this.entity!.programa!.tipo_avaliacao_plano_trabalho" [nota]="row.avaliacao.nota"></avaliar-nota-badge>
+                <avaliar-nota-badge *ngIf="row.avaliacao" [align]="'left'" [tipoAvaliacao]="row.avaliacao.tipo_avaliacao || this.entity!.programa!.tipo_avaliacao_plano_trabalho" [nota]="row.avaliacao.nota"></avaliar-nota-badge>
                 <separator *ngIf="row.avaliacao?.recurso?.length" title="Recurso da avaliação" collapse [collapsed]="false">
                     <small>{{row.avaliacao.recurso}}</small>
                 </separator>

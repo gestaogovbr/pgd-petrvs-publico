@@ -20,8 +20,16 @@
     <separator *ngIf="entregas.length" [title]="lex.translate('Entregas')" collapse [collapsed]="!checklist.length">
         <grid [items]="entregas" [minHeight]="0" #gridEntregas>
             <columns>
-                <column title="Início" type="datetime" field="data_inicio"></column>
-                <column title="Fim" type="datetime" field="data_fim"></column>
+                <column title="Início" [template]="culumnDataInicio">
+                    <ng-template let-row="row" #culumnDataInicio>
+                        {{this.util!.getDateFormatted(isPlanoEntrega ? row.data_inicio : row.plano_entrega_entrega?.data_inicio)}}
+                    </ng-template>
+                </column>
+                <column title="Fim" [template]="columnDataFim">
+                    <ng-template let-row="row" #columnDataFim>
+                        {{this.util!.getDateFormatted(isPlanoEntrega ? row.data_fim : row.plano_entrega_entrega?.data_fim)}}
+                    </ng-template>
+                </column>
                 <column title="Entrega" [template]="columnEntrega">
                     <ng-template let-row="row" #columnEntrega>
                         <badge [icon]="entityService.getIcon('Entrega')" [label]="row.descricao"></badge>
@@ -43,6 +51,11 @@
                         <progress-bar [value]="row.progresso_realizado" [goal]="row.progresso_esperado" color="success"></progress-bar>
                     </ng-template>
                 </column>
+                <column *ngFor="let check of checklist" [title]="check.value" [template]="columnCheck" [metadata]="check">
+                    <ng-template #columnCheck let-row="row" let-column="column">
+                        <input-switch [source]="row._metadata" [path]="column.metadata.key" [disabled]="recurso ? 'true' : undefined"></input-switch>
+                    </ng-template>
+                </column>
             </columns>
         </grid>
     </separator>
@@ -52,11 +65,11 @@
                 <column title="Data" type="datetime" field="data_avaliacao"></column>
                 <column title="Avaliador" [template]="columnAvaliador">
                     <ng-template let-row="row" #columnAvaliador>
-                        <div class="row">
-                            <div class="col-2">
+                        <div class="avaliador">
+                            <div class="avaliador-profile">
                                 <profile-picture [url]="row.avaliador.url_foto || ''" [size]="40" [hint]="row.avaliador.nome || ''"></profile-picture>
                             </div>
-                            <div class="col-10">
+                            <div class="avaliador-nome">
                                 <strong>{{row.avaliador.nome || ""}}</strong><br>
                                 <small>{{row.avaliador.apelido || ""}}</small>
                             </div>
@@ -65,7 +78,7 @@
                 </column>
                 <column [title]="'Nota\nJustificativas'" [template]="columnNotaJustificativa">
                     <ng-template let-row="row" #columnNotaJustificativa>
-                        <avaliar-nota-badge [align]="'left'" [tipoAvaliacao]="tipoAvaliacao" [nota]="row.nota"></avaliar-nota-badge>
+                        <avaliar-nota-badge [align]="'left'" [tipoAvaliacao]="row.tipo_avaliacao" [nota]="row.nota"></avaliar-nota-badge>
                         <small>{{row.justificativa || ''}}</small>
                         <div class="one-per-line">
                             <badge *ngFor="let justificativa of row.justificativas" [icon]="entityService.getIcon('TipoJustificativa')" [label]="justificativa.value"></badge>

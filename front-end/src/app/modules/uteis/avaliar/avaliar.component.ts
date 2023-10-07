@@ -25,6 +25,7 @@ import { Usuario } from 'src/app/models/usuario.model';
 import { PlanoEntregaService } from '../../gestao/plano-entrega/plano-entrega.service';
 import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
 import { PlanoTrabalhoEntregaDaoService } from 'src/app/dao/plano-trabalho-entrega-dao.service';
+import { AvaliacaoEntregaChecklist } from 'src/app/models/avaliacao-entrega-checklist.model';
 
 export type OrigemAvaliacao = "PLANO_ENTREGA" | "CONSOLIDACAO";
 
@@ -60,7 +61,7 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
   public joinConsolidacao: string[] = [];
   public joinPlanoEntrega: string[] = [];
   public joinPlanoEntregaEntrega: string[] = ['entrega', 'objetivos.objetivo', 'processos.processo', 'unidade', 'comentarios.usuario:id,nome,apelido',];
-  public joinPlanoTrabalhoEntrega: string[] = ['entrega', 'planoEntregaEntrega:id,descricao,plano_entrega_id,entrega_id', 'planoEntregaEntrega.entrega:id,nome,tipo_indicador'];
+  public joinPlanoTrabalhoEntrega: string[] = ['entrega', 'planoEntregaEntrega:id,descricao,data_inicio,data_fim,plano_entrega_id,entrega_id', 'planoEntregaEntrega.entrega:id,nome,tipo_indicador'];
 
   constructor(public injector: Injector) {
     super(injector, Avaliacao, AvaliacaoDaoService);
@@ -70,7 +71,7 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
     this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
     this.planoEntregaEntregaDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
     this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
-    this.join = ["avaliador", "entregas-checklist"];
+    this.join = ["avaliador", "entregas_checklist", "tipo_avaliacao.notas"];
     this.form = this.fh.FormBuilder({
       nota: {default: null},
       recurso: {default: ""},
@@ -118,6 +119,13 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
     this.entregas = this.metadata?.entregas || (this.isConsolidacao ? 
       await this.planoTrabalhoEntregaDao.query({where: [["plano_trabalho_id", "==", this.consolidacao!.plano_trabalho_id]], join: this.joinPlanoTrabalhoEntrega}).asPromise() : 
       await this.planoEntregaEntregaDao.query({where: [["plano_entrega_id", "==", this.planoEntrega!.id]], join: this.joinPlanoEntregaEntrega}).asPromise());
+    this.entregas.forEach(x => {
+      x._metadata = {};
+      this.checklist.forEach(y => {
+        let checklist = this.entity?.entregas_checklist.find(z => x.id == (z.plano_entrega_entrega_id || z.plano_trabalho_entrega_id));
+        x._metadata[y.key] = !checklist || !!checklist.checklist.find(k => k.id == y.key)?.checked;
+      });
+    });
     this.usuario = this.consolidacao?.plano_trabalho?.usuario;
     formValue = this.util.fillForm(formValue, this.entity);
     this.form.controls.nota.setValue(formValue.nota);
@@ -177,7 +185,19 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
       this.entity!.tipo_avaliacao_id = this.tipoAvaliacao!.id;
       /* Atualiza os checklist das entregas */
       if(this.checklist.length) {
-        /* TODO */
+        this.entity!.entregas_checklist = this.entregas.map(x => {
+          return new AvaliacaoEntregaChecklist({
+            plano_trabalho_entrega_id: this.consolidacao ? x.id : null,
+            plano_entrega_entrega_id: this.planoEntrega ? x.id : null, 
+            checklist: this.checklist.map(y => {
+              return {
+                id: y.key,
+                texto: y.value,
+                checked: !!x._metadata[y.key]
+              } 
+            })
+          });
+        });
       }
       return new NavigateResult(await this.dao!.save(this.entity!, this.join));
     }

@@ -4,10 +4,13 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use App\Models\Tenant;
+use App\Traits\Version;
 use Illuminate\Support\Facades\DB;
 
 class Version203 extends Migration
 {
+    use Version;
+
     /**
      * Run the migrations.
      *
@@ -15,12 +18,7 @@ class Version203 extends Migration
      */
     public function up()
     {
-        /* Deverá ser executado somente para a Tenant atual, o código abaixo não faz nenhum sentido */
-        /*$tenants = Tenant::all();
-    
-        foreach ($tenants as $tenant) {
-            DB::connection('mysql')->getPdo()->exec("UPDATE tenants SET version = '2.0.3' where id = $tenant->id");
-        }*/
+        $this->version("2.0.3");
     }
 
     /**
@@ -30,6 +28,6 @@ class Version203 extends Migration
      */
     public function down()
     {
-        //
+        throw new Exception("Impossível retornar para versões já atualizadas");
     }
 }
