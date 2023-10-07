@@ -31,8 +31,8 @@ export class InputRateComponent extends InputBase implements OnInit {
   @Input() loading: boolean = false;
   @Input() starMargin: number = 2;
   @Input() starSize: number = 4;
-  @Input() starIcon: string = "bi bi-star text-secondary h4 mx-2";
-  @Input() starFillIcon: string = "bi bi-star-fill text-warning h4 mx-2";
+  @Input() starIcon: string = "bi bi-star text-secondary";
+  @Input() starFillIcon: string = "bi bi-star-fill text-warning";
   @Input() form?: FormGroup;
   @Input() source?: any;
   @Input() path?: string;
@@ -64,7 +64,7 @@ export class InputRateComponent extends InputBase implements OnInit {
   }
 
   public startClass(index: number): string {
-    return 'float-start mx-'+ this.starMargin + ' h'+ this.starSize + ' ' + (index < this.value ? this.starFillIcon : this.starIcon);
+    return 'float-start mx-'+ this.starMargin + ' ' + (index < this.value ? this.starFillIcon : this.starIcon) + (this.small ? '' : ' h4');
   }
 
   public stars: boolean[] = Array<boolean>(10).fill(false);
