@@ -50,6 +50,10 @@ class DocumentacaoComponent {
     }, {
       label: 'Gestão',
       items: [{
+        label: 'Avaliação (Planos de entrega e trabalho)',
+        icon: 'bi bi-star',
+        target: 'docs/Gestao/avaliacao.md'
+      }, {
         label: 'Planejamento Institucional',
         icon: 'bi bi-journals',
         target: 'docs/Gestao/planejamento_institucional.md'
