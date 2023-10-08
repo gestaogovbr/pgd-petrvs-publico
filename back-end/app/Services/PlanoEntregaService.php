@@ -8,6 +8,7 @@ use App\Models\Usuario;
 use App\Models\StatusJustificativa;
 use App\Exceptions\ServerException;
 use App\Models\Programa;
+use App\Models\TipoAvaliacao;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -317,6 +318,17 @@ class PlanoEntregaService extends ServiceBase
             $row->metadados = $this->metadados($row);
         }
         return $rows;
+    }
+
+    public function proxyExtra($rows, $data) 
+    {
+        if(in_array("avaliacao", $data["with"])) {
+            $tiposAvaliacoesIds = array_unique(array_map(fn ($v) => ($v["avaliacao"] ?? ["tipo_avaliacao_id" => null])["tipo_avaliacao_id"], $rows->toArray()));
+            $tiposAvaliacoes = TipoAvaliacao::with(["notas"])->whereIn("id", $tiposAvaliacoesIds)->get()->all();
+            return ["tipos_avaliacoes" => $tiposAvaliacoes];
+        } else {
+            return null;
+        }
     }
 
     public function proxyStore(&$planoEntrega, $unidade, $action)
