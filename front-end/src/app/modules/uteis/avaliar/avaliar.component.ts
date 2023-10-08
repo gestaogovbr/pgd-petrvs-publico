@@ -26,6 +26,7 @@ import { PlanoEntregaService } from '../../gestao/plano-entrega/plano-entrega.se
 import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
 import { PlanoTrabalhoEntregaDaoService } from 'src/app/dao/plano-trabalho-entrega-dao.service';
 import { AvaliacaoEntregaChecklist } from 'src/app/models/avaliacao-entrega-checklist.model';
+import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 
 export type OrigemAvaliacao = "PLANO_ENTREGA" | "CONSOLIDACAO";
 
@@ -42,6 +43,7 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
   public planoTrabalhoEntregaDao: PlanoTrabalhoEntregaDaoService;
   public consolidacaoDao: PlanoTrabalhoConsolidacaoDaoService;
   public consolidacao?: PlanoTrabalhoConsolidacao;
+  public programaDao: ProgramaDaoService;
   public planoEntregaEntregaDao: PlanoEntregaEntregaDaoService;
   public planoEntregaDao: PlanoEntregaDaoService;
   public planoEntrega?: PlanoEntrega;
@@ -60,11 +62,13 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
   public modalWidth: number = 900;
   public joinConsolidacao: string[] = [];
   public joinPlanoEntrega: string[] = [];
+  public joinPrograma: string[] = ["tipo_avaliacao_plano_trabalho.notas.justificativas", "tipo_avaliacao_plano_entrega.notas.justificativas"];
   public joinPlanoEntregaEntrega: string[] = ['entrega', 'objetivos.objetivo', 'processos.processo', 'unidade', 'comentarios.usuario:id,nome,apelido',];
   public joinPlanoTrabalhoEntrega: string[] = ['entrega', 'planoEntregaEntrega:id,descricao,data_inicio,data_fim,plano_entrega_id,entrega_id', 'planoEntregaEntrega.entrega:id,nome,tipo_indicador'];
 
   constructor(public injector: Injector) {
     super(injector, Avaliacao, AvaliacaoDaoService);
+    this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.planoTrabalhoEntregaDao = injector.get<PlanoTrabalhoEntregaDaoService>(PlanoTrabalhoEntregaDaoService);
     this.tipoAvaliacaoDao = injector.get<TipoAvaliacaoDaoService>(TipoAvaliacaoDaoService); 
     this.consolidacaoDao = injector.get<PlanoTrabalhoConsolidacaoDaoService>(PlanoTrabalhoConsolidacaoDaoService);
@@ -107,30 +111,35 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
 
   public async loadData(entity: Avaliacao, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
-    this.consolidacao = this.urlParams?.has("consolidacaoId") || this.metadata?.consolidacao ? this.metadata?.consolidacao || await this.consolidacaoDao.getById(this.urlParams!.get("consolidacaoId")!, this.joinConsolidacao) : undefined;
-    this.planoEntrega = this.urlParams?.has("planoEntregaId") || this.metadata?.planoEntrega ? this.metadata?.planoEntrega || await this.planoEntregaDao.getById(this.urlParams!.get("planoEntregaId")!, this.joinPlanoEntrega) : undefined;
-    this.avaliacoes = await this.dao!.query({where: this.consolidacao ? [["plano_trabalho_consolidacao_id", "==", this.consolidacao.id]] : [["plano_entrega_id", "==", this.planoEntrega?.id]], join: this.join, orderBy: [["data_avaliacao", "desc"]]}).asPromise();
-    this.entity = this.avaliacoes.find(x => x.id == ((this.consolidacao || this.planoEntrega) as HasAvaliacao)?.avaliacao_id) || this.entity;
-    this.programa = this.metadata?.programa || this.consolidacao?.plano_trabalho?.programa || this.planoEntrega?.programa;
-    this.origem = !!this.consolidacao ? "CONSOLIDACAO" : "PLANO_ENTREGA";
-    this.tipoAvaliacao = this.isConsolidacao ? this.programa?.tipo_avaliacao_plano_trabalho : this.programa?.tipo_avaliacao_plano_entrega;
-    this.checklist = (this.isConsolidacao ? this.programa!.checklist_avaliacao_entregas_plano_trabalho : this.programa!.checklist_avaliacao_entregas_plano_entrega) || [];
-    this.recurso = !!this.metadata?.recurso;
-    this.entregas = this.metadata?.entregas || (this.isConsolidacao ? 
-      await this.planoTrabalhoEntregaDao.query({where: [["plano_trabalho_id", "==", this.consolidacao!.plano_trabalho_id]], join: this.joinPlanoTrabalhoEntrega}).asPromise() : 
-      await this.planoEntregaEntregaDao.query({where: [["plano_entrega_id", "==", this.planoEntrega!.id]], join: this.joinPlanoEntregaEntrega}).asPromise());
-    this.entregas.forEach(x => {
-      x._metadata = {};
-      this.checklist.forEach(y => {
-        let checklist = this.entity?.entregas_checklist.find(z => x.id == (z.plano_entrega_entrega_id || z.plano_trabalho_entrega_id));
-        x._metadata[y.key] = !checklist || !!checklist.checklist.find(k => k.id == y.key)?.checked;
+    this.loading = true;
+    try {
+      this.consolidacao = this.urlParams?.has("consolidacaoId") || this.metadata?.consolidacao ? this.metadata?.consolidacao || await this.consolidacaoDao.getById(this.urlParams!.get("consolidacaoId")!, this.joinConsolidacao) : undefined;
+      this.planoEntrega = this.urlParams?.has("planoEntregaId") || this.metadata?.planoEntrega ? this.metadata?.planoEntrega || await this.planoEntregaDao.getById(this.urlParams!.get("planoEntregaId")!, this.joinPlanoEntrega) : undefined;
+      this.avaliacoes = await this.dao!.query({where: this.consolidacao ? [["plano_trabalho_consolidacao_id", "==", this.consolidacao.id]] : [["plano_entrega_id", "==", this.planoEntrega?.id]], join: this.join, orderBy: [["data_avaliacao", "desc"]]}).asPromise();
+      this.entity = this.avaliacoes.find(x => x.id == ((this.consolidacao || this.planoEntrega) as HasAvaliacao)?.avaliacao_id) || this.entity;
+      this.programa = this.metadata?.programa || await this.programaDao.query({where: [["id", "==", this.consolidacao?.plano_trabalho?.programa_id || this.planoEntrega?.programa_id]], join: this.joinPrograma}).firstOrDefault(this.consolidacao?.plano_trabalho?.programa || this.planoEntrega?.programa);
+      this.origem = !!this.consolidacao ? "CONSOLIDACAO" : "PLANO_ENTREGA";
+      this.tipoAvaliacao = this.isConsolidacao ? this.programa?.tipo_avaliacao_plano_trabalho : this.programa?.tipo_avaliacao_plano_entrega;
+      this.checklist = (this.isConsolidacao ? this.programa!.checklist_avaliacao_entregas_plano_trabalho : this.programa!.checklist_avaliacao_entregas_plano_entrega) || [];
+      this.recurso = !!this.metadata?.recurso;
+      this.entregas = this.metadata?.entregas || (this.isConsolidacao ? 
+        await this.planoTrabalhoEntregaDao.query({where: [["plano_trabalho_id", "==", this.consolidacao!.plano_trabalho_id]], join: this.joinPlanoTrabalhoEntrega}).asPromise() : 
+        await this.planoEntregaEntregaDao.query({where: [["plano_entrega_id", "==", this.planoEntrega!.id]], join: this.joinPlanoEntregaEntrega}).asPromise());
+      this.entregas.forEach(x => {
+        x._metadata = {};
+        this.checklist.forEach(y => {
+          let checklist = this.entity?.entregas_checklist.find(z => x.id == (z.plano_entrega_entrega_id || z.plano_trabalho_entrega_id));
+          x._metadata[y.key] = !checklist || !!checklist.checklist.find(k => k.id == y.key)?.checked;
+        });
       });
-    });
-    this.usuario = this.consolidacao?.plano_trabalho?.usuario;
-    formValue = this.util.fillForm(formValue, this.entity);
-    this.form.controls.nota.setValue(formValue.nota);
-    this.onNotaChange(new Event('change'));
-    form.patchValue(formValue);
+      this.usuario = this.consolidacao?.plano_trabalho?.usuario;
+      formValue = this.util.fillForm(formValue, this.entity);
+      this.form.controls.nota.setValue(formValue.nota);
+      this.onNotaChange(new Event('change'));
+      form.patchValue(formValue);
+    } finally {
+      this.loading = false;
+    }
   }
 
   public async initializeData(form: FormGroup) {

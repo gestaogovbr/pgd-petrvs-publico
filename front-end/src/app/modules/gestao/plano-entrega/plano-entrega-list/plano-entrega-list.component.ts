@@ -12,6 +12,9 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { PlanoEntregaService } from '../plano-entrega.service';
 import { FullRoute } from 'src/app/services/navigate.service';
 import { Base } from 'src/app/models/base.model';
+import { Avaliacao } from 'src/app/models/avaliacao.model';
+import { AvaliacaoDaoService } from 'src/app/dao/avaliacao-dao.service';
+import { TipoAvaliacao } from 'src/app/models/tipo-avaliacao.model';
 
 @Component({
   selector: 'plano-entrega-list',
@@ -24,6 +27,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   public showFilter: boolean = true;
   public linha?: PlanoEntrega;
   public unidadeDao: UnidadeDaoService;
+  public avaliacaoDao: AvaliacaoDaoService;
   public planejamentoDao: PlanejamentoDaoService;
   public cadeiaValorDao: CadeiaValorDaoService;
   public planoEntregaService: PlanoEntregaService;
@@ -56,6 +60,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   constructor(public injector: Injector) {
     super(injector, PlanoEntrega, PlanoEntregaDaoService);
+    this.avaliacaoDao = injector.get<AvaliacaoDaoService>(AvaliacaoDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.planejamentoDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
@@ -87,7 +92,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       'entregas.comentarios.usuario:id,nome,apelido',
       'unidade.gestor:id',
       'unidade.gestor_substituto:id',
-      'unidade.unidade_pai'
+      'unidade.unidade_pai',
+      'avaliacao'
     ];
     this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }];
     this.BOTAO_ADERIR_OPTION = { label: "Aderir", icon: this.entityService.getIcon("Adesao"), onClick: (() => { this.go.navigate({ route: ['gestao', 'plano-entrega', 'adesao'] }, { metadata: { planoEntrega: this.linha }, modalClose: (modalResult) => { this.refresh(); } }); }).bind(this) };
@@ -110,8 +116,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.BOTAO_RETIRAR_HOMOLOGACAO = { label: "Retirar de homologação", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), onClick: this.retirarHomologacao.bind(this) };
     this.BOTAO_SUSPENDER = { label: "Suspender", id: "PAUSADO", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "SUSPENSO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "SUSPENSO"), onClick: this.suspender.bind(this) };
     this.botoes = [this.BOTAO_ALTERAR, this.BOTAO_ARQUIVAR, this.BOTAO_AVALIAR, this.BOTAO_CANCELAR_AVALIACAO, this.BOTAO_CANCELAR_CONCLUSAO,
-    this.BOTAO_CANCELAR_HOMOLOGACAO, this.BOTAO_CONCLUIR, this.BOTAO_CONSULTAR, this.BOTAO_DESARQUIVAR, this.BOTAO_EXCLUIR, this.BOTAO_HOMOLOGAR, this.BOTAO_LIBERAR_HOMOLOGACAO,
-    this.BOTAO_LOGS, this.BOTAO_REATIVAR, this.BOTAO_RETIRAR_HOMOLOGACAO, this.BOTAO_SUSPENDER];
+      this.BOTAO_CANCELAR_HOMOLOGACAO, this.BOTAO_CONCLUIR, this.BOTAO_CONSULTAR, this.BOTAO_DESARQUIVAR, this.BOTAO_EXCLUIR, this.BOTAO_HOMOLOGAR, this.BOTAO_LIBERAR_HOMOLOGACAO,
+      this.BOTAO_LOGS, this.BOTAO_REATIVAR, this.BOTAO_RETIRAR_HOMOLOGACAO, this.BOTAO_SUSPENDER];
     //this.BOTAO_ADERIR_OPTION, this.BOTAO_ADERIR_TOOLBAR,
   }
 
@@ -138,11 +144,16 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   }
 
   public onGridLoad(rows?: Base[]) {
+    const extra = (this.grid?.query || this.query!).extra;
     if (rows && this.execucao) {
       rows.forEach(v => {
         if (["ATIVO", "SUSPENSO"].includes((v as PlanoEntrega).status)) this.grid!.expand(v.id);
       });
     }
+    rows?.forEach(v => {
+      let planoEntrega = v as PlanoEntrega;
+      if(planoEntrega.avaliacao) planoEntrega.avaliacao.tipo_avaliacao = extra?.tipos_avaliacoes?.find((x: TipoAvaliacao) => x.id == planoEntrega.avaliacao!.tipo_avaliacao_id);
+    });
   }
 
   public checaBotaoAderirToolbar() {
@@ -469,8 +480,13 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   }
 
   public avaliar(planoEntrega: PlanoEntrega) {
-    this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoEntrega", entity: Object.assign({},planoEntrega, {arquivar: true}), novoStatus: "AVALIADO", onClick: this.dao!.avaliar.bind(this.dao) },
+    /*this.go.navigate(this.routeStatus, {
+      metadata: { 
+        tipo: "PlanoEntrega", 
+        entity: Object.assign({},planoEntrega, {arquivar: true}), 
+        novoStatus: "AVALIADO", 
+        onClick: this.dao!.avaliar.bind(this.dao)
+      },
       title: "Avaliar Plano de Entregas",
       modalClose: (modalResult) => {
         if (modalResult) {
@@ -479,11 +495,26 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
           });
         };
       }
+    });*/
+    this.go.navigate({route: ['gestao', 'plano-entrega', planoEntrega.id, 'avaliar']}, {
+      modal: true, 
+      metadata: { planoEntrega: planoEntrega },
+      modalClose: (modalResult?: Avaliacao) => {
+        if(modalResult) {
+          (this.grid?.query || this.query!).refreshId(planoEntrega.id, ["avaliacao.tipo_avaliacao.notas"]).then(() => {
+            this.checaBotaoAderirToolbar();
+          });
+          /*consolidacao.status = "AVALIADO";
+          consolidacao.avaliacao_id = modalResult.id;
+          consolidacao.avaliacao = modalResult;
+          this.refreshConsolidacao(consolidacao);*/
+        }
+      }
     });
   }
 
-  public cancelarAvaliacao(planoEntrega: PlanoEntrega) {
-    this.go.navigate(this.routeStatus, {
+  public async cancelarAvaliacao(planoEntrega: PlanoEntrega) {
+    /*this.go.navigate(this.routeStatus, {
       metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "CONCLUIDO", onClick: this.dao!.cancelarAvaliacao.bind(this.dao) },
       title: "Cancelar Avaliação",
       modalClose: (modalResult) => {
@@ -493,7 +524,24 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
           });
         };
       }
-    });
+    });*/
+    this.submitting = true;
+    try {
+      let response = await this.avaliacaoDao!.cancelarAvaliacao(planoEntrega.avaliacao!.id);
+      if(response) {
+        (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+          this.checaBotaoAderirToolbar();
+        });
+        /*consolidacao.status = "CONCLUIDO";
+        consolidacao.avaliacao_id = null;
+        consolidacao.avaliacao = undefined;
+        this.refreshConsolidacao(consolidacao);*/
+      }
+    } catch (error: any) {
+      this.error(error.message || error);
+    } finally {
+      this.submitting = false;
+    }
   }
 
   public cancelarConclusao(planoEntrega: PlanoEntrega) {
