@@ -15,6 +15,7 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { FullRoute } from 'src/app/services/navigate.service';
 import { PlanoTrabalhoService } from '../plano-trabalho.service';
 import { DocumentoService } from 'src/app/modules/uteis/documentos/documento.service';
+import { UtilService } from 'src/app/services/util.service';
 
 @Component({
   selector: 'plano-trabalho-list',
@@ -28,6 +29,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
   public unidadeDao: UnidadeDaoService;
   public documentoDao: DocumentoDaoService;
   public documentoService: DocumentoService;
+  public utilService: UtilService;
   public programaDao: ProgramaDaoService;
   public usuarioDao: UsuarioDaoService;
   public planoTrabalhoService: PlanoTrabalhoService;
@@ -61,6 +63,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.documentoDao = injector.get<DocumentoDaoService>(DocumentoDaoService);
     this.documentoService = injector.get<DocumentoService>(DocumentoService);
+    this.utilService = injector.get<UtilService>(UtilService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.planoTrabalhoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
     this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
@@ -172,8 +175,10 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
         */
         break;
       case 'CANCELADO':
+        if (this.botaoAtendeCondicoes(this.BOTAO_ARQUIVAR, row)) result.push(this.BOTAO_ARQUIVAR);
         /**
           - botões-padrão:
+            - 'Arquivar'. Condições para ser exibido: vide RN_PTR_N;
             - 'Consultar'. Condições para ser exibido: vide RN_PTR_S;
         */
         break;
@@ -244,6 +249,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
 
   public botaoAtendeCondicoes(botao: ToolbarButton, planoTrabalho: PlanoTrabalho): boolean {
     let assinaturasExigidas: string[] = planoTrabalho.assinaturasExigidas;
+    let assinaturasFaltantes: string[] = this.utilService.array_diff(planoTrabalho.assinaturasExigidas,planoTrabalho.jaAssinaramTCR);
     let usuarioEhGestorUnidadeExecutora: boolean = this.auth.usuario?.id == planoTrabalho.unidade?.gestor?.usuario?.id;
     let usuarioJaAssinouTCR: boolean = planoTrabalho.jaAssinaramTCR.includes(this.auth.usuario?.id!);
     let assinaturaUsuarioEhExigida: boolean = planoTrabalho.assinaturasExigidas.includes(this.auth.usuario?.id!);
@@ -252,8 +258,9 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     let planoAguardandoAssinatura = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'AGUARDANDO_ASSINATURA';
     let planoAtivo = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'ATIVO';
     let planoConcluido = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'CONCLUIDO';
+    let planoCancelado = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'CANCELADO';
     let planoArquivado = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'ARQUIVADO';
-    let programaExigeOutrasAssinaturas = !!assinaturasExigidas.filter(a => a != this.auth.usuario?.id).length;
+    //let programaExigeOutrasAssinaturas = !!assinaturasExigidas.filter(a => a != this.auth.usuario?.id).length;
     let planoSuspenso = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'SUSPENSO';
     let planoPossuiEntrega = planoTrabalho.entregas.length > 0;
     switch (botao) {
@@ -274,10 +281,10 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
       case this.BOTAO_ARQUIVAR:
         /*
           (RN_PTR_N) ARQUIVAR
-          O plano precisa estar com o status CONCLUIDO, não ter sido arquivado, e:
+          O plano precisa estar com o status CONCLUIDO ou CANCELADO, não ter sido arquivado, e:
             - o usuário logado precisa ser o participante ou o gestor da Unidade Executora;
         */
-        return planoConcluido && !planoArquivado && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora);
+        return (planoConcluido || planoCancelado) && !planoArquivado && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora);
       case this.BOTAO_ASSINAR:
         /*
           (RN_PTR_O) ASSINAR
@@ -333,10 +340,11 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
           (RN_PTR_U) ENVIAR PARA ASSINATURA
           O plano precisa estar com o status INCLUIDO; e
             - o usuário logado precisa ser o participante do plano ou gestor da sua Unidade Executora; e
-            - o programa de gestão precisa exigir não só a assinatura do usuário logado, e
-            - o plano precisa possui ao menos uma entrega;
+            - se a assinatura do usuário logado for exigida, ele já deve ter assinado o TCR; e
+            - devem existir assinaturas exigíveis ainda pendentes; e
+            - o plano precisa possuir ao menos uma entrega;
         */
-        return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && programaExigeOutrasAssinaturas && planoPossuiEntrega;
+        return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && (!assinaturaUsuarioEhExigida || usuarioJaAssinouTCR) && !!assinaturasFaltantes.length && planoPossuiEntrega;
       case this.BOTAO_REATIVAR:
         /*
           (RN_PTR_W) REATIVAR
@@ -361,7 +369,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
 
   public arquivar(planoTrabalho: PlanoTrabalho) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoTrabalho", entity: planoTrabalho, novoStatus: planoTrabalho.status, onClick: this.dao!.arquivar.bind(this.dao) },
+      metadata: { tipo: "PlanoTrabalho", entity: Object.assign({},planoTrabalho, {arquivar: true}), novoStatus: planoTrabalho.status, onClick: this.dao!.arquivar.bind(this.dao) },
       title: "Arquivar Plano de Trabalho",
       modalClose: (modalResult) => {
         if (modalResult) {
@@ -408,7 +416,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
 
   public cancelarPlano(planoTrabalho: PlanoTrabalho) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoTrabalho", entity: planoTrabalho, novoStatus: "CANCELADO", onClick: this.dao!.cancelarPlano.bind(this.dao) },
+      metadata: { tipo: "PlanoTrabalho", entity: Object.assign({},planoTrabalho, {arquivar: true}), novoStatus: "CANCELADO", onClick: this.dao!.cancelarPlano.bind(this.dao) },
       title: "Cancelar Plano de Trabalho",
       modalClose: (modalResult) => {
         if (modalResult) {
@@ -420,7 +428,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
 
   public desarquivar(planoTrabalho: PlanoTrabalho) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoTrabalho", entity: planoTrabalho, novoStatus: planoTrabalho.status, onClick: this.dao!.desarquivar.bind(this.dao) },
+      metadata: { tipo: "PlanoTrabalho", entity: Object.assign({},planoTrabalho, {arquivar: false}), novoStatus: planoTrabalho.status, onClick: this.dao!.arquivar.bind(this.dao) },
       title: "Desarquivar Plano de Trabalho",
       modalClose: (modalResult) => {
         if (modalResult) {

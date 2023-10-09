@@ -12,6 +12,9 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { PlanoEntregaService } from '../plano-entrega.service';
 import { FullRoute } from 'src/app/services/navigate.service';
 import { Base } from 'src/app/models/base.model';
+import { Avaliacao } from 'src/app/models/avaliacao.model';
+import { AvaliacaoDaoService } from 'src/app/dao/avaliacao-dao.service';
+import { TipoAvaliacao } from 'src/app/models/tipo-avaliacao.model';
 
 @Component({
   selector: 'plano-entrega-list',
@@ -24,6 +27,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   public showFilter: boolean = true;
   public linha?: PlanoEntrega;
   public unidadeDao: UnidadeDaoService;
+  public avaliacaoDao: AvaliacaoDaoService;
   public planejamentoDao: PlanejamentoDaoService;
   public cadeiaValorDao: CadeiaValorDaoService;
   public planoEntregaService: PlanoEntregaService;
@@ -56,6 +60,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   constructor(public injector: Injector) {
     super(injector, PlanoEntrega, PlanoEntregaDaoService);
+    this.avaliacaoDao = injector.get<AvaliacaoDaoService>(AvaliacaoDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.planejamentoDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
@@ -66,6 +71,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.filter = this.fh.FormBuilder({
       agrupar: { default: true },
       principais: { default: true },
+      arquivadas: { default: false },
       nome: { default: '' },
       data_inicio: { default: '' },
       data_fim: { default: '' },
@@ -80,11 +86,14 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       'cadeia_valor:id,nome',
       'unidade:id,sigla,path',
       'entregas.entrega',
+      'entregas.objetivos.objetivo',
+      'entregas.processos.processo',
       'entregas.unidade',
       'entregas.comentarios.usuario:id,nome,apelido',
       'unidade.gestor:id',
       'unidade.gestor_substituto:id',
-      'unidade.unidade_pai'
+      'unidade.unidade_pai',
+      'avaliacao'
     ];
     this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }];
     this.BOTAO_ADERIR_OPTION = { label: "Aderir", icon: this.entityService.getIcon("Adesao"), onClick: (() => { this.go.navigate({ route: ['gestao', 'plano-entrega', 'adesao'] }, { metadata: { planoEntrega: this.linha }, modalClose: (modalResult) => { this.refresh(); } }); }).bind(this) };
@@ -102,13 +111,13 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.BOTAO_EXCLUIR = { label: "Excluir", icon: "bi bi-trash", onClick: this.delete.bind(this) };
     this.BOTAO_HOMOLOGAR = { label: "Homologar", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "ATIVO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "ATIVO"), onClick: this.homologar.bind(this) };
     this.BOTAO_LIBERAR_HOMOLOGACAO = { label: "Liberar para homologação", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "HOMOLOGANDO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "HOMOLOGANDO"), onClick: this.liberarHomologacao.bind(this) };
-    this.BOTAO_LOGS = { label: "Logs", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), onClick: (planoEntrega: PlanoEntrega) => this.go.navigate({ route: ['gestao', 'plano-entrega', planoEntrega.id, 'logs'] }) };
+    this.BOTAO_LOGS = { label: "Logs", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), onClick: (planoEntrega: PlanoEntrega) => this.go.navigate({ route: ['logs', 'change', planoEntrega.id, 'consult'] }) };
     this.BOTAO_REATIVAR = { label: "Reativar", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "ATIVO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "ATIVO"), onClick: this.reativar.bind(this) };
     this.BOTAO_RETIRAR_HOMOLOGACAO = { label: "Retirar de homologação", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), onClick: this.retirarHomologacao.bind(this) };
     this.BOTAO_SUSPENDER = { label: "Suspender", id: "PAUSADO", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "SUSPENSO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "SUSPENSO"), onClick: this.suspender.bind(this) };
     this.botoes = [this.BOTAO_ALTERAR, this.BOTAO_ARQUIVAR, this.BOTAO_AVALIAR, this.BOTAO_CANCELAR_AVALIACAO, this.BOTAO_CANCELAR_CONCLUSAO,
-    this.BOTAO_CANCELAR_HOMOLOGACAO, this.BOTAO_CONCLUIR, this.BOTAO_CONSULTAR, this.BOTAO_DESARQUIVAR, this.BOTAO_EXCLUIR, this.BOTAO_HOMOLOGAR, this.BOTAO_LIBERAR_HOMOLOGACAO,
-    this.BOTAO_LOGS, this.BOTAO_REATIVAR, this.BOTAO_RETIRAR_HOMOLOGACAO, this.BOTAO_SUSPENDER];
+      this.BOTAO_CANCELAR_HOMOLOGACAO, this.BOTAO_CONCLUIR, this.BOTAO_CONSULTAR, this.BOTAO_DESARQUIVAR, this.BOTAO_EXCLUIR, this.BOTAO_HOMOLOGAR, this.BOTAO_LIBERAR_HOMOLOGACAO,
+      this.BOTAO_LOGS, this.BOTAO_REATIVAR, this.BOTAO_RETIRAR_HOMOLOGACAO, this.BOTAO_SUSPENDER];
     //this.BOTAO_ADERIR_OPTION, this.BOTAO_ADERIR_TOOLBAR,
   }
 
@@ -135,11 +144,16 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   }
 
   public onGridLoad(rows?: Base[]) {
+    const extra = (this.grid?.query || this.query!).extra;
     if (rows && this.execucao) {
       rows.forEach(v => {
         if (["ATIVO", "SUSPENSO"].includes((v as PlanoEntrega).status)) this.grid!.expand(v.id);
       });
     }
+    rows?.forEach(v => {
+      let planoEntrega = v as PlanoEntrega;
+      if(planoEntrega.avaliacao) planoEntrega.avaliacao.tipo_avaliacao = extra?.tipos_avaliacoes?.find((x: TipoAvaliacao) => x.id == planoEntrega.avaliacao!.tipo_avaliacao_id);
+    });
   }
 
   public checaBotaoAderirToolbar() {
@@ -180,7 +194,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     let result: any[] = [];
     let form: any = filter.value;
     /*
-        (RI_PENT_4) A consulta do grid retornará inicialmente os principais Planos de Entrega do usuário logado (a opção "principais" já vem marcada), que são:
+        (RI_PENT_B) A consulta do grid retornará inicialmente os principais Planos de Entrega do usuário logado (a opção "principais" já vem marcada), que são:
         - os válidos das unidades onde ele possui algum vínculo (áreas de trabalho) (w1), e
         - se ele for gestor:
           - os ativos das unidades-pai de onde ele é gestor (w2), e 
@@ -219,9 +233,9 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     if (form.status) {
       result.push(["status", "==", form.status]);
     }
-    //  (RI_PENT_5) Por padrão, os planos de entregas retornados na listagem do grid são os que não foram arquivados nem cancelados.
-    //  O não-arquivamento é tratado abaixo. A condição de não-cancelado é tratada no back-end.
-    result.push(["data_arquivamento", "==", null]);
+    //  (RI_PENT_C) Por padrão, os planos de entregas retornados na listagem do grid são os que não foram arquivados nem cancelados.
+    //  A condição de não-cancelado é tratada no back-end.
+    result.push(["incluir_arquivados", "==", this.filter!.controls.arquivadas.value]);
     return result;
   }
 
@@ -337,6 +351,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
           (RN_PENT_R) Para CANCELAR a AVALIAÇÃO de um plano de entregas:
           - o plano precisa estar com o status AVALIADO, e
           - o usuário logado precisa ser gestor da Unidade-pai (Unidade A) da Unidade do plano (Unidade B), ou
+          - a Unidade-pai (Unidade A) precisa ser a Unidade de lotação do usuário logado, e ele possuir a capacidade "MOD_PENT_CANC_AVAL"; ou
           - possuir a atribuição de AVALIADOR DE PLANOS DE ENTREGAS para a Unidade do plano (Unidade B);
         */
         return this.planoEntregaService.situacaoPlano(planoEntrega) == 'AVALIADO' && (this.auth.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id) || this.auth.isIntegrante('AVALIADOR_PLANO_ENTREGA', planoEntrega.unidade!.id!));
@@ -374,7 +389,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       case this.BOTAO_CONSULTAR:
         /*
           (RN_PENT_V) CONSULTAR
-          - todos os participantes podem visualizar todos os planos de entrega, desde que possuam a capacidade "MOD_PENT";
+          - todos os participantes podem visualizar todos os planos de entrega, desde que possuam a capacidade "MOD_PENT" (RN_PENT_F, RN_PENT_I);
         */
         return this.auth.hasPermissionTo("MOD_PENT");
       case this.BOTAO_DESARQUIVAR:
@@ -410,7 +425,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       case this.BOTAO_LIBERAR_HOMOLOGACAO:
         /*
           (RN_PENT_AA) Para LIBERAR PARA HOMOLOGAÇÃO um plano de entregas:
-          - o plano precisa estar com o status INCLUIDO, conter ao menos uma entrega, e
+          - o plano precisa estar com o status INCLUIDO, conter ao menos uma entrega (RN_PENT_D), e
               - o usuário logado precisa ser gestor da Unidade do plano (Unidade B); ou
               - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado, e este possuir a capacidade "MOD_PENT_LIB_HOMOL"
         */
@@ -452,7 +467,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public arquivar(planoEntrega: PlanoEntrega) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: planoEntrega.status, onClick: this.dao!.arquivar.bind(this.dao) },
+      metadata: { tipo: "PlanoEntrega", entity: Object.assign({}, planoEntrega, {arquivar: true}), novoStatus: planoEntrega.status, onClick: this.dao!.arquivar.bind(this.dao) },
       title: "Arquivar Plano de Entregas",
       modalClose: (modalResult) => {
         if (modalResult) {
@@ -465,8 +480,13 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   }
 
   public avaliar(planoEntrega: PlanoEntrega) {
-    this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "AVALIADO", onClick: this.dao!.avaliar.bind(this.dao) },
+    /*this.go.navigate(this.routeStatus, {
+      metadata: { 
+        tipo: "PlanoEntrega", 
+        entity: Object.assign({},planoEntrega, {arquivar: true}), 
+        novoStatus: "AVALIADO", 
+        onClick: this.dao!.avaliar.bind(this.dao)
+      },
       title: "Avaliar Plano de Entregas",
       modalClose: (modalResult) => {
         if (modalResult) {
@@ -475,11 +495,26 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
           });
         };
       }
+    });*/
+    this.go.navigate({route: ['gestao', 'plano-entrega', planoEntrega.id, 'avaliar']}, {
+      modal: true, 
+      metadata: { planoEntrega: planoEntrega },
+      modalClose: (modalResult?: Avaliacao) => {
+        if(modalResult) {
+          (this.grid?.query || this.query!).refreshId(planoEntrega.id, ["avaliacao.tipo_avaliacao.notas"]).then(() => {
+            this.checaBotaoAderirToolbar();
+          });
+          /*consolidacao.status = "AVALIADO";
+          consolidacao.avaliacao_id = modalResult.id;
+          consolidacao.avaliacao = modalResult;
+          this.refreshConsolidacao(consolidacao);*/
+        }
+      }
     });
   }
 
-  public cancelarAvaliacao(planoEntrega: PlanoEntrega) {
-    this.go.navigate(this.routeStatus, {
+  public async cancelarAvaliacao(planoEntrega: PlanoEntrega) {
+    /*this.go.navigate(this.routeStatus, {
       metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "CONCLUIDO", onClick: this.dao!.cancelarAvaliacao.bind(this.dao) },
       title: "Cancelar Avaliação",
       modalClose: (modalResult) => {
@@ -489,7 +524,24 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
           });
         };
       }
-    });
+    });*/
+    this.submitting = true;
+    try {
+      let response = await this.avaliacaoDao!.cancelarAvaliacao(planoEntrega.avaliacao!.id);
+      if(response) {
+        (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
+          this.checaBotaoAderirToolbar();
+        });
+        /*consolidacao.status = "CONCLUIDO";
+        consolidacao.avaliacao_id = null;
+        consolidacao.avaliacao = undefined;
+        this.refreshConsolidacao(consolidacao);*/
+      }
+    } catch (error: any) {
+      this.error(error.message || error);
+    } finally {
+      this.submitting = false;
+    }
   }
 
   public cancelarConclusao(planoEntrega: PlanoEntrega) {
@@ -550,7 +602,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public desarquivar(planoEntrega: PlanoEntrega) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: planoEntrega.status, onClick: this.dao!.desarquivar.bind(this.dao) },
+      metadata: { tipo: "PlanoEntrega", entity: Object.assign({},planoEntrega, {arquivar: false}), novoStatus: planoEntrega.status, onClick: this.dao!.arquivar.bind(this.dao) },
       title: "Desarquivar Plano de Entregas",
       modalClose: (modalResult) => {
         if (modalResult) {
@@ -634,6 +686,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public canAdd() {
     return this.auth.hasPermissionTo('MOD_PENT_INCL');
-    //IMPLEMENTAR AS DEMAIS CONDIÇÕES*******************
+    /*
+    - (RN_PENT_Z) ... O usuário logado precisa possuir a capacidade "MOD_PENT_INCL"
+     */
   }
 }

@@ -32,12 +32,19 @@ export class ColumnOptionsComponent extends ComponentBase implements OnInit {
   private _allButtons?: ToolbarButton[] = undefined;
   private _allOptions?: ToolbarButton[] = undefined;
 
+  public lastRow: boolean = false;
+
   constructor(public injector: Injector) {
     super(injector);
     this.go = injector.get<NavigateService>(NavigateService);
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if(this.grid && this.grid.items.length > 1){
+      const last = this.grid.items.slice(-1);
+      this.lastRow = this.row.id == last[0].id;      
+    }
+  }
 
   public onMoveClick(up: boolean) {
     const list = this.grid!.items;
@@ -57,6 +64,10 @@ export class ColumnOptionsComponent extends ComponentBase implements OnInit {
 
   public get isRowEditing(): boolean {
     return this.row["id"] == (this.grid?.editing || {id: undefined})["id"];
+  }
+
+  public get isDeletedRow(): boolean {
+    return this.row['deleted_at']
   }
 
   public get isUpDownButtons(): boolean {
@@ -83,17 +94,20 @@ export class ColumnOptionsComponent extends ComponentBase implements OnInit {
 
   public get allButtons(): ToolbarButton[] {
     let hash = this.calcHashChanges();
-    if(!this._allButtons || this._hashButtons != hash) {
+    if(!this.isDeletedRow && (!this._allButtons || this._hashButtons != hash)) {
       this._hashButtons = hash;
       const dynamicButtons = this.dynamicButtons ? this.dynamicButtons(this.row, this.column.metadata) : [];
       this._allButtons = [...dynamicButtons, ...this.buttons];
       this.recalcWith();
-    }
+    }    
     return this._allButtons!;
   }
 
   public get allOptions(): ToolbarButton[] {
     let hash = this.calcHashChanges();
+    if(this.isDeletedRow){
+      this.options = this.options?.filter(o => o.label === "Logs");
+    }
     if(!this._allOptions || this._hashOptions != hash) {
       this._hashOptions = hash;
       const dynamicOptions = this.dynamicOptions ? this.dynamicOptions(this.row, this.column.metadata) : [];

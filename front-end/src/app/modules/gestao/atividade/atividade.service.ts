@@ -4,7 +4,7 @@ import { BadgeButton } from 'src/app/components/badge/badge.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { Afastamento } from 'src/app/models/afastamento.model';
-import { Atividade, AtividadeChecklist } from 'src/app/models/atividade.model';
+import { Atividade, Checklist } from 'src/app/models/atividade.model';
 import { Base } from 'src/app/models/base.model';
 import { Comentario } from 'src/app/models/comentario';
 import { PlanoTrabalhoConsolidacao } from 'src/app/models/plano-trabalho-consolidacao.model';
@@ -106,13 +106,13 @@ export class AtividadeService {
   }
 
   public buildChecklist(tipoAtividade?: TipoAtividade, checklistControl?: AbstractControl) {
-    let checks: AtividadeChecklist[] = this.util.merge((tipoAtividade?.checklist || []).map(a => {
+    let checks: Checklist[] = this.util.merge((tipoAtividade?.checklist || []).map(a => {
       return {
         id: a.key,
         texto: a.value,
         checked: false
-      } as AtividadeChecklist;
-    }), (checklistControl?.value || []).filter((b: AtividadeChecklist) => b.checked), (a: AtividadeChecklist, b: AtividadeChecklist) => {
+      } as Checklist;
+    }), (checklistControl?.value || []).filter((b: Checklist) => b.checked), (a: Checklist, b: Checklist) => {
       if(a.id == b.id) {
         a.checked = b.checked;
         return true;

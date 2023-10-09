@@ -1,4 +1,4 @@
-<separator [title]="lex.translate('Atividades')" [icon]="entityService.getIcon('Atividade')">
+<separator collapse [collapsed]="false" [title]="lex.translate('Atividades')" [icon]="entityService.getIcon('Atividade')">
     <grid [items]="itemsEntregas" #gridEntregas [minHeight]="0" expanded>
         <columns>
             <column type="expand" [icon]="entityService.getIcon('PlanoTrabalhoConsolidacao')" [align]="'center'" [hint]="lex.translate('Consolidação')" [template]="columnConsolidacao" [expandTemplate]="columnExpandedConsolidacao">
@@ -81,18 +81,45 @@
             </column>
             <column title="Entrega" [template]="columnEntrega">
                 <ng-template let-row="row" #columnEntrega>
-                    <badge [icon]="entityService.getIcon('Entrega')" [label]="row.badge.nome" [textValue]="row.badge.descricao"></badge>
+                    <b>{{row.badge.descricao}}</b>
                 </ng-template>
             </column>
-            <column title="% Força Trab. Planejado" [template]="columnForcaTrabalho">
+            <column title="% Força Trab. Planejado" [template]="columnForcaTrabalho" [width]="100">
                 <ng-template let-row="row" #columnForcaTrabalho>
                     <badge color="light" [label]="row.entrega.forca_trabalho + '%'"></badge>
+                </ng-template>
+            </column>
+            <column [title]="'Meta\nRealizado'" [template]="columnMetaRealizado" [width]="100">
+                <ng-template let-row="row" #columnMetaRealizado>
+                    <badge icon="bi bi-graph-up-arrow" [textValue]="row.meta" color="light" hint="Meta"></badge><br>
+                    <badge icon="bi bi-check-lg" [textValue]="row.metaRealizado" color="light" hint="Realizado"></badge>
+                </ng-template>
+            </column>
+            <column title="Progresso" [template]="columnProgresso" [width]="150">
+                <ng-template let-row="row" #columnProgresso>
+                    <progress-bar [value]="row.progresso_realizado" color="success"></progress-bar>
+                </ng-template>
+            </column>
+            <column [title]="'Objetivos/Processos'" [template]="columnObjProc" [editTemplate]="columnObjProc" [width]="200">
+                <ng-template let-row="row" #columnObjProc>
+                    <separator [title]="lex.translate('Objetivos')" *ngIf="row.objetivos?.length" collapse [collapsed]="true">
+                        <div *ngFor="let pObjetivo of row.objetivos" class="objetivo d-flex align-items-center">
+                            <button class="btn btn-sm btn-outline-info me-2" (click)="showPlanejamento(pObjetivo.objetivo.planejamento_id)"><i class="bi bi-eye"></i></button>
+                            <small>{{pObjetivo.objetivo.nome}}</small>
+                        </div>
+                    </separator>
+                    <separator [title]="lex.translate('Processos')" *ngIf="row.processos?.length" collapse [collapsed]="true">
+                        <div *ngFor="let pProcesso of row.processos" class="objetivo d-flex align-items-center">
+                            <button class="btn btn-sm btn-outline-info me-2" (click)="showCadeiaValor(pProcesso.processo.cadeia_valor_id)"><i class="bi bi-eye"></i></button>
+                            <small>{{pProcesso.processo.nome}}</small>
+                        </div>
+                    </separator>
                 </ng-template>
             </column>
         </columns>
     </grid>
 </separator>
-<separator [title]="lex.translate('Ocorrências')" [icon]="entityService.getIcon('PlanoTrabalhoConsolidacao')">
+<separator collapse [collapsed]="false" [title]="lex.translate('Ocorrências')" [icon]="entityService.getIcon('PlanoTrabalhoConsolidacao')">
     <grid [items]="itemsOcorrencias" [minHeight]="0" #gridOcorrencia [form]="formOcorrencia" 
         [hasDelete]="!disabled" [hasAdd]="!disabled" [hasEdit]="!disabled"
         [add]="addOcorrencia.bind(this)" [load]="loadOcorrencia.bind(this)" 
@@ -105,7 +132,7 @@
         </columns>
     </grid>
 </separator>
-<separator [title]="lex.translate('Afastamentos')" [icon]="entityService.getIcon('Afastamento')">
+<separator collapse [collapsed]="false" [title]="lex.translate('Afastamentos')" [icon]="entityService.getIcon('Afastamento')">
     <grid [items]="itemsAfastamentos" [minHeight]="0" #gridAfastamento [add]="addAfastamento.bind(this)" [hasEdit]="false" [hasDelete]="false" [hasAdd]="!disabled" editable>
         <columns>
             <column title="Início" [width]="300" type="datetime" field="data_inicio"></column>
@@ -120,7 +147,7 @@
         </columns>
     </grid>
 </separator>
-<separator [title]="lex.translate('Comparecimentos')" [icon]="entityService.getIcon('Comparecimento')">
+<separator collapse [collapsed]="false" [title]="lex.translate('Comparecimentos')" [icon]="entityService.getIcon('Comparecimento')">
     <grid [items]="itemsComparecimentos" [minHeight]="0" #gridComparecimento [form]="formComparecimento" 
         [hasDelete]="!disabled" [hasAdd]="!disabled" [hasEdit]="!disabled"
         [add]="addComparecimento.bind(this)" [load]="loadComparecimento.bind(this)" 

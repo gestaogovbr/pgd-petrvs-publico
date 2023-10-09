@@ -1,6 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 
 .petrvs {
+
+  html, body {
+    height:100%;
+  }
   /* Reseta todas as propriedades anteriores */
   all: initial;
   cursor: inherit;
@@ -254,7 +258,7 @@
   .withTextValue {
     padding: 1px;
     i {
-      margin: 5px;
+      margin: 2px 5px;
     }
   }
 
@@ -272,7 +276,15 @@
     }
   }
 
-  
+  .deleted_at {
+    td {
+      background: #4b04041c;
+    }
+  }
+
+  .table-responsive {
+    height: 100%;
+  }
   
 }
 

@@ -5,15 +5,16 @@
         <input-switch [size]="3" labelPosition="left" label="Agrupar por Un." controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
         <input-switch [size]="2" labelPosition="left" label="Principais" controlName="principais" [control]="filter!.controls.principais" (change)="onPrincipaisChange($event)" [labelInfo]="lex.noun('Unidade', true) + ' onde o ' + lex.noun('usuario') + ' é integrante, incluindo unidades superiores das geridas por ele'"></input-switch>
     </toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed" [visible]="showFilter">
+    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed" [visible]="showFilter">
         <div class="row">
-            <input-text [size]="5" label="Nome" controlName="nome" [control]="filter!.controls.nome" [placeholder]="'Nome do '+lex.translate('plano de entrega')" [attr.maxlength]=250></input-text>
-            <input-search #unidade [size]="4" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+            <input-text [size]="4" label="Nome" controlName="nome" [control]="filter!.controls.nome" [placeholder]="'Nome do '+lex.translate('plano de entrega')" [attr.maxlength]=250></input-text>
+            <input-search #unidade [size]="4" [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao"></input-search>
             <input-select [size]="3" label="Status" controlName="status" [items]="lookup.PLANO_ENTREGA_STATUS" itemTodos="- Todos -" [valueTodos]="null"></input-select>
+            <input-switch [size]="1" label="Arq." controlName="arquivadas" [control]="filter!.controls.arquivadas" labelInfo="Listar também os planos de entregas arquivados"></input-switch>
         </div>
         <div class="row">
-            <input-search #planejamento [size]="4" controlName="planejamento_id" [dao]="planejamentoDao"></input-search>
-            <input-search #cadeiaValor [size]="4" controlName="cadeia_valor_id" [dao]="cadeiaValorDao"></input-search>
+            <input-search #planejamento [size]="4" [control]="filter!.controls.planejamento_id" controlName="planejamento_id" [dao]="planejamentoDao"></input-search>
+            <input-search #cadeiaValor [size]="4" [control]="filter!.controls.cadeia_valor_id" controlName="cadeia_valor_id" [dao]="cadeiaValorDao"></input-search>
             <input-datetime [size]="2" date label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" [labelInfo]="'Data de início do '+ lex.translate('plano de entrega')"></input-datetime>
             <input-datetime [size]="2" date label="Fim" controlName="data_fim" [control]="filter!.controls.data_fim" [labelInfo]="'Data do fim do '+ lex.translate('plano de entrega')"></input-datetime>
         </div>
@@ -66,10 +67,11 @@
                 <badge *ngIf="row.cadeia_valor" [maxWidth]="300" color="light" [icon]="entityService.getIcon('CadeiaValor')" [label]="row.cadeia_valor?.nome"></badge>
             </ng-template>
         </column>
-        <column title="Status" [template]="columnStatus">
+        <column [title]="'Status\nAvaliação'" [template]="columnStatus">
             <ng-template let-row="row" #columnStatus>
-                <badge [color]="lookup.getColor(lookup.PLANO_ENTREGA_STATUS, row.status)" [icon]="lookup.getIcon(lookup.PLANO_ENTREGA_STATUS, row.status)" [label]="lookup.getValue(lookup.PLANO_ENTREGA_STATUS, row.status)"></badge>
-                <!-- <badge *ngIf="row.data_cancelamento" color="danger" icon="bi bi-dash-circle" label="Cancelado"></badge> -->
+                <badge [color]="lookup.getColor(lookup.PLANO_ENTREGA_STATUS, row.status)" [icon]="lookup.getIcon(lookup.PLANO_ENTREGA_STATUS, row.status)" [label]="lookup.getValue(lookup.PLANO_ENTREGA_STATUS, row.status)"></badge><br>
+                <badge *ngIf="row.data_arquivamento" color="warning" icon="bi bi-inboxes" label="Arquivado"></badge>
+                <avaliar-nota-badge *ngIf="row.avaliacao" [align]="'left'" [tipoAvaliacao]="row.avaliacao.tipo_avaliacao" [nota]="row.avaliacao.nota"></avaliar-nota-badge>
             </ng-template>
         </column>
         <column type="options" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>

@@ -10,7 +10,7 @@
     MOD_PTR_CNC - Permite cancelar planos de trabalho
     MOD_PTR_USERS_INCL - Permite incluir planos de trabalho para usuários que não estão lotados nas áreas de trabalho do usuário logado
     MOD_PTR_INCL_SEM_LOT - Permite incluir planos de trabalho para usuários que não estão lotados na unidade executora
-    MOD_PTR_INTSC_DATA - Permite incluir planos de trabalho que possuam períodos conflitantes com outro plano já existente na mesma unidade executora
+    MOD_PTR_INTSC_DATA - Permite incluir plano de trabalho que possua período conflitante com outro já existente na mesma unidade/servidor
 ~~~
 
 ## BANCO DE DADOS
@@ -50,13 +50,14 @@ Campos obrigatórios:
 - (RN_PTR_L) Um Plano de Trabalho adquire o status 'CONCLUIDO' quando a sua última consolidação for avaliada;
 - (RN_PTR_Y) Para incluir um Plano de Trabalho para um participante, é necessário que este esteja lotado em uma das áreas de trabalho do usuário logado, a menos que este possua a capacidade MOD_PTR_USERS_INCL;
 - (RN_PTR_Z) Na inclusão de um Plano de Trabalho, é necessário que o participante esteja lotado na Unidade Executora, a menos que o usuário logado possua a capacidade MOD_PTR_INCL_SEM_LOT;
-- (RN_PTR_AA) Um Plano de Trabalho não pode ser incluído se apresentar período conflitante com outro Plano de Trabalho já existente para a mesma Unidade Executora, a menos que o usuário logado possua a capacidade MOD_PTR_INTSC_DATA;
+- (RN_PTR_AA) Um Plano de Trabalho não pode ser incluído se apresentar período conflitante com outro Plano de Trabalho já existente para a mesma unidade/servidor, a menos que o usuário logado possua a capacidade MOD_PTR_INTSC_DATA;
 - (RN_PTR_AB) Um Plano de Trabalho não pode ser excluído;
+- (RN_PTR_AC) Quando um participante tiver um plano de trabalho criado, ele se tornará automaticamente um COLABORADOR da sua unidade executora;
+- (RN_PTR_AD) Após criado um plano de trabalho, a sua unidade e programa não podem mais ser alterados.
 
 ## FLUXOS (STATUS & AÇÕES)
 
-![Fig. 1 - Fluxos do Plano de Trabalho](docs/Imagens/Fluxo_Planos_Trabalhos
-.jpeg)
+![Fig. 1 - Fluxos do Plano de Trabalho](../Imagens/Fluxos_Planos_Trabalhos.jpeg)
 
 ~~~text
 status possíveis = ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO', 'CONCLUIDO', 'SUSPENSO', 'CANCELADO']
@@ -105,7 +106,7 @@ Ação: ALTERAR -> não muda o status do plano se ele estiver com o status 'INCL
 */*Ação: ARQUIVAR -> não muda o status do plano ('CONCLUIDO');
 
 - (RN_PTR_N) Condições para que um Plano de Trabalho possa ser arquivado:
-  - o plano precisa estar com o status CONCLUIDO, não ter sido arquivado, e:
+  - o plano precisa estar com o status CONCLUIDO ou CANCELADO, não ter sido arquivado, e:
   - o usuário logado precisa ser o participante ou o gestor da Unidade Executora;
 
 */*Ação: ATIVAR -> o plano vai para o status 'ATIVO';
@@ -146,17 +147,18 @@ Ação: ENVIAR PARA ASSINATURA -> o plano vai para o status 'AGUARDANDO_ASSINATU
 - (RN_PTR_U) Condições para que um Plano de Trabalho possa ser enviado para assinatura:
   - o plano precisa estar com o status INCLUIDO; e
     - o usuário logado precisa ser o participante do plano ou gestor da sua Unidade Executora; e
-    - o programa de gestão precisa exigir não só a assinatura do usuário logado, e
-***************    - o plano precisa possuir ao menos uma entrega, e:
+    - se a assinatura do usuário logado for exigida, ele já deve ter assinado o TCR; e
+    - devem existir assinaturas exigíveis ainda pendentes; e
+    - o plano precisa possuir ao menos uma entrega.
 
 */*Ação: INSERIR/INCLUIR -> o plano adquire o status de 'INCLUIDO';
 
 - (RN_PTR_V) Condições para que um Plano de Trabalho possa ser criado:
   - o usuário logado precisa possuir a capacidade "MOD_PTR_INCL", e:
     - o usuário logado precisa ser um participante do PGD, habilitado, ou ser gestor da Unidade Executora do plano; (RN_PTR_B); e
-    - o participante do plano precisa estar lotado em uma das áreas de trabalho do usuário logado, ou este deve possuir a capacidade MOD_PTR_USERS_INCL; e
-    - o participante do plano precisa estar lotado na Unidade Executora, ou o usuário logado possuir a capacidade MOD_PTR_INCL_SEM_LOT; e
-    - o novo Plano de Trabalho não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA
+***** REDISCUTIR ESSA REGRA *****- o participante do plano precisa estar lotado em uma das áreas de trabalho do usuário logado, ou este deve possuir a capacidade MOD_PTR_USERS_INCL (RN_PTR_Y); e**
+****** REDISCUTIR ESSA REGRA **********- o participante do plano precisa estar lotado na Unidade Executora, ou o usuário logado possuir a capacidade MOD_PTR_INCL_SEM_LOT (RN_PTR_Z); e**
+    - o novo Plano de Trabalho não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA (RN_PTR_AA)
 
 */*Ação: REATIVAR -> o plano adquire novamente o status de 'ATIVO';
 

@@ -31,7 +31,6 @@ export class InputMultitoggleComponent extends InputBase implements OnInit {
   @Input() form?: FormGroup;
   @Input() source?: any;
   @Input() path?: string;
-  @Input() classButton: string = "btn-outline-primary";
   @Input() required?: string;
   @Input() set value(value: LookupItem[]) {
     if(JSON.stringify(this._value) != JSON.stringify(value)) {
@@ -101,4 +100,9 @@ export class InputMultitoggleComponent extends InputBase implements OnInit {
   public isChecked(item: LookupItem): boolean {
     return !!this.value.find(x => x.key == item.key);
   }
+
+  public classButton(item: LookupItem): string {
+    return this.isDisabled && !this.isChecked(item) ? "btn-outline-secundary" : "btn-outline-primary";
+  }
+
 }

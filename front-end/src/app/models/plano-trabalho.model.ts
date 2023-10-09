@@ -31,6 +31,7 @@ export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
     public status: PlanoTrabalhoStatus = 'INCLUIDO'; // Status atual do plano de trabalho
     public forma_contagem_carga_horaria: TipoCargaHoraria = "DIA"; // Forma de contagem padrão da carga horária
     public metadados: PlanoMetadados | undefined = undefined; /* Campo virtual contendo informações calculadas pelo servidor */
+    public arquivar: boolean = false;                                 // Campo virtual utilizado pelos métodos arquivar/desarquivar
     public entregas: PlanoTrabalhoEntrega[] = []; /* Entregas vinculadas ao Plano de Trabalho*/
     public documentos: Documento[] = [];
     public atividades: Atividade[] = [];

@@ -72,7 +72,7 @@ class DocumentoController extends ControllerBase
             ]);
             return response()->json([
                 'success' => true,
-                'rows' => $this->service->assinar($data)
+                'rows' => $this->service->assinar($data,$request)
             ]); 
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);

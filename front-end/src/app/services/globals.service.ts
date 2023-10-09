@@ -17,6 +17,7 @@ export class GlobalsService {
   public URL_SEI: string = "https://sei.prf.gov.br/"; /* Buscar essa configuração da Entidade */
   public IMAGES = environment.images;
   public ENTIDADE = environment.entidade || "";
+  public ENV = environment.env || "";
   public SUPPORT_URL = environment.suporte || "";
   public app?: AppComponent;
   public set toolbarButtons(value: ToolbarButton[]) {
@@ -38,7 +39,7 @@ export class GlobalsService {
   public auth: AuthService;
   public go: NavigateService;
   public contexto?: MenuContexto;
-  
+
   constructor(@Inject(DOCUMENT) private document: any, public injector: Injector) {
     this.auth = injector.get<AuthService>(AuthService);
     this.go = injector.get<NavigateService>(NavigateService);
@@ -107,7 +108,7 @@ export class GlobalsService {
   public get initialRoute(): string[] {
     //@ts-ignore
     const route = typeof PETRVS_EXTENSION_ROUTE != "undefined" ? PETRVS_EXTENSION_ROUTE : typeof PETRVS_ROUTE != "undefined" ? PETRVS_ROUTE : "/home";
-    const strRoute = this.isEmbedded ? route : "/home";
+    const strRoute = this.isEmbedded ? route : (this.contexto ? "/home/"+ this.contexto!.key.toLowerCase() : "/home");
     return strRoute.substring(strRoute.startsWith("/") ? 1 : 0).split("/");
   }
 
@@ -125,7 +126,7 @@ export class GlobalsService {
   private _sanitizer?: DomSanitizer;
   public get sanitizer(): DomSanitizer { this._sanitizer = this._sanitizer || this.injector.get<DomSanitizer>(DomSanitizer); return this._sanitizer };
 
-  
+
 
   public getResourcePath(resource: string) {
     const key = "URL_" + encodeURI(resource);
@@ -166,7 +167,7 @@ export class GlobalsService {
   }
 
   public get theme(): string {
-    const theme = this.auth.usuarioConfig.theme   
+    const theme = this.auth.usuarioConfig.theme
     return theme ? theme : 'light'
   }
 }

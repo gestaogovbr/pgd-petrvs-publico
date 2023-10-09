@@ -20,7 +20,7 @@ class PlanoTrabalhoConsolidacao extends ModelBase
         'plano_trabalho_id', /* char(36); NOT NULL; */
         //'data_conclusao', /* date; NOT NULL; */
         //'status', /* enum('CONCLUIDO','AVALIADO','INCLUIDO'); */// Status atual da consolidação
-        'avaliacao_id', /* char(36); */
+        //'avaliacao_id', /* char(36); */
         //'deleted_at', /* timestamp; */
     ];
 

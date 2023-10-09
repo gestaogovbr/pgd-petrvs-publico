@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
 use Database\Seeders\BulkSeeeder;
 
+use App\Models\Cidade;
 use App\Models\TipoAtividade;
 use App\Models\TipoAvaliacao;
 use App\Models\TipoModalidade;
@@ -16,6 +17,8 @@ use App\Models\TipoDocumento;
 use App\Models\Programa;
 use App\Models\Template;
 use App\Models\Unidade;
+use App\Models\EixoTematico;
+use App\Models\Entrega;
 
 class IN24_2023Seeder extends Seeder
 {
@@ -26,9 +29,15 @@ class IN24_2023Seeder extends Seeder
      */
     
     public $timenow;
+    public $brasilia;
+    public $unidade_prf;
 
     public function __construct(){
         $this->timenow = now();
+        $this->brasilia = Cidade::where('codigo_ibge', '5300108')->sole();
+
+        // Encontra unidade inicial (instituidora) para registro de programa
+        $this->unidade_prf = Unidade::where('codigo', '30802')->first();
     }
 
     public function run(){
@@ -39,8 +48,8 @@ class IN24_2023Seeder extends Seeder
                 "updated_at" => $this->timenow,
                 "deleted_at" => null,
                 "nome" => "Atividades de gestão",
-                "esforco" => 40.0,
-                "dias_planejado" => 5.0,
+                "esforco" => 8.00,
+                "dias_planejado" => 0.00,
                 "etiquetas" => "[{\"key\": \"4533a61809adcc2fa2ff47f739b4105e\", \"icon\": \"bi bi-archive\", \"color\": \"#198754\", \"value\": \"Atividades de gestão\"}]",
                 "checklist" => null,
                 "comentario" => "São aquelas relacionadas às atividades como planejamento e gestão estratégica, tecnologia, orçamento, recursos humanos, gestão de patrimônio, gestão documental.",
@@ -51,8 +60,8 @@ class IN24_2023Seeder extends Seeder
                 "updated_at" => $this->timenow,
                 "deleted_at" => null,
                 "nome" => "Atividades de assessoria",
-                "esforco" => 40.0,
-                "dias_planejado" => 5.0,
+                "esforco" => 8.00,
+                "dias_planejado" => 0.00,
                 "etiquetas" => "[{\"key\": \"fe25fa03c17bc91725b3660fca952d56\", \"icon\": \"bi bi-check-circle\", \"color\": \"#ffc107\", \"value\": \"Atividades de assessoria\"}]",
                 "checklist" => null,
                 "comentario" => "São as mais variadas atividade exercidas em assessorias de autoridades como ministros, secretários executivos e\/ou dirigentes de órgãos\/entidades.",
@@ -63,8 +72,8 @@ class IN24_2023Seeder extends Seeder
                 "updated_at" => $this->timenow,
                 "deleted_at" => null,
                 "nome" => "Atividades de suporte",
-                "esforco" => 40.0,
-                "dias_planejado" => 5.0,
+                "esforco" => 8.00,
+                "dias_planejado" => 0.00,
                 "etiquetas" => "[{\"key\": \"521544bdb1b9e1feac71062cd164a5c0\", \"icon\": \"bi bi-archive\", \"color\": \"#198754\", \"value\": \"Atividades de suporte\"}]",
                 "checklist" => null,
                 "comentario" => "São aquelas que possuem natureza administrativa e que contribuem para a entrega de atividades finalísticas."
@@ -75,8 +84,8 @@ class IN24_2023Seeder extends Seeder
                 "updated_at" => $this->timenow,
                 "deleted_at" => null,
                 "nome" => "Fiscalização e controle",
-                "esforco" => 40.0,
-                "dias_planejado" => 5.0,
+                "esforco" => 8.00,
+                "dias_planejado" => 0.00,
                 "etiquetas" => "[{\"key\": \"05aa8046e6dfbbe9a30275685731e03b\", \"icon\": \"bi bi-cone-striped\", \"color\": \"#dc3545\", \"value\": \"Fiscalização e controle\"}]",
                 "checklist" => null,
                 "comentario" => "Atividades relacionadas à auditoria, controle interno, fiscalização como aquelas que ocorrem nos órgãos de controle ou algumas agências reguladoras."
@@ -87,12 +96,24 @@ class IN24_2023Seeder extends Seeder
                 "updated_at" => $this->timenow,
                 "deleted_at" => null,
                 "nome" => "Ensino, pesquisa e extensão",
-                "esforco" => 40.0,
-                "dias_planejado" => 5.0,
+                "esforco" => 8.00,
+                "dias_planejado" => 0.00,
                 "etiquetas" => "[{\"key\": \"bf154c8713d204d3ac920bf74b433663\", \"icon\": \"bi bi-book\", \"color\": \"#0dcaf0\", \"value\": \"Ensino, pesquisa e extensão\"}]",
                 "checklist" => null,
                 "comentario" => "Aquelas atividades exercidas em instituições de ensino, como por exemplo ensino superior."
             ],
+            [
+                "id" => "23ba35e5-dcbf-4931-a3b7-b9e058877f0f",
+                "created_at" => $this->timenow,
+                "updated_at" => $this->timenow,
+                "deleted_at" => NULL,
+                "nome" => "Projetos",
+                "esforco" => 8.00,
+                "dias_planejado" => 0.00,
+                "etiquetas" => "[{\"key\": \"178c526ffa79c5ce7f55c58748c87c19\", \"icon\": \"bi bi-bar-chart\", \"color\": \"#fd7777\", \"value\": \"Projetos\"}]",
+                "checklist" => NULL,
+                "comentario" => "São atividades com começo e fim determinados, entregas concretas e prazos.",
+            ],  
         );
 
         $tipos_modalidades = array(
@@ -262,168 +283,168 @@ class IN24_2023Seeder extends Seeder
         );
       
         $tipos_avaliacoes_notas = array(
-          [
-            "id" => "084221e6-d68e-4bfa-a7ab-dd5f1bc9a3a9",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "sequencia" => 2,
-            "nota" => "\"8\"",
-            "descricao" => "(Alto desempenho) Plano de trabalho executado acima do esperado",
-            "pergunta" => "O que pode melhorar?",
-            "aprova" => 0,
-            "justifica" => 1,
-            "icone" => "bi bi-building",
-            "cor" => "#42f09f",
-            "codigo" => "8",
-            "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5"
-          ],
-          [
+          array(
             "id" => "1084fb8d-20ea-4fd2-bf30-8aa70f2f55f6",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
-            "deleted_at" => null,
+            "deleted_at" => NULL,
             "sequencia" => 1,
-            "nota" => "\"10\"",
-            "descricao" => "(Excepcional) Plano de entregas executado com desempenho muito acima do esperado",
+            "nota" => "\"Excepcional\"",
+            "descricao" => "Plano de entregas executado com desempenho muito acima do esperado",
             "pergunta" => "Do que você gostou?",
             "aprova" => 0,
-            "justifica" => 1,
+            "justifica" => 0,
             "icone" => "bi bi-award",
             "cor" => "#198754",
-            "codigo" => "10",
-            "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390"
-          ],
-          [
-            "id" => "428f6d53-2ae1-49cb-b8bd-8cd76be2da05",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "sequencia" => 5,
-            "nota" => "\"1\"",
-            "descricao" => "(Não executado) Plano de entregas não executado",
-            "pergunta" => "Por quê não aceitar a atividade?",
-            "aprova" => 0,
-            "justifica" => 1,
-            "icone" => "bi bi-camera-video-off",
-            "cor" => "#dc3545",
-            "codigo" => "1",
-            "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390"
-          ],
-          [
-            "id" => "43c3b0e8-b25c-4b2a-bc5c-67d1b0e3cb86",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "sequencia" => 4,
-            "nota" => "\"4\"",
-            "descricao" => "(Inadequado) Plano de trabalho executado abaixo do esperado ou parcialmente executado",
-            "pergunta" => "Por quê não aceitar a atividade?",
-            "aprova" => 0,
-            "justifica" => 1,
-            "icone" => "bi bi-bug",
-            "cor" => "#fd7e14",
-            "codigo" => "4",
-            "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5"
-          ],
-          [
-            "id" => "5c7d6f5a-5990-4f76-add0-3290613b9ef2",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "sequencia" => 3,
-            "nota" => "\"7\"",
-            "descricao" => "(Adequado) Plano de trabalho executado dentro do esperado",
-            "pergunta" => "O que pode melhorar?",
-            "aprova" => 0,
-            "justifica" => 1,
-            "icone" => "bi bi-brightness-alt-high",
-            "cor" => "#ffc107",
-            "codigo" => "7",
-            "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5"
-          ],
-          [
+            "codigo" => "Excepcional",
+            "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390",
+          ),
+          array(
             "id" => "62a6ef53-b7c7-4fb9-b1c5-8261d60956c0",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
-            "deleted_at" => null,
+            "deleted_at" => NULL,
             "sequencia" => 1,
-            "nota" => "\"10\"",
-            "descricao" => "(Excepcional) Plano de trabalho executado muito acima do esperado",
+            "nota" => "\"Excepcional\"",
+            "descricao" => "Plano de trabalho executado muito acima do esperado",
             "pergunta" => "O que pode melhorar?",
             "aprova" => 0,
             "justifica" => 1,
             "icone" => "bi bi-award",
             "cor" => "#198754",
-            "codigo" => "10",
-            "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5"
-          ],
-          [
+            "codigo" => "Excepcional",
+            "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
+          ),
+          array(
+            "id" => "084221e6-d68e-4bfa-a7ab-dd5f1bc9a3a9",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "sequencia" => 2,
+            "nota" => "\"Alto desempenho\"",
+            "descricao" => "Plano de trabalho executado acima do esperado",
+            "pergunta" => "O que pode melhorar?",
+            "aprova" => 0,
+            "justifica" => 0,
+            "icone" => "bi bi-building",
+            "cor" => "#42f09f",
+            "codigo" => "Alto desempenho",
+            "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
+          ),
+          array(
+            "id" => "960d1216-ba21-4ac3-a35e-9553766d8f4b",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "sequencia" => 2,
+            "nota" => "\"Alto desempenho\"",
+            "descricao" => "Plano de entregas executado com desempenho acima do esperado",
+            "pergunta" => "Do que você gostou?",
+            "aprova" => 0,
+            "justifica" => 0,
+            "icone" => "bi bi-building",
+            "cor" => "#1de286",
+            "codigo" => "Alto desempenho",
+            "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390",
+          ),
+          array(
+            "id" => "5c7d6f5a-5990-4f76-add0-3290613b9ef2",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "sequencia" => 3,
+            "nota" => "\"Adequado\"",
+            "descricao" => "Plano de trabalho executado dentro do esperado",
+            "pergunta" => "O que pode melhorar?",
+            "aprova" => 0,
+            "justifica" => 0,
+            "icone" => "bi bi-brightness-alt-high",
+            "cor" => "#ffc107",
+            "codigo" => "Adequado",
+            "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
+          ),
+          array(
             "id" => "788b122a-e444-41c4-89b4-440b47cb6fa5",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
-            "deleted_at" => null,
+            "deleted_at" => NULL,
             "sequencia" => 3,
-            "nota" => "\"7\"",
-            "descricao" => "(Adequado) Plano de entregas executado dentro do esperado",
+            "nota" => "\"Adequado\"",
+            "descricao" => "Plano de entregas executado dentro do esperado",
             "pergunta" => "Do que você gostou?",
             "aprova" => 0,
-            "justifica" => 1,
+            "justifica" => 0,
             "icone" => "bi bi-brightness-alt-high",
             "cor" => "#ffc107",
-            "codigo" => "7",
-            "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390"
-          ],
-          [
+            "codigo" => "Adequado",
+            "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390",
+          ),
+          array(
+            "id" => "43c3b0e8-b25c-4b2a-bc5c-67d1b0e3cb86",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "sequencia" => 4,
+            "nota" => "\"Inadequado\"",
+            "descricao" => "Plano de trabalho executado abaixo do esperado ou parcialmente executado",
+            "pergunta" => "Por quê não aceitar a atividade?",
+            "aprova" => 0,
+            "justifica" => 1,
+            "icone" => "bi bi-bug",
+            "cor" => "#fd7e14",
+            "codigo" => "Inadequado",
+            "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
+          ),
+          array(
+            "id" => "fd9e3a0c-cd82-49ec-8dc4-f6127d0fbad8",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "sequencia" => 4,
+            "nota" => "\"Inadequado\"",
+            "descricao" => "Plano de entregas executado abaixo do esperado",
+            "pergunta" => "O que pode melhorar?",
+            "aprova" => 0,
+            "justifica" => 0,
+            "icone" => "bi bi-bug",
+            "cor" => "#fd7e14",
+            "codigo" => "Inadequado",
+            "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390",
+          ),
+          array(
+            "id" => "428f6d53-2ae1-49cb-b8bd-8cd76be2da05",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "sequencia" => 5,
+            "nota" => "\"Não executado\"",
+            "descricao" => "Plano de entregas não executado",
+            "pergunta" => "Por quê não aceitar a atividade?",
+            "aprova" => 0,
+            "justifica" => 0,
+            "icone" => "bi bi-camera-video-off",
+            "cor" => "#dc3545",
+            "codigo" => "Não executado",
+            "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390",
+          ),
+          array(
             "id" => "869b9687-e61d-4260-8178-aa8d9dab8a10",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
-            "deleted_at" => null,
+            "deleted_at" => NULL,
             "sequencia" => 5,
-            "nota" => "\"1\"",
-            "descricao" => "(Não executado) Plano de trabalho integralmente não executado.",
+            "nota" => "\"Não executado\"",
+            "descricao" => "Plano de trabalho integralmente não executado.",
             "pergunta" => "Por quê não aceitar a atividade?",
             "aprova" => 0,
             "justifica" => 1,
             "icone" => "bi bi-bug",
             "cor" => "#dc3545",
-            "codigo" => "1",
-            "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5"
-          ],
-          [
-            "id" => "960d1216-ba21-4ac3-a35e-9553766d8f4b",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "sequencia" => 2,
-            "nota" => "\"8\"",
-            "descricao" => "(Alto desempenho) Plano de entregas executado com desempenho acima do esperado",
-            "pergunta" => "Do que você gostou?",
-            "aprova" => 0,
-            "justifica" => 1,
-            "icone" => "bi bi-building",
-            "cor" => "#1de286",
-            "codigo" => "8",
-            "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390"
-          ],
-          [
-            "id" => "fd9e3a0c-cd82-49ec-8dc4-f6127d0fbad8",
-            "created_at" => $this->timenow,
-            "updated_at" => $this->timenow,
-            "deleted_at" => null,
-            "sequencia" => 4,
-            "nota" => "\"4\"",
-            "descricao" => "(Inadequado) Plano de entregas executado abaixo do esperado",
-            "pergunta" => "O que pode melhorar?",
-            "aprova" => 0,
-            "justifica" => 1,
-            "icone" => "bi bi-bug",
-            "cor" => "#fd7e14",
-            "codigo" => "4",
-            "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390"
-          ]
+            "codigo" => "Não executado",
+            "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
+          ),
         );
-
+        
         $tipos_avaliacoes_justificativas= array(
           [
             "id" => "0006b44a-1eba-45a4-a64f-a3199dcd2264",
@@ -1015,8 +1036,6 @@ class IN24_2023Seeder extends Seeder
             ]
         );
 
-        // Encontra unidade inicial (instituidora) para registro de programa
-        $unidade = Unidade::where('codigo', 1)->first();
         $programas = array(
             [ 
                 "id" => "9ebed914-1b82-4df0-95da-b0c8fadbb6f2",
@@ -1034,6 +1053,7 @@ class IN24_2023Seeder extends Seeder
                 "periodicidade_valor" => 1,
                 "dias_tolerancia_consolidacao" => 10,
                 "dias_tolerancia_avaliacao" => 20,
+                "dias_tolerancia_recurso_avaliacao" => 20,
                 "nota_padrao_avaliacao" => "7",
                 "plano_trabalho_assinatura_participante" => 1,
                 "plano_trabalho_assinatura_gestor_lotacao" => 0,
@@ -1042,11 +1062,11 @@ class IN24_2023Seeder extends Seeder
                 "tipo_avaliacao_plano_trabalho_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
                 "tipo_avaliacao_plano_entrega_id" => "b0db190d-823d-4222-bc92-abff634f5390",
                 "tipo_justificativa_id" => "f2aef225-a391-4667-9c41-6bb537b18778",
-                "unidade_id" => $unidade->id,
+                "unidade_id" => $this->unidade_prf->id,
                 "template_tcr_id" => "39f087ce-8816-4be2-a28e-18e8a8e83010",
                 "tipo_documento_tcr_id" => "48bc6f30-a634-4a21-9717-6fe0dc0d4f2a",
                 "documento_id" => NULL,
-            ]
+            ],
         );
 
         $templates = array(
@@ -1079,8 +1099,209 @@ class IN24_2023Seeder extends Seeder
             "unidade_id" => NULL,
           ],
         );
-        
-        // Existe uma sequência no Seeder. Se alterar vai dar ruim
+
+        $eixos_tematicos = array(
+          array(
+            "id" => "0a80af0f-cae3-409f-9df9-195721587acd",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Engajamento",
+            "icone" => "bi bi-bell",
+            "cor" => "#FAEDCD",
+            "descricao" => "...",
+          ),
+          array(
+            "id" => "10837269-6f23-4978-a86e-b5d280af389a",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Criatividade",
+            "icone" => "bi bi-bell",
+            "cor" => "#E9EDC9",
+            "descricao" => "...",
+          ),
+          array(
+            "id" => "4634cec2-f829-46f7-9dfe-29f094bc807a",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Respeito",
+            "icone" => "bi bi-bell",
+            "cor" => "#FAEDCD",
+            "descricao" => "...",
+          ),
+          array(
+            "id" => "6c930a94-f778-4943-925d-7812c33258cc",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Diversidade",
+            "icone" => "bi bi-bell",
+            "cor" => "#FAEDCD",
+            "descricao" => "...",
+          ),
+          array(
+            "id" => "a28d8bf1-30b9-496e-b903-9568829ba3c1",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Colaboração",
+            "icone" => "bi bi-bell",
+            "cor" => "#FAEDCD",
+            "descricao" => "...",
+          ),
+          array(
+            "id" => "06e244eb-bb98-470f-8846-575e4dab16ee",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Pessoas",
+            "icone" => "bi bi-brightness-alt-high",
+            "cor" => "#50bf31",
+            "descricao" => "Fomentar o bem-estar, o desenvolvimento de competências, a disciplina e o desempenho dos servidores",
+          ),
+          array(
+            "id" => "13903305-91a2-4515-bb6e-4bc7883c147a",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Geral",
+            "icone" => "bi bi-book",
+            "cor" => "#55dd97",
+            "descricao" => "Eixo utilizado no órgão/entidade que não utilize os eixos-temáticos.",
+          ),
+          array(
+            "id" => "524f043f-cafd-4bd1-8687-643ef6be7c9b",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Logística e Infraestrutura",
+            "icone" => "bi bi-building",
+            "cor" => "#AEE2FF",
+            "descricao" => "Prover recursos, infraestrutura e soluções tecnológicas inovadoras.",
+          ),
+          array(
+            "id" => "6b867a0a-9349-447a-a4b9-cdacd44e317b",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Comunicação",
+            "icone" => "bi bi-camera-reels",
+            "cor" => "#FAEDCD",
+            "descricao" => "Fortalecer a imagem e a transparência institucional",
+          ),
+          array(
+            "id" => "c49516a9-d457-4c68-b3a3-5a4de3edda14",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Integração",
+            "icone" => "bi bi-diagram-3",
+            "cor" => "#FFEB99",
+            "descricao" => "Aprimorar a articulação e integração interinstitucional.",
+          ),
+          array(
+            "id" => "c68ea6e6-2b40-42c8-bb46-8b5b27ee6766",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Segurança Pública com Cidadania",
+            "icone" => "bi bi-heart",
+            "cor" => "#d73c3c",
+            "descricao" => "Potencializar ações de educação para o trânsito. Intensificar a fiscalização e o policiamento ostensivo. Aprimorar o atendimento de acidentes de trânsito. Fomentar ações preventivas de promoção a mobilidade. Intensificar ações responsivas de promoção da livre circulação. Potencializar ações de enfrentamento à criminalidade. Intensificar o enfrentamento a crimes ambientais. Otimizar o policiamento por inteligência. Intensificar ações de garantia e promoção dos direitos humanos.",
+          ),
+          array(
+            "id" => "d543188b-67f4-4a7a-9282-f5f20757ea79",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Sistema Penitenciário",
+            "icone" => "fa-solid fa-check-double",
+            "cor" => "#D0C9C0",
+            "descricao" => "Gerir o Sistema Penitenciário Federal, promovendo o isolamento das lideranças criminosas.",
+          ),
+          array(
+            "id" => "de6d350e-9a51-4549-9104-a00d6125290e",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Gestão e Inovação",
+            "icone" => "bi bi-award",
+            "cor" => "#FFD4B2",
+            "descricao" => "Aprimorar a governança e a gestão por resultados.",
+          ),
+        );
+
+        $modelos_afericao_entregas = array(
+          array(
+            "id" => "23bf3c25-016f-4b9c-9a61-f0fba2a701ab",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Modelo - Valor",
+            "descricao" => "Modelo de entrega na qual a meta especifica valor. Ex.: Financeiro.",
+            "tipo_indicador" => "VALOR",
+            "lista_qualitativos" => NULL,
+            "unidade_id" => NULL,
+          ),
+          array(
+            "id" => "375520ce-b147-441e-8b5f-688ccd65e1a1",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Modelo - Percentual",
+            "descricao" => "Modelo de entrega com meta em percentual",
+            "tipo_indicador" => "PORCENTAGEM",
+            "lista_qualitativos" => NULL,
+            "unidade_id" => NULL,
+          ),
+          array(
+            "id" => "4ef8f42e-3753-471f-b984-ad75cd596aa6",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Modelo - Avaliação do público",
+            "descricao" => "Modelo de entrega onde o público destinatário avalia a entrega.",
+            "tipo_indicador" => "QUALITATIVO",
+            "lista_qualitativos" => "[{\"key\": \"AVALIAOEXCELENTE\", \"value\": \"Avaliação Excelente\"}, {\"key\": \"AVALIAOBOA\", \"value\": \"Avaliação boa\"}, {\"key\": \"NOAVALIADA\", \"value\": \"Não avaliada\"}, {\"key\": \"AVALIADACOMORUIM\", \"value\": \"Avaliada como ruim\"}, {\"key\": \"AVALIADACOMOPSSIMA\", \"value\": \"Avaliada como péssima\"}]",
+            "unidade_id" => NULL,
+          ),
+          array(
+            "id" => "7aeef185-4e4c-4007-af81-0d0b5d82f45b",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Modelo - Quantidade",
+            "descricao" => "Modelo de entrega na qual a meta permite aferição por quantidade.",
+            "tipo_indicador" => "QUANTIDADE",
+            "lista_qualitativos" => NULL,
+            "unidade_id" => NULL,
+          ),
+          array(
+            "id" => "9ce92424-5b04-453a-af9d-7297641315c5",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Modelo - Qualitativo - Ordinal",
+            "descricao" => "Modelo de entrega na qual a meta é aferida através de níveis de qualidade",
+            "tipo_indicador" => "QUALITATIVO",
+            "lista_qualitativos" => "[{\"key\": \"EXCELENTE\", \"value\": \"Excelente\"}, {\"key\": \"MUITOBOM\", \"value\": \"Muito bom\"}, {\"key\": \"BOM\", \"value\": \"Bom\"}, {\"key\": \"RAZOVEL\", \"value\": \"Razoável\"}, {\"key\": \"RUIMNOENTREGUE\", \"value\": \"Ruim (Não entregue)\"}, {\"key\": \"NEUTRO\", \"value\": \"Neutro\"}]",
+            "unidade_id" => NULL,
+          ),
+          array(
+            "id" => "a08cb8f5-1b08-4e59-8a50-81962adf273b",
+            "created_at" => $this->timenow,
+            "updated_at" => $this->timenow,
+            "deleted_at" => NULL,
+            "nome" => "Modelo - Entrega com variação na execução",
+            "descricao" => "Modelo de entrega onde ocorrerá aferição de execução ao final do prazo da respectiva entrega",
+            "tipo_indicador" => "QUALITATIVO",
+            "lista_qualitativos" => "[{\"key\": \"CONCLUDATOTALMENTE\", \"value\": \"Concluída totalmente\"}, {\"key\": \"CONCLUDAPARCIALMENTE\", \"value\": \"Concluída parcialmente\"}, {\"key\": \"NOINICIADA\", \"value\": \"Não iniciada\"}, {\"key\": \"COMDEPENDNCIAS\", \"value\": \"Com dependências\"}, {\"key\": \"COMPROBLEMAS\", \"value\": \"Com problemas\"}]",
+            "unidade_id" => NULL,
+          ),
+        );
+
         /*
         $this->call([
           CidadeSeeder=>=>class,
@@ -1088,7 +1309,7 @@ class IN24_2023Seeder extends Seeder
           PerfilSeeder=>=>class,
           TipoCapacidadeSeeder=>=>class,
           EntidadeSeeder=>=>class,
-          UnidadePrfSeeder=>=>class,
+          UnidadeSeeder=>=>class,
           UsuarioSeeder=>=>class,
           AreaConhecimentoSeeder=>=>class,
           TipoCursoSeeder=>=>class,
@@ -1110,5 +1331,7 @@ class IN24_2023Seeder extends Seeder
         TipoDocumento::insertOrIgnore($tipos_documentos);
         Template::insertOrIgnore($templates);
         Programa::insertOrIgnore($programas);
+        EixoTematico::insertOrIgnore($eixos_tematicos);
+        Entrega::insertOrIgnore($modelos_afericao_entregas);
     }
 }

@@ -61,7 +61,8 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
         onClick: this.delete.bind(this)
       });
     }
-  }
+    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
+  }  
 
   ngAfterViewInit(): void {
     super.ngAfterViewInit();

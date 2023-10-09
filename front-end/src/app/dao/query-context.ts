@@ -42,6 +42,10 @@ export class QueryContext<T extends Base> {
     return new Promise((resolve, reject) => this.subject.asObservable().subscribe(resolve, reject));
   }
 
+  public firstOrDefault(emptyResult: any = undefined): Promise<T | any> {
+    return new Promise((resolve, reject) => this.subject.asObservable().subscribe(value => resolve(value?.length ? value[0] : emptyResult), reject));
+  }
+
   public order(orderBy: QueryOrderBy[]) {
     this.options.orderBy = orderBy;
     this.rows = [];
@@ -60,9 +64,10 @@ export class QueryContext<T extends Base> {
     return this.dao.refresh(this);
   }
 
-  public refreshId(id: string): Promise<T | null> {
+  public refreshId(id: string, extraJoin?: string[]): Promise<T | null> {
+    let join = [...(this.options.join || []), ...(extraJoin || [])];
     this.loadingId = id;
-    return this.dao.getById(id, this.options.join || []).then(row => {
+    return this.dao.getById(id, join || []).then(row => {
       const index = this.rows.findIndex(r => r.id == id);
       if(row) {
         if(index >= 0) {

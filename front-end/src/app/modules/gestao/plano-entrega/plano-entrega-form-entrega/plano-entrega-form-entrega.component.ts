@@ -77,7 +77,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.planejamentoObjetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
     this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
     this.modalWidth = 600;
-    this.join = ["entrega"];
+    this.join = ["entrega", "objetivos.objetivo", "processos.processo"];
     this.form = this.fh.FormBuilder({
       descricao: { default: "" },
       data_inicio: { default: new Date() },
@@ -115,13 +115,6 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.cadeiaValorId = this.metadata?.cadeia_valor_id;
     this.unidadeId = this.metadata?.unidade_id;
     this.entity = this.metadata?.entrega as PlanoEntregaEntrega; 
-    (async () => {
-      await this.unidade?.loadSearch(this.unidadeId);
-      await this.planejamento?.loadSearch(this.planejamentoId);
-      await this.cadeiaValor?.loadSearch(this.cadeiaValorId);
-      unidade = this.unidadeId?.length ? (await this.unidadeDao.getById(this.unidadeId!) as Unidade) : null;
-      this.idsUnidadesAscendentes = unidade?.path?.split('/').slice(1) || [];
-    })();
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -184,6 +177,11 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.onEntregaChange(form.value);
     let {meta, realizado, ...entityWithout} = entity;
     await this.entrega?.loadSearch(entity.entrega || formValue.entrega_id, false);
+    await this.unidade?.loadSearch(this.unidadeId);
+    await this.planejamento?.loadSearch(this.planejamentoId);
+    await this.cadeiaValor?.loadSearch(this.cadeiaValorId);
+    let unidade = this.unidadeId?.length ? (await this.unidadeDao.getById(this.unidadeId!) as Unidade) : null;
+    this.idsUnidadesAscendentes = unidade?.path?.split('/').slice(1) || [];
     form.patchValue(this.util.fillForm(formValue, entityWithout));
     form.controls.meta.setValue(this.planoEntregaService.getValor(entity.meta));
     form.controls.realizado.setValue(this.planoEntregaService.getValor(entity.realizado));
@@ -220,7 +218,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     const meta = this.form?.controls.meta.value;
     const realizado = this.form?.controls.realizado.value;
     if (meta && realizado) {
-      let totalRealizado = !isNaN(realizado) ? ((realizado / meta) * 100).toFixed(2) || 0 : 0;
+      let totalRealizado = !isNaN(realizado) ? ((realizado / meta) * 100).toFixed(0) || 0 : 0;
       this.form?.controls.progresso_realizado.setValue(totalRealizado);
     }
   }

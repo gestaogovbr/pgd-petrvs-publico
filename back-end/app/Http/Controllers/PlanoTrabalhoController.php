@@ -84,11 +84,12 @@ class PlanoTrabalhoController extends ControllerBase {
         try {
             $this->checkPermissions("ARQUIVAR", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
             $data = $request->validate([
-                'id' => ['required']
+                'id' => ['required'],
+                'arquivar' => ['required']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
-                'success' => $this->service->arquivar($data, $unidade)
+                'success' => $this->service->arquivar($data, $unidade,$request)
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
@@ -130,11 +131,12 @@ class PlanoTrabalhoController extends ControllerBase {
             $this->checkPermissions("CANCELAR_PLANO", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
             $data = $request->validate([
                 'id' => ['required'],
-                'justificativa' => ['required']
+                'justificativa' => ['required'],
+                'arquivar' => ['required']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
-                'success' => $this->service->cancelarPlano($data, $unidade)
+                'success' => $this->service->cancelarPlano($data, $unidade, $request)
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
@@ -142,18 +144,18 @@ class PlanoTrabalhoController extends ControllerBase {
     }
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
-        $can = false;
-        $usuarioService = new UsuarioService();
+        $idUsuarioLogado = parent::loggedUser()->id;
+        //$usuarioService = new UsuarioService();
         switch ($action) {
             case 'QUERY':
-                if (!$usuario->hasPermissionTo('MOD_PTR')) throw new ServerException("CapacidadeSearchText", "Consulta não realizada. [RN_PTR_S]");
+                if (!$usuario->hasPermissionTo('MOD_PTR')) throw new ServerException("CapacidadeSearchText", "O usuário logado não tem permissão para consultar planos de trabalho (MOD_PTR). [RN_PTR_S]");
                 /*                 
                     (RN_PTR_S) CONSULTAR
                     Todos os participantes podem visualizar todos os planos de trabalho, desde que possuam a capacidade "MOD_PTR";
                 */
                 break;
             case 'GETBYID':
-                if (!$usuario->hasPermissionTo('MOD_PTR')) throw new ServerException("CapacidadeSearchText", "Consulta não realizada. [RN_PTR_S]");
+                if (!$usuario->hasPermissionTo('MOD_PTR')) throw new ServerException("CapacidadeSearchText", "O usuário logado não tem permissão para consultar planos de trabalho (MOD_PTR). [RN_PTR_S]");
                 /*                 
                     (RN_PTR_S) CONSULTAR
                     Todos os participantes podem visualizar todos os planos de trabalho, desde que possuam a capacidade "MOD_PTR";
@@ -162,71 +164,53 @@ class PlanoTrabalhoController extends ControllerBase {
             case 'STORE':           //incluir ou alterar um Plano de Trabalho
                 $data = $request->validate(['entity' => ['required'],'with' => ['array']]);
                 $planoTrabalho = $data['entity'];
-                $planoTrabalho['unidade'] = Unidade::find($planoTrabalho['unidade_id'])->toArray();
-                $condicoes = $service->buscaCondicoes($planoTrabalho);
                 $acao = UtilService::emptyEntry($planoTrabalho, "id") ? 'INSERT' : 'EDIT';
                 switch ($acao) {
                     case 'INSERT':  // inclusão de um novo Plano de Trabalho
-                        if(!$usuario->hasPermissionTo('MOD_PTR_INCL')) throw new ServerException("ValidatePlanoTrabalho", "Usuário não possui a capacidade de inserir planos de trabalho (MOD_PTR_INCL). [RN_PTR_V]");
-                        if(!($condicoes['usuarioEhParticipantePgdHabilitado'] || $condicoes['gestorUnidadeExecutora'])) throw new ServerException("ValidatePlanoTrabalho", "O usuário não é um participante habilitado no programa do plano de trabalho nem é gestor da sua unidade executora. [RN_PTR_V]");
-                        if(!($condicoes['participanteLotadoAreaTrabalho'] || $usuario->hasPermissionTo('MOD_PTR_USERS_INCL'))) throw new ServerException("ValidatePlanoTrabalho", "O participante do plano de trabalho não é lotado em nenhuma das áreas de trabalho do usuário logado, e este não possui a capacidade para ser dispensado dessa regra (MOD_PTR_USERS_INCL). [RN_PTR_V]");
-                        if(!($condicoes['participanteLotadoUnidadeExecutora'] || $usuario->hasPermissionTo('MOD_PTR_INCL_SEM_LOT'))) throw new ServerException("ValidatePlanoTrabalho", "O participante do plano de trabalho não é lotado na unidade executora do plano, e o usuário logado não possui a capacidade para ser dispensado dessa regra (MOD_PTR_INCL_SEM_LOT). [RN_PTR_V]");
-                        if(!($condicoes['naoPossuiPeriodoConflitanteOutroPlano'] || $usuario->hasPermissionTo('MOD_PTR_INTSC_DATA'))) throw new ServerException("ValidatePlanoTrabalho", "O período de duração do plano de trabalho apresenta conflito com a duração de outro plano da mesma unidade executora e mesmo participante, e o usuário logado não possui a capacidade para ser dispensado dessa regra (MOD_PTR_INTSC_DATA). [RN_PTR_V]");
-                        /*  (RN_PTR_V) INCLUIR/INSERIR
-                            O usuário logado precisa possuir a capacidade "MOD_PTR_INCL", e:
-                                - o usuário logado precisa ser um participante do PGD, habilitado, ou ser gestor da Unidade Executora do plano; (RN_PTR_B); e
-                                - o participante do plano precisa estar lotado em uma das áreas de trabalho do usuário logado, ou este deve possuir a capacidade MOD_PTR_USERS_INCL; e
-                                - o participante do plano precisa estar lotado na Unidade Executora, ou o usuário logado possuir a capacidade MOD_PTR_INCL_SEM_LOT; e
-                                - o novo Plano de Trabalho não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA
-                        */
+                        if(!$usuario->hasPermissionTo('MOD_PTR_INCL')) throw new ServerException("CapacidadeStore", "Usuário não possui a capacidade de inserir planos de trabalho (MOD_PTR_INCL). [RN_PTR_V]");
                         break; 
                     case 'EDIT':    // alteração de um Plano de Trabalho
-                        if(!$usuario->hasPermissionTo('MOD_PTR_EDT')) throw new ServerException("ValidatePlanoTrabalho", "Usuário não possui a capacidade de alterar/editar planos de trabalho (MOD_PTR_EDT). [RN_PTR_M]");
-                        if(!$condicoes['planoValido']) throw new ServerException("ValidatePlanoTrabalho", "O plano de trabalho não é válido, ou seja, foi apagado, cancelado ou arquivado. [RN_PTR_M]");
-                        if($condicoes['planoIncluido'] && (!($usuarioService->isParticipante($planoTrabalho) || $condicoes['gestorUnidadeExecutora']))) throw new ServerException("ValidatePlanoTrabalho", "Para alterar um plano de trabalho no status INCLUIDO, o usuário logado precisa ser o participante do plano ou o gestor da sua unidade executora. [RN_PTR_M]");
-                        if($condicoes['planoAguardandoAssinatura'] && !$condicoes['usuarioJaAssinouTCR']) throw new ServerException("ValidatePlanoTrabalho", "Para alterar um plano de trabalho no status AGUARDANDO ASSINATURA, o usuário logado precisa já ter assinado o TCR. [RN_PTR_M]");
-                        if($condicoes['planoAtivo'] && !($condicoes['gestorUnidadeExecutora'] && $usuario->hasPermissionTo('MOD_PTR_EDT_ATV'))) throw new ServerException("ValidatePlanoTrabalho", "Para alterar um plano de trabalho no status ATIVO, o usuário logado precisa ser gestor da sua unidade executora e possuir a capacidade específica (MOD_PTR_EDT_ATV). [RN_PTR_M]");
-                        if(!($condicoes['participanteLotadoAreaTrabalho'] || $usuario->hasPermissionTo('MOD_PTR_USERS_INCL'))) throw new ServerException("ValidatePlanoTrabalho", "O participante do plano de trabalho não é lotado em nenhuma das áreas de trabalho do usuário logado, e este não possui a capacidade para ser dispensado dessa regra (MOD_PTR_USERS_INCL). [RN_PTR_M]");
-                        if(!($condicoes['participanteLotadoUnidadeExecutora'] || $usuario->hasPermissionTo('MOD_PTR_INCL_SEM_LOT'))) throw new ServerException("ValidatePlanoTrabalho", "O participante do plano de trabalho não é lotado na unidade executora do plano, e o usuário logado não possui a capacidade para ser dispensado dessa regra (MOD_PTR_INCL_SEM_LOT). [RN_PTR_M]");
-                        if(!($condicoes['naoPossuiPeriodoConflitanteOutroPlano'] || $usuario->hasPermissionTo('MOD_PTR_INTSC_DATA'))) throw new ServerException("ValidatePlanoTrabalho", "O período de duração do plano de trabalho apresenta conflito com a duração de outro plano da mesma unidade executora e mesmo participante, e o usuário logado não possui a capacidade para ser dispensado dessa regra (MOD_PTR_INTSC_DATA). [RN_PTR_M]");
-                        /*  
-                            (RN_PTR_M) Condições para que um Plano de Trabalho possa ser alterado:
-                            O usuário logado precisa possuir a capacidade "MOD_PTR_EDT", o Plano de Trabalho precisa ser válido (ou seja, nem deletado, nem arquivado, nem estar no status CANCELADO), e:
-                                - estando com o status 'INCLUIDO', o usuário logado precisa ser o participante do plano ou o gestor da Unidade Executora;
-                                - estando com o status 'AGUARDANDO_ASSINATURA', o usuário logado precisa ser um dos que já assinaram o TCR e todas as assinaturas tornam-se sem efeito;
-                                - estando com o status 'ATIVO', o usuário precisa ser gestor da Unidade Executora e possuir a capacidade MOD_PTR_EDT_ATV. Após alterado, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
-                            Como a alteração pode ser no participante, e nas datas de início e fim do plano, faz-se necessário revalidar as respectivas regras da inserção do plano.
-                        */
+                        if(!$usuario->hasPermissionTo('MOD_PTR_EDT')) throw new ServerException("CapacidadeStore", "Usuário não possui a capacidade de alterar/editar planos de trabalho (MOD_PTR_EDT). [RN_PTR_M]");
                         break;             
                 }
                 break;
             case 'DESTROY':
-                throw new ServerException("CapacidadeStore", "Um Plano de Trabalho não pode ser excluído! [RN_PTR_AB]");
+                throw new ServerException("CapacidadeDestroy", "Um Plano de Trabalho não pode ser excluído! [RN_PTR_AB]");
                 /*                 
                     (RN_PTR_AB) EXCLUIR
                     Um Plano de Trabalho não pode ser excluído;
                 */                              
                 break;
             case 'ARQUIVAR':
-                $data = $request->validate(['id' => ['required']]);
-                $condicoes = $service->buscaCondicoes(['id' => $data['id']]);        
-                $condition1 = $condicoes["planoConcluido"] && !$condicoes["planoArquivado"];
-                $condition2 = $condicoes["usuarioEhParticipantePlano"] || $condicoes["gestorUnidadeExecutora"];
-                if ($condition1 && $condition2) $can = true;
-                /*                 
-                    (RN_PTR_N) ARQUIVAR
-                    O plano precisa estar com o status CONCLUIDO, não ter sido arquivado, e:
-                        - o usuário logado precisa ser o participante ou o gestor da Unidade Executora;
-                */
-                if(!$can) throw new ServerException("CapacidadeStore", "Arquivamento não realizado. [RN_PTR_N]");
+                $data = $request->validate(['id' => ['required'], 'arquivar' => ['required']]);
+                $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
+                if ($data['arquivar']) {
+                    if(!(($condicoes["planoConcluido"] || $condicoes["planoCancelado"]) && !$condicoes["planoArquivado"])) throw new ServerException("ValidatePlanoTrabalho", "Arquivamento não realizado, porque o plano não está no status CONCLUIDO nem CANCELADO, ou já está arquivado. [RN_PTR_N]");
+                    if(!($condicoes["usuarioEhParticipantePlano"] || $condicoes["gestorUnidadeExecutora"])) throw new ServerException("ValidateUsuario", "Arquivamento não realizado, porque o usuário logado não é participante do plano nem um dos gestores da sua unidade executora. [RN_PTR_N]");
+                    /*                 
+                        (RN_PTR_N) ARQUIVAR
+                        O plano precisa estar com o status CONCLUIDO ou CANCELADO, não ter sido arquivado, e:
+                            - o usuário logado precisa ser o participante ou o gestor da Unidade Executora;
+                    */
+                } else {
+                    $condition1 = $condicoes["planoArquivado"];
+                    $condition2 = $condicoes["usuarioEhParticipantePlano"] || $condicoes["gestorUnidadeExecutora"];
+                    if(!$condition1) new ServerException("ValidatePlanoTrabalho", "O plano de trabalho não pode ser desarquivado porque não se encontra arquivado. [RN_PTR_T]");
+                    if(!$condition2) new ServerException("ValidateUsuario", "O plano de trabalho não pode ser desarquivado porque o usuário logado não é o participante do plano nem um dos gestores da sua unidade executora. [RN_PTR_T]");
+                    /*
+                        (RN_PTR_T) DESARQUIVAR
+                        O plano precisa estar arquivado, e:
+                            - o usuário logado precisa ser o participante ou gestor da Unidade Executora;
+                    */ 
+                }     
                 break;
             case 'ATIVAR':
                 $data = $request->validate(['id' => ['required']]);
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);        
-                if(! $condicoes["planoIncluido"]) throw new ServerException("ValidatePlanoTrabalho", "Para ativar um plano de trabalho, ele precisa estar no status INCLUIDO.");
-                if(!($condicoes["usuarioEhParticipantePlano"] || $condicoes["gestorUnidadeExecutora"])) throw new ServerException("ValidatePlanoTrabalho", "Para ativar um plano de trabalho, o usuário logado precisa ser o participante deste plano ou um dos gestores da unidade executora.");
-                if(!(count($condicoes["assinaturasExigidas"]) == 0)) throw new ServerException("ValidatePlanoTrabalho", "Para ativar um plano de trabalho, o seu programa não deve exijir nenhuma assinatura no TCR.");
-                if($condicoes["nrEntregas"] == 0) throw new ServerException("ValidatePlanoTrabalho", "Para ativar um plano de trabalho, ele precisa possuir ao menos uma entrega.");
+                if(! $condicoes["planoIncluido"]) throw new ServerException("ValidatePlanoTrabalho", "Para ativar um plano de trabalho, ele precisa estar no status INCLUIDO. [RN_PTR_P]");
+                if(!($condicoes["usuarioEhParticipantePlano"] || $condicoes["gestorUnidadeExecutora"])) throw new ServerException("ValidateUsuario", "Para ativar um plano de trabalho, o usuário logado precisa ser o participante deste plano ou um dos gestores da unidade executora. [RN_PTR_P]");
+                if(!(count($condicoes["assinaturasExigidas"]) == 0)) throw new ServerException("ValidatePlanoTrabalho", "Para ativar um plano de trabalho, o seu programa não deve exigir nenhuma assinatura no TCR. [RN_PTR_P]");
+                if($condicoes["nrEntregas"] == 0) throw new ServerException("ValidatePlanoTrabalho", "Para ativar um plano de trabalho, ele precisa possuir ao menos uma entrega. [RN_PTR_P]");
                 /*                 
                     (RN_PTR_P) ATIVAR
                     O plano precisa estar no status 'INCLUIDO', e
@@ -238,100 +222,68 @@ class PlanoTrabalhoController extends ControllerBase {
             case 'CANCELAR_ASSINATURA':
                 $data = $request->validate(['id' => ['required']]);
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
-                $condition1 = $condicoes["planoAguardandoAssinatura"] && $condicoes["usuarioJaAssinouTCR"];
-                if($condition1) $can = true;
+                if(!$condicoes["planoAguardandoAssinatura"]) throw new ServerException("ValidatePlanoTrabalho", "Cancelamento de assinatura não realizado, porque o plano não está no status AGUARDANDO ASSINATURA. [RN_PTR_Q]");
+                if(!$condicoes["usuarioJaAssinouTCR"]) throw new ServerException("ValidateUsuario", "Cancelamento de assinatura não realizado, porque o usuário logado ainda não assinou o TCR. [RN_PTR_Q]");
                 /*                 
                     (RN_PTR_Q) CANCELAR ASSINATURA
                     O plano precisa estar no status 'AGUARDANDO_ASSINATURA'; e
                       - o usuário logado precisa já ter assinado o TCR;
                 */
-                if(!$can) throw new ServerException("CapacidadeStore", "Cancelamento de assinatura não realizado. [RN_PTR_Q]");
                 break;
             case 'CANCELAR_PLANO':
-                if (!$usuario->hasPermissionTo('MOD_PTR_CNC')) throw new ServerException("CapacidadeStore", "Cancelamento não realizado");
+                if (!$usuario->hasPermissionTo('MOD_PTR_CNC')) throw new ServerException("CapacidadeStore", "O usuário logado não tem permissão para cancelar planos de trabalho (MOD_PTR_CNC). [RN_PTR_R]");
                 $data = $request->validate(['id' => ['required']]);
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
                 $condition1 = in_array($condicoes['planoStatus'], ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO', 'CONCLUIDO']);
                 $condition2 = $condicoes['gestorUnidadeExecutora'];
-                if ($condition1 && $condition2) $can = true;
+                if(!$condition1) new ServerException("ValidatePlanoTrabalho", "O plano de trabalho não pode ser cancelado porque não está em nenhum dos seguintes status: INCLUIDO, AGUARDANDO ASSINATURA, ATIVO ou CONCLUIDO. [RN_PTR_R]");
+                if(!$condition2) new ServerException("ValidateUsuario", "O plano de trabalho não pode ser cancelado porque o usuário logado não é um dos gestores da sua unidade executora. [RN_PTR_R]");
                 /*
                     (RN_PTR_R) CANCELAR 
                     O usuário logado precisa possuir a capacidade "MOD_PTR_CNC", e
                       - o plano precisa estar em um dos seguintes status: INCLUIDO, AGUARDANDO_ASSINATURA, ATIVO ou CONCLUIDO; e
                       - o usuário logado precisa ser gestor da Unidade Executora;
                 */
-                if(!$can) throw new ServerException("CapacidadeStore", "Cancelamento não realizado. [RN_PTR_R]");
                 break; 
-            case 'DESARQUIVAR':
-                $data = $request->validate(['id' => ['required']]);
-                $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
-                $condition1 = $condicoes["planoArquivado"];
-                $condition2 = $condicoes["usuarioEhParticipantePlano"] || $condicoes["gestorUnidadeExecutora"];
-                if ($condition1 && $condition2) $can = true;
-                /*
-                    (RN_PTR_T) DESARQUIVAR
-                    O plano precisa estar arquivado, e:
-                        - o usuário logado precisa ser o participante ou gestor da Unidade Executora;
-                */ 
-                if(!$can) throw new ServerException("CapacidadeStore", "Desarquivamento não realizado. [RN_PTR_T]");
-                break;
             case 'REATIVAR':
                 $data = $request->validate(['id' => ['required']]);
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
-                $condition1 = $condicoes["planoSuspenso"];
-                $condition2 = $condicoes["gestorUnidadeExecutora"];
-                if ($condition1 && $condition2) $can = true;                
+                if(!$condicoes["planoSuspenso"]) throw new ServerException("ValidatePlanoTrabalho", "O Plano de trabalho não pode ser suspenso porque não se encontra no status SUSPENSO. [RN_PTR_W]");
+                if(!$condicoes["gestorUnidadeExecutora"]) throw new ServerException("ValidateUsuario", "O Plano de trabalho não pode ser suspenso porque O usuário logado não é um dos gestores da Unidade Executora. [RN_PTR_W]");
                 /*
                     (RN_PTR_W) REATIVAR
                     O plano precisa estar com o status SUSPENSO, e
                       - o usuário logado precisa ser gestor da Unidade Executora;
                 */
-                if(!$can) throw new ServerException("CapacidadeStore", "Reativação não realizada. [RN_PTR_W]");
                 break;   
             case 'ENVIAR_ASSINATURA':
                 $data = $request->validate(['id' => ['required']]);
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
-                $condition1 = $condicoes["planoIncluido"];
-                $condition2 = $condicoes["usuarioEhParticipantePlano"] || $condicoes["gestorUnidadeExecutora"];
-                $condition3 = count($condicoes["assinaturasExigidas"]) > 1 && in_array(parent::loggedUser()->id, $condicoes["assinaturasExigidas"]);
-                if ($condition1 && $condition2 && $condition3) $can = true;                 
+                if(!$condicoes["planoIncluido"]) throw new ServerException("ValidatePlanoTrabalho", "O Plano de trabalho não pode ser enviado para assinatura porque não se encontra no status INCLUIDO. [RN_PTR_U]");
+                if(!($condicoes["usuarioEhParticipantePlano"] || $condicoes["gestorUnidadeExecutora"])) throw new ServerException("ValidateUsuario", "O Plano de trabalho não pode ser enviado para assinatura porque o usuário logado não é o participante do plano nem é um dos gestores da sua unidade executora. [RN_PTR_U]");
+                if(in_array($idUsuarioLogado,$condicoes["assinaturasExigidas"]) && !$condicoes["usuarioJaAssinouTCR"]) throw new ServerException("ValidateUsuario", "O Plano de trabalho não pode ser enviado para assinatura porque o usuário logado ainda não assinou seu TCR. [RN_PTR_U]");
+                if(count($condicoes["assinaturasFaltantes"]) == 0) throw new ServerException("ValidatePlanoTrabalho", "O Plano de trabalho não pode ser enviado para assinatura porque não há assinaturas pendentes. [RN_PTR_U]");
+                if($condicoes["nrEntregas"] == 0) throw new ServerException("ValidatePlanoTrabalho", "O Plano de trabalho não pode ser enviado para assinatura porque ainda não possui nenhuma entrega. [RN_PTR_U]");
                 /*  
                     (RN_PTR_U) ENVIAR PARA ASSINATURA
                     O plano precisa estar com o status INCLUIDO; e
                       - o usuário logado precisa ser o participante do plano ou gestor da sua Unidade Executora; e
-                      - o programa de gestão precisa exigir não só a assinatura do usuário logado;
-
+                      - se a assinatura do usuário logado for exigida, ele já deve ter assinado o TCR; e
+                      - devem existir assinaturas exigíveis ainda pendentes; e
+                      - o plano precisa possuir ao menos uma entrega.
                 */
-                if(!$can) throw new ServerException("CapacidadeStore", "Envio para assinatura não realizado. [RN_PTR_U]"); 
                 break;
             case 'SUSPENDER':
                 $data = $request->validate(['id' => ['required']]);
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
-                $condition1 = $condicoes["planoAtivo"];
-                $condition2 = $condicoes["gestorUnidadeExecutora"];
-                if ($condition1 && $condition2) $can = true;                  
+                if(!$condicoes["planoAtivo"]) throw new ServerException("ValidatePlanoTrabalho", "O plano de trabalho não pode ser suspenso porque não se encontra no status ATIVO. [RN_PTR_X]");          
+                if(!$condicoes["gestorUnidadeExecutora"]) throw new ServerException("ValidateUsuario", "O plano de trabalho não pode ser suspenso porque o usuário logado não é um dos gestores da sua unidade executora. [RN_PTR_X]");          
                 /*                 
                     (RN_PTR_X) SUSPENDER
                     O plano precisa estar com o status ATIVO, e
                       - o usuário logado precisa ser gestor da Unidade Executora;
                 */ 
-                if(!$can) throw new ServerException("CapacidadeStore", "Suspensão não realizada. [RN_PTR_X]");               
                 break; 
-        }
-    }
-
-    public function desarquivar(Request $request) {
-        try {
-            $this->checkPermissions("DESARQUIVAR", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
-            $data = $request->validate([
-                'id' => ['required']
-            ]);
-            $unidade = $this->getUnidade($request);
-            return response()->json([
-                'success' => $this->service->desarquivar($data, $unidade)
-            ]);
-        } catch (Throwable $e) {
-            return response()->json(['error' => $e->getMessage()]);
         }
     }
 

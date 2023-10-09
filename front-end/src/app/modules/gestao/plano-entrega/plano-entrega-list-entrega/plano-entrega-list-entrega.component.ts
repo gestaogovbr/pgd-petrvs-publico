@@ -18,13 +18,14 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @Input() cdRef: ChangeDetectorRef;
+  @Input() disabled: boolean = false;
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
-  @Input() set entity(value: PlanoEntregaEntrega | undefined) { super.entity = value; } get entity(): PlanoEntregaEntrega | undefined { return super.entity; }
+  @Input() set entity(value: PlanoEntrega | undefined) { super.entity = value; } get entity(): PlanoEntrega | undefined { return super.entity; }
   @Input() set planejamentoId(value: string | undefined) {
     if(this._planejamentoId != value) {
       this._planejamentoId = value;
-      // verificar nas entregas quais objetivos não são desse planjemaneot e remove-los
+      // TODO: verificar nas entregas quais objetivos não são desse planjemaneot e remove-los
       // será remvido somente da lista de itens (em memória), independente de persistente ou não, MAS NO BACKEND HAVERÀ ESSA VALIDAÇÂO!
     }
   } get planejamentoId(): string | undefined {
@@ -33,7 +34,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   @Input() set cadeiaValorId(value: string | undefined) {
     if(this._cadeiaValorId != value) {
       this._cadeiaValorId = value;
-      // verificar nas entregas quais objetivos não são desse planejamento e remove-los
+      // TODO: verificar nas entregas quais objetivos não são desse planejamento e remove-los
       // será removido somente da lista de itens (em memória), independente de persistente ou não, MAS NO BACKEND HAVERÀ ESSA VALIDAÇÂO!
     }
   } get cadeiaValorId(): string | undefined {
@@ -42,7 +43,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   @Input() set unidadeId(value: string | undefined) {
     if(this._unidadeId != value) {
       this._unidadeId = value;
-      // verificar nas entregas quais objetivos não são desse planjemaneot e remove-los
+      // TODO: verificar nas entregas quais objetivos não são desse planjemaneot e remove-los
       // será remvido somente da lista de itens (em memória), independente de persistente ou não, MAS NO BACKEND HAVERÀ ESSA VALIDAÇÂO!
     }
   } get unidadeId(): string | undefined {
@@ -86,21 +87,9 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
       destinatario: { default: null },
     }, this.cdRef, this.validate);
     // Testa se o usuário possui permissão para exibir dados da entrega do plano de entregas
-    if (this.auth.hasPermissionTo("MOD_PENT")) {
-      this.options.push({
-        icon: "bi bi-info-circle",
-        label: "Informações",
-        onClick: this.consult.bind(this)
-      });
-    }
-    // Testa se o usuário possui permissão para excluir a entrega do plano de entregas
-    if (this.auth.hasPermissionTo("MOD_PENT_ENTR_EXCL")) {
-      this.options.push({
-        icon: "bi bi-trash",
-        label: "Excluir",
-        onClick: this.delete.bind(this)
-      });
-    }
+    this.addOption(Object.assign({ onClick: this.consult.bind(this) }, this.OPTION_INFORMACOES), "MOD_PENT");
+    this.addOption(Object.assign({ onClick: this.delete.bind(this) }, this.OPTION_EXCLUIR), "MOD_PENT_ENTR_EXCL");
+    this.addOption(Object.assign({ onClick: this.showLogs.bind(this) }, this.OPTION_LOGS), "MOD_AUDIT_LOG");
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -121,6 +110,10 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     let form: any = filter.value;
     result.push(["plano_entrega_id", "==", this.planoEntregaId]);
     return result;
+  }
+
+  public get isDisabled(): boolean {
+    return this.formDisabled || this.disabled;
   }
 
   public async add() {
@@ -151,10 +144,15 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   }
 
   public dynamicOptions(row: any): ToolbarButton[] {
-    return !this.execucao ? this.options : [];
+    return !this.execucao && !this.isDisabled ? this.options : [];
+  }
+
+  public dynamicButtons(row: any): ToolbarButton[] {
+    return this.isDisabled ? [Object.assign({ onClick: this.consult.bind(this) }, this.OPTION_INFORMACOES)] : [];
   }
 
   public async edit(entrega: PlanoEntregaEntrega) {
+    //console.log(this.form?.controls.progresso_realizado.value);
     if(this.execucao) {
       this.grid!.edit(entrega);
     } else {
@@ -179,13 +177,14 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   }
 
   public async load(form: FormGroup, row: any) {
+    console.log(row)
     this.form!.patchValue(row);
     this.form!.controls.meta.setValue(this.planoEntregaService.getValor(row.meta));
     this.form!.controls.realizado.setValue(this.planoEntregaService.getValor(row.realizado));
     this.cdRef.detectChanges();
   }
 
-  public async save(form: FormGroup, row: any) {
+  public async save(form: FormGroup, row: any) {    
     let result = undefined;
     this.form!.markAllAsTouched();
     if (form.valid) {
@@ -215,12 +214,41 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   }
 
   public async consult(entrega: PlanoEntregaEntrega) {
-    this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', entrega.id, "consult"]});
+    this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', entrega.id, "consult"]}, {
+      metadata: {
+        plano_entrega: this.entity!,
+        planejamento_id: this.planejamentoId,
+        cadeia_valor_id: this.cadeiaValorId,
+        unidade_id: this.unidadeId,
+        entrega: entrega
+      }
+    });
+  }
+
+  public async showLogs(entrega: PlanoEntregaEntrega){
+    this.go.navigate({ route: ['logs', 'change', entrega.id, 'consult'] })
+  }
+
+  public async showPlanejamento(planejamento_id: string){
+    this.go.navigate({ route: ['gestao', 'planejamento', planejamento_id, 'consult'] }, {modal: true})
+  }
+
+  public async showCadeiaValor(cadeia_valor_id_id: string){
+    this.go.navigate({ route: ['gestao', 'cadeia-valor', cadeia_valor_id_id, 'consult'] }, {modal: true})
   }
 
   public refreshComentarios(modalResult: any) {
     /* Atualiza os comentários após ser salvo pela própria tela de comentarios (persistent) */
     let row: PlanoEntregaEntrega | undefined = this.items.find(x => x.id == modalResult.id);
     if(row) row.comentarios = modalResult.comentarios || [];
+  }
+
+  public onRealizadaChange() {
+    const meta = this.form?.controls.meta.value;
+    const realizado = this.form?.controls.realizado.value;
+    if (meta && realizado) {
+      let totalRealizado = !isNaN(realizado) ? ((realizado / meta) * 100).toFixed(0) || 0 : 0;
+      this.form?.controls.progresso_realizado.setValue(totalRealizado);
+    }
   }
 }

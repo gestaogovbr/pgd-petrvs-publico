@@ -19,9 +19,10 @@ class PetrvsController extends ControllerBase
         $google_config = config("google");
         $config = json_encode([
             "api_url" => $app_config["url"],
+            "app_env" => $app_config["env"],
             "entidade" => $petrvs_config["entidade"],
-            "suporte_url" => $petrvs_config["suporte"], 
-            "logo_url" => $petrvs_config["logo"], 
+            "suporte_url" => $petrvs_config["suporte"],
+            "logo_url" => $petrvs_config["logo"],
             "versao" => $app_config["version"],
             "login" => [
                 "google_client_id" => $google_config["client_id"],

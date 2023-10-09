@@ -363,8 +363,8 @@ export class UtilService {
 
   public getBackgroundColor(level: number = 0, numLevels: number = 20): string {
     const palette = [];
-    for (let i = 0; i < numLevels; i++) {
-      const hue = (i * 360) / numLevels; 
+    for (let i = numLevels - 1; i >= 0; i--) { 
+      const hue = (i * 190) / numLevels; 
       const color = `hsl(${hue}, 70%, 60%)`;
       palette.push(color);
     }
@@ -704,5 +704,9 @@ export class UtilService {
     return array.filter(function(x, i) {
       return array.indexOf(x) === i;
     });
+  }
+
+  public array_diff(array1: any[], array2: any[]): any[]{
+    return array1.filter(elem => !array2.includes(elem));
   }
 }

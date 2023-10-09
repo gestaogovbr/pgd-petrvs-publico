@@ -5,12 +5,12 @@
     <toolbar *ngIf="!fixedFilter && !selectable">
         <input-switch [size]="4" labelPosition="left" label="Agrupar por Un." controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
     </toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && !queryParams?.filter && filterCollapsed">
+    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && !queryParams?.filter && filterCollapsed">
         <div class="row">
             <input-switch [size]="1" label="Minhas" controlName="atribuidas_para_mim" [control]="filter!.controls.atribuidas_para_mim" (change)="onAtribuidasParaMimChange($event)"></input-switch>
-            <input-search [size]="5" label="Usuário" #usuario controlName="usuario_id"  [disabled]="filter!.controls.atribuidas_para_mim.value ? 'true' : undefined" [dao]="usuarioDao" ></input-search>
+            <input-search [size]="5" label="Usuário" #usuario [control]="filter!.controls.usuario_id" controlName="usuario_id"  [disabled]="filter!.controls.atribuidas_para_mim.value ? 'true' : undefined" [dao]="usuarioDao" ></input-search>
             <input-switch [size]="1" label="Atual" controlName="somente_unidade_atual" [control]="filter!.controls.somente_unidade_atual" (change)="onSomenteUnidadeAtualChange($event)" labelInfo="Somente as atividades da unidade selecionada"></input-switch>
-            <input-search [size]="4" label="Unidade" #unidade controlName="unidade_id" [disabled]="filter!.controls.somente_unidade_atual.value ? 'true' : undefined" [dao]="unidadeDao" ></input-search>
+            <input-search [size]="4" label="Unidade" #unidade [control]="filter!.controls.unidade_id" controlName="unidade_id" [disabled]="filter!.controls.somente_unidade_atual.value ? 'true' : undefined" [dao]="unidadeDao" ></input-search>
             <input-switch [size]="1" label="Sub." controlName="unidades_subordinadas" [control]="filter!.controls.unidades_subordinadas" labelInfo="Incluir as unidades subordinadas"></input-switch>
         </div>
         <div class="row">
@@ -21,8 +21,8 @@
             <input-switch [size]="1" label="Arq." controlName="arquivadas" [control]="filter!.controls.arquivadas" labelInfo="Listar também atividades arquivadas"></input-switch>
         </div>
         <div class="row">
-            <input-search [size]="3" [label]="lex.translate('Tipo de Atividade')" controlName="tipo_atividade_id" [dao]="tipoAtividadeDao"></input-search>
-            <input-search [size]="3" [label]="lex.translate('Tipo de Processo')" controlName="tipo_processo_id" [dao]="tipoProcessoDao" ></input-search>
+            <input-search [size]="3" [label]="lex.translate('Tipo de Atividade')" [control]="filter!.controls.tipo_atividade_id" controlName="tipo_atividade_id" [dao]="tipoAtividadeDao"></input-search>
+            <input-search [size]="3" [label]="lex.translate('Tipo de Processo')" [control]="filter!.controls.tipo_processo_id" controlName="tipo_processo_id" [dao]="tipoProcessoDao"></input-search>
             <input-select [size]="2" label="Data" itemTodos="- Todos -" [valueTodos]="null" controlName="data_filtro" [control]="filter!.controls.data_filtro" [items]="DATAS_FILTRO"></input-select>
             <input-datetime [size]="2" noIcon [disabled]="filter!.controls.data_filtro.value == null ? 'true' : undefined" label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" labelInfo="Data início do período"></input-datetime>
             <input-datetime [size]="2" noIcon [disabled]="filter!.controls.data_filtro.value == null ? 'true' : undefined" label="Fim" controlName="data_fim" [control]="filter!.controls.data_fim" labelInfo="Data fim do período"></input-datetime>
@@ -39,7 +39,8 @@
         </column>
         <column [titleTemplate]="titleIdAtividadeDescricao" [template]="columnAtividadeDescricao">
             <ng-template let-header="header" #titleIdAtividadeDescricao>
-                <order by="numero" [header]="header">#ID</order>/{{lex.translate('Tipo de Atividade')}}/{{lex.translate('Entrega')}}<br>
+                <order by="numero" [header]="header">#ID</order>/{{lex.translate('Tipo de Atividade')}}/
+                <order by="plano_trabalho_entrega.descricao" [header]="header">{{lex.translate('Entrega')}}</order><br>
                 Descrição
             </ng-template>
             <ng-template let-row="row" #columnAtividadeDescricao>

@@ -1,0 +1,34 @@
+<h5>Atividades:</h5>
+<grid [items]="items" [loading]="loader">
+  <columns>
+    <column [titleTemplate]="titleIdAtividadeDescricao" [template]="columnAtividadeDescricao">
+      <ng-template let-header="header" #titleIdAtividadeDescricao>          
+          Descrição
+      </ng-template>
+      <ng-template let-row="row" #columnAtividadeDescricao>
+        <span class="micro-text fw-ligh atividade-descricao">{{row.descricao}}</span>
+      </ng-template>
+    </column>
+
+    <column [titleTemplate]="titleUnResponsavelDemandante" [template]="columnPessoas">
+      <ng-template let-header="header" #titleUnResponsavelDemandante>
+          Un./<order by="usuario.nome" [header]="header">Responsável</order><br>
+          <order by="demandante.nome" [header]="header">Demandante</order>
+      </ng-template>
+      <ng-template let-row="row" #columnPessoas>
+          <div class="text-nowrap">
+              <badge icon="bi bi-briefcase" color="light" [label]="row.unidade.sigla"></badge>
+              <badge [icon]="'bi ' + (row.usuario?.nome?.length ? 'bi-person-check' : 'bi-person-x')" color="light" [label]="util.apelidoOuNome(row.usuario, true) || '(Não atribuído)'" [hint]="'Responsável: ' + (row.usuario?.nome || 'Não atribuido a nenhum usuário')"></badge>
+          </div>
+          <badge icon="bi bi-cursor" color="light" [label]="util.apelidoOuNome(row.demandante, true) || 'Desconhecido'" [hint]="'Demandante: ' + (row.demandante?.nome || 'Desconhecido')"></badge>
+      </ng-template>
+    </column>
+
+    <column [title]="'Progresso'" [width]="200"[template]="columnProgressoEtiquetasChecklist">
+      <ng-template let-row="row" #columnProgressoEtiquetasChecklist>
+        <progress-bar [value]="row.progresso" color="success"></progress-bar>
+      </ng-template>
+    </column>
+
+  </columns>
+</grid>
