@@ -65,7 +65,12 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
       plano_trabalho_assinatura_gestor_lotacao: { default: true },
       plano_trabalho_assinatura_gestor_unidade: { default: true },
       plano_trabalho_assinatura_gestor_entidade: { default: true },
-      dias_tolerancia_avaliacao: {default: 10},
+      checklist_avaliacao_entregas_plano_trabalho: { default: [] },
+      checklist_plano_trabalho_texto: { default: "" },
+      checklist_avaliacao_entregas_plano_entrega: { default: [] },
+      checklist_plano_entrega_texto: { default: "" },
+      dias_tolerancia_avaliacao: {default: 20},
+      dias_tolerancia_recurso_avaliacao: {default: 20},
       nota_padrao_avaliacao: {default: 0},
       tipo_justificativa_id: {default: null}
     }, this.cdRef, this.validate);
@@ -101,6 +106,8 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
     await Promise.all ([
       this.unidade!.loadSearch(entity.unidade || entity.unidade_id)
     ]);
+    entity.checklist_avaliacao_entregas_plano_entrega = entity.checklist_avaliacao_entregas_plano_entrega || [];
+    entity.checklist_avaliacao_entregas_plano_trabalho = entity.checklist_avaliacao_entregas_plano_trabalho || [];
     form.patchValue(this.util.fillForm(formValue, entity));
   }
 
@@ -126,6 +133,34 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
     if(JSON.stringify(items) != JSON.stringify(this._tipoAvaliacaoQualitativo)) this._tipoAvaliacaoQualitativo = items;
     return this._tipoAvaliacaoQualitativo;
   }
+
+  public addItemHandlePlanoTrabalhoChecklist(): LookupItem | undefined {
+    let result = undefined;
+    const value = this.form!.controls.checklist_plano_trabalho_texto.value;
+    const key = this.util.textHash(value);
+    if(value?.length && this.util.validateLookupItem(this.form!.controls.checklist_avaliacao_entregas_plano_trabalho.value, key)) {
+      result = {
+        key: key,
+        value: this.form!.controls.checklist_plano_trabalho_texto.value
+      };
+      this.form!.controls.checklist_plano_trabalho_texto.setValue("");
+    }
+    return result;
+  };
+
+  public addItemHandlePlanoEntregaChecklist(): LookupItem | undefined {
+    let result = undefined;
+    const value = this.form!.controls.checklist_plano_entrega_texto.value;
+    const key = this.util.textHash(value);
+    if(value?.length && this.util.validateLookupItem(this.form!.controls.checklist_avaliacao_entregas_plano_entrega.value, key)) {
+      result = {
+        key: key,
+        value: this.form!.controls.checklist_plano_entrega_texto.value
+      };
+      this.form!.controls.checklist_plano_entrega_texto.setValue("");
+    }
+    return result;
+  };
 
   public titleEdit = (entity: Programa): string => {
     return "Editando " + this.lex.translate("Programa") + ': ' + (entity?.nome || "");

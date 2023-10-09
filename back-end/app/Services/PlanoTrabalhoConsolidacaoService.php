@@ -34,8 +34,10 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       'planoTrabalho.unidade.gestor:id,usuario_id',
       'planoTrabalho.unidade.gestorSubstituto:id,usuario_id',
       'planoTrabalho.entregas.entrega', 
-      'planoTrabalho.entregas.planoEntregaEntrega:id,descricao,plano_entrega_id,entrega_id', 
+      'planoTrabalho.entregas.planoEntregaEntrega:id,descricao,plano_entrega_id,entrega_id,meta,realizado,progresso_realizado', 
       'planoTrabalho.entregas.planoEntregaEntrega.entrega:id,nome,tipo_indicador', 
+      'planoTrabalho.entregas.planoEntregaEntrega.objetivos.objetivo', 
+      'planoTrabalho.entregas.planoEntregaEntrega.processos.processo', 
       'planoTrabalho.tipoModalidade'
     ])->find($id);
     $concluido = in_array($consolidacao->status, ["CONCLUIDO", "AVALIADO"]);

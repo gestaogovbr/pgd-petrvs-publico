@@ -38,8 +38,9 @@ class TenantDatabaseMigrated extends TenantListenerBase
                 DB::connection('mysql')->getPdo()->exec("CREATE DATABASE IF NOT EXISTS `{$database}`");
                 Config::set('database.connections.log.database', $database);
                 DB::purge('log');
-                Artisan::call("migrate --database=log --path=database/migrations/log");
-                dd(Artisan::output());
+                Artisan::call("migrate --database=log --path=database/migrations/log --force");
+                Artisan::output();
+                //dd(Artisan::output());
             }
         }
     }

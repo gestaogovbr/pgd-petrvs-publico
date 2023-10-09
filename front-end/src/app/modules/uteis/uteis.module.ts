@@ -15,6 +15,9 @@ import { NotificacoesConfigComponent } from './notificacoes/notificacoes-config/
 import { NotificacoesTemplateComponent } from './notificacoes/notificacoes-template/notificacoes-template.component';
 import { DocumentosBadgeComponent } from './documentos/documentos-badge/documentos-badge.component';
 import { StatusFormComponent } from './status/status-form/status-form.component';
+import { AvaliarComponent } from './avaliar/avaliar.component';
+import { AvaliarNotaInputComponent } from './avaliar/avaliar-nota-input/avaliar-nota-input.component';
+import { AvaliarNotaBadgeComponent } from './avaliar/avaliar-nota-badge/avaliar-nota-badge.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +33,10 @@ import { StatusFormComponent } from './status/status-form/status-form.component'
     NotificacoesComponent,
     NotificacoesConfigComponent,
     NotificacoesTemplateComponent,
-    StatusFormComponent
+    StatusFormComponent,
+    AvaliarComponent,
+    AvaliarNotaInputComponent,
+    AvaliarNotaBadgeComponent
   ],
   imports: [
     CommonModule,
@@ -48,7 +54,10 @@ import { StatusFormComponent } from './status/status-form/status-form.component'
     TemplatesComponent,
     NotificacoesComponent,
     NotificacoesConfigComponent,
-    NotificacoesTemplateComponent
+    NotificacoesTemplateComponent,
+    AvaliarComponent,
+    AvaliarNotaInputComponent,
+    AvaliarNotaBadgeComponent
   ]
 })
 export class UteisModule { }

@@ -8,6 +8,8 @@ use App\Models\Usuario;
 use App\Models\StatusJustificativa;
 use App\Exceptions\ServerException;
 use App\Models\Programa;
+use App\Models\TipoAvaliacao;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use DateTime;
@@ -56,15 +58,16 @@ class PlanoEntregaService extends ServiceBase
         }
     }
 
-    public function arquivar($data, $unidade)
+    public function arquivar($data, $unidade,$request)
     { // ou 'desarquivar'
         try {
             DB::beginTransaction();
             $planoEntrega = PlanoEntrega::find($data["id"]);
+            $unidadeLogin = Auth::user()->areasTrabalho[0]->unidade;
             if (!empty($planoEntrega)) {
                 $this->update([
                     "id" => $planoEntrega->id,
-                    "data_arquivamento" => $data["arquivar"] ? Carbon::now() : null
+                    "data_arquivamento" => $data["arquivar"] ? $this->unidadeService->hora($unidadeLogin->id) : null
                 ], $unidade, false);
             } else {
                 throw new ServerException("ValidatePlanoTrabalho", "Plano de Entrega não encontrado!");
@@ -77,7 +80,7 @@ class PlanoEntregaService extends ServiceBase
         return true;
     }
 
-    public function avaliar($data, $unidade)
+    public function avaliar($data, $unidade,$request)
     {
         try {
             DB::beginTransaction();
@@ -85,7 +88,8 @@ class PlanoEntregaService extends ServiceBase
             // IMPLEMENTAR CODIGO DE AVALIAÇÃO DO PLANO DE ENTREGAS
             $this->status->atualizaStatus($planoEntrega, 'AVALIADO', 'A avaliação do plano de entregas foi realizada nesta data.');
             // (RN_PENT_O) ... sugerir arquivamento automático (vide RI_PENT_A);
-            if ($data["arquivar"]) $this->update(["id" => $planoEntrega->id, "data_arquivamento" => Carbon::now()], $unidade, false);
+            $unidadeLogin = Auth::user()->areasTrabalho[0]->unidade;
+            if ($data["arquivar"]) $this->update(["id" => $planoEntrega->id, "data_arquivamento" => $this->unidadeService->hora($unidadeLogin->id)], $unidade, false);
             DB::commit();
         } catch (Throwable $e) {
             DB::rollback();
@@ -114,10 +118,12 @@ class PlanoEntregaService extends ServiceBase
         $result["planoPaiAtivo"] = $planoEntrega['plano_entrega_id'] ? $this->isPlano("ATIVO", $planoEntregaPai->toArray()) : false;
         $result["planoHomologando"] = $this->isPlano("HOMOLOGANDO", $planoEntrega);
         $result["planoIncluido"] = $this->isPlano("INCLUIDO", $planoEntrega);
+        $result["planoAvaliado"] = $this->isPlano("AVALIADO", $planoEntrega);
         $result["planoProprio"] = $planoEntrega['plano_entrega_id'] == null;
         $result["planoVinculado"] = $planoEntrega['plano_entrega_id'] != null;
         $result["nrEntregas"] = empty($planoEntrega['entregas']) ? 0 : count($planoEntrega['entregas']);
         $result["planoArquivado"] = empty($planoEntrega['id']) ? false : PlanoEntrega::find($planoEntrega['id'])->data_arquivamento != null;
+        $result["planoSuspenso"] = $this->isPlano("SUSPENSO", $planoEntrega);
         $result["planoStatus"] = empty($planoEntrega['id']) ? null : PlanoEntrega::find($planoEntrega['id'])->status;
         $result["gestorUnidadePlano"] = $this->usuario->isGestorUnidade($planoEntrega['unidade_id']);
         $result["gestorUnidadePaiUnidadePlano"] = !empty($planoEntrega['unidade']['unidade_pai_id']) && $this->usuario->isGestorUnidade($planoEntrega['unidade']['unidade_pai_id']);
@@ -314,6 +320,17 @@ class PlanoEntregaService extends ServiceBase
         return $rows;
     }
 
+    public function proxyExtra($rows, $data) 
+    {
+        if(in_array("avaliacao", $data["with"])) {
+            $tiposAvaliacoesIds = array_unique(array_map(fn ($v) => ($v["avaliacao"] ?? ["tipo_avaliacao_id" => null])["tipo_avaliacao_id"], $rows->toArray()));
+            $tiposAvaliacoes = TipoAvaliacao::with(["notas"])->whereIn("id", $tiposAvaliacoesIds)->get()->all();
+            return ["tipos_avaliacoes" => $tiposAvaliacoes];
+        } else {
+            return null;
+        }
+    }
+
     public function proxyStore(&$planoEntrega, $unidade, $action)
     {
         if ($action == ServiceBase::ACTION_INSERT) {
@@ -467,15 +484,16 @@ class PlanoEntregaService extends ServiceBase
      */
     public function verificaUnicidadeMesmaUnidade($status, $data)
     {
-        $planos = PlanoEntrega::where("unidade_id", $data["unidade_id"])->where("status", $status)->get();
+        $planoEntrega = PlanoEntrega::find($data["id"]);
+        $planos = PlanoEntrega::where("unidade_id", $planoEntrega->unidade_id)->where("status", $status)->get();
         foreach ($planos as $plano) {
             if (
-                UtilService::intersect($plano->data_inicio, $plano->data_fim, $data["data_inicio"], $data["data_fim"]) &&
-                UtilService::valueOrNull($data, "id") != $plano->id
+                UtilService::intersect($plano->data_inicio, $plano->data_fim, $planoEntrega->data_inicio, $planoEntrega->data_fim) &&
+                $planoEntrega->id != $plano->id
             ) {
                 throw new ServerException("ValidatePlanoEntrega", "Com base na capacidade do usuário logado (" . ($status == 'HOMOLOGANDO' ? "MOD_PENT_EDT_ATV_HOMOL" : "MOD_PENT_EDT_ATV_ATV)") .
                     ", a alteração do plano retornaria o seu status para " . ($status == 'HOMOLOGANDO' ? "AGUARDANDO HOMOLOGAÇÃO" : "ATIVO") .
-                    ", mas seu período de vigência (" . UtilService::getDateTimeFormatted($data["data_inicio"]) . " a " . UtilService::getDateTimeFormatted($data["data_fim"]) .
+                    ", mas seu período de vigência (" . UtilService::getDateTimeFormatted($planoEntrega->data_inicio) . " a " . UtilService::getDateTimeFormatted($planoEntrega->data_fim) .
                     ") entraria em conflito com o do plano de entregas #" . $plano->numero . " (" . UtilService::getDateTimeFormatted($plano->data_inicio) . " a " . UtilService::getDateTimeFormatted($plano->data_fim) . "). [RN_PENT_J]");
             }
         }

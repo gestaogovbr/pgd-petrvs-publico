@@ -3,11 +3,12 @@
 ## Lista de Atribuições  
 
 ~~~text
+    Avaliador de Planos de Entregas
     Avaliador de Planos de Trabalho
-    Avaliador de Planos de Trabalho
-    Colaborador (aquele que possui um TCR assinado)
+    Colaborador
     Gestor
-    Gestor Substituto
     Gestor Delegado
+    Gestor Substituto
     Homologador de Planos de Entregas
+    Lotado
 ~~~

@@ -342,9 +342,9 @@ export class AuthService {
    * @returns
    */
   public isGestorUnidade(pUnidade: Unidade | string | null = null): boolean {
-    let gerencias = [this.usuario!.gerencia_titular?.unidade, ...(this.usuario!.gerencias_substitutas!.map(x => x.unidade)), ...(this.usuario!.gerencias_delegadas!.map(x => x.unidade))].filter(x => x).map(x => x?.id);
-    let unidade_id = pUnidade == null ? this.unidade!.id : typeof pUnidade == "string" ? pUnidade : pUnidade.id;
-    return gerencias.includes(unidade_id);
+    let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? [this.usuario!.gerencia_titular?.unidade, ...(this.usuario!.gerencias_substitutas!.map(x => x.unidade)), ...(this.usuario!.gerencias_delegadas!.map(x => x.unidade))].find(x => x && x.id == pUnidade) : pUnidade;
+    let areaTrabalho = this.unidades?.find(x => x.id == unidade?.id);
+    return !!unidade && [areaTrabalho?.gestor_substituto?.usuario_id, areaTrabalho?.gestor?.usuario_id, areaTrabalho?.gestor_delegado?.usuario_id].includes(this.usuario!.id);
   }
 
   /**

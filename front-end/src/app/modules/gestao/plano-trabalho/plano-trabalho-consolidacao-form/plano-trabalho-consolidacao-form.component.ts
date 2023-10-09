@@ -8,7 +8,7 @@ import { PlanoTrabalhoConsolidacaoOcorrenciaDaoService } from 'src/app/dao/plano
 import { IIndexable } from 'src/app/models/base.model';
 import { PlanoTrabalhoConsolidacao } from 'src/app/models/plano-trabalho-consolidacao.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
-import { Atividade, AtividadeChecklist } from 'src/app/models/atividade.model';
+import { Atividade, Checklist } from 'src/app/models/atividade.model';
 import { PlanoTrabalhoConsolidacaoOcorrencia } from 'src/app/models/plano-trabalho-consolidacao-ocorrencia.model';
 import { Afastamento } from 'src/app/models/afastamento.model';
 import { PlanoTrabalhoEntrega } from 'src/app/models/plano-trabalho-entrega.model';
@@ -81,7 +81,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   public planoEntregaService: PlanoEntregaService;
   public itemsEntregas: ConsolidacaoEntrega[] = [];
   public etiquetas: LookupItem[] = [];
-  public checklist?: AtividadeChecklist[];
+  public checklist?: Checklist[];
   public itemsOcorrencias: PlanoTrabalhoConsolidacaoOcorrencia[] = [];
   public itemsComparecimentos: Comparecimento[] = [];
   public itemsAfastamentos: Afastamento[] = [];
@@ -221,8 +221,14 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
         id: x.id,
         entrega: x,
         atividades: dados.atividades.filter(y => y.plano_trabalho_entrega_id == x.id),
-        badge: this.planoTrabalhoService.tipoEntrega(x, dados.planoTrabalho)
+        badge: this.planoTrabalhoService.tipoEntrega(x, dados.planoTrabalho),
+        meta: x.plano_entrega_entrega ? this.planoEntregaService.getValorMeta(x.plano_entrega_entrega) : '',
+        metaRealizado: x.plano_entrega_entrega ? this.planoEntregaService.getValorRealizado(x.plano_entrega_entrega) : '',
+        progresso_realizado: x.plano_entrega_entrega ? x.plano_entrega_entrega.progresso_realizado : 0,
+        objetivos: x.plano_entrega_entrega ? x.plano_entrega_entrega.objetivos : [],
+        processos: x.plano_entrega_entrega ? x.plano_entrega_entrega.processos : [],
       };
+
       return result;
     });
     this.programa = dados.programa;
@@ -548,5 +554,13 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     //result.push({ hint: "Adicionar filho", icon: "bi bi-plus-circle", onClick: this.addChildProcesso.bind(this) });
     return result;
   }  
+
+  public async showPlanejamento(planejamento_id: string){
+    this.go.navigate({ route: ['gestao', 'planejamento', planejamento_id, 'consult'] }, {modal: true})
+  }
+
+  public async showCadeiaValor(cadeia_valor_id_id: string){
+    this.go.navigate({ route: ['gestao', 'cadeia-valor', cadeia_valor_id_id, 'consult'] }, {modal: true})
+  }
  
 }
