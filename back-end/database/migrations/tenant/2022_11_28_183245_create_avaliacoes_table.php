@@ -24,6 +24,7 @@ class CreateAvaliacoesTable extends Migration
             $table->dateTime('data_avaliacao')->comment("Data e hora da avaliação");
             $table->json('nota')->comment("Nota da avaliação");
             $table->text('justificativa')->nullable()->comment("Comentário referente à avaliação, pelo avaliador");
+            $table->json('justificativas')->default(new Expression('(JSON_ARRAY())'))->comment("Justificativas");
             $table->text('recurso')->nullable()->comment("Recurso contra a nota atribuída, pelo avaliado");
             // Chaves estrangeiras:
             $table->foreignUuid('avaliador_id')->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->comment('Usuário avaliador');

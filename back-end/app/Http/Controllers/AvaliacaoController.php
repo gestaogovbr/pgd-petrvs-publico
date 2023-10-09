@@ -43,7 +43,8 @@ class AvaliacaoController extends ControllerBase {
                 ]);
                 $avaliacao = Avaliacao::find($data["id"]);
                 if(empty($avaliacao)) throw new ServerException("ValidateAvaliacao", "Avaliação não encontrada");
-                /* (RN_AVL_2) [PT] O usuário do plano de trabalho poderá recorrer da nota atribuida dentro do limites estabelecido pelo programa; */
+                /* (RN_AVL_2) [PT] O usuário do plano de trabalho que possuir o acesso MOD_PTR_CSLD_REC_AVAL poderá recorrer da nota atribuida dentro do limites estabelecido pelo programa; */
+                if(!$usuario->hasPermissionTo('MOD_PTR_CSLD_REC_AVAL')) throw new ServerException("ValidateAvaliacao", "Usuário não possuí o acesso MOD_PTR_CSLD_REC_AVAL. [RN_AVL_2]");
                 $planoTrabalho = $avaliacao->planoTrabalhoConsolidacao->planoTrabalho;
                 if($planoTrabalho->usuario_id != $usuario->id) throw new ServerException("ValidateAvaliacao", "Apenas o usuário do plano de trabalho poderá recorrer. [RN_AVL_2]");
                 $programa = $planoTrabalho->programa;

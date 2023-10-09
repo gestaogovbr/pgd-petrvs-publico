@@ -6,7 +6,6 @@ use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\Usuario;
 use App\Models\TipoAvaliacao;
-use App\Models\AvaliacaoJustificativa;
 use App\Models\AvaliacaoEntregaChecklist;
 
 class Avaliacao extends ModelBase
@@ -17,9 +16,10 @@ class Avaliacao extends ModelBase
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'nota', /* json; NOT NULL; */// Nota da avaliação
-        'justificativa', /* json; NOT NULL; DEFAULT: 'json_array()'; */// Justificativa
+        'justificativa', /* text; NOT NULL; DEFAULT: ; */// Justificativa
         'tipo_avaliacao_id', /* char(36); NOT NULL; */
         'data_avaliacao',
+        'justificativas', /* json; NOT NULL; DEFAULT: 'json_array()'; */// Justificativa
         //'recurso',
         //'deleted_at', /* timestamp; */
         //'comentarios', /* text; */// Comentário referente à avaliação, pelo avaliador
@@ -32,22 +32,20 @@ class Avaliacao extends ModelBase
     ];
 
     public $delete_cascade = [
-        "justificativas",
-        "entregasChecklist"
+        "entregas_checklist"
     ];
 
-    public $fillable_changes = [
-        "justificativas",
-        "entregasChecklist"
+    public $fillable_relations = [
+        "entregas_checklist"
     ];
 
     // Casting
     protected $casts = [
-        'nota' => AsJson::class
+        'nota' => AsJson::class,
+        'justificativas' => AsJson::class,
     ];
     
     // Has
-    public function justificativas() { return $this->hasMany(AvaliacaoJustificativa::class); }   
     public function entregasChecklist() { return $this->hasMany(AvaliacaoEntregaChecklist::class); }   
     // Belongs
     public function avaliador() { return $this->belongsTo(Usuario::class); }

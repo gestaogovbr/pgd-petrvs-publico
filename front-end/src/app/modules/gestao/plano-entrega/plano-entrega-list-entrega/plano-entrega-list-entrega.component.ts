@@ -229,6 +229,14 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     this.go.navigate({ route: ['logs', 'change', entrega.id, 'consult'] })
   }
 
+  public async showPlanejamento(planejamento_id: string){
+    this.go.navigate({ route: ['gestao', 'planejamento', planejamento_id, 'consult'] }, {modal: true})
+  }
+
+  public async showCadeiaValor(cadeia_valor_id_id: string){
+    this.go.navigate({ route: ['gestao', 'cadeia-valor', cadeia_valor_id_id, 'consult'] }, {modal: true})
+  }
+
   public refreshComentarios(modalResult: any) {
     /* Atualiza os comentários após ser salvo pela própria tela de comentarios (persistent) */
     let row: PlanoEntregaEntrega | undefined = this.items.find(x => x.id == modalResult.id);

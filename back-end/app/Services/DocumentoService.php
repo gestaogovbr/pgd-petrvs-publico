@@ -79,7 +79,8 @@ class DocumentoService extends ServiceBase {
         $assinatura->data_assinatura = $this->unidadeService->hora($unidadeLogin->id);
         $assinatura->documento_id = $documento->id;
         $assinatura->usuario_id = $usuario_id;
-        $assinatura->assinatura = hash('md5', $assinatura->data_assinatura->toDateTimeString() . $usuario_id . $documento->conteudo);
+        //$assinatura->assinatura = hash('md5', $assinatura->data_assinatura->toDateTimeString() . $usuario_id . $documento->conteudo);
+        $assinatura->assinatura = hash('md5', $assinatura->data_assinatura . $usuario_id . $documento->conteudo);
         return $assinatura->save();
     }
 

@@ -6,7 +6,6 @@ use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\Usuario;
 use App\Models\TipoAvaliacao;
-use App\Models\AvaliacaoJustificativa;
 
 class AvaliacaoEntregaChecklist extends ModelBase
 {

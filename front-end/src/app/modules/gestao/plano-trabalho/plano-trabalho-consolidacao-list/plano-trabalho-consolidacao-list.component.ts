@@ -169,6 +169,8 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
       modalClose: (modalResult?: Avaliacao) => {
         if(modalResult) {
           consolidacao.status = "AVALIADO";
+          consolidacao.avaliacao_id = modalResult.id;
+          consolidacao.avaliacao = modalResult;
           this.refreshConsolidacao(consolidacao);
         }
       }
@@ -239,8 +241,8 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
         result.push(BOTAO_AVALIAR);
       }
       if(consolidacao.status == "AVALIADO" && consolidacao!.avaliacao) {
-        /* (RN_AVL_2) [PT] O usuário do plano de trabalho poderá recorrer da nota atribuida dentro do limites estabelecido pelo programa; */
-        if(isUsuarioDoPlano && consolidacao!.avaliacao?.data_avaliacao && 
+        /* (RN_AVL_2) [PT] O usuário do plano de trabalho que possuir o acesso MOD_PTR_CSLD_REC_AVAL poderá recorrer da nota atribuida dentro do limites estabelecido pelo programa; */
+        if(isUsuarioDoPlano && this.auth.hasPermissionTo('MOD_PTR_CSLD_REC_AVAL') && consolidacao!.avaliacao?.data_avaliacao && 
           (!this.entity!.programa!.dias_tolerancia_recurso_avaliacao || 
           (this.util.daystamp(consolidacao!.avaliacao!.data_avaliacao) + this.entity!.programa!.dias_tolerancia_recurso_avaliacao > this.util.daystamp(this.auth.hora)))) {
           result.push(BOTAO_FAZER_RECURSO);

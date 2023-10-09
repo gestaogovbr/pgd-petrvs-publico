@@ -17,6 +17,7 @@ import { DocumentosBadgeComponent } from './documentos/documentos-badge/document
 import { StatusFormComponent } from './status/status-form/status-form.component';
 import { AvaliarComponent } from './avaliar/avaliar.component';
 import { AvaliarNotaInputComponent } from './avaliar/avaliar-nota-input/avaliar-nota-input.component';
+import { AvaliarNotaBadgeComponent } from './avaliar/avaliar-nota-badge/avaliar-nota-badge.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { AvaliarNotaInputComponent } from './avaliar/avaliar-nota-input/avaliar-
     NotificacoesTemplateComponent,
     StatusFormComponent,
     AvaliarComponent,
-    AvaliarNotaInputComponent
+    AvaliarNotaInputComponent,
+    AvaliarNotaBadgeComponent
   ],
   imports: [
     CommonModule,
@@ -53,7 +55,9 @@ import { AvaliarNotaInputComponent } from './avaliar/avaliar-nota-input/avaliar-
     NotificacoesComponent,
     NotificacoesConfigComponent,
     NotificacoesTemplateComponent,
-    AvaliarComponent
+    AvaliarComponent,
+    AvaliarNotaInputComponent,
+    AvaliarNotaBadgeComponent
   ]
 })
 export class UteisModule { }

@@ -21,7 +21,8 @@ export class AvaliarNotaInputComponent {
         key: x.nota,
         value: x.nota,
         hint: x.descricao,
-        icon: x.icone
+        icon: x.icone,
+        color: x.cor
       }));
     }
   }

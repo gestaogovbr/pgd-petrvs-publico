@@ -30,7 +30,7 @@ export class PlanoTrabalhoEntregaAtividadesComponent extends PageFrameBase {
   constructor(public injector: Injector){
     super(injector);
     this.AtividadeDao = injector.get<AtividadeDaoService>(AtividadeDaoService);
-    this.join = ['unidade']
+    this.join = ['unidade', 'usuario','demandante']
   }
 
   ngOnInit(): void {

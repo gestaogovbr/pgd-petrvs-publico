@@ -131,11 +131,12 @@ class PlanoTrabalhoController extends ControllerBase {
             $this->checkPermissions("CANCELAR_PLANO", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
             $data = $request->validate([
                 'id' => ['required'],
-                'justificativa' => ['required']
+                'justificativa' => ['required'],
+                'arquivar' => ['required']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
-                'success' => $this->service->cancelarPlano($data, $unidade,$request)
+                'success' => $this->service->cancelarPlano($data, $unidade, $request)
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
@@ -144,7 +145,7 @@ class PlanoTrabalhoController extends ControllerBase {
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         $idUsuarioLogado = parent::loggedUser()->id;
-        $usuarioService = new UsuarioService();
+        //$usuarioService = new UsuarioService();
         switch ($action) {
             case 'QUERY':
                 if (!$usuario->hasPermissionTo('MOD_PTR')) throw new ServerException("CapacidadeSearchText", "O usuário logado não tem permissão para consultar planos de trabalho (MOD_PTR). [RN_PTR_S]");
@@ -184,11 +185,11 @@ class PlanoTrabalhoController extends ControllerBase {
                 $data = $request->validate(['id' => ['required'], 'arquivar' => ['required']]);
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
                 if ($data['arquivar']) {
-                    if(!($condicoes["planoConcluido"] && !$condicoes["planoArquivado"])) throw new ServerException("ValidatePlanoTrabalho", "Arquivamento não realizado, porque o plano não está no status CONCLUIDO ou já está arquivado. [RN_PTR_N]");
+                    if(!(($condicoes["planoConcluido"] || $condicoes["planoCancelado"]) && !$condicoes["planoArquivado"])) throw new ServerException("ValidatePlanoTrabalho", "Arquivamento não realizado, porque o plano não está no status CONCLUIDO nem CANCELADO, ou já está arquivado. [RN_PTR_N]");
                     if(!($condicoes["usuarioEhParticipantePlano"] || $condicoes["gestorUnidadeExecutora"])) throw new ServerException("ValidateUsuario", "Arquivamento não realizado, porque o usuário logado não é participante do plano nem um dos gestores da sua unidade executora. [RN_PTR_N]");
                     /*                 
                         (RN_PTR_N) ARQUIVAR
-                        O plano precisa estar com o status CONCLUIDO, não ter sido arquivado, e:
+                        O plano precisa estar com o status CONCLUIDO ou CANCELADO, não ter sido arquivado, e:
                             - o usuário logado precisa ser o participante ou o gestor da Unidade Executora;
                     */
                 } else {

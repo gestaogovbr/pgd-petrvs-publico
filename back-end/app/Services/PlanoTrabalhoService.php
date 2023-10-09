@@ -351,7 +351,7 @@ class PlanoTrabalhoService extends ServiceBase
       "unidade.gestor:id,unidade_id,usuario_id",
       "unidade.gestorSubstituto:id,unidade_id,usuario_id",
       "tipoModalidade:id,nome",
-      "consolidacoes.avaliacao",
+      "consolidacoes.avaliacao.tipoAvaliacao.notas",
       "usuario:id,nome,apelido,url_foto"
     ])->where("usuario_id", $usuarioId);
     if (!$arquivados) $query->whereNull("data_arquivamento");
@@ -563,6 +563,7 @@ class PlanoTrabalhoService extends ServiceBase
     $result["planoArquivado"] = empty($planoTrabalho['id']) ? false : PlanoTrabalho::find($planoTrabalho['id'])->data_arquivamento != null;
     $result["planoAtivo"] = $this->isPlano("ATIVO", $planoTrabalho);
     $result["planoConcluido"] = $this->isPlano("CONCLUIDO", $planoTrabalho);
+    $result["planoCancelado"] = $planoTrabalho['status'] == "CANCELADO";
     $result["planoIncluido"] = $this->isPlano("INCLUIDO", $planoTrabalho);
     $result["planoStatus"] = empty($planoTrabalho['id']) ? null : PlanoTrabalho::find($planoTrabalho['id'])->status;
     $result["planoSuspenso"] = $this->isPlano("SUSPENSO", $planoTrabalho);

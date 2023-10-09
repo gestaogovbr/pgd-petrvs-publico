@@ -1,4 +1,5 @@
 import { StatusDockerConfig } from '../modules/gestao/atividade/atividade-list-kanban/atividade-list-kanban.component';
+import { Avaliacao, HasAvaliacao } from './avaliacao.model';
 import { Base } from './base.model';
 import { CadeiaValor } from './cadeia-valor.model';
 import { Planejamento } from './planejamento.model';
@@ -19,7 +20,9 @@ export type PlanoEntregaMetadados = {
   avaliado: boolean,
   arquivado: boolean
 }
-export class PlanoEntrega extends Base implements HasStatus {
+
+export class PlanoEntrega extends Base implements HasStatus, HasAvaliacao {
+  public avaliacao?: Avaliacao;
   public unidade?: Unidade;
   public planejamento?: Planejamento;
   public cadeia_valor?: CadeiaValor;
@@ -36,10 +39,12 @@ export class PlanoEntrega extends Base implements HasStatus {
   public numero?: number;                                           // Número do plano de entrega (Gerado pelo sistema)
   public data_arquivamento?: Date | null;
   public metadados: PlanoEntregaMetadados | undefined = undefined;  // Campo virtual contendo informações calculadas pelo servidor
-  public arquivar: boolean = false;                                 // Campo virtual utilizado pelo método avaliar
+  public arquivar: boolean = false;                                 // Campo virtual utilizado pelos métodos arquivar/desarquivar/avaliar
   public status: PlanoEntregaStatus = "INCLUIDO";                   // Status atual do plano de entregas
+  public avaliacoes: Avaliacao[] = [];
 
   public unidade_id: string = '';
+  public avaliacao_id: string | null = null;
   public plano_entrega_id: string | null = null;
   public planejamento_id: string | null = null;
   public cadeia_valor_id: string | null = null;

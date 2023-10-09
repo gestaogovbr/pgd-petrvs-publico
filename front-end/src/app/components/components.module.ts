@@ -69,6 +69,7 @@ import { DoubleScrollbarComponent } from './double-scrollbar/double-scrollbar.co
 import { ButtonDashboardComponent } from './button-dashboard/button-dashboard.component';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { JsonViewerComponent } from './json-viewer/json-viewer.component';
+import { InputChooseComponent } from './input/input-choose/input-choose.component';
 
 const maskConfigFunction: () => Partial<IConfig> = () => {
   return {
@@ -105,6 +106,7 @@ const maskConfigFunction: () => Partial<IConfig> = () => {
     InputColorComponent,
     InputTimerComponent,
     InputRateComponent,
+    InputChooseComponent,
     InputMultitoggleComponent,
     TabsComponent,
     TabComponent,
@@ -138,7 +140,7 @@ const maskConfigFunction: () => Partial<IConfig> = () => {
     CollapseCardComponent,
     DoubleScrollbarComponent,
     ButtonDashboardComponent,
-    JsonViewerComponent
+    JsonViewerComponent,
   ],
   imports: [
     CommonModule,
@@ -177,6 +179,7 @@ const maskConfigFunction: () => Partial<IConfig> = () => {
     InputMultiselectComponent,
     InputTimerComponent,
     InputRateComponent,
+    InputChooseComponent,
     InputMultitoggleComponent,
     TabsComponent,
     TabComponent,
