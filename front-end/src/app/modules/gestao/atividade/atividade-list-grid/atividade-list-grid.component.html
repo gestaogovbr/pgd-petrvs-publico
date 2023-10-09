@@ -22,7 +22,7 @@
         </div>
         <div class="row">
             <input-search [size]="3" [label]="lex.translate('Tipo de Atividade')" [control]="filter!.controls.tipo_atividade_id" controlName="tipo_atividade_id" [dao]="tipoAtividadeDao"></input-search>
-            <input-search [size]="3" [label]="lex.translate('Tipo de Processo')" [control]="filter!.controls.tipo_processo_id" controlName="tipo_processo_id" [dao]="tipoProcessoDao"></input-search>
+            <input-search [size]="3" [label]="lex.translate('Tipo de Processo')" [control]="filter!.controls.tipo_processo_id" controlName="tipo_processo_id" [dao]="tipoProcessoDao" ></input-search>
             <input-select [size]="2" label="Data" itemTodos="- Todos -" [valueTodos]="null" controlName="data_filtro" [control]="filter!.controls.data_filtro" [items]="DATAS_FILTRO"></input-select>
             <input-datetime [size]="2" noIcon [disabled]="filter!.controls.data_filtro.value == null ? 'true' : undefined" label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" labelInfo="Data início do período"></input-datetime>
             <input-datetime [size]="2" noIcon [disabled]="filter!.controls.data_filtro.value == null ? 'true' : undefined" label="Fim" controlName="data_fim" [control]="filter!.controls.data_fim" labelInfo="Data fim do período"></input-datetime>
