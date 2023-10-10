@@ -211,6 +211,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
         await this.dao!.delete(entrega);
       };
     }
+    
   }
 
   public async consult(entrega: PlanoEntregaEntrega) {

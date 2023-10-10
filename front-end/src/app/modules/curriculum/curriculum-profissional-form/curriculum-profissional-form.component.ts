@@ -113,30 +113,10 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       for (let i = 1980; i <= (new Date()).getFullYear(); i++) {
         this.anos.push(Object.assign({}, { key: i, value: (i.toString()) }));
       }
-
-      /*(async () => {
-       
-        this.unidadesArray = await this.unidadeDao?.lookupTodasUnidades()
-        this.unidade = this.unidadesArray.map((x: { id: any; sigla: any; }) => Object.assign({}, { key: x.id, value: x.sigla }));
-        setTimeout(() => 
-        {
-         
-          console.log('Todas Unidades', this.unidade);
-          
-        },
-        1000);
-      })();*/
       
       const userUnidade = this.auth.unidade;
-      console.log(userUnidade)
-   /*   this.lotacaoDao?.query({ where: [['usuario_id', '==', userID],['principal', '==', 1 ]]}).getAll().then((user) => {
-          const unidadeID=user[0].unidade_id;
-          this.unidadeDao?.query({ where: [['id', '==', unidadeID]]}).getAll().then((unidade) => {
-              console.log('UNIDADES',unidade[0].sigla,unidade[0].nome)
-                //this.usuarioUnidade = user.map(x => Object.assign({}, { key: x.id, value: x.unidade_id }) as LookupItem);
-                //this.cdRef.detectChanges();
-          });
-      });*/
+      console.log('userUnidade',userUnidade)
+ 
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
