@@ -22,7 +22,7 @@
         <column [maxWidth]="350" [titleTemplate]="titleEntrega" [template]="columnEntrega" [editTemplate]="editEntrega" [verticalAlign]="'middle'">
             <ng-template let-header="header" #titleEntrega><span><strong>Entrega</strong></span></ng-template>
             <ng-template let-row="row" #columnEntrega>
-                <small>{{ planoTrabalhoService.tipoEntrega(row, entity).nome }}</small>
+                <small>{{ planoTrabalhoService.tipoEntrega(row, entity).descricao }}</small>
                 <div *ngIf="['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(planoTrabalhoService.tipoEntrega(row, entity).tipo)" class="w-100">
                     <badge color="light" icon="bi bi-box-arrow-in-right" [label]="util.getDateFormatted(row.plano_entrega_entrega?.data_inicio)" hint="Data de início"></badge>
                     <badge color="light" icon="bi bi-box-arrow-right" [label]="util.getDateFormatted(row.plano_entrega_entrega?.data_fim)" hint="Data de término"></badge>
@@ -46,9 +46,13 @@
             <ng-template let-row="row" #columnForcaTrabalho><small>{{  row.forca_trabalho + '%' }}</small></ng-template>
             <ng-template let-row="row" #editForcaTrabalho><input-text number sufix="%" controlName="forca_trabalho" [control]="form!.controls.forca_trabalho" (change)="onForcaTrabalhoChange(row)" [attr.maxlength]=250></input-text></ng-template>
         </column>
-        <column [maxWidth]="250" [titleTemplate]="titleDescricao" [template]="columnDescricao" [editTemplate]="editDescricao" [verticalAlign]="'middle'">
+        <column [maxWidth]="250" [titleTemplate]="titleDescricao" [template]="columnDescricao" [editTemplate]="editDescricao" [verticalAlign]="'middle'" [align]="'center'">
             <ng-template let-header="header" #titleDescricao><div class="text-center"><span><strong>Detalhamento/Descrição dos Trabalhos</strong></span></div></ng-template>
-            <ng-template let-row="row" #columnDescricao><small>{{ row.descricao }}</small></ng-template>
+            <ng-template let-row="row" #columnDescricao>
+                <div *ngIf="row.descricao != planoTrabalhoService.tipoEntrega(row, entity).descricao; else solicitarDescricao"><small>{{ row.descricao }}</small></div>
+            </ng-template>
+            <ng-template #solicitarDescricao><small>Detalhe/Descreva os trabalhos</small></ng-template>
+            <!--<ng-template let-row="row" #columnDescricao><small>{{ row.descricao }}</small></ng-template>-->
             <ng-template let-row="row" #editDescricao><input-text controlName="descricao" [control]="form!.controls.descricao" [attr.maxlength]=250></input-text></ng-template>
         </column>
         <column type="options"></column>
