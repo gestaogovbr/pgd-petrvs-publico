@@ -11,40 +11,7 @@ import { HomeRaioxComponent } from './home-raiox/home-raiox.component';
 import { HomeAdministradorComponent } from './home-administrador/home-administrador.component';
 import { ComponentsModule } from "../../components/components.module";
 import { HomeAvaliadorComponent } from './home-avaliador/home-avaliador.component';
-
-const routes: Routes = [
-  {
-    path: '', component: HomeComponent,
-    children: [
-      {
-        path:'execucao', component: HomeExecucaoComponent
-      },
-      {
-        path:'avaliacao', component: HomeAvaliadorComponent
-      },
-      {
-        path:'gestao', component: HomeGestaoComponent
-      },
-      {
-        path:'projeto', component: HomeProjetosComponent
-      },
-      {
-        path:'dev', component: HomeDevComponent
-      },
-      {
-        path:'administrador', component: HomeAdministradorComponent
-      },
-      {
-        path:'ponto', component: HomePontoComponent
-      },
-      {
-        path:'raiox', component: HomeRaioxComponent
-      }
-    ]
-  }
-  
-];
-
+import { HomeRoutingModule } from './home-routing.module';
 
 @NgModule({
     declarations: [
@@ -59,9 +26,9 @@ const routes: Routes = [
         HomeAvaliadorComponent
     ],
     imports: [
-        RouterModule.forRoot(routes),
         CommonModule,
-        ComponentsModule
+        ComponentsModule,
+        HomeRoutingModule
     ]
 })
 export class HomeModule { }
