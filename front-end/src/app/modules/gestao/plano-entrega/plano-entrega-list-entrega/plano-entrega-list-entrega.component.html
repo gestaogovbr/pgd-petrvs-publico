@@ -31,10 +31,10 @@
                 <span *ngIf="row.data_fim"> {{dao!.getDateFormatted(row.data_fim)}}</span>
             </ng-template>
         </column>
-        <column [title]="'Meta\nRealizado'" [width]="200" [template]="columnMetaRealizado" [editTemplate]="editMetaRealizado">
+        <column [title]="'Meta'" [width]="200" [template]="columnMetaRealizado" [editTemplate]="editMetaRealizado">
             <ng-template let-row="row" #columnMetaRealizado>
-                <badge icon="bi bi-graph-up-arrow" [textValue]="planoEntregaService.getValorMeta(row)" color="light" hint="Meta"></badge><br>
-                <badge icon="bi bi-check-lg" [textValue]="planoEntregaService.getValorRealizado(row)" color="light" hint="Realizado"></badge>
+                <badge icon="bi bi-graph-up-arrow" [textValue]="planoEntregaService.getValorMeta(row)" color="light" hint="Planejada"></badge><br>
+                <badge icon="bi bi-check-lg" [textValue]="planoEntregaService.getValorRealizado(row)" color="light" hint="Realizada"></badge>
             </ng-template>
             <ng-template let-row="row" #editMetaRealizado>
                 <plano-entrega-valor-meta-input icon="bi bi-graph-up-arrow" [entrega]="row.entrega" disabled [size]="6" [control]="form!.controls.meta" label="Meta"></plano-entrega-valor-meta-input>
@@ -64,6 +64,13 @@
                         <small>{{pProcesso.processo.nome}}</small>
                     </div>
                 </separator>
+                <!--<separator *ngIf="row.checklist?.length" small title="Checklist"></separator>
+                <table *ngIf="row.checklist?.length">
+                    <tr *ngFor="let check of row.checklist">
+                        <td><i *ngIf="check.checked" class="bi bi-check-circle"></i></td>
+                        <td class="micro-text fw-ligh">{{check.texto}}</td>
+                    </tr>
+                </table>-->
             </ng-template>
         </column>
         <column [title]="'Modelo de Entrega\nComentários'" [template]="columnEntregaCometario" [editTemplate]="columnEntregaCometario">
