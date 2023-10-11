@@ -40,11 +40,11 @@ class CargoSeeder extends Seeder
         }
 
         // Seeder - Inicial da PRF
-        $cargos_prf = [
-          ['id' => 'b1544ba3-9489-429e-9a63-1e7e28a9500a', 'nome'=> 'PRF','nivel'=> '','descricao'=>'','siape'=>'','cbo'=>'','efetivo'=>1,'ativo'=>1],
-          ['id' => 'd49c7d69-8e66-438e-97c7-b17113a50b11', 'nome'=> 'Agente Administrativo','nivel'=> '','descricao'=>'','siape'=>'','cbo'=>'','efetivo'=>1,'ativo'=>1],
-        ];
-        Cargo::insertOrIgnore($cargos_prf);
+        //$cargos_prf = [
+       //   ['id' => 'b1544ba3-9489-429e-9a63-1e7e28a9500a', 'nome'=> 'PRF','nivel'=> '','descricao'=>'','siape'=>'','cbo'=>'','efetivo'=>1,'ativo'=>1],
+       //   ['id' => 'd49c7d69-8e66-438e-97c7-b17113a50b11', 'nome'=> 'Agente Administrativo','nivel'=> '','descricao'=>'','siape'=>'','cbo'=>'','efetivo'=>1,'ativo'=>1],
+       // ];
+      //  Cargo::insertOrIgnore($cargos_prf);
     }
 }
 
