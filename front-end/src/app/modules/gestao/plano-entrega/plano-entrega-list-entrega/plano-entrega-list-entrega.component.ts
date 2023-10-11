@@ -208,7 +208,14 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
       if (this.isNoPersist) {
         entrega._status = "DELETE";
       } else {
-        await this.dao!.delete(entrega);
+        this.dao!.delete(entrega).then(() => {
+          //this.grid!.query!.removeId(entrega.id);
+          this.items.splice(index, 1);
+          this.cdRef.detectChanges();
+          this.dialog.topAlert("Registro excluído com sucesso!", 5000);
+        }).catch((error) => {
+          this.dialog.alert("Erro", "Erro ao excluir: " + (error?.message ? error?.message : error));
+        });;
       };
     }
     

@@ -2,38 +2,36 @@ import { Component, Injector, TemplateRef, ViewChild, OnInit } from '@angular/co
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { GridComponent } from 'src/app/components/grid/grid.component';
+import { Curso } from 'src/app/models/curso.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
-import { Materia } from 'src/app/models/materia.model';
-import { MateriaDaoService } from 'src/app/dao/materia-dao.service';
-import { AreaConhecimentoDaoService } from 'src/app/dao/area-conhecimento-dao.service';
+import { CursoDaoService } from 'src/app/dao/curso-dao.service';
+
 
 @Component({
-  selector: 'materia-list',
-  templateUrl: './materia-list.component.html',
-  styleUrls: ['./materia-list.component.scss']
+  selector: 'curso-list',
+  templateUrl: './curso-list.component.html',
+  styleUrls: ['./curso-list.component.scss']
 })
 
-
-export class MateriaListComponent extends PageListBase<Materia, MateriaDaoService> {
+export class CursoListComponent extends PageListBase<Curso, CursoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
-
-  public area?: AreaConhecimentoDaoService;
   
+ 
+
   constructor(public injector: Injector) {
-    super(injector, Materia, MateriaDaoService);
-    this.area = injector.get<AreaConhecimentoDaoService>(AreaConhecimentoDaoService)
-   
+    super(injector, Curso, CursoDaoService);
        /* Inicializações */
-    this.title = this.lex.translate("Matérias");
+    this.title = this.lex.translate("Cursos");
     this.code = "MOD_RX";
-    this.join = ["curso:id,nome"];
-    this.join = ["curso.area:id,nome"];
+    this.join = ["area_conhecimento","tipo_curso"];
+    this.orderBy = [['nome','asc']];
+    //console.log('CURSO JOIN->>')
   
     this.filter = this.fh.FormBuilder({
-      area_id:{default: ""},
-      nome: {default: ""},
-      horas_aula: {default:0},
-      ativo: {default: true},
+      nome_area: {default: ""},
+      nome_curso: {default: ""},
+      nome_tipo:{default: ""},
+      titulo: {default: ""},
      });
     // Testa se o usuário possui permissão para exibir dados de cursos
     if (this.auth.hasPermissionTo("MOD_RX_VIS_DPE")) {
@@ -57,9 +55,11 @@ export class MateriaListComponent extends PageListBase<Materia, MateriaDaoServic
   }
 
   public filterClear(filter: FormGroup) {
-    filter.controls.nome.setValue("");
-    filter.controls.horas_aula.setValue("");
-  
+    filter.controls.nome_area.setValue("");
+    filter.controls.nome_curso.setValue("");
+    filter.controls.nome_tipo.setValue("");
+    filter.controls.titulo.setValue("");
+
     super.filterClear(filter);
   }
 
@@ -67,12 +67,19 @@ export class MateriaListComponent extends PageListBase<Materia, MateriaDaoServic
     let result: any[] = [];
     let form: any = filter.value;
 
-    if(form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
+    if(form.nome_curso?.length) {
+      result.push(["nome", "like", "%" + form.nome_curso.trim().replace(" ", "%") + "%"]);
     }
 
-    if(form.horas_aula?.length) {
-      result.push(["horas_aula", "like", "%" + form.horas_aula.trim().replace(" ", "%") + "%"]);
+    if(form.nome_area?.length) {
+      result.push(["area_curso_id", "like", "%" + form.nome_area.trim().replace(" ", "%") + "%"]);
+    }
+    
+    if(form.titulo?.length) {
+      result.push(["titulo", "like", "%" + form.titulo.trim().replace(" ", "%") + "%"]);
+    }
+    if(form.nome_tipo?.length) {
+      result.push(["tipo_curso_id", "like", "%" + form.tipo.trim().replace(" ", "%") + "%"]);
     }
 
     return result;
@@ -80,6 +87,5 @@ export class MateriaListComponent extends PageListBase<Materia, MateriaDaoServic
 
  
 }
-
 
 

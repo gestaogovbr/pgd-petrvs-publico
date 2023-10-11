@@ -21,8 +21,8 @@ class Curso extends ModelBase
     ];
 
      // Belongs
-     public function areaConhecimento() { return $this->belongsTo(AreaConhecimento::class); }
-     public function tipoCurso() { return $this->belongsTo(TipoCurso::class); }
+     public function areaConhecimento() { return $this->belongsTo(AreaConhecimento::class,'area_id'); }
+     public function tipoCurso() { return $this->belongsTo(TipoCurso::class,'tipo_curso_id'); }
       // Has
      public function materia() { return $this->hasMany(Materia::class); }
      public function curriculumGraduacao() { return $this->hasMany(CurriculumGraduacao::class); }
