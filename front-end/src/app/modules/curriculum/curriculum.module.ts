@@ -13,7 +13,7 @@ import { CurriculumListComponent } from '../cadastros/curriculum/curriculum-list
 
 @NgModule({
   declarations: [
-    CurriculumListComponent,
+    //CurriculumListComponent,
     CurriculumFormComponent,
     CurriculumProfissionalFormComponent,
     CurriculumAtributosbig5FormComponent

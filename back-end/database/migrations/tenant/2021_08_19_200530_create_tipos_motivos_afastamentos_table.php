@@ -19,14 +19,26 @@ class CreateTiposMotivosAfastamentosTable extends Migration
             $table->primary('id');
             $table->timestamps();
             $table->softDeletes();
+
             // Campos:
-            $table->string('codigo', 50)->nullable()->comment("Código do afastamento");
-            $table->string('nome', 256)->comment("Nome do motivo de afastamento");
-            $table->string('icone', 100)->comment("Class do icone relacionado ao afastamento"); // class="fa fa-icone"
+            $table->string('codigo', 50)->nullable()->comment("Código SIAPE do afastamento.");
+            $table->string('sigla', 256)->comment("Sigla do afastamento.");
+            $table->string('nome', 256)->comment("Descrição sucinta do afastamento.");
+            
+            $table->dateTime('data_inicio')
+                ->comment("Data inicial de ativação do afastamento nos ". 
+                    "sistemas estruturantes.");
+            $table->dateTime('data_fim')->nullable()
+                ->comment("Data que especifica encerramento do uso do ". 
+                    "afastamento nos sistemas estruturantes.");
+            
+            $table->string('situacao', 100)->comment("Confirma situação no SIAPE registrada no Sigepe Afastamentos.");
+            
+            $table->string('icone', 100)->comment("Class do ícone relacionado ao afastamento"); // class="fa fa-icone"
             $table->string('cor', 100)->comment("Código da cor em formato hex"); // style="color: #AABBCC00"
             $table->tinyInteger('horas')->comment("Se o afastamento é medido em horas");
-            $table->tinyInteger('integracao')->comment("Se o tipo de motivo de afastamento é integrado a outro sistema");
-           
+            $table->tinyInteger('integracao')
+                ->comment("Se o tipo de motivo de afastamento é integrado a outro sistema");
         });
     }
 

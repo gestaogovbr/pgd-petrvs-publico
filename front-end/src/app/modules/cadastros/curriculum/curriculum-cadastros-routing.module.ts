@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule,  Routes } from '@angular/router';
 import { AuthGuard } from 'src/app/guards/auth.guard';
 import { ConfigResolver } from 'src/app/resolvies/config.resolver';
-
 import { AreaConhecimentoFormComponent } from './area-conhecimento-form/area-conhecimento-form.component';
 import { AreaConhecimentoListComponent } from './area-conhecimento-list/area-conhecimento-list.component';
 import { CursoFormComponent } from './curso-form/curso-form.component';
@@ -29,9 +28,7 @@ import { QuestionarioPerguntaListComponent } from './questionario-pergunta-list/
 import { QuestionarioPerguntaFormComponent } from './questionario-pergunta-form/questionario-pergunta-form.component';
 import { QuestionarioRespostaListComponent } from './questionario-resposta-list/questionario-resposta-list.component';
 
-
 const routes: Routes = [
- 
   { path: 'gerais/areaconhecimento', component: AreaConhecimentoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Lista", modal: false } },
   { path: 'gerais/areaconhecimento/new', component: AreaConhecimentoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
   { path: 'gerais/areaconhecimento/:id/edit', component: AreaConhecimentoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
