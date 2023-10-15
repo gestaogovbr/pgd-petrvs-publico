@@ -81,6 +81,7 @@ status possíveis: "INCLUIDO", "HOMOLOGANDO", "ATIVO", "CONCLUIDO", "AVALIADO", 
 Ação: ALTERAR -> geralmente não muda o status do plano ('INCLUIDO','HOMOLOGANDO','ATIVO'), exceto no caso da regra RN_PENT_AE;
 
 - (RN_PENT_L) Condições para que um Plano de Entregas possa ser alterado:
+  - o Plano de Entregas precisa estar com o status INCLUIDO, HOMOLOGANDO ou ATIVO, e
   - o usuário logado precisa possuir a capacidade "MOD_PENT_EDT", o Plano de Entregas precisa ser válido (ou seja, nem deletado, nem arquivado e com status diferente de 'CANCELADO'), e:
     - estar com o status INCLUIDO ou HOMOLOGANDO, e o usuário logado precisa ser gestor da Unidade do plano, ou esta ser sua Unidade de lotação; ou
     - o usuário logado precisa ser gestor da Unidade-pai (Unidade A) da Unidade do plano (Unidade B) e possuir a capacidade "MOD_PENT_EDT_FLH" (RN_PENT_C);  ou
@@ -312,6 +313,7 @@ Ação: SUSPENDER -> o plano adquire o status de 'SUSPENSO';
   - os planos válidos das suas Áreas de Trabalho, e
   - se ele for gestor, os planos ativos das Unidades-pai de onde ele é gestor;
 - (RI_PENT_C) Por padrão, os planos de entregas retornados na listagem do grid são os que não foram arquivados nem cancelados.
+- (RI_PENT_D) Na visualização de Avaliação, deverá trazer a unidade ao qual o usuário é gestor e todas as suas subordinadas imediatas.
 
 ## QUESTÕES PENDENTES
 
