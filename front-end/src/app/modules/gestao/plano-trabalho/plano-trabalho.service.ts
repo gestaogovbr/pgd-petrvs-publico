@@ -10,6 +10,16 @@ import { TemplateService } from '../../uteis/templates/template.service';
 import { PlanoTrabalhoConsolidacao } from 'src/app/models/plano-trabalho-consolidacao.model';
 import { Programa } from 'src/app/models/programa.model';
 import { UtilService } from 'src/app/services/util.service';
+import { NavigateService } from 'src/app/services/navigate.service';
+import { Avaliacao } from 'src/app/models/avaliacao.model';
+import { PageBase } from '../../base/page-base';
+import { AvaliacaoDaoService } from 'src/app/dao/avaliacao-dao.service';
+import { PageListBase } from '../../base/page-list-base';
+import { Base } from 'src/app/models/base.model';
+import { DaoBaseService } from 'src/app/dao/dao-base.service';
+
+
+export type RefreshConsolidacao = (consolidacao: PlanoTrabalhoConsolidacao) => void;
 
 export type BadgeTrabalho = {
   titulo: string,
@@ -27,8 +37,10 @@ export class PlanoTrabalhoService {
   constructor(
     public auth: AuthService,
     public util: UtilService,
+    public go: NavigateService,
     public lookup: LookupService,
     public dao: PlanoTrabalhoDaoService,
+    public avaliacaoDao: AvaliacaoDaoService,
     public templateService: TemplateService,
     public planoTrabalhoDao: PlanoTrabalhoDaoService
   ) { }
@@ -175,4 +187,69 @@ export class PlanoTrabalhoService {
   public diasParaConcluirConsolidacao(consolidacao?: PlanoTrabalhoConsolidacao, programa?: Programa): number {
     return !consolidacao || !programa ? -1 : this.util.daystamp(consolidacao.data_fim) + programa.dias_tolerancia_avaliacao - this.util.daystamp(this.auth.hora);
   }
+
+  /**
+   * Faz avaliação da consolidação
+   * @param consolidacao 
+   * @param programa
+   * @param refresh
+   */
+  public avaliar(consolidacao: PlanoTrabalhoConsolidacao, programa: Programa, refresh: RefreshConsolidacao) {
+    this.go.navigate({route: ['gestao', 'plano-trabalho', 'consolidacao', consolidacao.id, 'avaliar']}, {
+      modal: true, 
+      metadata: {
+        consolidacao: consolidacao,
+        programa: programa
+      },
+      modalClose: (modalResult?: Avaliacao) => {
+        if(modalResult) {
+          consolidacao.status = "AVALIADO";
+          consolidacao.avaliacao_id = modalResult.id;
+          consolidacao.avaliacao = modalResult;
+          refresh(consolidacao); 
+        }
+      }
+    });
+  }
+
+  /**
+   * Fas recurso contra avaliação
+   * @param consolidacao 
+   * @param programa
+   * @param refresh
+   */
+  public fazerRecurso(consolidacao: PlanoTrabalhoConsolidacao, programa: Programa, refresh: RefreshConsolidacao) {
+    this.go.navigate({route: ['gestao', 'plano-trabalho', 'consolidacao', consolidacao.id, 'recurso']}, {
+      modal: true, 
+      metadata: {
+        recurso: true,
+        consolidacao: consolidacao,
+        programa: programa
+      },
+      modalClose: (modalResult?: Avaliacao) => {
+        if(modalResult) {
+          consolidacao.avaliacao = modalResult;
+          refresh(consolidacao);
+        }
+      }
+    });
+  }
+
+  public async cancelarAvaliacao(consolidacao: PlanoTrabalhoConsolidacao, page: PageBase, refresh: RefreshConsolidacao) {
+    page.submitting = true;
+    try {
+      let response = await this.avaliacaoDao!.cancelarAvaliacao(consolidacao.avaliacao!.id);
+      if(response) {
+        consolidacao.status = "CONCLUIDO";
+        consolidacao.avaliacao_id = null;
+        consolidacao.avaliacao = undefined;
+        refresh(consolidacao);
+      }
+    } catch (error: any) {
+      page.error(error.message || error);
+    } finally {
+      page.submitting = false;
+    }
+  }
+  
 }

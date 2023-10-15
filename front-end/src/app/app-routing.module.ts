@@ -45,6 +45,8 @@ const routes: Routes = [
   { path: 'gestao/projeto', loadChildren: () => import('./modules/gestao/projeto/projeto.module').then(m => m.ProjetoModule), canActivate: [AuthGuard] },
   { path: 'gestao/desdobramento', loadChildren: () => import('./modules/gestao/desdobramento/desdobramento.module').then(m => m.DesdobramentoModule), canActivate: [AuthGuard] },
   { path: 'execucao/plano-entrega', loadChildren: () => import('./modules/gestao/plano-entrega/plano-entrega.module').then(m => m.PlanoEntregaModule), canActivate: [AuthGuard] },
+  { path: 'avaliacao/plano-entrega', loadChildren: () => import('./modules/gestao/plano-entrega/plano-entrega.module').then(m => m.PlanoEntregaModule), canActivate: [AuthGuard] },
+  { path: 'avaliacao/plano-trabalho', loadChildren: () => import('./modules/gestao/plano-trabalho/plano-trabalho.module').then(m => m.PlanoTrabalhoModule), canActivate: [AuthGuard] },
   { path: 'configuracoes/preferencia', loadChildren: () => import('./modules/configuracoes/preferencia/preferencia.module').then(m => m.PreferenciaModule), canActivate: [AuthGuard] },
   { path: 'configuracoes/entidade', loadChildren: () => import('./modules/configuracoes/entidade/entidade.module').then(m => m.EntidadeModule), canActivate: [AuthGuard] },
   { path: 'configuracoes/perfil', loadChildren: () => import('./modules/configuracoes/perfil/perfil.module').then(m => m.PerfilModule), canActivate: [AuthGuard] },

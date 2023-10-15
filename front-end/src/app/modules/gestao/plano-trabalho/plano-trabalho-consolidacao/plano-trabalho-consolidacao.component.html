@@ -9,11 +9,11 @@
             </div>
             <collapse-card *ngFor="let usuario of usuarios" [data]="usuario" [titleTemplate]="usuarioCardTitle" [template]="usuarioCard">
                 <ng-template let-data="data" #usuarioCardTitle>
-                    <div class="row">
-                        <div class="col-2">
+                    <div class="d-flex">
+                        <div class="ms-3">
                             <profile-picture [url]="data.url_foto" [size]="40" [hint]="data.nome"></profile-picture>
                         </div>
-                        <div class="col-10">
+                        <div class="flex-fill ms-3">
                             <strong>{{data.nome || ""}}</strong><br>
                             <small>{{data.apelido || ""}}</small>
                         </div>
