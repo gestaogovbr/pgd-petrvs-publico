@@ -14,7 +14,7 @@
         <column title="Curso" field="nome" orderBy="nome"></column>
         <column title="Área do Conhecimento" [template]="columnNomeArea">
             <ng-template let-row="row" #columnNomeArea>
-                <span>{{ row.area.nome }}</span>
+                <span>{{ row.area_conhecimento.nome }}</span>
             </ng-template>
         </column>
         <column title="Título" [template]="columnTitulo">
@@ -24,7 +24,7 @@
         </column>
         <column title="Tipo" [template]="columnTipo">
             <ng-template let-row="row" #columnTipo>
-                <span>{{ row.tipo.nome }}</span>
+                <span>{{ row.tipo_curso.nome }}</span>
             </ng-template>
         </column>
         <column type="options" [onEdit]="edit" [options]="options"></column>

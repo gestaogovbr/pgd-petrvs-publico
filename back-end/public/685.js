@@ -1752,7 +1752,7 @@ var _class;
 const _c0 = ["planejamentoInstitucional"];
 function PlanejamentoMapaComponent_div_5_li_25_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "li", 19)(1, "blockquote", 15)(2, "p");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "li", 18)(1, "blockquote", 15)(2, "p");
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()();
   }
@@ -1764,7 +1764,7 @@ function PlanejamentoMapaComponent_div_5_li_25_Template(rf, ctx) {
 }
 function PlanejamentoMapaComponent_div_5_li_32_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "li", 19)(1, "blockquote", 15)(2, "p");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "li", 18)(1, "blockquote", 15)(2, "p");
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()();
   }
@@ -1779,7 +1779,7 @@ function PlanejamentoMapaComponent_div_5_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "div", 9)(1, "div", 10)(2, "div", 11)(3, "div", 12)(4, "div", 13);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](5, " Miss\u00E3o ");
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](6, "div", 14)(7, "blockquote", 15)(8, "p", 16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](6, "div", 14)(7, "blockquote", 15)(8, "p");
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](9);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()()()();
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](10, "div", 11)(11, "div", 12)(12, "div", 13);
@@ -1791,14 +1791,14 @@ function PlanejamentoMapaComponent_div_5_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](18, "div", 10)(19, "div", 11)(20, "div", 12)(21, "div", 13);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](22, " Resultados Institucionais ");
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](23, "div", 14)(24, "ul", 17);
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](25, PlanejamentoMapaComponent_div_5_li_25_Template, 4, 1, "li", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](23, "div", 14)(24, "ul", 16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](25, PlanejamentoMapaComponent_div_5_li_25_Template, 4, 1, "li", 17);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()()();
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](26, "div", 11)(27, "div", 12)(28, "div", 13);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](29, " Valores ");
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](30, "div", 14)(31, "ul", 17);
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](32, PlanejamentoMapaComponent_div_5_li_32_Template, 4, 1, "li", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](30, "div", 14)(31, "ul", 16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](32, PlanejamentoMapaComponent_div_5_li_32_Template, 4, 1, "li", 17);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()()()()();
   }
   if (rf & 2) {
@@ -1821,7 +1821,7 @@ const _c1 = function (a0, a1) {
 };
 function PlanejamentoMapaComponent_div_8_div_18_ng_container_8_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementContainer"](0, 46);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementContainer"](0, 45);
   }
   if (rf & 2) {
     const subobjetivo_r13 = ctx.$implicit;
@@ -1832,7 +1832,7 @@ function PlanejamentoMapaComponent_div_8_div_18_ng_container_8_Template(rf, ctx)
 }
 function PlanejamentoMapaComponent_div_8_div_18_ng_template_9_ng_container_8_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementContainer"](0, 46);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementContainer"](0, 45);
   }
   if (rf & 2) {
     const subobjetivo_r18 = ctx.$implicit;
@@ -1848,7 +1848,7 @@ const _c2 = function () {
 function PlanejamentoMapaComponent_div_8_div_18_ng_template_9_Template(rf, ctx) {
   if (rf & 1) {
     const _r21 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "div", 47);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "div", 46);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("dndEnd", function PlanejamentoMapaComponent_div_8_div_18_ng_template_9_Template_div_dndEnd_0_listener($event) {
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵrestoreView"](_r21);
       const ctx_r20 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"](3);
@@ -1864,22 +1864,22 @@ function PlanejamentoMapaComponent_div_8_div_18_ng_template_9_Template(rf, ctx) 
       const ctx_r23 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"](3);
       return _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵresetView"](ctx_r23.onObjetivoDragStart($event));
     });
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](1, "div", 48)(2, "div", 49);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](1, "div", 47)(2, "div", 48);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](4, "action-button", 50);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](4, "action-button", 49);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](5, "div", 38);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](5, "div", 37);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("dndDrop", function PlanejamentoMapaComponent_div_8_div_18_ng_template_9_Template_div_dndDrop_5_listener($event) {
       const restoredCtx = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵrestoreView"](_r21);
       const objetivo_r15 = restoredCtx.objetivo;
       const ctx_r24 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"](3);
       return _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵresetView"](ctx_r24.onObjetivoDrop($event, objetivo_r15));
     });
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](6, "div", 39);
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](7, "span", 40);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](6, "div", 38);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](7, "span", 39);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](8, PlanejamentoMapaComponent_div_8_div_18_ng_template_9_ng_container_8_Template, 1, 5, "ng-container", 41);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](8, PlanejamentoMapaComponent_div_8_div_18_ng_template_9_ng_container_8_Template, 1, 5, "ng-container", 40);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
   }
   if (rf & 2) {
@@ -1899,7 +1899,7 @@ function PlanejamentoMapaComponent_div_8_div_18_ng_template_9_Template(rf, ctx) 
 function PlanejamentoMapaComponent_div_8_div_18_Template(rf, ctx) {
   if (rf & 1) {
     const _r26 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "div", 35);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "div", 34);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("dndEnd", function PlanejamentoMapaComponent_div_8_div_18_Template_div_dndEnd_0_listener($event) {
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵrestoreView"](_r26);
       const ctx_r25 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"](2);
@@ -1915,24 +1915,24 @@ function PlanejamentoMapaComponent_div_8_div_18_Template(rf, ctx) {
       const ctx_r29 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"](2);
       return _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵresetView"](ctx_r29.onObjetivoDragStart($event));
     });
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](1, "div", 26)(2, "div", 36)(3, "div", 37);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](1, "div", 25)(2, "div", 35)(3, "div", 36);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](4);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](5, "div", 38);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](5, "div", 37);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("dndDrop", function PlanejamentoMapaComponent_div_8_div_18_Template_div_dndDrop_5_listener($event) {
       const restoredCtx = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵrestoreView"](_r26);
       const objetivo_r9 = restoredCtx.$implicit;
       const ctx_r30 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"](2);
       return _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵresetView"](ctx_r30.onObjetivoDrop($event, objetivo_r9));
     });
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](6, "div", 39);
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](7, "span", 40);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](6, "div", 38);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](7, "span", 39);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](8, PlanejamentoMapaComponent_div_8_div_18_ng_container_8_Template, 1, 5, "ng-container", 41);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](8, PlanejamentoMapaComponent_div_8_div_18_ng_container_8_Template, 1, 5, "ng-container", 40);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](9, PlanejamentoMapaComponent_div_8_div_18_ng_template_9_Template, 9, 8, "ng-template", null, 42, _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplateRefExtractor"]);
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](11, "div", 32);
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](12, "action-button", 43)(13, "action-button", 44)(14, "action-button", 45);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](9, PlanejamentoMapaComponent_div_8_div_18_ng_template_9_Template, 9, 8, "ng-template", null, 41, _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplateRefExtractor"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](11, "div", 31);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](12, "action-button", 42)(13, "action-button", 43)(14, "action-button", 44);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()();
   }
   if (rf & 2) {
@@ -1956,25 +1956,25 @@ function PlanejamentoMapaComponent_div_8_div_18_Template(rf, ctx) {
 function PlanejamentoMapaComponent_div_8_Template(rf, ctx) {
   if (rf & 1) {
     const _r32 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "div", 20);
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](1, "action-button", 21);
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](2, "div", 22)(3, "div", 23)(4, "h4");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "div", 19);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](1, "action-button", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](2, "div", 21)(3, "div", 22)(4, "h4");
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](5);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](6, "div", 24);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](6, "div", 23);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("dndDrop", function PlanejamentoMapaComponent_div_8_Template_div_dndDrop_6_listener($event) {
       const restoredCtx = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵrestoreView"](_r32);
       const eixo_r7 = restoredCtx.$implicit;
       const ctx_r31 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]();
       return _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵresetView"](ctx_r31.onObjetivoDrop($event, eixo_r7));
     });
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](7, "div", 25)(8, "div", 26)(9, "p", 27);
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](10, "span", 28)(11, "span", 29)(12, "span", 30)(13, "span", 31);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](7, "div", 24)(8, "div", 25)(9, "p", 26);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](10, "span", 27)(11, "span", 28)(12, "span", 29)(13, "span", 30);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](14, "div", 32);
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](15, "action-button", 33)(16, "action-button", 33)(17, "action-button", 33);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](14, "div", 31);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](15, "action-button", 32)(16, "action-button", 32)(17, "action-button", 32);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](18, PlanejamentoMapaComponent_div_8_div_18_Template, 15, 12, "div", 34);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](18, PlanejamentoMapaComponent_div_8_div_18_Template, 15, 12, "div", 33);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()();
   }
   if (rf & 2) {
@@ -2212,7 +2212,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
   decls: 10,
   vars: 8,
-  consts: [["noButtons", "", 3, "form"], [1, "row", "mt-2"], ["controlName", "planejamento_id", 3, "size", "control", "items", "change"], ["planejamentoInstitucional", ""], ["transparent", "", "collapse", "", "title", "Miss\u00E3o, vis\u00E3o, resultados e valores"], ["class", "row", 4, "ngIf"], [1, "row", "my-2"], ["labelPosition", "left", "label", "Todos os eixos", "controlName", "todos", 3, "size", "control", "change"], ["class", "eixo", 3, "background-color", 4, "ngFor", "ngForOf"], [1, "row"], [1, "row", "mb-2"], [1, "col-md-6"], [1, "card", "h-100"], [1, "card-header"], [1, "card-body"], [1, "blockquote", "mb-0"], [1, "fst-italic"], [1, "list-group", "list-group-flush"], ["class", "list-group-item", 4, "ngFor", "ngForOf"], [1, "list-group-item"], [1, "eixo"], ["icon", "bi bi-plus-circle", "color", "transparent-black", 3, "data", "onClick"], [1, "d-flex", "align-items-center", "align-content-stretch", "p-3"], [1, "descricao"], [1, "objetivos", "w-100", "row", 3, "dndDropzone", "dndDrop"], ["dndPlaceholderRef", "", 1, "col-md-4"], [1, "objetivo", "shadow-sm", "d-flex", "flex-column", "align-content-between"], [1, "placeholder-glow"], [1, "placeholder", "col-2"], [1, "placeholder", "col-3"], [1, "placeholder", "col-1"], [1, "placeholder", "col-6"], [1, "buttons", "w-100", "d-flex", "justify-content-end", "px-1"], ["placeholder", "", "icon", "bi bi-question", "color", "transparent-black p-0"], ["class", "col-md-4", "dndType", "objetivo", "dndEffectAllowed", "move", 3, "dndDisableIf", "dndDraggable", "dndEnd", "dndMoved", "dndStart", 4, "ngFor", "ngForOf"], ["dndType", "objetivo", "dndEffectAllowed", "move", 1, "col-md-4", 3, "dndDisableIf", "dndDraggable", "dndEnd", "dndMoved", "dndStart"], [1, "m-2"], ["dndHandle", "", 1, "card-text", "text-break", "w-100"], [1, "subobjetivo", 3, "dndDropzone", "dndDrop"], ["dndPlaceholderRef", "", 1, "border", "mt-3", "p-2"], [1, "placeholder", "w-75"], [3, "ngTemplateOutlet", "ngTemplateOutletContext", 4, "ngFor", "ngForOf"], ["subobjetivos", ""], ["icon", "bi bi-file-earmark-bar-graph", "color", "transparent-black px-1", 3, "data", "onClick"], ["icon", "bi bi-pencil-square", "color", "transparent-black px-1", 3, "data", "onClick"], ["icon", "bi bi-trash", "color", "transparent-black px-1", 3, "data", "onClick"], [3, "ngTemplateOutlet", "ngTemplateOutletContext"], ["dndType", "objetivo", "dndEffectAllowed", "move", 1, "border", "mt-3", "p-2", 3, "dndDisableIf", "dndDraggable", "dndEnd", "dndMoved", "dndStart"], [1, "d-flex", "justify-content-between"], [1, "me-2", "card-text", "text-break", "w-100"], ["noArrow", "", 3, "button", "data"]],
+  consts: [["noButtons", "", 3, "form"], [1, "row", "mt-2"], ["controlName", "planejamento_id", 3, "size", "control", "items", "change"], ["planejamentoInstitucional", ""], ["transparent", "", "collapse", "", "title", "Miss\u00E3o, vis\u00E3o, resultados e valores"], ["class", "row", 4, "ngIf"], [1, "row", "my-2"], ["labelPosition", "left", "label", "Todos os eixos", "controlName", "todos", 3, "size", "control", "change"], ["class", "eixo", 3, "background-color", 4, "ngFor", "ngForOf"], [1, "row"], [1, "row", "mb-2"], [1, "col-md-6"], [1, "card", "h-100"], [1, "card-header"], [1, "card-body"], [1, "blockquote", "mb-0"], [1, "list-group", "list-group-flush"], ["class", "list-group-item", 4, "ngFor", "ngForOf"], [1, "list-group-item"], [1, "eixo"], ["icon", "bi bi-plus-circle", "color", "transparent-black", 3, "data", "onClick"], [1, "d-flex", "align-items-center", "align-content-stretch", "p-3"], [1, "descricao"], [1, "objetivos", "w-100", "row", 3, "dndDropzone", "dndDrop"], ["dndPlaceholderRef", "", 1, "col-md-4"], [1, "objetivo", "shadow-sm", "d-flex", "flex-column", "align-content-between"], [1, "placeholder-glow"], [1, "placeholder", "col-2"], [1, "placeholder", "col-3"], [1, "placeholder", "col-1"], [1, "placeholder", "col-6"], [1, "buttons", "w-100", "d-flex", "justify-content-end", "px-1"], ["placeholder", "", "icon", "bi bi-question", "color", "transparent-black p-0"], ["class", "col-md-4", "dndType", "objetivo", "dndEffectAllowed", "move", 3, "dndDisableIf", "dndDraggable", "dndEnd", "dndMoved", "dndStart", 4, "ngFor", "ngForOf"], ["dndType", "objetivo", "dndEffectAllowed", "move", 1, "col-md-4", 3, "dndDisableIf", "dndDraggable", "dndEnd", "dndMoved", "dndStart"], [1, "m-2"], ["dndHandle", "", 1, "card-text", "text-break", "w-100"], [1, "subobjetivo", 3, "dndDropzone", "dndDrop"], ["dndPlaceholderRef", "", 1, "border", "mt-3", "p-2"], [1, "placeholder", "w-75"], [3, "ngTemplateOutlet", "ngTemplateOutletContext", 4, "ngFor", "ngForOf"], ["subobjetivos", ""], ["icon", "bi bi-file-earmark-bar-graph", "color", "transparent-black px-1", 3, "data", "onClick"], ["icon", "bi bi-pencil-square", "color", "transparent-black px-1", 3, "data", "onClick"], ["icon", "bi bi-trash", "color", "transparent-black px-1", 3, "data", "onClick"], [3, "ngTemplateOutlet", "ngTemplateOutletContext"], ["dndType", "objetivo", "dndEffectAllowed", "move", 1, "border", "mt-3", "p-2", 3, "dndDisableIf", "dndDraggable", "dndEnd", "dndMoved", "dndStart"], [1, "d-flex", "justify-content-between"], [1, "me-2", "card-text", "text-break", "w-100"], ["noArrow", "", 3, "button", "data"]],
   template: function PlanejamentoMapaComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "editable-form", 0)(1, "div", 1)(2, "input-select", 2, 3);

@@ -11,8 +11,13 @@ class TipoMotivoAfastamento extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        
         'codigo', /* varchar(50); */// Código do afastamento
+        'sigla',
         'nome', /* varchar(256); NOT NULL; */// Nome do motivo de afastamento
+        'data_inicio',
+        'data_fim',
+        'ativo_no_siape',
         'icone', /* varchar(100); NOT NULL; */// Class do icone relacionado ao afastamento
         'cor', /* varchar(100); NOT NULL; */// Código da cor em formato hex
         'horas', /* tinyint; NOT NULL; */// Se o afastamento é medido em horas
