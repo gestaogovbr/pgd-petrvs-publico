@@ -142,7 +142,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   public onEstadosChange() {
     //console.log('onEstadosChange', this.form?.controls.estados)
     const estados = this.estadosV!.value;
-    this.selecionaMunicipios(estados)
+    this.selecionaMunicipios(estados);
   }
 
   public selecionaMunicipios(uf: string) {

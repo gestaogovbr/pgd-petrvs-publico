@@ -3,19 +3,19 @@
         <tab key="FUNCIONAIS" class="fw-bold" label="Funcionais">
             <div class="row mb-2 mt-4">
                 <input-select [size]="4" label="Ingresso na Instituição" icon="bi bi-calendar-check-fill" controlName="ano_ingresso" [control]="form!.controls.ano_ingresso" [items]="anos"></input-select>
-                <input-select #ct [size]="4" label="Centro de Treinamento" icon="bi bi-building-fill" controlName="centro_treinamento" [control]="form!.controls.centro_treinamento" [items]="centroTreinamentoItems"></input-select>
+                <input-select #centroTreinamento [size]="4" label="Centro de Treinamento" icon="bi bi-building-fill" controlName="centro_treinamento" [control]="form!.controls.centro_treinamento" [items]="centroTreinamentoItems"></input-select>
                 <input-search #cargos [size]="4" label="Cargo" controlName="cargo" [control]="form!.controls.cargo" [dao]="cargoDao"></input-search>
             </div>
             <div class="row">
                 <separator class="mb-3 mt-3" title="Histórico de Lotações e Funções Gratificadas" [bold]="true"></separator>
-                <input-multiselect [size]="6" [control]="form!.controls.funcoes" controlName="funcoes" [addItemHandle]="addItemFuncao.bind(this)" noBox [bold]="true">
-                    <input-select #funcoes [size]="12" label="Funções ocupadas como titular ou substituto" icon="bi bi-check-circle-fill" controlName="funcoesOcupadas" [control]="form!.controls.funcoesOcupadas" [items]="funcoesItems"></input-select>
+                <input-multiselect [size]="6" label="Funções ocupadas como titular ou substituto" [control]="form!.controls.funcoes" controlName="funcoes" [addItemHandle]="addItemFuncao.bind(this)" noBox [bold]="true">
+                    <input-select #funcoes [size]="12" icon="bi bi-check-circle-fill" controlName="funcoesOcupadas" [control]="form!.controls.funcoesOcupadas" [items]="funcoesItems"></input-select>
                 </input-multiselect>
                 <input-select #grupos [size]="6" label="Você faz parte de algum grupo especializado?" icon="bi bi-check-circle" controlName="grupo" [control]="form!.controls.grupo" id="testeID"  [items]="gruposItems"></input-select>
             </div>
             <div class="row my-3">
-                <input-multiselect [size]="6" [control]="form!.controls.lotaces" controlName="lotacoes" [addItemHandle]="addItemFuncao.bind(this)" noBox [bold]="true">
-                    <input-search #unidades [size]="12" label="Selecione todas as unidades em que já foi lotado" controlName="selectLotacao" [control]="form!.controls.selectLotacao" [dao]="unidadeDao" liveSearch></input-search>
+                <input-multiselect [size]="6"  label="Selecione todas as unidades em que já foi lotado" [control]="form!.controls.lotaces" controlName="lotacoes" [addItemHandle]="addItemLotacao.bind(this)" noBox [bold]="true">
+                    <input-search #selectLotacao [size]="12" controlName="selectLotacao" [control]="form!.controls.selectLotacao" [dao]="unidadeDao" liveSearch></input-search>
                 </input-multiselect>
                 <input-search #lotacaoAtual [size]="6" label="Lotação atual" controlName="lotacaoAtual" [control]="form!.controls.lotacaoAtual" [dao]="unidadeDao"></input-search>
             </div>

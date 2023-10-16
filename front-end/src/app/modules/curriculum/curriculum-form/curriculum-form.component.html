@@ -28,9 +28,9 @@
         <input-select [size]="5" label="Estado Civil" icon="fas fa-ring" controlName="estado_civil"
             [control]="form!.controls.estado_civil" [items]="this.lookup.ESTADO_CIVIL">
         </input-select>
-        <input-switch [size]="3" label="Possui Filhos?" icon="fas fa-child" controlName="filhos"
-            [control]="form!.controls.filhos" labelInfo="Possui Filhos?"></input-switch>
-        <input-number [hidden]="form!.controls.filhos.value ? undefined : 'true'" [size]="4" label="Quantos?"
+        <input-switch [size]="2" label="Possui Filhos?" icon="fas fa-child" controlName="filhos"
+            [control]="form!.controls.filhos" ></input-switch>
+        <input-number [hidden]="form!.controls.filhos.value ? undefined : 'true'" [size]="1" label="Quantos?"
             icon="bi bi-arrow-up-right-circle" controlName="quantidade_filhos"
             [control]="form!.controls.quantidade_filhos" [minValue]="0"></input-number>
     </div>

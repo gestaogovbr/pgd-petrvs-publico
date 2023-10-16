@@ -23,6 +23,7 @@ import { UnidadesService } from 'src/app/services/unidades.service';
 import { Funcao } from 'src/app/models/funcao.model';
 import { CurriculumDaoService } from 'src/app/dao/curriculum-dao.service';
 import { CargoDaoService } from 'src/app/dao/cargo-dao.service';
+import { Unidade } from 'src/app/models/unidade.model';
 
 @Component({
   selector: 'curriculum-profissional-form',
@@ -48,8 +49,9 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   @ViewChild('unidades', { static: false }) public unidades?: InputSearchComponent;
   @ViewChild('lotacaoAtual', { static: false }) public lotacaoAtual?: InputSearchComponent;
   @ViewChild('grupos', { static: false }) public grupos?: InputSelectComponent;
-  @ViewChild('ct', { static: false }) public ct?: InputSelectComponent;
+  @ViewChild('centroTreinamento', { static: false }) public centroTreinamento?: InputSelectComponent;
   @ViewChild('cargos', { static: false }) public cargos?: InputSearchComponent;
+  @ViewChild('selectLotacao', { static: false }) public selectLotacao?: InputSearchComponent;
   
    
   public testeLookup: LookupItem[] = [{ 'key': 'key 1', 'value': 'value 1' }];
@@ -155,6 +157,52 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     });
   };
 
+  public addItemFuncao(): LookupItem | undefined {
+    let result = undefined;
+    let res = this.form!.value;
+    console.log('addItemFuncao', res);
+    const funcao = this.funcoes?.selectedItem;
+    const key = this.util.textHash(funcao!.key);
+    console.log('addItemFuncao', ' - ', funcao,'-', key);
+    if (funcao && this.util.validateLookupItem(this.form!.controls.funcoes.value, key)) {// && this.util.validateLookupItem(key,value)) {
+      result = {
+        key: key,
+        value: funcao.value,
+        data: { 
+            _status: "ADD",
+        }
+      };
+      this.form!.controls.funcoesOcupadas.setValue("");
+    
+    }
+    return result;
+  };
+
+  public addItemLotacao(): LookupItem | undefined {
+    let result = undefined;
+    //let res = this.form!.value;
+    //console.log('addItemLotacao', res);
+    //const lotacao =  { 'key': this.form?.controls.selectLotacao.value, 'value': this.selectLotacao!.selectedItem!.text };
+    //console.log('SELECTED', lotacao);
+    //this.funcoesItems = lotacao!.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
+    const lotacao = this.selectLotacao?.selectedEntity as Unidade;
+    const key = lotacao?.id; //this.util.textHash(lotacao?.key);
+    //console.log('addItemLotacoes', ' - ', lotacao,'-', key);
+    if (lotacao && this.util.validateLookupItem(this.form!.controls.lotacoes.value, key)) {// && this.util.validateLookupItem(key,value)) {
+      result = {
+        key: key,
+        value: lotacao.sigla + " - " + lotacao.nome,
+        data: { 
+          _status: "ADD",
+        }
+      };
+      this.form!.controls.selectLotacao.setValue("");
+    }
+    return result;
+  };
+
+
+
   public onChangeEscolhePG(){
     this.escolhaRadioPG?.setValue("");
   }
@@ -162,10 +210,6 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
 
   public onChangeEscolheInteressePG(){
     this.escolhaInteressePG?.setValue("");
-  }
-
-  public addItemFuncao(): LookupItem | undefined {
-    return
   }
 
   public onAddClick() { }
