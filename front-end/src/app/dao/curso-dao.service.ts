@@ -9,7 +9,7 @@ export class CursoDaoService extends DaoBaseService<Curso>{
  
   constructor(protected injector: Injector) { 
     super("Curso", injector);
-    this.searchFields = ["nome"];
+    this.inputSearchConfig.searchFields = ["nome"];
   }  
 }
 

@@ -17,7 +17,7 @@ export class EntidadeDaoService extends DaoBaseService<Entidade> {
     super("Entidade", injector);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.cidadeDao = injector.get<CidadeDaoService>(CidadeDaoService);
-    this.searchFields = ["sigla", "nome"];
+    this.inputSearchConfig.searchFields = ["sigla", "nome"];
   }  
 
   public dataset(deeps?: string[]): TemplateDataset[] {

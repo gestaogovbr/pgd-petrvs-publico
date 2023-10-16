@@ -10,7 +10,7 @@ export class TipoModalidadeDaoService extends DaoBaseService<TipoModalidade> {
 
   constructor(protected injector: Injector) { 
     super("TipoModalidade", injector);
-    this.searchFields = ["nome"];
+    this.inputSearchConfig.searchFields = ["nome"];
   }
   
   public dataset(deeps?: string[]): TemplateDataset[] {

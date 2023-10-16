@@ -15,11 +15,13 @@ import { BadgeButton } from 'src/app/components/badge/badge.component';
 import { TipoAtividadeDaoService } from 'src/app/dao/tipo-atividade-dao.service';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { AtividadeOptionsMetadata, AtividadeService, ExtraAtividade } from './atividade.service';
+import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 
 export abstract class AtividadeListBase extends PageListBase<Atividade, AtividadeDaoService> {
   public calendarEfemerides?: TemplateRef<any>;
   public unidadeDao: UnidadeDaoService;
   public usuarioDao: UsuarioDaoService;
+  public planoTrabalhoDao: PlanoTrabalhoDaoService;
   public tipoAtividadeDao: TipoAtividadeDaoService;
   public tipoProcessoDao: TipoProcessoDaoService;
   public allPages: ListenerAllPagesService;
@@ -45,6 +47,7 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
     super(injector, Atividade, AtividadeDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
+    this.planoTrabalhoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
     this.tipoAtividadeDao = injector.get<TipoAtividadeDaoService>(TipoAtividadeDaoService);
     this.tipoProcessoDao = injector.get<TipoProcessoDaoService>(TipoProcessoDaoService);
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
@@ -80,6 +83,11 @@ export abstract class AtividadeListBase extends PageListBase<Atividade, Atividad
       Object.entries(extra.feriados || {}).forEach(([key, value]) => {
         if (!this.calendar.feriadosCadastrados[key]) this.calendar.feriadosCadastrados[key] = value as FeriadoList;
       });
+
+      rows?.forEach(a => {
+        a.planoTrabalho = extra.planos_trabalho[a.plano_trabalho_id];
+      });
+
       this.cdRef.detectChanges();
     }
   }

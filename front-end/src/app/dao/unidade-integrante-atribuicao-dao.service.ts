@@ -18,7 +18,7 @@ export class UnidadeIntegranteAtribuicaoDaoService extends DaoBaseService<Unidad
 
   constructor(protected injector: Injector) { 
     super("UnidadeIntegranteAtribuicao", injector);
-    this.searchFields = [];
+    this.inputSearchConfig.searchFields = [];
   }  
 }
 

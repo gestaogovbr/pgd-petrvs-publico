@@ -20,7 +20,7 @@ class MateriaDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0__.D
   constructor(injector) {
     super("Materia", injector);
     this.injector = injector;
-    this.searchFields = ["nome"];
+    this.inputSearchConfig.searchFields = ["nome"];
   }
 }
 _class = MateriaDaoService;

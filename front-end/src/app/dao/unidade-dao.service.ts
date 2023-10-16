@@ -41,7 +41,7 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
     this.entidadeDao = injector.get<EntidadeDaoService>(EntidadeDaoService);
     this.cidadeDao = injector.get<CidadeDaoService>(CidadeDaoService);
     this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
-    this.searchFields = ["codigo", "sigla", "nome"];
+    this.inputSearchConfig.searchFields = ["codigo", "sigla", "nome"];
   }
 
   public dataset(deeps?: string[]): TemplateDataset[] {

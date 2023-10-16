@@ -219,7 +219,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
   }
 
   public getSelectItemValue(row: IIndexable): string {
-    return (this.fields.length ? this.fields : this.dao?.searchFields || []).map(f => row[f]).join(" - ");
+    return (this.fields.length ? this.fields : this.dao?.inputSearchConfig.searchFields || []).map(f => row[f]).join(" - ");
   }
 
   private loadItems() {

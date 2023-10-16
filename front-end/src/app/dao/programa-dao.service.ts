@@ -10,7 +10,7 @@ export class ProgramaDaoService extends DaoBaseService<Programa> {
 
   constructor(protected injector: Injector) { 
     super("Programa", injector);
-    this.searchFields = ["nome"];
+    this.inputSearchConfig.searchFields = ["nome"];
   }  
 
   public dataset(deeps?: string[]): TemplateDataset[] {

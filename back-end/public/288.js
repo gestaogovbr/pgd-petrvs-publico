@@ -1,63 +1,6 @@
 "use strict";
 (self["webpackChunkpetrvs"] = self["webpackChunkpetrvs"] || []).push([[288],{
 
-/***/ 76229:
-/*!*******************************************************!*\
-  !*** ./src/app/models/cadeia-valor-processo.model.ts ***!
-  \*******************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   CadeiaValorProcesso: () => (/* binding */ CadeiaValorProcesso)
-/* harmony export */ });
-/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
-
-class CadeiaValorProcesso extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
-  find(arg0) {
-    throw new Error('Method not implemented.');
-  }
-  constructor(data) {
-    super();
-    this.path = ""; /* Unidade à qual está vinculado o plano de gestão/entregas */
-    this.nome = ""; /* Nome do plano de gestão/entregas */
-    this.sequencia = 0; /* Nome do plano de gestão/entregas */
-    this.cadeia_valor_id = ""; /* Unidade à qual está vinculado o plano de gestão/entregas */
-    this.processo_pai_id = null; /* Unidade à qual está vinculado o plano de gestão/entregas */
-    this.initialization(data);
-  }
-}
-
-/***/ }),
-
-/***/ 69478:
-/*!**********************************************!*\
-  !*** ./src/app/models/cadeia-valor.model.ts ***!
-  \**********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   CadeiaValor: () => (/* binding */ CadeiaValor)
-/* harmony export */ });
-/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
-
-class CadeiaValor extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
-  constructor(data) {
-    super();
-    this.processos = [];
-    this.data_inicio = new Date(); /* Data de início do planejamento */
-    this.data_fim = null; /* Data do fim do planejamento */
-    this.data_arquivamento = null; /* Data de arquivamento */
-    this.nome = ""; /* Nome do plano de gestão/entregas */
-    this.unidade_id = ""; /* Unidade à qual está vinculado o plano de gestão/entregas */
-    this.entidade_id = ""; /* Unidade à qual está vinculado o plano de gestão/entregas */
-    this.initialization(data);
-  }
-}
-
-/***/ }),
-
 /***/ 85939:
 /*!**********************************************************************************************!*\
   !*** ./src/app/modules/gestao/cadeia-valor/cadeia-valor-form/cadeia-valor-form.component.ts ***!
@@ -1278,7 +1221,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ 92392);
 /* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../components/input/input-select/input-select.component */ 64603);
 /* harmony import */ var _components_action_button_action_button_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../components/action-button/action-button.component */ 28032);
-/* harmony import */ var ngx_drag_drop__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ngx-drag-drop */ 51474);
+/* harmony import */ var ngx_drag_drop__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ngx-drag-drop */ 40499);
 
 var _class;
 
@@ -1870,7 +1813,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/common */ 89650);
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/forms */ 70997);
-/* harmony import */ var ngx_drag_drop__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ngx-drag-drop */ 51474);
+/* harmony import */ var ngx_drag_drop__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ngx-drag-drop */ 40499);
 /* harmony import */ var _components_components_module__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../components/components.module */ 10822);
 /* harmony import */ var _cadeia_valor_routing_module__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./cadeia-valor-routing.module */ 97075);
 /* harmony import */ var _cadeia_valor_list_cadeia_valor_list_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./cadeia-valor-list/cadeia-valor-list.component */ 32946);

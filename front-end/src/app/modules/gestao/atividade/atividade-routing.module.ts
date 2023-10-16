@@ -11,6 +11,7 @@ import { AtividadeFormComponent } from './atividade-form/atividade-form.componen
 import { AtividadeListTarefaComponent } from './atividade-list-tarefa/atividade-list-tarefa.component';
 import { AtividadeListGridComponent } from './atividade-list-grid/atividade-list-grid.component';
 import { AtividadeListComponent } from './atividade-list/atividade-list.component';
+import { AtividadeHierarquiaComponent } from './atividade-hierarquia/atividade-hierarquia.component';
 
 const routes: Routes = [
   { path: '', component: AtividadeListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Atividades" } },
@@ -26,7 +27,8 @@ const routes: Routes = [
   { path: ':id/concluir', component: AtividadeFormConcluirComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Conclusão de Atividade", modal: true } },
   { path: ':id/pausar', component: AtividadeFormPausarComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Suspensão de Atividade", modal: true } },
   { path: ':id/prorrogar', component: AtividadeFormProrrogarComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Prorrogação de Atividade", modal: true } },
-  { path: ':id/comentar', component: AtividadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Comentários de Atividade", modal: true } }
+  { path: ':id/comentar', component: AtividadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Comentários de Atividade", modal: true } },
+  { path: ':id/hierarquia', component: AtividadeHierarquiaComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Hierarquia da Atividade", modal: true } }
 ];
 
 @NgModule({

@@ -9,7 +9,7 @@ export class CadeiaValorDaoService extends DaoBaseService<CadeiaValor> {
 
   constructor(protected injector: Injector) {
     super("CadeiaValor", injector);
-    this.searchFields = ["nome"];
+    this.inputSearchConfig.searchFields = ["nome"];
   }
 }
 

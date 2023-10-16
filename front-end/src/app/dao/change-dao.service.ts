@@ -10,7 +10,7 @@ export class ChangeDaoService extends DaoBaseService<Change> {
 
   constructor(protected injector: Injector) {
     super("Change", injector);
-    this.searchFields = ["type", "date_time", "user_id", "row_id", "table_name"];
+    this.inputSearchConfig.searchFields = ["type", "date_time", "user_id", "row_id", "table_name"];
   }
 
   public showTables(): Promise<LookupItem[]> {

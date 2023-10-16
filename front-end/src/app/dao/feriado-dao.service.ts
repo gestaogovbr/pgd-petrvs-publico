@@ -9,6 +9,6 @@ export class FeriadoDaoService extends DaoBaseService<Feriado> {
 
   constructor(protected injector: Injector) { 
     super("Feriado", injector);
-    this.searchFields = ["nome"];
+    this.inputSearchConfig.searchFields = ["nome"];
   }  
 }
