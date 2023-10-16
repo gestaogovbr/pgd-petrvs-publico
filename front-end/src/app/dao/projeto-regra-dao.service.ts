@@ -9,6 +9,6 @@ export class ProjetoRegraDaoService extends DaoBaseService<ProjetoRegra>{
 
   constructor(protected injector: Injector) {
     super("ProjetoRegra", injector);
-    this.searchFields = ["nome"];
+    this.inputSearchConfig.searchFields = ["nome"];
   }
 }

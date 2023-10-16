@@ -9,7 +9,7 @@ export class TemplateDaoService extends DaoBaseService<Template> {
 
   constructor(protected injector: Injector) {
     super("Template", injector);
-    this.searchFields = ["titulo"];
+    this.inputSearchConfig.searchFields = ["titulo"];
   }
 }
 

@@ -67,7 +67,7 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
   constructor(protected injector: Injector) {
     super("Usuario", injector);
     this.lookup = injector.get<LookupService>(LookupService);
-    this.searchFields = ["matricula", "nome"];
+    this.inputSearchConfig.searchFields = ["matricula", "nome"];
   }
 
   public dataset(deeps?: string[]): TemplateDataset[] {

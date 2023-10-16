@@ -11,7 +11,7 @@ export class TipoProcessoDaoService extends DaoBaseService<TipoProcesso> {
 
   constructor(protected injector: Injector) { 
     super("TipoProcesso", injector);
-    this.searchFields = ["nome"];
+    this.inputSearchConfig.searchFields = ["nome"];
   }  
 
   public atualizar(lista: TipoProcessoSei[]): Promise<boolean> {

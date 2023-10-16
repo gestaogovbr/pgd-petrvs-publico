@@ -9,7 +9,7 @@ export class CapacidadeTecnicaDaoService extends DaoBaseService<CapacidadeTecnic
  
   constructor(protected injector: Injector) { 
     super("CapacidadeTecnica", injector);
-    this.searchFields = ["nome"];
+    this.inputSearchConfig.searchFields = ["nome"];
   }  
 }
 
