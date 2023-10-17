@@ -7,9 +7,13 @@ use App\Models\PlanoEntrega;
 use App\Models\Afastamento;
 use App\Services\ServiceBase;
 use App\Models\Atividade;
+use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\PlanoTrabalhoConsolidacaoAfastamento;
 use App\Models\PlanoTrabalhoConsolidacaoAtividade;
+use App\Models\Programa;
+use App\Models\TipoAvaliacao;
+use App\Models\Unidade;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +21,49 @@ use Throwable;
 
 class PlanoTrabalhoConsolidacaoService extends ServiceBase
 {
+
+  public function proxyQuery($query, &$data)
+  {
+    $arquivados = $this->extractWhere($data, "incluir_arquivados");
+    $subordinadas = $this->extractWhere($data, "unidades_subordinadas");
+    $unidadeId = $this->extractWhere($data, "plano_trabalho.unidade.id");
+    if (empty($arquivados) || !$arquivados[2]) $data["where"][] = ["planoTrabalho.data_arquivamento", "==", null];
+    if (!empty($unidadeId)) {
+      $unidade = Unidade::find($unidadeId[2]);
+      if (!empty($subordinadas) && $subordinadas[2] && !empty($unidade)) {
+        $data["where"][] = ["planoTrabalho.unidade.path", "like", $unidade->path . "%"];
+      } else {
+        $data["where"][] = $unidadeId;
+      }
+    }
+    return $data;
+  }
+
+  public function proxyExtra($rows, $data) 
+  {
+    $result = [];
+    if(in_array("avaliacao", $data["with"])) {
+      $tiposAvaliacoesIds = array_unique(array_map(fn ($v) => ($v["avaliacao"] ?? ["tipo_avaliacao_id" => null])["tipo_avaliacao_id"], $rows->toArray()));
+      $tiposAvaliacoes = TipoAvaliacao::with(["notas"])->whereIn("id", $tiposAvaliacoesIds)->get()->all();
+      $result["tipos_avaliacoes"] = $tiposAvaliacoes;
+    }
+    if(in_array("planoTrabalho:id", $data["with"])) {
+      $planosTrabalhosIds = array_unique(array_map(fn ($v) => $v["plano_trabalho_id"], $rows->toArray()));
+      $planosTrabalhos = PlanoTrabalho::with([
+        "unidade:id,sigla,nome",
+        "unidade.gestor:id,unidade_id,usuario_id",
+        "unidade.gestorSubstituto:id,unidade_id,usuario_id",
+        "tipoModalidade:id,nome",
+        "usuario:id,nome,apelido,url_foto"
+      ])->whereIn("id", $planosTrabalhosIds)->get()->all();
+      $programasIds = array_unique(array_map(fn ($v) => $v["programa_id"], $planosTrabalhos));
+      $programas = Programa::with(["tipoAvaliacaoPlanoTrabalho.notas.justificativas"])->whereIn("id", $programasIds)->get()->all();
+      $result["planos_trabalhos"] = $planosTrabalhos;
+      $result["programas"] = $programas;
+    }
+    return count($result) > 0 ? $result : null;
+  }
+
   /** 
    * Retorna dados de atividades, atividades da consolidacao, ocorrencias, afastamentos e entregas do plano
    * 

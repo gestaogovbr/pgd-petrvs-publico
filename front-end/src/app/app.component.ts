@@ -154,8 +154,8 @@ export class AppComponent {
       FORCAS_TRABALHOS_SERVIDORES: { name: "Força de Trabalho - Servidor", permition: 'MOD_PTR_CONS', route: ['relatorios', 'forca-de-trabalho', 'servidor'], icon: this.entity.getIcon('RelatorioServidor') },
       FORCAS_TRABALHOS_AREAS: { name: "Força de Trabalho - Área", permition: 'MOD_PTR_CONS', route: ['relatorios', 'forca-de-trabalho', 'area'], icon: this.entity.getIcon('RelatorioArea') },
       /* Avaliações */	
-      AVALIACAO_CONSOLIDACAO_PLANO_TRABALHO: { name: "Consolidações (Plano de Trabalho)", permition: '', route: [], icon: this.entity.getIcon('PlanoTrabalho') },	
-      AVALIACAO_PLANO_ENTREGAS: { name: "Plano de Entregas", permition: '', route: [], icon: this.entity.getIcon('PlanoEntrega') },
+      AVALIACAO_CONSOLIDACAO_PLANO_TRABALHO: { name: this.lex.translate("Consolidações"), permition: 'MOD_PTR_CSLD_AVAL', route: ['avaliacao', 'plano-trabalho', 'consolidacao', 'avaliacao'], icon: this.entity.getIcon('PlanoTrabalho') },	
+      AVALIACAO_PLANOS_ENTREGAS: { name: this.lex.translate("Planos de Entregas"), permition: 'MOD_PENT_AVAL', route: ['avaliacao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega'), params: { avaliacao: true }},
       /* CONFIGURAÇÕES */
       PREFERENCIAS: { name: "Preferências", permition: '', route: ['configuracoes', 'preferencia'], metadata: { root: true, modal: true }, icon: this.entity.getIcon('Preferencia') },
       ENTIDADES: { name: this.lex.translate("Entidades"), permition: 'MOD_CFG_ENTD', route: ['configuracoes', 'entidade'], icon: this.entity.getIcon('Entidade') },
@@ -224,7 +224,7 @@ export class AppComponent {
       id: "navbarDropdownGestaoAvaliacao",	
       menu: [	
         this.menuSchema.AVALIACAO_CONSOLIDACAO_PLANO_TRABALHO,	
-        this.menuSchema.AVALIACAO_PLANO_ENTREGAS      	
+        this.menuSchema.AVALIACAO_PLANOS_ENTREGAS
       ].sort(this.orderMenu)	
     }, {
       name: "Gerenciamento",

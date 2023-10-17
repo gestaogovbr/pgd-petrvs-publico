@@ -10,7 +10,7 @@ export class TipoDocumentoDaoService extends DaoBaseService<TipoDocumento> {
 
   constructor(protected injector: Injector) { 
     super("TipoDocumento", injector);
-    this.searchFields = ["nome"];
+    this.inputSearchConfig.searchFields = ["nome"];
   }  
 
   public atualizar(lista: TipoDocumentoSei[]): Promise<boolean> {

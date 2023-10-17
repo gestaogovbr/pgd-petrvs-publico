@@ -482,7 +482,7 @@ class PanelFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IM
         default: null
       },
       tenancy_db_port: {
-        default: null
+        default: 3308
       },
       tenancy_db_username: {
         default: null
@@ -506,7 +506,7 @@ class PanelFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IM
         default: null
       },
       log_port: {
-        default: null
+        default: 3308
       },
       log_username: {
         default: null
@@ -566,7 +566,7 @@ class PanelFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IM
         default: ""
       },
       codigo_cidade: {
-        default: null
+        default: 5300108
       },
       login: {
         default: []

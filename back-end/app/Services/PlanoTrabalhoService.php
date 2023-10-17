@@ -55,6 +55,10 @@ class PlanoTrabalhoService extends ServiceBase
       ->where("data_fim", ">=", $data_inicial)->get();
   }
 
+  public function proxySearch($query, &$data, &$text) {
+    $query->with(["usuario"]);
+  }
+
   public function proxyQuery($query, &$data)
   {
     $where = [];

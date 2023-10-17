@@ -9,11 +9,13 @@ import { PlanoTrabalhoListEntregaComponent } from './plano-trabalho-list-entrega
 import { PlanoTrabalhoConsolidacaoComponent } from './plano-trabalho-consolidacao/plano-trabalho-consolidacao.component';
 import { PlanoTrabalhoConsolidacaoListComponent } from './plano-trabalho-consolidacao-list/plano-trabalho-consolidacao-list.component';
 import { AvaliarComponent } from '../../uteis/avaliar/avaliar.component';
+import { PlanoTrabalhoConsolidacaoAvaliacaoComponent } from './plano-trabalho-consolidacao-avaliacao/plano-trabalho-consolidacao-avaliacao.component';
 
 const routes: Routes = [
   { path: '', component: PlanoTrabalhoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Planos de Trabalho" } },
   { path: 'new', component: PlanoTrabalhoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Plano de Trabalho", modal: true } },
   { path: 'termo', component: PlanoTrabalhoFormTermoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Termo de adesão", modal: true } },
+  { path: 'consolidacao/avaliacao', component: PlanoTrabalhoConsolidacaoAvaliacaoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Avaliação das Consolidações do Plano de Trabalho" } },
   { path: 'consolidacao/:consolidacaoId/avaliar', component: AvaliarComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Avaliar Consolidação do Plano de Trabalho" } },
   { path: 'consolidacao/:consolidacaoId/recurso', component: AvaliarComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Recurso da Avaliação da Consolidação do Plano de Trabalho" } },
   { path: 'consolidacao/:usuarioId/:planoTrabalhoId', component: PlanoTrabalhoConsolidacaoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consolidações do Plano de Trabalho" } },

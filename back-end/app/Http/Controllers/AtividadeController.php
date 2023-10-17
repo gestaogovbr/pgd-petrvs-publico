@@ -244,4 +244,15 @@ class AtividadeController extends ControllerBase
         }
     }
 
+    public function hierarquia(Request $request) {
+        try {
+            $atividade_id = $request->validate([
+                'atividade_id' => ['required']
+            ]);
+            return response()->json(['success' => true, 'hierarquia' => $this->service->hierarquia($atividade_id)]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
 }

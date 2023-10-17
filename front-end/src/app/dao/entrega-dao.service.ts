@@ -9,7 +9,7 @@ export class EntregaDaoService extends DaoBaseService<Entrega> {
 
   constructor(protected injector: Injector) { 
     super("Entrega", injector);
-    this.searchFields = ["nome"];
+    this.inputSearchConfig.searchFields = ["nome"];
   }  
 }
 

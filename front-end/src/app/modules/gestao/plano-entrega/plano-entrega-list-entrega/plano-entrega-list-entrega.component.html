@@ -15,7 +15,6 @@
                 <plano-entrega-entregas-plano-trabalho [entregaId]="row.id"></plano-entrega-entregas-plano-trabalho>
             </ng-template>
         </column>
-
         <column [title]="'Entrega\nDemandante/Destinatário'" [template]="columnEntregaCliente" [editTemplate]="columnEntregaCliente">
             <ng-template let-row="row" #columnEntregaCliente>
                 <badge *ngIf="row.descricao" color="light" icon="bi bi-textarea-t" [label]="row.descricao"></badge><br>

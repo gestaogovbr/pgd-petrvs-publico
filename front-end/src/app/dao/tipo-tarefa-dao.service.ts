@@ -9,7 +9,7 @@ export class TipoTarefaDaoService extends DaoBaseService<TipoTarefa> {
 
   constructor(protected injector: Injector) { 
     super("TipoTarefa", injector);
-    this.searchFields = ["nome"];
+    this.inputSearchConfig.searchFields = ["nome"];
   }
 }
 

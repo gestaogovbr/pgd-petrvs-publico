@@ -361,15 +361,16 @@ export class UtilService {
     }
   }
 
-  public getBackgroundColor(level: number = 0, numLevels: number = 20): string {
+  public getBackgroundColor(level: number = 0, numLevels: number = 20, hue: number = 51, saturation: number = 62, lightness: number = 51): string {
     const palette = [];
-    for (let i = numLevels - 1; i >= 0; i--) { 
-      const hue = (i * 190) / numLevels; 
-      const color = `hsl(${hue}, 70%, 60%)`;
+    // valores defaults = um tom de amarelo usado nos comentários
+    for (let i = 0; i <= numLevels; i++) { 
+      const newhue = (i * hue) / numLevels; 
+      const color = `hsl(${newhue}, ${saturation}%, ${lightness}%)`;
       palette.push(color);
     }
     // Retorna uma cor do array
-    return palette[level % numLevels]
+    return palette[numLevels - (level % (numLevels + 1))]; 
   }
 
   public isTimeValid(timer: string): boolean {
