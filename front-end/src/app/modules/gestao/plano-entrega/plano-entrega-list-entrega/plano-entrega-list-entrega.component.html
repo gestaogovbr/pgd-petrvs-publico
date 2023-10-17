@@ -1,6 +1,6 @@
 <grid [items]="items" [form]="form!" [groupTemplate]="groupEntregas" [minHeight]="300" [editable]="isDisabled ? undefined : 'true'" 
     [hasAdd]="!isDisabled && auth.hasPermissionTo('MOD_PENT_ENTR_INCL') && !execucao" [add]="add.bind(this)" 
-    [hasEdit]="!isDisabled && auth.hasPermissionTo('MOD_PENT_ENTR_EDT')" [load]="load.bind(this)" [save]="save.bind(this)">
+    [hasEdit]="!isDisabled && auth.hasPermissionTo('MOD_PENT_ENTR_EDT')" [load]="load.bind(this)" [save]="save.bind(this)" [selectable]="selectable">
     <ng-template let-separator="separator" #groupEntregas>
         <strong class="grid-group-text">Entregas: </strong><span class="text-wrap">
             <badge color="primary" [label]="separator?.text"></badge>
@@ -50,7 +50,7 @@
                 <input-number [size]="12" label="Realizado" sufix="%" icon="bi bi-clock" controlName="progresso_realizado" [control]="form!.controls.progresso_realizado" labelInfo="Progresso de execução (% Concluído)"></input-number>
             </ng-template>
         </column>
-        <column [title]="'Objetivos/Processos'" [width]="200" [template]="columnObjProc" [editTemplate]="columnObjProc">
+        <column [title]="'Objetivos/Processos\nEtiquetas/Checklist'" [width]="200" [template]="columnObjProc" [editTemplate]="columnObjProc" [columnEditTemplate]="selectable ? undefined : columnEtiquetasChecklistEdit" [edit]="selectable ? undefined : onColumnEtiquetasChecklistEdit.bind(this)" [save]="selectable ? undefined : onColumnEtiquetasChecklistSave.bind(this)">
             <ng-template let-row="row" #columnObjProc>
                 <separator [title]="lex.translate('Objetivos')" *ngIf="row.objetivos?.length" collapse [collapsed]="true">
                     <div *ngFor="let pObjetivo of row.objetivos" class="objetivo d-flex align-items-center">
@@ -64,13 +64,26 @@
                         <small>{{pProcesso.processo.nome}}</small>
                     </div>
                 </separator>
-                <!--<separator *ngIf="row.checklist?.length" small title="Checklist"></separator>
+                <badge *ngFor="let etiqueta of row.etiquetas" [lookup]="etiqueta"></badge>
+                <separator *ngIf="row.checklist?.length" small title="Checklist"></separator>
                 <table *ngIf="row.checklist?.length">
                     <tr *ngFor="let check of row.checklist">
                         <td><i *ngIf="check.checked" class="bi bi-check-circle"></i></td>
                         <td class="micro-text fw-ligh">{{check.texto}}</td>
                     </tr>
-                </table>-->
+                </table>
+            </ng-template>
+            <ng-template let-row="row" #columnEtiquetasChecklistEdit>
+                <input-multiselect controlName="etiquetas" [size]="12" [control]="formEdit.controls.etiquetas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
+                    <input-select [size]="12" #etiqueta controlName="etiqueta" nullable itemNull="- Selecione -" detailsButton detailsButtonIcon="bi bi-tools" (details)="onEtiquetaConfigClick()" [control]="formEdit.controls.etiqueta" [items]="etiquetas"></input-select>
+                </input-multiselect>
+                <separator *ngIf="row.checklist?.length" small title="Checklist"></separator>
+                <table *ngIf="row.checklist?.length">
+                    <tr *ngFor="let check of checklist; let i = index">
+                        <td><input-switch [size]="12" scale="small" [source]="checklist" [path]="i + '.checked'"></input-switch></td>
+                        <td class="micro-text fw-ligh">{{check.texto}}</td>
+                    </tr>
+                </table>
             </ng-template>
         </column>
         <column [title]="'Modelo de Entrega\nComentários'" [template]="columnEntregaCometario" [editTemplate]="columnEntregaCometario">

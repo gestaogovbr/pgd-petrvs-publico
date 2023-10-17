@@ -19,11 +19,15 @@ class Entrega extends ModelBase
         'tipo_indicador', /* enum('QUANTIDADE','VALOR','PORCENTAGEM','QUALITATIVO'); NOT NULL; */// Tipo do indicador da entrega
         'lista_qualitativos', /* json; */// Lista de valores para entrega do tipo qualitativo
         'unidade_id', /* char(36); */
+        'etiquetas', /* json; */// Nome das etiquetas para o modelo de entrega
+        'checklist', /* json; */// Nome dos checklist para o modelo de entrega
         //'deleted_at', /* timestamp; */
     ];
 
     protected $casts = [
         'lista_qualitativos' => AsJson::class,
+        'checklist' => AsJson::class,
+        'etiquetas' => AsJson::class,
     ];
 
     //Has

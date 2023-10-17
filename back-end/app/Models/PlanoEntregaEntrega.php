@@ -31,6 +31,8 @@ class PlanoEntregaEntrega extends ModelBase
         'plano_entrega_id', /* char(36); NOT NULL; */
         'entrega_id', /* char(36); */
         'entrega_pai_id', /* char(36); */
+        'etiquetas', /* json; */// Etiquetas da entrega
+        'checklist', /* json; */// Checklist da entrega
         //'deleted_at', /* timestamp; */
     ];
 
@@ -39,7 +41,9 @@ class PlanoEntregaEntrega extends ModelBase
     // Casting
     protected $casts = [
         'meta' => AsJson::class,
-        'realizado' => AsJson::class
+        'realizado' => AsJson::class,
+        'checklist' => AsJson::class,
+        'etiquetas' => AsJson::class,
     ];
 
     // HasMany

@@ -51,17 +51,18 @@
         </tab>
         <tab key="CARACTERIZACAO" label="Caracterização">
             <div class="row">
-                <input-multiselect label="Etiquetas" controlName="etiquetas" [size]="8" [control]="form!.controls.etiquetas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
+                <input-multiselect label="Etiquetas" controlName="etiquetas" [size]="6" [control]="form!.controls.etiquetas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
                     <input-select [size]="12" #etiqueta controlName="etiqueta" [control]="form!.controls.etiqueta" [items]="etiquetas"></input-select>
                 </input-multiselect>
-                <div class="col-md-4">
-                    <grid [control]="form!.controls.checklist" [form]="formChecklist" [hasAdd]="false" [hasDelete]="false" editable>
+                <div class="col-md-6">
+                   <br><h5>Checklist</h5>
+                   <grid [control]="form!.controls.checklist" [form]="formChecklist" [hasAdd]="true" [hasDelete]="true" editable>
                         <columns>
                             <column type="switch" title="Check" field="checked"></column>
-                            <column type="display" title="Texto" field="texto" [editable]="false"></column>
+                            <column type="text" title="Texto" field="texto"></column>
                             <column type="options"></column>
                         </columns>
-                    </grid>
+                   </grid>
                 </div>
             </div>
         </tab>

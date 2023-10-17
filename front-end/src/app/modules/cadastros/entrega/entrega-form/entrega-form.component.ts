@@ -8,6 +8,7 @@ import { Entrega } from 'src/app/models/entrega.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import {LookupItem} from "../../../../services/lookup.service";
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
+import { Checklist } from 'src/app/models/atividade.model';
 
 @Component({
   selector: 'app-entrega-form',
@@ -20,11 +21,14 @@ export class EntregaFormComponent extends PageFormBase<Entrega, EntregaDaoServic
 
   public listaQualitativos: string[] = [];
   public unidadeDao: UnidadeDaoService;
+  public etiquetas: LookupItem[] = [];
+  public checklist: Checklist[] = [];
+  public formChecklist: FormGroup;
 
   constructor(public injector: Injector) {
     super(injector, Entrega, EntregaDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
-    this.modalWidth = 600;
+    this.modalWidth = 900;
     this.join = ["unidade"];
     this.form = this.fh.FormBuilder({
       nome: {default: ""},
@@ -33,8 +37,18 @@ export class EntregaFormComponent extends PageFormBase<Entrega, EntregaDaoServic
       qualitativo: {default: ""},
       lista_qualitativos: {default: []},
       item_qualitativo: {default: ""},
-      unidade_id: {default: null}
+      unidade_id: {default: null},
+      etiquetas: {default: []},
+      checklist: {default: []},
+      etiqueta_texto: {default: ""},
+      etiqueta_icone: {default: null},
+      etiqueta_cor: {default: null},
     }, this.cdRef, this.validate);
+    this.formChecklist = this.fh.FormBuilder({
+      id: {default: ""},
+      texto: {default: ""},
+      checked: {default: false}
+    }, this.cdRef);
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -108,6 +122,24 @@ export class EntregaFormComponent extends PageFormBase<Entrega, EntregaDaoServic
         value: this.form!.controls.item_qualitativo.value
       };
       this.form!.controls.item_qualitativo.setValue("");
+    }
+    return result;
+  };
+
+  public addItemHandleEtiquetas(): LookupItem | undefined {
+    let result = undefined;
+    const value = this.form!.controls.etiqueta_texto.value;
+    const key = this.util.textHash(value);
+    if(value?.length && this.util.validateLookupItem(this.form!.controls.etiquetas.value, key)) {
+      result = {
+        key: key,
+        value: this.form!.controls.etiqueta_texto.value,
+        color: this.form!.controls.etiqueta_cor.value,
+        icon: this.form!.controls.etiqueta_icone.value
+      };
+      this.form!.controls.etiqueta_texto.setValue("");
+      this.form!.controls.etiqueta_icone.setValue(null);
+      this.form!.controls.etiqueta_cor.setValue(null);
     }
     return result;
   };
