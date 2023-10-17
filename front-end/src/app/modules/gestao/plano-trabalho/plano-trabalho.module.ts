@@ -12,6 +12,7 @@ import { PlanoTrabalhoConsolidacaoComponent } from './plano-trabalho-consolidaca
 import { PlanoTrabalhoConsolidacaoListComponent } from './plano-trabalho-consolidacao-list/plano-trabalho-consolidacao-list.component';
 import { PlanoTrabalhoListAccordeonComponent } from './plano-trabalho-list-accordeon/plano-trabalho-list-accordeon.component';
 import { PlanoTrabalhoConsolidacaoFormComponent } from './plano-trabalho-consolidacao-form/plano-trabalho-consolidacao-form.component';
+import { PlanoTrabalhoConsolidacaoAvaliacaoComponent } from './plano-trabalho-consolidacao-avaliacao/plano-trabalho-consolidacao-avaliacao.component';
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import { PlanoTrabalhoConsolidacaoFormComponent } from './plano-trabalho-consoli
     PlanoTrabalhoConsolidacaoComponent,
     PlanoTrabalhoConsolidacaoListComponent,
     PlanoTrabalhoConsolidacaoFormComponent,
-    PlanoTrabalhoListAccordeonComponent    
+    PlanoTrabalhoListAccordeonComponent,
+    PlanoTrabalhoConsolidacaoAvaliacaoComponent
   ],
   imports: [
     CommonModule,

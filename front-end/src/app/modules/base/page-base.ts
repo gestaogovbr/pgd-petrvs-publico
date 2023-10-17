@@ -144,6 +144,10 @@ export abstract class PageBase implements OnInit, ModalPage {
     this.viewInit = true;
   }
 
+  public error = (error: string) => {
+    this.dialog.topAlert(error);
+  }
+
   public saveUsuarioConfig(config?: any) {
     const extra = this.storeExtra ? this.storeExtra() : undefined;
     this.usuarioConfig = Object.assign(this.usuarioConfig || {}, extra || {}, config || {});

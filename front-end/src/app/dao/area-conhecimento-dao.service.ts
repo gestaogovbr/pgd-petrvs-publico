@@ -9,7 +9,7 @@ export class AreaConhecimentoDaoService extends DaoBaseService<AreaConhecimento>
  
   constructor(protected injector: Injector) { 
     super("AreaConhecimento", injector);
-    this.searchFields = ["nome"];
+    this.inputSearchConfig.searchFields = ["nome"];
   }  
 }
 

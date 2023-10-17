@@ -54,6 +54,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
   @Input() prefix?: string;
   @Input() sufix?: string;
   @Input() required?: string;
+  @Input() filter?: string[];
   @Input() set where(value: any[] | undefined) {
     if(JSON.stringify(this._where) != JSON.stringify(value)) {
       this._where = value;
@@ -213,11 +214,12 @@ export class InputSelectComponent extends InputBase implements OnInit {
   }
 
   public itemVisible(item: LookupItem): boolean {
-    return !this.filterControl.value?.length || (new RegExp(this.filterControl.value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), "i")).test(item.value);
+    return (!this.filterControl.value?.length || (new RegExp(this.filterControl.value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&"), "i")).test(item.value)) &&
+      (!this.filter?.length || this.filter.includes(item.key));
   }
 
   public getSelectItemValue(row: IIndexable): string {
-    return (this.fields.length ? this.fields : this.dao?.searchFields || []).map(f => row[f]).join(" - ");
+    return (this.fields.length ? this.fields : this.dao?.inputSearchConfig.searchFields || []).map(f => row[f]).join(" - ");
   }
 
   private loadItems() {

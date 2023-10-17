@@ -228,7 +228,6 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
         objetivos: x.plano_entrega_entrega ? x.plano_entrega_entrega.objetivos : [],
         processos: x.plano_entrega_entrega ? x.plano_entrega_entrega.processos : [],
       };
-
       return result;
     });
     this.programa = dados.programa;

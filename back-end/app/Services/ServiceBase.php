@@ -277,7 +277,9 @@ class ServiceBase extends DynamicMethods
     }
 
     protected function chooseWhere($query, $or, $first, $where, &$data = []) {
-        if(gettype($where) == "array") {
+        $triade = count($where) == 3 && in_array($where[1], ServiceBase::OPERATORS);
+        $proxyWhere = function($query) use ($where, $data) { $this->applyWhere($query, $where, $data); };
+        if($triade) {
             $field = $where[0];
             $operator = $where[1];
             $value = $where[2];
@@ -300,6 +302,10 @@ class ServiceBase extends DynamicMethods
                     } else {
                         $query->whereNull($field);
                     }
+                } else if ($operator == "in") {
+                    $query->whereIn($field, $value);
+                } else if ($operator == "not in") {
+                    $query->whereNotIn($field, $value);
                 } else {
                     $query->where($field, $this->convertOperator($operator), $value);
                 }
@@ -310,14 +316,20 @@ class ServiceBase extends DynamicMethods
                     } else {
                         $query->orWhereNull($field);
                     }
+                } else if ($operator == "in") {
+                    $query->orWhereIn($field, $value);
+                } else if ($operator == "not in") {
+                    $query->orWhereNotIn($field, $value);
                 } else {
                     $query->orWhere($field, $this->convertOperator($operator), $value);
                 }
             }
         } else if ($or && !$first) {
-            $query->orWhere($where);
+            $query->orWhere($proxyWhere);
+            //$query->orWhere($where);
         } else {
-            $query->where($where);
+            $query->where($proxyWhere);
+            //$query->where($where);
         }
     }
 
@@ -336,11 +348,12 @@ class ServiceBase extends DynamicMethods
                     $query->whereRaw($value->expression, $value->params);
                 }
             } else if(gettype($value) == "array"){
+                /*
                 $self = $this;
                 $triade = count($value) == 3 && in_array($value[1], ServiceBase::OPERATORS);
                 $value = !$triade ? function($query) use ($value, $data) { $this->applyWhere($query, $value, $data); } :
                     ($value[1] == "in" ? function($query) use ($value, $self) { $query->whereIn($self->prefixField($value[0]), $value[2]); } : 
-                    ($value[1] == "not in" ? function($query) use ($value, $self) { $query->whereNotIn($self->prefixField($value[0]), $value[2]); } : $value));
+                    ($value[1] == "not in" ? function($query) use ($value, $self) { $query->whereNotIn($self->prefixField($value[0]), $value[2]); } : $value)); */
                 $this->chooseWhere($query, $or, $first, $value, $data);
                 $first = false;
             }
@@ -456,10 +469,10 @@ class ServiceBase extends DynamicMethods
         $values = [];
         foreach ($rows as $row) {
             $row = (array) $row;
-            $text = join(" - ", array_map(fn($field) => $row[$field], $data['fields']));
+            //$text = join(" - ", array_map(fn($field) => $row[$field], $data['fields']));
             $orderFilds = array_map(fn($order) => "_" . str_replace(".", "_", $order[0]), $data['orderBy'] ?? []);
             $orderValues = array_map(fn($field) => $row[$field], $orderFilds);
-            array_push($values, [$row['id'], $text, $orderValues]);
+            array_push($values, [$row['id'], array_map(fn($field) => $row[$field], $data['fields']), $orderValues]);
         }
         return $values;
     }
@@ -475,7 +488,7 @@ class ServiceBase extends DynamicMethods
         $model = App($this->collection);
         $entity = $model::query();
         if(count($data['with']) > 0) {
-            $this->applyWith($entity,$data);
+            $this->applyWith($entity, $data);
         }
         $entity = $entity->find($data["key"]);
         $text = "";
@@ -487,6 +500,7 @@ class ServiceBase extends DynamicMethods
             return [
                 'value' => $data["key"],
                 'text' => $text,
+                'data' => array_map(fn($field) => array_reduce(explode(".", $field), fn($a, $i) => $a->$i, $entity), $data['fields']),
                 'entity' => $entity
             ];
         }

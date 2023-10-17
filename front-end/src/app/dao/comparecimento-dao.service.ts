@@ -9,7 +9,7 @@ export class ComparecimentoDaoService extends DaoBaseService<Comparecimento> {
 
   constructor(protected injector: Injector) {
     super("Comparecimento", injector);
-    this.searchFields = ["data_comparecimento"];
+    this.inputSearchConfig.searchFields = ["data_comparecimento"];
   }
 
 }
