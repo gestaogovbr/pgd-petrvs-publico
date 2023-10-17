@@ -9,7 +9,7 @@ export class PerfilDaoService extends DaoBaseService<Perfil> {
 
   constructor(protected injector: Injector) { 
     super("Perfil", injector);
-    this.searchFields = ["nome"];
+    this.inputSearchConfig.searchFields = ["nome"];
   }
 }
   

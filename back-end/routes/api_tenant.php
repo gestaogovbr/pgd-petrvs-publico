@@ -215,6 +215,7 @@ Route::middleware(['auth:sanctum'])->prefix('Atividade')->group(function () {
     Route::post('reiniciar', [AtividadeController::class, 'reiniciar']);
     Route::post('prorrogar', [AtividadeController::class, 'prorrogar']);
     Route::post('arquivar', [AtividadeController::class, 'arquivar']);
+    Route::post('hierarquia', [AtividadeController::class, 'hierarquia']);
 });
 Route::middleware(['auth:sanctum'])->prefix('AtividadeTarefa')->group(function () { defaultRoutes(AtividadeTarefaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Avaliacao')->group(function () {

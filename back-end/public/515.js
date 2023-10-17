@@ -20,7 +20,7 @@ class CurriculumDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0_
   constructor(injector) {
     super("Curriculum", injector);
     this.injector = injector;
-    this.searchFields = ["apresentacao", "telefone", "idiomas", "estado_civil", "quantidade_filhos"];
+    this.inputSearchConfig.searchFields = ["apresentacao", "telefone", "idiomas", "estado_civil", "quantidade_filhos"];
   }
   lookupsCurriculum() {
     return new Promise((resolve, reject) => {
@@ -62,7 +62,7 @@ class CurriculumProfissionalDaoService extends _dao_base_service__WEBPACK_IMPORT
   constructor(injector) {
     super("CurriculumProfissional", injector);
     this.injector = injector;
-    this.searchFields = ["ano_ingresso", "lotacao_atual", "pgd_inserido", "pgd_interesse", "funcoes", "unidades_lotado", "atividades_fora", "atividades_internas", "especifique_habilidades", "docencia_fora", "docencia_interna", "curso_fora", "curso_interno", "viagem_nacional", "viagem_internacional", "interesse_bnt", "remocao"];
+    this.inputSearchConfig.searchFields = ["ano_ingresso", "lotacao_atual", "pgd_inserido", "pgd_interesse", "funcoes", "unidades_lotado", "atividades_fora", "atividades_internas", "especifique_habilidades", "docencia_fora", "docencia_interna", "curso_fora", "curso_interno", "viagem_nacional", "viagem_internacional", "interesse_bnt", "remocao"];
   }
 }
 _class = CurriculumProfissionalDaoService;
@@ -147,44 +147,6 @@ class Curriculum extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
     this.initialization(data);
   }
 }
-
-/***/ }),
-
-/***/ 43433:
-/*!*******************************************************************************************!*\
-  !*** ./src/app/modules/cadastros/curriculum/curriculum-list/curriculum-list.component.ts ***!
-  \*******************************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   CurriculumListComponent: () => (/* binding */ CurriculumListComponent)
-/* harmony export */ });
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ 51197);
-var _class;
-
-class CurriculumListComponent {
-  constructor() {}
-  ngOnInit() {}
-}
-_class = CurriculumListComponent;
-_class.ɵfac = function CurriculumListComponent_Factory(t) {
-  return new (t || _class)();
-};
-_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({
-  type: _class,
-  selectors: [["app-curriculum-list"]],
-  decls: 2,
-  vars: 0,
-  template: function CurriculumListComponent_Template(rf, ctx) {
-    if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "p");
-      _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1, "curriculum-list works!");
-      _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-    }
-  },
-  styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
-});
 
 /***/ }),
 
@@ -1002,75 +964,6 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵdef
 
 /***/ }),
 
-/***/ 22222:
-/*!***************************************************************************!*\
-  !*** ./src/app/modules/curriculum/curriculum-home/raioxhome.component.ts ***!
-  \***************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   RaioxhomeComponent: () => (/* binding */ RaioxhomeComponent)
-/* harmony export */ });
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 51197);
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/router */ 82454);
-/* harmony import */ var src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/services/auth.service */ 32333);
-var _class;
-
-
-
-class RaioxhomeComponent {
-  constructor(router, auth) {
-    this.router = router;
-    this.auth = auth;
-    this.logoInicial = "../../../../assets/images/logo-raio-x-1.png";
-    this.imgDadosPessoais = "../../../../assets/images/Dados_pessoais.png";
-    this.imgDadosProfissionais = "../../../../assets/images/Dados_profissionais.png";
-    this.imgAtributos = "../../../../assets/images/Atributos_comportamentais.png";
-    this.imgOportunidades = "../../../../assets/images/Oportunidade.png";
-  }
-  ngOnInit() {}
-  dadosPessoais() {
-    this.router.navigate(['raiox/pessoal']);
-  }
-  mensagemSaudacao() {
-    const hora = parseInt(this.auth.unidadeHora.replace(":", ""));
-    const apelido = this.auth.usuario?.apelido.toUpperCase();
-    const mail = this.auth.usuario?.email;
-    return hora < 1200 ? "BOM DIA, " + apelido : hora < 1800 ? "BOA TARDE, " + apelido : "BOA NOITE, " + apelido;
-  }
-}
-_class = RaioxhomeComponent;
-_class.ɵfac = function RaioxhomeComponent_Factory(t) {
-  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_2__.Router), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_0__.AuthService));
-};
-_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({
-  type: _class,
-  selectors: [["app-raioxhome"]],
-  decls: 6,
-  vars: 2,
-  consts: [[1, "saudacao"], [1, "msgSaudacao"], [1, "logo-raio-x", "mt-5"], ["id", "logoRaioX", 3, "src"]],
-  template: function RaioxhomeComponent_Template(rf, ctx) {
-    if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "body")(1, "div", 0)(2, "h2", 1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](4, "div", 2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](5, "img", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
-    }
-    if (rf & 2) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate"](ctx.mensagemSaudacao());
-      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("src", ctx.logoInicial, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵsanitizeUrl"]);
-    }
-  },
-  styles: ["@import url(https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400[_ngcontent-%COMP%];500[_ngcontent-%COMP%];800&display=swap)[_ngcontent-%COMP%];@import url(https://fonts.cdnfonts.com/css/neutra-text-alt);body[_ngcontent-%COMP%]::-webkit-scrollbar, #dadospessoais[_ngcontent-%COMP%]::-webkit-scrollbar, #dadosP[_ngcontent-%COMP%]::-webkit-scrollbar, #oportunidades[_ngcontent-%COMP%]::-webkit-scrollbar, #atributos[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 11px;\n}\n\nbody[_ngcontent-%COMP%]::-webkit-scrollbar-track, #dadospessoais[_ngcontent-%COMP%]::-webkit-scrollbar-track, #dadosP[_ngcontent-%COMP%]::-webkit-scrollbar-track, #oportunidades[_ngcontent-%COMP%]::-webkit-scrollbar-track, #atributos[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  background-color: #fff;\n}\n\nbody[_ngcontent-%COMP%]::-webkit-scrollbar-thumb, #dadospessoais[_ngcontent-%COMP%]::-webkit-scrollbar-thumb, #dadosP[_ngcontent-%COMP%]::-webkit-scrollbar-thumb, #oportunidades[_ngcontent-%COMP%]::-webkit-scrollbar-thumb, #atributos[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background-color: #1d2143;\n  border-radius: 5px;\n}\n\n.logo-raio-x[_ngcontent-%COMP%], .saudacao[_ngcontent-%COMP%] {\n  width: 100%;\n  height: auto;\n  margin: auto;\n  display: flex;\n  justify-content: center;\n}\n\n.msgSaudacao[_ngcontent-%COMP%] {\n  color: #1d2143;\n  font-family: neutra text;\n  font-weight: bold;\n}\n\n.logo-raio-x[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  max-width: 500px;\n  width: 100%;\n  height: auto;\n  object-fit: cover;\n}\n\n.closing[_ngcontent-%COMP%] {\n  border: none;\n  background: none;\n}\n\nbutton[_ngcontent-%COMP%]   #imgBTNProf[_ngcontent-%COMP%], button[_ngcontent-%COMP%]   #imgBTNGer[_ngcontent-%COMP%], button[_ngcontent-%COMP%]   #imgBTNPessoal[_ngcontent-%COMP%], button[_ngcontent-%COMP%]   #imgBTNatributos[_ngcontent-%COMP%] {\n  width: auto;\n  height: 120px;\n  border: none;\n}\n\n.card-group--custom[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: center;\n}\n\n.title-custom[_ngcontent-%COMP%] {\n  font-weight: 800;\n  font-family: \"Fira Sans\", sans-serif;\n  color: #1d2143;\n}\n\n.card-custom[_ngcontent-%COMP%] {\n  border-radius: 20px 20px 20px 0px;\n  width: 260px;\n  height: auto;\n  transition: all 0.2s linear;\n}\n\n.card-custom[_ngcontent-%COMP%]:hover {\n  box-shadow: 0px 0px 5px 3px rgba(0, 0, 0, 0.2);\n}\n\n.card-header--custom[_ngcontent-%COMP%] {\n  background-color: #d9dad9;\n  border-radius: 15px 15px 0px 0px !important;\n}\n\n.card-custom[_ngcontent-%COMP%] {\n  width: 100% !important;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvbW9kdWxlcy9jdXJyaWN1bHVtL2N1cnJpY3VsdW0taG9tZS9yYWlveGhvbWUuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBR0E7RUFDSSxXQUFBO0FBQUo7O0FBR0M7RUFDSSxzQkFBQTtBQUFMOztBQUdDO0VBQ0kseUJBQUE7RUFDQSxrQkFBQTtBQUFMOztBQUdFO0VBQ0UsV0FBQTtFQUNBLFlBQUE7RUFDQSxZQUFBO0VBQ0EsYUFBQTtFQUNBLHVCQUFBO0FBQUo7O0FBR0U7RUFDRSxjQUFBO0VBQ0Esd0JBQUE7RUFDQSxpQkFBQTtBQUFKOztBQUlFO0VBQ0UsZ0JBQUE7RUFDQSxXQUFBO0VBQ0EsWUFBQTtFQUNBLGlCQUFBO0FBREo7O0FBSUU7RUFDRSxZQUFBO0VBQ0EsZ0JBQUE7QUFESjs7QUFLRTtFQUNFLFdBQUE7RUFDQSxhQUFBO0VBQ0EsWUFBQTtBQUZKOztBQU9FO0VBQ0UsYUFBQTtFQUNBLHVCQUFBO0FBSko7O0FBT0U7RUFDRSxnQkFBQTtFQUNBLG9DQUFBO0VBQ0EsY0FBQTtBQUpKOztBQU9FO0VBQ0UsaUNBQUE7RUFDQSxZQUFBO0VBQ0EsWUFBQTtFQUNBLDJCQUFBO0FBSko7O0FBT0U7RUFHSSw4Q0FBQTtBQUpOOztBQVFFO0VBQ0UseUJBQUE7RUFDQSwyQ0FBQTtBQUxKOztBQVNHO0VBQ0ksc0JBQUE7QUFOUCIsInNvdXJjZXNDb250ZW50IjpbIkBpbXBvcnQgdXJsKCdodHRwczovL2ZvbnRzLmdvb2dsZWFwaXMuY29tL2NzczI/ZmFtaWx5PUZpcmErU2Fuczp3Z2h0QDMwMDs0MDA7NTAwOzgwMCZkaXNwbGF5PXN3YXAnKTtcclxuQGltcG9ydCB1cmwoJ2h0dHBzOi8vZm9udHMuY2RuZm9udHMuY29tL2Nzcy9uZXV0cmEtdGV4dC1hbHQnKTtcclxuICBcclxuYm9keTo6LXdlYmtpdC1zY3JvbGxiYXIsICNkYWRvc3Blc3NvYWlzOjotd2Via2l0LXNjcm9sbGJhciwgI2RhZG9zUDo6LXdlYmtpdC1zY3JvbGxiYXIsICNvcG9ydHVuaWRhZGVzOjotd2Via2l0LXNjcm9sbGJhciwgI2F0cmlidXRvczo6LXdlYmtpdC1zY3JvbGxiYXIge1xyXG4gICAgd2lkdGg6IDExcHg7XHJcbiB9XHJcblxyXG4gYm9keTo6LXdlYmtpdC1zY3JvbGxiYXItdHJhY2ssICNkYWRvc3Blc3NvYWlzOjotd2Via2l0LXNjcm9sbGJhci10cmFjaywgI2RhZG9zUDo6LXdlYmtpdC1zY3JvbGxiYXItdHJhY2ssICNvcG9ydHVuaWRhZGVzOjotd2Via2l0LXNjcm9sbGJhci10cmFjaywgI2F0cmlidXRvczo6LXdlYmtpdC1zY3JvbGxiYXItdHJhY2sge1xyXG4gICAgIGJhY2tncm91bmQtY29sb3I6ICNmZmY7XHJcbiB9XHJcblxyXG4gYm9keTo6LXdlYmtpdC1zY3JvbGxiYXItdGh1bWIsICNkYWRvc3Blc3NvYWlzOjotd2Via2l0LXNjcm9sbGJhci10aHVtYiwgI2RhZG9zUDo6LXdlYmtpdC1zY3JvbGxiYXItdGh1bWIsICNvcG9ydHVuaWRhZGVzOjotd2Via2l0LXNjcm9sbGJhci10aHVtYiwgI2F0cmlidXRvczo6LXdlYmtpdC1zY3JvbGxiYXItdGh1bWIge1xyXG4gICAgIGJhY2tncm91bmQtY29sb3I6ICMxZDIxNDM7XHJcbiAgICAgYm9yZGVyLXJhZGl1czogNXB4O1xyXG4gfVxyXG4gICAgXHJcbiAgLmxvZ28tcmFpby14LCAuc2F1ZGFjYW97XHJcbiAgICB3aWR0aDogMTAwJTtcclxuICAgIGhlaWdodDogYXV0bztcclxuICAgIG1hcmdpbjogYXV0bztcclxuICAgIGRpc3BsYXk6IGZsZXg7XHJcbiAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcclxuICB9XHJcblxyXG4gIC5tc2dTYXVkYWNhbyB7XHJcbiAgICBjb2xvcjogIzFkMjE0MztcclxuICAgIGZvbnQtZmFtaWx5OiBuZXV0cmEgdGV4dDtcclxuICAgIGZvbnQtd2VpZ2h0OiBib2xkO1xyXG4gIH1cclxuXHJcbiAgXHJcbiAgLmxvZ28tcmFpby14IGltZyB7XHJcbiAgICBtYXgtd2lkdGg6IDUwMHB4O1xyXG4gICAgd2lkdGg6IDEwMCU7XHJcbiAgICBoZWlnaHQ6IGF1dG87XHJcbiAgICBvYmplY3QtZml0OiBjb3ZlcjtcclxuICB9XHJcblxyXG4gIC5jbG9zaW5ne1xyXG4gICAgYm9yZGVyOiBub25lO1xyXG4gICAgYmFja2dyb3VuZDogbm9uZTtcclxuICAgIFxyXG4gIH1cclxuXHJcbiAgYnV0dG9uICNpbWdCVE5Qcm9mLCBidXR0b24gI2ltZ0JUTkdlciwgYnV0dG9uICNpbWdCVE5QZXNzb2FsLCBidXR0b24gI2ltZ0JUTmF0cmlidXRvcyB7XHJcbiAgICB3aWR0aDogYXV0bztcclxuICAgIGhlaWdodDogMTIwcHg7XHJcbiAgICBib3JkZXI6bm9uZTtcclxuICB9XHJcblxyXG4gIFxyXG5cclxuICAuY2FyZC1ncm91cC0tY3VzdG9tIHtcclxuICAgIGRpc3BsYXk6IGZsZXg7XHJcbiAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcclxuICB9XHJcblxyXG4gIC50aXRsZS1jdXN0b20ge1xyXG4gICAgZm9udC13ZWlnaHQ6IDgwMDtcclxuICAgIGZvbnQtZmFtaWx5OiAnRmlyYSBTYW5zJywgc2Fucy1zZXJpZjtcclxuICAgIGNvbG9yOiAjMWQyMTQzO1xyXG4gIH1cclxuXHJcbiAgLmNhcmQtY3VzdG9tIHtcclxuICAgIGJvcmRlci1yYWRpdXM6IDIwcHggMjBweCAyMHB4IDBweDtcclxuICAgIHdpZHRoOiAyNjBweDtcclxuICAgIGhlaWdodDogYXV0bztcclxuICAgIHRyYW5zaXRpb246IGFsbCAuMnMgbGluZWFyO1xyXG4gIH1cclxuXHJcbiAgLmNhcmQtY3VzdG9tOmhvdmVyIHtcclxuICAgICAgLXdlYmtpdC1ib3gtc2hhZG93OiAwcHggMHB4IDVweCAzcHggcmdiYSgwLDAsMCwwLjIpO1xyXG4gICAgICAtbW96LWJveC1zaGFkb3c6IDBweCAwcHggNXB4IDNweCByZ2JhKDAsMCwwLDAuMik7XHJcbiAgICAgIGJveC1zaGFkb3c6IDBweCAwcHggNXB4IDNweCByZ2JhKDAsMCwwLDAuMik7XHJcbiAgfVxyXG5cclxuXHJcbiAgLmNhcmQtaGVhZGVyLS1jdXN0b20ge1xyXG4gICAgYmFja2dyb3VuZC1jb2xvcjogI2Q5ZGFkOTtcclxuICAgIGJvcmRlci1yYWRpdXM6IDE1cHggMTVweCAwcHggMHB4ICFpbXBvcnRhbnQ7XHJcbiAgfVxyXG5cclxuXHJcbiAgIC5jYXJkLWN1c3RvbSB7XHJcbiAgICAgICB3aWR0aDogMTAwJSAhaW1wb3J0YW50O1xyXG4gICB9XHJcblxyXG4iXSwic291cmNlUm9vdCI6IiJ9 */"]
-});
-
-/***/ }),
-
 /***/ 26832:
 /*!***********************************************************************************************************!*\
   !*** ./src/app/modules/curriculum/curriculum-profissional-form/curriculum-profissional-form.component.ts ***!
@@ -1096,19 +989,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_dao_unidade_integrante_dao_service__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! src/app/dao/unidade-integrante-dao.service */ 88631);
 /* harmony import */ var src_app_services_unidades_service__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! src/app/services/unidades.service */ 89640);
 /* harmony import */ var src_app_dao_curriculum_dao_service__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! src/app/dao/curriculum-dao.service */ 39910);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! @angular/core */ 51197);
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! @angular/common */ 89650);
-/* harmony import */ var _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../components/input/input-switch/input-switch.component */ 88820);
-/* harmony import */ var _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../../components/input/input-search/input-search.component */ 32802);
-/* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../../components/input/input-text/input-text.component */ 92392);
-/* harmony import */ var _components_input_input_radio_input_radio_component__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../../components/input/input-radio/input-radio.component */ 48877);
-/* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../../../components/input/input-select/input-select.component */ 64603);
-/* harmony import */ var _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../../../components/input/input-multiselect/input-multiselect.component */ 17819);
-/* harmony import */ var _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ../../../components/tabs/tabs.component */ 66384);
-/* harmony import */ var _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ../../../components/tabs/tab/tab.component */ 74978);
-/* harmony import */ var _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ../../../components/separator/separator.component */ 25560);
+/* harmony import */ var src_app_dao_cargo_dao_service__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! src/app/dao/cargo-dao.service */ 99255);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! @angular/common */ 89650);
+/* harmony import */ var _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../../components/input/input-switch/input-switch.component */ 88820);
+/* harmony import */ var _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../../components/input/input-search/input-search.component */ 32802);
+/* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../../components/input/input-text/input-text.component */ 92392);
+/* harmony import */ var _components_input_input_radio_input_radio_component__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../../../components/input/input-radio/input-radio.component */ 48877);
+/* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../../../components/input/input-select/input-select.component */ 64603);
+/* harmony import */ var _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ../../../components/input/input-multiselect/input-multiselect.component */ 17819);
+/* harmony import */ var _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ../../../components/tabs/tabs.component */ 66384);
+/* harmony import */ var _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ../../../components/tabs/tab/tab.component */ 74978);
+/* harmony import */ var _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ../../../components/separator/separator.component */ 25560);
 
 var _class;
+
 
 
 
@@ -1155,30 +1050,30 @@ const _c16 = ["ct"];
 const _c17 = ["cargos"];
 function CurriculumProfissionalFormComponent_input_radio_90_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](0, "input-radio", 85, 86);
+    _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](0, "input-radio", 85, 86);
   }
   if (rf & 2) {
-    const ctx_r17 = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 4)("items", ctx_r17.lookup.PG_PRF);
+    const ctx_r17 = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 4)("items", ctx_r17.lookup.PG_PRF);
   }
 }
 function CurriculumProfissionalFormComponent_input_radio_95_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](0, "input-radio", 87, 88);
+    _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](0, "input-radio", 87, 88);
   }
   if (rf & 2) {
-    const ctx_r19 = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 4)("items", ctx_r19.lookup.PG_PRF);
+    const ctx_r19 = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 4)("items", ctx_r19.lookup.PG_PRF);
   }
 }
 function CurriculumProfissionalFormComponent_input_text_96_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](0, "input-text", 89);
+    _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](0, "input-text", 89);
   }
   if (rf & 2) {
-    const ctx_r20 = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 4)("control", ctx_r20.form.controls.telefone)("maskFormat", "(00) 0000-0000 || (00) 0 0000-0000");
-    _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵattribute"]("maxlength", 250);
+    const ctx_r20 = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 4)("control", ctx_r20.form.controls.telefone)("maskFormat", "(00) 0000-0000 || (00) 0 0000-0000");
+    _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵattribute"]("maxlength", 250);
   }
 }
 class CurriculumProfissionalFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_2__.PageFormBase {
@@ -1190,11 +1085,11 @@ class CurriculumProfissionalFormComponent extends src_app_modules_base_page_form
       'value': 'value 1'
     }];
     this.anos = [];
-    //public ct: LookupItem[] = [];
-    this.cargo = [];
-    this.funcao = [];
-    this.grupo = [];
-    this.unidade = [];
+    this.unidadesItems = [];
+    this.funcoesItems = [];
+    this.gruposItems = [];
+    this.centroTreinamentoItems = [];
+    this.cargosItems = [];
     this.usuarioUnidade = [];
     this.validate = (control, controlName) => {
       let result = null;
@@ -1207,6 +1102,7 @@ class CurriculumProfissionalFormComponent extends src_app_modules_base_page_form
     this.funcaoDao = injector.get(src_app_dao_funcao_dao_service__WEBPACK_IMPORTED_MODULE_5__.FuncaoDaoService);
     this.grupoDao = injector.get(src_app_dao_grupo_especializado_dao_service__WEBPACK_IMPORTED_MODULE_7__.GrupoEspecializadoDaoService);
     this.unidadeDao = injector.get(src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_8__.UnidadeDaoService);
+    this.cargoDao = injector.get(src_app_dao_cargo_dao_service__WEBPACK_IMPORTED_MODULE_15__.CargoDaoService);
     this.unidadeService = injector.get(src_app_services_unidades_service__WEBPACK_IMPORTED_MODULE_13__.UnidadesService);
     this.lookupService = injector.get(src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_3__.LookupService);
     this.form = this.fh.FormBuilder({
@@ -1291,43 +1187,26 @@ class CurriculumProfissionalFormComponent extends src_app_modules_base_page_form
         value: i.toString()
       }));
     }
-    this.curriculumDao?.lookupsCurriculum().then(lookups => {
-      this.unidades.items = lookups.unidades;
-      this.lotacaoAtual.items = lookups.unidades;
-      this.funcoes.items = lookups.funcoes;
-      this.grupos.items = lookups.grupos;
-      this.ct.items = lookups.ct;
-      this.cargos.items = lookups.cargos;
-    });
-    /*(async () => {
-     
-      this.unidadesArray = await this.unidadeDao?.lookupTodasUnidades()
-      this.unidade = this.unidadesArray.map((x: { id: any; sigla: any; }) => Object.assign({}, { key: x.id, value: x.sigla }));
-      setTimeout(() =>
-      {
-       
-        console.log('Todas Unidades', this.unidade);
-        
-      },
-      1000);
-    })();*/
     const userUnidade = this.auth.unidade;
-    console.log(userUnidade);
-    /*   this.lotacaoDao?.query({ where: [['usuario_id', '==', userID],['principal', '==', 1 ]]}).getAll().then((user) => {
-           const unidadeID=user[0].unidade_id;
-           this.unidadeDao?.query({ where: [['id', '==', unidadeID]]}).getAll().then((unidade) => {
-               console.log('UNIDADES',unidade[0].sigla,unidade[0].nome)
-                 //this.usuarioUnidade = user.map(x => Object.assign({}, { key: x.id, value: x.unidade_id }) as LookupItem);
-                 //this.cdRef.detectChanges();
-           });
-       });*/
+    console.log('userUnidade', userUnidade);
   }
-
   loadData(entity, form) {
-    //throw new Error('Method not implemented.');
+    var _this = this;
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      let lookups = yield _this.curriculumDao.lookupsCurriculum();
+      //this.unidadesItems = lookups.unidades;
+      _this.funcoesItems = lookups.funcoes;
+      _this.gruposItems = lookups.grupos;
+      _this.centroTreinamentoItems = lookups.ct;
+      _this.cargosItems = lookups.cargos;
+      _this.lotacaoAtual.loadSearch(_this.auth.lotacao);
+    })();
   }
   initializeData(form) {
-    //throw new Error('Method not implemented.');
+    var _this2 = this;
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      return yield _this2.loadData(_this2.entity, form);
+    })();
   }
   saveData(form) {
     return new Promise((resolve, reject) => {
@@ -1352,296 +1231,283 @@ class CurriculumProfissionalFormComponent extends src_app_modules_base_page_form
     return;
   }
   onAddClick() {}
-  getAllUnidades() {
-    var _this = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      _this.unidadeDao?.query().getAll().then(unidade => {
-        //console.log(unidade);
-        _this.unidade = unidade.map(x => Object.assign({}, {
-          key: x.id,
-          value: x.sigla
-        }));
-        //console.log(this.unidade)
-      });
-    })();
-  }
 }
 _class = CurriculumProfissionalFormComponent;
 _class.ɵfac = function CurriculumProfissionalFormComponent_Factory(t) {
-  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_24__.Injector));
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_25__.Injector));
 };
-_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵdefineComponent"]({
+_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵdefineComponent"]({
   type: _class,
   selectors: [["curriculum-profissional-form"]],
   viewQuery: function CurriculumProfissionalFormComponent_Query(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c0, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c1, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c2, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c3, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c4, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c5, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c6, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c7, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c8, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c9, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c10, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c11, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c12, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c13, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c14, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c15, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c16, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c17, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵviewQuery"](_c0, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵviewQuery"](_c1, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵviewQuery"](_c2, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵviewQuery"](_c3, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵviewQuery"](_c4, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵviewQuery"](_c5, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵviewQuery"](_c6, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵviewQuery"](_c7, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵviewQuery"](_c8, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵviewQuery"](_c9, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵviewQuery"](_c10, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵviewQuery"](_c11, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵviewQuery"](_c12, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵviewQuery"](_c13, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵviewQuery"](_c14, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵviewQuery"](_c15, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵviewQuery"](_c16, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵviewQuery"](_c17, 5);
     }
     if (rf & 2) {
       let _t;
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.radioDocenciaFora = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.radioDocenciaPRF = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.radioCursos = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.radioCursosFora = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.radioInteresseBNT = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.radioPG = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.radioInteressePG = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.radioInteresseRemove = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.radioViajaN = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.radioViajaI = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.escolhaRadioPG = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.escolhaInteressePG = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.funcoes = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.unidades = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.lotacaoAtual = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.grupos = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.ct = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.cargos = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵloadQuery"]()) && (ctx.radioDocenciaFora = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵloadQuery"]()) && (ctx.radioDocenciaPRF = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵloadQuery"]()) && (ctx.radioCursos = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵloadQuery"]()) && (ctx.radioCursosFora = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵloadQuery"]()) && (ctx.radioInteresseBNT = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵloadQuery"]()) && (ctx.radioPG = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵloadQuery"]()) && (ctx.radioInteressePG = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵloadQuery"]()) && (ctx.radioInteresseRemove = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵloadQuery"]()) && (ctx.radioViajaN = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵloadQuery"]()) && (ctx.radioViajaI = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵloadQuery"]()) && (ctx.escolhaRadioPG = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵloadQuery"]()) && (ctx.escolhaInteressePG = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵloadQuery"]()) && (ctx.funcoes = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵloadQuery"]()) && (ctx.unidades = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵloadQuery"]()) && (ctx.lotacaoAtual = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵloadQuery"]()) && (ctx.grupos = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵloadQuery"]()) && (ctx.ct = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵloadQuery"]()) && (ctx.cargos = _t.first);
     }
   },
-  features: [_angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵInheritDefinitionFeature"]],
+  features: [_angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵInheritDefinitionFeature"]],
   decls: 102,
-  vars: 127,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "left", ""], ["key", "FUNCIONAIS", "label", "Funcionais", 1, "fw-bold"], [1, "row", "mb-2", "mt-4"], ["label", "Ingresso na Institui\u00E7\u00E3o", "icon", "bi bi-calendar-check-fill", "controlName", "ano_ingresso", 3, "size", "control", "items"], ["label", "Centro de Treinamento", "icon", "bi bi-building-fill", "controlName", "centro_treinamento", 3, "size", "control"], ["ct", ""], ["label", "Cargo", "icon", "bi bi-person-badge", "controlName", "cargo", 3, "size", "control"], ["cargos", ""], [1, "row"], ["title", "Hist\u00F3rico de Lota\u00E7\u00F5es e Fun\u00E7\u00F5es Gratificadas", 1, "mb-3", "mt-3", 3, "bold"], ["controlName", "funcoes", "noBox", "", 3, "size", "control", "addItemHandle", "bold"], ["label", "Fun\u00E7\u00F5es ocupadas como titular ou substituto", "icon", "bi bi-check-circle-fill", "controlName", "funcoesOcupadas", "liveSearch", "", 3, "size", "control"], ["funcoes", ""], ["label", "Voc\u00EA faz parte de algum grupo especializado?", "icon", "bi bi-check-circle", "controlName", "grupo", "id", "testeID", "liveSearch", "", 3, "size", "control"], ["grupos", ""], [1, "row", "my-3"], ["controlName", "lotacoes", "noBox", "", 3, "size", "control", "addItemHandle", "bold"], ["label", "Selecione todas as unidades em que j\u00E1 foi lotado", "icon", "bi bi-check-circle-fill", "controlName", "selectLotacao", "liveSearch", "", 3, "size", "control", "items"], ["unidades", ""], ["label", "Lota\u00E7\u00E3o atual", "icon", "bi bi-check-circle", "controlName", "lotacaoAtual", "liveSearch", "", 3, "size", "control"], ["lotacaoAtual", ""], ["key", "HARD_SKILLS", "label", "Hard Skills", 1, "fw-bold"], [1, "row", "mb-2", "mt-3"], ["title", "Desempenhou atividades fora e que podem contribuir para a institui\u00E7\u00E3o? Informe a \u00E1rea:", 1, "mb-3", 3, "bold"], ["controlName", "atividades_fora", "noBox", "", 3, "size", "control", "addItemHandle", "bold"], ["label", "Area", "icon", "bi bi-box-arrow-in-down", "controlName", "selecAtividadeFora", "liveSearch", "", 3, "size", "control", "items"], ["title", "Quais atividades voc\u00EA desempenhou internamente que podem contribuir para a institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["label", "", "controlName", "atividadeDesempenhou", "noBox", "", 3, "size", "control", "addItemHandle"], ["label", "\u00C1rea", "controlName", "areaatividadeDesempenhou", "icon", "fas fa-layer-group", 3, "size", "control"], ["area", ""], ["label", "Atividade", "icon", "bi bi-arrows-angle-contract", "controlName", "selectAtividade", "liveSearch", "", 3, "size", "control", "items"], ["title", "Informe as suas habilidades", 1, "mb-3", 3, "bold"], ["controlName", "especifique_habilidades", "noBox", "", 3, "size", "control", "addItemHandle", "bold"], ["label", "Especifique", "icon", "bi bi-list-stars", "controlName", "inputEspecifique", "liveSearch", "", 3, "size", "control"], ["key", "DOCENCIA", "label", "Doc\u00EAncia", 1, "fw-bold", "mb-3"], ["title", "Voc\u00EA j\u00E1 realizou algum trabalho de doc\u00EAncia fora da Institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["icon", "fas fa-chalkboard", "controlName", "radioDocenciaFora", 3, "size", "label", "control"], ["radioDocenciaFora", ""], ["label", "", "controlName", "docenciaFora", "noBox", "", 3, "hidden", "size", "control", "addItemHandle"], ["label", "Qual/Quais", "icon", "bi bi-mortarboard-fill", "controlName", "docenciaFora", "liveSearch", "", 3, "size", "control"], ["title", "Voc\u00EA \u00E9 docente ou instrutor da Institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["icon", "fas fa-chalkboard", "controlName", "radioDocenciaPRF", 3, "size", "label", "control"], ["radioDocenciaPRF", ""], ["label", "Em qual/quais disciplinas?", "icon", "bi bi-mortarboard-fill", "controlName", "docenciaPRF", "noBox", "", 3, "hidden", "size", "control", "addItemHandle"], ["icon", "bi bi-mortarboard-fill", "controlName", "selectDocenciaPRF", "liveSearch", "", 3, "size", "control", "items"], ["key", "CURSOS", "label", "Cursos", 1, "fw-bold", "mb-3"], ["title", "Quais os principais cursos que voc\u00EA j\u00E1 fez e pretende fazer na Institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["icon", "fas fa-user-graduate", "controlName", "radioCursos", 3, "size", "label", "control"], ["radioCursos", ""], ["label", "", "controlName", "cursosPRF", "noBox", "", 3, "hidden", "size", "control", "addItemHandle"], ["label", "\u00C1rea", "controlName", "areaCursoPRF", 3, "size", "control"], ["label", "Curso", "icon", "bi bi-mortarboard-fill", "controlName", "selectCursosPRF", "liveSearch", "", 3, "size", "control", "items"], [1, "row", "mb-3"], ["title", "Quais cursos voc\u00EA j\u00E1 fez e quais pretende fazer fora da Institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["icon", "fas fa-user-graduate", "controlName", "radioCursosFora", 3, "size", "label", "control"], ["radioCursosFora", ""], ["label", "", "controlName", "cursosForaPRF", "noBox", "", 3, "hidden", "size", "control", "addItemHandle"], ["label", "Institui\u00E7\u00E3o/Coorpora\u00E7\u00E3o", "controlName", "instituicao", 3, "size", "control"], ["label", "Curso", "icon", "bi bi-mortarboard-fill", "controlName", "selectCursosForaPRF", "liveSearch", "", 3, "size", "control", "items"], ["key", "DISPONIBILIDADE", "label", "Disponibilidade", 1, "fw-bold", "mb-3"], ["title", "Viagens", 1, "mb-3", "mt-3", 3, "bold"], [1, "col-lg-6"], [1, "bi", "bi-flag-fill"], ["labelPosition", "right", "controlName", "radioViajaN", 3, "size", "label", "control"], ["radioViajaN", ""], [1, "bi", "bi-globe-americas"], ["labelPosition", "right", "controlName", "radioViajaI", 3, "size", "label", "control"], ["radioViajaI", ""], ["title", "Voc\u00EA tem interesse na participa\u00E7\u00E3o do Banco Nacional de Talentos (BNT IN PRF N\u00BA 58 de 27 de agosto de 2021) SEI 35010079?", 1, "my-3", 3, "bold"], ["icon", "bi bi-universal-access", "controlName", "radioInteresseBNT", 3, "size", "label", "control"], ["radioInteresseBNT", ""], ["title", "Voc\u00EA est\u00E1 inserido no programa de gest\u00E3o da Institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["icon", "bi bi-calendar2-check", "controlName", "radioPG", 3, "size", "label", "control", "change"], ["radioPG", ""], ["label", "Op\u00E7\u00F5es", "controlName", "escolhaRadioPG", 3, "size", "items", 4, "ngIf"], ["title", "Voc\u00EA tem interesse em participar do programa de gest\u00E3o da Institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["icon", "bi bi-bookmark-check", "controlName", "radioInteressePG", 3, "size", "label", "control", "change"], ["radioInteressePG", ""], ["label", "Op\u00E7\u00F5es", "controlName", "escolhaInteressePG", 3, "size", "items", 4, "ngIf"], ["label", "Telefone de contato do Chefe Imediato", "icon", "fas fa-phone", "controlName", "telefone", 3, "size", "control", "maskFormat", 4, "ngIf"], ["title", "Voc\u00EA tem interesse em remo\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["icon", "bi bi-house-door-fill", "controlName", "radioInteresseRemove", 3, "size", "label", "control"], ["radioInteresseRemove", ""], [1, "mb-5"], ["label", "Op\u00E7\u00F5es", "controlName", "escolhaRadioPG", 3, "size", "items"], ["escolhaRadioPG", ""], ["label", "Op\u00E7\u00F5es", "controlName", "escolhaInteressePG", 3, "size", "items"], ["escolhaInteressePG", ""], ["label", "Telefone de contato do Chefe Imediato", "icon", "fas fa-phone", "controlName", "telefone", 3, "size", "control", "maskFormat"]],
+  vars: 132,
+  consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "left", ""], ["key", "FUNCIONAIS", "label", "Funcionais", 1, "fw-bold"], [1, "row", "mb-2", "mt-4"], ["label", "Ingresso na Institui\u00E7\u00E3o", "icon", "bi bi-calendar-check-fill", "controlName", "ano_ingresso", 3, "size", "control", "items"], ["label", "Centro de Treinamento", "icon", "bi bi-building-fill", "controlName", "centro_treinamento", 3, "size", "control", "items"], ["ct", ""], ["label", "Cargo", "controlName", "cargo", 3, "size", "control", "dao"], ["cargos", ""], [1, "row"], ["title", "Hist\u00F3rico de Lota\u00E7\u00F5es e Fun\u00E7\u00F5es Gratificadas", 1, "mb-3", "mt-3", 3, "bold"], ["controlName", "funcoes", "noBox", "", 3, "size", "control", "addItemHandle", "bold"], ["label", "Fun\u00E7\u00F5es ocupadas como titular ou substituto", "icon", "bi bi-check-circle-fill", "controlName", "funcoesOcupadas", 3, "size", "control", "items"], ["funcoes", ""], ["label", "Voc\u00EA faz parte de algum grupo especializado?", "icon", "bi bi-check-circle", "controlName", "grupo", "id", "testeID", 3, "size", "control", "items"], ["grupos", ""], [1, "row", "my-3"], ["controlName", "lotacoes", "noBox", "", 3, "size", "control", "addItemHandle", "bold"], ["label", "Selecione todas as unidades em que j\u00E1 foi lotado", "controlName", "selectLotacao", "liveSearch", "", 3, "size", "control", "dao"], ["unidades", ""], ["label", "Lota\u00E7\u00E3o atual", "controlName", "lotacaoAtual", 3, "size", "control", "dao"], ["lotacaoAtual", ""], ["key", "HARD_SKILLS", "label", "Hard Skills", 1, "fw-bold"], [1, "row", "mb-2", "mt-3"], ["title", "Desempenhou atividades fora e que podem contribuir para a institui\u00E7\u00E3o? Informe a \u00E1rea:", 1, "mb-3", 3, "bold"], ["controlName", "atividades_fora", "noBox", "", 3, "size", "control", "addItemHandle", "bold"], ["label", "Area", "icon", "bi bi-box-arrow-in-down", "controlName", "selecAtividadeFora", "liveSearch", "", 3, "size", "control", "items"], ["title", "Quais atividades voc\u00EA desempenhou internamente que podem contribuir para a institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["label", "", "controlName", "atividadeDesempenhou", "noBox", "", 3, "size", "control", "addItemHandle"], ["label", "\u00C1rea", "controlName", "areaatividadeDesempenhou", "icon", "fas fa-layer-group", 3, "size", "control"], ["area", ""], ["label", "Atividade", "icon", "bi bi-arrows-angle-contract", "controlName", "selectAtividade", "liveSearch", "", 3, "size", "control", "items"], ["title", "Informe as suas habilidades", 1, "mb-3", 3, "bold"], ["controlName", "especifique_habilidades", "noBox", "", 3, "size", "control", "addItemHandle", "bold"], ["label", "Especifique", "icon", "bi bi-list-stars", "controlName", "inputEspecifique", "liveSearch", "", 3, "size", "control"], ["key", "DOCENCIA", "label", "Doc\u00EAncia", 1, "fw-bold", "mb-3"], ["title", "Voc\u00EA j\u00E1 realizou algum trabalho de doc\u00EAncia fora da Institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["icon", "fas fa-chalkboard", "controlName", "radioDocenciaFora", 3, "size", "label", "control"], ["radioDocenciaFora", ""], ["label", "", "controlName", "docenciaFora", "noBox", "", 3, "hidden", "size", "control", "addItemHandle"], ["label", "Qual/Quais", "icon", "bi bi-mortarboard-fill", "controlName", "docenciaFora", "liveSearch", "", 3, "size", "control"], ["title", "Voc\u00EA \u00E9 docente ou instrutor da Institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["icon", "fas fa-chalkboard", "controlName", "radioDocenciaPRF", 3, "size", "label", "control"], ["radioDocenciaPRF", ""], ["label", "Em qual/quais disciplinas?", "icon", "bi bi-mortarboard-fill", "controlName", "docenciaPRF", "noBox", "", 3, "hidden", "size", "control", "addItemHandle"], ["icon", "bi bi-mortarboard-fill", "controlName", "selectDocenciaPRF", "liveSearch", "", 3, "size", "control", "items"], ["key", "CURSOS", "label", "Cursos", 1, "fw-bold", "mb-3"], ["title", "Quais os principais cursos que voc\u00EA j\u00E1 fez e pretende fazer na Institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["icon", "fas fa-user-graduate", "controlName", "radioCursos", 3, "size", "label", "control"], ["radioCursos", ""], ["label", "", "controlName", "cursosPRF", "noBox", "", 3, "hidden", "size", "control", "addItemHandle"], ["label", "\u00C1rea", "controlName", "areaCursoPRF", 3, "size", "control"], ["label", "Curso", "icon", "bi bi-mortarboard-fill", "controlName", "selectCursosPRF", "liveSearch", "", 3, "size", "control", "items"], [1, "row", "mb-3"], ["title", "Quais cursos voc\u00EA j\u00E1 fez e quais pretende fazer fora da Institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["icon", "fas fa-user-graduate", "controlName", "radioCursosFora", 3, "size", "label", "control"], ["radioCursosFora", ""], ["label", "", "controlName", "cursosForaPRF", "noBox", "", 3, "hidden", "size", "control", "addItemHandle"], ["label", "Institui\u00E7\u00E3o/Coorpora\u00E7\u00E3o", "controlName", "instituicao", 3, "size", "control"], ["label", "Curso", "icon", "bi bi-mortarboard-fill", "controlName", "selectCursosForaPRF", "liveSearch", "", 3, "size", "control", "items"], ["key", "DISPONIBILIDADE", "label", "Disponibilidade", 1, "fw-bold", "mb-3"], ["title", "Viagens", 1, "mb-3", "mt-3", 3, "bold"], [1, "col-lg-6"], [1, "bi", "bi-flag-fill"], ["labelPosition", "right", "controlName", "radioViajaN", 3, "size", "label", "control"], ["radioViajaN", ""], [1, "bi", "bi-globe-americas"], ["labelPosition", "right", "controlName", "radioViajaI", 3, "size", "label", "control"], ["radioViajaI", ""], ["title", "Voc\u00EA tem interesse na participa\u00E7\u00E3o do Banco Nacional de Talentos (BNT IN PRF N\u00BA 58 de 27 de agosto de 2021) SEI 35010079?", 1, "my-3", 3, "bold"], ["icon", "bi bi-universal-access", "controlName", "radioInteresseBNT", 3, "size", "label", "control"], ["radioInteresseBNT", ""], ["title", "Voc\u00EA est\u00E1 inserido no programa de gest\u00E3o da Institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["icon", "bi bi-calendar2-check", "controlName", "radioPG", 3, "size", "label", "control", "change"], ["radioPG", ""], ["label", "Op\u00E7\u00F5es", "controlName", "escolhaRadioPG", 3, "size", "items", 4, "ngIf"], ["title", "Voc\u00EA tem interesse em participar do programa de gest\u00E3o da Institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["icon", "bi bi-bookmark-check", "controlName", "radioInteressePG", 3, "size", "label", "control", "change"], ["radioInteressePG", ""], ["label", "Op\u00E7\u00F5es", "controlName", "escolhaInteressePG", 3, "size", "items", 4, "ngIf"], ["label", "Telefone de contato do Chefe Imediato", "icon", "fas fa-phone", "controlName", "telefone", 3, "size", "control", "maskFormat", 4, "ngIf"], ["title", "Voc\u00EA tem interesse em remo\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["icon", "bi bi-house-door-fill", "controlName", "radioInteresseRemove", 3, "size", "label", "control"], ["radioInteresseRemove", ""], [1, "mb-5"], ["label", "Op\u00E7\u00F5es", "controlName", "escolhaRadioPG", 3, "size", "items"], ["escolhaRadioPG", ""], ["label", "Op\u00E7\u00F5es", "controlName", "escolhaInteressePG", 3, "size", "items"], ["escolhaInteressePG", ""], ["label", "Telefone de contato do Chefe Imediato", "icon", "fas fa-phone", "controlName", "telefone", 3, "size", "control", "maskFormat"]],
   template: function CurriculumProfissionalFormComponent_Template(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](0, "editable-form", 0);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵlistener"]("submit", function CurriculumProfissionalFormComponent_Template_editable_form_submit_0_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](0, "editable-form", 0);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵlistener"]("submit", function CurriculumProfissionalFormComponent_Template_editable_form_submit_0_listener() {
         return ctx.onSaveData();
       })("cancel", function CurriculumProfissionalFormComponent_Template_editable_form_cancel_0_listener() {
         return ctx.onCancel();
       });
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](1, "tabs", 1)(2, "tab", 2)(3, "div", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](4, "input-select", 4)(5, "input-select", 5, 6)(7, "input-select", 7, 8);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](9, "div", 9);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](10, "separator", 10);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](11, "input-multiselect", 11);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](12, "input-select", 12, 13);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](14, "input-select", 14, 15);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](16, "div", 16)(17, "input-multiselect", 17);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](18, "input-select", 18, 19);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](20, "input-select", 20, 21);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](22, "tab", 22)(23, "div", 23);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](24, "separator", 24);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](25, "input-multiselect", 25);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](26, "input-select", 26);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](27, "div", 9);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](28, "separator", 27);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](29, "input-multiselect", 28);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](30, "input-search", 29, 30)(32, "input-select", 31);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](33, "div", 23);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](34, "separator", 32);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](35, "input-multiselect", 33);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](36, "input-text", 34);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]()()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](37, "tab", 35)(38, "div", 9);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](39, "separator", 36)(40, "input-switch", 37, 38);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](42, "input-multiselect", 39);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](43, "input-text", 40);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](44, "div", 9);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](45, "separator", 41)(46, "input-switch", 42, 43);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](48, "input-multiselect", 44);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](49, "input-select", 45);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]()()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](50, "tab", 46)(51, "div", 9);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](52, "separator", 47)(53, "input-switch", 48, 49);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](55, "input-multiselect", 50);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](56, "input-search", 51, 30)(58, "input-select", 52);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](59, "div", 53);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](60, "separator", 54)(61, "input-switch", 55, 56);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](63, "input-multiselect", 57);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](64, "input-search", 58, 30)(66, "input-select", 59);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]()()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](67, "tab", 60)(68, "div", 9);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](69, "separator", 61);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](70, "div", 62)(71, "label");
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](72, "i", 63);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵtext"](73, " J\u00E1 fez viagem nacional a trabalho?");
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](74, "input-switch", 64, 65);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](76, "div", 62)(77, "label");
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](78, "i", 66);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵtext"](79, " J\u00E1 fez viagem internacional a trabalho?");
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](80, "input-switch", 67, 68);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](82, "div", 9);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](83, "separator", 69)(84, "input-switch", 70, 71);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](86, "div", 9);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](87, "separator", 72);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](88, "input-switch", 73, 74);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵlistener"]("change", function CurriculumProfissionalFormComponent_Template_input_switch_change_88_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](1, "tabs", 1)(2, "tab", 2)(3, "div", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](4, "input-select", 4)(5, "input-select", 5, 6)(7, "input-search", 7, 8);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](9, "div", 9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](10, "separator", 10);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](11, "input-multiselect", 11);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](12, "input-select", 12, 13);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](14, "input-select", 14, 15);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](16, "div", 16)(17, "input-multiselect", 17);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](18, "input-search", 18, 19);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](20, "input-search", 20, 21);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](22, "tab", 22)(23, "div", 23);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](24, "separator", 24);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](25, "input-multiselect", 25);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](26, "input-select", 26);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](27, "div", 9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](28, "separator", 27);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](29, "input-multiselect", 28);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](30, "input-search", 29, 30)(32, "input-select", 31);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](33, "div", 23);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](34, "separator", 32);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](35, "input-multiselect", 33);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](36, "input-text", 34);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementEnd"]()()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](37, "tab", 35)(38, "div", 9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](39, "separator", 36)(40, "input-switch", 37, 38);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](42, "input-multiselect", 39);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](43, "input-text", 40);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](44, "div", 9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](45, "separator", 41)(46, "input-switch", 42, 43);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](48, "input-multiselect", 44);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](49, "input-select", 45);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementEnd"]()()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](50, "tab", 46)(51, "div", 9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](52, "separator", 47)(53, "input-switch", 48, 49);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](55, "input-multiselect", 50);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](56, "input-search", 51, 30)(58, "input-select", 52);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](59, "div", 53);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](60, "separator", 54)(61, "input-switch", 55, 56);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](63, "input-multiselect", 57);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](64, "input-search", 58, 30)(66, "input-select", 59);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementEnd"]()()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](67, "tab", 60)(68, "div", 9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](69, "separator", 61);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](70, "div", 62)(71, "label");
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](72, "i", 63);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵtext"](73, " J\u00E1 fez viagem nacional a trabalho?");
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](74, "input-switch", 64, 65);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](76, "div", 62)(77, "label");
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](78, "i", 66);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵtext"](79, " J\u00E1 fez viagem internacional a trabalho?");
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](80, "input-switch", 67, 68);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](82, "div", 9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](83, "separator", 69)(84, "input-switch", 70, 71);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](86, "div", 9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](87, "separator", 72);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](88, "input-switch", 73, 74);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵlistener"]("change", function CurriculumProfissionalFormComponent_Template_input_switch_change_88_listener() {
         return ctx.onChangeEscolhePG();
       });
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵtemplate"](90, CurriculumProfissionalFormComponent_input_radio_90_Template, 2, 2, "input-radio", 75);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](91, "div", 9);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](92, "separator", 76);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](93, "input-switch", 77, 78);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵlistener"]("change", function CurriculumProfissionalFormComponent_Template_input_switch_change_93_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵtemplate"](90, CurriculumProfissionalFormComponent_input_radio_90_Template, 2, 2, "input-radio", 75);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](91, "div", 9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](92, "separator", 76);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](93, "input-switch", 77, 78);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵlistener"]("change", function CurriculumProfissionalFormComponent_Template_input_switch_change_93_listener() {
         return ctx.onChangeEscolheInteressePG();
       });
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵtemplate"](95, CurriculumProfissionalFormComponent_input_radio_95_Template, 2, 2, "input-radio", 79);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵtemplate"](96, CurriculumProfissionalFormComponent_input_text_96_Template, 1, 4, "input-text", 80);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](97, "div", 9);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](98, "separator", 81)(99, "input-switch", 82, 83);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]()()()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](101, "separator", 84);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵtemplate"](95, CurriculumProfissionalFormComponent_input_radio_95_Template, 2, 2, "input-radio", 79);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵtemplate"](96, CurriculumProfissionalFormComponent_input_text_96_Template, 1, 4, "input-text", 80);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementStart"](97, "div", 9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](98, "separator", 81)(99, "input-switch", 82, 83);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementEnd"]()()()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelement"](101, "separator", 84);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵelementEnd"]();
     }
     if (rf & 2) {
-      const _r7 = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵreference"](41);
-      const _r8 = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵreference"](47);
-      const _r9 = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵreference"](54);
-      const _r11 = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵreference"](62);
-      const _r13 = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵreference"](75);
-      const _r14 = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵreference"](81);
-      const _r15 = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵreference"](85);
-      const _r16 = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵreference"](89);
-      const _r18 = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵreference"](94);
-      const _r21 = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵreference"](100);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](4);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.ano_ingresso)("items", ctx.anos);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.centro_treinamento);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.cargo);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("bold", true);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.funcoes)("addItemHandle", ctx.addItemFuncao.bind(ctx))("bold", true);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 12)("control", ctx.form.controls.funcoesOcupadas);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.grupo);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.lotaces)("addItemHandle", ctx.addItemFuncao.bind(ctx))("bold", true);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 12)("control", ctx.form.controls.selectLotacao)("items", ctx.unidade);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.lotacaoAtual);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](4);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("bold", true);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 10)("control", ctx.form.controls.atividades_fora)("addItemHandle", ctx.addItemFuncao.bind(ctx))("bold", true);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 12)("control", ctx.form.controls.selecAtividadeFora)("items", ctx.testeLookup);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("bold", true);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 10)("control", ctx.form.controls.atividadeDesempenhou)("addItemHandle", ctx.addItemFuncao.bind(ctx));
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.areaatividadeDesempenhou);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 8)("control", ctx.form.controls.selectAtividade)("items", ctx.testeLookup);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("bold", true);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 10)("control", ctx.form.controls.especifique_habilidades)("addItemHandle", ctx.addItemFuncao.bind(ctx))("bold", true);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 12)("control", ctx.form.controls.inputEspecifique);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵattribute"]("maxlength", 250);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("bold", true);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 2)("label", _r7.value ? "Sim" : "N\u00E3o")("control", ctx.form.controls.radioDocenciaFora);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("hidden", !ctx.form.controls.radioDocenciaFora.value)("size", 8)("control", ctx.form.controls.docenciaFora)("addItemHandle", ctx.addItemFuncao.bind(ctx));
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 8)("control", ctx.form.controls.docenciaFora);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵattribute"]("maxlength", 250);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("bold", true);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 2)("label", _r8.value ? "Sim" : "N\u00E3o")("control", ctx.form.controls.radioDocenciaPRF);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("hidden", !ctx.form.controls.radioDocenciaPRF.value)("size", 8)("control", ctx.form.controls.docenciaFora)("addItemHandle", ctx.addItemFuncao.bind(ctx));
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 8)("control", ctx.form.controls.selectDocenciaPRF)("items", ctx.testeLookup);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("bold", true);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 2)("label", _r9.value ? "Pretendo" : "N\u00E3o Pretendo")("control", ctx.form.controls.radioCursos);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("hidden", !ctx.form.controls.radioCursos.value)("size", 8)("control", ctx.form.controls.cursosPRF)("addItemHandle", ctx.addItemFuncao.bind(ctx));
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.areaCursoPRF);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 8)("control", ctx.form.controls.selectCursosPRF)("items", ctx.testeLookup);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("bold", true);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 2)("label", _r11.value ? "Pretendo" : "N\u00E3o Pretendo")("control", ctx.form.controls.radioCursosFora);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("hidden", !ctx.form.controls.radioCursosFora.value)("size", 8)("control", ctx.form.controls.cursosForaPRF)("addItemHandle", ctx.addItemFuncao.bind(ctx));
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.instituicao);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 8)("control", ctx.form.controls.selectCursosForaPRF)("items", ctx.testeLookup);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("bold", true);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 2)("label", _r13.value ? "Sim" : "N\u00E3o")("control", ctx.form.controls.radioViajaN);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](6);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 2)("label", _r14.value ? "Sim" : "N\u00E3o")("control", ctx.form.controls.radioViajaI);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("bold", true);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 1)("label", _r15.value ? "Sim" : "N\u00E3o")("control", ctx.form.controls.radioInteresseBNT);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("bold", true);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 1)("label", _r16.value ? "Sim" : "N\u00E3o")("control", ctx.form.controls.radioPG);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("ngIf", ctx.form.controls.radioPG.value);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("bold", true);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 1)("label", _r18.value ? "Sim" : "N\u00E3o")("control", ctx.form.controls.radioInteressePG);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("ngIf", ctx.form.controls.radioInteressePG.value);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("ngIf", ctx.form.controls.radioInteressePG.value);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("bold", true);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 1)("label", _r21.value ? "Sim" : "N\u00E3o")("control", ctx.form.controls.radioInteresseRemove);
+      const _r7 = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵreference"](41);
+      const _r8 = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵreference"](47);
+      const _r9 = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵreference"](54);
+      const _r11 = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵreference"](62);
+      const _r13 = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵreference"](75);
+      const _r14 = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵreference"](81);
+      const _r15 = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵreference"](85);
+      const _r16 = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵreference"](89);
+      const _r18 = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵreference"](94);
+      const _r21 = _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵreference"](100);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](4);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.ano_ingresso)("items", ctx.anos);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.centro_treinamento)("items", ctx.centroTreinamentoItems);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.cargo)("dao", ctx.cargoDao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("bold", true);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.funcoes)("addItemHandle", ctx.addItemFuncao.bind(ctx))("bold", true);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 12)("control", ctx.form.controls.funcoesOcupadas)("items", ctx.funcoesItems);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.grupo)("items", ctx.gruposItems);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.lotaces)("addItemHandle", ctx.addItemFuncao.bind(ctx))("bold", true);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 12)("control", ctx.form.controls.selectLotacao)("dao", ctx.unidadeDao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.lotacaoAtual)("dao", ctx.unidadeDao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](4);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("bold", true);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 10)("control", ctx.form.controls.atividades_fora)("addItemHandle", ctx.addItemFuncao.bind(ctx))("bold", true);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 12)("control", ctx.form.controls.selecAtividadeFora)("items", ctx.testeLookup);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("bold", true);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 10)("control", ctx.form.controls.atividadeDesempenhou)("addItemHandle", ctx.addItemFuncao.bind(ctx));
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.areaatividadeDesempenhou);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 8)("control", ctx.form.controls.selectAtividade)("items", ctx.testeLookup);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("bold", true);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 10)("control", ctx.form.controls.especifique_habilidades)("addItemHandle", ctx.addItemFuncao.bind(ctx))("bold", true);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 12)("control", ctx.form.controls.inputEspecifique);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵattribute"]("maxlength", 250);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("bold", true);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 2)("label", _r7.value ? "Sim" : "N\u00E3o")("control", ctx.form.controls.radioDocenciaFora);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("hidden", !ctx.form.controls.radioDocenciaFora.value)("size", 8)("control", ctx.form.controls.docenciaFora)("addItemHandle", ctx.addItemFuncao.bind(ctx));
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 8)("control", ctx.form.controls.docenciaFora);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵattribute"]("maxlength", 250);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("bold", true);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 2)("label", _r8.value ? "Sim" : "N\u00E3o")("control", ctx.form.controls.radioDocenciaPRF);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("hidden", !ctx.form.controls.radioDocenciaPRF.value)("size", 8)("control", ctx.form.controls.docenciaFora)("addItemHandle", ctx.addItemFuncao.bind(ctx));
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 8)("control", ctx.form.controls.selectDocenciaPRF)("items", ctx.testeLookup);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("bold", true);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 2)("label", _r9.value ? "Pretendo" : "N\u00E3o Pretendo")("control", ctx.form.controls.radioCursos);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("hidden", !ctx.form.controls.radioCursos.value)("size", 8)("control", ctx.form.controls.cursosPRF)("addItemHandle", ctx.addItemFuncao.bind(ctx));
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.areaCursoPRF);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 8)("control", ctx.form.controls.selectCursosPRF)("items", ctx.testeLookup);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("bold", true);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 2)("label", _r11.value ? "Pretendo" : "N\u00E3o Pretendo")("control", ctx.form.controls.radioCursosFora);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("hidden", !ctx.form.controls.radioCursosFora.value)("size", 8)("control", ctx.form.controls.cursosForaPRF)("addItemHandle", ctx.addItemFuncao.bind(ctx));
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.instituicao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 8)("control", ctx.form.controls.selectCursosForaPRF)("items", ctx.testeLookup);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("bold", true);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 2)("label", _r13.value ? "Sim" : "N\u00E3o")("control", ctx.form.controls.radioViajaN);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](6);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 2)("label", _r14.value ? "Sim" : "N\u00E3o")("control", ctx.form.controls.radioViajaI);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("bold", true);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 1)("label", _r15.value ? "Sim" : "N\u00E3o")("control", ctx.form.controls.radioInteresseBNT);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("bold", true);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 1)("label", _r16.value ? "Sim" : "N\u00E3o")("control", ctx.form.controls.radioPG);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("ngIf", ctx.form.controls.radioPG.value);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("bold", true);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 1)("label", _r18.value ? "Sim" : "N\u00E3o")("control", ctx.form.controls.radioInteressePG);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("ngIf", ctx.form.controls.radioInteressePG.value);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("ngIf", ctx.form.controls.radioInteressePG.value);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("bold", true);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_25__["ɵɵproperty"]("size", 1)("label", _r21.value ? "Sim" : "N\u00E3o")("control", ctx.form.controls.radioInteresseRemove);
     }
   },
-  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_25__.NgIf, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_15__.InputSwitchComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_16__.InputSearchComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_17__.InputTextComponent, _components_input_input_radio_input_radio_component__WEBPACK_IMPORTED_MODULE_18__.InputRadioComponent, _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_19__.InputSelectComponent, _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_20__.InputMultiselectComponent, _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_21__.TabsComponent, _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_22__.TabComponent, _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_23__.SeparatorComponent],
+  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_26__.NgIf, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_16__.InputSwitchComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_17__.InputSearchComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_18__.InputTextComponent, _components_input_input_radio_input_radio_component__WEBPACK_IMPORTED_MODULE_19__.InputRadioComponent, _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_20__.InputSelectComponent, _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_21__.InputMultiselectComponent, _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_22__.TabsComponent, _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_23__.TabComponent, _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_24__.SeparatorComponent],
   styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
 });
 
@@ -1660,10 +1526,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/router */ 82454);
 /* harmony import */ var src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/guards/auth.guard */ 1391);
 /* harmony import */ var src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/resolvies/config.resolver */ 2314);
-/* harmony import */ var src_app_modules_curriculum_curriculum_home_raioxhome_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/modules/curriculum/curriculum-home/raioxhome.component */ 22222);
-/* harmony import */ var src_app_modules_curriculum_curriculum_form_curriculum_form_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/modules/curriculum/curriculum-form/curriculum-form.component */ 97733);
-/* harmony import */ var src_app_modules_curriculum_curriculum_profissional_form_curriculum_profissional_form_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/modules/curriculum/curriculum-profissional-form/curriculum-profissional-form.component */ 26832);
-/* harmony import */ var _curriculum_atributosbig5_form_curriculum_atributosbig5_form_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./curriculum-atributosbig5-form/curriculum-atributosbig5-form.component */ 92976);
+/* harmony import */ var src_app_modules_curriculum_curriculum_form_curriculum_form_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/modules/curriculum/curriculum-form/curriculum-form.component */ 97733);
+/* harmony import */ var src_app_modules_curriculum_curriculum_profissional_form_curriculum_profissional_form_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/modules/curriculum/curriculum-profissional-form/curriculum-profissional-form.component */ 26832);
+/* harmony import */ var _curriculum_atributosbig5_form_curriculum_atributosbig5_form_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./curriculum-atributosbig5-form/curriculum-atributosbig5-form.component */ 92976);
+/* harmony import */ var _home_home_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../home/home.component */ 34269);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ 51197);
 var _class;
 
@@ -1675,9 +1541,24 @@ var _class;
 
 
 
-const routes = [{
+const routes = [
+//{ path: '', component: RaioxhomeComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Home Raio-X" } },
+{
   path: '',
-  component: src_app_modules_curriculum_curriculum_home_raioxhome_component__WEBPACK_IMPORTED_MODULE_2__.RaioxhomeComponent,
+  component: _home_home_component__WEBPACK_IMPORTED_MODULE_5__.HomeComponent,
+  canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_0__.AuthGuard],
+  resolve: {
+    config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_1__.ConfigResolver
+  },
+  runGuardsAndResolvers: 'always',
+  data: {
+    title: "Home Raio-X"
+  }
+},
+//{ path: 'home', component: RaioxhomeComponent, canActivate: [AuthGuard], data: { title: "Home Raio-X" } },
+{
+  path: 'home',
+  component: _home_home_component__WEBPACK_IMPORTED_MODULE_5__.HomeComponent,
   canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_0__.AuthGuard],
   resolve: {
     config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_1__.ConfigResolver
@@ -1687,29 +1568,26 @@ const routes = [{
     title: "Home Raio-X"
   }
 }, {
-  path: 'home',
-  component: src_app_modules_curriculum_curriculum_home_raioxhome_component__WEBPACK_IMPORTED_MODULE_2__.RaioxhomeComponent,
-  canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_0__.AuthGuard],
-  data: {
-    title: "Home Raio-X"
-  }
-}, {
   path: 'pessoal',
-  component: src_app_modules_curriculum_curriculum_form_curriculum_form_component__WEBPACK_IMPORTED_MODULE_3__.CurriculumFormComponent,
+  component: src_app_modules_curriculum_curriculum_form_curriculum_form_component__WEBPACK_IMPORTED_MODULE_2__.CurriculumFormComponent,
   canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_0__.AuthGuard],
+  resolve: {
+    config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_1__.ConfigResolver
+  },
+  runGuardsAndResolvers: 'always',
   data: {
     title: ""
   }
 }, {
   path: 'profissional',
-  component: src_app_modules_curriculum_curriculum_profissional_form_curriculum_profissional_form_component__WEBPACK_IMPORTED_MODULE_4__.CurriculumProfissionalFormComponent,
+  component: src_app_modules_curriculum_curriculum_profissional_form_curriculum_profissional_form_component__WEBPACK_IMPORTED_MODULE_3__.CurriculumProfissionalFormComponent,
   canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_0__.AuthGuard],
   data: {
     title: "Dados Profissionais"
   }
 }, {
   path: 'big5',
-  component: _curriculum_atributosbig5_form_curriculum_atributosbig5_form_component__WEBPACK_IMPORTED_MODULE_5__.CurriculumAtributosbig5FormComponent,
+  component: _curriculum_atributosbig5_form_curriculum_atributosbig5_form_component__WEBPACK_IMPORTED_MODULE_4__.CurriculumAtributosbig5FormComponent,
   canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_0__.AuthGuard],
   data: {
     title: "Teste BIG 5"
@@ -1745,17 +1623,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   CurriculumModule: () => (/* binding */ CurriculumModule)
 /* harmony export */ });
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common */ 89650);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/common */ 89650);
 /* harmony import */ var src_app_components_components_module__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/components/components.module */ 10822);
-/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/forms */ 70997);
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/forms */ 70997);
 /* harmony import */ var _curriculum_routing_module__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./curriculum-routing.module */ 26447);
 /* harmony import */ var _curriculum_form_curriculum_form_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./curriculum-form/curriculum-form.component */ 97733);
 /* harmony import */ var _curriculum_curriculum_profissional_form_curriculum_profissional_form_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../curriculum/curriculum-profissional-form/curriculum-profissional-form.component */ 26832);
 /* harmony import */ var _curriculum_atributosbig5_form_curriculum_atributosbig5_form_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./curriculum-atributosbig5-form/curriculum-atributosbig5-form.component */ 92976);
-/* harmony import */ var _cadastros_curriculum_curriculum_list_curriculum_list_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../cadastros/curriculum/curriculum-list/curriculum-list.component */ 43433);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/core */ 51197);
 var _class;
-
 
 
 
@@ -1769,16 +1645,18 @@ _class = CurriculumModule;
 _class.ɵfac = function CurriculumModule_Factory(t) {
   return new (t || _class)();
 };
-_class.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineNgModule"]({
+_class.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineNgModule"]({
   type: _class
 });
-_class.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineInjector"]({
-  imports: [_angular_common__WEBPACK_IMPORTED_MODULE_7__.CommonModule, src_app_components_components_module__WEBPACK_IMPORTED_MODULE_0__.ComponentsModule, _angular_forms__WEBPACK_IMPORTED_MODULE_8__.ReactiveFormsModule, _curriculum_routing_module__WEBPACK_IMPORTED_MODULE_1__.CurriculumRoutingModule]
+_class.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineInjector"]({
+  imports: [_angular_common__WEBPACK_IMPORTED_MODULE_6__.CommonModule, src_app_components_components_module__WEBPACK_IMPORTED_MODULE_0__.ComponentsModule, _angular_forms__WEBPACK_IMPORTED_MODULE_7__.ReactiveFormsModule, _curriculum_routing_module__WEBPACK_IMPORTED_MODULE_1__.CurriculumRoutingModule]
 });
 (function () {
-  (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵsetNgModuleScope"](CurriculumModule, {
-    declarations: [_cadastros_curriculum_curriculum_list_curriculum_list_component__WEBPACK_IMPORTED_MODULE_5__.CurriculumListComponent, _curriculum_form_curriculum_form_component__WEBPACK_IMPORTED_MODULE_2__.CurriculumFormComponent, _curriculum_curriculum_profissional_form_curriculum_profissional_form_component__WEBPACK_IMPORTED_MODULE_3__.CurriculumProfissionalFormComponent, _curriculum_atributosbig5_form_curriculum_atributosbig5_form_component__WEBPACK_IMPORTED_MODULE_4__.CurriculumAtributosbig5FormComponent],
-    imports: [_angular_common__WEBPACK_IMPORTED_MODULE_7__.CommonModule, src_app_components_components_module__WEBPACK_IMPORTED_MODULE_0__.ComponentsModule, _angular_forms__WEBPACK_IMPORTED_MODULE_8__.ReactiveFormsModule, _curriculum_routing_module__WEBPACK_IMPORTED_MODULE_1__.CurriculumRoutingModule]
+  (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵsetNgModuleScope"](CurriculumModule, {
+    declarations: [
+    //CurriculumListComponent,
+    _curriculum_form_curriculum_form_component__WEBPACK_IMPORTED_MODULE_2__.CurriculumFormComponent, _curriculum_curriculum_profissional_form_curriculum_profissional_form_component__WEBPACK_IMPORTED_MODULE_3__.CurriculumProfissionalFormComponent, _curriculum_atributosbig5_form_curriculum_atributosbig5_form_component__WEBPACK_IMPORTED_MODULE_4__.CurriculumAtributosbig5FormComponent],
+    imports: [_angular_common__WEBPACK_IMPORTED_MODULE_6__.CommonModule, src_app_components_components_module__WEBPACK_IMPORTED_MODULE_0__.ComponentsModule, _angular_forms__WEBPACK_IMPORTED_MODULE_7__.ReactiveFormsModule, _curriculum_routing_module__WEBPACK_IMPORTED_MODULE_1__.CurriculumRoutingModule]
   });
 })();
 

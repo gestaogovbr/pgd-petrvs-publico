@@ -22,6 +22,7 @@ import { NavigateResult } from 'src/app/services/navigate.service';
 import { UnidadesService } from 'src/app/services/unidades.service';
 import { Funcao } from 'src/app/models/funcao.model';
 import { CurriculumDaoService } from 'src/app/dao/curriculum-dao.service';
+import { CargoDaoService } from 'src/app/dao/cargo-dao.service';
 
 @Component({
   selector: 'curriculum-profissional-form',
@@ -48,7 +49,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   @ViewChild('lotacaoAtual', { static: false }) public lotacaoAtual?: InputSearchComponent;
   @ViewChild('grupos', { static: false }) public grupos?: InputSelectComponent;
   @ViewChild('ct', { static: false }) public ct?: InputSelectComponent;
-  @ViewChild('cargos', { static: false }) public cargos?: InputSelectComponent;
+  @ViewChild('cargos', { static: false }) public cargos?: InputSearchComponent;
   
    
   public testeLookup: LookupItem[] = [{ 'key': 'key 1', 'value': 'value 1' }];
@@ -66,6 +67,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   public funcaoDao: FuncaoDaoService;
   public ctDao: CentroTreinamentoDaoService;
   public grupoDao: GrupoEspecializadoDaoService;
+  public cargoDao: CargoDaoService;
   public unidadeService: UnidadesService;
   public lookupService: LookupService;
   public unidadesArray?:any;
@@ -79,6 +81,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     this.funcaoDao = injector.get<FuncaoDaoService>(FuncaoDaoService);
     this.grupoDao = injector.get<GrupoEspecializadoDaoService>(GrupoEspecializadoDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    this.cargoDao = injector.get<CargoDaoService>(CargoDaoService);
     this.unidadeService = injector.get<UnidadesService>(UnidadesService);
     this.lookupService = injector.get<LookupService>(LookupService);
     this.form = this.fh.FormBuilder({

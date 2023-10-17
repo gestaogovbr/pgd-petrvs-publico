@@ -4,7 +4,7 @@
             <div class="row mb-2 mt-4">
                 <input-select [size]="4" label="Ingresso na Instituição" icon="bi bi-calendar-check-fill" controlName="ano_ingresso" [control]="form!.controls.ano_ingresso" [items]="anos"></input-select>
                 <input-select #ct [size]="4" label="Centro de Treinamento" icon="bi bi-building-fill" controlName="centro_treinamento" [control]="form!.controls.centro_treinamento" [items]="centroTreinamentoItems"></input-select>
-                <input-select #cargos [size]="4" label="Cargo" icon="bi bi-person-badge" controlName="cargo" [control]="form!.controls.cargo" [items]="cargosItems"></input-select>
+                <input-search #cargos [size]="4" label="Cargo" controlName="cargo" [control]="form!.controls.cargo" [dao]="cargoDao"></input-search>
             </div>
             <div class="row">
                 <separator class="mb-3 mt-3" title="Histórico de Lotações e Funções Gratificadas" [bold]="true"></separator>

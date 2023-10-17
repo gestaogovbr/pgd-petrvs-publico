@@ -15,6 +15,8 @@ import { AtividadeListKanbanComponent } from './atividade-list-kanban/atividade-
 import { AtividadeDashboardComponent } from './atividade-dashboard/atividade-dashboard.component';
 import { AtividadeFormTarefaComponent } from './atividade-form-tarefa/atividade-form-tarefa.component';
 import { AtividadeListTarefaComponent } from './atividade-list-tarefa/atividade-list-tarefa.component';
+import { AtividadeHierarquiaComponent } from './atividade-hierarquia/atividade-hierarquia.component';
+import { OrganizationChartModule } from 'primeng/organizationchart';
 
 
 @NgModule({
@@ -29,13 +31,15 @@ import { AtividadeListTarefaComponent } from './atividade-list-tarefa/atividade-
     AtividadeFormProrrogarComponent,
     AtividadeFormTarefaComponent,
     AtividadeListTarefaComponent,
-    AtividadeListKanbanComponent
+    AtividadeListKanbanComponent,
+    AtividadeHierarquiaComponent
   ],
   imports: [
     CommonModule,
     AtividadeRoutingModule,
     ComponentsModule,
-    UteisModule
+    UteisModule,
+    OrganizationChartModule
   ],
   exports: [
     AtividadeListGridComponent

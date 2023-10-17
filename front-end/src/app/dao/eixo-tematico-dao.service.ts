@@ -9,7 +9,7 @@ export class EixoTematicoDaoService extends DaoBaseService<EixoTematico> {
 
   constructor(protected injector: Injector) { 
     super("EixoTematico", injector);
-    this.searchFields = ["nome"];
+    this.inputSearchConfig.searchFields = ["nome"];
   }  
 }
 

@@ -17,9 +17,14 @@ export type queryEvents = {
   resolve?: (value: any) => void,
   reject?: (reason?: any) => void
 };
+export type InputSearchConfig = {
+  searchFields: string[];
+  display?: (entity: any[]) => string;
+}
 
 export class DaoBaseService<T extends Base> {
-  public searchFields: string[] = [];
+  //public searchFields: string[] = [];
+  public inputSearchConfig: InputSearchConfig = { searchFields: [] };
   public PREFIX_URL: string = "api"; 
 
   private _gb?: GlobalsService;
@@ -72,10 +77,14 @@ export class DaoBaseService<T extends Base> {
     return typeof deeps == "undefined" || deeps.includes(field) ? { field, label, type, fields: dao.dataset([]) } : undefined;
   }
 
+  public getSelectItemText(values: any): string {
+    return this.inputSearchConfig.display ? this.inputSearchConfig.display(values) : (values || []).join(" - ");
+  } 
+
   public searchText(query: string, fieldsToSearch?: string[], where?: any[], orderBy?: QueryOrderBy[]): Promise<SelectItem[]> {
     return new Promise<SelectItem[]>((resolve, reject) => {
       try {
-        let fields = fieldsToSearch || this.searchFields;
+        let fields = fieldsToSearch || this.inputSearchConfig.searchFields;
         let first = fields.length > 1 && query.indexOf(" - ") > 0 ? query.substr(0, query.indexOf(" - ")) : query;
         let request = this.server.post(this.PREFIX_URL + '/' + this.collection + '/search-text', {
           collection: this.collection,
@@ -90,7 +99,7 @@ export class DaoBaseService<T extends Base> {
             resolve(response?.values?.map((item: any[]) => {
               return {
                 value: item[0],
-                text: item[1],
+                text: this.getSelectItemText(this.iso8601ToDate(item[1])),
                 order: item[2]
               };
             }) || []);
@@ -103,8 +112,8 @@ export class DaoBaseService<T extends Base> {
   }
 
   public entityToSelectItem(entity: T, fieldsToSearch?: string[]): SelectItem {
-    const fields = fieldsToSearch || this.searchFields || [];
-    const text = fields.map(x => (entity as IIndexable)[x] || "").join(" - ");
+    const fields = fieldsToSearch || this.inputSearchConfig.searchFields || [];
+    const text = this.getSelectItemText(fields.map(x => (entity as IIndexable)[x] || ""));
     return {
       value: entity.id,
       text: text,
@@ -115,14 +124,19 @@ export class DaoBaseService<T extends Base> {
   public searchKey(key: string, fieldsToSearch?: string[], join?: string[]): Promise<SelectItem | null> {
     return new Promise<SelectItem | null>((resolve, reject) => {
       try {
-        let fields = fieldsToSearch || this.searchFields;
+        let fields = fieldsToSearch || this.inputSearchConfig.searchFields;
         let request = this.server.post(this.PREFIX_URL + '/' + this.collection + '/search-key', {
           collection: this.collection,
           key: key,
           fields: fields,
           with: join || []
         }).subscribe(response => {
-          resolve(this.iso8601ToDate(response?.value));
+          let data = this.iso8601ToDate(response?.value);
+          resolve({
+            value: data.value,
+            text: this.getSelectItemText(data.data),
+            entity: data.entity
+          });
         }, error => reject(error));
       } catch (error) {
         reject(error);
