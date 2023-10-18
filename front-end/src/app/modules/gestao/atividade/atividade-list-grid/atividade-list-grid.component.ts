@@ -132,6 +132,7 @@ export class AtividadeListGridComponent extends AtividadeListBase {
       });
       row.progresso = this.formEdit.controls.progresso.value;
       row.checklist = this.checklist;
+      row.etiquetas = this.formEdit.controls.etiquetas.value;
       return !!saved;
     } catch (error) {
       return false;

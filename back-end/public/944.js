@@ -514,7 +514,7 @@ class AtividadeFormIniciarComponent extends src_app_modules_base_page_form_base_
     this.planoTrabalhoJoin = ["entregas.plano_entrega_entrega:id,descricao", "tipo_modalidade:id,nome"];
     this.validate = (control, controlName) => {
       let result = null;
-      if (["usuario_id", "plano_trabalho_id"].includes(controlName) && !control.value?.length) {
+      if (["usuario_id", "plano_trabalho_id", "plano_trabalho_entrega_id"].includes(controlName) && !control.value?.length) {
         result = "Obrigatório";
       } else if (controlName == "data_inicio" && !control.value) {
         result = "Obrigatório";

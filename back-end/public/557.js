@@ -1032,6 +1032,7 @@ class AtividadeListGridComponent extends _atividade_list_base__WEBPACK_IMPORTED_
         });
         row.progresso = _this2.formEdit.controls.progresso.value;
         row.checklist = _this2.checklist;
+        row.etiquetas = _this2.formEdit.controls.etiquetas.value;
         return !!saved;
       } catch (error) {
         return false;
