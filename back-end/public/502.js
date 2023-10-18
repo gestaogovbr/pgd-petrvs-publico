@@ -271,7 +271,6 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
   saveData(form) {
     var _this2 = this;
     return new Promise((resolve, reject) => {
-      var _ref;
       this.notificacoes.saveData();
       let unidade = this.util.fill(new src_app_models_unidade_model__WEBPACK_IMPORTED_MODULE_10__.Unidade(), this.entity);
       unidade = this.util.fillForm(unidade, this.form.value);
@@ -282,8 +281,8 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
       let apagarGestor = !this.formGestor.controls.gestor_id?.value && !!this.entity?.gestor?.id.length;
       let apagarGestorSubstituto = !this.formGestor.controls.gestor_substituto_id?.value && !!this.entity?.gestor_substituto?.id.length;
       let apagarGestorDelegado = !this.formGestor.controls.gestor_delegado_id?.value && !!this.entity?.gestor_delegado?.id.length;
-      this.dao?.save(unidade, ["gestor.gestor:id", "gestor_substituto.gestor_substituto:id", "gestor_delegado.gestor_delegado:id"]).then(function (_x) {
-        return (_ref = _ref || (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (unidade) {
+      this.dao?.save(unidade, ["gestor.gestor:id", "gestor_substituto.gestor_substituto:id", "gestor_delegado.gestor_delegado:id"]).then( /*#__PURE__*/function () {
+        var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (unidade) {
           _this2.entity = unidade;
           if (salvarGestor) yield _this2.integranteDao.saveIntegrante([{
             'unidade_id': _this2.entity.id,
@@ -304,8 +303,11 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
           if (apagarGestorSubstituto) yield _this2.integranteAtribuicaoDao.delete(_this2.entity?.gestor_substituto.gestor_substituto.id);
           if (apagarGestorDelegado) yield _this2.integranteAtribuicaoDao.delete(_this2.entity?.gestor_delegado.gestor_delegado.id);
           resolve(true);
-        })).apply(this, arguments);
-      });
+        });
+        return function (_x) {
+          return _ref.apply(this, arguments);
+        };
+      }());
     });
   }
 }
@@ -969,8 +971,7 @@ class UnidadeListGridComponent extends src_app_modules_base_page_list_base__WEBP
     this.unidadesJaVinculadas = this.metadata?.unidadesJaVinculadas || this.unidadesJaVinculadas;
   }
   dynamicOptions(row) {
-    var _this = this,
-      _ref;
+    var _this = this;
     let result = [];
     let unidade = row;
     // Testa se o usuário possui permissão para exibir dados da unidade
@@ -983,11 +984,14 @@ class UnidadeListGridComponent extends src_app_modules_base_page_list_base__WEBP
     if (this.auth.hasPermissionTo("MOD_UND_INATV")) result.push({
       icon: unidade.data_inativacao ? "bi bi-check-circle" : "bi bi-x-circle",
       label: unidade.data_inativacao ? 'Reativar' : 'Inativar',
-      onClick: function onClick(_x) {
-        return (_ref = _ref || (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (unidade) {
+      onClick: function () {
+        var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (unidade) {
           return yield _this.inativo(unidade, !unidade.data_inativacao);
-        })).apply(this, arguments);
-      }
+        });
+        return function onClick(_x) {
+          return _ref.apply(this, arguments);
+        };
+      }()
     });
     // Testa se o usuário possui permissão para gerenciar integrantes da unidade
     if (this.auth.hasPermissionTo("MOD_UND_INTG")) result.push({
