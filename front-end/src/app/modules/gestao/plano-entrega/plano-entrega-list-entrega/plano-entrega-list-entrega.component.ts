@@ -96,6 +96,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
       etiquetas: { default: [] },
     }, this.cdRef, this.validate);
     this.formEdit = this.fh.FormBuilder({
+      progresso_realizado: { default: 0 },
       etiquetas: { default: [] },
       etiqueta: { default: null }
     });
@@ -303,6 +304,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
       const saved = await this.dao!.update(row.id, {
         etiquetas: this.formEdit.controls.etiquetas.value
       });
+      row.etiquetas = this.formEdit.controls.etiquetas.value;
       return !!saved;
     } catch (error) {
       return false;
@@ -319,14 +321,17 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   }
 
   public async onColumnChecklistEdit(row: any) {
+    this.formEdit.controls.progresso_realizado.setValue(row.progresso_realizado);
     this.checklist = this.util.clone(row.checklist);
   }
 
   public async onColumnChecklistSave(row: any) {
     try {
       const saved = await this.dao!.update(row.id, {
+        progresso_realizado: this.formEdit.controls.progresso_realizado.value,
         checklist: this.checklist
       });
+      row.progresso_realizado = this.formEdit.controls.progresso_realizado.value;
       row.checklist = this.checklist;
       return !!saved;
     } catch (error) {

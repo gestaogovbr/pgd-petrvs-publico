@@ -50,13 +50,37 @@
                 <plano-entrega-valor-meta-input icon="bi bi-check-lg" [entrega]="row.entrega" [size]="6" [control]="form!.controls.realizado" label="Realizada" [change]="onRealizadaChange.bind(this)"></plano-entrega-valor-meta-input>
             </ng-template>
         </column>
-        <column title="Progresso" [width]="100" [template]="columnProgresso" [editTemplate]="editProgresso">
+        <!--<column title="Progresso\nChecklist" [width]="100" [template]="columnProgresso" [editTemplate]="editProgresso">
             <ng-template let-row="row" #columnProgresso>
                 <progress-bar [value]="row.progresso_realizado" [goal]="row.progresso_esperado" color="success"></progress-bar>
             </ng-template>
             <ng-template let-row="row" #editProgresso>
                 <input-number [size]="12" disabled label="Esperado" sufix="%" icon="bi bi-clock" controlName="progresso_esperado" [control]="form!.controls.progresso_esperado" labelInfo="Progresso de execução (% Esperado)"></input-number>
                 <input-number [size]="12" label="Realizado" sufix="%" icon="bi bi-clock" controlName="progresso_realizado" [control]="form!.controls.progresso_realizado" labelInfo="Progresso de execução (% Concluído)"></input-number>
+            </ng-template>
+        </column>-->
+        <column [title]="'Progresso\nChecklist'" [width]="200" [template]="columnProgChecklist" [editTemplate]="columnProgChecklist" [columnEditTemplate]="selectable ? undefined : columnChecklistEdit" [edit]="selectable ? undefined : onColumnChecklistEdit.bind(this)" [save]="selectable ? undefined : onColumnChecklistSave.bind(this)">
+            <ng-template let-row="row" #columnProgChecklist>
+                <progress-bar [value]="row.progresso_realizado" [goal]="row.progresso_esperado" color="success"></progress-bar>
+                <separator *ngIf="row.checklist?.length" small title="Checklist" collapse [collapsed]="true">
+                    <table *ngIf="row.checklist?.length">
+                        <tr *ngFor="let check of row.checklist">
+                            <td><i *ngIf="check.checked" class="bi bi-check-circle"></i></td>
+                            <td class="micro-text fw-ligh">{{check.texto}}</td>
+                        </tr>
+                    </table>
+                </separator>
+            </ng-template>
+            <ng-template let-row="row" #columnChecklistEdit>
+                <!--<input-number [size]="12" disabled label="Esperado" sufix="%" icon="bi bi-clock" controlName="progresso_esperado" [control]="form!.controls.progresso_esperado" labelInfo="Progresso de execução (% Esperado)"></input-number>-->
+                <input-number [size]="12" label="Realizado" sufix="%" icon="bi bi-clock" controlName="progresso_realizado" [control]="formEdit!.controls.progresso_realizado" labelInfo="Progresso de execução (% Concluído)"></input-number>
+                <separator *ngIf="row.checklist?.length" small title="Checklist"></separator>
+                <table *ngIf="row.checklist?.length">
+                    <tr *ngFor="let check of checklist; let i = index">
+                        <td><input-switch [size]="12" scale="small" [source]="checklist" [path]="i + '.checked'"></input-switch></td>
+                        <td class="micro-text fw-ligh">{{check.texto}}</td>
+                    </tr>
+                </table>
             </ng-template>
         </column>
         <column [title]="'Objetivos/Processos'" [width]="200" [template]="columnObjProc" [editTemplate]="columnObjProc">
@@ -73,27 +97,6 @@
                         <small>{{pProcesso.processo.nome}}</small>
                     </div>
                 </separator>
-            </ng-template>
-        </column>
-        <column [title]="'Checklist'" [width]="200" [template]="columnChecklist" [editTemplate]="columnChecklist" [columnEditTemplate]="selectable ? undefined : columnChecklistEdit" [edit]="selectable ? undefined : onColumnChecklistEdit.bind(this)" [save]="selectable ? undefined : onColumnChecklistSave.bind(this)">
-            <ng-template let-row="row" #columnChecklist>
-                <separator *ngIf="row.checklist?.length" small title="Checklist" collapse [collapsed]="true">
-                    <table *ngIf="row.checklist?.length">
-                        <tr *ngFor="let check of row.checklist">
-                            <td><i *ngIf="check.checked" class="bi bi-check-circle"></i></td>
-                            <td class="micro-text fw-ligh">{{check.texto}}</td>
-                        </tr>
-                    </table>
-                </separator>
-            </ng-template>
-            <ng-template let-row="row" #columnChecklistEdit>
-                <separator *ngIf="row.checklist?.length" small title="Checklist"></separator>
-                <table *ngIf="row.checklist?.length">
-                    <tr *ngFor="let check of checklist; let i = index">
-                        <td><input-switch [size]="12" scale="small" [source]="checklist" [path]="i + '.checked'"></input-switch></td>
-                        <td class="micro-text fw-ligh">{{check.texto}}</td>
-                    </tr>
-                </table>
             </ng-template>
         </column>
         <column [title]="'Modelo de Entrega\nComentários'" [template]="columnEntregaCometario" [editTemplate]="columnEntregaCometario">
