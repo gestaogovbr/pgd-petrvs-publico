@@ -1060,7 +1060,7 @@ class AtividadeListGridComponent extends _atividade_list_base__WEBPACK_IMPORTED_
     if (this.etiqueta && this.etiqueta.selectedItem) {
       const item = this.etiqueta.selectedItem;
       const key = item.key?.length ? item.key : this.util.textHash(item.value);
-      if (this.util.validateLookupItem(this.formEdit.controls.etiquetas.value, key)) {
+      if (this.util.validateLookupItem(this.formEdit.controls.etiqueta.value, key)) {
         result = {
           key: key,
           value: item.value,
