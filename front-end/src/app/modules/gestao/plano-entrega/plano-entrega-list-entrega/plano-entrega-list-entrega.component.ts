@@ -291,21 +291,18 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     return result;
   };
 
-  public async onColumnEtiquetasChecklistEdit(row: any) {
+  public async onColumnEtiquetasEdit(row: any) {
     this.formEdit.controls.etiquetas.setValue(row.etiquetas);
     this.formEdit.controls.etiqueta.setValue(null);
     this.etiquetas = this.util.merge(row.tipo_atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key);
     this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);
-    this.checklist = this.util.clone(row.checklist);
   }
 
-  public async onColumnEtiquetasChecklistSave(row: any) {
+  public async onColumnEtiquetasSave(row: any) {
     try {
       const saved = await this.dao!.update(row.id, {
-        etiquetas: this.formEdit.controls.etiquetas.value,
-        checklist: this.checklist
+        etiquetas: this.formEdit.controls.etiquetas.value
       });
-      row.checklist = this.checklist;
       return !!saved;
     } catch (error) {
       return false;
@@ -320,5 +317,20 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
       }
     });
   }
-  
+
+  public async onColumnChecklistEdit(row: any) {
+    this.checklist = this.util.clone(row.checklist);
+  }
+
+  public async onColumnChecklistSave(row: any) {
+    try {
+      const saved = await this.dao!.update(row.id, {
+        checklist: this.checklist
+      });
+      row.checklist = this.checklist;
+      return !!saved;
+    } catch (error) {
+      return false;
+    }
+  }  
 }
