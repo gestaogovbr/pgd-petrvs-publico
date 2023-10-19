@@ -14,8 +14,7 @@ export class DocumentoDaoService extends DaoBaseService<Documento> {
   public documentoPendenteSei(id_documento: number): Promise<Documento | undefined>  {
     return new Promise<Documento | undefined>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/pendente-sei', {id_documento}).subscribe(response => {
-        if(response.error) throw new Error(response.error);
-        resolve(response?.data ? this.getRow(response?.data) : undefined);
+        response.error ? reject(response.error) : resolve(response?.data ? this.getRow(response?.data) : undefined);
       }, error => reject(error));
     });
   }

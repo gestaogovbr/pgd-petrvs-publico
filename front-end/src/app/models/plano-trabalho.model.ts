@@ -10,6 +10,7 @@ import { Documento, HasDocumentos } from './documento.model';
 import { Atividade } from './atividade.model';
 import { HasStatus, StatusJustificativa } from './status-justificativa.model';
 import { PlanoTrabalhoConsolidacao } from './plano-trabalho-consolidacao.model';
+import { LookupItem } from '../services/lookup.service';
 
 export type PlanoMetadados = { concluido: boolean }
 
@@ -39,6 +40,7 @@ export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
     public consolidacoes: PlanoTrabalhoConsolidacao[] = [];
     public assinaturasExigidas: string[] = [];
     public jaAssinaramTCR: string[] = [];
+    public criterios_avaliacao: LookupItem[] = []; /* Critérios de avaliação do plano de trabalho */
     
     public programa_id: string = "";
     public usuario_id: string = "";

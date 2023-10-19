@@ -1,8 +1,6 @@
 <grid [dao]="dao" [form]="form" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="selectable"
   [add]="addTemplate.bind(this)" [load]="loadTemplate.bind(this)" [remove]="removeTemplate.bind(this)" [save]="saveTemplate.bind(this)" editable
-  [hasAdd]="true"
-  [hasEdit]="true"
-  [hasDelete]="true">
+  [hasAdd]="true" [hasEdit]="true" [hasDelete]="true" [loadList]="onGridLoad.bind(this)">
   <toolbar *ngIf="!selectable"></toolbar>
   <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" hidden [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed"></filter>
   <side-panel [size]="8" fullSizeOnEdit [template]="panelTemplate" [editTemplate]="panelTemplateEdit">

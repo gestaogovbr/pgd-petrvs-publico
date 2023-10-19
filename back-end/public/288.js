@@ -1221,7 +1221,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ 92392);
 /* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../components/input/input-select/input-select.component */ 64603);
 /* harmony import */ var _components_action_button_action_button_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../components/action-button/action-button.component */ 28032);
-/* harmony import */ var ngx_drag_drop__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ngx-drag-drop */ 40499);
+/* harmony import */ var ngx_drag_drop__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ngx-drag-drop */ 51474);
 
 var _class;
 
@@ -1813,7 +1813,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/common */ 89650);
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/forms */ 70997);
-/* harmony import */ var ngx_drag_drop__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ngx-drag-drop */ 40499);
+/* harmony import */ var ngx_drag_drop__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ngx-drag-drop */ 51474);
 /* harmony import */ var _components_components_module__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../components/components.module */ 10822);
 /* harmony import */ var _cadeia_valor_routing_module__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./cadeia-valor-routing.module */ 97075);
 /* harmony import */ var _cadeia_valor_list_cadeia_valor_list_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./cadeia-valor-list/cadeia-valor-list.component */ 32946);
