@@ -45,11 +45,12 @@ export class PlanoTrabalhoDaoService extends DaoBaseService<PlanoTrabalho> {
       { field: "tempo_proporcional", label: "Tempo proporcional (descontando afastamentos)" },
       { field: "data_inicio", label: "Data inicial do plano", type: "DATETIME" },
       { field: "data_fim", label: "Data final do plano", type: "DATETIME" },
-      { field: "tipo_modalidade", label: "tipo_modalidade", fields: this.tipoModalidadeDao.dataset(), type: "OBJECT" },
-      { field: "unidade", label: "unidade", fields: this.unidadeDao.dataset(), type: "OBJECT" },
-      { field: "usuario", label: "usuario", fields: this.usuarioDao.dataset(), type: "OBJECT" },
-      { field: "programa", label: "programa", fields: this.programaDao.dataset(), type: "OBJECT" },
-      { field: "entregas", label: "entregas", fields: this.planoTrabalhoEntregaDao.dataset(), type: "ARRAY" }
+      { field: "tipo_modalidade", label: "Tipo de modalidade", fields: this.tipoModalidadeDao.dataset(), type: "OBJECT" },
+      { field: "unidade", label: "Unidade", fields: this.unidadeDao.dataset(), type: "OBJECT" },
+      { field: "usuario", label: "Usuário", fields: this.usuarioDao.dataset(), type: "OBJECT" },
+      { field: "programa", label: "Programa", fields: this.programaDao.dataset(), type: "OBJECT" },
+      { field: "entregas", label: "Entregas", fields: this.planoTrabalhoEntregaDao.dataset(), type: "ARRAY" },
+      { field: "criterios_avaliacao", label: "Critérios de avaliação", fields: [{ field: "value", label: "Critério" }], type: "ARRAY" }
     ], deeps);
   }
 
