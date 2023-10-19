@@ -5,29 +5,32 @@ namespace App\Services;
 use App\Models\Unidade;
 use App\Services\ServiceBase;
 
-class TemplateService extends ServiceBase {
+class TemplateService extends ServiceBase
+{
 
-    public function proxyQuery($query, &$data) {
-        if(!empty(array_filter($data["where"], fn($v) => $v[0] == 'especie' && $v[2] == 'NOTIFICACAO'))) {
+    public function proxyQuery($query, &$data)
+    {
+        if (!empty(array_filter($data["where"], fn ($v) => $v[0] == 'especie' && $v[2] == 'NOTIFICACAO'))) {
             $where = [];
             foreach ($data["where"] as $condition) {
-              if (is_array($condition) && $condition[0] == "unidade_id") {
-                $unidade = Unidade::find($condition[2]);
-                $where[] = ["or", ["entidade_id", "==", $unidade?->entidade_id], $condition];
-              } else {
-                $where[] = $condition;
-              }
+                if (is_array($condition) && $condition[0] == "unidade_id") {
+                    $unidade = Unidade::find($condition[2]);
+                    $where[] = ["or", ["entidade_id", "==", $unidade?->entidade_id], $condition];
+                } else {
+                    $where[] = $condition;
+                }
             }
             $data["where"] = $where;
         }
     }
 
-    public function proxyExtra($rows, $data) {
-        $result = null; 
-        if(!empty(array_filter($data["where"], fn($v) => $v[0] == 'especie' && $v[2] == 'NOTIFICACAO'))) {
+    public function proxyExtra($rows, $data)
+    {
+        $result = null;
+        if (!empty(array_filter($data["where"], fn ($v) => $v[0] == 'especie' && $v[2] == 'NOTIFICACAO'))) {
             $result["notificacoes"] = [];
             $keys = array_keys($this->NotificacoesService->notificacoes);
-            foreach($keys as $key) {
+            foreach ($keys as $key) {
                 $value = $this->NotificacoesService->notificacoes[$key];
                 $result["notificacoes"][] = [
                     "codigo" => $key,
@@ -46,5 +49,17 @@ class TemplateService extends ServiceBase {
         return $result;
     }
 
-}
+    /**************************************************************************************
+     * Funções para renderizar template
+     **************************************************************************************/
 
+    /**
+     * Renderiza o template utilizando os dados do contexto (Recursivo)
+     * @param string $template
+     * @param array $context
+     */
+    public function renderTemplate(string $template, array $context)
+    {
+
+    }
+}

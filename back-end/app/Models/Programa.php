@@ -40,6 +40,7 @@ class Programa extends ModelBase
         'plano_trabalho_assinatura_gestor_unidade', /* tinyint; NOT NULL; DEFAULT: '1'; */// Exigir assinatura do gestor da unidade do plano de trabalho
         'plano_trabalho_assinatura_gestor_lotacao', /* tinyint; NOT NULL; DEFAULT: '1'; */// Exigir assinatura do gestor da unidade de lotacao do participante do plano de trabalho
         'plano_trabalho_assinatura_gestor_entidade', /* tinyint; NOT NULL; DEFAULT: '1'; */// Exigir assinatura do gestor da entidade do plano de trabalho
+        'plano_trabalho_criterios_avaliacao',
         'tipo_documento_tcr_id', /* char(36); */
         'tipo_justificativa_id', /* char(36); NOT NULL; */
         'tipo_avaliacao_plano_trabalho_id', /* char(36); NOT NULL; */
@@ -58,6 +59,7 @@ class Programa extends ModelBase
 
     protected $casts = [
         "nota_padrao_avaliacao" => AsJson::class,
+        "plano_trabalho_criterios_avaliacao" =>  AsJson::class,
         "checklist_avaliacao_entregas_plano_entrega" => AsJson::class,
         "checklist_avaliacao_entregas_plano_trabalho" => AsJson::class,
     ];
