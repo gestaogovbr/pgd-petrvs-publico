@@ -184,33 +184,6 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     return result;
   };
 
- /* public addItemGraduacao(): LookupItem | undefined {
-    let result = undefined;
-
-    const area = { 'key': this.formGraduacao!.controls.area.value, 'value': this.area?.selectedItem?.text };
-    const curso = this.cursos.find(value => value.key == this.formGraduacao!.controls.curso.value)
-    const status = this.opcoesEscolha.find(value => value.key == (this.formGraduacao!.controls.pretensao.value ? 1 : 0))//converte o value do switch
-    const key = this.util.textHash((area.key || "") + (curso?.key || "") + (status?.key || ""));
-
-    if (curso && area && status && this.util.validateLookupItem(this.formGraduacao!.controls.graduacao.value, key)) {
-
-      result = {
-        key: key,
-        value: area.value + ' - ' + curso.value + ' - ' + status?.value,
-        data: {
-          area: area.key,
-          curso: curso.key,
-          status: status?.key
-        }
-      };
-      console.log('FORMGRAD->', this.formGraduacao!.value)
-      this.formGraduacao!.controls.area.setValue("");
-      this.formGraduacao!.controls.curso.setValue("");
-      this.formGraduacao!.controls.pretensao.setValue(false);
-    }
-    return result;
-  };*/
-
   public addItemGraduacaoPos(): LookupItem | undefined {
     let result = undefined;
 

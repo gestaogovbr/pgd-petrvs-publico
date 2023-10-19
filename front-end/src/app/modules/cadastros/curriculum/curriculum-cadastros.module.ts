@@ -9,8 +9,8 @@ import { MateriaListComponent } from './materia/materia-list/materia-list.compon
 
 @NgModule({
   declarations: [
-    MateriaFormComponent,
-    MateriaListComponent
+   // MateriaFormComponent,
+   // MateriaListComponent
   ],
   imports: [
     CommonModule,
