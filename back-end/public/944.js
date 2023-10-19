@@ -514,7 +514,7 @@ class AtividadeFormIniciarComponent extends src_app_modules_base_page_form_base_
     this.planoTrabalhoJoin = ["entregas.plano_entrega_entrega:id,descricao", "tipo_modalidade:id,nome"];
     this.validate = (control, controlName) => {
       let result = null;
-      if (["usuario_id", "plano_trabalho_id"].includes(controlName) && !control.value?.length) {
+      if (["usuario_id", "plano_trabalho_id", "plano_trabalho_entrega_id"].includes(controlName) && !control.value?.length) {
         result = "Obrigatório";
       } else if (controlName == "data_inicio" && !control.value) {
         result = "Obrigatório";
@@ -1473,7 +1473,7 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
     super(injector, src_app_models_atividade_model__WEBPACK_IMPORTED_MODULE_3__.Atividade, src_app_dao_atividade_dao_service__WEBPACK_IMPORTED_MODULE_2__.AtividadeDaoService);
     this.injector = injector;
     this.etiquetas = [];
-    this.checklist = [];
+    this.checklist = []; //public checklist: LookupItem[] = [];
     this.planosTrabalhos = [];
     this.planoTrabalhoJoin = ["entregas.plano_entrega_entrega:id,descricao", "tipo_modalidade:id,nome"];
     this.planoTrabalhoSelecionado = null;
@@ -1513,9 +1513,13 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
     this.formValidation = form => {
       let result = undefined;
       this.loadEtiquetas();
-      this.loadChecklist();
+      if (this.form.controls.tipo_atividade_id.value) {
+        let checkAtividade = this.tipoAtividade?.selectedEntity.checklist;
+        if (this.form.controls.checklist.value.length == checkAtividade.length) this.loadChecklist(); // this.loadChecklist();
+      }
+
       const etiquetasKeys = this.etiquetas.map(x => x.key);
-      const checklistKeys = this.checklist.map(x => x.key);
+      const checklistKeys = this.checklist.map(x => x.id); //const checklistKeys = this.checklist.map(x => x.key);
       const etiqueta = (this.form.controls.etiquetas.value || []).find(x => !etiquetasKeys.includes(x.key));
       const checklst = (this.form.controls.checklist.value || []).find(x => !checklistKeys.includes(x.id) && x.checked);
       if (etiqueta) result = "Etiqueta " + etiqueta.value + "não pode ser utilizada!";
@@ -1713,7 +1717,15 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
   }
   loadChecklist() {
     const tipoAtividade = this.tipoAtividade?.selectedEntity;
-    this.checklist = tipoAtividade?.checklist || [];
+    let checkAdd = tipoAtividade.checklist.map(a => {
+      return {
+        id: a.key,
+        texto: a.value,
+        checked: false
+      };
+    });
+    this.checklist = checkAdd || []; //this.checklist = tipoAtividade?.checklist || [];
+    this.form.controls.checklist.setValue(checkAdd);
     this.atividadeService.buildChecklist(tipoAtividade, this.form.controls.checklist);
   }
   loadTipoAtividade(tipoAtividade) {
@@ -1961,9 +1973,9 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵdef
     }
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵInheritDefinitionFeature"]],
-  decls: 55,
-  vars: 58,
-  consts: [["initialFocus", "descricao", 3, "form", "disabled", "submit", "cancel"], ["display", "", "right", "", 3, "title"], ["key", "ATIVIDADE", "label", "Atividade"], [3, "sei", "documento"], [1, "row"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", "required", "", 3, "size", "rows", "control"], ["controlName", "unidade_id", "required", "", 3, "label", "size", "dao", "change"], ["unidade", ""], ["controlName", "tipo_atividade_id", 3, "label", "emptyValue", "size", "dao", "labelInfo", "required", "select", "change"], ["tipoAtividade", ""], ["label", "Iniciado", "controlName", "iniciado", 3, "size", "disabled", 4, "ngIf"], ["label", "Conclu\u00EDdo", "controlName", "concluido", 3, "size", "change", 4, "ngIf"], ["label", "Respons\u00E1vel", "controlName", "usuario_id", "labelInfo", "Respons\u00E1vel pela execu\u00E7\u00E3o", 3, "size", "emptyValue", "dao", "join", "select", "change"], ["usuario", ""], ["controlName", "plano_trabalho_id", 3, "label", "size", "control", "items", "labelInfo", "change"], ["planoTrabalho", ""], ["controlName", "plano_trabalho_entrega_id", 3, "label", "size", "control", "items", "labelInfo"], ["entrega", ""], ["class", "row", 4, "ngIf", "ngIfElse"], ["comEsforco", ""], ["title", "Conclus\u00E3o", 4, "ngIf"], ["key", "TAREFAS", 3, "label"], [3, "control", "atividade", "disabled"], ["key", "CARACTERIZACAO", "label", "Caracteriza\u00E7\u00E3o"], ["label", "Etiquetas", "controlName", "etiquetas", 3, "size", "control", "addItemHandle"], ["controlName", "etiqueta", 3, "size", "control", "items"], ["etiqueta", ""], [1, "col-md-4"], ["editable", "", 3, "control", "form", "hasAdd", "hasDelete"], ["type", "switch", "title", "Check", "field", "checked"], ["type", "display", "title", "Texto", "field", "texto", 3, "editable"], ["type", "options"], ["key", "COMENTARIOS", "label", "Coment\u00E1rios"], ["clss", "row"], ["origem", "ATIVIDADE", 3, "control"], ["comentarios", ""], ["key", "COMPLEMENTARES", "label", "Complementares"], ["label", "Demandante", "controlName", "demandante_id", "disabled", "", 3, "size", "dao"], [1, "card", "col-md-4", "mt-4"], [1, "card-header"], [1, "bi", "bi-pause-circle"], [1, "card-body"], ["disabled", "", 3, "control", "hasEdit", "hasDelete", "minHeight"], ["pausas", ""], ["title", "In\u00EDcio", "type", "datetime", "field", "data_inicio"], ["title", "Fim", "type", "datetime", "field", "data_fim"], ["label", "Iniciado", "controlName", "iniciado", 3, "size", "disabled"], ["label", "Conclu\u00EDdo", "controlName", "concluido", 3, "size", "change"], ["noIcon", "", "controlName", "data_distribuicao", "labelInfo", "Data de inclus\u00E3o/distribui\u00E7\u00E3o/lan\u00E7amento", 3, "size", "label", "control", "change"], ["label", "Progresso", "disabled", "", "sufix", "%", "icon", "bi bi-clock", "controlName", "progresso", "labelInfo", "Progresso de execu\u00E7\u00E3o (% Conclu\u00EDdo)", 3, "size", "decimals"], ["noIcon", "", "controlName", "data_estipulada_entrega", "labelInfo", "Data estipulada para entrega da atividade", 3, "size", "label", "control", "change"], ["icon", "bi bi-stopwatch", "onlyHours", "", "controlName", "esforco", "labelInfo", "Tempo estimado de execu\u00E7\u00E3o", 3, "size", "label", "control"], ["title", "Conclus\u00E3o"], ["comTempoDespendido", ""], [3, "documento"], ["noIcon", "", "label", "Inicio", "controlName", "data_inicio", "disabled", "", "labelInfo", "Data em que o usu\u00E1rio iniciou a atividade", 3, "size", "control"], ["noIcon", "", "label", "Conclus\u00E3o", "controlName", "data_entrega", "disabled", "", "labelInfo", "Data da conclus\u00E3o da atividade", 3, "size", "control"], ["label", "Data de arquivamento", "controlName", "data_arquivamento", "disabled", "", "labelInfo", "Data de arquivamento da atividade", 3, "size", "control"], ["label", "Tempo despendido", "icon", "bi bi-hourglass-bottom", "controlName", "tempo_despendido", "disabled", "", "labelInfo", "Calculado no fim da atividade, sendo o tempo l\u00EDquido (considerando pausas)", 3, "size", "control"]],
+  decls: 58,
+  vars: 57,
+  consts: [["initialFocus", "descricao", 3, "form", "disabled", "submit", "cancel"], ["display", "", "right", "", 3, "title"], ["key", "ATIVIDADE", "label", "Atividade"], [3, "sei", "documento"], [1, "row"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", "required", "", 3, "size", "rows", "control"], ["controlName", "unidade_id", "required", "", 3, "label", "size", "dao", "change"], ["unidade", ""], ["controlName", "tipo_atividade_id", 3, "label", "emptyValue", "size", "dao", "labelInfo", "required", "select", "change"], ["tipoAtividade", ""], ["label", "Iniciado", "controlName", "iniciado", 3, "size", "disabled", 4, "ngIf"], ["label", "Conclu\u00EDdo", "controlName", "concluido", 3, "size", "change", 4, "ngIf"], ["label", "Respons\u00E1vel", "controlName", "usuario_id", "labelInfo", "Respons\u00E1vel pela execu\u00E7\u00E3o", 3, "size", "emptyValue", "dao", "join", "select", "change"], ["usuario", ""], ["controlName", "plano_trabalho_id", 3, "label", "size", "control", "items", "labelInfo", "change"], ["planoTrabalho", ""], ["controlName", "plano_trabalho_entrega_id", 3, "label", "size", "control", "items", "labelInfo"], ["entrega", ""], ["class", "row", 4, "ngIf", "ngIfElse"], ["comEsforco", ""], ["title", "Conclus\u00E3o", 4, "ngIf"], ["key", "TAREFAS", 3, "label"], [3, "control", "atividade", "disabled"], ["key", "CARACTERIZACAO", "label", "Caracteriza\u00E7\u00E3o"], ["label", "Etiquetas", "controlName", "etiquetas", 3, "size", "control", "addItemHandle"], ["controlName", "etiqueta", 3, "size", "control", "items"], ["etiqueta", ""], [1, "col-md-6"], ["editable", "", 3, "control", "form", "hasAdd", "hasDelete"], ["type", "switch", "title", "Check", "field", "checked"], ["type", "text", "title", "Texto", "field", "texto"], ["type", "options"], ["key", "COMENTARIOS", "label", "Coment\u00E1rios"], ["clss", "row"], ["origem", "ATIVIDADE", 3, "control"], ["comentarios", ""], ["key", "COMPLEMENTARES", "label", "Complementares"], ["label", "Demandante", "controlName", "demandante_id", "disabled", "", 3, "size", "dao"], [1, "card", "col-md-4", "mt-4"], [1, "card-header"], [1, "bi", "bi-pause-circle"], [1, "card-body"], ["disabled", "", 3, "control", "hasEdit", "hasDelete", "minHeight"], ["pausas", ""], ["title", "In\u00EDcio", "type", "datetime", "field", "data_inicio"], ["title", "Fim", "type", "datetime", "field", "data_fim"], ["label", "Iniciado", "controlName", "iniciado", 3, "size", "disabled"], ["label", "Conclu\u00EDdo", "controlName", "concluido", 3, "size", "change"], ["noIcon", "", "controlName", "data_distribuicao", "labelInfo", "Data de inclus\u00E3o/distribui\u00E7\u00E3o/lan\u00E7amento", 3, "size", "label", "control", "change"], ["label", "Progresso", "disabled", "", "sufix", "%", "icon", "bi bi-clock", "controlName", "progresso", "labelInfo", "Progresso de execu\u00E7\u00E3o (% Conclu\u00EDdo)", 3, "size", "decimals"], ["noIcon", "", "controlName", "data_estipulada_entrega", "labelInfo", "Data estipulada para entrega da atividade", 3, "size", "label", "control", "change"], ["icon", "bi bi-stopwatch", "onlyHours", "", "controlName", "esforco", "labelInfo", "Tempo estimado de execu\u00E7\u00E3o", 3, "size", "label", "control"], ["title", "Conclus\u00E3o"], ["comTempoDespendido", ""], [3, "documento"], ["noIcon", "", "label", "Inicio", "controlName", "data_inicio", "disabled", "", "labelInfo", "Data em que o usu\u00E1rio iniciou a atividade", 3, "size", "control"], ["noIcon", "", "label", "Conclus\u00E3o", "controlName", "data_entrega", "disabled", "", "labelInfo", "Data da conclus\u00E3o da atividade", 3, "size", "control"], ["label", "Data de arquivamento", "controlName", "data_arquivamento", "disabled", "", "labelInfo", "Data de arquivamento da atividade", 3, "size", "control"], ["label", "Tempo despendido", "icon", "bi bi-hourglass-bottom", "controlName", "tempo_despendido", "disabled", "", "labelInfo", "Calculado no fim da atividade, sendo o tempo l\u00EDquido (considerando pausas)", 3, "size", "control"]],
   template: function AtividadeFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementStart"](0, "editable-form", 0);
@@ -2016,21 +2028,26 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementStart"](26, "tab", 23)(27, "div", 4)(28, "input-multiselect", 24);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelement"](29, "input-select", 25, 26);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementStart"](31, "div", 27)(32, "grid", 28)(33, "columns");
-      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelement"](34, "column", 29)(35, "column", 30)(36, "column", 31);
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementStart"](31, "div", 27);
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelement"](32, "br");
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementStart"](33, "h5");
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtext"](34, "Checklist");
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementStart"](35, "grid", 28)(36, "columns");
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelement"](37, "column", 29)(38, "column", 30)(39, "column", 31);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementEnd"]()()()()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementStart"](37, "tab", 32)(38, "div", 33);
-      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelement"](39, "comentarios", 34, 35);
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementStart"](40, "tab", 32)(41, "div", 33);
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelement"](42, "comentarios", 34, 35);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementStart"](41, "tab", 36)(42, "div", 4);
-      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelement"](43, "input-search", 37);
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementStart"](44, "tab", 36)(45, "div", 4);
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelement"](46, "input-search", 37);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementStart"](44, "div", 33)(45, "div", 38)(46, "h5", 39);
-      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelement"](47, "i", 40);
-      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtext"](48, " Suspens\u00F5es/Pausas ");
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementStart"](47, "div", 33)(48, "div", 38)(49, "h5", 39);
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelement"](50, "i", 40);
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtext"](51, " Suspens\u00F5es/Pausas ");
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementStart"](49, "div", 41)(50, "grid", 42, 43)(52, "columns");
-      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelement"](53, "column", 44)(54, "column", 45);
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementStart"](52, "div", 41)(53, "grid", 42, 43)(55, "columns");
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelement"](56, "column", 44)(57, "column", 45);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementEnd"]()()()()()()()();
     }
     if (rf & 2) {
@@ -2066,14 +2083,12 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("control", ctx.form.controls.tarefas)("atividade", ctx.entity)("disabled", ctx.formDisabled);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("size", 8)("control", ctx.form.controls.etiquetas)("addItemHandle", ctx.addItemHandleEtiquetas.bind(ctx));
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.etiquetas)("addItemHandle", ctx.addItemHandleEtiquetas.bind(ctx));
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("size", 12)("control", ctx.form.controls.etiqueta)("items", ctx.etiquetas);
-      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("control", ctx.form.controls.checklist)("form", ctx.formChecklist)("hasAdd", false)("hasDelete", false);
-      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("editable", false);
-      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](4);
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](6);
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("control", ctx.form.controls.checklist)("form", ctx.formChecklist)("hasAdd", true)("hasDelete", true);
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](7);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("control", ctx.form.controls.comentarios);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](4);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("size", 12)("dao", ctx.usuarioDao);
@@ -2322,7 +2337,7 @@ function AtividadeHierarquiaComponent_ng_container_0_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](7, AtividadeHierarquiaComponent_ng_container_0_div_7_Template, 4, 1, "div", 6);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](8, "div", 7)(9, "h6");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](10, "Entrega do plano de trabalho:");
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](10, "Aloca\u00E7\u00E3o:");
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](11, "h5", 8);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](12);
@@ -2410,7 +2425,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefi
     }
   },
   dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_7__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_7__.NgIf, _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_4__.BadgeComponent, _components_progress_bar_progress_bar_component__WEBPACK_IMPORTED_MODULE_5__.ProgressBarComponent],
-  styles: ["h6[_ngcontent-%COMP%] {\n  border-bottom: 1px solid rgba(194, 225, 245, 0.14);\n  padding-bottom: 5px;\n  color: var(--petrvs-nav-link-color);\n}\n\nh5[_ngcontent-%COMP%] {\n  color: var(--petrvs-navbar-brand-color);\n  font-weight: 200;\n  margin: 0;\n}\n\n.first-box[_ngcontent-%COMP%]::after, .first-box[_ngcontent-%COMP%]::before {\n  border: none !important;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvbW9kdWxlcy9nZXN0YW8vYXRpdmlkYWRlL2F0aXZpZGFkZS1oaWVyYXJxdWlhL2F0aXZpZGFkZS1oaWVyYXJxdWlhLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0Usa0RBQUE7RUFDQSxtQkFBQTtFQUNBLG1DQUFBO0FBQ0Y7O0FBQ0E7RUFDRSx1Q0FBQTtFQUNBLGdCQUFBO0VBQ0EsU0FBQTtBQUVGOztBQUNFO0VBQ0UsdUJBQUE7QUFFSiIsInNvdXJjZXNDb250ZW50IjpbImg2IHtcbiAgYm9yZGVyLWJvdHRvbTogMXB4IHNvbGlkIHJnYigxOTQgMjI1IDI0NSAvIDE0JSk7XG4gIHBhZGRpbmctYm90dG9tOiA1cHg7XG4gIGNvbG9yOiAgdmFyKC0tcGV0cnZzLW5hdi1saW5rLWNvbG9yKTtcbn1cbmg1IHtcbiAgY29sb3I6IHZhcigtLXBldHJ2cy1uYXZiYXItYnJhbmQtY29sb3IpO1xuICBmb250LXdlaWdodDogMjAwO1xuICBtYXJnaW46IDA7XG59XG4uZmlyc3QtYm94IHtcbiAgJjo6YWZ0ZXIsICY6OmJlZm9yZSB7XG4gICAgYm9yZGVyOiBub25lICFpbXBvcnRhbnQ7XG4gIH1cbn0iXSwic291cmNlUm9vdCI6IiJ9 */"]
+  styles: ["h6[_ngcontent-%COMP%] {\n  border-bottom: 1px solid rgba(194, 225, 245, 0.14);\n  padding-bottom: 5px;\n  color: var(--petrvs-nav-link-color);\n}\n\nh5[_ngcontent-%COMP%] {\n  color: var(--petrvs-navbar-brand-color);\n  font-weight: 300;\n  margin: 0;\n}\n\n.first-box[_ngcontent-%COMP%]::after, .first-box[_ngcontent-%COMP%]::before {\n  border: none !important;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvbW9kdWxlcy9nZXN0YW8vYXRpdmlkYWRlL2F0aXZpZGFkZS1oaWVyYXJxdWlhL2F0aXZpZGFkZS1oaWVyYXJxdWlhLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0Usa0RBQUE7RUFDQSxtQkFBQTtFQUNBLG1DQUFBO0FBQ0Y7O0FBQ0E7RUFDRSx1Q0FBQTtFQUNBLGdCQUFBO0VBQ0EsU0FBQTtBQUVGOztBQUNFO0VBQ0UsdUJBQUE7QUFFSiIsInNvdXJjZXNDb250ZW50IjpbImg2IHtcbiAgYm9yZGVyLWJvdHRvbTogMXB4IHNvbGlkIHJnYigxOTQgMjI1IDI0NSAvIDE0JSk7XG4gIHBhZGRpbmctYm90dG9tOiA1cHg7XG4gIGNvbG9yOiAgdmFyKC0tcGV0cnZzLW5hdi1saW5rLWNvbG9yKTtcbn1cbmg1IHtcbiAgY29sb3I6IHZhcigtLXBldHJ2cy1uYXZiYXItYnJhbmQtY29sb3IpO1xuICBmb250LXdlaWdodDogMzAwO1xuICBtYXJnaW46IDA7XG59XG4uZmlyc3QtYm94IHtcbiAgJjo6YWZ0ZXIsICY6OmJlZm9yZSB7XG4gICAgYm9yZGVyOiBub25lICFpbXBvcnRhbnQ7XG4gIH1cbn0iXSwic291cmNlUm9vdCI6IiJ9 */"]
 });
 
 /***/ }),

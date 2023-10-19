@@ -324,7 +324,7 @@ class AtividadeService {
       const BOTAO_ARQUIVAR = {
         hint: "Arquivar",
         icon: "bi bi-inboxes",
-        onClick: this.arquivar.bind(this)
+        onClick: this.arquivar.bind(this, metadata)
       };
       const BOTAO_DESARQUIVAR = {
         hint: "Desarquivar",

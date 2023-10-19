@@ -15,7 +15,7 @@ import { NotificacaoService } from './modules/uteis/notificacoes/notificacao.ser
 import { DOCUMENT } from '@angular/common';
 
 export let appInjector: Injector;
-export type Contexto = "EXECUCAO" | "AVALIACAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
+export type Contexto = "PGD" | "EXECUCAO" | "AVALIACAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
 export type Schema = {
   name: string, 
   permition?: string, 
@@ -31,12 +31,24 @@ export type MenuItem = {
   id: string,
   menu: Schema[]
 } | Schema;
+
+export type PetrvsModule = {
+  name: string,
+  icon: string
+}
 export type MenuContexto = {
   key: Contexto,
   icon: string,
   name: string,
-  menu: MenuItem[]
+  menu?: MenuItem[],
+  petrvsModule?: string
 };	
+
+export type NovoMenuContexto = {
+  module: PetrvsModule | null,
+  items: MenuContexto[]
+};	
+
 
 @Component({
   selector: 'app-root',
@@ -73,6 +85,7 @@ export class AppComponent {
   public menuSchema: MenuSchema = {};
   public menuToolbar: any[] = [];
   public menuContexto: MenuContexto[] = [];
+  public novoMenuContexto: NovoMenuContexto[] = [];
   public menuProjeto: any;
   public menuGestao: any;
   public menuOperacional: any;
@@ -395,17 +408,38 @@ export class AppComponent {
       ]
     }];
 
-
-  this.menuContexto = [
-      { key: "EXECUCAO", icon: "bi bi-person-check", name: "Participante (PGD)", menu: this.menuExecucao },	
-      { key: "GESTAO", icon: "bi bi-people-fill", name: "Gestor (PGD)", menu: this.menuGestao },
+    this.menuContexto = [
+      { key: "EXECUCAO", icon: "bi bi-person-check", name: "Participante", menu: this.menuExecucao, petrvsModule: 'PGD'},	
+      { key: "GESTAO", icon: "bi bi-people-fill", name: "Gestor", menu: this.menuGestao, petrvsModule: 'PGD'},
       { key: "ADMINISTRADOR", icon: "bi bi-emoji-sunglasses", name: "Administrador", menu: this.menuAdministrador },
       { key: "DEV", icon: "bi bi-braces", name: "Desenvolvedor", menu: this.menuDev },
       { key: "PONTO", icon: "bi bi-stopwatch", name: "Ponto eletrônico", menu: this.menuPonto },
       { key: "PROJETO", icon: "bi bi-graph-up-arrow", name: "Projetos", menu: this.menuProjeto },
       { key: "RAIOX", icon: "bi bi-camera", name: "Raio X", menu: this.menuRaioX }
-    ];
-   // this.contexto.key = "PGD"
+    ]   
+    
+    const petrvsModules = [{
+      name: 'PGD',
+      icon: 'bi bi-clipboard2-data'
+    }];
+
+    this.novoMenuContexto = [];
+    petrvsModules.forEach(module => {
+      const groupedItems = this.menuContexto.filter(item => item.petrvsModule === module.name);
+      if (groupedItems.length > 0) {
+        this.novoMenuContexto.push({
+          module: module,
+          items: groupedItems
+        });
+      }
+      const itemsWithoutModules = this.menuContexto.filter(item => !item.petrvsModule);
+      if (itemsWithoutModules.length > 0) {
+        this.novoMenuContexto.push({
+          module: null,
+          items: itemsWithoutModules
+        });
+      }
+    });
   }
 
   /*public onContextoSelect(item: any) {
@@ -441,7 +475,7 @@ export class AppComponent {
     /* Container para a criação de dialogs */
     this.dialog.container = this.dialogs;
     this.dialog.cdRef = this.cdRef;
-    this.globals.refresh();    
+    this.globals.refresh();
   }
 
   public toolbarLogin() {
@@ -516,6 +550,23 @@ export class AppComponent {
 
   public get isConfig(): boolean {
     return this.router.url.indexOf("/extension/options") >= 0;
+  }
+
+  public activeModule(menu: NovoMenuContexto){
+   return menu.items?.find(s => s.name == this.globals.contexto?.name)
+  }
+
+  public showSubMenu(e: any){
+    console.log(e);
+    let nextEl = e.target.nextElementSibling;
+    if(nextEl && nextEl.classList.contains('submenu')) {	
+      e.preventDefault();
+      if(nextEl.style.display == 'block'){
+        nextEl.style.display = 'none';
+      } else {
+        nextEl.style.display = 'block';
+      }
+    }
   }
 
 }

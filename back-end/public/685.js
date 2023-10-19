@@ -822,6 +822,15 @@ class PlanejamentoListObjetivoComponent extends src_app_modules_base_page_frame_
         }
       });
     }
+    result.push({
+      hint: "Entregas",
+      icon: "bi bi-file-earmark-bar-graph",
+      onClick: objetivo => this.go.navigate({
+        route: ['gestao', 'plano-entrega', 'entrega', 'objetivos', objetivo.id]
+      }, {
+        modal: true
+      })
+    });
     return result;
   }
   dynamicOptions(row) {
