@@ -1058,7 +1058,7 @@ class IN24_2023Seeder extends Seeder
         );
 
         $programas = array(
-            [ 
+            array(
                 "id" => "9ebed914-1b82-4df0-95da-b0c8fadbb6f2",
                 "created_at" => $this->timenow,
                 "updated_at" => $this->timenow,
@@ -1068,14 +1068,27 @@ class IN24_2023Seeder extends Seeder
                 "prazo_max_plano_entrega" => 365,
                 "termo_obrigatorio" => 1,
                 "config" => NULL,
+
                 "data_inicio" => $this->timenow,
-                "data_fim" => date('Y-m-d H:i:s', strtotime('+1 year', strtotime($this->timenow))),
+                "data_fim" => date('Y-m-d H:i:s',
+                    strtotime('+1 year', strtotime($this->timenow))),
+
                 "periodicidade_consolidacao" => "MENSAL",
                 "periodicidade_valor" => 1,
                 "dias_tolerancia_consolidacao" => 10,
                 "dias_tolerancia_avaliacao" => 20,
                 "dias_tolerancia_recurso_avaliacao" => 20,
-                "nota_padrao_avaliacao" => "7",
+                "nota_padrao_avaliacao" => "\"Não executado\"",
+                
+                "checklist_avaliacao_entregas_plano_entrega" => "[{\"key\": \"20cb2ee8f0219f5a33affa3483cf2abf\", 
+                    \"value\": \"Qualidade alcançada\"},
+                    {\"key\": \"8fa40c653a88110a441b0b260da8b276\", \"value\": \"Meta atingida\"},
+                    {\"key\": \"57934ac92710600bda11fd3775a2f22e\", \"value\": \"Prazo cumprido\"}]",
+
+                "checklist_avaliacao_entregas_plano_trabalho" => "[{\"key\": \"871cccdcafcd2f903bb8cbc5d4e32f23\", 
+                    \"value\": \"Contribuiu para a entrega\"}]",
+
+                "registra_comparecimento" => 1,
                 "plano_trabalho_assinatura_participante" => 1,
                 "plano_trabalho_assinatura_gestor_lotacao" => 0,
                 "plano_trabalho_assinatura_gestor_unidade" => 0,
@@ -1087,7 +1100,7 @@ class IN24_2023Seeder extends Seeder
                 "template_tcr_id" => "39f087ce-8816-4be2-a28e-18e8a8e83010",
                 "tipo_documento_tcr_id" => "48bc6f30-a634-4a21-9717-6fe0dc0d4f2a",
                 "documento_id" => NULL,
-            ],
+            ),
         );
 
         $templates = array(
