@@ -11,7 +11,7 @@
                 <input-multiselect [size]="6" label="Funções ocupadas como titular ou substituto" [control]="form!.controls.funcoes" controlName="funcoes" [addItemHandle]="addItemFuncao.bind(this)" noBox [bold]="true">
                     <input-select #funcoes [size]="12" icon="bi bi-check-circle-fill" controlName="funcoesOcupadas" [control]="form!.controls.funcoesOcupadas" [items]="funcoesItems"></input-select>
                 </input-multiselect>
-                <input-select #grupos [size]="6" label="Você faz parte de algum grupo especializado?" icon="bi bi-check-circle" controlName="grupo" [control]="form!.controls.grupo" id="testeID"  [items]="gruposItems"></input-select>
+                <input-select #gruposEspecializados [size]="6" label="Você faz parte de algum grupo especializado?" icon="bi bi-check-circle" controlName="gruposEspecializados" [control]="form!.controls.gruposEspecializados" id="gruposEspecializados"  [items]="gruposItems"></input-select>
             </div>
             <div class="row my-3">
                 <input-multiselect [size]="6"  label="Selecione todas as unidades em que já foi lotado" [control]="form!.controls.lotaces" controlName="lotacoes" [addItemHandle]="addItemLotacao.bind(this)" noBox [bold]="true">
@@ -57,7 +57,7 @@
                 <separator class="my-3" title="Você é docente ou instrutor da Instituição?" [bold]="true"></separator>
                 <input-switch [size]="2" #radioDocenciaPRF [label]="radioDocenciaPRF.value ? 'Sim' : 'Não'" icon="fas fa-chalkboard" controlName="radioDocenciaPRF" [control]="formDocenciaInterna!.controls.radioDocenciaPRF"></input-switch>
                 <input-multiselect [hidden]="!((formDocenciaInterna!.controls.radioDocenciaPRF.value))" [size]="8" label="Em qual/quais disciplinas?" icon="bi bi-mortarboard-fill" [control]="formDocenciaInterna.controls.docenciaPRF" controlName="docenciaPRF" [addItemHandle]="addItemDocenciaInterna.bind(this)" noBox>
-                    <input-select #selectDocenciaPRF [size]="8" icon="bi bi-mortarboard-fill" controlName="selectDocenciaPRF"  [control]="formDocenciaInterna!.controls.selectDocenciaPRF" [items]="disciplinasItens2"></input-select>
+                    <input-select #selectDocenciaInterna [size]="8" icon="bi bi-mortarboard-fill" controlName="selectDocenciaInterna"  [control]="formDocenciaInterna!.controls.selectDocenciaInterna" [items]="disciplinasItens2"></input-select>
                 </input-multiselect>
             </div>
         </tab>

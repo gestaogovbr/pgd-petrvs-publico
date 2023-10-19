@@ -54,7 +54,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   @ViewChild('funcoes', { static: false }) public funcoes?: InputSelectComponent;
   @ViewChild('unidades', { static: false }) public unidades?: InputSearchComponent;
   @ViewChild('lotacaoAtual', { static: false }) public lotacaoAtual?: InputSearchComponent;
-  @ViewChild('grupos', { static: false }) public grupos?: InputSelectComponent;
+  @ViewChild('gruposEspecializados', { static: false }) public gruposEspecializados?: InputSelectComponent;
   @ViewChild('centroTreinamento', { static: false }) public centroTreinamento?: InputSelectComponent;
   @ViewChild('cargos', { static: false }) public cargos?: InputSearchComponent;
   @ViewChild('selectLotacao', { static: false }) public selectLotacao?: InputSearchComponent;
@@ -62,7 +62,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   @ViewChild('areaConhecimento', { static: false }) public areaConhecimento?: InputSearchComponent;
   @ViewChild('areaExterna', { static: false }) public areaExterna?: InputSearchComponent;
   @ViewChild('areaAtividadeInterna', { static: false }) public areaAtividadeInterna?: InputSearchComponent;
-  @ViewChild('selectDocenciaPRF', { static: false }) public selectDocenciaPRF?: InputSelectComponent;
+  @ViewChild('selectDocenciaInterna', { static: false }) public selectDocenciaInterna?: InputSelectComponent;
   @ViewChild('selectCursosInternos', { static: false }) public selectCursosInternos?: InputSelectComponent;
   
    
@@ -121,8 +121,6 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     this.areaExternaDao = injector.get<AreaAtividadeExternaDaoService>(AreaAtividadeExternaDaoService);
     this.lookupService = injector.get<LookupService>(LookupService);
     this.form = this.fh.FormBuilder({
-      radioPretendoCursos: { default: false },
-      radioPretendoCursosFora: { default: false },
       radioProgramaGestao: { default: false },
       radioInteresseProgramaGestao: { default: false },
       radioInteresseBNT: { default: false },
@@ -139,7 +137,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       funcoesOcupadas: { default: "" },
       selectLotacao: { default: "" },
       lotacaoAtual: { default: "" },
-      grupo: { default: "" },
+      gruposEspecializados: { default: "" },
       telefone: { default: "" },
       escolhaInteresseProgramaGestao: { default: "" },
       escolhaRadioProgramaGestao: { default: "" },      
@@ -168,7 +166,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     this.formDocenciaInterna = this.fh.FormBuilder({
       radioDocenciaPRF: { default: false },
       docenciaPRF: { default: [] },
-      selectDocenciaPRF: { default:"" },
+      selectDocenciaInterna: { default:"" },
     }, this.cdRef, this.validate);
 
     this.formCursoInterno = this.fh.FormBuilder({
@@ -360,9 +358,9 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
 
   public addItemDocenciaInterna(): LookupItem | undefined {
     let result = undefined;
-    const docencia = this.selectDocenciaPRF?.selectedItem;
+    const docencia = this.selectDocenciaInterna?.selectedItem;
     console.log('DOCENCIA',docencia)
-    const key = this.formDocenciaInterna!.controls.selectDocenciaPRF.value;
+    const key = this.formDocenciaInterna!.controls.selectDocenciaInterna.value;
     const docencias = { 'key' : docencia?.key , 'value' : docencia?.value };
     
     if (docencias && this.util.validateLookupItem(this.formDocenciaInterna!.controls.docenciaPRF.value, key)) {
@@ -373,7 +371,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
           _status: "ADD",
         }
       };
-      this.formDocenciaInterna!.controls.selectDocenciaPRF.setValue("");
+      this.formDocenciaInterna!.controls.selectDocenciaInterna.setValue("");
     }
     return result;
   };
