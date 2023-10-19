@@ -10,7 +10,7 @@ export class AvaliacaoDaoService extends DaoBaseService<Avaliacao> {
 
   constructor(protected injector: Injector) { 
     super("Avaliacao", injector);
-    this.searchFields = [];
+    this.inputSearchConfig.searchFields = [];
   }  
 
   public cancelarAvaliacao(id: string): Promise<boolean> {

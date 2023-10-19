@@ -9,7 +9,7 @@ export class CadeiaValorProcessoDaoService extends DaoBaseService<CadeiaValorPro
 
   constructor(protected injector: Injector) {
     super("CadeiaValorProcesso", injector);
-    this.searchFields = ["nome"];
+    this.inputSearchConfig.searchFields = ["nome"];
   }
 }
 

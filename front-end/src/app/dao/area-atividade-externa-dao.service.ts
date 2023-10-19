@@ -9,7 +9,7 @@ export class AreaAtividadeExternaDaoService extends DaoBaseService<AreaAtividade
  
   constructor(protected injector: Injector) { 
     super("AreaAtividadeExterna", injector);
-    this.searchFields = ["nome"];
+    this.inputSearchConfig.searchFields = ["nome"];
   }  
 }
 

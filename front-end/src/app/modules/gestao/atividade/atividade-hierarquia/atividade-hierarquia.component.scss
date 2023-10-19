@@ -1,0 +1,15 @@
+h6 {
+  border-bottom: 1px solid rgb(194 225 245 / 14%);
+  padding-bottom: 5px;
+  color:  var(--petrvs-nav-link-color);
+}
+h5 {
+  color: var(--petrvs-navbar-brand-color);
+  font-weight: 300;
+  margin: 0;
+}
+.first-box {
+  &::after, &::before {
+    border: none !important;
+  }
+}

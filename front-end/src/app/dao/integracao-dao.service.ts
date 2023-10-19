@@ -10,7 +10,7 @@ export class IntegracaoDaoService extends DaoBaseService<Integracao> {
 
   constructor(protected injector: Injector) {
     super("Integracao", injector);
-    this.searchFields = ["usuario_id", "data_execucao", "atualizar_unidades", "atualizar_servidores", "atualizar_gestores"];
+    this.inputSearchConfig.searchFields = ["usuario_id", "data_execucao", "atualizar_unidades", "atualizar_servidores", "atualizar_gestores"];
   }
 
   public showResponsaveis(): Promise<LookupItem[]> {

@@ -1,3 +1,5 @@
+import { LookupItem } from '../services/lookup.service';
+import { Checklist } from './atividade.model';
 import { Avaliacao, HasAvaliacao } from './avaliacao.model';
 import { Base } from './base.model';
 import { Comentario, HasComentarios } from './comentario';
@@ -27,6 +29,8 @@ export class PlanoEntregaEntrega extends Base implements HasAvaliacao, HasComent
   public destinatario: string = '';
   public avaliacoes: Avaliacao[] = [];
   public comentarios: Comentario[] = []; /* Comentarios da etrega */
+  public etiquetas: LookupItem[] = []; /* Etiquetas */
+  public checklist: Checklist[] = []; /* Checklist */
 
   public entrega_id: string = '';
   public unidade_id: string = '';                        

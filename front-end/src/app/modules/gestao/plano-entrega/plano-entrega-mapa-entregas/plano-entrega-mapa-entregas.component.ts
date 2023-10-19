@@ -30,7 +30,7 @@ export class PlanoEntregaMapaEntregasComponent extends PageListBase<PlanoEntrega
     this.entregaDao = injector.get<EntregaDaoService>(EntregaDaoService);
     this.entregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
     /* Inicializações */
-    this.join = ["plano_entrega.unidade"];
+    this.join = ["plano_entrega.unidade","plano_entrega"];
     this.title = this.lex.translate("Entregas");
     this.filter = this.fh.FormBuilder({
       unidade_id: {default: null},
@@ -38,7 +38,6 @@ export class PlanoEntregaMapaEntregasComponent extends PageListBase<PlanoEntrega
       data_inicio: {default: null},
       data_fim: {default: null}
     });
-    this.join = [];
   }
 
   ngOnInit(){
@@ -68,6 +67,5 @@ export class PlanoEntregaMapaEntregasComponent extends PageListBase<PlanoEntrega
 
     return result;
   }
-
 }
 

@@ -10,6 +10,6 @@ export class ProjetoTarefaDaoService extends DaoBaseService<ProjetoTarefa>{
 
   constructor(protected injector: Injector) {
     super("ProjetoTarefa", injector);
-    this.searchFields = ["nome"];
+    this.inputSearchConfig.searchFields = ["nome"];
   }
 }

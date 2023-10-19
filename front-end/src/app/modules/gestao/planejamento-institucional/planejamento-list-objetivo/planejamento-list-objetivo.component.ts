@@ -65,6 +65,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
     if (this.auth.hasPermissionTo('MOD_PLAN_INST_EDT') && !this.disabled) {
       result.push({ hint: "Alterar", icon: "bi bi-pencil-square", color: "btn-outline-info", onClick: (objetivo: PlanejamentoObjetivo) => { this.editObjetivo(objetivo); } });
     }
+    result.push({ hint: "Entregas", icon: "bi bi-file-earmark-bar-graph", onClick: (objetivo: PlanejamentoObjetivo) => this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', 'objetivos', objetivo.id]}, { modal: true })});
     return result;
   }
 
@@ -187,7 +188,6 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
       this.eixos = eixos;
     });
   }
-
 }
 
 

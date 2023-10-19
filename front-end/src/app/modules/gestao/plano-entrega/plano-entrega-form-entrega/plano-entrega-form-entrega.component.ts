@@ -27,6 +27,8 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { PlanoEntregaService } from '../plano-entrega.service';
 import { Unidade } from 'src/app/models/unidade.model';
 import { QueryOrderBy } from 'src/app/dao/dao-base.service';
+import { Checklist } from 'src/app/models/atividade.model';
+import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 
 @Component({
   selector: 'plano-entrega-form-entrega',
@@ -45,6 +47,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   @ViewChild('entrega', { static: false }) public entrega?: InputSearchComponent;
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
   @ViewChild('tabs', { static: false }) public tabs?: TabsComponent;
+  @ViewChild('etiqueta', { static: false }) public etiqueta?: InputSelectComponent;
 
   public planoEntrega?: PlanoEntrega;
   public planejamentoDao: PlanejamentoDaoService;
@@ -64,6 +67,9 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   public planejamentoObjetivoDao: PlanejamentoObjetivoDaoService;
   public planoEntregaService: PlanoEntregaService;
   public idsUnidadesAscendentes: string[] = [];
+  public checklist: Checklist[] = [];
+  public formChecklist: FormGroup;
+  public etiquetas: LookupItem[] = [];
 
   constructor(public injector: Injector) {
     super(injector, PlanoEntregaEntrega, PlanoEntregaEntregaDaoService);
@@ -76,7 +82,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.cadeiaValorProcessoDao = injector.get<CadeiaValorProcessoDaoService>(CadeiaValorProcessoDaoService);
     this.planejamentoObjetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
     this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
-    this.modalWidth = 600;
+    this.modalWidth = 700;
     this.join = ["entrega", "objetivos.objetivo", "processos.processo"];
     this.form = this.fh.FormBuilder({
       descricao: { default: "" },
@@ -98,6 +104,9 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       cadeia_valor_id: { default: null },
       objetivo_id: { default: null },
       objetivo: { default: null },
+      checklist: {default: []},
+      etiquetas: {default: []},
+      etiqueta: {default: ""},
     }, this.cdRef, this.validate);
     this.formObjetivos = this.fh.FormBuilder({
       planejamento_objetivo_id: { default: null },
@@ -105,6 +114,11 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.formProcessos = this.fh.FormBuilder({
       cadeia_processo_id: { default: null },
     }, this.cdRef, this.validate);
+    this.formChecklist = this.fh.FormBuilder({
+      id: {default: ""},
+      texto: {default: ""},
+      checked: {default: false}
+    }, this.cdRef);
   }
 
   public ngOnInit() {
@@ -316,8 +330,44 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
         default:
           break;
       }
+      if (entregaItem.etiquetas) this.loadEtiquetas();
+      if (entregaItem.checklist) this.loadChecklist();
       this.calculaRealizado();
     }
+  } 
+
+  public loadEtiquetas() {
+    this.etiquetas = this.util.merge(this.entrega?.selectedEntity.etiquetas, this.unidade?.selectedEntity.etiquetas, (a, b) => a.key == b.key);
   }
- 
+
+  public loadChecklist() {
+    const modeloEntrega = this.entrega?.selectedEntity as Entrega;
+    let checkAdd: Checklist[] = modeloEntrega.checklist.map(a => {
+      return {
+        id: a.id,
+        texto: a.texto,
+        checked: false
+      } as Checklist;
+    });
+    this.checklist = checkAdd || [];
+    this.form!.controls.checklist.setValue(checkAdd);
+  }
+
+  public addItemHandleEtiquetas(): LookupItem | undefined {
+    let result = undefined;
+    if(this.etiqueta && this.etiqueta.selectedItem) {
+      const item = this.etiqueta.selectedItem;
+      const key = item.key?.length ? item.key : this.util.textHash(item.value);
+      if(this.util.validateLookupItem(this.form!.controls.etiquetas.value, key)) {
+        result = {
+          key: key,
+          value: item.value,
+          color: item.color,
+          icon: item.icon
+        };
+        this.form!.controls.etiqueta.setValue("");
+      }
+    }
+    return result;
+  };
 }

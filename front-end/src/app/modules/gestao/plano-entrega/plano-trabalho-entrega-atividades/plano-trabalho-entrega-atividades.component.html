@@ -3,7 +3,7 @@
   <columns>
     <column [titleTemplate]="titleIdAtividadeDescricao" [template]="columnAtividadeDescricao">
       <ng-template let-header="header" #titleIdAtividadeDescricao>          
-          Descrição
+          <b>Descrição</b>
       </ng-template>
       <ng-template let-row="row" #columnAtividadeDescricao>
         <span class="micro-text fw-ligh atividade-descricao">{{row.descricao}}</span>

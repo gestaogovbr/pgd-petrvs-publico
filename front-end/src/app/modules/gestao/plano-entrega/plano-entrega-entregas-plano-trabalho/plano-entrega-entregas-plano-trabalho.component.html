@@ -24,7 +24,7 @@
                 <column  [template]="columnPlano" [titleTemplate]="titlePlano" >
                   <ng-template let-header="header" #titlePlano><div class="text-center"><span><strong>Plano de trabalho</strong></span></div></ng-template>
                   <ng-template let-row="row" #columnPlano>
-                    <b class="d-block text-center">{{PlanoTrabalhoDao!.getDateFormatted(plano.data_inicio)}} <br>{{ " até "+PlanoTrabalhoDao!.getDateFormatted(plano.data_fim)}}</b>
+                    <span class="d-block text-center">{{PlanoTrabalhoDao!.getDateFormatted(plano.data_inicio)}} <br>{{ " até "+PlanoTrabalhoDao!.getDateFormatted(plano.data_fim)}}</span>
                   </ng-template>
                 </column>
 

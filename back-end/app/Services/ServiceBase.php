@@ -469,10 +469,10 @@ class ServiceBase extends DynamicMethods
         $values = [];
         foreach ($rows as $row) {
             $row = (array) $row;
-            $text = join(" - ", array_map(fn($field) => $row[$field], $data['fields']));
+            //$text = join(" - ", array_map(fn($field) => $row[$field], $data['fields']));
             $orderFilds = array_map(fn($order) => "_" . str_replace(".", "_", $order[0]), $data['orderBy'] ?? []);
             $orderValues = array_map(fn($field) => $row[$field], $orderFilds);
-            array_push($values, [$row['id'], $text, $orderValues]);
+            array_push($values, [$row['id'], array_map(fn($field) => $row[$field], $data['fields']), $orderValues]);
         }
         return $values;
     }
@@ -488,7 +488,7 @@ class ServiceBase extends DynamicMethods
         $model = App($this->collection);
         $entity = $model::query();
         if(count($data['with']) > 0) {
-            $this->applyWith($entity,$data);
+            $this->applyWith($entity, $data);
         }
         $entity = $entity->find($data["key"]);
         $text = "";
@@ -500,6 +500,7 @@ class ServiceBase extends DynamicMethods
             return [
                 'value' => $data["key"],
                 'text' => $text,
+                'data' => array_map(fn($field) => array_reduce(explode(".", $field), fn($a, $i) => $a->$i, $entity), $data['fields']),
                 'entity' => $entity
             ];
         }

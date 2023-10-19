@@ -97,7 +97,15 @@
             color: var(--bs-nav-link-color);
         }
     }
+
+    
 }
+
+.submenu { 
+    list-style: none;
+    padding-left: 10px;
+}
+
 
 @media(min-width: 992px) {
     .navbar-expand-lg .navbar-nav .dropdown-menu {
@@ -111,9 +119,12 @@
     }
 }
 
+@media (max-width: 991px) {
+
+}
+
 .avatar {
     position: relative;
     display: inline-block;
     vertical-align: middle;
 }
-

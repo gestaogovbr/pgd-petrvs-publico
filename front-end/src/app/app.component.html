@@ -82,7 +82,7 @@
         </div>
         <ul class="navbar-nav navbar-nav-icons flex-row align-items-center justify-content-end ">
             <li class="nav-item dropdown">                
-                <a class="nav-link" id="petrvs-context" href="#" role="button"  [attr.data-bs-toggle]="'dropdown'" aria-haspopup="true"  aria-expanded="false">
+                <a class="nav-link" id="petrvs-context" href="#" role="button"  [attr.data-bs-toggle]="'dropdown'" aria-haspopup="true"  aria-expanded="false"  data-bs-auto-close="outside">
                     <span class="d-none d-md-block">
                         {{ globals.contexto?.name || "Selecione..." }}
                         <i class="bi bi-chevron-down fs-6"></i>
@@ -95,11 +95,35 @@
                     <div class="card position-relative border-0">
                         <div class="card-body py-3 px-3">
                             <ul class="nav d-flex flex-column">
-                                <li *ngFor="let itemContexto2 of menuContexto" (click)="globals.setContexto(itemContexto2.key)" class="nav-item">                                    
-                                    <a [class.active]="globals.contexto?.name == itemContexto2.name" class="nav-link " role="button">
-                                        <i [class]="itemContexto2.icon"></i> {{ itemContexto2.name }}
-                                    </a>                                            
-                                </li>
+                                <ng-container *ngFor="let menu of novoMenuContexto">
+                                    <ng-container *ngIf="menu.module">
+                                        <li class="nav-item">
+                                            <a  class="nav-link" role="button" [class.active]="activeModule(menu)"  [attr.data-bs-toggle]="'collapse'" [attr.data-bs-target]="'#menu'+ menu.module.name" aria-expanded="false"  [attr.aria-controls]="menu.module.name">
+                                                <i [class]="menu.module.icon"></i> {{ menu.module.name }}
+                                            </a>
+                                            <div class="collapse multi-collapse" id="menu{{menu.module.name}}">
+                                                <ul *ngIf="menu.items" class="submenu">
+                                                    <ng-container *ngFor="let submenuItem of menu.items">
+                                                        <li  class="nav-item" (click)="globals.setContexto(submenuItem.key)">
+                                                            <a [class.active]="globals.contexto?.name == submenuItem.name" class="nav-link" role="button">
+                                                                <i [class]="submenuItem.icon"></i> {{ submenuItem.name }}
+                                                            </a>
+                                                        </li>
+                                                    </ng-container>
+                                                </ul>
+                                            </div>
+                                        </li>
+                                    </ng-container>
+                                    <ng-container *ngIf="!menu.module">
+                                        <ng-container *ngFor="let submenuItem of menu.items">
+                                            <li (click)="globals.setContexto(submenuItem.key)" class="nav-item">
+                                                <a [class.active]="globals.contexto?.name == submenuItem.name" class="nav-link" role="button">
+                                                    <i [class]="submenuItem.icon"></i> {{ submenuItem.name }}
+                                                </a>
+                                            </li>
+                                        </ng-container>
+                                    </ng-container>
+                                </ng-container>
                             </ul>
                         </div>
                     </div>

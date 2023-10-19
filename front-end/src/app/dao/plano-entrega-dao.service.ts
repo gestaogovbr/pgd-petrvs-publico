@@ -8,9 +8,8 @@ import { DaoBaseService } from './dao-base.service';
 export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
 
   constructor(protected injector: Injector) {
-  
     super("PlanoEntrega", injector);
-    this.searchFields = ["numero", "nome"];
+    this.inputSearchConfig.searchFields = ["numero", "nome"];
   }
 
   public arquivar(planoEntrega: PlanoEntrega, justificativa: string | null): Promise<boolean> {
