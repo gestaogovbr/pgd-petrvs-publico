@@ -71,4 +71,10 @@ export class ServerService {
     request.pipe(catchError(this.errorHandle.bind(this)));
     return request;
   }
+
+  public getSvg(svg: string): Observable<any> {
+    let request = this.http.get(svg, { responseType: 'text' })
+    request.pipe(catchError(this.errorHandle.bind(this)));
+    return request;
+  }
 }
