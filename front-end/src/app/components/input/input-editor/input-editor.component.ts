@@ -3,7 +3,7 @@ import { AbstractControl, ControlContainer, FormGroup, FormGroupDirective } from
 import { EditorComponent } from '@tinymce/tinymce-angular';
 import { IIndexable } from 'src/app/models/base.model';
 import { DialogService } from 'src/app/services/dialog.service';
-import { Editor, RawEditorOptions } from 'tinymce';
+import { Editor, EditorEvent, RawEditorOptions } from 'tinymce';
 import { InputBase, LabelPosition } from "../input-base";
 import { TemplateDataset, TemplateService, VariableTemplate } from 'src/app/modules/uteis/templates/template.service';
 
@@ -90,7 +90,7 @@ export class InputEditorComponent extends InputBase implements OnInit {
   public toolbars: string[] = [
     'customEditTemplateButton',
     'customDoneEditTemplateButton customCancelEditTemplateButton | customAddMacroTemplate customHelpTemplate | undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl visualblocks',
-    'customAddMacroTemplate customHelpTemplate | undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl visualblocks',
+    'customAddMacroTemplate customHelpTemplate | undo redo | customLockTemplate customUnlockTemplate | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl visualblocks',
     'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl visualblocks'
   ];
 
@@ -154,6 +154,41 @@ export class InputEditorComponent extends InputBase implements OnInit {
           label: "Fechar",
           color: "btn btn-outline-danger",
         }]).asPromise()).dialog.close())()
+      });
+      /* Botões de bloqueio e desbloqueio de conteúdo */
+      editor.ui.registry.addButton('customLockTemplate', {
+        icon: 'lock',
+        tooltip: "Bloqueia a região selecionada",
+        onAction: (_) => {
+          let content = editor.selection.getContent({'format':'html'});
+          let timestamp = (new Date()).getTime(); 
+          let key = this.util.md5("" + content + timestamp);
+          let new_selection_content = '<div class="mceNonEditable" style="display:inline-block;" data-lock-timestamp="' + timestamp + '" data-lock-key="' + key + '">' + content + '</div>';
+          editor.execCommand('insertHTML', false, new_selection_content);
+        },
+        onSetup: (buttonApi) => {
+          //@ts-ignore
+          const editorEventCallback = (eventApi: EditorEvent<NodeChangeEvent>) => buttonApi.setEnabled(eventApi.element.className != 'mceNonEditable');
+          editor.on('NodeChange', editorEventCallback);
+          return (buttonApi) => editor.off('NodeChange', editorEventCallback);
+        }
+      });
+      editor.ui.registry.addButton('customUnlockTemplate', {
+        icon: 'unlock',
+        tooltip: "Desbloqueia a região selecionada",
+        onAction: (_) => {
+          let lockOpen = /^<div\sclass="mceNonEditable".*?>/;
+          let lockClose = /<\/div>$/;
+          let content = editor.selection.getContent({'format':'html'});
+          let new_selection_content = content.replace(lockOpen, '').replace(lockClose, '');
+          editor.execCommand('insertHTML', false, new_selection_content);
+        },
+        onSetup: (buttonApi) => {
+          //@ts-ignore
+          const editorEventCallback = (eventApi: EditorEvent<NodeChangeEvent>) => buttonApi.setEnabled(eventApi.element.className == 'mceNonEditable');
+          editor.on('NodeChange', editorEventCallback);
+          return (buttonApi) => editor.off('NodeChange', editorEventCallback);
+        }
       });
     }).bind(this),
     /*init_instance_callback: ((editor: Editor) => {
