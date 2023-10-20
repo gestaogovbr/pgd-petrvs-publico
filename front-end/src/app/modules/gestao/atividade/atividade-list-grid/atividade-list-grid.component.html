@@ -53,7 +53,16 @@
                 <span class="micro-text fw-ligh atividade-descricao">{{row.descricao}}</span>
             </ng-template>
         </column>
-
+        <column [title]="'Etiquetas'" [width]="100" [template]="columnEtiquetas" [editTemplate]="columnEtiquetas" [columnEditTemplate]="selectable ? undefined : columnEtiquetasEdit" [edit]="selectable ? undefined : onColumnEtiquetasEdit.bind(this)" [save]="selectable ? undefined : onColumnEtiquetasSave.bind(this)">
+            <ng-template let-row="row" #columnEtiquetas>
+                <badge *ngFor="let etiqueta of row.etiquetas" [lookup]="etiqueta" [click]="onEtiquetaClick.bind(this)"></badge>
+            </ng-template>
+            <ng-template let-row="row" #columnEtiquetasEdit>
+                <input-multiselect controlName="etiquetas" [size]="12" [control]="formEdit.controls.etiquetas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
+                    <input-select [size]="12" #etiqueta controlName="etiqueta" nullable itemNull="- Selecione -" detailsButton detailsButtonIcon="bi bi-tools" (details)="onEtiquetaConfigClick()" [control]="formEdit.controls.etiqueta" [items]="etiquetas"></input-select>
+                </input-multiselect>
+            </ng-template>
+        </column>
         <column [titleTemplate]="titlePlanoTrabalho" [template]="columnPlanoTrabalho">
             <ng-template let-header="header" #titlePlanoTrabalho>
                 Plano de trabalho
@@ -89,10 +98,9 @@
                 </div>
             </ng-template>
         </column>
-        <column [title]="'Progresso\nEtiquetas/Checklist'" [width]="200" [columnEditTemplate]="selectable ? undefined : columnProgressoEtiquetasChecklistEdit" [template]="columnProgressoEtiquetasChecklist" [edit]="selectable ? undefined : onColumnProgressoEtiquetasChecklistEdit.bind(this)" [save]="selectable ? undefined : onColumnProgressoEtiquetasChecklistSave.bind(this)">
+        <column [title]="'Progresso\nChecklist'" [width]="200" [columnEditTemplate]="selectable ? undefined : columnProgressoEtiquetasChecklistEdit" [template]="columnProgressoEtiquetasChecklist" [edit]="selectable ? undefined : onColumnProgressoEtiquetasChecklistEdit.bind(this)" [save]="selectable ? undefined : onColumnProgressoEtiquetasChecklistSave.bind(this)">
             <ng-template let-row="row" #columnProgressoEtiquetasChecklist>
                 <progress-bar [value]="row.progresso" color="success"></progress-bar>
-                <badge *ngFor="let etiqueta of row.etiquetas" [lookup]="etiqueta" [click]="onEtiquetaClick.bind(this)"></badge>
                 <separator *ngIf="row.checklist?.length" small title="Checklist"></separator>
                 <table *ngIf="row.checklist?.length">
                     <tr *ngFor="let check of row.checklist">
@@ -103,9 +111,6 @@
             </ng-template>
             <ng-template let-row="row" #columnProgressoEtiquetasChecklistEdit>
                 <input-number [size]="12" [decimals]="2" label="Progresso" sufix="%" icon="bi bi-clock" controlName="progresso" [control]="formEdit.controls.progresso" labelInfo="Progresso de execução (% Concluído)"></input-number>
-                <input-multiselect controlName="etiquetas" [size]="12" [control]="formEdit.controls.etiquetas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
-                    <input-select [size]="12" #etiqueta controlName="etiqueta" nullable itemNull="- Selecione -" detailsButton detailsButtonIcon="bi bi-tools" (details)="onEtiquetaConfigClick()" [control]="formEdit.controls.etiqueta" [items]="etiquetas"></input-select>
-                </input-multiselect>
                 <separator *ngIf="row.checklist?.length" small title="Checklist"></separator>
                 <table *ngIf="row.checklist?.length">
                     <tr *ngFor="let check of checklist; let i = index">
@@ -115,7 +120,7 @@
                 </table>
             </ng-template>
         </column>
-        <column [title]="'nº Processo/Status\nComentários'" [width]="350" [template]="columnNumero">
+        <column [title]="'nº Processo/Status\nComentários'" [width]="300" [template]="columnNumero">
             <ng-template let-row="row" #columnNumero>
                 <documentos-badge [documento]="row.documento_requisicao"></documentos-badge>
                 <span class="d-block">

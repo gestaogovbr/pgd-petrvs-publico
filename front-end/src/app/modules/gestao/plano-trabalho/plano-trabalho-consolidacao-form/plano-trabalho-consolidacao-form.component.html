@@ -89,7 +89,7 @@
                     <badge color="light" [label]="row.entrega.forca_trabalho + '%'"></badge>
                 </ng-template>
             </column>
-            <column [title]="'Meta\nRealizado'" [template]="columnMetaRealizado" [width]="100">
+            <column [title]="'Meta'" [template]="columnMetaRealizado" [width]="100">
                 <ng-template let-row="row" #columnMetaRealizado>
                     <badge icon="bi bi-graph-up-arrow" [textValue]="row.meta" color="light" hint="Meta"></badge><br>
                     <badge icon="bi bi-check-lg" [textValue]="row.metaRealizado" color="light" hint="Realizado"></badge>
