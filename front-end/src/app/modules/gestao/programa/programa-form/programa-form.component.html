@@ -16,7 +16,6 @@
         <input-search [label]="lex.translate('Tipo de avaliação do Plano de entrega')" [size]="12" #tipoAvaliacao controlName="tipo_avaliacao_plano_entrega_id" [dao]="tipoAvaliacaoDao" [labelInfo]="lex.noun('Tipo de avaliação') + ' que especifica a forma que será avaliado ' + lex.noun('plano de trabalho') + ' e ' + lex.noun('plano de entrega')" required></input-search>
     </separator>
     <separator [title]="'Configurações ' + lex.translate('do Plano de trabalho')" collapse [collapsed]="false">
-        <input-switch label="Se o termo é obrigatório" [size]="12" controlName="termo_obrigatorio" scale="small" labelPosition="right"></input-switch>
         <input-switch [size]="12" scale="small" labelPosition="right" controlName="termo_obrigatorio" label="Se o termo é obrigatório"></input-switch>
         <input-switch [size]="12" scale="small" labelPosition="right" controlName="plano_trabalho_assinatura_participante" [label]="'Exige assinatura ' + lex.translate('do usuário') + lex.translate(' do plano de trabalho')"></input-switch>
         <input-switch [size]="12" scale="small" labelPosition="right" controlName="plano_trabalho_assinatura_gestor_lotacao" [label]="'Exige assinatura do gestor da lotação ' + lex.translate('do usuário') + ' (para ' + lex.translate('unidade') + ' distinta)'"></input-switch>
