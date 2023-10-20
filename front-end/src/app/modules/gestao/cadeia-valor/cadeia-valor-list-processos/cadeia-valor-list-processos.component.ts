@@ -78,10 +78,11 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
           niveisPai = (atual?.sequencia || "") + "." + niveisPai;
           paiId = atual?.processo_pai_id || null;
         }
-        let controleNiveis = niveisPai.split(".");
+        let controleNiveis: any;
+        controleNiveis = niveisPai.split(".");
         controleNiveis.pop();
         controleNiveis.push((ultimoCriado.sequencia - 1).toString());
-        if (this.JSON.stringify(niveis) <= this.JSON.stringify(controleNiveis)) {
+        if (this.JSON.stringify(niveis) <= this.JSON.stringify(controleNiveis) && niveis[niveis.length - 1].parseInt() <= controleNiveis[controleNiveis.length - 1].parseInt()) {
           result = "Nível já existente";
         } else if (niveis.length > controleNiveis.length) {
           result = pais.length + 1 == niveis.length ? "Adicione o nível filho pelo botão 'Adicionar filho'" : "Não existe o nível pai";
@@ -96,7 +97,6 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
       } else {
         result = ultimoCriado.processo_pai_id == null ? null : "Adicione este nível pelo botão 'Adicionar nível'";
       }
-      
     }
     return result;
   }
@@ -137,6 +137,7 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
         metadata.nivel = niveis;
         metadata.path = path;
       }
+      if (!this.grid) this.sortProcessosItems();
     }
     return metadata.nivel;
   }
@@ -151,6 +152,28 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
       const sb = (this.grid!.getMetadata(b)?.nivel || "").split(".").map((x: string) => ("000" + x).substr(-3)).join(".");
       return sa < sb ? -1 : sa > sb ? 1 : 0;
     });
+  }
+
+  public sortProcessosItems() {
+    this.items.sort((a, b) => {
+      let nivelA = a.processo_pai_id ? this.retornaNivel(a) : a.sequencia.toString();
+      let nivelB = b.processo_pai_id ? this.retornaNivel(b) : b.sequencia.toString();
+      const nA = (nivelA || "").split(".").map((x: string) => ("000" + x).substr(-3)).join(".");
+      const nB = (nivelB || "").split(".").map((x: string) => ("000" + x).substr(-3)).join(".");
+      return nA < nB ? -1 : nA > nB ? 1 : 0;
+    });
+  }
+
+  public retornaNivel(processo: any): string {
+    let paiId: string | null = processo.processo_pai_id;
+    let nivelPai = "";
+    while (paiId) {
+      let atual = this.items.find(x => x.id == paiId);
+      nivelPai = (atual?.sequencia || "") + "." + nivelPai;
+      paiId = atual?.processo_pai_id || null;
+    }
+    nivelPai += processo.sequencia;
+    return nivelPai;
   }
 
   public async addProcesso() {
