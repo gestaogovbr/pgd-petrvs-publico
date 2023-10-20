@@ -10,6 +10,7 @@ use App\Models\PlanoTrabalhoEntrega;
 use App\Models\PlanoEntrega;
 use App\Models\Entrega;
 use App\Models\Unidade;
+use App\Models\Reacao;
 
 class PlanoEntregaEntrega extends ModelBase
 {
@@ -36,7 +37,7 @@ class PlanoEntregaEntrega extends ModelBase
         //'deleted_at', /* timestamp; */
     ];
 
-    public $fillable_changes = ['objetivos', 'processos', 'comentarios']; 
+    public $fillable_changes = ['objetivos', 'processos', 'comentarios', 'reacoes']; 
 
     // Casting
     protected $casts = [
@@ -46,11 +47,14 @@ class PlanoEntregaEntrega extends ModelBase
         'etiquetas' => AsJson::class,
     ];
 
+    public $delete_cascade = ['comentarios', 'reacoes'];
+
     // HasMany
     public function objetivos() { return $this->hasMany(PlanoEntregaEntregaObjetivo::class, 'entrega_id'); }  //ok
     public function processos() { return $this->hasMany(PlanoEntregaEntregaProcesso::class, 'entrega_id'); }  //ok
     public function comentarios() { return $this->hasMany(Comentario::class); }
     public function entregasPlanoTrabalho() { return $this->hasMany(PlanoTrabalhoEntrega::class); }     
+    public function reacoes() { return $this->hasMany(Reacao::class); }
     // Belongs
     public function planoEntrega() { return $this->belongsTo(PlanoEntrega::class); }    
     public function entrega() { return $this->belongsTo(Entrega::class); }      //nullable
