@@ -81,7 +81,7 @@
             </column>
             <column title="Entrega" [template]="columnEntrega">
                 <ng-template let-row="row" #columnEntrega>
-                    <b>{{row.badge.descricao}}</b>
+                    {{row.badge.descricao || row.entrega.descricao}}
                 </ng-template>
             </column>
             <column title="% Força Trab. Planejado" [template]="columnForcaTrabalho" [width]="100">

@@ -4,6 +4,69 @@
 
 <!--button type="button" class="btn btn-primary" (click)="openDocumentos()">Primary</button/-->
 
+<ng-template #objetivo let-objetivo="objetivo">
+
+</ng-template>
+<ng-template #unidade>
+
+</ng-template>
+<ng-template #entregas>
+
+</ng-template>
+<ng-template #metas>
+
+</ng-template>
+<ng-template #atividades>
+
+</ng-template>
+
+<table class="table okr">
+    <thead>
+        <tr>
+            <th scope="col">O - Objetivo</th>
+            <th scope="col">Unidades</th>
+            <th scope="col">K - Entregas</th>
+            <th scope="col">R - Metas</th>
+            <th scope="col">Atividades</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="azul" rowspan="4">Ser simples e ágil</td>
+            <td class="vermelho" rowspan="3">SETIC-PI</td>
+            <td class="verde">Utilizar o Petrvs</td>
+            <td class="vazio">Frequentemente</td>
+        </tr>
+        <tr>
+            <td class="rosa">Requisição de servidores</td>
+            <td class="vazio">6</td>
+        </tr>
+        <tr>
+            <td class="amarelo">Compra de equipamentos</td>
+            <td class="vazio">2000</td>
+        </tr>
+        <tr>
+            <td class="laranja">SUPEX</td>
+            <td class="vazio"></td>
+            <td class="vazio"></td>
+        </tr>
+        <tr>
+            <td class="roxo" rowspan="3">Otimizar esforços e recursos</td>
+            <td class="verde" rowspan="2">DGP</td>
+            <td class="vazio"></td>
+            <td class="vazio"></td>
+        </tr>
+        <tr>
+            <td class="vazio"></td>
+            <td class="vazio"></td>
+        </tr>
+        <tr>
+            <td class="vermelho">DIREX</td>
+            <td class="vazio"></td>
+            <td class="vazio"></td>
+        </tr>
+    </tbody>
+</table>
 
 <editable-form [form]="form">
     <div class="d-flex">
@@ -16,7 +79,7 @@
             <button *ngIf="false" type="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Cancelar"><i class="bi bi-dash-circle"></i></button>
         </div>
     </div>
-    
+
 
     <div class="row">
         <input-level [size]="12" controlName="level" [validate]="validateLevel"></input-level>

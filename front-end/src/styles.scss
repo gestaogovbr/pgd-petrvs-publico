@@ -197,7 +197,6 @@
         --bs-modal-bg: #fff;
     }
 
- 
     .navbar-toggler-icon {
       --bs-navbar-toggler-icon-bg: #{escape-svg($navbar-dark-toggler-icon-bg)};
     }
@@ -314,6 +313,10 @@
 
   .table-responsive {
     height: 100%;
+  }
+
+  .buttons-home path {
+    fill: var(--bs-body-color);
   }
   
 }

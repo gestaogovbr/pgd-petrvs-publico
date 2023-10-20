@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\Usuario;
 use App\Models\Unidade;
@@ -34,6 +35,7 @@ class PlanoTrabalho extends ModelBase
         'data_inicio', /* datetime; NOT NULL; */// Inicio do plano de trabalho
         'data_fim', /* datetime; NOT NULL; */// Fim do plano de trabalho
         'data_arquivamento', /* datetime; */// Data de arquivamento do plano de trabalho
+        'criterios_avaliacao',
         //'deleted_at', /* timestamp; */
         //'numero', /* int; NOT NULL; */// Número do plano de trabalho (Gerado pelo sistema)
     ];
@@ -41,6 +43,10 @@ class PlanoTrabalho extends ModelBase
     public $fillable_changes = ['entregas', 'documentos'];
 
     public $delete_cascade = ['documentos'];
+
+    protected $casts = [
+        "criterios_avaliacao" =>  AsJson::class
+    ];
 
     protected static function booted()
     {

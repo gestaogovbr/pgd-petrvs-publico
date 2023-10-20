@@ -29417,6 +29417,9 @@ a > .petrvs code {
 .petrvs .table-responsive {
   height: 100%;
 }
+.petrvs .buttons-home path {
+  fill: var(--bs-body-color);
+}
 
 /* Define variáveis do bootstrap */
 :root {

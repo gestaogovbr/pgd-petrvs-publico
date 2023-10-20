@@ -16,7 +16,7 @@
         </column>
         <column title="Data fim" [template]="columnDataFim">
             <ng-template let-row="row" #columnDataFim>
-                <strong>{{util.getDateFormatted(row.data_fim)}}</strong>
+                {{util.getDateFormatted(row.data_fim)}}
             </ng-template>
         </column>
         <column title="Estatísticas/Avaliações" [template]="columnEstatisticas" [width]="300">
