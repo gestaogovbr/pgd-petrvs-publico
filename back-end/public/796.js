@@ -1800,7 +1800,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("template", _r9)("width", 100);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("title", "Meta\nRealizado")("template", _r11)("width", 100);
+      _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("title", "Meta")("template", _r11)("width", 100);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("template", _r13)("width", 150);
       _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](3);
