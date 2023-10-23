@@ -91,7 +91,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if(['codigo', 'sigla', 'nome', 'cidade_id', 'entidade_id','unidade_pai_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if(['sigla', 'nome', 'cidade_id', 'entidade_id','unidade_pai_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
     return result;
