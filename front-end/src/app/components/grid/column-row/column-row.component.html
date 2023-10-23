@@ -1,5 +1,5 @@
 <!-- Modo display -->
-<ng-container *ngIf="!isRowEditing && (!column.editing || !isEditing) && column.template" [ngTemplateOutlet]="column.template" [ngTemplateOutletContext]="{row: row, grid: grid, metadata: grid!.getMetadata(row)}"></ng-container>
+<ng-container *ngIf="!isRowEditing && (!column.editing || !isEditing) && column.template" [ngTemplateOutlet]="column.template" [ngTemplateOutletContext]="{row: row, grid: grid, column: column, metadata: grid!.getMetadata(row)}"></ng-container>
 <ng-container *ngIf="!isRowEditing && (!column.editing || !isEditing) && !column.template" [class]="getClass()">
     <i *ngIf="hasIcon()" [class]="getIcon()"></i>{{getColumnText()}}
 </ng-container>

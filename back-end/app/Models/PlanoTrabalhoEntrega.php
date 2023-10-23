@@ -7,6 +7,7 @@ use App\Models\PlanoTrabalho;
 use App\Models\Entrega;
 use App\Models\Atividade;
 use App\Models\PlanoEntregaEntrega;
+use App\Models\Reacao;
 
 class PlanoTrabalhoEntrega extends ModelBase
 {
@@ -25,10 +26,11 @@ class PlanoTrabalhoEntrega extends ModelBase
         //'meta', /* json; */// Meta para a entrega
     ];
 
-    public $delete_cascade = [];
+    public $delete_cascade = ['reacoes'];
 
     // Has
     public function atividades() { return $this->hasMany(Atividade::class); } 
+    public function reacoes() { return $this->hasMany(Reacao::class); }
     // Belongs
     public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class); }
     public function planoEntregaEntrega() { return $this->belongsTo(PlanoEntregaEntrega::class); }    //nullable

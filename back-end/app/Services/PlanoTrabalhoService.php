@@ -55,6 +55,10 @@ class PlanoTrabalhoService extends ServiceBase
       ->where("data_fim", ">=", $data_inicial)->get();
   }
 
+  public function proxySearch($query, &$data, &$text) {
+    $query->with(["usuario"]);
+  }
+
   public function proxyQuery($query, &$data)
   {
     $where = [];
@@ -351,7 +355,7 @@ class PlanoTrabalhoService extends ServiceBase
       "unidade.gestor:id,unidade_id,usuario_id",
       "unidade.gestorSubstituto:id,unidade_id,usuario_id",
       "tipoModalidade:id,nome",
-      "consolidacoes.avaliacao",
+      "consolidacoes.avaliacao.tipoAvaliacao.notas",
       "usuario:id,nome,apelido,url_foto"
     ])->where("usuario_id", $usuarioId);
     if (!$arquivados) $query->whereNull("data_arquivamento");

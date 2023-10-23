@@ -9,7 +9,7 @@ export class AfastamentoDaoService extends DaoBaseService<Afastamento> {
 
   constructor(protected injector: Injector) { 
     super("Afastamento", injector);
-    this.searchFields = ["observacoes"];
+    this.inputSearchConfig.searchFields = ["observacoes"];
   }  
 }
 

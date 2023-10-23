@@ -21,7 +21,5 @@ class Cargo extends ModelBase
 
      // HasMAny
      public function curriculumProfissional() { return $this->hasMany(CurriculumProfissional::class); }
-
-  
     
 }

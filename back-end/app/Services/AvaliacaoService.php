@@ -26,7 +26,15 @@ class AvaliacaoService extends ServiceBase {
     {
       /* (RN_AVL_5) [PT] Ao realizar qualquer avaliação o status da consolidação deverá ir para AVALIADO; */
       if(!empty($avaliacao->plano_trabalho_consolidacao_id)) {
-        $this->status->atualizaStatus($avaliacao->planoTrabalhoConsolidacao, 'AVALIADO');
+        $consolidacao = $avaliacao->planoTrabalhoConsolidacao;
+        $consolidacao->avaliacao_id = $avaliacao->id;
+        $consolidacao->save();
+        $this->status->atualizaStatus($consolidacao, 'AVALIADO');
+      } else if(!empty($avaliacao->plano_entrega_id)) {
+        $planoEntrega = $avaliacao->planoEntrega;
+        $planoEntrega->avaliacao_id = $avaliacao->id;
+        $planoEntrega->save();
+        $this->status->atualizaStatus($planoEntrega, 'AVALIADO');
       }
     }    
 
@@ -41,17 +49,21 @@ class AvaliacaoService extends ServiceBase {
         $avaliacao = Avaliacao::find($id);
         $consolidacao = !empty($avaliacao->plano_trabalho_consolidacao_id) ? PlanoTrabalhoConsolidacao::find($avaliacao->plano_trabalho_consolidacao_id) : null;
         $planoEntrega = !empty($avaliacao->plano_entrega_id) ? PlanoEntrega::find($avaliacao->plano_entrega_id) : null;
-        if(!empty($consolidacao)) {
-            try {
-                DB::beginTransaction();
+        try {
+            DB::beginTransaction();
+            if(!empty($consolidacao)) {
                 $consolidacao->avaliacao_id = null;
                 $consolidacao->save();
-                $this->status->atualizaStatus($consolidacao, 'AVALIADO');
-                DB::commit();
-            } catch (Throwable $e) {
-                DB::rollback();
-                throw $e;
+                $this->status->atualizaStatus($consolidacao, 'CONCLUIDO');
+            } else if(!empty($planoEntrega)) {
+                $planoEntrega->avaliacao_id = null;
+                $planoEntrega->save();
+                $this->status->atualizaStatus($planoEntrega, 'CONCLUIDO');
             }
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollback();
+            throw $e;
         }
     }
 }

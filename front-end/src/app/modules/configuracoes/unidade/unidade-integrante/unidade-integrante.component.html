@@ -7,11 +7,11 @@
     <columns>
         <column [title]="lex.translate('Usuário')" [template]="columnUsuario" [editTemplate]="editUsuario">
             <ng-template let-row="row" #columnUsuario>
-                <div class="row">
-                    <div class="col-2">
+                <div class="d-flex">
+                    <div class="ms-3">
                         <profile-picture [url]="row.usuario_url_foto || ''" [size]="40" [hint]="row.usuario_nome || ''"></profile-picture>
                     </div>
-                    <div class="col-10">
+                    <div class="flex-fill ms-3">
                         <strong>{{row.usuario_nome || ""}}</strong><br>
                         <small>{{row.usuario_apelido || ""}}</small>
                     </div>

@@ -19,7 +19,6 @@ class CreateComparecimentosTable extends Migration
             $table->primary('id');
             $table->timestamps();
             $table->softDeletes();
-            
             // Campos:
             $table->date('data_comparecimento')->comment("Data do comparecimento");
             $table->string('detalhamento')->comment("Detalhamento do comparecimento");

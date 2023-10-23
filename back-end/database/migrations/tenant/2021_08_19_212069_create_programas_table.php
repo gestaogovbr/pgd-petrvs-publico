@@ -31,6 +31,7 @@ class CreateProgramasTable extends Migration
             $table->integer('periodicidade_valor')->default("1")->comment("Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do mês para o restante");
             $table->integer('dias_tolerancia_consolidacao')->default("10")->comment("Dias de tolerância para o lançamento do registro das atividades na consolidação, após esses dias será liberado automaticamente para avaliação");
             $table->integer('dias_tolerancia_avaliacao')->default("20")->comment("Dias de tolerância para realizar a avaliação, considerando a tolerância da consolidação. Caso seja zero não fará nada, caso contrário após esse prazo a consolidação será automaticamente avaliada com a nota padrão");
+            $table->integer('dias_tolerancia_recurso_avaliacao')->default("20")->comment("Dias de tolerância para recorrer da avaliação");
             $table->json('nota_padrao_avaliacao')->nullable()->comment("Nota padrão de avaliação, para quando o gestor não realizar a avaliação dentro do prazo");
             $table->json('checklist_avaliacao_entregas_plano_entrega')->nullable()->comment("Checklist para avaliar das entregas do plano de entrega");
             $table->json('checklist_avaliacao_entregas_plano_trabalho')->nullable()->comment("Checklist para avaliar das entregas do plano de trabalho");

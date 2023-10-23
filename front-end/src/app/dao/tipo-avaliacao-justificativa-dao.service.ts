@@ -9,7 +9,7 @@ export class TipoAvaliacaoJustificativaDaoService extends DaoBaseService<TipoAva
 
   constructor(protected injector: Injector) { 
     super("TipoAvaliacaoJustificativa", injector);
-    this.searchFields = ["nome"];
+    this.inputSearchConfig.searchFields = ["nome"];
 
     }
 

@@ -9,7 +9,7 @@ export class PlanoEntregaEntregaObjetivoDaoService extends DaoBaseService<PlanoE
 
   constructor(protected injector: Injector) { 
     super("PlanoEntregaEntregaObjetivo", injector);
-    this.searchFields = ["objetivo.nome"];
+    this.inputSearchConfig.searchFields = ["objetivo.nome"];
   }
 
 }

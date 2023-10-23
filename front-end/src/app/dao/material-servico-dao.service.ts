@@ -9,7 +9,7 @@ export class MaterialServicoDaoService extends DaoBaseService<MaterialServico> {
 
   constructor(protected injector: Injector) { 
     super("MaterialServico", injector);
-    this.searchFields = ["codigo", "referencia", "descricao"];
+    this.inputSearchConfig.searchFields = ["codigo", "referencia", "descricao"];
   } 
 
 }

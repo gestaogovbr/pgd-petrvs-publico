@@ -471,6 +471,14 @@ export class GridComponent extends ComponentBase implements OnInit {
     this.cdRef.detectChanges();
   }
 
+  public refreshRows() {
+    let items = this._items;
+    this._items = [];
+    this.cdRef.detectChanges();
+    this._items = items;
+    this.cdRef.detectChanges();
+  }
+
   public refreshMultiselectToolbar() {
     if(this.toolbarRef) this.toolbarRef!.buttons = this.multiselecting ? [this.BUTTON_MULTISELECT, ...(this.multiselectMenu || []), ...(this.dynamicMultiselectMenu ? this.dynamicMultiselectMenu(this.multiselected) : [])] : [...(this.initialButtons || []), ...this.toolbarButtons];
   }

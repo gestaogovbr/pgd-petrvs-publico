@@ -100,7 +100,6 @@ export abstract class PageReportBase<M extends Base, D extends DaoBaseService<M>
     icon: "bi bi-clipboard-data",
     //onClick: this.onReport.bind(this) Conhecer o método writeToFile (util.service)
   }];
-  public error: string = "";
   public mensagemCarregando = "Carregando dados do formulário...";
   public dao?: D;
   public calendar: CalendarService;
@@ -121,7 +120,7 @@ export abstract class PageReportBase<M extends Base, D extends DaoBaseService<M>
       try {
         this.rows = await this.report(this.queryParams);
       } catch (erro) {
-        this.error = "Erro ao carregar relatório: " + erro;
+        this.error("Erro ao carregar relatório: " + erro);
       } finally {
         this.loading = false;
         this.cdRef.detectChanges();

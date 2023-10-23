@@ -53,6 +53,18 @@ export class TesteComponent implements OnInit {
     { id: "a1", title: "avaliada 1", subTitle: "avaliado 1", text: "Mensagem do ticke, muito texto, outras coisa, teste, mensagem, mais mensagens" }
   ];
 
+  public button_items: LookupItem[] = [
+    { key: '1', value: '1', icon: 'bi-heart-fill', color: '#107165', data: {label: 'Stretchable Button Hover Effect'} },
+    { key: '1', value: '1', icon: 'bi-emoji-smile', color: '#2b1071', data: {label: 'Embedded', selected: true} },
+    { key: '1', value: '1', icon: 'bi-hand-thumbs-down', color: '#713710', data: {label: 'Embed your icons within the HTML of your page'} },
+    { key: '1', value: '1', icon: 'bi-heart-fill', color: '#107165', data: {label: 'Stretchable Button Hover Effect'} },
+    { key: '1', value: '1', icon: 'bi-emoji-smile', color: '#2b1071', data: {label: 'Embedded', selected: true} },
+    { key: '1', value: '1', icon: 'bi-hand-thumbs-down', color: '#713710', data: {label: 'Embed your icons within the HTML of your page'} },
+    { key: '1', value: '1', icon: 'bi-heart-fill', color: '#107165', data: {label: 'Stretchable Button Hover Effect'} },
+    { key: '1', value: '1', icon: 'bi-emoji-smile', color: '#2b1071', data: {label: 'Embedded', selected: true} },
+    { key: '1', value: '1', icon: 'bi-hand-thumbs-down', color: '#713710', data: {label: 'Embed your icons within the HTML of your page'} },
+  ]
+
   public calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
     events: [

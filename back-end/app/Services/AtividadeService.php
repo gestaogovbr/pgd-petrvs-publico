@@ -20,6 +20,8 @@ use App\Models\Documento;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\PlanoTrabalhoConsolidacaoAtividade;
+use App\Models\PlanejamentoObjetivo;
+use App\Models\CadeiaValorProcesso;
 use App\Models\StatusJustificativa;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -223,8 +225,8 @@ class AtividadeService extends ServiceBase
             /*if(!array_key_exists($row->unidade_id, $result['avaliadores'])) {
                 $result['avaliadores'][$row->unidade_id] = $this->unidadeService->avaliadores($row->unidade_id);
             }*/
+            if(!empty($row->plano_trabalho_id)) $planosTrabalhos[$row->plano_trabalho_id] = true;
             if(empty($row->data_entrega)) { /* Somente as que não estiverem concluídas */
-                if(!empty($row->plano_trabalho_id)) $planosTrabalhos[$row->plano_trabalho_id] = true;
                 $tomorrow = Carbon::now()->add(1, "days")->format(ServiceBase::ISO8601_FORMAT);
                 $afastamentos[$row->usuario_id] = empty($afastamentos[$row->usuario_id]) ? [$row->data_distribuicao, $row->data_estipulada_entrega] : $afastamentos[$row->usuario_id];
                 $afastamentos[$row->usuario_id] = [
@@ -625,4 +627,87 @@ class AtividadeService extends ServiceBase
         return true;
     }
 
+    public function hierarquia($data)
+    {
+        $atividade = Atividade::find($data["atividade_id"]);
+        if (!empty($atividade)) {
+            $entregaPlanoTrabalho = $atividade->planoTrabalhoEntrega;
+            $entregaPlanoEntrega = $entregaPlanoTrabalho->planoEntregaEntrega;
+            $entregasPlanoEntrega = $this->recuperarEntregasSuperiores($entregaPlanoEntrega);
+
+            $retorno = [
+                'atividade' => $atividade,
+                'entregaPlanoTrabalho' => $entregaPlanoTrabalho,
+                'entregasPlanoEntrega' => $entregasPlanoEntrega,
+            ];
+
+            $resultados = $this->recuperarObjetivosProcessosParaEntregas($entregasPlanoEntrega);
+            $retorno['objetivos'] = $resultados['objetivos'];
+            $retorno['processos'] = $resultados['processos'];
+
+            $retorno['planejamento'] = count($resultados['objetivos'])>0 ? $resultados['objetivos'][0]->planejamento : null;
+            $retorno['cadeiaValor'] = count($resultados['processos'])>0 ? $resultados['processos'][0]->cadeiaValor : null;
+
+            return $retorno;
+        } else {
+            throw new ServerException("ValidateAtividade", "Id não encontrado");
+        }
+    }
+
+    public function recuperarEntregasSuperiores($entregaPlanoEntrega = null)
+    {
+        $result = [];
+        if(!empty($entregaPlanoEntrega)) {
+            $entregaPlanoEntrega->entrega;
+            $result = [$entregaPlanoEntrega];
+            $atual = $entregaPlanoEntrega;
+            while(!empty($atual->entrega_pai_id)) {
+                $result[] = $atual->entregaPai;
+                $atual = $atual->entregaPai;
+                $atual->entrega;
+            }
+        }
+        return $result;
+
+    }
+
+    public function recuperarObjetivosProcessosParaEntregas($entregas)
+    {
+        $objetivosIds = [];
+        $processosIds = [];
+        foreach ($entregas as $entrega) {
+            $objetivosIds = array_merge($objetivosIds, $entrega->objetivos->pluck('planejamento_objetivo_id')->toArray());
+            $processosIds = array_merge($processosIds, $entrega->processos->pluck('cadeia_processo_id')->toArray());
+        }
+
+        $objetivos = [];
+        $processos = [];
+        $planejamentoObjetivos = PlanejamentoObjetivo::whereIn('id', $objetivosIds)->get();
+        $planejamnetoProcessos = CadeiaValorProcesso::whereIn('id', $processosIds)->get();
+
+
+       foreach ($planejamentoObjetivos as $objetivo) {
+            $objetivos = [$objetivo];
+            $atual = $objetivo;
+            while(!empty($atual->objetivo_pai_id)) {
+                $objetivos[] = $atual->objetivoPai;
+                $atual = $atual->objetivoPai;
+            }        
+        }
+
+        foreach ($planejamnetoProcessos as $processo) {
+            $processos = [$processo];
+            $atual = $processo;
+            while(!empty($atual->processo_pai_id)) {
+                $processos[] = $atual->processoPai;
+                $atual = $atual->processoPai;
+            }        
+        }
+
+        return [
+            'objetivos' => $objetivos,
+            'processos' => $processos,
+        ];
+    }
+    
 }

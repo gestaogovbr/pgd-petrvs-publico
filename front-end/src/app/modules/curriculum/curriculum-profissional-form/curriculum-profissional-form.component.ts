@@ -22,6 +22,7 @@ import { NavigateResult } from 'src/app/services/navigate.service';
 import { UnidadesService } from 'src/app/services/unidades.service';
 import { Funcao } from 'src/app/models/funcao.model';
 import { CurriculumDaoService } from 'src/app/dao/curriculum-dao.service';
+import { CargoDaoService } from 'src/app/dao/cargo-dao.service';
 
 @Component({
   selector: 'curriculum-profissional-form',
@@ -44,30 +45,31 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   @ViewChild('escolhaRadioPG', { static: false }) public escolhaRadioPG?: InputRadioComponent;
   @ViewChild('escolhaInteressePG', { static: false }) public escolhaInteressePG?: InputRadioComponent;
   @ViewChild('funcoes', { static: false }) public funcoes?: InputSelectComponent;
-  @ViewChild('unidades', { static: false }) public unidades?: InputSelectComponent;
-  @ViewChild('lotacaoAtual', { static: false }) public lotacaoAtual?: InputSelectComponent;
+  @ViewChild('unidades', { static: false }) public unidades?: InputSearchComponent;
+  @ViewChild('lotacaoAtual', { static: false }) public lotacaoAtual?: InputSearchComponent;
   @ViewChild('grupos', { static: false }) public grupos?: InputSelectComponent;
   @ViewChild('ct', { static: false }) public ct?: InputSelectComponent;
-  @ViewChild('cargos', { static: false }) public cargos?: InputSelectComponent;
+  @ViewChild('cargos', { static: false }) public cargos?: InputSearchComponent;
   
    
   public testeLookup: LookupItem[] = [{ 'key': 'key 1', 'value': 'value 1' }];
   public anos: LookupItem[] = [];
-  //public ct: LookupItem[] = [];
-  public cargo: LookupItem[] = [];
-  public funcao: LookupItem[] = [];
-  public grupo: LookupItem[] = [];
-  public unidade: LookupItem[] = [];
+  public unidadesItems: LookupItem[] = [];
+  public funcoesItems: LookupItem[] = [];
+  public gruposItems: LookupItem[] = [];
+  public centroTreinamentoItems: LookupItem[] = [];
+  public cargosItems: LookupItem[] = [];
   public usuarioUnidade: LookupItem[] = [];
-  public curriculumDao?: CurriculumDaoService;
-  public userDao?: UsuarioDaoService;
-  public lotacaoDao?: UnidadeIntegranteDaoService;
-  public unidadeDao?: UnidadeDaoService;
-  public funcaoDao?: FuncaoDaoService;
-  public ctDao?: CentroTreinamentoDaoService;
-  public grupoDao?: GrupoEspecializadoDaoService;
-  public unidadeService?: UnidadesService;
-  public lookupService?: LookupService;
+  public curriculumDao: CurriculumDaoService;
+  public userDao: UsuarioDaoService;
+  public lotacaoDao: UnidadeIntegranteDaoService;
+  public unidadeDao: UnidadeDaoService;
+  public funcaoDao: FuncaoDaoService;
+  public ctDao: CentroTreinamentoDaoService;
+  public grupoDao: GrupoEspecializadoDaoService;
+  public cargoDao: CargoDaoService;
+  public unidadeService: UnidadesService;
+  public lookupService: LookupService;
   public unidadesArray?:any;
   
   constructor(public injector: Injector) {
@@ -79,6 +81,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     this.funcaoDao = injector.get<FuncaoDaoService>(FuncaoDaoService);
     this.grupoDao = injector.get<GrupoEspecializadoDaoService>(GrupoEspecializadoDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    this.cargoDao = injector.get<CargoDaoService>(CargoDaoService);
     this.unidadeService = injector.get<UnidadesService>(UnidadesService);
     this.lookupService = injector.get<LookupService>(LookupService);
     this.form = this.fh.FormBuilder({
@@ -106,51 +109,17 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       telefone: { default: "" },
       escolhaInteressePG: { default: "" },
       escolhaRadioPG: { default: "" },
-     
-
     }, this.cdRef, this.validate)
-   
-
   }
 
   ngOnInit(): void {
       for (let i = 1980; i <= (new Date()).getFullYear(); i++) {
         this.anos.push(Object.assign({}, { key: i, value: (i.toString()) }));
       }
-
-      this.curriculumDao?.lookupsCurriculum().then((lookups) => {
-        this.unidades!.items = lookups.unidades;
-        this.lotacaoAtual!.items = lookups.unidades;
-        this.funcoes!.items = lookups.funcoes;
-        this.grupos!.items = lookups.grupos;
-        this.ct!.items = lookups.ct;
-        this.cargos!.items = lookups.cargos;
-      });
-      /*(async () => {
-       
-        this.unidadesArray = await this.unidadeDao?.lookupTodasUnidades()
-        this.unidade = this.unidadesArray.map((x: { id: any; sigla: any; }) => Object.assign({}, { key: x.id, value: x.sigla }));
-        setTimeout(() => 
-        {
-         
-          console.log('Todas Unidades', this.unidade);
-          
-        },
-        1000);
-      })();*/
-
       
-      
-      const userUnidade=this.auth.unidade;
-      console.log(userUnidade)
-   /*   this.lotacaoDao?.query({ where: [['usuario_id', '==', userID],['principal', '==', 1 ]]}).getAll().then((user) => {
-          const unidadeID=user[0].unidade_id;
-          this.unidadeDao?.query({ where: [['id', '==', unidadeID]]}).getAll().then((unidade) => {
-              console.log('UNIDADES',unidade[0].sigla,unidade[0].nome)
-                //this.usuarioUnidade = user.map(x => Object.assign({}, { key: x.id, value: x.unidade_id }) as LookupItem);
-                //this.cdRef.detectChanges();
-          });
-      });*/
+      const userUnidade = this.auth.unidade;
+      console.log('userUnidade',userUnidade)
+ 
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -159,11 +128,18 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     return result;
   }
 
-  public loadData(entity: CurriculumProfissional, form: FormGroup): void | Promise<void> {
-    //throw new Error('Method not implemented.');
+  public async loadData(entity: CurriculumProfissional, form: FormGroup) {
+    let lookups = await this.curriculumDao.lookupsCurriculum();
+    //this.unidadesItems = lookups.unidades;
+    this.funcoesItems = lookups.funcoes;
+    this.gruposItems = lookups.grupos;
+    this.centroTreinamentoItems = lookups.ct;
+    this.cargosItems = lookups.cargos;
+    this.lotacaoAtual!.loadSearch(this.auth.lotacao);
   }
-  public initializeData(form: FormGroup): void | Promise<void> {
-    //throw new Error('Method not implemented.');
+
+  public async initializeData(form: FormGroup) {
+    return await this.loadData(this.entity!, form);
   }
 
   public saveData(form: IIndexable): Promise<CurriculumProfissional> {
@@ -194,12 +170,4 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
 
   public onAddClick() { }
 
-  async getAllUnidades(){
-    this.unidadeDao?.query().getAll().then((unidade) => {
-      //console.log(unidade);
-      this.unidade = unidade.map(x => Object.assign({}, { key: x.id, value: x.sigla }) as LookupItem);
-      //console.log(this.unidade)
-    });
-  }
- 
 }

@@ -24,7 +24,7 @@ export class UnidadeIntegranteDaoService extends DaoBaseService<UnidadeIntegrant
 
   constructor(protected injector: Injector) { 
     super("UnidadeIntegrante", injector);
-    this.searchFields = [];
+    this.inputSearchConfig.searchFields = [];
   }  
 
   public loadIntegrantes(unidade_id: string, usuario_id: string): Promise<LoadIntegrantesResult> {

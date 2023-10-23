@@ -202,7 +202,8 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_PTR_CSLD_CONCL", "Permite realizar conclusão (independete de ser o usuário da consolidação)"],
                 ["MOD_PTR_CSLD_DES_CONCL", "Permite desfazer conclusão (independete de ser o usuário da consolidação)"],
                 ["MOD_PTR_CSLD_CANC_AVAL", "Permite cancelar avaliação"],
-                ["MOD_PTR_CSLD_AVAL", "Permite avaliar"]
+                ["MOD_PTR_CSLD_AVAL", "Permite avaliar"],
+                ["MOD_PTR_CSLD_REC_AVAL", "Permite recorrer da avaliação"]
             ]
         ], [ 
             "codigo"=> "MOD_PTR_CSLD_OCOR",

@@ -10,7 +10,7 @@ export class ProjetoDaoService extends DaoBaseService<Projeto> {
 
   constructor(protected injector: Injector) { 
     super("Projeto", injector);
-    this.searchFields = ["nome"];
+    this.inputSearchConfig.searchFields = ["nome"];
   }
 
 }
