@@ -27,7 +27,7 @@ class IN24_2023Seeder extends Seeder
      *
      * @return void
      */
-    
+
     public $timenow;
     public $brasilia;
     public $unidade_prf;
@@ -113,20 +113,10 @@ class IN24_2023Seeder extends Seeder
                 "etiquetas" => "[{\"key\": \"178c526ffa79c5ce7f55c58748c87c19\", \"icon\": \"bi bi-bar-chart\", \"color\": \"#fd7777\", \"value\": \"Projetos\"}]",
                 "checklist" => NULL,
                 "comentario" => "São atividades com começo e fim determinados, entregas concretas e prazos.",
-            ],  
+            ],
         );
 
         $tipos_modalidades = array(
-            [
-                "id" => "11e04620-c9c8-4502-a37a-d5a3311698e3",
-                "created_at" => $this->timenow,
-                "updated_at" => $this->timenow,
-                "deleted_at" => null,
-                "nome" => "Presencial (obrigatório)",
-                "plano_trabalho_calcula_horas" => 0,
-                "atividade_tempo_despendido" => 0,
-                "atividade_esforco" => 0
-            ],
             [
                 "id" => "48497798-02c2-46b8-87b9-5b03262b4fbd",
                 "created_at" => $this->timenow,
@@ -283,7 +273,7 @@ class IN24_2023Seeder extends Seeder
                 "nome" => "Tecnicamente abaixo do esperado",
             ),
         );
-        
+
         $tipos_avaliacoes = array(
             [
                 "id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
@@ -302,7 +292,7 @@ class IN24_2023Seeder extends Seeder
                 "tipo" => "QUALITATIVO"
             ],
         );
-      
+
         $tipos_avaliacoes_notas = array(
             array(
                 "id" => "1084fb8d-20ea-4fd2-bf30-8aa70f2f55f6",
@@ -465,7 +455,7 @@ class IN24_2023Seeder extends Seeder
                 "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
             ),
         );
-        
+
         $tipos_avaliacoes_justificativas= array(
             [
                 "id" => "0006b44a-1eba-45a4-a64f-a3199dcd2264",
@@ -1079,13 +1069,13 @@ class IN24_2023Seeder extends Seeder
                 "dias_tolerancia_avaliacao" => 20,
                 "dias_tolerancia_recurso_avaliacao" => 20,
                 "nota_padrao_avaliacao" => "\"Não executado\"",
-                
-                "checklist_avaliacao_entregas_plano_entrega" => "[{\"key\": \"20cb2ee8f0219f5a33affa3483cf2abf\", 
+
+                "checklist_avaliacao_entregas_plano_entrega" => "[{\"key\": \"20cb2ee8f0219f5a33affa3483cf2abf\",
                     \"value\": \"Qualidade alcançada\"},
                     {\"key\": \"8fa40c653a88110a441b0b260da8b276\", \"value\": \"Meta atingida\"},
                     {\"key\": \"57934ac92710600bda11fd3775a2f22e\", \"value\": \"Prazo cumprido\"}]",
 
-                "checklist_avaliacao_entregas_plano_trabalho" => "[{\"key\": \"871cccdcafcd2f903bb8cbc5d4e32f23\", 
+                "checklist_avaliacao_entregas_plano_trabalho" => "[{\"key\": \"871cccdcafcd2f903bb8cbc5d4e32f23\",
                     \"value\": \"Contribuiu para a entrega\"}]",
 
                 "registra_comparecimento" => 1,
