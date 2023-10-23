@@ -47,7 +47,8 @@ class AtividadeService extends ServiceBase
         "plano_trabalho.entregas.entrega:id,nome",
         "usuario.afastamentos",
         "usuario.planos_trabalho.entregas.entrega:id,nome",
-        "usuario.planos_trabalho.tipo_modalidade:id,nome"
+        "usuario.planos_trabalho.tipo_modalidade:id,nome",
+        "reacoes.usuario:id,nome,apelido"
     ];
 
     public function validateIniciar($data) {
