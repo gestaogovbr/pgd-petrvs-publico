@@ -81,6 +81,16 @@ export class LookupService {
     { key: 'ATIVIDADE', value: "Atividade", icon: "bi bi-envelope-exclamation" }
   ];
 
+  public REACAO_TIPO: LookupItem[] = [
+    { key: 'like', value: "Curti", icon: "like" },
+    { key: 'love', value: "Amei", icon: "love" },
+    { key: 'care', value: "Força", icon: "care" },
+    { key: 'haha', value: "Haha", icon: "haha" },
+    { key: 'wow', value: "Uau", icon: "wow" },
+    { key: 'sad', value: "Triste", icon: "sad" },
+    { key: 'angry', value: "Grr", icon: "angry" }
+  ];
+
   public USUARIO_SITUACAO_FUNCIONAL: LookupItem[] = [
     { key: "ATIVO_PERMANENTE", value: "Ativo permanente" },
     { key: "APOSENTADO", value: "Aposentado" },
