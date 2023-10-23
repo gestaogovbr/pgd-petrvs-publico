@@ -17,7 +17,9 @@ export class AvaliarNotaInputComponent {
   @Input() set tipoAvaliacao(value: TipoAvaliacao | undefined) {
     if(this._tipoAvaliacao != value) {
       this._tipoAvaliacao = value;
-      this.items = (this._tipoAvaliacao?.notas || []).map(x => Object.assign({}, {
+      let notasOrdenadas = this._tipoAvaliacao?.notas;
+      notasOrdenadas!.sort((a, b) => b.sequencia - a.sequencia);
+      this.items = (notasOrdenadas || []).map(x => Object.assign({}, {
         key: x.nota,
         value: x.nota,
         hint: x.descricao,
