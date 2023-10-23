@@ -15,6 +15,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_dao_programa_dao_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/dao/programa-dao.service */ 92214);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ 51197);
 /* harmony import */ var primeng_organizationchart__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! primeng/organizationchart */ 29124);
+var _class;
 
 
 
@@ -66,28 +67,29 @@ class DesdobramentoComponent extends _base_page_base__WEBPACK_IMPORTED_MODULE_0_
   carregaPrograma() {
     this.programaDao.getById(this.idObject);
   }
-  static #_ = this.ɵfac = function DesdobramentoComponent_Factory(t) {
-    return new (t || DesdobramentoComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_2__.Injector));
-  };
-  static #_2 = this.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineComponent"]({
-    type: DesdobramentoComponent,
-    selectors: [["app-desdobramento"]],
-    features: [_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵInheritDefinitionFeature"]],
-    decls: 1,
-    vars: 1,
-    consts: [[3, "value"]],
-    template: function DesdobramentoComponent_Template(rf, ctx) {
-      if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](0, "p-organizationChart", 0);
-      }
-      if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("value", ctx.data);
-      }
-    },
-    dependencies: [primeng_organizationchart__WEBPACK_IMPORTED_MODULE_3__.OrganizationChart],
-    styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
-  });
 }
+_class = DesdobramentoComponent;
+_class.ɵfac = function DesdobramentoComponent_Factory(t) {
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_2__.Injector));
+};
+_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineComponent"]({
+  type: _class,
+  selectors: [["app-desdobramento"]],
+  features: [_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵInheritDefinitionFeature"]],
+  decls: 1,
+  vars: 1,
+  consts: [[3, "value"]],
+  template: function DesdobramentoComponent_Template(rf, ctx) {
+    if (rf & 1) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](0, "p-organizationChart", 0);
+    }
+    if (rf & 2) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("value", ctx.data);
+    }
+  },
+  dependencies: [primeng_organizationchart__WEBPACK_IMPORTED_MODULE_3__.OrganizationChart],
+  styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
+});
 
 /***/ }),
 
@@ -108,6 +110,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/resolvies/config.resolver */ 2314);
 /* harmony import */ var primeng_organizationchart__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! primeng/organizationchart */ 29124);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ 51197);
+var _class;
 
 
 
@@ -129,17 +132,17 @@ const routes = [{
     modal: true
   }
 }];
-class DesdobramentoModule {
-  static #_ = this.ɵfac = function DesdobramentoModule_Factory(t) {
-    return new (t || DesdobramentoModule)();
-  };
-  static #_2 = this.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineNgModule"]({
-    type: DesdobramentoModule
-  });
-  static #_3 = this.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineInjector"]({
-    imports: [_angular_router__WEBPACK_IMPORTED_MODULE_4__.RouterModule.forRoot(routes), _angular_common__WEBPACK_IMPORTED_MODULE_5__.CommonModule, primeng_organizationchart__WEBPACK_IMPORTED_MODULE_6__.OrganizationChartModule]
-  });
-}
+class DesdobramentoModule {}
+_class = DesdobramentoModule;
+_class.ɵfac = function DesdobramentoModule_Factory(t) {
+  return new (t || _class)();
+};
+_class.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineNgModule"]({
+  type: _class
+});
+_class.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineInjector"]({
+  imports: [_angular_router__WEBPACK_IMPORTED_MODULE_4__.RouterModule.forRoot(routes), _angular_common__WEBPACK_IMPORTED_MODULE_5__.CommonModule, primeng_organizationchart__WEBPACK_IMPORTED_MODULE_6__.OrganizationChartModule]
+});
 (function () {
   (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵsetNgModuleScope"](DesdobramentoModule, {
     declarations: [_desdobramento_component__WEBPACK_IMPORTED_MODULE_0__.DesdobramentoComponent],
