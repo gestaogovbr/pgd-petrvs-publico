@@ -13,7 +13,8 @@ export type LoadIntegrantesResult = {
 export type Vinculo = {
     ['unidade_id']: string,
     ['usuario_id']: string,
-    ['atribuicoes']: IntegranteAtribuicao[]
+    ['atribuicoes']: IntegranteAtribuicao[],
+    ['msg']?: string
 }
 
 @Injectable({
@@ -41,7 +42,7 @@ export class UnidadeIntegranteDaoService extends DaoBaseService<UnidadeIntegrant
   public saveIntegrante(vinculos: Vinculo[]): Promise<Vinculo[]> {
     return new Promise<Vinculo[]>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/save-integrante', {vinculos}).subscribe(response => {
-        resolve(response?.data || null);
+        if(response?.error) reject(response.error); else resolve(response?.data || null);
       }, 
       error => reject(error));
     });

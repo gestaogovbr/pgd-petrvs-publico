@@ -583,9 +583,8 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
     this.usuariosJaVinculados = [];
     this.validate = (control, controlName) => {
       let result = null;
-      if (["usuario_id", "atribuicoes"].includes(controlName) && !control.value?.length) {
-        result = "Obrigatório";
-      }
+      if (["usuario_id", "atribuicoes"].includes(controlName) && !control.value?.length) result = "Obrigatório";
+      if (controlName == "usuario_id" && this.items.map(i => i.id).includes(control.value)) result = "O usuário já é integrante desta unidade. Edite-o, ao invés de incluir novamente!";
       return result;
     };
     this.integranteDao = injector.get(src_app_dao_unidade_integrante_dao_service__WEBPACK_IMPORTED_MODULE_2__.UnidadeIntegranteDaoService);
@@ -670,7 +669,7 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
   loadIntegrante(form, row) {
     var _this4 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      form.controls.usuario_id.setValue(row.id);
+      form.controls.usuario_id.setValue(_this4.grid?.adding ? row.usuario_id : row.id);
       form.controls.atribuicoes.setValue(row.atribuicoes.map(x => Object.assign({}, {
         key: x,
         value: _this4.lookup.getValue(_this4.lookup.UNIDADE_INTEGRANTE_TIPO, x),
@@ -686,17 +685,23 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
       let confirm = yield _this5.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
       if (confirm) {
         _this5.loading = true;
+        let msg;
         try {
           yield _this5.integranteDao.saveIntegrante([{
             'unidade_id': _this5.unidade.id,
             'usuario_id': row.id,
             'atribuicoes': []
-          }]);
+          }]).then(resposta => {
+            if (msg = resposta.find(v => v.msg?.length)?.msg) {
+              if (_this5.grid) _this5.grid.error = msg;
+            }
+            ;
+          });
           yield _this5.loadData({}, _this5.form);
         } finally {
           _this5.loading = false;
         }
-        return true;
+        return msg ? false : true;
       } else {
         return false;
       }
@@ -705,14 +710,23 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
   saveIntegrante(form, row) {
     var _this6 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      if (form.controls.atribuicoes.value.length) {
+      let confirm = true;
+      let n = _this6.alterandoGestor(form);
+      if (n.length) confirm = yield _this6.dialog.confirm("Confirma a Alteração de Gestor ?", n.length == 1 ? "O " + n[0] + " será alterado." : "Serão alterados: " + n.join(', ') + ".");
+      if (form.controls.atribuicoes.value.length && confirm) {
         _this6.loading = true;
         try {
           yield _this6.integranteDao.saveIntegrante([{
             'unidade_id': _this6.unidade.id,
             'usuario_id': form.controls.usuario_id.value,
             'atribuicoes': form.controls.atribuicoes.value.map(x => x.key)
-          }]);
+          }]).then(resposta => {
+            let msg;
+            if (msg = resposta?.find(v => v.msg?.length)?.msg) {
+              if (_this6.grid) _this6.grid.error = msg;
+            }
+            ;
+          });
           yield _this6.loadData({}, _this6.form);
         } finally {
           _this6.loading = false;
@@ -720,6 +734,13 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
       }
       return undefined;
     })();
+  }
+  alterandoGestor(form) {
+    let result = [];
+    ['Gestor', 'Gestor_substituto', 'Gestor_delegado'].forEach(g => {
+      if (form.controls.atribuicoes.value.includes(g) && this.items.find(i => i.atribuicoes.includes(g))) result.push(g);
+    });
+    return result;
   }
 }
 _class = UnidadeIntegranteComponent;

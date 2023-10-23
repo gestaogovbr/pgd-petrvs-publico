@@ -467,11 +467,8 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
     this.unidadesJaVinculadas = [];
     this.validate = (control, controlName) => {
       let result = null;
-      if (["unidade_id"].includes(controlName) && !control.value?.length) {
+      if (["unidade_id", "atribuicoes"].includes(controlName) && !control.value?.length) {
         result = "Obrigatório";
-      }
-      if (controlName == "atribuicoes" && !control.value?.length) {
-        result = "Obrigatório ao menos uma atribuição!";
       }
       return result;
     };
@@ -593,11 +590,12 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
       if (confirm) {
         _this5.loading = true;
         try {
-          if (!_this5.isNoPersist) _this5.integranteDao.saveIntegrante([{
+          if (!_this5.isNoPersist) yield _this5.integranteDao.saveIntegrante([{
             'unidade_id': row.id,
             'usuario_id': _this5.usuario.id,
             'atribuicoes': []
-          }]);
+          }]).then();
+          ;
           //await this.loadData({}, this.form);
         } finally {
           _this5.loading = false;

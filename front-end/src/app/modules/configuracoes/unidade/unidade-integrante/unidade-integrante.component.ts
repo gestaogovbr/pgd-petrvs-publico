@@ -74,9 +74,8 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if(["usuario_id", "atribuicoes"].includes(controlName) && !control.value?.length) {
-      result = "Obrigatório";
-    }
+    if(["usuario_id", "atribuicoes"].includes(controlName) && !control.value?.length) result = "Obrigatório";
+    if((controlName == "usuario_id") && this.grid?.adding && this.items.map(i => i.id).includes(control.value)) result = "O usuário já é integrante desta unidade. Edite-o, ao invés de incluir novamente!";
     return result;
   }
 
@@ -112,7 +111,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
    * @param row 
    */
   public async loadIntegrante(form: FormGroup, row: any) {
-    form.controls.usuario_id.setValue(row.id);
+    form.controls.usuario_id.setValue(this.grid?.adding ? row.usuario_id : row.id);
     form.controls.atribuicoes.setValue(row.atribuicoes.map((x: string) => Object.assign({}, {
       key: x,
       value: this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, x),
@@ -126,29 +125,53 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
     if(confirm) {
       this.loading = true;
+      let msg: string | undefined;
       try {
-        await this.integranteDao.saveIntegrante([{'unidade_id': this.unidade!.id, 'usuario_id': row.id, 'atribuicoes': []}]);
+        await this.integranteDao.saveIntegrante([{'unidade_id': this.unidade!.id, 'usuario_id': row.id, 'atribuicoes': []}]).then( resposta => {
+          if(msg = resposta.find(v => v.msg?.length)?.msg) { if(this.grid) this.grid.error = msg; };
+        });
         await this.loadData({}, this.form);
       } finally {
         this.loading = false;
       }
-      return true;
+      return msg ? false : true;
     } else {
       return false;
     }
   }
 
   public async saveIntegrante(form: FormGroup, row: any) {
-    if(form!.controls.atribuicoes.value.length) {
+    let confirm = true;
+    let n = this.alterandoGestor(form);
+    if (n.length) confirm = await this.dialog.confirm("Confirma a Alteração de Gestor ?", n.length == 1 ?  "O " + n[0] + " será alterado." : "Serão alterados: " + n.join(', ') + ".");
+    if(form!.controls.atribuicoes.value.length && confirm) {
       this.loading = true;
       try {
-        await this.integranteDao.saveIntegrante([{'unidade_id': this.unidade!.id, 'usuario_id': form!.controls.usuario_id.value, 'atribuicoes': form!.controls.atribuicoes.value.map((x: LookupItem) => x.key)}]);
+        await this.integranteDao.saveIntegrante([{'unidade_id': this.unidade!.id, 'usuario_id': form!.controls.usuario_id.value, 'atribuicoes': form!.controls.atribuicoes.value.map((x: LookupItem) => x.key)}]).then( resposta => {
+          let msg: string | undefined;
+          if(msg = resposta?.find(v => v.msg?.length)?.msg) { if(this.grid) this.grid.error = msg; };
+        });
         await this.loadData({}, this.form);
+        if(this.grid) this.grid!.error = "";
+      } catch (error: any) {
+        if(this.grid) this.grid.error = error;
+        await this.loadData({}, this.form);
+        //this.cdRef.detectChanges();
       } finally {
         this.loading = false;
       }
     }
     return undefined;
+  }
+
+/*   public editEndIntegrante(){
+    if(this.grid) this.grid!.error = "";
+  } */
+
+  public alterandoGestor(form: FormGroup): string[] {
+    let result: string[] = [];
+    ['GESTOR','GESTOR_DELEGADO','GESTOR_SUBSTITUTO'].forEach(g => { if(form!.controls.atribuicoes.value.map((a: { key: string; }) => a.key).includes(g) && this.items.find( i => i.atribuicoes.includes(g) )) result.push(this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, g)); });
+    return result;
   }
 
 }

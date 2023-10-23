@@ -83,11 +83,8 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if (["unidade_id"].includes(controlName) && !control.value?.length) {
+    if (["unidade_id", "atribuicoes"].includes(controlName) && !control.value?.length) {
       result = "Obrigatório";
-    }
-    if (controlName == "atribuicoes" && !control.value?.length) {
-      result = "Obrigatório ao menos uma atribuição!";
     }
     return result;
   }
@@ -150,7 +147,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     if (confirm) {
       this.loading = true;
       try {
-        if(!this.isNoPersist) this.integranteDao.saveIntegrante([{'unidade_id': row.id, 'usuario_id': this.usuario!.id, 'atribuicoes': []}]);
+        if(!this.isNoPersist) await this.integranteDao.saveIntegrante([{'unidade_id': row.id, 'usuario_id': this.usuario!.id, 'atribuicoes': []}]).then();;
         //await this.loadData({}, this.form);
       } finally {
         this.loading = false;
