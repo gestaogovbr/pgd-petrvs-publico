@@ -9,6 +9,7 @@ use App\Models\Unidade;
 use App\Models\TipoAtividade;
 use App\Models\Comentario;
 use App\Models\Documento;
+use App\Models\Reacao;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 

@@ -1,0 +1,37 @@
+<div class="d-flex align-items-center justify-content-start mt-2">
+  <div class="wrapper" (mouseenter)="toggleShow(true)" (mouseleave)="toggleShow(false)">
+    <div class="emojis d-flex" *ngIf="showEmojis">
+
+      <span *ngFor="let emoji of emojiList; index as i;" title="{{emoji.hint}}">
+        <img [src]="emojiPath(emoji.icon!)" width='75px' (click)="react(emoji)">
+      </span>
+
+    </div>
+
+    <span class="btn-reacao" (click)="react(emojiList[0])" *ngIf="reacaoUsuario == null">
+      <i class="bi bi-hand-thumbs-up me-2"></i> <label>Curtir</label>
+    </span>
+
+    <span *ngIf="reacaoUsuario != null" class="btn-reacao">
+      <img [src]="emojiPath(getIconReacao()?.icon!)" width='75px'> <strong class="me-2">{{getIconReacao()?.value}}</strong>
+    </span>
+  </div>
+
+  <div class="reactions">    
+    <div class="d-flex align-items-center">
+      <ng-container *ngFor="let tipoReacao of reacoesPorTipo">
+        <div class="tipoReacao">
+          <img [src]="emojiPath(tipoReacao.tipo)">
+          <div class="participantes rounded shadow">
+            <h5>{{lookup.getValue(lookup.REACAO_TIPO, tipoReacao.tipo)}}</h5>
+            <small *ngFor="let reacao of tipoReacao.reacoes" class="d-block">
+                {{reacao.usuario?.nome}}
+            </small>
+          </div>
+        </div>
+      </ng-container>
+     
+      <div class="total ms-2 flex-grow-1" *ngIf="reacoes.length">{{reacoes.length}}</div>
+    </div>
+  </div>
+</div>
