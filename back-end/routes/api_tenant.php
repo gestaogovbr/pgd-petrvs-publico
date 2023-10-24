@@ -75,6 +75,7 @@ use App\Http\Controllers\HistoricoFuncaoCurriculumController;
 use App\Http\Controllers\HistoricoLotacaoCurriculumController;
 use App\Http\Controllers\PlanoTrabalhoConsolidacaoOcorrenciaController;
 use App\Http\Controllers\ComparecimentoController;
+use App\Http\Controllers\BatchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -160,6 +161,9 @@ Route::middleware(['auth:sanctum'])->prefix('Integracao')->group(function () {
 Route::get('/teste', function (Request $request) { return ["OK"]; });
 Route::middleware('auth:sanctum')->post('/Teste/calculaDataTempoUnidade', [UsuarioController::class, 'calculaDataTempoUnidade']);
 //Route::middleware(['auth:sanctum', 'can:ADMINISTRADOR'])->get('/teste', function (Request $request) { return ["OK"]; });
+
+/* Batch */
+Route::middleware(['auth:sanctum'])->post('batch', [BatchController::class, 'run']);
 
 /* Modulos: Cadastros */
 Route::middleware(['auth:sanctum'])->prefix('Afastamento')->group(function () { defaultRoutes(AfastamentoController::class); });
