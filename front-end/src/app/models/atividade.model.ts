@@ -12,6 +12,7 @@ import { Documento } from './documento.model';
 import { AtividadePausa } from './atividade-pausa.model';
 import { HasStatus, StatusJustificativa } from './status-justificativa.model';
 import { PlanoTrabalhoConsolidacao } from './plano-trabalho-consolidacao.model';
+import { HasReacoes, Reacao } from './reacao';
 
 export type AtividadeStatus = "INCLUIDO" | "INICIADO" | "PAUSADO" | "CONCLUIDO";
 
@@ -42,7 +43,7 @@ export type Checklist = {
     checked: boolean
 }
 
-export class Atividade extends Base implements HasComentarios, HasStatus {
+export class Atividade extends Base implements HasComentarios, HasStatus, HasReacoes {
     public plano_trabalho?: PlanoTrabalho;
     public plano_trabalho_entrega?: PlanoTrabalhoEntrega;
     public plano_trabalho_consolidacao?: PlanoTrabalhoConsolidacao;
@@ -84,6 +85,7 @@ export class Atividade extends Base implements HasComentarios, HasStatus {
     public unidade_id: string = "";
     public documento_requisicao_id: string | null = null;
     public documento_entrega_id: string | null = null;
+    public reacoes: Reacao[] = []; /* Reações da atividade */
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

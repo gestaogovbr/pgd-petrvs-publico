@@ -417,7 +417,7 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
         default: new Date()
       }
     }, this.cdRef, this.filterValidate);
-    this.join = ["unidade.entidade", "unidade.gestor.usuario:id", "usuario", "programa.template_tcr", "documento.assinaturas.usuario:id,nome,url_foto", "tipo_modalidade", "entregas.plano_entrega_entrega.entrega", "entregas.plano_entrega_entrega.plano_entrega:id,unidade_id", "entregas.plano_entrega_entrega.plano_entrega.unidade", "entregas.entrega"];
+    this.join = ["unidade.entidade", "unidade.gestor.usuario:id", "usuario", "programa.template_tcr", "documento.assinaturas.usuario:id,nome,url_foto", "tipo_modalidade", "entregas.plano_entrega_entrega.entrega", "entregas.plano_entrega_entrega.plano_entrega:id,unidade_id", "entregas.plano_entrega_entrega.plano_entrega.unidade", "entregas.entrega", "entregas.reacoes.usuario:id,nome,apelido"];
     this.groupBy = [{
       field: "unidade.sigla",
       label: "Unidade"

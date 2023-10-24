@@ -22,6 +22,7 @@
                     <badge *ngIf="row.unidade" color="light" [icon]="entityService.getIcon('Unidade')" [label]="row.unidade.sigla"></badge>
                     <badge *ngIf="row.destinatario?.length" color="light" icon="bi bi-mailbox" [label]="row.destinatario"></badge>
                 </span>
+                <reaction [entity]="row" origem="PLANO_ENTREGA_ENTREGA"></reaction>
             </ng-template>
         </column>
         <column [title]="'Etiquetas'" [width]="100" [template]="columnEtiquetas" [editTemplate]="columnEtiquetas" [columnEditTemplate]="selectable ? undefined : columnEtiquetasEdit" [edit]="selectable ? undefined : onColumnEtiquetasEdit.bind(this)" [save]="selectable ? undefined : onColumnEtiquetasSave.bind(this)">

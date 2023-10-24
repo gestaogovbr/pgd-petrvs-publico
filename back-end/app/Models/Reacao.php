@@ -14,8 +14,8 @@ class Reacao extends ModelBase
    
     protected $with = [];
 
-    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'tipo', /* enum('COMENTARIO','TECNICO','GERENCIAL','AVALIACAO','TAREFA','ATIVIDADE'); NOT NULL; DEFAULT: 'COMENTARIO'; */// Tipo do comentário
+    public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// 
+        'tipo', /* enum('like' | 'love' | 'care' | 'haha' | 'wow' | 'sad' | 'angry'); NOT NULL; DEFAULT: 'like'; */// Tipo da reação
         'usuario_id', /* char(36); NOT NULL; */
         'atividade_id', /* char(36); */
         'plano_trabalho_entrega_id', /* char(36); */

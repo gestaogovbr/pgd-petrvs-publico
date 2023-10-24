@@ -89,7 +89,8 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
       "entregas.plano_entrega_entrega.entrega",
       "entregas.plano_entrega_entrega.plano_entrega:id,unidade_id",
       "entregas.plano_entrega_entrega.plano_entrega.unidade",
-      "entregas.entrega"
+      "entregas.entrega",
+      "entregas.reacoes.usuario:id,nome,apelido"
     ];
     this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }];
     this.BOTAO_ALTERAR = { label: "Alterar", icon: "bi bi-pencil-square", color: "btn-outline-info", onClick: this.edit.bind(this) };

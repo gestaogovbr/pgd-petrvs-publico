@@ -19,7 +19,7 @@ import { CurriculumProfissionalDaoService } from 'src/app/dao/curriculum-profiss
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
 import { NavigateResult } from 'src/app/services/navigate.service';
-import { UnidadesService } from 'src/app/services/unidades.service';
+import { UnidadeService } from 'src/app/services/unidade.service';
 import { Funcao } from 'src/app/models/funcao.model';
 import { CurriculumDaoService } from 'src/app/dao/curriculum-dao.service';
 import { CargoDaoService } from 'src/app/dao/cargo-dao.service';
@@ -68,7 +68,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   public ctDao: CentroTreinamentoDaoService;
   public grupoDao: GrupoEspecializadoDaoService;
   public cargoDao: CargoDaoService;
-  public unidadeService: UnidadesService;
+  public unidadeService: UnidadeService;
   public lookupService: LookupService;
   public unidadesArray?:any;
   
@@ -82,7 +82,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     this.grupoDao = injector.get<GrupoEspecializadoDaoService>(GrupoEspecializadoDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.cargoDao = injector.get<CargoDaoService>(CargoDaoService);
-    this.unidadeService = injector.get<UnidadesService>(UnidadesService);
+    this.unidadeService = injector.get<UnidadeService>(UnidadeService);
     this.lookupService = injector.get<LookupService>(LookupService);
     this.form = this.fh.FormBuilder({
       radioDocenciaFora: { default: false },

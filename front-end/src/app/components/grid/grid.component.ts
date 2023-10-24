@@ -217,6 +217,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   public metadatas: IIndexable = {};
   public set error(error: string | undefined) {
     this._error = error;
+    //this.detectChanges();
   }
   public get error(): string | undefined {
     return this._error;
