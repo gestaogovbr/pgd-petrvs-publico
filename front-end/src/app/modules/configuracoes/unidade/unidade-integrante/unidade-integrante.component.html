@@ -1,11 +1,9 @@
 <grid [items]="items" [minHeight]="500" [form]="form!" [hasDelete]="true"
     [add]="addIntegrante.bind(this)" [load]="loadIntegrante.bind(this)" [remove]="removeIntegrante.bind(this)" [save]="saveIntegrante.bind(this)" 
-    editable [hasAdd]="auth.hasPermissionTo('MOD_PRGT_PART_INCL')"
-    [hasEdit]="auth.hasPermissionTo('MOD_PRGT_PART_EDT')"
-    [hasDelete]="auth.hasPermissionTo('MOD_PRGT_PART_EXCL')">
+    editable>
     <span *ngIf="!isNoPersist"><strong>{{ entity?.nome }}</strong></span>
     <columns>
-        <column [title]="lex.translate('Usuário')" [template]="columnUsuario" [editTemplate]="editUsuario">
+        <column [title]="lex.translate('Usuários')" [template]="columnUsuario" [editTemplate]="editUsuario">
             <ng-template let-row="row" #columnUsuario>
                 <div class="d-flex">
                     <div class="ms-3">
