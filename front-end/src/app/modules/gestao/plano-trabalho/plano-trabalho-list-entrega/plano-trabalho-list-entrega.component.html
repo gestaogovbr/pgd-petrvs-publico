@@ -36,10 +36,10 @@
                 </div>
             </ng-template>
         </column>
-        <column [titleTemplate]="titleForcaTrabalho" [template]="columnForcaTrabalho" [editTemplate]="editForcaTrabalho" [width]="125" [align]="'center'">
+        <column [titleTemplate]="titleForcaTrabalho" [title]="'% CHD'" [template]="columnForcaTrabalho" [editTemplate]="editForcaTrabalho" [width]="125" [align]="'center'" [titleHint]="'% Carga Horária Disponível'">
             <ng-template let-header="header" #titleForcaTrabalho>
                 <div class="text-center">
-                    <small><strong>% Força Trab.</strong></small><br>
+                    <!--<small><strong>% CHD</strong></small><br>-->
                     <small><badge icon="bi bi-calculator" [color]="totalForcaTrabalho == 100 ? 'success' : 'warning'" [label]="totalForcaTrabalho + '%'"></badge></small>
                 </div>
             </ng-template>
