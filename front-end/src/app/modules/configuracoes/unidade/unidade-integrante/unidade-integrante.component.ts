@@ -63,7 +63,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     this.grid!.loading = true;
     try {
       let result = await this.integranteDao!.loadIntegrantes(this.entity!.id, "");
-      this.items = result.integrantes.filter(x => x.atribuicoes.length > 0);
+      this.items = this.unidadeIntegranteService.ordenar(result.integrantes.filter(x => x.atribuicoes.length > 0));
       this.unidade = result.unidade;
     } finally {
       this.grid!.loading = false;
@@ -144,6 +144,15 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
       return false;
     }
   }
+
+  /**
+   * Garante que não será possível excluir a lotação de um servidor por este caminho
+   * @param row Atribuição do servidor na unidade
+   * @returns 
+   */
+  public deleteItemHandle(row: LookupItem): boolean | undefined | void {
+    return row.key != "LOTADO";
+  };
 
   /**
    * Método chamado no salvamento de um integrante da unidade, seja este componente persistente ou não.

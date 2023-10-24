@@ -66,7 +66,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     this.grid!.loading = true;
     try {
       let result = await this.integranteDao!.loadIntegrantes("", this.entity!.id);
-      this.items = result.integrantes.filter(x => x.atribuicoes.length > 0);
+      this.items = this.unidadeIntegranteService.ordenar(result.integrantes.filter(x => x.atribuicoes.length > 0));
       this.usuario = result.usuario;
     } finally {
       this.grid!.loading = false;

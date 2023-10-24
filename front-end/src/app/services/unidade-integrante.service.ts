@@ -29,4 +29,13 @@ export class UnidadeIntegranteService {
     ['GESTOR', 'GESTOR_DELEGADO', 'GESTOR_SUBSTITUTO'].forEach(g => { if (form!.controls.atribuicoes.value.map((a: { key: string; }) => a.key).includes(g) && items.find(i => i.atribuicoes.includes(g))) result.push(this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, g)); });
     return result;
   }
+
+  public ordenar(items: IntegranteConsolidado[]){
+    items.sort((a, b) => {
+      let x = (a.usuario_nome || a.unidade_nome)?.toLowerCase();
+      let y = (b.usuario_nome || b.unidade_nome)?.toLowerCase();
+      return x! < y! ? -1 : (x! > y! ? 1 : 0)
+    });
+    return items;
+  }
 }
