@@ -1,1 +1,94 @@
-<p>questionario-pergunta-form works!</p>
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+    <div class="row mt-3">
+        <input-text [size]="4" label="Nome do Questionário" icon="bi bi-pen" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250></input-text>
+        <input-text [size]="4" label="Código do Questionário" icon="bi bi-pen" controlName="codigo" [control]="form!.controls.codigo" [attr.maxlength]=250></input-text>
+        <input-select [size]="4" label="Tipo do Questionário" icon="bi bi-pen" controlName="tipo" [control]="form!.controls.tipo" [items]="tipoQuestionario"></input-select>
+    </div>
+    <separator>
+        <b>Exemplo dos tipos de respostas:</b>
+    </separator>
+    <div class="table-opcoes d-grid">
+        <table class="table table-responsive table-hover table-sm" name="tableOpcoes" id="tableOpcoes">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Lista</th>
+                    <th scope="col">Única escolha</th>
+                    <th scope="col">Múltipla escolha</th>
+                    <th scope="col">Sim ou Não</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td scope="row"><input-select [size]="4" label="Opções" icon="bi bi-pen" controlName="listaExemplo" [items]="exemploLista"></input-select></td>
+                    <!--<td scope="row"><input-radio #radioExemplo [size]="4" label="Opções" icon="bi bi-pen" controlName="radioExemplo" [items]="exemploRadio"></input-radio></td>-->
+                    <td scope="row">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked>
+                            <label class="form-check-label" for="flexRadioDefault1">
+                              Opção 1
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
+                            <label class="form-check-label" for="flexRadioDefault2">
+                              Opção 2
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault3">
+                            <label class="form-check-label" for="flexRadioDefault3">
+                              Opção 3
+                            </label>
+                          </div>
+                    </td>
+                    <td scope="row">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="defaultCheck1" name="checkbox">
+                            <label class="form-check-label" for="defaultCheck1">
+                              Opção 1
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" name="checkbox">
+                            <label class="form-check-label" for="defaultCheck2">
+                              Opção 2
+                            </label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="defaultCheck2" name="checkbox">
+                            <label class="form-check-label" for="defaultCheck2">
+                              Opção 3
+                            </label>
+                          </div>
+                        
+                    </td>
+                    <td scope="row"><input-switch #switchExemplo [size]="2" [label]="switchExemplo.value ? 'Sim' : 'Não'" icon="fas fa-chalkboard" controllName="switchExemplo" [control]="form!.controls.switchExemplo"></input-switch></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <b>Perguntas:</b>
+
+    <div class="table-perguntas d-grid">
+        <table class="table table-responsive table-hover" name="tablePerguntas" id="tablePerguntas">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Pergunta</th>
+                    <th scope="col">Tipo de resposta</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr id="trID">
+                    <td scope="row"><input-text [size]="4" label="Pergunta" icon="bi bi-pen" controlName="pergunta" [control]="form!.controls.pergunta" [attr.maxlength]=250></input-text></td>
+                    <td scope="row" id="tdID"><input-select #listaExemplo [size]="4" label="Opções" icon="bi bi-pen" controlName="listaExemplo" [items]="tipoPergunta" (change)="onEscolheTipoPerguntaChange()" id="listaExemplo"></input-select></td>
+                    <!--<td scope="row"><input-radio #radioExemplo [size]="4" label="Opções" icon="bi bi-pen" controlName="radioExemplo" [items]="exemploRadio"></input-radio></td>-->
+                   
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+
+</editable-form>
