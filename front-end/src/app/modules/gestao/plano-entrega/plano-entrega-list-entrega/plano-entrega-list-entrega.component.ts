@@ -251,12 +251,12 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     this.go.navigate({ route: ['logs', 'change', entrega.id, 'consult'] })
   }
 
-  public async showPlanejamento(planejamento_id: string){
-    this.go.navigate({ route: ['gestao', 'planejamento', planejamento_id, 'consult'] }, {modal: true})
+  public async showPlanejamento(objetivo_id: string){
+    this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', 'objetivos', objetivo_id]}, { modal: true });
   }
 
-  public async showCadeiaValor(cadeia_valor_id_id: string){
-    this.go.navigate({ route: ['gestao', 'cadeia-valor', cadeia_valor_id_id, 'consult'] }, {modal: true})
+  public async showCadeiaValor(processo_id: string){
+    this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', 'processos', processo_id]}, {modal: true});
   }
 
   public refreshComentarios(modalResult: any) {
