@@ -1054,7 +1054,7 @@ class IN24_2023Seeder extends Seeder
                 "updated_at" => $this->timenow,
                 "deleted_at" => NULL,
                 "nome" => "PGD",
-                "normativa" => "Portaria XXX XXX XXX XXX",
+                "normativa" => "IN CONJUNTA SEGES-SGPRT/MGI Nº 24, DE 28 DE JULHO DE 2023",
                 "prazo_max_plano_entrega" => 365,
                 "termo_obrigatorio" => 1,
                 "config" => NULL,
@@ -1070,13 +1070,9 @@ class IN24_2023Seeder extends Seeder
                 "dias_tolerancia_recurso_avaliacao" => 20,
                 "nota_padrao_avaliacao" => "\"Não executado\"",
 
-                "checklist_avaliacao_entregas_plano_entrega" => "[{\"key\": \"20cb2ee8f0219f5a33affa3483cf2abf\",
-                    \"value\": \"Qualidade alcançada\"},
-                    {\"key\": \"8fa40c653a88110a441b0b260da8b276\", \"value\": \"Meta atingida\"},
-                    {\"key\": \"57934ac92710600bda11fd3775a2f22e\", \"value\": \"Prazo cumprido\"}]",
+                "checklist_avaliacao_entregas_plano_entrega" => "[]",
 
-                "checklist_avaliacao_entregas_plano_trabalho" => "[{\"key\": \"871cccdcafcd2f903bb8cbc5d4e32f23\",
-                    \"value\": \"Contribuiu para a entrega\"}]",
+                "checklist_avaliacao_entregas_plano_trabalho" => "[]",
 
                 "registra_comparecimento" => 1,
                 "plano_trabalho_assinatura_participante" => 1,
