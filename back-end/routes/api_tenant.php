@@ -77,6 +77,7 @@ use App\Http\Controllers\HistoricoFuncaoCurriculumController;
 use App\Http\Controllers\HistoricoLotacaoCurriculumController;
 use App\Http\Controllers\PlanoTrabalhoConsolidacaoOcorrenciaController;
 use App\Http\Controllers\ComparecimentoController;
+use App\Http\Controllers\ReacaoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -338,3 +339,5 @@ Route::middleware(['auth:sanctum'])->prefix('HistoricoDocenciaExternaCurriculumP
 Route::middleware(['auth:sanctum'])->prefix('HistoricoDocenciaInternaCurriculumProfissional')->group(function () { defaultRoutes(HistoricoDocenciaInternaCurriculumController::class); });
 Route::middleware(['auth:sanctum'])->prefix('HistoricoFuncaoCurriculumProfissional')->group(function () { defaultRoutes(HistoricoFuncaoCurriculumController::class); });
 Route::middleware(['auth:sanctum'])->prefix('HistoricoLotacaoCurriculumProfissional')->group(function () { defaultRoutes(HistoricoLotacaoCurriculumController::class); });
+
+Route::middleware(['auth:sanctum'])->prefix('Reacao')->group(function () { defaultRoutes(ReacaoController::class); });
