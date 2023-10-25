@@ -16,11 +16,12 @@ import { LookupItem } from 'src/app/services/lookup.service';
 export class QuestionarioPerguntaFormComponent extends PageFormBase<QuestionarioPergunta, QuestionarioPerguntaDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('listaExemplo', { static: false }) public listaExemplo?: InputSelectComponent;
+  @ViewChild('listaTipoResposta', { static: false }) public listaTipoResposta?: InputSelectComponent;
 
   public tipoQuestionario: LookupItem[] = [{ 'key': 'Interno', 'value': 'Interno' },{ 'key': 'Personalizado', 'value': 'Personalizado' }];
   public exemploLista: LookupItem[] = [{ 'key': '1', 'value': 'Exemplo 1' },{ 'key': '2', 'value': 'Exemplo 2' },{ 'key': '3', 'value': 'Exemplo 3' }];
   public exemploRadio: LookupItem[] = [{ 'key': '1', 'value': 'Exemplo 1' },{ 'key': '2', 'value': 'Exemplo 2' },{ 'key': '3', 'value': 'Exemplo 3' }];
-  public tipoPergunta: LookupItem[] = [{ 'key': 'LISTA', 'value': 'Lista' },{ 'key': 'SWICTH', 'value': 'Sim/Não' },{ 'key': 'MULTIPLA', 'value': 'Resposta Múltipla' },{ 'key': 'UNICA', 'value': 'Resposta Única' }];
+  public tipoPergunta: LookupItem[] = [{ 'key': 'LISTA', 'value': 'Lista' },{ 'key': 'SWITCH', 'value': 'Sim/Não' },{ 'key': 'MULTIPLA', 'value': 'Resposta Múltipla' },{ 'key': 'UNICA', 'value': 'Resposta Única' }];
 
   constructor(public injector: Injector) {
     super(injector, QuestionarioPergunta, QuestionarioPerguntaDaoService);
@@ -31,6 +32,11 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
       perguntas: {default: ""},
       pergunta: {default: ""},
       switchExemplo: {default: false},
+      multiPerguntas: { default: [] },
+      multiOpcaoResposta: { default: [] },
+      inputPergunta: {default: ""},
+      listaTipoResposta: {default: ""},
+      inputOpcoesResposta: {default: ""},
            
     }, this.cdRef, this.validate);
   }
@@ -40,6 +46,10 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
     let result = null;
 
     if(['nome'].indexOf(controlName) >= 0 && !control.value?.length) {
+      result = "Obrigatório";
+    }
+
+    if(['inputPergunta'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
 
@@ -77,6 +87,78 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
       //select.innerHTML += '<input-text [size]="4" label="Opção de resposta" icon="bi bi-pen" controlName="opres" [control]="form!.controls.opres" [attr.maxlength]=250></input-text>';
           select.innerHTML +=teste;
     }
+  }
+
+  public addMultiPerguntas(){
+
+    let result = undefined;
+    const pergunta = this.form?.controls.inputPergunta.value;
+    const tipoResposta = this.listaTipoResposta?.selectedItem;
+    const key = this.util.textHash(pergunta);
+    
+    if (pergunta && tipoResposta?.value && this.form?.controls.multiOpcaoResposta.value && this.util.validateLookupItem(this.form!.controls.multiPerguntas.value,key)) {
+      let opcoesResposta = this.form?.controls.multiOpcaoResposta.value;
+      let opcoesTexto =""
+      let index=opcoesResposta.length;
+    
+    if(tipoResposta.key != 'SWITCH'){
+        opcoesResposta.forEach((element: { value: any; }) => {
+              if(index==1){
+                opcoesTexto += (element.value)
+              }else{
+                opcoesTexto += (element.value) + ' - '; 
+              }
+              index--;  
+        });
+        console.log('opcoesTexto',opcoesTexto)
+        result = {
+          key: key,
+          value: 'Pergunta: ' + pergunta + ' - Tipo de Resposta: ' + tipoResposta.value + ' - Opções da resposta: ' + opcoesTexto,
+          data: {
+            tipo: tipoResposta.key,
+            opcaoResposta: opcoesResposta,
+            _status: "ADD",
+          }
+        };
+    }else{
+        result = {
+          key: key,
+          value: 'Pergunta: ' + pergunta + ' - Tipo de Resposta: ' + tipoResposta.value + ' - Opções da resposta: ' +  tipoResposta.value,
+          data: {
+            tipo: tipoResposta.key,
+            opcaoResposta: 'UNICA',
+            _status: "ADD",
+          }
+        };
+    }
+      this.form!.controls.inputPergunta.setValue("");
+      this.form!.controls.listaTipoResposta.setValue("");
+      this.form!.controls.inputOpcoesResposta.setValue("");
+      this.form!.controls.multiOpcaoResposta.setValue([]);
+    }
+    return result;
+
+  }
+
+  public addMultiRespostas(){
+    let result = undefined;
+    
+    const opcaoResposta = this.form?.controls.inputOpcoesResposta.value;
+    const key = this.util.textHash(opcaoResposta);
+    
+    if (opcaoResposta && this.form?.controls.inputPergunta.value && this.listaTipoResposta?.selectedItem?.value && this.util.validateLookupItem(this.form!.controls.multiOpcaoResposta.value,key)) {
+      result = {
+        key: key,
+        value: opcaoResposta,
+        data: {
+           _status: "ADD",
+        }
+      };
+      this.form!.controls.inputOpcoesResposta.setValue("");
+      
+    }
+    return result;
+    
   }
 }
 

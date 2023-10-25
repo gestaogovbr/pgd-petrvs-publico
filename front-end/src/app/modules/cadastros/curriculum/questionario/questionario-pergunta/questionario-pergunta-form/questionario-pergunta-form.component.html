@@ -70,25 +70,33 @@
     
     <b>Perguntas:</b>
 
-    <div class="table-perguntas d-grid">
-        <table class="table table-responsive table-hover" name="tablePerguntas" id="tablePerguntas">
-            <thead class="thead-light">
-                <tr>
-                    <th scope="col">Pergunta</th>
-                    <th scope="col">Tipo de resposta</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr id="trID">
-                    <td scope="row"><input-text [size]="4" label="Pergunta" icon="bi bi-pen" controlName="pergunta" [control]="form!.controls.pergunta" [attr.maxlength]=250></input-text></td>
-                    <td scope="row" id="tdID"><input-select #listaExemplo [size]="4" label="Opções" icon="bi bi-pen" controlName="listaExemplo" [items]="tipoPergunta" (change)="onEscolheTipoPerguntaChange()" id="listaExemplo"></input-select></td>
-                    <!--<td scope="row"><input-radio #radioExemplo [size]="4" label="Opções" icon="bi bi-pen" controlName="radioExemplo" [items]="exemploRadio"></input-radio></td>-->
-                   
-                </tr>
-            </tbody>
-        </table>
-    </div>
+   
 
+    <input-multiselect [size]="12" label="" [control]="form!.controls.multiPerguntas" controlName="multiPerguntas" [addItemHandle]="addMultiPerguntas.bind(this)" noBox>
+            <input-text #inputPergunta [size]="4" label="Pergunta" icon="bi bi-pencil-fill" controlName="inputPergunta" [control]="form!.controls.inputPergunta" [attr.maxlength]=250></input-text>
+            <input-select #listaTipoResposta [size]="3" label="Tipo de resposta" icon="bi bi-pen" controlName="listaTipoResposta" [control]="form!.controls.listaTipoResposta" [items]="tipoPergunta"></input-select>
+            <input-multiselect [hidden]="this.listaTipoResposta?.selectedItem?.key == ('SWITCH' || '' || null)" [size]="5" label="" [control]="form!.controls.multiOpcaoResposta" controlName="multiOpcaoResposta" [addItemHandle]="addMultiRespostas.bind(this)" noBox>
+                <input-text #opcoesResposta [size]="12" label="Opções da resposta" icon="bi bi-pencil-fill" controlName="inputOpcoesResposta" [control]="form!.controls.inputOpcoesResposta" [attr.maxlength]=250></input-text>
+            </input-multiselect>
+    </input-multiselect>
 
+    <!--<div class="table-perguntas d-grid">
+      <table class="table table-responsive table-hover" name="tablePerguntas" id="tablePerguntas">
+          <thead class="thead-light">
+              <tr>
+                  <th scope="col">Pergunta</th>
+                  <th scope="col">Tipo de resposta</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr id="trID">
+                  <td scope="row"><input-text [size]="4" label="Pergunta" icon="bi bi-pen" controlName="pergunta" [control]="form!.controls.pergunta" [attr.maxlength]=250></input-text></td>
+                  <td scope="row" id="tdID"><input-select #listaExemplo [size]="4" label="Opções" icon="bi bi-pen" controlName="listaExemplo" [items]="tipoPergunta" (change)="onEscolheTipoPerguntaChange()" id="listaExemplo"></input-select></td>
+                  <td scope="row"><input-radio #radioExemplo [size]="4" label="Opções" icon="bi bi-pen" controlName="radioExemplo" [items]="exemploRadio"></input-radio></td>
+                 
+              </tr>
+          </tbody>
+      </table>
+  </div>-->
 
 </editable-form>
