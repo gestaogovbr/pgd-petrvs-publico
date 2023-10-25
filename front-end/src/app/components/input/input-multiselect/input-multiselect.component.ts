@@ -1,4 +1,4 @@
-import { Component, HostBinding, Injector, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Injector, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, ControlContainer, FormGroup, FormGroupDirective } from '@angular/forms';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { InputBase, LabelPosition, MultiselectStyle } from '../input-base';
@@ -55,6 +55,7 @@ export class InputMultiselectComponent extends InputBase implements OnInit {
     this.control?.setValue(value);
     this.detectChanges();
   }
+  //@Output() change = new EventEmitter<Event>();
   get items(): LookupItem[] {
     return this.control?.value || this._items || [];
   }
@@ -97,7 +98,7 @@ export class InputMultiselectComponent extends InputBase implements OnInit {
     let canDelete = !this.deleteItemHandle || this.deleteItemHandle(item);
     if(canDelete) this.items.splice(this.items.findIndex(x => x.key == item.key), 1);
     this.cdRef.detectChanges();
-    if(this.change && (canDelete || before != item.data?._status)) this.change();
+    if(this.change && (canDelete || before != item.data?._status)) this.change();   
   }
 
   public get isNoForm(): boolean {

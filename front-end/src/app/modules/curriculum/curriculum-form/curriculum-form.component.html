@@ -28,9 +28,9 @@
         <input-select [size]="5" label="Estado Civil" icon="fas fa-ring" controlName="estado_civil"
             [control]="form!.controls.estado_civil" [items]="this.lookup.ESTADO_CIVIL">
         </input-select>
-        <input-switch [size]="3" label="Possui Filhos?" icon="fas fa-child" controlName="filhos"
-            [control]="form!.controls.filhos" labelInfo="Possui Filhos?"></input-switch>
-        <input-number [hidden]="form!.controls.filhos.value ? undefined : 'true'" [size]="4" label="Quantos?"
+        <input-switch [size]="2" label="Possui Filhos?" icon="fas fa-child" controlName="filhos"
+            [control]="form!.controls.filhos" ></input-switch>
+        <input-number [hidden]="form!.controls.filhos.value ? undefined : 'true'" [size]="1" label="Quantos?"
             icon="bi bi-arrow-up-right-circle" controlName="quantidade_filhos"
             [control]="form!.controls.quantidade_filhos" [minValue]="0"></input-number>
     </div>
@@ -46,8 +46,8 @@
         <input-switch [size]="2" label="Fala outros idiomas?" icon="fas fa-language" controlName="radioFalaIdioma"
             [control]="form!.controls.radioFalaIdioma">
         </input-switch>
-        <input-multiselect *ngIf="form!.controls.radioFalaIdioma.value" controlName="idiomasM" [size]="10"
-            [control]="form!.controls.idiomasM" [addItemHandle]="addItemIdioma.bind(this)" noBox>
+        <input-multiselect #idiomasM *ngIf="form!.controls.radioFalaIdioma.value" controlName="idiomasM" [size]="10"
+            [control]="form!.controls.idiomasM" [addItemHandle]="addItemIdioma.bind(this)" (change)="onIdiomaChange()" noBox>
 
             <input-select [size]="3" label="Idioma" icon="fas fa-sign-out-alt" controlName="idioma" liveSearch
                 [control]="form!.controls.idioma" [items]="this.lookup.IDIOMAS">
@@ -65,6 +65,26 @@
             </input-select>
 
         </input-multiselect>
+    </div>
+    <div *ngIf="dataTableIdioma.length != 0" class="table-idiomas d-grid">
+        <table class="table table-responsive table-striped table-hover table-sm offset-lg-2" name="tableIdiomas" id="tableIdiomas">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Idioma</th>
+                    <th scope="col">Nível de Fala</th>
+                    <th scope="col">Nível de Escrita</th>
+                    <th scope="col">Nível de Entendimento</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let idiomaNG of dataTableIdioma">
+                    <td scope="row">{{idiomaNG.idioma}}</td>
+                    <td scope="row">{{idiomaNG.escrever}}</td>
+                    <td scope="row">{{idiomaNG.falar}}</td>
+                    <td scope="row">{{idiomaNG.entender}}</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
     <div class="row mt-3 mb-5">

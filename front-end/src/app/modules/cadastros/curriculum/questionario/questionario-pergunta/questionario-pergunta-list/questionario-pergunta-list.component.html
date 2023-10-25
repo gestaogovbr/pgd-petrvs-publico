@@ -1,1 +1,20 @@
-<p>questionario-pergunta-list works!</p>
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+    [selectable]="selectable" (select)="onSelect($event)"  [hasAdd]="auth.hasPermissionTo('MOD_RX_VIS_DPE')" [hasEdit]="auth.hasPermissionTo('MOD_RX_VIS_DPE')">
+    <toolbar *ngIf="!selectable"></toolbar>
+    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-text [size]="3" label="Nome" controlName="nome" [attr.maxlength]=250 [control]="filter!.controls.nome" placeholder="Nome"></input-text>
+            <input-text [size]="3" label="Código" controlName="codigo" [attr.maxlength]=250 [control]="filter!.controls.codigo" placeholder="Código"></input-text>
+            <input-select [size]="3" label="Tipo" controlName="tipo" [control]="filter!.controls.tipo" placeholder="Tipo" [items]="tipoQuestionario"></input-select>
+        </div>
+    </filter>
+    <columns>
+        <column title="Nome" field="nome" orderBy="nome"></column>
+        <column title="Código" field="codigo"></column>
+        <column title="Tipo" field="tipo"></column>
+        <column title="Perguntas" field="perguntas"></column>
+        <column type="options" [onEdit]="edit" [options]="options"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>
+

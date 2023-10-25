@@ -96,11 +96,12 @@ export class MateriaFormComponent extends PageFormBase<Materia, MateriaDaoServic
   }
 
   public onTituloChange(){
-    //console.log(this.form!.controls.titulo.value)
+    console.log(this.form!.controls.titulo.value)
     //const titulo = this.lookup.TITULOS_CURSOS_INST.find(x => x.key == this.form!.controls.titulo.value);
     if(this.form!.controls.area_id.value && this.form!.controls.titulo.value){
         /*this.cursoDao?.query({ where: [['area_curso_id', '==', this.form!.controls.area_id.value],['titulo', '==', this.form!.controls.titulo.value]] }).getAll().then((cursos2) => {
           this.cursos = cursos2.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);*/
+          //this.form!.controls.curso_id.enable;
           this.cursoWhere =[['area_id', '==', this.form!.controls.area_id.value], ['titulo', '==', this.form!.controls.titulo.value]];
           this.cdRef.detectChanges();
        // });

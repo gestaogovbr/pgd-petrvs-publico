@@ -4,7 +4,7 @@
         <input-select [size]="3" label="Titulo" [items]="this.lookup.TITULOS_CURSOS_INST" controlName="titulo" (change)="onTituloChange()" required></input-select>
         <input-select [size]="5" label="Curso" icon="fas fa-user-graduate" controlName="curso_id" liveSearch
         [control]="form!.controls.curso_id" [dao]="cursoDao"  [where]="cursoWhere"
-         [addRoute]="{route: ['raiox','cadastros','gerais','curso','new']}" required></input-select>
+         [addRoute]="{route: ['raiox','cadastros','curso','new']}" required></input-select>
     </div>
     <div class="row">
         <input-text [size]="5" label="Nome da Matéria" controlName="nome" [attr.maxlength]=250 required></input-text>
