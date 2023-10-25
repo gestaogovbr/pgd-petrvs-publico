@@ -139,7 +139,7 @@ const _c4 = function () {
   return ["gestao/plano-trabalho/consolidacao"];
 };
 const _c5 = function () {
-  return ["gestao/plano-trabalho"];
+  return ["execucao/plano-entrega"];
 };
 class HomeExecucaoComponent {
   static #_ = this.ɵfac = function HomeExecucaoComponent_Factory(t) {
