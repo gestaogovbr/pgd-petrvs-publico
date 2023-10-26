@@ -23,16 +23,16 @@ class UnidadeSeeder extends Seeder
     }
 
     public function run()
-    {    
+    {
         $unidade_raiz = array(
           array(
             "id" => "4f705d83-5808-4240-8b92-39ca88139076",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => NULL,
-            "codigo" => "30802",
-            "sigla" => "PRF",
-            "nome" => "Polícia Rodoviária Federal",
+            "codigo" => "1",
+            "sigla" => "MGI",
+            "nome" => "Ministério da Gestão e Inovação em Serviços Públicos",
             "instituidora" => 1,
             "path" => NULL,
             "texto_complementar_plano" => NULL,

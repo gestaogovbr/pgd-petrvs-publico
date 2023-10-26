@@ -109,7 +109,7 @@ class UsuarioSeeder extends Seeder
             [
                 'email' => 'alexdiasprojetos@gmail.com',
                 'nome' => 'Alex Dias Ferreira',
-                'cpf' => '94577536153', 
+                'cpf' => '94577536153',
                 'apelido' => 'Alex',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
             ],
@@ -144,7 +144,7 @@ class UsuarioSeeder extends Seeder
         ];
 
         // Operação de inserção de usuários desenvolvedores
-        $unidade_pai_prf = Unidade::where('SIGLA', 'PRF')->first();
+        $unidade_pai = Unidade::where('SIGLA', 'MGI')->first();
 
         foreach($usuarios_desenvolvedores as $usuario)
         {
@@ -159,7 +159,7 @@ class UsuarioSeeder extends Seeder
             $user->save();
 
             $integrante = new UnidadeIntegrante([
-                'unidade_id' => $unidade_pai_prf->id,
+                'unidade_id' => $unidade_pai->id,
                 'usuario_id' => $user->id
             ]);
             $integrante->save();

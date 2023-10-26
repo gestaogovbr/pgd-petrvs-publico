@@ -30,14 +30,14 @@ class IN24_2023Seeder extends Seeder
 
     public $timenow;
     public $brasilia;
-    public $unidade_prf;
+    public $unidade_inicial;
 
     public function __construct(){
         $this->timenow = now();
         $this->brasilia = Cidade::where('codigo_ibge', '5300108')->sole();
 
         // Encontra unidade inicial (instituidora) para registro de programa
-        $this->unidade_prf = Unidade::where('codigo', '30802')->first();
+        $this->unidade_inicial = Unidade::where('codigo', '1')->first();
     }
 
     public function run(){
@@ -305,7 +305,7 @@ class IN24_2023Seeder extends Seeder
                 "pergunta" => "Do que você gostou?",
                 "aprova" => 0,
                 "justifica" => 0,
-                "icone" => "far fa-grin-stars",
+                "icone" => "bi bi-emoji-smile",
                 "cor" => "#198754",
                 "codigo" => "Excepcional",
                 "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390",
@@ -321,7 +321,7 @@ class IN24_2023Seeder extends Seeder
                 "pergunta" => "O que pode melhorar?",
                 "aprova" => 0,
                 "justifica" => 1,
-                "icone" => "far fa-grin-stars",
+                "icone" => "bi bi-emoji-smile",
                 "cor" => "#198754",
                 "codigo" => "Excepcional",
                 "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
@@ -1082,7 +1082,7 @@ class IN24_2023Seeder extends Seeder
                 "tipo_avaliacao_plano_trabalho_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
                 "tipo_avaliacao_plano_entrega_id" => "b0db190d-823d-4222-bc92-abff634f5390",
                 "tipo_justificativa_id" => "f2aef225-a391-4667-9c41-6bb537b18778",
-                "unidade_id" => $this->unidade_prf->id,
+                "unidade_id" => $this->unidade_inicial->id,
                 "template_tcr_id" => "ef1c106c-3534-46d2-9519-cc69d5cf9dad",
                 "tipo_documento_tcr_id" => "48bc6f30-a634-4a21-9717-6fe0dc0d4f2a",
                 "documento_id" => NULL,
