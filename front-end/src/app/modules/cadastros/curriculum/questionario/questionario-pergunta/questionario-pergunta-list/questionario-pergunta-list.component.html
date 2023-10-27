@@ -5,7 +5,7 @@
         <div class="row">
             <input-text [size]="3" label="Nome" controlName="nome" [attr.maxlength]=250 [control]="filter!.controls.nome" placeholder="Nome"></input-text>
             <input-text [size]="3" label="Código" controlName="codigo" [attr.maxlength]=250 [control]="filter!.controls.codigo" placeholder="Código"></input-text>
-            <input-select [size]="3" label="Tipo" controlName="tipo" [control]="filter!.controls.tipo" placeholder="Tipo" [items]="tipoQuestionario"></input-select>
+            <input-select [size]="3" label="Tipo do Questionário" controlName="tipo" [control]="filter!.controls.tipo" placeholder="Tipo" [items]="tipoQuestionario"></input-select>
         </div>
     </filter>
     <columns>
@@ -15,7 +15,16 @@
        <!--<column title="Perguntas" field="perguntas"></column>-->
         <column title="Perguntas" [template]="columnPerguntas">
             <ng-template let-row="row" #columnPerguntas>
-                <span *ngFor="let pergunta of row.perguntas; index as i">{{i + 1}} - {{pergunta.data.pergunta}} | &nbsp; </span>
+                <table>
+                    <tr *ngFor="let pergunta of row.perguntas; index as i">{{i + 1}} - {{pergunta.data.pergunta}}
+                        <td> - Tipo da resposta: {{pergunta.data.tipo.value}}</td>
+                    </tr>
+                </table>
+                <br>
+                <ul>
+                    <li *ngFor="let pergunta of row.perguntas; index as i">{{i + 1}} - {{pergunta.data.pergunta}}</li>
+                </ul>
+                <span *ngFor="let pergunta of row.perguntas; index as i">{{i + 1}} - {{pergunta.data.pergunta}} |&nbsp; </span>
                 <!--<span>{{JSON.stringify(row.perguntas)}}</span>-->
             </ng-template>
         </column>
