@@ -32,16 +32,14 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
       unidade_id: { default: "" },
       perfil_id: { default: null }
     });
+    this.addOption(this.OPTION_INFORMACOES, "MOD_USER");
+    this.addOption(this.OPTION_EXCLUIR, "MOD_USER_EXCL");
   }
 
   public dynamicOptions(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
-    // Testa se o usuário logado possui permissão para exibir dados do usuário do grid
-    if (this.auth.hasPermissionTo("MOD_USER")) result.push({ icon: "bi bi-info-circle", label: "Informações", onClick: this.consult.bind(this) });
     // Testa se o usuário logado possui permissão para gerenciar as atribuições do usuário do grid
     if (this.auth.hasPermissionTo("MOD_USER_ATRIB")) result.push({ icon: "bi bi-list-task", label: "Atribuições", onClick: (usuario: Usuario) => { this.go.navigate({ route: ['configuracoes', 'usuario', '', usuario.id, 'integrante'] }, { metadata: { entity: row } }); }});
-    // Testa se o usuário logado possui permissão para excluir o usuário do grid
-    if (this.auth.hasPermissionTo("MOD_USER_EXCL")) result.push({ icon: "bi bi-trash", label: "Excluir", onClick: this.delete.bind(this) });
     return result;
   }
 

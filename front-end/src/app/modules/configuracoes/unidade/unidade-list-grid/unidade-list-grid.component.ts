@@ -50,6 +50,8 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
         onClick: (unidade: Unidade) => this.go.navigate({ route: ['configuracoes', 'unidade', 'merge'] }, this.modalRefresh())
       });
     }
+    this.addOption(this.OPTION_INFORMACOES, "MOD_UND");
+    this.addOption(this.OPTION_EXCLUIR, "MOD_UND_EXCL");
   }
 
   ngOnInit(): void {
@@ -60,14 +62,10 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
   public dynamicOptions(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let unidade: Unidade = row as Unidade;
-    // Testa se o usuário logado possui permissão para exibir dados da unidade do grid
-    if (this.auth.hasPermissionTo("MOD_UND")) result.push({ icon: "bi bi-info-circle", label: "Informações", onClick: this.consult.bind(this) });
     // Testa se o usuário logado possui permissão de inativar a unidade do grid
     if (this.auth.hasPermissionTo("MOD_UND_INATV")) result.push({icon: unidade.data_inativacao ? "bi bi-check-circle" : "bi bi-x-circle", label: unidade.data_inativacao ? 'Reativar' : 'Inativar', onClick: async (unidade: Unidade) => await this.inativo(unidade, !unidade.data_inativacao)});
     // Testa se o usuário logado possui permissão para gerenciar integrantes da unidade do grid
     if (this.auth.hasPermissionTo("MOD_UND_INTG")) result.push({icon: "bi bi-people", label: "Integrantes", onClick: (unidade: Unidade) => this.go.navigate({ route: ['configuracoes', 'unidade', '', unidade.id, 'integrante'] }, { metadata: { entity: row } })});
-    // Testa se o usuário logado possui permissão para excluir unidade do grid
-    if (this.auth.hasPermissionTo("MOD_UND_EXCL")) result.push({ icon: "bi bi-trash", label: "Excluir", onClick: this.delete.bind(this) });
     return result;
   }
 

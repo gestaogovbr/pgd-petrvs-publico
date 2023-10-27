@@ -18,7 +18,7 @@
             </ng-template>
         </column>
         <column title="Fundamentação" field="fundamentacao"></column>
-        <column type="options" [onEdit]="edit" [dynamicOptions]="dynamicOptions.bind(this)"></column>
+        <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>
