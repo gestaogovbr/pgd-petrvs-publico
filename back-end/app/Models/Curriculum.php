@@ -31,10 +31,10 @@ class Curriculum extends ModelBase
     //public $fillable_relation = [];
 
     //Has Many
-    public function curriculumGraduacao() { return $this->hasMany(CurriculumGraduacao::class); }
+    public function graduacoes() { return $this->hasMany(CurriculumGraduacao::class); }
     public function respostaQuestionario() { return $this->hasMany(RespostaQuestionario::class); }
     //Has One
-    public function curriculumProfissional() { return $this->hasOne(CurriculumProfissional::class); }
+    public function profissional() { return $this->hasOne(CurriculumProfissional::class); }
     // Belongs
     public function usuario() { return $this->belongsTo(Usuario::class); }
     public function cidade() { return $this->belongsTo(Cidade::class); }
