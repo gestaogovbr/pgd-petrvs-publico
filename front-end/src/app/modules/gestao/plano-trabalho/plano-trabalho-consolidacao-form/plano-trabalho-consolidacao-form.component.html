@@ -84,7 +84,7 @@
                     {{row.badge.descricao || row.entrega.descricao}}
                 </ng-template>
             </column>
-            <column title="% Força Trab. Planejado" [template]="columnForcaTrabalho" [width]="100">
+            <column title="% CHD Planejado" [template]="columnForcaTrabalho" [width]="100" [titleHint]="'% Carga Horária Disponível Planejada'">
                 <ng-template let-row="row" #columnForcaTrabalho>
                     <badge color="light" [label]="row.entrega.forca_trabalho + '%'"></badge>
                 </ng-template>

@@ -35,7 +35,7 @@
                         <badge [icon]="entityService.getIcon('Entrega')" [label]="row.descricao"></badge>
                     </ng-template>
                 </column>
-                <column *ngIf="isConsolidacao" title="% Força Trab. Planejado" [template]="columnForcaTrabalho">
+                <column *ngIf="isConsolidacao" title="% CHD Planejado" [template]="columnForcaTrabalho" [titleHint]="'% Carga Horária Disponível Planejada'">
                     <ng-template let-row="row" #columnForcaTrabalho>
                         <badge color="light" [label]="row.forca_trabalho + '%'"></badge>
                     </ng-template>
