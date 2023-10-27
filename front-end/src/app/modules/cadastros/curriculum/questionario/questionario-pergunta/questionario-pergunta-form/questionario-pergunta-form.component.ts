@@ -29,10 +29,9 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
       nome: {default: ""},
       codigo: {default: ""},
       tipo: {default: ""},
-      perguntas: {default: ""},
+      perguntas: {default: []},
       pergunta: {default: ""},
       switchExemplo: {default: false},
-      multiPerguntas: { default: [] },
       multiOpcaoResposta: { default: [] },
       inputPergunta: {default: ""},
       listaTipoResposta: {default: ""},
@@ -67,6 +66,7 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
 
 
   public saveData(form: IIndexable): Promise<QuestionarioPergunta> {
+  console.log('PERGUNTAS', this.form?.controls.perguntas.value)
   return new Promise<QuestionarioPergunta>((resolve, reject) => {
       const questionario = this.util.fill(new QuestionarioPergunta(), this.entity!);
       resolve(this.util.fillForm(questionario, this.form!.value));
@@ -90,13 +90,13 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
   }
 
   public addMultiPerguntas(){
-
+    console.log('PERGUNTAS', this.form?.controls.perguntas.value)
     let result = undefined;
     const pergunta = this.form?.controls.inputPergunta.value;
     const tipoResposta = this.listaTipoResposta?.selectedItem;
     const key = this.util.textHash(pergunta);
     
-    if (pergunta && tipoResposta?.value && this.form?.controls.multiOpcaoResposta.value && this.util.validateLookupItem(this.form!.controls.multiPerguntas.value,key)) {
+    if (pergunta && tipoResposta?.value && this.form?.controls.multiOpcaoResposta.value && this.util.validateLookupItem(this.form!.controls.perguntas.value,key)) {
       let opcoesResposta = this.form?.controls.multiOpcaoResposta.value;
       let opcoesTexto =""
       let index=opcoesResposta.length;
@@ -115,6 +115,7 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
           key: key,
           value: 'Pergunta: ' + pergunta + ' - Tipo de Resposta: ' + tipoResposta.value + ' - Opções da resposta: ' + opcoesTexto,
           data: {
+            pergunta: pergunta,
             tipo: tipoResposta.key,
             opcaoResposta: opcoesResposta,
             _status: "ADD",
@@ -125,6 +126,7 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
           key: key,
           value: 'Pergunta: ' + pergunta + ' - Tipo de Resposta: ' + tipoResposta.value + ' - Opções da resposta: ' +  tipoResposta.value,
           data: {
+            pergunta: pergunta,
             tipo: tipoResposta.key,
             opcaoResposta: 'UNICA',
             _status: "ADD",
