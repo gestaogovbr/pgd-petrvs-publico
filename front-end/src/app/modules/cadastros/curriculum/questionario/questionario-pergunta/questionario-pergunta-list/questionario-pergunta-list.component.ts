@@ -2,6 +2,7 @@ import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { QuestionarioPerguntaDaoService } from 'src/app/dao/questionario-pergunta-dao.service';
+import { Base } from 'src/app/models/base.model';
 import { QuestionarioPergunta } from 'src/app/models/questionario-pergunta.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { LookupItem } from 'src/app/services/lookup.service';
@@ -15,6 +16,8 @@ export class QuestionarioPerguntaListComponent extends PageListBase<Questionario
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
   public tipoQuestionario: LookupItem[] = [{ 'key': 'Interno', 'value': 'Interno' },{ 'key': 'Personalizado', 'value': 'Personalizado' }];
+  public exibePerguntas : any[] = [];
+  
 
   constructor(public injector: Injector) {
     super(injector, QuestionarioPergunta, QuestionarioPerguntaDaoService);
@@ -25,7 +28,9 @@ export class QuestionarioPerguntaListComponent extends PageListBase<Questionario
     this.orderBy = [['nome','asc']];
 
     this.filter = this.fh.FormBuilder({
-      nome: {default: ""}
+      nome: {default: ""},
+      codigo: {default: ""},
+      tipo: {default: ""}
      });
     // Testa se o usuário possui permissão para exibir dados de cidade
     if (this.auth.hasPermissionTo("MOD_RX_VIS_DPE")) {
@@ -70,5 +75,16 @@ export class QuestionarioPerguntaListComponent extends PageListBase<Questionario
 
     return result;
   }
+
+ 
+  public onGridLoad(rows?: any[]) {
+    console.log('ROWS->',rows)
+        rows?.forEach(v => {
+        console.log('V->',v.perguntas);
+        v.exibePerguntas = v.perguntas!;
+        
+      });
+  }
+   
 }
 
