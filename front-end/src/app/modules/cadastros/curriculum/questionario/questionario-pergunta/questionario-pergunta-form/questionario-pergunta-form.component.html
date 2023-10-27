@@ -5,7 +5,7 @@
         <input-select [size]="4" label="Tipo do Questionário" icon="bi bi-pen" controlName="tipo" [control]="form!.controls.tipo" [items]="tipoQuestionario"></input-select>
     </div>
     <separator>
-        <b>Exemplo dos tipos de respostas:</b>
+        <b>Exemplo dos tipos de respostas para as perguntas:</b>
     </separator>
     <div class="table-opcoes d-grid">
         <table class="table table-responsive table-hover table-sm" name="tableOpcoes" id="tableOpcoes">
@@ -70,15 +70,15 @@
     
     <b>Perguntas:</b>
 
-   
-
-    <input-multiselect [size]="12" label="" [control]="form!.controls.multiPerguntas" controlName="multiPerguntas" [addItemHandle]="addMultiPerguntas.bind(this)" noBox>
-            <input-text #inputPergunta [size]="4" label="Pergunta" icon="bi bi-pencil-fill" controlName="inputPergunta" [control]="form!.controls.inputPergunta" [attr.maxlength]=250></input-text>
-            <input-select #listaTipoResposta [size]="3" label="Tipo de resposta" icon="bi bi-pen" controlName="listaTipoResposta" [control]="form!.controls.listaTipoResposta" [items]="tipoPergunta"></input-select>
-            <input-multiselect [hidden]="this.listaTipoResposta?.selectedItem?.key == ('SWITCH' || '' || null)" [size]="5" label="" [control]="form!.controls.multiOpcaoResposta" controlName="multiOpcaoResposta" [addItemHandle]="addMultiRespostas.bind(this)" noBox>
-                <input-text #opcoesResposta [size]="12" label="Opções da resposta" icon="bi bi-pencil-fill" controlName="inputOpcoesResposta" [control]="form!.controls.inputOpcoesResposta" [attr.maxlength]=250></input-text>
-            </input-multiselect>
-    </input-multiselect>
+    <div class="row">
+        <input-multiselect [size]="12" label="" [control]="form!.controls.perguntas" controlName="perguntas" [addItemHandle]="addMultiPerguntas.bind(this)" noBox>
+                <input-text #inputPergunta [size]="4" label="Pergunta" icon="bi bi-pencil-fill" controlName="inputPergunta" [control]="form!.controls.inputPergunta" [attr.maxlength]=250></input-text>
+                <input-select #listaTipoResposta [size]="3" label="Tipo de resposta" icon="bi bi-pen" controlName="listaTipoResposta" [control]="form!.controls.listaTipoResposta" [items]="tipoPergunta"></input-select>
+                <input-multiselect [hidden]="this.listaTipoResposta?.selectedItem?.key == ('SWITCH' || '' || null)" [size]="5" label="" [control]="form!.controls.multiOpcaoResposta" controlName="multiOpcaoResposta" [addItemHandle]="addMultiRespostas.bind(this)" noBox>
+                    <input-text #opcoesResposta [size]="12" label="Opções da resposta" icon="bi bi-pencil-fill" controlName="inputOpcoesResposta" [control]="form!.controls.inputOpcoesResposta" [attr.maxlength]=250></input-text>
+                </input-multiselect>
+        </input-multiselect>
+    </div>
 
     <!--<div class="table-perguntas d-grid">
       <table class="table table-responsive table-hover" name="tablePerguntas" id="tablePerguntas">
