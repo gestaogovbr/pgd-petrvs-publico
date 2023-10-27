@@ -128,7 +128,7 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
           data: {
             pergunta: pergunta,
             tipo: tipoResposta,
-            opcaoResposta: 'UNICA',
+            opcaoResposta: { 'key': 'UNICA', 'value': 'Resposta Única' },
             _status: "ADD",
           }
         };

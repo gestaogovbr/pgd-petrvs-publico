@@ -6,16 +6,16 @@ import { QuestionarioPerguntaListComponent } from './questionario-pergunta/quest
 import { QuestionarioPerguntaFormComponent } from './questionario-pergunta/questionario-pergunta-form/questionario-pergunta-form.component';
 import { QuestionarioRespostaListComponent } from './questionario-resposta/questionario-resposta-list/questionario-resposta-list.component';
 import { QuestionarioRespostaFormComponent } from './questionario-resposta/questionario-resposta-form/questionario-resposta-form.component';
+import { QuestionarioListPerguntaComponent } from './questionario-list-pergunta/questionario-list-pergunta.component';
 import { QuestionarioRoutingModule } from './questionario-routing.module';
-
-
 
 @NgModule({
   declarations: [
+    QuestionarioListPerguntaComponent,
     QuestionarioPerguntaListComponent,
     QuestionarioPerguntaFormComponent,
     QuestionarioRespostaListComponent,
-    QuestionarioRespostaFormComponent
+    QuestionarioRespostaFormComponent,
   ],
   imports: [
     CommonModule,

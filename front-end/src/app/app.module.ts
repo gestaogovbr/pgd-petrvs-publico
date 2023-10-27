@@ -20,6 +20,7 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -28,7 +29,7 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
     DialogComponent,
     SpinnerOverlayComponent,
     TesteComponent,
-    TesteFormComponent
+    TesteFormComponent,
   ],
   imports: [
     BrowserModule,

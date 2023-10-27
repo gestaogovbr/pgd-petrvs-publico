@@ -6,6 +6,7 @@ import { ConfigResolver } from 'src/app/resolvies/config.resolver';
 import { QuestionarioPerguntaListComponent } from './questionario-pergunta/questionario-pergunta-list/questionario-pergunta-list.component';
 import { QuestionarioPerguntaFormComponent } from './questionario-pergunta/questionario-pergunta-form/questionario-pergunta-form.component';
 import { QuestionarioRespostaListComponent } from './questionario-resposta/questionario-resposta-list/questionario-resposta-list.component';
+import { QuestionarioListPerguntaComponent } from './questionario-list-pergunta/questionario-list-pergunta.component';
 
 const routes: Routes = [
     { path: '', component: QuestionarioPerguntaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Lista", modal: false } },
@@ -16,6 +17,7 @@ const routes: Routes = [
     { path: 'resposta/new', component: QuestionarioRespostaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão", modal: true } },
     { path: 'resposta/:id/edit', component: QuestionarioRespostaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
     { path: 'resposta/:id/consult', component: QuestionarioRespostaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } },
+    { path: 'teste', component: QuestionarioListPerguntaComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } },
 ]
 
 @NgModule({
