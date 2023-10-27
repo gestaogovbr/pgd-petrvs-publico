@@ -152,7 +152,7 @@ export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoServic
   }
 
   public get labelNota(): string {
-    return 'Como foi a entrega ' + (this.isConsolidacao ? 'de ' + this.util.apelidoOuNome(this.usuario) : 'da ' + this.planoEntrega?.unidade?.sigla) + '?';
+    return 'Como foi o trabalho ' + (this.isConsolidacao ? 'de ' + this.util.apelidoOuNome(this.usuario) : 'da ' + this.planoEntrega?.unidade?.sigla) + '?';
   }
 
   public get styleButtonNota(): string {

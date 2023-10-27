@@ -19,6 +19,8 @@ use App\Models\Template;
 use App\Models\Unidade;
 use App\Models\EixoTematico;
 use App\Models\Entrega;
+use App\Models\Planejamento;
+use App\Models\PlanejamentoObjetivo;
 
 class IN24_2023Seeder extends Seeder
 {
@@ -30,14 +32,14 @@ class IN24_2023Seeder extends Seeder
 
     public $timenow;
     public $brasilia;
-    public $unidade_prf;
+    public $unidade_inicial;
 
     public function __construct(){
         $this->timenow = now();
         $this->brasilia = Cidade::where('codigo_ibge', '5300108')->sole();
 
         // Encontra unidade inicial (instituidora) para registro de programa
-        $this->unidade_prf = Unidade::where('codigo', '30802')->first();
+        $this->unidade_inicial = Unidade::where('codigo', '1')->first();
     }
 
     public function run(){
@@ -305,7 +307,7 @@ class IN24_2023Seeder extends Seeder
                 "pergunta" => "Do que você gostou?",
                 "aprova" => 0,
                 "justifica" => 0,
-                "icone" => "far fa-grin-stars",
+                "icone" => "bi bi-emoji-smile",
                 "cor" => "#198754",
                 "codigo" => "Excepcional",
                 "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390",
@@ -321,7 +323,7 @@ class IN24_2023Seeder extends Seeder
                 "pergunta" => "O que pode melhorar?",
                 "aprova" => 0,
                 "justifica" => 1,
-                "icone" => "far fa-grin-stars",
+                "icone" => "bi bi-emoji-smile",
                 "cor" => "#198754",
                 "codigo" => "Excepcional",
                 "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
@@ -1071,8 +1073,8 @@ class IN24_2023Seeder extends Seeder
                 "nota_padrao_avaliacao" => "\"Não executado\"",
 
                 "checklist_avaliacao_entregas_plano_entrega" => "[]",
-
                 "checklist_avaliacao_entregas_plano_trabalho" => "[]",
+                "plano_trabalho_criterios_avaliacao" => "[]",
 
                 "registra_comparecimento" => 1,
                 "plano_trabalho_assinatura_participante" => 1,
@@ -1082,7 +1084,7 @@ class IN24_2023Seeder extends Seeder
                 "tipo_avaliacao_plano_trabalho_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
                 "tipo_avaliacao_plano_entrega_id" => "b0db190d-823d-4222-bc92-abff634f5390",
                 "tipo_justificativa_id" => "f2aef225-a391-4667-9c41-6bb537b18778",
-                "unidade_id" => $this->unidade_prf->id,
+                "unidade_id" => $this->unidade_inicial->id,
                 "template_tcr_id" => "ef1c106c-3534-46d2-9519-cc69d5cf9dad",
                 "tipo_documento_tcr_id" => "48bc6f30-a634-4a21-9717-6fe0dc0d4f2a",
                 "documento_id" => NULL,
@@ -1238,13 +1240,13 @@ class IN24_2023Seeder extends Seeder
                 "descricao" => "Aprimorar a governança e a gestão por resultados.",
             ),
             array(
-                "id" => "fb6db93f-9efd-4be0-bf57-1c761fc3a688",
-                "created_at" => "2023-10-09 09:17:41",
-                "updated_at" => "2023-10-09 09:17:41",
+                "id" => "23ee6ace-2b7c-41a6-a255-c3ee91ba7aab",
+                "created_at" => $this->timenow,
+                "updated_at" => $this->timenow,
                 "deleted_at" => NULL,
                 "nome" => "Diretrizes SEGES",
-                "icone" => "bi bi-award",
-                "cor" => "#D0C9C0",
+                "icone" => "bi bi-book",
+                "cor" => "#05BD33",
                 "descricao" => ".",
             ),
         );
@@ -1321,6 +1323,152 @@ class IN24_2023Seeder extends Seeder
             */
         );
 
+        $planejamentos = array(
+            array(
+                "id" => "84e9a49c-ecfe-4ee9-b426-fc1a7aa73eee",
+                "created_at" => $this->timenow,
+                "updated_at" => $this->timenow,
+                "deleted_at" => NULL,
+                "nome" => "Planejamento SEGES",
+
+                "missao" => "Impulsionar modelos de gestão inovadores e ".
+                "colaborativos, que promovam a transformação e a ampliação ".
+                "da capacidade do Estado para geração de valor na prestação ".
+                "de serviços públicos",
+
+                "visao" => "Transformar fazendo melhor",
+
+                "data_inicio" => $this->timenow,
+
+                "data_fim" => date('Y-m-d H:i:s',
+                    strtotime('+4 year', strtotime($this->timenow))),
+
+                "data_arquivamento" => NULL,
+
+                "valores" => "[{\"key\": \"f24d940efdd36fa0717d868da3f6a11a\", \"value\": \"Inovação\"}, {\"key\": \"d66db84665b8e2dd8b6aa155917b3010\", \"value\": \"Criatividade\"}, {\"key\": \"ee3b90f4ddc4256b0ba1670a83a64548\", \"value\": \"Colaboração\"}, {\"key\": \"1af3c9427ab2690344eb80dfeaa66bbb\", \"value\": \"Respeito\"}, {\"key\": \"fbbd08afd6a279aa15df987ad14536ce\", \"value\": \"Engajamento\"}, {\"key\": \"c9cb78b93d9cfe2331110f113bae0f55\", \"value\": \"Diversidade\"}]",
+
+                "resultados_institucionais" => NULL,
+                "entidade_id" => "52d78c7d-e0c1-422b-b094-2ca5958d5ac1",
+                "unidade_id" => "1e6f4d0f-e286-4c6d-ba69-da837a92cfbb",
+                "planejamento_superior_id" => NULL,
+            ),
+        );
+
+        $planejamentos_objetivos = array(
+            array(
+                "id" => "260b62e6-3a7e-45b6-a5a0-e10386c333c5",
+                "created_at" => $this->timenow,
+                "updated_at" => $this->timenow,
+                "deleted_at" => NULL,
+                "sequencia" => 1,
+                "fundamentacao" => "...",
+                "nome" => "Ser simples e ágil",
+                "path" => NULL,
+                "planejamento_id" => "84e9a49c-ecfe-4ee9-b426-fc1a7aa73eee",
+                "eixo_tematico_id" => "23ee6ace-2b7c-41a6-a255-c3ee91ba7aab",
+                "objetivo_pai_id" => NULL,
+                "objetivo_superior_id" => NULL,
+            ),
+            array(
+                "id" => "2a051122-7b92-4058-9274-11a3a5cb3f23",
+                "created_at" => $this->timenow,
+                "updated_at" => $this->timenow,
+                "deleted_at" => NULL,
+                "sequencia" => 2,
+                "fundamentacao" => "...",
+                "nome" => "Ampliar a sinergia das ações e a transversalidade no Governo",
+                "path" => NULL,
+                "planejamento_id" => "84e9a49c-ecfe-4ee9-b426-fc1a7aa73eee",
+                "eixo_tematico_id" => "23ee6ace-2b7c-41a6-a255-c3ee91ba7aab",
+                "objetivo_pai_id" => NULL,
+                "objetivo_superior_id" => NULL,
+            ),
+            array(
+                "id" => "6d151c0a-199e-4e4e-8bcd-bf56a1074881",
+                "created_at" => $this->timenow,
+                "updated_at" => $this->timenow,
+                "deleted_at" => NULL,
+                "sequencia" => 3,
+                "fundamentacao" => "...",
+                "nome" => "Integrar a gestão com Estados e Municípios",
+                "path" => NULL,
+                "planejamento_id" => "84e9a49c-ecfe-4ee9-b426-fc1a7aa73eee",
+                "eixo_tematico_id" => "23ee6ace-2b7c-41a6-a255-c3ee91ba7aab",
+                "objetivo_pai_id" => NULL,
+                "objetivo_superior_id" => NULL,
+            ),
+            array(
+                "id" => "7a886e41-9c68-40d1-995b-17f468e487c4",
+                "created_at" => $this->timenow,
+                "updated_at" => $this->timenow,
+                "deleted_at" => NULL,
+                "sequencia" => 4,
+                "fundamentacao" => "...",
+                "nome" => "Fomentar o desenvolvimento econômico e social sustentável",
+                "path" => NULL,
+                "planejamento_id" => "84e9a49c-ecfe-4ee9-b426-fc1a7aa73eee",
+                "eixo_tematico_id" => "23ee6ace-2b7c-41a6-a255-c3ee91ba7aab",
+                "objetivo_pai_id" => NULL,
+                "objetivo_superior_id" => NULL,
+            ),
+            array(
+                "id" => "7a986cdf-3510-4617-8cac-22a2206f2c5c",
+                "created_at" => $this->timenow,
+                "updated_at" => $this->timenow,
+                "deleted_at" => NULL,
+                "sequencia" => 5,
+                "fundamentacao" => "...",
+                "nome" => "Contribuir com as entregas das políticas públicas",
+                "path" => NULL,
+                "planejamento_id" => "84e9a49c-ecfe-4ee9-b426-fc1a7aa73eee",
+                "eixo_tematico_id" => "23ee6ace-2b7c-41a6-a255-c3ee91ba7aab",
+                "objetivo_pai_id" => NULL,
+                "objetivo_superior_id" => NULL,
+            ),
+            array(
+                "id" => "c85c323f-6ec3-443f-b05d-c572568e450f",
+                "created_at" => $this->timenow,
+                "updated_at" => $this->timenow,
+                "deleted_at" => NULL,
+                "sequencia" => 6,
+                "fundamentacao" => "...",
+                "nome" => "Ampliar a transparência e participação social",
+                "path" => NULL,
+                "planejamento_id" => "84e9a49c-ecfe-4ee9-b426-fc1a7aa73eee",
+                "eixo_tematico_id" => "23ee6ace-2b7c-41a6-a255-c3ee91ba7aab",
+                "objetivo_pai_id" => NULL,
+                "objetivo_superior_id" => NULL,
+            ),
+            array(
+                "id" => "d58234c8-828b-434f-b599-283c786f01a7",
+                "created_at" => $this->timenow,
+                "updated_at" => $this->timenow,
+                "deleted_at" => NULL,
+                "sequencia" => 7,
+                "fundamentacao" => "...",
+                "nome" => "Desenvolver capacidade de inovação no setor público",
+                "path" => NULL,
+                "planejamento_id" => "84e9a49c-ecfe-4ee9-b426-fc1a7aa73eee",
+                "eixo_tematico_id" => "23ee6ace-2b7c-41a6-a255-c3ee91ba7aab",
+                "objetivo_pai_id" => NULL,
+                "objetivo_superior_id" => NULL,
+            ),
+            array(
+                "id" => "da2b990e-a83f-4453-afe9-c7922850af95",
+                "created_at" => $this->timenow,
+                "updated_at" => $this->timenow,
+                "deleted_at" => NULL,
+                "sequencia" => 8,
+                "fundamentacao" => "...",
+                "nome" => "Otimizar esforços e recursos",
+                "path" => NULL,
+                "planejamento_id" => "84e9a49c-ecfe-4ee9-b426-fc1a7aa73eee",
+                "eixo_tematico_id" => "23ee6ace-2b7c-41a6-a255-c3ee91ba7aab",
+                "objetivo_pai_id" => NULL,
+                "objetivo_superior_id" => NULL,
+            ),
+        );
+
         /*
         $this->call([
           CidadeSeeder=>=>class,
@@ -1352,5 +1500,8 @@ class IN24_2023Seeder extends Seeder
         Programa::insertOrIgnore($programas);
         EixoTematico::insertOrIgnore($eixos_tematicos);
         Entrega::insertOrIgnore($modelos_afericao_entregas);
+        Planejamento::insertOrIgnore($planejamentos);
+        PlanejamentoObjetivo::insertOrIgnore($planejamentos_objetivos);
+
     }
 }
