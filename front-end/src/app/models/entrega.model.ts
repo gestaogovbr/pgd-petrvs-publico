@@ -1,5 +1,5 @@
 import { LookupItem } from '../services/lookup.service';
-import { Checklist } from './atividade.model';
+import { Atividade, Checklist } from './atividade.model';
 import { Base } from './base.model';
 import { Unidade } from './unidade.model';
 
@@ -22,6 +22,7 @@ export class Entrega extends Base {
     public checklist: Checklist[] = []; /* Checklist */
 
     public unidade_id: string | null = null;
+    public atividades?: Atividade[];
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }
