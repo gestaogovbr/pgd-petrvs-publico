@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 
 class TruncateAllTables extends Command
 {
@@ -19,13 +18,16 @@ class TruncateAllTables extends Command
 
     public function handle()
     {
-        $tables = DB::connection()->getDoctrineSchemaManager()->listTableNames();
+        // Obtenha uma lista de todas as tabelas no banco de dados
+        $tables = DB::select('SHOW TABLES');
 
         foreach ($tables as $table) {
-            if (Schema::hasTable($table)) {
-                DB::table($table)->delete();
-                $this->info("Table $table truncated.");
-            }
+            $table = reset($table); // O nome da tabela está no primeiro elemento do array retornado
+
+            // Execute a instrução SQL para truncar a tabela
+            DB::table($table)->truncate();
+
+            $this->info("Table $table truncated.");
         }
 
         $this->info('All tables truncated.');
