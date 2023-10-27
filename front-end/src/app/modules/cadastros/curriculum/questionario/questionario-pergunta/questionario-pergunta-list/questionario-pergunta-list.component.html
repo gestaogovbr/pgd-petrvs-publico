@@ -15,7 +15,7 @@
        <!--<column title="Perguntas" field="perguntas"></column>-->
         <column title="Perguntas" [template]="columnPerguntas">
             <ng-template let-row="row" #columnPerguntas>
-                <span *ngFor="let pergunta of row.perguntas; index as i">{{i + 1}} - {{pergunta.data.tipo}} | &nbsp; </span>
+                <span *ngFor="let pergunta of row.perguntas; index as i">{{i + 1}} - {{pergunta.data.pergunta}} | &nbsp; </span>
                 <!--<span>{{JSON.stringify(row.perguntas)}}</span>-->
             </ng-template>
         </column>
