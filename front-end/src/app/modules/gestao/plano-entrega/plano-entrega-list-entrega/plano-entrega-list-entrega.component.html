@@ -88,13 +88,13 @@
             <ng-template let-row="row" #columnObjProc>
                 <separator [title]="lex.translate('Objetivos')" *ngIf="row.objetivos?.length" collapse [collapsed]="true">
                     <div *ngFor="let pObjetivo of row.objetivos" class="objetivo d-flex align-items-center">
-                        <button class="btn btn-sm btn-outline-info me-2" (click)="showPlanejamento(pObjetivo.objetivo.planejamento_id)"><i class="bi bi-eye"></i></button>
+                        <button class="btn btn-sm btn-outline-info me-2" (click)="showPlanejamento(pObjetivo.objetivo.id)"><i class="bi bi-eye"></i></button>
                         <small>{{pObjetivo.objetivo.nome}}</small>
                     </div>
                 </separator>
                 <separator [title]="lex.translate('Processos')" *ngIf="row.processos?.length" collapse [collapsed]="true">
                     <div *ngFor="let pProcesso of row.processos" class="objetivo">
-                        <button class="btn btn-sm btn-outline-info me-2" (click)="showCadeiaValor(pProcesso.processo.cadeia_valor_id)"><i class="bi bi-eye"></i></button>
+                        <button class="btn btn-sm btn-outline-info me-2" (click)="showCadeiaValor(pProcesso.processo.id)"><i class="bi bi-eye"></i></button>
                         <small>{{pProcesso.processo.nome}}</small>
                     </div>
                 </separator>

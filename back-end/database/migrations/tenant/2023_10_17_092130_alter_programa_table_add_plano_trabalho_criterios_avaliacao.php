@@ -16,10 +16,12 @@ class AlterProgramaTableAddPlanoTrabalhoCriteriosAvaliacao extends Migration
     public function up()
     {
         Schema::table('programas', function (Blueprint $table) {
-            $table->json('plano_trabalho_criterios_avaliacao')->default(new Expression('(JSON_ARRAY())'))->comment("Critérios para avaliação do plano de trabalho");
+            $table->json('plano_trabalho_criterios_avaliacao')
+            ->nullable()
+            ->default(new Expression('(JSON_ARRAY())'))->comment("Critérios".
+            " para avaliação do plano de trabalho");
         });
     }
-
     /**
      * Reverse the migrations.
      *

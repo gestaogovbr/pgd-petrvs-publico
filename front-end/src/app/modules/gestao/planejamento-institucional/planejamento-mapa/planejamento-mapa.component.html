@@ -7,68 +7,28 @@
     </div>
     <!-- Cabeçalho -->
     <separator transparent collapse title="Missão, visão, resultados e valores">
-        <div *ngIf="planejamento" class="row">
-            <div class="row mb-2">
-                <div class="col-md-6">
-                    <div class="card h-100">
-                        <div class="card-header">
-                            Missão
-                        </div>
-                        <div class="card-body">
-                            <blockquote class="blockquote mb-0">
-                                <p>{{planejamento.missao}}</p>
-                            </blockquote>
-                        </div>
-                    </div>
+        <div *ngIf="planejamento" class="">
+            <div class="d-flex">
+                <div class="border-start border-4 border-warning ps-3 mt-3">
+                  <h6>Missão</h6>
+                  <cite>{{planejamento.missao}}</cite>
                 </div>
-                <div class="col-md-6">
-                    <div class="card h-100">
-                        <div class="card-header">
-                            Visão
-                        </div>
-                        <div class="card-body">
-                            <blockquote class="blockquote mb-0">
-                                <p>{{planejamento!.visao}}</p>
-                            </blockquote>
-                        </div>
-                    </div>
+                <div class="border-start border-4 border-info ps-3 mt-3 ms-5">
+                  <h6>Visão</h6>
+                  <cite>{{planejamento.visao}}</cite>
                 </div>
-            </div>
-            <div class="row mb-2">
-                <div class="col-md-6">
-                    <div class="card h-100">
-                        <div class="card-header">
-                            Resultados Institucionais
-                        </div>
-                        <div class="card-body">
-                            <ul class="list-group list-group-flush">
-                                <li *ngFor="let resultado of planejamento!.resultados_institucionais"
-                                    class="list-group-item">
-                                    <blockquote class="blockquote mb-0">
-                                        <p>{{resultado.value}}</p>
-                                    </blockquote>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+                <div class="border-start border-4 border-primary ps-3 mt-3 ms-5 w-100">
+                  <h6>Valores</h6>
+                  <cite *ngFor="let valor of planejamento.valores">{{valor.value}}<br></cite>
                 </div>
-                <div class="col-md-6">
-                    <div class="card h-100">
-                        <div class="card-header">
-                            Valores
-                        </div>
-                        <div class="card-body">
-                            <ul class="list-group list-group-flush">
-                                <li *ngFor="let valor of planejamento!.valores" class="list-group-item">
-                                    <blockquote class="blockquote mb-0">
-                                        <p>{{valor.value}}</p>
-                                    </blockquote>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+                <div class="border-start border-4 border-success ps-3 mt-3 ms-5 w-100">
+                    <h6>Resultados Institucionais</h6>
+                    <cite *ngFor="let resultado of planejamento.resultados_institucionais">{{resultado.value}}<br></cite>
+                  </div>
+
+              </div>
+            
         </div>
     </separator>
     <!-- Eixos -->

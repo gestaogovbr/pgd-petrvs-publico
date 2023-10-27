@@ -26,6 +26,10 @@ class PlanoEntregaEntregaService extends ServiceBase
                 $query->whereHas('objetivos', function (Builder $query) use ($condition) {
                     $query->where('planejamento_objetivo_id', $condition[2]);
                 });
+            } else if (is_array($condition) && $condition[0] == "processos.processo_id") {
+                $query->whereHas('processos', function (Builder $query) use ($condition) {
+                    $query->where('cadeia_processo_id', $condition[2]);
+                });
             } else {
                 array_push($where, $condition);
             }
