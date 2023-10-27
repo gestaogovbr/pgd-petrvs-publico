@@ -116,7 +116,7 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
           value: 'Pergunta: ' + pergunta + ' - Tipo de Resposta: ' + tipoResposta.value + ' - Opções da resposta: ' + opcoesTexto,
           data: {
             pergunta: pergunta,
-            tipo: tipoResposta.key,
+            tipo: tipoResposta,
             opcaoResposta: opcoesResposta,
             _status: "ADD",
           }
@@ -127,7 +127,7 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
           value: 'Pergunta: ' + pergunta + ' - Tipo de Resposta: ' + tipoResposta.value + ' - Opções da resposta: ' +  tipoResposta.value,
           data: {
             pergunta: pergunta,
-            tipo: tipoResposta.key,
+            tipo: tipoResposta,
             opcaoResposta: 'UNICA',
             _status: "ADD",
           }
