@@ -1,0 +1,37 @@
+.okr_header {
+    width: 350px;
+    text-align: center;
+    background: var(--petrvs-box-background);
+    border-bottom: 3px solid #000;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    flex-direction: column;
+    h1, h6 {
+        color: var(--bs-body-color);
+    }
+}
+
+.objetivo, .entrega, .unidade, .indicador, .atividades {
+    width: 350px;
+    border-right-style: solid;
+    padding: 10px;
+    background: var(--petrvs-box-background);
+}
+.entrega, .header_resultados {
+    width: 550px;
+}
+.unidade, .header_unidade {
+    width: 250px;
+}
+
+
+.atividade {
+    border-bottom: 1px solid #ddd;
+    padding: 5px 0;
+}
+
+.okr_header {
+    
+}

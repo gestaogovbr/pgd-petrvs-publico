@@ -66,7 +66,7 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
 
   ngAfterViewInit(): void {
     super.ngAfterViewInit();
-    this.tabs!.active = ["TABELA", "MAPA"].includes(this.usuarioConfig.active_tab) ? this.usuarioConfig.active_tab : "TABELA";
+    this.tabs!.active = ["TABELA", "MAPA", "OKR"].includes(this.usuarioConfig.active_tab) ? this.usuarioConfig.active_tab : "TABELA";
   }
 
   /* override */
