@@ -20,7 +20,7 @@
                 <span class="d-block">{{row.nome}}</span>
             </ng-template>
         </column>
-        <column type="options" [onEdit]="edit" [dynamicOptions]="dynamicOptions.bind(this)"></column>
+        <column type="options" [onEdit]="edit" [options]="options"></column> <!--[dynamicOptions]="dynamicOptions.bind(this)"-->
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>
