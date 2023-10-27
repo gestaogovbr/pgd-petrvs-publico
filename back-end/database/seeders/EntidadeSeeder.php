@@ -24,7 +24,7 @@ class EntidadeSeeder extends Seeder
 
     public function run()
     {
-        $entidades = array(
+        $entidade = array(
           array(
             "id" => "52d78c7d-e0c1-422b-b094-2ca5958d5ac1",
             "created_at" => $this->timenow,
@@ -52,6 +52,7 @@ class EntidadeSeeder extends Seeder
             "gestor_substituto_id" => NULL,
           ),
         );
-        Entidade::insertOrIgnore($entidades);
+
+        Entidade::insertOrIgnore($entidade);
     }
 }

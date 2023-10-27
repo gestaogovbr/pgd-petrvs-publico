@@ -27,6 +27,7 @@ class UsuarioSeeder extends Seeder
                 'cpf' => '07408707425',
                 'apelido' => 'Genisson',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+                'sexo' => 'MASCULINO',
             ],
             [
                 'email' => 'diogo.paiva@prf.gov.br',
@@ -34,6 +35,7 @@ class UsuarioSeeder extends Seeder
                 'cpf' => '01710713526',
                 'apelido' => 'Paiva',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+                'sexo' => 'MASCULINO',
             ],
             [
                 'email' => 'henrique.alves@prf.gov.br',
@@ -41,6 +43,7 @@ class UsuarioSeeder extends Seeder
                 'cpf' => '26751043880',
                 'apelido' => 'Carlos III',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+                'sexo' => 'MASCULINO',
             ],
             [
                 'email' => 'edson.marian@prf.gov.br',
@@ -48,6 +51,7 @@ class UsuarioSeeder extends Seeder
                 'cpf' => '67703011053',
                 'apelido' => 'Marian',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+                'sexo' => 'MASCULINO',
             ],
 
             [
@@ -56,6 +60,7 @@ class UsuarioSeeder extends Seeder
                 'cpf' => '25941933304',
                 'apelido' => 'Ricardo',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+                'sexo' => 'MASCULINO',
             ],
             [
                 'email' => 'caroline.ribeiro@prf.gov.br',
@@ -63,6 +68,7 @@ class UsuarioSeeder extends Seeder
                 'cpf' => '01492368164',
                 'apelido' => 'Caroline',
                 'perfil_id' => $perfis->where('nome', 'Administrador')->first()->id,
+                'sexo' => 'FEMININO',
             ],
             [
                 'email' => 'jonatas.ferreira@prf.gov.br',
@@ -70,6 +76,7 @@ class UsuarioSeeder extends Seeder
                 'cpf' => '09741166702',
                 'apelido' => 'Jonata',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+                'sexo' => 'MASCULINO',
             ],
               [
                 'email' => 'pauloflausino@gmail.com',
@@ -77,6 +84,7 @@ class UsuarioSeeder extends Seeder
                 'cpf' => '22374479854',
                 'apelido' => 'Paulo',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+                'sexo' => 'MASCULINO',
             ],
             [
                 'email' => 'geisimar.rech87@gmail.com',
@@ -84,13 +92,7 @@ class UsuarioSeeder extends Seeder
                 'cpf' => '01798651106',
                 'apelido' => 'Geisimar',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
-            ],
-            [
-                'email' => 'pablorgds@gmail.com',
-                'nome' => 'Pablo Roberto',
-                'cpf' => '05178506138',
-                'apelido' => 'Pablorgds',
-                'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+                'sexo' => 'MASCULINO',
             ],
             [
                 'email' => 'henrique.felipe100@gmail.com',
@@ -98,6 +100,7 @@ class UsuarioSeeder extends Seeder
                 'cpf' => '40921185898',
                 'apelido' => 'Henrique',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+                'sexo' => 'MASCULINO',
             ],
             [
                 'email' => 'guibitar@gmail.com',
@@ -105,13 +108,7 @@ class UsuarioSeeder extends Seeder
                 'cpf' => '01914276167',
                 'apelido' => 'Guilherme',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
-            ],
-            [
-                'email' => 'alexdiasprojetos@gmail.com',
-                'nome' => 'Alex Dias Ferreira',
-                'cpf' => '94577536153',
-                'apelido' => 'Alex',
-                'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+                'sexo' => 'MASCULINO',
             ],
             [
                 'email' => 'karinahellen.eng@gmail.com',
@@ -119,6 +116,7 @@ class UsuarioSeeder extends Seeder
                 'cpf' => '05182319177',
                 'apelido' => 'Karina',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+                'sexo' => 'FEMININO',
             ],
             [
                 'email' => 'cimei.teixeira@gmail.com',
@@ -126,6 +124,7 @@ class UsuarioSeeder extends Seeder
                 'cpf' => '48321770100',
                 'apelido' => 'Cimei',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+                'sexo' => 'MASCULINO',
             ],
             [
                 'email' => 'marco.coelho@firstbps.com.br',
@@ -133,6 +132,7 @@ class UsuarioSeeder extends Seeder
                 'cpf' => '03400125954',
                 'apelido' => 'Marco',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+                'sexo' => 'MASCULINO',
             ],
             [
                 'email' => 'edson.dario@gmail.com',
@@ -140,6 +140,7 @@ class UsuarioSeeder extends Seeder
                 'cpf' => '01380127416',
                 'apelido' => 'Dario',
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
+                'sexo' => 'MASCULINO',
             ],
         ];
 
@@ -154,7 +155,14 @@ class UsuarioSeeder extends Seeder
                 'nome' => $usuario['nome'],
                 'cpf' => $usuario['cpf'],
                 'apelido' => $usuario['apelido'],
-                'perfil_id' => $usuario['perfil_id']
+                'perfil_id' => $usuario['perfil_id'],
+                'matricula' => str_pad(
+                    rand(1000000, 9999999),
+                    7,
+                    0,
+                    STR_PAD_LEFT),
+                'uf' => 'DF',
+                'sexo' => $usuario['sexo'],
             ]);
             $user->save();
 
