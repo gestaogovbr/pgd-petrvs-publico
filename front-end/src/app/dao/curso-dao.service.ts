@@ -11,5 +11,14 @@ export class CursoDaoService extends DaoBaseService<Curso>{
     super("Curso", injector);
     this.inputSearchConfig.searchFields = ["nome"];
   }  
+
+  public idInstitucional(): Promise<string>{
+    return new Promise<string>((resolve, reject) => {
+      this.server.post('api/Curso/id-institucional',{}).subscribe(response => {
+        resolve(response);
+        console.log(response);
+      }, error => reject(error));
+    });
+  }
 }
 

@@ -34,6 +34,7 @@ export class Programa extends Base {
     public plano_trabalho_assinatura_gestor_lotacao: number = 1; /* Exigir assinatura do gestor da unidade de lotação do servidor */
     public plano_trabalho_assinatura_gestor_unidade: number = 1; /* Exigir assinatura do gestor da unidade */
     public plano_trabalho_assinatura_gestor_entidade: number = 1; /* Exigir assinatura do gestor da entidade */
+    public plano_trabalho_criterios_avaliacao: LookupItem[] = []; /* Critérios de avaliação do plano de trabalho */
 
     public tipo_avaliacao_plano_trabalho_id: string = ""; /* Tipo de avaliação do plano de trabalho */
     public tipo_avaliacao_plano_entrega_id: string = ""; /* Tipo de avaliação do plano de entrega */

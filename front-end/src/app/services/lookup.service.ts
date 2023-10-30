@@ -81,6 +81,16 @@ export class LookupService {
     { key: 'ATIVIDADE', value: "Atividade", icon: "bi bi-envelope-exclamation" }
   ];
 
+  public REACAO_TIPO: LookupItem[] = [
+    { key: 'like', value: "Curti", icon: "like" },
+    { key: 'love', value: "Amei", icon: "love" },
+    { key: 'care', value: "Força", icon: "care" },
+    { key: 'haha', value: "Haha", icon: "haha" },
+    { key: 'wow', value: "Uau", icon: "wow" },
+    { key: 'sad', value: "Triste", icon: "sad" },
+    { key: 'angry', value: "Grr", icon: "angry" }
+  ];
+
   public USUARIO_SITUACAO_FUNCIONAL: LookupItem[] = [
     { key: "ATIVO_PERMANENTE", value: "Ativo permanente" },
     { key: "APOSENTADO", value: "Aposentado" },
@@ -174,10 +184,10 @@ export class LookupService {
   public UNIDADE_INTEGRANTE_TIPO: LookupItem[] = [
     { key: 'AVALIADOR_PLANO_ENTREGA', value: "Avaliador (Planos de Entrega)", icon: "bi bi-check-all", color: "warning" },
     { key: 'AVALIADOR_PLANO_TRABALHO', value: "Avaliador (Planos de Trabalho)", icon: "bi bi-check-circle", color: "info" },
-    { key: 'COLABORADOR', value: "Colaborador", icon: "bi bi-person-add", color: "dark" },
+    { key: 'COLABORADOR', value: "Servidor Associado", icon: "bi bi-person-add", color: "secondary" },
     { key: 'GESTOR', value: "Gestor", icon: "bi bi-star-fill", color: "primary" },
     { key: 'GESTOR_DELEGADO', value: "Gestor Delegado", icon: "bi bi-star-fill", color: "danger" },
-    { key: 'GESTOR_SUBSTITUTO', value: "Gestor Substituto", icon: "bi bi-star-half", color: "secondary" },
+    { key: 'GESTOR_SUBSTITUTO', value: "Gestor Substituto", icon: "bi bi-star-half", color: "primary" },
     { key: 'HOMOLOGADOR_PLANO_ENTREGA', value: "Homologador (Planos de Entrega)", icon: "bi bi-check2-square", color: "success" },
     { key: 'LOTADO', value: "Lotado", icon: "bi bi-file-person", color: "dark" }
   ];

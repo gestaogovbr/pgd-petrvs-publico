@@ -80,8 +80,8 @@ export class TemplateService {
     public util: UtilService
   ) { }
 
-  public selectRoute(especie: TemplateEspecie): FullRoute {
-    return {route: ['uteis', 'templates', especie]};
+  public selectRoute(especie: TemplateEspecie, selectId?: string): FullRoute {
+    return Object.assign({route: ['uteis', 'templates', especie]}, selectId?.length ? {params: {selectId: selectId}} : {});
   }
 
   public details(data: any) {

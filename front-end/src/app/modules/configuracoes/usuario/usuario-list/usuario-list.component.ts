@@ -1,6 +1,7 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
@@ -33,17 +34,13 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
     });
     this.addOption(this.OPTION_INFORMACOES, "MOD_USER");
     this.addOption(this.OPTION_EXCLUIR, "MOD_USER_EXCL");
-    this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
-    // Testa se o usuário possui permissão para gerenciar as suas unidades-integrantes
-    if (this.auth.hasPermissionTo("MOD_UND_INTG")) {
-      this.options.push({
-        icon: "bi bi-list-task",
-        label: "Atribuições",
-        onClick: (usuario: Usuario) => {
-          this.go.navigate({ route: ['configuracoes', 'usuario', usuario.id, 'integrante'] });
-        }
-      });
-    }
+  }
+
+  public dynamicOptions(row: any): ToolbarButton[] {
+    let result: ToolbarButton[] = [];
+    // Testa se o usuário logado possui permissão para gerenciar as atribuições do usuário do grid
+    if (this.auth.hasPermissionTo("MOD_USER_ATRIB")) result.push({ icon: "bi bi-list-task", label: "Atribuições", onClick: (usuario: Usuario) => { this.go.navigate({ route: ['configuracoes', 'usuario', '', usuario.id, 'integrante'] }, { metadata: { entity: row } }); }});
+    return result;
   }
 
   public filterWhere = (filter: FormGroup) => {

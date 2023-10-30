@@ -987,7 +987,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_dao_curriculum_profissional_dao_service__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! src/app/dao/curriculum-profissional-dao.service */ 60978);
 /* harmony import */ var src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! src/app/dao/usuario-dao.service */ 35255);
 /* harmony import */ var src_app_dao_unidade_integrante_dao_service__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! src/app/dao/unidade-integrante-dao.service */ 88631);
-/* harmony import */ var src_app_services_unidades_service__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! src/app/services/unidades.service */ 89640);
+/* harmony import */ var src_app_services_unidade_service__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! src/app/services/unidade.service */ 20609);
 /* harmony import */ var src_app_dao_curriculum_dao_service__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! src/app/dao/curriculum-dao.service */ 39910);
 /* harmony import */ var src_app_dao_cargo_dao_service__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! src/app/dao/cargo-dao.service */ 99255);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! @angular/core */ 51197);
@@ -1103,7 +1103,7 @@ class CurriculumProfissionalFormComponent extends src_app_modules_base_page_form
     this.grupoDao = injector.get(src_app_dao_grupo_especializado_dao_service__WEBPACK_IMPORTED_MODULE_7__.GrupoEspecializadoDaoService);
     this.unidadeDao = injector.get(src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_8__.UnidadeDaoService);
     this.cargoDao = injector.get(src_app_dao_cargo_dao_service__WEBPACK_IMPORTED_MODULE_15__.CargoDaoService);
-    this.unidadeService = injector.get(src_app_services_unidades_service__WEBPACK_IMPORTED_MODULE_13__.UnidadesService);
+    this.unidadeService = injector.get(src_app_services_unidade_service__WEBPACK_IMPORTED_MODULE_13__.UnidadeService);
     this.lookupService = injector.get(src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_3__.LookupService);
     this.form = this.fh.FormBuilder({
       radioDocenciaFora: {
@@ -1662,22 +1662,22 @@ _class.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefi
 
 /***/ }),
 
-/***/ 89640:
-/*!**********************************************!*\
-  !*** ./src/app/services/unidades.service.ts ***!
-  \**********************************************/
+/***/ 20609:
+/*!*********************************************!*\
+  !*** ./src/app/services/unidade.service.ts ***!
+  \*********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   UnidadesService: () => (/* binding */ UnidadesService)
+/* harmony export */   UnidadeService: () => (/* binding */ UnidadeService)
 /* harmony export */ });
 /* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 51197);
 
 var _class;
 
-class UnidadesService {
+class UnidadeService {
   constructor() {
     this.unidade = [];
   }
@@ -1685,19 +1685,17 @@ class UnidadesService {
     var _this = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this.unidadeDao?.query().getAll().then(unidade => {
-        //console.log(unidade);
         _this.unidade = unidade.map(x => Object.assign({}, {
           key: x.id,
           value: x.sigla
         }));
-        //console.log(this.unidade)
         return _this.unidade;
       });
     })();
   }
 }
-_class = UnidadesService;
-_class.ɵfac = function UnidadesService_Factory(t) {
+_class = UnidadeService;
+_class.ɵfac = function UnidadeService_Factory(t) {
   return new (t || _class)();
 };
 _class.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({

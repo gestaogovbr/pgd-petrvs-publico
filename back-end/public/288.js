@@ -853,10 +853,11 @@ class CadeiaValorListProcessosComponent extends src_app_modules_base_page_frame_
           niveisPai = (atual?.sequencia || "") + "." + niveisPai;
           paiId = atual?.processo_pai_id || null;
         }
-        let controleNiveis = niveisPai.split(".");
+        let controleNiveis;
+        controleNiveis = niveisPai.split(".");
         controleNiveis.pop();
         controleNiveis.push((ultimoCriado.sequencia - 1).toString());
-        if (this.JSON.stringify(niveis) <= this.JSON.stringify(controleNiveis)) {
+        if (this.JSON.stringify(niveis) <= this.JSON.stringify(controleNiveis) && niveis[niveis.length - 1].parseInt() <= controleNiveis[controleNiveis.length - 1].parseInt()) {
           result = "Nível já existente";
         } else if (niveis.length > controleNiveis.length) {
           result = pais.length + 1 == niveis.length ? "Adicione o nível filho pelo botão 'Adicionar filho'" : "Não existe o nível pai";
@@ -913,6 +914,7 @@ class CadeiaValorListProcessosComponent extends src_app_modules_base_page_frame_
         metadata.nivel = niveis;
         metadata.path = path;
       }
+      if (!this.grid) this.sortProcessosItems();
     }
     return metadata.nivel;
   }
@@ -925,6 +927,26 @@ class CadeiaValorListProcessosComponent extends src_app_modules_base_page_frame_
       const sb = (this.grid.getMetadata(b)?.nivel || "").split(".").map(x => ("000" + x).substr(-3)).join(".");
       return sa < sb ? -1 : sa > sb ? 1 : 0;
     });
+  }
+  sortProcessosItems() {
+    this.items.sort((a, b) => {
+      let nivelA = a.processo_pai_id ? this.retornaNivel(a) : a.sequencia.toString();
+      let nivelB = b.processo_pai_id ? this.retornaNivel(b) : b.sequencia.toString();
+      const nA = (nivelA || "").split(".").map(x => ("000" + x).substr(-3)).join(".");
+      const nB = (nivelB || "").split(".").map(x => ("000" + x).substr(-3)).join(".");
+      return nA < nB ? -1 : nA > nB ? 1 : 0;
+    });
+  }
+  retornaNivel(processo) {
+    let paiId = processo.processo_pai_id;
+    let nivelPai = "";
+    while (paiId) {
+      let atual = this.items.find(x => x.id == paiId);
+      nivelPai = (atual?.sequencia || "") + "." + nivelPai;
+      paiId = atual?.processo_pai_id || null;
+    }
+    nivelPai += processo.sequencia;
+    return nivelPai;
   }
   addProcesso() {
     var _this2 = this;
@@ -1221,7 +1243,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ 92392);
 /* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../components/input/input-select/input-select.component */ 64603);
 /* harmony import */ var _components_action_button_action_button_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../components/action-button/action-button.component */ 28032);
-/* harmony import */ var ngx_drag_drop__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ngx-drag-drop */ 40499);
+/* harmony import */ var ngx_drag_drop__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ngx-drag-drop */ 51474);
 
 var _class;
 
@@ -1813,7 +1835,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/common */ 89650);
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/forms */ 70997);
-/* harmony import */ var ngx_drag_drop__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ngx-drag-drop */ 40499);
+/* harmony import */ var ngx_drag_drop__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ngx-drag-drop */ 51474);
 /* harmony import */ var _components_components_module__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../components/components.module */ 10822);
 /* harmony import */ var _cadeia_valor_routing_module__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./cadeia-valor-routing.module */ 97075);
 /* harmony import */ var _cadeia_valor_list_cadeia_valor_list_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./cadeia-valor-list/cadeia-valor-list.component */ 32946);

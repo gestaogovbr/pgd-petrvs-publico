@@ -67,7 +67,7 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
 
-    if(["usuario_id", "plano_trabalho_id"].includes(controlName) && !control.value?.length) {
+    if(["usuario_id", "plano_trabalho_id", "plano_trabalho_entrega_id"].includes(controlName) && !control.value?.length) {
       result = "Obrigatório";
     } else if(controlName == "data_inicio" && !control.value){
       result = "Obrigatório";

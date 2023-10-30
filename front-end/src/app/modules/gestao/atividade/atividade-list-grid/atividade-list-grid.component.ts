@@ -116,10 +116,10 @@ export class AtividadeListGridComponent extends AtividadeListBase {
 
   public async onColumnProgressoEtiquetasChecklistEdit(row: any) {
     this.formEdit.controls.progresso.setValue(row.progresso);
-    this.formEdit.controls.etiquetas.setValue(row.etiquetas);
-    this.formEdit.controls.etiqueta.setValue(null);
-    this.etiquetas = this.util.merge(row.tipo_atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key);
-    this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);
+    //this.formEdit.controls.etiquetas.setValue(row.etiquetas);
+    //this.formEdit.controls.etiqueta.setValue(null);
+    //this.etiquetas = this.util.merge(row.tipo_atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key);
+    //this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);
     this.checklist = this.util.clone(row.checklist);
   }
 
@@ -127,11 +127,12 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     try {
       const saved = await this.dao!.update(row.id, {
         progresso: this.formEdit.controls.progresso.value,
-        etiquetas: this.formEdit.controls.etiquetas.value,
+        //etiquetas: this.formEdit.controls.etiquetas.value,
         checklist: this.checklist
       });
       row.progresso = this.formEdit.controls.progresso.value;
       row.checklist = this.checklist;
+      //row.etiquetas = this.formEdit.controls.etiquetas.value;
       return !!saved;
     } catch (error) {
       return false;
@@ -223,7 +224,7 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     if (this.etiqueta && this.etiqueta.selectedItem) {
       const item = this.etiqueta.selectedItem;
       const key = item.key?.length ? item.key : this.util.textHash(item.value);
-      if (this.util.validateLookupItem(this.formEdit.controls.etiquetas.value, key)) {
+      if (this.util.validateLookupItem(this.formEdit.controls.etiqueta.value, key)) {
         result = {
           key: key,
           value: item.value,
@@ -235,6 +236,34 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     }
     return result;
   };
+
+  public async onColumnEtiquetasEdit(row: any) {
+    this.formEdit.controls.etiquetas.setValue(row.etiquetas);
+    this.formEdit.controls.etiqueta.setValue(null);
+    this.etiquetas = this.util.merge(row.tipo_atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key);
+    this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);
+  }
+
+  public async onColumnEtiquetasSave(row: any) {
+    try {
+      const saved = await this.dao!.update(row.id, {
+        etiquetas: this.formEdit.controls.etiquetas.value
+      });
+      row.etiquetas = this.formEdit.controls.etiquetas.value;
+      return !!saved;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  public onEtiquetaConfigClick() {
+    this.go.navigate({ route: ["configuracoes", "preferencia", "usuario", this.auth.usuario!.id], params: { etiquetas: true } }, {
+      modal: true, modalClose: (modalResult) => {
+        this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);
+        this.cdRef.detectChanges();
+      }
+    });
+  }
 
 }
 

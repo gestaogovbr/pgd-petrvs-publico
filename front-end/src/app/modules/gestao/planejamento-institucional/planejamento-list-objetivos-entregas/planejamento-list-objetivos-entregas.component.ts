@@ -29,12 +29,8 @@ export class PlanejamentoListObjetivosEntregasComponent extends PageListBase<Pla
       nome: { default: "" },
       planejamento_id: { default: null}
     });
-  }  
- 
-  public dynamicOptions(row: any): ToolbarButton[] {
-    let result: ToolbarButton[] = [];
-    result.push({ label: "Informações", icon: "bi bi-info-circle", onClick: (objetivo: PlanejamentoObjetivo) => this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo', objetivo.id, 'consult'] }, { modal: true }) });
-    return result;
+    this.OPTION_INFORMACOES.onClick = (objetivo: PlanejamentoObjetivo) => this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo', objetivo.id, 'consult'] }, { modal: true });
+    this.addOption(this.OPTION_INFORMACOES);
   }
 
   public filterClear(filter: FormGroup) {

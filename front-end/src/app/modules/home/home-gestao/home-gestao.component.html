@@ -3,11 +3,12 @@
 <div class="row mt-5">
   <div class="col-6 col-sm-3 mb-3">
     <app-button-dashboard
-      title="Avaliar consolidadas"
-      imgIcon="../../../../assets/icons/home/ranking.svg"
+      title="Planos de trabalho"
+      imgIcon="../../../../assets/icons/home/negociate.svg"
       textColor="#1369f0"
       borderColor="#1369f0"
-      [route]="{route: ['gestao/atividade'], params: {atribuidas_para_mim: true}}"
+      [route]="{route: ['gestao/plano-trabalho']}"
+      [metadata]="{ metadata: {minha_unidade: true}}"
     ></app-button-dashboard>
   </div>
 
@@ -17,7 +18,7 @@
       imgIcon="../../../../assets/icons/home/service.svg"
       textColor="#1369f0"
       borderColor="#1369f0"
-      [route]="{route: ['gestao/plano-entrega']}"
+      [route]="{route: ['execucao/plano-entrega']}"
     ></app-button-dashboard>
   </div>
 
@@ -27,17 +28,17 @@
       imgIcon="../../../../assets/icons/home/team.svg"
       textColor="#1369f0"
       borderColor="#1369f0"
+      [route]="{route: ['gestao/atividade']}"
     ></app-button-dashboard>
   </div>
 
   <div class="col-6 col-sm-3 mb-3">
     <app-button-dashboard
-      title="Planos de trabalho"
-      imgIcon="../../../../assets/icons/home/negociate.svg"
+      title="Avaliar consolidados"
+      imgIcon="../../../../assets/icons/home/ranking.svg"
       textColor="#1369f0"
       borderColor="#1369f0"
-      [route]="{route: ['gestao/plano-trabalho']}"
-      [metadata]="{ metadata: {minha_unidade: true}}"
+      [route]="{route: ['avaliacao/plano-trabalho/consolidacao/avaliacao']}"
     ></app-button-dashboard>
   </div>
 

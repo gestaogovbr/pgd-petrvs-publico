@@ -9,6 +9,7 @@ use App\Models\Unidade;
 use App\Models\TipoAtividade;
 use App\Models\Comentario;
 use App\Models\Documento;
+use App\Models\Reacao;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -49,6 +50,7 @@ class Atividade extends ModelBase
 
     public $fillable_changes = [
         'comentarios',
+        'reacoes',
         'tarefas'
     ];
 
@@ -59,7 +61,7 @@ class Atividade extends ModelBase
         }); 
     }
 
-    public $delete_cascade = ['tarefas', 'pausas', 'comentarios'];
+    public $delete_cascade = ['tarefas', 'pausas', 'comentarios', 'reacoes'];
 
     // Casting
     protected $casts = [
@@ -76,6 +78,7 @@ class Atividade extends ModelBase
     public function comentarios() { return $this->hasMany(Comentario::class); }
     public function documentos() { return $this->hasMany(Documento::class); }
     public function consolidacoes() { return $this->hasMany(PlanoTrabalhoConsolidacaoAtividade::class); }
+    public function reacoes() { return $this->hasMany(Reacao::class); }
     // Belongs
     public function planoTrabalho() { return $this->belongsTo(PlanoTrabalho::class); }        //nullable
     public function planoTrabalhoEntrega() { return $this->belongsTo(PlanoTrabalhoEntrega::class); }      //nullable

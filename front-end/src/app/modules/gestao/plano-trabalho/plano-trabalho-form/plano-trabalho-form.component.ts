@@ -86,7 +86,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       "documento", 
       "documentos.assinaturas.usuario:id,nome,apelido", 
       "entregas.plano_entrega_entrega.entrega",
-      "entregas.plano_entrega_entrega.plano_entrega.unidade:id,nome,sigla"
+      "entregas.plano_entrega_entrega.plano_entrega.unidade:id,nome,sigla",
+      'entregas.reacoes.usuario:id,nome,apelido'
     ];
     this.joinPrograma = ["template_tcr"];
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
@@ -120,7 +121,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       editar_texto_complementar_unidade: { default: false },
       editar_texto_complementar_usuario: { default: false },
       unidade_texto_complementar: { default: "" },
-      usuario_texto_complementar: { default: "" }
+      usuario_texto_complementar: { default: "" },
+      criterios_avaliacao: { default: [] },
+      criterio_avaliacao: { default: "" }
     }, this.cdRef, this.validate);
   }
 
@@ -188,6 +191,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     let programa = selected.entity as Programa;
     this.entity!.programa_id = programa.id;
     this.entity!.programa = programa;
+    this.form?.controls.criterios_avaliacao.setValue(programa.plano_trabalho_criterios_avaliacao || []);
     this.form?.controls.data_inicio.updateValueAndValidity();
     this.form?.controls.data_fim.updateValueAndValidity();
     this.calculaTempos();
@@ -309,6 +313,20 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
     return result;
   }
+
+  public addItemHandleCriteriosAvaliacao(): LookupItem | undefined {
+    let result = undefined;
+    const value = this.form!.controls.criterio_avaliacao.value;
+    const key = this.util.textHash(value);
+    if(value?.length && this.util.validateLookupItem(this.form!.controls.criterios_avaliacao.value, key)) {
+      result = {
+        key: key,
+        value: this.form!.controls.criterio_avaliacao.value
+      };
+      this.form!.controls.criterio_avaliacao.setValue("");
+    }
+    return result;
+  };
 
   public async signDocumento(documento: Documento) {
     await this.documentoService.sign([documento]);

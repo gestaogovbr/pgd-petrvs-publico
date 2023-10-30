@@ -51,7 +51,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
   public calendar: CalendarService;
   public comentario: ComentarioService;
   public etiquetas: LookupItem[] = [];
-  public checklist: LookupItem[] = [];
+  public checklist: Checklist[] = [];//public checklist: LookupItem[] = [];
   public planosTrabalhos: LookupItem[] = [];
   public planoTrabalhoJoin: string[] = ["entregas.plano_entrega_entrega:id,descricao", "tipo_modalidade:id,nome"];
   public planoTrabalhoSelecionado?: PlanoTrabalho | null = null;
@@ -140,7 +140,6 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-
     if(["unidade_id", "descricao"].includes(controlName) && !control?.value?.length) {
       result = "Obrigatório";
     } else if(controlName == "tipo_atividade_id" && !control?.value?.length && !this.auth.hasPermissionTo("MOD_ATV_TIPO_ATV_VAZIO")) {
@@ -164,16 +163,18 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
         result = "Selecione";
       }
     }
-
     return result;
   }
 
   public formValidation = (form?: FormGroup) => {
     let result = undefined;
     this.loadEtiquetas();
-    this.loadChecklist();
+    if (this.form.controls.tipo_atividade_id.value) {
+      let checkAtividade = this.tipoAtividade?.selectedEntity.checklist;
+      if (this.form.controls.checklist.value.length == checkAtividade.length) this.loadChecklist();// this.loadChecklist();
+    }
     const etiquetasKeys = this.etiquetas.map(x => x.key);
-    const checklistKeys = this.checklist.map(x => x.key);
+    const checklistKeys = this.checklist.map(x => x.id);//const checklistKeys = this.checklist.map(x => x.key);
     const etiqueta = (this.form.controls.etiquetas.value || []).find((x: LookupItem) => !etiquetasKeys.includes(x.key)) as LookupItem;
     const checklst = (this.form.controls.checklist.value || []).find((x: Checklist) => !checklistKeys.includes(x.id) && x.checked) as Checklist;
     if(etiqueta) result = "Etiqueta " + etiqueta.value + "não pode ser utilizada!";
@@ -249,7 +250,15 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
 
   public loadChecklist() {
     const tipoAtividade = this.tipoAtividade?.selectedEntity as TipoAtividade;
-    this.checklist = tipoAtividade?.checklist || [];
+    let checkAdd: Checklist[] = tipoAtividade.checklist.map((a: { key: any; value: any; }) => {
+      return {
+        id: a.key,
+        texto: a.value,
+        checked: false
+      } as Checklist;
+    });
+    this.checklist = checkAdd || [];//this.checklist = tipoAtividade?.checklist || [];
+    this.form.controls.checklist.setValue(checkAdd);
     this.atividadeService.buildChecklist(tipoAtividade, this.form.controls.checklist);
   }
 

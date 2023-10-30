@@ -91,7 +91,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if(['codigo', 'sigla', 'nome', 'cidade_id', 'entidade_id','unidade_pai_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if(['sigla', 'nome', 'cidade_id', 'entidade_id','unidade_pai_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
     return result;
@@ -132,8 +132,8 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       this.gestorSubstituto!.loadSearch(entity?.gestor_substituto?.usuario || entity.gestor_substituto?.usuario!.id),
       this.entidade!.loadSearch(entity.entidade || entity.entidade_id)
     ]);
-    this.form.patchValue(this.util.fillForm(formValue, {...entity, ...{
-    }}));
+    entity.etiquetas = entity.etiquetas || [];
+    this.form.patchValue(this.util.fillForm(formValue, entity));
   }
 
   public initializeData(form: FormGroup): void {

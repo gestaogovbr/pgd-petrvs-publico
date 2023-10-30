@@ -32,11 +32,12 @@ class DatabaseSeeder extends Seeder
                EntidadeSeeder::class,
                UnidadeSeeder::class,
                UsuarioSeeder::class,
+               
                /*
                TipoAvaliacaoSeeder::class,
                TipoJustificativaSeeder::class,
                TipoAvaliacaoJustificativaSeeder::class,
-               */
+              */
                AreaConhecimentoSeeder::class,
                TipoCursoSeeder::class,
                CursoSeeder::class,
@@ -45,6 +46,8 @@ class DatabaseSeeder extends Seeder
                FuncaoSeeder::class,
                CentroTreinamentoSeeder::class,
                GrupoEspecializadoSeeder::class,
+               AreaTematicaSeeder::class,
+               AreaAtividadeExternaSeeder::class,
                IN24_2023Seeder::class,
 
                /*

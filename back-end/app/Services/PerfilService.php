@@ -15,6 +15,10 @@ class PerfilService extends ServiceBase {
         [4, "Usuário Nível 3", "Nível 3 - Atividades, Gestão, Configurações pessoais e Inclusão de Atividades e restrições tabela, e as opções somente de sua unidade"],
         [5, "Usuário Nível 2", "Nível 2 - Atividades, Gestão, Configurações pessoais, Inclusão de Atividades e Acesso a Cadastro somente na primeira parte, e as opções somente de sua unidade"],
         [6, "Usuário Nível 1", "Nível 1 - Atividades, Gestão e Configurações pessoais"],
+
+        // Seeder IN24_2023
+        [3, "Chefe de Unidade Executora", "Usuário Chefe de Unidade Executora e Gestores Similares"],
+        [5, "Participante", "Participante do PGD"],
     ];
 
     /**

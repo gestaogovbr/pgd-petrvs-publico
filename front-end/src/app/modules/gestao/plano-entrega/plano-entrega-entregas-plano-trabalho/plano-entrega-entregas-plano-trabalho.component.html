@@ -8,7 +8,7 @@
       </ng-template>
 
       <ng-template let-item="row" #columnExpandeEntregas>
-        <h5>Entregas do plano:</h5>
+        <h5>Entregas do plano:</h5> 
         <hr>
         <div *ngFor="let plano of item.planos_trabalho" class="card mb-2">
           <div class="card-body">
@@ -44,10 +44,10 @@
               </column>
 
 
-                <column [titleTemplate]="titleForcaTrabalho" [template]="columnForcaTrabalho" [width]="125" [align]="'center'">
+                <column [titleTemplate]="titleForcaTrabalho" [title]="'% CHD'" [template]="columnForcaTrabalho" [width]="125" [align]="'center'" [titleHint]="'% Carga Horária Disponível'">
                   <ng-template let-header="header" #titleForcaTrabalho>
                       <div class="text-center">
-                          <small><strong>% Força Trab.</strong></small><br>
+                          <!--<small><strong>% Força Trab.</strong></small><br>-->
                           <small><badge icon="bi bi-calculator" [color]="totalForcaTrabalho(plano.entregas) == 100 ? 'success' : 'warning'" [label]="totalForcaTrabalho(plano.entregas) + '%'"></badge></small>
                       </div>
                   </ng-template>
@@ -82,9 +82,9 @@
       </ng-template>
     </column>
 
-    <column [titleTemplate]="titleForcaTrabalho" [template]="columnForcaTrabalho">
+    <column [titleTemplate]="titleForcaTrabalho" [template]="columnForcaTrabalho" [title]="'% CHD'" [titleHint]="'% Carga Horária Disponível'">
       <ng-template let-header="header" #titleForcaTrabalho>
-          <b>% Força Trab.</b>
+          <!--<b>% Força Trab.</b>-->
       </ng-template>
       <ng-template let-row="row" #columnForcaTrabalho>
         <small><badge icon="bi bi-calculator" [color]="totalForcaTrabalho(planoAtivo(row.planos_trabalho).entregas) == 100 ? 'success' : 'warning'" [label]="totalForcaTrabalho(planoAtivo(row.planos_trabalho).entregas) + '%'"></badge></small>

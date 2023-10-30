@@ -137,7 +137,7 @@
 
   .arrow_box {
     position: relative;
-    background: var(--petrvs-navbar-top-bg-color);
+    background: var(--petrvs-box-background);
     margin-top: 30px;
     padding: 10px;
 
@@ -153,13 +153,13 @@
     }
     &::after {
       border-color: rgba(136, 183, 213, 0);
-      border-bottom-color: var(--petrvs-navbar-top-bg-color);
+      border-bottom-color: var(--petrvs-box-background);
       border-width: 20px;
       margin-left: -20px;
     }
     &::before {
       border-color: rgba(194, 225, 245, 0);
-      border-bottom-color: var(--bs-body-bg);
+      border-bottom-color: var(--petrvs-box-background);
       border-width: 22px;
       margin-left: -22px;
     }
@@ -192,12 +192,12 @@
     --petrvs-nav-link-color: #fff;
     --petrvs-border-color-dropdown: #13162d;
     --petrvs-form-control-background: #fff;
+    --petrvs-box-background: #dce3ec;
 
     .modal {
         --bs-modal-bg: #fff;
     }
 
- 
     .navbar-toggler-icon {
       --bs-navbar-toggler-icon-bg: #{escape-svg($navbar-dark-toggler-icon-bg)};
     }
@@ -240,6 +240,7 @@
     --petrvs-nav-link-color: #2b2828;
     --petrvs-border-color-dropdown: #ffffff;
     --petrvs-form-control-background: #fff;
+    --petrvs-box-background: #dce3ec;
 
     .form-control {
       background-color: var(--petrvs-form-control-background);
@@ -252,6 +253,7 @@
     --petrvs-navbar-vertical-border-color: #0c0f12;
     --petrvs-nav-link-bg-hover: #111212;
     --petrvs-nav-link-bg-active: #111212;
+    --petrvs-box-background: #1b1f23;
 
     .btn-light {
       --bs-btn-bg: var(--bs-body-bg);
@@ -314,6 +316,16 @@
 
   .table-responsive {
     height: 100%;
+  }
+
+  .buttons-home path {
+    fill: var(--bs-body-color);
+  }
+
+  .first-box {
+    &::after, &::before {
+      border: none !important;
+    }
   }
   
 }

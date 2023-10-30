@@ -8,6 +8,9 @@ import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model'
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { PlanoEntregaService } from '../plano-entrega.service';
+import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
+import { LookupItem } from 'src/app/services/lookup.service';
+import { Checklist } from 'src/app/models/atividade.model';
 
 @Component({
   selector: 'plano-entrega-list-entrega',
@@ -17,6 +20,7 @@ import { PlanoEntregaService } from '../plano-entrega.service';
 export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
+  @ViewChild('etiqueta', { static: false }) public etiqueta?: InputSelectComponent;
   @Input() cdRef: ChangeDetectorRef;
   @Input() disabled: boolean = false;
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
@@ -65,11 +69,15 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   public planoEntregaId: string = "";
   public dao: PlanoEntregaEntregaDaoService;
   public planoEntregaService: PlanoEntregaService;
+  public formEdit: FormGroup;
+  public etiquetas: LookupItem[] = [];
+  public checklist?: Checklist[];
+  public selectable: boolean = false;
 
   constructor(public injector: Injector) {
     super(injector);
     this.title = this.lex.translate("Entregas");
-    this.join = ["unidade", "entrega"];
+    this.join = ["unidade", "entrega", "reacoes.usuario:id,nome,apelido"];
     this.code = "MOD_PENT";
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
     this.dao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
@@ -85,7 +93,13 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
       progresso_esperado: { default: null },
       progresso_realizado: { default: null },
       destinatario: { default: null },
+      etiquetas: { default: [] },
     }, this.cdRef, this.validate);
+    this.formEdit = this.fh.FormBuilder({
+      progresso_realizado: { default: 0 },
+      etiquetas: { default: [] },
+      etiqueta: { default: null }
+    });
     // Testa se o usuário possui permissão para exibir dados da entrega do plano de entregas
     this.addOption(Object.assign({ onClick: this.consult.bind(this) }, this.OPTION_INFORMACOES), "MOD_PENT");
     this.addOption(Object.assign({ onClick: this.delete.bind(this) }, this.OPTION_EXCLUIR), "MOD_PENT_ENTR_EXCL");
@@ -237,12 +251,12 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     this.go.navigate({ route: ['logs', 'change', entrega.id, 'consult'] })
   }
 
-  public async showPlanejamento(planejamento_id: string){
-    this.go.navigate({ route: ['gestao', 'planejamento', planejamento_id, 'consult'] }, {modal: true})
+  public async showPlanejamento(objetivo_id: string){
+    this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', 'objetivos', objetivo_id]}, { modal: true });
   }
 
-  public async showCadeiaValor(cadeia_valor_id_id: string){
-    this.go.navigate({ route: ['gestao', 'cadeia-valor', cadeia_valor_id_id, 'consult'] }, {modal: true})
+  public async showCadeiaValor(processo_id: string){
+    this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', 'processos', processo_id]}, {modal: true});
   }
 
   public refreshComentarios(modalResult: any) {
@@ -259,4 +273,69 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
       this.form?.controls.progresso_realizado.setValue(totalRealizado);
     }
   }
+
+  public addItemHandleEtiquetas(): LookupItem | undefined {
+    let result = undefined;
+    if (this.etiqueta && this.etiqueta.selectedItem) {
+      const item = this.etiqueta.selectedItem;
+      const key = item.key?.length ? item.key : this.util.textHash(item.value);
+      if (this.util.validateLookupItem(this.formEdit.controls.etiqueta.value, key)) {
+        result = {
+          key: key,
+          value: item.value,
+          color: item.color,
+          icon: item.icon
+        };
+        this.formEdit.controls.etiqueta.setValue(null);
+      }
+    }
+    return result;
+  };
+
+  public async onColumnEtiquetasEdit(row: any) {
+    this.formEdit.controls.etiquetas.setValue(row.etiquetas);
+    this.formEdit.controls.etiqueta.setValue(null);
+    this.etiquetas = this.util.merge(row.tipo_atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key);
+    this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);
+  }
+
+  public async onColumnEtiquetasSave(row: any) {
+    try {
+      const saved = await this.dao!.update(row.id, {
+        etiquetas: this.formEdit.controls.etiquetas.value
+      });
+      row.etiquetas = this.formEdit.controls.etiquetas.value;
+      return !!saved;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  public onEtiquetaConfigClick() {
+    this.go.navigate({ route: ["configuracoes", "preferencia", "usuario", this.auth.usuario!.id], params: { etiquetas: true } }, {
+      modal: true, modalClose: (modalResult) => {
+        this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);
+        this.cdRef.detectChanges();
+      }
+    });
+  }
+
+  public async onColumnChecklistEdit(row: any) {
+    this.formEdit.controls.progresso_realizado.setValue(row.progresso_realizado);
+    this.checklist = this.util.clone(row.checklist);
+  }
+
+  public async onColumnChecklistSave(row: any) {
+    try {
+      const saved = await this.dao!.update(row.id, {
+        progresso_realizado: this.formEdit.controls.progresso_realizado.value,
+        checklist: this.checklist
+      });
+      row.progresso_realizado = this.formEdit.controls.progresso_realizado.value;
+      row.checklist = this.checklist;
+      return !!saved;
+    } catch (error) {
+      return false;
+    }
+  }  
 }

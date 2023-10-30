@@ -416,11 +416,12 @@ class TipoCapacidadeService extends ServiceBase {
             "codigo"=> "MOD_USER", //ok
             "descricao"=> "Módulo Usuários",
             "capacidades"=> [
-                /* Capacidades do módulo UNIDADES*/
+                /* Capacidades do módulo USUÁRIOS */
                 ["MOD_USER_EDT", "Permite alterar dados de usuário"],
                 ["MOD_USER_EXCL", "Permite excluir dados de usuário"],
                 ["MOD_USER_INCL", "Permite incluir usuário"],
                 ["MOD_USER_TUDO", "Permite consultar qualquer usuário independente de lotação"],
+                ["MOD_USER_ATRIB", "Permite gerenciar atribuições do usuário"],
             ]
         ], [ 
             "codigo"=> "MOD_RX",

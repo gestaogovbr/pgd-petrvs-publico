@@ -7,7 +7,7 @@
         [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-search #entidade [size]="5" [control]="filter!.controls.entidade_id" controlName="entidade_id" [control]="filter!.controls.entidade_id" [dao]="entidadeDao"></input-search>
-            <input-switch #instituidora [size]="1" [label]="instituidora.value ? 'Instit.' : 'Exec.'" labelClass="text-nowrap" controlName="instituidora" [control]="filter!.controls.instituidora" [labelInfo]="'Se lista SOMENTE as ' + lex.noun('unidades') + ' instituidoras de ' + lex.noun('programa', true)"></input-switch>
+            <input-switch #instituidora [size]="1" label="Instit." labelClass="text-nowrap" controlName="instituidora" [control]="filter!.controls.instituidora" [labelInfo]="'Se lista SOMENTE as ' + lex.noun('unidades') + ' instituidoras de ' + lex.noun('programa', true)"></input-switch>
             <input-text [size]="5" label="Nome" controlName="nome" [control]="filter!.controls.nome" placeholder="Nome ou sigla..." [attr.maxlength]=250></input-text>
             <input-switch [size]="1" label="Inativos" controlName="inativos" [control]="filter!.controls.inativos" labelInfo="Se lista também as unidade inativas"></input-switch>
         </div>
@@ -39,7 +39,7 @@
                 </div>
             </ng-template>
         </column>
-        <column type="options" [onEdit]="edit" [dynamicOptions]="dynamicOptions.bind(this)"></column>
+        <column type="options" [onEdit]="edit" [options]="options" [dynamicOptions]="dynamicOptions.bind(this)"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>
