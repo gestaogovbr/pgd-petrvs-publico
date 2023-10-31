@@ -228,7 +228,7 @@ class MenuSuporteComponent {
     selectors: [["app-menu-suporte"]],
     decls: 3,
     vars: 4,
-    consts: [[1, "row", "mt-3"], [1, "col-6", "col-sm-3", "mb-3"], ["title", "Documenta\u00E7\u00E3o", "imgIcon", "../../../../assets/icons/home/documentacao.png", "textColor", "#1369f0", "borderColor", "#1369f0", 3, "route"]],
+    consts: [[1, "row", "mt-3"], [1, "col-6", "col-sm-3", "mb-3"], ["title", "Documenta\u00E7\u00E3o", "imgIcon", "../../../../assets/icons/home/documentacao.svg", "textColor", "#1369f0", "borderColor", "#1369f0", 3, "route"]],
     template: function MenuSuporteComponent_Template(rf, ctx) {
       if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 0)(1, "div", 1);
