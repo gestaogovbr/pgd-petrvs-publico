@@ -14,6 +14,7 @@ export class PlanejamentoObjetivo extends Base {
     public fundamentacao: string = ""; /* Fundamentação para a definição do objetivo */
     public sequencia: number = 0; 
     public path: string | null = null; 
+    public integra_okr: boolean = true; 
 
     public planejamento_id: string | null = null; 
     public eixo_tematico_id: string | null = null; 
