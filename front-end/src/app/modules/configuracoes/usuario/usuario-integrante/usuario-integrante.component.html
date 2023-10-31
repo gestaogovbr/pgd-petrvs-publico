@@ -1,7 +1,7 @@
 <grid #grid [items]="items" [minHeight]="500" [form]="form!" [hasDelete]="true"
     [add]="addAtribuicao.bind(this)" [load]="loadAtribuicao.bind(this)" [remove]="removeAtribuicao.bind(this)" [save]="saveAtribuicao.bind(this)" 
     editable>
-    <span *ngIf="!isNoPersist"><strong>{{ entity?.nome }}</strong></span>
+    <span *ngIf="!isNoPersist"><strong>{{ entity?.nome + ' - Matrícula ' + entity?.matricula }}</strong></span>
     <columns>
         <column [title]="lex.translate('Unidades')" [template]="columnUnidade" [editTemplate]="editUnidade">
             <ng-template let-row="row" #columnUnidade>

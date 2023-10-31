@@ -807,6 +807,16 @@ class PlanejamentoListObjetivoComponent extends src_app_modules_base_page_frame_
         default: null
       }
     }, this.cdRef);
+    this.OPTION_INFORMACOES.onClick = objetivo => this.go.navigate({
+      route: ['gestao', 'planejamento', 'objetivo', objetivo.id, 'consult']
+    }, {
+      modal: true
+    });
+    this.OPTION_EXCLUIR.onClick = objetivo => {
+      this.removeObjetivo(objetivo);
+    };
+    this.addOption(this.OPTION_INFORMACOES);
+    this.addOption(this.OPTION_EXCLUIR, 'MOD_PLAN_INST_EXCL');
   }
   ngOnInit() {
     super.ngOnInit();
@@ -838,30 +848,6 @@ class PlanejamentoListObjetivoComponent extends src_app_modules_base_page_frame_
     });
     return result;
   }
-  dynamicOptions(row) {
-    let result = [];
-    let objetivo = row;
-    result.push({
-      label: "Informações",
-      icon: "bi bi-info-circle",
-      onClick: objetivo => this.go.navigate({
-        route: ['gestao', 'planejamento', 'objetivo', objetivo.id, 'consult']
-      }, {
-        modal: true
-      })
-    });
-    if (this.auth.hasPermissionTo('MOD_PLAN_INST_EXCL') && !this.disabled) {
-      result.push({
-        label: "Excluir",
-        icon: "bi bi-trash",
-        color: "btn-outline-danger",
-        onClick: objetivo => {
-          this.removeObjetivo(objetivo);
-        }
-      });
-    }
-    return result;
-  }
   marcador(row) {
     let level = row._metadata?.level || 0;
     return level < 1 ? "" : level < 2 ? "• " : level < 3 ? "- " : "+ ";
@@ -870,7 +856,7 @@ class PlanejamentoListObjetivoComponent extends src_app_modules_base_page_frame_
     var _this = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       // ************ 
-      // se for adicionar um objetivo num grid não persistente é necessário checar se o planejamento é da entidade ou da unidade, pois se
+      // se for adicionar um objetivo num grid não persistente é necessário checar se o planejamento é da entidade ou da unidade, pois
       // se for de uma unidade será obrigatório já ter escolhido o planejamento superior
       let objetivo = new src_app_models_planejamento_objetivo_model__WEBPACK_IMPORTED_MODULE_4__.PlanejamentoObjetivo({
         _status: "ADD",
@@ -1021,7 +1007,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵInheritDefinitionFeature"]],
   decls: 16,
   vars: 18,
-  consts: [["editable", "", 3, "items", "form", "selectable", "minHeight", "add", "remove", "hasDelete", "hasEdit", "hasAdd", "join", "groupBy", "groupTemplate"], ["gridObjetivos", ""], ["groupEixoTematico", ""], ["title", "Nome", 3, "template"], ["columnNome", ""], ["title", "Eixo Tem\u00E1tico", 3, "template"], ["columnEixoTematico", ""], ["title", "Fundamenta\u00E7\u00E3o", 3, "template"], ["columnFundamentacao", ""], ["title", "Objetivo Superior", 3, "template", 4, "ngIf"], ["type", "options", 3, "dynamicButtons", "dynamicOptions"], [1, "text-wrap"], [3, "icon", "color", "label"], [1, "text-break", "w-100"], ["title", "Objetivo Superior", 3, "template"], ["columnObjetivoSuperior", ""]],
+  consts: [["editable", "", 3, "items", "form", "selectable", "minHeight", "add", "remove", "hasDelete", "hasEdit", "hasAdd", "join", "groupBy", "groupTemplate"], ["gridObjetivos", ""], ["groupEixoTematico", ""], ["title", "Nome", 3, "template"], ["columnNome", ""], ["title", "Eixo Tem\u00E1tico", 3, "template"], ["columnEixoTematico", ""], ["title", "Fundamenta\u00E7\u00E3o", 3, "template"], ["columnFundamentacao", ""], ["title", "Objetivo Superior", 3, "template", 4, "ngIf"], ["type", "options", 3, "dynamicButtons", "options"], [1, "text-wrap"], [3, "icon", "color", "label"], [1, "text-break", "w-100"], ["title", "Objetivo Superior", 3, "template"], ["columnObjetivoSuperior", ""]],
   template: function PlanejamentoListObjetivoComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "grid", 0, 1);
@@ -1054,7 +1040,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("ngIf", ctx.planejamento_superior_id == null ? null : ctx.planejamento_superior_id.length);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("dynamicButtons", ctx.dynamicButtons.bind(ctx))("dynamicOptions", ctx.dynamicOptions.bind(ctx));
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("dynamicButtons", ctx.dynamicButtons.bind(ctx))("options", ctx.options);
     }
   },
   dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_13__.NgIf, src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_2__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_9__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_10__.ColumnComponent, _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_11__.BadgeComponent],

@@ -2,6 +2,8 @@ import { Injectable, Injector } from '@angular/core';
 import { LookupItem, LookupService } from './lookup.service';
 import { FormGroup } from '@angular/forms';
 import { IntegranteConsolidado } from '../models/unidade-integrante.model';
+import { Vinculo } from '../dao/unidade-integrante-dao.service';
+import { IntegranteAtribuicao } from '../models/base.model';
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +28,7 @@ export class UnidadeIntegranteService {
 
   public alterandoGestor(form: FormGroup, items: IntegranteConsolidado[]): string[] {
     let result: string[] = [];
-    ['GESTOR', 'GESTOR_DELEGADO', 'GESTOR_SUBSTITUTO'].forEach(g => { if (form!.controls.atribuicoes.value.map((a: { key: string; }) => a.key).includes(g) && items.find(i => i.atribuicoes.includes(g))) result.push(this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, g)); });
+    ['GESTOR', 'GESTOR_DELEGADO', 'GESTOR_SUBSTITUTO'].forEach(g => { if (form!.controls.atribuicoes.value.map((a: { key: string; }) => a.key).includes(g) && items.find(i => i.atribuicoes.includes(g as IntegranteAtribuicao))) result.push(this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, g)); });
     return result;
   }
 
@@ -37,5 +39,9 @@ export class UnidadeIntegranteService {
       return x! < y! ? -1 : (x! > y! ? 1 : 0)
     });
     return items;
+  }
+
+  public converterEmVinculo(base: any, unidade_id: string, usuario_id: string, atribuicoes: IntegranteAtribuicao[] ): Vinculo {
+    return Object.assign(base, { 'unidade_id': unidade_id, 'usuario_id': usuario_id, 'atribuicoes': atribuicoes });
   }
 }

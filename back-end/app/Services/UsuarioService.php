@@ -9,6 +9,7 @@ use App\Models\Atividade;
 use App\Models\PlanoTrabalho;
 use App\Services\ServiceBase;
 use App\Services\RawWhere;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use Exception;
@@ -119,7 +120,7 @@ class UsuarioService extends ServiceBase
     }
 
     public function extraStore($entity, $unidade, $action) {
-        $this->unidadeIntegranteAtribuicaoService->checkLotacoes($entity->id);
+        if($action != ServiceBase::ACTION_INSERT) $this->unidadeIntegranteAtribuicaoService->checkLotacoes($entity->id);
     }
 
     public function hasLotacao($id, $usuario = null, $subordinadas = true) {
