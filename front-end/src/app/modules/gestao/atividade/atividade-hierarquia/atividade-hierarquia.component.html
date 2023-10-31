@@ -1,23 +1,6 @@
 <ng-container *ngIf="atividade">
   <div class="d-flex align-items-stretch">
-    <div class="planejamento arrow_box first-box w-100" *ngIf="atividade.planejamento">
-      <h6>Planejamento:</h6>
-      <h4>{{atividade.planejamento.nome}}</h4>    
-      <div class="d-flex">
-        <div class="border-start border-4 border-warning ps-3 mt-3">
-          <h6>Missão</h6>
-          <cite>{{atividade.planejamento.missao}}</cite>
-        </div>
-        <div class="border-start border-4 border-info ps-3 mt-3 ms-5">
-          <h6>Visão</h6>
-          <cite>{{atividade.planejamento.visao}}</cite>
-        </div>
-        <div class="border-start border-4 border-primary ps-3 mt-3 ms-5">
-          <h6>Valores</h6>
-          <cite *ngFor="let valor of atividade.planejamento.valores">{{valor.value}}<br></cite>
-        </div>
-      </div>
-    </div>
+    <planejamento-show [planejamento]="atividade.planejamento" *ngIf="atividade.planejamento"></planejamento-show>
 
     <div class="cadeiaValor arrow_box first-box w-100 ms-3" *ngIf="atividade.cadeiaValor">
       <h6>Cadeia de valor:</h6>

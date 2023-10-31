@@ -1,0 +1,7 @@
+<planejamento-show [planejamento]="planejamentoSuperior" *ngIf="planejamentoSuperior"></planejamento-show>
+
+<div class="planejamento arrow_box w-100" *ngIf="planejamento" [ngClass]="!planejamento.planejamento_superior_id ? 'first-box' : ''">
+  <h6>Planejamento:</h6>
+  <h4>{{planejamento.nome}}</h4>    
+  <app-colunas [colunas]="colunas"></app-colunas>
+</div>
