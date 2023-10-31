@@ -4,6 +4,7 @@ import { UnidadeIntegrante, IntegranteConsolidado } from '../models/unidade-inte
 import { Unidade } from '../models/unidade.model';
 import { Usuario } from '../models/usuario.model';
 import { IntegranteAtribuicao } from '../models/base.model';
+import { MergeArrayAction } from '../services/util.service';
 
 export type LoadIntegrantesResult = {
   integrantes: IntegranteConsolidado[],
@@ -14,7 +15,8 @@ export type Vinculo = {
     ['unidade_id']: string,
     ['usuario_id']: string,
     ['atribuicoes']: IntegranteAtribuicao[],
-    ['msg']?: string
+    ['msg']?: string,
+    ['_status']?: MergeArrayAction
 }
 
 @Injectable({

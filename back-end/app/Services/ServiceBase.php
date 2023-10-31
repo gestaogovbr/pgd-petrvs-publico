@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use ReflectionObject;
 use Throwable;
 use Exception;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RawWhere {
     public $expression;
@@ -616,7 +617,7 @@ class ServiceBase extends DynamicMethods
         $table = $model->getTable();
         $data["select"] = array_map(fn($field) => str_contains($field, ".") ? $field : $table . "." . $field, $data['fields'] ?? ["*"]);
         $query = $model::query();
-        if(!empty($data["deleted"]) && $data["deleted"]) $query = $query->withTrashed();
+        if(!empty($data["deleted"]) && $data["deleted"]) $query = is_subclass_of(get_class($model), "App\Models\ModelBase") ? $query->withTrashed() : $query;
         if(method_exists($this, 'proxyQuery')) $this->proxyQuery($query, $data);
         $data["with"] = isset($this->joinable) ? $this->getJoinable($data["with"] ?? []) : $data["with"];
         if(count($data['with']) > 0) {

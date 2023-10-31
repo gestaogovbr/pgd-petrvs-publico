@@ -177,6 +177,69 @@ class UnidadeIntegranteService {
   });
 }
 
+/***/ }),
+
+/***/ 103:
+/*!********************************************************!*\
+  !*** ./src/app/services/unidade-integrante.service.ts ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   UnidadeIntegranteService: () => (/* binding */ UnidadeIntegranteService)
+/* harmony export */ });
+/* harmony import */ var _lookup_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lookup.service */ 39702);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 51197);
+var _class;
+
+
+class UnidadeIntegranteService {
+  constructor(injector) {
+    this.injector = injector;
+    this.lookup = this.injector.get(_lookup_service__WEBPACK_IMPORTED_MODULE_0__.LookupService);
+  }
+  converterAtribuicoes(atribuicoes) {
+    return atribuicoes.map(x => Object.assign({}, {
+      key: x,
+      value: this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, x),
+      icon: this.lookup.getIcon(this.lookup.UNIDADE_INTEGRANTE_TIPO, x),
+      color: this.lookup.getColor(this.lookup.UNIDADE_INTEGRANTE_TIPO, x)
+    }));
+  }
+  alterandoGestor(form, items) {
+    let result = [];
+    ['GESTOR', 'GESTOR_DELEGADO', 'GESTOR_SUBSTITUTO'].forEach(g => {
+      if (form.controls.atribuicoes.value.map(a => a.key).includes(g) && items.find(i => i.atribuicoes.includes(g))) result.push(this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, g));
+    });
+    return result;
+  }
+  ordenar(items) {
+    items.sort((a, b) => {
+      let x = (a.usuario_nome || a.unidade_nome)?.toLowerCase();
+      let y = (b.usuario_nome || b.unidade_nome)?.toLowerCase();
+      return x < y ? -1 : x > y ? 1 : 0;
+    });
+    return items;
+  }
+  converterEmVinculo(base, unidade_id, usuario_id, atribuicoes) {
+    return Object.assign(base, {
+      'unidade_id': unidade_id,
+      'usuario_id': usuario_id,
+      'atribuicoes': atribuicoes
+    });
+  }
+}
+_class = UnidadeIntegranteService;
+_class.ɵfac = function UnidadeIntegranteService_Factory(t) {
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__.Injector));
+};
+_class.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({
+  token: _class,
+  factory: _class.ɵfac,
+  providedIn: 'root'
+});
+
 /***/ })
 
 }]);
