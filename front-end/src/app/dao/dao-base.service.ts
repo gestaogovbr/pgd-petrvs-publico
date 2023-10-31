@@ -420,17 +420,21 @@ export class DaoBaseService<T extends Base> {
 
   public save(entity: T, join: string[] = [], rellations?: string[]): Promise<T> {
     return new Promise<T>((resolve, reject) => {
-      this.server.post(this.PREFIX_URL + '/' + this.collection + '/store', {
-        entity: this.prepareToSave(entity, rellations),
-        with: join
-      }).subscribe(response => {
-        if(response.error){
-          reject(response.error);
-        } else {
-          var rows: T[] = this.getRows(response);
-          resolve(rows[0]);
-        }
-      }, error => reject(error));
+      try {
+        this.server.post(this.PREFIX_URL + '/' + this.collection + '/store', {
+          entity: this.prepareToSave(entity, rellations),
+          with: join
+        }).subscribe(response => {
+          if(response.error){
+            reject(response.error);
+          } else {
+            var rows: T[] = this.getRows(response);
+            resolve(rows[0]);
+          }
+        }, error => reject(error));
+      } catch (error) {
+        reject(error);
+      }
     });
   }
 

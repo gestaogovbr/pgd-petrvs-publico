@@ -1,4 +1,4 @@
-import { Base } from './base.model';
+import { Base, IntegranteAtribuicao } from './base.model';
 import { UnidadeIntegranteAtribuicao } from './unidade-integrante-atribuicao.model';
 import { Unidade } from './unidade.model';
 import { Usuario } from './usuario.model';
@@ -11,7 +11,7 @@ export class IntegranteConsolidado {
     public unidade_nome?: string;
     public unidade_sigla?: string;
     public unidade_codigo?: string;
-    public atribuicoes: string[] = [];
+    public atribuicoes: IntegranteAtribuicao[] = [];
 };
 
 export class UnidadeIntegrante extends Base {

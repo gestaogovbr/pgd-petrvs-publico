@@ -170,6 +170,13 @@ class UnidadeIntegranteService {
     });
     return items;
   }
+  converterEmVinculo(base, unidade_id, usuario_id, atribuicoes) {
+    return Object.assign(base, {
+      'unidade_id': unidade_id,
+      'usuario_id': usuario_id,
+      'atribuicoes': atribuicoes
+    });
+  }
 }
 _class = UnidadeIntegranteService;
 _class.ɵfac = function UnidadeIntegranteService_Factory(t) {
