@@ -86,7 +86,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       "documento", 
       "documentos.assinaturas.usuario:id,nome,apelido", 
       "entregas.plano_entrega_entrega.entrega",
-      "entregas.plano_entrega_entrega.plano_entrega.unidade:id,nome,sigla"
+      "entregas.plano_entrega_entrega.plano_entrega.unidade:id,nome,sigla",
+      'entregas.reacoes.usuario:id,nome,apelido'
     ];
     this.joinPrograma = ["template_tcr"];
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);

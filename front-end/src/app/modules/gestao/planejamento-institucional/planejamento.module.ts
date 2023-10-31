@@ -9,6 +9,8 @@ import { PlanejamentoFormObjetivoComponent } from './planejamento-form-objetivo/
 import { PlanejamentoMapaComponent } from './planejamento-mapa/planejamento-mapa.component';
 import { DndModule } from 'ngx-drag-drop';
 import { PlanejamentoListObjetivosEntregasComponent } from './planejamento-list-objetivos-entregas/planejamento-list-objetivos-entregas.component';
+import { PlanejamentoOkrComponent } from './planejamento-okr/planejamento-okr.component';
+import { NgScrollbarModule } from 'ngx-scrollbar';
 
 
 @NgModule({
@@ -18,13 +20,15 @@ import { PlanejamentoListObjetivosEntregasComponent } from './planejamento-list-
     PlanejamentoListObjetivoComponent,
     PlanejamentoFormObjetivoComponent,
     PlanejamentoMapaComponent,
-    PlanejamentoListObjetivosEntregasComponent
+    PlanejamentoListObjetivosEntregasComponent,
+    PlanejamentoOkrComponent
   ],
   imports: [
     CommonModule,
     ComponentsModule,
     DndModule,
-    PlanejamentoRoutingModule
+    PlanejamentoRoutingModule,
+    NgScrollbarModule
   ],
   exports: [
     PlanejamentoListObjetivosEntregasComponent

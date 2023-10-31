@@ -130,7 +130,7 @@
                 <comentarios-widget [entity]="row" [selectable]="selectable" origem="ATIVIDADE" [grid]="grid"></comentarios-widget>
             </ng-template>
         </column>
-        <column *ngIf="!selectable" type="options" [metadata]="optionsMetadata" [dynamicOptions]="atividadeService.dynamicOptions.bind(this)" [dynamicButtons]="atividadeService.dynamicButtons.bind(this)"></column>
+        <column *ngIf="!selectable" type="options" [metadata]="optionsMetadata" [dynamicOptions]="atividadeService.dynamicOptions.bind(this)" [dynamicButtons]="atividadeService.dynamicButtons.bind(this)" [options]="options"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

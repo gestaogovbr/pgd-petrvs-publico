@@ -1,0 +1,16 @@
+<grid [items]="items" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join">
+    <columns>
+        <column title="Perguntas" [template]="columnPerguntas">
+            <ng-template let-row="row" #columnPerguntas>
+                <span>{{row.data.pergunta}}</span><br>
+               <!-- <table>
+                    <tr *ngFor="let pergunta of row.perguntas; index as i">{{i + 1}} - {{pergunta.data.pergunta}}
+                        <td> - Tipo da resposta: {{pergunta.data.tipo.value}}</td>
+                    </tr>
+                </table>-->
+            </ng-template>
+        </column>
+    </columns>
+</grid>
+
+

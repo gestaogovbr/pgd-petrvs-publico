@@ -28,14 +28,16 @@ export class CadeiaValorListProcessosEntregasComponent extends PageListBase<Cade
       nome: { default: "" },
       cadeia_valor_id: { default: null },
     });
+    this.OPTION_INFORMACOES.onClick = (processo: CadeiaValorProcesso) => this.go.navigate({ route: ['gestao', 'cadeia-valor', 'processo', processo.id, 'consult'] }, { modal: true });
+    this.addOption(this.OPTION_INFORMACOES);
   }
 
-  public dynamicOptions(row: any): ToolbarButton[] {
+  /*public dynamicOptions(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let processo: CadeiaValorProcesso = row as CadeiaValorProcesso;
     result.push({ label: "Informações", icon: "bi bi-info-circle", onClick: (processo: CadeiaValorProcesso) => this.go.navigate({ route: ['gestao', 'cadeia-valor', 'processo', processo.id, 'consult'] }, { modal: true }) });
     return result;
-  }
+  }*/
 
   public filterClear(filter: FormGroup) {
     super.filterClear(filter);

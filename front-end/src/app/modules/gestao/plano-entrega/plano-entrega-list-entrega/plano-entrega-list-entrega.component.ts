@@ -77,7 +77,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   constructor(public injector: Injector) {
     super(injector);
     this.title = this.lex.translate("Entregas");
-    this.join = ["unidade", "entrega"];
+    this.join = ["unidade", "entrega", "reacoes.usuario:id,nome,apelido"];
     this.code = "MOD_PENT";
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
     this.dao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
@@ -251,12 +251,12 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     this.go.navigate({ route: ['logs', 'change', entrega.id, 'consult'] })
   }
 
-  public async showPlanejamento(planejamento_id: string){
-    this.go.navigate({ route: ['gestao', 'planejamento', planejamento_id, 'consult'] }, {modal: true})
+  public async showPlanejamento(objetivo_id: string){
+    this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', 'objetivos', objetivo_id]}, { modal: true });
   }
 
-  public async showCadeiaValor(cadeia_valor_id_id: string){
-    this.go.navigate({ route: ['gestao', 'cadeia-valor', cadeia_valor_id_id, 'consult'] }, {modal: true})
+  public async showCadeiaValor(processo_id: string){
+    this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', 'processos', processo_id]}, {modal: true});
   }
 
   public refreshComentarios(modalResult: any) {

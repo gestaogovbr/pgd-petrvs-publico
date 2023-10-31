@@ -1,5 +1,5 @@
 <separator collapse [collapsed]="false" [title]="lex.translate('Atividades')" [icon]="entityService.getIcon('Atividade')">
-    <grid [items]="itemsEntregas" #gridEntregas [minHeight]="0" expanded>
+    <grid [items]="itemsEntregas" #gridEntregas [minHeight]="0">
         <columns>
             <column type="expand" [icon]="entityService.getIcon('PlanoTrabalhoConsolidacao')" [align]="'center'" [hint]="lex.translate('Consolidação')" [template]="columnConsolidacao" [expandTemplate]="columnExpandedConsolidacao">
                 <ng-template let-row="row" #columnConsolidacao>
@@ -84,7 +84,7 @@
                     {{row.badge.descricao || row.entrega.descricao}}
                 </ng-template>
             </column>
-            <column title="% Força Trab. Planejado" [template]="columnForcaTrabalho" [width]="100">
+            <column title="% CHD Planejado" [template]="columnForcaTrabalho" [width]="100" [titleHint]="'% Carga Horária Disponível Planejada'">
                 <ng-template let-row="row" #columnForcaTrabalho>
                     <badge color="light" [label]="row.entrega.forca_trabalho + '%'"></badge>
                 </ng-template>
