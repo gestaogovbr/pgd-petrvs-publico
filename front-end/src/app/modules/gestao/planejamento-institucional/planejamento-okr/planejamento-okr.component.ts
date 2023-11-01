@@ -54,7 +54,7 @@ export class PlanejamentoOkrComponent extends PageFrameBase {
       injector.get<PlanoEntregaService>(PlanoEntregaService);
     this.atividadeDao = injector.get<AtividadeDaoService>(AtividadeDaoService);
     this.atividadeService = injector.get<AtividadeService>(AtividadeService);
-    this.join = ['objetivos'];
+    this.join = ['objetivos_okr'];
     this.title =
       this.lex.translate('Objetivos') +
       ' ' +
@@ -132,7 +132,8 @@ export class PlanejamentoOkrComponent extends PageFrameBase {
 
   async carregaAtividades(
     entregasPlanoTrabalho: PlanoTrabalhoEntrega[],
-    entrega: Entrega
+    entrega: Entrega,
+    event: Event
   ) {
     const entregasPlanoTrabalhoIds = entregasPlanoTrabalho.map((e) => e.id);
     entrega!.atividades = await this.atividadeDao
@@ -141,6 +142,16 @@ export class PlanejamentoOkrComponent extends PageFrameBase {
         join: ['usuario:id,nome'],
       })
       .asPromise();
+
+    const divPai = (event.target as HTMLElement).closest('.entrega-geral')
+    const divAtividades = divPai?.getElementsByClassName('atividades');
+    if(divAtividades?.length){
+      divAtividades[0].setAttribute("class", "atividades atividadesVisivel");
+      if(!entrega.atividades.length){
+        divAtividades[0].innerHTML = `Essa entrega não tem ${this.lex.translate('Atividades')} cadastradas`
+      }  
+    }
+    
     this.cdRef.detectChanges();
   }
 
@@ -151,7 +162,7 @@ export class PlanejamentoOkrComponent extends PageFrameBase {
         this.join
       ).then((planejamento) => {
         this.planejamento = planejamento as Planejamento;
-        this.objetivos = this.planejamento.objetivos || [];
+        this.objetivos = this.planejamento.objetivos_okr || [];
         this.cdRef.detectChanges();
       });
     }

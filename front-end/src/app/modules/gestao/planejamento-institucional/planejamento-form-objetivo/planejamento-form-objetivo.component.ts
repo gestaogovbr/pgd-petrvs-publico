@@ -42,6 +42,7 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
       eixo_tematico_id: {default: null},
       objetivo_superior_id: {default: null},
       objetivo_pai_id: {default: null},
+      integra_okr: {default: true},
     }, this.cdRef, this.validate);
   }
 

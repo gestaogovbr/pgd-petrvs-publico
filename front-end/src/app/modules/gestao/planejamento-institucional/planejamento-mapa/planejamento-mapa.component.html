@@ -7,29 +7,7 @@
     </div>
     <!-- Cabeçalho -->
     <separator transparent collapse title="Missão, visão, resultados e valores">
-        <div *ngIf="planejamento" class="">
-            <div class="d-flex">
-                <div class="border-start border-4 border-warning ps-3 mt-3">
-                  <h6>Missão</h6>
-                  <cite>{{planejamento.missao}}</cite>
-                </div>
-                <div class="border-start border-4 border-info ps-3 mt-3 ms-5">
-                  <h6>Visão</h6>
-                  <cite>{{planejamento.visao}}</cite>
-                </div>
-                <div class="border-start border-4 border-primary ps-3 mt-3 ms-5 w-100">
-                  <h6>Valores</h6>
-                  <cite *ngFor="let valor of planejamento.valores">{{valor.value}}<br></cite>
-                </div>
-
-                <div class="border-start border-4 border-success ps-3 mt-3 ms-5 w-100">
-                    <h6>Resultados Institucionais</h6>
-                    <cite *ngFor="let resultado of planejamento.resultados_institucionais">{{resultado.value}}<br></cite>
-                  </div>
-
-              </div>
-            
-        </div>
+        <planejamento-show [planejamento]="planejamento" *ngIf="planejamento"></planejamento-show>
     </separator>
     <!-- Eixos -->
     <div class="row my-2">
