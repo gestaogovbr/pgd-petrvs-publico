@@ -18,7 +18,6 @@ export class QuestionarioPerguntaListComponent extends PageListBase<Questionario
   public tipoQuestionario: LookupItem[] = [{ 'key': 'Interno', 'value': 'Interno' },{ 'key': 'Personalizado', 'value': 'Personalizado' }];
   public exibePerguntas : any[] = [];
   
-
   constructor(public injector: Injector) {
     super(injector, QuestionarioPergunta, QuestionarioPerguntaDaoService);
     /* Inicializações */
