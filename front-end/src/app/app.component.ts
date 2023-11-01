@@ -15,16 +15,17 @@ import { NotificacaoService } from './modules/uteis/notificacoes/notificacao.ser
 import { DOCUMENT } from '@angular/common';
 
 export let appInjector: Injector;
-export type Contexto = "PGD" | "EXECUCAO" | "AVALIACAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
+//export type Contexto = "PGD" | "EXECUCAO" | "AVALIACAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
+export type Contexto = "GESTAO" | "EXECUCAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
 export type Schema = {
-  name: string, 
-  permition?: string, 
+  name: string,
+  permition?: string,
   route: string[],
   metadata?: RouteMetadata,
   params?: any,
   icon: string
 };
-export type MenuSchema = {[key: string]: Schema};
+export type MenuSchema = { [key: string]: Schema };
 export type MenuItem = {
   name: string,
   permition?: string,
@@ -38,16 +39,17 @@ export type PetrvsModule = {
 }
 export type MenuContexto = {
   key: Contexto,
+  permition?: string,
   icon: string,
   name: string,
   menu?: MenuItem[],
   petrvsModule?: string
-};	
+};
 
 export type NovoMenuContexto = {
   module: PetrvsModule | null,
   items: MenuContexto[]
-};	
+};
 
 
 @Component({
@@ -137,12 +139,12 @@ export class AppComponent {
     this.menuSchema = {
       /* Cadastros */
       AFASTAMENTOS: { name: this.lex.translate("Afastamentos"), permition: 'MOD_AFT', route: ['cadastros', 'afastamento'], icon: this.entity.getIcon('Afastamento') },
-      CIDADES:  { name: this.lex.translate("Cidades"), permition: 'MOD_CID', route: ['cadastros', 'cidade'], icon: this.entity.getIcon('Cidade') },
+      CIDADES: { name: this.lex.translate("Cidades"), permition: 'MOD_CID', route: ['cadastros', 'cidade'], icon: this.entity.getIcon('Cidade') },
       EIXOS_TEMATICOS: { name: this.lex.translate("Eixos Temáticos"), permition: 'MOD_EXTM', route: ['cadastros', 'eixo-tematico'], icon: this.entity.getIcon('EixoTematico') },
       ENTREGAS: { name: this.lex.translate("Modelos de Entregas"), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: this.entity.getIcon('Entrega') },
       FERIADOS: { name: this.lex.translate("Feriados"), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: this.entity.getIcon('Feriado') },
       MATERIAIS_SERVICOS: { name: this.lex.translate("Materiais e Serviços"), permition: '', route: ['cadastros', 'material-servico'], icon: this.entity.getIcon('MaterialServico') },
-      TEMPLATES: { name: this.lex.translate("Templates"), permition: 'MOD_TEMP', route: ['cadastros', 'templates'], icon: this.entity.getIcon('Template'), params: {modo: "listagem"} },
+      TEMPLATES: { name: this.lex.translate("Templates"), permition: 'MOD_TEMP', route: ['cadastros', 'templates'], icon: this.entity.getIcon('Template'), params: { modo: "listagem" } },
       TIPOS_TAREFAS: { name: this.lex.translate("Tipos de Tarefas"), permition: 'MOD_TIPO_TRF', route: ['cadastros', 'tipo-tarefa'], icon: this.entity.getIcon('TipoTarefa') },
       TIPOS_ATIVIDADES: { name: this.lex.translate("Tipos de Atividades"), permition: 'MOD_TIPO_ATV', route: ['cadastros', 'tipo-atividade'], icon: this.entity.getIcon('TipoAtividade') },
       TIPOS_AVALIACOES: { name: this.lex.translate("Tipos de Avaliação"), permition: 'MOD_TIPO_AVAL', route: ['cadastros', 'tipo-avaliacao'], icon: this.entity.getIcon('TipoAvaliacao') },
@@ -162,13 +164,13 @@ export class AppComponent {
       PORTIFOLIOS: { name: this.lex.translate("Portifólios"), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: this.entity.getIcon('Projeto') },
       PROJETOS: { name: this.lex.translate("Projetos"), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: this.entity.getIcon('Projeto') },
       /* Execucao */
-      EXECUCAO_PLANOS_ENTREGAS: { name: this.lex.translate("Planos de Entregas"), permition: 'MOD_PENT', route: ['execucao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega'), params: { execucao: true }},
+      EXECUCAO_PLANOS_ENTREGAS: { name: this.lex.translate("Planos de Entregas"), permition: 'MOD_PENT', route: ['execucao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega'), params: { execucao: true } },
       /* Relatórios */
       FORCAS_TRABALHOS_SERVIDORES: { name: "Força de Trabalho - Servidor", permition: 'MOD_PTR_CONS', route: ['relatorios', 'forca-de-trabalho', 'servidor'], icon: this.entity.getIcon('RelatorioServidor') },
       FORCAS_TRABALHOS_AREAS: { name: "Força de Trabalho - Área", permition: 'MOD_PTR_CONS', route: ['relatorios', 'forca-de-trabalho', 'area'], icon: this.entity.getIcon('RelatorioArea') },
-      /* Avaliações */	
-      AVALIACAO_CONSOLIDACAO_PLANO_TRABALHO: { name: this.lex.translate("Consolidações"), permition: 'MOD_PTR_CSLD_AVAL', route: ['avaliacao', 'plano-trabalho', 'consolidacao', 'avaliacao'], icon: this.entity.getIcon('PlanoTrabalho') },	
-      AVALIACAO_PLANOS_ENTREGAS: { name: this.lex.translate("Planos de Entregas"), permition: 'MOD_PENT_AVAL', route: ['avaliacao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega'), params: { avaliacao: true }},
+      /* Avaliações */
+      AVALIACAO_CONSOLIDACAO_PLANO_TRABALHO: { name: this.lex.translate("Consolidações"), permition: 'MOD_PTR_CSLD_AVAL', route: ['avaliacao', 'plano-trabalho', 'consolidacao', 'avaliacao'], icon: this.entity.getIcon('PlanoTrabalho') },
+      AVALIACAO_PLANOS_ENTREGAS: { name: this.lex.translate("Planos de Entregas"), permition: 'MOD_PENT_AVAL', route: ['avaliacao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega'), params: { avaliacao: true } },
       /* CONFIGURAÇÕES */
       PREFERENCIAS: { name: "Preferências", permition: '', route: ['configuracoes', 'preferencia'], metadata: { root: true, modal: true }, icon: this.entity.getIcon('Preferencia') },
       ENTIDADES: { name: this.lex.translate("Entidades"), permition: 'MOD_CFG_ENTD', route: ['configuracoes', 'entidade'], icon: this.entity.getIcon('Entidade') },
@@ -186,27 +188,27 @@ export class AppComponent {
       /* RAIO X */
       CURRICULUM_HOME: { name: "Home RX", permition: 'RX', route: ['raiox', 'home'], icon: "bi bi-toggle-off" },
       CURRICULUM_CADASTRO_PESSOAL: { name: this.lex.translate("Dados Pessoais"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'pessoal'], icon: "bi bi-file-person" },
-      CURRICULUM_CADASTRO_PROFISSIONAL: { name: this.lex.translate("Dados Profissionais"), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'profissional'], icon: "fa fa-briefcase"},
+      CURRICULUM_CADASTRO_PROFISSIONAL: { name: this.lex.translate("Dados Profissionais"), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'profissional'], icon: "fa fa-briefcase" },
       CURRICULUM_CADASTRO_ATRIBUTOS: { name: this.lex.translate("Atributos Comportamentais"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
       CURRICULUM_VISUALIZA_OPORTUNIDADES: { name: this.lex.translate("Pesquisa Oportunidades"), permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pessoal'], icon: "bi bi-lightbulb-fill" },
       CURRICULUM_CADASTRO_OPORTUNIDADES: { name: this.lex.translate("Oportunidades"), permition: 'MOD_RX_EDT_OPO', route: ['raiox', 'pessoal'], icon: "bi bi-lightbulb-fill" },
-      CURRICULUM_CADASTRO_CURSOS: { name: this.lex.translate("Cursos"), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'cadastros','curso'], icon: "bi bi-mortarboard-fill" },
-      CURRICULUM_CADASTRO_TIPOS_CURSOS: { name: this.lex.translate("Tipos de Cursos"), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'cadastros','tipocurso'], icon: "bi bi-box-seam" },
-      CURRICULUM_CADASTRO_CENTROS_TREINAMENTO: { name: this.lex.translate("Centros de Treinamentos"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros','centrotreinamento'], icon: "bi bi-building-fill" },
-      CURRICULUM_CADASTRO_FUNCAO: { name: this.lex.translate("Funções"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros','funcao'], icon: "bi bi-check-circle-fill" },
-      CURRICULUM_CADASTRO_CARGOS: { name: this.lex.translate("Cargos"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros','cargo'], icon: "bi bi-person-badge" },
-      CURRICULUM_CADASTRO_GRUPOS_ESPECIALIZADOS: { name: this.lex.translate("de Grupos Especializados"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros','grupoespecializado'], icon: "bi bi-check-circle" },
-      CURRICULUM_CADASTRO_MATERIAS: { name: this.lex.translate("Matérias"), permition: 'MOD_RX_EDT_OPO', route: ['raiox', 'cadastros','materia'], icon: "bi bi-list-check" },
-      CURRICULUM_CADASTRO_AREAS_ATIVIDADES_EXTERNAS: { name: this.lex.translate("Área da Atividade Externa"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','areaatividadeexterna'], icon: "bi bi-arrows-fullscreen" },
-      CURRICULUM_CADASTRO_AREAS_CONHECIMENTO: { name: this.lex.translate("Áreas de Conhecimento"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','areaconhecimento'], icon: "bi bi-mortarboard" },
-      CURRICULUM_CADASTRO_AREAS_TEMATICAS: { name: this.lex.translate("Áreas Temáticas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','areatematica'], icon: "bi bi-box-arrow-in-down" },
-      CURRICULUM_CADASTRO_CAPACIDADES_TECNICAS: { name: this.lex.translate("Capacidades Técnicas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','capacidadetecnica'], icon: "bi bi-arrows-angle-contract" },
-      CURRICULUM_CADASTRO_QUESTIONARIOS_PERGUNTAS: { name: this.lex.translate("Questionários"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','questionario'], icon: "bi bi-patch-question" },
+      CURRICULUM_CADASTRO_CURSOS: { name: this.lex.translate("Cursos"), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'cadastros', 'curso'], icon: "bi bi-mortarboard-fill" },
+      CURRICULUM_CADASTRO_TIPOS_CURSOS: { name: this.lex.translate("Tipos de Cursos"), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'cadastros', 'tipocurso'], icon: "bi bi-box-seam" },
+      CURRICULUM_CADASTRO_CENTROS_TREINAMENTO: { name: this.lex.translate("Centros de Treinamentos"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros', 'centrotreinamento'], icon: "bi bi-building-fill" },
+      CURRICULUM_CADASTRO_FUNCAO: { name: this.lex.translate("Funções"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros', 'funcao'], icon: "bi bi-check-circle-fill" },
+      CURRICULUM_CADASTRO_CARGOS: { name: this.lex.translate("Cargos"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros', 'cargo'], icon: "bi bi-person-badge" },
+      CURRICULUM_CADASTRO_GRUPOS_ESPECIALIZADOS: { name: this.lex.translate("de Grupos Especializados"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros', 'grupoespecializado'], icon: "bi bi-check-circle" },
+      CURRICULUM_CADASTRO_MATERIAS: { name: this.lex.translate("Matérias"), permition: 'MOD_RX_EDT_OPO', route: ['raiox', 'cadastros', 'materia'], icon: "bi bi-list-check" },
+      CURRICULUM_CADASTRO_AREAS_ATIVIDADES_EXTERNAS: { name: this.lex.translate("Área da Atividade Externa"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros', 'areaatividadeexterna'], icon: "bi bi-arrows-fullscreen" },
+      CURRICULUM_CADASTRO_AREAS_CONHECIMENTO: { name: this.lex.translate("Áreas de Conhecimento"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros', 'areaconhecimento'], icon: "bi bi-mortarboard" },
+      CURRICULUM_CADASTRO_AREAS_TEMATICAS: { name: this.lex.translate("Áreas Temáticas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros', 'areatematica'], icon: "bi bi-box-arrow-in-down" },
+      CURRICULUM_CADASTRO_CAPACIDADES_TECNICAS: { name: this.lex.translate("Capacidades Técnicas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros', 'capacidadetecnica'], icon: "bi bi-arrows-angle-contract" },
+      CURRICULUM_CADASTRO_QUESTIONARIOS_PERGUNTAS: { name: this.lex.translate("Questionários"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros', 'questionario'], icon: "bi bi-patch-question" },
       //CURRICULUM_LISTA_QUESTIONARIOS_PERGUNTAS: { name: this.lex.translate("Questionários"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','questionario'], icon: "bi bi-patch-question" },
-      CURRICULUM_CADASTRO_QUESTIONARIOS_RESPOSTAS: { name: this.lex.translate("Respostas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','questionario','reposta'], icon: "bi bi-list-task" },
-      CURRICULUM_CADASTRO_QUESTIONARIOS_TESTE: { name: this.lex.translate("Teste"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','questionario','teste'], icon: "bi bi-list-task" },
-      CURRICULUM_VISUALIZA_PESQUISA_USR: { name:"Usuario", permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-search" },
-      CURRICULUM_VISUALIZA_PESQUISA_ADM: { name:"Administrador", permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-binoculars" },
+      CURRICULUM_CADASTRO_QUESTIONARIOS_RESPOSTAS: { name: this.lex.translate("Respostas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros', 'questionario', 'reposta'], icon: "bi bi-list-task" },
+      CURRICULUM_CADASTRO_QUESTIONARIOS_TESTE: { name: this.lex.translate("Teste"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros', 'questionario', 'teste'], icon: "bi bi-list-task" },
+      CURRICULUM_VISUALIZA_PESQUISA_USR: { name: "Usuario", permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-search" },
+      CURRICULUM_VISUALIZA_PESQUISA_ADM: { name: "Administrador", permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-binoculars" },
       /*PROJETOS*/
       PAINEL: { name: "Painel", permition: '', route: ['configuracoes', 'sobre'], icon: "" },
       AUDITORIA: { name: "Auditoria", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
@@ -231,16 +233,16 @@ export class AppComponent {
         this.menuSchema.ATIVIDADES,
         this.menuSchema.AFASTAMENTOS,
         this.menuSchema.EXECUCAO_PLANOS_ENTREGAS,
-        Object.assign({}, this.menuSchema.CONSOLIDACOES, {params: {tab: "USUARIO"}})
+        Object.assign({}, this.menuSchema.CONSOLIDACOES, { params: { tab: "USUARIO" } })
       ].sort(this.orderMenu)
     }, {
-      name: "Avaliação",	
-      permition: "MENU_GESTAO_ACESSO",	
-      id: "navbarDropdownGestaoAvaliacao",	
-      menu: [	
-        this.menuSchema.AVALIACAO_CONSOLIDACAO_PLANO_TRABALHO,	
+      name: "Avaliação",
+      permition: "MENU_GESTAO_ACESSO",
+      id: "navbarDropdownGestaoAvaliacao",
+      menu: [
+        this.menuSchema.AVALIACAO_CONSOLIDACAO_PLANO_TRABALHO,
         this.menuSchema.AVALIACAO_PLANOS_ENTREGAS
-      ].sort(this.orderMenu)	
+      ].sort(this.orderMenu)
     }, {
       name: "Gerenciamento",
       permition: "MENU_CONFIG_ACESSO",
@@ -270,7 +272,7 @@ export class AppComponent {
     this.menuExecucao = [
       this.menuSchema.PLANOS_TRABALHOS,
       this.menuSchema.ATIVIDADES,
-      Object.assign({}, this.menuSchema.CONSOLIDACOES, {params: {tab: "UNIDADE"}}),
+      Object.assign({}, this.menuSchema.CONSOLIDACOES, { params: { tab: "UNIDADE" } }),
       this.menuSchema.AFASTAMENTOS
     ];
 
@@ -295,7 +297,7 @@ export class AppComponent {
         this.menuSchema.TIPOS_PROCESSOS,
         this.menuSchema.TIPOS_TAREFAS
       ].sort(this.orderMenu)
-    },{
+    }, {
       name: "Gerenciamento",
       permition: "MENU_CONFIG_ACESSO",
       id: "navbarDropdownGerencialAdm",
@@ -351,9 +353,10 @@ export class AppComponent {
         this.menuSchema.UNIDADES,
         this.menuSchema.USUARIOS
       ]
-    }, 
+    },
     this.menuSchema.PORTIFOLIO,
-    this.menuSchema.PROJETOS];
+    this.menuSchema.PROJETOS
+    ];
 
     this.menuRaioX = [{
       name: "Curriculum",
@@ -412,15 +415,15 @@ export class AppComponent {
     }];
 
     this.menuContexto = [
-      { key: "EXECUCAO", icon: "bi bi-person-check", name: "Participante", menu: this.menuExecucao, petrvsModule: 'PGD'},	
-      { key: "GESTAO", icon: "bi bi-people-fill", name: "Gestor", menu: this.menuGestao, petrvsModule: 'PGD'},
-      { key: "ADMINISTRADOR", icon: "bi bi-emoji-sunglasses", name: "Administrador", menu: this.menuAdministrador },
-      { key: "DEV", icon: "bi bi-braces", name: "Desenvolvedor", menu: this.menuDev },
-      { key: "PONTO", icon: "bi bi-stopwatch", name: "Ponto eletrônico", menu: this.menuPonto },
-      { key: "PROJETO", icon: "bi bi-graph-up-arrow", name: "Projetos", menu: this.menuProjeto },
-      { key: "RAIOX", icon: "bi bi-camera", name: "Raio X", menu: this.menuRaioX }
-    ]   
-    
+      { key: "EXECUCAO", permition: "CTXT_EXEC", icon: "bi bi-person-check", name: "Participante", menu: this.menuExecucao, petrvsModule: 'PGD' },
+      { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-people-fill", name: "Gestor", menu: this.menuGestao, petrvsModule: 'PGD' },
+      { key: "ADMINISTRADOR", permition: "CTXT_ADM", icon: "bi bi-emoji-sunglasses", name: "Administrador", menu: this.menuAdministrador },
+      { key: "DEV", permition: "CTXT_DEV", icon: "bi bi-braces", name: "Desenvolvedor", menu: this.menuDev },
+      { key: "PONTO", permition: "CTXT_PNT", icon: "bi bi-stopwatch", name: "Ponto eletrônico", menu: this.menuPonto },
+      { key: "PROJETO", permition: "CTXT_PROJ", icon: "bi bi-graph-up-arrow", name: "Projetos", menu: this.menuProjeto },
+      { key: "RAIOX", permition: "CTXT_RX", icon: "bi bi-camera", name: "Raio X", menu: this.menuRaioX }
+    ]
+
     const petrvsModules = [{
       name: 'PGD',
       icon: 'bi bi-clipboard2-data'
@@ -428,14 +431,14 @@ export class AppComponent {
 
     this.novoMenuContexto = [];
     petrvsModules.forEach(module => {
-      const groupedItems = this.menuContexto.filter(item => item.petrvsModule === module.name);
+      const groupedItems = this.menuContexto.filter(item => item.petrvsModule === module.name && (!item.permition || this.auth.capacidades.includes(item.permition)));
       if (groupedItems.length > 0) {
         this.novoMenuContexto.push({
           module: module,
           items: groupedItems
         });
       }
-      const itemsWithoutModules = this.menuContexto.filter(item => !item.petrvsModule);
+      const itemsWithoutModules = this.menuContexto.filter(item => !item.petrvsModule && (!item.permition || this.auth.capacidades.includes(item.permition)));
       if (itemsWithoutModules.length > 0) {
         this.novoMenuContexto.push({
           module: null,
@@ -458,7 +461,7 @@ export class AppComponent {
   }
 
   public rootMenuClick(item: any) {
-    if(!item.menu?.length) this.go.navigate({route: item.route}, item.metadata || {root: true});
+    if (!item.menu?.length) this.go.navigate({ route: item.route }, item.metadata || { root: true });
   }
 
   public get menu(): any {
@@ -487,7 +490,7 @@ export class AppComponent {
 
   public menuItemClass(baseClass: string, item: any) {
     let routeUrl = this.go.getRouteUrl().replace(/^\//, "");
-    if(item.menu?.find((x: any) => !x)) console.log(item);
+    if (item.menu?.find((x: any) => !x)) console.log(item);
     return baseClass + (item.route?.join("/") == routeUrl || item.menu?.find((x: any) => x?.route?.join("/") == routeUrl) ? " fw-bold" : "");
   }
 
@@ -500,7 +503,7 @@ export class AppComponent {
   }
 
   public openModule(item: any) {
-    if(item.route) this.go.navigate({route: item.route, params: item.params}, item.metadata || {root: true});
+    if (item.route) this.go.navigate({ route: item.route, params: item.params }, item.metadata || { root: true });
   }
 
   public get unidades(): any[] {
@@ -555,16 +558,16 @@ export class AppComponent {
     return this.router.url.indexOf("/extension/options") >= 0;
   }
 
-  public activeModule(menu: NovoMenuContexto){
-   return menu.items?.find(s => s.name == this.globals.contexto?.name)
+  public activeModule(menu: NovoMenuContexto) {
+    return menu.items?.find(s => s.name == this.globals.contexto?.name)
   }
 
-  public showSubMenu(e: any){
+  public showSubMenu(e: any) {
     console.log(e);
     let nextEl = e.target.nextElementSibling;
-    if(nextEl && nextEl.classList.contains('submenu')) {	
+    if (nextEl && nextEl.classList.contains('submenu')) {
       e.preventDefault();
-      if(nextEl.style.display == 'block'){
+      if (nextEl.style.display == 'block') {
         nextEl.style.display = 'none';
       } else {
         nextEl.style.display = 'block';
