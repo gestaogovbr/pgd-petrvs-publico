@@ -11,6 +11,19 @@ class TipoCapacidadeService extends ServiceBase {
     public $tiposCapacidades = 
     [       
         [ 
+            "codigo"=> "MOD_CTXT",
+            "descricao" => "Módulo de Acesso aos Contextos",
+            "capacidades" => [
+                /* Capacidades do menu principal*/
+                ["CTXT_GEST", "Permite acessar o contexto GESTÃO"],
+                ["CTXT_EXEC", "Permite acessar o contexto EXECUÇÃO"],
+                ["CTXT_ADM", "Permite acessar o contexto ADMINISTRADOR"],
+                ["CTXT_DEV", "Permite acessar o contexto DEV"],
+                ["CTXT_PNT", "Permite acessar o contexto PONTO"],
+                ["CTXT_PROJ", "Permite acessar o contexto PROJETO"],
+                ["CTXT_RX", "Permite acessar o contexto RAIOX"],
+            ]
+        ], [ 
             "codigo"=> "MOD_ACESSO",
             "descricao" => "Módulo de Acesso aos Menus",
             "capacidades" => [
@@ -83,7 +96,7 @@ class TipoCapacidadeService extends ServiceBase {
             "codigo"=> "MOD_CFG", // ok
             "descricao"=> "Módulo de configurações",
             "capacidades"=> [
-                /* Capacidades do módulo CONFIGURAÇÂO*/
+                /* Capacidades do módulo CONFIGURAÇÃO*/
                 ["MOD_CFG_ENTD", "Permite acessar Entidade no menu configurações"],
                 ["MOD_CFG_PERFS", "Permite configuração de perfis no petrvs"],
                 //["MOD_CFG_PREF", "Permite configurar preferências"],

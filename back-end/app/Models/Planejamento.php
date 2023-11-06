@@ -48,6 +48,7 @@ class Planejamento extends ModelBase
     }
 
     // Has
+    function objetivosOkr() { return $this->hasMany(PlanejamentoObjetivo::class)->where('planejamentos_objetivos.integra_okr', '=', true); }
     public function objetivos() { return $this->hasMany(PlanejamentoObjetivo::class); }    
     public function planejamentos() { return $this->hasMany(Planejamento::class, 'planejamento_superior_id'); }    
     public function planosEntrega() { return $this->hasMany(PlanoEntrega::class); }       
