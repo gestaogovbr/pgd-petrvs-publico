@@ -260,6 +260,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     let planoAtivo = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'ATIVO';
     let planoConcluido = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'CONCLUIDO';
     let planoCancelado = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'CANCELADO';
+    let planoDeletado = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'EXCLUIDO';
     let planoArquivado = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'ARQUIVADO';
     //let programaExigeOutrasAssinaturas = !!assinaturasExigidas.filter(a => a != this.auth.usuario?.id).length;
     let planoSuspenso = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'SUSPENSO';
@@ -319,10 +320,10 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
         /*
           (RN_PTR_R) CANCELAR 
           O usuário logado precisa possuir a capacidade "MOD_PTR_CNC", e
-            - o plano precisa estar em um dos seguintes status: INCLUIDO, AGUARDANDO_ASSINATURA, ATIVO ou CONCLUIDO; e
+            - o plano não pode ter sido deletado e precisa estar em um dos seguintes status: INCLUIDO, AGUARDANDO_ASSINATURA, ATIVO ou CONCLUIDO; e
             - o usuário logado precisa ser gestor da Unidade Executora;
         */
-        return this.auth.hasPermissionTo("MOD_PTR_CNC") && ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO', 'CONCLUIDO'].includes(planoTrabalho.status);
+        return this.auth.hasPermissionTo("MOD_PTR_CNC") && !planoDeletado && ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO', 'CONCLUIDO'].includes(planoTrabalho.status);
       case this.BOTAO_INFORMACOES:
         /*
           (RN_PTR_S) CONSULTAR

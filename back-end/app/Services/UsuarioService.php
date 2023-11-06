@@ -9,7 +9,6 @@ use App\Models\Atividade;
 use App\Models\PlanoTrabalho;
 use App\Services\ServiceBase;
 use App\Services\RawWhere;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use Exception;

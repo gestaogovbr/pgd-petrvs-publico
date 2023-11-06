@@ -195,8 +195,8 @@ class PlanoTrabalhoController extends ControllerBase {
                 } else {
                     $condition1 = $condicoes["planoArquivado"];
                     $condition2 = $condicoes["usuarioEhParticipantePlano"] || $condicoes["gestorUnidadeExecutora"];
-                    if(!$condition1) new ServerException("ValidatePlanoTrabalho", "O plano de trabalho não pode ser desarquivado porque não se encontra arquivado. [RN_PTR_T]");
-                    if(!$condition2) new ServerException("ValidateUsuario", "O plano de trabalho não pode ser desarquivado porque o usuário logado não é o participante do plano nem um dos gestores da sua unidade executora. [RN_PTR_T]");
+                    if(!$condition1) throw new ServerException("ValidatePlanoTrabalho", "O plano de trabalho não pode ser desarquivado porque não se encontra arquivado. [RN_PTR_T]");
+                    if(!$condition2) throw new ServerException("ValidateUsuario", "O plano de trabalho não pode ser desarquivado porque o usuário logado não é o participante do plano nem um dos gestores da sua unidade executora. [RN_PTR_T]");
                     /*
                         (RN_PTR_T) DESARQUIVAR
                         O plano precisa estar arquivado, e:
@@ -234,14 +234,14 @@ class PlanoTrabalhoController extends ControllerBase {
                 if (!$usuario->hasPermissionTo('MOD_PTR_CNC')) throw new ServerException("CapacidadeStore", "O usuário logado não tem permissão para cancelar planos de trabalho (MOD_PTR_CNC). [RN_PTR_R]");
                 $data = $request->validate(['id' => ['required']]);
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
-                $condition1 = in_array($condicoes['planoStatus'], ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO', 'CONCLUIDO']);
+                $condition1 = !$condicoes['planoDeletado'] && in_array($condicoes['planoStatus'], ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO', 'CONCLUIDO']);
                 $condition2 = $condicoes['gestorUnidadeExecutora'];
-                if(!$condition1) new ServerException("ValidatePlanoTrabalho", "O plano de trabalho não pode ser cancelado porque não está em nenhum dos seguintes status: INCLUIDO, AGUARDANDO ASSINATURA, ATIVO ou CONCLUIDO. [RN_PTR_R]");
-                if(!$condition2) new ServerException("ValidateUsuario", "O plano de trabalho não pode ser cancelado porque o usuário logado não é um dos gestores da sua unidade executora. [RN_PTR_R]");
+                if(!$condition1) throw new ServerException("ValidatePlanoTrabalho", "O plano de trabalho não pode ser cancelado porque foi deletado ou não está em nenhum dos seguintes status: INCLUIDO, AGUARDANDO ASSINATURA, ATIVO ou CONCLUIDO. [RN_PTR_R]");
+                if(!$condition2) throw new ServerException("ValidateUsuario", "O plano de trabalho não pode ser cancelado porque o usuário logado não é um dos gestores da sua unidade executora. [RN_PTR_R]");
                 /*
                     (RN_PTR_R) CANCELAR 
                     O usuário logado precisa possuir a capacidade "MOD_PTR_CNC", e
-                      - o plano precisa estar em um dos seguintes status: INCLUIDO, AGUARDANDO_ASSINATURA, ATIVO ou CONCLUIDO; e
+                      - o plano não pode ter sido deletado e precisa estar em um dos seguintes status: INCLUIDO, AGUARDANDO_ASSINATURA, ATIVO ou CONCLUIDO; e
                       - o usuário logado precisa ser gestor da Unidade Executora;
                 */
                 break; 

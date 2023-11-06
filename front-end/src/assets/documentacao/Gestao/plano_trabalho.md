@@ -128,7 +128,7 @@ Ação: CANCELAR ASSINATURA -> o plano permanece no status 'AGUARDANDO_ASSINATUR
 
 - (RN_PTR_R) Condições para que um Plano de Trabalho possa ser cancelado:
   - o usuário logado precisa possuir a capacidade "MOD_PTR_CNC", e
-    - o plano precisa estar em um dos seguintes status: INCLUIDO, AGUARDANDO_ASSINATURA, ATIVO ou CONCLUIDO; e
+    - o plano não pode ter sido deletado e precisa estar em um dos seguintes status: INCLUIDO, AGUARDANDO_ASSINATURA, ATIVO ou CONCLUIDO; e
     - o usuário logado precisa ser gestor da Unidade Executora;
 
 */*Ação: CONSULTAR -> não muda o status do plano;

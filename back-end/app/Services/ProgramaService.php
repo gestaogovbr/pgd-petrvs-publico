@@ -13,7 +13,7 @@ class ProgramaService extends ServiceBase {
     public function assinaturasExigidas($plano_trabalho_id): array {
         $ids = [];
         if(strlen($plano_trabalho_id)) {
-          $plano = PlanoTrabalho::with(["tipoModalidade", "programa", "unidade.entidade", "unidade.gestor:id,usuario_id", "unidade.gestorSubstituto:id,usuario_id", "unidade.gestorDelegado:id,usuario_id",
+          $plano = PlanoTrabalho::withTrashed()->with(["tipoModalidade", "programa", "unidade.entidade", "unidade.gestor:id,usuario_id", "unidade.gestorSubstituto:id,usuario_id", "unidade.gestorDelegado:id,usuario_id",
                           "usuario.lotacao.unidade.gestor:id,usuario_id", "usuario.lotacao.unidade.gestorSubstituto:id,usuario_id", "usuario.lotacao.unidade.gestorDelegado:id,usuario_id"])
                           ->find($plano_trabalho_id);
           $programa = $plano->programa;

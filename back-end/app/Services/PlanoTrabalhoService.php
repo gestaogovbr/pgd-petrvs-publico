@@ -553,7 +553,7 @@ class PlanoTrabalhoService extends ServiceBase
    */
   public function buscaCondicoes(array $entity): array
   {
-    $planoTrabalho = !empty($entity['id']) ? PlanoTrabalho::with('entregas')->find($entity['id'])->toArray() : $entity;
+    $planoTrabalho = !empty($entity['id']) ? PlanoTrabalho::withTrashed()->with('entregas')->find($entity['id'])->toArray() : $entity;
     $planoTrabalho['unidade'] = !empty($planoTrabalho['unidade_id']) ? Unidade::find($planoTrabalho['unidade_id'])->toArray() : null;
     $result = [];
     $result["assinaturasExigidas"] = $this->programa->assinaturasExigidas($planoTrabalho["id"]);
@@ -564,15 +564,16 @@ class PlanoTrabalhoService extends ServiceBase
     $result["participanteLotadoAreaTrabalho"] = parent::loggedUser()->areasTrabalho->find(fn ($at) => $this->usuario->isLotacao($planoTrabalho["usuario_id"], $at->unidade->id)) != null;
     $result["participanteLotadoUnidadeExecutora"] = $this->usuario->isLotacao($planoTrabalho["usuario_id"], $planoTrabalho["unidade_id"]);
     $result["planoAguardandoAssinatura"] = $this->isPlano("AGUARDANDO_ASSINATURA", $planoTrabalho);
-    $result["planoArquivado"] = empty($planoTrabalho['id']) ? false : PlanoTrabalho::find($planoTrabalho['id'])->data_arquivamento != null;
+    $result["planoArquivado"] = empty($planoTrabalho['id']) ? false : PlanoTrabalho::withTrashed()->find($planoTrabalho['id'])->data_arquivamento != null;
     $result["planoAtivo"] = $this->isPlano("ATIVO", $planoTrabalho);
     $result["planoConcluido"] = $this->isPlano("CONCLUIDO", $planoTrabalho);
     $result["planoCancelado"] = $planoTrabalho['status'] == "CANCELADO";
+    $result["planoDeletado"] = !empty($planoTrabalho['deleted_at']);
     $result["planoIncluido"] = $this->isPlano("INCLUIDO", $planoTrabalho);
-    $result["planoStatus"] = empty($planoTrabalho['id']) ? null : PlanoTrabalho::find($planoTrabalho['id'])->status;
+    $result["planoStatus"] = empty($planoTrabalho['id']) ? null : PlanoTrabalho::withTrashed()->find($planoTrabalho['id'])->status;
     $result["planoSuspenso"] = $this->isPlano("SUSPENSO", $planoTrabalho);
     $result["planoValido"] = $this->isPlanoTrabalhoValido($planoTrabalho);
-    $result["naoPossuiPeriodoConflitanteOutroPlano"] = count(PlanoTrabalho::where("unidade_id", $planoTrabalho['unidade_id'])->where("usuario_id", $planoTrabalho['usuario_id'])->where("id", "!=", $planoTrabalho["id"])->get()
+    $result["naoPossuiPeriodoConflitanteOutroPlano"] = count(PlanoTrabalho::withTrashed()->where("unidade_id", $planoTrabalho['unidade_id'])->where("usuario_id", $planoTrabalho['usuario_id'])->where("id", "!=", $planoTrabalho["id"])->get()
       ->filter(fn ($p) => $this->util->intersection([
         ['start' => UtilService::asDateTime($p->data_inicio), 'end' => UtilService::asDateTime($p->data_fim)],
         ['start' => UtilService::asDateTime($planoTrabalho["data_inicio"]), 'end' => UtilService::asDateTime($planoTrabalho["data_fim"])]
@@ -591,7 +592,7 @@ class PlanoTrabalhoService extends ServiceBase
    */
   public function isPlanoTrabalhoValido($plano): bool
   {
-    $planoTrabalho = !empty($plano['id']) ? PlanoTrabalho::where('id', $plano['id'])->first() : $plano;
+    $planoTrabalho = !empty($plano['id']) ? PlanoTrabalho::withTrashed()->where('id', $plano['id'])->first() : $plano;
     return empty($plano['id']) ? false : (!$planoTrabalho->trashed() && !$plano['data_arquivamento'] && $planoTrabalho->status != 'CANCELADO');
   }
 
@@ -603,7 +604,7 @@ class PlanoTrabalhoService extends ServiceBase
    */
   public function isPlano($status, $plano): bool
   {
-    $planoTrabalho = !empty($plano['id']) ? PlanoTrabalho::find($plano['id']) : $plano;
+    $planoTrabalho = !empty($plano['id']) ? PlanoTrabalho::withTrashed()->find($plano['id']) : $plano;
     return empty($plano['id']) ? false : ($this->isPlanoTrabalhoValido($plano) && $planoTrabalho->status == $status);
   }
 
