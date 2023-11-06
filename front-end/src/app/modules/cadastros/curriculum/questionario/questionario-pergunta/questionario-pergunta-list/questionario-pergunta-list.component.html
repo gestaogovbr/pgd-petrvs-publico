@@ -19,12 +19,13 @@
                         <tr>
                             <th>Pergunta</th>
                             <th>Tipo de Resposta</th>
-                            <th>Opções de resposta</th>
+                            <th>Opções de resposta e Valor</th>
+                            
                         </tr>
                     </thead>
-                    <tr *ngFor="let pergunta of row.perguntas; index as i">{{i + 1}} - {{pergunta.data.pergunta}}
+                    <tr *ngFor="let pergunta of row.perguntas; index as i">{{i + 1}} - {{pergunta.data.pergunta.pergunta}}
                         <td>{{pergunta.data.tipo.value}}</td>
-                        <td id="tdOpcao"><span id="opcoes" *ngFor="let opcoes of pergunta.data.opcaoResposta; index as i">{{i+1}} - {{opcoes.value}}</span></td>
+                        <td id="tdOpcao"><span id="opcoes" *ngFor="let opcoes of pergunta.data.opcaoResposta; index as i">{{i+1}} - {{opcoes.data.opcao}} - Valor: {{opcoes.data.valor}}</span></td>
                         
                     </tr>
                 
@@ -36,14 +37,13 @@
         <column title="Nome" field="nome" orderBy="nome"></column>
         <column title="Código" field="codigo"></column>
         <column title="Tipo" field="tipo"></column>
-        <column type="expand" icon="bi bi-list-check" [align]="'center'" [hint]="lex.translate('Entrega')" [template]="columnEntregas" [expandTemplate]="columnExpandedEntregas">
+        <!--<column type="expand" icon="bi bi-list-check" [align]="'center'" [hint]="lex.translate('Entrega')" [template]="columnEntregas" [expandTemplate]="columnExpandedEntregas">
             <ng-template let-row="row" #columnEntregas>
                 <span *ngIf="row.perguntas?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-list-check"></i> {{row.perguntas?.length}}</span>
             </ng-template>
-            <ng-template let-row="row" #columnExpandedEntregas>
-                <!--<teste-list [items]="items"></teste-list>-->
+                 <ng-template let-row="row" #columnExpandedEntregas>
             </ng-template>
-        </column>
+        </column>-->
        <!--<column title="Perguntas" field="perguntas"></column>-->
         <!--<column title="Perguntas" [template]="columnPerguntas2">
             <ng-template let-row="row" #columnPerguntas2>
