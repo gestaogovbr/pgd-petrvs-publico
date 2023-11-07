@@ -47,8 +47,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_models_programa_model__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! src/app/models/programa.model */ 90758);
 /* harmony import */ var src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! src/app/modules/base/page-form-base */ 1184);
 /* harmony import */ var src_app_modules_uteis_templates_template_service__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! src/app/modules/uteis/templates/template.service */ 49367);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! @angular/core */ 51197);
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! @angular/common */ 89650);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! @angular/common */ 89650);
 /* harmony import */ var _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../../components/input/input-switch/input-switch.component */ 88820);
 /* harmony import */ var _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../../../components/input/input-search/input-search.component */ 32802);
 /* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ 92392);
@@ -59,6 +59,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../../../components/tabs/tab/tab.component */ 74978);
 /* harmony import */ var _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../../../../components/separator/separator.component */ 25560);
 /* harmony import */ var _components_input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../../../../components/input/input-number/input-number.component */ 9224);
+/* harmony import */ var _components_action_button_action_button_component__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ../../../../components/action-button/action-button.component */ 28032);
 
 var _class;
 
@@ -84,51 +85,64 @@ var _class;
 
 
 
+
 const _c0 = ["unidade"];
 const _c1 = ["tipoAvaliacao"];
-function ProgramaFormComponent_input_select_33_Template(rf, ctx) {
+function ProgramaFormComponent_div_14_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelement"](0, "input-select", 42);
-  }
-  if (rf & 2) {
-    const ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 3)("control", ctx_r4.form.controls.periodicidade_valor)("items", ctx_r4.lookup.DIA_SEMANA);
+    const _r12 = _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementStart"](0, "div", 44)(1, "div", 45)(2, "action-button", 46);
+    _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵlistener"]("click", function ProgramaFormComponent_div_14_Template_action_button_click_2_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵrestoreView"](_r12);
+      const ctx_r11 = _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵresetView"](ctx_r11.onClickIN());
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementEnd"]()()();
   }
 }
-function ProgramaFormComponent_input_number_34_Template(rf, ctx) {
+function ProgramaFormComponent_input_select_35_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelement"](0, "input-number", 43);
+    _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelement"](0, "input-select", 47);
   }
   if (rf & 2) {
-    const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 3)("control", ctx_r5.form.controls.periodicidade_valor);
+    const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 3)("control", ctx_r5.form.controls.periodicidade_valor)("items", ctx_r5.lookup.DIA_SEMANA);
   }
 }
-function ProgramaFormComponent_input_number_35_Template(rf, ctx) {
+function ProgramaFormComponent_input_number_36_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelement"](0, "input-number", 44);
+    _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelement"](0, "input-number", 48);
   }
   if (rf & 2) {
-    const ctx_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 3)("control", ctx_r6.form.controls.periodicidade_valor);
+    const ctx_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 3)("control", ctx_r6.form.controls.periodicidade_valor);
   }
 }
-function ProgramaFormComponent_input_number_42_Template(rf, ctx) {
+function ProgramaFormComponent_input_number_37_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelement"](0, "input-number", 45);
+    _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelement"](0, "input-number", 49);
   }
   if (rf & 2) {
-    const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 4)("control", ctx_r7.form.controls.nota_padrao_avaliacao);
+    const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 3)("control", ctx_r7.form.controls.periodicidade_valor);
   }
 }
-function ProgramaFormComponent_input_select_43_Template(rf, ctx) {
+function ProgramaFormComponent_input_number_44_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelement"](0, "input-select", 46);
+    _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelement"](0, "input-number", 50);
   }
   if (rf & 2) {
-    const ctx_r8 = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 4)("control", ctx_r8.form.controls.nota_padrao_avaliacao)("items", ctx_r8.tipoAvaliacaoQualitativo);
+    const ctx_r8 = _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 4)("control", ctx_r8.form.controls.nota_padrao_avaliacao);
+  }
+}
+function ProgramaFormComponent_input_select_45_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelement"](0, "input-select", 51);
+  }
+  if (rf & 2) {
+    const ctx_r9 = _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 4)("control", ctx_r9.form.controls.nota_padrao_avaliacao)("items", ctx_r9.tipoAvaliacaoQualitativo);
   }
 }
 const _c2 = function () {
@@ -202,6 +216,9 @@ class ProgramaFormComponent extends src_app_modules_base_page_form_base__WEBPACK
       },
       normativa: {
         default: ""
+      },
+      link_normativa: {
+        default: null
       },
       config: {
         default: null
@@ -359,165 +376,174 @@ class ProgramaFormComponent extends src_app_modules_base_page_form_base__WEBPACK
     }
     return result;
   }
+  onClickIN() {
+    window.open(this.form?.controls.link_normativa.value);
+  }
 }
 _class = ProgramaFormComponent;
 _class.ɵfac = function ProgramaFormComponent_Factory(t) {
-  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_21__.Injector));
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_22__.Injector));
 };
-_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵdefineComponent"]({
+_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵdefineComponent"]({
   type: _class,
   selectors: [["app-programa-form"]],
   viewQuery: function ProgramaFormComponent_Query(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵviewQuery"](_c0, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵviewQuery"](_c1, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵviewQuery"](_c0, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵviewQuery"](_c1, 5);
     }
     if (rf & 2) {
       let _t;
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵloadQuery"]()) && (ctx.unidade = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵloadQuery"]()) && (ctx.tipoAvaliacao = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵloadQuery"]()) && (ctx.unidade = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵloadQuery"]()) && (ctx.tipoAvaliacao = _t.first);
     }
   },
-  features: [_angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵInheritDefinitionFeature"]],
-  decls: 51,
-  vars: 87,
-  consts: [["initialFocus", "unidade_id", 3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "GERAL", "label", "Geral"], [1, "row"], ["label", "Unidade Instituidora", "controlName", "unidade_id", "required", "", 3, "size", "dao", "selectParams"], ["unidade", ""], ["date", "", "label", "Data de In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio", "labelInfo", "Data de in\u00EDcio da vig\u00EAncia do programa de gest\u00E3o na unidade instituidora", 3, "size", "control"], ["date", "", "label", "Data de Fim", "icon", "bi bi-calendar-date", "controlName", "data_fim", "labelInfo", "Data de fim da vig\u00EAncia do programa de gest\u00E3o na unidade instituidora", 3, "size", "control"], ["label", "Dura\u00E7\u00E3o M\u00E1x P.E.", "icon", "bi bi-blockquote-left", "controlName", "prazo_max_plano_entrega", "labelInfo", "Limite m\u00E1ximo de dias corridos para a dura\u00E7\u00E3o do plano de entregas a partir da sua data de cria\u00E7\u00E3o (Zero para n\u00E3o limitar)", 3, "size", "control"], ["label", "T\u00EDtulo", "icon", "bi bi-textarea-t", "controlName", "nome", "required", "", 3, "size", "control"], ["label", "Normativa", "icon", "bi bi-blockquote-left", "controlName", "normativa", "labelInfo", "Normativa que regula o Programa", 3, "size", "control"], ["key", "PLANO_ENTREGA", 3, "label"], ["controlName", "tipo_avaliacao_plano_entrega_id", "required", "", 3, "label", "size", "dao", "labelInfo"], ["tipoAvaliacao", ""], [3, "title"], ["label", "Checklists das entregas", "controlName", "checklist_avaliacao_entregas_plano_entrega", 3, "size", "addItemHandle"], ["controlName", "checklist_plano_entrega_texto", 3, "size"], ["key", "PLANO_TRABALHO", 3, "label"], ["scale", "small", "labelPosition", "right", "controlName", "termo_obrigatorio", "label", "Se o termo \u00E9 obrigat\u00F3rio", 3, "size"], ["scale", "small", "labelPosition", "right", "controlName", "plano_trabalho_assinatura_participante", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "plano_trabalho_assinatura_gestor_lotacao", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "plano_trabalho_assinatura_gestor_unidade", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "plano_trabalho_assinatura_gestor_entidade", 3, "size", "label"], ["detailsButton", "", "labelInfo", "Template do termo utilizado no plano de trabalho", "controlName", "template_tcr_id", "required", "", 3, "label", "size", "dao", "where", "selectRoute", "details"], ["controlName", "tipo_documento_tcr_id", "labelInfo", "Tipo de documento utilizado para exportar o termo para o SEI/SUPER", 3, "label", "size", "dao"], ["tipoDocumento", ""], ["controlName", "tipo_avaliacao_plano_trabalho_id", "required", "", 3, "label", "size", "dao", "labelInfo"], ["label", "Periodicidade", "controlName", "periodicidade_consolidacao", "labelInfo", "Per\u00EDodo para avalia\u00E7\u00E3o do plano de trabalho", 3, "size", "control", "items"], ["label", "Dia da semana", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", "items", 4, "ngIf"], ["label", "Dia do m\u00EAs", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", 4, "ngIf"], ["label", "Qtd. de Dias", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", 4, "ngIf"], ["label", "Toler\u00E2ncia", "controlName", "dias_tolerancia_consolidacao", "labelInfo", "Dias de toler\u00E2ncia para o lan\u00E7amento do registro das atividades na consolida\u00E7\u00E3o, ap\u00F3s esses dias ser\u00E1 liberado automaticamente para avalia\u00E7\u00E3o", 3, "size", "control"], ["label", "Toler\u00E2ncia p/ avalia\u00E7\u00E3o", "controlName", "dias_tolerancia_avaliacao", "labelInfo", "Dias de toler\u00E2ncia para realizar a avalia\u00E7\u00E3o, considerando a toler\u00E2ncia da consolida\u00E7\u00E3o. Caso seja zero n\u00E3o far\u00E1 nada, caso contr\u00E1rio ap\u00F3s esse prazo a consolida\u00E7\u00E3o ser\u00E1 automaticamente avaliada com a nota padr\u00E3o", 3, "size", "control"], ["label", "Toler\u00E2ncia p/ recurso", "controlName", "dias_tolerancia_recurso_avaliacao", "labelInfo", "Dias de toler\u00E2ncia para recorrer da avalia\u00E7\u00E3o", 3, "size", "control"], ["label", "Nota", "labelInfo", "Nota que ser\u00E1 atribu\u00EDdo automaticamente caso a toler\u00E2ncia seja alcan\u00E7ada", 3, "size", "control", 4, "ngIf"], ["label", "Nota", "labelInfo", "Nota que ser\u00E1 atribu\u00EDdo automaticamente caso a toler\u00E2ncia seja alcan\u00E7ada", 3, "size", "control", "items", 4, "ngIf"], ["controlName", "tipo_justificativa_id", "labelInfo", "Tipo de justificativa, para quando o gestor n\u00E3o realizar a avalia\u00E7\u00E3o dentro do prazo", 3, "label", "size", "emptyValue", "dao"], ["tipoJustificativa", ""], ["label", "Checklists das entregas", "controlName", "checklist_avaliacao_entregas_plano_trabalho", 3, "size", "addItemHandle"], ["controlName", "checklist_plano_trabalho_texto", 3, "size"], ["label", "Crit\u00E9rios de avalia\u00E7\u00E3o", "controlName", "plano_trabalho_criterios_avaliacao", 3, "size", "addItemHandle"], ["controlName", "plano_trabalho_criterio_avaliacao", 3, "size"], ["label", "Dia da semana", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", "items"], ["label", "Dia do m\u00EAs", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control"], ["label", "Qtd. de Dias", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control"], ["label", "Nota", "labelInfo", "Nota que ser\u00E1 atribu\u00EDdo automaticamente caso a toler\u00E2ncia seja alcan\u00E7ada", 3, "size", "control"], ["label", "Nota", "labelInfo", "Nota que ser\u00E1 atribu\u00EDdo automaticamente caso a toler\u00E2ncia seja alcan\u00E7ada", 3, "size", "control", "items"]],
+  features: [_angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵInheritDefinitionFeature"]],
+  decls: 53,
+  vars: 90,
+  consts: [["initialFocus", "unidade_id", 3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "GERAL", "label", "Geral"], [1, "row"], ["label", "Unidade Instituidora", "controlName", "unidade_id", "required", "", 3, "size", "dao", "selectParams"], ["unidade", ""], ["date", "", "label", "Data de In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio", "labelInfo", "Data de in\u00EDcio da vig\u00EAncia do programa de gest\u00E3o na unidade instituidora", 3, "size", "control"], ["date", "", "label", "Data de Fim", "icon", "bi bi-calendar-date", "controlName", "data_fim", "labelInfo", "Data de fim da vig\u00EAncia do programa de gest\u00E3o na unidade instituidora", 3, "size", "control"], ["label", "Dura\u00E7\u00E3o M\u00E1x P.E.", "icon", "bi bi-blockquote-left", "controlName", "prazo_max_plano_entrega", "labelInfo", "Limite m\u00E1ximo de dias corridos para a dura\u00E7\u00E3o do plano de entregas a partir da sua data de cria\u00E7\u00E3o (Zero para n\u00E3o limitar)", 3, "size", "control"], ["label", "T\u00EDtulo", "icon", "bi bi-textarea-t", "controlName", "nome", "required", "", 3, "size", "control"], ["label", "Normativa", "icon", "bi bi-blockquote-left", "controlName", "normativa", "labelInfo", "Normativa que regula o Programa", 3, "size", "control"], ["label", "Link Normativa", "icon", "bi bi-link-45deg", "controlName", "link_normativa", "labelInfo", "Link web da instru\u00E7\u00E3o normativa", 3, "size", "control"], ["class", "row justify-content-end my-2", 4, "ngIf"], ["key", "PLANO_ENTREGA", 3, "label"], ["controlName", "tipo_avaliacao_plano_entrega_id", "required", "", 3, "label", "size", "dao", "labelInfo"], ["tipoAvaliacao", ""], [3, "title"], ["label", "Checklists das entregas", "controlName", "checklist_avaliacao_entregas_plano_entrega", 3, "size", "addItemHandle"], ["controlName", "checklist_plano_entrega_texto", 3, "size"], ["key", "PLANO_TRABALHO", 3, "label"], ["scale", "small", "labelPosition", "right", "controlName", "termo_obrigatorio", "label", "Se o termo \u00E9 obrigat\u00F3rio", 3, "size"], ["scale", "small", "labelPosition", "right", "controlName", "plano_trabalho_assinatura_participante", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "plano_trabalho_assinatura_gestor_lotacao", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "plano_trabalho_assinatura_gestor_unidade", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "plano_trabalho_assinatura_gestor_entidade", 3, "size", "label"], ["detailsButton", "", "labelInfo", "Template do termo utilizado no plano de trabalho", "controlName", "template_tcr_id", "required", "", 3, "label", "size", "dao", "where", "selectRoute", "details"], ["controlName", "tipo_documento_tcr_id", "labelInfo", "Tipo de documento utilizado para exportar o termo para o SEI/SUPER", 3, "label", "size", "dao"], ["tipoDocumento", ""], ["controlName", "tipo_avaliacao_plano_trabalho_id", "required", "", 3, "label", "size", "dao", "labelInfo"], ["label", "Periodicidade", "controlName", "periodicidade_consolidacao", "labelInfo", "Per\u00EDodo para avalia\u00E7\u00E3o do plano de trabalho", 3, "size", "control", "items"], ["label", "Dia da semana", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", "items", 4, "ngIf"], ["label", "Dia do m\u00EAs", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", 4, "ngIf"], ["label", "Qtd. de Dias", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", 4, "ngIf"], ["label", "Toler\u00E2ncia", "controlName", "dias_tolerancia_consolidacao", "labelInfo", "Dias de toler\u00E2ncia para o lan\u00E7amento do registro das atividades na consolida\u00E7\u00E3o, ap\u00F3s esses dias ser\u00E1 liberado automaticamente para avalia\u00E7\u00E3o", 3, "size", "control"], ["label", "Toler\u00E2ncia p/ avalia\u00E7\u00E3o", "controlName", "dias_tolerancia_avaliacao", "labelInfo", "Dias de toler\u00E2ncia para realizar a avalia\u00E7\u00E3o, considerando a toler\u00E2ncia da consolida\u00E7\u00E3o. Caso seja zero n\u00E3o far\u00E1 nada, caso contr\u00E1rio ap\u00F3s esse prazo a consolida\u00E7\u00E3o ser\u00E1 automaticamente avaliada com a nota padr\u00E3o", 3, "size", "control"], ["label", "Toler\u00E2ncia p/ recurso", "controlName", "dias_tolerancia_recurso_avaliacao", "labelInfo", "Dias de toler\u00E2ncia para recorrer da avalia\u00E7\u00E3o", 3, "size", "control"], ["label", "Nota", "labelInfo", "Nota que ser\u00E1 atribu\u00EDdo automaticamente caso a toler\u00E2ncia seja alcan\u00E7ada", 3, "size", "control", 4, "ngIf"], ["label", "Nota", "labelInfo", "Nota que ser\u00E1 atribu\u00EDdo automaticamente caso a toler\u00E2ncia seja alcan\u00E7ada", 3, "size", "control", "items", 4, "ngIf"], ["controlName", "tipo_justificativa_id", "labelInfo", "Tipo de justificativa, para quando o gestor n\u00E3o realizar a avalia\u00E7\u00E3o dentro do prazo", 3, "label", "size", "emptyValue", "dao"], ["tipoJustificativa", ""], ["label", "Checklists das entregas", "controlName", "checklist_avaliacao_entregas_plano_trabalho", 3, "size", "addItemHandle"], ["controlName", "checklist_plano_trabalho_texto", 3, "size"], ["label", "Crit\u00E9rios de avalia\u00E7\u00E3o", "controlName", "plano_trabalho_criterios_avaliacao", 3, "size", "addItemHandle"], ["controlName", "plano_trabalho_criterio_avaliacao", 3, "size"], [1, "row", "justify-content-end", "my-2"], [1, "col-4"], ["label", "Acessar Instr. Normativa", "icon", "bi bi-box-arrow-up-right", 3, "click"], ["label", "Dia da semana", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", "items"], ["label", "Dia do m\u00EAs", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control"], ["label", "Qtd. de Dias", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control"], ["label", "Nota", "labelInfo", "Nota que ser\u00E1 atribu\u00EDdo automaticamente caso a toler\u00E2ncia seja alcan\u00E7ada", 3, "size", "control"], ["label", "Nota", "labelInfo", "Nota que ser\u00E1 atribu\u00EDdo automaticamente caso a toler\u00E2ncia seja alcan\u00E7ada", 3, "size", "control", "items"]],
   template: function ProgramaFormComponent_Template(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementStart"](0, "editable-form", 0);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵlistener"]("submit", function ProgramaFormComponent_Template_editable_form_submit_0_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementStart"](0, "editable-form", 0);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵlistener"]("submit", function ProgramaFormComponent_Template_editable_form_submit_0_listener() {
         return ctx.onSaveData();
       })("cancel", function ProgramaFormComponent_Template_editable_form_cancel_0_listener() {
         return ctx.onCancel();
       });
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementStart"](1, "tabs", 1)(2, "tab", 2)(3, "div", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelement"](4, "input-search", 4, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementStart"](6, "div", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelement"](7, "input-datetime", 6)(8, "input-datetime", 7)(9, "input-number", 8);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementStart"](10, "div", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelement"](11, "input-text", 9)(12, "input-text", 10);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementStart"](13, "tab", 11);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelement"](14, "input-search", 12, 13);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementStart"](16, "separator", 14)(17, "input-multiselect", 15);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelement"](18, "input-text", 16);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementEnd"]()()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementStart"](19, "tab", 17);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelement"](20, "input-switch", 18)(21, "input-switch", 19)(22, "input-switch", 20)(23, "input-switch", 21)(24, "input-switch", 22);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementStart"](25, "input-search", 23);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵlistener"]("details", function ProgramaFormComponent_Template_input_search_details_25_listener($event) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementStart"](1, "tabs", 1)(2, "tab", 2)(3, "div", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelement"](4, "input-search", 4, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementStart"](6, "div", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelement"](7, "input-datetime", 6)(8, "input-datetime", 7)(9, "input-number", 8);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementStart"](10, "div", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelement"](11, "input-text", 9)(12, "input-text", 10)(13, "input-text", 11);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵtemplate"](14, ProgramaFormComponent_div_14_Template, 3, 0, "div", 12);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementStart"](15, "tab", 13);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelement"](16, "input-search", 14, 15);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementStart"](18, "separator", 16)(19, "input-multiselect", 17);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelement"](20, "input-text", 18);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementEnd"]()()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementStart"](21, "tab", 19);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelement"](22, "input-switch", 20)(23, "input-switch", 21)(24, "input-switch", 22)(25, "input-switch", 23)(26, "input-switch", 24);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementStart"](27, "input-search", 25);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵlistener"]("details", function ProgramaFormComponent_Template_input_search_details_27_listener($event) {
         return ctx.templateService.details($event);
       });
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelement"](26, "input-search", 24, 25)(28, "input-search", 26, 13);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementStart"](30, "separator", 14)(31, "div", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelement"](32, "input-select", 27);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵtemplate"](33, ProgramaFormComponent_input_select_33_Template, 1, 3, "input-select", 28);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵtemplate"](34, ProgramaFormComponent_input_number_34_Template, 1, 2, "input-number", 29);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵtemplate"](35, ProgramaFormComponent_input_number_35_Template, 1, 2, "input-number", 30);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelement"](36, "input-number", 31);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementStart"](37, "separator", 14)(38, "div", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelement"](39, "input-number", 32)(40, "input-number", 33);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementStart"](41, "div", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵtemplate"](42, ProgramaFormComponent_input_number_42_Template, 1, 2, "input-number", 34);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵtemplate"](43, ProgramaFormComponent_input_select_43_Template, 1, 3, "input-select", 35);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelement"](44, "input-search", 36, 37);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementStart"](46, "div", 3)(47, "input-multiselect", 38);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelement"](48, "input-text", 39);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementStart"](49, "input-multiselect", 40);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelement"](50, "input-text", 41);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementEnd"]()()()()()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelement"](28, "input-search", 26, 27)(30, "input-search", 28, 15);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementStart"](32, "separator", 16)(33, "div", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelement"](34, "input-select", 29);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵtemplate"](35, ProgramaFormComponent_input_select_35_Template, 1, 3, "input-select", 30);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵtemplate"](36, ProgramaFormComponent_input_number_36_Template, 1, 2, "input-number", 31);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵtemplate"](37, ProgramaFormComponent_input_number_37_Template, 1, 2, "input-number", 32);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelement"](38, "input-number", 33);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementStart"](39, "separator", 16)(40, "div", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelement"](41, "input-number", 34)(42, "input-number", 35);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementStart"](43, "div", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵtemplate"](44, ProgramaFormComponent_input_number_44_Template, 1, 2, "input-number", 36);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵtemplate"](45, ProgramaFormComponent_input_select_45_Template, 1, 3, "input-select", 37);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelement"](46, "input-search", 38, 39);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementStart"](48, "div", 3)(49, "input-multiselect", 40);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelement"](50, "input-text", 41);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementStart"](51, "input-multiselect", 42);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelement"](52, "input-text", 43);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵelementEnd"]()()()()()();
     }
     if (rf & 2) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](4);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 12)("dao", ctx.unidadeDao)("selectParams", _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵpureFunction1"](79, _c3, _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵpureFunction0"](78, _c2)));
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.data_inicio);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.data_fim);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.prazo_max_plano_entrega);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.nome);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵattribute"]("maxlength", 250);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.normativa);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵattribute"]("maxlength", 250);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("label", ctx.lex.translate("Plano de entrega"));
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("label", ctx.lex.translate("Tipo de avalia\u00E7\u00E3o do Plano de entrega"))("size", 12)("dao", ctx.tipoAvaliacaoDao)("labelInfo", ctx.lex.noun("Tipo de avalia\u00E7\u00E3o") + " que especifica a forma que ser\u00E1 avaliado " + ctx.lex.noun("plano de trabalho") + " e " + ctx.lex.noun("plano de entrega"));
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("title", ctx.lex.translate("Avalia\u00E7\u00E3o") + ctx.lex.translate(" do Plano de Entrega"));
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 12)("addItemHandle", ctx.addItemHandlePlanoEntregaChecklist.bind(ctx));
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 12);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵattribute"]("maxlength", 250);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("label", ctx.lex.translate("Plano de trabalho"));
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 12);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 12)("label", "Exige assinatura " + ctx.lex.translate("do usu\u00E1rio") + ctx.lex.translate(" do plano de trabalho"));
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 12)("label", "Exige assinatura do gestor da lota\u00E7\u00E3o " + ctx.lex.translate("do usu\u00E1rio") + " (para " + ctx.lex.translate("unidade") + " distinta)");
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 12)("label", "Exige assinatura do gestor " + ctx.lex.translate("da unidade"));
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 12)("label", "Exige assinatura do gestor " + ctx.lex.translate("da entidade"));
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("label", "Template " + ctx.lex.translate("termo") + " (TCR)")("size", 12)("dao", ctx.templateDao)("where", _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵpureFunction1"](82, _c5, _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵpureFunction0"](81, _c4)))("selectRoute", ctx.templateService.selectRoute("TCR", ctx.form == null ? null : ctx.form.controls == null ? null : ctx.form.controls.template_tcr_id == null ? null : ctx.form.controls.template_tcr_id.value));
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("label", "Tipo de documento " + ctx.lex.translate("termo"))("size", 12)("dao", ctx.tipoDocumentoDao);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("label", ctx.lex.translate("Tipo de avalia\u00E7\u00E3o do Plano de trabalho"))("size", 12)("dao", ctx.tipoAvaliacaoDao)("labelInfo", ctx.lex.noun("Tipo de avalia\u00E7\u00E3o") + " que especifica a forma que ser\u00E1 avaliado " + ctx.lex.noun("plano de trabalho") + " e " + ctx.lex.noun("plano de entrega"));
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("title", ctx.lex.translate("Consolida\u00E7\u00E3o") + ctx.lex.translate(" do Plano de trabalho"));
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.periodicidade_consolidacao)("items", ctx.lookup.PERIODICIDADE_CONSOLIDACAO);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵpureFunction0"](84, _c6).includes(ctx.form.controls.periodicidade_consolidacao.value));
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵpureFunction0"](85, _c7).includes(ctx.form.controls.periodicidade_consolidacao.value));
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵpureFunction0"](86, _c8).includes(ctx.form.controls.periodicidade_consolidacao.value));
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 3)("control", ctx.form.controls.dias_tolerancia_consolidacao);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("title", ctx.lex.translate("Avalia\u00E7\u00E3o") + ctx.lex.translate(" da Consolida\u00E7\u00E3o"));
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.dias_tolerancia_avaliacao);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.dias_tolerancia_recurso_avaliacao);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("ngIf", ctx.isTipoAvaliacao("QUANTITATIVO"));
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("ngIf", ctx.isTipoAvaliacao("QUALITATIVO"));
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("label", ctx.lex.translate("Tipo de justificativa"))("size", 8)("emptyValue", null)("dao", ctx.tipoJustificativaDao);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 6)("addItemHandle", ctx.addItemHandlePlanoTrabalhoChecklist.bind(ctx));
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 12);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵattribute"]("maxlength", 250);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 6)("addItemHandle", ctx.addItemHandlePlanoTrabalhoCriteriosAvaliacao.bind(ctx));
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 12);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵattribute"]("maxlength", 250);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](4);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 12)("dao", ctx.unidadeDao)("selectParams", _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵpureFunction1"](82, _c3, _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵpureFunction0"](81, _c2)));
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.data_inicio);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.data_fim);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.prazo_max_plano_entrega);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.nome);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵattribute"]("maxlength", 250);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.normativa);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵattribute"]("maxlength", 250);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.link_normativa);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("ngIf", ctx.form.controls.link_normativa.value);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("label", ctx.lex.translate("Plano de entrega"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("label", ctx.lex.translate("Tipo de avalia\u00E7\u00E3o do Plano de entrega"))("size", 12)("dao", ctx.tipoAvaliacaoDao)("labelInfo", ctx.lex.noun("Tipo de avalia\u00E7\u00E3o") + " que especifica a forma que ser\u00E1 avaliado " + ctx.lex.noun("plano de trabalho") + " e " + ctx.lex.noun("plano de entrega"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("title", ctx.lex.translate("Avalia\u00E7\u00E3o") + ctx.lex.translate(" do Plano de Entrega"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 12)("addItemHandle", ctx.addItemHandlePlanoEntregaChecklist.bind(ctx));
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 12);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵattribute"]("maxlength", 250);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("label", ctx.lex.translate("Plano de trabalho"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 12);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 12)("label", "Exige assinatura " + ctx.lex.translate("do usu\u00E1rio") + ctx.lex.translate(" do plano de trabalho"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 12)("label", "Exige assinatura do gestor da lota\u00E7\u00E3o " + ctx.lex.translate("do usu\u00E1rio") + " (para " + ctx.lex.translate("unidade") + " distinta)");
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 12)("label", "Exige assinatura do gestor " + ctx.lex.translate("da unidade"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 12)("label", "Exige assinatura do gestor " + ctx.lex.translate("da entidade"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("label", "Template " + ctx.lex.translate("termo") + " (TCR)")("size", 12)("dao", ctx.templateDao)("where", _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵpureFunction1"](85, _c5, _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵpureFunction0"](84, _c4)))("selectRoute", ctx.templateService.selectRoute("TCR", ctx.form == null ? null : ctx.form.controls == null ? null : ctx.form.controls.template_tcr_id == null ? null : ctx.form.controls.template_tcr_id.value));
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("label", "Tipo de documento " + ctx.lex.translate("termo"))("size", 12)("dao", ctx.tipoDocumentoDao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("label", ctx.lex.translate("Tipo de avalia\u00E7\u00E3o do Plano de trabalho"))("size", 12)("dao", ctx.tipoAvaliacaoDao)("labelInfo", ctx.lex.noun("Tipo de avalia\u00E7\u00E3o") + " que especifica a forma que ser\u00E1 avaliado " + ctx.lex.noun("plano de trabalho") + " e " + ctx.lex.noun("plano de entrega"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("title", ctx.lex.translate("Consolida\u00E7\u00E3o") + ctx.lex.translate(" do Plano de trabalho"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.periodicidade_consolidacao)("items", ctx.lookup.PERIODICIDADE_CONSOLIDACAO);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵpureFunction0"](87, _c6).includes(ctx.form.controls.periodicidade_consolidacao.value));
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵpureFunction0"](88, _c7).includes(ctx.form.controls.periodicidade_consolidacao.value));
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵpureFunction0"](89, _c8).includes(ctx.form.controls.periodicidade_consolidacao.value));
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 3)("control", ctx.form.controls.dias_tolerancia_consolidacao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("title", ctx.lex.translate("Avalia\u00E7\u00E3o") + ctx.lex.translate(" da Consolida\u00E7\u00E3o"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.dias_tolerancia_avaliacao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.dias_tolerancia_recurso_avaliacao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("ngIf", ctx.isTipoAvaliacao("QUANTITATIVO"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("ngIf", ctx.isTipoAvaliacao("QUALITATIVO"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("label", ctx.lex.translate("Tipo de justificativa"))("size", 8)("emptyValue", null)("dao", ctx.tipoJustificativaDao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 6)("addItemHandle", ctx.addItemHandlePlanoTrabalhoChecklist.bind(ctx));
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 12);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵattribute"]("maxlength", 250);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 6)("addItemHandle", ctx.addItemHandlePlanoTrabalhoCriteriosAvaliacao.bind(ctx));
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("size", 12);
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵattribute"]("maxlength", 250);
     }
   },
-  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_22__.NgIf, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_11__.InputSwitchComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_12__.InputSearchComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_13__.InputTextComponent, _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_14__.InputDatetimeComponent, _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_15__.InputSelectComponent, _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_16__.InputMultiselectComponent, _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_17__.TabsComponent, _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_18__.TabComponent, _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_19__.SeparatorComponent, _components_input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_20__.InputNumberComponent],
+  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_23__.NgIf, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_11__.InputSwitchComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_12__.InputSearchComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_13__.InputTextComponent, _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_14__.InputDatetimeComponent, _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_15__.InputSelectComponent, _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_16__.InputMultiselectComponent, _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_17__.TabsComponent, _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_18__.TabComponent, _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_19__.SeparatorComponent, _components_input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_20__.InputNumberComponent, _components_action_button_action_button_component__WEBPACK_IMPORTED_MODULE_21__.ActionButtonComponent],
   styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
 });
 
@@ -562,11 +588,7 @@ var _class;
 
 function ProgramaListComponent_toolbar_1_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](0, "toolbar", 15);
-  }
-  if (rf & 2) {
-    const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("buttons", ctx_r0.buttons);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](0, "toolbar");
   }
 }
 function ProgramaListComponent_ng_template_7_Template(rf, ctx) {
@@ -636,7 +658,6 @@ class ProgramaListComponent extends src_app_modules_base_page_list_base__WEBPACK
   constructor(injector, dao) {
     super(injector, src_app_models_programa_model__WEBPACK_IMPORTED_MODULE_2__.Programa, src_app_dao_programa_dao_service__WEBPACK_IMPORTED_MODULE_1__.ProgramaDaoService);
     this.injector = injector;
-    this.buttons = [];
     this.filterWhere = filter => {
       let result = [];
       let form = filter.value;
@@ -676,12 +697,6 @@ class ProgramaListComponent extends src_app_modules_base_page_list_base__WEBPACK
         })
       });
     }
-    this.buttons.push({
-      icon: "bi bi-box-arrow-up-right",
-      color: "btn-outline-secondary",
-      label: "Norma PGD - IN 24",
-      onClick: () => window.open("https://www.in.gov.br/en/web/dou/-/instrucao-normativa-conjunta-seges-sgprt-/mgi-n-24-de-28-de-julho-de-2023-499593248")
-    });
   }
 }
 _class = ProgramaListComponent;
@@ -703,14 +718,14 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
   decls: 20,
   vars: 28,
-  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [3, "buttons", 4, "ngIf"], [3, "deleted", "form", "where", "submit", "collapseChange", "collapsed"], [1, "row"], ["controlName", "nome", 3, "size", "label", "control", "placeholder"], ["title", "T\u00EDtulo/Normativa", 3, "template"], ["columnTituloNormativa", ""], ["title", "Unidade instituidora", 3, "template"], ["columnUnidadeInstituidora", ""], ["title", "In\u00EDcio da Vig\u00EAncia", 3, "template"], ["columnInicioVigencia", ""], ["title", "Fim da Vig\u00EAncia", 3, "template"], ["columnFimVigencia", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"], [3, "buttons"]],
+  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "deleted", "form", "where", "submit", "collapseChange", "collapsed"], [1, "row"], ["controlName", "nome", 3, "size", "label", "control", "placeholder"], ["title", "T\u00EDtulo/Normativa", 3, "template"], ["columnTituloNormativa", ""], ["title", "Unidade instituidora", 3, "template"], ["columnUnidadeInstituidora", ""], ["title", "In\u00EDcio da Vig\u00EAncia", 3, "template"], ["columnInicioVigencia", ""], ["title", "Fim da Vig\u00EAncia", 3, "template"], ["columnFimVigencia", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"]],
   template: function ProgramaListComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "grid", 0);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("select", function ProgramaListComponent_Template_grid_select_0_listener($event) {
         return ctx.onSelect($event);
       });
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](1, ProgramaListComponent_toolbar_1_Template, 1, 1, "toolbar", 1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](1, ProgramaListComponent_toolbar_1_Template, 1, 0, "toolbar", 1);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](2, "filter", 2)(3, "div", 3);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](4, "input-text", 4);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
