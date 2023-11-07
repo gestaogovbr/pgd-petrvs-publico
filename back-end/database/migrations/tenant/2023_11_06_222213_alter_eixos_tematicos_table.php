@@ -1,8 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class AlterEixosTematicosTable extends Migration
 {
@@ -13,11 +12,7 @@ class AlterEixosTematicosTable extends Migration
      */
     public function up()
     {
-        Schema::table('eixos_tematicos', function (Blueprint $table) {
-            $table->text('descricao')
-                ->comment("Descrição do eixo temático")
-                ->change();
-        });
+        DB::statement("ALTER TABLE eixos_tematicos MODIFY descricao TEXT;");
     }
 
     /**
@@ -27,10 +22,6 @@ class AlterEixosTematicosTable extends Migration
      */
     public function down()
     {
-        Schema::table('eixos_tematicos', function (Blueprint $table) {
-            $table->string('descricao', 256)
-                ->comment("Descrição do eixo temático")
-                ->change();
-        });
+        DB::statement("ALTER TABLE eixos_tematicos MODIFY descricao VARCHAR(256);");
     }
 }

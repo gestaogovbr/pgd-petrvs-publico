@@ -44,7 +44,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo de afastamentos",
             "capacidades" => [
             /* Capacidades do módulo AFASTAMENTO*/
-                ["0ac18772-72ef-8023-d9ac-7e1879fa045d", "MOD_AFT_CONS", "Permite consultar afastamento"],
                 ["ac5655f7-c8f1-d942-54d2-585a3c90bcdc", "MOD_AFT_EDT", "Permite editar afastamento"],
                 ["d49a202b-ef6f-6d95-b6fb-e6b188896ed5", "MOD_AFT_EXCL", "Permite excluir afastamento"],
                 ["72842deb-6304-739b-209f-8ac736a2a721", "MOD_AFT_INCL", "Permite incluir afastamento"]
@@ -56,7 +55,7 @@ class TipoCapacidadeService extends ServiceBase {
             "capacidades" => [
                 /* Capacidades do módulo ATIVIDADES*/
                 ["5a4302ec-e350-e76a-2fc2-f07aae6406f7", "MOD_ATV_TIPO_ATV_VAZIO", "Permite incluir atividade sem tipo de atividade"],
-                ["e4e98026-5484-942a-122d-d65d910ee584", "MOD_ATV_CONS", "Permite consultar atividade"],
+                // ["e4e98026-5484-942a-122d-d65d910ee584", "MOD_ATV_CONS", "Permite consultar atividade"],
                 ["0fc2b4f1-992b-fa7c-b2b7-5ff1f25543ca", "MOD_ATV_EDT", "Permite editar atividade"],
                 ["131aa1a3-450e-39a8-6d5a-02fb6de4f9a3", "MOD_ATV_EXCL", "Permite excluir atividade"],
                 ["fe019b6d-981f-385e-1d0c-10f9174eafee", "MOD_ATV_USU_EXT", "Permite atribuir atividades a usuários de outra unidade"],
@@ -85,8 +84,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao" => "Módulo Cidades",
             "capacidades" => [
                 /* Capacidades do módulo CIDADE*/
-                //["MOD_CID", "Permite acessar item menu cidades"],
-                ["9e81843c-b045-140a-1ddf-fcc11e3e8873", "MOD_CID_CONS", "Permite consultar cidade"],
                 ["ec78a136-c4d6-1919-b341-b5141620b0bf", "MOD_CID_EDT", "Permite editar cidades"],
                 ["f7628915-cb6d-bacc-4054-ef3b6862e7f7", "MOD_CID_EXCL", "Permite excluir cidades"],
                 ["28832ef0-bf13-ab9e-7f65-8f1ab3ebff60", "MOD_CID_INCL", "Permite incluir cidades"],
@@ -139,8 +136,7 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao" => "Módulo Eixos Temáticos",
             "capacidades" => [
                 /* Capacidades do módulo EIXOS TEMÁTICOS */
-                //["MOD_EXTM", "Permite acessar item do menu Eixos temáticos"],
-                ["ef245afe-7d8d-19fd-ac1f-5d7739b0094e", "MOD_EXTM_CONS", "Permite consultar Eixos temáticos"],
+                // ["ef245afe-7d8d-19fd-ac1f-5d7739b0094e", "MOD_EXTM_CONS", "Permite consultar Eixos temáticos"],
                 ["5ecc7923-7eaa-e95a-e17b-0dd188d03351" ,"MOD_EXTM_INCL", "Permite incluir Eixos temáticos"],
                 ["0d7dbfa5-cbaf-2aec-6b2a-52302d7766b6" ,"MOD_EXTM_EDT", "Permite editar Eixos temáticos"],
                 ["b1f08587-67ce-f496-aa79-a8d781674b63" ,"MOD_EXTM_EXCL", "Permite excluir Eixos temáticos"],
@@ -161,8 +157,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao" => "Módulo feriados",
             "capacidades" => [
                 /* Capacidades do módulo FERIADO*/
-                //["MOD_FER", "Permite acessar item menu feriados"],
-                ["e237a10c-a274-ba65-b293-da6223f53ad8", "MOD_FER_CONS", "Permite consultar feriado"],
                 ["82ab5e5c-26ae-1eac-bff2-4c123e60e4fd", "MOD_FER_EDT", "Permite editar feriados"],
                 //["MOD_FER_ENT_EDT", "Permite editar entidades em feriado"], // só no back
                 //["MOD_FER_ENT_INCL", "Permite incluir entidades em feriado"], // só no back
@@ -185,7 +179,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao" => "Módulo de Planejamento Institucional",
             "capacidades" => [
                 /* Capacidades do módulo PLANEJAMENTO INSTITUCIONAL */
-                //["MOD_PLAN", "Permite acessar Planejamentos Institucionais"],
                 ["3e5f5851-e63a-0430-3804-d9c0e14179be", "MOD_PLAN_INST", "Permite acessar item do menu Planejamentos Institucionais"],
                 ["47bba179-cf06-f54f-9822-e5c0d1bb482a", "MOD_PLAN_INST_CONS", "Permite consultar Planejamentos Institucionais"],
                 ["141c10fe-adf5-bd53-97cb-d7fd4c001902", "MOD_PLAN_INST_INCL", "Permite incluir algum tipo de Planejamento Institucional"],
@@ -326,8 +319,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao" => "Módulo de Tipos de Atividade",
             "capacidades" => [
                 /* Capacidades do módulo TIPO ATIVIDADE*/
-                //["MOD_TIPO_ATV", "Permite acessar item de menu cadastro->tipo de atividade"],
-                ["231fc4f6-31f8-58c0-48e1-d0561bb82c7f", "MOD_TIPO_ATV_CONS", "Permite consultar atividade"],
                 ["2d2216e1-d1fb-2e0e-b1a0-66ee46d8d420", "MOD_TIPO_ATV_EDT", "Permite editar atividades"],
                 ["76c4272c-c776-22fe-1fd8-56c835cb98e8", "MOD_TIPO_ATV_EDT_PCPL", "Permite editar atividades na guia principal"],
                 ["36bd1719-8ac4-27b2-757a-2dc494073179", "MOD_TIPO_ATV_EDT_PRE_DEF", "Permite editar dados guia pré-definidas"],
@@ -357,7 +348,6 @@ class TipoCapacidadeService extends ServiceBase {
             "capacidades" => [
                 /* Capacidades do módulo TIPO CAPACIDADE*/
                 //["MOD_TIPO_CAP", "Permite acessar configurações de capacidades de usuário"],
-                ["7fe9b8ea-51ff-155b-6fd4-7dcaa397b5f7", "MOD_TIPO_CAP_CONS", "Permite consultar tipo de capacidade"],
                 ["4b3fb5ac-dd4e-dedb-9082-3ecfbbb43c3c", "MOD_TIPO_CAP_EDT", "Permite editar tipo de capacidade"],
                 ["7bcc05ff-db6c-4a37-3feb-acc276f0bc43", "MOD_TIPO_CAP_EXCL", "Permite excluir tipo de capacidade"],
                 ["404f9e11-4083-fbdd-b67c-272edb128adf", "MOD_TIPO_CAP_INCL", "Permite incluir tipos de capacidades"],
@@ -378,8 +368,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao" => "Módulo de Tipos de Justificativa",
             "capacidades" => [
                 /* Capacidades do módulo TIPO JUSTIFICATIVA*/
-                //["MOD_TIPO_JUST", "Permite acessar item de menu cadastro->tipo de justificativa"],
-                ["54cc1746-3a70-2e06-51b2-e128f59e993d", "MOD_TIPO_JUST_CONS", "Permite consultar tipos de justificativas"],
                 ["01ebd07f-17f2-8b8e-f637-4885e30a6d83", "MOD_TIPO_JUST_EDT", "Permite editar tipos de justificativas"],
                 ["9a31cf98-67dc-393d-bd48-a0e290266d3a", "MOD_TIPO_JUST_EXCL", "Permite excluir tipos de justificativas"],
                 ["dfb039df-6e4b-c2ff-ab0f-63e68c785513", "MOD_TIPO_JUST_INCL", "Permite incluir tipos de justificativas"],
@@ -400,8 +388,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao" => "Módulo de Tipos de Motivos de Afastamento",
             "capacidades" => [
                 /* Capacidades do módulo TIPO MOTIVO AFASTAMENTO*/
-                //["MOD_TIPO_MTV_AFT", "Permite acessar item de menu cadastro->tipo de motivo de afastamento"],
-                ["cb733de6-7229-6d23-a61a-50b60fab085d", "MOD_TIPO_MTV_AFT_CONS", "Permite consultar tipos de motivos de afastamentos"],
                 ["2d8b1789-1e6c-f119-bed2-5415da5caa9e", "MOD_TIPO_MTV_AFT_EDT", "Permite editar tipos de motivos de afastamentos"],
                 ["1b05f4d2-014c-3c85-db9c-eb8bfcb2922f", "MOD_TIPO_MTV_AFT_EXCL", "Pemite excluir tipos de motivos de afastamentos"],
                 ["0d09fd70-c1ed-f1f8-3af5-dedbccf5b410", "MOD_TIPO_MTV_AFT_INCL", "Permite incluir tipos de motivos de afastamentos"],
@@ -423,8 +409,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao" => "Módulo Tarefas",
             "capacidades" => [
                 /* Capacidades do módulo TAREFAS*/
-                //["MOD_TRF", "Permite acessar módulo/item de menu tarefas"],
-                ["c97f09ab-deed-0564-6bb7-60cc28b6d3ac", "MOD_TRF_CONS", "Permite consultar tarefa"],
                 ["28d36214-4e36-25a3-19d8-a2663544aff9", "MOD_TRF_EDT", "Permite editar tarefas"],
                 ["610404b7-7b6e-20b4-7244-a8a654cd2fc3", "MOD_TRF_EXCL", "Permite excluir tarefas"],
                 ["c25f4c08-9edf-19b1-0c17-b72803ae3229", "MOD_TRF_INCL", "Permite incluir tarefas"],
@@ -445,7 +429,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo Unidades",
             "capacidades"=> [
                 /* Capacidades do módulo UNIDADES*/
-                ["46d9ae68-8dc8-f73b-fb65-74285f8f368d", "MOD_UND_CONS", "Permite consultar Unidades"],
                 ["54c26986-5f17-20f4-e6b6-525b5db15b19", "MOD_UND_EDT", "Permite editar Unidade"],
                 ["e6dbb5f7-18df-4876-6e2a-e603e46c6900", "MOD_UND_EXCL", "Permite excluir Unidade"],
                 ["9c603f2d-2eda-1356-f828-518aa43226f0", "MOD_UND_INCL", "Permite incluir Unidades"],
