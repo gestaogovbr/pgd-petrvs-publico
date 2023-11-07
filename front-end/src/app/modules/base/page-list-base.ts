@@ -168,9 +168,9 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
 
   public refresh(id?: string) {
     if(id) {
-      return (this.grid!.query || this.query!).refreshId(id!);
+      return (this.grid?.query || this.query!).refreshId(id!);
     } else {
-      return (this.grid!.query || this.query!).refresh();
+      return (this.grid?.query || this.query!).refresh();
     }
   }
 
