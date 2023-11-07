@@ -267,6 +267,9 @@ class QuestionarioPerguntaFormComponent extends src_app_modules_base_page_form_b
       },
       inputOpcoesResposta: {
         default: ""
+      },
+      inputValorResposta: {
+        default: ""
       }
     }, this.cdRef, this.validate);
   }
@@ -303,20 +306,25 @@ class QuestionarioPerguntaFormComponent extends src_app_modules_base_page_form_b
     if (pergunta && tipoResposta?.value && this.form?.controls.multiOpcaoResposta.value && this.util.validateLookupItem(this.form.controls.perguntas.value, key)) {
       let opcoesResposta = this.form?.controls.multiOpcaoResposta.value;
       let opcoesTexto = "";
+      let valoresResposta = "";
       let index = opcoesResposta.length;
       if (tipoResposta.key != 'SWITCH') {
         opcoesResposta.forEach(element => {
           if (index == 1) {
-            opcoesTexto += element.value;
+            //opcoesTexto += (element.value)
+            opcoesTexto += element.data.opcao + ' - Valor: ' + element.data.valor;
+            // valoresResposta += (element.data.valor)
           } else {
-            opcoesTexto += element.value + ' - ';
+            opcoesTexto += element.data.opcao + ' - Valor: ' + element.data.valor + ' - ';
+            //valoresResposta += (element.data.valor) + ' - ' 
           }
+
           index--;
         });
         console.log('opcoesTexto', opcoesTexto);
         result = {
           key: key,
-          value: 'Pergunta: ' + pergunta + ' - Tipo de Resposta: ' + tipoResposta.value + ' - Opções da resposta: ' + opcoesTexto,
+          value: 'Pergunta: ' + pergunta + ' - Tipo de Resposta: ' + tipoResposta.value + ' - Opção de Resposta: ' + opcoesTexto,
           data: {
             pergunta: pergunta,
             tipo: tipoResposta,
@@ -327,9 +335,12 @@ class QuestionarioPerguntaFormComponent extends src_app_modules_base_page_form_b
       } else {
         result = {
           key: key,
-          value: 'Pergunta: ' + pergunta + ' - Tipo de Resposta: ' + tipoResposta.value + ' - Opções da resposta: ' + tipoResposta.value,
+          value: 'Pergunta: ' + pergunta + ' - Tipo de Resposta: ' + tipoResposta.value + ' - Opção de Resposta: ' + tipoResposta.value,
           data: {
-            pergunta: pergunta,
+            pergunta: {
+              'pergunta': pergunta,
+              'valor': ''
+            },
             tipo: tipoResposta,
             opcaoResposta: {
               'key': 'UNICA',
@@ -349,16 +360,20 @@ class QuestionarioPerguntaFormComponent extends src_app_modules_base_page_form_b
   addMultiRespostas() {
     let result = undefined;
     const opcaoResposta = this.form?.controls.inputOpcoesResposta.value;
+    const valorResposta = this.form?.controls.inputValorResposta.value;
     const key = this.util.textHash(opcaoResposta);
     if (opcaoResposta && this.form?.controls.inputPergunta.value && this.listaTipoResposta?.selectedItem?.value && this.util.validateLookupItem(this.form.controls.multiOpcaoResposta.value, key)) {
       result = {
         key: key,
-        value: opcaoResposta,
+        value: opcaoResposta + ' - ' + valorResposta,
         data: {
+          opcao: opcaoResposta,
+          valor: valorResposta,
           _status: "ADD"
         }
       };
       this.form.controls.inputOpcoesResposta.setValue("");
+      this.form.controls.inputValorResposta.setValue("");
     }
     return result;
   }
@@ -384,9 +399,9 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefi
     }
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵInheritDefinitionFeature"]],
-  decls: 64,
-  vars: 33,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row", "mt-3"], ["label", "Nome do Question\u00E1rio", "icon", "bi bi-pen", "controlName", "nome", 3, "size", "control"], ["label", "C\u00F3digo do Question\u00E1rio", "icon", "bi bi-pen", "controlName", "codigo", 3, "size", "control"], ["label", "Tipo do Question\u00E1rio", "icon", "bi bi-pen", "controlName", "tipo", 3, "size", "control", "items"], [1, "table-opcoes", "d-grid"], ["name", "tableOpcoes", "id", "tableOpcoes", 1, "table", "table-responsive", "table-hover", "table-sm"], [1, "thead-light"], ["scope", "col"], ["scope", "row"], ["label", "Op\u00E7\u00F5es", "icon", "bi bi-pen", "controlName", "listaExemplo", 3, "size", "items"], [1, "form-check"], ["type", "radio", "name", "flexRadioDefault", "id", "flexRadioDefault1", "checked", "", 1, "form-check-input"], ["for", "flexRadioDefault1", 1, "form-check-label"], ["type", "radio", "name", "flexRadioDefault", "id", "flexRadioDefault2", 1, "form-check-input"], ["for", "flexRadioDefault2", 1, "form-check-label"], ["type", "radio", "name", "flexRadioDefault", "id", "flexRadioDefault3", 1, "form-check-input"], ["for", "flexRadioDefault3", 1, "form-check-label"], ["type", "checkbox", "value", "", "id", "defaultCheck1", "name", "checkbox", 1, "form-check-input"], ["for", "defaultCheck1", 1, "form-check-label"], ["type", "checkbox", "value", "", "id", "defaultCheck2", "name", "checkbox", 1, "form-check-input"], ["for", "defaultCheck2", 1, "form-check-label"], ["icon", "fas fa-chalkboard", "controllName", "switchExemplo", 3, "size", "label", "control"], ["switchExemplo", ""], [1, "row"], ["label", "", "controlName", "perguntas", "noBox", "", 3, "size", "control", "addItemHandle"], ["label", "Pergunta", "icon", "bi bi-pencil-fill", "controlName", "inputPergunta", 3, "size", "control"], ["inputPergunta", ""], ["label", "Tipo de resposta", "icon", "bi bi-pen", "controlName", "listaTipoResposta", 3, "size", "control", "items"], ["listaTipoResposta", ""], ["label", "", "controlName", "multiOpcaoResposta", "noBox", "", 3, "hidden", "size", "control", "addItemHandle"], ["label", "Op\u00E7\u00F5es da resposta", "icon", "bi bi-pencil-fill", "controlName", "inputOpcoesResposta", 3, "size", "control"], ["opcoesResposta", ""]],
+  decls: 66,
+  vars: 36,
+  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row", "mt-3"], ["label", "Nome do Question\u00E1rio", "icon", "bi bi-pen", "controlName", "nome", 3, "size", "control"], ["label", "C\u00F3digo do Question\u00E1rio", "icon", "bi bi-pen", "controlName", "codigo", 3, "size", "control"], ["label", "Tipo do Question\u00E1rio", "icon", "bi bi-pen", "controlName", "tipo", 3, "size", "control", "items"], [1, "table-opcoes", "d-grid"], ["name", "tableOpcoes", "id", "tableOpcoes", 1, "table", "table-responsive", "table-hover", "table-sm"], [1, "thead-light"], ["scope", "col"], ["scope", "row"], ["label", "Op\u00E7\u00F5es", "icon", "bi bi-pen", "controlName", "listaExemplo", 3, "size", "items"], [1, "form-check"], ["type", "radio", "name", "flexRadioDefault", "id", "flexRadioDefault1", "checked", "", 1, "form-check-input"], ["for", "flexRadioDefault1", 1, "form-check-label"], ["type", "radio", "name", "flexRadioDefault", "id", "flexRadioDefault2", 1, "form-check-input"], ["for", "flexRadioDefault2", 1, "form-check-label"], ["type", "radio", "name", "flexRadioDefault", "id", "flexRadioDefault3", 1, "form-check-input"], ["for", "flexRadioDefault3", 1, "form-check-label"], ["type", "checkbox", "value", "", "id", "defaultCheck1", "name", "checkbox", 1, "form-check-input"], ["for", "defaultCheck1", 1, "form-check-label"], ["type", "checkbox", "value", "", "id", "defaultCheck2", "name", "checkbox", 1, "form-check-input"], ["for", "defaultCheck2", 1, "form-check-label"], ["icon", "fas fa-chalkboard", "controllName", "switchExemplo", 3, "size", "label", "control"], ["switchExemplo", ""], [1, "row"], ["label", "", "controlName", "perguntas", "noBox", "", 3, "size", "control", "addItemHandle"], ["label", "Pergunta", "icon", "bi bi-pencil-fill", "controlName", "inputPergunta", 3, "size", "control"], ["inputPergunta", ""], ["label", "Tipo de resposta", "icon", "bi bi-pen", "controlName", "listaTipoResposta", 3, "size", "control", "items"], ["listaTipoResposta", ""], ["label", "", "controlName", "multiOpcaoResposta", "noBox", "", 3, "hidden", "size", "control", "addItemHandle"], ["label", "Op\u00E7\u00F5es da resposta", "icon", "bi bi-pencil-fill", "controlName", "inputOpcoesResposta", 3, "size", "control"], ["opcoesResposta", ""], ["label", "Valor da resposta", "icon", "bi bi-pencil-fill", "controlName", "inputValorResposta", 3, "size", "control"], ["valorResposta", ""]],
   template: function QuestionarioPerguntaFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "editable-form", 0);
@@ -455,7 +470,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefi
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](55, "div", 24)(56, "input-multiselect", 25);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](57, "input-text", 26, 27)(59, "input-select", 28, 29);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](61, "input-multiselect", 30);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](62, "input-text", 31, 32);
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](62, "input-text", 31, 32)(64, "input-text", 33, 34);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()()()();
     }
     if (rf & 2) {
@@ -480,11 +495,14 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefi
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.inputPergunta);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 3)("control", ctx.form.controls.listaTipoResposta)("items", ctx.tipoPergunta);
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 2)("control", ctx.form.controls.listaTipoResposta)("items", ctx.tipoPergunta);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("hidden", (_r2 == null ? null : _r2.selectedItem == null ? null : _r2.selectedItem.key) == ("SWITCH" || 0 || 0))("size", 5)("control", ctx.form.controls.multiOpcaoResposta)("addItemHandle", ctx.addMultiRespostas.bind(ctx));
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("hidden", (_r2 == null ? null : _r2.selectedItem == null ? null : _r2.selectedItem.key) == ("SWITCH" || 0 || 0))("size", 6)("control", ctx.form.controls.multiOpcaoResposta)("addItemHandle", ctx.addMultiRespostas.bind(ctx));
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 12)("control", ctx.form.controls.inputOpcoesResposta);
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.inputOpcoesResposta);
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵattribute"]("maxlength", 250);
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.inputValorResposta);
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵattribute"]("maxlength", 250);
     }
   },
@@ -539,37 +557,37 @@ function QuestionarioPerguntaListComponent_toolbar_1_Template(rf, ctx) {
 }
 function QuestionarioPerguntaListComponent_column_8_ng_template_1_span_0_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "span", 19);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](1, "i", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "span", 17);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](1, "i", 18);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
-    const row_r10 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]().row;
+    const row_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]().row;
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate1"](" ", row_r10.perguntas == null ? null : row_r10.perguntas.length, "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate1"](" ", row_r6.perguntas == null ? null : row_r6.perguntas.length, "");
   }
 }
 function QuestionarioPerguntaListComponent_column_8_ng_template_1_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](0, QuestionarioPerguntaListComponent_column_8_ng_template_1_span_0_Template, 3, 1, "span", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](0, QuestionarioPerguntaListComponent_column_8_ng_template_1_span_0_Template, 3, 1, "span", 16);
   }
   if (rf & 2) {
-    const row_r10 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", row_r10.perguntas == null ? null : row_r10.perguntas.length);
+    const row_r6 = ctx.row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", row_r6.perguntas == null ? null : row_r6.perguntas.length);
   }
 }
 function QuestionarioPerguntaListComponent_column_8_ng_template_3_tr_9_span_5_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "span", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "span", 23);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
-    const opcoes_r18 = ctx.$implicit;
-    const i_r19 = ctx.index;
+    const opcoes_r14 = ctx.$implicit;
+    const i_r15 = ctx.index;
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate2"]("", i_r19 + 1, " - ", opcoes_r18.value, "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate3"]("", i_r15 + 1, " - ", opcoes_r14.data.opcao, " - Valor: ", opcoes_r14.data.valor, "");
   }
 }
 function QuestionarioPerguntaListComponent_column_8_ng_template_3_tr_9_Template(rf, ctx) {
@@ -579,78 +597,55 @@ function QuestionarioPerguntaListComponent_column_8_ng_template_3_tr_9_Template(
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](2, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](4, "td", 23);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](5, QuestionarioPerguntaListComponent_column_8_ng_template_3_tr_9_span_5_Template, 2, 2, "span", 24);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](4, "td", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](5, QuestionarioPerguntaListComponent_column_8_ng_template_3_tr_9_span_5_Template, 2, 3, "span", 22);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()();
   }
   if (rf & 2) {
-    const pergunta_r15 = ctx.$implicit;
-    const i_r16 = ctx.index;
+    const pergunta_r11 = ctx.$implicit;
+    const i_r12 = ctx.index;
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate2"]("", i_r16 + 1, " - ", pergunta_r15.data.pergunta, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate2"]("", i_r12 + 1, " - ", pergunta_r11.data.pergunta.pergunta, " ");
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate"](pergunta_r15.data.tipo.value);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate"](pergunta_r11.data.tipo.value);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngForOf", pergunta_r15.data.opcaoResposta);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngForOf", pergunta_r11.data.opcaoResposta);
   }
 }
 function QuestionarioPerguntaListComponent_column_8_ng_template_3_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "table", 21)(1, "thead")(2, "tr")(3, "th");
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "table", 19)(1, "thead")(2, "tr")(3, "th");
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](4, "Pergunta");
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](5, "th");
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](6, "Tipo de Resposta");
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](7, "th");
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](8, "Op\u00E7\u00F5es de resposta");
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](8, "Op\u00E7\u00F5es de resposta e Valor");
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](9, QuestionarioPerguntaListComponent_column_8_ng_template_3_tr_9_Template, 6, 4, "tr", 22);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](9, QuestionarioPerguntaListComponent_column_8_ng_template_3_tr_9_Template, 6, 4, "tr", 20);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
-    const row_r13 = ctx.row;
+    const row_r9 = ctx.row;
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](9);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngForOf", row_r13.perguntas);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngForOf", row_r9.perguntas);
   }
 }
 function QuestionarioPerguntaListComponent_column_8_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "column", 11);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](1, QuestionarioPerguntaListComponent_column_8_ng_template_1_Template, 1, 1, "ng-template", null, 16, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](3, QuestionarioPerguntaListComponent_column_8_ng_template_3_Template, 10, 1, "ng-template", null, 17, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "column", 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](1, QuestionarioPerguntaListComponent_column_8_ng_template_1_Template, 1, 1, "ng-template", null, 14, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](3, QuestionarioPerguntaListComponent_column_8_ng_template_3_Template, 10, 1, "ng-template", null, 15, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
     _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
-    const _r6 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵreference"](2);
-    const _r8 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵreference"](4);
+    const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵreference"](2);
+    const _r4 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵreference"](4);
     const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("align", "center")("hint", ctx_r1.lex.translate("Perguntas"))("template", _r6)("expandTemplate", _r8);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("align", "center")("hint", ctx_r1.lex.translate("Perguntas"))("template", _r2)("expandTemplate", _r4);
   }
 }
-function QuestionarioPerguntaListComponent_ng_template_13_span_0_Template(rf, ctx) {
-  if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "span", 19);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](1, "i", 20);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-  }
-  if (rf & 2) {
-    const row_r20 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]().row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate1"](" ", row_r20.perguntas == null ? null : row_r20.perguntas.length, "");
-  }
-}
-function QuestionarioPerguntaListComponent_ng_template_13_Template(rf, ctx) {
-  if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](0, QuestionarioPerguntaListComponent_ng_template_13_span_0_Template, 3, 1, "span", 18);
-  }
-  if (rf & 2) {
-    const row_r20 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", row_r20.perguntas == null ? null : row_r20.perguntas.length);
-  }
-}
-function QuestionarioPerguntaListComponent_ng_template_15_Template(rf, ctx) {}
 class QuestionarioPerguntaListComponent extends src_app_modules_base_page_list_base__WEBPACK_IMPORTED_MODULE_3__.PageListBase {
   constructor(injector) {
     super(injector, src_app_models_questionario_pergunta_model__WEBPACK_IMPORTED_MODULE_2__.QuestionarioPergunta, src_app_dao_questionario_pergunta_dao_service__WEBPACK_IMPORTED_MODULE_1__.QuestionarioPerguntaDaoService);
@@ -740,9 +735,9 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
     }
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵInheritDefinitionFeature"]],
-  decls: 19,
-  vars: 35,
-  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "loadList", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "deleted", "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome", "controlName", "nome", "placeholder", "Nome", 3, "size", "control"], ["label", "C\u00F3digo", "controlName", "codigo", "placeholder", "C\u00F3digo", 3, "size", "control"], ["label", "Tipo do Question\u00E1rio", "controlName", "tipo", "placeholder", "Tipo", 3, "size", "control", "items"], ["type", "expand", "icon", "bi bi-list-check", 3, "align", "hint", "template", "expandTemplate", 4, "ngIf"], ["title", "Nome", "field", "nome", "orderBy", "nome"], ["title", "C\u00F3digo", "field", "codigo"], ["title", "Tipo", "field", "tipo"], ["type", "expand", "icon", "bi bi-list-check", 3, "align", "hint", "template", "expandTemplate"], ["columnEntregas", ""], ["columnExpandedEntregas", ""], ["type", "options", 3, "onEdit", "options"], [3, "rows"], ["columnPerguntas", ""], ["columnExpandedPerguntas", ""], ["class", "badge rounded-pill bg-light text-dark", 4, "ngIf"], [1, "badge", "rounded-pill", "bg-light", "text-dark"], [1, "bi", "bi-list-check"], [1, "table", "table-responsive", "table-striped", "table-hover", "table-sm"], [4, "ngFor", "ngForOf"], ["id", "tdOpcao"], ["id", "opcoes", 4, "ngFor", "ngForOf"], ["id", "opcoes"]],
+  decls: 14,
+  vars: 31,
+  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "loadList", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "deleted", "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome", "controlName", "nome", "placeholder", "Nome", 3, "size", "control"], ["label", "C\u00F3digo", "controlName", "codigo", "placeholder", "C\u00F3digo", 3, "size", "control"], ["label", "Tipo do Question\u00E1rio", "controlName", "tipo", "placeholder", "Tipo", 3, "size", "control", "items"], ["type", "expand", "icon", "bi bi-list-check", 3, "align", "hint", "template", "expandTemplate", 4, "ngIf"], ["title", "Nome", "field", "nome", "orderBy", "nome"], ["title", "C\u00F3digo", "field", "codigo"], ["title", "Tipo", "field", "tipo"], ["type", "options", 3, "onEdit", "options"], [3, "rows"], ["type", "expand", "icon", "bi bi-list-check", 3, "align", "hint", "template", "expandTemplate"], ["columnPerguntas", ""], ["columnExpandedPerguntas", ""], ["class", "badge rounded-pill bg-light text-dark", 4, "ngIf"], [1, "badge", "rounded-pill", "bg-light", "text-dark"], [1, "bi", "bi-list-check"], [1, "table", "table-responsive", "table-striped", "table-hover", "table-sm"], [4, "ngFor", "ngForOf"], ["id", "tdOpcao"], ["id", "opcoes", 4, "ngFor", "ngForOf"], ["id", "opcoes"]],
   template: function QuestionarioPerguntaListComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "grid", 0);
@@ -755,19 +750,12 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()();
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](7, "columns");
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](8, QuestionarioPerguntaListComponent_column_8_Template, 5, 4, "column", 7);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](9, "column", 8)(10, "column", 9)(11, "column", 10);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](12, "column", 11);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](13, QuestionarioPerguntaListComponent_ng_template_13_Template, 1, 1, "ng-template", null, 12, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](15, QuestionarioPerguntaListComponent_ng_template_15_Template, 0, 0, "ng-template", null, 13, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](9, "column", 8)(10, "column", 9)(11, "column", 10)(12, "column", 11);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](17, "column", 14);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](18, "pagination", 15);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](13, "pagination", 12);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
     }
     if (rf & 2) {
-      const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵreference"](14);
-      const _r4 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵreference"](16);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("loadList", ctx.onGridLoad.bind(ctx))("selectable", ctx.selectable)("hasAdd", ctx.auth.hasPermissionTo("MOD_RX_VIS_DPE"))("hasEdit", ctx.auth.hasPermissionTo("MOD_RX_VIS_DPE"));
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", !ctx.selectable);
@@ -784,15 +772,13 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", !ctx.selectable);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](4);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("align", "center")("hint", ctx.lex.translate("Entrega"))("template", _r2)("expandTemplate", _r4);
-      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](5);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("onEdit", ctx.edit)("options", ctx.options);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("rows", ctx.rowsLimit);
     }
   },
   dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_12__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_12__.NgIf, src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_4__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_5__.ColumnComponent, _components_grid_filter_filter_component__WEBPACK_IMPORTED_MODULE_6__.FilterComponent, _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_7__.ToolbarComponent, _components_grid_pagination_pagination_component__WEBPACK_IMPORTED_MODULE_8__.PaginationComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_9__.InputTextComponent, _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_10__.InputSelectComponent],
-  styles: ["\n\n\n\n\n\n#opcoes[_ngcontent-%COMP%] {\n  display: block;\n}\n\n#tdOpcao[_ngcontent-%COMP%] {\n  align-items: center;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvbW9kdWxlcy9jYWRhc3Ryb3MvY3VycmljdWx1bS9xdWVzdGlvbmFyaW8vcXVlc3Rpb25hcmlvLXBlcmd1bnRhL3F1ZXN0aW9uYXJpby1wZXJndW50YS1saXN0L3F1ZXN0aW9uYXJpby1wZXJndW50YS1saXN0LmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBOzs7O01BQUE7QUFLQTtFQUNJLGNBQUE7QUFDSjs7QUFFQTtFQUNJLG1CQUFBO0FBQ0oiLCJzb3VyY2VzQ29udGVudCI6WyIvKiNvcGNvZXM6OmJlZm9yZXtcclxuICAgIGNvbnRlbnQ6IFwiXFxhXCI7XHJcbiAgICB3aGl0ZS1zcGFjZTogcHJlO1xyXG4gICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcclxuICAgIH0qL1xyXG4jb3Bjb2VzIHtcclxuICAgIGRpc3BsYXk6IGJsb2NrO1xyXG4gfVxyXG5cclxuI3RkT3BjYW97XHJcbiAgICBhbGlnbi1pdGVtczogY2VudGVyO1xyXG59Il0sInNvdXJjZVJvb3QiOiIifQ== */"]
+  styles: ["\n\n\n\n\n\n#opcoes[_ngcontent-%COMP%] {\n  display: block;\n}\n\n#tdOpcao[_ngcontent-%COMP%] {\n  align-items: center;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvbW9kdWxlcy9jYWRhc3Ryb3MvY3VycmljdWx1bS9xdWVzdGlvbmFyaW8vcXVlc3Rpb25hcmlvLXBlcmd1bnRhL3F1ZXN0aW9uYXJpby1wZXJndW50YS1saXN0L3F1ZXN0aW9uYXJpby1wZXJndW50YS1saXN0LmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBOzs7O01BQUE7QUFLQTtFQUNJLGNBQUE7QUFDSjs7QUFFQTtFQUNJLG1CQUFBO0FBQ0oiLCJzb3VyY2VzQ29udGVudCI6WyIvKiNvcGNvZXM6OmJlZm9yZXtcbiAgICBjb250ZW50OiBcIlxcYVwiO1xuICAgIHdoaXRlLXNwYWNlOiBwcmU7XG4gICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICB9Ki9cbiNvcGNvZXMge1xuICAgIGRpc3BsYXk6IGJsb2NrO1xuIH1cblxuI3RkT3BjYW97XG4gICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbn0iXSwic291cmNlUm9vdCI6IiJ9 */"]
 });
 
 /***/ }),
