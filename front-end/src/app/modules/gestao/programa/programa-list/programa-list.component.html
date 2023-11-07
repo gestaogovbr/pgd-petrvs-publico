@@ -3,7 +3,7 @@
     [selectable]="selectable" (select)="onSelect($event)"
     [hasAdd]="auth.hasPermissionTo('MOD_PRGT_INCL')"
     [hasEdit]="auth.hasPermissionTo('MOD_PRGT_EDT')">
-    <toolbar *ngIf="!selectable" [buttons]="buttons"></toolbar>
+    <toolbar *ngIf="!selectable"></toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
             <input-text [size]="12" [label]="'Nome do '+ lex.translate('programa')" controlName="nome"

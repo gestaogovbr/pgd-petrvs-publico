@@ -14,8 +14,6 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
-  public buttons: ToolbarButton[] = [];
-
   constructor(public injector: Injector, dao: ProgramaDaoService) {
     super(injector, Programa, ProgramaDaoService);
     /* Inicializações */
@@ -45,13 +43,6 @@ export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoSer
         onClick: (programa: Programa) => this.go.navigate({route: ["gestao", "desdobramento", programa.id, "programa"]})
       });
     }
-    
-    this.buttons.push({
-      icon: "bi bi-box-arrow-up-right",
-      color: "btn-outline-secondary",
-      label: "Norma PGD - IN 24",
-      onClick: () => window.open("https://www.in.gov.br/en/web/dou/-/instrucao-normativa-conjunta-seges-sgprt-/mgi-n-24-de-28-de-julho-de-2023-499593248")
-    });
   }
 
   public filterWhere = (filter: FormGroup) => {
