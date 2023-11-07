@@ -36,6 +36,7 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
       inputPergunta: {default: ""},
       listaTipoResposta: {default: ""},
       inputOpcoesResposta: {default: ""},
+      inputValorResposta: {default: ""},
            
     }, this.cdRef, this.validate);
   }
@@ -99,21 +100,25 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
     if (pergunta && tipoResposta?.value && this.form?.controls.multiOpcaoResposta.value && this.util.validateLookupItem(this.form!.controls.perguntas.value,key)) {
       let opcoesResposta = this.form?.controls.multiOpcaoResposta.value;
       let opcoesTexto =""
+      let valoresResposta =""
       let index=opcoesResposta.length;
     
     if(tipoResposta.key != 'SWITCH'){
-        opcoesResposta.forEach((element: { value: any; }) => {
+        opcoesResposta.forEach((element: {data: any; value: any;}) => {
               if(index==1){
-                opcoesTexto += (element.value)
+                //opcoesTexto += (element.value)
+                opcoesTexto += (element.data.opcao) + ' - Valor: ' + (element.data.valor)
+               // valoresResposta += (element.data.valor)
               }else{
-                opcoesTexto += (element.value) + ' - '; 
+                opcoesTexto += (element.data.opcao) + ' - Valor: ' + (element.data.valor)+ ' - ';
+                //valoresResposta += (element.data.valor) + ' - ' 
               }
               index--;  
         });
         console.log('opcoesTexto',opcoesTexto)
         result = {
           key: key,
-          value: 'Pergunta: ' + pergunta + ' - Tipo de Resposta: ' + tipoResposta.value + ' - Opções da resposta: ' + opcoesTexto,
+          value: 'Pergunta: ' + pergunta + ' - Tipo de Resposta: ' + tipoResposta.value + ' - Opção de Resposta: ' + opcoesTexto,
           data: {
             pergunta: pergunta,
             tipo: tipoResposta,
@@ -124,9 +129,9 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
     }else{
         result = {
           key: key,
-          value: 'Pergunta: ' + pergunta + ' - Tipo de Resposta: ' + tipoResposta.value + ' - Opções da resposta: ' +  tipoResposta.value,
+          value: 'Pergunta: ' + pergunta + ' - Tipo de Resposta: ' + tipoResposta.value + ' - Opção de Resposta: ' +  tipoResposta.value,
           data: {
-            pergunta: pergunta,
+            pergunta:{'pergunta':pergunta, 'valor':''},
             tipo: tipoResposta,
             opcaoResposta: { 'key': 'UNICA', 'value': 'Resposta Única' },
             _status: "ADD",
@@ -146,17 +151,21 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
     let result = undefined;
     
     const opcaoResposta = this.form?.controls.inputOpcoesResposta.value;
+    const valorResposta = this.form?.controls.inputValorResposta.value
     const key = this.util.textHash(opcaoResposta);
     
     if (opcaoResposta && this.form?.controls.inputPergunta.value && this.listaTipoResposta?.selectedItem?.value && this.util.validateLookupItem(this.form!.controls.multiOpcaoResposta.value,key)) {
       result = {
         key: key,
-        value: opcaoResposta,
+        value: opcaoResposta + ' - ' + valorResposta,
         data: {
-           _status: "ADD",
+          opcao : opcaoResposta,
+          valor : valorResposta,
+          _status: "ADD",
         }
       };
       this.form!.controls.inputOpcoesResposta.setValue("");
+      this.form!.controls.inputValorResposta.setValue("");
       
     }
     return result;
