@@ -16,6 +16,7 @@ export class Programa extends Base {
 
     public nome: string = ""; /* Nome do programa */
     public normativa: string = ""; /* Normativa que regula o programa */
+    public link_normativa: string = ""; /* Link da Normativa que regula o programa *///
     public config: string | null = null; /* Configuração extra de programa */
     public data_inicio: Date = new Date(); /* Data de início vigência */
     public data_fim: Date = new Date(); /* Data de fim vigência */

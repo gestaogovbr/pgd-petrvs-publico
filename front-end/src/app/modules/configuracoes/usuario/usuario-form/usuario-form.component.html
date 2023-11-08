@@ -7,9 +7,10 @@
                 </div>
                 <div class="form-group col-md-9">
                     <div class="row">
-                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_CPF') ? 'true' : undefined" [size]="4" label="CPF" controlName="cpf" [maskFormat]="'000.000.000-00'" [attr.maxlength]=15 required></input-text>
-                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAT') ? 'true' : undefined" [size]="3" label="Matrícula" controlName="matricula" [attr.maxlength]=250 required></input-text>
-                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAIL') ? 'true' : undefined" [size]="5" label="E-mail" controlName="email" textCase="lower" [attr.maxlength]=250 required></input-text>
+                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_CPF') ? 'true' : undefined" [size]="3" label="CPF" controlName="cpf" [maskFormat]="'000.000.000-00'" [attr.maxlength]=15 required></input-text>
+                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAT') ? 'true' : undefined" [size]="2" label="Matrícula" controlName="matricula" [attr.maxlength]=250 required></input-text>
+                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAIL') ? 'true' : undefined" [size]="4" label="E-mail" controlName="email" textCase="lower" [attr.maxlength]=250 required></input-text>
+                        <input-datetime date [size]="3" label="Nascimento" controlName="data_nascimento" [labelInfo]="'Data de nascimento'" required></input-datetime>
                     </div>
                     <div class="row">
                         <input-text [size]="8" label="Nome" controlName="nome" [attr.maxlength]=250 required></input-text>

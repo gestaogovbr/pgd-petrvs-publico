@@ -171,7 +171,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     this.loadEtiquetas();
     if (this.form.controls.tipo_atividade_id.value) {
       let checkAtividade = this.tipoAtividade?.selectedEntity.checklist;
-      if (this.form.controls.checklist.value.length == checkAtividade.length) this.loadChecklist();// this.loadChecklist();
+      if (checkAtividade && this.form.controls.checklist.value.length == checkAtividade.length) this.loadChecklist();// this.loadChecklist();
     }
     const etiquetasKeys = this.etiquetas.map(x => x.key);
     const checklistKeys = this.checklist.map(x => x.id);//const checklistKeys = this.checklist.map(x => x.key);
@@ -250,7 +250,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
 
   public loadChecklist() {
     const tipoAtividade = this.tipoAtividade?.selectedEntity as TipoAtividade;
-    let checkAdd: Checklist[] = tipoAtividade.checklist.map((a: { key: any; value: any; }) => {
+    let checkAdd: Checklist[] = tipoAtividade.checklist?.map((a: { key: any; value: any; }) => {
       return {
         id: a.key,
         texto: a.value,
