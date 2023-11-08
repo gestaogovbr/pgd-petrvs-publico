@@ -1,6 +1,7 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 import { Programa } from 'src/app/models/programa.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
@@ -42,7 +43,6 @@ export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoSer
         onClick: (programa: Programa) => this.go.navigate({route: ["gestao", "desdobramento", programa.id, "programa"]})
       });
     }
-   
   }
 
   public filterWhere = (filter: FormGroup) => {

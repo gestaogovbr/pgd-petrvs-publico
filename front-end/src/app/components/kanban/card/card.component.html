@@ -1,8 +1,8 @@
 <div class="card border-secondary my-1">
-    <div class="card-body bg-light">
+    <div class="card-body ">
         <div *ngIf="item!.title || hasMenu" class="d-flex w-100">
             <div class="flex-fill">
-                <h5 class="card-title text-dark small">{{item!.title || ""}}</h5>
+                <h5 class="card-title small">{{item!.title || ""}}</h5>
             </div>
             <div *ngIf="hasMenu" class="btn-group card-buttons" role="group" aria-label="Opções">
                 <div *ngFor="let btn of menu" class="btn-group" role="group">
