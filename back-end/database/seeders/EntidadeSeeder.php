@@ -53,6 +53,6 @@ class EntidadeSeeder extends Seeder
           ),
         );
 
-        Entidade::insertOrIgnore($entidade);
+        Entidade::insert($entidade);
     }
 }

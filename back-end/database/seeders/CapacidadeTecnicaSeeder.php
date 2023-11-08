@@ -65,7 +65,7 @@ class CapacidadeTecnicaSeeder extends Seeder
             ['nome'=>'Desenvolvimento de APP Mobile','area'=>'Tecnologia'],
             ['nome'=>'Desenvolvimento em Google Script e Google WebApp','area'=>'Tecnologia'],
             ['nome'=>'Dashboards (PowerBI e/ou DataStudio)','area'=>'Tecnologia'],
-            
+
             ['nome'=>'Instrução em CFP','area'=>'Ensino'],
             ['nome'=>'Instrução em Cursos de Capacitação','area'=>'Ensino'],
             ['nome'=>'Instrução em Cursos de Aperfeiçoamento','area'=>'Ensino'],
@@ -88,9 +88,9 @@ class CapacidadeTecnicaSeeder extends Seeder
             ['nome'=>'Orçamento e Finanças','area'=>'Administração e Logística'],
             ['nome'=>'Patrimônio e Material','area'=>'Administração e Logística'],
             ['nome'=>'SCDP','area'=>'Administração e Logística'],
-              
+
          ];
-              
+
         foreach($array_capacidades as $capacidade) {
 
             $capacidadeI = new CapacidadeTecnica();
@@ -99,7 +99,7 @@ class CapacidadeTecnicaSeeder extends Seeder
                 'area_tematica_id'=>AreaTematica::where('nome',$capacidade['area'])->first()?->id,
             ]);
             $capacidadeI->save();
-           
+
         }
         //
     }
