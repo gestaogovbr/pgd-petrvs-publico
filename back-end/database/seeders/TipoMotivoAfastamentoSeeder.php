@@ -38,7 +38,7 @@ class TipoMotivoAfastamentoSeeder extends Seeder
                 $data[$key]['cor']= "#198754";
                 unset($data[$key]["afastamento"]);
             }
-            TipoMotivoAfastamento::insertOrIgnore($data);
+            TipoMotivoAfastamento::insert($data);
         }
     }
 }
