@@ -421,7 +421,7 @@ class TipoAtividadeListComponent extends src_app_modules_base_page_list_base__WE
       }
     });
     // Testa se o usuário possui permissão para exibir dados do tipo de atividade
-    if (this.auth.hasPermissionTo("MOD_TIPO_ATV_CONS")) {
+    if (this.auth.hasPermissionTo("MOD_TIPO_ATV")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",
