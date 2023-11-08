@@ -95,20 +95,5 @@ class UsuarioController extends ControllerBase
         }
     }
 
-/*     public function jaAssinouTCR(Request $request){
-        try {
-            $data = $request->validate([
-                'usuario_id' => ['present'],
-                'plano_trabalho_id' => ['required']
-            ]);
-            return response()->json([
-                'success' => true,
-                'data' => $this->service->jaAssinouTCR($data["usuario_id"],$data["plano_trabalho_id"])
-            ]);
-        } catch (Throwable $e) {
-            return response()->json(['error' => $e->getMessage()]);
-        }
-    } */
-
 } 
 

@@ -33,7 +33,7 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
   constructor(public injector: Injector) {
     super(injector, Planejamento, PlanejamentoDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
-    this.hasPermissionToUNEX = this.auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_LOTPRI') || this.auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_QQLOT') || this.auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_SUBORD') || this.auth.hasPermissionTo('MOD_PLAN_INST_INCL_UNEX_QUALQUER');
+    this.hasPermissionToUNEX = this.auth.hasPermissionTo('MOD_PLAN_INCL_UNEX_LOTPRI') || this.auth.hasPermissionTo('MOD_PLAN_INCL_UNEX_QQLOT') || this.auth.hasPermissionTo('MOD_PLAN_INCL_UNEX_SUBORD') || this.auth.hasPermissionTo('MOD_PLAN_INCL_UNEX_QUALQUER');
     this.join = [
       'objetivos',
       'objetivos.objetivo_pai:id,nome',

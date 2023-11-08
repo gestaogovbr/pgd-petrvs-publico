@@ -44,7 +44,7 @@ class LoginController extends Controller
             $entidadeId = $request->session()->has("entidade_id") ? $request->session()->get("entidade_id") : null;
             $usuario = Usuario::where("id", $usuario->id)->with([
                 "areasTrabalho" => function ($query) use ($entidadeId) {
-                    $query->with(["unidade.gestor.usuario", "unidade.gestorSubstituto.usuario", "unidade.cidade", "unidade.planosEntrega", "unidade.unidadePai.planosEntrega", "atribuicoes"])->whereHas('unidade', function ($query) use ($entidadeId) {
+                    $query->with(["unidade.gestor.usuario", "unidade.gestorSubstituto.usuario", "unidade.gestorDelegado.usuario", "unidade.cidade", "unidade.planosEntrega", "unidade.unidadePai.planosEntrega", "atribuicoes"])->whereHas('unidade', function ($query) use ($entidadeId) {
                         return  $query->where('entidade_id', '=', $entidadeId);
                     });
                 },

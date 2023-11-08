@@ -22,7 +22,7 @@ export class EixoTematicoListComponent extends PageListBase<EixoTematico, EixoTe
       nome: {default: ""}
      });
     // Testa se o usuário possui permissão para consultar eixos temáticos
-    if (this.auth.hasPermissionTo("MOD_EXTM_CONS")) {
+    if (this.auth.hasPermissionTo("MOD_EXTM")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",

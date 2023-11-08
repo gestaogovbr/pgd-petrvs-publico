@@ -22,7 +22,7 @@ export class TipoTarefaListComponent extends PageListBase<TipoTarefa, TipoTarefa
       nome: {default: ""}
      });
     // Testa se o usuário possui permissão para exibir dados da tarefa
-    if (this.auth.hasPermissionTo("MOD_TRF_CONS")) {
+    if (this.auth.hasPermissionTo("MOD_TRF")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",

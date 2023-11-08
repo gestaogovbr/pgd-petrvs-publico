@@ -232,7 +232,7 @@ class EixoTematicoListComponent extends src_app_modules_base_page_list_base__WEB
       }
     });
     // Testa se o usuário possui permissão para consultar eixos temáticos
-    if (this.auth.hasPermissionTo("MOD_EXTM_CONS")) {
+    if (this.auth.hasPermissionTo("MOD_EXTM")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",

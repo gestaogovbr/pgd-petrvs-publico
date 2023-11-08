@@ -41,7 +41,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo de afastamentos",
             "capacidades" => [
             /* Capacidades do módulo AFASTAMENTO*/
-                ["MOD_AFT_CONS", "Permite consultar afastamento"],
                 ["MOD_AFT_EDT", "Permite editar afastamento"],
                 ["MOD_AFT_EXCL", "Permite excluir afastamento"],
                 ["MOD_AFT_INCL", "Permite incluir afastamento"]
@@ -52,7 +51,6 @@ class TipoCapacidadeService extends ServiceBase {
             "capacidades" => [
                 /* Capacidades do módulo ATIVIDADES*/
                 ["MOD_ATV_TIPO_ATV_VAZIO", "Permite incluir atividade sem tipo de atividade"],
-                ["MOD_ATV_CONS", "Permite consultar atividade"],
                 ["MOD_ATV_EDT", "Permite editar atividade"],
                 ["MOD_ATV_EXCL", "Permite excluir atividade"],
                 ["MOD_ATV_USU_EXT", "Permite atribuir atividades a usuários de outra unidade"],
@@ -79,8 +77,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo Cidades",
             "capacidades"=> [
                 /* Capacidades do módulo CIDADE*/
-                //["MOD_CID", "Permite acessar item menu cidades"],
-                ["MOD_CID_CONS", "Permite consultar cidade"],
                 ["MOD_CID_EDT", "Permite editar cidades"],
                 ["MOD_CID_EXCL", "Permite excluir cidades"],
                 ["MOD_CID_INCL", "Permite incluir cidades"],
@@ -99,17 +95,12 @@ class TipoCapacidadeService extends ServiceBase {
                 /* Capacidades do módulo CONFIGURAÇÃO*/
                 ["MOD_CFG_ENTD", "Permite acessar Entidade no menu configurações"],
                 ["MOD_CFG_PERFS", "Permite configuração de perfis no petrvs"],
-                //["MOD_CFG_PREF", "Permite configurar preferências"],
                 ["MOD_CFG_UND", "Permite configurar unidade"],
                 ["MOD_CFG_USER", "Permite alterar configurações de usuário"],
-                //["MOD_CFG_USER_APELIDO", "Permite alterar valor campo apelido do usuário"],
                 ["MOD_CFG_USER_CPF", "Permite alterar valor campo CPF do usuário"],
                 ["MOD_CFG_USER_MAIL", "Permite alterar valor campo e-Mail do usuário"],
                 ["MOD_CFG_USER_MAT", "Permite alterar valor campo matrícula do usuário"],
-                //["MOD_CFG_USER_NOME", "Permite alterar valor campo nome do usuário"],
                 ["MOD_CFG_USER_PERFIL", "Permite alterar valor campo perfil do usuário"],
-                //["MOD_CFG_USER_TEL", "Permite alterar valor campo telefone do usuário"],
-                //["MOD_CFG_USER_UF", "Permite alterar valor campo UF do usuário"],
                 /* Capacidades do módulo Configurações de PERFIL*/
                 ["MOD_PERF_EDT", "Permite editar perfil"],
                 ["MOD_PERF_EXCL", "Permite excluir perfil"],
@@ -129,8 +120,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo Eixos Temáticos",
             "capacidades"=> [
                 /* Capacidades do módulo EIXOS TEMÁTICOS */
-                //["MOD_EXTM", "Permite acessar item do menu Eixos temáticos"],
-                ["MOD_EXTM_CONS", "Permite consultar Eixos temáticos"],
                 ["MOD_EXTM_INCL", "Permite incluir Eixos temáticos"],
                 ["MOD_EXTM_EDT", "Permite editar Eixos temáticos"],
                 ["MOD_EXTM_EXCL", "Permite excluir Eixos temáticos"],
@@ -149,11 +138,7 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo feriados",
             "capacidades"=> [
                 /* Capacidades do módulo FERIADO*/
-                //["MOD_FER", "Permite acessar item menu feriados"],
-                ["MOD_FER_CONS", "Permite consultar feriado"],
                 ["MOD_FER_EDT", "Permite editar feriados"],
-                //["MOD_FER_ENT_EDT", "Permite editar entidades em feriado"], // só no back
-                //["MOD_FER_ENT_INCL", "Permite incluir entidades em feriado"], // só no back
                 ["MOD_FER_EXCL", "Permite excluir feriado"],
                 ["MOD_FER_INCL", "Permite incluir feriados"],
             ]
@@ -171,17 +156,14 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo de Planejamento Institucional",
             "capacidades"=> [
                 /* Capacidades do módulo PLANEJAMENTO INSTITUCIONAL */
-                //["MOD_PLAN", "Permite acessar Planejamentos Institucionais"],
-                ["MOD_PLAN_INST", "Permite acessar item do menu Planejamentos Institucionais"],
-                ["MOD_PLAN_INST_CONS", "Permite consultar Planejamentos Institucionais"],
-                ["MOD_PLAN_INST_INCL", "Permite incluir algum tipo de Planejamento Institucional"],
-                ["MOD_PLAN_INST_INCL_UNID_INST", "Permite incluir Planejamento Institucional para a Unidade Instituidora"],
-                ["MOD_PLAN_INST_INCL_UNEX_LOTPRI", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas para a sua lotação)"],
-                ["MOD_PLAN_INST_INCL_UNEX_QQLOT", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas as de suas lotações)"],
-                ["MOD_PLAN_INST_INCL_UNEX_SUBORD", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas as de suas lotações e suas subordinadas)"],
-                ["MOD_PLAN_INST_INCL_UNEX_QUALQUER", "Permite incluir Planejamentos Institucionais para qualquer Unidade Executora, independente de sua lotação"],
-                ["MOD_PLAN_INST_EDT", "Permite editar Planejamentos Institucionais"],
-                ["MOD_PLAN_INST_EXCL", "Permite excluir Planejamentos Institucionais"],
+                ["MOD_PLAN_INCL", "Permite incluir algum tipo de Planejamento Institucional"],
+                ["MOD_PLAN_INCL_UNID_INST", "Permite incluir Planejamento Institucional para a Unidade Instituidora"],
+                ["MOD_PLAN_INCL_UNEX_LOTPRI", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas para a sua lotação)"],
+                ["MOD_PLAN_INCL_UNEX_QQLOT", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas as de suas lotações)"],
+                ["MOD_PLAN_INCL_UNEX_SUBORD", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas as de suas lotações e suas subordinadas)"],
+                ["MOD_PLAN_INCL_UNEX_QUALQUER", "Permite incluir Planejamentos Institucionais para qualquer Unidade Executora, independente de sua lotação"],
+                ["MOD_PLAN_EDT", "Permite editar Planejamentos Institucionais"],
+                ["MOD_PLAN_EXCL", "Permite excluir Planejamentos Institucionais"],
             ]
         ], [
             "codigo"=> "MOD_PTR",
@@ -275,8 +257,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo de Projetos",
             "capacidades"=> [
                 /* Capacidades do módulo PROJETO */
-                //["MOD_PROJ", "Permite acessar módulo projetos"],
-                ["MOD_PROJ_CONS", "Permite consultar projeto"], // só aqui
                 ["MOD_PROJ_EDT", "Permite editar projeto"], //só no back
                 ["MOD_PROJ_EXCL", "Permite excluir projeto"], //só no back
                 ["MOD_PROJ_INCL", "Permite incluir Projetos"],
@@ -303,9 +283,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo de Tipos de Atividade",
             "capacidades"=> [
                 /* Capacidades do módulo TIPO ATIVIDADE*/
-                //["MOD_TIPO_ATV", "Permite acessar item de menu cadastro->tipo de atividade"],
-                ["MOD_TIPO_ATV", "Permite acessar item menu atividade"],
-                ["MOD_TIPO_ATV_CONS", "Permite consultar atividade"],
                 ["MOD_TIPO_ATV_EDT", "Permite editar atividades"],
                 ["MOD_TIPO_ATV_EDT_PCPL", "Permite editar atividades na guia principal"],
                 ["MOD_TIPO_ATV_EDT_PRE_DEF", "Permite editar dados guia pré-definidas"],
@@ -332,8 +309,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo de Tipos de Capacidade",
             "capacidades"=> [
                 /* Capacidades do módulo TIPO CAPACIDADE*/
-                //["MOD_TIPO_CAP", "Permite acessar configurações de capacidades de usuário"],
-                ["MOD_TIPO_CAP_CONS", "Permite consultar tipo de capacidade"],
                 ["MOD_TIPO_CAP_EDT", "Permite editar tipo de capacidade"],
                 ["MOD_TIPO_CAP_EXCL", "Permite excluir tipo de capacidade"],
                 ["MOD_TIPO_CAP_INCL", "Permite incluir tipos de capacidades"],
@@ -352,8 +327,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo de Tipos de Justificativa",
             "capacidades"=> [
                 /* Capacidades do módulo TIPO JUSTIFICATIVA*/
-                //["MOD_TIPO_JUST", "Permite acessar item de menu cadastro->tipo de justificativa"],
-                ["MOD_TIPO_JUST_CONS", "Permite consultar tipos de justificativas"],
                 ["MOD_TIPO_JUST_EDT", "Permite editar tipos de justificativas"],
                 ["MOD_TIPO_JUST_EXCL", "Permite excluir tipos de justificativas"],
                 ["MOD_TIPO_JUST_INCL", "Permite incluir tipos de justificativas"],
@@ -372,8 +345,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo de Tipos de Motivos de Afastamento",
             "capacidades"=> [
                 /* Capacidades do módulo TIPO MOTIVO AFASTAMENTO*/
-                //["MOD_TIPO_MTV_AFT", "Permite acessar item de menu cadastro->tipo de motivo de afastamento"],
-                ["MOD_TIPO_MTV_AFT_CONS", "Permite consultar tipos de motivos de afastamentos"],
                 ["MOD_TIPO_MTV_AFT_EDT", "Permite editar tipos de motivos de afastamentos"],
                 ["MOD_TIPO_MTV_AFT_EXCL", "Pemite excluir tipos de motivos de afastamentos"],
                 ["MOD_TIPO_MTV_AFT_INCL", "Permite incluir tipos de motivos de afastamentos"],
@@ -393,8 +364,6 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo Tarefas",
             "capacidades"=> [
                 /* Capacidades do módulo TAREFAS*/
-                //["MOD_TRF", "Permite acessar módulo/item de menu tarefas"],
-                ["MOD_TRF_CONS", "Permite consultar tarefa"],
                 ["MOD_TRF_EDT", "Permite editar tarefas"],
                 ["MOD_TRF_EXCL", "Permite excluir tarefas"],
                 ["MOD_TRF_INCL", "Permite incluir tarefas"],
@@ -413,11 +382,11 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo Unidades",
             "capacidades"=> [
                 /* Capacidades do módulo UNIDADES*/
-                ["MOD_UND_CONS", "Permite consultar Unidades"],
-                ["MOD_UND_EDT", "Permite editar Unidade"],
-                ["MOD_UND_EXCL", "Permite excluir Unidade"],
-                ["MOD_UND_INCL", "Permite incluir Unidades"],
-                ["MOD_UND_UNIR", "Permite Unificar Unidades"],
+                ["MOD_UND", "Permite consultar unidade"],
+                ["MOD_UND_EDT", "Permite editar unidade"],
+                ["MOD_UND_EXCL", "Permite excluir unidade"],
+                ["MOD_UND_INCL", "Permite incluir unidade"],
+                ["MOD_UND_UNIR", "Permite unificar unidade"],
                 ["MOD_UND_TUDO", "Permite consultar qualquer unidade independente de subordinação"],
                 ["MOD_UND_INATV", "Permite inativar uma unidade"],
                 ["MOD_UND_INTG", "Permite gerenciar integrantes da unidade"],
@@ -430,11 +399,11 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo Usuários",
             "capacidades"=> [
                 /* Capacidades do módulo USUÁRIOS */
-                ["MOD_USER_EDT", "Permite alterar dados de usuário"],
-                ["MOD_USER_EXCL", "Permite excluir dados de usuário"],
+                ["MOD_USER_EDT", "Permite alterar usuário"],
+                ["MOD_USER_EXCL", "Permite excluir usuário"],
                 ["MOD_USER_INCL", "Permite incluir usuário"],
                 ["MOD_USER_TUDO", "Permite consultar qualquer usuário independente de lotação"],
-                ["MOD_USER_ATRIB", "Permite gerenciar atribuições do usuário"],
+                ["MOD_USER_ATRIB", "Permite gerenciar atribuições de usuário"],
             ]
         ], [
             "codigo"=> "MOD_RX",

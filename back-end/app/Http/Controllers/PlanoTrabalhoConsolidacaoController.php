@@ -21,7 +21,6 @@ class PlanoTrabalhoConsolidacaoController extends ControllerBase {
                 if (!$usuario->hasPermissionTo('MOD_PTR_CSLD_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não realizada");
                 break;
             case 'QUERY':
-                //if (!$usuario->hasPermissionTo('MOD_PTR_CSLD_CONS')) throw new ServerException("CapacidadeStore", "Consulta não realizada");
                 break;
         }
     }

@@ -17,6 +17,7 @@ export class StatusFormComponent extends PageFrameBase {
   public tipo: string = "";
   public lookup: LookupService;
   public statusService: StatusService;
+  private _exigeJustificativa: boolean = false;
 
   constructor(public injector: Injector) {
     super(injector);
@@ -24,7 +25,7 @@ export class StatusFormComponent extends PageFrameBase {
     this.lookup = injector.get<LookupService>(LookupService);
     this.modalWidth = 450;
     this.form = this.fh.FormBuilder({
-      justificativa: { default: null },
+      justificativa: { default: '' },
       novo_status: { default: null }
     }, this.cdRef, this.validate);
   }
@@ -33,6 +34,7 @@ export class StatusFormComponent extends PageFrameBase {
     super.ngOnInit();
     this.tipo = this.metadata?.tipo//; || this.tipo;
     this.entity = this.metadata?.entity || this.entity;
+    this._exigeJustificativa = this.metadata?.exigeJustificativa || this._exigeJustificativa;
     this.novoStatus = this.metadata?.novoStatus || this.novoStatus;
     if (this.novoStatus.length) this.form?.controls.novo_status?.setValue(this.novoStatus);
   }
@@ -40,10 +42,8 @@ export class StatusFormComponent extends PageFrameBase {
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
     let valueLength = control.value?.trim().length;
-    if (['justificativa'].indexOf(controlName) >= 0) {
-      if(!valueLength) {
-        if(this.exigeJustificativa) result = "Obrigatório";
-      } else {
+    if (controlName == 'justificativa' && this._exigeJustificativa) {
+      if(!valueLength) result = "Obrigatório"; else {
         if(valueLength < this.MIN_LENGTH_TEXT) result = "Texto muito curto. Mínimo: " + this.MIN_LENGTH_TEXT + " caracteres.";
         if(valueLength > this.MAX_LENGTH_TEXT) result = "Conteúdo (" + valueLength + " caracteres) excede o comprimento máximo: " + this.MAX_LENGTH_TEXT + ".";
       }
@@ -67,14 +67,15 @@ export class StatusFormComponent extends PageFrameBase {
   }
 
   /**
-   * Com base no novo status pretendido para a entidade, obtém um array com os status de origem que não exigem justificativa e por fim verifica
+   * Com base no novo status pretendido para a entidade, obtém um array com os status de origem que exigem justificativa e por fim verifica-se
    * se o status atual é um deles.
    * @returns boolean 
    */
   public get exigeJustificativa() {
+    if(this._exigeJustificativa) return true;
     let result = this.lookup.getData(this.statusService.getItem(this.tipo), this.form?.controls.novo_status?.value);
-    //return !Array.from(result?.naoJustificar || []).includes(this.entity?.status);
-    return this.entity?.hasOwnProperty('arquivar') ? false : !(result?.naoJustificar || []).includes(this.entity?.status);
+    this._exigeJustificativa = (result?.justificar || []).includes(this.entity?.status);
+    return this._exigeJustificativa;
   }
 
 }
