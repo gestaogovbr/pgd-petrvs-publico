@@ -62,6 +62,9 @@ class PlanoTrabalhoService extends ServiceBase
   public function proxyQuery($query, &$data)
   {
     $where = [];
+    //  (RI_PTR_C) Garante que, se não houver um interesse específico na data de arquivamento, só retornarão os planos de trabalho não arquivados.
+    $arquivados = $this->extractWhere($data, "incluir_arquivados");
+    if (empty($arquivados) || !$arquivados[2]) $data["where"][] = ["data_arquivamento", "==", null];
     foreach ($data["where"] as $condition) {
       if (is_array($condition) && $condition[0] == "data_filtro") {
         $dataInicio = $this->getFilterValue($data["where"], "data_filtro_inicio");
@@ -608,8 +611,8 @@ class PlanoTrabalhoService extends ServiceBase
     return empty($plano['id']) ? false : ($this->isPlanoTrabalhoValido($plano) && $planoTrabalho->status == $status);
   }
 
-  public function arquivar($data, $unidade,$request)
-  {
+  public function arquivar($data, $unidade)
+  { //ou desarquivar
     try {
       DB::beginTransaction();
       $planoTrabalho = PlanoTrabalho::find($data["id"]);
@@ -635,7 +638,7 @@ class PlanoTrabalhoService extends ServiceBase
     try {
       DB::beginTransaction();
       $planoTrabalho = PlanoTrabalho::find($data["id"]);
-      $this->status->atualizaStatus($planoTrabalho, 'ATIVO', "O Plano de Trabalho foi ativado nesta data!");
+      $this->status->atualizaStatus($planoTrabalho, 'ATIVO', $data["justificativa"]);
       DB::commit();
     } catch (Throwable $e) {
       DB::rollback();
@@ -664,32 +667,15 @@ class PlanoTrabalhoService extends ServiceBase
     return true;
   }
 
-  public function cancelarPlano($data, $unidade,$request)
+  public function cancelarPlano($data, $unidade)
   {
     try {
       DB::beginTransaction();
       $planoTrabalho = PlanoTrabalho::find($data["id"]);
-      $this->status->atualizaStatus($planoTrabalho, 'CANCELADO', $data["justificativa"]);
-      $this->arquivar($data, $unidade,$request);
-      DB::commit();
-    } catch (Throwable $e) {
-      DB::rollback();
-      throw $e;
-    }
-    return true;
-  }
-
-  public function desarquivar($data, $unidade)
-  {
-    try {
-      DB::beginTransaction();
-      $planoTrabalho = PlanoTrabalho::find($data["id"]);
-      if (!empty($planoTrabalho)) {
-        $this->update([
-          "id" => $planoTrabalho->id,
-          "data_arquivamento" => null
-        ], $unidade, false);
-      } else {
+      if(!empty($planoTrabalho)){
+        $this->status->atualizaStatus($planoTrabalho, 'CANCELADO', $data["justificativa"]);
+        $this->arquivar($data, $unidade);
+      }else {
         throw new ServerException("ValidatePlanoTrabalho", "Plano de Trabalho não encontrado!");
       }
       DB::commit();

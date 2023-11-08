@@ -257,6 +257,7 @@ Ação: ENVIAR PARA ASSINATURA -> o plano vai para o status 'AGUARDANDO_ASSINATU
 - No formulário de inclusão/edição de um Plano de Trabalho:
   - (RI_PTR_A) se o usuário logado não for gestor da Unidade Executora, o inputSearch de usuário já vem preenchido com o seu nome e permanece bloqueado;
   - (RI_PTR_B) os input-search de unidade, programa e usuario devem ficar desabilitados nas edições e habilitado apenas nas inclusões;
+  - (RI_PTR_C) Por padrão, os planos de trabalho retornados na listagem do grid são os que não foram arquivados.
 
 ## REGRAS DE NEGÓCIO APLICADAS ÀS ENTREGAS DO PLANO DE TRABALHO
 

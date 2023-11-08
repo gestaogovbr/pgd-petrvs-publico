@@ -5,9 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
-use App\Models\Unidade;
 use App\Services\UtilService;
-use App\Services\UsuarioService;
 use Throwable;
 
 class PlanoTrabalhoController extends ControllerBase {
@@ -69,7 +67,8 @@ class PlanoTrabalhoController extends ControllerBase {
         try {
             $this->checkPermissions("CANCELAR_AVALIACAO", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
             $data = $request->validate([
-                'id' => ['required']
+                'id' => ['required'],
+                'justificativa' => ['present']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
@@ -89,7 +88,7 @@ class PlanoTrabalhoController extends ControllerBase {
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
-                'success' => $this->service->arquivar($data, $unidade,$request)
+                'success' => $this->service->arquivar($data, $unidade)
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
@@ -100,7 +99,8 @@ class PlanoTrabalhoController extends ControllerBase {
         try {
             $this->checkPermissions("ATIVAR", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
             $data = $request->validate([
-                'id' => ['required']
+                'id' => ['required'],
+                'justificativa' => ['present']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
@@ -115,7 +115,8 @@ class PlanoTrabalhoController extends ControllerBase {
         try {
             $this->checkPermissions("CANCELAR_ASSINATURA", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
             $data = $request->validate([
-                'id' => ['required']
+                'id' => ['required'],
+                'justificativa' => ['present']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
@@ -131,12 +132,12 @@ class PlanoTrabalhoController extends ControllerBase {
             $this->checkPermissions("CANCELAR_PLANO", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
             $data = $request->validate([
                 'id' => ['required'],
-                'justificativa' => ['required'],
+                'justificativa' => ['present'],
                 'arquivar' => ['required']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
-                'success' => $this->service->cancelarPlano($data, $unidade, $request)
+                'success' => $this->service->cancelarPlano($data, $unidade)
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
@@ -145,7 +146,6 @@ class PlanoTrabalhoController extends ControllerBase {
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         $idUsuarioLogado = parent::loggedUser()->id;
-        //$usuarioService = new UsuarioService();
         switch ($action) {
             case 'QUERY':
                 if (!$usuario->hasPermissionTo('MOD_PTR')) throw new ServerException("CapacidadeSearchText", "O usuário logado não tem permissão para consultar planos de trabalho (MOD_PTR). [RN_PTR_S]");
@@ -291,7 +291,8 @@ class PlanoTrabalhoController extends ControllerBase {
         try {
             $this->checkPermissions("ENVIAR_ASSINATURA", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
             $data = $request->validate([
-                'id' => ['required']
+                'id' => ['required'],
+                'justificativa' => ['present']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
@@ -306,7 +307,8 @@ class PlanoTrabalhoController extends ControllerBase {
         try {
             $this->checkPermissions("REATIVAR", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
             $data = $request->validate([
-                'id' => ['required']
+                'id' => ['required'],
+                'justificativa' => ['present']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
@@ -321,7 +323,8 @@ class PlanoTrabalhoController extends ControllerBase {
         try {
             $this->checkPermissions("SUSPENDER", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));            
             $data = $request->validate([
-                'id' => ['required']
+                'id' => ['required'],
+                'justificativa' => ['present']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([

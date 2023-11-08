@@ -80,9 +80,9 @@ export class PlanoTrabalhoDaoService extends DaoBaseService<PlanoTrabalho> {
     });
   }
 
-  public arquivar(planoTrabalho: PlanoTrabalho, justificativa: string | null): Promise<boolean> {
+  public arquivar(planoTrabalho: PlanoTrabalho): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/arquivar', { id: planoTrabalho.id, justificativa: justificativa, arquivar: planoTrabalho.arquivar }).subscribe(response => {
+      this.server.post('api/' + this.collection + '/arquivar', { id: planoTrabalho.id, arquivar: planoTrabalho.arquivar }).subscribe(response => {
         if (response.error) {
           reject(response.error);
         } else {

@@ -6,8 +6,10 @@
     </toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="6" [label]="lex.translate('Usuário')" controlName="usuario" [control]="filter!.controls.usuario" placeholder="Usuário" [attr.maxlength]=250></input-text>
-            <input-search [size]="6" [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+            <input-text [size]="4" [label]="lex.translate('Usuário')" controlName="usuario" [control]="filter!.controls.usuario" placeholder="Usuário" [attr.maxlength]=250></input-text>
+            <input-search [size]="4" [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao"></input-search>
+            <input-select [size]="3" label="Status" controlName="status" [items]="lookup.PLANO_TRABALHO_STATUS" [control]="filter!.controls.status" itemTodos="- Todos -" [valueTodos]="null"></input-select>
+            <input-switch [size]="1" label="Arq." controlName="arquivados" [control]="filter!.controls.arquivados" labelInfo="Listar também os planos de trabalho arquivados"></input-switch>
         </div>
         <div class="row">
           <input-search [size]="6" [control]="filter!.controls.tipo_modalidade_id" controlName="tipo_modalidade_id" [dao]="tipoModalidadeDao"></input-search>
@@ -73,7 +75,7 @@
             <ng-template let-row="row" #columnStatus>
                 <badge [color]="lookup.getColor(lookup.PLANO_TRABALHO_STATUS, row.status)" [icon]="lookup.getIcon(lookup.PLANO_TRABALHO_STATUS, row.status)" [label]="lookup.getValue(lookup.PLANO_TRABALHO_STATUS, row.status)"></badge><br>
                 <badge *ngIf="row.data_arquivamento" color="warning" icon="bi bi-inboxes" label="Arquivado"></badge>
-                <badge *ngIf="row.deleted_at" color="danger" icon="bi bi-trash" label="DELETADO"></badge>
+                <badge *ngIf="row.deleted_at" color="danger" icon="bi bi-trash3" label="Excluído"></badge>
             </ng-template>
         </column>
         <column type="options" [dynamicOptions]="dynamicOptions.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
