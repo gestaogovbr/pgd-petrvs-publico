@@ -16,11 +16,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _models_cadeia_valor_model__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../models/cadeia-valor.model */ 69478);
 /* harmony import */ var _dao_cadeia_valor_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../dao/cadeia-valor-dao.service */ 19520);
 /* harmony import */ var _components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/core */ 51197);
-/* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ 92392);
-/* harmony import */ var _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../components/input/input-datetime/input-datetime.component */ 84495);
-/* harmony import */ var _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../components/separator/separator.component */ 25560);
-/* harmony import */ var _cadeia_valor_list_processos_cadeia_valor_list_processos_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../cadeia-valor-list-processos/cadeia-valor-list-processos.component */ 83869);
+/* harmony import */ var src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/dao/unidade-dao.service */ 81214);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../components/input/input-search/input-search.component */ 32802);
+/* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ 92392);
+/* harmony import */ var _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../components/input/input-datetime/input-datetime.component */ 84495);
+/* harmony import */ var _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/separator/separator.component */ 25560);
+/* harmony import */ var _cadeia_valor_list_processos_cadeia_valor_list_processos_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../cadeia-valor-list-processos/cadeia-valor-list-processos.component */ 83869);
 
 var _class;
 
@@ -33,14 +35,17 @@ var _class;
 
 
 
+
+
 const _c0 = ["processos"];
+const _c1 = ["unidade"];
 class CadeiaValorFormComponent extends _base_page_form_base__WEBPACK_IMPORTED_MODULE_1__.PageFormBase {
   constructor(injector) {
     super(injector, _models_cadeia_valor_model__WEBPACK_IMPORTED_MODULE_2__.CadeiaValor, _dao_cadeia_valor_dao_service__WEBPACK_IMPORTED_MODULE_3__.CadeiaValorDaoService);
     this.injector = injector;
     this.validate = (control, controlName) => {
       let result = null;
-      if (['nome'].indexOf(controlName) >= 0 && !control.value?.length) {
+      if (['nome', 'unidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
         result = "Obrigatório";
       }
       if (['data_inicio'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
@@ -61,6 +66,7 @@ class CadeiaValorFormComponent extends _base_page_form_base__WEBPACK_IMPORTED_MO
     this.titleEdit = entity => {
       return "Editando " + this.lex.translate("Cadeia de Valor") + ': ' + (entity?.nome || "");
     };
+    this.unidadeDao = injector.get(src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_5__.UnidadeDaoService);
     this.join = ['processos'];
     this.form = this.fh.FormBuilder({
       nome: {
@@ -71,6 +77,9 @@ class CadeiaValorFormComponent extends _base_page_form_base__WEBPACK_IMPORTED_MO
       },
       data_fim: {
         default: null
+      },
+      unidade_id: {
+        default: ""
       },
       moveFilhos: {
         default: false
@@ -92,7 +101,7 @@ class CadeiaValorFormComponent extends _base_page_form_base__WEBPACK_IMPORTED_MO
         _this.processos.grid.confirm();
         let cadeiaValor = _this.util.fill(new _models_cadeia_valor_model__WEBPACK_IMPORTED_MODULE_2__.CadeiaValor(), _this.entity);
         _this.form.value.entidade_id = _this.auth.entidade?.id;
-        _this.form.value.unidade_id = _this.auth.unidade?.id;
+        //this.form!.value.unidade_id = this.auth.unidade?.id
         cadeiaValor = _this.util.fillForm(cadeiaValor, _this.form.value);
         cadeiaValor.processos = _this.processos.items;
         resolve(cadeiaValor);
@@ -102,57 +111,61 @@ class CadeiaValorFormComponent extends _base_page_form_base__WEBPACK_IMPORTED_MO
 }
 _class = CadeiaValorFormComponent;
 _class.ɵfac = function CadeiaValorFormComponent_Factory(t) {
-  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_9__.Injector));
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_11__.Injector));
 };
-_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefineComponent"]({
+_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdefineComponent"]({
   type: _class,
   selectors: [["app-cadeia-valor-form"]],
   viewQuery: function CadeiaValorFormComponent_Query(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵviewQuery"](_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_4__.EditableFormComponent, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵviewQuery"](_c0, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵviewQuery"](_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_4__.EditableFormComponent, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵviewQuery"](_c0, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵviewQuery"](_c1, 5);
     }
     if (rf & 2) {
       let _t;
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵloadQuery"]()) && (ctx.processos = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵloadQuery"]()) && (ctx.processos = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵloadQuery"]()) && (ctx.unidade = _t.first);
     }
   },
-  features: [_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵInheritDefinitionFeature"]],
-  decls: 10,
-  vars: 15,
-  consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["icon", "bi bi-textarea-t", "controlName", "nome", "required", "", 3, "size", "label", "control"], ["date", "", "label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio", "required", "", 3, "size", "control", "labelInfo"], ["date", "", "label", "Fim", "icon", "bi bi-calendar-date", "controlName", "data_fim", "required", "", 3, "size", "control", "labelInfo"], ["noPersist", "", 3, "entity", "cdRef"], ["processos", ""]],
+  features: [_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵInheritDefinitionFeature"]],
+  decls: 12,
+  vars: 17,
+  consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["icon", "bi bi-textarea-t", "controlName", "nome", "required", "", 3, "size", "label", "control"], ["date", "", "label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio", "required", "", 3, "size", "control", "labelInfo"], ["date", "", "label", "Fim", "icon", "bi bi-calendar-date", "controlName", "data_fim", "required", "", 3, "size", "control", "labelInfo"], ["controlName", "unidade_id", 3, "size", "dao"], ["unidade", ""], ["noPersist", "", 3, "entity", "cdRef"], ["processos", ""]],
   template: function CadeiaValorFormComponent_Template(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "editable-form", 0);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("submit", function CadeiaValorFormComponent_Template_editable_form_submit_0_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "editable-form", 0);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵlistener"]("submit", function CadeiaValorFormComponent_Template_editable_form_submit_0_listener() {
         return ctx.onSaveData();
       })("cancel", function CadeiaValorFormComponent_Template_editable_form_cancel_0_listener() {
         return ctx.onCancel();
       });
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](1, "div", 1)(2, "div", 1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](3, "input-text", 2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](4, "div", 1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](5, "input-datetime", 3)(6, "input-datetime", 4);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](7, "separator")(8, "cadeia-valor-list-processos", 5, 6);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](1, "div", 1)(2, "div", 1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](3, "input-text", 2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](4, "div", 1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](5, "input-datetime", 3)(6, "input-datetime", 4)(7, "input-search", 5, 6);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](9, "separator")(10, "cadeia-valor-list-processos", 7, 8);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
     }
     if (rf & 2) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 12)("label", "Nome da " + ctx.lex.translate("cadeia de valor"))("control", ctx.form.controls.nome);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵattribute"]("maxlength", 250);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.data_inicio)("labelInfo", "In\u00EDcio da " + ctx.lex.translate("cadeia de valor"));
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.data_fim)("labelInfo", "Fim da " + ctx.lex.translate("cadeia de valor"));
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("entity", ctx.entity)("cdRef", ctx.cdRef);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 12)("label", "Nome da " + ctx.lex.translate("cadeia de valor"))("control", ctx.form.controls.nome);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("maxlength", 250);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.data_inicio)("labelInfo", "In\u00EDcio da " + ctx.lex.translate("cadeia de valor"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.data_fim)("labelInfo", "Fim da " + ctx.lex.translate("cadeia de valor"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 4)("dao", ctx.unidadeDao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("entity", ctx.entity)("cdRef", ctx.cdRef);
     }
   },
-  dependencies: [_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_4__.EditableFormComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_5__.InputTextComponent, _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_6__.InputDatetimeComponent, _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_7__.SeparatorComponent, _cadeia_valor_list_processos_cadeia_valor_list_processos_component__WEBPACK_IMPORTED_MODULE_8__.CadeiaValorListProcessosComponent],
+  dependencies: [_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_4__.EditableFormComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_6__.InputSearchComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_7__.InputTextComponent, _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_8__.InputDatetimeComponent, _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_9__.SeparatorComponent, _cadeia_valor_list_processos_cadeia_valor_list_processos_component__WEBPACK_IMPORTED_MODULE_10__.CadeiaValorListProcessosComponent],
   styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
 });
 

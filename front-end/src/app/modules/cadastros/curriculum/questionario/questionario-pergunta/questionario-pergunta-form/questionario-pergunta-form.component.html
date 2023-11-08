@@ -73,9 +73,10 @@
     <div class="row">
         <input-multiselect [size]="12" label="" [control]="form!.controls.perguntas" controlName="perguntas" [addItemHandle]="addMultiPerguntas.bind(this)" noBox>
                 <input-text #inputPergunta [size]="4" label="Pergunta" icon="bi bi-pencil-fill" controlName="inputPergunta" [control]="form!.controls.inputPergunta" [attr.maxlength]=250></input-text>
-                <input-select #listaTipoResposta [size]="3" label="Tipo de resposta" icon="bi bi-pen" controlName="listaTipoResposta" [control]="form!.controls.listaTipoResposta" [items]="tipoPergunta"></input-select>
-                <input-multiselect [hidden]="this.listaTipoResposta?.selectedItem?.key == ('SWITCH' || '' || null)" [size]="5" label="" [control]="form!.controls.multiOpcaoResposta" controlName="multiOpcaoResposta" [addItemHandle]="addMultiRespostas.bind(this)" noBox>
-                    <input-text #opcoesResposta [size]="12" label="Opções da resposta" icon="bi bi-pencil-fill" controlName="inputOpcoesResposta" [control]="form!.controls.inputOpcoesResposta" [attr.maxlength]=250></input-text>
+                <input-select #listaTipoResposta [size]="2" label="Tipo de resposta" icon="bi bi-pen" controlName="listaTipoResposta" [control]="form!.controls.listaTipoResposta" [items]="tipoPergunta"></input-select>
+                <input-multiselect [hidden]="this.listaTipoResposta?.selectedItem?.key == ('SWITCH' || '' || null)" [size]="6" label="" [control]="form!.controls.multiOpcaoResposta" controlName="multiOpcaoResposta" [addItemHandle]="addMultiRespostas.bind(this)" noBox>
+                    <input-text #opcoesResposta [size]="6" label="Opções da resposta" icon="bi bi-pencil-fill" controlName="inputOpcoesResposta" [control]="form!.controls.inputOpcoesResposta" [attr.maxlength]=250></input-text>
+                    <input-text #valorResposta [size]="6" label="Valor da resposta" icon="bi bi-pencil-fill" controlName="inputValorResposta" [control]="form!.controls.inputValorResposta" [attr.maxlength]=250></input-text>
                 </input-multiselect>
         </input-multiselect>
     </div>

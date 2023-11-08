@@ -21,6 +21,7 @@ class Programa extends ModelBase
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'nome', /* varchar(255); NOT NULL; */// Nome do programa
         'normativa', /* varchar(255); */// Normativa que regula o programa de gestão
+        'link_normativa', /* varchar(255); */// Link da Normativa que regula o programa de gestão
         'config', /* json; */// Configurações do programa
         'data_inicio', /* datetime; NOT NULL; */// Inicio da vigência do programa
         'data_fim', /* datetime; NOT NULL; */// Fim da vigência do programa

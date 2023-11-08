@@ -160,7 +160,7 @@ class FeriadoSeeder extends Seeder
                 "cidade_id" => NULL,
             ),
         );
-        Feriado::insertOrIgnore($feriados);
+        Feriado::insert($feriados);
     }
 }
         /*
