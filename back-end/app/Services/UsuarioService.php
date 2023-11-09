@@ -9,7 +9,6 @@ use App\Models\Atividade;
 use App\Models\PlanoTrabalho;
 use App\Services\ServiceBase;
 use App\Services\RawWhere;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use Exception;
@@ -132,7 +131,7 @@ class UsuarioService extends ServiceBase
      * @param string $unidade_id 
      */
     public function isGestorUnidade(string $unidade_id): bool {
-        return $this->isIntegrante('GESTOR',$unidade_id) || $this->isIntegrante('GESTOR_SUBSTITUTO',$unidade_id);
+        return $this->isIntegrante('GESTOR',$unidade_id) || $this->isIntegrante('GESTOR_SUBSTITUTO',$unidade_id) || $this->isIntegrante('GESTOR_DELEGADO',$unidade_id);
     }
 
     /**

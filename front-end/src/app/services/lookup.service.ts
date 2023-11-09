@@ -603,23 +603,23 @@ export class LookupService {
   ];
 
   public PLANO_ENTREGA_STATUS: LookupItem[] = [
-    { key: "INCLUIDO", value: "Incluído", icon: "bi bi-pencil-square", color: "secondary", data: { naoJustificar: [] } },
-    { key: "HOMOLOGANDO", value: "Aguardando homologação", icon: "bi bi-clock", color: "warning", data: { naoJustificar: ["INCLUIDO"] } },
-    { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success", data: { naoJustificar: ["HOMOLOGANDO"] } },
-    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-clipboard2-check", color: "primary", data: { naoJustificar: ["ATIVO","CONCLUIDO"] } },
-    { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info", data: { naoJustificar: ["CONCLUIDO","AVALIADO"] } },
-    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "dark", data: { naoJustificar: [] } },
-    { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "danger", data: { naoJustificar: [] } }
+    { key: "INCLUIDO", value: "Incluído", icon: "bi bi-pencil-square", color: "secondary", data: { justificar: ["HOMOLOGANDO"] } },
+    { key: "HOMOLOGANDO", value: "Aguardando homologação", icon: "bi bi-clock", color: "warning", data: { justificar: ["ATIVO"] } },
+    { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success", data: { justificar: ["CONCLUIDO"] } },
+    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-clipboard2-check", color: "primary", data: { justificar: ["AVALIADO"] } },
+    { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info", data: { justificar: [] } },
+    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "dark", data: { justificar: [] } },
+    { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "danger", data: { justificar: [] } }
   ];
 
   public PLANO_TRABALHO_STATUS: LookupItem[] = [
-    { key: "INCLUIDO", value: "Incluído", icon: "bi bi-pencil-square", color: "secondary" },
-    { key: "AGUARDANDO_ASSINATURA", value: "Aguardando assinatura", icon: "bi bi-clock", color: "warning" },
-    { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success" },
-    { key: "CONCLUIDO", value: "Executado", icon: "bi bi-clipboard2-check", color: "primary" },
-    { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info" },
-    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "dark" },
-    { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "danger" }
+    { key: "INCLUIDO", value: "Incluído", icon: "bi bi-pencil-square", color: "secondary", data: { justificar: ["AGUARDANDO_ASSINATURA"] } },
+    { key: "AGUARDANDO_ASSINATURA", value: "Aguardando assinatura", icon: "bi bi-clock", color: "warning", data: { justificar: [] } },
+    { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success", data: { justificar: [] } },
+    { key: "CONCLUIDO", value: "Executado", icon: "bi bi-clipboard2-check", color: "primary", data: { justificar: [] } },
+    { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info", data: { justificar: [] } },  // Um plano de trabalho é considerado avaliado quando todas as suas consolidações o forem
+    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "dark", data: { justificar: [] } },
+    { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "danger", data: { justificar: [] } }
   ];
 
   public PROJETO_PERFIS: LookupItem[] = [

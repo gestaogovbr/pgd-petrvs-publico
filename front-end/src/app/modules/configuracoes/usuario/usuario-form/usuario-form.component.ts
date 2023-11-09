@@ -48,6 +48,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
       url_foto: {default: ""},
       texto_complementar_plano: {default: ""},
       perfil_id: {default: null},
+      data_nascimento: { default: new Date() },
       //atribuicoes: { default: []}
     }, this.cdRef, this.validate);
     this.formLotacao = this.fh.FormBuilder({
@@ -64,14 +65,19 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     }
     else if(controlName == "cpf" && !this.util.validarCPF(control.value)) {
       result = "Inválido";
+    } else if (['data_nascimento'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+      result = "Inválido";
     }
     return result;
   }
   
   public formValidation = (form?: FormGroup) => {
+    const nascimento = this.form?.controls.data_nascimento.value;
     if(!this.formLotacao?.controls.unidade_lotacao_id.value?.length) {
       return "É obrigatória a definição da unidade de lotação do servidor!";
-    };
+    } else if (!this.dao?.validDateTime(nascimento)) {
+      return "Data de nascimento inválida";
+    }
     const erros_atribuicoes = [];
     this.atribuicoes?.grid?.items.forEach((atribuicao) => {
       if(atribuicao.unidade_id == '') erros_atribuicoes.push({ atribuicao: atribuicao, erro: 'Falta unidade_id'})

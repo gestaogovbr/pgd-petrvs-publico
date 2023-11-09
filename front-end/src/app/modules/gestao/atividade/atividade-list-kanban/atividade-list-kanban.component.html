@@ -18,6 +18,8 @@
     </div>
 </filter>  
 <ng-template #ticket let-card="card">
+    <badge *ngIf="card.data.plano_trabalho_entrega" [icon]="entityService.getIcon('Entrega')" [label]="card.data.plano_trabalho_entrega.descricao" color="info" (click)="onEntregaClick(card.data)" role="button"></badge>
+
     <div class="d-flex w-100">
         <div class="flex-fill">
             <div class="text-nowrap">
@@ -58,6 +60,7 @@
                 <td class="micro-text fw-ligh">{{check.texto}}</td>
             </tr>
         </table>
+        <reaction [entity]="card.data" origem="ATIVIDADE"></reaction>
         <comentarios-widget [entity]="card.data" [selectable]="false" origem="ATIVIDADE" [query]="query"></comentarios-widget>
     </ng-container>
 </ng-template>
@@ -93,8 +96,8 @@
         <docker #dockerNaoIniciado icon="bi bi-hourglass-split" title="Não iniciado" color="border-warning" [collapse]="cardsConfig.naoIniciado" [toggle]="onDockerCollapse.bind(this)" [menu]="menuDockerNaoIniciado" [dragged]="onDragged.bind(this)" [drop]="onDrop.bind(this)" [dropIf]="canDrop(DOCKERS[NAOINICIADO])" [cards]="cards[NAOINICIADO]"></docker>
     </swimlane>
     <swimlane>
-        <docker #dockerPausado icon="bi bi-pause-circle" title="Pausadas" color="border-danger" [collapse]="cardsConfig.pausado" [toggle]="onDockerCollapse.bind(this)" [dragged]="onDragged.bind(this)" [drop]="onDrop.bind(this)" [dropIf]="canDrop(DOCKERS[PAUSADO])" [cards]="cards[PAUSADO]"></docker>
         <docker #dockerIniciado icon="bi bi-play-circle" title="Iniciadas" color="border-info" [collapse]="cardsConfig.iniciado" [toggle]="onDockerCollapse.bind(this)" [dragged]="onDragged.bind(this)" [drop]="onDrop.bind(this)" [dropIf]="canDrop(DOCKERS[INICIADO])" [cards]="cards[INICIADO]"></docker>
+        <docker #dockerPausado icon="bi bi-pause-circle" title="Pausadas" color="border-danger" [collapse]="cardsConfig.pausado" [toggle]="onDockerCollapse.bind(this)" [dragged]="onDragged.bind(this)" [drop]="onDrop.bind(this)" [dropIf]="canDrop(DOCKERS[PAUSADO])" [cards]="cards[PAUSADO]"></docker>
     </swimlane>
     <swimlane>
         <docker #dockerConcluido icon="bi bi-check-circle" title="Concluídas" color="border-primary" [collapse]="cardsConfig.concluido" [toggle]="onDockerCollapse.bind(this)" [dragged]="onDragged.bind(this)" [drop]="onDrop.bind(this)" [dropIf]="canDrop(DOCKERS[CONCLUIDO])" [cards]="cards[CONCLUIDO]"></docker>

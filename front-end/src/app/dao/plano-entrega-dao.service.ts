@@ -12,9 +12,9 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
     this.inputSearchConfig.searchFields = ["numero", "nome"];
   }
 
-  public arquivar(planoEntrega: PlanoEntrega, justificativa: string | null): Promise<boolean> {
+  public arquivar(planoEntrega: PlanoEntrega): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/arquivar', { id: planoEntrega.id, justificativa: justificativa, arquivar: planoEntrega.arquivar }).subscribe(response => {
+      this.server.post('api/' + this.collection + '/arquivar', { id: planoEntrega.id, arquivar: planoEntrega.arquivar }).subscribe(response => {
         if (response.error) {
           reject(response.error);
         } else {
@@ -74,7 +74,7 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
 
   public cancelarPlano(planoEntrega: PlanoEntrega, justificativa: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/cancelar-plano', { id: planoEntrega.id, justificativa: justificativa }).subscribe(response => {
+      this.server.post('api/' + this.collection + '/cancelar-plano', { id: planoEntrega.id, justificativa: justificativa, arquivar: planoEntrega.arquivar }).subscribe(response => {
         if (response.error) {
           reject(response.error);
         } else {
@@ -84,9 +84,9 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
     });
   }
 
-  public concluir(planoEntrega: PlanoEntrega): Promise<boolean> {
+  public concluir(planoEntrega: PlanoEntrega, justificativa: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/concluir', { id: planoEntrega.id }).subscribe(response => {
+      this.server.post('api/' + this.collection + '/concluir', { id: planoEntrega.id, justificativa: justificativa }).subscribe(response => {
         if (response.error) {
           reject(response.error);
         } else {
@@ -96,21 +96,9 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
     });
   }
 
-/*   public desarquivar(planoEntrega: PlanoEntrega, justificativa: string | null): Promise<boolean> {
+  public homologar(planoEntrega: PlanoEntrega, justificativa: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/desarquivar', { id: planoEntrega.id, justificativa: justificativa }).subscribe(response => {
-        if (response.error) {
-          reject(response.error);
-        } else {
-          resolve(!!response?.success);
-        }
-      }, error => reject(error));
-    });
-  } */
-
-  public homologar(planoEntrega: PlanoEntrega): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/homologar', { id: planoEntrega.id }).subscribe(response => {
+      this.server.post('api/' + this.collection + '/homologar', { id: planoEntrega.id, justificativa: justificativa }).subscribe(response => {
         if (response.error) {
           reject(response.error);
         } else {
@@ -120,9 +108,9 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
     });
   }
 
-  public liberarHomologacao(planoEntrega: PlanoEntrega): Promise<boolean> {
+  public liberarHomologacao(planoEntrega: PlanoEntrega, justificativa: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/liberar-homologacao', { id: planoEntrega.id }).subscribe(response => {
+      this.server.post('api/' + this.collection + '/liberar-homologacao', { id: planoEntrega.id, justificativa: justificativa }).subscribe(response => {
         if (response.error) {
           reject(response.error);
         } else {

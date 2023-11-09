@@ -24,7 +24,7 @@ export class FeriadoListComponent extends PageListBase<Feriado, FeriadoDaoServic
       nome: {default: ""},
     });
     // Testa se o usuário possui permissão para exibir dados do feriado
-    if (this.auth.hasPermissionTo("MOD_FER_CONS")) {
+    if (this.auth.hasPermissionTo("MOD_FER")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",

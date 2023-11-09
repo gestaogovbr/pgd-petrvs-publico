@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Unidade;
 use App\Models\PlanoEntrega;
 use App\Services\UtilService;
 use App\Services\UsuarioService;
@@ -24,7 +23,7 @@ class PlanoEntregaController extends ControllerBase
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
-                'success' => $this->service->arquivar($data, $unidade,$request)
+                'success' => $this->service->arquivar($data, $unidade)
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
@@ -215,7 +214,7 @@ class PlanoEntregaController extends ControllerBase
             case 'CANCELAR_PLANO':
                 $data = $request->validate(['id' => ['required']]);
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
-                $condition1 = in_array(['INCLUIDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO'], $condicoes['planoStatus']);
+                $condition1 = in_array($condicoes['planoStatus'], ['INCLUIDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO']);
                 $condition2 = $condicoes['gestorUnidadePlano'];
                 $condition3 = $condicoes['unidadePlanoEhLotacao'];
                 if (!$usuario->hasPermissionTo("MOD_PENT_CNC")) throw new ServerException("ValidateUsuario", "O usuário logado não tem permissão para cancelar planos de entregas (MOD_PENT_CNC). [RN_PENT_P]");
@@ -410,7 +409,8 @@ class PlanoEntregaController extends ControllerBase
     {
         try {
             $data = $request->validate([
-                'id' => ['required']
+                'id' => ['required'],
+                'justificativa' => ['present']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
@@ -425,7 +425,8 @@ class PlanoEntregaController extends ControllerBase
     {
         try {
             $data = $request->validate([
-                'id' => ['required']
+                'id' => ['required'],
+                'justificativa' => ['present']
             ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
@@ -440,7 +441,10 @@ class PlanoEntregaController extends ControllerBase
     {
         try {
             $this->checkPermissions("LIBERAR_HOMOLOGACAO", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
-            $data = $request->validate(['id' => ['required']]);
+            $data = $request->validate([
+                'id' => ['required'], 
+                'justificativa' => ['present']
+            ]);
             $unidade = $this->getUnidade($request);
             return response()->json([
                 'success' => $this->service->liberarHomologacao($data, $unidade)

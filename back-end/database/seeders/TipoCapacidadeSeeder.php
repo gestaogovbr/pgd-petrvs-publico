@@ -6,7 +6,6 @@ use Illuminate\Database\Seeder;
 use App\Models\TipoCapacidade;
 use App\Models\Capacidade;
 use App\Models\Perfil;
-use Ramsey\Uuid\Uuid;
 use App\Services\TipoCapacidadeService;
 use App\Services\UtilService;
 
@@ -27,8 +26,8 @@ class TipoCapacidadeSeeder extends Seeder
         if(!$perfilDesenvolvedor){
             $perfilDesenvolvedor = new Perfil();
             $perfilDesenvolvedor->fill([
-                'id' => $utilService->uuid("Desenvolvedor"),   
-                'nivel' => 0,         
+                'id' => $utilService->uuid("Desenvolvedor"),
+                'nivel' => 0,
                 'nome' => 'Desenvolvedor',
                 'descricao' => 'Perfil de Desenvolvedor - Todas as permissões',
             ]);
@@ -84,7 +83,7 @@ class TipoCapacidadeSeeder extends Seeder
 
         // exclui as capacidades que não existem mais no vetor declarado no serviço TipoCapacidadeService
         $dadosModulosCapacidades = array_map(fn($x) => $x,$tiposCapacidadesService->tiposCapacidades);
-        
+
         foreach ($dadosModulosCapacidades as $modulo) {
             //foreach ($modulo['capacidades'] as $dadosModulosCapacidadesFilhas) {
             $arrayCapacidades = array_map(fn($z) => $z[0], $modulo['capacidades']);
@@ -95,7 +94,7 @@ class TipoCapacidadeSeeder extends Seeder
                                     ->whereNotIn('codigo',array_map(fn($z) => $z[0], $modulo['capacidades']))->get() as $tipo) {
                 foreach($tipo->capacidades as $tipoCap) {
                     $cap = Capacidade::where('tipo_capacidade_id',$tipo->id)->first();
-                    $cap->delete();               
+                    $cap->delete();
                 }
                 if ($tipo->grupo_id) $tipo->delete();
                 $i++;

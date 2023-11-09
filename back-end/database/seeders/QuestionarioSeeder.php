@@ -14,36 +14,37 @@ class TipoCursoSeeder extends Seeder
      */
     public function run()
     {
-       $perguntas =  [  
+        /*
+       $perguntas =  [
             ['tipo'=>'interno','nome'=>'Big Five','pergunta'=>{'key' : '9017a8b1aaf2662c2a547d9665ce67dd',
-                                                                 'value':'Pergunta: Perg1 - Tipo de Resposta: Resposta Única - Opções da resposta: Muito Inadequado - Relativamente Inadequado - Nem Adequado, Nem Inadequado - Relativamente Adequado - Muito Adequado'  
+                                                                 'value':'Pergunta: Perg1 - Tipo de Resposta: Resposta Única - Opções da resposta: Muito Inadequado - Relativamente Inadequado - Nem Adequado, Nem Inadequado - Relativamente Adequado - Muito Adequado'
                                                                  //{"key": "9017a8b1aaf2662c2a547d9665ce67b8",
-                                                                 //"value": "Pergunta: perg1 - Tipo de Resposta: Resposta Única - Opção de Resposta: resp1 - Valor: 1 - resp2 - Valor: 2 - resp3 - Valor: 3",    
+                                                                 //"value": "Pergunta: perg1 - Tipo de Resposta: Resposta Única - Opção de Resposta: resp1 - Valor: 1 - resp2 - Valor: 2 - resp3 - Valor: 3",
                                                                  //"data":{
-                                                                        //"tipo": {"key": "UNICA", "value": "Resposta Única"}, 
-                                                                        //"_status": "ADD", 
-                                                                        //"pergunta": "perg1", 
+                                                                        //"tipo": {"key": "UNICA", "value": "Resposta Única"},
+                                                                        //"_status": "ADD",
+                                                                        //"pergunta": "perg1",
                                                                         //"opcaoResposta": [{
-                                                                                    //  "key": "a1866c1e61653fd2a77033750c72c90c", 
+                                                                                    //  "key": "a1866c1e61653fd2a77033750c72c90c",
                                                                                     //  "data": {
-                                                                                    //           "opcao": "resp1", 
-                                                                                    //           "valor": "1", 
-                                                                                    //           "_status": "ADD"}, 
+                                                                                    //           "opcao": "resp1",
+                                                                                    //           "valor": "1",
+                                                                                    //           "_status": "ADD"},
                                                                                     //           "value": "resp1 - 1"
                                                                                     //          },{
-                                                                                    //  "key": "bb1797702574859ad9bab93694ed779d", 
+                                                                                    //  "key": "bb1797702574859ad9bab93694ed779d",
                                                                                     //  "data": {
-                                                                                    //           "opcao": "resp2", 
-                                                                                    //           "valor": "2", 
+                                                                                    //           "opcao": "resp2",
+                                                                                    //           "valor": "2",
                                                                                     //           "_status": "ADD"}, "value": "resp2 - 2"}, {
-                                                                                    //  "key": "6ae899e50b6df45e52866e3ac8c2ba65", "data": {"opcao": "resp3", "valor": "3", "_status": "ADD"}, "value": "resp3 - 3"}]} 
+                                                                                    //  "key": "6ae899e50b6df45e52866e3ac8c2ba65", "data": {"opcao": "resp3", "valor": "3", "_status": "ADD"}, "value": "resp3 - 3"}]}
                                                                  {'data':{
 
 
                                                                          }
                                                                  }
                                                               }],
-            
+
         ];
         foreach($perguntas as $p){
             $p = new Questionario();
@@ -54,6 +55,7 @@ class TipoCursoSeeder extends Seeder
             ]);
             $p->save();
         }
+        */
     }
 }
 

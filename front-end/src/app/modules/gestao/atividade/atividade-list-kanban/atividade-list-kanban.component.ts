@@ -506,5 +506,9 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
     this.saveEtiquetasUsuarioConfig();
   }
 
+  public onEntregaClick(atividade: Atividade){
+    this.go.navigate({route: ['gestao', 'atividade', atividade.id, 'hierarquia']}, {metadata: {atividade: atividade}})
+  }
+
 }
 

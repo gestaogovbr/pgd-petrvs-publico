@@ -62,6 +62,9 @@ class PlanoTrabalhoService extends ServiceBase
   public function proxyQuery($query, &$data)
   {
     $where = [];
+    //  (RI_PTR_C) Garante que, se não houver um interesse específico na data de arquivamento, só retornarão os planos de trabalho não arquivados.
+    $arquivados = $this->extractWhere($data, "incluir_arquivados");
+    if (empty($arquivados) || !$arquivados[2]) $data["where"][] = ["data_arquivamento", "==", null];
     foreach ($data["where"] as $condition) {
       if (is_array($condition) && $condition[0] == "data_filtro") {
         $dataInicio = $this->getFilterValue($data["where"], "data_filtro_inicio");
@@ -553,7 +556,7 @@ class PlanoTrabalhoService extends ServiceBase
    */
   public function buscaCondicoes(array $entity): array
   {
-    $planoTrabalho = !empty($entity['id']) ? PlanoTrabalho::with('entregas')->find($entity['id'])->toArray() : $entity;
+    $planoTrabalho = !empty($entity['id']) ? PlanoTrabalho::withTrashed()->with('entregas')->find($entity['id'])->toArray() : $entity;
     $planoTrabalho['unidade'] = !empty($planoTrabalho['unidade_id']) ? Unidade::find($planoTrabalho['unidade_id'])->toArray() : null;
     $result = [];
     $result["assinaturasExigidas"] = $this->programa->assinaturasExigidas($planoTrabalho["id"]);
@@ -564,15 +567,16 @@ class PlanoTrabalhoService extends ServiceBase
     $result["participanteLotadoAreaTrabalho"] = parent::loggedUser()->areasTrabalho->find(fn ($at) => $this->usuario->isLotacao($planoTrabalho["usuario_id"], $at->unidade->id)) != null;
     $result["participanteLotadoUnidadeExecutora"] = $this->usuario->isLotacao($planoTrabalho["usuario_id"], $planoTrabalho["unidade_id"]);
     $result["planoAguardandoAssinatura"] = $this->isPlano("AGUARDANDO_ASSINATURA", $planoTrabalho);
-    $result["planoArquivado"] = empty($planoTrabalho['id']) ? false : PlanoTrabalho::find($planoTrabalho['id'])->data_arquivamento != null;
+    $result["planoArquivado"] = empty($planoTrabalho['id']) ? false : PlanoTrabalho::withTrashed()->find($planoTrabalho['id'])->data_arquivamento != null;
     $result["planoAtivo"] = $this->isPlano("ATIVO", $planoTrabalho);
     $result["planoConcluido"] = $this->isPlano("CONCLUIDO", $planoTrabalho);
     $result["planoCancelado"] = $planoTrabalho['status'] == "CANCELADO";
+    $result["planoDeletado"] = !empty($planoTrabalho['deleted_at']);
     $result["planoIncluido"] = $this->isPlano("INCLUIDO", $planoTrabalho);
-    $result["planoStatus"] = empty($planoTrabalho['id']) ? null : PlanoTrabalho::find($planoTrabalho['id'])->status;
+    $result["planoStatus"] = empty($planoTrabalho['id']) ? null : PlanoTrabalho::withTrashed()->find($planoTrabalho['id'])->status;
     $result["planoSuspenso"] = $this->isPlano("SUSPENSO", $planoTrabalho);
     $result["planoValido"] = $this->isPlanoTrabalhoValido($planoTrabalho);
-    $result["naoPossuiPeriodoConflitanteOutroPlano"] = count(PlanoTrabalho::where("unidade_id", $planoTrabalho['unidade_id'])->where("usuario_id", $planoTrabalho['usuario_id'])->where("id", "!=", $planoTrabalho["id"])->get()
+    $result["naoPossuiPeriodoConflitanteOutroPlano"] = count(PlanoTrabalho::withTrashed()->where("unidade_id", $planoTrabalho['unidade_id'])->where("usuario_id", $planoTrabalho['usuario_id'])->where("id", "!=", $planoTrabalho["id"])->get()
       ->filter(fn ($p) => $this->util->intersection([
         ['start' => UtilService::asDateTime($p->data_inicio), 'end' => UtilService::asDateTime($p->data_fim)],
         ['start' => UtilService::asDateTime($planoTrabalho["data_inicio"]), 'end' => UtilService::asDateTime($planoTrabalho["data_fim"])]
@@ -591,7 +595,7 @@ class PlanoTrabalhoService extends ServiceBase
    */
   public function isPlanoTrabalhoValido($plano): bool
   {
-    $planoTrabalho = !empty($plano['id']) ? PlanoTrabalho::where('id', $plano['id'])->first() : $plano;
+    $planoTrabalho = !empty($plano['id']) ? PlanoTrabalho::withTrashed()->where('id', $plano['id'])->first() : $plano;
     return empty($plano['id']) ? false : (!$planoTrabalho->trashed() && !$plano['data_arquivamento'] && $planoTrabalho->status != 'CANCELADO');
   }
 
@@ -603,12 +607,12 @@ class PlanoTrabalhoService extends ServiceBase
    */
   public function isPlano($status, $plano): bool
   {
-    $planoTrabalho = !empty($plano['id']) ? PlanoTrabalho::find($plano['id']) : $plano;
+    $planoTrabalho = !empty($plano['id']) ? PlanoTrabalho::withTrashed()->find($plano['id']) : $plano;
     return empty($plano['id']) ? false : ($this->isPlanoTrabalhoValido($plano) && $planoTrabalho->status == $status);
   }
 
-  public function arquivar($data, $unidade,$request)
-  {
+  public function arquivar($data, $unidade)
+  { //ou desarquivar
     try {
       DB::beginTransaction();
       $planoTrabalho = PlanoTrabalho::find($data["id"]);
@@ -634,7 +638,7 @@ class PlanoTrabalhoService extends ServiceBase
     try {
       DB::beginTransaction();
       $planoTrabalho = PlanoTrabalho::find($data["id"]);
-      $this->status->atualizaStatus($planoTrabalho, 'ATIVO', "O Plano de Trabalho foi ativado nesta data!");
+      $this->status->atualizaStatus($planoTrabalho, 'ATIVO', $data["justificativa"]);
       DB::commit();
     } catch (Throwable $e) {
       DB::rollback();
@@ -663,32 +667,15 @@ class PlanoTrabalhoService extends ServiceBase
     return true;
   }
 
-  public function cancelarPlano($data, $unidade,$request)
+  public function cancelarPlano($data, $unidade)
   {
     try {
       DB::beginTransaction();
       $planoTrabalho = PlanoTrabalho::find($data["id"]);
-      $this->status->atualizaStatus($planoTrabalho, 'CANCELADO', $data["justificativa"]);
-      $this->arquivar($data, $unidade,$request);
-      DB::commit();
-    } catch (Throwable $e) {
-      DB::rollback();
-      throw $e;
-    }
-    return true;
-  }
-
-  public function desarquivar($data, $unidade)
-  {
-    try {
-      DB::beginTransaction();
-      $planoTrabalho = PlanoTrabalho::find($data["id"]);
-      if (!empty($planoTrabalho)) {
-        $this->update([
-          "id" => $planoTrabalho->id,
-          "data_arquivamento" => null
-        ], $unidade, false);
-      } else {
+      if(!empty($planoTrabalho)){
+        $this->status->atualizaStatus($planoTrabalho, 'CANCELADO', $data["justificativa"]);
+        $this->arquivar($data, $unidade);
+      }else {
         throw new ServerException("ValidatePlanoTrabalho", "Plano de Trabalho não encontrado!");
       }
       DB::commit();

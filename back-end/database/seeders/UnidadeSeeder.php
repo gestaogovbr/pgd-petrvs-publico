@@ -55,7 +55,7 @@ class UnidadeSeeder extends Seeder
         );
 
         foreach($unidade_raiz as $u){
-            Unidade::insertOrIgnore($u);
+            Unidade::insert($u);
         }
 
         // Inclusão de unidades para facilitar apresentações
@@ -576,7 +576,7 @@ class UnidadeSeeder extends Seeder
         );
 
         foreach($unidades as $u){
-            Unidade::insertOrIgnore($u);
+            Unidade::insert($u);
         }
     }
 }

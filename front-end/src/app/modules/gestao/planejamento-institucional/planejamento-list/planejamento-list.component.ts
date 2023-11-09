@@ -27,7 +27,7 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
     super(injector, Planejamento, PlanejamentoDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     /* Inicializações */
-    this.code = "MOD_PLAN_INST";
+    this.code = "MOD_PLAN";
     this.title = this.lex.translate('Planejamentos Institucionais');
     this.filter = this.fh.FormBuilder({
       data_inicio: {default: null},
@@ -46,7 +46,7 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
       'planejamento_superior.objetivos'
     ];
     // Testa se o usuário possui permissão para exibir planejamentos institucionais
-    if (this.auth.hasPermissionTo("MOD_PLAN_INST_CONS")) {
+    if (this.auth.hasPermissionTo("MOD_PLAN")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",
@@ -54,7 +54,7 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
       });
     }
     // Testa se o usuário possui permissão para excluir planejamentos institucionais
-    if (this.auth.hasPermissionTo("MOD_PLAN_INST_EXCL")) {
+    if (this.auth.hasPermissionTo("MOD_PLAN_EXCL")) {
       this.options.push({
         icon: "bi bi-trash",
         label: "Excluir",
