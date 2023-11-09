@@ -1,14 +1,14 @@
 import { Injectable,Injector } from '@angular/core';
 import { DaoBaseService } from './dao-base.service';
-import { QuestionarioPergunta } from '../models/questionario-pergunta.model';
+import { Questionario} from '../models/questionario.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class QuestionarioPerguntaDaoService extends DaoBaseService<QuestionarioPergunta>{
+export class QuestionarioDaoService extends DaoBaseService<Questionario>{
  
   constructor(protected injector: Injector) { 
-    super("QuestionarioPergunta", injector);
+    super("Questionario", injector);
     this.inputSearchConfig.searchFields = ["nome, codigo, perguntas, tipo"];
   }  
 }

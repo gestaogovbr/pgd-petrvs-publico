@@ -22,7 +22,7 @@ class Questionario extends ModelBase
        
     ];
 
-    //public $fillable_changes = ['graduacoes'];
+    //public $fillable_changes = ['perguntas'];
 
     //public $fillable_relation = [];
 
