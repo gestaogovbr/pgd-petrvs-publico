@@ -171,4 +171,6 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     return "Editando " + this.lex.translate("Unidade") + ': ' + (entity?.sigla || "");
   }
 
+  public informal(){
+  }
 }
