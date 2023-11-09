@@ -2598,14 +2598,6 @@ class IN24_2023Seeder extends Seeder
                 "tipo_capacidade_id" => "827a2b51-866e-da51-16bc-1f791c8f8e68",
             ),
             array(
-                "id" => "e4bac2f8-43b0-49f0-b026-a7ba3d48bdd4",
-                "created_at" => $this->timenow,
-                "updated_at" => $this->timenow,
-                "deleted_at" => NULL,
-                "perfil_id" => "0d8771a5-7210-b879-0779-55d46948a2b3",
-                "tipo_capacidade_id" => "0ac18772-72ef-8023-d9ac-7e1879fa045d",
-            ),
-            array(
                 "id" => "ed35fd86-7982-429e-bdb9-7f2d21487575",
                 "created_at" => $this->timenow,
                 "updated_at" => $this->timenow,
@@ -2645,14 +2637,7 @@ class IN24_2023Seeder extends Seeder
                 "perfil_id" => "0d8771a5-7210-b879-0779-55d46948a2b3",
                 "tipo_capacidade_id" => "cf1e3dfa-7e12-3668-935e-3612505ba6b6",
             ),
-            array(
-                "id" => "0b112081-1a75-410f-a51e-b0f4a9197cfc",
-                "created_at" => $this->timenow,
-                "updated_at" => $this->timenow,
-                "deleted_at" => NULL,
-                "perfil_id" => "0d8771a5-7210-b879-0779-55d46948a2b3",
-                "tipo_capacidade_id" => "e4e98026-5484-942a-122d-d65d910ee584",
-            ),
+
             array(
                 "id" => "0d19eb7b-bbe6-40bb-99bd-58c3a1561da5",
                 "created_at" => $this->timenow,
@@ -2836,30 +2821,6 @@ class IN24_2023Seeder extends Seeder
                 "deleted_at" => NULL,
                 "perfil_id" => "b684857b-48f3-8e0a-d496-66b0fbcee684",
                 "tipo_capacidade_id" => "bd78e4bd-c75b-1d2c-dc02-93ee45f0df83",
-            ),
-            array(
-                "id" => "62937be1-b31e-4c9d-94ac-7ccb4ac16980",
-                "created_at" => $this->timenow,
-                "updated_at" => $this->timenow,
-                "deleted_at" => NULL,
-                "perfil_id" => "b684857b-48f3-8e0a-d496-66b0fbcee684",
-                "tipo_capacidade_id" => "0ac18772-72ef-8023-d9ac-7e1879fa045d",
-            ),
-            array(
-                "id" => "649504d9-2d05-4d96-9798-da4818ce34b8",
-                "created_at" => $this->timenow,
-                "updated_at" => $this->timenow,
-                "deleted_at" => NULL,
-                "perfil_id" => "b684857b-48f3-8e0a-d496-66b0fbcee684",
-                "tipo_capacidade_id" => "cb733de6-7229-6d23-a61a-50b60fab085d",
-            ),
-            array(
-                "id" => "654bfe80-1412-46c4-871e-aa40db2c4a7f",
-                "created_at" => $this->timenow,
-                "updated_at" => $this->timenow,
-                "deleted_at" => NULL,
-                "perfil_id" => "b684857b-48f3-8e0a-d496-66b0fbcee684",
-                "tipo_capacidade_id" => "47bba179-cf06-f54f-9822-e5c0d1bb482a",
             ),
             array(
                 "id" => "6678d42e-c5e3-4641-bace-8134b15bdb53",
@@ -3134,14 +3095,6 @@ class IN24_2023Seeder extends Seeder
                 "tipo_capacidade_id" => "c17fc9cb-a788-75b0-d793-3f2d2e64b290",
             ),
             array(
-                "id" => "aea09865-78e9-4c17-960b-2a6b473f59d5",
-                "created_at" => $this->timenow,
-                "updated_at" => $this->timenow,
-                "deleted_at" => NULL,
-                "perfil_id" => "b684857b-48f3-8e0a-d496-66b0fbcee684",
-                "tipo_capacidade_id" => "e237a10c-a274-ba65-b293-da6223f53ad8",
-            ),
-            array(
                 "id" => "aec0486f-9a70-481c-a950-25485af10da4",
                 "created_at" => $this->timenow,
                 "updated_at" => $this->timenow,
@@ -3198,28 +3151,12 @@ class IN24_2023Seeder extends Seeder
                 "tipo_capacidade_id" => "28d36214-4e36-25a3-19d8-a2663544aff9",
             ),
             array(
-                "id" => "d10d6b4f-45c1-4226-916c-3f4a0766f010",
-                "created_at" => $this->timenow,
-                "updated_at" => $this->timenow,
-                "deleted_at" => NULL,
-                "perfil_id" => "b684857b-48f3-8e0a-d496-66b0fbcee684",
-                "tipo_capacidade_id" => "141c10fe-adf5-bd53-97cb-d7fd4c001902",
-            ),
-            array(
                 "id" => "d6836785-8afb-4dfe-84c9-5e69eb7bb7e8",
                 "created_at" => $this->timenow,
                 "updated_at" => $this->timenow,
                 "deleted_at" => NULL,
                 "perfil_id" => "b684857b-48f3-8e0a-d496-66b0fbcee684",
                 "tipo_capacidade_id" => "dbb04baf-26b3-7c99-8694-e703271ac2ac",
-            ),
-            array(
-                "id" => "d8719675-0636-4799-86bf-e757a111ea11",
-                "created_at" => $this->timenow,
-                "updated_at" => $this->timenow,
-                "deleted_at" => NULL,
-                "perfil_id" => "b684857b-48f3-8e0a-d496-66b0fbcee684",
-                "tipo_capacidade_id" => "83372bf5-878b-4a38-5b35-a35c1077bc4e",
             ),
             array(
                 "id" => "dd71ae2a-af32-46b4-a8b3-595c9974a12e",
@@ -3262,14 +3199,6 @@ class IN24_2023Seeder extends Seeder
                 "tipo_capacidade_id" => "253b499f-a412-16cb-b7a2-5f3052dc3308",
             ),
             array(
-                "id" => "ed9a78fb-74ac-435f-ab96-35e8d54badca",
-                "created_at" => $this->timenow,
-                "updated_at" => $this->timenow,
-                "deleted_at" => NULL,
-                "perfil_id" => "b684857b-48f3-8e0a-d496-66b0fbcee684",
-                "tipo_capacidade_id" => "3e5f5851-e63a-0430-3804-d9c0e14179be",
-            ),
-            array(
                 "id" => "f15a4959-275c-4036-b0bf-f153df0295b1",
                 "created_at" => $this->timenow,
                 "updated_at" => $this->timenow,
@@ -3292,14 +3221,6 @@ class IN24_2023Seeder extends Seeder
                 "deleted_at" => NULL,
                 "perfil_id" => "b684857b-48f3-8e0a-d496-66b0fbcee684",
                 "tipo_capacidade_id" => "057f76a9-d9fd-d44c-adee-2a0561239ed2",
-            ),
-            array(
-                "id" => "f4a1adf9-1c9a-421e-b791-7736f961416c",
-                "created_at" => $this->timenow,
-                "updated_at" => $this->timenow,
-                "deleted_at" => NULL,
-                "perfil_id" => "b684857b-48f3-8e0a-d496-66b0fbcee684",
-                "tipo_capacidade_id" => "a9e16567-ab1f-97e7-e5f7-e30c7d5f3699",
             ),
             array(
                 "id" => "f76e1fdb-8a40-4198-9ffb-32547f09092b",
@@ -3422,14 +3343,6 @@ class IN24_2023Seeder extends Seeder
                 "tipo_capacidade_id" => "2728de77-6a04-3f97-dd77-aacc33a50861",
             ),
             array(
-                "id" => "1fc76c9f-273a-4fd0-8259-e5a42dfd21a7",
-                "created_at" => $this->timenow,
-                "updated_at" => $this->timenow,
-                "deleted_at" => NULL,
-                "perfil_id" => "b684857b-48f3-8e0a-d496-66b0fbcee684",
-                "tipo_capacidade_id" => "c97f09ab-deed-0564-6bb7-60cc28b6d3ac",
-            ),
-            array(
                 "id" => "1fdff7e5-2929-4d14-becb-ef16fe424b36",
                 "created_at" => $this->timenow,
                 "updated_at" => $this->timenow,
@@ -3444,14 +3357,6 @@ class IN24_2023Seeder extends Seeder
                 "deleted_at" => NULL,
                 "perfil_id" => "b684857b-48f3-8e0a-d496-66b0fbcee684",
                 "tipo_capacidade_id" => "e255df1d-26ea-bd25-5b9b-57cb8228be72",
-            ),
-            array(
-                "id" => "288a3e34-9934-412c-9711-05f902df8615",
-                "created_at" => $this->timenow,
-                "updated_at" => $this->timenow,
-                "deleted_at" => NULL,
-                "perfil_id" => "b684857b-48f3-8e0a-d496-66b0fbcee684",
-                "tipo_capacidade_id" => "e4e98026-5484-942a-122d-d65d910ee584",
             ),
             array(
                 "id" => "2964af44-e7c8-4b5a-81d3-c0d98d74b59c",
@@ -3476,14 +3381,6 @@ class IN24_2023Seeder extends Seeder
                 "deleted_at" => NULL,
                 "perfil_id" => "b684857b-48f3-8e0a-d496-66b0fbcee684",
                 "tipo_capacidade_id" => "5fa94a47-ce02-a94e-0daf-13987972e3a9",
-            ),
-            array(
-                "id" => "351d53a9-a1f0-4239-90c0-f8c44d06af25",
-                "created_at" => $this->timenow,
-                "updated_at" => $this->timenow,
-                "deleted_at" => NULL,
-                "perfil_id" => "b684857b-48f3-8e0a-d496-66b0fbcee684",
-                "tipo_capacidade_id" => "073249da-522d-ad7d-4ff2-5635f91a9d59",
             ),
             array(
                 "id" => "3687ef90-3b2b-49fe-9b00-f55669cf647f",
@@ -3655,5 +3552,15 @@ class IN24_2023Seeder extends Seeder
         CadeiaValor::insert($cadeias_valores);
         CadeiaValorProcesso::insert($cadeias_valores_processos);
         Capacidade::insert($capacidades);
+
+        /*
+        Algoritmo para visualizar erros durante inclusão
+        foreach($capacidades as $c){
+            $result = Capacidade::insertOrIgnore($c);
+            if ($result == 0) {
+                ($result . " - " . $c["id"] . "\n");
+            }
+        }
+        */
     }
 }
