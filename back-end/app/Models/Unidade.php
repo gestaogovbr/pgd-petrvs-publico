@@ -45,6 +45,7 @@ class Unidade extends ModelBase
         'texto_complementar_plano', /* longtext; */// Campo de mensagem adicional do plano de trabalho
         'data_inativacao', /* datetime; */// Se a unidade está ou não inativa
         'instituidora', /* tinyint; NOT NULL; */// Se a unidade é instituidora (Programas)
+        'informal', /* tinyint; NOT NULL; */// Se a unidade é informal (Time volante, por ex.)
         'checklist', /* json; */// Nome dos checklist
         'unidade_pai_id', /* char(36); */
         'entidade_id', /* char(36); NOT NULL; */
@@ -91,16 +92,16 @@ class Unidade extends ModelBase
     public function entidade() { return $this->belongsTo(Entidade::class); }
     public function cidade() { return $this->belongsTo(Cidade::class); }  //nullable
     public function unidadePai() { return $this->belongsTo(Unidade::class, 'unidade_pai_id'); }    //nullable
-    
+
     // Others relationships
-    public function gestor() { return $this->hasOne(UnidadeIntegrante::class)->has('gestor'); } 
+    public function gestor() { return $this->hasOne(UnidadeIntegrante::class)->has('gestor'); }
     public function gestorSubstituto() { return $this->hasOne(UnidadeIntegrante::class)->has('gestorSubstituto'); }
     public function gestorDelegado() { return $this->hasOne(UnidadeIntegrante::class)->has('gestorDelegado'); }
     public function lotados() { return $this->hasMany(UnidadeIntegrante::class)->has('lotado'); }
-    public function colaboradores() { return $this->hasMany(UnidadeIntegrante::class)->has('colaborador'); } // aqueles que possuem TCR      
-    public function homologadoresPlanoEntrega() { return $this->hasMany(UnidadeIntegrante::class)->has('homologadorPlanoEntrega'); }       
-    public function avaliadoresPlanoEntrega() { return $this->hasMany(UnidadeIntegrante::class)->has('avaliadorPlanoEntrega'); }       
-    public function avaliadoresPlanoTrabalho() { return $this->hasMany(UnidadeIntegrante::class)->has('avaliadorPlanoTrabalho'); }       
+    public function colaboradores() { return $this->hasMany(UnidadeIntegrante::class)->has('colaborador'); } // aqueles que possuem TCR
+    public function homologadoresPlanoEntrega() { return $this->hasMany(UnidadeIntegrante::class)->has('homologadorPlanoEntrega'); }
+    public function avaliadoresPlanoEntrega() { return $this->hasMany(UnidadeIntegrante::class)->has('avaliadorPlanoEntrega'); }
+    public function avaliadoresPlanoTrabalho() { return $this->hasMany(UnidadeIntegrante::class)->has('avaliadorPlanoTrabalho'); }
     // Mutattors e Casts
     public function getNotificacoesAttribute($value)
     {
@@ -112,7 +113,7 @@ class Unidade extends ModelBase
         $this->attributes['notificacoes'] = json_encode($value);
     }
     public function getIntegrantesAtribuicoesAttribute()
-    { 
+    {
         $result = [];
         foreach($this->integrantes as $integrante){
             if(count($integrante->atribuicoes) > 0) $result[$integrante->usuario_id] = array_map(fn($a) => $a["atribuicao"], $integrante->atribuicoes?->toArray() ?? []);
