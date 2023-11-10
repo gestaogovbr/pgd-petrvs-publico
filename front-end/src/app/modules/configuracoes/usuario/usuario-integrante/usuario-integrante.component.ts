@@ -178,7 +178,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
    */
   public async saveAtribuicao(form: FormGroup, row: IntegranteConsolidado) {
     let confirm = true;
-    let n = this.unidadeIntegranteService.alterandoGestor(form, this.items || []);
+    let n = this.unidadeIntegranteService.alterandoGestor(form, row.atribuicoes || []);
     if (n.length) confirm = await this.dialog.confirm("Confirma a Alteração de Gestor ?", n.length == 1 ? "O " + n[0] + " será alterado." : "Serão alterados: " + n.join(', ') + ".");
     if (form!.controls.atribuicoes.value.length && confirm) {
       this.loading = true;
