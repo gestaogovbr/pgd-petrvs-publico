@@ -69,7 +69,7 @@ class TenantService extends ServiceBase {
                         Log::error($errorMessage);
                         Log::channel('daily')->error($errorMessage);
 
-                        // Lançe uma nova exceção com a mensagem de erro personalizada
+                        // Lance uma nova exceção com a mensagem de erro personalizada
                         throw new \Exception($errorMessage);
                     }
 

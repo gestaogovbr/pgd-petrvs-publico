@@ -87,7 +87,6 @@ class TipoCapacidadeSeeder extends Seeder
             $arrayCapacidades = array_map(fn($z) => $z[0], $modulo['capacidades']);
             $tiposCapacidadesNulos = TipoCapacidade::where('grupo_id', $utilService->uuid($modulo['codigo']))
                                                     ->whereNotIn('codigo',$arrayCapacidades)->get();        // representa todos os tipos de capacidade existentes na tabela, filhos do módulo, que não existem mais
-           // $i = 1;
             foreach ($tiposCapacidadesNulos as $tipoNulo) {
                 // $tipoNulo->deleteCascade();
                 foreach($tipoNulo->capacidades as $capacidadeNula) { 
@@ -97,7 +96,6 @@ class TipoCapacidadeSeeder extends Seeder
                     $cap->delete();
                 } */
                 if ($tipoNulo->grupo_id) $tipoNulo->delete();
-                //$i++;
             }
         }
 

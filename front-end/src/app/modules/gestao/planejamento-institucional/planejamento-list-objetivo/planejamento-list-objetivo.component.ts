@@ -53,7 +53,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
     this.OPTION_INFORMACOES.onClick = (objetivo: PlanejamentoObjetivo) => this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo', objetivo.id, 'consult'] }, { modal: true });
     this.OPTION_EXCLUIR.onClick = (objetivo: PlanejamentoObjetivo) => { this.removeObjetivo(objetivo); };
     this.addOption(this.OPTION_INFORMACOES);
-    this.addOption(this.OPTION_EXCLUIR,'MOD_PLAN_EXCL');
+    this.addOption(this.OPTION_EXCLUIR,'MOD_PLAN_INST_EXCL');
   }
 
   ngOnInit(): void {
@@ -66,7 +66,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
   public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let objetivo: PlanejamentoObjetivo = row as PlanejamentoObjetivo;
-    if (this.auth.hasPermissionTo('MOD_PLAN_EDT') && !this.disabled) {
+    if (this.auth.hasPermissionTo('MOD_PLAN_INST_EDT') && !this.disabled) {
       result.push({ hint: "Alterar", icon: "bi bi-pencil-square", color: "btn-outline-info", onClick: (objetivo: PlanejamentoObjetivo) => { this.editObjetivo(objetivo); } });
     }
     result.push({ hint: "Entregas", icon: "bi bi-file-earmark-bar-graph", onClick: (objetivo: PlanejamentoObjetivo) => this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', 'objetivos', objetivo.id]}, { modal: true })});
