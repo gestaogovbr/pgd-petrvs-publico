@@ -6,7 +6,6 @@ import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
 import { IIndexable, IntegranteAtribuicao } from 'src/app/models/base.model';
 import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
-import { Unidade } from 'src/app/models/unidade.model';
 import { Usuario } from 'src/app/models/usuario.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { LookupItem } from 'src/app/services/lookup.service';
@@ -29,7 +28,6 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   public unidadeIntegranteService: UnidadeIntegranteService;
   public integranteDao: UnidadeIntegranteDaoService;
   public unidadeDao: UnidadeDaoService;
-  //public usuario?: Usuario;
   public tiposAtribuicao: LookupItem[] = [];
 
   constructor(public injector: Injector) {
@@ -91,7 +89,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
    * Método chamado para inserir uma atribuição no grid, seja este componente persistente ou não.
    * @returns 
    */
-  public async addAtribuicao() {
+  public async addIntegrante() {
     let novo = {
       id: this.integranteDao!.generateUuid(),
       unidade_id: "",
@@ -124,7 +122,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
    * @param form 
    * @param row 
    */
-  public async loadAtribuicao(form: FormGroup, row: any) {
+  public async loadIntegrante(form: FormGroup, row: any) {
     form.controls.unidade_id.setValue(this.grid?.adding ? row.unidade_id : row.id);
     form.controls.atribuicoes.setValue(this.unidadeIntegranteService.converterAtribuicoes(row.atribuicoes));
     form.controls.atribuicao.setValue("");
@@ -135,7 +133,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
    * @param row 
    * @returns 
    */
-  public async removeAtribuicao(row: IntegranteConsolidado) {
+  public async removeIntegrante(row: IntegranteConsolidado) {
     let nomeServidor = this.entity!.nome;
     let nomeUnidade = row.unidade_nome;
     let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir todas as atribuições do servidor '" + nomeServidor + "' na unidade '" + nomeUnidade + "' ?");
@@ -171,12 +169,12 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   };
 
   /**
-   * Método chamado no salvamento de uma atribuição do usuário, seja este componente persistente ou não.
+   * Método chamado no salvamento de uma unidade-integrante (new/edit), seja este componente persistente ou não.
    * @param form 
    * @param row 
    * @returns 
    */
-  public async saveAtribuicao(form: FormGroup, row: IntegranteConsolidado) {
+  public async saveIntegrante(form: FormGroup, row: IntegranteConsolidado) {
     let confirm = true;
     let n = this.unidadeIntegranteService.alterandoGestor(form, row.atribuicoes || []);
     if (n.length) confirm = await this.dialog.confirm("Confirma a Alteração de Gestor ?", n.length == 1 ? "O " + n[0] + " será alterado." : "Serão alterados: " + n.join(', ') + ".");

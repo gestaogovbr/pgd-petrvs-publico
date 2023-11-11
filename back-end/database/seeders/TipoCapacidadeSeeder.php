@@ -82,23 +82,16 @@ class TipoCapacidadeSeeder extends Seeder
             }
         }
 
-        // exclui as capacidades que não existem mais no vetor declarado no serviço TipoCapacidadeService 
+        // exclui os tipos de capacidades filhas que não existem mais no vetor declarado no serviço TipoCapacidadeService 
         foreach ($dadosModulosCapacidades as $modulo) {
-            $arrayCapacidades = array_map(fn($z) => $z[0], $modulo['capacidades']);
-            $tiposCapacidadesNulos = TipoCapacidade::where('grupo_id', $utilService->uuid($modulo['codigo']))
-                                                    ->whereNotIn('codigo',$arrayCapacidades)->get();        // representa todos os tipos de capacidade existentes na tabela, filhos do módulo, que não existem mais
-            foreach ($tiposCapacidadesNulos as $tipoNulo) {
-                // $tipoNulo->deleteCascade();
-                foreach($tipoNulo->capacidades as $capacidadeNula) { 
-                    $capacidadeNula->delete(); 
-                }
-/*                     $cap = Capacidade::where('tipo_capacidade_id',$tipoNulo->id)->first();
-                    $cap->delete();
-                } */
-                if ($tipoNulo->grupo_id) $tipoNulo->delete();
-            }
+            $capacidades = array_map(fn($z) => $z[0], $modulo['capacidades']);
+            // representa todos os tipos de capacidade existentes na tabela, filhas do módulo, que não existem mais
+            $filhosNulos = TipoCapacidade::where('grupo_id', $utilService->uuid($modulo['codigo']))->whereNotIn('codigo',$capacidades)->get();        
+            foreach ($filhosNulos as $filhoNulo) $filhoNulo->deleteCascade();
         }
-
-        // falta apagar os tipos de capacidades referentes aos próprios módulos que não contêm mais tipos filhos
+        // Apagar os tipos de capacidades referentes aos próprios módulos (pais) que não contêm mais filhas, e aqueles módulos (pais) que mudaram de nome
+        $modulos = array_map(fn($z) => $z["codigo"], $dadosModulosCapacidades);
+        $modulosNulos = TipoCapacidade::whereNull('grupo_id')->whereNotIn('codigo',$modulos)->get(); 
+        foreach($modulosNulos as $moduloNulo) $moduloNulo->deleteCascade();      
     }
 }

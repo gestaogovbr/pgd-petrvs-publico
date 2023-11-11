@@ -1,7 +1,6 @@
-<grid [items]="items" [minHeight]="500" [form]="form!" [hasDelete]="true"
-    [add]="addIntegrante.bind(this)" [load]="loadIntegrante.bind(this)" [remove]="removeIntegrante.bind(this)" [save]="saveIntegrante.bind(this)" 
-    editable>
-    <span *ngIf="!isNoPersist"><strong>{{ entity?.nome }}</strong></span>
+<grid #grid [items]="items" [minHeight]="500" [form]="form!" [hasDelete]="true" editable
+    [add]="addIntegrante.bind(this)" [load]="loadIntegrante.bind(this)" [remove]="removeIntegrante.bind(this)" [save]="saveIntegrante.bind(this)">
+    <span *ngIf="!isNoPersist"><strong>{{ 'Unidade: ' + entity?.nome }}</strong></span>
     <columns>
         <column [title]="lex.translate('Usuários')" [template]="columnUsuario" [editTemplate]="editUsuario">
             <ng-template let-row="row" #columnUsuario>
@@ -19,15 +18,15 @@
                 <input-search #usuario [size]="12" label icon controlName="usuario_id" [dao]="usuarioDao"></input-search>
             </ng-template>
         </column>
-        <column title="Atribuições" titleHint="Atribuições do usuário nesta unidade" [template]="columnUnidadeDestino" [editTemplate]="editUnidadeDestino">
-            <ng-template let-row="row" #columnUnidadeDestino>
-                <div class="text-wrap width-min-content">
-                    <badge *ngFor="let atribuicao of row.atribuicoes" [color]="lookup.getColor(lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao || '')" [icon]="lookup.getIcon(lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao || '')" [label]="lookup.getValue(lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao || '')"></badge>
+        <column [title]="lex.translate('Atribuições')" [template]="columnAtribuicoes" [editTemplate]="editAtribuicoes">
+            <ng-template let-row="row" #columnAtribuicoes>
+                <div *ngFor="let atribuicao of row.atribuicoes">
+                    <badge [color]="lookup.getColor(lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao || '')" [icon]="lookup.getIcon(lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao || '')" [label]="lookup.getValue(lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao || '')"></badge><br>
                 </div>
             </ng-template>
-            <ng-template let-row="row" #editUnidadeDestino>
+            <ng-template let-row="row" #editAtribuicoes>
                 <input-multiselect controlName="atribuicoes" [size]="8" [addItemHandle]="addItemHandle.bind(this)" [deleteItemHandle]="deleteItemHandle.bind(this)">
-                    <input-select [size]="12" label="" icon="fas fa-sign-out-alt" controlName="atribuicao" [items]="lookup.UNIDADE_INTEGRANTE_TIPO"></input-select>
+                    <input-select [size]="12" label="" icon="fas fa-sign-out-alt" controlName="atribuicao" [items]="tiposAtribuicao"></input-select>
                 </input-multiselect>
             </ng-template>
         </column>
