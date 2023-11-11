@@ -9,7 +9,7 @@ import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
 import { Usuario } from 'src/app/models/usuario.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { LookupItem } from 'src/app/services/lookup.service';
-import { UnidadeIntegranteService } from 'src/app/services/unidade-integrante.service';
+import { IntegranteService } from 'src/app/services/integrante.service';
 
 @Component({
   selector: 'usuario-integrante',
@@ -25,14 +25,14 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
 
   public items: IntegranteConsolidado[] = [];
   public _items?: any[];
-  public unidadeIntegranteService: UnidadeIntegranteService;
+  public integranteService: IntegranteService;
   public integranteDao: UnidadeIntegranteDaoService;
   public unidadeDao: UnidadeDaoService;
   public tiposAtribuicao: LookupItem[] = [];
 
   constructor(public injector: Injector) {
     super(injector);
-    this.unidadeIntegranteService = injector.get<UnidadeIntegranteService>(UnidadeIntegranteService);
+    this.integranteService = injector.get<IntegranteService>(IntegranteService);
     this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.form = this.fh.FormBuilder({
@@ -67,10 +67,10 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
             this.entity = resposta.usuario;
             if(this.isNoPersist) {
               this._items = [];
-              resposta.integrantes.forEach(i => this._items?.push(this.unidadeIntegranteService.converterEmVinculo(i, i.id, this.entity!.id, i.atribuicoes)));
+              resposta.integrantes.forEach(i => this._items?.push(this.integranteService.converterEmVinculo(i, i.id, this.entity!.id, i.atribuicoes)));
             }
-            return this.unidadeIntegranteService.ordenar(resposta.integrantes.filter(x => x.atribuicoes?.length > 0));
-          }) : this.unidadeIntegranteService.ordenar(this._items.filter(x => x.atribuicoes?.length > 0));
+            return this.integranteService.ordenar(resposta.integrantes.filter(x => x.atribuicoes?.length > 0));
+          }) : this.integranteService.ordenar(this._items.filter(x => x.atribuicoes?.length > 0));
       } finally {
         this.cdRef.detectChanges();
         this.grid!.loading = false;
@@ -124,7 +124,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
    */
   public async loadIntegrante(form: FormGroup, row: any) {
     form.controls.unidade_id.setValue(this.grid?.adding ? row.unidade_id : row.id);
-    form.controls.atribuicoes.setValue(this.unidadeIntegranteService.converterAtribuicoes(row.atribuicoes));
+    form.controls.atribuicoes.setValue(this.integranteService.converterAtribuicoes(row.atribuicoes));
     form.controls.atribuicao.setValue("");
   }
 
@@ -142,13 +142,13 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
       try {
         if (!this.isNoPersist) {    // se persistente
           this.loading = true;
-          await this.integranteDao.saveIntegrante([this.unidadeIntegranteService.converterEmVinculo(row, row.id, this.entity!.id, [])]).then(resposta => {
+          await this.integranteDao.saveIntegrante([this.integranteService.converterEmVinculo(row, row.id, this.entity!.id, [])]).then(resposta => {
             if (msg = resposta.find(v => v.msg?.length)?.msg) { if (this.grid) this.grid.error = msg; };
           });
           await this.loadData({ id: this.entity!.id }, this.form);
         } else {                    // se não persistente
           let index = this._items!.findIndex(x => x["id"] == row["id"]);
-          this._items![index] = this.unidadeIntegranteService.converterEmVinculo(row, row.id, this.entity!.id, []);
+          this._items![index] = this.integranteService.converterEmVinculo(row, row.id, this.entity!.id, []);
         }
       } finally {
         this.loading = false;
@@ -176,14 +176,14 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
    */
   public async saveIntegrante(form: FormGroup, row: IntegranteConsolidado) {
     let confirm = true;
-    let n = this.unidadeIntegranteService.alterandoGestor(form, row.atribuicoes || []);
+    let n = this.integranteService.alterandoGestor(form, row.atribuicoes || []);
     if (n.length) confirm = await this.dialog.confirm("Confirma a Alteração de Gestor ?", n.length == 1 ? "O " + n[0] + " será alterado." : "Serão alterados: " + n.join(', ') + ".");
     if (form!.controls.atribuicoes.value.length && confirm) {
       this.loading = true;
       try {
         let novasAtribuicoes: IntegranteAtribuicao[] = form!.controls.atribuicoes.value.map((x: LookupItem) => x.key);
         if (!this.isNoPersist) { // se persistente
-          await this.integranteDao.saveIntegrante([this.unidadeIntegranteService.converterEmVinculo(row, form!.controls.unidade_id.value, this.entity!.id, novasAtribuicoes)]).then(resposta => {
+          await this.integranteDao.saveIntegrante([this.integranteService.converterEmVinculo(row, form!.controls.unidade_id.value, this.entity!.id, novasAtribuicoes)]).then(resposta => {
             let msg: string | undefined;
             if (msg = resposta?.find(v => v.msg?.length)?.msg) { if (this.grid) this.grid.error = msg; };
           });
@@ -192,7 +192,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
         } else {                // se não persistente
           let index = this._items!.findIndex(x => x["id"] == row["id"]);
           let novoIntegranteConsolidado = { id: row.id, unidade_sigla: this.unidade?.selectedItem?.entity.sigla, unidade_nome: this.unidade?.selectedItem?.entity.nome, unidade_codigo: this.unidade?.selectedItem?.entity.codigo };
-          this._items![index!] = this.unidadeIntegranteService.converterEmVinculo(novoIntegranteConsolidado, form!.controls.unidade_id.value, this.entity!.id, novasAtribuicoes);
+          this._items![index!] = this.integranteService.converterEmVinculo(novoIntegranteConsolidado, form!.controls.unidade_id.value, this.entity!.id, novasAtribuicoes);
           await this.loadData({ id: this.entity!.id }, this.form);
         }
       } catch (error: any) {

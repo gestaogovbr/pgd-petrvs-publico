@@ -11,7 +11,7 @@ class TipoCapacidade extends ModelBase
 
     protected $with = [];
 
-    public $delete_cascade = ["capacidades","grupos"];
+    public $delete_cascade = ["capacidades","filhos"];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
         'id', /* char(36); NOT NULL; */
@@ -22,6 +22,6 @@ class TipoCapacidade extends ModelBase
     ];
 
     // Has
-    public function grupos() { return $this->hasMany(TipoCapacidade::class, 'grupo_id'); }
+    public function filhos() { return $this->hasMany(TipoCapacidade::class, 'grupo_id'); }
     public function capacidades() { return $this->hasMany(Capacidade::class, 'tipo_capacidade_id'); }
 }

@@ -53,7 +53,7 @@ export class PerfilFormComponent extends PageFormBase<Perfil, PerfilDaoService> 
     var queryOptions: QueryOptions = new QueryOptions({
       where: [["grupo_id", "==", null]],
       orderBy: [["codigo", "asc"]],
-      join: ["grupos"]
+      join: ["filhos"]
     });
     this.tiposCapacidades = await this.tipoCapacidadeDao.query(queryOptions).asPromise();
     formValue = this.util.fillForm(formValue, entity);
@@ -61,7 +61,7 @@ export class PerfilFormComponent extends PageFormBase<Perfil, PerfilDaoService> 
       const capacidade = entity.capacidades?.find(x => (x.tipo_capacidade?.codigo == tipoCapacidade.codigo));
       tipoCapacidade._metadata = Object.assign(tipoCapacidade._metadata || {}, {habilitado: !!capacidade});
       if (capacidade) console.log(capacidade.tipo_capacidade?.codigo)
-      for (let tipoCapacidadeFilha of tipoCapacidade.grupos) {
+      for (let tipoCapacidadeFilha of tipoCapacidade.filhos) {
         const capacidadeFilha = entity.capacidades?.find(x => (x.tipo_capacidade?.codigo == tipoCapacidadeFilha.codigo));
         tipoCapacidadeFilha._metadata = Object.assign(tipoCapacidadeFilha._metadata || {}, {habilitado: !!capacidadeFilha});
       }
@@ -81,11 +81,11 @@ export class PerfilFormComponent extends PageFormBase<Perfil, PerfilDaoService> 
     } else {
       if(capacidade && !capacidade._status) capacidade._status = "DELETE";
       if(capacidade && capacidade._status == "ADD") this.entity!.capacidades!.splice(this.entity!.capacidades!.findIndex(x => x.tipo_capacidade_id == row.id), 1);
-      for(let grupo of row.grupos) {
-        grupo._metadata = Object.assign(grupo._metadata || {}, {habilitado: false});
-        let subCapacidade = this.entity!.capacidades?.find(x => x.tipo_capacidade_id == grupo.id);
+      for(let filho of row.filhos) {
+        filho._metadata = Object.assign(filho._metadata || {}, {habilitado: false});
+        let subCapacidade = this.entity!.capacidades?.find(x => x.tipo_capacidade_id == filho.id);
         if(subCapacidade && !subCapacidade._status) subCapacidade._status = "DELETE";
-        if(subCapacidade && subCapacidade._status == "ADD") this.entity!.capacidades!.splice(this.entity!.capacidades!.findIndex(x => x.tipo_capacidade_id == grupo.id), 1);
+        if(subCapacidade && subCapacidade._status == "ADD") this.entity!.capacidades!.splice(this.entity!.capacidades!.findIndex(x => x.tipo_capacidade_id == filho.id), 1);
       }
     }
     this.refreshCapacidadesHabilitadas()

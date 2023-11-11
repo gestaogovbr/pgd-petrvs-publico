@@ -9,7 +9,7 @@ import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { LookupItem } from 'src/app/services/lookup.service';
-import { UnidadeIntegranteService } from 'src/app/services/unidade-integrante.service';
+import { IntegranteService } from 'src/app/services/integrante.service';
 
 @Component({
   selector: 'unidade-integrante',
@@ -25,7 +25,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
 
   public items: IntegranteConsolidado[] = [];
   public _items?: any[];
-  public unidadeIntegranteService: UnidadeIntegranteService;
+  public integranteService: IntegranteService;
   public integranteDao: UnidadeIntegranteDaoService;
   public usuarioDao: UsuarioDaoService;
   public unidade?: Unidade;
@@ -33,7 +33,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
 
   constructor(public injector: Injector) {
     super(injector);
-    this.unidadeIntegranteService = injector.get<UnidadeIntegranteService>(UnidadeIntegranteService);
+    this.integranteService = injector.get<IntegranteService>(IntegranteService);
     this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.form = this.fh.FormBuilder({
@@ -68,10 +68,10 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
             this.entity = resposta.unidade;
             if(this.isNoPersist) {
               this._items = [];
-              resposta.integrantes.forEach(i => this._items?.push(this.unidadeIntegranteService.converterEmVinculo(i, this.entity!.id, i.id, i.atribuicoes)));
+              resposta.integrantes.forEach(i => this._items?.push(this.integranteService.converterEmVinculo(i, this.entity!.id, i.id, i.atribuicoes)));
             }
-            return this.unidadeIntegranteService.ordenar(resposta.integrantes.filter(x => x.atribuicoes?.length > 0));
-          }) : this.unidadeIntegranteService.ordenar(this._items.filter(x => x.atribuicoes?.length > 0));
+            return this.integranteService.ordenar(resposta.integrantes.filter(x => x.atribuicoes?.length > 0));
+          }) : this.integranteService.ordenar(this._items.filter(x => x.atribuicoes?.length > 0));
       } finally {
         this.cdRef.detectChanges();
         this.grid!.loading = false;
@@ -125,7 +125,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
    */
   public async loadIntegrante(form: FormGroup, row: any) {
     form.controls.usuario_id.setValue(this.grid?.adding ? row.usuario_id : row.id);
-    form.controls.atribuicoes.setValue(this.unidadeIntegranteService.converterAtribuicoes(row.atribuicoes));
+    form.controls.atribuicoes.setValue(this.integranteService.converterAtribuicoes(row.atribuicoes));
     form.controls.atribuicao.setValue("");
   }
 
@@ -143,13 +143,13 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
       try {
         if (!this.isNoPersist) {    // se persistente
           this.loading = true;
-          await this.integranteDao.saveIntegrante([this.unidadeIntegranteService.converterEmVinculo(row, this.entity!.id, row.id, [])]).then(resposta => {
+          await this.integranteDao.saveIntegrante([this.integranteService.converterEmVinculo(row, this.entity!.id, row.id, [])]).then(resposta => {
             if (msg = resposta.find(v => v.msg?.length)?.msg) { if (this.grid) this.grid.error = msg; };
           });
           await this.loadData({ id: this.entity!.id }, this.form);
         } else {                    // se não persistente
           let index = this._items!.findIndex(x => x["id"] == row["id"]);
-          this._items![index] = this.unidadeIntegranteService.converterEmVinculo(row, this.entity!.id, row.id, []);
+          this._items![index] = this.integranteService.converterEmVinculo(row, this.entity!.id, row.id, []);
         }
       } finally {
         this.loading = false;
@@ -161,12 +161,12 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
   }
 
   /**
-   * Garante que não será possível excluir as atribuições de LOTADO, GESTOR e GESTOR_SUBSTITUTO de um servidor por este caminho
+   * Garante que não será possível excluir atribuições que possam gerar inconsistências
    * @param row Atribuição do servidor na unidade
    * @returns 
    */
   public deleteItemHandle(row: LookupItem): boolean | undefined | void {
-    return !["LOTADO","GESTOR","GESTOR_SUBSTITUTO"].includes(row.key);
+    return this.integranteService.permitidoApagar(row.key, this.isNoPersist);
   };
 
   /**
@@ -177,14 +177,14 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
    */
   public async saveIntegrante(form: FormGroup, row: IntegranteConsolidado) {
     let confirm = true;
-    let n = this.unidadeIntegranteService.alterandoGestor(form, row.atribuicoes || []);
+    let n = this.integranteService.alterandoGestor(form, row.atribuicoes || []);
     if (n.length) confirm = await this.dialog.confirm("Confirma a Alteração de Gestor ?", n.length == 1 ? "O " + n[0] + " será alterado." : "Serão alterados: " + n.join(', ') + ".");
     if (form!.controls.atribuicoes.value.length && confirm) {
       this.loading = true;
       try {
         let novasAtribuicoes: IntegranteAtribuicao[] = form!.controls.atribuicoes.value.map((x: LookupItem) => x.key);
         if (!this.isNoPersist) { // se persistente
-          await this.integranteDao.saveIntegrante([this.unidadeIntegranteService.converterEmVinculo(row, this.entity!.id, form!.controls.usuario_id.value, novasAtribuicoes)]).then(resposta => {
+          await this.integranteDao.saveIntegrante([this.integranteService.converterEmVinculo(row, this.entity!.id, form!.controls.usuario_id.value, novasAtribuicoes)]).then(resposta => {
             let msg: string | undefined;
             if (msg = resposta?.find(v => v.msg?.length)?.msg) { if (this.grid) this.grid.error = msg; };
           });
@@ -193,7 +193,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
         } else {                // se não persistente
           let index = this._items!.findIndex(x => x["id"] == row["id"]);
           let novoIntegranteConsolidado = { id: row.id, usuario_apelido: this.usuario?.selectedItem?.entity.apelido, usuario_nome: this.usuario?.selectedItem?.entity.nome };
-          this._items![index!] = this.unidadeIntegranteService.converterEmVinculo(novoIntegranteConsolidado, this.entity!.id, form!.controls.usuario_id.value, novasAtribuicoes);
+          this._items![index!] = this.integranteService.converterEmVinculo(novoIntegranteConsolidado, this.entity!.id, form!.controls.usuario_id.value, novasAtribuicoes);
           await this.loadData({ id: this.entity!.id }, this.form);
         }
       } catch (error: any) {
