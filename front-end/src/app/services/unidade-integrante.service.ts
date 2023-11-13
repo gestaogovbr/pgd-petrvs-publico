@@ -26,9 +26,10 @@ export class UnidadeIntegranteService {
     }))
   }
 
-  public alterandoGestor(form: FormGroup, items: IntegranteConsolidado[]): string[] {
+  public alterandoGestor(form: FormGroup, items: IntegranteAtribuicao[]): string[] {
     let result: string[] = [];
-    ['GESTOR', 'GESTOR_DELEGADO', 'GESTOR_SUBSTITUTO'].forEach(g => { if (form!.controls.atribuicoes.value.map((a: { key: string; }) => a.key).includes(g) && items.find(i => i.atribuicoes.includes(g as IntegranteAtribuicao))) result.push(this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, g)); });
+    let novasAtribuicoes = form!.controls.atribuicoes.value.map((a: { key: string; }) => a.key);
+    ['GESTOR', 'GESTOR_DELEGADO', 'GESTOR_SUBSTITUTO'].forEach(g => { if (novasAtribuicoes.includes(g) && items.includes(g as IntegranteAtribuicao)) result.push(this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, g)); });
     return result;
   }
 

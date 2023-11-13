@@ -23,7 +23,7 @@ class TenantController extends ControllerBase {
                 ]);
                 $unidade = $this->getUnidade($request);
                 $entity = $this->service->store($data['entity'], $unidade);
-                $entity=$entity??(object)$data['entity'];
+                $entity = $entity ?? (object) $data['entity'];
                 $result = $this->service->getById([
                     'id' => $entity->id,
                     'with' => $data['with']
@@ -39,6 +39,7 @@ class TenantController extends ControllerBase {
             throw $e;
         }
     }
+    
     public function cidades(Request $request) {
         try {
             $data = $request->validate([

@@ -62,8 +62,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     let result = null;
     if(['cpf', 'matricula', 'email', 'nome', 'apelido', 'perfil_id', 'unidade_lotacao_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    }
-    else if(controlName == "cpf" && !this.util.validarCPF(control.value)) {
+    } else if(controlName == "cpf" && !this.util.validarCPF(control.value)) {
       result = "Inválido";
     } else if (['data_nascimento'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
