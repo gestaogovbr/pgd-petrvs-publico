@@ -17,12 +17,14 @@ export class QuestionarioFormComponent extends PageFormBase<Questionario, Questi
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('listaExemplo', { static: false }) public listaExemplo?: InputSelectComponent;
   @ViewChild('listaTipoResposta', { static: false }) public listaTipoResposta?: InputSelectComponent;
+  @ViewChild('listaTipoRespostaB', { static: false }) public listaTipoRespostaB?: InputSelectComponent;
 
   public tipoQuestionario: LookupItem[] = [{ 'key': 'Interno', 'value': 'Interno' },{ 'key': 'Personalizado', 'value': 'Personalizado' }];
   public exemploLista: LookupItem[] = [{ 'key': '1', 'value': 'Exemplo 1' },{ 'key': '2', 'value': 'Exemplo 2' },{ 'key': '3', 'value': 'Exemplo 3' }];
   public exemploRadio: LookupItem[] = [{ 'key': '1', 'value': 'Exemplo 1' },{ 'key': '2', 'value': 'Exemplo 2' },{ 'key': '3', 'value': 'Exemplo 3' }];
   public tipo: LookupItem[] = [{ 'key': 'LISTA', 'value': 'Lista' },{ 'key': 'SWITCH', 'value': 'Sim/Não' },{ 'key': 'MULTIPLA', 'value': 'Resposta Múltipla' },{ 'key': 'UNICA', 'value': 'Resposta Única' }];
-
+  public formPergunta: FormGroup;
+  
   constructor(public injector: Injector) {
     super(injector, Questionario, QuestionarioDaoService);
     this.form = this.fh.FormBuilder({
@@ -36,9 +38,24 @@ export class QuestionarioFormComponent extends PageFormBase<Questionario, Questi
       input: {default: ""},
       listaTipoResposta: {default: ""},
       inputOpcoesResposta: {default: ""},
-      inputValorResposta: {default: ""},
-           
+      inputValorResposta: {default: ""},  
     }, this.cdRef, this.validate);
+    this.formPergunta = this.fh.FormBuilder ({
+      perguntasB:{default:[]},
+      perguntaB: {default: ""},
+      listaTipoRespostaB:{default: ""},
+      tipoRespostaB:{default: []},
+      inputOpcoesRespostaB:{default: ""},
+      inputValorRespostaB:{default: ""},
+      opcoesResposta:{default: {'opcao':"",'valor':""}},
+    }, this.cdRef, this.perguntaValidate);
+  }
+
+
+  public perguntaValidate = (control: AbstractControl, controlName: string) => {
+    let result = null;
+
+    return result;
   }
 
   
@@ -147,35 +164,36 @@ export class QuestionarioFormComponent extends PageFormBase<Questionario, Questi
 
   }
 
-  public addMultiRespostas(){
+  public addMultiRespostasB(){
     let result = undefined;
-    
-    const opcaoResposta = this.form?.controls.inputOpcoesResposta.value;
-    const valorResposta = this.form?.controls.inputValorResposta.value
-    const key = this.util.textHash(opcaoResposta);
-    
-    if (opcaoResposta && this.form?.controls.input.value && this.listaTipoResposta?.selectedItem?.value && this.util.validateLookupItem(this.form!.controls.multiOpcaoResposta.value,key)) {
+
+    const opcaoResposta = this.formPergunta.controls.inputOpcoesRespostaB.value;
+    const valorResposta = this.formPergunta.controls.inputValorRespostaB.value;
+    const key = this.util.textHash(opcaoResposta + valorResposta);
+
+    if (opcaoResposta && valorResposta && this.util.validateLookupItem(this.formPergunta!.controls.perguntasB.value, key)) {
       result = {
         key: key,
         value: opcaoResposta + ' - ' + valorResposta,
         data: {
-          opcao : opcaoResposta,
-          valor : valorResposta,
-          _status: "ADD",
+          opcaoResposta: opcaoResposta,
+          valorResposta: valorResposta,
+          _status: "ADD"
         }
       };
-      this.form!.controls.inputOpcoesResposta.setValue("");
-      this.form!.controls.inputValorResposta.setValue("");
-      
+      //console.log('FORMULARIOGRAD', this.formGraduacao!.value)
+      //this.formPergunta.controls.inputOpcoesRespostaB.setValue("");
+      //this.formPergunta.controls.inputValorRespostaB.setValue("");
     }
-    return result;
     
+    return result;
+       
   }
 
      /**
    * Método chamado para inserir um integrante no grid, seja este componente persistente ou não.
-   * @returns 
-   */
+   /** @returns 
+   
      public async add() {
       return {
         id: this.dao!.generateUuid(),
@@ -231,7 +249,20 @@ export class QuestionarioFormComponent extends PageFormBase<Questionario, Questi
   
   
   
-  public async addPergunta(){ }
+  public async addPergunta(){
+    return {
+      id: this.dao!.generateUuid(),
+      perguntaB: "",
+      listaTipoRespostaB:"",
+      tipoRespostaB:"",
+      multiOpcaoRespostaB:[],
+      inputOpcoesRespostaB:"",
+      inputValorRespostaB:"",
+      opcoesResposta:{'opcao':'','valor':''},
+    }
+
+
+   }
 
   public async loadPergunta(){  }
 

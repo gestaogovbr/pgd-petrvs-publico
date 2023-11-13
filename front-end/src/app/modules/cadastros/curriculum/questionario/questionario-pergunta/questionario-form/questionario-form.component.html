@@ -29,7 +29,7 @@
         </div>
     </separator>
     <separator title="Perguntas">
-        <grid [control]="form!.controls.perguntas" [minHeight]="500" [form]="form!" [hasDelete]="true"
+        <grid [control]="formPergunta!.controls.perguntasB" [minHeight]="500" [form]="formPergunta!" [hasDelete]="true"
             [add]="addPergunta.bind(this)" [load]="loadPergunta.bind(this)" [remove]="removePergunta.bind(this)" [save]="savePergunta.bind(this)" editable>
             
             <columns>
@@ -56,14 +56,14 @@
                 <column title="Respostas" titleHint="Informe as escolhas de respostas da pergunta" [template]="columnResposta" [editTemplate]="editResposta">
                     <ng-template let-row="row" #columnResposta>
                         <div class="text-wrap width-min-content">
-                            <input-multiselect [hidden]="this.listaTipoResposta?.selectedItem?.key == ('SWITCH' || '' || null)" [size]="6" label=""  controlName="multiOpcaoRespostaB" [addItemHandle]="addMultiRespostas.bind(this)" noBox>
+                            <input-multiselect [hidden]="this.listaTipoRespostaB?.selectedItem?.key == ('SWITCH' || '' || null)" [size]="12" label=""  controlName="multiOpcaoRespostaB" [addItemHandle]="addMultiRespostasB.bind(this)" noBox>
                                 <input-text #opcoesResposta [size]="6" label="Opções da resposta" icon="bi bi-pencil-fill" controlName="inputOpcoesRespostaB"  [attr.maxlength]=250></input-text>
                                 <input-text #valorResposta [size]="6" label="Valor da resposta" icon="bi bi-pencil-fill" controlName="inputValorRespostaB"  [attr.maxlength]=250></input-text>
                             </input-multiselect>
                         </div>
                     </ng-template>
                     <ng-template let-row="row" #editResposta>
-                        <input-multiselect [hidden]="this.listaTipoResposta?.selectedItem?.key == ('SWITCH' || '' || null)" [size]="6" label=""  controlName="multiOpcaoRespostaB" [addItemHandle]="addMultiRespostas.bind(this)" noBox>
+                        <input-multiselect [hidden]="this.listaTipoRespostaB?.selectedItem?.key == ('SWITCH' || '' || null)" [size]="12" label=""  controlName="multiOpcaoRespostaB" [addItemHandle]="addMultiRespostasB.bind(this)" noBox>
                             <input-text #opcoesResposta [size]="6" label="Opções da resposta" icon="bi bi-pencil-fill" controlName="inputOpcoesRespostaB" [attr.maxlength]=250></input-text>
                             <input-text #valorResposta [size]="6" label="Valor da resposta" icon="bi bi-pencil-fill" controlName="inputValorRespostaB" [attr.maxlength]=250></input-text>
                         </input-multiselect>
@@ -71,7 +71,7 @@
                 </column>
                 <column type="options"></column>
             </columns>
-            </grid>
+        </grid>
             
         
         <!--div class="row">
