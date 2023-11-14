@@ -104,6 +104,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     this.addOption(Object.assign({ onClick: this.consult.bind(this) }, this.OPTION_INFORMACOES), "MOD_PENT");
     this.addOption(Object.assign({ onClick: this.delete.bind(this) }, this.OPTION_EXCLUIR), "MOD_PENT_ENTR_EXCL");
     this.addOption(Object.assign({ onClick: this.showLogs.bind(this) }, this.OPTION_LOGS), "MOD_AUDIT_LOG");
+    this.addOption(Object.assign({ onClick: this.showProgresso.bind(this) }, { label: "Progresso", icon: "bi bi-activity" }), "MOD_AUDIT_LOG");
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -257,6 +258,16 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
 
   public async showCadeiaValor(processo_id: string){
     this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', 'processos', processo_id]}, {modal: true});
+  
+  }
+  public async showProgresso(entrega: PlanoEntregaEntrega){
+    this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', 'progresso', entrega.id]}, {
+      modal: true, 
+      modalClose: (modalResult) => { 
+        
+        
+      }
+    });
   }
 
   public refreshComentarios(modalResult: any) {

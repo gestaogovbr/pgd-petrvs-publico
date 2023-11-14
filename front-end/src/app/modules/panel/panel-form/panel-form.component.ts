@@ -131,7 +131,7 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
   }
 
   public async onSelectTab(tab: LookupItem) {
-    this.saveUsuarioConfig({ active_tab: tab });
+    if(this.viewInit) this.saveUsuarioConfig({ active_tab: tab.key });
   }
    
   public async loadData(entity: Tenant, form: FormGroup) {

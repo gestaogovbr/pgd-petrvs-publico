@@ -99,6 +99,7 @@ export class AppComponent {
   private _menu: any;
   private _menuDetectChanges: any;
 
+
   constructor(public injector: Injector) {
     /* Injector */
     this.globals = injector.get<GlobalsService>(GlobalsService);
@@ -132,7 +133,6 @@ export class AppComponent {
     this.lex.cdRef = this.cdRef;
     /* Definição do menu do sistema */
     this.setMenuVars();
-    //this.globals.contexto = this.menuContexto[0];    
   }
 
   public setMenuVars() {

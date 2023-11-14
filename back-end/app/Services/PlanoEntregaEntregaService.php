@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Models\PlanoEntregaEntrega;
+use App\Models\PlanoEntregaEntregaProgresso;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
 
 class PlanoEntregaEntregaService extends ServiceBase
 {
@@ -36,6 +38,33 @@ class PlanoEntregaEntregaService extends ServiceBase
         }
         $data["where"] = $where;
         return $data;
+    }
+
+    public function afterUpdate($data) {
+        $entrega = PlanoEntregaEntrega::find($data['id']);
+        $usuario = parent::loggedUser();
+
+        $atributosParaCopiar = [
+            'homologado',
+            'progresso_esperado',
+            'progresso_realizado',
+            'data_inicio',
+            'data_fim',
+            'meta',
+            'realizado',
+        ];
+    
+        $dadosProgresso = collect($entrega->getAttributes())
+        ->only($atributosParaCopiar)
+        ->merge([
+            'usuario_id' => $usuario->id,
+            'plano_entrega_entrega_id' => $entrega->id,
+            'data_progresso' => Carbon::now(),
+        ])->toArray();
+    
+        $progresso = new PlanoEntregaEntregaProgresso($dadosProgresso);
+        $progresso->save();    
+        return $entrega;
     }
 
 }

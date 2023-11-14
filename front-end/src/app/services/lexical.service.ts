@@ -156,7 +156,7 @@ export class LexicalService {
     let preposition = groups ? groups[2].trim().replace(" ", "%") : "";
     let noun = groups ? groups[3] : "";
     let plural = this.plurals[noun.toLowerCase()];
-    let key = (plural || noun).toLowerCase();
+    let key = (plural || noun).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
     let native = this.defaults[key];
     let database = this.vocabulary[key];
     /* Verifica se é necessário fazer a transformação */

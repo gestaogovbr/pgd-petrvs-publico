@@ -113,7 +113,10 @@ export class PlanejamentoOkrComponent extends PageFrameBase {
 
           this.objetivo_entregas.forEach((entrega) => {
             const unidade = entrega.entrega?.unidade;
+            entrega._metadata = Object.assign(entrega._metadata || {}, { corBorda: this.util.getRandomColor() });
+
             if (unidade) {
+              unidade._metadata = Object.assign(unidade._metadata || {}, { corBorda: this.util.getRandomColor() });
               const unidadeId = unidade.id;
               if (!entregasPorUnidade[unidadeId]) {
                 entregasPorUnidade[unidadeId] = { unidade, entregas: [] };
@@ -143,15 +146,17 @@ export class PlanejamentoOkrComponent extends PageFrameBase {
       })
       .asPromise();
 
-    const divPai = (event.target as HTMLElement).closest('.entrega-geral')
+    const divPai = (event.target as HTMLElement).closest('.entrega-geral');
     const divAtividades = divPai?.getElementsByClassName('atividades');
-    if(divAtividades?.length){
-      divAtividades[0].setAttribute("class", "atividades atividadesVisivel");
-      if(!entrega.atividades.length){
-        divAtividades[0].innerHTML = `Essa entrega não tem ${this.lex.translate('Atividades')} cadastradas`
-      }  
+    if (divAtividades?.length) {
+      divAtividades[0].setAttribute('class', 'atividades atividadesVisivel');
+      if (!entrega.atividades.length) {
+        divAtividades[0].innerHTML = `Essa entrega não tem ${this.lex.translate(
+          'Atividades'
+        )} cadastradas`;
+      }
     }
-    
+
     this.cdRef.detectChanges();
   }
 
@@ -163,6 +168,9 @@ export class PlanejamentoOkrComponent extends PageFrameBase {
       ).then((planejamento) => {
         this.planejamento = planejamento as Planejamento;
         this.objetivos = this.planejamento.objetivos_okr || [];
+        this.objetivos.forEach(objetivo => {
+          objetivo._metadata = Object.assign(objetivo._metadata || {}, { corBorda: this.util.getRandomColor() });
+        });
         this.cdRef.detectChanges();
       });
     }
