@@ -110,10 +110,10 @@ const _c3 = ["gestorSubstituto"];
 const _c4 = ["entidade"];
 const _c5 = ["notificacoes"];
 const _c6 = ["instituidora"];
-function UnidadeFormComponent_tab_40_Template(rf, ctx) {
+function UnidadeFormComponent_tab_41_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](0, "tab", 34);
-    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](1, "notificacoes-config", 35, 36);
+    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](0, "tab", 35);
+    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](1, "notificacoes-config", 36, 37);
     _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
@@ -172,6 +172,9 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
         default: ""
       },
       instituidora: {
+        default: 0
+      },
+      informal: {
         default: 0
       },
       atividades_arquivamento_automatico: {
@@ -308,6 +311,7 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
       }());
     });
   }
+  informal() {}
 }
 _class = UnidadeFormComponent;
 _class.ɵfac = function UnidadeFormComponent_Factory(t) {
@@ -340,9 +344,9 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵdef
     }
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵInheritDefinitionFeature"]],
-  decls: 41,
-  vars: 55,
-  consts: [["initialFocus", "codigo", 3, "title", "form", "disabled", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], ["label", "Instit.", "labelClass", "text-nowrap", "controlName", "instituidora", 3, "size", "labelInfo"], ["label", "C\u00F3digo", "controlName", "codigo", 3, "size"], ["label", "Sigla", "controlName", "sigla", "required", "", 3, "size"], ["label", "Nome", "controlName", "nome", "required", "", 3, "size"], ["label", "Gestor", "controlName", "gestor_id", "labelInfo", "Respons\u00E1vel pela unidade", 3, "size", "emptyValue", "control", "dao"], ["gestor", ""], ["label", "Gestor Substituto", "controlName", "gestor_substituto_id", "labelInfo", "Respons\u00E1vel substituto pela unidade", 3, "size", "emptyValue", "control", "dao"], ["gestorSubstituto", ""], ["controlName", "cidade_id", "required", "", 3, "size", "dao"], ["cidade", ""], ["controlName", "unidade_pai_id", "required", "", 3, "size", "label", "where", "dao"], ["unidade_pai", ""], ["disabled", "", "controlName", "entidade_id", "required", "", 3, "size", "dao"], ["entidade", ""], ["key", "CONFIGURACOES", "label", "Configura\u00E7\u00F5es"], ["controlName", "distribuicao_forma_contagem_prazos", "labelInfo", "A forma da contagem dos prazos para a distribui\u00E7\u00E3o (lan\u00E7amento da demanda).", 3, "size", "label", "items"], ["controlName", "entrega_forma_contagem_prazos", "labelInfo", "A forma da contagem dos prazos na entrega da demanda (data da entrega e tempo despendido)", 3, "size", "label", "items"], ["label", "Arquivamento autom\u00E1tico", "controlName", "atividades_arquivamento_automatico", "labelInfo", "Se ap\u00F3s a avalia\u00E7\u00E3o, arquivar\u00E1 automaticamente a atividade.", 3, "size", "items"], ["clss", "row"], ["label", "Etiquetas", "multiselectStyle", "inline", "controlName", "etiquetas", 3, "maxItemWidth", "size", "addItemHandle"], ["label", "Texto", "controlName", "etiqueta_texto", 3, "size"], ["label", "\u00CDcone", "controlName", "etiqueta_icone", 3, "size", "items"], ["label", "Cor", "controlName", "etiqueta_cor", 3, "size"], ["controlName", "texto_complementar_plano", 3, "label", "dataset"], ["key", "EXPEDIENTE", "label", "Expediente"], ["labelPosition", "right", "icon", "bi bi-check2", "controlName", "usar_expediente_entidade", "labelInfo", "Se utiliza o expediente configurado na entidade ao inv\u00E9s de especificar na unidade", 3, "label", "size", "change"], ["usarExpedienteEntidade", ""], [3, "disabled", "expedienteDisabled", "control"], ["expediente", ""], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es", 4, "ngIf"], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es"], [3, "unidadeId", "entity", "disabled"], ["notificacoes", ""]],
+  decls: 42,
+  vars: 57,
+  consts: [["initialFocus", "codigo", 3, "title", "form", "disabled", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], ["label", "Instit.", "labelClass", "text-nowrap", "controlName", "instituidora", 3, "size", "labelInfo"], ["label", "Informal", "labelClass", "text-nowrap", "controlName", "informal", 3, "size", "labelInfo", "change"], ["label", "C\u00F3digo", "controlName", "codigo", 3, "size"], ["label", "Sigla", "controlName", "sigla", "required", "", 3, "size"], ["label", "Nome", "controlName", "nome", "required", "", 3, "size"], ["label", "Gestor", "controlName", "gestor_id", "labelInfo", "Respons\u00E1vel pela unidade", 3, "size", "emptyValue", "control", "dao"], ["gestor", ""], ["label", "Gestor Substituto", "controlName", "gestor_substituto_id", "labelInfo", "Respons\u00E1vel substituto pela unidade", 3, "size", "emptyValue", "control", "dao"], ["gestorSubstituto", ""], ["controlName", "cidade_id", "required", "", 3, "size", "dao"], ["cidade", ""], ["controlName", "unidade_pai_id", "required", "", 3, "size", "label", "where", "dao"], ["unidade_pai", ""], ["disabled", "", "controlName", "entidade_id", "required", "", 3, "size", "dao"], ["entidade", ""], ["key", "CONFIGURACOES", "label", "Configura\u00E7\u00F5es"], ["controlName", "distribuicao_forma_contagem_prazos", "labelInfo", "A forma da contagem dos prazos para a distribui\u00E7\u00E3o (lan\u00E7amento da demanda).", 3, "size", "label", "items"], ["controlName", "entrega_forma_contagem_prazos", "labelInfo", "A forma da contagem dos prazos na entrega da demanda (data da entrega e tempo despendido)", 3, "size", "label", "items"], ["label", "Arquivamento autom\u00E1tico", "controlName", "atividades_arquivamento_automatico", "labelInfo", "Se ap\u00F3s a avalia\u00E7\u00E3o, arquivar\u00E1 automaticamente a atividade.", 3, "size", "items"], ["clss", "row"], ["label", "Etiquetas", "multiselectStyle", "inline", "controlName", "etiquetas", 3, "maxItemWidth", "size", "addItemHandle"], ["label", "Texto", "controlName", "etiqueta_texto", 3, "size"], ["label", "\u00CDcone", "controlName", "etiqueta_icone", 3, "size", "items"], ["label", "Cor", "controlName", "etiqueta_cor", 3, "size"], ["controlName", "texto_complementar_plano", 3, "label", "dataset"], ["key", "EXPEDIENTE", "label", "Expediente"], ["labelPosition", "right", "icon", "bi bi-check2", "controlName", "usar_expediente_entidade", "labelInfo", "Se utiliza o expediente configurado na entidade ao inv\u00E9s de especificar na unidade", 3, "label", "size", "change"], ["usarExpedienteEntidade", ""], [3, "disabled", "expedienteDisabled", "control"], ["expediente", ""], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es", 4, "ngIf"], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es"], [3, "unidadeId", "entity", "disabled"], ["notificacoes", ""]],
   template: function UnidadeFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](0, "editable-form", 0);
@@ -352,39 +356,47 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵdef
         return ctx.onCancel();
       });
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](1, "tabs", 1)(2, "tab", 2)(3, "div", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](4, "input-switch", 4)(5, "input-text", 5)(6, "input-text", 6)(7, "input-text", 7);
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](4, "input-switch", 4);
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](5, "input-switch", 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵlistener"]("change", function UnidadeFormComponent_Template_input_switch_change_5_listener() {
+        return ctx.informal();
+      });
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](8, "div", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](9, "input-search", 8, 9)(11, "input-search", 10, 11);
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](6, "input-text", 6)(7, "input-text", 7)(8, "input-text", 8);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](13, "div", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](14, "input-search", 12, 13)(16, "input-search", 14, 15)(18, "input-search", 16, 17);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](20, "tab", 18)(21, "div", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](22, "input-select", 19)(23, "input-select", 20)(24, "input-radio", 21);
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](9, "div", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](10, "input-search", 9, 10)(12, "input-search", 11, 12);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](25, "separator");
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](26, "div", 22)(27, "input-multiselect", 23);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](28, "input-text", 24)(29, "input-select", 25)(30, "input-color", 26);
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](14, "div", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](15, "input-search", 13, 14)(17, "input-search", 15, 16)(19, "input-search", 17, 18);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](31, "separator");
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](32, "div", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](33, "input-editor", 27);
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](21, "tab", 19)(22, "div", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](23, "input-select", 20)(24, "input-select", 21)(25, "input-radio", 22);
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](26, "separator");
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](27, "div", 23)(28, "input-multiselect", 24);
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](29, "input-text", 25)(30, "input-select", 26)(31, "input-color", 27);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](34, "tab", 28)(35, "div", 3)(36, "input-switch", 29, 30);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵlistener"]("change", function UnidadeFormComponent_Template_input_switch_change_36_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](32, "separator");
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](33, "div", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](34, "input-editor", 28);
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](35, "tab", 29)(36, "div", 3)(37, "input-switch", 30, 31);
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵlistener"]("change", function UnidadeFormComponent_Template_input_switch_change_37_listener() {
         return ctx.onUsarExpedienteEntidadeChange();
       });
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](38, "calendar-expediente", 31, 32);
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](39, "calendar-expediente", 32, 33);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵtemplate"](40, UnidadeFormComponent_tab_40_Template, 3, 3, "tab", 33);
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵtemplate"](41, UnidadeFormComponent_tab_41_Template, 3, 3, "tab", 34);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]()();
     }
     if (rf & 2) {
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("title", ctx.isModal ? "" : ctx.title)("form", ctx.form)("disabled", ctx.formDisabled);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](4);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 1)("labelInfo", "Se a " + ctx.lex.noun("unidade") + " \u00E9 instituidora de Programas.");
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 1)("labelInfo", "Se a " + ctx.lex.noun("unidade") + " \u00E9 informal.");
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 2);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵattribute"]("maxlength", 250);
@@ -401,7 +413,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 4)("dao", ctx.cidadeDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 4)("label", ctx.lex.translate("Unidade") + " pai")("where", _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵpureFunction1"](53, _c8, _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵpureFunction1"](51, _c7, ctx.form.controls.entidade_id.value)))("dao", ctx.dao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 4)("label", ctx.lex.translate("Unidade") + " pai")("where", _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵpureFunction1"](55, _c8, _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵpureFunction1"](53, _c7, ctx.form.controls.entidade_id.value)))("dao", ctx.dao);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 4)("dao", ctx.entidadeDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](4);
@@ -729,7 +741,7 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
     var _this6 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let confirm = true;
-      let n = _this6.unidadeIntegranteService.alterandoGestor(form, _this6.items);
+      let n = _this6.unidadeIntegranteService.alterandoGestor(form, row.atribuicoes);
       if (n.length) confirm = yield _this6.dialog.confirm("Confirma a Alteração de Gestor ?", n.length == 1 ? "O " + n[0] + " será alterado." : "Serão alterados: " + n.join(', ') + ".");
       if (form.controls.atribuicoes.value.length && confirm) {
         _this6.loading = true;

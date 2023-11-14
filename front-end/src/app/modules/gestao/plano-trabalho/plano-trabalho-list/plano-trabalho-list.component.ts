@@ -25,7 +25,6 @@ import { UtilService } from 'src/app/services/util.service';
 export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, PlanoTrabalhoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
-  public static selectRoute?: FullRoute = { route: ["gestao", "plano-trabalho"] };
   public unidadeDao: UnidadeDaoService;
   public documentoDao: DocumentoDaoService;
   public documentoService: DocumentoService;
@@ -73,7 +72,9 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     this.filter = this.fh.FormBuilder({
       agrupar: { default: true },
       usuario: { default: "" },
+      status: { default: "" },
       unidade_id: { default: null },
+      arquivados: { default: false },
       tipo_modalidade_id: { default: null },
       data_filtro: { default: null },
       data_filtro_inicio: { default: new Date() },
@@ -190,7 +191,6 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
 
   public filterValidate = (control: AbstractControl, controlName: string) => {
     let result = null;
-
     if (controlName == "data_filtro_inicio" && control.value > this.filter?.controls.data_filtro_fim.value) {
       result = "Maior que fim";
     } else if (controlName == "data_filtro_fim" && control.value < this.filter?.controls.data_filtro_inicio.value) {
@@ -202,6 +202,8 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
   public filterClear(filter: FormGroup) {
     filter.controls.usuario.setValue("");
     filter.controls.unidade_id.setValue(null);
+    filter.controls.status.setValue(null);
+    filter.controls.arquivados.setValue(false);
     filter.controls.tipo_modalidade_id.setValue(null);
     filter.controls.data_filtro.setValue(null);
     filter.controls.data_filtro_inicio.setValue(new Date());
@@ -220,13 +222,11 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
       result.push(["data_filtro_inicio", "==", form.data_filtro_inicio]);
       result.push(["data_filtro_fim", "==", form.data_filtro_fim]);
     }
-    if (form.usuario?.length) {
-      result.push(["usuario.nome", "like", "%" + form.usuario.trim().replace(" ", "%") + "%"]);
-    }
-    if (form.unidade_id?.length) {
-      result.push(["unidade_id", "==", form.unidade_id]);
-    }
-
+    if (form.usuario?.length) result.push(["usuario.nome", "like", "%" + form.usuario.trim().replace(" ", "%") + "%"]);
+    if (form.unidade_id?.length) result.push(["unidade_id", "==", form.unidade_id]);
+    if (form.status) result.push(["status", "==", form.status]);
+    //  (RI_PTR_C) Por padrão, os planos de trabalho retornados na listagem do grid são os que não foram arquivados.
+    result.push(["incluir_arquivados", "==", this.filter!.controls.arquivados.value]);
     return result;
   }
 
@@ -251,7 +251,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
   public botaoAtendeCondicoes(botao: ToolbarButton, planoTrabalho: PlanoTrabalho): boolean {
     let assinaturasExigidas: string[] = planoTrabalho.assinaturasExigidas;
     let assinaturasFaltantes: string[] = this.utilService.array_diff(planoTrabalho.assinaturasExigidas,planoTrabalho.jaAssinaramTCR);
-    let usuarioEhGestorUnidadeExecutora: boolean = this.auth.usuario?.id == planoTrabalho.unidade?.gestor?.usuario?.id;
+    let usuarioEhGestorUnidadeExecutora: boolean = this.auth.isGestorUnidade(planoTrabalho.unidade_id);
     let usuarioJaAssinouTCR: boolean = planoTrabalho.jaAssinaramTCR.includes(this.auth.usuario?.id!);
     let assinaturaUsuarioEhExigida: boolean = planoTrabalho.assinaturasExigidas.includes(this.auth.usuario?.id!);
     let planoIncluido = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'INCLUIDO';
@@ -260,110 +260,115 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     let planoAtivo = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'ATIVO';
     let planoConcluido = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'CONCLUIDO';
     let planoCancelado = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'CANCELADO';
+    let planoDeletado = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'EXCLUIDO';
     let planoArquivado = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'ARQUIVADO';
     //let programaExigeOutrasAssinaturas = !!assinaturasExigidas.filter(a => a != this.auth.usuario?.id).length;
     let planoSuspenso = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'SUSPENSO';
     let planoPossuiEntrega = planoTrabalho.entregas.length > 0;
-    switch (botao) {
-      case this.BOTAO_ALTERAR:
-        /*
-          (RN_PTR_M) Condições para que um Plano de Trabalho possa ser alterado:
-          O usuário logado precisa possuir a capacidade "MOD_PTR_EDT", o Plano de Trabalho precisa ser válido (ou seja, nem deletado, nem arquivado, nem estar no status CANCELADO), e:
-              - estando com o status 'INCLUIDO', o usuário logado precisa ser o participante do plano ou o gestor da Unidade Executora;
-              - estando com o status 'AGUARDANDO_ASSINATURA', o usuário logado precisa ser um dos que já assinaram o TCR e todas as assinaturas tornam-se sem efeito;
-              - estando com o status 'ATIVO', o usuário precisa ser gestor da Unidade Executora e possuir a capacidade MOD_PTR_EDT_ATV. Após alterado, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
-        */
-        let condition1 = this.auth.hasPermissionTo("MOD_PTR_EDT");
-        let condition2 = this.planoTrabalhoService.isValido(planoTrabalho);
-        let condition3 = planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora);
-        let condition4 = planoAguardandoAssinatura && usuarioJaAssinouTCR;
-        let condition5 = planoAtivo && usuarioEhGestorUnidadeExecutora && this.auth.hasPermissionTo("MOD_PTR_EDT_ATV");
-        return condition1 && condition2 && (condition3 || condition4 || condition5);
-      case this.BOTAO_ARQUIVAR:
-        /*
-          (RN_PTR_N) ARQUIVAR
-          O plano precisa estar com o status CONCLUIDO ou CANCELADO, não ter sido arquivado, e:
-            - o usuário logado precisa ser o participante ou o gestor da Unidade Executora;
-        */
-        return (planoConcluido || planoCancelado) && !planoArquivado && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora);
-      case this.BOTAO_ASSINAR:
-        /*
-          (RN_PTR_O) ASSINAR
-            - o plano precisa possuir ao menos uma entrega, e:
-            - o plano precisa estar com o status INCLUIDO, e:
-              - o usuário logado precisa ser o participante do plano ou o gestor da sua Unidade Executora, e
-              - a assinatura do usuário logado precisa ser uma das exigidas pelo Programa de Gestão, e ele não ter ainda assinado;
-            - ou o plano precisa estar com o status AGUARDANDO_ASSINATURA, e:
-              - a assinatura do usuário logado precisa ser uma das exigidas pelo Programa de Gestão, e ele não ter ainda assinado;
-        */
-        let condicao1 = usuarioEhParticipante || usuarioEhGestorUnidadeExecutora;
-        let condicao2 = assinaturaUsuarioEhExigida && !usuarioJaAssinouTCR;
-        return planoPossuiEntrega && ((planoIncluido && condicao1 && condicao2) || (planoAguardandoAssinatura && condicao2));
-      case this.BOTAO_ATIVAR:
-        /*
-          (RN_PTR_P) ATIVAR
-          O plano precisa estar no status 'INCLUIDO', e
-              - o usuário logado precisa ser o participante do plano ou gestor da Unidade Executora, e
-              - nenhuma assinatura no TCR ser exigida pelo programa, e
-              - o plano de trabalho precisa ter ao menos uma entrega;        
-        */
-        return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && !assinaturasExigidas.length && planoPossuiEntrega;
-      case this.BOTAO_CANCELAR_ASSINATURA:
-        /*
-          (RN_PTR_Q) CANCELAR ASSINATURA
-          O plano precisa estar no status 'AGUARDANDO_ASSINATURA'; e
-            - o usuário logado precisa já ter assinado o TCR;
-        */
-        return planoAguardandoAssinatura && usuarioJaAssinouTCR;
-      case this.BOTAO_CANCELAR_PLANO:
-        /*
-          (RN_PTR_R) CANCELAR 
-          O usuário logado precisa possuir a capacidade "MOD_PTR_CNC", e
-            - o plano precisa estar em um dos seguintes status: INCLUIDO, AGUARDANDO_ASSINATURA, ATIVO ou CONCLUIDO; e
-            - o usuário logado precisa ser gestor da Unidade Executora;
-        */
-        return this.auth.hasPermissionTo("MOD_PTR_CNC") && ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO', 'CONCLUIDO'].includes(planoTrabalho.status);
-      case this.BOTAO_INFORMACOES:
-        /*
+    if(botao == this.BOTAO_INFORMACOES && this.auth.hasPermissionTo("MOD_PTR")) {
+      /*
           (RN_PTR_S) CONSULTAR
           Todos os participantes podem visualizar todos os planos de trabalho, desde que possuam a capacidade "MOD_PTR";
-        */
-        return this.auth.hasPermissionTo("MOD_PTR");
-      case this.BOTAO_DESARQUIVAR:
-        /*
-          (RN_PTR_T) DESARQUIVAR
-          O plano precisa estar arquivado, e:
-              - o usuário logado precisa ser o participante ou gestor da Unidade Executora;
-        */
-        return planoArquivado && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora);
-      case this.BOTAO_ENVIAR_ASSINATURA:
-        /*
-          (RN_PTR_U) ENVIAR PARA ASSINATURA
-          O plano precisa estar com o status INCLUIDO; e
-            - o usuário logado precisa ser o participante do plano ou gestor da sua Unidade Executora; e
-            - se a assinatura do usuário logado for exigida, ele já deve ter assinado o TCR; e
-            - devem existir assinaturas exigíveis ainda pendentes; e
-            - o plano precisa possuir ao menos uma entrega;
-        */
-        return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && (!assinaturaUsuarioEhExigida || usuarioJaAssinouTCR) && !!assinaturasFaltantes.length && planoPossuiEntrega;
-      case this.BOTAO_REATIVAR:
-        /*
-          (RN_PTR_W) REATIVAR
-          O plano precisa estar com o status SUSPENSO, e
-            - o usuário logado precisa ser gestor da Unidade Executora;
-        */
-        return planoSuspenso && usuarioEhGestorUnidadeExecutora;
-      case this.BOTAO_SUSPENDER:
-        /*
-          (RN_PTR_X) SUSPENDER
-          O plano precisa estar com o status ATIVO, e
-            - o usuário logado precisa ser gestor da Unidade Executora;
-        */
-        return planoAtivo && usuarioEhGestorUnidadeExecutora;
-      case this.BOTAO_TERMOS:
-        return this.auth.hasPermissionTo("MOD_PTR");
-      case this.BOTAO_CONSOLIDACOES:
-        return true;
+      */
+      return true;
+    } else {
+      if(planoDeletado) return false; else {
+        switch (botao) {
+          case this.BOTAO_ALTERAR:
+            /*
+              (RN_PTR_M) Condições para que um Plano de Trabalho possa ser alterado:
+              O usuário logado precisa possuir a capacidade "MOD_PTR_EDT", o Plano de Trabalho precisa ser válido (ou seja, nem deletado, nem arquivado, nem estar no status CANCELADO), e:
+                  - estando com o status 'INCLUIDO', o usuário logado precisa ser o participante do plano ou o gestor da Unidade Executora;
+                  - estando com o status 'AGUARDANDO_ASSINATURA', o usuário logado precisa ser um dos que já assinaram o TCR e todas as assinaturas tornam-se sem efeito;
+                  - estando com o status 'ATIVO', o usuário precisa ser gestor da Unidade Executora e possuir a capacidade MOD_PTR_EDT_ATV. Após alterado, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
+            */
+            let condition1 = this.auth.hasPermissionTo("MOD_PTR_EDT");
+            let condition2 = this.planoTrabalhoService.isValido(planoTrabalho);
+            let condition3 = planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora);
+            let condition4 = planoAguardandoAssinatura && usuarioJaAssinouTCR;
+            let condition5 = planoAtivo && usuarioEhGestorUnidadeExecutora && this.auth.hasPermissionTo("MOD_PTR_EDT_ATV");
+            return condition1 && condition2 && (condition3 || condition4 || condition5);
+          case this.BOTAO_ARQUIVAR:
+            /*
+              (RN_PTR_N) ARQUIVAR
+              O plano precisa estar com o status CONCLUIDO ou CANCELADO, não ter sido arquivado, e:
+                - o usuário logado precisa ser o participante ou o gestor da Unidade Executora;
+            */
+            return (planoConcluido || planoCancelado) && !planoArquivado && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora);
+          case this.BOTAO_ASSINAR:
+            /*
+              (RN_PTR_O) ASSINAR
+                - o plano precisa possuir ao menos uma entrega, e:
+                - o plano precisa estar com o status INCLUIDO, e:
+                  - o usuário logado precisa ser o participante do plano ou o gestor da sua Unidade Executora, e
+                  - a assinatura do usuário logado precisa ser uma das exigidas pelo Programa de Gestão, e ele não ter ainda assinado;
+                - ou o plano precisa estar com o status AGUARDANDO_ASSINATURA, e:
+                  - a assinatura do usuário logado precisa ser uma das exigidas pelo Programa de Gestão, e ele não ter ainda assinado;
+            */
+            let condicao1 = usuarioEhParticipante || usuarioEhGestorUnidadeExecutora;
+            let condicao2 = assinaturaUsuarioEhExigida && !usuarioJaAssinouTCR;
+            return planoPossuiEntrega && ((planoIncluido && condicao1 && condicao2) || (planoAguardandoAssinatura && condicao2));
+          case this.BOTAO_ATIVAR:
+            /*
+              (RN_PTR_P) ATIVAR
+              O plano precisa estar no status 'INCLUIDO', e
+                  - o usuário logado precisa ser o participante do plano ou gestor da Unidade Executora, e
+                  - nenhuma assinatura no TCR ser exigida pelo programa, e
+                  - o plano de trabalho precisa ter ao menos uma entrega;        
+            */
+            return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && !assinaturasExigidas.length && planoPossuiEntrega;
+          case this.BOTAO_CANCELAR_ASSINATURA:
+            /*
+              (RN_PTR_Q) CANCELAR ASSINATURA
+              O plano precisa estar no status 'AGUARDANDO_ASSINATURA'; e
+                - o usuário logado precisa já ter assinado o TCR;
+            */
+            return planoAguardandoAssinatura && usuarioJaAssinouTCR;
+          case this.BOTAO_CANCELAR_PLANO:
+            /*
+              (RN_PTR_R) CANCELAR 
+              O usuário logado precisa possuir a capacidade "MOD_PTR_CNC", e
+                - o plano não pode ter sido deletado e precisa estar em um dos seguintes status: INCLUIDO, AGUARDANDO_ASSINATURA, ATIVO ou CONCLUIDO; e
+                - o usuário logado precisa ser gestor da Unidade Executora;
+            */
+            return this.auth.hasPermissionTo("MOD_PTR_CNC") && ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO', 'CONCLUIDO'].includes(planoTrabalho.status);
+          case this.BOTAO_DESARQUIVAR:
+            /*
+              (RN_PTR_T) DESARQUIVAR
+              O plano precisa estar arquivado, e:
+                  - o usuário logado precisa ser o participante ou gestor da Unidade Executora;
+            */
+            return planoArquivado && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora);
+          case this.BOTAO_ENVIAR_ASSINATURA:
+            /*
+              (RN_PTR_U) ENVIAR PARA ASSINATURA
+              O plano precisa estar com o status INCLUIDO; e
+                - o usuário logado precisa ser o participante do plano ou gestor da sua Unidade Executora; e
+                - se a assinatura do usuário logado for exigida, ele já deve ter assinado o TCR; e
+                - devem existir assinaturas exigíveis ainda pendentes; e
+                - o plano precisa possuir ao menos uma entrega;
+            */
+            return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && (!assinaturaUsuarioEhExigida || usuarioJaAssinouTCR) && !!assinaturasFaltantes.length && planoPossuiEntrega;
+          case this.BOTAO_REATIVAR:
+            /*
+              (RN_PTR_W) REATIVAR
+              O plano precisa estar com o status SUSPENSO, e
+                - o usuário logado precisa ser gestor da Unidade Executora;
+            */
+            return planoSuspenso && usuarioEhGestorUnidadeExecutora;
+          case this.BOTAO_SUSPENDER:
+            /*
+              (RN_PTR_X) SUSPENDER
+              O plano precisa estar com o status ATIVO, e
+                - o usuário logado precisa ser gestor da Unidade Executora;
+            */
+            return planoAtivo && usuarioEhGestorUnidadeExecutora;
+          case this.BOTAO_TERMOS:
+            return this.auth.hasPermissionTo("MOD_PTR");
+          case this.BOTAO_CONSOLIDACOES:
+            return true;
+        }
+      }
     }
     return false;
   }
@@ -417,7 +422,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
 
   public cancelarPlano(planoTrabalho: PlanoTrabalho) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoTrabalho", entity: Object.assign({},planoTrabalho, {arquivar: true}), novoStatus: "CANCELADO", onClick: this.dao!.cancelarPlano.bind(this.dao) },
+      metadata: { tipo: "PlanoTrabalho", entity: Object.assign({},planoTrabalho, {arquivar: true}), exigeJustificativa: true, novoStatus: "CANCELADO", onClick: this.dao!.cancelarPlano.bind(this.dao) },
       title: "Cancelar Plano de Trabalho",
       modalClose: (modalResult) => {
         if (modalResult) {

@@ -464,7 +464,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("size", 12);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("ngIf", ctx.auth.hasPermissionTo("MOD_TIPO_CAP_CONS"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("ngIf", ctx.auth.hasPermissionTo("MOD_TIPO_CAP"));
     }
   },
   dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_16__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_16__.NgIf, src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_2__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_9__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_10__.ColumnComponent, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_11__.InputSwitchComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_12__.InputTextComponent, _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_13__.TabsComponent, _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_14__.TabComponent],
@@ -549,6 +549,7 @@ class PerfilListComponent extends src_app_modules_base_page_list_base__WEBPACK_I
     /* Inicializações */
     this.title = this.lex.translate("Perfis");
     this.code = "MOD_CFG_PERFS";
+    this.orderBy = [['nome', 'asc']];
     this.filter = this.fh.FormBuilder({
       nome: {
         default: ""

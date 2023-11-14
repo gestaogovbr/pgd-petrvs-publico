@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
+use Illuminate\Http\Request;
+use Throwable;
 
 class TemplateController extends ControllerBase
 {
@@ -21,4 +23,16 @@ class TemplateController extends ControllerBase
                 break;
         }
     }
+
+    public function teste(Request $request)
+    {
+        try {
+            return response()->json([
+                'dados' => $this->service->teste()
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
 }

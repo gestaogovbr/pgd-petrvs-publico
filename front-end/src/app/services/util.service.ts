@@ -119,7 +119,6 @@ export class UtilService {
     let leaf = tree.pop();
     let last = tree.reduce((a, o)=> a[Array.isArray(a) ? parseInt(o) : o], source);
     if(last && leaf) last[leaf] = value;
-    return
   }
 
   public validateLookupItem(lista: LookupItem[], key: any): boolean | undefined {

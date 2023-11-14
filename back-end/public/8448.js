@@ -258,7 +258,7 @@ class CapacidadeListComponent extends src_app_modules_base_page_list_base__WEBPA
       }
     });
     // Testa se o usuário possui permissão para exibir dados do tipo de capacidade
-    if (this.auth.hasPermissionTo("MOD_TIPO_CAP_CONS")) {
+    if (this.auth.hasPermissionTo("MOD_TIPO_CAP")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",

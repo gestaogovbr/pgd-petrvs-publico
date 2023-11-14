@@ -21,7 +21,7 @@ class PlanejamentoObjetivoController extends ControllerBase {
                 if (!$usuario->hasPermissionTo('MOD_PLAN_INST_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não realizada");
                 break;
             case 'QUERY':
-                if (!$usuario->hasPermissionTo('MOD_PLAN_INST_CONS')) throw new ServerException("CapacidadeStore", "Consulta não realizada");
+                if (!$usuario->hasPermissionTo('MOD_PLAN_INST')) throw new ServerException("CapacidadeStore", "Consulta não realizada");
                 break;
         }
     }

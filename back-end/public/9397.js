@@ -172,7 +172,7 @@ class TipoJustificativaListComponent extends src_app_modules_base_page_list_base
       }
     });
     // Testa se o usuário possui permissão para exibir dados do tipo de justificativa
-    if (this.auth.hasPermissionTo("MOD_TIPO_JUST_CONS")) {
+    if (this.auth.hasPermissionTo("MOD_TIPO_JUST")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",

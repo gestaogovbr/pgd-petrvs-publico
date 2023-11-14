@@ -216,7 +216,7 @@ class TipoTarefaListComponent extends src_app_modules_base_page_list_base__WEBPA
       }
     });
     // Testa se o usuário possui permissão para exibir dados da tarefa
-    if (this.auth.hasPermissionTo("MOD_TRF_CONS")) {
+    if (this.auth.hasPermissionTo("MOD_TRF")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",

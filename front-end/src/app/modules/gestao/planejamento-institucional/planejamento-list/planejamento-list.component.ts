@@ -46,7 +46,7 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
       'planejamento_superior.objetivos'
     ];
     // Testa se o usuário possui permissão para exibir planejamentos institucionais
-    if (this.auth.hasPermissionTo("MOD_PLAN_INST_CONS")) {
+    if (this.auth.hasPermissionTo("MOD_PLAN_INST")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",

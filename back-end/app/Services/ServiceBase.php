@@ -574,6 +574,7 @@ class ServiceBase extends DynamicMethods
             $this->applyWith($query,$data);
         }
         $query->where('id', $data['id']);
+        $query = is_subclass_of(get_class($model), "App\Models\ModelBase") ? $query->withTrashed() : $query;
         $rows = method_exists($this, 'proxyRows') ? $this->proxyRows($query->get()) : $query->get();
         if(count($rows) == 1) {
             return $rows[0];
@@ -748,7 +749,9 @@ class ServiceBase extends DynamicMethods
     /**
      * Store a newly created resource in storage.
      *
-     * @param  Array $data
+     * @param  Array   $dataOrEntity
+     * @param  Object  $unidade
+     * @param  Boolean $transaction
      * @return Object
      */
     public function store($dataOrEntity, $unidade, $transaction = true)
@@ -933,6 +936,5 @@ class ServiceBase extends DynamicMethods
         }
         return $model;
     }
-
 }
 

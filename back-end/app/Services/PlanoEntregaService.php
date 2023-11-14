@@ -58,7 +58,7 @@ class PlanoEntregaService extends ServiceBase
     }
   }
 
-  public function arquivar($data, $unidade, $request)
+  public function arquivar($data, $unidade)
   { // ou 'desarquivar'
     try {
       DB::beginTransaction();
@@ -70,7 +70,7 @@ class PlanoEntregaService extends ServiceBase
           "data_arquivamento" => $data["arquivar"] ? $this->unidadeService->hora($unidadeLogin->id) : null
         ], $unidade, false);
       } else {
-        throw new ServerException("ValidatePlanoTrabalho", "Plano de Entrega não encontrado!");
+        throw new ServerException("ValidatePlanoEntrega", "Plano de Entrega não encontrado!");
       }
       DB::commit();
     } catch (Throwable $e) {
@@ -141,11 +141,10 @@ class PlanoEntregaService extends ServiceBase
 
   public function cancelarAvaliacao($data, $unidade)
   {
-
     try {
       DB::beginTransaction();
       $planoEntrega = PlanoEntrega::find($data["id"]);
-      $this->status->atualizaStatus($planoEntrega, 'CONCLUIDO', 'A avaliação do plano de entregas foi cancelada nesta data.');
+      $this->status->atualizaStatus($planoEntrega, 'CONCLUIDO', $data["justificativa"]);
       DB::commit();
     } catch (Throwable $e) {
       DB::rollback();
@@ -161,7 +160,7 @@ class PlanoEntregaService extends ServiceBase
     try {
       DB::beginTransaction();
       $planoEntrega = PlanoEntrega::find($data["id"]);
-      $this->status->atualizaStatus($planoEntrega, 'ATIVO', 'A conclusão do plano de entregas foi cancelada nesta data.');
+      $this->status->atualizaStatus($planoEntrega, 'ATIVO', $data["justificativa"]);
       DB::commit();
     } catch (Throwable $e) {
       DB::rollback();
@@ -177,7 +176,7 @@ class PlanoEntregaService extends ServiceBase
     try {
       DB::beginTransaction();
       $planoEntrega = PlanoEntrega::find($data["id"]);
-      $this->status->atualizaStatus($planoEntrega, 'HOMOLOGANDO', 'A homologação do plano de entregas foi cancelada nesta data.');
+      $this->status->atualizaStatus($planoEntrega, 'HOMOLOGANDO', $data["justificativa"]);
       DB::commit();
     } catch (Throwable $e) {
       DB::rollback();
@@ -188,11 +187,15 @@ class PlanoEntregaService extends ServiceBase
 
   public function cancelarPlano($data, $unidade)
   {
-
     try {
       DB::beginTransaction();
       $planoEntrega = PlanoEntrega::find($data["id"]);
-      $this->status->atualizaStatus($planoEntrega, 'CANCELADO', 'O Plano de entregas foi cancelado nesta data.');
+      if(!empty($planoEntrega)){
+        $this->status->atualizaStatus($planoEntrega, 'CANCELADO', $data["justificativa"]);
+        $this->arquivar($data, $unidade);
+      }else {
+        throw new ServerException("ValidatePlanoEntrega", "Plano de Entrega não encontrado!");
+      }
       DB::commit();
     } catch (Throwable $e) {
       DB::rollback();
@@ -206,7 +209,7 @@ class PlanoEntregaService extends ServiceBase
     try {
       DB::beginTransaction();
       $planoEntrega = PlanoEntrega::find($data["id"]);
-      $this->status->atualizaStatus($planoEntrega, 'CONCLUIDO', 'O plano de entregas foi concluído nesta data.');
+      $this->status->atualizaStatus($planoEntrega, 'CONCLUIDO', $data["justificativa"]);
       DB::commit();
     } catch (Throwable $e) {
       DB::rollback();
@@ -233,7 +236,7 @@ class PlanoEntregaService extends ServiceBase
     try {
       DB::beginTransaction();
       $planoEntrega = PlanoEntrega::find($data["id"]);
-      $this->status->atualizaStatus($planoEntrega, 'ATIVO', 'O plano de entregas foi homologado nesta data.');
+      $this->status->atualizaStatus($planoEntrega, 'ATIVO', $data["justificativa"]);
       DB::commit();
     } catch (Throwable $e) {
       DB::rollback();
@@ -272,7 +275,7 @@ class PlanoEntregaService extends ServiceBase
     try {
       DB::beginTransaction();
       $planoEntrega = PlanoEntrega::find($data["id"]);
-      $this->status->atualizaStatus($planoEntrega, 'HOMOLOGANDO', 'O plano de entregas foi liberado para homologação nesta data.');
+      $this->status->atualizaStatus($planoEntrega, 'HOMOLOGANDO', $data["justificativa"]);
       DB::commit();
     } catch (Throwable $e) {
       DB::rollback();
@@ -301,12 +304,10 @@ class PlanoEntregaService extends ServiceBase
 
   public function proxyQuery($query, &$data)
   {
-    //  (RI_PENT_5) Garante que, se não houver um interesse específico na data de arquivamento, só retornarão os planos de entrega não arquivados. Se não houver interesse em um status
-    //  específico, incluir todos os status exceto os cancelados.
+    $where = [];
+    //  (RI_PENT_C) Garante que, se não houver um interesse específico na data de arquivamento, só retornarão os planos de entrega não arquivados. 
     $arquivados = $this->extractWhere($data, "incluir_arquivados");
     if (empty($arquivados) || !$arquivados[2]) $data["where"][] = ["data_arquivamento", "==", null];
-    $status = $this->extractWhere($data, "status");
-    $data["where"][] = empty($status) ? ["status", "!=", 'CANCELADO'] : $status;
     // (RI_PENT_D) Na visualização de Avaliação, deverá trazer a unidade ao qual o usuário é gestor e todas as suas subordinadas imediatas.
     $filhas = $this->extractWhere($data, "unidades_filhas");
     $unidadeId = $this->extractWhere($data, "unidade_id");
@@ -318,7 +319,32 @@ class PlanoEntregaService extends ServiceBase
         $data["where"][] = $unidadeId;
       }
     }
-    return $data;
+    foreach ($data["where"] as $condition) {
+      if (is_array($condition) && $condition[0] == "data_filtro") {
+        $dataInicio = $this->getFilterValue($data["where"], "data_filtro_inicio");
+        $dataFim = $this->getFilterValue($data["where"], "data_filtro_fim");
+        switch ($condition[2]) {
+          case "VIGENTE":
+            $where[] = ["data_inicio", "<=", $dataFim];
+            $where[] = ["data_fim", ">=", $dataInicio];
+            break;
+          case "NAOVIGENTE":;
+            $where[] = ["OR", ["data_inicio", ">", $dataFim], ["data_fim", "<", $dataInicio]];
+            break;
+          case "INICIAM":;
+            $where[] = ["data_inicio", ">=", $dataInicio];
+            $where[] = ["data_inicio", "<=", $dataFim];
+            break;
+          case "FINALIZAM":;
+            $where[] = ["data_fim", ">=", $dataInicio];
+            $where[] = ["data_fim", "<=", $dataFim];
+            break;
+        }
+      } else if (!(is_array($condition) && in_array($condition[0], ["data_filtro_inicio", "data_filtro_fim"]))) {
+        array_push($where, $condition);
+      }
+    }
+    $data["where"] = $where;
   }
 
   public function proxyRows($rows)
@@ -355,7 +381,7 @@ class PlanoEntregaService extends ServiceBase
     try {
       DB::beginTransaction();
       $planoEntrega = PlanoEntrega::find($data["id"]);
-      $this->status->atualizaStatus($planoEntrega, 'ATIVO', 'O plano de entregas foi reativado nesta data.');
+      $this->status->atualizaStatus($planoEntrega, 'ATIVO', $data["justificativa"]);
       DB::commit();
     } catch (Throwable $e) {
       DB::rollback();
@@ -366,11 +392,10 @@ class PlanoEntregaService extends ServiceBase
 
   public function retirarHomologacao($data, $unidade)
   {
-
     try {
       DB::beginTransaction();
       $planoEntrega = PlanoEntrega::find($data["id"]);
-      $this->status->atualizaStatus($planoEntrega, 'INCLUIDO', 'O plano de entregas foi retirado de homologação nesta data.');
+      $this->status->atualizaStatus($planoEntrega, 'INCLUIDO', $data["justificativa"]);
       DB::commit();
     } catch (Throwable $e) {
       DB::rollback();
@@ -385,7 +410,7 @@ class PlanoEntregaService extends ServiceBase
     try {
       DB::beginTransaction();
       $planoEntrega = PlanoEntrega::find($data["id"]);
-      $this->status->atualizaStatus($planoEntrega, 'SUSPENSO', 'O plano de entregas foi suspenso nesta data.');
+      $this->status->atualizaStatus($planoEntrega, 'SUSPENSO', $data["justificativa"]);
       DB::commit();
     } catch (Throwable $e) {
       DB::rollback();

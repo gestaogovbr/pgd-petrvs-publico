@@ -21,6 +21,7 @@ export class PerfilListComponent extends PageListBase<Perfil, PerfilDaoService> 
     /* Inicializações */
     this.title = this.lex.translate("Perfis");
     this.code = "MOD_CFG_PERFS";
+    this.orderBy = [['nome','asc']];
     this.filter = this.fh.FormBuilder({
       nome: {default: ""}
     });

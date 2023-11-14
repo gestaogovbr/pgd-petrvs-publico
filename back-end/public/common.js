@@ -157,8 +157,9 @@ class UnidadeIntegranteService {
   }
   alterandoGestor(form, items) {
     let result = [];
+    let novasAtribuicoes = form.controls.atribuicoes.value.map(a => a.key);
     ['GESTOR', 'GESTOR_DELEGADO', 'GESTOR_SUBSTITUTO'].forEach(g => {
-      if (form.controls.atribuicoes.value.map(a => a.key).includes(g) && items.find(i => i.atribuicoes.includes(g))) result.push(this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, g));
+      if (novasAtribuicoes.includes(g) && items.includes(g)) result.push(this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, g));
     });
     return result;
   }

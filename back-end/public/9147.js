@@ -299,7 +299,7 @@ class FeriadoListComponent extends src_app_modules_base_page_list_base__WEBPACK_
       }
     });
     // Testa se o usuário possui permissão para exibir dados do feriado
-    if (this.auth.hasPermissionTo("MOD_FER_CONS")) {
+    if (this.auth.hasPermissionTo("MOD_FER")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",
