@@ -42,8 +42,8 @@ export class GlobalsService {
 
   constructor(@Inject(DOCUMENT) private document: any, public injector: Injector) {
     this.auth = injector.get<AuthService>(AuthService);
-    this.go = injector.get<NavigateService>(NavigateService);
-   }
+    this.go = injector.get<NavigateService>(NavigateService);    
+  }
 
   public refresh() {
     this.document.getElementById("html-petrvs").setAttribute("data-bs-theme", this.theme)

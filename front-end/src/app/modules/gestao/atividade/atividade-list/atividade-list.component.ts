@@ -24,7 +24,7 @@ export class AtividadeListComponent extends PageBase implements OnInit {
 
   public async onSelectTab(tab: LookupItem) {
     this.activeTab = tab.key;
-    this.saveUsuarioConfig({active_tab: this.activeTab});
+    if(this.viewInit) this.saveUsuarioConfig({active_tab: this.activeTab});
   }
 
 }

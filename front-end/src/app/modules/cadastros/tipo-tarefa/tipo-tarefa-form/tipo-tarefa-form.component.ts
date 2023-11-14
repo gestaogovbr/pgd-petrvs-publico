@@ -16,7 +16,7 @@ export class TipoTarefaFormComponent extends PageFormBase<TipoTarefa, TipoTarefa
 
   constructor(public injector: Injector) {
     super(injector, TipoTarefa, TipoTarefaDaoService);
-    this.modalWidth = 1100;
+    this.modalWidth = 800;
     this.form = this.fh.FormBuilder({
       nome: {default: ""},
       tempo_estimado: {default: 0},

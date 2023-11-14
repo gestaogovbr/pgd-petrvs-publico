@@ -19,7 +19,7 @@
                 <input-search #usuario [size]="12" label icon controlName="usuario_id" [dao]="usuarioDao"></input-search>
             </ng-template>
         </column>
-        <column title="Atribuições" titleHint="Atribuições do usuário nesta unidade" [template]="columnUnidadeDestino" [editTemplate]="editUnidadeDestino">
+        <column title="Atribuições" [titleHint]="'Atribuições' + lex.translate('do usuário') + 'nesta unidade'" [template]="columnUnidadeDestino" [editTemplate]="editUnidadeDestino">
             <ng-template let-row="row" #columnUnidadeDestino>
                 <div class="text-wrap width-min-content">
                     <badge *ngFor="let atribuicao of row.atribuicoes" [color]="lookup.getColor(lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao || '')" [icon]="lookup.getIcon(lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao || '')" [label]="lookup.getValue(lookup.UNIDADE_INTEGRANTE_TIPO, atribuicao || '')"></badge>

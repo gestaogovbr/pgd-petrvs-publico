@@ -82,6 +82,7 @@
             <column title="Entrega" [template]="columnEntrega">
                 <ng-template let-row="row" #columnEntrega>
                     {{row.badge.descricao || row.entrega.descricao}}
+                    <reaction [entity]="row.entrega" origem="PLANO_TRABALHO_ENTREGA"></reaction>
                 </ng-template>
             </column>
             <column title="% CHD Planejado" [template]="columnForcaTrabalho" [width]="100" [titleHint]="'% Carga Horária Disponível Planejada'">
