@@ -1,13 +1,41 @@
+<ng-container *ngIf="objetivo">
+    <planejamento-show [planejamento]="objetivo.planejamento" *ngIf="objetivo.planejamento"></planejamento-show>
+    <div class="objetivos arrow_box w-100">
+        <h5>Objetivo:</h5>
+        <h6>{{objetivo.nome}}</h6>
+    </div>
+</ng-container>
+
+
+<ng-container *ngIf="processo">
+    <div class="planejamento arrow_box first-box w-100" *ngIf="processo.cadeia_valor">
+        <h6>Cadeia de valor:</h6>
+        <h4>{{processo.cadeia_valor.nome}}</h4>        
+    </div>
+    <div class="procesos arrow_box w-100">
+        <h5>Processo:</h5>
+        <h6>{{processo.nome}}</h6>
+    </div>
+</ng-container>
+
 <grid [dao]="dao" [title]="isModal ? '' : title" [orderBy]="orderBy" [join]="join">
     <toolbar>
         <!-- input-switch [size]="4" labelPosition="left" label="Agrupar por Unidade" controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch -->
     </toolbar>
-    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere"
+        [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)"
+        [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-search #unidade [size]="4" [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao"></input-search>
-            <input-search #entrega [size]="4" [control]="filter!.controls.entrega_id" controlName="entrega_id" [dao]="entregaDao"></input-search>
-            <input-datetime [size]="2" date noIcon label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" labelInfo="Data de início do planejamento institucional"></input-datetime>
-            <input-datetime [size]="2" date noIcon label="Fim" controlName="data_fim" [control]="filter!.controls.data_fim" labelInfo="Data do fim do planejamento institucional"></input-datetime>
+            <input-search #unidade [size]="4" [control]="filter!.controls.unidade_id" controlName="unidade_id"
+                [dao]="unidadeDao"></input-search>
+            <input-search #entrega [size]="4" [control]="filter!.controls.entrega_id" controlName="entrega_id"
+                [dao]="entregaDao"></input-search>
+            <input-datetime [size]="2" date noIcon label="Início" controlName="data_inicio"
+                [control]="filter!.controls.data_inicio"
+                labelInfo="Data de início do planejamento institucional"></input-datetime>
+            <input-datetime [size]="2" date noIcon label="Fim" controlName="data_fim"
+                [control]="filter!.controls.data_fim"
+                labelInfo="Data do fim do planejamento institucional"></input-datetime>
         </div>
     </filter>
     <columns>
@@ -16,8 +44,10 @@
             <ng-template let-row="row" #columnEntregaCliente>
                 {{row.descricao}}<br>
                 <span class="d-block">
-                    <badge *ngIf="row.plano_entrega.unidade" color="light" [icon]="entityService.getIcon('Unidade')" [label]="row.plano_entrega.unidade.sigla"></badge>
-                    <badge *ngIf="row.destinatario?.length" color="light" icon="bi bi-mailbox" [label]="row.destinatario"></badge>
+                    <badge *ngIf="row.plano_entrega.unidade" color="light" [icon]="entityService.getIcon('Unidade')"
+                        [label]="row.plano_entrega.unidade.sigla"></badge>
+                    <badge *ngIf="row.destinatario?.length" color="light" icon="bi bi-mailbox"
+                        [label]="row.destinatario"></badge>
                 </span>
             </ng-template>
         </column>
@@ -35,11 +65,12 @@
         </column>-->
         <column [title]="'Progresso'" [width]="200" [template]="columnProgresso">
             <ng-template let-row="row" #columnProgresso>
-                <progress-bar [value]="row.progresso_realizado" [goal]="row.progresso_esperado" color="success"></progress-bar>
+                <progress-bar [value]="row.progresso_realizado" [goal]="row.progresso_esperado"
+                    color="success"></progress-bar>
             </ng-template>
         </column>
 
-    <!--LAYOUT ANTIGO
+        <!--LAYOUT ANTIGO
         <column title="Entrega" [template]="columnEntrega">
             <ng-template let-row="row" #columnEntrega>
                 <p><b>Data:</b> {{util.getDateFormatted(row.data_inicio)}} - {{util.getDateFormatted(row.data_fim)}}</p>

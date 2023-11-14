@@ -1,1 +1,67 @@
-<p>questionario-pergunta-list works!</p>
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [loadList]="onGridLoad.bind(this)"
+    [selectable]="selectable" (select)="onSelect($event)"  [hasAdd]="auth.hasPermissionTo('MOD_RX_VIS_DPE')" [hasEdit]="auth.hasPermissionTo('MOD_RX_VIS_DPE')">
+    <toolbar *ngIf="!selectable"></toolbar>
+    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
+        <div class="row">
+            <input-text [size]="3" label="Nome" controlName="nome" [attr.maxlength]=250 [control]="filter!.controls.nome" placeholder="Nome"></input-text>
+            <input-text [size]="3" label="Código" controlName="codigo" [attr.maxlength]=250 [control]="filter!.controls.codigo" placeholder="Código"></input-text>
+            <input-select [size]="3" label="Tipo do Questionário" controlName="tipo" [control]="filter!.controls.tipo" placeholder="Tipo" [items]="tipoQuestionario"></input-select>
+        </div>
+    </filter>
+    <columns>
+        <column *ngIf="!selectable" type="expand" icon="bi bi-list-check" [align]="'center'" [hint]="lex.translate('Perguntas')" [template]="columnPerguntas" [expandTemplate]="columnExpandedPerguntas">
+            <ng-template let-row="row" #columnPerguntas>
+                <span *ngIf="row.perguntas?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-list-check"></i> {{row.perguntas?.length}}</span>
+            </ng-template>
+            <ng-template let-row="row" #columnExpandedPerguntas>
+                <table class="table table-responsive table-striped table-hover table-sm">
+                    <thead>
+                        <tr>
+                            <th>Pergunta</th>
+                            <th>Tipo de Resposta</th>
+                            <th>Opções de resposta e Valor</th>
+                            
+                        </tr>
+                    </thead>
+                    <tr *ngFor="let pergunta of row.perguntas; index as i">{{i + 1}} - {{pergunta.data.pergunta.pergunta}}
+                        <td>{{pergunta.data.tipo.value}}</td>
+                        <td id="tdOpcao"><span id="opcoes" *ngFor="let opcoes of pergunta.data.opcaoResposta; index as i">{{i+1}} - {{opcoes.data.opcao}} - Valor: {{opcoes.data.valor}}</span></td>
+                        
+                    </tr>
+                
+                </table>
+                
+            </ng-template>
+        </column>
+       
+        <column title="Nome" field="nome" orderBy="nome"></column>
+        <column title="Código" field="codigo"></column>
+        <column title="Tipo" field="tipo"></column>
+        <!--<column type="expand" icon="bi bi-list-check" [align]="'center'" [hint]="lex.translate('Entrega')" [template]="columnEntregas" [expandTemplate]="columnExpandedEntregas">
+            <ng-template let-row="row" #columnEntregas>
+                <span *ngIf="row.perguntas?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-list-check"></i> {{row.perguntas?.length}}</span>
+            </ng-template>
+                 <ng-template let-row="row" #columnExpandedEntregas>
+            </ng-template>
+        </column>-->
+       <!--<column title="Perguntas" field="perguntas"></column>-->
+        <!--<column title="Perguntas" [template]="columnPerguntas2">
+            <ng-template let-row="row" #columnPerguntas2>
+                <table>
+                    <tr *ngFor="let pergunta of row.perguntas; index as i">{{i + 1}} - {{pergunta.data.pergunta}}
+                        <td> - Tipo da resposta: {{pergunta.data.tipo.value}}</td>
+                    </tr>
+                </table>
+                <br>
+                <ul>
+                    <li *ngFor="let pergunta of row.perguntas; index as i">{{i + 1}} - {{pergunta.data.pergunta}}</li>
+                </ul>
+                <span *ngFor="let pergunta of row.perguntas; index as i">{{i + 1}} - {{pergunta.data.pergunta}} |&nbsp; </span>
+                
+            </ng-template>
+        </column>-->
+        <column type="options" [onEdit]="edit" [options]="options"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>
+

@@ -50,6 +50,10 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
       eixo_tematico_id: { default: null },
       objetivo_superior_id: { default: null }
     }, this.cdRef);
+    this.OPTION_INFORMACOES.onClick = (objetivo: PlanejamentoObjetivo) => this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo', objetivo.id, 'consult'] }, { modal: true });
+    this.OPTION_EXCLUIR.onClick = (objetivo: PlanejamentoObjetivo) => { this.removeObjetivo(objetivo); };
+    this.addOption(this.OPTION_INFORMACOES);
+    this.addOption(this.OPTION_EXCLUIR,'MOD_PLAN_INST_EXCL');
   }
 
   ngOnInit(): void {
@@ -69,16 +73,6 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
     return result;
   }
 
-  public dynamicOptions(row: any): ToolbarButton[] {
-    let result: ToolbarButton[] = [];
-    let objetivo: PlanejamentoObjetivo = row as PlanejamentoObjetivo;
-    result.push({ label: "Informações", icon: "bi bi-info-circle", onClick: (objetivo: PlanejamentoObjetivo) => this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo', objetivo.id, 'consult'] }, { modal: true }) });
-    if (this.auth.hasPermissionTo('MOD_PLAN_INST_EXCL') && !this.disabled) {
-      result.push({ label: "Excluir", icon: "bi bi-trash", color: "btn-outline-danger", onClick: (objetivo: PlanejamentoObjetivo) => { this.removeObjetivo(objetivo); } });
-    }
-    return result;
-  }
-
   public marcador(row: PlanejamentoObjetivo): string {
     let level = row._metadata?.level || 0;
     return level < 1 ? "" : (level < 2 ? "• " : (level < 3 ? "- " : "+ "));
@@ -86,7 +80,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
 
   public async addObjetivo() {
     // ************ 
-    // se for adicionar um objetivo num grid não persistente é necessário checar se o planejamento é da entidade ou da unidade, pois se
+    // se for adicionar um objetivo num grid não persistente é necessário checar se o planejamento é da entidade ou da unidade, pois
     // se for de uma unidade será obrigatório já ter escolhido o planejamento superior
     let objetivo = new PlanejamentoObjetivo({ 
       _status: "ADD", 

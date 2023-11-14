@@ -67,6 +67,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       cidade_id: {default: ""},
       uf: {default: ""},
       instituidora: {default: 0},
+      informal: {default: 0},
       atividades_arquivamento_automatico: {default: 1},
       distribuicao_forma_contagem_prazos: {default: "DIAS_UTEIS"},
       entrega_forma_contagem_prazos: {default: "HORAS_UTEIS"},
@@ -91,7 +92,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if(['codigo', 'sigla', 'nome', 'cidade_id', 'entidade_id','unidade_pai_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if(['sigla', 'nome', 'cidade_id', 'entidade_id','unidade_pai_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
     return result;
@@ -170,4 +171,6 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     return "Editando " + this.lex.translate("Unidade") + ': ' + (entity?.sigla || "");
   }
 
+  public informal(){
+  }
 }

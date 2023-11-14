@@ -1,0 +1,54 @@
+.okr_header {
+    min-width: 350px;
+    width: 30%;
+    text-align: center;
+    background: var(--petrvs-box-background);
+    border-bottom: 3px solid #000;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    flex-direction: column;
+    h1, h6 {
+        color: var(--bs-body-color);
+    }
+}
+
+.objetivo, .entrega, .unidade, .indicador, .atividades {
+    min-width: 350px;
+    border-right-style: solid;
+    padding: 10px;
+    background: var(--petrvs-box-background);
+}
+.objetivo {
+    width: 30%;
+}
+.unidades,  .header_unidades {
+    width: 70%;
+}
+
+.entrega, .header_resultados {
+    min-width: 550px;
+}
+.unidade, .header_unidade {
+    min-width: 250px;
+}
+.entrega, .atividades {
+    margin-bottom: 5px;
+}
+
+.atividades {    
+    visibility: hidden;
+}
+.atividadesVisivel {
+    visibility: visible;
+}
+
+.atividade {
+    border-bottom: 1px solid #ddd;
+    padding: 5px 0;
+}
+
+.okr_header {
+    
+}

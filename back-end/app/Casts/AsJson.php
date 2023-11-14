@@ -17,7 +17,7 @@ class AsJson implements CastsAttributes
      */
     public function get($model, string $key, $value, array $attributes)
     {
-        return $value == null ? null : json_decode($value);
+        return $value === null ? null : json_decode($value);
     }
 
     /**
@@ -31,6 +31,6 @@ class AsJson implements CastsAttributes
      */
     public function set($model, string $key, $value, array $attributes)
     {
-        return $value == null ? null : json_encode($value);
+        return $value === null ? null : json_encode($value);
     }
 }

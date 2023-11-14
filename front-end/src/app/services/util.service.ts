@@ -119,7 +119,6 @@ export class UtilService {
     let leaf = tree.pop();
     let last = tree.reduce((a, o)=> a[Array.isArray(a) ? parseInt(o) : o], source);
     if(last && leaf) last[leaf] = value;
-    return
   }
 
   public validateLookupItem(lista: LookupItem[], key: any): boolean | undefined {
@@ -612,99 +611,6 @@ export class UtilService {
     control.setValue(value);
     control.setErrors(null);
     control.markAsUntouched();
-  }
-
-  /**
-   * 
-   * @param strJson Uma string no formato JSON
-   * @returns       Um objeto correspondente à string JSON com todos os seus valores 
-   *                no formato de objetos, transformando-se todos os níveis internos das strings JSON.
-   */
-  public friendlyJson(strJson: string): Object {
-    let obj = JSON.parse(strJson);
-    Object.entries(obj).forEach((element, index, array) => {
-      let key: string = (element as string[])[0];
-      let value: string | Object = (element as any[])[1];
-      if(value != null && (typeof(value) == 'object' || (this.isStrJson(value) && !['boolean','number'].find(e => e == typeof(value))))) {
-        obj[key] = typeof(value) == 'string' ? this.friendlyJson(JSON.stringify(JSON.parse(value))) : this.friendlyJson(JSON.stringify(value));
-      }
-    });
-    return obj;
-  }
-
-  /**
-   * 
-   * @param str Uma string para ser avaliada se está ou não no formato JSON
-   * @returns   Um booleano sobre a validade do parâmetro como string JSON
-   */
-  public isStrJson(str: string): boolean {
-    try { JSON.parse(str); } catch (e) { return false; } return true;
-  }
-
-  /**
-   * 
-   * @param obj Um objeto no formato {key: value}, onde key deve ser string, e 
-   *            value pode ser null | boolean | string | object. Se value for object, a função é chamada
-   *            recursivamente pra ele. 
-   * @returns   Um array no formato [...[key, value]], onde key é uma string e 
-   *            value pode ser boolean | string | array.
-   */
-  public objectToArray(obj: any): Array<any>{
-    let result = Object.keys(obj).map((k) => {
-      obj[k] = (obj[k] == null) ? 'nulo' : (typeof(obj[k]) == 'object' ? this.objectToArray(obj[k]) : obj[k]);
-      return [k as string, obj[k]];
-    });
-    return result;
-  }
-
-  /**
-   * 
-   * @param array Um array com dois elementos na forma [string, string | number | boolean | array(2)]
-   * @param i     O contador das iterações de recursividade
-   * @returns     Um array(2) sem elementos do tipo array, com um indicador de endentação
-   */
-  public endentarArray(array: Array<any>, i: number = 0): Array<any> {
-    i++;
-    let result: Array<any> = [];
-    for (let index = 0; index < array.length; index++) {
-      const element = array[index];
-      if(['string','number','boolean'].includes(typeof(element[1]))) {
-        result.push([element[0], element[1], i]);
-      } else {
-        result.push([element[0], null, i]);
-        result.push(...this.endentarArray(element[1], i));
-      }
-    }
-    return result;
-  }
-
-  /**
-   * Compara dois arrays com a mesma estrutura, ou seja, [...['chave','valor']], onde as chaves são as mesmas e são string e os valores são
-   * do mesmo tipo (null | string | number | boolean | array | object).
-   * @param array1  Array que será comparado.
-   * @param array2  Array de referência.
-   * @returns       Retorna um array com as diferenças encontradas: [] ou [...['chave', 'valor no array1', 'valor no array2]].  
-   */
-  public diferencasEntreArrays(array1: Array<any>, array2: Array<any>): Array<any>{
-    let result: Array<any> = [];
-    array1.forEach((elem, index, array) => {
-      let outroElem = array2.find(x => x[0] == elem[0]);
-      if(Array.isArray(elem[1])) {
-        if(!outroElem) { result.push([elem[0],elem[1],'não existe']);
-        }else { this.diferencasEntreArrays(elem[1],outroElem[1]) }
-      }else if((typeof(elem[1]) == 'string') && moment(elem[1]).isValid() && moment(outroElem[1]).isValid()){
-        if(moment(elem[1]) != moment(outroElem[1])) result.push([elem[0],elem[1],outroElem[1]]);
-      }else{
-        if(array2.find(x => x[0] == elem[0])[1] != elem[1]) result.push([elem[0],elem[1],array2.find(x => x[0] == elem[0])[1]]);
-      }
-    });
-    return result;
-  }
-
-  public arrayUnique(array: Array<any>): Array<any> { 
-    return array.filter(function(x, i) {
-      return array.indexOf(x) === i;
-    });
   }
 
   public array_diff(array1: any[], array2: any[]): any[]{

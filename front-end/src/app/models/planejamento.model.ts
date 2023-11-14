@@ -8,6 +8,7 @@ export class Planejamento extends Base {
     public unidade?: Unidade;
     public entidade?: Entidade;
     public objetivos?: PlanejamentoObjetivo[];
+    public objetivos_okr?: PlanejamentoObjetivo[];
     public planejamento_superior?: Planejamento;
     
     public data_arquivamento: Date | null = null;  /* Data de arquivamento */

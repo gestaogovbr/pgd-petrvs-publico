@@ -37,6 +37,7 @@ use App\Traits\LogChanges;
 use App\Traits\HasPermissions;
 use App\Services\UsuarioService;
 use Throwable;
+use App\Exceptions\ServerException;
 
 class UsuarioConfig {}
 
@@ -78,7 +79,17 @@ class Usuario extends Authenticatable
         //'metadados', /* json; */// Metadados do usuário
     ];
 
-    //public $fillable_changes = ["unidades_integrante"];
+    public function proxyFill(&$dataOrEntity, $unidade, $action) {
+        $this->fill($dataOrEntity);
+        if($action == 'INSERT'){
+            $this->save();
+            //$lotacao = new UnidadeIntegrante(['unidade_id' => $dataOrEntity['lotacao_id']]);
+            $vinculoLotacao = $this->unidadesIntegrante()->save(new UnidadeIntegrante(['unidade_id' => $dataOrEntity['lotacao_id']]));
+            $lotacao = $vinculoLotacao->atribuicoes()->save(new UnidadeIntegranteAtribuicao(['atribuicao' => 'LOTADO']));
+            if(!$vinculoLotacao || !$lotacao) throw new ServerException("ValidateLotacao", "Erro com a definição da lotação. Usuário não cadastrado!");
+        }
+        return $this;
+    }
 
     protected $keyType = 'string';
 
@@ -104,7 +115,7 @@ class Usuario extends Authenticatable
         'notificacoes' => AsJson::class
     ];
 
-    public $delete_cascade = ['favoritos', 'vinculosUnidades'];
+    public $delete_cascade = ['favoritos', 'unidadesIntegrante'];
 
     // hasOne
     public function gerenciaEntidade() { return $this->hasOne(Entidade::class, 'gestor_id'); } 

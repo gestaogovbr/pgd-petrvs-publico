@@ -24,14 +24,14 @@ class EntidadeSeeder extends Seeder
 
     public function run()
     {
-        $entidades = array(
+        $entidade = array(
           array(
             "id" => "52d78c7d-e0c1-422b-b094-2ca5958d5ac1",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => NULL,
-            "sigla" => "PRF",
-            "nome" => "Polícia Rodoviária Federal",
+            "sigla" => "MGI",
+            "nome" => "Ministério da Gestão e da Inovação em Serviços Públicos",
             "abrangencia" => "NACIONAL",
             "codigo_ibge" => $this->brasilia->codigo_ibge,
             "uf" => $this->brasilia->uf,
@@ -40,7 +40,7 @@ class EntidadeSeeder extends Seeder
             "layout_formulario_atividade" => "COMPLETO",
             "campos_ocultos_atividade" => NULL,
             "nomenclatura" => NULL,
-            "url_sei" => "https://sei.prf.gov.br/",
+            "url_sei" => "https://sei.economia.gov.br/",
             "notificacoes" => "{\"enviar_email\": true, \"enviar_petrvs\": true, \"nao_notificar\": [], \"enviar_whatsapp\": true}",
             "forma_contagem_carga_horaria" => "DIA",
             "api_public_key" => NULL,
@@ -52,6 +52,7 @@ class EntidadeSeeder extends Seeder
             "gestor_substituto_id" => NULL,
           ),
         );
-        Entidade::insertOrIgnore($entidades);
+
+        Entidade::insert($entidade);
     }
 }

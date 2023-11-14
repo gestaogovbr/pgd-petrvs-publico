@@ -4,6 +4,7 @@ import { UnidadeIntegrante, IntegranteConsolidado } from '../models/unidade-inte
 import { Unidade } from '../models/unidade.model';
 import { Usuario } from '../models/usuario.model';
 import { IntegranteAtribuicao } from '../models/base.model';
+import { MergeArrayAction } from '../services/util.service';
 
 export type LoadIntegrantesResult = {
   integrantes: IntegranteConsolidado[],
@@ -13,7 +14,9 @@ export type LoadIntegrantesResult = {
 export type Vinculo = {
     ['unidade_id']: string,
     ['usuario_id']: string,
-    ['atribuicoes']: IntegranteAtribuicao[]
+    ['atribuicoes']: IntegranteAtribuicao[],
+    ['msg']?: string,
+    ['_status']?: MergeArrayAction
 }
 
 @Injectable({
@@ -41,7 +44,7 @@ export class UnidadeIntegranteDaoService extends DaoBaseService<UnidadeIntegrant
   public saveIntegrante(vinculos: Vinculo[]): Promise<Vinculo[]> {
     return new Promise<Vinculo[]>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/save-integrante', {vinculos}).subscribe(response => {
-        resolve(response?.data || null);
+        if(response?.error) reject(response.error); else resolve(response?.data || null);
       }, 
       error => reject(error));
     });

@@ -119,7 +119,7 @@ class UsuarioService extends ServiceBase
     }
 
     public function extraStore($entity, $unidade, $action) {
-        $this->unidadeIntegranteAtribuicaoService->checkLotacoes($entity->id);
+        if($action != ServiceBase::ACTION_INSERT) $this->unidadeIntegranteAtribuicaoService->checkLotacoes($entity->id);
     }
 
     public function hasLotacao($id, $usuario = null, $subordinadas = true) {
@@ -131,7 +131,7 @@ class UsuarioService extends ServiceBase
      * @param string $unidade_id 
      */
     public function isGestorUnidade(string $unidade_id): bool {
-        return $this->isIntegrante('GESTOR',$unidade_id) || $this->isIntegrante('GESTOR_SUBSTITUTO',$unidade_id);
+        return $this->isIntegrante('GESTOR',$unidade_id) || $this->isIntegrante('GESTOR_SUBSTITUTO',$unidade_id) || $this->isIntegrante('GESTOR_DELEGADO',$unidade_id);
     }
 
     /**

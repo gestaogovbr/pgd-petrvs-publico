@@ -422,6 +422,12 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
     //this.form.controls.search.setValue("dfcb36c8-4784-4d3c-b4bb-d4e9c9b2e68c");
   }
 
+  public renderTemplate() {
+    this.server.post('api/Template/teste', {}).subscribe(response => {
+      console.log(response);
+    }, error => console.log(error));
+  }
+
   public addItemHandle(): LookupItem | undefined {
     let self = this;
     return {

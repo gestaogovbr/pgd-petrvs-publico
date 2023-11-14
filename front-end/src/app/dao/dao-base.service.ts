@@ -49,17 +49,18 @@ export class DaoBaseService<T extends Base> {
 
   public values(entity: IIndexable, dataset: TemplateDataset[]): IIndexable {
     return dataset.reduce((a, v) => {
-      if(v.type == "OBJECT" && typeof entity[v.field] != "undefined") {
+      const empty = typeof entity[v.field] == "undefined" || entity[v.field] == null;
+      if(v.type == "OBJECT" && !empty) {
         a[v.field] = this.values(entity[v.field], v.fields || []);
       } else if(v.type == "ARRAY" && Array.isArray(entity[v.field])) {
         a[v.field] = entity[v.field].map((x: IIndexable) => this.values(x, v.fields || []));
-      } else if((!v.type || v.type == "VALUE") && typeof entity[v.field] != "undefined") {
+      } else if((!v.type || v.type == "VALUE") && !empty) {
         a[v.field] = v.lookup ? v.lookup.find(x => x.key == entity[v.field])?.value || entity[v.field] : entity[v.field];
-      } else if(v.type == "TEMPLATE" && entity[v.field] != "undefined") {
+      } else if(v.type == "TEMPLATE" && !empty) {
         a[v.field] = entity[v.field];
-      } else if(v.type == "DATE" && entity[v.field] != "undefined") {
+      } else if(v.type == "DATE" && !empty) {
         a[v.field] = this.util.getDateFormatted(entity[v.field]);
-      } else if(v.type == "DATETIME" && entity[v.field] != "undefined") {
+      } else if(v.type == "DATETIME" && !empty) {
         a[v.field] = this.util.getDateTimeFormatted(entity[v.field]);
       } else if(v.type == "LAMBDA" && v.lambda) {
         a[v.field] = v.lambda(entity);
@@ -420,17 +421,21 @@ export class DaoBaseService<T extends Base> {
 
   public save(entity: T, join: string[] = [], rellations?: string[]): Promise<T> {
     return new Promise<T>((resolve, reject) => {
-      this.server.post(this.PREFIX_URL + '/' + this.collection + '/store', {
-        entity: this.prepareToSave(entity, rellations),
-        with: join
-      }).subscribe(response => {
-        if(response.error){
-          reject(response.error);
-        } else {
-          var rows: T[] = this.getRows(response);
-          resolve(rows[0]);
-        }
-      }, error => reject(error));
+      try {
+        this.server.post(this.PREFIX_URL + '/' + this.collection + '/store', {
+          entity: this.prepareToSave(entity, rellations),
+          with: join
+        }).subscribe(response => {
+          if(response.error){
+            reject(response.error);
+          } else {
+            var rows: T[] = this.getRows(response);
+            resolve(rows[0]);
+          }
+        }, error => reject(error));
+      } catch (error) {
+        reject(error);
+      }
     });
   }
 

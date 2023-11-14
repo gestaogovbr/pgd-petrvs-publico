@@ -1,9 +1,7 @@
 <grid #grid [items]="items" [minHeight]="500" [form]="form!" [hasDelete]="true"
-    [add]="addAtribuicao.bind(this)"
-    [load]="loadAtribuicao.bind(this)"
-    [remove]="removeAtribuicao.bind(this)"
-    [save]="saveAtribuicao.bind(this)" editable>
-    <span *ngIf="!isNoPersist"><strong>{{ entity?.nome }}</strong></span>
+    [add]="addAtribuicao.bind(this)" [load]="loadAtribuicao.bind(this)" [remove]="removeAtribuicao.bind(this)" [save]="saveAtribuicao.bind(this)" 
+    editable>
+    <span *ngIf="!isNoPersist"><strong>{{ entity?.nome + ' - Matrícula ' + entity?.matricula }}</strong></span>
     <columns>
         <column [title]="lex.translate('Unidades')" [template]="columnUnidade" [editTemplate]="editUnidade">
             <ng-template let-row="row" #columnUnidade>
@@ -11,7 +9,8 @@
                 <span>{{ row.unidade_nome || '' }} </span>
             </ng-template>
             <ng-template let-row="row" #editUnidade>
-                <input-search #unidade [disabled]="grid?.editing && !grid?.adding ? 'true' : undefined" [size]="12" label icon controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" [where]="['id', 'not in',unidadesJaVinculadas]" [selectRoute]="{route: ['configuracoes', 'unidade']}" [metadata]="{'unidadesJaVinculadas': unidadesJaVinculadas}"></input-search>
+<!--            <input-search #unidade [disabled]="grid?.editing && !grid?.adding ? 'true' : undefined" [size]="12" label icon controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" [where]="['id', 'not in',unidadesJaVinculadas]" [selectRoute]="{route: ['configuracoes', 'unidade']}" [metadata]="{'unidadesJaVinculadas': unidadesJaVinculadas}"></input-search> -->
+                <input-search #unidade [size]="12" label icon controlName="unidade_id" [dao]="unidadeDao"></input-search>
             </ng-template>
         </column>
         <column [title]="lex.translate('Atribuições')" [template]="columnAtribuicoes" [editTemplate]="editAtribuicoes">

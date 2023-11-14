@@ -39,7 +39,7 @@
                 </div>
             </ng-template>
         </column>
-        <column type="options" [onEdit]="edit" [dynamicOptions]="dynamicOptions.bind(this)"></column>
+        <column type="options" [onEdit]="edit" [options]="options" [dynamicOptions]="dynamicOptions.bind(this)"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>

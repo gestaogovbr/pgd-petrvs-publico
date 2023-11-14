@@ -29270,7 +29270,7 @@ a > .petrvs code {
 }
 .petrvs .arrow_box {
   position: relative;
-  background: var(--petrvs-navbar-top-bg-color);
+  background: var(--petrvs-box-background);
   margin-top: 30px;
   padding: 10px;
 }
@@ -29286,13 +29286,13 @@ a > .petrvs code {
 }
 .petrvs .arrow_box::after {
   border-color: rgba(136, 183, 213, 0);
-  border-bottom-color: var(--petrvs-navbar-top-bg-color);
+  border-bottom-color: var(--petrvs-box-background);
   border-width: 20px;
   margin-left: -20px;
 }
 .petrvs .arrow_box::before {
   border-color: rgba(194, 225, 245, 0);
-  border-bottom-color: var(--bs-body-bg);
+  border-bottom-color: var(--petrvs-box-background);
   border-width: 22px;
   margin-left: -22px;
 }
@@ -29319,6 +29319,7 @@ a > .petrvs code {
   --petrvs-nav-link-color: #fff;
   --petrvs-border-color-dropdown: #13162d;
   --petrvs-form-control-background: #fff;
+  --petrvs-box-background: #dce3ec;
 }
 .petrvs[data-bs-theme=blue] .modal {
   --bs-modal-bg: #fff;
@@ -29359,6 +29360,7 @@ a > .petrvs code {
   --petrvs-nav-link-color: #2b2828;
   --petrvs-border-color-dropdown: #ffffff;
   --petrvs-form-control-background: #fff;
+  --petrvs-box-background: #dce3ec;
 }
 .petrvs[data-bs-theme=light] .form-control {
   background-color: var(--petrvs-form-control-background);
@@ -29368,6 +29370,7 @@ a > .petrvs code {
   --petrvs-navbar-vertical-border-color: #0c0f12;
   --petrvs-nav-link-bg-hover: #111212;
   --petrvs-nav-link-bg-active: #111212;
+  --petrvs-box-background: #1b1f23;
 }
 .petrvs[data-bs-theme=dark] .btn-light {
   --bs-btn-bg: var(--bs-body-bg);
@@ -29419,6 +29422,9 @@ a > .petrvs code {
 }
 .petrvs .buttons-home path {
   fill: var(--bs-body-color);
+}
+.petrvs .first-box::after, .petrvs .first-box::before {
+  border: none !important;
 }
 
 /* Define variáveis do bootstrap */

@@ -21,6 +21,7 @@ class PlanejamentoObjetivo extends ModelBase
         'eixo_tematico_id', /* char(36); NOT NULL; */
         'objetivo_pai_id', /* char(36); */
         'planejamento_id', /* char(36); NOT NULL; */
+        'integra_okr',  /* tinyint(1); NOT NULL; */// Objetivos que serão visíveis no OKR
         //'deleted_at', /* timestamp; */
         'objetivo_superior_id', /* char(36); */
     ];

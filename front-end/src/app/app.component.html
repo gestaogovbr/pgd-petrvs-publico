@@ -104,7 +104,7 @@
                                             <div class="collapse multi-collapse" id="menu{{menu.module.name}}">
                                                 <ul *ngIf="menu.items" class="submenu">
                                                     <ng-container *ngFor="let submenuItem of menu.items">
-                                                        <li  class="nav-item" (click)="globals.setContexto(submenuItem.key)">
+                                                        <li  class="nav-item mt-1" (click)="globals.setContexto(submenuItem.key)">
                                                             <a [class.active]="globals.contexto?.name == submenuItem.name" class="nav-link" role="button">
                                                                 <i [class]="submenuItem.icon"></i> {{ submenuItem.name }}
                                                             </a>

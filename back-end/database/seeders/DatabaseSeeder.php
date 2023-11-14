@@ -32,11 +32,6 @@ class DatabaseSeeder extends Seeder
                EntidadeSeeder::class,
                UnidadeSeeder::class,
                UsuarioSeeder::class,
-               /*
-               TipoAvaliacaoSeeder::class,
-               TipoJustificativaSeeder::class,
-               TipoAvaliacaoJustificativaSeeder::class,
-               */
                AreaConhecimentoSeeder::class,
                TipoCursoSeeder::class,
                CursoSeeder::class,
@@ -45,6 +40,8 @@ class DatabaseSeeder extends Seeder
                FuncaoSeeder::class,
                CentroTreinamentoSeeder::class,
                GrupoEspecializadoSeeder::class,
+               AreaTematicaSeeder::class,
+               AreaAtividadeExternaSeeder::class,
                IN24_2023Seeder::class,
 
                /*
@@ -52,7 +49,6 @@ class DatabaseSeeder extends Seeder
                http://localhost[:porta]/api/integracao?servidores=true&unidades=true&entidade=[ID da entidade]
                ou sudo curl -G 'http://localhost/api/integracao' -d servidores=true -d unidades=true -d entidade=[ID da entidade]
                */
-
            ]);
        }
     }

@@ -11,8 +11,7 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { UsuarioIntegranteComponent } from '../usuario-integrante/usuario-integrante.component';
 import { TemplateDataset } from 'src/app/modules/uteis/templates/template.service';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
-import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
-import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
+import { UnidadeIntegranteDaoService, Vinculo } from 'src/app/dao/unidade-integrante-dao.service';
 
 @Component({
   selector: 'app-usuario-form',
@@ -21,7 +20,7 @@ import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
 })
 export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  @ViewChild('unidadesIntegrantes', { static: false }) public unidadesIntegrantes?: UsuarioIntegranteComponent;
+  @ViewChild(UsuarioIntegranteComponent, { static: false }) public atribuicoes?: UsuarioIntegranteComponent;
   @ViewChild('lotacao', { static: false }) public lotacao?: InputSearchComponent;
 
   public formLotacao: FormGroup;
@@ -49,35 +48,40 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
       url_foto: {default: ""},
       texto_complementar_plano: {default: ""},
       perfil_id: {default: null},
-      atribuicoes: { default: []}
+      data_nascimento: { default: new Date() },
+      //atribuicoes: { default: []}
     }, this.cdRef, this.validate);
     this.formLotacao = this.fh.FormBuilder({
       unidade_lotacao_id: {default: ""},
-    }, this.cdRef);
+    }, this.cdRef, this.validate);
     this.planoDataset = this.planoTrabalhoDao.dataset();
     this.join = ["lotacao.unidade:id"];
   }
 
   public validate = (control: AbstractControl, controlName: string) => {   
     let result = null;
-    if(['cpf', 'matricula', 'email', 'nome', 'apelido', 'perfil_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if(['cpf', 'matricula', 'email', 'nome', 'apelido', 'perfil_id', 'unidade_lotacao_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    }
-    else if(controlName == "cpf" && !this.util.validarCPF(control.value)) {
+    } else if(controlName == "cpf" && !this.util.validarCPF(control.value)) {
+      result = "Inválido";
+    } else if (['data_nascimento'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
     }
     return result;
   }
   
   public formValidation = (form?: FormGroup) => {
+    const nascimento = this.form?.controls.data_nascimento.value;
     if(!this.formLotacao?.controls.unidade_lotacao_id.value?.length) {
       return "É obrigatória a definição da unidade de lotação do servidor!";
-    };
+    } else if (!this.dao?.validDateTime(nascimento)) {
+      return "Data de nascimento inválida";
+    }
     const erros_atribuicoes = [];
-    form?.controls.atribuicoes.value?.forEach((atribuicao: { nome: string; unidade_id: string }) => {
+    this.atribuicoes?.grid?.items.forEach((atribuicao) => {
       if(atribuicao.unidade_id == '') erros_atribuicoes.push({ atribuicao: atribuicao, erro: 'Falta unidade_id'})
     });
-    if(erros_atribuicoes.length) return "Salve a unidade antes de salvar o usuário"
+    if(erros_atribuicoes.length) return "Na aba 'Atribuições' há unidade não salva. Salve-a antes de salvar o usuário!"
     return undefined;
   } 
 
@@ -85,6 +89,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
     this.formLotacao.controls.unidade_lotacao_id.setValue(entity.lotacao?.unidade?.id);
+    this.atribuicoes?.loadData(entity);
   }
 
   public initializeData(form: FormGroup): void {
@@ -93,21 +98,28 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
   }
   
   public saveData(form: IIndexable): Promise<boolean> {      
-    return new Promise<boolean>((resolve, reject) => {
-      this.unidadesIntegrantes!.grid!.confirm();
+    return new Promise<boolean>(async (resolve, reject) => {
+      this.atribuicoes!.grid!.confirm();
       let usuario = this.util.fill(new Usuario(), this.entity!);
       usuario = this.util.fillForm(usuario, this.form!.value);
-      //usuario.unidades_integrante = usuario.atribuicoes.filter((x: { _status: any; unidade_id: string; nome: string; }) => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.unidade_id?.length && x.nome?.length);
-      usuario.unidades_integrante = this.unidadesIntegrantes?.grid?.items.filter((x: any) => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.unidade_id?.length && x.nome?.length);
-      this.dao?.save(usuario).then(async usuario => {
-        //if(this.formLotacao.controls.unidade_lotacao_id.value != usuario.lotacao?.unidade_id) this.integranteDao.saveIntegrante([{'unidade_id': this.formLotacao!.controls.unidade_lotacao_id!.value, 'usuario_id': usuario.id, 'atribuicoes': ["LOTADO"]}]);
-        resolve(true);
-      });
+      usuario.lotacao_id = this.formLotacao?.controls.unidade_lotacao_id.value;
+      let vinculos = this.atribuicoes?._items || [];
+      try {
+        await this.dao?.save(usuario).then(async resposta => {
+          if(vinculos.length) {
+            vinculos.forEach(v => v.usuario_id = resposta.id);
+            await this.integranteDao.saveIntegrante(vinculos as Vinculo[]);
+          }
+        });
+        resolve(true); 
+      } catch (error: any) {
+        if (this.editableForm) this.editableForm.error = error;
+      }
     });
   }
 
   public titleEdit = (entity: Usuario): string => {
-    return "Editando " + this.lex.translate("Usuário") + ': ' + (entity?.matricula || "") + ' - ' + (entity?.apelido || "");
+    return "Editando " + this.lex.translate("Usuário") + ': ' + (entity?.nome || "");
   }
 
   public onLotacaoChange(){

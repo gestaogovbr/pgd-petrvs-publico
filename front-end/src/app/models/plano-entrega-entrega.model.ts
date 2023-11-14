@@ -7,9 +7,11 @@ import { Entrega, EntregaValor } from './entrega.model';
 import { PlanoEntregaEntregaObjetivo } from './plano-entrega-entrega-objetivo.model';
 import { PlanoEntregaEntregaProcesso } from './plano-entrega-entrega-processo.model';
 import { PlanoEntrega } from './plano-entrega.model';
+import { PlanoTrabalhoEntrega } from './plano-trabalho-entrega.model';
+import { HasReacoes, Reacao } from './reacao';
 import { Unidade } from './unidade.model';
 
-export class PlanoEntregaEntrega extends Base implements HasAvaliacao, HasComentarios {
+export class PlanoEntregaEntrega extends Base implements HasAvaliacao, HasComentarios, HasReacoes {
   public entrega?: Entrega;
   public entrega_pai?: Entrega;
   public plano_entrega?: PlanoEntrega;
@@ -17,6 +19,7 @@ export class PlanoEntregaEntrega extends Base implements HasAvaliacao, HasComent
   public unidade?: Unidade;
   public objetivos: PlanoEntregaEntregaObjetivo[] = [];
   public processos: PlanoEntregaEntregaProcesso[] = [];
+  public entregas_plano_trabalho?: PlanoTrabalhoEntrega[];
 
   public data_inicio: Date = new Date();
   public data_fim: Date | null = null;
@@ -29,6 +32,7 @@ export class PlanoEntregaEntrega extends Base implements HasAvaliacao, HasComent
   public destinatario: string = '';
   public avaliacoes: Avaliacao[] = [];
   public comentarios: Comentario[] = []; /* Comentarios da etrega */
+  public reacoes: Reacao[] = []; /* Reações da entrega */
   public etiquetas: LookupItem[] = []; /* Etiquetas */
   public checklist: Checklist[] = []; /* Checklist */
 

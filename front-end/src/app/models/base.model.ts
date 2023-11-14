@@ -1,6 +1,6 @@
 export interface IIndexable {
     [key: string]: any;
-}
+};
 
 export type EntityStatus = "ADD" | "EDIT" | "DELETE";
 
@@ -13,6 +13,7 @@ export abstract class Base implements IIndexable {
     public deleted_at: Date | null = null;
     public _status?: EntityStatus; /* Usado somente pelos componentes da UX */ 
     public _metadata?: any; /* Usado exclusivamente para armazenar dados adicionar */ 
+  opcoesPergunta: any;
 
     public initialization(data?: any) {
         if(data) Object.assign(this, data);

@@ -55,12 +55,13 @@ export class GlobalsService {
 
   public setContexto(context: string, goToContextoHome: boolean = true) {
     if(this.contexto?.key != context) {
-      this.contexto = this.app!.menuContexto.find(x => x.key == context);
+      let novoContexto = this.app!.menuContexto.find(x => x.key == context);
+      if(!novoContexto?.permition || this.auth.capacidades.includes(novoContexto.permition)) this.contexto = novoContexto;
       if(this.contexto && goToContextoHome) this.goHome();
       this.app!.cdRef.detectChanges();
     }
-    if(this.auth.usuario && this.auth.usuarioConfig.menu_contexto != context) {
-      this.auth.usuarioConfig = { menu_contexto: context };
+    if(this.auth.usuario && this.auth.usuarioConfig.menu_contexto != this.contexto?.key) {
+      this.auth.usuarioConfig = { menu_contexto: this.contexto?.key || "" };
     }
   }
 

@@ -29,7 +29,7 @@ export class TipoMotivoAfastamentoListComponent extends PageListBase<TipoMotivoA
       data_fim: {default: ""},
     });
     // Testa se o usuário possui permissão para exibir dados do tipo de motivo de afastamento
-    if (this.auth.hasPermissionTo("MOD_TIPO_MTV_AFT_CONS")) {
+    if (this.auth.hasPermissionTo("MOD_TIPO_MTV_AFT")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",
