@@ -238,6 +238,11 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_PENT_ENTR_EDT", "Permite editar entregas de um plano de entregas"],
                 ["MOD_PENT_ENTR_EXCL", "Permite excluir entregas de um plano de entregas"],
                 ["MOD_PENT_ENTR_INCL", "Permite incluir entregas de um plano de entregas"],
+
+                /* Capacidades do módulo PLANO DE ENTREGAS - ENTREGAS - PROGRESSOS*/
+                ["MOD_PENT_ENTR_PRO_INCL", "Permite incluir o progresso da entrega de um plano de entregas"],
+                ["MOD_PENT_ENTR_PRO_EDT", "Permite editar o progresso da entrega de um plano de entregas"],
+                ["MOD_PENT_ENTR_PRO_EXCL", "Permite excluir o progresso da entrega de um plano de entregas"],
             ]
         ], [
             "codigo"=> "MOD_PRGT",

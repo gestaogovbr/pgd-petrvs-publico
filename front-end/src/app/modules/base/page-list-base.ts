@@ -129,6 +129,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
   }
 
   ngAfterViewInit() {
+    super.ngAfterViewInit();
     if(this.usuarioConfig?.filter) {
       this.filter?.patchValue(this.usuarioConfig.filter, { emitEvent: true });
     }

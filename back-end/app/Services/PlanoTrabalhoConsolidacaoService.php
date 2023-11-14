@@ -81,6 +81,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       'planoTrabalho.unidade.gestor:id,usuario_id',
       'planoTrabalho.unidade.gestorSubstituto:id,usuario_id',
       'planoTrabalho.entregas.entrega', 
+      'planoTrabalho.entregas.reacoes', 
       'planoTrabalho.entregas.planoEntregaEntrega:id,descricao,plano_entrega_id,entrega_id,meta,realizado,progresso_realizado', 
       'planoTrabalho.entregas.planoEntregaEntrega.entrega:id,nome,tipo_indicador', 
       'planoTrabalho.entregas.planoEntregaEntrega.objetivos.objetivo', 

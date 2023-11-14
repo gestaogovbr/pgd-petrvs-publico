@@ -79,6 +79,7 @@ use App\Http\Controllers\PlanoTrabalhoConsolidacaoOcorrenciaController;
 use App\Http\Controllers\ComparecimentoController;
 use App\Http\Controllers\BatchController;
 use App\Http\Controllers\ReacaoController;
+use App\Http\Controllers\PlanoEntregaEntregaProgressoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -348,3 +349,5 @@ Route::middleware(['auth:sanctum'])->prefix('HistoricoFuncaoCurriculumProfission
 Route::middleware(['auth:sanctum'])->prefix('HistoricoLotacaoCurriculumProfissional')->group(function () { defaultRoutes(HistoricoLotacaoCurriculumController::class); });
 
 Route::middleware(['auth:sanctum'])->prefix('Reacao')->group(function () { defaultRoutes(ReacaoController::class); });
+
+Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntregaProgresso')->group(function () { defaultRoutes(PlanoEntregaEntregaProgressoController::class); });
