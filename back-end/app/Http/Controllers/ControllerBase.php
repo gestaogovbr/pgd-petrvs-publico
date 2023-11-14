@@ -15,6 +15,8 @@ abstract class ControllerBase extends Controller
     public $service = null;
     public $updatable = [];
 
+    public static $sameTransaction = false;
+
     public function __construct() {
         if(empty($this->collection)) {
             $this->collection = str_replace("Controller", "", str_replace("App\\Http\\Controllers", "App\\Models", get_class($this)));
@@ -315,7 +317,7 @@ abstract class ControllerBase extends Controller
                 'with' => ['array']
             ]);
             $unidade = $this->getUnidade($request);
-            $entity = $this->service->store($data['entity'], $unidade);
+            $entity = $this->service->store($data['entity'], $unidade, !ControllerBase::$sameTransaction);
             $result = $this->service->getById([
                 'id' => $entity->id,
                 'with' => $data['with']
@@ -352,7 +354,7 @@ abstract class ControllerBase extends Controller
             }
             $unidade = $this->getUnidade($request);
             $data['data']['id'] = $data['id'];
-            $entity = $this->service->update($data['data'], $unidade);
+            $entity = $this->service->update($data['data'], $unidade, !ControllerBase::$sameTransaction);
             $result = $this->service->getById([
                 'id' => $entity->id,
                 'with' => $data['with']
@@ -386,7 +388,7 @@ abstract class ControllerBase extends Controller
                 return response()->json(['error' => "Não é possível atualizar"]);
             }
             $unidade = $this->getUnidade($request);
-            $entity = $this->service->updateJson($data, $unidade);
+            $entity = $this->service->updateJson($data, $unidade, !ControllerBase::$sameTransaction);
             $result = $this->service->getById([
                 'id' => $entity->id,
                 'with' => $data['with']
@@ -413,7 +415,7 @@ abstract class ControllerBase extends Controller
             $data = $request->validate([
                 'id' => ['required']
             ]);
-            return response()->json(['success' => $this->service->destroy($data["id"])]);
+            return response()->json(['success' => $this->service->destroy($data["id"], !ControllerBase::$sameTransaction)]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }

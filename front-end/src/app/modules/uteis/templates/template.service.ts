@@ -244,20 +244,21 @@ export class TemplateService {
     return undefined;
   }
 
+  public processParamDrop(tag?: SplitTag, params?: string) {
+    let parameter: string[] = []; /* Usado penas para iterar os parametros */
+    let parameters = (params?.replace(/^;/, "") || "").split(";").reduce((a, v) => (parameter = v.split("="), a[parameter[0]] = parameter[1], a), {} as IIndexable);
+    if(tag && parameters.drop && parameters.drop.match(/^\w+$/)) {
+      this.bondaryTag(tag, "<" + parameters.drop + ">[\\s\\S]*?$", "^[\\s\\S]*?<\\/" + parameters.drop + ">");
+      tag.start.before = "";
+      tag.end.after = "";
+    }
+  }
+
   public renderTemplate(template: string, context: IIndexable): string {
     let tag: SplitTag | undefined = undefined;
     let statement: RegExpMatchArray | null = null;
     let next: string = template;
     let result: string = "";
-    let processParamDrop = (tag?: SplitTag, params?: string) => {
-      let parameter: string[] = []; /* Usado penas para iterar os parametros */
-      let parameters = (params?.replace(/^;/, "") || "").split(";").reduce((a, v) => (parameter = v.split("="), a[parameter[0]] = parameter[1], a), {} as IIndexable);
-      if(tag && parameters.drop && parameters.drop.match(/^\w+$/)) {
-        this.bondaryTag(tag, "<" + parameters.drop + ">[\\s\\S]*?$", "^[\\s\\S]*?<\\/" + parameters.drop + ">");
-        tag.start.before = "";
-        tag.end.after = "";
-      }
-    };
 
     while(tag = this.tagSplit(next, TemplateService.OPEN_TAG, TemplateService.CLOSE_TAG)) {
       try {
@@ -270,12 +271,12 @@ export class TemplateService {
           let bValue = this.getExpressionValue(statement?.groups?.EXP_B || "", context);
           let ifThen = this.evaluateOperator(aValue, statement?.groups?.OPER || "", bValue);
           /* Processa o parametro drop caso ele exista, removendo a HTML-tag (definida pelo drop=TAG) onde o comando está dentro */
-          processParamDrop(tag, statement?.groups?.PARS);
+          this.processParamDrop(tag, statement?.groups?.PARS);
           /* Encontra o end-if */
           let endIfTag = this.splitEndTag(tag.after, "if:", "end-if");
           if(endIfTag) {
             /* Processa o parametro drop caso ele exista na tag de fechamento, removendo a HTML-tag (definida pelo drop=TAG) onde o comando está dentro */
-            processParamDrop(endIfTag, endIfTag.content?.replace(/^;/, ""));
+            this.processParamDrop(endIfTag, endIfTag.content?.replace(/^;/, ""));
             /* O content da tag só será renderizado caso ifThen seja true */
             tag.content = ifThen ? this.renderTemplate(endIfTag.before, context) : "";
             tag.after = endIfTag.after;
@@ -285,12 +286,12 @@ export class TemplateService {
         } else if(tag.content.match(TemplateService.EXPRESSION_FOR)) {
           statement = tag.content.match(TemplateService.STATEMENT_FOR); /* for:EXP[(t..)x..0|0..x(..t)|EACH];par=0;par=0... */
           /* Processa o parametro drop caso ele exista, removendo a HTML-tag (definida pelo drop=TAG) onde o comando está dentro */
-          processParamDrop(tag, statement?.groups?.PARS);
+          this.processParamDrop(tag, statement?.groups?.PARS);
           /* Encontra o end-for */
           let endForTag = this.splitEndTag(tag.after, "for:", "end-for");
           if(endForTag) {
             /* Processa o parametro drop caso ele exista na tag de fechamento, removendo a HTML-tag (definida pelo drop=TAG) onde o comando está dentro */
-            processParamDrop(endForTag, endForTag.content?.replace(/^;/, ""));
+            this.processParamDrop(endForTag, endForTag.content?.replace(/^;/, ""));
             /* O content da tag será todo o conteúdo repetível do for e o after será o after do end-for */
             tag.content = "";
             tag.after = endForTag.after;
