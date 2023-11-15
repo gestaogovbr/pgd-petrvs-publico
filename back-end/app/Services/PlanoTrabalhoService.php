@@ -133,7 +133,7 @@ class PlanoTrabalhoService extends ServiceBase
     /*     if (!in_array($unidade->id, $usuario_lotacoes_ids) && !parent::loggedUser()->hasPermissionTo('MOD_PTR_INCL_SEM_LOT')) {
       throw new ServerException("ValidatePlanoTrabalho", "Participante não lotado na unidade executora do plano (MOD_PTR_INCL_SEM_LOT)");
     } */
-    $planos = PlanoTrabalho::where("usuario_id", $data["usuario_id"])->where("unidade_id", $data["unidade_id"])->get();
+    $planos = PlanoTrabalho::where("usuario_id", $data["usuario_id"])->where("unidade_id", $data["unidade_id"])->where("status","ATIVO")->get();
     foreach ($planos as $plano) {
       if (
         UtilService::intersect($plano->data_inicio, $plano->data_fim, $data["data_inicio"], $data["data_fim"]) &&

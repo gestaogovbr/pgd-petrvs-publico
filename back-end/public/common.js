@@ -127,25 +127,27 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
 
 /***/ }),
 
-/***/ 103:
-/*!********************************************************!*\
-  !*** ./src/app/services/unidade-integrante.service.ts ***!
-  \********************************************************/
+/***/ 27918:
+/*!************************************************!*\
+  !*** ./src/app/services/integrante.service.ts ***!
+  \************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   UnidadeIntegranteService: () => (/* binding */ UnidadeIntegranteService)
+/* harmony export */   IntegranteService: () => (/* binding */ IntegranteService)
 /* harmony export */ });
-/* harmony import */ var _lookup_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lookup.service */ 39702);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _modules_base_page_base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../modules/base/page-base */ 17112);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ 51197);
+
 var _class;
 
 
-class UnidadeIntegranteService {
+class IntegranteService extends _modules_base_page_base__WEBPACK_IMPORTED_MODULE_1__.PageBase {
   constructor(injector) {
+    super(injector);
     this.injector = injector;
-    this.lookup = this.injector.get(_lookup_service__WEBPACK_IMPORTED_MODULE_0__.LookupService);
   }
   converterAtribuicoes(atribuicoes) {
     return atribuicoes.map(x => Object.assign({}, {
@@ -159,7 +161,7 @@ class UnidadeIntegranteService {
     let result = [];
     let novasAtribuicoes = form.controls.atribuicoes.value.map(a => a.key);
     ['GESTOR', 'GESTOR_DELEGADO', 'GESTOR_SUBSTITUTO'].forEach(g => {
-      if (novasAtribuicoes.includes(g) && items.includes(g)) result.push(this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, g));
+      if (this.util.array_diff_simm(novasAtribuicoes, items).includes(g)) result.push(this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, g));
     });
     return result;
   }
@@ -178,12 +180,22 @@ class UnidadeIntegranteService {
       'atribuicoes': atribuicoes
     });
   }
+  permitidoApagar(atribuicao, noPersist) {
+    var _this = this;
+    let proibicoes = noPersist ? ["LOTADO", "GESTOR", "GESTOR_SUBSTITUTO"] : ["LOTADO"];
+    let permitidoApagar = !proibicoes.includes(atribuicao);
+    let msg = atribuicao == "LOTADO" ? "A lotação do servidor não pode ser apagada. Para alterá-la, lote-o em outra Unidade." : "Para alterar/excluir o Gestor/Substituto use a aba 'Principal'.";
+    (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      if (!permitidoApagar) yield _this.dialog.alert("Não permitido!", msg);
+    })();
+    return permitidoApagar;
+  }
 }
-_class = UnidadeIntegranteService;
-_class.ɵfac = function UnidadeIntegranteService_Factory(t) {
-  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__.Injector));
+_class = IntegranteService;
+_class.ɵfac = function IntegranteService_Factory(t) {
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_2__.Injector));
 };
-_class.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({
+_class.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineInjectable"]({
   token: _class,
   factory: _class.ɵfac,
   providedIn: 'root'

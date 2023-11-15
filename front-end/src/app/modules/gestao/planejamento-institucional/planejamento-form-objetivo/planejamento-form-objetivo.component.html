@@ -5,13 +5,13 @@
             <input-switch [size]="2" labelPosition="top" [control]="form!.controls.integra_okr" label="Integra o OKR?" labelInfo="Somente esses objetivos serão listados no OKR."></input-switch>
         </div>
         <div class="row">
-            <input-search [size]="6" #eixoTematico [disabled]="form?.controls?.objetivo_pai_id?.value ? 'true' : undefined" controlName="eixo_tematico_id" [dao]="eixoTematicoDao" required (change)="onObjetivoPaiChange($event)"></input-search>
-            <input-select [size]="6" #objetivoPai [items]="objetivos" label="Objetivo Pai" icon="fab fa-unity" controlName="objetivo_pai_id"></input-select>
+            <input-search [size]="6" #eixoTematico [disabled]="form?.controls?.objetivo_pai_id?.value ? 'true' : undefined" controlName="eixo_tematico_id" [dao]="eixoTematicoDao" required ></input-search>
+            <input-select [size]="6" #objetivoPai [items]="objetivos" label="Objetivo Pai" icon="fab fa-unity" controlName="objetivo_pai_id" (change)="onObjetivoPaiChange($event)"></input-select>
         </div>
         <separator *ngIf="planejamento?.planejamento_superior_id" [margin]="2" title="Vinculo com Planejamento Superior">
             <div class="row">
                 <input-text [size]="6" disabled label="Planejamento Superior vinculado" [icon]="entityService.getIcon('Planejamento')" controlName="planejamento_superior_nome" [attr.maxlength]=250></input-text>
-                <input-select [items]="objetivos_superiores" [size]="6" label="Objetivo de Planejamento Superior (Vinculado)" icon="fab fa-unity" controlName="objetivo_superior_id" [control]="form!.controls.objetivo_superior_id"></input-select>
+                <input-select [items]="objetivos_superiores" [size]="6" label="Objetivo de Planejamento Superior (Vinculado)" icon="fab fa-unity" controlName="objetivo_superior_id" [control]="form!.controls.objetivo_superior_id" (change)="onObjetivoSuperiorChange($event)"></input-select>
             </div>
         </separator>
         <div class="row">
