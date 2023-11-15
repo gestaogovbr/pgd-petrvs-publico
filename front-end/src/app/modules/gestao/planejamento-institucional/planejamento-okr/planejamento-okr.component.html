@@ -37,9 +37,9 @@
           <ng-container [ngTemplateOutlet]="objetivoTmpl"
             [ngTemplateOutletContext]="{objetivo: objetivo, i: i}"></ng-container>
           <div class="unidades">
-            <div *ngFor="let unidade_entrega of objetivo.unidadesComEntregas;">
+            <div *ngFor="let unidade_entrega of objetivo.unidadesComEntregas; let u = index">
               <div class="d-flex mb-1 align-items-stretch">
-                <div class="unidade w-25">
+                <div class="unidade w-25" [style.border-color]="unidade_entrega.unidade._metadata.corBorda">
                   {{unidade_entrega.unidade.nome}}
                 </div>
                 <div class="entregas flex-fill">
@@ -63,7 +63,7 @@
 
 
 <ng-template #objetivoTmpl let-objetivo="objetivo" let-i="i">
-  <div class="objetivo">
+  <div class="objetivo" [style.border-color]="objetivo._metadata.corBorda">
     <div class="d-flex justify-content-between align-items-center">
       <span>{{objetivo.nome}}</span>
       <button class="btn" (click)="carregaEntregas(objetivo.id)"><i class="bi bi-chevron-right"></i></button>
@@ -75,7 +75,7 @@
 <ng-template #entregaTmpl let-objetivo_entrega="objetivo_entrega" let-i="i">
   <div>
     <div class="d-flex justify-content-between align-items-stretch entrega-geral">
-      <div class="entrega flex-fill">
+      <div class="entrega flex-fill" [style.border-color]="objetivo_entrega._metadata.corBorda">
         <span class="d-flex justify-content-between align-items-center">
           {{objetivo_entrega.entrega.descricao}}
           <button class="btn"

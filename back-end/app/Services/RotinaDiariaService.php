@@ -18,5 +18,6 @@ class RotinaDiariaService {
     public function concluirConsolidacoes() {
         // TODO: Implementar
     }
+
 }
 

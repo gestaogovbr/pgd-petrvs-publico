@@ -68,7 +68,7 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
     } else {
       result.push(["programa_id", "==", this.programaId]);
       if (form.nome?.length) result.push(["usuario.nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
-      if (form.unidade_id?.length) result.push(["usuario.areas_trabalho.unidade.id", "==", form.unidade_id]);
+      if (form.unidade_id?.length) result.push(["usuario.lotacao.unidade.id", "==", form.unidade_id]);
     }
 
     return result;

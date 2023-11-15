@@ -10,7 +10,7 @@
     </filter>
     <columns>
         <column title="Nome" field="nome" orderBy="nome"></column>
-        <column [title]="lex.translate('Tempo estimado') + ' /(h)'" field="tempo_estimado"></column>
+        <!--<column [title]="lex.translate('Tempo estimado') + ' /(h)'" field="tempo_estimado"></column>-->
         <column title="Documental?" type="select" field="documental" [items]="lookup.SIMNAO"></column>
         <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>

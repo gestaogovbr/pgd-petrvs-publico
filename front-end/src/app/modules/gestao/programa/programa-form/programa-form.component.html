@@ -22,7 +22,7 @@
             </div>
         </tab>
         <tab key="PLANO_ENTREGA" [label]="lex.translate('Plano de entrega')">
-            <input-search [label]="lex.translate('Tipo de avaliação do Plano de entrega')" [size]="12" #tipoAvaliacao controlName="tipo_avaliacao_plano_entrega_id" [dao]="tipoAvaliacaoDao" [labelInfo]="lex.noun('Tipo de avaliação') + ' que especifica a forma que será avaliado ' + lex.noun('plano de trabalho') + ' e ' + lex.noun('plano de entrega')" required></input-search>
+            <input-search [label]="lex.translate('Tipo de avaliação do Plano de entrega')" [size]="12" #tipoAvaliacaoEntrega controlName="tipo_avaliacao_plano_entrega_id" [dao]="tipoAvaliacaoDao" [labelInfo]="lex.noun('Tipo de avaliação') + ' que especifica a forma que será avaliado ' + lex.noun('plano de trabalho') + ' e ' + lex.noun('plano de entrega')" required></input-search>
             <separator [title]="lex.translate('Avaliação') + lex.translate(' do Plano de Entrega')">
                 <input-multiselect label="Checklists das entregas" controlName="checklist_avaliacao_entregas_plano_entrega" [size]="12" [addItemHandle]="addItemHandlePlanoEntregaChecklist.bind(this)">
                     <input-text [size]="12" controlName="checklist_plano_entrega_texto" [attr.maxlength]=250></input-text>
@@ -54,7 +54,7 @@
                 </div>                    
                 <div class="row">
                     <input-number [size]="4" label="Nota" *ngIf="isTipoAvaliacao('QUANTITATIVO')" [control]="form!.controls.nota_padrao_avaliacao" labelInfo="Nota que será atribuído automaticamente caso a tolerância seja alcançada"></input-number>
-                    <input-select [size]="4" label="Nota" *ngIf="isTipoAvaliacao('QUALITATIVO')" [control]="form!.controls.nota_padrao_avaliacao" [items]="tipoAvaliacaoQualitativo" labelInfo="Nota que será atribuído automaticamente caso a tolerância seja alcançada"></input-select>
+                    <input-select [size]="4" label="Conceito" *ngIf="isTipoAvaliacao('QUALITATIVO')" [control]="form!.controls.nota_padrao_avaliacao" [items]="tipoAvaliacaoQualitativo" labelInfo="Nota que será atribuído automaticamente caso a tolerância seja alcançada"></input-select>
                     <input-search [label]="lex.translate('Tipo de justificativa')" [size]="8" [emptyValue]="null" #tipoJustificativa controlName="tipo_justificativa_id" [dao]="tipoJustificativaDao" labelInfo="Tipo de justificativa, para quando o gestor não realizar a avaliação dentro do prazo"></input-search>
                 </div>                    
                 <div class="row">

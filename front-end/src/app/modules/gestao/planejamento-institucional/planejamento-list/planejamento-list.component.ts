@@ -78,7 +78,7 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
 
   public async onSelectTab(tab: LookupItem) {
     //if(tab.key == "TABELA") this.onLoad();
-    this.saveUsuarioConfig({active_tab: tab});
+    if(this.viewInit) this.saveUsuarioConfig({active_tab: tab.key});
   }
 
   public filterClear(filter: FormGroup) {
