@@ -17,10 +17,10 @@ class PlanejamentoService extends ServiceBase
     public function proxyQuery($query, &$data) {
         if(!empty(array_filter($data["where"], fn($w) => $w[0] == "manut_planej_unidades_executoras"))){
             $entidade_id = parent::unidadeLotacaoUsuarioLogado()?->entidade_id;
-            $unidade_executora_id = array_filter($data["where"], fn($w) => $w[0] == "unidade_executora_id")[0][2];
-            $unidade_executora_path = Unidade::find($unidade_executora_id)->path;
-            $unidades_superiores_ids = array_filter(explode('/',$unidade_executora_path),fn($x) => $x != "");
-            array_shift($unidades_superiores_ids);
+            $unidade_id = array_filter($data["where"], fn($w) => $w[0] == "unidade_id")[0][2];
+            $unidade_path = Unidade::find($unidade_id)->path;
+            $unidades_superiores_ids = array_filter(explode('/',$unidade_path),fn($x) => $x != "");
+            //array_shift($unidades_superiores_ids);
             $unidades_superiores_ids = implode("','",$unidades_superiores_ids);
             $expressao = "entidade_id = '$entidade_id' AND deleted_at IS NULL AND (unidade_id IS NULL OR unidade_id IN ('$unidades_superiores_ids'))";
             $data['where'] = [new RawWhere($expressao, [])];
