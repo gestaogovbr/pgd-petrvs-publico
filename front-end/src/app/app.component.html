@@ -1,4 +1,4 @@
-<div>
+<div class="d-flex flex-column h-100">
     <ng-template #dialogs></ng-template>
     <nav *ngIf="auth.logged || globals.isEmbedded || isConfig" class="navbar navbar-expand-lg fixed-top px-3">
         <div class="navbar-logo">
@@ -230,4 +230,16 @@
         <top-alert *ngFor="let topAlert of dialog.topAlerts" type="alert" [id]="topAlert.id" [close]="topAlert.close" [message]="topAlert.message" [closable]="topAlert.closable"></top-alert>
         <router-outlet></router-outlet>
     </div>
+
+    <footer class="footer mt-auto">
+        <div class="d-flex justify-content-between">
+            <div>
+                <small class="text-light">Versão: {{globals.VERSAO_SYS}}</small>
+            </div>
+            <div class="logos">
+                <img src="../assets/images/logo_pgd.png">
+                <img src="../assets/images/logo_gov_ligth.png">
+            </div>
+        </div>
+    </footer>
 </div>

@@ -1,11 +1,12 @@
 
 import { Base } from './base.model';
 import { Entrega, EntregaValor } from './entrega.model';
-import { PlanoEntregaEntrega } from './plano-entrega-entrega.model';
+import { HasMetaRealizado, PlanoEntregaEntrega } from './plano-entrega-entrega.model';
 import { Usuario } from './usuario.model';
 
-export class PlanoEntregaEntregaProgresso extends Base  {
-  public entrega?: PlanoEntregaEntrega;
+export class PlanoEntregaEntregaProgresso extends Base implements HasMetaRealizado  {
+  public plano_entrega_entrega?: PlanoEntregaEntrega;
+  public entrega?: Entrega;
   public usuario?: Usuario;
 
   public data_inicio: Date = new Date();

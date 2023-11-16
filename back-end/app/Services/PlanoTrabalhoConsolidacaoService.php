@@ -99,7 +99,8 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       'tarefas' => fn($q) => $q->withTrashed(),
       'tarefas.tipoTarefa:id,nome',
       'comentarios' => fn($q) => $q->withTrashed(),
-      'comentarios.usuario:id,nome,apelido'
+      'comentarios.usuario:id,nome,apelido',
+      'reacoes.usuario:id,nome,apelido'
     ]);
     $afastamentos = Afastamento::with(['tipoMotivoAfastamento']);
     if($concluido) { /* Carrega atividades e afastamentos baseado no snapshot */

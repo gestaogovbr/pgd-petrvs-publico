@@ -38,6 +38,6 @@ class PlanoEntregaEntregaProgresso extends ModelBase
 
     // Has
     // Belongs
-    public function usuario() { return $this->belongsTo(Usuario::class, 'usuario_id'); }//ok
-    public function entrega() { return $this->belongsTo(PlanoEntregaEntrega::class, 'plano_entrega_entrega_id'); }//ok
+    public function usuario() { return $this->belongsTo(Usuario::class, 'usuario_id'); }
+    public function planoEntregaEntrega() { return $this->belongsTo(PlanoEntregaEntrega::class, 'plano_entrega_entrega_id'); }
 }
