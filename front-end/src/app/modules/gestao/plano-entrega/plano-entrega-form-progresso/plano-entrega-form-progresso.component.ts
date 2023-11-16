@@ -27,7 +27,7 @@ export class PlanoEntregaFormProgressoComponent extends PageFormBase<PlanoEntreg
     super(injector, PlanoEntregaEntregaProgresso, PlanoEntregaEntregaProgressoDaoService);
     this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
     this.planoEntregaEntregaDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
-    this.join = ["entrega.entrega"];
+    this.join = ["plano_entrega_entrega.entrega"];
     
     this.form = this.fh.FormBuilder({
       data_progresso: { default: new Date() },
@@ -77,7 +77,7 @@ export class PlanoEntregaFormProgressoComponent extends PageFormBase<PlanoEntreg
 
     this.entity!.usuario_id = this.auth.usuario!.id;
     this.entity!.plano_entrega_entrega_id = this.planoEntregaEntrega?.id!;
-    this.entity!.entrega = this.planoEntregaEntrega;
+    this.entity!.plano_entrega_entrega = this.planoEntregaEntrega;
     this.entity!.meta = this.planoEntregaEntrega?.meta!;
     this.entity!.realizado = this.planoEntregaEntrega?.realizado!;
     this.entity!.progresso_esperado = this.planoEntregaEntrega?.progresso_esperado!;
@@ -93,8 +93,8 @@ export class PlanoEntregaFormProgressoComponent extends PageFormBase<PlanoEntreg
       let {meta, realizado, ...valueWithout} = this.form!.value;
 
       progresso = this.util.fillForm(progresso, valueWithout);
-      progresso.meta = this.planoEntregaService.getEntregaValor(this.entity!.entrega?.entrega!, meta);
-      progresso.realizado = this.planoEntregaService.getEntregaValor(this.entity!.entrega?.entrega!, realizado);
+      progresso.meta = this.planoEntregaService.getEntregaValor(this.entity!.plano_entrega_entrega?.entrega!, meta);
+      progresso.realizado = this.planoEntregaService.getEntregaValor(this.entity!.plano_entrega_entrega?.entrega!, realizado);
       
       resolve(progresso);
     });

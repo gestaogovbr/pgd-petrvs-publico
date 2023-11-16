@@ -1,50 +1,34 @@
-<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
-  [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_PENT_ENTR_PRO_INCL')"
-  [hasEdit]="auth.hasPermissionTo('MOD_PENT_ENTR_PRO_EDT')">
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_PENT_ENTR_PRO_INCL')" [hasEdit]="auth.hasPermissionTo('MOD_PENT_ENTR_PRO_EDT')" [loadList]="onGridLoad.bind(this)">
   <toolbar *ngIf="!selectable"></toolbar>
-  <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere"
-    [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)"
-    [collapsed]="!selectable && filterCollapsed">
+  <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
     <div class="row">
-      <input-datetime [size]="3" noIcon label="Data inical do progresso" controlName="data_inicial_progresso"
-        [control]="filter!.controls.data_inicial_progresso" labelInfo="Data que foi registrado o progresso"></input-datetime>
-
-        <input-datetime [size]="3" noIcon label="Data final do progresso" controlName="data_final_progresso"
-        [control]="filter!.controls.data_final_progresso" labelInfo="Data que foi registrado o progresso"></input-datetime>
-        
+      <input-datetime [size]="3" noIcon label="Data inical do progresso" controlName="data_inicial_progresso" [control]="filter!.controls.data_inicial_progresso" labelInfo="Data que foi registrado o progresso"></input-datetime>
+      <input-datetime [size]="3" noIcon label="Data final do progresso" controlName="data_final_progresso" [control]="filter!.controls.data_final_progresso" labelInfo="Data que foi registrado o progresso"></input-datetime>
     </div>
   </filter>
   <columns>
-
     <column [title]="'Data progresso'" [template]="columnProgressoData" [editTemplate]="columnProgressoData">
       <ng-template let-row="row" #columnProgressoData>
         <span *ngIf="row.data_progresso"> {{dao!.getDateFormatted(row.data_progresso)}}</span>
       </ng-template>
     </column>
-
     <column [title]="'Data Início\nData Fim'" [template]="columnDatas" [editTemplate]="columnDatas">
       <ng-template let-row="row" #columnDatas>
         <span *ngIf="row.data_inicio"> {{dao!.getDateFormatted(row.data_inicio)}}</span><br>
         <span *ngIf="row.data_fim"> {{dao!.getDateFormatted(row.data_fim)}}</span>
       </ng-template>
     </column>
-
     <column [title]="'Meta'" [width]="100" [template]="columnMetaRealizado">
       <ng-template let-row="row" #columnMetaRealizado>
-        <badge icon="bi bi-graph-up-arrow" [textValue]="planoEntregaService.getValorMeta(row.entrega)" color="light"
-          hint="Planejada"></badge><br>
-        <badge icon="bi bi-check-lg" [textValue]="planoEntregaService.getValorRealizado(row.entrega)" color="light"
-          hint="Realizada"></badge>
+        <badge icon="bi bi-graph-up-arrow" [textValue]="planoEntregaService.getValorMeta(row)" color="light" hint="Planejada"></badge><br>
+        <badge icon="bi bi-check-lg" [textValue]="planoEntregaService.getValorRealizado(row)" color="light" hint="Realizada"></badge>
       </ng-template>
     </column>
-
-    <column [title]="'Progresso'" [width]="200" [template]="columnProgresso" [editTemplate]="columnProgresso"
-      [columnEditTemplate]="selectable ? undefined : columnProgresso">
+    <column [title]="'Progresso'" [width]="200" [template]="columnProgresso" [editTemplate]="columnProgresso" [columnEditTemplate]="selectable ? undefined : columnProgresso">
       <ng-template let-row="row" #columnProgresso>
         <progress-bar [value]="row.progresso_realizado" [goal]="row.progresso_esperado" color="success"></progress-bar>
       </ng-template>
     </column>
-
     <column type="options" [onEdit]="edit" [options]="options"></column>
   </columns>
   <pagination [rows]="rowsLimit"></pagination>
