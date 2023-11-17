@@ -749,7 +749,9 @@ class ServiceBase extends DynamicMethods
     /**
      * Store a newly created resource in storage.
      *
-     * @param  Array $data
+     * @param  Array   $dataOrEntity
+     * @param  Object  $unidade
+     * @param  Boolean $transaction
      * @return Object
      */
     public function store($dataOrEntity, $unidade, $transaction = true)
@@ -934,6 +936,5 @@ class ServiceBase extends DynamicMethods
         }
         return $model;
     }
-
 }
 

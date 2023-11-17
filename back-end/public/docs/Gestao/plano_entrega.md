@@ -312,7 +312,7 @@ Ação: SUSPENDER -> o plano adquire o status de 'SUSPENSO';
 - (RI_PENT_B) A consulta do grid retornará inicialmente os principais Planos de Entrega do usuário logado (a opção 'principais' já vem marcada), que são:
   - os planos válidos das suas Áreas de Trabalho, e
   - se ele for gestor, os planos ativos das Unidades-pai de onde ele é gestor;
-- (RI_PENT_C) Por padrão, os planos de entregas retornados na listagem do grid são os que não foram arquivados.
+- (RI_PENT_C) Por padrão, os planos de entregas retornados na listagem do grid são os que não foram arquivados nem cancelados.
 - (RI_PENT_D) Na visualização de Avaliação, deverá trazer a unidade ao qual o usuário é gestor e todas as suas subordinadas imediatas.
 
 ## QUESTÕES PENDENTES

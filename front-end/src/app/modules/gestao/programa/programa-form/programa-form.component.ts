@@ -127,7 +127,10 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
   }
 
   public isTipoAvaliacao(tipo: string) {
+    
+    
     let selected = this.tipoAvaliacao?.selectedEntity as TipoAvaliacao;
+    console.log(selected);
     return selected?.tipo == tipo || (!selected && tipo == "QUANTITATIVO");
   }
 

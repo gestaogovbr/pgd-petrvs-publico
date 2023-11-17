@@ -1,6 +1,6 @@
 export interface IIndexable {
     [key: string]: any;
-}
+};
 
 export type EntityStatus = "ADD" | "EDIT" | "DELETE";
 

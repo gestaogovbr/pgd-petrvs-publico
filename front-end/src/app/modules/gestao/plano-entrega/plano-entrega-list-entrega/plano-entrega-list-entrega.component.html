@@ -60,7 +60,7 @@
                 <input-number [size]="12" label="Realizado" sufix="%" icon="bi bi-clock" controlName="progresso_realizado" [control]="form!.controls.progresso_realizado" labelInfo="Progresso de execução (% Concluído)"></input-number>
             </ng-template>
         </column>-->
-        <column [title]="'Progresso\nChecklist'" [width]="200" [template]="columnProgChecklist" [editTemplate]="columnProgChecklist" [columnEditTemplate]="selectable ? undefined : columnChecklistEdit" [edit]="selectable ? undefined : onColumnChecklistEdit.bind(this)" [save]="selectable ? undefined : onColumnChecklistSave.bind(this)">
+        <column [title]="'Progresso\nChecklist'" [width]="200" [template]="columnProgChecklist" [editTemplate]="columnProgChecklist" [columnEditTemplate]="selectable ? undefined : columnChecklistEdit" [edit]="selectable ? undefined : onColumnChecklistEdit.bind(this)" [save]="selectable ? undefined : onColumnChecklistSave.bind(this)" *ngIf="execucao">
             <ng-template let-row="row" #columnProgChecklist>
                 <progress-bar [value]="row.progresso_realizado" [goal]="row.progresso_esperado" color="success"></progress-bar>
                 <separator *ngIf="row.checklist?.length" small title="Checklist" collapse [collapsed]="true">

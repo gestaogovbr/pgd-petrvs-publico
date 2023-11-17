@@ -75,7 +75,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   public atividadeDao: AtividadeDaoService;
   public atividadeService: AtividadeService;
   public calendar: CalendarService;
-  public joinAtividade: string[] = ['demandante', 'usuario', 'tipo_atividade', 'comentarios.usuario:id,nome,apelido'];
+  public joinAtividade: string[] = ['demandante', 'usuario', 'tipo_atividade', 'comentarios.usuario:id,nome,apelido', 'reacoes.usuario:id,nome,apelido'];
   public tipoAtividadeDao: TipoAtividadeDaoService;
   public planoTrabalhoService: PlanoTrabalhoService;
   public planoEntregaService: PlanoEntregaService;

@@ -81,6 +81,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       'planoTrabalho.unidade.gestor:id,usuario_id',
       'planoTrabalho.unidade.gestorSubstituto:id,usuario_id',
       'planoTrabalho.entregas.entrega', 
+      'planoTrabalho.entregas.reacoes', 
       'planoTrabalho.entregas.planoEntregaEntrega:id,descricao,plano_entrega_id,entrega_id,meta,realizado,progresso_realizado', 
       'planoTrabalho.entregas.planoEntregaEntrega.entrega:id,nome,tipo_indicador', 
       'planoTrabalho.entregas.planoEntregaEntrega.objetivos.objetivo', 
@@ -98,7 +99,8 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       'tarefas' => fn($q) => $q->withTrashed(),
       'tarefas.tipoTarefa:id,nome',
       'comentarios' => fn($q) => $q->withTrashed(),
-      'comentarios.usuario:id,nome,apelido'
+      'comentarios.usuario:id,nome,apelido',
+      'reacoes.usuario:id,nome,apelido'
     ]);
     $afastamentos = Afastamento::with(['tipoMotivoAfastamento']);
     if($concluido) { /* Carrega atividades e afastamentos baseado no snapshot */

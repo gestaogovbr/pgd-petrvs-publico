@@ -26,7 +26,7 @@
                 <span *ngIf="row.entregas?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-list-check"></i> {{row.entregas?.length}}</span>
             </ng-template>
             <ng-template let-row="row" #columnExpandedEntregas>
-                <plano-entrega-list-entrega [disabled]="avaliacao || !botaoAtendeCondicoes(BOTAO_ALTERAR, row)" [entity]="row" [execucao]="execucao" [cdRef]="cdRef" [planejamentoId]="row.planejamento_id" [cadeiaValorId]="row.cadeia_valor_id" [unidadeId]="row.unidade_id"></plano-entrega-list-entrega>
+                <plano-entrega-list-entrega [parent]="this" [disabled]="avaliacao || !botaoAtendeCondicoes(BOTAO_ALTERAR, row)" [entity]="row" [execucao]="execucao" [cdRef]="cdRef" [planejamentoId]="row.planejamento_id" [cadeiaValorId]="row.cadeia_valor_id" [unidadeId]="row.unidade_id"></plano-entrega-list-entrega>
             </ng-template>
         </column>
         <column [titleTemplate]="titleIdNumeroStatus" [template]="columnNumero">
@@ -43,9 +43,9 @@
                 Programa{{ !filter!.controls.agrupar.value ? ' - Unidade' : ''}}
             </ng-template>
             <ng-template let-row="row" #columnNome>
-                <span class="text-break text-wrap" [style.max-width.px]="400">{{row.nome}}</span><br>
-                <badge [icon]="entityService.getIcon('Programa')" [label]="row.programa.nome" color="light"></badge>
-                <badge *ngIf="!filter!.controls.agrupar.value" color="secondary" [icon]="entityService.getIcon(lex.translate('unidade'))" [label]="row.unidade.sigla"></badge>
+                <span class="text-break text-wrap" [style.max-width.px]="400">{{row.nome || ""}}</span><br>
+                <badge *ngIf="row.programa" [icon]="entityService.getIcon('Programa')" [label]="row.programa.nome" color="light"></badge>
+                <badge *ngIf="!filter!.controls.agrupar.value && row.unidade" color="secondary" [icon]="entityService.getIcon(lex.translate('unidade'))" [label]="row.unidade.sigla"></badge>
             </ng-template>
         </column>
         <column title="Início" [template]="columnInicio" orderBy="data_inicio">

@@ -1,20 +1,18 @@
 import { Injectable, Injector } from '@angular/core';
-import { LookupItem, LookupService } from './lookup.service';
+import { LookupItem } from './lookup.service';
 import { FormGroup } from '@angular/forms';
 import { IntegranteConsolidado } from '../models/unidade-integrante.model';
 import { Vinculo } from '../dao/unidade-integrante-dao.service';
 import { IntegranteAtribuicao } from '../models/base.model';
+import { PageBase } from '../modules/base/page-base';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
-export class UnidadeIntegranteService {
-
-  public lookup: LookupService;
+export class IntegranteService extends PageBase {
 
   constructor(public injector: Injector) {
-    this.lookup = this.injector.get<LookupService>(LookupService);
+    super(injector);
   }
 
   public converterAtribuicoes(atribuicoes: string[]): LookupItem[] {
@@ -28,8 +26,8 @@ export class UnidadeIntegranteService {
 
   public alterandoGestor(form: FormGroup, items: IntegranteAtribuicao[]): string[] {
     let result: string[] = [];
-    let novasAtribuicoes = form!.controls.atribuicoes.value.map((a: { key: string; }) => a.key);
-    ['GESTOR', 'GESTOR_DELEGADO', 'GESTOR_SUBSTITUTO'].forEach(g => { if (novasAtribuicoes.includes(g) && items.includes(g as IntegranteAtribuicao)) result.push(this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, g)); });
+    let novasAtribuicoes: string[] = form!.controls.atribuicoes.value.map((a: { key: string; }) => a.key);
+    ['GESTOR', 'GESTOR_DELEGADO', 'GESTOR_SUBSTITUTO'].forEach(g => { if (this.util.array_diff_simm(novasAtribuicoes, items).includes(g)) result.push(this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, g)); });
     return result;
   }
 
@@ -44,5 +42,15 @@ export class UnidadeIntegranteService {
 
   public converterEmVinculo(base: any, unidade_id: string, usuario_id: string, atribuicoes: IntegranteAtribuicao[] ): Vinculo {
     return Object.assign(base, { 'unidade_id': unidade_id, 'usuario_id': usuario_id, 'atribuicoes': atribuicoes });
+  }
+
+  public permitidoApagar(atribuicao: string, noPersist: boolean): boolean {
+    let proibicoes = noPersist ? ["LOTADO","GESTOR","GESTOR_SUBSTITUTO"] : ["LOTADO"];
+    let permitidoApagar = !proibicoes.includes(atribuicao);
+    let msg = atribuicao == "LOTADO" ? "A lotação do servidor não pode ser apagada. Para alterá-la, lote-o em outra Unidade." : "Para alterar/excluir o Gestor/Substituto use a aba 'Principal'.";
+    (async () => {
+      if(!permitidoApagar) await this.dialog.alert("Não permitido!", msg);
+    })();
+    return permitidoApagar;
   }
 }
