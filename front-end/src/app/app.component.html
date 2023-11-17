@@ -231,13 +231,13 @@
         <router-outlet></router-outlet>
     </div>
 
-    <footer class="footer mt-auto">
+    <footer class="footer mt-auto" *ngIf="auth.usuario">
         <div class="d-flex justify-content-between">
             <div>
                 <small class="text-light">Versão: {{globals.VERSAO_SYS}}</small>
             </div>
             <div class="logos">
-                <img src="../assets/images/logo_pgd.png">
+                <img src="../assets/images/logo_pgd_ligth.png">
                 <img src="../assets/images/logo_gov_ligth.png">
             </div>
         </div>
