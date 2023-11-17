@@ -41,7 +41,13 @@
             <ng-template let-header="header" #titleForcaTrabalho>
                 <div class="text-center">
                     <!--<small><strong>% CHD</strong></small><br>-->
-                    <small><badge icon="bi bi-calculator" [color]="totalForcaTrabalho == 100 ? 'success' : 'warning'" [label]="totalForcaTrabalho + '%'"></badge></small>
+                    <div *ngIf="totalForcaTrabalho > 100; else umCHD">
+                        <small><badge icon="bi bi-calculator" [color]="'warning'" [label]="totalForcaTrabalho + '%'"></badge></small>
+                        <small><badge icon="bi bi-intersect" [color]="'secondary'" [label]="totalForcaTrabalho - 100 + '%'"></badge></small><!--[hint]="'Sobreposição de CHD entre Entregas'"-->
+                    </div>
+                    <ng-template #umCHD>
+                        <small><badge icon="bi bi-calculator" [color]="totalForcaTrabalho == 100 ? 'success' : 'warning'" [label]="totalForcaTrabalho + '%'"></badge></small>
+                    </ng-template>    
                 </div>
             </ng-template>
             <ng-template let-row="row" #columnForcaTrabalho><small>{{  row.forca_trabalho + '%' }}</small></ng-template>
