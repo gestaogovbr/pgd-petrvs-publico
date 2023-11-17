@@ -4,7 +4,7 @@ import { EditableFormComponent } from 'src/app/components/editable-form/editable
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { QuestionarioDaoService } from 'src/app/dao/questionario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
-import { Questionario } from 'src/app/models/questionario.model';
+import { Questionario, QuestionarioPergunta } from 'src/app/models/questionario.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 
@@ -51,10 +51,8 @@ export class QuestionarioFormComponent extends PageFormBase<Questionario, Questi
     }, this.cdRef, this.perguntaValidate);
   }
 
-
   public perguntaValidate = (control: AbstractControl, controlName: string) => {
     let result = null;
-
     return result;
   }
 
@@ -171,6 +169,10 @@ export class QuestionarioFormComponent extends PageFormBase<Questionario, Questi
     const valorResposta = this.formPergunta.controls.inputValorRespostaB.value;
     const key = this.util.textHash(opcaoResposta + valorResposta);
 
+/*
+   valor - respota ?
+*/
+
     if (opcaoResposta && valorResposta && this.util.validateLookupItem(this.formPergunta!.controls.perguntasB.value, key)) {
       result = {
         key: key,
@@ -249,8 +251,13 @@ export class QuestionarioFormComponent extends PageFormBase<Questionario, Questi
   
   
   
-  public async addPergunta(){
+  public async addPergunta() {
     return {
+    } as QuestionarioPergunta;
+    
+    
+    
+    /*{
       id: this.dao!.generateUuid(),
       perguntaB: "",
       listaTipoRespostaB:"",
@@ -259,7 +266,7 @@ export class QuestionarioFormComponent extends PageFormBase<Questionario, Questi
       inputOpcoesRespostaB:"",
       inputValorRespostaB:"",
       opcoesResposta:{'opcao':'','valor':''},
-    }
+    };*/
 
 
    }
