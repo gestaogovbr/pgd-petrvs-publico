@@ -18,7 +18,7 @@
                     </div>
                     <div class="row">
                         <input-select [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_PERFIL') ? 'true' : undefined" [size]="4" label="Perfil" controlName="perfil_id" [dao]="perfilDao" required></input-select>
-                        <input-search #lotacao label="Lotação" [size]="8" [emptyValue]="null" [control]="formLotacao!.controls.unidade_lotacao_id" controlName="unidade_lotacao_id" [dao]="unidadeDao" labelInfo="Unidade de lotação do Usuário" (change)="onLotacaoChange()" required></input-search>
+                        <input-search #lotacao label="Lotação" [size]="8" [emptyValue]="null" [control]="formLotacao!.controls.unidade_lotacao_id" controlName="unidade_lotacao_id" [dao]="unidadeDao" labelInfo="Unidade de lotação do Usuário" required></input-search>
                     </div>
                     <div class="row">
                         <input-select [size]="4" label="UF" icon="bi bi-flag" controlName="uf" [items]="lookup.UF"></input-select>
@@ -34,7 +34,6 @@
             </div>
         </tab>
         <tab key="ATRIBUICOES" [label]="lex.translate('Atribuições')">
-            <!-- <usuario-integrante #unidadesIntegrantes noPersist [entity]="entity" [entity_id]="entity?.id"></usuario-integrante> -->
             <usuario-integrante #unidadesIntegrantes noPersist [entity]="entity"></usuario-integrante>
         </tab>
     </tabs>

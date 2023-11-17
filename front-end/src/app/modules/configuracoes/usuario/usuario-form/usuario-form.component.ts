@@ -20,8 +20,7 @@ import { UnidadeIntegranteDaoService, Vinculo } from 'src/app/dao/unidade-integr
 })
 export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  @ViewChild(UsuarioIntegranteComponent, { static: false }) public atribuicoes?: UsuarioIntegranteComponent;
-  @ViewChild('lotacao', { static: false }) public lotacao?: InputSearchComponent;
+  @ViewChild(UsuarioIntegranteComponent, { static: false }) public unidadesIntegrantes?: UsuarioIntegranteComponent;
 
   public formLotacao: FormGroup;
   public perfilDao: PerfilDaoService;
@@ -49,7 +48,6 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
       texto_complementar_plano: {default: ""},
       perfil_id: {default: null},
       data_nascimento: { default: new Date() },
-      //atribuicoes: { default: []}
     }, this.cdRef, this.validate);
     this.formLotacao = this.fh.FormBuilder({
       unidade_lotacao_id: {default: ""},
@@ -71,15 +69,12 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
   }
   
   public formValidation = (form?: FormGroup) => {
-    const nascimento = this.form?.controls.data_nascimento.value;
     if(!this.formLotacao?.controls.unidade_lotacao_id.value?.length) {
       return "É obrigatória a definição da unidade de lotação do servidor!";
-    } else if (!this.dao?.validDateTime(nascimento)) {
-      return "Data de nascimento inválida";
     }
     const erros_atribuicoes = [];
-    this.atribuicoes?.grid?.items.forEach((atribuicao) => {
-      if(atribuicao.unidade_id == '') erros_atribuicoes.push({ atribuicao: atribuicao, erro: 'Falta unidade_id'})
+    this.unidadesIntegrantes?.grid?.items.forEach((unidadeIntegrante) => {
+      if(unidadeIntegrante.unidade_id == '') erros_atribuicoes.push({ integrante: unidadeIntegrante, erro: 'Falta unidade_id'})
     });
     if(erros_atribuicoes.length) return "Na aba 'Atribuições' há unidade não salva. Salve-a antes de salvar o usuário!"
     return undefined;
@@ -89,7 +84,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
     this.formLotacao.controls.unidade_lotacao_id.setValue(entity.lotacao?.unidade?.id);
-    this.atribuicoes?.loadData(entity);
+    this.unidadesIntegrantes?.loadData(entity);
   }
 
   public initializeData(form: FormGroup): void {
@@ -99,15 +94,15 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
   
   public saveData(form: IIndexable): Promise<boolean> {      
     return new Promise<boolean>(async (resolve, reject) => {
-      this.atribuicoes!.grid!.confirm();
+      this.unidadesIntegrantes!.grid!.confirm();
       let usuario = this.util.fill(new Usuario(), this.entity!);
       usuario = this.util.fillForm(usuario, this.form!.value);
       usuario.lotacao_id = this.formLotacao?.controls.unidade_lotacao_id.value;
-      let vinculos = this.atribuicoes?._items || [];
+      let vinculos = this.unidadesIntegrantes?._items || [];
       try {
-        await this.dao?.save(usuario).then(async resposta => {
+        await this.dao?.save(usuario).then(async usuario => {
           if(vinculos.length) {
-            vinculos.forEach(v => v.usuario_id = resposta.id);
+            vinculos.forEach(v => v.usuario_id = usuario.id);
             await this.integranteDao.saveIntegrante(vinculos as Vinculo[]);
           }
         });
@@ -120,10 +115,6 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
 
   public titleEdit = (entity: Usuario): string => {
     return "Editando " + this.lex.translate("Usuário") + ': ' + (entity?.nome || "");
-  }
-
-  public onLotacaoChange(){
-    //this.unidadesIntegrantes?.items.splice(this.unidadesIntegrantes?.items.indexOf(),1);
   }
 
 }

@@ -29,7 +29,7 @@ export class UnidadeListComponent extends PageListBase<Unidade, UnidadeDaoServic
   }
 
   public async onSelectTab(tab: LookupItem) {
-    this.saveUsuarioConfig({active_tab: tab});
+    if(this.viewInit) this.saveUsuarioConfig({active_tab: tab.key});
   }
 
   public filterClear(filter: FormGroup) {

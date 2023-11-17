@@ -30,7 +30,7 @@ export class CadeiaValorListComponent extends PageListBase<CadeiaValor, CadeiaVa
   }
 
   public async onSelectTab(tab: LookupItem) {
-    this.saveUsuarioConfig({active_tab: tab});
+    if(this.viewInit) this.saveUsuarioConfig({active_tab: tab.key});
   }
 
   public filterClear(filter: FormGroup) {

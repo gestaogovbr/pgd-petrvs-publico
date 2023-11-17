@@ -14,6 +14,7 @@ export type EntidadePetrvs = "ANTAQ" | "PRF" | "";
 })
 export class GlobalsService {
   public VERSAO_DB: number = 1;
+  public VERSAO_SYS: number =  environment.versao;
   public URL_SEI: string = "https://sei.prf.gov.br/"; /* Buscar essa configuração da Entidade */
   public IMAGES = environment.images;
   public ENTIDADE = environment.entidade || "";
@@ -42,8 +43,8 @@ export class GlobalsService {
 
   constructor(@Inject(DOCUMENT) private document: any, public injector: Injector) {
     this.auth = injector.get<AuthService>(AuthService);
-    this.go = injector.get<NavigateService>(NavigateService);
-   }
+    this.go = injector.get<NavigateService>(NavigateService);    
+  }
 
   public refresh() {
     this.document.getElementById("html-petrvs").setAttribute("data-bs-theme", this.theme)

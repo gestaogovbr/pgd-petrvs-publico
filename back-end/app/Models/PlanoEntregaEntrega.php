@@ -47,9 +47,10 @@ class PlanoEntregaEntrega extends ModelBase
         'etiquetas' => AsJson::class,
     ];
 
-    public $delete_cascade = ['comentarios', 'reacoes'];
+    public $delete_cascade = ['comentarios', 'reacoes', 'progressos'];
 
     // HasMany
+    public function progressos() { return $this->hasMany(PlanoEntregaEntregaProgresso::class, 'plano_entrega_entrega_id'); }
     public function objetivos() { return $this->hasMany(PlanoEntregaEntregaObjetivo::class, 'entrega_id'); }  //ok
     public function processos() { return $this->hasMany(PlanoEntregaEntregaProcesso::class, 'entrega_id'); }  //ok
     public function comentarios() { return $this->hasMany(Comentario::class); }
