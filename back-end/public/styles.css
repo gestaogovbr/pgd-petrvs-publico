@@ -29431,9 +29431,7 @@ body {
 }
 
 .content {
-  min-height: 100vh;
   padding: calc(var(--petrvs-navbar-top-height) + 2rem) 1.5rem 6.375rem 1.5rem;
-  padding-bottom: 6rem;
 }
 
 .login .content {

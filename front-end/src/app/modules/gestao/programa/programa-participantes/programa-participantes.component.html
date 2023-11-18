@@ -1,4 +1,4 @@
-<grid multiselect [dao]="dao" [form]="form" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" editable 
+<grid multiselect [dao]="dao" [form]="form!" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" editable 
       [add]="addParticipante.bind(this)" [load]="loadParticipante.bind(this)" [remove]="removeParticipante.bind(this)" 
       [save]="saveParticipante.bind(this)" [selectable]="selectable" (select)="onSelect($event)" 
       [hasAdd]="auth.hasPermissionTo('MOD_PRGT_PART_INCL')" [hasEdit]="auth.hasPermissionTo('MOD_PRGT_PART_EDT')" 
@@ -29,7 +29,7 @@
                 <!-- Pensar na possibilidade de por as lotacoes -->
             </ng-template>
             <ng-template let-row="row" #editUsuario>
-                <input-search #usuario [size]="12" label icon [control]="form!.controls.usuario_id" [dao]="usuarioDao"></input-search>
+                <input-search #usuario [size]="12" label icon [control]="form!.controls.usuario_id" [dao]="usuarioDao" required></input-search>
             </ng-template>
         </column>
         <column title="Habilitado" [template]="columnHabilitado" [editTemplate]="editHabilitado">

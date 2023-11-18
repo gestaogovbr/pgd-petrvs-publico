@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="notranslate petrvs" data-bs-theme="blue" id="html-petrvs">
+<html lang="en" class="notranslate petrvs h-100" data-bs-theme="blue" id="html-petrvs">
 <head>
   <meta charset="utf-8">
   <title>Petrvs</title>

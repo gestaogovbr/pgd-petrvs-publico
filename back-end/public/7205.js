@@ -135,7 +135,7 @@ function PerfilFormComponent_tab_9_ng_template_5_span_0_Template(rf, ctx) {
   if (rf & 2) {
     const row_r13 = _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵnextContext"]().row;
     _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵtextInterpolate1"](" ", row_r13.grupos == null ? null : row_r13.grupos.length, "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵtextInterpolate1"](" ", row_r13.filhos == null ? null : row_r13.filhos.length, "");
   }
 }
 function PerfilFormComponent_tab_9_ng_template_5_Template(rf, ctx) {
@@ -144,7 +144,7 @@ function PerfilFormComponent_tab_9_ng_template_5_Template(rf, ctx) {
   }
   if (rf & 2) {
     const row_r13 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("ngIf", row_r13.grupos == null ? null : row_r13.grupos.length);
+    _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("ngIf", row_r13.filhos == null ? null : row_r13.filhos.length);
   }
 }
 function PerfilFormComponent_tab_9_ng_template_7_tr_2_Template(rf, ctx) {
@@ -189,7 +189,7 @@ function PerfilFormComponent_tab_9_ng_template_7_Template(rf, ctx) {
   if (rf & 2) {
     const row_r16 = ctx.row;
     _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("ngForOf", row_r16.grupos);
+    _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("ngForOf", row_r16.filhos);
   }
 }
 function PerfilFormComponent_tab_9_ng_template_10_Template(rf, ctx) {
@@ -317,7 +317,7 @@ class PerfilFormComponent extends src_app_modules_base_page_form_base__WEBPACK_I
       var queryOptions = new src_app_dao_query_options__WEBPACK_IMPORTED_MODULE_4__.QueryOptions({
         where: [["grupo_id", "==", null]],
         orderBy: [["codigo", "asc"]],
-        join: ["grupos"]
+        join: ["filhos"]
       });
       _this.tiposCapacidades = yield _this.tipoCapacidadeDao.query(queryOptions).asPromise();
       formValue = _this.util.fillForm(formValue, entity);
@@ -327,7 +327,7 @@ class PerfilFormComponent extends src_app_modules_base_page_form_base__WEBPACK_I
           habilitado: !!capacidade
         });
         if (capacidade) console.log(capacidade.tipo_capacidade?.codigo);
-        for (let tipoCapacidadeFilha of tipoCapacidade.grupos) {
+        for (let tipoCapacidadeFilha of tipoCapacidade.filhos) {
           const capacidadeFilha = entity.capacidades?.find(x => x.tipo_capacidade?.codigo == tipoCapacidadeFilha.codigo);
           tipoCapacidadeFilha._metadata = Object.assign(tipoCapacidadeFilha._metadata || {}, {
             habilitado: !!capacidadeFilha
@@ -349,13 +349,13 @@ class PerfilFormComponent extends src_app_modules_base_page_form_base__WEBPACK_I
     } else {
       if (capacidade && !capacidade._status) capacidade._status = "DELETE";
       if (capacidade && capacidade._status == "ADD") this.entity.capacidades.splice(this.entity.capacidades.findIndex(x => x.tipo_capacidade_id == row.id), 1);
-      for (let grupo of row.grupos) {
-        grupo._metadata = Object.assign(grupo._metadata || {}, {
+      for (let filho of row.filhos) {
+        filho._metadata = Object.assign(filho._metadata || {}, {
           habilitado: false
         });
-        let subCapacidade = this.entity.capacidades?.find(x => x.tipo_capacidade_id == grupo.id);
+        let subCapacidade = this.entity.capacidades?.find(x => x.tipo_capacidade_id == filho.id);
         if (subCapacidade && !subCapacidade._status) subCapacidade._status = "DELETE";
-        if (subCapacidade && subCapacidade._status == "ADD") this.entity.capacidades.splice(this.entity.capacidades.findIndex(x => x.tipo_capacidade_id == grupo.id), 1);
+        if (subCapacidade && subCapacidade._status == "ADD") this.entity.capacidades.splice(this.entity.capacidades.findIndex(x => x.tipo_capacidade_id == filho.id), 1);
       }
     }
     this.refreshCapacidadesHabilitadas();

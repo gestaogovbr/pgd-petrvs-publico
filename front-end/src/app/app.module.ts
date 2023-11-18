@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
-import { NgModule, SecurityContext } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgChartsModule } from 'ng2-charts';
 import { BrowserModule } from '@angular/platform-browser';
@@ -18,8 +18,6 @@ import { RotinaModule } from './modules/rotinas/rotina.module';
 import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
-
-
 
 @NgModule({
   declarations: [

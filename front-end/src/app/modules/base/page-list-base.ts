@@ -102,11 +102,11 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
   }
 
   public modalRefreshId(entity: Base): RouteMetadata {
-    return { modal: true, modalClose: async (modalResult?: string) => (this.grid?.query || this.query!).refreshId(entity.id) };
+    return { modal: true, modalClose: (async (modalResult?: string) => this.refresh(entity.id)).bind(this) };
   }
 
   public modalRefresh() {
-    return { modal: true, modalClose: async (modalResult?: string) => this.refresh() };
+    return { modal: true, modalClose: (async (modalResult?: string) => this.refresh()).bind(this) };
   }
 
   public get queryOptions() {
