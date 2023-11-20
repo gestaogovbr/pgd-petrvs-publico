@@ -13,19 +13,18 @@ class CreatePerguntasQuestionariosTable extends Migration
      */
     public function up()
     {
-        Schema::create('perguntas_questionarios', function (Blueprint $table) {
+        Schema::create('questionarios_perguntas', function (Blueprint $table) {
             // Configurações:
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
             $table->softDeletes();
             // Campos:
-            $table->tinyint('numero')->comment("Numero da pergunta no questionario");
+            $table->tinyint('sequencia')->comment("Sequequencia dos numeros da pergunta no questionario");
             //$table->increments('numero')
-            $table->string('pergunta',256)->comment("A pergunta do questionario");
+            $table->text('pergunta')->comment("A pergunta do questionario");
             $table->enum('tipo', ["VISUAL", "LISTA_UNICA", "LISTA_MULTIPLA","LIVRE", "TEMPO", "NUMERICA", "CLASSIFICACAO", "SWICTH", "NUMERICA", "INTENSIDADE", "ORDENACAO", "LACUNA"])->comment("Tipos das respostas Sim/Nao, Multipla Escolha, Unica Escolha, etc");
-            $table->string('codigo',256)->comment("Código do questionario");
-            $table->json('resposta')->nullable()->comment("Respostas possiveis para a pergunta");
+            $table->json('respostas')->nullable()->comment("Respostas possiveis para a pergunta");
             // Chaves estrangeiras:
             $table->foreignUuid('questionario_id')->constrained("questionarios")->onDelete('restrict')->onUpdate('cascade')->comment("FK Questionario ID");
         });
@@ -38,6 +37,6 @@ class CreatePerguntasQuestionariosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('perguntas_questionarios');
+        Schema::dropIfExists('questionarios_perguntas');
     }
 }

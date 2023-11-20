@@ -46,6 +46,7 @@ export class LexicalService {
     "lotação": {single: "lotação", plural: "lotações", female: true},
     "material e serviço": {single: "material e serviço", plural: "materiais e serviços", female: false},
     "modalidade": {single: "modalidade", plural: "modalidades", female: true},
+    "modelo de entrega:" : {single: "modelo de entrega", plural: "modelos de entregas", female: false},
     "motivo de afastamento": {single: "motivo de afastamento", plural: "motivos de afastamento", female: false},
     "notificação": {single: "notificação", plural: "notificações", female: true},
     "objetivo": {single: "objetivo", plural: "objetivos", female: false},
