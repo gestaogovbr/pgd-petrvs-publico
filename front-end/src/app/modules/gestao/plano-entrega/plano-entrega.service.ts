@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Entrega, EntregaValor } from 'src/app/models/entrega.model';
-import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
+import { HasMetaRealizado, PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
 import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { LookupService } from 'src/app/services/lookup.service';
 
@@ -11,7 +11,7 @@ export class PlanoEntregaService {
 
   constructor(public lookup: LookupService) { }
 
-  public getValorMeta(entrega: PlanoEntregaEntrega): string {
+  public getValorMeta(entrega: HasMetaRealizado): string {
     let result = "";
     switch (entrega.entrega?.tipo_indicador) {
       case "PORCENTAGEM": result = entrega.meta.porcentagem + " %"; break;
@@ -23,7 +23,7 @@ export class PlanoEntregaService {
     return result;
   }
 
-  public getValorRealizado(entrega: PlanoEntregaEntrega): string {
+  public getValorRealizado(entrega: HasMetaRealizado): string {
     let result = "";
     switch (entrega.entrega?.tipo_indicador) {
       case "PORCENTAGEM": result = entrega.realizado.porcentagem + " %"; break;

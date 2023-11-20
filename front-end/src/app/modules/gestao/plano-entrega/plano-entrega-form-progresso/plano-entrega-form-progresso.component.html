@@ -1,21 +1,18 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="data_progresso" (submit)="onSaveData()" (cancel)="onCancel()">
-    <div class="row">
-        <input-datetime date [size]="6" label="Data do progresso" controlName="data_progresso"  required></input-datetime>
-    </div>
+  <div class="row">
+    <input-datetime date [size]="4" label="Data do progresso" controlName="data_progresso" required></input-datetime>
+    <input-datetime date [size]="4" label="Início" controlName="data_inicio" [labelInfo]="'Início ' + lex.translate('Plano de Entregas')" required></input-datetime>
+    <input-datetime date [size]="4" label="Fim" controlName="data_fim" [labelInfo]="'Fim ' + lex.translate('Plano de Entregas') + '(Estimativa Inicial)'" required></input-datetime>
+  </div>
 
-    <div class="row">
-      <input-datetime date [size]="6" label="Início" controlName="data_inicio" [labelInfo]="'Início ' + lex.translate('Plano de Entregas')" required></input-datetime>
-      <input-datetime date [size]="6" label="Fim" controlName="data_fim" [labelInfo]="'Fim ' + lex.translate('Plano de Entregas') + '(Estimativa Inicial)'" required></input-datetime>
-    </div>
+  <div class="row">
+    <plano-entrega-valor-meta-input icon="bi bi-graph-up-arrow" [entrega]="entity?.plano_entrega_entrega?.entrega" [size]="6" [control]="form!.controls.meta" label="Meta"></plano-entrega-valor-meta-input>
+    <plano-entrega-valor-meta-input icon="bi bi-check-lg" [entrega]="entity?.plano_entrega_entrega?.entrega" [size]="6" [control]="form!.controls.realizado" label="Valor Inicial" labelInfo="Valor da meta verificado no início do plano de entrega"></plano-entrega-valor-meta-input>
+  </div>
 
-    <div class="row">
-      <plano-entrega-valor-meta-input icon="bi bi-graph-up-arrow" [entrega]="entity?.entrega?.entrega" [size]="6" [control]="form!.controls.meta" label="Meta"></plano-entrega-valor-meta-input>
-      <plano-entrega-valor-meta-input icon="bi bi-check-lg" [entrega]="entity?.entrega?.entrega" [size]="6" [control]="form!.controls.realizado" label="Valor Inicial"  labelInfo="Valor da meta verificado no início do plano de entrega"></plano-entrega-valor-meta-input>
-    </div>
+  <div class="row">
+    <input-number [size]="6" label="Progresso Esperado" controlName="progresso_esperado" sufix="%"></input-number>
+    <input-number [size]="6" label="Progresso Realizado" controlName="progresso_realizado" sufix="%"></input-number>
+  </div>
 
-    <div class="row">
-      <input-number [size]="6" label="Progresso Esperado" controlName="progresso_esperado" sufix="%"></input-number>
-      <input-number [size]="6" label="Progresso Realizado" controlName="progresso_realizado" sufix="%"></input-number>
-    </div>
-    
 </editable-form>

@@ -12,6 +12,9 @@
     display: none;
 }
 
+:host {
+    height: 100%;
+}
 // Novo menu 
 
 .fixed-top {
@@ -104,6 +107,16 @@
 .submenu { 
     list-style: none;
     padding-left: 10px;
+}
+
+.footer {
+    background: var(--petrvs-navbar-top-bg-color);
+    border-top: 1px solid var(--petrvs-navbar-vertical-border-color);;
+    padding: 5px;
+    .logos img{
+        height: 30px;
+        margin-right: 20px;
+    }
 }
 
 

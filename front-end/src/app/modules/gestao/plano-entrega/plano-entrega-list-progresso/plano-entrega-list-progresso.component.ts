@@ -5,6 +5,7 @@ import { PlanoEntregaEntregaProgressoDaoService } from "src/app/dao/plano-entreg
 import { PlanoEntregaEntregaProgresso } from "src/app/models/plano-entrega-entrega-progresso.model";
 import { PageListBase } from "src/app/modules/base/page-list-base";
 import { PlanoEntregaService } from "../plano-entrega.service";
+import { Base } from "src/app/models/base.model";
 
 @Component({
   selector: 'app-plano-entrega-list-progresso',
@@ -20,15 +21,18 @@ export class PlanoEntregaListProgressoComponent extends PageListBase<PlanoEntreg
   constructor(public injector: Injector) {
     super(injector, PlanoEntregaEntregaProgresso, PlanoEntregaEntregaProgressoDaoService);
     this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
-    this.title = this.lex.translate("Progresso da entrega");
+    this.title = this.lex.translate("Histórico de execução");
     this.orderBy = [['data_progresso','desc']];
-    this.join = ['entrega.entrega']
-
+    this.join = ['plano_entrega_entrega.entrega'];
     this.filter = this.fh.FormBuilder({
       data_inicial_progresso: {default: null},
       data_final_progresso: {default: null},
     });
     this.addOption(Object.assign({ onClick: this.delete.bind(this) }, this.OPTION_EXCLUIR), "MOD_PENT_ENTR_PRO_EXCL");
+  }
+
+  public onGridLoad(rows?: Base[]) {
+    (rows as PlanoEntregaEntregaProgresso[])?.forEach(x => x.entrega = x.plano_entrega_entrega?.entrega);
   }
 
   public ngOnInit() {

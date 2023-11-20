@@ -14,6 +14,7 @@ export type EntidadePetrvs = "ANTAQ" | "PRF" | "";
 })
 export class GlobalsService {
   public VERSAO_DB: number = 1;
+  public VERSAO_SYS: number =  environment.versao;
   public URL_SEI: string = "https://sei.prf.gov.br/"; /* Buscar essa configuração da Entidade */
   public IMAGES = environment.images;
   public ENTIDADE = environment.entidade || "";

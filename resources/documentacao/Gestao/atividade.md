@@ -21,22 +21,24 @@
 
 ## REGRAS DE NEGÓCIO APLICADAS AS ATIVIDADES
 
-1. (RN_ATV_X) Somente é permitido iniciar a atividade se o usuário responsável for o próprio usuário ou se tiver o MOD_ATV_USERS_INICIAR
-2. (RN_ATV_X) Para incluir/alterar atividades o usuário logado precisa ser lotado ou colaborar da unidade, ou a unidade ser subordinada hierarquicamente a dele
-3. (RN_ATV_X) O responsável pela atividade precisa ser lotado ou colaborar da unidade, ou o usuário logado possuir as capacidades MOD_ATV_EXT ou MOD_ATV_USERS_ATRIB
-2. (RN_ATV_X) Unidade da atividade deve obrigatoriamente ser a unidade do plano de trabalho (quando o plano for informado)
-2. (RN_ATV_X) A entrega vinculada a atividade deve ter período compativel com a da atividade (se for entrega de plano de entrega será a data da entrega, caso seja do catálogo de entregas então deverá ser o período do plano de trabalho)
+1. (RN_ATV_1) Somente é permitido iniciar a atividade se o usuário responsável for o próprio usuário ou se tiver o MOD_ATV_USERS_INICIAR;
+2. (RN_ATV_2) Para incluir/alterar atividades o usuário logado precisa ser lotado ou colaborar da unidade, ou a unidade ser subordinada hierarquicamente a dele;
+3. (RN_ATV_3) O responsável pela atividade precisa ser lotado ou colaborar da unidade, ou o usuário logado possuir as capacidades MOD_ATV_EXT ou MOD_ATV_USERS_ATRIB;
+4. (RN_ATV_4) Unidade da atividade deve obrigatoriamente ser a unidade do plano de trabalho (quando o plano for informado);
+5. (RN_ATV_5) A atividade deverá ter perído compatível com o do plano de trabalho (Data de distribuição e Prazo de entrega devem estar dentro do período do plano de trabalho);
+6. (RN_ATV_6) Somente será permitido iniciar a atividade dentro do período do plano de trabalho.
 
 ## REGRAS CORRELACIONADAS
 
 1. (RN_CSLD_9) Se uma atividade for iniciada em uma outra consolidação anterior (CONCLUIDO ou AVALIADO), não poderá mais retroceder nem editar o inicio (Exemplo.: Retroceder de INICIADO para INCLUIDO, ou de CONCLUIDO para INICIADO);
-2. (RN_CSLD_10) A atividade já iniciado so não pode pausar com data retroativa da última consolidação CONCLUIDO ou AVALIADO
-3. (RN_CSLD_12) Tarefas concluidas de atividades em consolidação CONCLUIDO ou AVALIADO não poderão mais ser alteradas/excluidas, nem Concluir ou Remover conclusão.
-4. (RN_CSLD_13) Tarefas de atividades em consolidação CONCLUIDO ou AVALIADO não poderão mais ser alteradas/excluidas, somente a opção de Concluir ficará disponível.
+2. (RN_CSLD_10) A atividade já iniciado so não pode pausar com data retroativa da última consolidação CONCLUIDO ou AVALIADO;
+3. (RN_CSLD_12) Tarefas concluidas de atividades em consolidação CONCLUIDO ou AVALIADO não poderão mais ser alteradas/excluidas, nem Concluir ou Remover conclusão;
+4. (RN_CSLD_13) Tarefas de atividades em consolidação CONCLUIDO ou AVALIADO não poderão mais ser alteradas/excluidas, somente a opção de Concluir ficará disponível;
+5. (RN_CSLD_14) Não será possível lançar novas atividades em períodos já CONCLUIDO ou AVALIADO.
 
 ## REGRAS DE INTERFACE
 
-1. (RI_ATV_X) 
+2. (RI_ATV_1) Caso a entrega vinculada a atividade tenha período incompativel com a da atividade o usuário deverá ser alertado.
 
 ## FLUXO DAS ATIVIDADE
 
