@@ -342,13 +342,22 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   }
 
   public async onColumnChecklistSave(row: any) {
+    let realizado = Math.round(parseInt(this.planoEntregaService.getValorMeta(row)) * this.formEdit.controls.progresso_realizado.value/100);
     try {
       const saved = await this.dao!.update(row.id, {
         progresso_realizado: this.formEdit.controls.progresso_realizado.value,
+        realizado: this.planoEntregaService.getEntregaValor(row.entrega, realizado),
         checklist: this.checklist
       });
       row.progresso_realizado = this.formEdit.controls.progresso_realizado.value;
       row.checklist = this.checklist;
+      if (typeof row.realizado.porcentagem != "undefined") {
+        row.realizado.porcentagem = realizado;
+      } else if (typeof row.realizado.quantitativo != "undefined") {
+        row.realizado.quantitativo = realizado;
+      } else if (typeof row.realizado.valor != "undefined") {
+        row.realizado.valor = realizado;
+      };
       return !!saved;
     } catch (error) {
       return false;

@@ -1,4 +1,4 @@
-<h5>Atividades:</h5>
+<h5>{{lex.translate("Atividades")}}:</h5>
 <grid [items]="items" [loading]="loader">
   <columns>
     <column [titleTemplate]="titleIdAtividadeDescricao" [template]="columnAtividadeDescricao">
@@ -7,6 +7,7 @@
       </ng-template>
       <ng-template let-row="row" #columnAtividadeDescricao>
         <span class="micro-text fw-ligh atividade-descricao">{{row.descricao}}</span>
+        <reaction [entity]="row" origem="ATIVIDADE"></reaction>
       </ng-template>
     </column>
 
