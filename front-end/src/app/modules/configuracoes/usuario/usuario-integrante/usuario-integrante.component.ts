@@ -136,27 +136,30 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   public async removeIntegrante(row: IntegranteConsolidado) {
     let nomeServidor = this.entity!.nome;
     let nomeUnidade = row.unidade_nome;
-    let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir todas as atribuições do servidor '" + nomeServidor + "' na unidade '" + nomeUnidade + "' ?");
-    if (confirm) {
-      let msg: string | undefined;
-      try {
-        if (!this.isNoPersist) {    // se persistente
-          this.loading = true;
-          await this.integranteDao.saveIntegrante([this.integranteService.converterEmVinculo(row, row.id, this.entity!.id, [])]).then(resposta => {
-            if (msg = resposta.find(v => v.msg?.length)?.msg) { if (this.grid) this.grid.error = msg; };
-          });
-          await this.loadData({ id: this.entity!.id }, this.form);
-        } else {                    // se não persistente
-          let index = this._items!.findIndex(x => x["id"] == row["id"]);
-          this._items![index] = this.integranteService.converterEmVinculo(row, row.id, this.entity!.id, []);
-        }
-      } finally {
-        this.loading = false;
-      }
-      return msg ? false : true;
+    if(this.isNoPersist && row.atribuicoes.length == 1 && row.atribuicoes[0] == "LOTADO") {
+      await this.dialog.alert("IMPOSSÍVEL EXCLUIR !", "Um vínculo não pode ser excluído quando sua única atribuição é a lotação do servidor. Se quiser alterar a lotação, use a aba principal.");
     } else {
-      return false;
+      let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir todas as atribuições do servidor '" + nomeServidor + "' na unidade '" + nomeUnidade + "' ?");
+      if (confirm) {
+        let msg: string | undefined;
+        try {
+          if (!this.isNoPersist) {    // se persistente
+            this.loading = true;
+            await this.integranteDao.saveIntegrante([this.integranteService.converterEmVinculo(row, row.id, this.entity!.id, [])]).then(resposta => {
+              if (msg = resposta.find(v => v.msg?.length)?.msg) { if (this.grid) this.grid.error = msg; };
+            });
+            await this.loadData({ id: this.entity!.id }, this.form);
+          } else {                    // se não persistente
+            let index = this._items!.findIndex(x => x["id"] == row["id"]);
+            this._items![index] = this.integranteService.converterEmVinculo(row, row.id, this.entity!.id, []);
+          }
+        } finally {
+          this.loading = false;
+        }
+        return msg ? false : true;
+      }
     }
+    return false;
   }
 
   /**
@@ -175,6 +178,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
    * @returns 
    */
   public async saveIntegrante(form: FormGroup, row: IntegranteConsolidado) {
+    form.controls.atribuicoes.setValue(this.lookup.uniqueLookupItem(form.controls.atribuicoes.value));
     let confirm = true;
     let n = this.integranteService.alterandoGestor(form, row.atribuicoes || []);
     if (n.length) confirm = await this.dialog.confirm("Confirma a Alteração de Gestor ?", n.length == 1 ? "O " + n[0] + " será alterado." : "Serão alterados: " + n.join(', ') + ".");
