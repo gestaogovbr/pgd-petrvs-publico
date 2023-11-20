@@ -541,7 +541,7 @@ class PlanoTrabalhoService extends ServiceBase
   public function proxyRows($rows)
   {
     foreach ($rows as $row) {
-      $row->assinaturasExigidas = $this->programa->assinaturasExigidas($row->id);
+      $row->assinaturasExigidas = $this->programa->assinaturasExigidas($row);
       $row->jaAssinaramTCR = $this->usuario->jaAssinaramTCR($row->id);
     }
     return $rows;
@@ -559,9 +559,9 @@ class PlanoTrabalhoService extends ServiceBase
     $planoTrabalho = !empty($entity['id']) ? PlanoTrabalho::withTrashed()->with('entregas')->find($entity['id'])->toArray() : $entity;
     $planoTrabalho['unidade'] = !empty($planoTrabalho['unidade_id']) ? Unidade::find($planoTrabalho['unidade_id'])->toArray() : null;
     $result = [];
-    $result["assinaturasExigidas"] = $this->programa->assinaturasExigidas($planoTrabalho["id"]);
-    $result["assinaturasFaltantes"] = array_diff($this->programa->assinaturasExigidas($planoTrabalho["id"]),$this->usuario->jaAssinaramTCR($planoTrabalho["id"]));
-    $result["assinaturaUsuarioExigida"] = in_array(parent::loggedUser()->id, $this->programa->assinaturasExigidas($planoTrabalho["id"]));
+    $result["assinaturasExigidas"] = $this->programa->assinaturasExigidas($planoTrabalho);
+    $result["assinaturasFaltantes"] = array_diff($this->programa->assinaturasExigidas($planoTrabalho),$this->usuario->jaAssinaramTCR($planoTrabalho["id"]));
+    $result["assinaturaUsuarioExigida"] = in_array(parent::loggedUser()->id, $this->programa->assinaturasExigidas($planoTrabalho));
     $result["gestorUnidadeExecutora"] = $this->usuario->isGestorUnidade($planoTrabalho['unidade_id']);
     $result["nrEntregas"] = empty($planoTrabalho['entregas']) ? 0 : count($planoTrabalho['entregas']);
     $result["participanteLotadoAreaTrabalho"] = parent::loggedUser()->areasTrabalho->find(fn ($at) => $this->usuario->isLotacao($planoTrabalho["usuario_id"], $at->unidade->id)) != null;
