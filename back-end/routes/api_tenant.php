@@ -183,7 +183,6 @@ Route::middleware(['auth:sanctum'])->prefix('Feriado')->group(function () { defa
 Route::middleware(['auth:sanctum'])->prefix('MaterialServico')->group(function () { defaultRoutes(MaterialServicoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('PlanejamentoObjetivo')->group(function () { defaultRoutes(PlanejamentoObjetivoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Programa')->group(function () { 
-    //Route::post('assinaturas-exigidas', [ProgramaController::class, 'assinaturasExigidas']);
     defaultRoutes(ProgramaController::class);
  });
 Route::middleware(['auth:sanctum'])->prefix('ProgramaParticipante')->group(function () {

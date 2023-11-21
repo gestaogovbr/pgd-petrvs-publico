@@ -174,8 +174,8 @@ export class LookupService {
   ];
 
   public DOCUMENTO_ESPECIE: LookupItem[] = [
-    { key: 'SEI', value: "Documento SEI", icon: "bi bi-exclamation", color: "primary"},
-    { key: 'TCR', value: "TCR", icon: "bi bi-file-medical-fill", color: "success"},
+    { key: 'SEI', value: "Documento SEI", icon: "bi bi-exclamation", color: "primary" },
+    { key: 'TCR', value: "TCR", icon: "bi bi-file-medical-fill", color: "success" },
     //{ key: 'TCR_CANCELAMENTO', value: "Cancelamento TCR", icon: "bi bi-file-earmark-x", color: "danger" },
     { key: 'OUTRO', value: "Outro", icon: "bi bi-question-circle", color: "danger" },
     { key: 'NOTIFICACAO', value: "Notificação", icon: "bi bi-bell", color: "info" }
@@ -206,7 +206,7 @@ export class LookupService {
     { key: 'OUTRA_UNIDADE', value: "Outra Unidade", color: "primary" },
     { key: 'OUTRO_ORGAO', value: "Outro Órgão/Entidade", color: "warning" },
     { key: 'SEM_ENTREGA', value: "Não vinculadas a entregas", color: "info" }
-  ]; 
+  ];
 
   public HORAS_CORRIDAS_OU_UTEIS: LookupItem[] = [
     { key: 'HORAS_CORRIDAS', value: "Horas Corridas" },
@@ -563,7 +563,7 @@ export class LookupService {
     { key: "QUALITATIVO", value: "Qualitativo (conceitual)" },
     { key: "QUANTITATIVO", value: "Quantitativo (valor)" }
   ];
-  
+
   public ADESAO_STATUS: LookupItem[] = [
     { key: "SOLICITADO", value: "Solicitado", color: "bg-primary" },
     { key: "HOMOLOGADO", value: "Homologado", color: "bg-success" },
@@ -712,9 +712,9 @@ export class LookupService {
   ];
 
   public THEMES: LookupItem[] = [
-    {'key': 'light', 'value': "Branco (light)"},
-    {'key': 'blue', 'value': "Azul (oxford)"}, 
-    {'key': 'dark', 'value': "Preto (dark)"}
+    { 'key': 'light', 'value': "Branco (light)" },
+    { 'key': 'blue', 'value': "Azul (oxford)" },
+    { 'key': 'dark', 'value': "Preto (dark)" }
   ];
 
   public TIPO_INTEGRACAO: LookupItem[] = [
@@ -727,7 +727,7 @@ export class LookupService {
     { 'key': 'A', 'value': 'Vínculos ativos sem ocorrência de exclusão' },
     { 'key': 'B', 'value': 'Todos os vínculos' },
   ];
-  
+
   public TIPO_VINCULO: LookupItem[] = [
     { 'key': 'A', 'value': 'Ativos em exercício no órgão' },
     { 'key': 'B', 'value': 'Ativos e aposentados' },
@@ -757,5 +757,16 @@ export class LookupService {
 
   public getData(itens: LookupItem[], key: any): any {
     return itens?.find(x => x.key == key)?.data;
+  }
+
+  /**
+   * Retorna um LookupItem[] com chaves únicas
+   * @param array Array original
+   * @returns 
+   */
+  public uniqueLookupItem(array: LookupItem[]): LookupItem[] {
+    let novoArray: LookupItem[] = [];
+    array.forEach(elem => { if(!novoArray.find(x => x.key == elem.key)) novoArray.push(elem); });
+    return novoArray;
   }
 }
