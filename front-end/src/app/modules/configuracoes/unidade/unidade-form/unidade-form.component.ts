@@ -189,17 +189,12 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     return "Editando " + this.lex.translate("Unidade") + ': ' + (entity?.sigla || "");
   }
 
-<<<<<<< HEAD
   public onInformalChange(event: Event) {
     if(this.form!.controls.informal.value) {
       this.form!.controls.codigo.setValue("");
       this.form!.controls.codigo.updateValueAndValidity();
     }
     this.cdRef.detectChanges();
-=======
-  public get is24hrs(): string | undefined {
-    return this.form?.controls.expediente24.value ? "" : undefined;
->>>>>>> develop
   }
 
   public onUsarExpedienteEntidadeChange() {
