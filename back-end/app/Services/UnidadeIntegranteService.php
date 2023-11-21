@@ -56,7 +56,7 @@ class UnidadeIntegranteService extends ServiceBase
                       $msg = "O vínculo de LOTADO não pode ser apagado, apenas transferido através da atribuição de lotação em outra unidade.";
                       array_push($atribuicoesFinais, "LOTADO");
                   } else {
-                      $integranteNovoOuExistente->deleteCascade();
+                      $integranteNovoOuExistoente->deleteCascade();
                       if($transaction) DB::commit();
                       return $result;
                   };
