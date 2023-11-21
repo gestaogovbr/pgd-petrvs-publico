@@ -2,7 +2,7 @@
     <columns>
         <column title="Perguntas" [template]="columnPerguntas">
             <ng-template let-row="row" #columnPerguntas>
-                <span>{{row.data.pergunta}}</span><br>
+                <span>{{row.data.pergunta.pergunta}}</span><br>
                <!-- <table>
                     <tr *ngFor="let pergunta of row.perguntas; index as i">{{i + 1}} - {{pergunta.data.pergunta}}
                         <td> - Tipo da resposta: {{pergunta.data.tipo.value}}</td>

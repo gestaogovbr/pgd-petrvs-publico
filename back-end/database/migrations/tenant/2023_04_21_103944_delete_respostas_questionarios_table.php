@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRespostasQuestionariosTable extends Migration
+class DeleteRespostasQuestionariosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,6 +12,16 @@ class CreateRespostasQuestionariosTable extends Migration
      * @return void
      */
     public function up()
+    {
+        Schema::dropIfExists('respostas_questionarios');
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
     {
         Schema::create('respostas_questionarios', function (Blueprint $table) {
             // Configurações:
@@ -27,15 +37,5 @@ class CreateRespostasQuestionariosTable extends Migration
             $table->foreignUuid('questionario_id')->constrained("questionarios")->onDelete('restrict')->onUpdate('cascade')->comment("FK Questionario ID");
             $table->foreignUuid('usuario_id')->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->unique()->comment('Usuário');
         });
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('respostas_questionarios');
     }
 }

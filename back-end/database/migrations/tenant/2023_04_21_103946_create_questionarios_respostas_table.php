@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRespostasQuestionariosTable extends Migration
+class CreateQuestionariosRespostasTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateRespostasQuestionariosTable extends Migration
      */
     public function up()
     {
-        Schema::create('respostas_questionarios', function (Blueprint $table) {
+        Schema::create('questionarios_respostas', function (Blueprint $table) {
             // Configurações:
             $table->uuid('id');
             $table->primary('id');
@@ -22,7 +22,8 @@ class CreateRespostasQuestionariosTable extends Migration
             // Campos:
             $table->dateTime('data_respostas')->comment("Data e hora das respostas");
             $table->tinyInteger('editavel')->default(1)->comment("Possibilidade de editar as respostas");
-            $table->json('respostas')->nullable()->comment("Respostas do questionário");
+            $table->integer('versao')->comment("Versao do questionario");
+            //$table->json('respostas')->nullable()->comment("Respostas do questionário");
             // Chaves estrangeiras:
             $table->foreignUuid('questionario_id')->constrained("questionarios")->onDelete('restrict')->onUpdate('cascade')->comment("FK Questionario ID");
             $table->foreignUuid('usuario_id')->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->unique()->comment('Usuário');
@@ -36,6 +37,6 @@ class CreateRespostasQuestionariosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('respostas_questionarios');
+        Schema::dropIfExists('questionarios_respostas');
     }
 }
