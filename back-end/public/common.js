@@ -138,16 +138,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   IntegranteService: () => (/* binding */ IntegranteService)
 /* harmony export */ });
 /* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
-/* harmony import */ var _modules_base_page_base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../modules/base/page-base */ 17112);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _lookup_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./lookup.service */ 39702);
+/* harmony import */ var _util_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./util.service */ 49193);
+/* harmony import */ var _dialog_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./dialog.service */ 19899);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 51197);
 
 var _class;
 
 
-class IntegranteService extends _modules_base_page_base__WEBPACK_IMPORTED_MODULE_1__.PageBase {
+
+
+class IntegranteService {
   constructor(injector) {
-    super(injector);
     this.injector = injector;
+    /* Injections */
+    this.lookup = this.injector.get(_lookup_service__WEBPACK_IMPORTED_MODULE_1__.LookupService);
+    this.dialog = this.injector.get(_dialog_service__WEBPACK_IMPORTED_MODULE_3__.DialogService);
+    this.util = this.injector.get(_util_service__WEBPACK_IMPORTED_MODULE_2__.UtilService);
   }
   converterAtribuicoes(atribuicoes) {
     return atribuicoes.map(x => Object.assign({}, {
@@ -193,9 +200,9 @@ class IntegranteService extends _modules_base_page_base__WEBPACK_IMPORTED_MODULE
 }
 _class = IntegranteService;
 _class.ɵfac = function IntegranteService_Factory(t) {
-  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_2__.Injector));
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_4__.Injector));
 };
-_class.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineInjectable"]({
+_class.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineInjectable"]({
   token: _class,
   factory: _class.ɵfac,
   providedIn: 'root'

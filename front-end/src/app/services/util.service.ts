@@ -375,10 +375,10 @@ export class UtilService {
 
   public getRandomColor(): string {
     const letters = '0123456789ABCDEF';
-    let color = '#';    
+    let color = '#';
     for (let i = 0; i < 6; i++) {
       color += letters[Math.floor(Math.random() * 16)];
-    }    
+    }
     return color;
   }
 
@@ -647,4 +647,14 @@ export class UtilService {
     let intersecao: any[] = arrayA.filter(item => arrayB.includes(item));
     return this.array_diff(uniao, intersecao);
   }
+
+  /**
+   * Retorna um array com valores únicos, exceto se seus elementos forem objetos
+   * @param array Array original
+   * @returns 
+   */
+  public uniqueArray(array: any[]): any[] {
+    return array.filter((elem, i) => array.indexOf(elem) === i);
+  }
+
 }

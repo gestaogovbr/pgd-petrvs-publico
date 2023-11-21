@@ -1198,7 +1198,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdef
       const _r4 = _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵreference"](15);
       const _r6 = _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵreference"](19);
       const _r8 = _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵreference"](22);
-      _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("ngIf", !ctx.isModal);
+      _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("ngIf", ctx.isModal);
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("selectable", ctx.selectable)("hasAdd", ctx.auth.hasPermissionTo("MOD_UND_INCL"))("hasEdit", ctx.auth.hasPermissionTo("MOD_UND_EDT"));
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵadvance"](1);

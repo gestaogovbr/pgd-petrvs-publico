@@ -5,13 +5,14 @@ import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
-import { IIndexable } from 'src/app/models/base.model';
+import { IIndexable, IntegranteAtribuicao } from 'src/app/models/base.model';
 import { Usuario } from 'src/app/models/usuario.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { UsuarioIntegranteComponent } from '../usuario-integrante/usuario-integrante.component';
 import { TemplateDataset } from 'src/app/modules/uteis/templates/template.service';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { UnidadeIntegranteDaoService, Vinculo } from 'src/app/dao/unidade-integrante-dao.service';
+import { IntegranteConsolidado, UnidadeIntegrante } from 'src/app/models/unidade-integrante.model';
 
 @Component({
   selector: 'app-usuario-form',
@@ -27,8 +28,8 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
   public unidadeDao: UnidadeDaoService;
   public integranteDao: UnidadeIntegranteDaoService;
   public planoTrabalhoDao: PlanoTrabalhoDaoService;
-  public planoDataset: TemplateDataset[]; 
- 
+  public planoDataset: TemplateDataset[];
+
   constructor(public injector: Injector) {
     super(injector, Usuario, UsuarioDaoService);
     this.perfilDao = injector.get<PerfilDaoService>(PerfilDaoService);
@@ -36,49 +37,49 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
     this.planoTrabalhoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
     this.form = this.fh.FormBuilder({
-      email: {default: ""},
-      nome: {default: ""},
-      cpf: {default: ""},
-      matricula: {default: ""},
-      apelido: {default: ""},
-      telefone: {default: ""},
-      uf: {default: ""},
-      sexo: {default: null},
-      url_foto: {default: ""},
-      texto_complementar_plano: {default: ""},
-      perfil_id: {default: null},
-      data_nascimento: { default: new Date() },
+      email: { default: "" },
+      nome: { default: "" },
+      cpf: { default: "" },
+      matricula: { default: "" },
+      apelido: { default: "" },
+      telefone: { default: "" },
+      uf: { default: "" },
+      sexo: { default: null },
+      url_foto: { default: "" },
+      texto_complementar_plano: { default: "" },
+      perfil_id: { default: null },
+      data_nascimento: { default: null },
     }, this.cdRef, this.validate);
     this.formLotacao = this.fh.FormBuilder({
-      unidade_lotacao_id: {default: ""},
+      unidade_lotacao_id: { default: "" },
     }, this.cdRef, this.validate);
     this.planoDataset = this.planoTrabalhoDao.dataset();
     this.join = ["lotacao.unidade:id"];
   }
 
-  public validate = (control: AbstractControl, controlName: string) => {   
+  public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if(['cpf', 'matricula', 'email', 'nome', 'apelido', 'perfil_id', 'unidade_lotacao_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if (['cpf', 'matricula', 'email', 'nome', 'apelido', 'perfil_id', 'unidade_lotacao_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    } else if(controlName == "cpf" && !this.util.validarCPF(control.value)) {
+    } else if (controlName == "cpf" && !this.util.validarCPF(control.value)) {
       result = "Inválido";
     } else if (['data_nascimento'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
     }
     return result;
   }
-  
+
   public formValidation = (form?: FormGroup) => {
-    if(!this.formLotacao?.controls.unidade_lotacao_id.value?.length) {
+    if (!this.formLotacao?.controls.unidade_lotacao_id.value?.length) {
       return "É obrigatória a definição da unidade de lotação do servidor!";
     }
     const erros_atribuicoes = [];
     this.unidadesIntegrantes?.grid?.items.forEach((unidadeIntegrante) => {
-      if(unidadeIntegrante.unidade_id == '') erros_atribuicoes.push({ integrante: unidadeIntegrante, erro: 'Falta unidade_id'})
+      if (unidadeIntegrante.unidade_id == '') erros_atribuicoes.push({ integrante: unidadeIntegrante, erro: 'Falta unidade_id' })
     });
-    if(erros_atribuicoes.length) return "Na aba 'Atribuições' há unidade não salva. Salve-a antes de salvar o usuário!"
+    if (erros_atribuicoes.length) return "Na aba 'Atribuições' há unidade não salva. Salve-a antes de salvar o usuário!"
     return undefined;
-  } 
+  }
 
   public loadData(entity: Usuario, form: FormGroup): void {
     let formValue = Object.assign({}, form.value);
@@ -89,24 +90,29 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
 
   public initializeData(form: FormGroup): void {
     this.entity = new Usuario();
-    this.loadData(this.entity, form); 
+    this.loadData(this.entity, form);
   }
-  
-  public saveData(form: IIndexable): Promise<boolean> {      
+
+  public saveData(form: IIndexable): Promise<boolean> {
     return new Promise<boolean>(async (resolve, reject) => {
       this.unidadesIntegrantes!.grid!.confirm();
       let usuario = this.util.fill(new Usuario(), this.entity!);
       usuario = this.util.fillForm(usuario, this.form!.value);
       usuario.lotacao_id = this.formLotacao?.controls.unidade_lotacao_id.value;
-      let vinculos = this.unidadesIntegrantes?._items || [];
+      let vinculos: Vinculo[] = this.unidadesIntegrantes?._items || [];
+      let indiceVinculoLotacao = vinculos.findIndex(v => v.atribuicoes.includes("LOTADO"));
+      let lotacaoAlterada: boolean = indiceVinculoLotacao == -1 || usuario.lotacao_id != vinculos[indiceVinculoLotacao].unidade_id;
       try {
-        await this.dao?.save(usuario).then(async usuario => {
-          if(vinculos.length) {
-            vinculos.forEach(v => v.usuario_id = usuario.id);
-            await this.integranteDao.saveIntegrante(vinculos as Vinculo[]);
+        await this.dao?.save(usuario).then(async usuarioBanco => {
+          if (lotacaoAlterada) {
+            if(indiceVinculoLotacao != -1) vinculos[indiceVinculoLotacao].atribuicoes = vinculos[indiceVinculoLotacao].atribuicoes.filter(x => x != "LOTADO");
+            let index = vinculos.findIndex(v => v.unidade_id == usuario.lotacao_id);
+            index == -1 ? vinculos.push({ unidade_id: usuario.lotacao_id, usuario_id: usuarioBanco.id, atribuicoes: ["LOTADO"] }) : vinculos[index].atribuicoes.push("LOTADO");
           }
+          vinculos.forEach(v => v.usuario_id = usuarioBanco.id);
+          await this.integranteDao.saveIntegrante(vinculos as Vinculo[]);
         });
-        resolve(true); 
+        resolve(true);
       } catch (error: any) {
         if (this.editableForm) this.editableForm.error = error;
       }

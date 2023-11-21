@@ -24,6 +24,7 @@ use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\PlanoTrabalhoConsolidacaoAtividade;
 use App\Models\PlanejamentoObjetivo;
 use App\Models\CadeiaValorProcesso;
+use App\Models\PlanoTrabalhoEntrega;
 use App\Models\StatusJustificativa;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -65,6 +66,27 @@ class AtividadeService extends ServiceBase
         }
     }
 
+    /* 
+    (RN_CSLD_14) Não será possível lançar novas atividades em períodos já CONCLUIDO ou AVALIADO. 
+    (RN_ATV_5) A atividade deverá ter perído compatível com o do plano de trabalho (Data de distribuição e Prazo de entrega devem estar dentro do período do plano de trabalho)
+    (RN_ATV_6) Somente será permitido iniciar a atividade dentro do período do plano de trabalho.
+    */        
+    public function validatePeriodo($action, $id, $planoTrabalhoId, $planoTrabalhoEntregaId, $dataDistribuicao, $dataEstipuladaEntrega, $dataInicio) {
+        $entrega = PlanoTrabalhoEntrega::find($planoTrabalhoEntregaId);
+        if(empty($entrega)) throw new ServerException("ValidateAtividade", "Entrega não encontra");
+        if($entrega->plano_trabalho_id != $planoTrabalhoId) throw new ServerException("ValidateAtividade", "Entrega não pertence ao plano de trabalho selecionado");
+        $plano = PlanoTrabalho::with(["consolidacoes" => function($query) use ($dataDistribuicao, $dataEstipuladaEntrega) {
+            $query->whereIn('status', ['CONCLUIDO', 'AVALIADO']);
+            $query->where('data_inicio', '<=', $dataEstipuladaEntrega);
+            $query->where('data_fim', '>=', $dataDistribuicao);
+        }])->find($planoTrabalhoId);
+        if(!empty($dataInicio) && (UtilService::asTimestamp($dataInicio) < UtilService::asTimestamp($plano->data_inicio) || UtilService::asTimestamp($dataInicio) > UtilService::asTimestamp($plano->data_fim))) throw new ServerException("ValidateAtividade", "A inicialização da atividade não pode ser anterior ou posterior ao plano de trabalho. (Plano de trabalho: " . UtilService::getDateFormatted($plano->data_inicio) . " - " . UtilService::getDateFormatted($plano->data_fim) . ") [RN_ATV_6]");
+        if(UtilService::asTimestamp($plano->data_inicio) > UtilService::asTimestamp($dataDistribuicao) || UtilService::asTimestamp($plano->data_fim) < UtilService::asTimestamp($dataEstipuladaEntrega)) throw new ServerException("ValidateAtividade", "Data da atividade extrapola a do plano de trabalho. (Plano de trabalho: " . UtilService::getDateFormatted($plano->data_inicio) . " - " . UtilService::getDateFormatted($plano->data_fim) . ") [RN_ATV_5]");
+        foreach($plano->consolidacoes as $concluida) {
+            if($action == ServiceBase::ACTION_INSERT || !PlanoTrabalhoConsolidacaoAtividade::where("plano_trabalho_consolidacao_id", $concluida->id)->where("atividade_id", $id)->exists()) throw new ServerException("ValidateAtividade", "Não será possível lançar novas atividades em períodos já CONCLUIDO ou AVALIADO [RN_CSLD_14]");
+        }
+    }
+
     public function validateStore($data, $unidade, $action) {
         $unidade = Unidade::find($data["unidade_id"]);
         if($action != ServiceBase::ACTION_INSERT) {
@@ -74,6 +96,7 @@ class AtividadeService extends ServiceBase
             throw new ServerException("ValidateAtividade", $unidade->sigla . " não é uma unidade do usuário logado nem subordinada a ele.");
         }
         if(!empty($data["plano_trabalho_id"])) {
+            $this->validatePeriodo($action, $data["id"] ?? "", $data["plano_trabalho_id"], $data["plano_trabalho_entrega_id"], $data["data_distribuicao"], $data["data_estipulada_entrega"], $data["data_inicio"]);
             $planoTrabalho = PlanoTrabalho::find($data["plano_trabalho_id"]);
             if($planoTrabalho->unidade_id != $data["unidade_id"]) {
                 throw new ServerException("ValidateAtividade", "Unidade do plano diverge da unidade da atividade");
@@ -105,17 +128,11 @@ class AtividadeService extends ServiceBase
             ($metadados["concluido"] ? "CONCLUIDO" : 
             ($metadados["iniciado"] ? "INICIADO" : "INCLUIDO"));
         $this->status->atualizaStatus($entity, $status);
-        /*if($entity->status != $status) {
-            $entity->status = $status;
-            $entity->save();
-            $entity->refresh();
-        }*/
     }
 
     public function afterStore($entity, $action) {
         if($action == ServiceBase::ACTION_INSERT) {
             $this->notificacoesService->send("ATV_DISTRIBUICAO", ["atividade" => $entity]);
-            //$this->status->atualizaStatus($entity, $entity->status, 'A atividade foi criada nesta data.');
         } else {
             $this->notificacoesService->send("ATV_MODIFICACAO", ["atividade" => $entity]);
         }
@@ -250,9 +267,6 @@ class AtividadeService extends ServiceBase
             'feriados' => []
         ];
         foreach($rows as $row) {
-            /*if(!array_key_exists($row->unidade_id, $result['avaliadores'])) {
-                $result['avaliadores'][$row->unidade_id] = $this->unidadeService->avaliadores($row->unidade_id);
-            }*/
             if(!empty($row->plano_trabalho_id)) $planosTrabalhos[$row->plano_trabalho_id] = true;
             if(empty($row->data_entrega)) { /* Somente as que não estiverem concluídas */
                 $tomorrow = Carbon::now()->add(1, "days")->format(ServiceBase::ISO8601_FORMAT);
@@ -414,7 +428,15 @@ class AtividadeService extends ServiceBase
         try {
             DB::beginTransaction();
             $atividade = Atividade::find($data["id"]);
-            $this->validateStore(["id" => $data["id"], "unidade_id" => $atividade->unidade_id, "plano_trabalho_id" => $data["plano_trabalho_id"], "usuario_id" => $data["usuario_id"]], $unidade, ServiceBase::ACTION_EDIT);
+            if(empty($atividade)) throw new ServerException("ValidateAtividade", "Atividade não encontrada no banco de dados");
+            $this->validateStore(array_merge($atividade->toArray(), $data), $unidade, ServiceBase::ACTION_EDIT);
+            /*[
+                "id" => $data["id"],
+                "unidade_id" => $atividade->unidade_id, 
+                "plano_trabalho_id" => $data["plano_trabalho_id"], 
+                "plano_trabalho_entrega_id" => $data["plano_trabalho_entrega_id"], 
+                "usuario_id" => $data["usuario_id"]
+            ] */           
             /*if(CalendarioService::getTimestemp($data["data_inicio"]) < CalendarioService::getTimestemp($demanda->data_distribuicao)) {
                 throw new ServerException("ValidateDemanda", "Data de início menor que a data de distribuição.");
             }*/
@@ -565,7 +587,6 @@ class AtividadeService extends ServiceBase
                 throw new ServerException("ValidateAtividade", "Demanda já pausada!");
             }
             /* Atualiza o status da atividade */
-            //$this->extraStore($atividade, $unidade, ServiceBase::ACTION_EDIT);
             $this->status->atualizaStatus($atividade, "PAUSADO", "Pausado nessa data");
             DB::commit();
         } catch (Throwable $e) {
@@ -601,7 +622,6 @@ class AtividadeService extends ServiceBase
                 ], $unidade, false);
                 /* Atualiza o status da atividade */
                 $this->status->atualizaStatus($atividade, "INICIADO", "Reiniciado nessa data");
-                //$this->extraStore($atividade, $unidade, ServiceBase::ACTION_EDIT);
             } else {
                 throw new ServerException("ValidateAtividade", "Não há pausa para reiniciar");
             }
@@ -622,8 +642,6 @@ class AtividadeService extends ServiceBase
                     "id" => $atividade->id,
                     "data_estipulada_entrega" => $data["data_estipulada_entrega"]
                 ], $unidade, false);
-                /* Atualiza o status da atividade */
-                //$this->extraStore($atividade, $unidade, ServiceBase::ACTION_EDIT);
             } else {
                 throw new ServerException("ValidateAtividade", "Atividade não encontrada!");
             }

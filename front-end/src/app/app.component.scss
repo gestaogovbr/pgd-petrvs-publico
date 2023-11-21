@@ -110,8 +110,8 @@
 }
 
 .footer {
-    background: #1b1f23;
-    border-top: 1px solid #0c0f12;
+    background: var(--petrvs-navbar-top-bg-color);
+    border-top: 1px solid var(--petrvs-navbar-vertical-border-color);;
     padding: 5px;
     .logos img{
         height: 30px;

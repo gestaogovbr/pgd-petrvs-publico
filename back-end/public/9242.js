@@ -125,7 +125,7 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
         default: null
       },
       data_nascimento: {
-        default: new Date()
+        default: null
       }
     }, this.cdRef, this.validate);
     this.formLotacao = this.fh.FormBuilder({
@@ -155,13 +155,22 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
         usuario = _this.util.fillForm(usuario, _this.form.value);
         usuario.lotacao_id = _this.formLotacao?.controls.unidade_lotacao_id.value;
         let vinculos = _this.unidadesIntegrantes?._items || [];
+        let indiceVinculoLotacao = vinculos.findIndex(v => v.atribuicoes.includes("LOTADO"));
+        let lotacaoAlterada = indiceVinculoLotacao == -1 || usuario.lotacao_id != vinculos[indiceVinculoLotacao].unidade_id;
         try {
           yield _this.dao?.save(usuario).then( /*#__PURE__*/function () {
-            var _ref2 = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (usuario) {
-              if (vinculos.length) {
-                vinculos.forEach(v => v.usuario_id = usuario.id);
-                yield _this.integranteDao.saveIntegrante(vinculos);
+            var _ref2 = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (usuarioBanco) {
+              if (lotacaoAlterada) {
+                if (indiceVinculoLotacao != -1) vinculos[indiceVinculoLotacao].atribuicoes = vinculos[indiceVinculoLotacao].atribuicoes.filter(x => x != "LOTADO");
+                let index = vinculos.findIndex(v => v.unidade_id == usuario.lotacao_id);
+                index == -1 ? vinculos.push({
+                  unidade_id: usuario.lotacao_id,
+                  usuario_id: usuarioBanco.id,
+                  atribuicoes: ["LOTADO"]
+                }) : vinculos[index].atribuicoes.push("LOTADO");
               }
+              vinculos.forEach(v => v.usuario_id = usuarioBanco.id);
+              yield _this.integranteDao.saveIntegrante(vinculos);
             });
             return function (_x3) {
               return _ref2.apply(this, arguments);
@@ -199,7 +208,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵInheritDefinitionFeature"]],
   decls: 29,
   vars: 39,
-  consts: [["initialFocus", "cpf", 3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], [1, "form-group", "col-md-3", "text-center"], [1, "mt-5", 3, "url", "size"], [1, "form-group", "col-md-9"], ["label", "CPF", "controlName", "cpf", "required", "", 3, "disabled", "size", "maskFormat"], ["label", "Matr\u00EDcula", "controlName", "matricula", "required", "", 3, "disabled", "size"], ["label", "E-mail", "controlName", "email", "textCase", "lower", "required", "", 3, "disabled", "size"], ["date", "", "label", "Nascimento", "noIcon", "", "controlName", "data_nascimento", "required", "", 3, "size", "labelInfo"], ["label", "Nome", "controlName", "nome", "required", "", 3, "size"], ["label", "Apelido", "controlName", "apelido", "required", "", 3, "size"], ["label", "Perfil", "controlName", "perfil_id", "required", "", 3, "disabled", "size", "dao"], ["label", "Lota\u00E7\u00E3o", "controlName", "unidade_lotacao_id", "labelInfo", "Unidade de lota\u00E7\u00E3o do Usu\u00E1rio", "required", "", 3, "size", "emptyValue", "control", "dao"], ["lotacao", ""], ["label", "UF", "icon", "bi bi-flag", "controlName", "uf", 3, "size", "items"], ["label", "Sexo", "controlName", "sexo", 3, "size", "items"], ["label", "Telefone", "controlName", "telefone", 3, "size", "maskFormat"], ["key", "CONFIGURACOES", "label", "Configura\u00E7\u00F5es"], ["controlName", "texto_complementar_plano", 3, "label", "dataset"], ["key", "ATRIBUICOES", 3, "label"], ["noPersist", "", 3, "entity"], ["unidadesIntegrantes", ""]],
+  consts: [["initialFocus", "cpf", 3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], [1, "form-group", "col-md-3", "text-center"], [1, "mt-5", 3, "url", "size"], [1, "form-group", "col-md-9"], ["label", "CPF", "controlName", "cpf", "required", "", 3, "disabled", "size", "maskFormat"], ["label", "Matr\u00EDcula", "controlName", "matricula", "required", "", 3, "disabled", "size"], ["label", "E-mail", "controlName", "email", "textCase", "lower", "required", "", 3, "disabled", "size"], ["date", "", "label", "Nascimento", "noIcon", "", "controlName", "data_nascimento", 3, "size", "labelInfo"], ["label", "Nome", "controlName", "nome", "required", "", 3, "size"], ["label", "Apelido", "controlName", "apelido", "required", "", 3, "size"], ["label", "Perfil", "controlName", "perfil_id", "required", "", 3, "disabled", "size", "dao"], ["label", "Lota\u00E7\u00E3o", "controlName", "unidade_lotacao_id", "labelInfo", "Unidade de lota\u00E7\u00E3o do Usu\u00E1rio", "required", "", 3, "size", "emptyValue", "control", "dao"], ["lotacao", ""], ["label", "UF", "icon", "bi bi-flag", "controlName", "uf", 3, "size", "items"], ["label", "Sexo", "controlName", "sexo", 3, "size", "items"], ["label", "Telefone", "controlName", "telefone", 3, "size", "maskFormat"], ["key", "CONFIGURACOES", "label", "Configura\u00E7\u00F5es"], ["controlName", "texto_complementar_plano", 3, "label", "dataset"], ["key", "ATRIBUICOES", 3, "label"], ["noPersist", "", 3, "entity"], ["unidadesIntegrantes", ""]],
   template: function UsuarioFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelementStart"](0, "editable-form", 0);
@@ -538,34 +547,37 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let nomeServidor = _this5.entity.nome;
       let nomeUnidade = row.unidade_nome;
-      let confirm = yield _this5.dialog.confirm("Exclui ?", "Deseja realmente excluir todas as atribuições do servidor '" + nomeServidor + "' na unidade '" + nomeUnidade + "' ?");
-      if (confirm) {
-        let msg;
-        try {
-          if (!_this5.isNoPersist) {
-            // se persistente
-            _this5.loading = true;
-            yield _this5.integranteDao.saveIntegrante([_this5.integranteService.converterEmVinculo(row, row.id, _this5.entity.id, [])]).then(resposta => {
-              if (msg = resposta.find(v => v.msg?.length)?.msg) {
-                if (_this5.grid) _this5.grid.error = msg;
-              }
-              ;
-            });
-            yield _this5.loadData({
-              id: _this5.entity.id
-            }, _this5.form);
-          } else {
-            // se não persistente
-            let index = _this5._items.findIndex(x => x["id"] == row["id"]);
-            _this5._items[index] = _this5.integranteService.converterEmVinculo(row, row.id, _this5.entity.id, []);
-          }
-        } finally {
-          _this5.loading = false;
-        }
-        return msg ? false : true;
+      if (_this5.isNoPersist && row.atribuicoes.length == 1 && row.atribuicoes[0] == "LOTADO") {
+        yield _this5.dialog.alert("IMPOSSÍVEL EXCLUIR !", "Um vínculo não pode ser excluído quando sua única atribuição é a lotação do servidor. Se quiser alterar a lotação, use a aba principal.");
       } else {
-        return false;
+        let confirm = yield _this5.dialog.confirm("Exclui ?", "Deseja realmente excluir todas as atribuições do servidor '" + nomeServidor + "' na unidade '" + nomeUnidade + "' ?");
+        if (confirm) {
+          let msg;
+          try {
+            if (!_this5.isNoPersist) {
+              // se persistente
+              _this5.loading = true;
+              yield _this5.integranteDao.saveIntegrante([_this5.integranteService.converterEmVinculo(row, row.id, _this5.entity.id, [])]).then(resposta => {
+                if (msg = resposta.find(v => v.msg?.length)?.msg) {
+                  if (_this5.grid) _this5.grid.error = msg;
+                }
+                ;
+              });
+              yield _this5.loadData({
+                id: _this5.entity.id
+              }, _this5.form);
+            } else {
+              // se não persistente
+              let index = _this5._items.findIndex(x => x["id"] == row["id"]);
+              _this5._items[index] = _this5.integranteService.converterEmVinculo(row, row.id, _this5.entity.id, []);
+            }
+          } finally {
+            _this5.loading = false;
+          }
+          return msg ? false : true;
+        }
       }
+      return false;
     })();
   }
   /**
@@ -585,6 +597,7 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
   saveIntegrante(form, row) {
     var _this6 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      form.controls.atribuicoes.setValue(_this6.lookup.uniqueLookupItem(form.controls.atribuicoes.value));
       let confirm = true;
       let n = _this6.integranteService.alterandoGestor(form, row.atribuicoes || []);
       if (n.length) confirm = yield _this6.dialog.confirm("Confirma a Alteração de Gestor ?", n.length == 1 ? "O " + n[0] + " será alterado." : "Serão alterados: " + n.join(', ') + ".");

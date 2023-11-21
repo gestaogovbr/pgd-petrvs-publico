@@ -1,5 +1,5 @@
 <div class="d-flex vh-100 g-0 bg-gray-100">
-    <div class="col-lg-6 position-relative d-none d-lg-block bg-primary-subtle">
+    <div class="col-lg-6 position-relative d-none d-lg-block bg-primary-subtle">        
         <div class="bg-holder" style="background-image: url(../../../assets/images/intro-login.jpg)"></div>
     </div>
 
@@ -15,8 +15,9 @@
                     {{ error }}
                 </div>
 
-                <div class="text-center mb-5">
-                    <img [src]="globals.getResourcePath('assets/images/' + globals.IMAGES.login)" class="login-logo" alt="Petrvs"/>
+                <div class="text-center mb-5 d-flex align-items-center justify-content-center">
+                    <img src="../assets/images/logo_pgd.png" class="logo-pgd">
+                    <img [src]="globals.getResourcePath('assets/images/' + globals.IMAGES.login)" class="logo-petrvs" alt="Petrvs"/>
                 </div>
                 <div class="text-center mb-5">
                     <h3 class="fw-bold">Acesso</h3>
@@ -102,6 +103,10 @@
                 </div>
             </div>
         </div>
+        <div class="logos">            
+            <img src="../assets/images/logo_gov.png">
+        </div>
     </div>
+    
 
 </div>
