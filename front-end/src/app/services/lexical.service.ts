@@ -46,6 +46,7 @@ export class LexicalService {
     "lotação": {single: "lotação", plural: "lotações", female: true},
     "material e serviço": {single: "material e serviço", plural: "materiais e serviços", female: false},
     "modalidade": {single: "modalidade", plural: "modalidades", female: true},
+    "modelo de entrega:" : {single: "modelo de entrega", plural: "modelos de entregas", female: false},
     "motivo de afastamento": {single: "motivo de afastamento", plural: "motivos de afastamento", female: false},
     "notificação": {single: "notificação", plural: "notificações", female: true},
     "objetivo": {single: "objetivo", plural: "objetivos", female: false},
@@ -64,6 +65,7 @@ export class LexicalService {
     "programa de gestão": {single: "programa de gestão", plural: "programas de gestão", female: false},
     "projeto": {single: "projeto", plural: "projetos", female: false},
     "requisição": {single: "requisição", plural: "requisições", female: true},
+    "resultado institucional": {single: "resultado institucional", plural: "resultados institucionais", female: false},
     "rotina de integração": {single: "rotina de integração", plural: "rotinas de integração", female: true},
     "servidor": {single: "servidor", plural: "servidores", female: false},
     "tarefa": {single: "tarefa", plural: "tarefas", female: true},
@@ -79,7 +81,8 @@ export class LexicalService {
     "tipo de atividade": {single: "tipo de atividade", plural: "tipos de atividades", female: false},
     "tipo de capacidade": {single: "tipo de capacidade", plural: "tipos de capacidades", female: false},
     "unidade": {single: "unidade", plural: "unidades", female: true},
-    "usuario": {single: "usuário", plural: "usuários", female: false}
+    "usuario": {single: "usuário", plural: "usuários", female: false},
+    "valor institucional": {single: "valor institucional", plural: "valores institucionais", female: false}
   };
 
   public plurals: IIndexable = {}; // Vetor reverso, contendo os plurais para permitir encontrar a key do vetor defaults pelo plural (melhorar performance)
