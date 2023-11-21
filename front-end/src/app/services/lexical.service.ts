@@ -50,7 +50,6 @@ export class LexicalService {
     "motivo de afastamento": {single: "motivo de afastamento", plural: "motivos de afastamento", female: false},
     "notificação": {single: "notificação", plural: "notificações", female: true},
     "objetivo": {single: "objetivo", plural: "objetivos", female: false},
-    "objetivo e variação": {single: "objetivo e variação", plural: "objetivos e variações", female: false},
     "pela unidade gestora": {single: "pela Unidade Gestora", plural: "pelas Unidades Gestoras", female: true},
     "perfil": {single: "perfil", plural: "perfis", female: false},
     "planejamento institucional": {single: "planejamento institucional", plural: "planejamentos institucionais", female: false},
