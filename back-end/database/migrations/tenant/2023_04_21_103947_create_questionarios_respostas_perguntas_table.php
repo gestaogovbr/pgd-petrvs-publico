@@ -20,11 +20,14 @@ class CreateQuestionariosRespostasPerguntasTable extends Migration
             $table->timestamps();
             $table->softDeletes();
             // Campos:
-            $table->json('resposta')->nullable()->comment("Respostas do questionário");
+            $table->json('resposta')->nullable()->comment("Resposta do questionário");
+            $table->uuid('questionario_pergunta_id');
+            $table->uuid('questionario_resposta_id');
             // Chaves estrangeiras:
-            $table->foreignUuid('questionario_pergunta_id')->constrained("questionarios_perguntas")->onDelete('restrict')->onUpdate('cascade')->comment("FK QuestionarioPerguntaa ID");
-            $table->foreignUuid('questionario_resposta_id')->constrained("questionarios_respostas")->onDelete('restrict')->onUpdate('cascade')->comment("FK QuestionarioResposta ID");
-           
+            //$table->foreignUuid('questionario_pergunta_id')->constrained("questionarios_perguntas")->onDelete('restrict')->onUpdate('cascade')->comment("FK QuestionarioPerguntaa ID");
+            $table->foreign('questionario_pergunta_id', 'fk_questionario_perg_id')->references('id')->on('questionarios_perguntas')->onDelete('restrict')->onUpdate('cascade')->comment("FK Questionario Pergunta ID");
+            //$table->foreignUuid('questionario_resposta_id')->constrained("questionarios_respostas")->onDelete('restrict')->onUpdate('cascade')->comment("FK QuestionarioResposta ID");
+            $table->foreign('questionario_resposta_id', 'fk_questionario_resp_id')->references('id')->on('questionarios_respostas')->onDelete('restrict')->onUpdate('cascade')->comment("FK Questionario Resposta ID");
         });
     }
 

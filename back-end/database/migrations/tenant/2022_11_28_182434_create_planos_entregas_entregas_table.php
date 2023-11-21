@@ -31,7 +31,7 @@ class CreatePlanosEntregasEntregasTable extends Migration
             $table->json("realizado")->nullable()->comment("Valor realizado da entrega");
             // Chaves estrangeiras:
             $table->foreignUuid('plano_entrega_id')->constrained("planos_entregas")->onDelete('restrict')->onUpdate('cascade')->comment("Plano de Entrega da entrega");
-            $table->foreignUuid('entrega_id')->nullable()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Entrega do Catálogo ao qual está associada esta entrega (opcional)");
+            $table->foreignUuid('entrega_id')->default()->constrained()->onDelete('restrict')->onUpdate('cascade')->comment("Entrega do Catálogo ao qual está associada esta entrega (opcional)");
             $table->foreignUuid('entrega_pai_id')->nullable()->constrained("planos_entregas_entregas")->onDelete('restrict')->onUpdate('cascade')->comment("Entrega do Plano de Entregas à qual está associada esta entrega (opcional)");
             $table->foreignUuid('unidade_id')->constrained()->onDelete('restrict')->onUpdate('cascade')->comment('Unidade demandante da entrega');
         });
