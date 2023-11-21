@@ -8,15 +8,16 @@
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && !queryParams?.filter && filterCollapsed">
         <div class="row">
             <input-switch [size]="1" label="Minhas" controlName="atribuidas_para_mim" [control]="filter!.controls.atribuidas_para_mim" (change)="onAtribuidasParaMimChange($event)"></input-switch>
-            <input-search [size]="4" label="Usuário" #usuario [control]="filter!.controls.usuario_id" controlName="usuario_id"  [disabled]="filter!.controls.atribuidas_para_mim.value ? 'true' : undefined" [dao]="usuarioDao" ></input-search>
+            <input-search [size]="5" label="Usuário" #usuario [control]="filter!.controls.usuario_id" controlName="usuario_id"  [disabled]="filter!.controls.atribuidas_para_mim.value ? 'true' : undefined" [dao]="usuarioDao" ></input-search>
             <input-search [size]="5" label="Plano de trabalho" #planoTrabalho [control]="filter!.controls.plano_trabalho_id" controlName="plano_trabalho_id" [dao]="planoTrabalhoDao" ></input-search>
             <input-switch [size]="1" label="Atual" controlName="somente_unidade_atual" [control]="filter!.controls.somente_unidade_atual" (change)="onSomenteUnidadeAtualChange($event)" labelInfo="Somente as atividades da unidade selecionada"></input-switch>
-            <input-switch [size]="1" label="Sub." controlName="unidades_subordinadas" [control]="filter!.controls.unidades_subordinadas" labelInfo="Incluir as unidades subordinadas"></input-switch>
+            
         </div>
         <div class="row">
             <input-search [size]="4" label="Unidade" #unidade [control]="filter!.controls.unidade_id" controlName="unidade_id" [disabled]="filter!.controls.somente_unidade_atual.value ? 'true' : undefined" [dao]="unidadeDao" (change)="onUnidadeChange($event)"></input-search>
+            <input-switch [size]="1" label="Sub." controlName="unidades_subordinadas" [control]="filter!.controls.unidades_subordinadas" labelInfo="Incluir as unidades subordinadas"></input-switch>
             <input-select [size]="4" [label]="lex.translate('Plano de Entrega')" #planoEntrega itemTodos="- Todos -" [valueTodos]="null" controlName="plano_entrega_id" [control]="filter!.controls.plano_entrega_id" [items]="planosEntregas" (change)="onPlanoEntregaChange($event)"></input-select>
-            <input-select [size]="4" [label]="lex.translate('Entrega do Plano de Entrega')" #planoEntregaEntrega itemTodos="- Todos -" [valueTodos]="null"  controlName="plano_entrega_entrega_id" [control]="filter!.controls.plano_entrega_entrega_id" [items]="planosEntregasEntregas"></input-select>
+            <input-select [size]="3" [label]="lex.translate('Entrega do Plano de Entrega')" #planoEntregaEntrega itemTodos="- Todos -" [valueTodos]="null"  controlName="plano_entrega_entrega_id" [control]="filter!.controls.plano_entrega_entrega_id" [items]="planosEntregasEntregas"></input-select>
         </div>
         <div class="row">
             <input-text [size]="1" label="#ID" controlName="numero" maskFormat="999999" [control]="filter!.controls.numero" [labelInfo]="'Número ' + lex.translate('atividade')" [attr.maxlength]=250></input-text>
