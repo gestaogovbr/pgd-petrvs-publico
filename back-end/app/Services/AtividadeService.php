@@ -18,6 +18,8 @@ use App\Exceptions\ServerException;
 use App\Models\Atividade;
 use App\Models\Documento;
 use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalhoEntrega;
+use App\Models\PlanoEntregaEntrega;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\PlanoTrabalhoConsolidacaoAtividade;
 use App\Models\PlanejamentoObjetivo;
@@ -28,6 +30,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Throwable;
+
+use function PHPSTORM_META\map;
 
 class AtividadeService extends ServiceBase
 {
@@ -183,6 +187,27 @@ class AtividadeService extends ServiceBase
                 } else if($condition[2] == "ARQUIVADO") {
                     array_push($where, ["data_arquivamento", "!=", null]);
                 }
+            } else if(is_array($condition) && $condition[0] == "plano_entrega_entrega_id") {
+                $ids = [];
+                $entrega_atividade = PlanoTrabalhoEntrega::where("plano_entrega_entrega_id", $condition[2])->get();
+                $ids = $entrega_atividade->map(fn ($a) => $a->id);
+                /*foreach($entrega_atividade as $entrega) {
+                    $ids[] = $entrega->id;
+                }*/
+                array_push($where, ["plano_trabalho_entrega_id", "in", $ids]);
+            } else if(is_array($condition) && $condition[0] == "plano_entrega_id") {
+                $ids = [];
+                $entregas_plano_entrega = PlanoEntregaEntrega::where("plano_entrega_id", $condition[2])->get();
+                
+                //$ids = $entregas_plano_entrega->map(fn ($epe) => $epe->id)->map(fn ($epe) => PlanoTrabalhoEntrega::where("plano_entrega_entrega_id", $epe)->get()->id);
+
+                foreach($entregas_plano_entrega as $epe) {
+                    $entregas_planos_trabalho = PlanoTrabalhoEntrega::where("plano_entrega_entrega_id", $epe->id)->get();
+                    foreach($entregas_planos_trabalho as $ept) {
+                        $ids[] = $ept->id;
+                    }
+                }
+                array_push($where, ["plano_trabalho_entrega_id", "in", $ids]);
             } else {
                 array_push($where, $condition);
             }
@@ -221,6 +246,8 @@ class AtividadeService extends ServiceBase
                 WHERE " . (count($where) > 0 ? join(" OR ", $where) : "FALSE") . "
             ) AS subquery
         )", $params));
+        $entrega = $this->extractWhere($data, "plano_entrega_entrega_id");
+        $plano_entrega = $this->extractWhere($data, "plano_entrega_id");
         return $data;
     }
 
