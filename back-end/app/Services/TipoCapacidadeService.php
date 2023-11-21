@@ -152,18 +152,18 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_MATSRV_INCL", "Permite incluir materiais e serviços"],
             ]
         ], [
-            "codigo"=> "MOD_PLAN", //ok
+            "codigo"=> "MOD_PLAN_INST", //ok
             "descricao"=> "Módulo de Planejamento Institucional",
             "capacidades"=> [
                 /* Capacidades do módulo PLANEJAMENTO INSTITUCIONAL */
-                ["MOD_PLAN_INCL", "Permite incluir algum tipo de Planejamento Institucional"],
-                ["MOD_PLAN_INCL_UNID_INST", "Permite incluir Planejamento Institucional para a Unidade Instituidora"],
-                ["MOD_PLAN_INCL_UNEX_LOTPRI", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas para a sua lotação)"],
-                ["MOD_PLAN_INCL_UNEX_QQLOT", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas as de suas lotações)"],
-                ["MOD_PLAN_INCL_UNEX_SUBORD", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas as de suas lotações e suas subordinadas)"],
-                ["MOD_PLAN_INCL_UNEX_QUALQUER", "Permite incluir Planejamentos Institucionais para qualquer Unidade Executora, independente de sua lotação"],
-                ["MOD_PLAN_EDT", "Permite editar Planejamentos Institucionais"],
-                ["MOD_PLAN_EXCL", "Permite excluir Planejamentos Institucionais"],
+                ["MOD_PLAN_INST_INCL", "Permite incluir algum tipo de Planejamento Institucional"],
+                ["MOD_PLAN_INST_INCL_UNID_INST", "Permite incluir Planejamento Institucional para a Unidade Instituidora"],
+                ["MOD_PLAN_INST_INCL_UNEX_LOTPRI", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas para a sua lotação)"],
+                ["MOD_PLAN_INST_INCL_UNEX_QQLOT", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas as de suas lotações)"],
+                ["MOD_PLAN_INST_INCL_UNEX_SUBORD", "Permite incluir Planejamentos Institucionais para Unidades Executoras (apenas as de suas lotações e suas subordinadas)"],
+                ["MOD_PLAN_INST_INCL_UNEX_QUALQUER", "Permite incluir Planejamentos Institucionais para qualquer Unidade Executora, independente de sua lotação"],
+                ["MOD_PLAN_INST_EDT", "Permite editar Planejamentos Institucionais"],
+                ["MOD_PLAN_INST_EXCL", "Permite excluir Planejamentos Institucionais"],
             ]
         ], [
             "codigo"=> "MOD_PTR",
@@ -238,6 +238,11 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_PENT_ENTR_EDT", "Permite editar entregas de um plano de entregas"],
                 ["MOD_PENT_ENTR_EXCL", "Permite excluir entregas de um plano de entregas"],
                 ["MOD_PENT_ENTR_INCL", "Permite incluir entregas de um plano de entregas"],
+
+                /* Capacidades do módulo PLANO DE ENTREGAS - ENTREGAS - PROGRESSOS*/
+                ["MOD_PENT_ENTR_PRO_INCL", "Permite incluir o progresso da entrega de um plano de entregas"],
+                ["MOD_PENT_ENTR_PRO_EDT", "Permite editar o progresso da entrega de um plano de entregas"],
+                ["MOD_PENT_ENTR_PRO_EXCL", "Permite excluir o progresso da entrega de um plano de entregas"],
             ]
         ], [
             "codigo"=> "MOD_PRGT",

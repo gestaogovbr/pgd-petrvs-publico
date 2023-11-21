@@ -179,6 +179,10 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     const checklst = (this.form.controls.checklist.value || []).find((x: Checklist) => !checklistKeys.includes(x.id) && x.checked) as Checklist;
     if(etiqueta) result = "Etiqueta " + etiqueta.value + "não pode ser utilizada!";
     if(checklst) result = "Checklist " + checklst.texto + "não pode ser utilizado!";
+    /* (RN_ATV_5) A atividade deverá ter perído compatível com o do plano de trabalho (Data de distribuição e Prazo de entrega devem estar dentro do período do plano de trabalho); */
+    if(this.planoTrabalhoSelecionado && (this.util.asTimestamp(this.form.controls.data_distribuicao.value) < this.util.asTimestamp(this.planoTrabalhoSelecionado.data_inicio) || this.util.asTimestamp(this.form.controls.data_estipulada_entrega.value) > this.util.asTimestamp(this.planoTrabalhoSelecionado.data_fim))) {
+      result = "A atividade deverá ter perído compatível com o do plano de trabalho (" + this.util.getDateFormatted(this.planoTrabalhoSelecionado.data_inicio) + " até " + this.util.getDateFormatted(this.planoTrabalhoSelecionado.data_fim) + ") [RN_ATV_5]";
+    }
     return result;
   }
 

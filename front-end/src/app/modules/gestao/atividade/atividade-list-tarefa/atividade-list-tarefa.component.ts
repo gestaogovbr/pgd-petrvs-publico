@@ -228,8 +228,10 @@ export class AtividadeListTarefaComponent extends PageBase {
     /* (RN_CSLD_12) Tarefas concluidas de atividades em consolidação CONCLUIDO ou AVALIADO não poderão mais ser alteradas/excluidas, nem Remover conclusão.
        (RN_CSLD_13) Tarefas de atividades em consolidação CONCLUIDO ou AVALIADO não poderão mais ser alteradas/excluidas, somente a opção de Concluir ficará disponível. */
     if(!lastConsolidacao || lastConsolidacao.status == "INCLUIDO" || this.util.asTimestamp(lastConsolidacao.data_conclusao) < this.util.asTimestamp(tarefa.created_at)) {
-      result.push(Object.assign(this.grid!.BUTTON_EDIT, { onClick: this.editTarefa.bind(this) }));
-      result.push(Object.assign(this.grid!.BUTTON_DELETE, { onClick: this.deleteTarefa.bind(this) }));
+      //result.push(Object.assign(this.grid!.BUTTON_EDIT, { onClick: this.editTarefa.bind(this) }));
+      //result.push(Object.assign(this.grid!.BUTTON_DELETE, { onClick: this.deleteTarefa.bind(this) }));
+      result.push({ label: "Alterar", icon: "bi bi-pencil-square", hint: "Alterar", color: "btn-outline-info", onClick: this.editTarefa.bind(this) });
+      result.push({ label: "Excluir", icon: "bi bi-trash", hint: "Excluir", color: "btn-outline-danger", onClick: this.deleteTarefa.bind(this) });
     }
     return result;
   }

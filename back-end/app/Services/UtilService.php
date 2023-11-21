@@ -26,6 +26,19 @@ class UtilService
         return Carbon::parse($dataHora)->format("d/m/Y");
     }
 
+    public static function getNested($source, $path) {
+        $path = preg_replace(['/\[/', '/\]/', '/^\./'], ['.', '.', ''], $path);
+        $pathArray = array_filter(explode('.', $path), 'strlen');
+        return array_reduce($pathArray, function ($a, $o) {
+            if ($a) {
+                $key = is_numeric($o) ? (int)$o : $o;
+                if (is_array($a)) return isset($a[$key]) ? $a[$key] : null;
+                if (is_object($a)) return property_exists($a, $key) ? $a->{$key} : null;
+            }
+            return null;
+        }, $source);
+    }
+
     public function valueOrDefault($value, $default = "", $option = "") {
         
         // Trata númerações códigos siapes de uorgs com fins 

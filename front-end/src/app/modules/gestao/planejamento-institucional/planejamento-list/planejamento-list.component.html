@@ -3,8 +3,8 @@
         <ng-template #lista>
             <grid [dao]="dao" [add]="add" [orderBy]="orderBy" [join]="join" [init]="initGrid.bind(this)"
                 [selectable]="selectable" (select)="onSelect($event)" 
-                [hasAdd]="auth.hasPermissionTo('MOD_PLAN_INCL')"
-                [hasEdit]="auth.hasPermissionTo('MOD_PLAN_EDT')">
+                [hasAdd]="auth.hasPermissionTo('MOD_PLAN_INST_INCL')"
+                [hasEdit]="auth.hasPermissionTo('MOD_PLAN_INST_EDT')">
                 <toolbar *ngIf="!selectable"></toolbar>
                 <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
                     <div class="row">
@@ -58,9 +58,5 @@
             <planejamento-mapa></planejamento-mapa>
         </ng-template>
     </tab>
-    <tab key="OKR" icon="bi bi-receipt" label="OKR" [template]="okr">
-        <ng-template #okr>
-            <planejamento-okr></planejamento-okr>
-        </ng-template>
-    </tab>
+   
 </tabs>

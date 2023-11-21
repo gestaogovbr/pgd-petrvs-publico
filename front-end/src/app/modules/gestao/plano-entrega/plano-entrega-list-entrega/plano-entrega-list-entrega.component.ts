@@ -11,6 +11,10 @@ import { PlanoEntregaService } from '../plano-entrega.service';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { Checklist } from 'src/app/models/atividade.model';
+import { PageListBase } from 'src/app/modules/base/page-list-base';
+import { Base } from 'src/app/models/base.model';
+import { DaoBaseService } from 'src/app/dao/dao-base.service';
+import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
 
 @Component({
   selector: 'plano-entrega-list-entrega',
@@ -23,6 +27,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   @ViewChild('etiqueta', { static: false }) public etiqueta?: InputSelectComponent;
   @Input() cdRef: ChangeDetectorRef;
   @Input() disabled: boolean = false;
+  @Input() parent?: PageListBase<PlanoEntrega, PlanoEntregaDaoService>;
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: PlanoEntrega | undefined) { super.entity = value; } get entity(): PlanoEntrega | undefined { return super.entity; }
@@ -162,7 +167,10 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   }
 
   public dynamicButtons(row: any): ToolbarButton[] {
-    return this.isDisabled ? [Object.assign({ onClick: this.consult.bind(this) }, this.OPTION_INFORMACOES)] : [];
+    const btns = [];
+    if(this.isDisabled) btns.push(Object.assign({ onClick: this.consult.bind(this) }, this.OPTION_INFORMACOES));
+    if(this.execucao) btns.push({ label: "Histórico de execução", icon: "bi bi-activity", color: 'btn-outline-info', onClick: this.showProgresso.bind(this) });   
+    return btns;
   }
 
   public async edit(entrega: PlanoEntregaEntrega) {
@@ -191,7 +199,6 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   }
 
   public async load(form: FormGroup, row: any) {
-    console.log(row)
     this.form!.patchValue(row);
     this.form!.controls.meta.setValue(this.planoEntregaService.getValor(row.meta));
     this.form!.controls.realizado.setValue(this.planoEntregaService.getValor(row.realizado));
@@ -257,6 +264,15 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
 
   public async showCadeiaValor(processo_id: string){
     this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', 'processos', processo_id]}, {modal: true});
+  
+  }
+  public async showProgresso(entrega: PlanoEntregaEntrega){
+    this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', 'progresso', entrega.id]}, {
+      modal: true, 
+      modalClose: (modalResult) => { 
+        this.parent?.refresh(this.entity?.id);
+      }
+    });
   }
 
   public refreshComentarios(modalResult: any) {
@@ -326,13 +342,22 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   }
 
   public async onColumnChecklistSave(row: any) {
+    let realizado = Math.round(parseInt(this.planoEntregaService.getValorMeta(row)) * this.formEdit.controls.progresso_realizado.value/100);
     try {
       const saved = await this.dao!.update(row.id, {
         progresso_realizado: this.formEdit.controls.progresso_realizado.value,
+        realizado: this.planoEntregaService.getEntregaValor(row.entrega, realizado),
         checklist: this.checklist
       });
       row.progresso_realizado = this.formEdit.controls.progresso_realizado.value;
       row.checklist = this.checklist;
+      if (typeof row.realizado.porcentagem != "undefined") {
+        row.realizado.porcentagem = realizado;
+      } else if (typeof row.realizado.quantitativo != "undefined") {
+        row.realizado.quantitativo = realizado;
+      } else if (typeof row.realizado.valor != "undefined") {
+        row.realizado.valor = realizado;
+      };
       return !!saved;
     } catch (error) {
       return false;

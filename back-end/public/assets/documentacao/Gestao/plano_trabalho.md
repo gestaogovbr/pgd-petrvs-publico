@@ -31,7 +31,7 @@ Campos obrigatórios:
     usuario_id
     unidade_id
     tipo_modalidade_id
-    criacao_usuario_id
+    criacao_usuario_id+
 ~~~
 
 ## REGRAS DE NEGÓCIO
@@ -128,7 +128,7 @@ Ação: CANCELAR ASSINATURA -> o plano permanece no status 'AGUARDANDO_ASSINATUR
 
 - (RN_PTR_R) Condições para que um Plano de Trabalho possa ser cancelado:
   - o usuário logado precisa possuir a capacidade "MOD_PTR_CNC", e
-    - o plano não pode ter sido deletado e precisa estar em um dos seguintes status: INCLUIDO, AGUARDANDO_ASSINATURA, ATIVO ou CONCLUIDO; e
+    - o plano precisa estar em um dos seguintes status: INCLUIDO, AGUARDANDO_ASSINATURA, ATIVO ou CONCLUIDO; e
     - o usuário logado precisa ser gestor da Unidade Executora;
 
 */*Ação: CONSULTAR -> não muda o status do plano;
@@ -257,7 +257,6 @@ Ação: ENVIAR PARA ASSINATURA -> o plano vai para o status 'AGUARDANDO_ASSINATU
 - No formulário de inclusão/edição de um Plano de Trabalho:
   - (RI_PTR_A) se o usuário logado não for gestor da Unidade Executora, o inputSearch de usuário já vem preenchido com o seu nome e permanece bloqueado;
   - (RI_PTR_B) os input-search de unidade, programa e usuario devem ficar desabilitados nas edições e habilitado apenas nas inclusões;
-  - (RI_PTR_C) Por padrão, os planos de trabalho retornados na listagem do grid são os que não foram arquivados.
 
 ## REGRAS DE NEGÓCIO APLICADAS ÀS ENTREGAS DO PLANO DE TRABALHO
 

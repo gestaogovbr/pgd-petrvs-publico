@@ -1,5 +1,5 @@
-<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [join]="join" [hasAdd]="auth.hasPermissionTo('MOD_PLAN_INCL')"
-      [hasEdit]="auth.hasPermissionTo('MOD_PLAN_EDT')" [orderBy]="orderBy" [selectable]="selectable" (select)="onSelect($event)">
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [join]="join" [hasAdd]="auth.hasPermissionTo('MOD_PLAN_INST_INCL')"
+      [hasEdit]="auth.hasPermissionTo('MOD_PLAN_INST_EDT')" [orderBy]="orderBy" [selectable]="selectable" (select)="onSelect($event)">
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">

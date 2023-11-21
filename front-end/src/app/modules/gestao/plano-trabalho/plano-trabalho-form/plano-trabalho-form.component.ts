@@ -80,7 +80,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       "unidade.entidade", 
       "entregas.entrega", 
       "entregas.plano_entrega_entrega:id,plano_entrega_id", 
-      "usuario", 
+      "usuario",
       "programa.template_tcr", 
       "tipo_modalidade", 
       "documento", 
@@ -200,8 +200,49 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
   public onUsuarioSelect(selected: SelectItem) {
     this.form!.controls.usuario_texto_complementar.setValue((selected.entity as Usuario)?.texto_complementar_plano || "");
+    if(!this.form?.controls.unidade_id.value) {
+      selected.entity.unidades.every( async (element: any, index: any) => {
+        if (selected.entity.lotacao.unidade_id == element.id) {
+          this.preencheUnidade(element);
+          if(!this.form?.controls.programa_id.value) {
+            let unidadePai = element.unidade_pai_id;
+            let idAtual = element.id;
+            while (unidadePai != idAtual) {
+              idAtual = unidadePai;
+              await this.unidadeDao.getById(unidadePai).then(unidade => {
+                unidadePai = unidade?.unidade_pai_id || idAtual;
+              });
+            }
+            await this.programaDao.query({where : [["unidade_id","==",idAtual]]}).asPromise().then( programa => {
+              this.preenchePrograma(programa[0]!);
+            });
+          }
+          return false;
+        } else return true;
+      })
+    }
     this.calculaTempos();
     this.cdRef.detectChanges();
+  }
+
+  public preencheUnidade(unidade: Unidade) {
+    this.form?.controls.unidade_id.setValue(unidade.id);
+    this.entity!.unidade = unidade;
+    this.entity!.unidade_id = unidade.id;
+    this.form!.controls.forma_contagem_carga_horaria.setValue(unidade?.entidade?.forma_contagem_carga_horaria || "DIA");
+    this.form!.controls.unidade_texto_complementar.setValue(unidade?.texto_complementar_plano || "");
+    this.unidadeDao.getById(unidade.id, ['gestor:id,usuario_id','gestor_substituto:id,usuario_id','gestor_delegado:id,usuario_id']).then( unidade => {
+      this.buscaGestoresUnidadeExecutora(unidade);
+    });
+  }
+
+  public preenchePrograma(programa: Programa) {
+    this.form?.controls.programa_id.setValue(programa.id);
+    this.entity!.programa_id = programa.id;
+    this.entity!.programa = programa;
+    this.form?.controls.criterios_avaliacao.setValue(programa.plano_trabalho_criterios_avaliacao || []);
+    this.form?.controls.data_inicio.updateValueAndValidity();
+    this.form?.controls.data_fim.updateValueAndValidity();
   }
 
   public onDataInicioChange(event: Event) {

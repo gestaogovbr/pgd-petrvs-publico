@@ -1,18 +1,41 @@
 import { Injectable, Injector } from '@angular/core';
+<<<<<<< HEAD
 import { LookupItem } from './lookup.service';
+=======
+import { LookupItem, LookupService } from './lookup.service';
+>>>>>>> develop
 import { FormGroup } from '@angular/forms';
 import { IntegranteConsolidado } from '../models/unidade-integrante.model';
 import { Vinculo } from '../dao/unidade-integrante-dao.service';
 import { IntegranteAtribuicao } from '../models/base.model';
 import { PageBase } from '../modules/base/page-base';
+<<<<<<< HEAD
+=======
+import { UtilService } from './util.service';
+import { DialogService } from './dialog.service';
+>>>>>>> develop
 
 @Injectable({
   providedIn: 'root',
 })
+<<<<<<< HEAD
 export class IntegranteService extends PageBase {
 
   constructor(public injector: Injector) {
     super(injector);
+=======
+export class IntegranteService {
+
+  public lookup: LookupService;
+  public util: UtilService;
+  public dialog: DialogService;
+
+  constructor(public injector: Injector){
+    /* Injections */
+    this.lookup = this.injector.get<LookupService>(LookupService);
+    this.dialog = this.injector.get<DialogService>(DialogService);
+    this.util = this.injector.get<UtilService>(UtilService);
+>>>>>>> develop
   }
 
   public converterAtribuicoes(atribuicoes: string[]): LookupItem[] {
@@ -31,7 +54,11 @@ export class IntegranteService extends PageBase {
     return result;
   }
 
+<<<<<<< HEAD
   public ordenar(items: IntegranteConsolidado[]){
+=======
+  public ordenar(items: IntegranteConsolidado[]): IntegranteConsolidado[] {
+>>>>>>> develop
     items.sort((a, b) => {
       let x = (a.usuario_nome || a.unidade_nome)?.toLowerCase();
       let y = (b.usuario_nome || b.unidade_nome)?.toLowerCase();
@@ -40,16 +67,28 @@ export class IntegranteService extends PageBase {
     return items;
   }
 
+<<<<<<< HEAD
   public converterEmVinculo(base: any, unidade_id: string, usuario_id: string, atribuicoes: IntegranteAtribuicao[] ): Vinculo {
+=======
+  public converterEmVinculo(base: any, unidade_id: string, usuario_id: string, atribuicoes: IntegranteAtribuicao[]): Vinculo {
+>>>>>>> develop
     return Object.assign(base, { 'unidade_id': unidade_id, 'usuario_id': usuario_id, 'atribuicoes': atribuicoes });
   }
 
   public permitidoApagar(atribuicao: string, noPersist: boolean): boolean {
+<<<<<<< HEAD
     let proibicoes = noPersist ? ["LOTADO","GESTOR","GESTOR_SUBSTITUTO"] : ["LOTADO"];
     let permitidoApagar = !proibicoes.includes(atribuicao);
     let msg = atribuicao == "LOTADO" ? "A lotação do servidor não pode ser apagada. Para alterá-la, lote-o em outra Unidade." : "Para alterar/excluir o Gestor/Substituto use a aba 'Principal'.";
     (async () => {
       if(!permitidoApagar) await this.dialog.alert("Não permitido!", msg);
+=======
+    let proibicoes = noPersist ? ["LOTADO", "GESTOR", "GESTOR_SUBSTITUTO"] : ["LOTADO"];
+    let permitidoApagar = !proibicoes.includes(atribuicao);
+    let msg = atribuicao == "LOTADO" ? "A lotação do servidor não pode ser apagada. Para alterá-la, lote-o em outra Unidade." : "Para alterar/excluir o Gestor/Substituto use a aba 'Principal'.";
+    (async () => {
+      if (!permitidoApagar) await this.dialog.alert("Não permitido!", msg);
+>>>>>>> develop
     })();
     return permitidoApagar;
   }

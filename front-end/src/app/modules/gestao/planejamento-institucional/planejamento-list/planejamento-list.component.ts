@@ -27,7 +27,7 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
     super(injector, Planejamento, PlanejamentoDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     /* Inicializações */
-    this.code = "MOD_PLAN";
+    this.code = "MOD_PLAN_INST";
     this.title = this.lex.translate('Planejamentos Institucionais');
     this.filter = this.fh.FormBuilder({
       data_inicio: {default: null},
@@ -46,7 +46,7 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
       'planejamento_superior.objetivos'
     ];
     // Testa se o usuário possui permissão para exibir planejamentos institucionais
-    if (this.auth.hasPermissionTo("MOD_PLAN")) {
+    if (this.auth.hasPermissionTo("MOD_PLAN_INST")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",
@@ -54,7 +54,7 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
       });
     }
     // Testa se o usuário possui permissão para excluir planejamentos institucionais
-    if (this.auth.hasPermissionTo("MOD_PLAN_EXCL")) {
+    if (this.auth.hasPermissionTo("MOD_PLAN_INST_EXCL")) {
       this.options.push({
         icon: "bi bi-trash",
         label: "Excluir",
@@ -78,7 +78,7 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
 
   public async onSelectTab(tab: LookupItem) {
     //if(tab.key == "TABELA") this.onLoad();
-    this.saveUsuarioConfig({active_tab: tab});
+    if(this.viewInit) this.saveUsuarioConfig({active_tab: tab.key});
   }
 
   public filterClear(filter: FormGroup) {

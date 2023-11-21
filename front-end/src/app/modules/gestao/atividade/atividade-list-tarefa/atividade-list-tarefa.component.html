@@ -6,7 +6,7 @@
                 {{row.descricao}}
             </ng-template>
         </column>
-        <column type="timer" title="Tempo estimado" onlyHours field="tempo_estimado"></column>
+        <!--<column type="timer" title="Tempo estimado" onlyHours field="tempo_estimado"></column>-->
         <column title="Documento" [template]="documento">
             <ng-template let-row="row" #documento>
                 <documentos-badge [documento]="row.documento"></documentos-badge>

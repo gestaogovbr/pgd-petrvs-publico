@@ -24,7 +24,6 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
   public cidadeDao: CidadeDaoService;
   public entidadeDao: EntidadeDaoService;
   public buttons: ToolbarButton[] = [];
-  public unidadesJaVinculadas: string[] = [];
 
   constructor(public injector: Injector) {
     super(injector, Unidade, UnidadeDaoService);
@@ -54,18 +53,13 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
     this.addOption(this.OPTION_EXCLUIR, "MOD_UND_EXCL");
   }
 
-  ngOnInit(): void {
-    super.ngOnInit();
-    this.unidadesJaVinculadas = this.metadata?.unidadesJaVinculadas || this.unidadesJaVinculadas;
-  }
-
   public dynamicOptions(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let unidade: Unidade = row as Unidade;
     // Testa se o usuário logado possui permissão de inativar a unidade do grid
     if (this.auth.hasPermissionTo("MOD_UND_INATV")) result.push({icon: unidade.data_inativacao ? "bi bi-check-circle" : "bi bi-x-circle", label: unidade.data_inativacao ? 'Reativar' : 'Inativar', onClick: async (unidade: Unidade) => await this.inativo(unidade, !unidade.data_inativacao)});
     // Testa se o usuário logado possui permissão para gerenciar integrantes da unidade do grid
-    if (this.auth.hasPermissionTo("MOD_UND_INTG")) result.push({icon: "bi bi-people", label: "Integrantes", onClick: (unidade: Unidade) => this.go.navigate({ route: ['configuracoes', 'unidade', '', unidade.id, 'integrante'] }, { metadata: { entity: row } })});
+    if (this.auth.hasPermissionTo("MOD_UND_INTG")) result.push({ label: "Integrantes", icon: "bi bi-people", onClick: (unidade: Unidade) => this.go.navigate({ route: ['configuracoes', 'unidade', '', unidade.id, 'integrante'] }, { metadata: { entity_id: row.id } })});
     return result;
   }
 
@@ -93,7 +87,6 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
     if (form.entidade_id?.length) result.push(["entidade_id", "==", form.entidade_id]);
     if (form.nome?.length) result.push(["or", ["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"], ["sigla", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]]);
     if (form.instituidora) result.push(["instituidora", "==", 1]);
-    if (this.unidadesJaVinculadas.length) result.push(["id","not in",this.unidadesJaVinculadas]);
     return result;
   }
 }

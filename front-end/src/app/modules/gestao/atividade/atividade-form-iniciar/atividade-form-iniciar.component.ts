@@ -76,6 +76,15 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
     return result;
   }
 
+  public formValidation = (form?: FormGroup) => {
+    let result = undefined;
+    /* (RN_ATV_6) Somente será permitido iniciar a atividade dentro do período do plano de trabalho. */
+    if(this.planoTrabalhoSelecionado && (this.util.asTimestamp(this.form.controls.data_inicio.value) < this.util.asTimestamp(this.planoTrabalhoSelecionado.data_inicio) || this.util.asTimestamp(this.form.controls.data_inicio.value) > this.util.asTimestamp(this.planoTrabalhoSelecionado.data_fim))) {
+      result = "Data de início fora do período do plano de trabalho (" + this.util.getDateFormatted(this.planoTrabalhoSelecionado.data_inicio) + " até " + this.util.getDateFormatted(this.planoTrabalhoSelecionado.data_fim) + ") [RN_ATV_6]";
+    }
+    return result;
+  }
+
   public loadIniciadas(usuario_id?: string) {
     this.iniciadas = [];
     if(usuario_id?.length) {
