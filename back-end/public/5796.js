@@ -109,7 +109,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   PlanoTrabalhoConsolidacaoAvaliacaoComponent: () => (/* binding */ PlanoTrabalhoConsolidacaoAvaliacaoComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/grid/grid.component */ 73150);
 /* harmony import */ var src_app_modules_base_page_list_base__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/modules/base/page-list-base */ 78509);
 /* harmony import */ var src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/usuario-dao.service */ 35255);
@@ -390,7 +390,7 @@ class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends src_app_modules_base_p
   }
   refreshConsolidacao(consolidacao) {
     var _this = this;
-    (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       yield _this.grid.query.refreshId(consolidacao.id, _this.extraJoin);
       _this.grid.refreshRows();
     })();
@@ -572,7 +572,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   PlanoTrabalhoConsolidacaoFormComponent: () => (/* binding */ PlanoTrabalhoConsolidacaoFormComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! @angular/core */ 51197);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_dao_plano_trabalho_consolidacao_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/plano-trabalho-consolidacao-dao.service */ 17046);
@@ -1333,7 +1333,7 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
   ngAfterViewInit() {
     var _this = this;
     super.ngAfterViewInit();
-    (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       yield _this.loadData(_this.entity, _this.form);
     })();
   }
@@ -1363,7 +1363,7 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
   }
   loadData(entity, form) {
     var _this2 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.gridEntregas.loading = true;
       _this2.cdRef.detectChanges();
       try {
@@ -1380,7 +1380,7 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
   ****************************************************************************************/
   addAtividade(entrega) {
     var _this3 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let planoTrabalho = entrega.plano_trabalho || _this3.entity.plano_trabalho;
       let efemerides = _this3.calendar.calculaDataTempoUnidade(_this3.entity.data_inicio, _this3.entity.data_fim, planoTrabalho.carga_horaria, _this3.unidade, "ENTREGA");
       const tempoPlanejado = _this3.calendar.horasUteis(_this3.entity.data_inicio, _this3.entity.data_fim, planoTrabalho.carga_horaria, _this3.unidade, "DISTRIBUICAO");
@@ -1427,14 +1427,14 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
   }
   loadAtividade(form, row) {
     var _this4 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this4.formAtividade.patchValue(row);
       _this4.cdRef.detectChanges();
     })();
   }
   removeAtividade(atividades, row) {
     var _this5 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let confirm = yield _this5.dialog.confirm("Exclui ?", "Deseja realmente excluir o item ?");
       if (confirm) {
         try {
@@ -1452,7 +1452,7 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
   }
   saveAtividade(form, row) {
     var _this6 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let result = undefined;
       _this6.gridAtividades.error = "";
       _this6.formAtividade.markAllAsTouched();
@@ -1487,7 +1487,7 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
   }
   onColumnProgressoEtiquetasChecklistEdit(row) {
     var _this7 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this7.formEdit.controls.progresso.setValue(row.progresso);
       _this7.formEdit.controls.etiquetas.setValue(row.etiquetas);
       _this7.formEdit.controls.etiqueta.setValue(null);
@@ -1498,7 +1498,7 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
   }
   onColumnProgressoEtiquetasChecklistSave(row) {
     var _this8 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       try {
         const saved = yield _this8.atividadeDao.update(row.id, {
           progresso: _this8.formEdit.controls.progresso.value,
@@ -1566,7 +1566,7 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
   ****************************************************************************************/
   addOcorrencia() {
     var _this9 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       return new src_app_models_plano_trabalho_consolidacao_ocorrencia_model__WEBPACK_IMPORTED_MODULE_6__.PlanoTrabalhoConsolidacaoOcorrencia({
         plano_trabalho_consolidacao_id: _this9.entity.id
       });
@@ -1574,7 +1574,7 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
   }
   loadOcorrencia(form, row) {
     var _this10 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this10.formAtividade.patchValue({
         data_inicio: row.data_inicio,
         data_fim: row.data_fim,
@@ -1585,7 +1585,7 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
   }
   removeOcorrencia(row) {
     var _this11 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let confirm = yield _this11.dialog.confirm("Exclui ?", "Deseja realmente excluir o item ?");
       if (confirm) {
         try {
@@ -1603,7 +1603,7 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
   }
   saveOcorrencia(form, row) {
     var _this12 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let result = undefined;
       _this12.formOcorrencia.markAllAsTouched();
       if (_this12.formOcorrencia.valid) {
@@ -1631,7 +1631,7 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
   ****************************************************************************************/
   addComparecimento() {
     var _this13 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       return new src_app_models_comparecimento_model__WEBPACK_IMPORTED_MODULE_13__.Comparecimento({
         unidade_id: _this13.unidade?.id,
         unidade: _this13.unidade,
@@ -1641,7 +1641,7 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
   }
   loadComparecimento(form, row) {
     var _this14 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this14.formComparecimento.patchValue({
         data_comparecimento: row.data_comparecimento,
         unidade_id: row.unidade_id,
@@ -1652,7 +1652,7 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
   }
   removeComparecimento(row) {
     var _this15 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let confirm = yield _this15.dialog.confirm("Exclui ?", "Deseja realmente excluir o item ?");
       if (confirm) {
         try {
@@ -1670,7 +1670,7 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
   }
   saveComparecimento(form, row) {
     var _this16 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let result = undefined;
       _this16.formComparecimento.markAllAsTouched();
       if (_this16.formComparecimento.valid) {
@@ -1699,7 +1699,7 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
   ****************************************************************************************/
   addAfastamento() {
     var _this17 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this17.go.navigate({
         route: ['cadastros', 'afastamento', 'new']
       }, {
@@ -1726,7 +1726,7 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
   }
   showPlanejamento(planejamento_id) {
     var _this18 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this18.go.navigate({
         route: ['gestao', 'planejamento', planejamento_id, 'consult']
       }, {
@@ -1736,7 +1736,7 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
   }
   showCadeiaValor(cadeia_valor_id_id) {
     var _this19 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this19.go.navigate({
         route: ['gestao', 'cadeia-valor', cadeia_valor_id_id, 'consult']
       }, {
@@ -1901,7 +1901,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   PlanoTrabalhoConsolidacaoListComponent: () => (/* binding */ PlanoTrabalhoConsolidacaoListComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/grid/grid.component */ 73150);
 /* harmony import */ var src_app_dao_plano_trabalho_consolidacao_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/plano-trabalho-consolidacao-dao.service */ 17046);
 /* harmony import */ var src_app_models_plano_trabalho_consolidacao_model__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/models/plano-trabalho-consolidacao.model */ 61210);
@@ -2060,7 +2060,7 @@ class PlanoTrabalhoConsolidacaoListComponent extends src_app_modules_base_page_f
   ngAfterViewInit() {
     var _this = this;
     super.ngAfterViewInit();
-    (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (_this.urlParams?.has("usuarioId") && _this.urlParams?.has("planoTrabalhoId")) {
         let dados = yield _this.planoTrabalhoDao.getByUsuario(_this.urlParams.get("usuarioId"), true, _this.urlParams.get("planoTrabalhoId"));
         if (dados.planos.length == 1) _this.entity = dados.planos[0];
@@ -2074,7 +2074,7 @@ class PlanoTrabalhoConsolidacaoListComponent extends src_app_modules_base_page_f
   }
   addConsolidacao() {
     var _this2 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       return new src_app_models_plano_trabalho_consolidacao_model__WEBPACK_IMPORTED_MODULE_3__.PlanoTrabalhoConsolidacao({
         id: _this2.dao.generateUuid(),
         plano_trabalho_id: _this2.entity.id
@@ -2083,7 +2083,7 @@ class PlanoTrabalhoConsolidacaoListComponent extends src_app_modules_base_page_f
   }
   loadConsolidacao(form, row) {
     var _this3 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this3.form.patchValue({
         data_inicio: row.data_inicio,
         data_fim: row.data_fim
@@ -2093,7 +2093,7 @@ class PlanoTrabalhoConsolidacaoListComponent extends src_app_modules_base_page_f
   }
   removeConsolidacao(row) {
     var _this4 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let confirm = yield _this4.dialog.confirm("Exclui ?", "Deseja realmente excluir o item ?");
       if (confirm) {
         try {
@@ -2111,7 +2111,7 @@ class PlanoTrabalhoConsolidacaoListComponent extends src_app_modules_base_page_f
   }
   saveConsolidacao(form, row) {
     var _this5 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let result = undefined;
       _this5.form.markAllAsTouched();
       if (_this5.form.valid) {
@@ -2134,7 +2134,7 @@ class PlanoTrabalhoConsolidacaoListComponent extends src_app_modules_base_page_f
   }
   concluir(consolidacao) {
     var _this6 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this6.submitting = true;
       try {
         let response = yield _this6.dao.concluir(consolidacao.id);
@@ -2149,7 +2149,7 @@ class PlanoTrabalhoConsolidacaoListComponent extends src_app_modules_base_page_f
   }
   cancelarConclusao(consolidacao) {
     var _this7 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this7.submitting = true;
       try {
         let response = yield _this7.dao.cancelarConclusao(consolidacao.id);
@@ -2331,7 +2331,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   PlanoTrabalhoConsolidacaoComponent: () => (/* binding */ PlanoTrabalhoConsolidacaoComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/tabs/tabs.component */ 66384);
 /* harmony import */ var src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/unidade-dao.service */ 81214);
 /* harmony import */ var src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/modules/base/page-frame-base */ 76298);
@@ -2466,13 +2466,13 @@ class PlanoTrabalhoConsolidacaoComponent extends src_app_modules_base_page_frame
     var _this = this;
     super.ngAfterViewInit();
     this.tabs.active = this.queryParams?.tab || "USUARIO";
-    (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       yield _this.loadData(_this.entity, _this.form);
     })();
   }
   loadData(entity, form) {
     var _this2 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.unidade = _this2.auth.unidadeGestor();
       if (_this2.unidade) {
         _this2.usuarios = [];
@@ -2541,7 +2541,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   PlanoTrabalhoFormTermoComponent: () => (/* binding */ PlanoTrabalhoFormTermoComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_dao_documento_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/documento-dao-service */ 25026);
 /* harmony import */ var src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/plano-trabalho-dao.service */ 87744);
@@ -2671,7 +2671,7 @@ class PlanoTrabalhoFormTermoComponent extends src_app_modules_base_page_form_bas
   }
   loadData(entity, form) {
     var _this = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = Object.assign({}, form.value);
       formValue = _this.util.fillForm(formValue, entity);
       yield Promise.all([_this.unidade.loadSearch(entity.unidade || entity.unidade_id), _this.usuario.loadSearch(entity.usuario || entity.usuario_id), _this.programa.loadSearch(entity.programa || entity.programa_id), _this.tipoModalidade.loadSearch(entity.tipo_modalidade || entity.tipo_modalidade_id)]);
@@ -2685,7 +2685,7 @@ class PlanoTrabalhoFormTermoComponent extends src_app_modules_base_page_form_bas
   }
   initializeData(form) {
     var _this2 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.entity = yield _this2.dao.getById(_this2.metadata.plano_trabalho.id, _this2.join);
       _this2.processo = _this2.metadata?.processo;
       yield _this2.loadData(_this2.entity, form);
@@ -2824,7 +2824,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   PlanoTrabalhoFormComponent: () => (/* binding */ PlanoTrabalhoFormComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_dao_documento_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/documento-dao-service */ 25026);
 /* harmony import */ var src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/plano-trabalho-dao.service */ 87744);
@@ -3048,7 +3048,7 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
       return result;
     };
     this.formValidation = /*#__PURE__*/function () {
-      var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (form) {
+      var _ref = (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (form) {
         let result = "";
         return result;
         // TODO:
@@ -3185,7 +3185,7 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
     this.form.controls.usuario_texto_complementar.setValue(selected.entity?.texto_complementar_plano || "");
     if (!this.form?.controls.unidade_id.value) {
       selected.entity.unidades.every( /*#__PURE__*/function () {
-        var _ref2 = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (element, index) {
+        var _ref2 = (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (element, index) {
           if (selected.entity.lotacao.unidade_id == element.id) {
             _this.preencheUnidade(element);
             if (!_this.form?.controls.programa_id.value) {
@@ -3258,7 +3258,7 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
   }
   loadData(entity, form) {
     var _this2 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.planoTrabalho = new src_app_models_plano_trabalho_model__WEBPACK_IMPORTED_MODULE_8__.PlanoTrabalho(entity);
       yield Promise.all([_this2.calendar.loadFeriadosCadastrados(entity.unidade_id), _this2.usuario?.loadSearch(entity.usuario || entity.usuario_id), _this2.unidade?.loadSearch(entity.unidade || entity.unidade_id), _this2.programa?.loadSearch(entity.programa || entity.programa_id), _this2.tipoModalidade?.loadSearch(entity.tipo_modalidade || entity.tipo_modalidade_id)]);
       let formValue = Object.assign({}, form.value);
@@ -3271,7 +3271,7 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
   }
   initializeData(form) {
     var _this3 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (_this3.isTermos) {
         _this3.entity = yield _this3.dao.getById(_this3.urlParams.get("id"), _this3.join);
       } else {
@@ -3294,7 +3294,7 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
   }
   saveData(form) {
     var _this4 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       //let plano = this.loadEntity();
       /* Atualiza o documento */
       _this4.atualizarTcr();
@@ -3361,7 +3361,7 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
   }
   signDocumento(documento) {
     var _this5 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       yield _this5.documentoService.sign([documento]);
       _this5.cdRef.detectChanges();
     })();
@@ -3525,7 +3525,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   PlanoTrabalhoListAccordeonComponent: () => (/* binding */ PlanoTrabalhoListAccordeonComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/dao/plano-trabalho-dao.service */ 87744);
 /* harmony import */ var src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/modules/base/page-frame-base */ 76298);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ 51197);
@@ -3619,13 +3619,13 @@ class PlanoTrabalhoListAccordeonComponent extends src_app_modules_base_page_fram
   ngAfterViewInit() {
     var _this = this;
     super.ngAfterViewInit();
-    (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       yield _this.loadData(_this.entity, _this.form);
     })();
   }
   loadData(entity, form) {
     var _this2 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.accordion.loading = true;
       try {
         let dados = yield _this2.dao.getByUsuario(_this2.usuarioId, _this2.arquivados);
@@ -3726,7 +3726,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   PlanoTrabalhoListEntregaComponent: () => (/* binding */ PlanoTrabalhoListEntregaComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! @angular/core */ 51197);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../components/grid/grid.component */ 73150);
@@ -4206,7 +4206,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
   ngOnInit() {
     var _superprop_getNgOnInit = () => super.ngOnInit,
       _this = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _superprop_getNgOnInit().call(_this);
       _this.entity = _this.metadata?.entity || _this.entity;
       _this.totalForcaTrabalho = Math.round(_this.somaForcaTrabalho(_this.entity?.entregas) * 100) / 100;
@@ -4220,7 +4220,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
    */
   addEntrega() {
     var _this2 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       return Object.assign(new src_app_models_plano_trabalho_entrega_model__WEBPACK_IMPORTED_MODULE_5__.PlanoTrabalhoEntrega(), {
         _status: "ADD",
         id: _this2.dao.generateUuid(),
@@ -4235,7 +4235,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
    */
   loadEntrega(form, row) {
     var _this3 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let entrega = row;
       form.controls.descricao.setValue(row.descricao);
       form.controls.forca_trabalho.setValue(row.forca_trabalho);
@@ -4268,7 +4268,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
    */
   removeEntrega(row) {
     var _this4 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let confirm = yield _this4.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
       if (confirm) {
         _this4.loading = true;
@@ -4294,7 +4294,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
    */
   saveEntrega(form, row) {
     var _this5 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this5.entity._metadata = _this5.entity._metadata || {};
       _this5.entity._metadata.novaEntrega = row;
       _this5.entity._metadata.novaEntrega.plano_entrega_entrega_id = _this5.form?.controls.plano_entrega_entrega_id.value;
@@ -4333,7 +4333,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
    */
   carregarEntregas(idPlanoOuPlano) {
     var _this6 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let planoEntrega = typeof idPlanoOuPlano == 'string' ? yield _this6.planoEntregaDao.getById(idPlanoOuPlano, ["entregas.entrega:id,nome", "unidade"]) : idPlanoOuPlano;
       let planoEntregaComUnidade = {
         id: planoEntrega?.id,
@@ -4353,7 +4353,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
   /* ---------  TRATAMENTO DOS EVENTOS ----------- */
   onOrigemChange(row) {
     var _this7 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let value = _this7.form.controls.origem.value;
       _this7.cdRef.detectChanges();
       if (value == 'OUTRO_ORGAO') {
