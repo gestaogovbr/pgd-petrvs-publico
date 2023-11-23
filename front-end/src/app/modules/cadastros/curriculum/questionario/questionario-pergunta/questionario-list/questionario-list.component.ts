@@ -1,25 +1,25 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { QuestionarioPerguntaDaoService } from 'src/app/dao/questionario-pergunta-dao.service';
+import { QuestionarioDaoService } from 'src/app/dao/questionario-dao.service';
 import { Base } from 'src/app/models/base.model';
-import { QuestionarioPergunta } from 'src/app/models/questionario-pergunta.model';
+import { Questionario } from 'src/app/models/questionario.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
-  selector: 'app-questionario-pergunta-list',
-  templateUrl: './questionario-pergunta-list.component.html',
-  styleUrls: ['./questionario-pergunta-list.component.scss']
+  selector: 'questionario-list',
+  templateUrl: './questionario-list.component.html',
+  styleUrls: ['./questionario-list.component.scss']
 })
-export class QuestionarioPerguntaListComponent extends PageListBase<QuestionarioPergunta, QuestionarioPerguntaDaoService> {
+export class QuestionarioListComponent extends PageListBase<Questionario, QuestionarioDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
   public tipoQuestionario: LookupItem[] = [{ 'key': 'Interno', 'value': 'Interno' },{ 'key': 'Personalizado', 'value': 'Personalizado' }];
-  public exibePerguntas : any[] = [];
+  public exibes : any[] = [];
   
   constructor(public injector: Injector) {
-    super(injector, QuestionarioPergunta, QuestionarioPerguntaDaoService);
+    super(injector, Questionario, QuestionarioDaoService);
     /* Inicializações */
   
     this.title = this.lex.translate("Questionários");

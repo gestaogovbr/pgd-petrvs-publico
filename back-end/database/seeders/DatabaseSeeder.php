@@ -42,6 +42,7 @@ class DatabaseSeeder extends Seeder
                GrupoEspecializadoSeeder::class,
                AreaTematicaSeeder::class,
                AreaAtividadeExternaSeeder::class,
+               CapacidadeTecnicaSeeder::class,
                IN24_2023Seeder::class,
 
                /*

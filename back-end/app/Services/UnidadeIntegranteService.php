@@ -47,7 +47,6 @@ class UnidadeIntegranteService extends ServiceBase
               $atribuicoesFinais = [];
               $integranteNovoOuExistente = UnidadeIntegrante::firstOrCreate(['unidade_id' => $unidade->id, 'usuario_id' => $usuario->id]);
               if ($usuario && !$vinculo["atribuicoes"]) {     // excluir o vínculo e suas atribuições
-                  //$integrante = UnidadeIntegrante::where('usuario_id', $usuario->id)->where('unidade_id', $unidade->id)->first();
                   if (!empty($usuario->lotacao) && $usuario->lotacao->id == $integranteNovoOuExistente->id) {     // o vínculo de lotação não pode ser excluído, apenas através da definição da lotação em outra unidade
                       $integranteNovoOuExistente->atribuicoes->each(function ($a) { if ($a->atribuicao != 'LOTADO') $a->delete(); });
                       $msg = "O vínculo de LOTADO não pode ser apagado, apenas transferido através da atribuição de lotação em outra unidade.";
@@ -58,7 +57,6 @@ class UnidadeIntegranteService extends ServiceBase
                       return $result;
                   };
               } else {
-                  //$integranteNovoOuExistente = UnidadeIntegrante::firstOrCreate(['unidade_id' => $unidade->id, 'usuario_id' => $usuario->id]);
                   $this->validateIntegrante($vinculo["atribuicoes"]);
                   $unidadeLotacao = $usuario->lotacao ? $usuario->lotacao->unidade : null;
                   $unidadeGerenciaTitular = $usuario->gerenciaTitular ? $usuario->gerenciaTitular->unidade : null;
@@ -107,10 +105,10 @@ class UnidadeIntegranteService extends ServiceBase
                     array_push($atribuicoesFinais, "GESTOR_SUBSTITUTO");
                 };
 
-                  if (in_array("LOTADO", $vinculo["atribuicoes"])) $definirLotacao($integranteNovoOuExistente); else if(!empty($unidadeLotacao->id) && $unidadeLotacao->id == $unidade->id) array_push($atribuicoesFinais, "LOTADO");
-                  if (in_array("GESTOR", $vinculo["atribuicoes"])) $definirGerenciaTitular($integranteNovoOuExistente); else if(!empty($atualGestorUnidade->id) && $atualGestorUnidade->id == $usuario->id) array_push($atribuicoesFinais, "GESTOR");
-                  if (in_array("GESTOR_DELEGADO", $vinculo["atribuicoes"])) $definirGerenciaDelegada($integranteNovoOuExistente); else if(!empty($atualGestorDelegadoUnidade->id) && $atualGestorDelegadoUnidade->id == $usuario->id) array_push($atribuicoesFinais, "GESTOR_DELEGADO");
-                  if (in_array("GESTOR_SUBSTITUTO", $vinculo["atribuicoes"])) $definirGerenciaSubstituta($integranteNovoOuExistente); else if(!empty($atualGestorSubstitutoUnidade->id) && $atualGestorSubstitutoUnidade->id == $usuario->id) array_push($atribuicoesFinais, "GESTOR_SUBSTITUTO");
+                  if (in_array("LOTADO", $vinculo["atribuicoes"])) $definirLotacao($integranteNovoOuExistente); //else if(!empty($unidadeLotacao->id) && $unidadeLotacao->id == $unidade->id) array_push($atribuicoesFinais, "LOTADO");
+                  if (in_array("GESTOR", $vinculo["atribuicoes"])) $definirGerenciaTitular($integranteNovoOuExistente); //else if(!empty($atualGestorUnidade->id) && $atualGestorUnidade->id == $usuario->id) array_push($atribuicoesFinais, "GESTOR");
+                  if (in_array("GESTOR_DELEGADO", $vinculo["atribuicoes"])) $definirGerenciaDelegada($integranteNovoOuExistente); //else if(!empty($atualGestorDelegadoUnidade->id) && $atualGestorDelegadoUnidade->id == $usuario->id) array_push($atribuicoesFinais, "GESTOR_DELEGADO");
+                  if (in_array("GESTOR_SUBSTITUTO", $vinculo["atribuicoes"])) $definirGerenciaSubstituta($integranteNovoOuExistente); //else if(!empty($atualGestorSubstitutoUnidade->id) && $atualGestorSubstitutoUnidade->id == $usuario->id) array_push($atribuicoesFinais, "GESTOR_SUBSTITUTO");
                   
                   // Só salvar atribuições diferentes de lotação e gerência (Lotado, Gestor, Gestor_delegado, Gestor_substituto) e se ainda não existir
                   foreach (array_diff($vinculo["atribuicoes"], ['LOTADO', 'GESTOR', 'GESTOR_DELEGADO', 'GESTOR_SUBSTITUTO']) as $x) {
@@ -142,6 +140,6 @@ class UnidadeIntegranteService extends ServiceBase
 
     public function validateIntegrante($atribuicoes)
     {
-        if (count(array_intersect(['GESTOR', 'GESTOR_SUBSTITUTO'], $atribuicoes)) == 2) throw new ServerException("ValidateIntegrante", "Um servidor não pode exercer as atribuições de GESTOR e GESTOR_SUBSTITUTO, simultaneamente, para uma mesma Unidade!");
+        if (count(array_intersect(['GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO'], $atribuicoes)) > 1) throw new ServerException("ValidateIntegrante", "A um mesmo servidor só pode ser atribuída uma função de gestor, para uma mesma Unidade!");
     }
 }
