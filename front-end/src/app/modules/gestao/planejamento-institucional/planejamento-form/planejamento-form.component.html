@@ -3,7 +3,7 @@
         <tab key="DADOS" label="Dados">
             <div class="row">
                 <div class="row">
-                    <input-text [size]="12" label="Nome do Planejamento Institucional" [icon]="entityService.getIcon('Planejamento')" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250 required></input-text>
+                    <input-text [size]="12" [label]="'Nome do ' + lex.translate('Planejamento Institucional')" [icon]="entityService.getIcon('Planejamento')" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250 required></input-text>
                 </div>
                 <div class="row">
                     <!-- <input-search [size]="6" [disabled]="hasPermissionToUNEX ? undefined : 'true'" controlName="unidade_id" [control]="form!.controls.unidade_id" [dao]="unidadeDao" [selectParams]="{filter: {instituidora: true}}" (change)="onUnidadeChange($event)" labelInfo="Unidade responsável pelo planejamento, caso vazio será considerado a Entidade"></input-search> -->
@@ -25,8 +25,8 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                            <input-multiselect [size]="12" label="Resultados Institucionais" controlName="resultados_institucionais" [addItemHandle]="addResultadoHandle.bind(this)">
-                                <input-text label="Resultados Institucionais" icon="far fa-edit" controlName="resultados_texto" [control]="form!.controls.resultados_texto" [attr.maxlength]=250></input-text>
+                            <input-multiselect [size]="12" [label]="lex.translate('Resultados Institucionais')" controlName="resultados_institucionais" [addItemHandle]="addResultadoHandle.bind(this)">
+                                <input-text [label]="lex.translate('Resultados Institucionais')" icon="far fa-edit" controlName="resultados_texto" [control]="form!.controls.resultados_texto" [attr.maxlength]=250></input-text>
                             </input-multiselect>
                     </div>
                     <div class="col-md-6">
