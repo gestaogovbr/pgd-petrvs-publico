@@ -336,7 +336,7 @@ Route::middleware(['auth:sanctum'])->prefix('Funcao')->group(function () { defau
 Route::middleware(['auth:sanctum'])->prefix('CentroTreinamento')->group(function () { defaultRoutes(CentroTreinamentoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('GrupoEspecializado')->group(function () { defaultRoutes(GrupoEspecializadoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Cargo')->group(function () { defaultRoutes(CargoController::class); });
-Route::middleware(['auth:sanctum'])->prefix('QuestionarioPergunta')->group(function () { defaultRoutes(QuestionarioController::class); });
+Route::middleware(['auth:sanctum'])->prefix('Questionario')->group(function () { defaultRoutes(QuestionarioController::class); });
 Route::middleware(['auth:sanctum'])->prefix('RespostaQuestionario')->group(function () { defaultRoutes(RespostaQuestionarioController::class); });
 Route::middleware(['auth:sanctum'])->prefix('HistoricoAtividadeExternaCurriculumProfissional')->group(function () { defaultRoutes(HistoricoAtividadeExternaCurriculumController::class); });
 Route::middleware(['auth:sanctum'])->prefix('HistoricoAtividadeInternaCurriculumProfissional')->group(function () { defaultRoutes(HistoricoAtividadeInternaCurriculumController::class); });
