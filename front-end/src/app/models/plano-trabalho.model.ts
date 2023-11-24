@@ -11,6 +11,7 @@ import { Atividade } from './atividade.model';
 import { HasStatus, StatusJustificativa } from './status-justificativa.model';
 import { PlanoTrabalhoConsolidacao } from './plano-trabalho-consolidacao.model';
 import { LookupItem } from '../services/lookup.service';
+import { AssinaturaList } from '../modules/gestao/plano-trabalho/plano-trabalho.service';
 
 export type PlanoMetadados = { concluido: boolean }
 
@@ -38,8 +39,8 @@ export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
     public atividades: Atividade[] = [];
     public status_historico: StatusJustificativa[] = [];  // Mudanças de status sofridas pelo plano de trabalho (histórico)
     public consolidacoes: PlanoTrabalhoConsolidacao[] = [];
-    public assinaturasExigidas: string[] = [];
-    public jaAssinaramTCR: string[] = [];
+    public assinaturasExigidas: AssinaturaList = { "participante": [], "gestores_unidade_executora": [],  "gestores_unidade_lotacao": [], "gestores_entidade": [] };
+    public jaAssinaramTCR: AssinaturaList = { "participante": [], "gestores_unidade_executora": [],  "gestores_unidade_lotacao": [], "gestores_entidade": [] };
     public criterios_avaliacao: LookupItem[] = []; /* Critérios de avaliação do plano de trabalho */
     
     public programa_id: string = "";

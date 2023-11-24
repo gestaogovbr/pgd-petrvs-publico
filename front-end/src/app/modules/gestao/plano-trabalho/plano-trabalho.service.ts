@@ -14,10 +14,6 @@ import { NavigateService } from 'src/app/services/navigate.service';
 import { Avaliacao } from 'src/app/models/avaliacao.model';
 import { PageBase } from '../../base/page-base';
 import { AvaliacaoDaoService } from 'src/app/dao/avaliacao-dao.service';
-import { PageListBase } from '../../base/page-list-base';
-import { Base } from 'src/app/models/base.model';
-import { DaoBaseService } from 'src/app/dao/dao-base.service';
-
 
 export type RefreshConsolidacao = (consolidacao: PlanoTrabalhoConsolidacao) => void;
 
@@ -28,6 +24,14 @@ export type BadgeTrabalho = {
   descricao: string,
   tipo: PlanoTrabalhoEntregaTipo
 }
+
+export type AssinaturaList = { 
+  "participante": string[], 
+  "gestores_unidade_executora": string[], 
+  "gestores_unidade_lotacao": string[], 
+  "gestores_entidade": string[], 
+  "todas"?: string[]
+};
 
 @Injectable({
   providedIn: 'root'
@@ -251,5 +255,18 @@ export class PlanoTrabalhoService {
       page.submitting = false;
     }
   }
+
+  public assinaturasFaltantes(exigidas: AssinaturaList, assinaram: AssinaturaList): AssinaturaList {
+    return {
+      "participante": exigidas.participante.filter(x => !assinaram.participante.includes(x)),
+      "gestores_unidade_executora": !exigidas.gestores_unidade_executora.length ? [] : (exigidas.gestores_unidade_executora.filter(x => assinaram.gestores_unidade_executora.includes(x)).length ? [] : exigidas.gestores_unidade_executora),
+      "gestores_unidade_lotacao": !exigidas.gestores_unidade_lotacao.length ? [] : (exigidas.gestores_unidade_lotacao.filter(x => assinaram.gestores_unidade_lotacao.includes(x)).length ? [] : exigidas.gestores_unidade_lotacao),
+      "gestores_entidade": !exigidas.gestores_entidade.length ? [] : (exigidas.gestores_entidade.filter(x => assinaram.gestores_entidade.includes(x)).length ? [] : exigidas.gestores_entidade),
+    };
+  }
+
+/*   public assinaturaUsuarioEhExigida(exigidas: AssinaturaList): boolean {
+    return [...exigidas.participante, ...exigidas.gestores_unidade_executora, ...exigidas.gestores_unidade_lotacao, ...exigidas.gestores_entidade].includes(this.auth.usuario?.id!); 
+  } */
   
 }

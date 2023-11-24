@@ -6,9 +6,7 @@ use App\Models\Documento;
 use App\Models\PlanoTrabalho;
 use App\Models\DocumentoAssinatura;
 use App\Services\ServiceBase;
-use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -57,7 +55,7 @@ class DocumentoService extends ServiceBase {
                             (RN_PTR_O)
                             Enquanto faltar assinatura no TCR, o plano vai para o (ou permanece no) status de 'AGUARDANDO_ASSINATURA'. Quando o último assinar o TCR, o plano vai para o status 'ATIVO' (RN_PTR_D);
                         */
-                        $status = count(array_diff($this->programa->assinaturasExigidas($documento->planoTrabalho),$this->usuario->jaAssinaramTCR($documento->planoTrabalho->id))) > 0 ? 'AGUARDANDO_ASSINATURA' : 'ATIVO';
+                        $status = $this->planoTrabalho->haAssinaturasFaltantes($documento->planoTrabalho) ? 'AGUARDANDO_ASSINATURA' : 'ATIVO';
                         $this->status->atualizaStatus($documento->planoTrabalho, $status, 'Registrada a assinatura do servidor: ' . $usuario->nome . ' - CPF ' . $usuario->cpf . '.');                        
                     }
                 } else {

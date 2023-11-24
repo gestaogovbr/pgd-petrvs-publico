@@ -181,18 +181,6 @@ class UsuarioService extends ServiceBase
     }
 
     /**
-     * Recebe o ID de um plano de trabalho como parâmetro e retorna um array com os IDs dos usuários que já assinaram o TCR atual do plano.
-     */
-    public function jaAssinaramTCR(string $plano_trabalho_id): array {
-        $result = [];
-        $planoTrabalho = PlanoTrabalho::withTrashed()->find($plano_trabalho_id);
-        if($planoTrabalho && $planoTrabalho->documento_id) {
-            $result = $planoTrabalho->documento->assinaturas->map(fn($a) => $a->usuario_id)->toArray();
-        }
-        return $result;
-    }
-
-    /**
      * Informa se o usuário logado tem como lotação alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
      * recebida como parâmetro.
      * @param string $unidade_id 

@@ -1,6 +1,6 @@
 <div [class.grid-invisible]="!visible">
     <div *ngIf="error?.length" class="alert alert-danger mt-2" role="alert">
-        {{error}}
+        <span><u><strong>{{ (error || '').split('&')[0] }}</strong></u></span><br>{{ (error || '').split('&')[1] }}
     </div>
     <form [formGroup]="form!" class="grid-list-container">
         <div class="row m-0 p-0">
@@ -76,7 +76,7 @@
     </form>
     <div *ngIf="hasError()" class="invalid-feedback" [class.d-block]="isInvalid()">
         <i class="bi bi-info-circle"></i>
-        {{errorMessage()}}
+        {{ errorMessage() }}
     </div>
     <ng-content *ngIf="paginationRef?.type == 'pages'" select="pagination"></ng-content>
 </div>

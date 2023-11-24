@@ -196,10 +196,12 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     this.entity!._metadata.novaEntrega.forca_trabalho = this.form?.controls.forca_trabalho.value;
     this.loading = true;
     try {
-      if (!this.isNoPersist) {
+      if (!this.isNoPersist) {  // persistente
         this.entity!._metadata.novaEntrega = await (this.dao as PlanoTrabalhoEntregaDaoService).save(this.entity!._metadata.novaEntrega, this.join);
         // TODO: Verificar isso (Foi feito uma modificação no grid para isso não ser mais necessário)
         // if (this.grid?.adding) this.grid!.items[this.grid!.items.length - 1].id = '';  // (*4)
+      } else {
+
       }
     } catch (e: any) {
       this.error(e.message ? e.message : e.toString() || e);
@@ -228,7 +230,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   public async carregarEntregas(idPlanoOuPlano: string | PlanoEntrega): Promise<void> {
     let planoEntrega = typeof idPlanoOuPlano == 'string' ? await this.planoEntregaDao!.getById(idPlanoOuPlano, ["entregas.entrega:id,nome", "unidade"]) : idPlanoOuPlano;
     let planoEntregaComUnidade = {id: planoEntrega?.id, unidade_id: planoEntrega?.unidade_id, unidade: planoEntrega?.unidade};
-    this.entregas = planoEntrega?.entregas.map(epe => Object.assign({}, { key: epe.id, value: epe.descricao || epe.entrega?.nome || "Deconhecido", data: Object.assign(epe, {plano_entrega: planoEntregaComUnidade}) })) || [];
+    this.entregas = planoEntrega?.entregas.map(epe => Object.assign({}, { key: epe.id, value: epe.descricao || epe.entrega?.nome || "Desconhecido", data: Object.assign(epe, {plano_entrega: planoEntregaComUnidade}) })) || [];
     if(!this.entregas.find(x => x.key == this.form!.controls.plano_entrega_entrega_id.value)) this.form!.controls.plano_entrega_entrega_id.setValue(null);
   }
 
@@ -246,12 +248,13 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
       this.form?.controls.orgao.setValue(null);
       this.loading = true;
       try {
-        let planosEntregas = await this.planoEntregaDao!.query({where: [["unidade_id", "==", this.entity!.unidade_id], ["status", "==", "ATIVO"], ["data_inicio", "<=", this.entity!.data_fim], ["data_fim", ">=", this.entity!.data_inicio]]}).asPromise();
+/*         let planosEntregas = await this.planoEntregaDao!.query({where: [["unidade_id", "==", this.entity!.unidade_id], ["status", "==", "ATIVO"], ["data_inicio", "<=", this.entity!.data_fim], ["data_fim", ">=", this.entity!.data_inicio]]}).asPromise();
         if(planosEntregas.length == 1) {
           this.form?.controls.plano_entrega_id.setValue(planosEntregas[0].id);
         } else if(this.planoEntrega?.selectedEntity?.unidade_id != this.entity!.unidade_id) {
           this.planoEntrega?.onSelectClick(new Event("SELECT"));
-        }
+        } */
+        this.planoEntrega?.onSelectClick(new Event("SELECT"));
       } finally {
         this.loading = false;
       }
