@@ -9,6 +9,8 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { FullRoute, RouteMetadata } from 'src/app/services/navigate.service';
 import { AtividadeListBase } from '../atividade-list-base';
 import { BadgeButton } from 'src/app/components/badge/badge.component';
+import { Unidade } from 'src/app/models/unidade.model';
+import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
 
 @Component({
   selector: 'atividade-list-grid',
@@ -21,11 +23,15 @@ export class AtividadeListGridComponent extends AtividadeListBase {
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
   @ViewChild('usuario', { static: false }) public usuario?: InputSearchComponent;
   @ViewChild('etiqueta', { static: false }) public etiqueta?: InputSelectComponent;
+  @ViewChild('planoEntrega', { static: false }) public planoEntrega?: InputSelectComponent;
+  @ViewChild('planoEntregaEntrega', { static: false }) public planoEntregaEntrega?: InputSelectComponent;
   @Input() snapshot?: ActivatedRouteSnapshot;
   @Input() fixedFilter?: any[];
   @Input() minhas: boolean = false;
 
   public static selectRoute?: FullRoute = { route: ["gestao", "atividade", "grid"] };
+  public planosEntregas: LookupItem[] = [];
+  public planosEntregasEntregas: LookupItem[] = [];
   public formEdit: FormGroup;
 
   constructor(public injector: Injector) {
@@ -51,7 +57,9 @@ export class AtividadeListGridComponent extends AtividadeListBase {
       tipo_processo_id: { default: null },
       data_filtro: { default: null },
       data_inicio: { default: null },
-      data_fim: { default: null }
+      data_fim: { default: null },
+      plano_entrega_id: { default: null},
+      plano_entrega_entrega_id: { default: null},
     });
     this.formEdit = this.fh.FormBuilder({
       progresso: { default: 0 },
@@ -188,6 +196,12 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     if (form.tipo_processo_id?.length) {
       result.push(["tipo_processo_id", "==", form.tipo_processo_id]);
     }
+    if (form.plano_entrega_id?.length) {
+      result.push(["plano_entrega_id", "==", form.plano_entrega_id]);
+    }
+    if (form.plano_entrega_entrega_id?.length) {
+      result.push(["plano_entrega_entrega_id", "==", form.plano_entrega_entrega_id]);
+    }
     if (form.data_filtro?.length) {
       const field = form.data_filtro == "DISTRIBUICAO" ? "data_distribuicao" : form.data_filtro == "PRAZO" ? "data_estipulada_entrega" : "data_entrega";
       if (form.data_inicio) {
@@ -197,7 +211,6 @@ export class AtividadeListGridComponent extends AtividadeListBase {
         result.push([field, "<=", form.data_fim]);
       }
     }
-
     return result;
   }
 
@@ -214,6 +227,8 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     this.filter!.controls.data_filtro.setValue(null);
     this.filter!.controls.data_inicio.setValue(null);
     this.filter!.controls.data_fim.setValue(null);
+    this.filter!.controls.plano_entrega_id.setValue(null);
+    this.filter!.controls.plano_entrega_entrega_id.setValue(null);
     if (!this.fixedFilter?.length || !this.fixedFilter.find(x => x[0] == "status")) this.filter!.controls.status.setValue(null);
     this.filter!.controls.etiquetas.setValue([]);
     super.filterClear(filter);
@@ -265,5 +280,24 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     });
   }
 
+  public async onUnidadeChange(event: Event) {
+    let unidade_selecionada = await this.unidadeDao.getById(this.filter?.controls.unidade_id.value, ['planos_entrega']);
+    this.planosEntregas = unidade_selecionada?.planos_entrega?.map(x => Object.assign({
+      key: x.id,
+      value: x.nome
+    })) || [];
+  }
+
+  public async onPlanoEntregaChange(event: Event) {
+    let plano_entrega_selecionado: any[] = [];
+    let unidade_selecionada = await this.unidadeDao.getById(this.filter?.controls.unidade_id.value, ['planos_entrega.entregas']);
+    unidade_selecionada?.planos_entrega?.forEach(element => {
+      if (element.id == this.filter!.controls.plano_entrega_id.value) plano_entrega_selecionado.push(element.entregas);
+    });
+    this.planosEntregasEntregas = plano_entrega_selecionado[0]!.map((x: { id: any; descricao: any; }) => Object.assign({
+      key: x.id,
+      value: x.descricao
+    })) || [];
+  }
 }
 

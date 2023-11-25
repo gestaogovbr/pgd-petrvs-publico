@@ -24,9 +24,8 @@ class CreateRespostasQuestionariosTable extends Migration
             $table->tinyInteger('editavel')->default(1)->comment("Possibilidade de editar as respostas");
             $table->json('respostas')->nullable()->comment("Respostas do questionário");
             // Chaves estrangeiras:
-            $table->foreignUuid('usuario_id')->nullable()->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->comment("FK Usuario ID");
-            $table->foreignUuid('curriculum_id')->nullable()->constrained("curriculums")->onDelete('restrict')->onUpdate('cascade')->comment("FK Curriculum ID");
             $table->foreignUuid('questionario_id')->constrained("questionarios")->onDelete('restrict')->onUpdate('cascade')->comment("FK Questionario ID");
+            $table->foreignUuid('usuario_id')->constrained("usuarios")->onDelete('restrict')->onUpdate('cascade')->unique()->comment('Usuário');
         });
     }
 

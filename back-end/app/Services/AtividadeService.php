@@ -18,16 +18,19 @@ use App\Exceptions\ServerException;
 use App\Models\Atividade;
 use App\Models\Documento;
 use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalhoEntrega;
+use App\Models\PlanoEntregaEntrega;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\PlanoTrabalhoConsolidacaoAtividade;
 use App\Models\PlanejamentoObjetivo;
 use App\Models\CadeiaValorProcesso;
-use App\Models\PlanoTrabalhoEntrega;
 use App\Models\StatusJustificativa;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Throwable;
+
+use function PHPSTORM_META\map;
 
 class AtividadeService extends ServiceBase
 {
@@ -76,8 +79,8 @@ class AtividadeService extends ServiceBase
             $query->where('data_inicio', '<=', $dataEstipuladaEntrega);
             $query->where('data_fim', '>=', $dataDistribuicao);
         }])->find($planoTrabalhoId);
-        if(!empty($dataInicio) && (UtilService::asTimestamp($dataInicio) < UtilService::asTimestamp($plano->data_inicio) || UtilService::asTimestamp($dataInicio) > UtilService::asTimestamp($plano->data_fim))) throw new ServerException("ValidateAtividade", "A inicialização da atividade não pode ser anterior ou posterior ao plano de trabalho. (Plano de trabalho: " . UtilService::getDateFormatted($plano->data_inicio) . " - " . UtilService::getDateFormatted($plano->data_fim) . ")\n[ver RN_ATV_6]");
-        if(UtilService::asTimestamp($plano->data_inicio) > UtilService::asTimestamp($dataDistribuicao) || UtilService::asTimestamp($plano->data_fim) < UtilService::asTimestamp($dataEstipuladaEntrega)) throw new ServerException("ValidateAtividade", "Data da atividade extrapola a do plano de trabalho. (Plano de trabalho: " . UtilService::getDateFormatted($plano->data_inicio) . " - " . UtilService::getDateFormatted($plano->data_fim) . ")\n[ver RN_ATV_5]");
+        if(!empty($dataInicio) && (UtilService::asTimestamp($dataInicio) < UtilService::asTimestamp($plano->data_inicio) || UtilService::asTimestamp($dataInicio) > UtilService::asTimestamp($plano->data_fim))) throw new ServerException("ValidateAtividade", "A inicialização da atividade não pode ser anterior ou posterior ao plano de trabalho. (Plano de trabalho: " . UtilService::getDateTimeFormatted($plano->data_inicio) . " - " . UtilService::getDateTimeFormatted($plano->data_fim) . ")\n[RN_ATV_6]");
+        if(UtilService::asTimestamp($plano->data_inicio) > UtilService::asTimestamp($dataDistribuicao) || UtilService::asTimestamp($plano->data_fim) < UtilService::asTimestamp($dataEstipuladaEntrega)) throw new ServerException("ValidateAtividade", "Data da atividade extrapola a do plano de trabalho. (Plano de trabalho: " . UtilService::getDateTimeFormatted($plano->data_inicio) . " - " . UtilService::getDateTimeFormatted($plano->data_fim) . ")\n[RN_ATV_5]");
         foreach($plano->consolidacoes as $concluida) {
             if($action == ServiceBase::ACTION_INSERT || !PlanoTrabalhoConsolidacaoAtividade::where("plano_trabalho_consolidacao_id", $concluida->id)->where("atividade_id", $id)->exists()) throw new ServerException("ValidateAtividade", "Não será possível lançar novas atividades em períodos já CONCLUIDO ou AVALIADO.\n[ver RN_CSLD_14]");
         }
@@ -183,6 +186,22 @@ class AtividadeService extends ServiceBase
                 } else if($condition[2] == "ARQUIVADO") {
                     array_push($where, ["data_arquivamento", "!=", null]);
                 }
+            } else if(is_array($condition) && $condition[0] == "plano_entrega_entrega_id") {
+                $ids = [];
+                $entrega_atividade = PlanoTrabalhoEntrega::where("plano_entrega_entrega_id", $condition[2])->get();
+                $ids = $entrega_atividade->map(fn ($a) => $a->id);
+                array_push($where, ["plano_trabalho_entrega_id", "in", $ids]);
+            } else if(is_array($condition) && $condition[0] == "plano_entrega_id") {
+                $ids = [];
+                $entregas_plano_entrega = PlanoEntregaEntrega::where("plano_entrega_id", $condition[2])->get();
+                //$ids = $entregas_plano_entrega->map(fn ($epe) => $epe->id)->map(fn ($epe) => PlanoTrabalhoEntrega::where("plano_entrega_entrega_id", $epe)->get()->id);
+                foreach($entregas_plano_entrega as $epe) {
+                    $entregas_planos_trabalho = PlanoTrabalhoEntrega::where("plano_entrega_entrega_id", $epe->id)->get();
+                    foreach($entregas_planos_trabalho as $ept) {
+                        $ids[] = $ept->id;
+                    }
+                }
+                array_push($where, ["plano_trabalho_entrega_id", "in", $ids]);
             } else {
                 array_push($where, $condition);
             }
