@@ -196,22 +196,25 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     this.entity!._metadata.novaEntrega.forca_trabalho = this.form?.controls.forca_trabalho.value;
     this.loading = true;
     try {
-      if (!this.isNoPersist) {  // persistente
-        this.entity!._metadata.novaEntrega = await (this.dao as PlanoTrabalhoEntregaDaoService).save(this.entity!._metadata.novaEntrega, this.join);
-        // TODO: Verificar isso (Foi feito uma modificação no grid para isso não ser mais necessário)
-        // if (this.grid?.adding) this.grid!.items[this.grid!.items.length - 1].id = '';  // (*4)
-      } else {
-
-      }
+      if (!this.isNoPersist) /* persistente */ { (this.dao as PlanoTrabalhoEntregaDaoService).save(this.entity!._metadata.novaEntrega, this.join); }
     } catch (e: any) {
       this.error(e.message ? e.message : e.toString() || e);
     } finally {
-      this.entity!._metadata.novaEntrega.plano_entrega_entrega = this.entrega?.selectedItem?.data || null;
       row.forca_trabalho = this.form?.controls.forca_trabalho.value * 1;
+      row.plano_entrega_entrega = this.entrega?.selectedItem?.data || null;
       this.totalForcaTrabalho = Math.round(this.somaForcaTrabalho(this.entity?.entregas) * 100) / 100;
       this.loading = false;
     }
     return this.entity!._metadata.novaEntrega;
+  }
+
+  /**
+   *  Quando uma nova entrega de plano de trabalho é incluída no grid, o objeto '_metadata' é anexado em 'this.entity' para permitir a atualização do grid antes da atualização da página.
+   *  Após a atualização do grid, este método é chamado para excluir o objeto '_metadata' e garantir que, no caso da inserção de várias entregas no grid, apenas a última seja lida a partir deste objeto.
+   * @param row 
+   */
+  public saveEndEntrega(row: any) {
+    this.entity!._metadata = null;
   }
 
   /**
@@ -244,16 +247,19 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     } else if(value == 'SEM_ENTREGA') {
       this.form?.controls.orgao.setValue(null);
       this.form?.controls.plano_entrega_entrega_id.setValue(null);
-    } if (value == 'PROPRIA_UNIDADE') {
+    } if (value == 'PROPRIA_UNIDADE' || value == 'OUTRA_UNIDADE') {
       this.form?.controls.orgao.setValue(null);
       this.loading = true;
-      try {
-/*         let planosEntregas = await this.planoEntregaDao!.query({where: [["unidade_id", "==", this.entity!.unidade_id], ["status", "==", "ATIVO"], ["data_inicio", "<=", this.entity!.data_fim], ["data_fim", ">=", this.entity!.data_inicio]]}).asPromise();
+      this.planoEntrega?.onSelectClick(new Event("SELECT"));
+      this.loading = false;
+    }
+      /*      try {
+         let planosEntregas = await this.planoEntregaDao!.query({where: [["unidade_id", "==", this.entity!.unidade_id], ["status", "==", "ATIVO"], ["data_inicio", "<=", this.entity!.data_fim], ["data_fim", ">=", this.entity!.data_inicio]]}).asPromise();
         if(planosEntregas.length == 1) {
           this.form?.controls.plano_entrega_id.setValue(planosEntregas[0].id);
         } else if(this.planoEntrega?.selectedEntity?.unidade_id != this.entity!.unidade_id) {
           this.planoEntrega?.onSelectClick(new Event("SELECT"));
-        } */
+        } 
         this.planoEntrega?.onSelectClick(new Event("SELECT"));
       } finally {
         this.loading = false;
@@ -261,7 +267,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     } if (value == 'OUTRA_UNIDADE') {
       this.form?.controls.orgao.setValue(null);
       this.planoEntrega?.onSelectClick(new Event("SELECT"));
-    }
+    }*/
   }
 
   public onPlanoEntregaChange(event: Event) {

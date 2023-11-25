@@ -261,6 +261,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     const agrupar = this.filter!.controls.agrupar.value;
     if ((agrupar && !this.groupBy?.length) || (!agrupar && this.groupBy?.length)) {
       this.groupBy = agrupar ? [{ field: "unidade.sigla", label: "Unidade" }] : [];
+      this.cdRef.detectChanges();
       this.grid!.reloadFilter();
     }
   }

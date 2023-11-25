@@ -819,7 +819,8 @@ class PlanoTrabalhoService extends ServiceBase
     return in_array($idUsuario, [...$exigidas["participante"], ...$exigidas["gestores_unidade_executora"], ...$exigidas["gestores_unidade_lotacao"], ...$exigidas["gestores_entidade"]]);
   }
 
-  /** Recebe um Plano de Trabalho (novo ou não) e retorna um booleano informando se alguém já assinou o TCR, dentre as assinaturas exigidas pelo seu Programa de Gestão.
+  /** 
+   *  Recebe um Plano de Trabalho (novo ou não) e retorna um booleano informando se alguém já assinou o TCR, dentre as assinaturas exigidas pelo seu Programa de Gestão.
    *  Os campos "programa_id", "usuario_id" e "unidade_id" são obrigatórios no Plano de Trabalho.
    */
   public function alguemAssinou($planoTrabalho): bool
