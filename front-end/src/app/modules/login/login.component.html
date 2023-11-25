@@ -12,7 +12,7 @@
         <div class="d-flex align-items-center justify-content-center h-100 g-0 px-4 px-sm-0">
             <div class=".col col-sm-6 col-lg-7 col-xl-6">
                 <div *ngIf="error?.length" class="alert alert-danger mt-2 mb-5" role="alert">
-                    {{ error }}
+                    <span><u><strong>{{ (error || '').split('&')[0] }}</strong></u></span><br>{{ (error || '').split('&')[1] }}
                 </div>
 
                 <div class="text-center mb-5 d-flex align-items-center justify-content-center">

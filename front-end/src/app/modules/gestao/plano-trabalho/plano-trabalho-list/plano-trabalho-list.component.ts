@@ -249,11 +249,12 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
   }
 
   public botaoAtendeCondicoes(botao: ToolbarButton, planoTrabalho: PlanoTrabalho): boolean {
-    let assinaturasExigidas: string[] = planoTrabalho.assinaturasExigidas;
-    let assinaturasFaltantes: string[] = this.utilService.array_diff(planoTrabalho.assinaturasExigidas,planoTrabalho.jaAssinaramTCR);
+    let assinaturasExigidas = planoTrabalho.assinaturasExigidas;
+    let assinaturasFaltantes = this.planoTrabalhoService.assinaturasFaltantes(planoTrabalho.assinaturasExigidas, planoTrabalho.jaAssinaramTCR);
+    let haAssinaturasFaltantes = !!assinaturasFaltantes.participante.length || !!assinaturasFaltantes.gestores_unidade_executora.length || !!assinaturasFaltantes.gestores_unidade_lotacao.length || !!assinaturasFaltantes.gestores_entidade.length;
     let usuarioEhGestorUnidadeExecutora: boolean = this.auth.isGestorUnidade(planoTrabalho.unidade_id);
-    let usuarioJaAssinouTCR: boolean = planoTrabalho.jaAssinaramTCR.includes(this.auth.usuario?.id!);
-    let assinaturaUsuarioEhExigida: boolean = planoTrabalho.assinaturasExigidas.includes(this.auth.usuario?.id!);
+    let usuarioJaAssinouTCR: boolean = !!planoTrabalho.jaAssinaramTCR?.todas?.includes(this.auth.usuario?.id!);
+    let assinaturaUsuarioEhExigida: boolean = !!planoTrabalho.assinaturasExigidas?.todas?.includes(this.auth.usuario?.id!);
     let planoIncluido = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'INCLUIDO';
     let usuarioEhParticipante = this.auth.usuario?.id == planoTrabalho.usuario_id;
     let planoAguardandoAssinatura = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'AGUARDANDO_ASSINATURA';
@@ -262,7 +263,6 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     let planoCancelado = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'CANCELADO';
     let planoDeletado = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'EXCLUIDO';
     let planoArquivado = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'ARQUIVADO';
-    //let programaExigeOutrasAssinaturas = !!assinaturasExigidas.filter(a => a != this.auth.usuario?.id).length;
     let planoSuspenso = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'SUSPENSO';
     let planoPossuiEntrega = planoTrabalho.entregas.length > 0;
     if(botao == this.BOTAO_INFORMACOES && this.auth.hasPermissionTo("MOD_PTR")) {
@@ -313,10 +313,10 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
               (RN_PTR_P) ATIVAR
               O plano precisa estar no status 'INCLUIDO', e
                   - o usuário logado precisa ser o participante do plano ou gestor da Unidade Executora, e
-                  - nenhuma assinatura no TCR ser exigida pelo programa, e
+                  - nenhuma assinatura no TCR deve ser exigida pelo programa, e
                   - o plano de trabalho precisa ter ao menos uma entrega;        
             */
-            return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && !assinaturasExigidas.length && planoPossuiEntrega;
+            return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && !assinaturasExigidas?.todas?.length && planoPossuiEntrega;
           case this.BOTAO_CANCELAR_ASSINATURA:
             /*
               (RN_PTR_Q) CANCELAR ASSINATURA
@@ -348,7 +348,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
                 - devem existir assinaturas exigíveis ainda pendentes; e
                 - o plano precisa possuir ao menos uma entrega;
             */
-            return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && (!assinaturaUsuarioEhExigida || usuarioJaAssinouTCR) && !!assinaturasFaltantes.length && planoPossuiEntrega;
+            return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && (!assinaturaUsuarioEhExigida || usuarioJaAssinouTCR) && haAssinaturasFaltantes && planoPossuiEntrega;
           case this.BOTAO_REATIVAR:
             /*
               (RN_PTR_W) REATIVAR

@@ -3786,7 +3786,7 @@ function PlanoTrabalhoListEntregaComponent_ng_template_6_badge_3_Template(rf, ct
   if (rf & 2) {
     const row_r28 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵnextContext"]().row;
     const ctx_r29 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("label", (row_r28.plano_entrega_entrega == null ? null : row_r28.plano_entrega_entrega.plano_entrega == null ? null : row_r28.plano_entrega_entrega.plano_entrega.unidade == null ? null : row_r28.plano_entrega_entrega.plano_entrega.unidade.sigla) || "Desconhecido")("icon", ctx_r29.entityService.getIcon("Unidade"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("label", (row_r28.plano_entrega_entrega == null ? null : row_r28.plano_entrega_entrega.plano_entrega == null ? null : row_r28.plano_entrega_entrega.plano_entrega.unidade == null ? null : row_r28.plano_entrega_entrega.plano_entrega.unidade.sigla) || "DESCONHECIDO")("icon", ctx_r29.entityService.getIcon("Unidade"));
   }
 }
 function PlanoTrabalhoListEntregaComponent_ng_template_6_badge_4_Template(rf, ctx) {
@@ -3823,17 +3823,29 @@ const _c3 = function () {
 const _c4 = function (a2) {
   return ["unidade_id", "==", a2];
 };
-const _c5 = function (a0) {
-  return [a0];
+const _c5 = function () {
+  return ["status", "==", "ATIVO"];
 };
-const _c6 = function (a0) {
-  return {
-    unidade_id: a0
-  };
+const _c6 = function (a0, a1) {
+  return [a0, a1];
 };
 const _c7 = function (a0) {
+  return [a0];
+};
+const _c8 = function (a0) {
+  return {
+    unidade_id: a0,
+    status: "ATIVO"
+  };
+};
+const _c9 = function (a0) {
   return {
     filter: a0
+  };
+};
+const _c10 = function () {
+  return {
+    status: "ATIVO"
   };
 };
 function PlanoTrabalhoListEntregaComponent_ng_template_8_input_search_2_Template(rf, ctx) {
@@ -3851,7 +3863,7 @@ function PlanoTrabalhoListEntregaComponent_ng_template_8_input_search_2_Template
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵnextContext"]();
     const _r34 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](1);
     const ctx_r35 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("placeholder", "Selecione o " + ctx_r35.lex.translate("Plano de entrega"))("join", _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction0"](5, _c3))("where", (_r34 == null ? null : _r34.value) == "PROPRIA_UNIDADE" ? _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction1"](8, _c5, _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction1"](6, _c4, ctx_r35.entity == null ? null : ctx_r35.entity.unidade_id)) : undefined)("selectParams", (_r34 == null ? null : _r34.value) == "PROPRIA_UNIDADE" ? _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction1"](12, _c7, _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction1"](10, _c6, ctx_r35.entity == null ? null : ctx_r35.entity.unidade_id)) : undefined)("dao", ctx_r35.planoEntregaDao);
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("placeholder", "Selecione o " + ctx_r35.lex.translate("Plano de entrega"))("join", _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction0"](5, _c3))("where", (_r34 == null ? null : _r34.value) == "PROPRIA_UNIDADE" ? _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction2"](9, _c6, _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction1"](6, _c4, ctx_r35.entity == null ? null : ctx_r35.entity.unidade_id), _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction0"](8, _c5)) : _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction1"](13, _c7, _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction0"](12, _c5)))("selectParams", (_r34 == null ? null : _r34.value) == "PROPRIA_UNIDADE" ? _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction1"](17, _c9, _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction1"](15, _c8, ctx_r35.entity == null ? null : ctx_r35.entity.unidade_id)) : _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction1"](20, _c9, _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction0"](19, _c10)))("dao", ctx_r35.planoEntregaDao);
   }
 }
 function PlanoTrabalhoListEntregaComponent_ng_template_8_input_text_3_Template(rf, ctx) {
@@ -3862,7 +3874,7 @@ function PlanoTrabalhoListEntregaComponent_ng_template_8_input_text_3_Template(r
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵattribute"]("maxlength", 250);
   }
 }
-const _c8 = function () {
+const _c11 = function () {
   return ["PROPRIA_UNIDADE", "OUTRA_UNIDADE"];
 };
 function PlanoTrabalhoListEntregaComponent_ng_template_8_Template(rf, ctx) {
@@ -3876,7 +3888,7 @@ function PlanoTrabalhoListEntregaComponent_ng_template_8_Template(rf, ctx) {
       return _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵresetView"](ctx_r41.onOrigemChange(row_r33));
     });
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](2, PlanoTrabalhoListEntregaComponent_ng_template_8_input_search_2_Template, 2, 14, "input-search", 30);
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](2, PlanoTrabalhoListEntregaComponent_ng_template_8_input_search_2_Template, 2, 22, "input-search", 30);
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](3, PlanoTrabalhoListEntregaComponent_ng_template_8_input_text_3_Template, 2, 1, "input-text", 31);
   }
   if (rf & 2) {
@@ -3884,7 +3896,7 @@ function PlanoTrabalhoListEntregaComponent_ng_template_8_Template(rf, ctx) {
     const ctx_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("control", ctx_r6.form.controls.origem)("items", ctx_r6.lookup.ORIGENS_ENTREGAS_PLANO_TRABALHO);
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction0"](4, _c8).includes(_r34 == null ? null : _r34.value));
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction0"](4, _c11).includes(_r34 == null ? null : _r34.value));
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", (_r34 == null ? null : _r34.value) == "OUTRO_ORGAO");
   }
@@ -3925,7 +3937,7 @@ function PlanoTrabalhoListEntregaComponent_ng_template_13_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtextInterpolate"](ctx_r10.planoTrabalhoService.tipoEntrega(row_r44, ctx_r10.entity).descricao);
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction0"](3, _c8).includes(ctx_r10.planoTrabalhoService.tipoEntrega(row_r44, ctx_r10.entity).tipo));
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction0"](3, _c11).includes(ctx_r10.planoTrabalhoService.tipoEntrega(row_r44, ctx_r10.entity).tipo));
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("entity", row_r44);
   }
@@ -3967,7 +3979,7 @@ function PlanoTrabalhoListEntregaComponent_ng_template_15_Template(rf, ctx) {
   }
   if (rf & 2) {
     const ctx_r12 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction0"](2, _c8).includes(ctx_r12.origem == null ? null : ctx_r12.origem.value));
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction0"](2, _c11).includes(ctx_r12.origem == null ? null : ctx_r12.origem.value));
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", ctx_r12.entrega == null ? null : ctx_r12.entrega.selectedItem);
   }
@@ -4303,21 +4315,27 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
       _this5.entity._metadata.novaEntrega.forca_trabalho = _this5.form?.controls.forca_trabalho.value;
       _this5.loading = true;
       try {
-        if (!_this5.isNoPersist) {
-          _this5.entity._metadata.novaEntrega = yield _this5.dao.save(_this5.entity._metadata.novaEntrega, _this5.join);
-          // TODO: Verificar isso (Foi feito uma modificação no grid para isso não ser mais necessário)
-          // if (this.grid?.adding) this.grid!.items[this.grid!.items.length - 1].id = '';  // (*4)
-        }
+        if (!_this5.isNoPersist) /* persistente */{
+            _this5.dao.save(_this5.entity._metadata.novaEntrega, _this5.join);
+          }
       } catch (e) {
         _this5.error(e.message ? e.message : e.toString() || e);
       } finally {
-        _this5.entity._metadata.novaEntrega.plano_entrega_entrega = _this5.entrega?.selectedItem?.data || null;
         row.forca_trabalho = _this5.form?.controls.forca_trabalho.value * 1;
+        row.plano_entrega_entrega = _this5.entrega?.selectedItem?.data || null;
         _this5.totalForcaTrabalho = Math.round(_this5.somaForcaTrabalho(_this5.entity?.entregas) * 100) / 100;
         _this5.loading = false;
       }
       return _this5.entity._metadata.novaEntrega;
     })();
+  }
+  /**
+   *  Quando uma nova entrega de plano de trabalho é incluída no grid, o objeto '_metadata' é anexado em 'this.entity' para permitir a atualização do grid antes da atualização da página.
+   *  Após a atualização do grid, este método é chamado para excluir o objeto '_metadata' e garantir que, no caso da inserção de várias entregas no grid, apenas a última seja lida a partir deste objeto.
+   * @param row
+   */
+  saveEndEntrega(row) {
+    this.entity._metadata = null;
   }
   /**
    * Método chamado para somar os percentuais das forças de trabalho do array de entregas passado como parâmetro.
@@ -4342,7 +4360,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
       };
       _this6.entregas = planoEntrega?.entregas.map(epe => Object.assign({}, {
         key: epe.id,
-        value: epe.descricao || epe.entrega?.nome || "Deconhecido",
+        value: epe.descricao || epe.entrega?.nome || "Desconhecido",
         data: Object.assign(epe, {
           plano_entrega: planoEntregaComUnidade
         })
@@ -4362,28 +4380,30 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
         _this7.form?.controls.orgao.setValue(null);
         _this7.form?.controls.plano_entrega_entrega_id.setValue(null);
       }
-      if (value == 'PROPRIA_UNIDADE') {
+      if (value == 'PROPRIA_UNIDADE' || value == 'OUTRA_UNIDADE') {
         _this7.form?.controls.orgao.setValue(null);
         _this7.loading = true;
-        try {
-          let planosEntregas = yield _this7.planoEntregaDao.query({
-            where: [["unidade_id", "==", _this7.entity.unidade_id], ["status", "==", "ATIVO"], ["data_inicio", "<=", _this7.entity.data_fim], ["data_fim", ">=", _this7.entity.data_inicio]]
-          }).asPromise();
-          if (planosEntregas.length == 1) {
-            _this7.form?.controls.plano_entrega_id.setValue(planosEntregas[0].id);
-          } else if (_this7.planoEntrega?.selectedEntity?.unidade_id != _this7.entity.unidade_id) {
-            _this7.planoEntrega?.onSelectClick(new Event("SELECT"));
-          }
-        } finally {
-          _this7.loading = false;
-        }
-      }
-      if (value == 'OUTRA_UNIDADE') {
-        _this7.form?.controls.orgao.setValue(null);
         _this7.planoEntrega?.onSelectClick(new Event("SELECT"));
+        _this7.loading = false;
       }
+      /*      try {
+         let planosEntregas = await this.planoEntregaDao!.query({where: [["unidade_id", "==", this.entity!.unidade_id], ["status", "==", "ATIVO"], ["data_inicio", "<=", this.entity!.data_fim], ["data_fim", ">=", this.entity!.data_inicio]]}).asPromise();
+        if(planosEntregas.length == 1) {
+          this.form?.controls.plano_entrega_id.setValue(planosEntregas[0].id);
+        } else if(this.planoEntrega?.selectedEntity?.unidade_id != this.entity!.unidade_id) {
+          this.planoEntrega?.onSelectClick(new Event("SELECT"));
+        }
+        this.planoEntrega?.onSelectClick(new Event("SELECT"));
+      } finally {
+        this.loading = false;
+      }
+      } if (value == 'OUTRA_UNIDADE') {
+      this.form?.controls.orgao.setValue(null);
+      this.planoEntrega?.onSelectClick(new Event("SELECT"));
+      }*/
     })();
   }
+
   onPlanoEntregaChange(event) {
     let planoEntrega = this.planoEntrega?.selectedEntity;
     this.carregarEntregas(planoEntrega);
@@ -4432,8 +4452,8 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵInheritDefinitionFeature"]],
   decls: 34,
-  vars: 37,
-  consts: [["noMargin", "", "editable", "", 3, "items", "form", "selectable", "minHeight", "join", "groupBy", "add", "remove", "save", "load", "hasDelete", "hasEdit", "hasAdd"], ["gridEntregas", ""], [3, "titleTemplate", "template", "editTemplate", "verticalAlign", "width", "align"], ["titleOrigem", ""], ["columnOrigem", ""], ["editOrigem", ""], [3, "maxWidth", "titleTemplate", "template", "editTemplate", "verticalAlign"], ["titleEntrega", ""], ["columnEntrega", ""], ["editEntrega", ""], [3, "titleTemplate", "title", "template", "editTemplate", "width", "align", "titleHint"], ["titleForcaTrabalho", ""], ["columnForcaTrabalho", ""], ["editForcaTrabalho", ""], [3, "maxWidth", "titleTemplate", "template", "editTemplate", "verticalAlign", "align"], ["titleDescricao", ""], ["columnDescricao", ""], ["solicitarDescricao", ""], ["editDescricao", ""], ["type", "options"], [1, "text-center"], [1, "w-100", "d-flex", "justify-content-center"], [1, "one-per-line"], [3, "label", "color"], ["color", "primary", 3, "label", "icon", 4, "ngIf"], ["icon", "bi bi-box-arrow-down-left", "color", "warning", 3, "label", 4, "ngIf"], ["color", "primary", 3, "label", "icon"], ["icon", "bi bi-box-arrow-down-left", "color", "warning", 3, "label"], ["controlName", "origem", "controlName", "origem", 3, "control", "items", "change"], ["origem", ""], ["label", "", "controlName", "plano_entrega_id", 3, "placeholder", "join", "where", "selectParams", "dao", "change", 4, "ngIf"], ["controlName", "orgao", "placeholder", "\u00D3rg\u00E3o", 4, "ngIf"], ["label", "", "controlName", "plano_entrega_id", 3, "placeholder", "join", "where", "selectParams", "dao", "change"], ["planoEntrega", ""], ["controlName", "orgao", "placeholder", "\u00D3rg\u00E3o"], ["orgao", ""], ["class", "w-100", 4, "ngIf"], ["origem", "PLANO_TRABALHO_ENTREGA", 3, "entity"], [1, "w-100"], ["color", "light", "icon", "bi bi-box-arrow-in-right", "hint", "Data de in\u00EDcio", 3, "label"], ["color", "light", "icon", "bi bi-box-arrow-right", "hint", "Data de t\u00E9rmino", 3, "label"], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", 3, "control", "items", "change", 4, "ngIf"], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", 3, "control", "items", "change"], ["entrega", ""], [4, "ngIf", "ngIfElse"], ["umCHD", ""], ["icon", "bi bi-calculator", 3, "color", "label"], ["icon", "bi bi-intersect", 3, "color", "label"], ["number", "", "sufix", "%", "controlName", "forca_trabalho", 3, "control", "change"], ["controlName", "descricao", 3, "control"]],
+  vars: 38,
+  consts: [["noMargin", "", "editable", "", 3, "items", "form", "selectable", "minHeight", "join", "groupBy", "add", "remove", "save", "load", "saveEnd", "hasDelete", "hasEdit", "hasAdd"], ["gridEntregas", ""], [3, "titleTemplate", "template", "editTemplate", "verticalAlign", "width", "align"], ["titleOrigem", ""], ["columnOrigem", ""], ["editOrigem", ""], [3, "maxWidth", "titleTemplate", "template", "editTemplate", "verticalAlign"], ["titleEntrega", ""], ["columnEntrega", ""], ["editEntrega", ""], [3, "titleTemplate", "title", "template", "editTemplate", "width", "align", "titleHint"], ["titleForcaTrabalho", ""], ["columnForcaTrabalho", ""], ["editForcaTrabalho", ""], [3, "maxWidth", "titleTemplate", "template", "editTemplate", "verticalAlign", "align"], ["titleDescricao", ""], ["columnDescricao", ""], ["solicitarDescricao", ""], ["editDescricao", ""], ["type", "options"], [1, "text-center"], [1, "w-100", "d-flex", "justify-content-center"], [1, "one-per-line"], [3, "label", "color"], ["color", "primary", 3, "label", "icon", 4, "ngIf"], ["icon", "bi bi-box-arrow-down-left", "color", "warning", 3, "label", 4, "ngIf"], ["color", "primary", 3, "label", "icon"], ["icon", "bi bi-box-arrow-down-left", "color", "warning", 3, "label"], ["controlName", "origem", "controlName", "origem", 3, "control", "items", "change"], ["origem", ""], ["label", "", "controlName", "plano_entrega_id", 3, "placeholder", "join", "where", "selectParams", "dao", "change", 4, "ngIf"], ["controlName", "orgao", "placeholder", "\u00D3rg\u00E3o", 4, "ngIf"], ["label", "", "controlName", "plano_entrega_id", 3, "placeholder", "join", "where", "selectParams", "dao", "change"], ["planoEntrega", ""], ["controlName", "orgao", "placeholder", "\u00D3rg\u00E3o"], ["orgao", ""], ["class", "w-100", 4, "ngIf"], ["origem", "PLANO_TRABALHO_ENTREGA", 3, "entity"], [1, "w-100"], ["color", "light", "icon", "bi bi-box-arrow-in-right", "hint", "Data de in\u00EDcio", 3, "label"], ["color", "light", "icon", "bi bi-box-arrow-right", "hint", "Data de t\u00E9rmino", 3, "label"], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", 3, "control", "items", "change", 4, "ngIf"], ["nullable", "", "itemNull", "- Selecione -", "controlName", "plano_entrega_entrega_id", 3, "control", "items", "change"], ["entrega", ""], [4, "ngIf", "ngIfElse"], ["umCHD", ""], ["icon", "bi bi-calculator", 3, "color", "label"], ["icon", "bi bi-intersect", 3, "color", "label"], ["number", "", "sufix", "%", "controlName", "forca_trabalho", 3, "control", "change"], ["controlName", "descricao", 3, "control"]],
   template: function PlanoTrabalhoListEntregaComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](0, "grid", 0, 1)(2, "columns")(3, "column", 2);
@@ -4473,7 +4493,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdef
       const _r19 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](26);
       const _r21 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](28);
       const _r25 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](32);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("items", ctx.items)("form", ctx.form)("selectable", false)("minHeight", ctx.items.length > 2 ? 0 : 220)("join", ctx.join)("groupBy", ctx.groupBy)("add", ctx.addEntrega.bind(ctx))("remove", ctx.removeEntrega.bind(ctx))("save", ctx.saveEntrega.bind(ctx))("load", ctx.loadEntrega.bind(ctx))("hasDelete", !ctx.disabled)("hasEdit", !ctx.disabled)("hasAdd", !ctx.disabled);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("items", ctx.items)("form", ctx.form)("selectable", false)("minHeight", ctx.items.length > 2 ? 0 : 220)("join", ctx.join)("groupBy", ctx.groupBy)("add", ctx.addEntrega.bind(ctx))("remove", ctx.removeEntrega.bind(ctx))("save", ctx.saveEntrega.bind(ctx))("load", ctx.loadEntrega.bind(ctx))("saveEnd", ctx.saveEndEntrega.bind(ctx))("hasDelete", !ctx.disabled)("hasEdit", !ctx.disabled)("hasAdd", !ctx.disabled);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("titleTemplate", _r1)("template", _r3)("editTemplate", _r5)("verticalAlign", "middle")("width", 300)("align", "center");
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](7);
