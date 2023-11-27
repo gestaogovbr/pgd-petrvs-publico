@@ -199,23 +199,23 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public onUsuarioSelect(selected: SelectItem) {
+    console.log(selected)
     this.form!.controls.usuario_texto_complementar.setValue((selected.entity as Usuario)?.texto_complementar_plano || "");
     if(!this.form?.controls.unidade_id.value) {
       selected.entity.unidades.every( async (element: any, index: any) => {
         if (selected.entity.lotacao.unidade_id == element.id) {
-          this.preencheUnidade(element);
           if(!this.form?.controls.programa_id.value) {
-            let unidadePai = element.unidade_pai_id;
-            let idAtual = element.id;
-            while (unidadePai != idAtual) {
-              idAtual = unidadePai;
-              await this.unidadeDao.getById(unidadePai).then(unidade => {
-                unidadePai = unidade?.unidade_pai_id || idAtual;
-              });
-            }
-            await this.programaDao.query({where : [["unidade_id","==",idAtual]]}).asPromise().then( programa => {
-              this.preenchePrograma(programa[0]!);
+            let habilitado = -1;
+            selected.entity.participacoes_programas.every((programa: any, index: any) => {
+              habilitado = programa.habilitado == 1 ? index : habilitado;
+              return habilitado < 0;
             });
+            if (habilitado >= 0) {
+              await this.programaDao.query({where : [["id","==",selected.entity.participacoes_programas[habilitado].programa_id]]}).asPromise().then( programa => {
+                this.preencheUnidade(element);
+                this.preenchePrograma(programa[0]!);
+              });
+            } else this.preencheUnidade(element);
           }
           return false;
         } else return true;

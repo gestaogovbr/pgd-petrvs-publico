@@ -28,6 +28,7 @@ import { Programa } from 'src/app/models/programa.model';
 import { Comparecimento } from 'src/app/models/comparecimento.model';
 import { ComparecimentoDaoService } from 'src/app/dao/comparecimento-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
+import { SeparatorComponent } from 'src/app/components/separator/separator.component';
 
 export type ConsolidacaoEntrega = {
   id: string,
@@ -113,6 +114,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       tempo_planejado: { default: 0 },
       data_distribuicao: {default: new Date()},
       data_estipulada_entrega: {default: new Date()},
+      data_inicio: {default: new Date()},
       data_entrega: {default: new Date()},
       tipo_atividade_id: {default: null}
     }, this.cdRef, this.validateAtividade);
@@ -182,12 +184,16 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     let result = null;
     if (['descricao'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    } else if(['data_distribuicao', 'data_estipulada_entrega', 'data_entrega'].includes(controlName) && !this.util.isDataValid(control.value)) {
+    } else if(['data_distribuicao', 'data_estipulada_entrega', 'data_inicio', 'data_entrega'].includes(controlName) && !this.util.isDataValid(control.value)) {
       result = "Inválido";
     } else if(controlName == 'data_estipulada_entrega' && control.value.getTime() < this.formAtividade?.controls.data_distribuicao.value.getTime()) {
       result = "Menor que distribuição";
+    } else if(controlName == 'data_inicio' && control.value.getTime() < this.formAtividade?.controls.data_distribuicao.value.getTime()) {
+      result = "Menor que distribuição";
     } else if(controlName == 'data_entrega' && control.value.getTime() < this.formAtividade?.controls.data_distribuicao.value.getTime()) {
       result = "Menor que distribuição";
+    } else if(controlName == 'data_entrega' && control.value.getTime() < this.formAtividade?.controls.data_inicio.value.getTime()) {
+      result = "Menor que início";
     }
     return result;
   }
@@ -322,6 +328,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
 
   public async saveAtividade(form: FormGroup, row: any) {
     let result = undefined;
+    this.gridAtividades!.error = "";
     this.formAtividade.markAllAsTouched();
     if (this.formAtividade!.valid) {
       row.id = row.id == "NEW" ? this.dao!.generateUuid() : row.id;
@@ -329,12 +336,23 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       this.submitting = true;
       try {
         result = await this.atividadeDao?.save(row, this.joinAtividade, ['etiquetas', 'checklist', 'comentarios', 'pausas', 'tarefas']);
+        this.atividadeRefreshId(row.id, result);
+      } catch (error: any) {
+        result = false;
+        this.gridAtividades!.error = error.message || error;
       } finally {
         this.submitting = false;
       }
-      this.atividadeRefreshId(row.id, result);
     }
     return result;
+  }
+
+  public onDataDistribuicaoChange(event: Event) {
+    this.formAtividade!.controls.data_inicio.setValue(this.formAtividade!.controls.data_distribuicao.value);
+  }
+
+  public onDataEstipuladaEntregaChange(event: Event) {
+    this.formAtividade!.controls.data_entrega.setValue(this.formAtividade!.controls.data_estipulada_entrega.value);
   }
 
   public atividadeDynamicButtons(row: any): ToolbarButton[] {

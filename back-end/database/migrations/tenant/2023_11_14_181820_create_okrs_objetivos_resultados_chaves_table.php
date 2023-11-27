@@ -4,11 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-<<<<<<< HEAD
-class CreatePlanejamentosObjetivosResultadosChavesTable extends Migration
-=======
 class CreateOkrsObjetivosResultadosChavesTable extends Migration
->>>>>>> develop
 {
     /**
      * Run the migrations.

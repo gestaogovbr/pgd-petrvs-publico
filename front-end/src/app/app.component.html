@@ -224,7 +224,7 @@
         </ul>
     </nav>
     <div *ngIf="error?.length" class="alert alert-danger mt-2" role="alert">
-        {{ error }}
+        <span><u><strong>{{ (error || '').split('&')[0] }}</strong></u></span><br>{{ (error || '').split('&')[1] }}
     </div>
     <div class="content" [class.d-none]="globals.isToolbar || collapseContainer">
         <top-alert *ngFor="let topAlert of dialog.topAlerts" type="alert" [id]="topAlert.id" [close]="topAlert.close" [message]="topAlert.message" [closable]="topAlert.closable"></top-alert>

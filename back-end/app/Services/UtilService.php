@@ -2,12 +2,10 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\DB;
 use App\Services\CalendarioService;
 use Carbon\Carbon;
 use \MomentPHP\MomentPHP;
 use DateTime;
-use PhpParser\Node\Stmt\Switch_;
 
 class UtilService
 {
@@ -229,9 +227,7 @@ class UtilService
         return substr($hash, 0, 8) . "-" . substr($hash, 8, 4) . "-" . substr($hash, 12, 4) . "-" . substr($hash, 16, 4) . "-" . substr($hash, 20, 12);
     }
  
-    // ***************
-
-        /**
+    /**
      * getStrTimeHours
      *
      * @param  mixed $time: tempo em formato de string ("hh:mm:ss", "hh:mm", "hh")
@@ -359,99 +355,6 @@ class UtilService
             return $isDate ? array_map(fn($x) => static::asDateInterval($x), $result) : $result;
         }
     }
-    /**
-     * Intervalos para teste:
-     * 01 15  01  15  01  15  01  15  01  15  01  15  01  15  01  15  01  15  01  15  01  15  01  15
-     * 01 01  02  02  03  03  04  04  05  05  06  06  07  07  08  08  09  09  10  10  11  11  12  12
-     * 22 22  22  22  22  22  22  22  22  22  22  22  22  22  22  22  22  22  22  22  22  22  22  22
-     * 
-     * CASO I:
-     *    ********** 
-     *                    **********         
-     *                                ****** 
-     *              $intervals_i = [['start' => new DateTime('2022-01-15 00:00:00'), 'end' => new DateTime('2022-02-15 00:00:00')],
-     *                              ['start' => new DateTime('2022-03-15 00:00:00'), 'end' => new DateTime('2022-04-15 00:00:00')],
-     *                              ['start' => new DateTime('2022-05-01 00:00:00'), 'end' => new DateTime('2022-05-15 00:00:00')]]        
-     *          Retorno esperado da função UNION:    15/01/22---15/02/22     15/03/22---15/04/22       01/05/22---15/05/22  
-     * 
-     * CASO II:
-     *    **********
-     *        ******************         
-     *                                ****** 
-     *              $intervals_ii = [['start' => new DateTime('2022-01-15 00:00:00'), 'end' => new DateTime('2022-02-15 00:00:00')],
-     *                               ['start' => new DateTime('2022-02-01 00:00:00'), 'end' => new DateTime('2022-04-01 00:00:00')],
-     *                               ['start' => new DateTime('2022-05-01 00:00:00'), 'end' => new DateTime('2022-05-15 00:00:00')]]        
-     *          Retorno esperado da função UNION:    15/01/22---01/04/22     01/05/22---15/05/22 
-     * 
-     * CASO III:
-     *    **********
-     *        ******************         
-     *                    ****************** 
-     *              $intervals_iii = [['start' => new DateTime('2022-01-15 00:00:00'), 'end' => new DateTime('2022-02-15 00:00:00')],
-     *                                ['start' => new DateTime('2022-02-01 00:00:00'), 'end' => new DateTime('2022-04-01 00:00:00')],
-     *                                ['start' => new DateTime('2022-03-15 00:00:00'), 'end' => new DateTime('2022-05-15 00:00:00')]]          
-     *          Retorno esperado da função UNION:    15/01/22---15/05/22      
-     * 
-     * Intervalos para teste:
-     * 01 15  01  15  01  15  01  15  01  15  01  15  01  15  01  15  01  15  01  15  01  15  01  15
-     * 01 01  02  02  03  03  04  04  05  05  06  06  07  07  08  08  09  09  10  10  11  11  12  12
-     * 22 22  22  22  22  22  22  22  22  22  22  22  22  22  22  22  22  22  22  22  22  22  22  22
-     *  
-     * CASO IV:
-     *    **************
-     *        ******         
-     *                    ****************** 
-     *                            ******  
-     *              $intervals_iv = [['start' => new DateTime('2022-01-15 00:00:00'), 'end' => new DateTime('2022-03-01 00:00:00')],
-     *                               ['start' => new DateTime('2022-02-01 00:00:00'), 'end' => new DateTime('2022-02-15 00:00:00')],
-     *                               ['start' => new DateTime('2022-03-15 00:00:00'), 'end' => new DateTime('2022-05-15 00:00:00')],
-     *                               ['start' => new DateTime('2022-04-15 00:00:00'), 'end' => new DateTime('2022-05-01 00:00:00')]] 
-     *          Retorno esperado da função UNION:    15/01/22---01/03/22     15/03/22---15/05/22       
-     *
-     * CASO V:
-     *    **********************************
-     *        **************************         
-     *            ****************** 
-     *              $intervals_v = [['start' => new DateTime('2022-01-15 00:00:00'), 'end' => new DateTime('2022-05-15 00:00:00')],
-     *                              ['start' => new DateTime('2022-02-01 00:00:00'), 'end' => new DateTime('2022-05-01 00:00:00')],
-     *                              ['start' => new DateTime('2022-02-15 00:00:00'), 'end' => new DateTime('2022-04-15 00:00:00')]]          
-     *          Retorno esperado da função UNION:    15/01/22---15/05/22    
-     * 
-     * CASO VI:
-     *    **************
-     *                        **************         
-     *        ****** 
-     *                    **********
-     *            **************
-     *              $intervals_vi = [['start' => new DateTime('2022-01-15 00:00:00'), 'end' => new DateTime('2022-03-01 00:00:00')],
-     *                               ['start' => new DateTime('2022-04-01 00:00:00'), 'end' => new DateTime('2022-05-15 00:00:00')],
-     *                               ['start' => new DateTime('2022-02-01 00:00:00'), 'end' => new DateTime('2022-02-15 00:00:00')],
-     *                               ['start' => new DateTime('2022-03-15 00:00:00'), 'end' => new DateTime('2022-04-15 00:00:00')],
-     *                               ['start' => new DateTime('2022-02-15 00:00:00'), 'end' => new DateTime('2022-04-01 00:00:00')]]          
-     *          Retorno esperado da função UNION:    15/01/22---15/05/22 
-     *         
-     * Intervalos para teste:
-     * 01 15  01  15  01  15  01  15  01  15  01  15  01  15  01  15  01  15  01  15  01  15  01  15
-     * 01 01  02  02  03  03  04  04  05  05  06  06  07  07  08  08  09  09  10  10  11  11  12  12
-     * 22 22  22  22  22  22  22  22  22  22  22  22  22  22  22  22  22  22  22  22  22  22  22  22
-     *  
-     * CASO VII:
-     *    ******
-     *        ******         
-     *                ********** 
-     *                    **********
-     *                                ****** 
-     *                                    ****** 
-     *                                            ******
-     *              $intervals_vii = [['start' => new DateTime('2022-01-15 00:00:00'), 'end' => new DateTime('2022-02-01 00:00:00')],
-     *                                ['start' => new DateTime('2022-02-01 00:00:00'), 'end' => new DateTime('2022-02-15 00:00:00')],
-     *                                ['start' => new DateTime('2022-03-01 00:00:00'), 'end' => new DateTime('2022-04-01 00:00:00')],
-     *                                ['start' => new DateTime('2022-03-15 00:00:00'), 'end' => new DateTime('2022-04-15 00:00:00')],
-     *                                ['start' => new DateTime('2022-05-01 00:00:00'), 'end' => new DateTime('2022-05-15 00:00:00')],
-     *                                ['start' => new DateTime('2022-05-15 00:00:00'), 'end' => new DateTime('2022-06-01 00:00:00')],
-     *                                ['start' => new DateTime('2022-06-15 00:00:00'), 'end' => new DateTime('2022-07-01 00:00:00')]] 
-     *          Retorno esperado da função UNION:    Esperado:   15/01/22---15/02/22     01/03/22---15/04/22     01/05/22---01/06/22   15/06/22---01/07/22      
-    */
 
     /**
      * @param $interval - esperado um array na seguinte forma ['start' => number | DateTime, 'end' => number | DateTime], 
@@ -616,10 +519,8 @@ class UtilService
         }
         return $out;
     }
-}
-/* EXEMPLO:
 
-$a = ['nome' => 'Ricardo', 'sexo' => 'MASC', 'endereco' => 'Av. Abdias Neves, 2168', 'esposa' => ['nome' => 'Suzana', 'idade' => 49]];
-$b = ['nome' => 'Ricardo de Sousa', 'sexo' => 'MASC', 'endereco' => [
-    'logradouro' => 'Av. Abdias Neves', 'numero' => '2168'], 'esposa' => ['nome' => 'Susana', 'idade' => 49]];
-$diferenca = ['nome' => 'Ricardo', 'endereco' => 'Av. Abdias Neves, 2168', 'esposa' => ['nome' => 'Suzana']]; */
+    public static function intersecao(array $arrayA, array $arrayB): array {
+        return array_filter($arrayA, fn($e) => in_array($e, $arrayB));
+    }
+}

@@ -60,7 +60,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   @Input() add?: () => Promise<IIndexable | undefined | void>;
   @Input() load?: (form: FormGroup, row: any) => Promise<void>;
   @Input() remove?: (row: any) => Promise<boolean | undefined | void>;
-  @Input() save?: (form: FormGroup, row: any) => Promise<IIndexable | Base | undefined | void>;
+  @Input() save?: (form: FormGroup, row: any) => Promise<IIndexable | Base | boolean | undefined | void>;
   @Input() editEnd?: (id?: string) => void;
   @Input() saveEnd?: (row: any) => void;
   @Input() addRoute?: FullRoute;
@@ -727,10 +727,12 @@ export class GridComponent extends ComponentBase implements OnInit {
         this.editing = item;
         if(this.saveEnd) this.saveEnd(item);
       }
-      this.group(this.items);
-      this.control?.setValue(this.items);
-      this.cdRef.detectChanges();
-      await this.endEdit();
+      if(entity !== false) {
+        this.group(this.items);
+        this.control?.setValue(this.items);
+        this.cdRef.detectChanges();
+        await this.endEdit();
+      }
     } else {
       this.form!.markAllAsTouched();
     }
@@ -747,6 +749,7 @@ export class GridComponent extends ComponentBase implements OnInit {
       this.form.patchValue(this.util.fillForm(this.form.value, itemRow));
     }
     this.cdRef.detectChanges();
+    (document.getElementById('row_' + itemRow.id) as HTMLTableRowElement)?.scrollIntoView({block: "end", inline: "nearest", behavior: "smooth"});
   }
 
   public async endEdit() {

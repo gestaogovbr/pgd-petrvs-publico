@@ -14,5 +14,5 @@
 <!-- Mensagem de erro -->
 <div *ngIf="viewInit && hasError()" class="invalid-feedback" [class.d-block]="isInvalid()">
     <i *ngIf="errorMessageIcon" [class]="'bi ' + errorMessageIcon"></i>
-    {{errorMessage()}}
+    {{ errorMessage() }}
 </div>
