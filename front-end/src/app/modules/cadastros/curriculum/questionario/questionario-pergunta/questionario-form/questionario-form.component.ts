@@ -4,7 +4,7 @@ import { EditableFormComponent } from 'src/app/components/editable-form/editable
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { QuestionarioDaoService } from 'src/app/dao/questionario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
-import { Questionario, QuestionarioPergunta } from 'src/app/models/questionario.model';
+import { Questionario } from 'src/app/models/questionario.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 
@@ -253,7 +253,7 @@ export class QuestionarioFormComponent extends PageFormBase<Questionario, Questi
   
   public async addPergunta() {
     return {
-    } as QuestionarioPergunta;
+    } ;
     
     
     
