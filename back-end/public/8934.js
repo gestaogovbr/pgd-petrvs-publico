@@ -20,7 +20,7 @@ class QuestionarioDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_
   constructor(injector) {
     super("Questionario", injector);
     this.injector = injector;
-    this.inputSearchConfig.searchFields = ["nome, codigo, perguntas, tipo"];
+    this.inputSearchConfig.searchFields = ["nome, codigo, versao, tipo"];
   }
 }
 _class = QuestionarioDaoService;
@@ -53,21 +53,9 @@ class Questionario extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
     this.tipo = ""; //Tipo interno | personalizado
     this.nome = ""; //Nome do questionário
     this.codigo = ""; // Código do questionario
-    this.perguntas = []; //Perguntas do questionário
     this.initialization(data);
   }
 }
-//LIVRE - Resposta Aberta (Texto Livre): Permite que os respondentes expressem suas opiniões em suas próprias palavras.
-//LISTA UNICA - Resposta de Escolha Única: respondente seleciona uma única opção entre as fornecidas.
-//LISTA_MULTIPLA - O respondente pode selecionar várias opções entre as fornecidas.
-//CLASSIFICACAO - O respondente avalia sua concordância ou discordância em uma escala. 
-//VISUAL - O respondente fornece uma classificação visual, como estrelas ou emojis.
-//NUMERICA - O respondente fornece um valor numérico como resposta.
-//SWITCH - O respondente escolhe entre verdadeiro ou falso, sim ou não.
-//INTENSIDADE - O respondente indica o nível de intensidade de uma característica. Ex. Em uma escala de 1 a 10, quão importante...
-//ORDENACAO - O respondente ordena itens de acordo com suas preferências.
-//LACUNA - O respondente preenche espaços em branco em uma frase.
-//SWITCH-Resposta de Escolha Única: respondente seleciona uma única opção entre SIM ou NÃO.
 
 /***/ }),
 
