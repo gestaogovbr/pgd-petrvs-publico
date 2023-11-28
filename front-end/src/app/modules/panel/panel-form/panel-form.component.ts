@@ -31,7 +31,7 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
     { Tipo: 'Usuário/Senha', Web: '', API: '', Habilitado: true },
     { Tipo: 'Firebase', Web: '', API: '', Habilitado: true },
     { Tipo: 'Google (GIS)', Web: '', API: '', Habilitado: true },
-    { Tipo: 'Microsoft (Azure)', Web: '', API: '', Habilitado: true },  
+    { Tipo: 'Microsoft (Azure)', Web: '', API: '', Habilitado: true },
     { Tipo: 'Login único', Web: '', API: '', Habilitado: true },
     { Tipo: 'Institucional', Web: '', API: '', Habilitado: true }
   ];
@@ -72,8 +72,11 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       abrangencia: { default: "" },
       codigo_cidade: { default: 5300108 },
       login: { default: [] },
-      dominio_url: { default: "" },
+      dominio_url: { default: window.location.hostname },
       // LOGIN
+      login_google: { default: false },
+      login_azure: { default: false },
+      login_login_unico: { default: false },
       login_select_entidade: { default: false },
       login_google_client_id: { default: "" },
       login_firebase_client_id: { default: "" },
@@ -133,7 +136,7 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
   public async onSelectTab(tab: LookupItem) {
     if(this.viewInit) this.saveUsuarioConfig({ active_tab: tab.key });
   }
-   
+
   public async loadData(entity: Tenant, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
     let login = this.tiposLogin || [];
@@ -144,7 +147,7 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
   public async initializeData(form: FormGroup) {
     this.entity = (await this.dao!.getById(this.urlParams!.get("id")!, this.join))!;
     await this.loadData(this.entity, form);
-    
+
   }
 
   public async saveData(form: IIndexable): Promise<Tenant> {

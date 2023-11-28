@@ -21,6 +21,8 @@ class PetrvsController extends ControllerBase
         // Obtém o host (domínio) do URL
         $domain = $parsedUrl['host'];
 
+        if($domain=="petrvs_php") $domain="localhost";
+
         $tenant = Domain::where('domain', $domain)->with('tenant')->first();
 
         if(!$tenant){
@@ -59,12 +61,12 @@ class PetrvsController extends ControllerBase
             "versao" => $tenant["version"],
             "login" => [
                 "google_client_id" =>   $tenant["login_google_client_id"],
-                "gsuit" =>              true,
-                "azure" =>              true,
-                "institucional" =>      true,
-                "firebase" =>           true,
-                "user_password" =>      true,
-                "login_unico" =>        true
+                "gsuit" =>              $tenant["login_google"],
+                "azure" =>              $tenant["login_azure"],
+                "institucional" =>      false,
+                "firebase" =>           $tenant["login_google"],
+                "user_password" =>      false,
+                "login_unico" =>        $tenant["login_login_unico"],
             ]
         ]);
         return response()->view('environment-config', ["config" => $config])

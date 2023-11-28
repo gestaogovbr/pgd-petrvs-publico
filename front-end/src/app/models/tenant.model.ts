@@ -44,6 +44,9 @@ export class Tenant extends Base {
     public login_azure_redirect_uri:string = "" ;
     public login_login_unico_client_id:string = "" ;
     public login_login_unico_secret:string = "" ;
+    public login_google: boolean = false;
+    public login_azure: boolean = false;
+    public login_login_unico: boolean = false;
     // INTEGRACAO
     public tipo_integracao: string = "";
     public integracao_auto_incluir: boolean = true;

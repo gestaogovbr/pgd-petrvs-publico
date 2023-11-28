@@ -92,7 +92,7 @@
     </tab>
     <tab key="LOGIN" label="Login">
         <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
-            <separator title="Entidade"></separator>
+<!--            <separator title="Entidade"></separator>
             <div class="row">
                 <input-switch [size]="3" labelPosition="left" label="Seleciona Entidade:" controlName="select_entidade"></input-switch>
             </div>
@@ -103,23 +103,26 @@
                     <column type="text" title="API" field="API" ></column>
                     <column type="switch" title="Habilitado" field="Habilitado"></column>
                 </columns>
-            </grid>
+            </grid>-->
 
             <separator title="Google"></separator>
             <div class="row">
-                <input-text [size]="6" label="Google Client ID" controlName="login_google_client_id" [attr.maxlength]=250></input-text>
-                <input-text [size]="6" label="Firebase Project ID" controlName="login_firebase_client_id" [attr.maxlength]=250></input-text>
+                <input-text [size]="5" label="Google Client ID" controlName="login_google_client_id" [attr.maxlength]=250></input-text>
+                <input-text [size]="5" label="Firebase Project ID" controlName="login_firebase_client_id" [attr.maxlength]=250></input-text>
+                <input-switch [size]="2" scale="large" labelPosition="right" label="" controlName="login_google"></input-switch>
             </div>
             <separator title="Microsoft"></separator>
             <div class="row">
                 <input-text [size]="4" label="Azure Client ID" controlName="login_azure_client_id" [attr.maxlength]=250></input-text>
-                <input-text [size]="4" label="Azure Client Secret" controlName="login_azure_secret" [attr.maxlength]=250></input-text>
-                <input-text [size]="4" label="Azure Redirect URI" controlName="login_azure_redirect_uri" [attr.maxlength]=250></input-text>
+                <input-text [size]="3" label="Azure Client Secret" controlName="login_azure_secret" [attr.maxlength]=250></input-text>
+                <input-text [size]="3" label="Azure Redirect URI" controlName="login_azure_redirect_uri" [attr.maxlength]=250></input-text>
+              <input-switch [size]="2" scale="large" labelPosition="right" label="" controlName="login_azure"></input-switch>
             </div>
             <separator title="Login Unico"></separator>
             <div class="row">
-                <input-text [size]="6" label="Client ID" controlName="login_login_unico_client_id" [attr.maxlength]=250></input-text>
-                <input-text [size]="6" label="Secret" controlName="login_login_unico_secret" [attr.maxlength]=250></input-text>
+                <input-text [size]="5" label="Client ID" controlName="login_login_unico_client_id" [attr.maxlength]=250></input-text>
+                <input-text [size]="5" label="Secret" controlName="login_login_unico_secret" [attr.maxlength]=250></input-text>
+              <input-switch [size]="2" scale="large" labelPosition="right" label="" controlName="login_login_unico"></input-switch>
             </div>
         </editable-form>
     </tab>
@@ -141,7 +144,7 @@
                 <div class="row">
                     <input-text [size]="4" label="Nome do Sistema" controlName="integracao_siape_nome" [attr.maxlength]=250></input-text>
                     <input-text [size]="4" label="CPF" controlName="integracao_siape_cpf" [attr.maxlength]="15"></input-text>
-                    <input-text [size]="4" label="Senha" controlName="integracao_siape_senha" [attr.maxlength]=250></input-text> 
+                    <input-text [size]="4" label="Senha" controlName="integracao_siape_senha" [attr.maxlength]=250></input-text>
                 </div>
                 <div class="row">
                     <input-text [size]="3" label="Codigo do Órgão" controlName="integracao_siape_codorgao" [attr.maxlength]=250></input-text>
