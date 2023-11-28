@@ -5,14 +5,12 @@ import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
-import { IIndexable, IntegranteAtribuicao } from 'src/app/models/base.model';
+import { IIndexable } from 'src/app/models/base.model';
 import { Usuario } from 'src/app/models/usuario.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { UsuarioIntegranteComponent } from '../usuario-integrante/usuario-integrante.component';
 import { TemplateDataset } from 'src/app/modules/uteis/templates/template.service';
-import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { UnidadeIntegranteDaoService, Vinculo } from 'src/app/dao/unidade-integrante-dao.service';
-import { IntegranteConsolidado, UnidadeIntegrante } from 'src/app/models/unidade-integrante.model';
 
 @Component({
   selector: 'app-usuario-form',
@@ -85,11 +83,12 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
     this.formLotacao.controls.unidade_lotacao_id.setValue(entity.lotacao?.unidade?.id);
+    if(this.action == "new") this.unidadesIntegrantes!._items = [];
     this.unidadesIntegrantes?.loadData(entity);
   }
 
   public initializeData(form: FormGroup): void {
-    this.entity = new Usuario();
+    this.entity = new Usuario({id: this.dao?.generateUuid()});
     this.loadData(this.entity, form);
   }
 
