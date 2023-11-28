@@ -3,6 +3,9 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { QuestionarioDaoService } from 'src/app/dao/questionario-dao.service';
+import { QuestionarioPerguntaDaoService } from 'src/app/dao/questionario-pergunta-dao.service';
+import { QuestionarioRespostaDaoService } from 'src/app/dao/questionario-resposta-dao.service';
+import { QuestionarioRespostaPerguntaDaoService } from 'src/app/dao/questionario-resposta-pergunta-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Questionario } from 'src/app/models/questionario.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
@@ -19,14 +22,18 @@ export class QuestionarioFormComponent extends PageFormBase<Questionario, Questi
   @ViewChild('listaTipoResposta', { static: false }) public listaTipoResposta?: InputSelectComponent;
   @ViewChild('listaTipoRespostaB', { static: false }) public listaTipoRespostaB?: InputSelectComponent;
 
-  public tipoQuestionario: LookupItem[] = [{ 'key': 'Interno', 'value': 'Interno' },{ 'key': 'Personalizado', 'value': 'Personalizado' }];
+  public tipoQuestionario: LookupItem[] = [{ 'key': 'INTERNO', 'value': 'Interno' },{ 'key': 'PERSONALIZADO', 'value': 'Personalizado' }];
   public exemploLista: LookupItem[] = [{ 'key': '1', 'value': 'Exemplo 1' },{ 'key': '2', 'value': 'Exemplo 2' },{ 'key': '3', 'value': 'Exemplo 3' }];
   public exemploRadio: LookupItem[] = [{ 'key': '1', 'value': 'Exemplo 1' },{ 'key': '2', 'value': 'Exemplo 2' },{ 'key': '3', 'value': 'Exemplo 3' }];
   public tipo: LookupItem[] = [{ 'key': 'LISTA', 'value': 'Lista' },{ 'key': 'SWITCH', 'value': 'Sim/Não' },{ 'key': 'MULTIPLA', 'value': 'Resposta Múltipla' },{ 'key': 'UNICA', 'value': 'Resposta Única' }];
   public formPergunta: FormGroup;
+  public questionarioPerguntaDao? : QuestionarioPerguntaDaoService;
+  public questionarioRespostaPerguntaDao? : QuestionarioRespostaPerguntaDaoService;
   
   constructor(public injector: Injector) {
     super(injector, Questionario, QuestionarioDaoService);
+    this.questionarioPerguntaDao = injector.get<QuestionarioPerguntaDaoService>(QuestionarioPerguntaDaoService);
+    this.questionarioRespostaPerguntaDao = injector.get<QuestionarioRespostaPerguntaDaoService>(QuestionarioRespostaPerguntaDaoService);
     this.form = this.fh.FormBuilder({
       nome: {default: ""},
       codigo: {default: ""},

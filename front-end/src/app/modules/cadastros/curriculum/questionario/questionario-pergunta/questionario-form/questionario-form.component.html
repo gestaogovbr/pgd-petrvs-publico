@@ -51,8 +51,6 @@
                 <column title="Respostas" titleHint="Informe as escolhas de respostas da pergunta" [template]="columnResposta" [editTemplate]="editResposta">
                     <ng-template let-row="row" #columnResposta>
                         <div class="text-wrap width-min-content">
-
-                            
                             <input-multiselect [hidden]="this.listaTipoRespostaB?.selectedItem?.key == ('SWITCH' || '' || null)" [size]="12" label=""  controlName="multiOpcaoRespostaB" [addItemHandle]="addMultiRespostasB.bind(this)" noBox>
                                 <input-text #opcoesResposta [size]="6" label="Opções da resposta" icon="bi bi-pencil-fill" controlName="inputOpcoesRespostaB"  [attr.maxlength]=250></input-text>
                                 <input-text #valorResposta [size]="6" label="Valor da resposta" icon="bi bi-pencil-fill" controlName="inputValorRespostaB"  [attr.maxlength]=250></input-text>
