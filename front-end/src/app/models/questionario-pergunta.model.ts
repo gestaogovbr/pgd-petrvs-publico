@@ -11,8 +11,7 @@ export class QuestionarioPergunta extends Base {
     public tipo:  QuestionarioPerguntaTipo = "LISTA_UNICA"; // tipo da resposta para esta pergunta
     public criado_versao: number | undefined; //versao de criacao
     public deletado_versao: number | undefined; //versao em que for deletado
-    public respostas: [] = []; // opções de respostas para essa pergunta
-
+    public respostas: any; // opções de respostas para essa pergunta
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }
