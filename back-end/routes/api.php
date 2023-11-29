@@ -9,15 +9,19 @@ use Stancl\Tenancy\Middleware\InitializeTenancyByPath;
 Route::get('/teste', function (Request $request) { return ["CENTRAL"]; }); *
 
 
-/* 
+/*
 Rota dinâmica para login social Microsoft (Azure) e
 GovBr baseado em B2B (multi-tenancy / multi-tenant)
 */
 
 Route::middleware([InitializeTenancyByPath::class])
-    ->get('/login-azure-callback/{tenant}', 
+    ->get('/login-azure-callback/{tenant}',
           [LoginController::class, 'signInAzureCallback']);
 
 Route::middleware([InitializeTenancyByPath::class])
-    ->get('/login-govbr-callback/{tenant}', 
+    ->get('/login-govbr-callback/{tenant}',
           [LoginController::class, 'signInGovBrCallback']);
+
+Route::middleware([InitializeTenancyByPath::class])
+    ->get('/login-unico/{tenant}',
+        [LoginController::class, 'signInGovBrCallback']);

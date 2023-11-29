@@ -53,7 +53,7 @@ class PetrvsController extends ControllerBase
         $tenant=json_decode($tenant['tenant'],true);
 
         $config = json_encode([
-            "api_url" => $tenant["dominio_url"],
+            "api_url" => "https://".$tenant["dominio_url"],
             "app_env" => config("app.env"),
             "entidade" => $tenant["id"],
             "suporte_url" =>$tenant["dominio_url"],

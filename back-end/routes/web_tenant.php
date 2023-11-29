@@ -6,6 +6,8 @@ use App\Http\Controllers\PetrvsController;
 use App\Http\Controllers\AngularController;
 use App\Http\Controllers\DownloadController;
 use Laravel\Socialite\Facades\Socialite;
+use Stancl\Tenancy\Middleware\InitializeTenancyByPath;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -42,7 +44,7 @@ Route::get('/web/login-azure-redirect', [LoginController::class, 'signInAzureRed
 // Route::get('/web/login-azure-callback', [LoginController::class, 'signInAzureCallback']);
 
 Route::middleware([InitializeTenancyByPath::class])
-    ->get('/login-azure-callback/{tenant}', 
+    ->get('/login-azure-callback/{tenant}',
           [LoginController::class, 'signInAzureCallback']);
 
 // Rota criada para teste por algum desenvolvedor.
@@ -58,7 +60,11 @@ Route::get('/web/login-govbr-redirect', [LoginController::class, 'signInGovBrRed
 // Route::get('/web/login-azure-callback', [LoginController::class, 'signInAzureCallback']);
 
 Route::middleware([InitializeTenancyByPath::class])
-    ->get('/login-govbr-callback/{tenant}', 
+    ->get('/login-govbr-callback/{tenant}',
+          [LoginController::class, 'signInGovBrCallback']);
+//////////////////////////////////////////////////////////////////
+Route::middleware([InitializeTenancyByPath::class])
+    ->get('/login-unico/{tenant}',
           [LoginController::class, 'signInGovBrCallback']);
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

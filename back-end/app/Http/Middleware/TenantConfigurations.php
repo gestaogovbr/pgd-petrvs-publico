@@ -6,7 +6,7 @@ use Closure;
 use App\Models\Tenant;
 use Stancl\Tenancy\Database\Models\Domain;
 
- 
+
 class TenantConfigurations
 {
     public function handle($request, Closure $next)
@@ -18,6 +18,7 @@ class TenantConfigurations
         $tenant = Domain::where('domain', $domain)->with('tenant')->first();
 
         if ($tenant) {
+            $request->headers->set('X-ENTIDADE',$request->route('tenant')??$tenant['tenant_id']);
             // Carregar as configurações do tenant
             $settings=json_decode($tenant['tenant'],true);
 
@@ -30,7 +31,6 @@ class TenantConfigurations
             config(['services.govbr.code_challenge_method' => $settings['login_login_unico_code_challenge_method']??env('LOGIN_UNICO_CODE_CHALLENGE_METHOD')]);
             config(['services.govbr.environment' => $settings['login_login_unico_environment']??env('LOGIN_UNICO_ENV','staging')]);
         }
-
         return $next($request);
     }
 
