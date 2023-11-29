@@ -172,10 +172,8 @@ class TenantService extends ServiceBase {
             logInfo();
             // Execute the 'tenants:migrate' command
             Artisan::call('tenants:migrate', ['--force' => true,'-n'=>true]);
-            logInfo();
-            Artisan::call('db:seed --class=CidadeSeeder --force');
-            logInfo();
-            Artisan::call('db:seed --class=PerfilSeeder --force');
+            $seedCommand = 'tenants:run db:seed --option="class=DatabaseSeeder"' . (empty($id) ? '' : ' --tenants=' . $id);
+            Artisan::call($seedCommand);
             logInfo();
             return true;
         } catch (\Exception $e) {
