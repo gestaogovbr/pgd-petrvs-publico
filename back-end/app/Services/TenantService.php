@@ -51,7 +51,7 @@ class TenantService extends ServiceBase {
         ]);
         tenancy()->initialize($tenant);
 
-        config('app.env') == 'production' ? $this->acoesProducao($dataOrEntity->id) : $this->acoesDev($dataOrEntity->id);
+        $this->acoesDeploy($dataOrEntity->id);
 
         if($tenant) {
             $tenant->run(function () use ($dataOrEntity) {
@@ -162,31 +162,8 @@ class TenantService extends ServiceBase {
         }
     }
 
-    private function acoesProducao($id=null){
-        try {
-            Artisan::call('cache:clear');
-            logInfo();
-            Artisan::call('queue:clear', ['--force' => true]);
-            logInfo();
-            Artisan::call('optimize:clear');
-            logInfo();
-            // Execute the 'tenants:migrate' command
-            Artisan::call('tenants:migrate', ['--force' => true,'-n'=>true]);
-            $seedCommand = 'tenants:run db:seed --option="class=DatabaseSeeder"' . (empty($id) ? '' : ' --tenants=' . $id);
-            Artisan::call($seedCommand);
-            logInfo();
-            return true;
-        } catch (\Exception $e) {
-            // Handle any exceptions that may occur during command execution
-            Log::error('Error executing commands: ' . $e->getMessage());
-            Log::channel('daily')->error('Error executing commands: ' . $e->getMessage());
-            // Optionally, rethrow the exception to let it be handled elsewhere
-            throw $e;
-        }
 
-    }
-
-    private function acoesDev($id = null)
+    private function acoesDeploy($id = null)
     {
         try {
             Artisan::call('tenants:migrate');
