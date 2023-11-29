@@ -168,8 +168,16 @@ class TenantService extends ServiceBase {
         try {
             Artisan::call('tenants:migrate');
             logInfo();
+            
+            $diretorioAtual = getcwd();
+            // Mudar para o diretório do projeto Laravel
+            chdir(base_path());
+            // Executar comandos ou operações no novo diretório
             $seedCommand = 'echo yes | php artisan tenants:run db:seed --option="class=DatabaseSeeder"' . (empty($id) ? '' : ' --tenants=' . $id);
-            exec($seedCommand,$output);
+            exec($seedCommand, $output);
+            // Voltar para o diretório original
+            chdir($diretorioAtual);
+
             logInfo($output);
             return true;
         } catch (\Exception $e) {
