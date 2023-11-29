@@ -168,8 +168,12 @@ class TenantService extends ServiceBase {
         try {
             Artisan::call('tenants:migrate');
             logInfo();
-            $seedCommand = 'tenants:run db:seed --option="class=DatabaseSeeder"' . (empty($id) ? '' : ' --tenants=' . $id. ' --force');
-            Artisan::call($seedCommand);
+            $opt=[];
+            if($id) $opt['--tenants']=$id;
+            $opt['--no-interaction']=true;
+            $opt['--class']='DatabaseSeeder';
+            $opt['--tag']='seed';
+            Artisan::call('tenants:run', $opt);
             logInfo();
             return true;
         } catch (\Exception $e) {
