@@ -61,17 +61,19 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
    */
   public async loadData(entity: IIndexable, form?: FormGroup | undefined) {
     if (entity.id) {
+      let integrantes: IntegranteConsolidado[] = [];
       try {
+        if(this._items == undefined){
           this.grid!.loading = true;
-          this.items = this._items == undefined ? await this.integranteDao!.loadIntegrantes("", entity.id).then( resposta => {
-            this.entity = resposta.usuario;
-            if(this.isNoPersist) {
-              this._items = [];
-              resposta.integrantes.forEach(i => this._items?.push(this.integranteService.converterEmVinculo(i, i.id, this.entity!.id, i.atribuicoes)));
-            }
-            return this.integranteService.ordenar(resposta.integrantes.filter(x => x.atribuicoes?.length > 0));
-          }) : this.integranteService.ordenar(this._items.filter(x => x.atribuicoes?.length > 0));
+          this._items = [];
+          await this.integranteDao!.loadIntegrantes("", entity.id).then( resposta => { 
+            integrantes = resposta.integrantes.filter(x => x.atribuicoes?.length > 0); 
+            if(!this.isNoPersist) this.entity = resposta.usuario;
+          });
+        }
       } finally {
+        integrantes.forEach(i => this._items?.push(this.integranteService.converterEmVinculo(i, i.id, entity.id, i.atribuicoes)));
+        this.items = this.integranteService.ordenar(this._items || []);
         this.cdRef.detectChanges();
         this.grid!.loading = false;
       }
@@ -95,7 +97,6 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
       unidade_id: "",
       atribuicoes: []
     } as IIndexable;
-    this._items?.push(novo);
     return novo;
   }
 

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 use App\Casts\AsJson;
+use App\Models\QuestionarioPergunta;
 
 class Questionario extends ModelBase
 {
@@ -13,13 +14,8 @@ class Questionario extends ModelBase
         'tipo', /* varchar(256); NOT NULL; */// Tipo interno | personalizado
         'nome', /* varchar(256); NOT NULL; */// Nome do questionário
         'codigo', /* varchar(256); NOT NULL; */// Código do questionario
-        'perguntas', /* json; */// Perguntas do questionário
+        'versao', /* integer - versão do questrionario **/
         //'deleted_at', /* timestamp; */
-    ];
-
-    protected $casts = [
-        'perguntas' => AsJson::class,
-       
     ];
 
     //public $fillable_changes = ['perguntas'];
@@ -27,7 +23,7 @@ class Questionario extends ModelBase
     //public $fillable_relation = [];
 
     //Has
-    public function respostaQuestionario() { return $this->hasOne(RespostaQuestionario::class); }
+    public function perguntas() { return $this->hasMany(QuestionarioPergunta::class); }
 
     // Belongs
 

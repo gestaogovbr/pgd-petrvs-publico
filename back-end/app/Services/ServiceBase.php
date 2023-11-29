@@ -279,7 +279,7 @@ class ServiceBase extends DynamicMethods
 
     protected function chooseWhere($query, $or, $first, $where, &$data = []) {
         $triade = count($where) == 3 && in_array($where[1], ServiceBase::OPERATORS);
-        $proxyWhere = function($query) use ($where, $data) { $this->applyWhere($query, $where, $data); };
+        $proxyWhere = function($query) use ($where, &$data) { $this->applyWhere($query, $where, $data); };
         if($triade) {
             $field = $where[0];
             $operator = $where[1];
@@ -410,7 +410,8 @@ class ServiceBase extends DynamicMethods
             $join = ["usuario_especilista as _especialista", "_especialista.usuario_id", "usuario.id"]*/
             if(!array_key_exists($alias, $data["join"])) {
                 $join = [$fTable . " AS " . $alias, $alias . "." . $idName, $source . "." . $fkName];
-                $query->leftJoin($join[0], $join[1], "=", $join[2]);
+                //O leftJoin foi movido para a função query(), pois lá aplica ao contexto pai
+                //$query->leftJoin($join[0], $join[1], "=", $join[2]);
                 $data["join"][$alias] = $join;
             }
             $source = $alias;
@@ -627,6 +628,7 @@ class ServiceBase extends DynamicMethods
         $this->applyWhere($query, $data['where'], $data);
         $this->applyOrderBy($query, $data);
         $query->select($data["select"]);
+        foreach($data["join"] as $join) $query->leftJoin($join[0], $join[1], "=", $join[2]);
         $count = $query->count();
         if(!empty($data['limit'])) {
             $query->skip(max($data['page']-1, 0) * $data['limit'])->take($data['limit']);
