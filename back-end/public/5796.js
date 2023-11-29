@@ -3189,19 +3189,18 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
         var _ref2 = (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (element, index) {
           if (selected.entity.lotacao.unidade_id == element.id) {
             if (!_this.form?.controls.programa_id.value) {
-              let habilitado = -1;
-              selected.entity.participacoes_programas.every((programa, index) => {
-                habilitado = programa.habilitado == 1 ? index : habilitado;
-                return habilitado < 0;
+              let paiId = "";
+              selected.entity.unidades.every(unidade => {
+                paiId = unidade.id == element.id ? unidade.path.slice(1, 37) : "";
+                return paiId.length < 2;
               });
-              if (habilitado >= 0) {
-                yield _this.programaDao.query({
-                  where: [["id", "==", selected.entity.participacoes_programas[habilitado].programa_id]]
-                }).asPromise().then(programa => {
-                  _this.preencheUnidade(element);
-                  _this.preenchePrograma(programa[0]);
-                });
-              } else _this.preencheUnidade(element);
+              console.log(paiId);
+              yield _this.programaDao.query({
+                where: [["unidade_id", "==", paiId], ["data_inicio", "<", new Date()], ["data_fim", ">", new Date()]]
+              }).asPromise().then(programa => {
+                _this.preencheUnidade(element);
+                _this.preenchePrograma(programa[0]);
+              });
             }
             return false;
           } else return true;
