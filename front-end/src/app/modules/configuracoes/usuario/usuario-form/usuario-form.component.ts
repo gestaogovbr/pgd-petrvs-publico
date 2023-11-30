@@ -10,7 +10,8 @@ import { Usuario } from 'src/app/models/usuario.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { UsuarioIntegranteComponent } from '../usuario-integrante/usuario-integrante.component';
 import { TemplateDataset } from 'src/app/modules/uteis/templates/template.service';
-import { UnidadeIntegranteDaoService, Vinculo } from 'src/app/dao/unidade-integrante-dao.service';
+import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
+import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
 
 @Component({
   selector: 'app-usuario-form',
@@ -83,12 +84,11 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
     this.formLotacao.controls.unidade_lotacao_id.setValue(entity.lotacao?.unidade?.id);
-    if(this.action == "new") this.unidadesIntegrantes!._items = [];
     this.unidadesIntegrantes?.loadData(entity);
   }
 
   public initializeData(form: FormGroup): void {
-    this.entity = new Usuario({id: this.dao?.generateUuid()});
+    this.entity = new Usuario();
     this.loadData(this.entity, form);
   }
 
@@ -98,18 +98,18 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
       let usuario = this.util.fill(new Usuario(), this.entity!);
       usuario = this.util.fillForm(usuario, this.form!.value);
       usuario.lotacao_id = this.formLotacao?.controls.unidade_lotacao_id.value;
-      let vinculos: Vinculo[] = this.unidadesIntegrantes?._items || [];
-      let indiceVinculoLotacao = vinculos.findIndex(v => v.atribuicoes.includes("LOTADO"));
-      let lotacaoAlterada: boolean = indiceVinculoLotacao == -1 || usuario.lotacao_id != vinculos[indiceVinculoLotacao].unidade_id;
+      let integrantesConsolidados: IntegranteConsolidado[] = this.unidadesIntegrantes?.items || [];
+      let indiceVinculoLotacao = integrantesConsolidados.findIndex(ic => ic.atribuicoes.includes("LOTADO"));
+      let lotacaoAlterada: boolean = indiceVinculoLotacao == -1 || usuario.lotacao_id != integrantesConsolidados[indiceVinculoLotacao].unidade_id;
       try {
         await this.dao?.save(usuario).then(async usuarioBanco => {
           if (lotacaoAlterada) {
-            if(indiceVinculoLotacao != -1) vinculos[indiceVinculoLotacao].atribuicoes = vinculos[indiceVinculoLotacao].atribuicoes.filter(x => x != "LOTADO");
-            let index = vinculos.findIndex(v => v.unidade_id == usuario.lotacao_id);
-            index == -1 ? vinculos.push({ unidade_id: usuario.lotacao_id, usuario_id: usuarioBanco.id, atribuicoes: ["LOTADO"] }) : vinculos[index].atribuicoes.push("LOTADO");
+            if(indiceVinculoLotacao != -1) integrantesConsolidados[indiceVinculoLotacao].atribuicoes = integrantesConsolidados[indiceVinculoLotacao].atribuicoes.filter(x => x != "LOTADO");
+            let index = integrantesConsolidados.findIndex(ic => ic.unidade_id == usuario.lotacao_id);
+            index == -1 ? integrantesConsolidados.push(Object.assign(new IntegranteConsolidado (), { unidade_id: usuario.lotacao_id, usuario_id: usuarioBanco.id, atribuicoes: ["LOTADO"] })) : integrantesConsolidados[index].atribuicoes.push("LOTADO");
           }
-          vinculos.forEach(v => v.usuario_id = usuarioBanco.id);
-          await this.integranteDao.saveIntegrante(vinculos as Vinculo[]);
+          integrantesConsolidados.forEach(ic => ic.usuario_id = usuarioBanco.id);
+          await this.integranteDao.saveIntegrante(integrantesConsolidados as IntegranteConsolidado[]);
         });
         resolve(true);
       } catch (error: any) {

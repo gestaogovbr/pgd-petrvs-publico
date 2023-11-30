@@ -8,7 +8,7 @@ import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UnidadeIntegranteAtribuicaoDaoService } from 'src/app/dao/unidade-integrante-atribuicao-dao.service';
-import { UnidadeIntegranteDaoService, Vinculo } from 'src/app/dao/unidade-integrante-dao.service';
+import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Expediente } from 'src/app/models/expediente.model';
@@ -19,6 +19,7 @@ import { NotificacoesConfigComponent } from 'src/app/modules/uteis/notificacoes/
 import { TemplateDataset } from 'src/app/modules/uteis/templates/template.service';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { UnidadeIntegranteComponent } from '../unidade-integrante/unidade-integrante.component';
+import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
 
 @Component({
   selector: 'app-unidade-form',
@@ -121,6 +122,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     this.form.patchValue(this.util.fillForm(formValue, entity));
     this.formGestor.controls.gestor_id.setValue(entity.gestor?.usuario_id);
     this.formGestor.controls.gestor_substituto_id.setValue(entity.gestor_substituto?.usuario_id);
+    if(this.action == "new") this.usuariosIntegrantes!._items = [];
     this.usuariosIntegrantes?.loadData(entity);
   }
 
@@ -164,15 +166,15 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       try {
         await this.dao?.save(unidade, ["gestor.gestor:id","gestor_substituto.gestor_substituto:id","gestor_delegado.gestor_delegado:id"]).then(async unidade => {
           this.entity = unidade;
-          if(salvarGestor) await this.integranteDao.saveIntegrante([{'unidade_id': this.entity.id, 'usuario_id': this.formGestor!.controls.gestor_id!.value, 'atribuicoes': ["GESTOR"]}]);
-          if(salvarGestorSubstituto) await this.integranteDao.saveIntegrante([{'unidade_id': this.entity.id, 'usuario_id': this.formGestor!.controls.gestor_substituto_id!.value, 'atribuicoes': ["GESTOR_SUBSTITUTO"]}]);
-          if(salvarGestorDelegado) await this.integranteDao.saveIntegrante([{'unidade_id': this.entity.id, 'usuario_id': this.formGestor!.controls.gestor_delegado_id!.value, 'atribuicoes': ["GESTOR_DELEGADO"]}]);
+          if(salvarGestor) await this.integranteDao.saveIntegrante([Object.assign(new IntegranteConsolidado, {'unidade_id': this.entity.id, 'usuario_id': this.formGestor!.controls.gestor_id!.value, 'atribuicoes': ["GESTOR"]})]);
+          if(salvarGestorSubstituto) await this.integranteDao.saveIntegrante([Object.assign(new IntegranteConsolidado, {'unidade_id': this.entity.id, 'usuario_id': this.formGestor!.controls.gestor_substituto_id!.value, 'atribuicoes': ["GESTOR_SUBSTITUTO"]})]);
+          if(salvarGestorDelegado) await this.integranteDao.saveIntegrante([Object.assign(new IntegranteConsolidado, {'unidade_id': this.entity.id, 'usuario_id': this.formGestor!.controls.gestor_delegado_id!.value, 'atribuicoes': ["GESTOR_DELEGADO"]})]);
           if(apagarGestor) await this.integranteAtribuicaoDao.delete(this.entity?.gestor!.gestor!.id);
           if(apagarGestorSubstituto) await this.integranteAtribuicaoDao.delete(this.entity?.gestor_substituto!.gestor_substituto!.id);
           if(apagarGestorDelegado) await this.integranteAtribuicaoDao.delete(this.entity?.gestor_delegado!.gestor_delegado!.id);
           if(vinculos.length) {
             vinculos.forEach(v => v.unidade_id = unidade.id);
-            await this.integranteDao.saveIntegrante(vinculos as Vinculo[]);
+            await this.integranteDao.saveIntegrante(vinculos as IntegranteConsolidado[]);
           }
         });
         resolve(true);

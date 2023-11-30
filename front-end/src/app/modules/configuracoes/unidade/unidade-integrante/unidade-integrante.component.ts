@@ -62,17 +62,19 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
    */
   public async loadData(entity: IIndexable, form?: FormGroup | undefined) {
     if (entity.id) {
+      let integrantes: IntegranteConsolidado[] = [];
       try {
+        if(this._items == undefined){
           this.grid!.loading = true;
-          this.items = this._items == undefined ? await this.integranteDao!.loadIntegrantes(entity.id, "").then( resposta => {
-            this.entity = resposta.unidade;
-            if(this.isNoPersist) {
-              this._items = [];
-              resposta.integrantes.forEach(i => this._items?.push(this.integranteService.converterEmVinculo(i, this.entity!.id, i.id, i.atribuicoes)));
-            }
-            return this.integranteService.ordenar(resposta.integrantes.filter(x => x.atribuicoes?.length > 0));
-          }) : this.integranteService.ordenar(this._items.filter(x => x.atribuicoes?.length > 0));
+          this._items = [];
+          await this.integranteDao!.loadIntegrantes(entity.id, "").then( resposta => { 
+            integrantes = resposta.integrantes.filter(x => x.atribuicoes?.length > 0); 
+            if(!this.isNoPersist) this.entity = resposta.unidade;
+          });
+        }
       } finally {
+        integrantes.forEach(i => this._items?.push(this.integranteService.completarIntegrante(i, entity.id, i.id, i.atribuicoes)));
+        this.items = this.integranteService.ordenar(this._items || []);
         this.cdRef.detectChanges();
         this.grid!.loading = false;
       }
@@ -96,7 +98,6 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
       usuario_id: "",
       atribuicoes: []
     } as IIndexable;
-    this._items?.push(novo);
     return novo;
   }
 
@@ -137,27 +138,30 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
   public async removeIntegrante(row: IntegranteConsolidado) {
     let nomeServidor = row.usuario_nome;
     let nomeUnidade = this.entity!.nome;
-    let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir todas as atribuições do servidor '" + nomeServidor + "' na unidade '" + nomeUnidade + "' ?");
-    if (confirm) {
-      let msg: string | undefined;
-      try {
-        if (!this.isNoPersist) {    // se persistente
-          this.loading = true;
-          await this.integranteDao.saveIntegrante([this.integranteService.converterEmVinculo(row, this.entity!.id, row.id, [])]).then(resposta => {
-            if (msg = resposta.find(v => v.msg?.length)?.msg) { if (this.grid) this.grid.error = msg; };
-          });
-          await this.loadData({ id: this.entity!.id }, this.form);
-        } else {                    // se não persistente
-          let index = this._items!.findIndex(x => x["id"] == row["id"]);
-          this._items![index] = this.integranteService.converterEmVinculo(row, this.entity!.id, row.id, []);
-        }
-      } finally {
-        this.loading = false;
-      }
-      return msg ? false : true;
+    if(this.isNoPersist && row.atribuicoes.length == 1 && row.atribuicoes[0] == "LOTADO") {
+      await this.dialog.alert("IMPOSSÍVEL EXCLUIR !", "Um vínculo não pode ser excluído quando sua única atribuição é a lotação do servidor. Se quiser alterar sua lotação, defina-a em outra Unidade.");
     } else {
-      return false;
+      let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir todas as atribuições do servidor '" + nomeServidor + "' na unidade '" + nomeUnidade + "' ?");
+      if (confirm) {
+        let msg: string | undefined;
+        try {
+          if (!this.isNoPersist) {    // se persistente
+            this.loading = true;
+            await this.integranteDao.saveIntegrante([this.integranteService.completarIntegrante(row, this.entity!.id, row.id, [])]).then(resposta => {
+              if (msg = resposta.find(v => v._metadata.msg?.length)?._metadata.msg) { if (this.grid) this.grid.error = msg; };
+            });
+            await this.loadData({ id: this.entity!.id }, this.form);
+          } else {                    // se não persistente
+            let index = this._items!.findIndex(x => x["id"] == row["id"]);
+            this._items![index] = this.integranteService.completarIntegrante(row, this.entity!.id, row.id, []);
+          }
+        } finally {
+          this.loading = false;
+        }
+        return msg ? false : true;
+      }
     }
+    return false;
   }
 
   /**
@@ -176,6 +180,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
    * @returns 
    */
   public async saveIntegrante(form: FormGroup, row: IntegranteConsolidado) {
+    form.controls.atribuicoes.setValue(this.lookup.uniqueLookupItem(form.controls.atribuicoes.value));
     let confirm = true;
     let n = this.integranteService.alterandoGestor(form, row.atribuicoes || []);
     if (n.length) confirm = await this.dialog.confirm("Confirma a Alteração de Gestor ?", n.length == 1 ? "O " + n[0] + " será alterado." : "Serão alterados: " + n.join(', ') + ".");
@@ -184,16 +189,16 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
       try {
         let novasAtribuicoes: IntegranteAtribuicao[] = form!.controls.atribuicoes.value.map((x: LookupItem) => x.key);
         if (!this.isNoPersist) { // se persistente
-          await this.integranteDao.saveIntegrante([this.integranteService.converterEmVinculo(row, this.entity!.id, form!.controls.usuario_id.value, novasAtribuicoes)]).then(resposta => {
+          await this.integranteDao.saveIntegrante([this.integranteService.completarIntegrante(row, this.entity!.id, form!.controls.usuario_id.value, novasAtribuicoes)]).then(resposta => {
             let msg: string | undefined;
-            if (msg = resposta?.find(v => v.msg?.length)?.msg) { if (this.grid) this.grid.error = msg; };
+            if (msg = resposta?.find(v => v._metadata.msg?.length)?._metadata.msg) { if (this.grid) this.grid.error = msg; };
           });
           await this.loadData({ id: this.entity!.id }, this.form);
           if (this.grid) this.grid!.error = "";
         } else {                // se não persistente
           let index = this._items!.findIndex(x => x["id"] == row["id"]);
           let novoIntegranteConsolidado = { id: row.id, usuario_apelido: this.usuario?.selectedItem?.entity.apelido, usuario_nome: this.usuario?.selectedItem?.entity.nome };
-          this._items![index!] = this.integranteService.converterEmVinculo(novoIntegranteConsolidado, this.entity!.id, form!.controls.usuario_id.value, novasAtribuicoes);
+          this._items![index!] = this.integranteService.completarIntegrante(novoIntegranteConsolidado, this.entity!.id, form!.controls.usuario_id.value, novasAtribuicoes);
           await this.loadData({ id: this.entity!.id }, this.form);
         }
       } catch (error: any) {
