@@ -149,7 +149,8 @@ export class LookupService {
     { key: "PENSIONISTA", value: "Pensionista" },
     { key: "BENEFICIARIO_PENSAO", value: "Beneficiário de pensão" },
     { key: "QE/MRE_CEDIDO", value: "QE/MRE Cedido" },
-    { key: "QUADRO_ESPEC_QE/MRE", value: "Quadro ESPEC QE/MRE" }
+    { key: "QUADRO_ESPEC_QE/MRE", value: "Quadro ESPEC QE/MRE" },
+    { key: "DESCONHECIDO", value: "Desconhecido" }
   ];
 
   public ATIVIDADE_STATUS: LookupItem[] = [
@@ -762,7 +763,7 @@ export class LookupService {
   /**
    * Retorna um LookupItem[] com chaves únicas
    * @param array Array original
-   * @returns 
+   * @returns
    */
   public uniqueLookupItem(array: LookupItem[]): LookupItem[] {
     let novoArray: LookupItem[] = [];
