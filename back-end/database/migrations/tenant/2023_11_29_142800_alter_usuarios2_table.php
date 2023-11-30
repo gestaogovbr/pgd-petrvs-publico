@@ -93,7 +93,7 @@ class AlterUsuarios2Table extends Migration
         COMMENT 'Vínculo do usuário com a administração.'");
 
         Schema::table('usuarios', function (Blueprint $table) {
-            $table->string('datamodificacao')->default(null)->nullable()->comment("Data de modificação informado pelo SIAPE.");
+            $table->string('data_modificacao')->default(null)->nullable()->comment("Data de modificação informado pelo SIAPE.");
         });
 
     }
@@ -182,7 +182,7 @@ class AlterUsuarios2Table extends Migration
         COMMENT 'Vínculo do usuário com a administração.'");
 
         Schema::table('usuarios', function (Blueprint $table) {
-            $table->dropColumn('datamodificacao');
+            $table->dropColumn('data_modificacao');
         });
     }
 }
