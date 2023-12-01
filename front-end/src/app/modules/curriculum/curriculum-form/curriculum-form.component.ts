@@ -14,6 +14,7 @@ import { InputSelectComponent } from 'src/app/components/input/input-select/inpu
 import { Curriculum } from 'src/app/models/currriculum.model';
 import { trigger,state,style,animate,transition } from '@angular/animations';
 import { InputMultiselectComponent } from 'src/app/components/input/input-multiselect/input-multiselect.component';
+import { CurriculumGraduacaoDaoService } from 'src/app/dao/curriculum-graduacao.service';
 
 @Component({
   selector: 'curriculum-pessoal-form',
@@ -55,6 +56,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   public cidadeDao: CidadeDaoService;
   public cursoDao?: CursoDaoService;
   public areaDao?: AreaConhecimentoDaoService;
+  public curriculumGraduacaoDAO?: CurriculumGraduacaoDaoService;
   public formGraduacao?: FormGroup;
   public cursoWhere: any[] = [["id", "==", null]];
   public dataTableIdioma : {entender: string, falar: string, idioma:string, escrever:string}[] = [];
@@ -66,6 +68,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     this.cidadeDao = injector.get<CidadeDaoService>(CidadeDaoService);
     this.areaDao = injector.get<AreaConhecimentoDaoService>(AreaConhecimentoDaoService)
     this.cursoDao = injector.get<CursoDaoService>(CursoDaoService)
+    this.curriculumGraduacaoDAO = injector.get<CurriculumGraduacaoDaoService>(CurriculumGraduacaoDaoService)
     this.join = ['graduacoes'];
     
     this.form = this.fh.FormBuilder({

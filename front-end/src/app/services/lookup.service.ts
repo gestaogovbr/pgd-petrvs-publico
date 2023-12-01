@@ -630,111 +630,122 @@ export class LookupService {
   ];
 
   public IDIOMAS: LookupItem[] = [
-    { 'key': "ALEMAO", 'value': 'Alemão' },
-    { 'key': "ARABE", 'value': 'Árabe' },
-    { 'key': "ARGELINO", 'value': 'Argelino' },
-    { 'key': "AZERI", 'value': 'Azeri' },
-    { 'key': "BENGALI", 'value': 'Bengali' },
-    { 'key': "CHINES", 'value': 'Chinês' },
-    { 'key': "COREANO", 'value': 'Coreano' },
-    { 'key': "EGIPCIO", 'value': 'Egípcio' },
-    { 'key': "ESPANHOL", 'value': 'Espanhol' },
-    { 'key': "FRANCES", 'value': 'Frances' },
-    { 'key': "INDI", 'value': 'indi' },
-    { 'key': "HOLANDES", 'value': 'Holandês' },
-    { 'key': "INDONESIO", 'value': 'Indonésio' },
-    { 'key': "INGLES", 'value': 'Inglês' },
-    { 'key': "IORUBA", 'value': 'Iorubá' },
-    { 'key': "ITALIANO", 'value': 'Italiano' },
-    { 'key': "JAPONES", 'value': 'Japonês' },
-    { 'key': "JAVANES", 'value': 'Javanês' },
-    { 'key': "MALAIO", 'value': 'Malaio' },
-    { 'key': "MALAIOB", 'value': 'Malaio/Bahasa' },
-    { 'key': "MARATA", 'value': 'Marata' },
-    { 'key': "PERSA ", 'value': 'Persa' },
-    { 'key': "PUNJABI ", 'value': 'Punjabi' },
-    { 'key': "ROMENO", 'value': 'Romeno' },
-    { 'key': "RUSSO", 'value': 'Russo' },
-    { 'key': "SUAILI", 'value': 'Suaíli' },
-    { 'key': "TAILANDES", 'value': 'Tailandes' },
-    { 'key': "TAMIL ", 'value': 'Tâmil' },
-    { 'key': "TELUGU", 'value': 'Telugu' },
-    { 'key': "TURCO", 'value': 'Turco' },
-    { 'key': "UCRANIANO", 'value': 'Ucraniano' },
-    { 'key': "URDU", 'value': 'Urdu' },
-    { 'key': "VIETNAMITA", 'value': 'Vietnamita' }
+    { key: "ALEMAO", value: 'Alemão' },
+    { key: "ARABE", value: 'Árabe' },
+    { key: "ARGELINO", value: 'Argelino' },
+    { key: "AZERI", value: 'Azeri' },
+    { key: "BENGALI", value: 'Bengali' },
+    { key: "CHINES", value: 'Chinês' },
+    { key: "COREANO", value: 'Coreano' },
+    { key: "EGIPCIO", value: 'Egípcio' },
+    { key: "ESPANHOL", value: 'Espanhol' },
+    { key: "FRANCES", value: 'Frances' },
+    { key: "INDI", value: 'indi' },
+    { key: "HOLANDES", value: 'Holandês' },
+    { key: "INDONESIO", value: 'Indonésio' },
+    { key: "INGLES", value: 'Inglês' },
+    { key: "IORUBA", value: 'Iorubá' },
+    { key: "ITALIANO", value: 'Italiano' },
+    { key: "JAPONES", value: 'Japonês' },
+    { key: "JAVANES", value: 'Javanês' },
+    { key: "MALAIO", value: 'Malaio' },
+    { key: "MALAIOB", value: 'Malaio/Bahasa' },
+    { key: "MARATA", value: 'Marata' },
+    { key: "PERSA ", value: 'Persa' },
+    { key: "PUNJABI ", value: 'Punjabi' },
+    { key: "ROMENO", value: 'Romeno' },
+    { key: "RUSSO", value: 'Russo' },
+    { key: "SUAILI", value: 'Suaíli' },
+    { key: "TAILANDES", value: 'Tailandes' },
+    { key: "TAMIL ", value: 'Tâmil' },
+    { key: "TELUGU", value: 'Telugu' },
+    { key: "TURCO", value: 'Turco' },
+    { key: "UCRANIANO", value: 'Ucraniano' },
+    { key: "URDU", value: 'Urdu' },
+    { key: "VIETNAMITA", value: 'Vietnamita' }
   ];
 
   public NIVEL_IDIOMA: LookupItem[] = [
-    { 'key': 'BASICO', 'value': 'Básico' },
-    { 'key': 'INTERMEDIARIO', 'value': 'Intermediário' },
-    { 'key': 'AVANCADO', 'value': 'Avançado' },
-    { 'key': 'FLUENTE', 'value': 'Fluente' }
+    { key: 'BASICO', value: 'Básico' },
+    { key: 'INTERMEDIARIO', value: 'Intermediário' },
+    { key: 'AVANCADO', value: 'Avançado' },
+    { key: 'FLUENTE', value: 'Fluente' }
   ];
 
   public ESTADO_CIVIL: LookupItem[] = [
-    { 'key': 'CASADO', 'value': 'Casado' },
-    { 'key': 'DIVORCIADO', 'value': 'Divorciado' },
-    { 'key': 'SOLTEIRO', 'value': 'Solteiro' },
-    { 'key': 'SEPARADO', 'value': 'Separado' },
-    { 'key': 'VIUVO', 'value': 'Viúvo' }
+    { key: 'CASADO', value: 'Casado' },
+    { key: 'DIVORCIADO', value: 'Divorciado' },
+    { key: 'SOLTEIRO', value: 'Solteiro' },
+    { key: 'SEPARADO', value: 'Separado' },
+    { key: 'VIUVO', value: 'Viúvo' }
   ];
 
   public TITULOS_CURSOS: LookupItem[] = [
-    { 'key': 'GRAD_TEC', 'value': 'Tecnólogo' },
-    { 'key': 'GRAD_BAC', 'value': 'Bacharelado' },
-    { 'key': 'GRAD_LIC', 'value': 'Licenciatura' },
-    { 'key': 'ESPECIAL', 'value': 'Especialização' },
-    { 'key': 'MESTRADO', 'value': 'Mestrado' },
-    { 'key': 'DOUTORADO', 'value': 'Doutorado' },
-    { 'key': 'POS_DOUTORADO', 'value': 'Pós Doutorado' }
+    { key: 'GRAD_TEC', value: 'Tecnólogo' },
+    { key: 'GRAD_BAC', value: 'Bacharelado' },
+    { key: 'GRAD_LIC', value: 'Licenciatura' },
+    { key: 'ESPECIAL', value: 'Especialização' },
+    { key: 'MESTRADO', value: 'Mestrado' },
+    { key: 'DOUTORADO', value: 'Doutorado' },
+    { key: 'POS_DOUTORADO', value: 'Pós Doutorado' }
   ];
 
   public TITULOS_CURSOS_INST: LookupItem[] = [
-    { 'key': 'INSTITUCIONAL', 'value': 'Institucional' },
-    { 'key': 'GRAD_TEC', 'value': 'Tecnólogo' },
-    { 'key': 'GRAD_BAC', 'value': 'Bacharelado' },
-    { 'key': 'GRAD_LIC', 'value': 'Licenciatura' },
-    { 'key': 'ESPECIAL', 'value': 'Especialização' },
-    { 'key': 'MESTRADO', 'value': 'Mestrado' },
-    { 'key': 'DOUTORADO', 'value': 'Doutorado' },
-    { 'key': 'POS_DOUTORADO', 'value': 'Pós Doutorado' }
+    { key: 'INSTITUCIONAL', value: 'Institucional' },
+    { key: 'GRAD_TEC', value: 'Tecnólogo' },
+    { key: 'GRAD_BAC', value: 'Bacharelado' },
+    { key: 'GRAD_LIC', value: 'Licenciatura' },
+    { key: 'ESPECIAL', value: 'Especialização' },
+    { key: 'MESTRADO', value: 'Mestrado' },
+    { key: 'DOUTORADO', value: 'Doutorado' },
+    { key: 'POS_DOUTORADO', value: 'Pós Doutorado' }
   ];
 
   public CARGOS_PRF: LookupItem[] = [
-    { 'key': 'PRF', 'value': 'PRF' },
-    { 'key': 'ADM', 'value': 'Agente Administrativo' }
+    { key: 'PRF', value: 'PRF' },
+    { key: 'ADM', value: 'Agente Administrativo' }
   ];
 
   public PG_PRF: LookupItem[] = [
-    { 'key': 'PRESENCIAL', 'value': 'Presencial' },
-    { 'key': 'REMOTO', 'value': 'Remoto' },
-    { 'key': 'HIBRIDO', 'value': 'Híbrido' }
+    { key: 'PRESENCIAL', value: 'Presencial' },
+    { key: 'REMOTO', value: 'Remoto' },
+    { key: 'HIBRIDO', value: 'Híbrido' }
+  ];
+
+  public QUESTIONARIO_TIPO: LookupItem[] = [
+    { key: 'INTERNO', value: 'Interno' },
+    { key: 'PERSONALIZADO', value: 'Personalizado' }
+  ];
+
+  public QUESTIONARIO_PERGUNTA_TIPO: LookupItem[] = [
+    { key: 'LISTA', value: 'Lista' },
+    { key: 'SWITCH', value: 'Sim/Não' },
+    { key: 'MULTIPLA', value: 'Resposta Múltipla' },
+    { key: 'UNICA', value: 'Resposta Única' }
   ];
 
   public THEMES: LookupItem[] = [
-    { 'key': 'light', 'value': "Branco (light)" },
-    { 'key': 'blue', 'value': "Azul (oxford)" },
-    { 'key': 'dark', 'value': "Preto (dark)" }
+    { key: 'light', value: "Branco (light)" },
+    { key: 'blue', value: "Azul (oxford)" },
+    { key: 'dark', value: "Preto (dark)" }
   ];
 
   public TIPO_INTEGRACAO: LookupItem[] = [
-    { 'key': 'NENHUMA', 'value': 'Nenhuma' },
-    { 'key': 'WSO2', 'value': 'Siape-PRF' },
-    { 'key': 'SIAPE', 'value': 'Siape-WS' },
+    { key: 'NENHUMA', value: 'Nenhuma' },
+    { key: 'WSO2', value: 'Siape-PRF' },
+    { key: 'SIAPE', value: 'Siape-WS' },
   ];
 
   public EXISTE_PAGADOR: LookupItem[] = [
-    { 'key': 'A', 'value': 'Vínculos ativos sem ocorrência de exclusão' },
-    { 'key': 'B', 'value': 'Todos os vínculos' },
+    { key: 'A', value: 'Vínculos ativos sem ocorrência de exclusão' },
+    { key: 'B', value: 'Todos os vínculos' },
   ];
 
   public TIPO_VINCULO: LookupItem[] = [
-    { 'key': 'A', 'value': 'Ativos em exercício no órgão' },
-    { 'key': 'B', 'value': 'Ativos e aposentados' },
-    { 'key': 'C', 'value': 'Ativos, aposentados e pensionistas' },
+    { key: 'A', value: 'Ativos em exercício no órgão' },
+    { key: 'B', value: 'Ativos e aposentados' },
+    { key: 'C', value: 'Ativos, aposentados e pensionistas' },
   ];
-
 
   public getLookup(itens: LookupItem[], key: any) {
     return itens.find(x => x.key == key);

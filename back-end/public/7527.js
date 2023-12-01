@@ -387,6 +387,32 @@ class HomeRaioxComponent {
     styles: [".logo-raio-x[_ngcontent-%COMP%], .saudacao[_ngcontent-%COMP%] {\n  width: 100%;\n  height: auto;\n  margin: auto;\n  display: flex;\n  justify-content: center;\n}\n\n.msgSaudacao[_ngcontent-%COMP%] {\n  color: #1d2143;\n  font-family: neutra text;\n  font-weight: bold;\n}\n\n.logo-raio-x[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  max-width: 500px;\n  width: 100%;\n  height: auto;\n  object-fit: cover;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvbW9kdWxlcy9ob21lL2hvbWUtcmFpb3gvaG9tZS1yYWlveC5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFDQTtFQUNJLFdBQUE7RUFDQSxZQUFBO0VBQ0EsWUFBQTtFQUNBLGFBQUE7RUFDQSx1QkFBQTtBQUFKOztBQUdFO0VBQ0UsY0FBQTtFQUNBLHdCQUFBO0VBQ0EsaUJBQUE7QUFBSjs7QUFJRTtFQUNFLGdCQUFBO0VBQ0EsV0FBQTtFQUNBLFlBQUE7RUFDQSxpQkFBQTtBQURKIiwic291cmNlc0NvbnRlbnQiOlsiXG4ubG9nby1yYWlvLXgsIC5zYXVkYWNhb3tcbiAgICB3aWR0aDogMTAwJTtcbiAgICBoZWlnaHQ6IGF1dG87XG4gICAgbWFyZ2luOiBhdXRvO1xuICAgIGRpc3BsYXk6IGZsZXg7XG4gICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gIH1cblxuICAubXNnU2F1ZGFjYW8ge1xuICAgIGNvbG9yOiAjMWQyMTQzO1xuICAgIGZvbnQtZmFtaWx5OiBuZXV0cmEgdGV4dDtcbiAgICBmb250LXdlaWdodDogYm9sZDtcbiAgfVxuXG4gIFxuICAubG9nby1yYWlvLXggaW1nIHtcbiAgICBtYXgtd2lkdGg6IDUwMHB4O1xuICAgIHdpZHRoOiAxMDAlO1xuICAgIGhlaWdodDogYXV0bztcbiAgICBvYmplY3QtZml0OiBjb3ZlcjtcbiAgfSJdLCJzb3VyY2VSb290IjoiIn0= */"]
   });
 }
+<<<<<<< HEAD
+=======
+_class = HomeRaioxComponent;
+_class.ɵfac = function HomeRaioxComponent_Factory(t) {
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_2__.Router), _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_0__.AuthService));
+};
+_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({
+  type: _class,
+  selectors: [["app-home-raiox"]],
+  decls: 2,
+  vars: 1,
+  consts: [[1, "logo-raio-x", "mt-5"], ["id", "logoRaioX", 3, "src"]],
+  template: function HomeRaioxComponent_Template(rf, ctx) {
+    if (rf & 1) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 0);
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](1, "img", 1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+    }
+    if (rf & 2) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("src", ctx.logoInicial, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵsanitizeUrl"]);
+    }
+  },
+  styles: [".logo-raio-x[_ngcontent-%COMP%], .saudacao[_ngcontent-%COMP%] {\n  width: 100%;\n  height: auto;\n  margin: auto;\n  display: flex;\n  justify-content: center;\n}\n\n.msgSaudacao[_ngcontent-%COMP%] {\n  color: #1d2143;\n  font-family: neutra text;\n  font-weight: bold;\n}\n\n.logo-raio-x[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  max-width: 500px;\n  width: 100%;\n  height: auto;\n  object-fit: cover;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvbW9kdWxlcy9ob21lL2hvbWUtcmFpb3gvaG9tZS1yYWlveC5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFDQTtFQUNJLFdBQUE7RUFDQSxZQUFBO0VBQ0EsWUFBQTtFQUNBLGFBQUE7RUFDQSx1QkFBQTtBQUFKOztBQUdFO0VBQ0UsY0FBQTtFQUNBLHdCQUFBO0VBQ0EsaUJBQUE7QUFBSjs7QUFJRTtFQUNFLGdCQUFBO0VBQ0EsV0FBQTtFQUNBLFlBQUE7RUFDQSxpQkFBQTtBQURKIiwic291cmNlc0NvbnRlbnQiOlsiXG4ubG9nby1yYWlvLXgsIC5zYXVkYWNhb3tcbiAgICB3aWR0aDogMTAwJTtcbiAgICBoZWlnaHQ6IGF1dG87XG4gICAgbWFyZ2luOiBhdXRvO1xuICAgIGRpc3BsYXk6IGZsZXg7XG4gICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gIH1cblxuICAubXNnU2F1ZGFjYW8ge1xuICAgIGNvbG9yOiAjMWQyMTQzO1xuICAgIGZvbnQtZmFtaWx5OiBuZXV0cmEgdGV4dDtcbiAgICBmb250LXdlaWdodDogYm9sZDtcbiAgfVxuXG4gIFxuICAubG9nby1yYWlvLXggaW1nIHtcbiAgICBtYXgtd2lkdGg6IDUwMHB4O1xuICAgIHdpZHRoOiAxMDAlO1xuICAgIGhlaWdodDogYXV0bztcbiAgICBvYmplY3QtZml0OiBjb3ZlcjtcbiAgfSJdLCJzb3VyY2VSb290IjoiIn0= */"]
+});
+>>>>>>> 7dc47decd359da0d8fcf67d6dd8185f53d03d034
 
 /***/ }),
 

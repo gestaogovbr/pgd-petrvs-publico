@@ -6,7 +6,7 @@ import { Base } from './base.model';
 
 export class QuestionarioRespostaPergunta extends Base {
   
-    public respostas: [] = [];
+    public resposta: any;
   
     public constructor(data?: any) { super(); this.initialization(data); }
 }

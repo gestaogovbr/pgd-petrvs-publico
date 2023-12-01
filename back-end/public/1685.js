@@ -2509,6 +2509,75 @@ class PlanejamentoOkrComponent extends src_app_modules_base_page_frame_base__WEB
     styles: [".okr_header[_ngcontent-%COMP%] {\n  min-width: 350px;\n  width: 30%;\n  text-align: center;\n  background: var(--petrvs-box-background);\n  border-bottom: 3px solid #000;\n  display: flex;\n  align-content: center;\n  justify-content: center;\n  flex-wrap: wrap;\n  flex-direction: column;\n}\n.okr_header[_ngcontent-%COMP%]   h1[_ngcontent-%COMP%], .okr_header[_ngcontent-%COMP%]   h6[_ngcontent-%COMP%] {\n  color: var(--bs-body-color);\n}\n\n.objetivo[_ngcontent-%COMP%], .entrega[_ngcontent-%COMP%], .unidade[_ngcontent-%COMP%], .indicador[_ngcontent-%COMP%], .atividades[_ngcontent-%COMP%] {\n  min-width: 350px;\n  border-right-style: solid;\n  padding: 10px;\n  background: var(--petrvs-box-background);\n}\n\n.objetivo[_ngcontent-%COMP%] {\n  width: 30%;\n}\n\n.unidades[_ngcontent-%COMP%], .header_unidades[_ngcontent-%COMP%] {\n  width: 70%;\n}\n\n.entrega[_ngcontent-%COMP%], .header_resultados[_ngcontent-%COMP%] {\n  min-width: 550px;\n}\n\n.unidade[_ngcontent-%COMP%], .header_unidade[_ngcontent-%COMP%] {\n  min-width: 250px;\n}\n\n.entrega[_ngcontent-%COMP%], .atividades[_ngcontent-%COMP%] {\n  margin-bottom: 5px;\n}\n\n.atividades[_ngcontent-%COMP%] {\n  visibility: hidden;\n}\n\n.atividadesVisivel[_ngcontent-%COMP%] {\n  visibility: visible;\n}\n\n.atividade[_ngcontent-%COMP%] {\n  border-bottom: 1px solid #ddd;\n  padding: 5px 0;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvbW9kdWxlcy9nZXN0YW8vcGxhbmVqYW1lbnRvLWluc3RpdHVjaW9uYWwvcGxhbmVqYW1lbnRvLW9rci9wbGFuZWphbWVudG8tb2tyLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksZ0JBQUE7RUFDQSxVQUFBO0VBQ0Esa0JBQUE7RUFDQSx3Q0FBQTtFQUNBLDZCQUFBO0VBQ0EsYUFBQTtFQUNBLHFCQUFBO0VBQ0EsdUJBQUE7RUFDQSxlQUFBO0VBQ0Esc0JBQUE7QUFDSjtBQUFJO0VBQ0ksMkJBQUE7QUFFUjs7QUFFQTtFQUNJLGdCQUFBO0VBQ0EseUJBQUE7RUFDQSxhQUFBO0VBQ0Esd0NBQUE7QUFDSjs7QUFDQTtFQUNJLFVBQUE7QUFFSjs7QUFBQTtFQUNJLFVBQUE7QUFHSjs7QUFBQTtFQUNJLGdCQUFBO0FBR0o7O0FBREE7RUFDSSxnQkFBQTtBQUlKOztBQUZBO0VBQ0ksa0JBQUE7QUFLSjs7QUFGQTtFQUNJLGtCQUFBO0FBS0o7O0FBSEE7RUFDSSxtQkFBQTtBQU1KOztBQUhBO0VBQ0ksNkJBQUE7RUFDQSxjQUFBO0FBTUoiLCJzb3VyY2VzQ29udGVudCI6WyIub2tyX2hlYWRlciB7XG4gICAgbWluLXdpZHRoOiAzNTBweDtcbiAgICB3aWR0aDogMzAlO1xuICAgIHRleHQtYWxpZ246IGNlbnRlcjtcbiAgICBiYWNrZ3JvdW5kOiB2YXIoLS1wZXRydnMtYm94LWJhY2tncm91bmQpO1xuICAgIGJvcmRlci1ib3R0b206IDNweCBzb2xpZCAjMDAwO1xuICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgYWxpZ24tY29udGVudDogY2VudGVyO1xuICAgIGp1c3RpZnktY29udGVudDogY2VudGVyO1xuICAgIGZsZXgtd3JhcDogd3JhcDtcbiAgICBmbGV4LWRpcmVjdGlvbjogY29sdW1uO1xuICAgIGgxLCBoNiB7XG4gICAgICAgIGNvbG9yOiB2YXIoLS1icy1ib2R5LWNvbG9yKTtcbiAgICB9XG59XG5cbi5vYmpldGl2bywgLmVudHJlZ2EsIC51bmlkYWRlLCAuaW5kaWNhZG9yLCAuYXRpdmlkYWRlcyB7XG4gICAgbWluLXdpZHRoOiAzNTBweDtcbiAgICBib3JkZXItcmlnaHQtc3R5bGU6IHNvbGlkO1xuICAgIHBhZGRpbmc6IDEwcHg7XG4gICAgYmFja2dyb3VuZDogdmFyKC0tcGV0cnZzLWJveC1iYWNrZ3JvdW5kKTtcbn1cbi5vYmpldGl2byB7XG4gICAgd2lkdGg6IDMwJTtcbn1cbi51bmlkYWRlcywgIC5oZWFkZXJfdW5pZGFkZXMge1xuICAgIHdpZHRoOiA3MCU7XG59XG5cbi5lbnRyZWdhLCAuaGVhZGVyX3Jlc3VsdGFkb3Mge1xuICAgIG1pbi13aWR0aDogNTUwcHg7XG59XG4udW5pZGFkZSwgLmhlYWRlcl91bmlkYWRlIHtcbiAgICBtaW4td2lkdGg6IDI1MHB4O1xufVxuLmVudHJlZ2EsIC5hdGl2aWRhZGVzIHtcbiAgICBtYXJnaW4tYm90dG9tOiA1cHg7XG59XG5cbi5hdGl2aWRhZGVzIHsgICAgXG4gICAgdmlzaWJpbGl0eTogaGlkZGVuO1xufVxuLmF0aXZpZGFkZXNWaXNpdmVsIHtcbiAgICB2aXNpYmlsaXR5OiB2aXNpYmxlO1xufVxuXG4uYXRpdmlkYWRlIHtcbiAgICBib3JkZXItYm90dG9tOiAxcHggc29saWQgI2RkZDtcbiAgICBwYWRkaW5nOiA1cHggMDtcbn1cblxuLm9rcl9oZWFkZXIge1xuICAgIFxufSJdLCJzb3VyY2VSb290IjoiIn0= */"]
   });
 }
+<<<<<<< HEAD
+=======
+_class = PlanejamentoOkrComponent;
+_class.ɵfac = function PlanejamentoOkrComponent_Factory(t) {
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_11__.Injector));
+};
+_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdefineComponent"]({
+  type: _class,
+  selectors: [["planejamento-okr"]],
+  viewQuery: function PlanejamentoOkrComponent_Query(rf, ctx) {
+    if (rf & 1) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵviewQuery"](_c0, 5);
+    }
+    if (rf & 2) {
+      let _t;
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵloadQuery"]()) && (ctx.planejamentoInstitucional = _t.first);
+    }
+  },
+  features: [_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵInheritDefinitionFeature"]],
+  decls: 32,
+  vars: 7,
+  consts: [["noButtons", "", 3, "form"], [1, "row", "mt-2"], ["controlName", "planejamento_id", 3, "size", "control", "items", "change"], ["planejamentoInstitucional", ""], ["autoHeightDisabled", "false", "track", "all"], [1, "d-flex", "justify-content-between", "mt-4"], [1, "okr_header"], [1, "header_unidades"], [1, "d-flex"], [1, "okr_header", "header_unidade", "w-25"], [1, "flex-fill"], [1, "d-flex", "justify-content-between"], [1, "okr_header", "header_resultados", "w-100"], [1, "d-flex", "flex-column", "justify-content-between", "mt-4"], ["class", "mb-2", 4, "ngFor", "ngForOf"], ["objetivoTmpl", ""], ["entregaTmpl", ""], [1, "mb-2"], [1, "d-flex", "justify-content-start"], [3, "ngTemplateOutlet", "ngTemplateOutletContext"], [1, "unidades"], [4, "ngFor", "ngForOf"], [1, "d-flex", "mb-1", "align-items-stretch"], [1, "unidade", "w-25"], [1, "entregas", "flex-fill"], [1, "d-flex", "flex-column"], [1, "objetivo"], [1, "d-flex", "justify-content-between", "align-items-center"], [1, "btn", 3, "click"], [1, "bi", "bi-chevron-right"], [1, "d-flex", "justify-content-between", "align-items-stretch", "entrega-geral"], [1, "entrega", "flex-fill"], [1, "d-flex", "align-items-center"], [1, "w-100"], ["color", "success", 3, "value", "goal"], [1, "ms-2"], ["icon", "bi bi-graph-up-arrow", "color", "light", "hint", "Planejada", 3, "textValue"], ["icon", "bi bi-check-lg", "color", "light", "hint", "Realizada", 3, "textValue"], [1, "atividades"], [1, "atividade"], [1, "m-0"], [3, "data", "color", "icon", "label", 4, "ngFor", "ngForOf"], [3, "data", "color", "icon", "label"]],
+  template: function PlanejamentoOkrComponent_Template(rf, ctx) {
+    if (rf & 1) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "editable-form", 0)(1, "div", 1)(2, "input-select", 2, 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵlistener"]("change", function PlanejamentoOkrComponent_Template_input_select_change_2_listener() {
+        return ctx.onPlanejamentoChange();
+      });
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](4, "ng-scrollbar", 4)(5, "div", 5)(6, "div", 6)(7, "h1");
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](8, "O");
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](9, "h6");
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](10, "Objetivos");
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](11, "div", 7)(12, "div", 8)(13, "div", 9)(14, "h6");
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](15);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](16, "div", 10)(17, "div", 11)(18, "div", 12)(19, "h1");
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](20, "K.R");
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](21, "h6");
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](22, "Resultados chaves");
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](23, "div", 6)(24, "h6");
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](25);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()()()()()()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](26, "div", 13);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](27, PlanejamentoOkrComponent_div_27_Template, 5, 6, "div", 14);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](28, PlanejamentoOkrComponent_ng_template_28_Template, 6, 3, "ng-template", null, 15, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](30, PlanejamentoOkrComponent_ng_template_30_Template, 17, 8, "ng-template", null, 16, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
+    }
+    if (rf & 2) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("form", ctx.form);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 12)("control", ctx.form.controls.planejamento_id)("items", ctx.planejamentos);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](13);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate"](ctx.lex.translate("Unidades"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](10);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtextInterpolate"](ctx.lex.translate("Atividades"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngForOf", ctx.objetivos);
+    }
+  },
+  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_12__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_12__.NgTemplateOutlet, _components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_7__.EditableFormComponent, _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_8__.InputSelectComponent, _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_9__.BadgeComponent, _components_progress_bar_progress_bar_component__WEBPACK_IMPORTED_MODULE_10__.ProgressBarComponent, ngx_scrollbar__WEBPACK_IMPORTED_MODULE_13__.NgScrollbar],
+  styles: [".okr_header[_ngcontent-%COMP%] {\n  min-width: 350px;\n  width: 30%;\n  text-align: center;\n  background: var(--petrvs-box-background);\n  border-bottom: 3px solid #000;\n  display: flex;\n  align-content: center;\n  justify-content: center;\n  flex-wrap: wrap;\n  flex-direction: column;\n}\n.okr_header[_ngcontent-%COMP%]   h1[_ngcontent-%COMP%], .okr_header[_ngcontent-%COMP%]   h6[_ngcontent-%COMP%] {\n  color: var(--bs-body-color);\n}\n\n.objetivo[_ngcontent-%COMP%], .entrega[_ngcontent-%COMP%], .unidade[_ngcontent-%COMP%], .indicador[_ngcontent-%COMP%], .atividades[_ngcontent-%COMP%] {\n  min-width: 350px;\n  border-right-style: solid;\n  padding: 10px;\n  background: var(--petrvs-box-background);\n}\n\n.objetivo[_ngcontent-%COMP%] {\n  width: 30%;\n}\n\n.unidades[_ngcontent-%COMP%], .header_unidades[_ngcontent-%COMP%] {\n  width: 70%;\n}\n\n.entrega[_ngcontent-%COMP%], .header_resultados[_ngcontent-%COMP%] {\n  min-width: 550px;\n}\n\n.unidade[_ngcontent-%COMP%], .header_unidade[_ngcontent-%COMP%] {\n  min-width: 250px;\n}\n\n.entrega[_ngcontent-%COMP%], .atividades[_ngcontent-%COMP%] {\n  margin-bottom: 5px;\n}\n\n.atividades[_ngcontent-%COMP%] {\n  visibility: hidden;\n}\n\n.atividadesVisivel[_ngcontent-%COMP%] {\n  visibility: visible;\n}\n\n.atividade[_ngcontent-%COMP%] {\n  border-bottom: 1px solid #ddd;\n  padding: 5px 0;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvbW9kdWxlcy9nZXN0YW8vcGxhbmVqYW1lbnRvLWluc3RpdHVjaW9uYWwvcGxhbmVqYW1lbnRvLW9rci9wbGFuZWphbWVudG8tb2tyLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksZ0JBQUE7RUFDQSxVQUFBO0VBQ0Esa0JBQUE7RUFDQSx3Q0FBQTtFQUNBLDZCQUFBO0VBQ0EsYUFBQTtFQUNBLHFCQUFBO0VBQ0EsdUJBQUE7RUFDQSxlQUFBO0VBQ0Esc0JBQUE7QUFDSjtBQUFJO0VBQ0ksMkJBQUE7QUFFUjs7QUFFQTtFQUNJLGdCQUFBO0VBQ0EseUJBQUE7RUFDQSxhQUFBO0VBQ0Esd0NBQUE7QUFDSjs7QUFDQTtFQUNJLFVBQUE7QUFFSjs7QUFBQTtFQUNJLFVBQUE7QUFHSjs7QUFBQTtFQUNJLGdCQUFBO0FBR0o7O0FBREE7RUFDSSxnQkFBQTtBQUlKOztBQUZBO0VBQ0ksa0JBQUE7QUFLSjs7QUFGQTtFQUNJLGtCQUFBO0FBS0o7O0FBSEE7RUFDSSxtQkFBQTtBQU1KOztBQUhBO0VBQ0ksNkJBQUE7RUFDQSxjQUFBO0FBTUoiLCJzb3VyY2VzQ29udGVudCI6WyIub2tyX2hlYWRlciB7XG4gICAgbWluLXdpZHRoOiAzNTBweDtcbiAgICB3aWR0aDogMzAlO1xuICAgIHRleHQtYWxpZ246IGNlbnRlcjtcbiAgICBiYWNrZ3JvdW5kOiB2YXIoLS1wZXRydnMtYm94LWJhY2tncm91bmQpO1xuICAgIGJvcmRlci1ib3R0b206IDNweCBzb2xpZCAjMDAwO1xuICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgYWxpZ24tY29udGVudDogY2VudGVyO1xuICAgIGp1c3RpZnktY29udGVudDogY2VudGVyO1xuICAgIGZsZXgtd3JhcDogd3JhcDtcbiAgICBmbGV4LWRpcmVjdGlvbjogY29sdW1uO1xuICAgIGgxLCBoNiB7XG4gICAgICAgIGNvbG9yOiB2YXIoLS1icy1ib2R5LWNvbG9yKTtcbiAgICB9XG59XG5cbi5vYmpldGl2bywgLmVudHJlZ2EsIC51bmlkYWRlLCAuaW5kaWNhZG9yLCAuYXRpdmlkYWRlcyB7XG4gICAgbWluLXdpZHRoOiAzNTBweDtcbiAgICBib3JkZXItcmlnaHQtc3R5bGU6IHNvbGlkO1xuICAgIHBhZGRpbmc6IDEwcHg7XG4gICAgYmFja2dyb3VuZDogdmFyKC0tcGV0cnZzLWJveC1iYWNrZ3JvdW5kKTtcbn1cbi5vYmpldGl2byB7XG4gICAgd2lkdGg6IDMwJTtcbn1cbi51bmlkYWRlcywgIC5oZWFkZXJfdW5pZGFkZXMge1xuICAgIHdpZHRoOiA3MCU7XG59XG5cbi5lbnRyZWdhLCAuaGVhZGVyX3Jlc3VsdGFkb3Mge1xuICAgIG1pbi13aWR0aDogNTUwcHg7XG59XG4udW5pZGFkZSwgLmhlYWRlcl91bmlkYWRlIHtcbiAgICBtaW4td2lkdGg6IDI1MHB4O1xufVxuLmVudHJlZ2EsIC5hdGl2aWRhZGVzIHtcbiAgICBtYXJnaW4tYm90dG9tOiA1cHg7XG59XG5cbi5hdGl2aWRhZGVzIHsgICAgXG4gICAgdmlzaWJpbGl0eTogaGlkZGVuO1xufVxuLmF0aXZpZGFkZXNWaXNpdmVsIHtcbiAgICB2aXNpYmlsaXR5OiB2aXNpYmxlO1xufVxuXG4uYXRpdmlkYWRlIHtcbiAgICBib3JkZXItYm90dG9tOiAxcHggc29saWQgI2RkZDtcbiAgICBwYWRkaW5nOiA1cHggMDtcbn1cblxuLm9rcl9oZWFkZXIge1xuICAgIFxufSJdLCJzb3VyY2VSb290IjoiIn0= */"]
+});
+>>>>>>> 7dc47decd359da0d8fcf67d6dd8185f53d03d034
 
 /***/ }),
 
