@@ -25,6 +25,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/input/input-datetime/input-datetime.component */ 84495);
 /* harmony import */ var _components_top_alert_top_alert_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../../components/top-alert/top-alert.component */ 50933);
 
+var _class;
 
 
 
@@ -131,69 +132,70 @@ class AfastamentoFormComponent extends src_app_modules_base_page_form_base__WEBP
     }
     return result;
   }
-  static #_ = this.ɵfac = function AfastamentoFormComponent_Factory(t) {
-    return new (t || AfastamentoFormComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_11__.Injector));
-  };
-  static #_2 = this.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdefineComponent"]({
-    type: AfastamentoFormComponent,
-    selectors: [["app-afastamento-form"]],
-    viewQuery: function AfastamentoFormComponent_Query(rf, ctx) {
-      if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵviewQuery"](_c0, 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵviewQuery"](_c1, 5);
-      }
-      if (rf & 2) {
-        let _t;
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵloadQuery"]()) && (ctx.tipoMotivoAfastamento = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵloadQuery"]()) && (ctx.usuario = _t.first);
-      }
-    },
-    features: [_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵInheritDefinitionFeature"]],
-    decls: 12,
-    vars: 16,
-    consts: [["type", "warning", 3, "message", 4, "ngIf"], ["initialFocus", "usuario_id", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "usuario_id", "required", "", 3, "size", "disabled", "dao"], ["usuario", ""], ["controlName", "tipo_motivo_afastamento_id", "required", "", 3, "size", "dao"], ["tipoMotivoAfastamento", ""], ["label", "In\u00EDcio", "controlName", "data_inicio", 3, "date", "size"], ["label", "Fim", "controlName", "data_fim", 3, "date", "size"], ["label", "Observa\u00E7\u00F5es", "controlName", "observacoes", 3, "size", "rows"], ["type", "warning", 3, "message"]],
-    template: function AfastamentoFormComponent_Template(rf, ctx) {
-      if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](0, AfastamentoFormComponent_top_alert_0_Template, 1, 1, "top-alert", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](1, "editable-form", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵlistener"]("submit", function AfastamentoFormComponent_Template_editable_form_submit_1_listener() {
-          return ctx.onSaveData();
-        })("cancel", function AfastamentoFormComponent_Template_editable_form_cancel_1_listener() {
-          return ctx.onCancel();
-        });
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](2, "div", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](3, "input-search", 3, 4)(5, "input-search", 5, 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](7, "div", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](8, "input-datetime", 7)(9, "input-datetime", 8);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](10, "div", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](11, "input-textarea", 9);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()();
-      }
-      if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", ctx.warning == null ? null : ctx.warning.length);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 6)("disabled", ctx.consolidacao ? "true" : undefined)("dao", ctx.usuarioDao);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 6)("dao", ctx.tipoMotivoAfastamentoDao);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("date", ctx.isHoras() ? undefined : "")("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("date", ctx.isHoras() ? undefined : "")("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 12)("rows", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("maxlength", 250);
-      }
-    },
-    dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_12__.NgIf, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_7__.InputSearchComponent, _components_input_input_textarea_input_textarea_component__WEBPACK_IMPORTED_MODULE_8__.InputTextareaComponent, _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_9__.InputDatetimeComponent, _components_top_alert_top_alert_component__WEBPACK_IMPORTED_MODULE_10__.TopAlertComponent],
-    styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
-  });
 }
+_class = AfastamentoFormComponent;
+_class.ɵfac = function AfastamentoFormComponent_Factory(t) {
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_11__.Injector));
+};
+_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdefineComponent"]({
+  type: _class,
+  selectors: [["app-afastamento-form"]],
+  viewQuery: function AfastamentoFormComponent_Query(rf, ctx) {
+    if (rf & 1) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵviewQuery"](_c0, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵviewQuery"](_c1, 5);
+    }
+    if (rf & 2) {
+      let _t;
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵloadQuery"]()) && (ctx.tipoMotivoAfastamento = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵloadQuery"]()) && (ctx.usuario = _t.first);
+    }
+  },
+  features: [_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵInheritDefinitionFeature"]],
+  decls: 12,
+  vars: 16,
+  consts: [["type", "warning", 3, "message", 4, "ngIf"], ["initialFocus", "usuario_id", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["controlName", "usuario_id", "required", "", 3, "size", "disabled", "dao"], ["usuario", ""], ["controlName", "tipo_motivo_afastamento_id", "required", "", 3, "size", "dao"], ["tipoMotivoAfastamento", ""], ["label", "In\u00EDcio", "controlName", "data_inicio", 3, "date", "size"], ["label", "Fim", "controlName", "data_fim", 3, "date", "size"], ["label", "Observa\u00E7\u00F5es", "controlName", "observacoes", 3, "size", "rows"], ["type", "warning", 3, "message"]],
+  template: function AfastamentoFormComponent_Template(rf, ctx) {
+    if (rf & 1) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](0, AfastamentoFormComponent_top_alert_0_Template, 1, 1, "top-alert", 0);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](1, "editable-form", 1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵlistener"]("submit", function AfastamentoFormComponent_Template_editable_form_submit_1_listener() {
+        return ctx.onSaveData();
+      })("cancel", function AfastamentoFormComponent_Template_editable_form_cancel_1_listener() {
+        return ctx.onCancel();
+      });
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](2, "div", 2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](3, "input-search", 3, 4)(5, "input-search", 5, 6);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](7, "div", 2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](8, "input-datetime", 7)(9, "input-datetime", 8);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](10, "div", 2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](11, "input-textarea", 9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()();
+    }
+    if (rf & 2) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", ctx.warning == null ? null : ctx.warning.length);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 6)("disabled", ctx.consolidacao ? "true" : undefined)("dao", ctx.usuarioDao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 6)("dao", ctx.tipoMotivoAfastamentoDao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("date", ctx.isHoras() ? undefined : "")("size", 6);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("date", ctx.isHoras() ? undefined : "")("size", 6);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 12)("rows", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("maxlength", 250);
+    }
+  },
+  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_12__.NgIf, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_7__.InputSearchComponent, _components_input_input_textarea_input_textarea_component__WEBPACK_IMPORTED_MODULE_8__.InputTextareaComponent, _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_9__.InputDatetimeComponent, _components_top_alert_top_alert_component__WEBPACK_IMPORTED_MODULE_10__.TopAlertComponent],
+  styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
+});
 
 /***/ }),
 
@@ -222,6 +224,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_grid_pagination_pagination_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../../components/grid/pagination/pagination.component */ 42704);
 /* harmony import */ var _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../../components/input/input-search/input-search.component */ 32802);
 /* harmony import */ var _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../../../components/input/input-datetime/input-datetime.component */ 84495);
+var _class;
 
 
 
@@ -362,94 +365,95 @@ class AfastamentoListComponent extends src_app_modules_base_page_list_base__WEBP
   filtro() {
     this.listagemInicial = false;
   }
-  static #_ = this.ɵfac = function AfastamentoListComponent_Factory(t) {
-    return new (t || AfastamentoListComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_13__.Injector));
-  };
-  static #_2 = this.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdefineComponent"]({
-    type: AfastamentoListComponent,
-    selectors: [["app-afastamento-list"]],
-    viewQuery: function AfastamentoListComponent_Query(rf, ctx) {
-      if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵviewQuery"](src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__.GridComponent, 5);
-      }
-      if (rf & 2) {
-        let _t;
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵloadQuery"]()) && (ctx.grid = _t.first);
-      }
-    },
-    features: [_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵInheritDefinitionFeature"]],
-    decls: 26,
-    vars: 32,
-    consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "hasAdd", "hasEdit"], [4, "ngIf"], [3, "form", "where", "submit", "collapseChange", "collapsed", "deleted"], [1, "row"], ["controlName", "usuario_id", 3, "size", "control", "dao"], ["usuario", ""], ["controlName", "tipo_motivo_afastamento_id", 3, "size", "control", "dao"], ["tipoMotivoAfastamento", ""], ["date", "", "label", "In\u00EDcio", "controlName", "data_inicio", 3, "size", "click"], ["date", "", "label", "Fim", "controlName", "data_fim", 3, "size", "click"], [3, "title", "template"], ["columnUsuario", ""], ["columnMotivoAfastamento", ""], ["title", "In\u00EDcio", 3, "template"], ["columnInicioAfastamento", ""], ["title", "Fim", 3, "template"], ["columnFimAfastamento", ""], ["title", "Observa\u00E7\u00F5es", "field", "observacoes"], ["type", "options", 3, "onEdit", "options"], [3, "rows"]],
-    template: function AfastamentoListComponent_Template(rf, ctx) {
-      if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](0, "grid", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](1, AfastamentoListComponent_toolbar_1_Template, 1, 0, "toolbar", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](2, "filter", 2)(3, "div", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelement"](4, "input-search", 4, 5)(6, "input-search", 6, 7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](8, "input-datetime", 8);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵlistener"]("click", function AfastamentoListComponent_Template_input_datetime_click_8_listener() {
-          return ctx.filtro();
-        });
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](9, "input-datetime", 9);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵlistener"]("click", function AfastamentoListComponent_Template_input_datetime_click_9_listener() {
-          return ctx.filtro();
-        });
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]()()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](10, "columns")(11, "column", 10);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](12, AfastamentoListComponent_ng_template_12_Template, 2, 1, "ng-template", null, 11, _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplateRefExtractor"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](14, "column", 10);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](15, AfastamentoListComponent_ng_template_15_Template, 4, 6, "ng-template", null, 12, _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplateRefExtractor"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](17, "column", 13);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](18, AfastamentoListComponent_ng_template_18_Template, 2, 1, "ng-template", null, 14, _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplateRefExtractor"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](20, "column", 15);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](21, AfastamentoListComponent_ng_template_21_Template, 2, 1, "ng-template", null, 16, _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplateRefExtractor"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelement"](23, "column", 17)(24, "column", 18);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelement"](25, "pagination", 19);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]();
-      }
-      if (rf & 2) {
-        const _r3 = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵreference"](13);
-        const _r5 = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵreference"](16);
-        const _r7 = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵreference"](19);
-        const _r9 = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵreference"](22);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("hasAdd", ctx.auth.hasPermissionTo("MOD_AFT_INCL"))("hasEdit", ctx.auth.hasPermissionTo("MOD_AFT_EDT"));
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("ngIf", !ctx.selectable);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", ctx.filterCollapsed)("deleted", ctx.auth.hasPermissionTo("MOD_AUDIT_DEL"));
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.usuario_id)("dao", ctx.usuarioDao);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.tipo_motivo_afastamento_id)("dao", ctx.tipoMotivoAfastamentoDao);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("title", ctx.lex.translate("Usu\u00E1rio"))("template", _r3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("title", ctx.lex.translate("Motivo"))("template", _r5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("template", _r7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("template", _r9);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("onEdit", ctx.edit)("options", ctx.options);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("rows", ctx.rowsLimit);
-      }
-    },
-    dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_14__.NgIf, src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_6__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_7__.ColumnComponent, _components_grid_filter_filter_component__WEBPACK_IMPORTED_MODULE_8__.FilterComponent, _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_9__.ToolbarComponent, _components_grid_pagination_pagination_component__WEBPACK_IMPORTED_MODULE_10__.PaginationComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_11__.InputSearchComponent, _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_12__.InputDatetimeComponent],
-    styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
-  });
 }
+_class = AfastamentoListComponent;
+_class.ɵfac = function AfastamentoListComponent_Factory(t) {
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_13__.Injector));
+};
+_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdefineComponent"]({
+  type: _class,
+  selectors: [["app-afastamento-list"]],
+  viewQuery: function AfastamentoListComponent_Query(rf, ctx) {
+    if (rf & 1) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵviewQuery"](src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__.GridComponent, 5);
+    }
+    if (rf & 2) {
+      let _t;
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵloadQuery"]()) && (ctx.grid = _t.first);
+    }
+  },
+  features: [_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵInheritDefinitionFeature"]],
+  decls: 26,
+  vars: 32,
+  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "hasAdd", "hasEdit"], [4, "ngIf"], [3, "form", "where", "submit", "collapseChange", "collapsed", "deleted"], [1, "row"], ["controlName", "usuario_id", 3, "size", "control", "dao"], ["usuario", ""], ["controlName", "tipo_motivo_afastamento_id", 3, "size", "control", "dao"], ["tipoMotivoAfastamento", ""], ["date", "", "label", "In\u00EDcio", "controlName", "data_inicio", 3, "size", "click"], ["date", "", "label", "Fim", "controlName", "data_fim", 3, "size", "click"], [3, "title", "template"], ["columnUsuario", ""], ["columnMotivoAfastamento", ""], ["title", "In\u00EDcio", 3, "template"], ["columnInicioAfastamento", ""], ["title", "Fim", 3, "template"], ["columnFimAfastamento", ""], ["title", "Observa\u00E7\u00F5es", "field", "observacoes"], ["type", "options", 3, "onEdit", "options"], [3, "rows"]],
+  template: function AfastamentoListComponent_Template(rf, ctx) {
+    if (rf & 1) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](0, "grid", 0);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](1, AfastamentoListComponent_toolbar_1_Template, 1, 0, "toolbar", 1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](2, "filter", 2)(3, "div", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelement"](4, "input-search", 4, 5)(6, "input-search", 6, 7);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](8, "input-datetime", 8);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵlistener"]("click", function AfastamentoListComponent_Template_input_datetime_click_8_listener() {
+        return ctx.filtro();
+      });
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](9, "input-datetime", 9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵlistener"]("click", function AfastamentoListComponent_Template_input_datetime_click_9_listener() {
+        return ctx.filtro();
+      });
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]()()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](10, "columns")(11, "column", 10);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](12, AfastamentoListComponent_ng_template_12_Template, 2, 1, "ng-template", null, 11, _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](14, "column", 10);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](15, AfastamentoListComponent_ng_template_15_Template, 4, 6, "ng-template", null, 12, _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](17, "column", 13);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](18, AfastamentoListComponent_ng_template_18_Template, 2, 1, "ng-template", null, 14, _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](20, "column", 15);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](21, AfastamentoListComponent_ng_template_21_Template, 2, 1, "ng-template", null, 16, _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelement"](23, "column", 17)(24, "column", 18);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelement"](25, "pagination", 19);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]();
+    }
+    if (rf & 2) {
+      const _r3 = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵreference"](13);
+      const _r5 = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵreference"](16);
+      const _r7 = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵreference"](19);
+      const _r9 = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵreference"](22);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("hasAdd", ctx.auth.hasPermissionTo("MOD_AFT_INCL"))("hasEdit", ctx.auth.hasPermissionTo("MOD_AFT_EDT"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("ngIf", !ctx.selectable);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", ctx.filterCollapsed)("deleted", ctx.auth.hasPermissionTo("MOD_AUDIT_DEL"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.usuario_id)("dao", ctx.usuarioDao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.tipo_motivo_afastamento_id)("dao", ctx.tipoMotivoAfastamentoDao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("title", ctx.lex.translate("Usu\u00E1rio"))("template", _r3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("title", ctx.lex.translate("Motivo"))("template", _r5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("template", _r7);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("template", _r9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](4);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("onEdit", ctx.edit)("options", ctx.options);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("rows", ctx.rowsLimit);
+    }
+  },
+  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_14__.NgIf, src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_6__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_7__.ColumnComponent, _components_grid_filter_filter_component__WEBPACK_IMPORTED_MODULE_8__.FilterComponent, _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_9__.ToolbarComponent, _components_grid_pagination_pagination_component__WEBPACK_IMPORTED_MODULE_10__.PaginationComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_11__.InputSearchComponent, _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_12__.InputDatetimeComponent],
+  styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
+});
 
 /***/ }),
 
@@ -469,6 +473,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _afastamento_form_afastamento_form_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./afastamento-form/afastamento-form.component */ 44634);
 /* harmony import */ var _afastamento_list_afastamento_list_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./afastamento-list/afastamento-list.component */ 44606);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 51197);
+var _class;
 
 
 
@@ -524,17 +529,17 @@ const routes = [{
     modal: true
   }
 }];
-class AfastamentoRoutingModule {
-  static #_ = this.ɵfac = function AfastamentoRoutingModule_Factory(t) {
-    return new (t || AfastamentoRoutingModule)();
-  };
-  static #_2 = this.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineNgModule"]({
-    type: AfastamentoRoutingModule
-  });
-  static #_3 = this.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineInjector"]({
-    imports: [_angular_router__WEBPACK_IMPORTED_MODULE_5__.RouterModule.forChild(routes), _angular_router__WEBPACK_IMPORTED_MODULE_5__.RouterModule]
-  });
-}
+class AfastamentoRoutingModule {}
+_class = AfastamentoRoutingModule;
+_class.ɵfac = function AfastamentoRoutingModule_Factory(t) {
+  return new (t || _class)();
+};
+_class.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineNgModule"]({
+  type: _class
+});
+_class.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineInjector"]({
+  imports: [_angular_router__WEBPACK_IMPORTED_MODULE_5__.RouterModule.forChild(routes), _angular_router__WEBPACK_IMPORTED_MODULE_5__.RouterModule]
+});
 (function () {
   (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵsetNgModuleScope"](AfastamentoRoutingModule, {
     imports: [_angular_router__WEBPACK_IMPORTED_MODULE_5__.RouterModule],
@@ -561,6 +566,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_components_components_module__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/components/components.module */ 10822);
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/forms */ 70997);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 51197);
+var _class;
 
 
 
@@ -568,17 +574,17 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-class AfastamentoModule {
-  static #_ = this.ɵfac = function AfastamentoModule_Factory(t) {
-    return new (t || AfastamentoModule)();
-  };
-  static #_2 = this.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineNgModule"]({
-    type: AfastamentoModule
-  });
-  static #_3 = this.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineInjector"]({
-    imports: [_angular_common__WEBPACK_IMPORTED_MODULE_5__.CommonModule, src_app_components_components_module__WEBPACK_IMPORTED_MODULE_3__.ComponentsModule, _angular_forms__WEBPACK_IMPORTED_MODULE_6__.ReactiveFormsModule, _afastamento_routing_module__WEBPACK_IMPORTED_MODULE_0__.AfastamentoRoutingModule]
-  });
-}
+class AfastamentoModule {}
+_class = AfastamentoModule;
+_class.ɵfac = function AfastamentoModule_Factory(t) {
+  return new (t || _class)();
+};
+_class.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineNgModule"]({
+  type: _class
+});
+_class.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineInjector"]({
+  imports: [_angular_common__WEBPACK_IMPORTED_MODULE_5__.CommonModule, src_app_components_components_module__WEBPACK_IMPORTED_MODULE_3__.ComponentsModule, _angular_forms__WEBPACK_IMPORTED_MODULE_6__.ReactiveFormsModule, _afastamento_routing_module__WEBPACK_IMPORTED_MODULE_0__.AfastamentoRoutingModule]
+});
 (function () {
   (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵsetNgModuleScope"](AfastamentoModule, {
     declarations: [_afastamento_form_afastamento_form_component__WEBPACK_IMPORTED_MODULE_1__.AfastamentoFormComponent, _afastamento_list_afastamento_list_component__WEBPACK_IMPORTED_MODULE_2__.AfastamentoListComponent],
