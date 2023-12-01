@@ -139,10 +139,13 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
     this.formLotacao.controls.unidade_lotacao_id.setValue(entity.lotacao?.unidade?.id);
+    if (this.action == "new") this.unidadesIntegrantes._items = [];
     this.unidadesIntegrantes?.loadData(entity);
   }
   initializeData(form) {
-    this.entity = new src_app_models_usuario_model__WEBPACK_IMPORTED_MODULE_6__.Usuario();
+    this.entity = new src_app_models_usuario_model__WEBPACK_IMPORTED_MODULE_6__.Usuario({
+      id: this.dao?.generateUuid()
+    });
     this.loadData(this.entity, form);
   }
   saveData(form) {
@@ -471,17 +474,19 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
     var _this2 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (entity.id) {
+        let integrantes = [];
         try {
-          _this2.grid.loading = true;
-          _this2.items = _this2._items == undefined ? yield _this2.integranteDao.loadIntegrantes("", entity.id).then(resposta => {
-            _this2.entity = resposta.usuario;
-            if (_this2.isNoPersist) {
-              _this2._items = [];
-              resposta.integrantes.forEach(i => _this2._items?.push(_this2.integranteService.converterEmVinculo(i, i.id, _this2.entity.id, i.atribuicoes)));
-            }
-            return _this2.integranteService.ordenar(resposta.integrantes.filter(x => x.atribuicoes?.length > 0));
-          }) : _this2.integranteService.ordenar(_this2._items.filter(x => x.atribuicoes?.length > 0));
+          if (_this2._items == undefined) {
+            _this2.grid.loading = true;
+            _this2._items = [];
+            yield _this2.integranteDao.loadIntegrantes("", entity.id).then(resposta => {
+              integrantes = resposta.integrantes.filter(x => x.atribuicoes?.length > 0);
+              if (!_this2.isNoPersist) _this2.entity = resposta.usuario;
+            });
+          }
         } finally {
+          integrantes.forEach(i => _this2._items?.push(_this2.integranteService.converterEmVinculo(i, i.id, entity.id, i.atribuicoes)));
+          _this2.items = _this2.integranteService.ordenar(_this2._items || []);
           _this2.cdRef.detectChanges();
           _this2.grid.loading = false;
         }
@@ -500,7 +505,6 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
         unidade_id: "",
         atribuicoes: []
       };
-      _this3._items?.push(novo);
       return novo;
     })();
   }

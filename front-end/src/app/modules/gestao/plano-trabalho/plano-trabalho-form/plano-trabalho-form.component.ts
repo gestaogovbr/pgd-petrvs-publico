@@ -205,17 +205,16 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       selected.entity.unidades.every( async (element: any, index: any) => {
         if (selected.entity.lotacao.unidade_id == element.id) {
           if(!this.form?.controls.programa_id.value) {
-            let habilitado = -1;
-            selected.entity.participacoes_programas.every((programa: any, index: any) => {
-              habilitado = programa.habilitado == 1 ? index : habilitado;
-              return habilitado < 0;
+            let paiId = "";
+            selected.entity.unidades.every( (unidade: any) => {
+              paiId = unidade.id == element.id ? unidade.path.slice(1,37) : "";
+              return paiId.length < 2;
             });
-            if (habilitado >= 0) {
-              await this.programaDao.query({where : [["id","==",selected.entity.participacoes_programas[habilitado].programa_id]]}).asPromise().then( programa => {
-                this.preencheUnidade(element);
-                this.preenchePrograma(programa[0]!);
-              });
-            } else this.preencheUnidade(element);
+            console.log(paiId)
+            await this.programaDao.query({where : [["unidade_id","==",paiId,],["data_inicio","<",new Date()],["data_fim",">",new Date()]]}).asPromise().then( programa => {
+              this.preencheUnidade(element);
+              this.preenchePrograma(programa[0]!);
+            });
           }
           return false;
         } else return true;
