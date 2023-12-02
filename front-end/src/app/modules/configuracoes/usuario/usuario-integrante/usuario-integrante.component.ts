@@ -154,9 +154,12 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
             Object.assign(row, { '_status': "DELETE", 'atribuicoes': [] });
             return false;
           }
+        } catch (e: any) {
+          this.loading = false;
         } finally {
           this.loading = false;
         }
+        //return msg ? false : true;
       }
     }
     return false;

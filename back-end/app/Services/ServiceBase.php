@@ -408,7 +408,7 @@ class ServiceBase extends DynamicMethods
             $fieldPath = explode(".", $order[0]);
             $field = array_pop($fieldPath);
             $source = $this->applyJoin($query, $data, $fieldPath, $model);
-            $aliasField = "_" . str_replace(".", "_", $order[0]);
+           $aliasField = "_" . str_replace(".", "_", $order[0]);
             if(strtolower($order[1]) == "desc") {
                 $query->orderByDesc(DB::raw($aliasField));
             } else {
@@ -595,7 +595,7 @@ class ServiceBase extends DynamicMethods
      */
     public function query($data)
     {
-        $model = $this->getModel();
+      $model = $this->getModel();
         $table = $model->getTable();
         $data["select"] = array_map(fn($field) => str_contains($field, ".") ? $field : $table . "." . $field, $data['fields'] ?? ["*"]);
         $query = $model::query();

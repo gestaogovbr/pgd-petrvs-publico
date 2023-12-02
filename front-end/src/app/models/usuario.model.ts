@@ -94,6 +94,7 @@ export class Usuario extends Base implements HasNotificacao {
     public gerencia_entidade?: Entidade;
     public gerencia_substituta_entidade?: Entidade;
     public lotacao?: UnidadeIntegrante;
+    public lotacao_id?: string;
     public gerencia_titular?: UnidadeIntegrante;
 
     public afastamentos?: Afastamento[];

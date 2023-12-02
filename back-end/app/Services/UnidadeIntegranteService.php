@@ -135,6 +135,8 @@ class UnidadeIntegranteService extends ServiceBase
               throw $e;
           }
       }
+      // TODO: EXCLUIR EVENTUAIS VINCULOS QUE EXISTAM E QUE NÃO ESTÃO NO ARRAY $VINCULOS
+
       return $result;
     }
 
