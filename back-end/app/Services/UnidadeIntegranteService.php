@@ -38,12 +38,16 @@ class UnidadeIntegranteService extends ServiceBase
     public function saveIntegrante(array $vinculos, $transaction = true): array
     {
       $result = [];
+      $msg = "";
+
       foreach ($vinculos as $vinculo) {
           if($transaction) DB::beginTransaction();
           try {
               $usuario = Usuario::find($vinculo["usuario_id"]);
               $unidade = Unidade::find($vinculo["unidade_id"]);
+
               if (empty($unidade) || empty($usuario)) throw new ServerException("ValidateIntegrante", "Unidade/Usuário não existe no banco");
+
               $atribuicoesFinais = [];
               $integranteNovoOuExistente = UnidadeIntegrante::firstOrCreate(['unidade_id' => $unidade->id, 'usuario_id' => $usuario->id]);
               if ($usuario && !$vinculo["atribuicoes"]) {     // excluir o vínculo e suas atribuições
@@ -52,7 +56,7 @@ class UnidadeIntegranteService extends ServiceBase
                       $msg = "O vínculo de LOTADO não pode ser apagado, apenas transferido através da atribuição de lotação em outra unidade.";
                       array_push($atribuicoesFinais, "LOTADO");
                   } else {
-                      $integranteNovoOuExistente->deleteCascade();
+                      $integranteNovoOuExistoente->deleteCascade();
                       if($transaction) DB::commit();
                       return $result;
                   };
@@ -64,18 +68,22 @@ class UnidadeIntegranteService extends ServiceBase
                   $atualGestorDelegadoUnidade = $unidade->gestorDelegado ? $unidade->gestorDelegado->usuario : null;
                   $atualGestorSubstitutoUnidade = $unidade->gestorSubstituto ? $unidade->gestorSubstituto->usuario : null;
 
-                  $definirLotacao = function ($integranteNovoOuExistente) use ($unidadeLotacao, $unidade, $usuario, &$atribuicoesFinais) {
-                      if(!empty($unidadeLotacao->id) && $unidadeLotacao->id != $unidade->id) { 
+                  $definirLotacao = function ($integranteNovoOuExistente) use ($unidadeLotacao, $unidade, $usuario, &$atribuicoesFinais, &$msg) {
+                      if(!empty($unidadeLotacao->id) && $unidadeLotacao->id != $unidade->id) {
                         $usuario->lotacao->lotado->delete();
                         $unidadeLotacao = null;
                       }
-                      if(empty($unidadeLotacao->id)) UnidadeIntegranteAtribuicao::create(["atribuicao" => "LOTADO", "unidade_integrante_id" => $integranteNovoOuExistente->id])->save();
-                      array_push($atribuicoesFinais, "LOTADO");
+                      if (!$unidade->informal){
+                          if(empty($unidadeLotacao->id)) UnidadeIntegranteAtribuicao::create(["atribuicao" => "LOTADO", "unidade_integrante_id" => $integranteNovoOuExistente->id])->save();
+                          array_push($atribuicoesFinais, "LOTADO");
+                      } else{
+                          $msg = "O vínculo LOTADO não pode ser atribuído a uma unidade informal";
+                      }
                   };
 
                   $definirGerenciaTitular = function ($integranteNovoOuExistente) use ($unidadeGerenciaTitular, $atualGestorUnidade, $unidade, $usuario, $definirLotacao, &$atribuicoesFinais) {
                       $definirLotacao($integranteNovoOuExistente);
-                      if(!empty($atualGestorUnidade->id) && $atualGestorUnidade->id != $usuario->id) { 
+                      if(!empty($atualGestorUnidade->id) && $atualGestorUnidade->id != $usuario->id) {
                         $unidade->gestor->gestor->delete();
                         $atualGestorUnidade = null;
                       }
@@ -88,7 +96,7 @@ class UnidadeIntegranteService extends ServiceBase
                   };
 
                   $definirGerenciaDelegada = function ($integranteNovoOuExistente) use ($atualGestorDelegadoUnidade, $usuario, $unidade, &$atribuicoesFinais) {
-                      if(!empty($atualGestorDelegadoUnidade->id) && $atualGestorDelegadoUnidade->id != $usuario->id) { 
+                      if(!empty($atualGestorDelegadoUnidade->id) && $atualGestorDelegadoUnidade->id != $usuario->id) {
                         $unidade->gestorDelegado->gestorDelegado->delete();
                         $atualGestorDelegadoUnidade = null;
                       }
@@ -109,7 +117,7 @@ class UnidadeIntegranteService extends ServiceBase
                   if (in_array("GESTOR", $vinculo["atribuicoes"])) $definirGerenciaTitular($integranteNovoOuExistente); //else if(!empty($atualGestorUnidade->id) && $atualGestorUnidade->id == $usuario->id) array_push($atribuicoesFinais, "GESTOR");
                   if (in_array("GESTOR_DELEGADO", $vinculo["atribuicoes"])) $definirGerenciaDelegada($integranteNovoOuExistente); //else if(!empty($atualGestorDelegadoUnidade->id) && $atualGestorDelegadoUnidade->id == $usuario->id) array_push($atribuicoesFinais, "GESTOR_DELEGADO");
                   if (in_array("GESTOR_SUBSTITUTO", $vinculo["atribuicoes"])) $definirGerenciaSubstituta($integranteNovoOuExistente); //else if(!empty($atualGestorSubstitutoUnidade->id) && $atualGestorSubstitutoUnidade->id == $usuario->id) array_push($atribuicoesFinais, "GESTOR_SUBSTITUTO");
-                  
+
                   // Só salvar atribuições diferentes de lotação e gerência (Lotado, Gestor, Gestor_delegado, Gestor_substituto) e se ainda não existir
                   foreach (array_diff($vinculo["atribuicoes"], ['LOTADO', 'GESTOR', 'GESTOR_DELEGADO', 'GESTOR_SUBSTITUTO']) as $x) {
                       if(empty(UnidadeIntegranteAtribuicao::where('atribuicao', $x)->where('unidade_integrante_id', $integranteNovoOuExistente->id)->first())) {
@@ -120,8 +128,8 @@ class UnidadeIntegranteService extends ServiceBase
               }
               $atribuicoesFinais = array_values(array_unique($atribuicoesFinais));
               /* Excluir as atribuições remanescentes */
-              foreach($integranteNovoOuExistente->atribuicoes as $atribuicao) { 
-                  if(!in_array($atribuicao->atribuicao, $atribuicoesFinais)) $atribuicao->delete(); 
+              foreach($integranteNovoOuExistente->atribuicoes as $atribuicao) {
+                  if(!in_array($atribuicao->atribuicao, $atribuicoesFinais)) $atribuicao->delete();
               }
               if($transaction) DB::commit();
               array_push($result,[

@@ -1337,6 +1337,7 @@ class IN24_2023Seeder extends Seeder
             ),
         );
 
+        /*
         $planejamentos = array(
             array(
                 "id" => "84e9a49c-ecfe-4ee9-b426-fc1a7aa73eee",
@@ -2564,6 +2565,7 @@ class IN24_2023Seeder extends Seeder
                 "processo_pai_id" => "b126a603-84c6-4924-9657-f1dac5cd7bab",
             ),
         );
+        */
 
         $capacidades = array(
             array(
@@ -3547,10 +3549,14 @@ class IN24_2023Seeder extends Seeder
         Programa::insert($programas);
         EixoTematico::insert($eixos_tematicos);
         Entrega::insert($modelos_afericao_entregas);
+
+        /*
         Planejamento::insert($planejamentos);
         PlanejamentoObjetivo::insert($planejamentos_objetivos);
         CadeiaValor::insert($cadeias_valores);
         CadeiaValorProcesso::insert($cadeias_valores_processos);
+        */
+
         Capacidade::insert($capacidades);
 
         /*
@@ -3563,6 +3569,6 @@ class IN24_2023Seeder extends Seeder
                 throw $th;
             }
         } */
-        
+
     }
 }
