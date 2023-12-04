@@ -717,11 +717,15 @@ export class LookupService {
   ];
 
   public QUESTIONARIO_PERGUNTA_TIPO: LookupItem[] = [
-    { key: 'LISTA', value: 'Lista' },
+    { key: 'LISTA_UNICA', value: 'Única Escolha' },
+    { key: 'LISTA_MULTIPLA', value: 'Multipla Escolha' },
+    { key: 'LIVRE', value: 'Livre' },
+    { key: 'CLASSIFICACAO', value: 'Classificação' },
     { key: 'SWITCH', value: 'Sim/Não' },
-    { key: 'MULTIPLA', value: 'Resposta Múltipla' },
-    { key: 'UNICA', value: 'Resposta Única' }
+    { key: 'INTENSIDADE', value: 'Intensidade' },
+    { key: 'NUMERICA', value: 'Numérica' }
   ];
+ // "VISUAL" | "LISTA_UNICA" | "LISTA_MULTIPLA" | "LIVRE" | "TEMPO" | "NUMERICA" | "CLASSIFICACAO" | "SWICTH" | "NUMERICA" | "INTENSIDADE" | "ORDENACAO" | "LACUNA";
 
   public THEMES: LookupItem[] = [
     { key: 'light', value: "Branco (light)" },

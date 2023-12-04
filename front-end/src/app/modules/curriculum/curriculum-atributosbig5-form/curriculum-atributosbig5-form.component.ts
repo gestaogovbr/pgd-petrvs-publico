@@ -33,7 +33,7 @@ export class CurriculumAtributosbig5FormComponent implements OnInit {
     this.bigicoAmarelo="/assets/images/iconBigAmarelo.png";
     this.bigico="/assets/images/iconBig.png";
 
-    const range = document.getElementById('range') as HTMLInputElement;
+    /*const range = document.getElementById('range') as HTMLInputElement;
     console.log('RANGE-->',range)
      const rangeV = document.getElementById('rangeV');
           
@@ -47,33 +47,14 @@ export class CurriculumAtributosbig5FormComponent implements OnInit {
           };
     document.addEventListener('DOMContentLoaded', setValue);
     console.log(range)
-    //range.addEventListener('input', setValue);
+    //range.addEventListener('input', setValue);*/
 
   }
 
   ngOnInit(): void {
   }
 
-  public inicio(): void{
-    if ($('#big5').is(":hidden")){
-      $('#big5').show();
-      $('#lblinicio').text('Voltar')
-      $('#btnInicio').removeClass().addClass('btn btn-dark')
-
-    }
-    else{
-      $('#big5').hide();
-      $('#lblinicio').text('Iniciar')
-      $('#btnInicio').removeClass().addClass('btn btn-success')
-    }       
-  }
-
-  public onChangePerma(){
-    console.log()
-    let value = $('#rangePerma').val()
-    $('#lblPerma').text(value!.toString())
-  }
-
+  
   public onChangeValorSoft(soft:any){
     console.log(soft)
   }
