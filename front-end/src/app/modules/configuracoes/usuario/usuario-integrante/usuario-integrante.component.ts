@@ -10,7 +10,7 @@ import { Usuario } from 'src/app/models/usuario.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { IntegranteService } from 'src/app/services/integrante.service';
-
+//********************************************************************** */
 @Component({
   selector: 'usuario-integrante',
   templateUrl: './usuario-integrante.component.html',
