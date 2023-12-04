@@ -31,7 +31,7 @@ class EntidadeSeeder extends Seeder
             "updated_at" => $this->timenow,
             "deleted_at" => NULL,
             "sigla" => "MGI",
-            "nome" => "Ministério da Gestão e da Inovação em Serviços Públicos",
+            "nome" => "Ministério da Gestão e Inovação em Serviço Público",
             "abrangencia" => "NACIONAL",
             "codigo_ibge" => $this->brasilia->codigo_ibge,
             "uf" => $this->brasilia->uf,

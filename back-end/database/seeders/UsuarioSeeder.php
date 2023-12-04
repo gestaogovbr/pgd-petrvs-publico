@@ -146,7 +146,7 @@ class UsuarioSeeder extends Seeder
 
         // Inserção de usuários pilotos
         // Apresentação
-
+        /*
         $usuarios_pilotos = [
             [
                 'email' => 'wlaagile@gmail.com',
@@ -292,7 +292,7 @@ class UsuarioSeeder extends Seeder
                 'perfil_id' => $perfis->where('nome', 'Desenvolvedor')->first()->id,
                 'sexo' => 'MASCULINO',
             ]
-        ];
+        ];*/
 
         // Operação de inserção de usuários desenvolvedores
         $unidade_pai = Unidade::where('SIGLA', 'MGI')->first();
@@ -329,6 +329,7 @@ class UsuarioSeeder extends Seeder
             $lotacao->save();
         }
 
+        /*
         foreach($usuarios_pilotos as $usuario)
         {
             $user = Usuario::where('cpf', $usuario['cpf'])->first() ?? new Usuario();
@@ -360,5 +361,6 @@ class UsuarioSeeder extends Seeder
             ]);
             $lotacao->save();
         }
+        */
     }
 }

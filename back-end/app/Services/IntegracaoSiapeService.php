@@ -41,10 +41,14 @@ class IntegracaoSiapeService extends ServiceBase {
     }
 
     public function retornarUorgs($uorgInicial = 1){
-        $uorgsWsdl = ""; 
+        // Altera a uorg inicial caso seja
+        // especificado nas configurações do sistema.
+        $uorgInicial = $this->siapeCodUorg ? $this->siapeCodUorg : $uorgInicial;
+
+        $uorgsWsdl = "";
         $uorgsPetrvs = [ "uorg" => []];
         $date = new Datetime();
-        
+
         try {
             if(!empty($this->siape)){
                 $uorgsWsdl = $this->siape->listaUorgs(
@@ -57,11 +61,38 @@ class IntegracaoSiapeService extends ServiceBase {
 
                 $uorgsWsdl = $this->UtilService->object2array($uorgsWsdl);
                 $uorgsWsdl = $uorgsWsdl['Uorg'];
+
             }
         } catch (Throwable $e) {
             // Informa erro de conexão ao Web Service SIAPE e aborta procedimento.
             LogError::newError("Web Service Siape: erro de conexão.", $e->getMessage());
         }
+
+        // Remove da integração uorgs que não tiveram data_modificacao alteradas no SIAPE.
+        /*
+        $uorgs_para_consulta = [];
+
+        if($uorgsWsdl){
+            foreach($uorgsWsdl as $uo){
+                $uo_data = $date->createFromFormat('dmY', $uo['dataUltimaTransacao'])->format('Y-m-d 00:00:00');
+                $uo_data = $this->UtilService->asTimestamp($uo_data);
+
+                $query = DB::table('unidades')->where('codigo', $uo['codigo']);
+
+                if($query->value('codigo')){
+                    $unidade_datamodificacao = $this->UtilService->asTimestamp($query->value('datamodificacao'));
+
+                    if(is_null($unidade_datamodificacao) || ($unidade_datamodificacao < $uo_data)) {
+                        array_push($uorgs_para_consulta, $uo);
+                    } else {
+                        LogError::newWarn('Unidade lida do SIAPE: (' . $uo['codigo'] . ' - ' .  $uo['nome'] .') não possui atualização.');
+                    }
+                } else { // Se for nova, deve ser atualizada
+                    array_push($uorgs_para_consulta, $uo);
+                }
+            }
+        }
+        */
 
         try {
             if(!empty($uorgsWsdl)){
@@ -74,7 +105,7 @@ class IntegracaoSiapeService extends ServiceBase {
                             $this->siapeCpf,
                             $this->siapeCodOrgao,
                             $value['codigo']);
-    
+
                         $uorgWsdl = $this->UtilService->object2array($uorgWsdl);
                         if($this->UtilService->valueOrNull($uorgWsdl, "codUorgPagadora") == $this->siapeUpag){
                             // Identifica informações sobre município e demais variáveis.
@@ -87,9 +118,9 @@ class IntegracaoSiapeService extends ServiceBase {
                                     $uorgWsdl['fuso_horario'] = $consulta_sql['timezone'];
                                     }
                                 }
-                            
+
                             $value['dataUltimaTransacao'] = $date->createFromFormat('dmY', $value['dataUltimaTransacao'])->format('Y-m-d 00:00:00');
-    
+
                             $inserir_uorg = [
                                 'id_servo' => strval(intval($this->UtilService->valueOrNull($uorgWsdl, "codUorg"))) ?: "",
                                 'pai_servo' => strval(intval($this->UtilService->valueOrNull($uorgWsdl, "codUorgPai"))) ?: "",
@@ -111,7 +142,7 @@ class IntegracaoSiapeService extends ServiceBase {
                                 'logradouro' => $this->UtilService->valueOrNull($uorgWsdl, "logradouro") ?: "",
                                 'bairro' => $this->UtilService->valueOrNull($uorgWsdl, "bairro") ?: "",
                                 'cep' => $this->UtilService->valueOrNull($uorgWsdl, "cep") ?: "",
-                                'ptn_ge_coordenada' => $this->UtilService->valueOrNull($uorgWsdl, "ptn_ge_coordenada") ?: "", 
+                                'ptn_ge_coordenada' => $this->UtilService->valueOrNull($uorgWsdl, "ptn_ge_coordenada") ?: "",
                                 'municipio_siafi_siape' => $this->UtilService->valueOrNull($uorgWsdl, "codMunicipio") ?: "",
                                 'municipio_siscom' => $this->UtilService->valueOrNull($uorgWsdl, "codMunicipio") ?: "",
                                 'municipio_ibge' => $this->UtilService->valueOrNull($uorgWsdl, "codMunicipio") ?: "",
@@ -129,7 +160,7 @@ class IntegracaoSiapeService extends ServiceBase {
                         }
                       } else {
                             LogError::newWarn("Web Service Siape: Ausência de código uorg.");
-                      } 
+                      }
                 }
             }
             return $uorgsPetrvs;
@@ -236,7 +267,7 @@ class IntegracaoSiapeService extends ServiceBase {
                     if(!empty($dadosPessoais['dataNascimento'])){
                       $dadosPessoais['dataNascimento'] = $date->createFromFormat('dmY', $dadosPessoais['dataNascimento'])->format('Y-m-d 00:00:00');
                     }
-                  
+
                     if(!empty($dadosFuncionais['dataOcorrIngressoOrgao'])){
                       $dadosFuncionais['dataOcorrIngressoOrgao'] = $date->createFromFormat('dmY', $dadosFuncionais['dataOcorrIngressoOrgao'])->format('Y-m-d 00:00:00');
                     }
@@ -244,7 +275,7 @@ class IntegracaoSiapeService extends ServiceBase {
                     if(!empty($dadosFuncionais['codUorgExercicio'])){
                       $dadosFuncionais['codUorgExercicio'] = strval(intval($dadosFuncionais['codUorgExercicio']));
                     }
-                    
+
                     $Pessoa = [
                         'cpf_ativo' => true,
                         'data_modificacao' => $pessoa['dataUltimaTransacao'],

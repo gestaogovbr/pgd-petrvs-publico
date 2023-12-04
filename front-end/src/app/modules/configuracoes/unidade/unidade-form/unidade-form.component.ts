@@ -1,5 +1,5 @@
-import { Component, Injector, ViewChild } from '@angular/core';
-import { AbstractControl, FormGroup } from '@angular/forms';
+import { Component, Injector, ViewChild, OnChanges, ChangeDetectorRef} from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { InputSwitchComponent } from 'src/app/components/input/input-switch/input-switch.component';
@@ -48,7 +48,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
   public integranteAtribuicaoDao: UnidadeIntegranteAtribuicaoDaoService;
   public notificacao: NotificacaoService;
   public planoDataset: TemplateDataset[];
-  public informal: boolean = false;
+  public raiz: boolean = false;
 
   constructor(public injector: Injector) {
     super(injector, Unidade, UnidadeDaoService);
@@ -62,28 +62,28 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     this.modalWidth = 1200;
     this.planoDataset = this.planoTrabalhoDao.dataset();
     this.form = this.fh.FormBuilder({
-      codigo: { default: "" },
-      sigla: { default: "" },
-      nome: { default: "" },
-      path: { default: "" },
-      cidade_id: { default: "" },
-      uf: { default: "" },
-      instituidora: { default: 0 },
-      informal: { default: 0 },
-      atividades_arquivamento_automatico: { default: 1 },
-      distribuicao_forma_contagem_prazos: { default: "DIAS_UTEIS" },
-      entrega_forma_contagem_prazos: { default: "HORAS_UTEIS" },
-      notificacoes: { default: {} },
-      etiquetas: { default: [] },
-      unidade_pai_id: { default: "" },
-      entidade_id: { default: this.auth.unidade?.entidade_id },
-      etiqueta_texto: { default: "" },
-      etiqueta_icone: { default: null },
-      etiqueta_cor: { default: null },
-      expediente24: { default: true },
-      expediente: { default: null },
-      usar_expediente_entidade: { default: false },
-      texto_complementar_plano: { default: "" }
+      codigo: {default: ""},
+      sigla: {default: ""},
+      nome: {default: ""},
+      path: {default: ""},
+      cidade_id: {default: ""},
+      uf: {default: ""},
+      instituidora: {default: false},
+      informal: {default: false},
+      atividades_arquivamento_automatico: {default: 1},
+      distribuicao_forma_contagem_prazos: {default: "DIAS_UTEIS"},
+      entrega_forma_contagem_prazos: {default: "HORAS_UTEIS"},
+      notificacoes: {default: {}},
+      etiquetas: {default: []},
+      unidade_pai_id: {default: ""},
+      entidade_id: {default: this.auth.unidade?.entidade_id},
+      etiqueta_texto: {default: ""},
+      etiqueta_icone: {default: null},
+      etiqueta_cor: {default: null},
+      expediente24: {default: true},
+      expediente: {default: null},
+      usar_expediente_entidade: {default: false},
+      texto_complementar_plano: {default: ""}
     }, this.cdRef, this.validate);
     this.formGestor = this.fh.FormBuilder({
       gestor_id: { default: "" },
@@ -94,7 +94,9 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if (['sigla', 'nome', 'cidade_id', 'entidade_id', 'unidade_pai_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if(((['sigla', 'nome', 'cidade_id', 'entidade_id'].indexOf(controlName) >= 0) || (controlName == 'unidade_pai_id' && !this.raiz)) && !control.value?.length) {
+      result = "Obrigatório";
+    } else if(controlName == 'codigo' && this.form?.controls.informal?.value == !!control.value?.length) {
       result = "Obrigatório";
     }
     return result;
@@ -119,6 +121,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       this.entidade!.loadSearch(entity.entidade || entity.entidade_id)
     ]);
     entity.etiquetas = entity.etiquetas || [];
+    this.raiz = this.action == 'edit' && !this.entity?.unidade_pai_id;
     this.form!.patchValue(this.util.fillForm(formValue, entity));
     this.formGestor.controls.gestor_id.setValue(entity.gestor?.usuario_id);
     this.formGestor.controls.gestor_substituto_id.setValue(entity.gestor_substituto?.usuario_id);
@@ -204,8 +207,12 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     return "Editando " + this.lex.translate("Unidade") + ': ' + (entity?.sigla || "");
   }
 
-  public get is24hrs(): string | undefined {
-    return this.form?.controls.expediente24.value ? "" : undefined;
+  public onInformalChange(event: Event) {
+    if(this.form!.controls.informal.value) {
+      this.form!.controls.codigo.setValue("");
+      this.form!.controls.codigo.updateValueAndValidity();
+    }
+    this.cdRef.detectChanges();
   }
 
   public onUsarExpedienteEntidadeChange() {
