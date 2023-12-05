@@ -16,8 +16,10 @@ class PetrvsController extends ControllerBase
     public function checkPermissions($action, $request, $service, $unidade, $usuario) { }
 
     public function environmentConfig(Request $request) {
-        $url = $request->url();
-        $parsedUrl = parse_url($url);
+
+        //Get URL
+        $parsedUrl = parse_url($request->url());
+
         // Obtém o host (domínio) do URL
         $domain = $parsedUrl['host'];
 

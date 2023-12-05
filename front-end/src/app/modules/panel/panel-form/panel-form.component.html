@@ -20,7 +20,7 @@
                 <input-text [size]="6" label="CPF" controlName="cpf" [attr.maxlength]=15></input-text>
                 <input-text [size]="6" label="Apelido" controlName="apelido" [attr.maxlength]=250></input-text>
             </div>
-            <separator title="Notificações"></separator>
+<!--            <separator title="Notificações"></separator>
             <div class="row">
                 <div class="col-md-6">
                     <div class="row">
@@ -51,7 +51,7 @@
                         <input-text password [size]="6" label="Senha" controlName="notification_mail_password"></input-text>
                     </div>
                 </div>
-            </div>
+            </div>-->
         </editable-form>
     </tab>
     <tab key="BANCO" label="Banco de dados">
@@ -68,7 +68,7 @@
             </div>
             <separator title="Logs"></separator>
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-8">
                     <div class="row">
                         <input-text [size]="6" label="Host" controlName="log_host" [attr.maxlength]=250></input-text>
                         <input-text [size]="4" label="Banco de dados" controlName="log_database" [attr.maxlength]=250></input-text>
@@ -79,7 +79,7 @@
                         <input-text password [size]="6" label="Senha" controlName="log_password" [attr.maxlength]=250></input-text>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <separator title="Opções de log"></separator>
                     <div class="row">
                         <input-switch [size]="12" scale="small" labelPosition="right" label="Tráfego (traffic)" controlName="log_traffic"></input-switch>
@@ -118,7 +118,7 @@
                 <input-text [size]="3" label="Azure Redirect URI" controlName="login_azure_redirect_uri" [attr.maxlength]=250></input-text>
               <input-switch [size]="2" scale="large" labelPosition="right" label="" controlName="login_azure"></input-switch>
             </div>
-            <separator title="Login Unico"></separator>
+            <separator title="Login GOVBr"></separator>
             <div class="row">
                 <input-text [size]="5" label="Client ID" controlName="login_login_unico_client_id" [attr.maxlength]=250></input-text>
                 <input-text [size]="5" label="Secret" controlName="login_login_unico_secret" [attr.maxlength]=250></input-text>
@@ -172,6 +172,9 @@
                 </div>
             </div>
         </editable-form>
+    </tab>
+    <tab key="ROTINAS" label="Rotinas Diárias">
+
     </tab>
 </tabs>
 
