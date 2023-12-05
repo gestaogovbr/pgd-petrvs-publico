@@ -6158,7 +6158,7 @@ class PlanoTrabalhoEntregaAtividadesComponent extends src_app_modules_base_page_
   loadData() {
     this.loader = true;
     this.AtividadeDao.query({
-      where: [["plano_trabalho_entrega_id", "==", this._entregaId]],
+      where: [["plano_trabalho_entrega_id", "==", this._entregaId], ["unidades_subordinadas", "==", true]],
       join: this.join
     }).asPromise().then(response => {
       this.items = response;

@@ -113,6 +113,4 @@ export class PlanoEntregaEntregasPlanoTrabalhoComponent extends PageFrameBase {
     const planoAtivo = planos.find((plano) => plano.status === "ATIVO");
     return planoAtivo || {} as PlanoTrabalho;
   }
-
-
 }
