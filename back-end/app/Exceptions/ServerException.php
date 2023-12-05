@@ -35,6 +35,6 @@ class ServerException extends Exception
     ];
 
     function __construct($code, $extra = "") {
-        parent::__construct($this->exceptions[$code] . (empty($extra) ? "" : ": " . $extra . "."));
+        parent::__construct($this->exceptions[$code] . "&" . (empty($extra) ? "" : $extra));
     }
 }

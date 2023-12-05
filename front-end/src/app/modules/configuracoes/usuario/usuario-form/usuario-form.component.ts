@@ -10,7 +10,8 @@ import { Usuario } from 'src/app/models/usuario.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { UsuarioIntegranteComponent } from '../usuario-integrante/usuario-integrante.component';
 import { TemplateDataset } from 'src/app/modules/uteis/templates/template.service';
-import { UnidadeIntegranteDaoService, Vinculo } from 'src/app/dao/unidade-integrante-dao.service';
+import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
+import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
 
 @Component({
   selector: 'app-usuario-form',
@@ -83,12 +84,11 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
     this.formLotacao.controls.unidade_lotacao_id.setValue(entity.lotacao?.unidade?.id);
-    if(this.action == "new") this.unidadesIntegrantes!._items = [];
     this.unidadesIntegrantes?.loadData(entity);
   }
 
   public initializeData(form: FormGroup): void {
-    this.entity = new Usuario({id: this.dao?.generateUuid()});
+    this.entity = new Usuario();
     this.loadData(this.entity, form);
   }
 
@@ -97,19 +97,26 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
       this.unidadesIntegrantes!.grid!.confirm();
       let usuario = this.util.fill(new Usuario(), this.entity!);
       usuario = this.util.fillForm(usuario, this.form!.value);
-      usuario.lotacao_id = this.formLotacao?.controls.unidade_lotacao_id.value;
-      let vinculos: Vinculo[] = this.unidadesIntegrantes?._items || [];
-      let indiceVinculoLotacao = vinculos.findIndex(v => v.atribuicoes.includes("LOTADO"));
-      let lotacaoAlterada: boolean = indiceVinculoLotacao == -1 || usuario.lotacao_id != vinculos[indiceVinculoLotacao].unidade_id;
       try {
-        await this.dao?.save(usuario).then(async usuarioBanco => {
-          if (lotacaoAlterada) {
-            if(indiceVinculoLotacao != -1) vinculos[indiceVinculoLotacao].atribuicoes = vinculos[indiceVinculoLotacao].atribuicoes.filter(x => x != "LOTADO");
-            let index = vinculos.findIndex(v => v.unidade_id == usuario.lotacao_id);
-            index == -1 ? vinculos.push({ unidade_id: usuario.lotacao_id, usuario_id: usuarioBanco.id, atribuicoes: ["LOTADO"] }) : vinculos[index].atribuicoes.push("LOTADO");
+        await this.dao?.save(Object.assign(usuario,{'lotacao_id': this.formLotacao?.controls.unidade_lotacao_id.value})).then(async usuarioBanco => {
+          usuario.lotacao_id = this.formLotacao?.controls.unidade_lotacao_id.value;
+          let integrantesConsolidados: IntegranteConsolidado[] = this.unidadesIntegrantes?.items || [];
+          let indicesIntegrantesExcluir: number[] = [];
+          integrantesConsolidados.filter(x => x._status == "DELETE").forEach((x,i) => indicesIntegrantesExcluir.push(i));
+          let indiceVinculoLotacao = integrantesConsolidados.findIndex(ic => ic.atribuicoes.includes("LOTADO"));
+          let lotacaoAlterada: boolean = indiceVinculoLotacao == -1 || usuario.lotacao_id != integrantesConsolidados[indiceVinculoLotacao].unidade_id;
+          if (lotacaoAlterada) {    // garantindo a coerência entre o campo de lotação do usuário e o vínculo de lotado dos integrantes
+            if(indiceVinculoLotacao != -1) integrantesConsolidados[indiceVinculoLotacao].atribuicoes = integrantesConsolidados[indiceVinculoLotacao].atribuicoes.filter(x => x != "LOTADO");
+            let indiceNovaUnidadeLotacao = integrantesConsolidados.findIndex(ic => ic.unidade_id == usuario.lotacao_id);
+            indiceNovaUnidadeLotacao == -1 ? integrantesConsolidados.push(Object.assign(new IntegranteConsolidado (), { unidade_id: usuario.lotacao_id, usuario_id: usuarioBanco.id, atribuicoes: ["LOTADO"] })) : integrantesConsolidados[indiceNovaUnidadeLotacao].atribuicoes.push("LOTADO");
+            indiceVinculoLotacao = integrantesConsolidados.findIndex(ic => ic.atribuicoes.includes("LOTADO"));
           }
-          vinculos.forEach(v => v.usuario_id = usuarioBanco.id);
-          await this.integranteDao.saveIntegrante(vinculos as Vinculo[]);
+          // uma vez garantida a coerência entre o campo de lotação do usuário e o vínculo de lotado dos integrantes, vamos tratar do eventual vínculo a ser excluído 
+          indicesIntegrantesExcluir.forEach( i => {
+            integrantesConsolidados[i].atribuicoes = i != indiceVinculoLotacao ? [] : ["LOTADO"];
+          });
+          integrantesConsolidados.forEach(ic => ic.usuario_id = usuarioBanco.id);
+          await this.integranteDao.saveIntegrante(integrantesConsolidados as IntegranteConsolidado[]);
         });
         resolve(true);
       } catch (error: any) {
@@ -123,3 +130,44 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
   }
 
 }
+
+/*
+TESTES A SEREM REALIZADOS NO FORM USUARIOS
+
+- Para verificar Lotação x Atribuições
+
+CENÁRIO: CAMINHO FELIZ
+Formulário completo do usuário
+1. Incluir um usuário com lotação definida e sem atribuições.
+2. Incluir um usuário com lotação definida e na mesma unidade inserir novas atribuições compatíveis (não deve estar disponível a atribuição 'LOTADO').
+3. Incluir um usuário com lotação definida e na mesma unidade e em várias outras inserir atribuições compatíveis diversas.
+4. Alterar um usuário, mudando sua lotação através da aba 'Principal', para uma unidade que não existe ainda na aba 'Atribuições'.
+5. Alterar um usuário, mudando sua lotação através da aba 'Principal', para uma unidade que já existe na aba 'Atribuições'.
+6. Alterar um usuário, apagando uma ou mais atribuições de uma mesma unidade.
+7. Alterar um usuário, apagando o vínculo completo com uma unidade distinta da sua lotação.
+8. Tentar incluir um usuário que já existe (mesmo e-mail funcional) e que foi desativado (apagado virtualmente).
+9. Tentar incluir um usuário que já existe (mesmo cpf) e que foi desativado (apagado virtualmente).
+
+CENÁRIO: CAMINHO ALTERNATIVO
+Formulário completo do usuário
+1. Incluir um usuário com lotação definida e com atribuições repetidas em uma mesma unidade.
+2. Incluir um usuário com lotação definida e com atribuições incompatíveis em uma mesma unidade (mais de uma atribuição de gestor).
+3. Alterar um usuário apagando sua atribuição de LOTADO na aba 'Atribuições'. 
+4. Alterar um usuário inserindo atribuições repetidas em uma mesma unidade.
+5. Alterar um usuário inserindo atribuições incompatíveis em uma mesma unidade.
+6. Alterar um usuário apagando o vínculo completo com a unidade de sua lotação.
+7. Alterar um usuário apagando vários vínculos completos com diversas unidades, sem incluir a unidade de lotação.
+8. Alterar um usuário apagando vários vínculos completos com diversas unidades, incluindo sua unidade de lotação.
+9. Alterar um usuário inserindo a atribuição de 'Gestor' a mais de uma unidade.
+
+CENÁRIO: CAMINHO ALTERNATIVO
+Formulário de 'Atribuições' (menu de opções: ...)
+1. Alterar um usuário apagando sua atribuição de LOTADO. 
+2. Alterar um usuário inserindo atribuições repetidas em uma mesma unidade.
+3. Alterar um usuário inserindo atribuições incompatíveis em uma mesma unidade.
+4. Alterar um usuário apagando o vínculo completo com a unidade de sua lotação.
+5. Alterar um usuário apagando vários vínculos completos com diversas unidades, sem incluir a unidade de lotação.
+6. Alterar um usuário apagando vários vínculos completos com diversas unidades, incluindo sua unidade de lotação.
+7. Alterar um usuário inserindo a atribuição de 'Gestor' a mais de uma unidade.
+
+ */

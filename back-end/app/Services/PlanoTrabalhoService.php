@@ -741,7 +741,7 @@ class PlanoTrabalhoService extends ServiceBase
   public function assinaturasExigidas($plano_trabalho): array
   {
     $ids = ["participante" => [], "gestores_unidade_executora" => [], "gestores_unidade_lotacao" => [], "gestores_entidade" => []];
-    if (strlen($plano_trabalho["programa_id"]) && strlen($plano_trabalho["usuario_id"]) && strlen($plano_trabalho["unidade_id"])) {
+    if (!empty($plano_trabalho) && !empty($plano_trabalho["programa_id"]) && !empty($plano_trabalho["usuario_id"]) && !empty($plano_trabalho["unidade_id"])) {
       $programa = Programa::find($plano_trabalho["programa_id"]);
       $participante = Usuario::find($plano_trabalho["usuario_id"]);
       $unidade = Unidade::find($plano_trabalho["unidade_id"]);

@@ -11,7 +11,6 @@ use App\Models\Programa;
 use App\Models\TipoAvaliacao;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 use DateTime;
 use Throwable;
 
@@ -439,7 +438,7 @@ class PlanoEntregaService extends ServiceBase
     $condition1 = $condicoes['gestorUnidadePlano'] || $condicoes['gestorUnidadePaiUnidadePlano'];
     $condition2 = !empty($dataOrEntity['unidade']['unidade_pai_id']) && UsuarioService::isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $dataOrEntity['unidade']['unidade_pai_id']) && $usuario->hasPermissionTo('MOD_PENT_EDT_FLH');
     $condition3 = $usuario->hasPermissionTo('MOD_PENT_QQR_UND');
-    if (!$condition3 && !($condition1 || $condition2)) throw new ServerException("ValidateUsuario", "\nO usuário logado precisa atender a pelo menos uma das seguintes condições:\n" .
+    if (!$condition3 && !($condition1 || $condition2)) throw new ServerException("ValidateUsuario", "O usuário logado precisa atender a pelo menos uma das seguintes condições:\n" .
       "1. ser um dos gestores da unidade do plano ou da sua unidade-pai;\n" .
       "2. ser homologador de plano de entrega da unidade-pai do plano e possuir a capacidade MOD_PENT_EDT_FLH;\n" .
       "3. possuir a capacidade MOD_PENT_QQR_UND.\n[ver RN_PENT_Z]");
@@ -460,7 +459,7 @@ class PlanoEntregaService extends ServiceBase
       $condition3 = !empty($data['entity']['unidade']['unidade_pai_id']) && UsuarioService::isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $data['entity']['unidade']['unidade_pai_id']);
       $condition4 = $condicoes['planoAtivo'] && $condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo(['MOD_PENT_EDT_ATV_HOMOL', 'MOD_PENT_EDT_ATV_ATV']);
       $condition5 = $usuario->hasPermissionTo('MOD_PENT_QQR_UND');
-      if (!$condition5 && !($condition1 || $condition2 || $condition3 || $condition4)) throw new ServerException("ValidatePlanoEntrega", "\nAo menos uma das seguintes condições precisa ser atendida:\n" .
+      if (!$condition5 && !($condition1 || $condition2 || $condition3 || $condition4)) throw new ServerException("ValidatePlanoEntrega", "Ao menos uma das seguintes condições precisa ser atendida:\n" .
         "1. o plano de entregas estar com o status INCLUIDO ou HOMOLOGANDO, e o usuário logado ser um dos gestores da unidade executora ou nela ser lotado;\n" .
         "2. o usuário logado possuir a capacidade MOD_PENT_EDT_FLH e ser um dos gestores da unidade-pai do plano de entregas;\n" .
         "3. o usuário logado ser homologador de plano de entregas da unidade-pai do plano de entregas;\n" .
