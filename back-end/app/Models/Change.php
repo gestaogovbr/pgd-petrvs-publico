@@ -28,7 +28,6 @@ class Change extends Model
     public $timestamps = false;
 
     protected $casts = [
-        'date_time' => 'datetime',
         'delta' => AsJson::class
     ];
 

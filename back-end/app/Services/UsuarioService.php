@@ -273,31 +273,54 @@ class UsuarioService extends ServiceBase
     }
 
     /**
-     * Este método impede que um usuário seja inserido com e-mail/CPF/Matrícula já existentes no Banco de Dados, bem como
+     * Este método impede que um usuário seja inserido com e-mail/CPF já existentes no Banco de Dados, bem como
      * impede também a inserção de um usuário com o perfil de Desenvolvedor. Usuários com esse perfil só podem ser inseridos
      * através do próprio código da aplicação.
      */
-    public function validateStore($data, $unidade, $action) {
+    public function validateStore(&$data, $unidade, $action) {
         if($action == ServiceBase::ACTION_INSERT) {
             if(empty($data["email"])) throw new Exception("O campo de e-mail é obrigatório");
             if(empty($data["cpf"])) throw new Exception("O campo de CPF é obrigatório");
-            $alreadyHas = Usuario::where("id", "!=", $data["id"])->where("email", $data["email"])->orWhere("cpf", $data["cpf"])->first();
+            $query1 = Usuario::where("id", "!=", $data["id"])->where(function ($query) use ($data) {
+                                                                return $query->where("cpf", UtilService::onlyNumbers($data["cpf"]))->orWhere("email", $data["email"]);
+                                                            });
+            $query2 = Usuario::where("id", "!=", $data["id"])->whereNotNull("deleted_at")->where(function ($query) use ($data) {
+                                                                                                return $query->where("cpf", UtilService::onlyNumbers($data["cpf"]))->orWhere("email", $data["email"]);
+                                                                                            });
+            $alreadyHas = $query1->first() ?? $query2->first();
             if(!empty($alreadyHas)) {
-                if($alreadyHas->trashed()) { /* Caso o usuário exista, mas esteja excluído, reabilita o usuário deletando todos os seus vínculos anteriores */
+                if($alreadyHas->deleted_at) { // Caso o usuário exista, mas esteja excluído, reabilita o usuário deletando todos os seus vínculos anteriores e recuperando seus dados sensíveis (cpf, e-mail funcional, matricula, nome, apelido, data_nascimento)
                     $this->removerVinculosUsuario($alreadyHas);
-                    $alreadyHas->restore();
+                    $data["id"] = $alreadyHas->id;
+                    $data["cpf"] = $alreadyHas->cpf;
+                    $data["email"] = $alreadyHas->email;
+                    $data["matricula"] = $alreadyHas->matricula;
+                    $data["nome"] = $alreadyHas->nome;
+                    $data["apelido"] = $alreadyHas->apelido;
+                    $data["data_nascimento"] = $alreadyHas->data_nascimento;
+                    $alreadyHas->deleted_at = null;
                     return $alreadyHas;
                 } else {
                     throw new Exception("Já existe um usuário com mesmo e-mail ou CPF no sistema");
                 }
+                /*
+                        if($alreadyHas->trashed()) { // Caso o usuário exista, mas esteja excluído, reabilita o usuário deletando todos os seus vínculos anteriores
+                        $this->removerVinculosUsuario($alreadyHas);
+                        $alreadyHas->restore();
+                        return $alreadyHas;
+                    } else {
+                        throw new Exception("Já existe um usuário com mesmo e-mail ou CPF no sistema");
+                    } 
+                */
             }
             if($data["perfil_id"] == $this->developerId && !$this->isLoggedUserADeveloper()) throw new Exception("Tentativa de inserir um usuário com o perfil de Desenvolvedor");
+            //$query->toSql();    $query->getBindings();
         }
     }
 
     public function removerVinculosUsuario(&$usuario) {
         if(!empty($usuario)) {
-            foreach($usuario->vinculosUnidades as $vinculo){ $vinculo->deleteCascade(); }
+            foreach($usuario->unidadesIntegrante as $vinculo){ $vinculo->deleteCascade(); }
             $usuario->fresh();
         }
     }
@@ -331,4 +354,9 @@ gestores da entidade
 gestor - af8aa254-a04f-4650-98d8-d2cc6e942e01 (Paiva)
 gestorSubstituto - 7b0797fe-19b4-4a5c-a325-c39186645ade (Genisson)
 
+
+
+ERROS ENCONTRADOS
+1 - Quando o servidor está apagado, seu nome e matricula  não aparece no form de atribuições
+2 - Quando o servidor é reativado, a linha do grid é atualizada, mas não vem a mensagem de sucesso nem aparece o botão para editar
 */
