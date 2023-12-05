@@ -326,7 +326,6 @@ class ProgramaFormComponent extends src_app_modules_base_page_form_base__WEBPACK
   }
   isTipoAvaliacao(tipo) {
     let selected = this.tipoAvaliacao?.selectedEntity;
-    console.log(selected);
     return selected?.tipo == tipo || !selected && tipo == "QUANTITATIVO";
   }
   get tipoAvaliacaoQualitativo() {

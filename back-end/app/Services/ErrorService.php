@@ -19,10 +19,7 @@ class ErrorService extends ServiceBase {
         $where = [];
         foreach($data["where"] as $condition) {
             if(is_array($condition) && $condition[0] == "user_id") {
-                if(!$condition[2]) array_push($where, ['user', '==', null]); else {
-                    //$sql = "JSON_SEARCH(errors, user, ?)";
-                    //array_push($where, RawWhere::raw($sql, [$condition[2]]));
-                };
+                if(!$condition[2]) array_push($where, ['user', '==', null]); 
             } else { array_push($where, $condition); }
         }
         $data["where"] = $where;

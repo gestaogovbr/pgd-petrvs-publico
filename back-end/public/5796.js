@@ -3182,30 +3182,33 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
   }
   onUsuarioSelect(selected) {
     var _this = this;
-    console.log(selected);
     this.form.controls.usuario_texto_complementar.setValue(selected.entity?.texto_complementar_plano || "");
     if (!this.form?.controls.unidade_id.value) {
       selected.entity.unidades.every( /*#__PURE__*/function () {
-        var _ref2 = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (element, index) {
-          if (selected.entity.lotacao.unidade_id == element.id) {
+        var _ref2 = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (unidade) {
+          if (selected.entity.lotacao.unidade_id == unidade.id) {
             if (!_this.form?.controls.programa_id.value) {
-              let paiId = "";
-              selected.entity.unidades.every(unidade => {
-                paiId = unidade.id == element.id ? unidade.path.slice(1, 37) : "";
-                return paiId.length < 2;
-              });
-              console.log(paiId);
-              yield _this.programaDao.query({
-                where: [["unidade_id", "==", paiId], ["data_inicio", "<", new Date()], ["data_fim", ">", new Date()]]
-              }).asPromise().then(programa => {
-                _this.preencheUnidade(element);
-                _this.preenchePrograma(programa[0]);
-              });
+              let niveis = unidade.path.split("/").reverse();
+              let hoje = new Date();
+              let preenchido = 0;
+              let indice = 0;
+              while (preenchido == 0) {
+                yield _this.programaDao.query({
+                  where: [["unidade_id", "==", niveis[indice]], ["data_inicio", "<", hoje], ["data_fim", ">", hoje]]
+                }).asPromise().then(programa => {
+                  if (programa.length > 0 && preenchido == 0) {
+                    preenchido = 1;
+                    _this.preencheUnidade(unidade);
+                    _this.preenchePrograma(programa[0]);
+                  }
+                });
+                indice += 1;
+              }
             }
             return false;
           } else return true;
         });
-        return function (_x2, _x3) {
+        return function (_x2) {
           return _ref2.apply(this, arguments);
         };
       }());
