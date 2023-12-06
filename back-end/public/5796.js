@@ -306,7 +306,8 @@ class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends src_app_modules_base_p
       let result = [];
       let form = filter.value;
       result.push(["status", "in", ["CONCLUIDO", "AVALIADO"]]);
-      if (form.usuario_id?.length) result.push(["usuario_id", "==", form.usuario_id]);
+      //    if(form.usuario_id?.length) result.push(["usuario_id", "==", form.usuario_id]);
+      if (form.usuario_id?.length) result.push(["plano_trabalho.usuario.id", "==", form.usuario_id]);
       if (form.unidade_id?.length) result.push(["plano_trabalho.unidade.id", "==", form.unidade_id]);
       if (form.unidades_subordinadas) result.push(["unidades_subordinadas", "==", true]);
       if (form.incluir_arquivados) result.push(["incluir_arquivados", "==", true]);
