@@ -1,6 +1,6 @@
 <editable-form [form]="form!" [disabled]="formDisabled" initialFocus="descricao" (submit)="onSaveData()" (cancel)="onCancel()">
     <tabs display right [title]="titleAtividade">
-        <tab key="ATIVIDADE" label="Atividade">
+        <tab key="ATIVIDADE" [label]="lex.translate('Atividade')">
             <documento-link [sei]="sei" [documento]="form!.controls.documento_requisicao.value"></documento-link>
             <div class="row">
                 <input-textarea label="Descrição" [size]="12" [rows]="2" controlName="descricao" [control]="form!.controls.descricao" required></input-textarea>
@@ -46,16 +46,16 @@
                 <documento-link [documento]="form!.controls.documento_entrega.value"></documento-link>
             </separator>
         </tab>
-        <tab key="TAREFAS" [label]="lex.translate('Tarefas')">
+        <!--<tab key="TAREFAS" [label]="lex.translate('Tarefas')">
             <atividade-list-tarefa [control]="form!.controls.tarefas" [atividade]="entity" [disabled]="formDisabled"></atividade-list-tarefa>
-        </tab>
+        </tab>-->
         <tab key="CARACTERIZACAO" label="Caracterização">
             <div class="row">
                 <input-multiselect label="Etiquetas" controlName="etiquetas" [size]="6" [control]="form!.controls.etiquetas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
                     <input-select [size]="12" #etiqueta controlName="etiqueta" [control]="form!.controls.etiqueta" [items]="etiquetas"></input-select>
                 </input-multiselect>
                 <div class="col-md-6">
-                   <br><h5>Checklist</h5>
+                   <br><h5>Requisitos</h5>
                    <grid [control]="form!.controls.checklist" [form]="formChecklist" [hasAdd]="true" [hasDelete]="true" editable>
                         <columns>
                             <column type="switch" title="Check" field="checked"></column>
@@ -66,12 +66,12 @@
                 </div>
             </div>
         </tab>
-        <tab key="COMENTARIOS" label="Comentários">
+        <!--<tab key="COMENTARIOS" label="Comentários">
             <div clss="row">
                 <comentarios #comentarios origem="ATIVIDADE" [control]="form!.controls.comentarios"></comentarios>
             </div>
-        </tab>
-        <tab key="COMPLEMENTARES" label="Complementares">
+        </tab>-->
+        <!--<tab key="COMPLEMENTARES" label="Complementares">
             <div class="row">
                 <input-search label="Demandante" [size]="12" controlName="demandante_id" [dao]="usuarioDao" disabled></input-search>
             </div>
@@ -91,6 +91,6 @@
                     </div>
                 </div>
             </div>
-        </tab>
+        </tab>-->
     </tabs>
 </editable-form>
