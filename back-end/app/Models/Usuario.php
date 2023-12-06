@@ -83,7 +83,6 @@ class Usuario extends Authenticatable
         $this->fill($dataOrEntity);
         if($action == 'INSERT'){
             $this->save();
-            //$lotacao = new UnidadeIntegrante(['unidade_id' => $dataOrEntity['lotacao_id']]);
             $vinculoLotacao = $this->unidadesIntegrante()->save(new UnidadeIntegrante(['unidade_id' => $dataOrEntity['lotacao_id']]));
             $lotacao = $vinculoLotacao->atribuicoes()->save(new UnidadeIntegranteAtribuicao(['atribuicao' => 'LOTADO']));
             if(!$vinculoLotacao || !$lotacao) throw new ServerException("ValidateLotacao", "Erro com a definição da lotação. Usuário não cadastrado!");

@@ -28,7 +28,6 @@ class Error extends Model
     public $timestamps = false;
 
     protected $casts = [
-        'date_time' => 'datetime',
         'user' => AsJson::class
     ];
 }

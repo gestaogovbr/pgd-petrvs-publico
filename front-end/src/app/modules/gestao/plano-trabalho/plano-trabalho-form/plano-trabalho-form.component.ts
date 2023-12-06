@@ -199,24 +199,27 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public onUsuarioSelect(selected: SelectItem) {
-    console.log(selected)
     this.form!.controls.usuario_texto_complementar.setValue((selected.entity as Usuario)?.texto_complementar_plano || "");
     if(!this.form?.controls.unidade_id.value) {
-      selected.entity.unidades.every( async (element: any, index: any) => {
-        if (selected.entity.lotacao.unidade_id == element.id) {
+      selected.entity.unidades.every(async (unidade: any) => {
+        if (selected.entity.lotacao.unidade_id == unidade.id) {
           if(!this.form?.controls.programa_id.value) {
-            let paiId = "";
-            selected.entity.unidades.every( (unidade: any) => {
-              paiId = unidade.id == element.id ? unidade.path.slice(1,37) : "";
-              return paiId.length < 2;
-            });
-            console.log(paiId)
-            await this.programaDao.query({where : [["unidade_id","==",paiId,],["data_inicio","<",new Date()],["data_fim",">",new Date()]]}).asPromise().then( programa => {
-              this.preencheUnidade(element);
-              this.preenchePrograma(programa[0]!);
-            });
+            let niveis = unidade.path.split("/").reverse();
+            let hoje = new Date();
+            let preenchido = 0;
+            let indice = 0;
+            while (preenchido == 0) {
+              await this.programaDao.query({where : [["unidade_id","==",niveis[indice],],["data_inicio","<", hoje],["data_fim",">", hoje]]}).asPromise().then( programa => {
+                if (programa.length > 0 && preenchido == 0) {
+                  preenchido = 1;
+                  this.preencheUnidade(unidade);
+                  this.preenchePrograma(programa[0]!);
+                }
+              })
+              indice += 1;
+            }
           }
-          return false;
+        return false;
         } else return true;
       })
     }
