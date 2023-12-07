@@ -180,11 +180,11 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
   }
 
   public isList(tipo: QuestionarioPerguntaTipo) {
-    return ['LISTA_UNICA', 'LISTA_MULTIPLA'].includes(tipo);
+    return ['SELECT', 'MULTI_SELECT'].includes(tipo);
   }
 
   public isRange(tipo: QuestionarioPerguntaTipo) {
-    return ['CLASSIFICACAO', 'INTENSIDADE'].includes(tipo);
+    return ['RATE', 'NUMBER'].includes(tipo);
   }
 
   public async addPergunta() {

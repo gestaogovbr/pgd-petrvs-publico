@@ -10,10 +10,9 @@ class QuestionarioService extends ServiceBase {
    public function proxyStore($data, $unidade, $action){
 
         if ($action == ServiceBase::ACTION_INSERT){
-           
-            //$data.versao = 1;
+           $data["versao"] = 1;
         }else{
-            //$data.versao = Questionario::find('versao').get() + 1;
+           $data["versao"] = Questionario::find($data['id'])->versao + 1;
         }
         return $data;
 
@@ -21,7 +20,7 @@ class QuestionarioService extends ServiceBase {
 
 }
 
-
+//$data["perguntas"][0]['respostas'][0]['data']['valorResposta']
 //$action == ServiceBase::ACTION_INSERT ? data.versao = 1 : questionario.versao + 1;
 // foreach($data.perguntas as $pergunta) {
      //pergunta._status == "ADD" ? criado_versao = questionarios.versao,

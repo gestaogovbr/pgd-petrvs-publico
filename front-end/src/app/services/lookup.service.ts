@@ -718,15 +718,15 @@ export class LookupService {
   ];
 
   public QUESTIONARIO_PERGUNTA_TIPO: LookupItem[] = [
-    { key: 'LISTA_UNICA', value: 'Única Escolha' },
-    { key: 'LISTA_MULTIPLA', value: 'Multipla Escolha' },
-    { key: 'LIVRE', value: 'Livre' },
-    { key: 'CLASSIFICACAO', value: 'Classificação' },
+    { key: 'SELECT', value: 'Única Escolha' },
+    { key: 'MULTI_SELECT', value: 'Multipla Escolha' },
+    { key: 'TEXT', value: 'Livre' },
+    { key: 'RATE', value: 'Classificação' },
     { key: 'SWITCH', value: 'Sim/Não' },
-    { key: 'INTENSIDADE', value: 'Intensidade' },
-    { key: 'NUMERICA', value: 'Numérica' }
+    //{ key: 'INTENSIDADE', value: 'Intensidade' },
+    { key: 'NUMBER', value: 'Numérica' }
   ];
- // "VISUAL" | "LISTA_UNICA" | "LISTA_MULTIPLA" | "LIVRE" | "TEMPO" | "NUMERICA" | "CLASSIFICACAO" | "SWICTH" | "NUMERICA" | "INTENSIDADE" | "ORDENACAO" | "LACUNA";
+ // "EMOJI" | "SELECT" | "MULTI_SELECT" | "TEXT" | "TEXT_AREA" | "TIMER" | "DATE_TIME" | "SWICTH" | "NUMBER" | "RATE" | "RADIO" | "CHECK";
 
   public THEMES: LookupItem[] = [
     { key: 'light', value: "Branco (light)" },
