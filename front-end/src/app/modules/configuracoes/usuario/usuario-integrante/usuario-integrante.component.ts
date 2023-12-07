@@ -10,6 +10,7 @@ import { Usuario } from 'src/app/models/usuario.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { IntegranteService } from 'src/app/services/integrante.service';
+import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 
 @Component({
   selector: 'usuario-integrante',
@@ -27,6 +28,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   public integranteService: IntegranteService;
   public integranteDao: UnidadeIntegranteDaoService;
   public unidadeDao: UnidadeDaoService;
+  public usuarioDao: UsuarioDaoService;
   public tiposAtribuicao: LookupItem[] = [];
 
   constructor(public injector: Injector) {
@@ -34,6 +36,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     this.integranteService = injector.get<IntegranteService>(IntegranteService);
     this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.form = this.fh.FormBuilder({
       unidade_id: { default: "" },
       atribuicoes: { default: undefined },
@@ -62,7 +65,12 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     if (entity.id) {
       let integrantes: IntegranteConsolidado[] = [];
       try {
-        await this.integranteDao!.loadIntegrantes("", entity.id).then(resposta => integrantes = resposta.integrantes.filter(x => x.atribuicoes?.length > 0));
+        let result = await Promise.all([
+          this.usuarioDao.getById(entity.id),
+          this.integranteDao!.loadIntegrantes("", entity.id)
+        ]);
+        this.entity = result[0]!;
+        integrantes = result[1].integrantes.filter(x => x.atribuicoes?.length > 0);
       } finally {
         integrantes.forEach(i => this.items?.push(this.integranteService.completarIntegrante(i, i.id, entity.id, i.atribuicoes)));
         this.items = this.integranteService.ordenar(this.items);
