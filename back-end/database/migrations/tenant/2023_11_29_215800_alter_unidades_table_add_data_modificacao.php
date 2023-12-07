@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterUnidades2Table extends Migration
+class AlterUnidadesAddDataModificacaoTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,7 +15,7 @@ class AlterUnidades2Table extends Migration
     public function up()
     {
         Schema::table('unidades', function (Blueprint $table) {
-            $table->string('datamodificacao')->default(null)->nullable()->comment("Data de modificação informado pelo SIAPE.");
+            $table->dateTime('datamodificacao')->nullable()->comment("Data de modificação informado pelo SIAPE.");
         });
     }
 

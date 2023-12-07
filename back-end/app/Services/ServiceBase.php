@@ -578,8 +578,6 @@ class ServiceBase extends DynamicMethods
         /* Remove os campos do with que são desnecessários */
         $allowed = array_merge(array_map(fn($value) => strtok($value, '.'), $data['fields']), ["id"]);
         $result["rows"] = $result["rows"]->toArray();
-        //$with = array_map(fn($value) => strtok($value, '.'), $data['with'] ?? []);
-        //$deletes = array_diff($with, $allowed);
         foreach($result["rows"] as &$row) {
             $deletes = array_diff(array_keys($row), $allowed);
             foreach($deletes as $delete) unset($row[$delete]);
