@@ -31,15 +31,15 @@ class UnidadeIntegranteController extends ControllerBase {
     public function saveIntegrante(Request $request) {
         try {
             $data = $request->validate([
-                'vinculos' => ['array','required'],
-                'vinculos.*.unidade_id' => ['string','required'],
-                'vinculos.*.usuario_id' => ['string','required'],
-                'vinculos.*.atribuicoes' => ['array','nullable']
+                'integrantesConsolidados' => ['array','required'],
+                'integrantesConsolidados.*.unidade_id' => ['string','required'],
+                'integrantesConsolidados.*.usuario_id' => ['string','required'],
+                'integrantesConsolidados.*.atribuicoes' => ['array','nullable']
             ]);
 
             return response()->json([
                 'success' => true,
-                'data' => $this->service->saveIntegrante($data["vinculos"])
+                'data' => $this->service->saveIntegrante($data["integrantesConsolidados"])
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);

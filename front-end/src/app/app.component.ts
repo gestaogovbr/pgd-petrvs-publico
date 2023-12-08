@@ -213,7 +213,7 @@ export class AppComponent {
       CURRICULUM_VISUALIZA_PESQUISA_USR: { name: "Usuario", permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-search" },
       CURRICULUM_VISUALIZA_PESQUISA_ADM: { name: "Administrador", permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-binoculars" },
       /*PROJETOS*/
-      PAINEL: { name: "Painel", permition: '', route: ['configuracoes', 'sobre'], icon: "" },
+      PAINEL: { name: "Painel", permition: '', route: ['panel'], icon: "" },
       AUDITORIA: { name: "Auditoria", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
     };
 
@@ -419,7 +419,7 @@ export class AppComponent {
 
     this.menuContexto = [
       { key: "EXECUCAO", permition: "CTXT_EXEC", icon: "bi bi-person-check", name: "Participante", menu: this.menuExecucao, petrvsModule: 'PGD' },
-      { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-people-fill", name: "Gestor", menu: this.menuGestao, petrvsModule: 'PGD' },
+      { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-people-fill", name: "Chefe", menu: this.menuGestao, petrvsModule: 'PGD' },
       { key: "ADMINISTRADOR", permition: "CTXT_ADM", icon: "bi bi-emoji-sunglasses", name: "Administrador", menu: this.menuAdministrador },
       { key: "DEV", permition: "CTXT_DEV", icon: "bi bi-braces", name: "Desenvolvedor", menu: this.menuDev },
       { key: "PONTO", permition: "CTXT_PNT", icon: "bi bi-stopwatch", name: "Ponto eletrônico", menu: this.menuPonto },

@@ -615,10 +615,11 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
   }
   botaoAtendeCondicoes(botao, planoTrabalho) {
     let assinaturasExigidas = planoTrabalho.assinaturasExigidas;
-    let assinaturasFaltantes = this.utilService.array_diff(planoTrabalho.assinaturasExigidas, planoTrabalho.jaAssinaramTCR);
+    let assinaturasFaltantes = this.planoTrabalhoService.assinaturasFaltantes(planoTrabalho.assinaturasExigidas, planoTrabalho.jaAssinaramTCR);
+    let haAssinaturasFaltantes = !!assinaturasFaltantes.participante.length || !!assinaturasFaltantes.gestores_unidade_executora.length || !!assinaturasFaltantes.gestores_unidade_lotacao.length || !!assinaturasFaltantes.gestores_entidade.length;
     let usuarioEhGestorUnidadeExecutora = this.auth.isGestorUnidade(planoTrabalho.unidade_id);
-    let usuarioJaAssinouTCR = planoTrabalho.jaAssinaramTCR.includes(this.auth.usuario?.id);
-    let assinaturaUsuarioEhExigida = planoTrabalho.assinaturasExigidas.includes(this.auth.usuario?.id);
+    let usuarioJaAssinouTCR = !!planoTrabalho.jaAssinaramTCR?.todas?.includes(this.auth.usuario?.id);
+    let assinaturaUsuarioEhExigida = !!planoTrabalho.assinaturasExigidas?.todas?.includes(this.auth.usuario?.id);
     let planoIncluido = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'INCLUIDO';
     let usuarioEhParticipante = this.auth.usuario?.id == planoTrabalho.usuario_id;
     let planoAguardandoAssinatura = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'AGUARDANDO_ASSINATURA';
@@ -627,7 +628,6 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
     let planoCancelado = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'CANCELADO';
     let planoDeletado = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'EXCLUIDO';
     let planoArquivado = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'ARQUIVADO';
-    //let programaExigeOutrasAssinaturas = !!assinaturasExigidas.filter(a => a != this.auth.usuario?.id).length;
     let planoSuspenso = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'SUSPENSO';
     let planoPossuiEntrega = planoTrabalho.entregas.length > 0;
     if (botao == this.BOTAO_INFORMACOES && this.auth.hasPermissionTo("MOD_PTR")) {
@@ -678,10 +678,10 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
               (RN_PTR_P) ATIVAR
               O plano precisa estar no status 'INCLUIDO', e
                   - o usuário logado precisa ser o participante do plano ou gestor da Unidade Executora, e
-                  - nenhuma assinatura no TCR ser exigida pelo programa, e
+                  - nenhuma assinatura no TCR deve ser exigida pelo programa, e
                   - o plano de trabalho precisa ter ao menos uma entrega;
             */
-            return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && !assinaturasExigidas.length && planoPossuiEntrega;
+            return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && !assinaturasExigidas?.todas?.length && planoPossuiEntrega;
           case this.BOTAO_CANCELAR_ASSINATURA:
             /*
               (RN_PTR_Q) CANCELAR ASSINATURA
@@ -713,7 +713,7 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
                 - devem existir assinaturas exigíveis ainda pendentes; e
                 - o plano precisa possuir ao menos uma entrega;
             */
-            return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && (!assinaturaUsuarioEhExigida || usuarioJaAssinouTCR) && !!assinaturasFaltantes.length && planoPossuiEntrega;
+            return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && (!assinaturaUsuarioEhExigida || usuarioJaAssinouTCR) && haAssinaturasFaltantes && planoPossuiEntrega;
           case this.BOTAO_REATIVAR:
             /*
               (RN_PTR_W) REATIVAR

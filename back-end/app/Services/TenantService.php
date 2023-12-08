@@ -61,7 +61,7 @@ class TenantService extends ServiceBase {
 
                 if (!$entidade) {
                     try {
-                        $cidade=Cidade::where('codigo_ibge', $dataOrEntity->codigo_cidade)->first()->id;
+                        $cidade_id=Cidade::where('codigo_ibge', $dataOrEntity->codigo_cidade)->first()->id;
                     } catch (\Exception $e) {
                         // Se uma exceção for lançada, o código IBGE não foi encontrado
                         $errorMessage = 'Código IBGE não encontrado';
@@ -81,7 +81,7 @@ class TenantService extends ServiceBase {
                         'layout_formulario_demanda' => 'COMPLETO',
                         'campos_ocultos_demanda' => [],
                         'nomenclatura' => [],
-                        'cidade_id' => $cidade,
+                        'cidade_id' => $cidade_id,
                     ]);
                     $entidade->save();
                 }

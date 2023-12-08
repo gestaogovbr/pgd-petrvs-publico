@@ -78,7 +78,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.title = this.lex.translate('Planos de Entregas');
     this.filter = this.fh.FormBuilder({
       agrupar: { default: true },
-      principais: { default: true },
+      principais: { default: false },
       arquivadas: { default: false },
       nome: { default: '' },
       data_filtro: { default: null },
@@ -261,12 +261,13 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     const agrupar = this.filter!.controls.agrupar.value;
     if ((agrupar && !this.groupBy?.length) || (!agrupar && this.groupBy?.length)) {
       this.groupBy = agrupar ? [{ field: "unidade.sigla", label: "Unidade" }] : [];
+      this.cdRef.detectChanges();
       this.grid!.reloadFilter();
     }
   }
 
   public onPrincipaisChange(event: Event) {
-    if (this.filter!.controls.principais.value) this.filter!.controls.unidade_id.setValue(null);
+    if (!this.filter!.controls.principais.value) this.filter!.controls.unidade_id.setValue(null);//invertido o default pelo !
     this.grid!.reloadFilter();
   }
 

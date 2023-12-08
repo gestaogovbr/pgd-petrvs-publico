@@ -4,7 +4,7 @@ import { EditableFormComponent } from 'src/app/components/editable-form/editable
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { QuestionarioDaoService } from 'src/app/dao/questionario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
-import { Questionario, QuestionarioPergunta } from 'src/app/models/questionario.model';
+import { Questionario} from 'src/app/models/questionario.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 

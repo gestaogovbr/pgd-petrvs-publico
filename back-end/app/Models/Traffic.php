@@ -25,6 +25,5 @@ class Traffic extends ModelBase
     public $timestamps = false;
 
     protected $casts = [
-        'date_time' => 'datetime',
     ];
 }

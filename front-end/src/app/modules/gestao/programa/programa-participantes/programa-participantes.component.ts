@@ -3,10 +3,12 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 import { ProgramaParticipanteDaoService } from 'src/app/dao/programa-participante-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { ProgramaParticipante } from 'src/app/models/programa-participante.model';
+import { Programa } from 'src/app/models/programa.model';
 import { Usuario } from 'src/app/models/usuario.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
@@ -21,16 +23,19 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
 
   public unidadeDao: UnidadeDaoService;
   public usuarioDao: UsuarioDaoService;
+  public programaDao: ProgramaDaoService;
   public programaParticipanteService: ProgramaParticipanteDaoService;
   public programaId: string = "";
   public form: FormGroup;
   public multiselectAllFields: string[] = ["usuario_id", "habilitado"];
   public multiselectMenu: ToolbarButton[];
+  public programa: Programa | null = null;
 
   constructor(public injector: Injector) {
     super(injector, ProgramaParticipante, ProgramaParticipanteDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
+    this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.programaParticipanteService = injector.get<ProgramaParticipanteDaoService>(ProgramaParticipanteDaoService);
     /* Inicializações */
     this.code = "MOD_PRGT_PART";
@@ -66,6 +71,7 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
   public ngOnInit(): void {
     super.ngOnInit();
     this.programaId = this.urlParams?.get('id') || "";
+    this.programaDao.getById(this.programaId).then(p => this.programa = p);
   }
 
   public filterWhere = (filter: FormGroup) => {

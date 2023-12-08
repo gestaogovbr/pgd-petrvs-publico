@@ -4009,7 +4009,7 @@ function PlanoEntregaListComponent_toolbar_1_input_switch_2_Template(rf, ctx) {
   }
   if (rf & 2) {
     const ctx_r23 = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵnextContext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 2)("control", ctx_r23.filter.controls.principais)("labelInfo", ctx_r23.lex.noun("Unidade", true) + " onde o " + ctx_r23.lex.noun("usuario") + " \u00E9 integrante, incluindo unidades superiores das geridas por ele");
+    _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 2)("control", ctx_r23.filter.controls.principais)("labelInfo", ctx_r23.lex.noun("Unidade", true) + " onde o " + ctx_r23.lex.noun("usuario") + " \u00E9 integrante, incluindo unidades superiores sob sua ger\u00EAncia.");
   }
 }
 function PlanoEntregaListComponent_toolbar_1_Template(rf, ctx) {
@@ -4351,7 +4351,7 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
         default: true
       },
       principais: {
-        default: true
+        default: false
       },
       arquivadas: {
         default: false
@@ -4609,11 +4609,12 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
         field: "unidade.sigla",
         label: "Unidade"
       }] : [];
+      this.cdRef.detectChanges();
       this.grid.reloadFilter();
     }
   }
   onPrincipaisChange(event) {
-    if (this.filter.controls.principais.value) this.filter.controls.unidade_id.setValue(null);
+    if (!this.filter.controls.principais.value) this.filter.controls.unidade_id.setValue(null); //invertido o default pelo !
     this.grid.reloadFilter();
   }
   dynamicButtons(row) {
@@ -5130,7 +5131,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵInheritDefinitionFeature"]],
   decls: 45,
   vars: 64,
-  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "loadList", "select"], [3, "buttons", 4, "ngIf"], [3, "deleted", "form", "where", "submit", "clear", "collapseChange", "collapsed", "visible"], [1, "row"], ["label", "Nome", "controlName", "nome", 3, "size", "control", "placeholder"], ["controlName", "unidade_id", 3, "size", "control", "dao"], ["unidade", ""], ["label", "Status", "controlName", "status", "itemTodos", "- Todos -", 3, "size", "control", "items", "filter", "valueTodos"], ["label", "Arq.", "controlName", "arquivadas", "labelInfo", "Listar tamb\u00E9m os planos de entregas arquivados", 3, "size", "control"], ["controlName", "planejamento_id", 3, "size", "control", "dao"], ["planejamento", ""], ["controlName", "cadeia_valor_id", 3, "size", "control", "dao"], ["cadeiaValor", ""], ["label", "Data", "itemTodos", "- Nenhum -", "controlName", "data_filtro", 3, "size", "valueTodos", "control", "items"], ["date", "", "label", "In\u00EDcio", "controlName", "data_filtro_inicio", "labelInfo", "Data in\u00EDcio do per\u00EDodo", 3, "size", "disabled", "control"], ["date", "", "label", "Fim", "controlName", "data_filtro_fim", "labelInfo", "Data fim do per\u00EDodo", 3, "size", "disabled", "control"], ["type", "expand", "icon", "bi bi-list-check", 3, "align", "hint", "template", "expandTemplate", 4, "ngIf"], [3, "titleTemplate", "template"], ["titleIdNumeroStatus", ""], ["columnNumero", ""], ["titleNomeProgramaUnidade", ""], ["columnNome", ""], ["title", "In\u00EDcio", "orderBy", "data_inicio", 3, "template"], ["columnInicio", ""], ["title", "Fim", "orderBy", "data_fim", 3, "template"], ["columnFim", ""], ["titlePlanoCadeia", ""], ["columnPlanoCadeia", ""], [3, "title", "template"], ["columnStatus", ""], ["type", "options", 3, "dynamicOptions", "dynamicButtons"], [3, "rows"], [3, "buttons"], ["labelPosition", "left", "label", "Agrupar por Un.", "controlName", "agrupar", 3, "size", "control", "change"], ["labelPosition", "left", "label", "Principais", "controlName", "principais", 3, "size", "control", "labelInfo", "change", 4, "ngIf"], ["labelPosition", "left", "label", "Principais", "controlName", "principais", 3, "size", "control", "labelInfo", "change"], ["type", "expand", "icon", "bi bi-list-check", 3, "align", "hint", "template", "expandTemplate"], ["columnEntregas", ""], ["columnExpandedEntregas", ""], ["class", "badge rounded-pill bg-light text-dark", 4, "ngIf"], [1, "badge", "rounded-pill", "bg-light", "text-dark"], [1, "bi", "bi-list-check"], [3, "parent", "disabled", "entity", "execucao", "cdRef", "planejamentoId", "cadeiaValorId", "unidadeId"], ["by", "numero", 3, "header"], [1, "micro-text", "fw-ligh"], ["by", "nome", 3, "header"], [1, "text-break", "text-wrap"], ["color", "light", 3, "icon", "label", 4, "ngIf"], ["color", "secondary", 3, "icon", "label", 4, "ngIf"], ["color", "light", 3, "icon", "label"], ["color", "secondary", 3, "icon", "label"], ["color", "light", 3, "maxWidth", "icon", "label", 4, "ngIf"], ["color", "light", 3, "maxWidth", "icon", "label"], [3, "color", "icon", "label"], ["color", "warning", "icon", "bi bi-inboxes", "label", "Arquivado", 4, "ngIf"], ["color", "danger", "icon", "bi bi-trash3", "label", "Exclu\u00EDdo", 4, "ngIf"], [3, "align", "tipoAvaliacao", "nota", 4, "ngIf"], ["color", "warning", "icon", "bi bi-inboxes", "label", "Arquivado"], ["color", "danger", "icon", "bi bi-trash3", "label", "Exclu\u00EDdo"], [3, "align", "tipoAvaliacao", "nota"]],
+  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "loadList", "select"], [3, "buttons", 4, "ngIf"], [3, "deleted", "form", "where", "submit", "clear", "collapseChange", "collapsed", "visible"], [1, "row"], ["label", "Nome", "controlName", "nome", 3, "size", "control", "placeholder"], ["controlName", "unidade_id", 3, "size", "control", "dao"], ["unidade", ""], ["label", "Status", "controlName", "status", "itemTodos", "- Todos -", 3, "size", "control", "items", "filter", "valueTodos"], ["label", "Arq.", "controlName", "arquivadas", "labelInfo", "Listar tamb\u00E9m os planos de entregas arquivados", 3, "size", "control"], ["controlName", "planejamento_id", 3, "size", "control", "dao"], ["planejamento", ""], ["controlName", "cadeia_valor_id", 3, "size", "control", "dao"], ["cadeiaValor", ""], ["label", "Data", "itemTodos", "- Nenhum -", "controlName", "data_filtro", 3, "size", "valueTodos", "control", "items"], ["date", "", "label", "In\u00EDcio", "controlName", "data_filtro_inicio", "labelInfo", "Data in\u00EDcio do per\u00EDodo", 3, "size", "disabled", "control"], ["date", "", "label", "Fim", "controlName", "data_filtro_fim", "labelInfo", "Data fim do per\u00EDodo", 3, "size", "disabled", "control"], ["type", "expand", "icon", "bi bi-list-check", 3, "align", "hint", "template", "expandTemplate", 4, "ngIf"], [3, "titleTemplate", "template"], ["titleIdNumeroStatus", ""], ["columnNumero", ""], ["titleNomeProgramaUnidade", ""], ["columnNome", ""], ["title", "In\u00EDcio", "orderBy", "data_inicio", 3, "template"], ["columnInicio", ""], ["title", "Fim", "orderBy", "data_fim", 3, "template"], ["columnFim", ""], ["titlePlanoCadeia", ""], ["columnPlanoCadeia", ""], [3, "title", "template"], ["columnStatus", ""], ["type", "options", 3, "dynamicOptions", "dynamicButtons"], [3, "rows"], [3, "buttons"], ["labelPosition", "left", "label", "Agrupar por Un.", "controlName", "agrupar", 3, "size", "control", "change"], ["labelPosition", "left", "label", "Vinculados", "controlName", "principais", 3, "size", "control", "labelInfo", "change", 4, "ngIf"], ["labelPosition", "left", "label", "Vinculados", "controlName", "principais", 3, "size", "control", "labelInfo", "change"], ["type", "expand", "icon", "bi bi-list-check", 3, "align", "hint", "template", "expandTemplate"], ["columnEntregas", ""], ["columnExpandedEntregas", ""], ["class", "badge rounded-pill bg-light text-dark", 4, "ngIf"], [1, "badge", "rounded-pill", "bg-light", "text-dark"], [1, "bi", "bi-list-check"], [3, "parent", "disabled", "entity", "execucao", "cdRef", "planejamentoId", "cadeiaValorId", "unidadeId"], ["by", "numero", 3, "header"], [1, "micro-text", "fw-ligh"], ["by", "nome", 3, "header"], [1, "text-break", "text-wrap"], ["color", "light", 3, "icon", "label", 4, "ngIf"], ["color", "secondary", 3, "icon", "label", 4, "ngIf"], ["color", "light", 3, "icon", "label"], ["color", "secondary", 3, "icon", "label"], ["color", "light", 3, "maxWidth", "icon", "label", 4, "ngIf"], ["color", "light", 3, "maxWidth", "icon", "label"], [3, "color", "icon", "label"], ["color", "warning", "icon", "bi bi-inboxes", "label", "Arquivado", 4, "ngIf"], ["color", "danger", "icon", "bi bi-trash3", "label", "Exclu\u00EDdo", 4, "ngIf"], [3, "align", "tipoAvaliacao", "nota", 4, "ngIf"], ["color", "warning", "icon", "bi bi-inboxes", "label", "Arquivado"], ["color", "danger", "icon", "bi bi-trash3", "label", "Exclu\u00EDdo"], [3, "align", "tipoAvaliacao", "nota"]],
   template: function PlanoEntregaListComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](0, "grid", 0);
@@ -6157,7 +6158,7 @@ class PlanoTrabalhoEntregaAtividadesComponent extends src_app_modules_base_page_
   loadData() {
     this.loader = true;
     this.AtividadeDao.query({
-      where: [["plano_trabalho_entrega_id", "==", this._entregaId]],
+      where: [["plano_trabalho_entrega_id", "==", this._entregaId], ["unidades_subordinadas", "==", true]],
       join: this.join
     }).asPromise().then(response => {
       this.items = response;
