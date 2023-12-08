@@ -1,7 +1,7 @@
 import { Component, ElementRef, Injector, Input, TemplateRef, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRouteSnapshot } from '@angular/router';
-import { GridComponent } from 'src/app/components/grid/grid.component';
+import { GridComponent, GroupBy } from 'src/app/components/grid/grid.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { Atividade } from 'src/app/models/atividade.model';
@@ -42,6 +42,7 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     this.modalWidth = 1100;
     this.filter = this.fh.FormBuilder({
       agrupar: { default: true },
+      agrupar_entrega: { default: true },
       atribuidas_para_mim: { default: false },
       usuario_id: { default: null },
       numero: { default: "" },
@@ -66,7 +67,7 @@ export class AtividadeListGridComponent extends AtividadeListBase {
       etiquetas: { default: [] },
       etiqueta: { default: null }
     });
-    this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }];
+    this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }, { field: "plano_trabalho_entrega.descricao", label: "Entrega" }];
     this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 
@@ -98,10 +99,13 @@ export class AtividadeListGridComponent extends AtividadeListBase {
 
   public onAgruparChange(event: Event) {
     const agrupar = this.filter!.controls.agrupar.value;
-    if ((agrupar && !this.groupBy?.length) || (!agrupar && this.groupBy?.length)) {
-      this.groupBy = agrupar ? [{ field: "unidade.sigla", label: "Unidade" }] : [];
-      this.grid!.reloadFilter();
-    }
+    const agrupar_entrega = this.filter!.controls.agrupar_entrega.value;
+    const groupByOptions: GroupBy[] = [];
+
+    if (agrupar) groupByOptions.push({ field: "unidade.sigla", label: "Unidade" });  
+    if (agrupar_entrega) groupByOptions.push({ field: "plano_trabalho_entrega.descricao", label: "Entrega" });  
+    this.groupBy = groupByOptions;
+    this.grid!.reloadFilter();   
   }
 
   public onStatusClick(status: BadgeButton) {

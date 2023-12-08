@@ -1,7 +1,10 @@
 <tabs right #tabs [title]="isModal ? '' : title">
     <tab key="UNIDADE" *ngIf="unidade" [icon]="entityService.getIcon('Unidade')" [label]="lex.translate('Unidade')" [template]="tabUnidade">
         <ng-template #tabUnidade>
-            <h5>{{unidade.sigla}} - {{unidade.nome}}</h5>
+            <div class="p-3 mb-3 bg-body-secondary">
+                <h5>{{lex.translate("Unidade")}}: {{unidade.sigla}} - {{unidade.nome}}</h5>
+                <h4>{{lex.translate("Participantes")}} <i class="bi bi-chevron-compact-down"></i></h4>
+            </div>
             <div *ngIf="loading" class="d-flex justify-content-center my-2">
                 <div class="spinner-border" role="status">
                     <span class="visually-hidden"></span>
@@ -27,7 +30,10 @@
     </tab>
     <tab key="USUARIO" [icon]="entityService.getIcon('Usuario')" [label]="lex.translate('Usuário')" [template]="tabUsuario">
         <ng-template #tabUsuario>
-            <separator [control]="form!.controls.arquivados" [title]="'Mostrar ' + lex.translate('Planos de trabalho') + ' arquivados?'"></separator>
+            <div class="d-flex justify-content-between">
+                <h5 class="mt-2">{{lex.translate("Planos de Trabalho")}} <i class="bi bi-chevron-compact-down"></i></h5>
+                <separator [control]="form!.controls.arquivados" [title]="'Mostrar ' + lex.translate('Planos de trabalho') + ' arquivados?'"></separator>
+            </div>            
             <plano-trabalho-list-accordeon [usuarioId]="auth.usuario!.id" [arquivados]="form!.controls.arquivados.value"></plano-trabalho-list-accordeon>
         </ng-template>
     </tab>
