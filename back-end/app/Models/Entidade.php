@@ -36,7 +36,7 @@ class Entidade extends ModelBase
         'tipo_modalidade_id', /* char(36); */
         'cidade_id', /* char(36); */
         'uf', /* varchar(2); */// UF para feriados estaduais
-        'url_sei', /* varchar(100); */// URL base do SEI da entidade
+        //'url_sei', /* varchar(100); */// URL base do SEI da entidade
         'nomenclatura', /* json; */// Nomenclatura utilizada no sistema
         'gestor_id', /* char(36); */
         'gestor_substituto_id', /* char(36); */

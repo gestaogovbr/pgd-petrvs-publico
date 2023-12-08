@@ -5,6 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use App\Models\ModelBase;
 use App\Models\PlanoEntregaEntrega;
+use Illuminate\Support\Facades\DB;
 
 class AlterPlanosEntregasEntregasTableChangeEntregaIdNotNull extends Migration
 {

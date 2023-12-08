@@ -6,15 +6,13 @@ use App\Models\Cidade;
 use App\Models\Entidade;
 use App\Models\Perfil;
 use App\Models\Usuario;
-use App\Models\Unidade;
 use App\Services\ServiceBase;
 use Illuminate\Support\Facades\Artisan;
 use Carbon\Carbon;
 use App\Models\Tenant;
-
-
 use Illuminate\Support\Facades\Log;
-use function App\Models\usuario;
+
+include(getcwd() . '/../app/Helpers/Helpers.php');
 
 class TenantService extends ServiceBase {
 
@@ -46,17 +44,20 @@ class TenantService extends ServiceBase {
 
     public function extraStore($dataOrEntity, $unidade, $action) {
         $tenant = Tenant::find($dataOrEntity->id);
-        $tenant->createDomain([
-            'domain' => $dataOrEntity->dominio_url
-        ]);
+        if(!$tenant->domains()->where('domain', $dataOrEntity->dominio_url)->exists()) {
+            $tenant->createDomain([
+                'domain' => $dataOrEntity->dominio_url
+            ]);
+        }
         tenancy()->initialize($tenant);
 
-        config('app.env') == 'production' ? $this->acoesProducao($dataOrEntity->id) : $this->acoesDev($dataOrEntity->id);
+        /* Executa migrations e seeds somente se for inclusão */
+        if ($action == ServiceBase::ACTION_INSERT) config('app.env') == 'production' ? $this->acoesProducao($dataOrEntity->id) : $this->acoesDev($dataOrEntity->id);
 
         if($tenant) {
             $tenant->run(function () use ($dataOrEntity) {
                 $entidade = Entidade::where('sigla', $dataOrEntity->id)->first();
-                $usuario = Usuario::where('nome', $dataOrEntity->nome_usuario)->first();
+                $usuario = Usuario::where('email', $dataOrEntity->email)->first();
 
                 if (!$entidade) {
                     try {
@@ -97,6 +98,16 @@ class TenantService extends ServiceBase {
                 }
             });
         }
+    }
+
+    public function generateCertificateKeys() {
+        $certificate = openssl_pkey_new();
+        openssl_pkey_export($certificate, $privateKey);
+        $publicKey = openssl_pkey_get_details($certificate)['key'];
+        return [
+            "private_key" => str_replace(["-----BEGIN PRIVATE KEY-----", "-----END PRIVATE KEY-----", "\n"], "", $privateKey),
+            "public_key" => str_replace(["-----BEGIN PUBLIC KEY-----", "-----END PUBLIC KEY-----", "\n"], "", $publicKey)
+        ];
     }
 
     public function cidade($id) {

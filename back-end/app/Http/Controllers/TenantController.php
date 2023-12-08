@@ -39,7 +39,18 @@ class TenantController extends ControllerBase {
             throw $e;
         }
     }
-    
+
+    public function generateCertificateKeys() {
+        try {
+            return response()->json([
+                'success' => true,
+                'data' => $this->service->generateCertificateKeys()
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
     public function cidades(Request $request) {
         try {
             $data = $request->validate([

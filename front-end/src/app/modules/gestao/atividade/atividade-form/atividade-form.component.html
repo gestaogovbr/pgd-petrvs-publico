@@ -1,7 +1,7 @@
 <editable-form [form]="form!" [disabled]="formDisabled" initialFocus="descricao" (submit)="onSaveData()" (cancel)="onCancel()">
     <tabs display right [title]="titleAtividade">
         <tab key="ATIVIDADE" label="Atividade">
-            <documento-link [sei]="sei" [documento]="form!.controls.documento_requisicao.value"></documento-link>
+            <documento-link #requisicao [sei]="sei" [documento]="form!.controls.documento_requisicao.value"></documento-link>
             <div class="row">
                 <input-textarea label="Descrição" [size]="12" [rows]="2" controlName="descricao" [control]="form!.controls.descricao" required></input-textarea>
             </div>

@@ -47,10 +47,10 @@ export class GlobalsService {
   }
 
   public refresh() {
-    this.document.getElementById("html-petrvs").setAttribute("data-bs-theme", this.theme)
-    const ngTheme = this.document.getElementById("primeng-thme") as HTMLLinkElement
-    if (ngTheme)
-      ngTheme.href = this.theme +".css"
+    //this.document.getElementById("html-petrvs").setAttribute("data-bs-theme", this.theme)
+    document.getElementsByTagName("html")[0].setAttribute("data-bs-theme", this.theme);
+    const ngTheme = this.document.getElementById("primeng-thme") as HTMLLinkElement;
+    if (ngTheme) ngTheme.href = this.theme + ".css";
     this.app!.cdRef.detectChanges();
   }
 
@@ -71,7 +71,7 @@ export class GlobalsService {
   }
 
   public get isEmbedded(): boolean {
-    return this.isExtension || this.isSuperModule;
+    return this.isExtension || this.isSeiModule;
   }
 
   public get isExtension(): boolean {
@@ -79,9 +79,9 @@ export class GlobalsService {
     return (typeof IS_PETRVS_EXTENSION != "undefined" && !!IS_PETRVS_EXTENSION) || (typeof PETRVS_IS_EXTENSION != "undefined" && !!PETRVS_IS_EXTENSION);
   };
 
-  public get isSuperModule(): boolean {
+  public get isSeiModule(): boolean {
     //@ts-ignore
-    return typeof PETRVS_IS_SUPER_MODULE != "undefined" && !!PETRVS_IS_SUPER_MODULE;
+    return typeof PETRVS_IS_SEI_MODULE != "undefined" && !!PETRVS_IS_SEI_MODULE;
   };
 
   public is(entidade: string): boolean {

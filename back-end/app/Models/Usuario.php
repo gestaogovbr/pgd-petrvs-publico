@@ -74,7 +74,7 @@ class Usuario extends Authenticatable
         //'foto_google', /* text; */// Foto do G-Suit (Google)
         //'foto_microsoft', /* text; */// Foto do Azure (Microsoft)
         //'foto_firebase', /* text; */// Foto do Firebase (Google, Facebook, Instagram, Twiter, etc...)
-        //'id_super', /* text; */// Id do usuário no SUPER
+        //'id_sei', /* text; */// Id do usuário no SEI
         //'vinculacao', /* enum('SERVIDOR_EFETIVO','SERVIDOR_COMISSIONADO','EMPREGADO','CONTRATADO_TEMPORARIO'); NOT NULL; DEFAULT: 'SERVIDOR_EFETIVO'; */// Vínculo do usuário com a administração
         //'metadados', /* json; */// Metadados do usuário
     ];

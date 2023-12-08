@@ -291,7 +291,7 @@ Route::middleware(['auth:sanctum'])->prefix('Usuario')->group(function () {
 Route::middleware(['auth:sanctum'])->prefix('Perfil')->group(function () { defaultRoutes(PerfilController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Entidade')->group(function () {
     defaultRoutes(EntidadeController::class);
-    Route::post('generate-api-key', [EntidadeController::class, 'generateApiKey']);
+    //Route::post('generate-api-key', [EntidadeController::class, 'generateApiKey']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
     defaultRoutes(UnidadeController::class);
