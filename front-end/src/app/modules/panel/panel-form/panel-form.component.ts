@@ -104,7 +104,11 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       integracao_wso2_token_acesso: { default: "" },
       integracao_wso2_token_user: { default: "" },
       integracao_wso2_token_password: { default: "" },
-
+      // SEI
+      modulo_sei_habilitado: { default: false },
+      modulo_sei_private_key: { default: "" },
+      modulo_sei_public_key: { default: "" },
+      modulo_sei_url: { default: "" }
     }, this.cdRef, this.validate);
     this.formLogin = this.fh.FormBuilder({
       Tipo: { default: "" },
@@ -154,4 +158,13 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
     });
   }
 
+  public async gerarCertificado() {
+    let certificado = await this.dao!.generateCertificateKeys();
+    this.form!.controls.modulo_sei_private_key.setValue(certificado.private_key);
+    this.form!.controls.modulo_sei_public_key.setValue(certificado.public_key);
+  }
+
+  public copiarPublicKeyClipboard() {
+    this.util.copyToClipboard(this.form!.controls.modulo_sei_public_key.value);
+  }
 }

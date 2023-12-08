@@ -5805,7 +5805,7 @@ class ProjetoTarefaFormPrincipalComponent extends src_app_modules_base_page_fram
       value: "Atividade"
     }, {
       key: "DOCUMENTO",
-      value: "Doc. SUPER/SEI"
+      value: "Doc. SEI"
     }, {
       key: "PROJETO",
       value: "Projeto"

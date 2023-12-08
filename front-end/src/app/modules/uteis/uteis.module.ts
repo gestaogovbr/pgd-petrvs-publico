@@ -20,6 +20,7 @@ import { AvaliarNotaInputComponent } from './avaliar/avaliar-nota-input/avaliar-
 import { AvaliarNotaBadgeComponent } from './avaliar/avaliar-nota-badge/avaliar-nota-badge.component';
 import { PlanejamentoShowComponent } from './planejamento-show/planejamento-show.component';
 import { ColunasComponent } from './colunas/colunas.component';
+import { DocumentosPreviewComponent } from './documentos/documentos-preview/documentos-preview.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { ColunasComponent } from './colunas/colunas.component';
     AvaliarNotaInputComponent,
     AvaliarNotaBadgeComponent,
     ColunasComponent,
-    PlanejamentoShowComponent
+    PlanejamentoShowComponent,
+    DocumentosPreviewComponent
   ],
   imports: [
     CommonModule,
@@ -63,7 +65,8 @@ import { ColunasComponent } from './colunas/colunas.component';
     AvaliarNotaInputComponent,
     AvaliarNotaBadgeComponent,
     ColunasComponent,
-    PlanejamentoShowComponent
+    PlanejamentoShowComponent,
+    DocumentosPreviewComponent
   ]
 })
 export class UteisModule { }

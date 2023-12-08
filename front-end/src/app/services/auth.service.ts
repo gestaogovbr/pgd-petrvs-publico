@@ -18,7 +18,7 @@ import { UnidadeDaoService } from '../dao/unidade-dao.service';
 import { NotificacaoService } from '../modules/uteis/notificacoes/notificacao.service';
 import { AppComponent } from '../app.component';
 
-export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION" | "SUPER" | "LOGINUNICO";
+export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION" | "SEI" | "LOGINUNICO";
 export type Permission = string | (string | string[])[];
 
 @Injectable({
@@ -95,7 +95,7 @@ export class AuthService {
   constructor(public injector: Injector) { }
 
   public success(usuario: Usuario, redirectTo?: FullRoute) {
-    this.app!.go.navigate(redirectTo || { route: this.app!.globals.initialRoute });
+    this.app!.go.navigate(redirectTo || { route: this.app!.gb.initialRoute });
   };
 
   public fail(error: any) {
@@ -257,7 +257,7 @@ export class AuthService {
   }
 
   private logIn(kind: AuthKind, route: string, params: any, redirectTo?: FullRoute): Promise<boolean> {
-    let deviceName = this.gb.isExtension ? "EXTENSION" : this.gb.isSuperModule ? "SUPER" : "BROWSER";
+    let deviceName = this.gb.isExtension ? "EXTENSION" : this.gb.isSeiModule ? "SEI" : "BROWSER";
     let login = (): Promise<boolean> => {
       return this.server.post((this.gb.isEmbedded ? "api/" : "web/") + route, { ...params, device_name: deviceName }).toPromise().then(response => {
         if (response?.error)

@@ -32,6 +32,7 @@ export class ButtonDashboardComponent  extends ComponentBase implements OnInit {
   }
 
   private _imgIcon: boolean = false;
+  
   seuCodigoSvg$!: Observable<string>;
   
   constructor(public injector: Injector, public sanitizer: DomSanitizer){    
@@ -41,21 +42,13 @@ export class ButtonDashboardComponent  extends ComponentBase implements OnInit {
     
   }
 
-  ngOnInit(): void {
-    
-  }
+  ngOnInit(): void {}
 
   async loadSvg(){
     this.seuCodigoSvg$ = await this.server.getSvg(this.imgIcon);
-    
   }
-
 
   onClick(){
-    if(this.route)
-      this.go.navigate(this.route, this.metadata);
+    if(this.route) this.go.navigate(this.route, this.metadata);
   }
-
-  
-
 }

@@ -1,4 +1,4 @@
-<div *ngIf="!button.dynamicVisible || button.dynamicVisible(button)" class="btn-group" role="group">
+<div *ngIf="!button.dynamicVisible || button.dynamicVisible(button)" class="btn-group" role="group" [class.w-100]="isFullWidth">
     <button type="button" [id]="generatedButtonId(button)" [class]="buttonClass" [attr.data-bs-toggle]="button.items && !button.toggle ? 'dropdown' : undefined" aria-expanded="false" 
         (click)="onButtonClick(button)" [disabled]="buttonDisabled(button)">
         <i *ngIf="button.icon?.length" [class]="button.icon"></i>
