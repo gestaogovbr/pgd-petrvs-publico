@@ -740,12 +740,16 @@ class PlanoTrabalhoService extends ServiceBase
    */
   public function assinaturasExigidas($plano_trabalho): array
   {
-    $ids = ["participante" => [], "gestores_unidade_executora" => [], "gestores_unidade_lotacao" => [], "gestores_entidade" => []];
-    if (strlen($plano_trabalho["programa_id"]) && strlen($plano_trabalho["usuario_id"]) && strlen($plano_trabalho["unidade_id"])) {
+    $ids = ["participante" => [], "gestores_unidade_executora" => [], "gestores_unidade_lotacao" => [], "gestores_entidade" => [], "erros" => []];
+    if (!empty($plano_trabalho) && !empty($plano_trabalho["programa_id"]) && !empty($plano_trabalho["usuario_id"]) && !empty($plano_trabalho["unidade_id"])) {
       $programa = Programa::find($plano_trabalho["programa_id"]);
       $participante = Usuario::find($plano_trabalho["usuario_id"]);
       $unidade = Unidade::find($plano_trabalho["unidade_id"]);
-      $lotacao = Unidade::find($participante->lotacao->unidade_id);
+      if(empty($programa) || empty($participante) || empty($unidade)) {
+        $ids["erros"] = ["programa_id" => $plano_trabalho["programa_id"], "programa" => $programa, "usuario_id" => $plano_trabalho["usuario_id"], "participante" => $participante, "unidade_id" => $plano_trabalho["unidade_id"], "unidade" => $unidade];
+        return $ids;
+      }
+      $lotacao = Unidade::find($participante->unidade_id);
       $entidade = $unidade->entidade;
       if ($programa->plano_trabalho_assinatura_participante && isset($participante)) $ids["participante"][] = $participante->id;
       if ($programa->plano_trabalho_assinatura_gestor_unidade && isset($unidade)) $ids["gestores_unidade_executora"] = array_values(array_filter([$unidade->gestor ? $unidade->gestor->usuario_id : null, $unidade->gestorSubstituto ? $unidade->gestorSubstituto->usuario_id : null, $unidade->gestorDelegado ? $unidade->gestorDelegado->usuario_id : null]));

@@ -327,10 +327,8 @@ class ServiceBase extends DynamicMethods
             }
         } else if ($or && !$first) {
             $query->orWhere($proxyWhere);
-            //$query->orWhere($where);
         } else {
             $query->where($proxyWhere);
-            //$query->where($where);
         }
     }
 
@@ -349,12 +347,6 @@ class ServiceBase extends DynamicMethods
                     $query->whereRaw($value->expression, $value->params);
                 }
             } else if(gettype($value) == "array"){
-                /*
-                $self = $this;
-                $triade = count($value) == 3 && in_array($value[1], ServiceBase::OPERATORS);
-                $value = !$triade ? function($query) use ($value, $data) { $this->applyWhere($query, $value, $data); } :
-                    ($value[1] == "in" ? function($query) use ($value, $self) { $query->whereIn($self->prefixField($value[0]), $value[2]); } : 
-                    ($value[1] == "not in" ? function($query) use ($value, $self) { $query->whereNotIn($self->prefixField($value[0]), $value[2]); } : $value)); */
                 $this->chooseWhere($query, $or, $first, $value, $data);
                 $first = false;
             }
@@ -374,11 +366,6 @@ class ServiceBase extends DynamicMethods
         foreach($where as $key => $value) {
             if(gettype($value) == "array"){
                 if(count($value) == 3 && gettype($value[0]) == "string" && in_array($value[1], ServiceBase::OPERATORS)){
-                    /*$collection = str_contains($where[$key][0], ".") ? substr($where[$key][0], 0, strpos($where[$key][0], ".")) : $prefix;
-                    $field = str_contains($where[$key][0], ".") ? substr($where[$key][0], strpos($where[$key][0], ".") + 1) : $where[$key][0];
-                    $model = App(str_starts_with($collection, 'App\\Models\\') ? $collection : 'App\\Models\\' . $collection);
-                    $table = !empty($model) ? $model->getTable() : $prefix;
-                    $where[$key][0] = DB::raw($table . "." . $field);*/
                     $where[$key][0] = DB::raw($this->prefixField($where[$key][0], $prefix));
                 } else {
                     $where[$key] = $this->prefixWhere($value, $prefix);
@@ -402,12 +389,6 @@ class ServiceBase extends DynamicMethods
             $context = $relation->getRelated();
             $fTable = $context->getTable();
             $alias .= "_" . ($kind == "BelongsTo" ? preg_replace("/_id$/", "", $fkName) : $relationName);
-            /*$context = "UsuarioEspecialista";
-            $fTable = "usuario_especilista";
-            $fkName = "id";
-            $idName = "usuario_id";
-            $alias = "_especialista";
-            $join = ["usuario_especilista as _especialista", "_especialista.usuario_id", "usuario.id"]*/
             if(!array_key_exists($alias, $data["join"])) {
                 $join = [$fTable . " AS " . $alias, $alias . "." . $idName, $source . "." . $fkName];
                 //O leftJoin foi movido para a função query(), pois lá aplica ao contexto pai
@@ -427,8 +408,7 @@ class ServiceBase extends DynamicMethods
             $fieldPath = explode(".", $order[0]);
             $field = array_pop($fieldPath);
             $source = $this->applyJoin($query, $data, $fieldPath, $model);
-            $aliasField = "_" . str_replace(".", "_", $order[0]);
-            //$query->orderBy(DB::raw($aliasField . (strtolower($order[1]) == "desc" ? " desc" : " asc")));
+           $aliasField = "_" . str_replace(".", "_", $order[0]);
             if(strtolower($order[1]) == "desc") {
                 $query->orderByDesc(DB::raw($aliasField));
             } else {
@@ -598,8 +578,6 @@ class ServiceBase extends DynamicMethods
         /* Remove os campos do with que são desnecessários */
         $allowed = array_merge(array_map(fn($value) => strtok($value, '.'), $data['fields']), ["id"]);
         $result["rows"] = $result["rows"]->toArray();
-        //$with = array_map(fn($value) => strtok($value, '.'), $data['with'] ?? []);
-        //$deletes = array_diff($with, $allowed);
         foreach($result["rows"] as &$row) {
             $deletes = array_diff(array_keys($row), $allowed);
             foreach($deletes as $delete) unset($row[$delete]);
@@ -615,7 +593,7 @@ class ServiceBase extends DynamicMethods
      */
     public function query($data)
     {
-        $model = $this->getModel();
+      $model = $this->getModel();
         $table = $model->getTable();
         $data["select"] = array_map(fn($field) => str_contains($field, ".") ? $field : $table . "." . $field, $data['fields'] ?? ["*"]);
         $query = $model::query();

@@ -14,7 +14,7 @@
             </div>
             <div class="row">
                 <input-search #cidade [size]="4" controlName="cidade_id" [dao]="cidadeDao" required></input-search>
-                <input-search #unidade_pai [size]="4" [label]="lex.translate('Unidade') + ' pai'" controlName="unidade_pai_id" [where]="[['entidade_id', '==', form.controls.entidade_id.value]]" [dao]="dao!" [required]="form.controls.unidade_pai_id.value ? 'true': undefined" [disabled]="!form.controls.unidade_pai_id.value ? 'true': undefined"></input-search>
+                <input-search #unidade_pai [size]="4" [label]="lex.translate('Unidade') + ' pai'" controlName="unidade_pai_id" [where]="[['entidade_id', '==', form!.controls.entidade_id.value]]" [dao]="dao!" [required]="form!.controls.unidade_pai_id.value ? 'true': undefined" [disabled]="!form!.controls.unidade_pai_id.value ? 'true': undefined"></input-search>
                 <input-search #entidade [size]="4" disabled controlName="entidade_id" [dao]="entidadeDao" required></input-search>
             </div>
         </tab>

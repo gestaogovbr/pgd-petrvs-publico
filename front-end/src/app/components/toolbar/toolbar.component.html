@@ -13,6 +13,7 @@
                     [class.dropdown-toggle]="btn.items && !btn.toggle" [attr.data-bs-toggle]="btn.items && !btn.toggle ? 'dropdown' : undefined" aria-expanded="false" 
                     (click)="onButtonClick(btn)" [disabled]="buttonDisabled(btn)">
                     <i *ngIf="btn.icon?.length" [class]="btn.icon"></i>
+                    <img *ngIf="btn.img?.length" [src]="gb.getResourcePath(btn.img!)" height="20">
                     <span class="d-none d-md-inline-block ms-2">{{btn.label || ""}}</span>
                     <span *ngIf="btn.badge?.length" class="badge bg-primary ms-2">{{btn.badge}}</span>
                 </button>

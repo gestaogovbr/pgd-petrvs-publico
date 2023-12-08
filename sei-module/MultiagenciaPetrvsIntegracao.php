@@ -3,9 +3,12 @@
 class MultiagenciaPetrvsIntegracao extends SeiIntegracao
 {
     const USUARIO_NAO_ENCONTRADO = 'USER_NOT_FOUND';
+    const ENTIDADE_NAO_ENCONTRADO = 'ENTITY_NOT_FOUND';
+    const MODULO_DESABILITADO = 'MODULE_DISABLED';
     const RECURSO_SISTEMA_PETRVS = 'md_multiagencia_petrvs';
     const PARAMETRO_URL_B2B_API = 'MD_MULTIAGENCIA_PETRVS_URL_B2B_API';
     const PARAMETRO_URL = 'MD_MULTIAGENCIA_PETRVS_URL';
+    const PARAMETRO_BACKEND = 'MD_MULTIAGENCIA_PETRVS_BACKEND';
     const PARAMETRO_ENTIDADE = 'MD_MULTIAGENCIA_PETRVS_ENTIDADE';
     const PARAMETRO_API_PUBLIC_KEY = 'MD_MULTIAGENCIA_PETRVS_API_PUBLIC_KEY';
     const SESSAO_SESSION_TOKEN = 'MD_MULTIAGENCIA_PETRVS_SESSION_TOKEN';
@@ -43,6 +46,7 @@ class MultiagenciaPetrvsIntegracao extends SeiIntegracao
             $objInfraParametro = new InfraParametro(BancoSEI::getInstance());
             $urlB2B = $objInfraParametro->isSetValor(self::PARAMETRO_URL_B2B_API) ? $objInfraParametro->getValor(self::PARAMETRO_URL_B2B_API) : null;
             $url = $objInfraParametro->isSetValor(self::PARAMETRO_URL) ? $objInfraParametro->getValor(self::PARAMETRO_URL) : "";
+            $backend = $objInfraParametro->isSetValor(self::PARAMETRO_BACKEND) ? $objInfraParametro->getValor(self::PARAMETRO_BACKEND) : $url;
             $entidade = $objInfraParametro->isSetValor(self::PARAMETRO_ENTIDADE) ? $objInfraParametro->getValor(self::PARAMETRO_ENTIDADE) : "";
             $chave = $objInfraParametro->isSetValor(self::PARAMETRO_API_PUBLIC_KEY) ? $objInfraParametro->getValor(self::PARAMETRO_API_PUBLIC_KEY) : "";
             $token = $objSessaoSEI->isSetAtributo(self::SESSAO_SESSION_TOKEN) ? $objSessaoSEI->getAtributo(self::SESSAO_SESSION_TOKEN) : "";
@@ -53,11 +57,13 @@ class MultiagenciaPetrvsIntegracao extends SeiIntegracao
                     $objSessaoSEI->setAtributo(self::SESSAO_SESSION_TOKEN, $token);
                 } 
                 $token = $objSessaoSEI->isSetAtributo(self::SESSAO_SESSION_TOKEN) ? $objSessaoSEI->getAtributo(self::SESSAO_SESSION_TOKEN) : "";
-                if(!empty($token) && $token != self::USUARIO_NAO_ENCONTRADO) {
+                if(!empty($token) && !in_array($token, [self::USUARIO_NAO_ENCONTRADO, self::ENTIDADE_NAO_ENCONTRADO, self::MODULO_DESABILITADO])) {
                     $retorno = [
                         "<script type='text/javascript'>\n".
                             "var MD_MULTIAGENCIA_PETRVS_SESSION_TOKEN='{$token}';\n".
+                            "var MD_MULTIAGENCIA_PETRVS_ENTIDADE='{$entidade}';\n".
                             "var MD_MULTIAGENCIA_PETRVS_URL='{$url}';\n".
+                            "var MD_MULTIAGENCIA_PETRVS_BACKEND='{$backend}';\n".
                             "var MD_MULTIAGENCIA_PETRVS_VERSAO='{$this->getVersao()}';\n".
                             "console.warn('Modulo PETRVS carregado');\n".
                         "</script>",
@@ -73,7 +79,7 @@ class MultiagenciaPetrvsIntegracao extends SeiIntegracao
     }
 
     /**
-     * Gera um token para o usuário utilizando as credencias do SUPER (CPF, email, nome)
+     * Gera um token para o usuário utilizando as credencias do SEI (CPF, email, nome)
      * 
      * @param string $urlBase  URL base para a action generate-session-token
      * @param mixed $chaveCriptografica  Chave publica gerada diretamente na configuração da entidade dentro do Petrvs
@@ -92,7 +98,7 @@ class MultiagenciaPetrvsIntegracao extends SeiIntegracao
             $objUsuarioDTO = $objUsuarioRN->consultarRN0489($objUsuarioDTO);
             $credencial = [
                 "entidade" => utf8_encode($entidade),
-                "id_super" => $usuarioId,
+                "id_sei" => $usuarioId,
                 "cpf" => utf8_encode(str_pad($objUsuarioDTO->getDblCpfContato(), 11, '0', STR_PAD_LEFT)),
                 "email" => utf8_encode($objUsuarioDTO->getStrEmailContato()),
                 "usuario" => utf8_encode($objSessaoSEI->getStrSiglaUsuario()),
@@ -106,7 +112,10 @@ class MultiagenciaPetrvsIntegracao extends SeiIntegracao
                 "token" => base64_encode($encrypted)
             ];
             $session = $this->httpPostJson(preg_replace("/\/$/", "", $urlBase) . "/api/generate-session-token", $data);
-            if(!empty($session["error"]) && $session["error"] == self::USUARIO_NAO_ENCONTRADO) return $session["error"];
+            if(!empty($session["error"]) && in_array($session["error"], [self::USUARIO_NAO_ENCONTRADO, self::ENTIDADE_NAO_ENCONTRADO, self::MODULO_DESABILITADO])) {
+                LogSEI::getInstance()->gravar('PETRVS{gerarTokenSessao}: ' . $session["error"], InfraLog::$ERRO);
+                return $session["error"];
+            }
             if(empty($session["token"])) throw new Exception("Erro ao obter token do servidor");
             return $session["token"];
         } catch (Throwable $erro) {

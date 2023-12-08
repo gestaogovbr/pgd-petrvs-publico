@@ -1,9 +1,20 @@
 <ng-template #calendarEfemerides>
     <calendar-efemerides [efemerides]="efemerides"></calendar-efemerides>
 </ng-template>
-<grid [dao]="dao" [add]="add" [form]="formEdit" [hasEdit]="false" [hasDelete]="false" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [loadList]="onGridLoad.bind(this)" [selectable]="selectable" (select)="onSelect($event)">
+
+
+<grid [dao]="dao" [add]="add" [form]="formEdit" [hasEdit]="false" [hasDelete]="false" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [loadList]="onGridLoad.bind(this)" [selectable]="selectable" (select)="onSelect($event)" [groupTemplate]="groupAtividades">
+    <ng-template #groupAtividades let-grid='grid' let-separator='separator' let-group='group'>
+        <div class="d-flex ps-3"> 
+            <ng-container *ngFor="let item of group">
+                <label class="me-3">{{item.label}}: <b>{{item.value}}</b></label>
+            </ng-container>
+        </div>
+    </ng-template>
+
     <toolbar *ngIf="!fixedFilter && !selectable">
-        <input-switch [size]="4" labelPosition="left" label="Agrupar por Un." controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
+        <input-switch [size]="3" labelPosition="left" label="Agrupar por Entrega" controlName="agrupar_entrega" [control]="filter!.controls.agrupar_entrega" (change)="onAgruparChange($event)"></input-switch>
+        <input-switch [size]="3" labelPosition="left" label="Agrupar por Unidade" controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
     </toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && !queryParams?.filter && filterCollapsed">
         <div class="row">
@@ -103,7 +114,7 @@
                 </div>
             </ng-template>
         </column>
-        <column [title]="'Progresso\nChecklist'" [width]="200" [columnEditTemplate]="selectable ? undefined : columnProgressoEtiquetasChecklistEdit" [template]="columnProgressoEtiquetasChecklist" [edit]="selectable ? undefined : onColumnProgressoEtiquetasChecklistEdit.bind(this)" [save]="selectable ? undefined : onColumnProgressoEtiquetasChecklistSave.bind(this)">
+        <column [title]="'Progresso\nChecklist'" [width]="150" [columnEditTemplate]="selectable ? undefined : columnProgressoEtiquetasChecklistEdit" [template]="columnProgressoEtiquetasChecklist" [edit]="selectable ? undefined : onColumnProgressoEtiquetasChecklistEdit.bind(this)" [save]="selectable ? undefined : onColumnProgressoEtiquetasChecklistSave.bind(this)">
             <ng-template let-row="row" #columnProgressoEtiquetasChecklist>
                 <progress-bar [value]="row.progresso" color="success"></progress-bar>
                 <separator *ngIf="row.checklist?.length" small title="Checklist"></separator>
@@ -138,3 +149,4 @@
     </columns>
     <pagination [rows]="rowsLimit"></pagination>
 </grid>
+

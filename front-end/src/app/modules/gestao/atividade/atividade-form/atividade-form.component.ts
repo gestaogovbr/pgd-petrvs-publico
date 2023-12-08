@@ -25,6 +25,7 @@ import { SeiKeys } from 'src/app/listeners/procedimento-trabalhar/procedimento-t
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { AtividadeService } from '../atividade.service';
+import { DocumentosLinkComponent } from 'src/app/modules/uteis/documentos/documentos-link/documentos-link.component';
 
 @Component({
   selector: 'app-atividade-form',
@@ -39,6 +40,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
   @ViewChild('usuario', { static: false }) public usuario?: InputSearchComponent;
   @ViewChild('comentarios', { static: false }) public comentarios?: ComentariosComponent;
+  @ViewChild('requisicao', { static: false }) public requisicao?: DocumentosLinkComponent;
 
   public sei?: SeiKeys;
   public form: FormGroup;
@@ -449,12 +451,6 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
         this.entity.usuario_id = usuario?.id || null;
         this.entity.usuario = usuario || undefined;
       }
-      /* Verificar isso (TODO)
-      if(this.queryParams?.numero_requisicao?.length) {
-        this.entity.numero_requisicao = this.queryParams?.numero_requisicao;
-      } else if(this.queryParams?.numero_processo?.length) {
-        this.entity.numero_processo = this.queryParams?.numero_processo;
-      }*/
     }
     await this.loadData(this.entity, form);
   }
@@ -477,6 +473,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
           }
         }
       }
+      atividade.documento_requisicao = this.requisicao?.documento;
       atividade.comentarios = atividade.comentarios.filter((x: Comentario) => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.texto?.length);
       atividade.tarefas = atividade.tarefas.filter((tarefa: AtividadeTarefa) => {
         tarefa.comentarios = tarefa.comentarios.filter((x: Comentario) => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.texto?.length);

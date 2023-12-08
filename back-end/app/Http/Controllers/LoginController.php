@@ -13,6 +13,7 @@ use App\Services\ApiService;
 use App\Models\Usuario;
 use App\Models\UnidadeIntegrante;
 use App\Models\Entidade;
+use App\Models\Tenant;
 use App\Services\UnidadeService;
 use App\Services\CalendarioService;
 use App\Services\UsuarioService;
@@ -527,12 +528,15 @@ class LoginController extends Controller
     {
         $credentials = $request->validate([
             'entidade' => ['required'],
-            'token' => ['required'],
-            'entidade' => ['required']
+            'token' => ['required']
         ]);
-        $entidade = Entidade::where("sigla", $credentials["entidade"])->first();
-        if (empty($entidade) || empty($entidade->api_private_key)) return LogError::newError('Entidade inválida.');
-        $tokenData = $api->verifyToken($credentials['token'], $entidade->api_private_key, $entidade->sigla);
+        $tenant = Tenant::find($credentials["entidade"]);
+        if (empty($tenant) || empty($tenant->modulo_sei_private_key)) return LogError::newError('ENTITY_NOT_FOUND');
+        tenancy()->initialize($tenant);
+        $privateKey = "-----BEGIN PRIVATE KEY-----\n" . $tenant->modulo_sei_private_key . "\n-----END PRIVATE KEY-----";
+        //$entidade = Entidade::where("sigla", $credentials["entidade"])->first();
+        //if (empty($entidade)) return LogError::newError('ENTITY_NOT_FOUND');
+        $tokenData = $api->verifyToken($credentials['token'], $privateKey, $credentials["entidade"]);
         if (!isset($tokenData['error'])) {
             $usuario = !empty($tokenData['email']) ? Usuario::where('email', $tokenData['email'])->first() :
                 Usuario::where('cpf', $tokenData['cpf'])->first();
@@ -544,12 +548,12 @@ class LoginController extends Controller
             }
             if (isset($usuario)) { // && Hash::check($request->password, $user->password)
                 $request->session()->regenerate();
-                $request->session()->put("kind", "SUPER");
+                $request->session()->put("kind", "SEI");
                 $usuario->save();
                 $entidade = $this->registrarEntidade($request);
-                $usuario = $this->registrarUsuario($request, $usuario, !empty($tokenData["id_super"]) ? ['id_super' => $tokenData["id_super"]] : []);
+                $usuario = $this->registrarUsuario($request, $usuario, !empty($tokenData["id_sei"]) ? ['id_sei' => $tokenData["id_sei"]] : []);
                 return response()->json([
-                    'token' => $usuario->createToken("SUPER_" . $tokenData["id_super"])->plainTextToken,
+                    'token' => $usuario->createToken("SEI_" . $tokenData["id_sei"])->plainTextToken,
                     'entidade' => $entidade,
                     'usuario' => $usuario,
                     "horario_servidor" => CalendarioService::horarioServidor()

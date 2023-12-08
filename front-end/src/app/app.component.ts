@@ -13,8 +13,9 @@ import { LookupService } from './services/lookup.service';
 import { EntityService } from './services/entity.service';
 import { NotificacaoService } from './modules/uteis/notificacoes/notificacao.service';
 import { DOCUMENT } from '@angular/common';
+import { SafeUrl } from '@angular/platform-browser';
 
-export let appInjector: Injector;
+//export let appInjector: Injector;
 //export type Contexto = "PGD" | "EXECUCAO" | "AVALIACAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
 export type Contexto = "GESTAO" | "EXECUCAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
 export type Schema = {
@@ -51,7 +52,6 @@ export type NovoMenuContexto = {
   items: MenuContexto[]
 };
 
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -67,11 +67,13 @@ export type NovoMenuContexto = {
 export class AppComponent {
   @ViewChild('dialogs', { read: ViewContainerRef }) dialogs?: ViewContainerRef;
 
+  public static instance: AppComponent;
+
   public title: string = 'petrvs';
   public error: string = '';
   public unidadeHora: string = "";
 
-  public globals: GlobalsService;
+  public gb: GlobalsService;
   public cdRef: ChangeDetectorRef;
   public auth: AuthService;
   public dialog: DialogService;
@@ -99,10 +101,11 @@ export class AppComponent {
   private _menu: any;
   private _menuDetectChanges: any;
 
-
   constructor(public injector: Injector) {
+    /* Instancia singleton da aplicação */
+    AppComponent.instance = this;
     /* Injector */
-    this.globals = injector.get<GlobalsService>(GlobalsService);
+    this.gb = injector.get<GlobalsService>(GlobalsService);
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
     this.auth = injector.get<AuthService>(AuthService);
     this.dialog = injector.get<DialogService>(DialogService);
@@ -119,9 +122,9 @@ export class AppComponent {
     this.notificacao.heartbeat();
     this.auth.app = this;
     this.lex.app = this;
-    this.globals.app = this;
-    if (this.globals.isEmbedded && this.globals.initialRoute?.length) {
-      this.go.navigate({ route: this.globals.initialRoute });
+    this.gb.app = this;
+    if (this.gb.isEmbedded && this.gb.initialRoute?.length) {
+      this.go.navigate({ route: this.gb.initialRoute });
     }
     setInterval(() => {
       let hora = this.auth.unidade ? this.auth.unidadeHora : "--:--";
@@ -210,7 +213,7 @@ export class AppComponent {
       CURRICULUM_VISUALIZA_PESQUISA_USR: { name: "Usuario", permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-search" },
       CURRICULUM_VISUALIZA_PESQUISA_ADM: { name: "Administrador", permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-binoculars" },
       /*PROJETOS*/
-      PAINEL: { name: "Painel", permition: '', route: ['configuracoes', 'sobre'], icon: "" },
+      PAINEL: { name: "Painel", permition: '', route: ['panel'], icon: "" },
       AUDITORIA: { name: "Auditoria", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
     };
 
@@ -449,8 +452,8 @@ export class AppComponent {
   }
 
   /*public onContextoSelect(item: any) {
-    if(this.globals.contexto = item) {
-      this.globals.contexto = item;
+    if(this.gb.contexto = item) {
+      this.gb.contexto = item;
       this.auth.usuarioConfig = {menu_contexto: item.key};
       this.goHome();
     }
@@ -465,7 +468,7 @@ export class AppComponent {
   }
 
   public get menu(): any {
-    switch (this.globals.contexto?.key) {
+    switch (this.gb.contexto?.key) {
       case "GESTAO": return this.menuGestao;
       case "EXECUCAO": return this.menuExecucao;
       case "ADMINISTRADOR": return this.menuAdministrador;
@@ -481,7 +484,7 @@ export class AppComponent {
     /* Container para a criação de dialogs */
     this.dialog.container = this.dialogs;
     this.dialog.cdRef = this.cdRef;
-    this.globals.refresh();
+    this.gb.refresh();
   }
 
   public toolbarLogin() {
@@ -514,8 +517,8 @@ export class AppComponent {
     return this.utils.shortName(this.auth.usuario?.apelido.length ? this.auth.usuario?.apelido : this.auth.usuario?.nome || "");
   }
 
-  public get usuarioFoto(): string {
-    return this.auth.usuario?.url_foto || "assets/images/profile.png";
+  public get usuarioFoto(): SafeUrl {
+    return this.gb.getResourcePath(this.auth.usuario?.url_foto || "assets/images/profile.png");
   }
 
   public onCollapseContainerClick() {
@@ -524,7 +527,7 @@ export class AppComponent {
   }
 
   public get collapseContainer(): boolean {
-    return this.globals.isEmbedded && this.auth.logged && !!this.auth.usuario?.config.ocultar_container_petrvs;
+    return this.gb.isEmbedded && this.auth.logged && !!this.auth.usuario?.config.ocultar_container_petrvs;
   }
 
   public onRestoreClick(popup: DialogComponent) {
@@ -559,7 +562,7 @@ export class AppComponent {
   }
 
   public activeModule(menu: NovoMenuContexto) {
-    return menu.items?.find(s => s.name == this.globals.contexto?.name)
+    return menu.items?.find(s => s.name == this.gb.contexto?.name)
   }
 
   public showSubMenu(e: any) {

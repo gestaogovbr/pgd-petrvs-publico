@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { SafeUrl } from '@angular/platform-browser';
 import { GlobalsService } from 'src/app/services/globals.service';
 
 @Component({
@@ -7,7 +8,7 @@ import { GlobalsService } from 'src/app/services/globals.service';
   styleUrls: ['./profile-picture.component.scss']
 })
 export class ProfilePictureComponent implements OnInit {
-  @Input() url?: string | null;
+  @Input() url?: string | SafeUrl | null;
   @Input() urlError: string;
   @Input() size: number = 25;
   @Input() hint?: string;
@@ -36,7 +37,7 @@ export class ProfilePictureComponent implements OnInit {
   }
 
   public get resourceUrl() {
-    return this.url?.startsWith("http") ? this.url : this.gb.getResourcePath(this.url || "assets/images/profile.png");
+    return typeof this.url == "string" ? (this.url?.startsWith("http") ? this.url : this.gb.getResourcePath(this.url || "assets/images/profile.png")) : this.url;
   }
     
   public onClick(event: Event) {

@@ -4,6 +4,11 @@ import { Tenant } from '../models/tenant.model';
 import { TipoCapacidade } from '../models/tipo-capacidade.model';
 import { Cidade } from '../models/cidade.model';
 
+export type CertificateKeys = {
+  public_key: string,
+  private_key: string
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -13,7 +18,6 @@ export class TenantDaoService extends DaoBaseService<Tenant> {
   constructor(protected injector: Injector) {
     super("Tenant", injector);
   }
-
 
   public cidadesSeeder(item: Cidade) {
     return new Promise<boolean>((resolve, reject) => {
@@ -43,6 +47,17 @@ export class TenantDaoService extends DaoBaseService<Tenant> {
     });
   }
 
+  public generateCertificateKeys() {
+    return new Promise<CertificateKeys>((resolve, reject) => {
+      this.server.post('config/' + this.collection + '/generate-certificate-keys', {}).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(response.data);
+        }
+      }, error => reject(error));
+    });
+  }
 
   public seeders(item: TipoCapacidade) {
     return new Promise<boolean>((resolve, reject) => {

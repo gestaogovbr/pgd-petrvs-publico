@@ -10,6 +10,7 @@ import { Usuario } from 'src/app/models/usuario.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { IntegranteService } from 'src/app/services/integrante.service';
+import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 
 @Component({
   selector: 'usuario-integrante',
@@ -24,10 +25,10 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
 
   public items: IntegranteConsolidado[] = [];
-  public _items?: any[];
   public integranteService: IntegranteService;
   public integranteDao: UnidadeIntegranteDaoService;
   public unidadeDao: UnidadeDaoService;
+  public usuarioDao: UsuarioDaoService;
   public tiposAtribuicao: LookupItem[] = [];
 
   constructor(public injector: Injector) {
@@ -35,6 +36,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     this.integranteService = injector.get<IntegranteService>(IntegranteService);
     this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
+    this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.form = this.fh.FormBuilder({
       unidade_id: { default: "" },
       atribuicoes: { default: undefined },
@@ -48,11 +50,11 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     this.tiposAtribuicao = this.isNoPersist ? this.lookup.UNIDADE_INTEGRANTE_TIPO.filter((atribuicao) => atribuicao.key != "LOTADO") : this.lookup.UNIDADE_INTEGRANTE_TIPO;
   }
 
-    ngAfterViewInit() {
-      (async () => {
-        await this.loadData({ id: this.entity_id }, this.form);
-      })();
-    }
+  ngAfterViewInit() {
+    (async () => {
+      await this.loadData({ id: this.entity_id }, this.form);
+    })();
+  }
 
   /**
    * Método chamado na inicialização do componente para carregar todas as unidades-integrantes do usuário.
@@ -63,17 +65,15 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     if (entity.id) {
       let integrantes: IntegranteConsolidado[] = [];
       try {
-        if(this._items == undefined){
-          this.grid!.loading = true;
-          this._items = [];
-          await this.integranteDao!.loadIntegrantes("", entity.id).then( resposta => { 
-            integrantes = resposta.integrantes.filter(x => x.atribuicoes?.length > 0); 
-            if(!this.isNoPersist) this.entity = resposta.usuario;
-          });
-        }
+        let result = await Promise.all([
+          this.usuarioDao.getById(entity.id),
+          this.integranteDao!.loadIntegrantes("", entity.id)
+        ]);
+        this.entity = result[0]!;
+        integrantes = result[1].integrantes.filter(x => x.atribuicoes?.length > 0);
       } finally {
-        integrantes.forEach(i => this._items?.push(this.integranteService.converterEmVinculo(i, i.id, entity.id, i.atribuicoes)));
-        this.items = this.integranteService.ordenar(this._items || []);
+        integrantes.forEach(i => this.items?.push(this.integranteService.completarIntegrante(i, i.id, entity.id, i.atribuicoes)));
+        this.items = this.integranteService.ordenar(this.items);
         this.cdRef.detectChanges();
         this.grid!.loading = false;
       }
@@ -83,8 +83,16 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
     if (["unidade_id", "atribuicoes"].includes(controlName) && !control.value?.length) { result = "Obrigatório"; }
-    if ((controlName == "unidade_id") && this.grid?.adding && this.items.map(i => i.id).includes(control.value)) result = "O usuário já é integrante desta unidade. Edite-a, ao invés de incluí-la novamente!";
+    if (controlName == "unidade_id" && this.grid?.adding && this.items.map(i => i.id).includes(control.value)) result = "O usuário já é integrante desta unidade. Edite-a, ao invés de incluí-la novamente!";
     return result;
+  }
+
+  public formValidation = (form?: FormGroup) => {
+    let atribuicoes: LookupItem[] = form!.controls.atribuicoes.value;
+    if (this.util.array_diff(['GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO'], atribuicoes.map(na => na.key) || []).length < 2) {
+      return "A um mesmo servidor só pode ser atribuída uma função de gestor, para uma mesma Unidade!";
+    }
+    return undefined;
   }
 
   /**
@@ -137,7 +145,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   public async removeIntegrante(row: IntegranteConsolidado) {
     let nomeServidor = this.entity!.nome;
     let nomeUnidade = row.unidade_nome;
-    if(this.isNoPersist && row.atribuicoes.length == 1 && row.atribuicoes[0] == "LOTADO") {
+    if (this.isNoPersist && row.atribuicoes.length == 1 && row.atribuicoes[0] == "LOTADO") {
       await this.dialog.alert("IMPOSSÍVEL EXCLUIR !", "Um vínculo não pode ser excluído quando sua única atribuição é a lotação do servidor. Se quiser alterar a lotação, use a aba principal.");
     } else {
       let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir todas as atribuições do servidor '" + nomeServidor + "' na unidade '" + nomeUnidade + "' ?");
@@ -146,18 +154,20 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
         try {
           if (!this.isNoPersist) {    // se persistente
             this.loading = true;
-            await this.integranteDao.saveIntegrante([this.integranteService.converterEmVinculo(row, row.id, this.entity!.id, [])]).then(resposta => {
-              if (msg = resposta.find(v => v.msg?.length)?.msg) { if (this.grid) this.grid.error = msg; };
+            await this.integranteDao.saveIntegrante([this.integranteService.completarIntegrante(row, row.id, this.entity!.id, [])]).then(resposta => {
+              if (msg = resposta.find(v => v._metadata.msg?.length)?._metadata.msg) { if (this.grid) this.grid.error = msg; };
             });
             await this.loadData({ id: this.entity!.id }, this.form);
           } else {                    // se não persistente
-            let index = this._items!.findIndex(x => x["id"] == row["id"]);
-            this._items![index] = this.integranteService.converterEmVinculo(row, row.id, this.entity!.id, []);
+            Object.assign(row, { '_status': "DELETE", 'atribuicoes': [] });
+            return false;
           }
+        } catch (e: any) {
+          this.loading = false;
         } finally {
           this.loading = false;
         }
-        return msg ? false : true;
+        //return msg ? false : true;
       }
     }
     return false;
@@ -179,34 +189,51 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
    * @returns 
    */
   public async saveIntegrante(form: FormGroup, row: IntegranteConsolidado) {
-    form.controls.atribuicoes.setValue(this.lookup.uniqueLookupItem(form.controls.atribuicoes.value));
-    let confirm = true;
-    let n = this.integranteService.alterandoGestor(form, row.atribuicoes || []);
-    if (n.length) confirm = await this.dialog.confirm("Confirma a Alteração de Gestor ?", n.length == 1 ? "O " + n[0] + " será alterado." : "Serão alterados: " + n.join(', ') + ".");
-    if (form!.controls.atribuicoes.value.length && confirm) {
-      this.loading = true;
-      try {
-        let novasAtribuicoes: IntegranteAtribuicao[] = form!.controls.atribuicoes.value.map((x: LookupItem) => x.key);
-        if (!this.isNoPersist) { // se persistente
-          await this.integranteDao.saveIntegrante([this.integranteService.converterEmVinculo(row, form!.controls.unidade_id.value, this.entity!.id, novasAtribuicoes)]).then(resposta => {
-            let msg: string | undefined;
-            if (msg = resposta?.find(v => v.msg?.length)?.msg) { if (this.grid) this.grid.error = msg; };
-          });
+    form.controls.atribuicoes.setValue(this.lookup.uniqueLookupItem(form!.controls.atribuicoes.value));
+/*     if (this.grid) this.grid!.error = "";
+    this.cdRef.detectChanges(); */
+    let error: any = undefined;
+    //error = this.formValidation(form);
+    if (!error) {
+      let confirm = true;
+      let n = this.integranteService.alterandoGestor(form, row.atribuicoes || []);
+      if (n.length) confirm = await this.dialog.confirm("Confirma a Alteração de Gestor ?", n.length == 1 ? "O " + n[0] + " será alterado." : "Serão alterados: " + n.join(', ') + ".");
+      if (form!.controls.atribuicoes.value.length && confirm) {
+        this.loading = true;
+        try {
+          let novasAtribuicoes: IntegranteAtribuicao[] = form!.controls.atribuicoes.value.map((x: LookupItem) => x.key);
+          if (!this.isNoPersist) { // se persistente
+            await this.integranteDao.saveIntegrante([this.integranteService.completarIntegrante(row, form!.controls.unidade_id.value, this.entity!.id, novasAtribuicoes)]).then(resposta => {
+              let msg: string | undefined;
+              if (msg = resposta?.find(v => v._metadata.msg?.length)?._metadata.msg) { if (this.grid) this.grid!.error = msg; };
+            });
+            await this.loadData({ id: this.entity!.id }, this.form);
+            if (this.grid) this.grid!.error = "";
+          } else {                // se não persistente
+            this.substituirItem(row, novasAtribuicoes);
+          }
+        } catch (error: any) {
+          if (this.grid) this.grid.error = error;
           await this.loadData({ id: this.entity!.id }, this.form);
-          if (this.grid) this.grid!.error = "";
-        } else {                // se não persistente
-          let index = this._items!.findIndex(x => x["id"] == row["id"]);
-          let novoIntegranteConsolidado = { id: row.id, unidade_sigla: this.unidade?.selectedItem?.entity.sigla, unidade_nome: this.unidade?.selectedItem?.entity.nome, unidade_codigo: this.unidade?.selectedItem?.entity.codigo };
-          this._items![index!] = this.integranteService.converterEmVinculo(novoIntegranteConsolidado, form!.controls.unidade_id.value, this.entity!.id, novasAtribuicoes);
-          await this.loadData({ id: this.entity!.id }, this.form);
+        } finally {
+          this.loading = false;
         }
-      } catch (error: any) {
-        if (this.grid) this.grid.error = error;
-        await this.loadData({ id: this.entity!.id }, this.form);
-      } finally {
-        this.loading = false;
       }
+    } else {
+      if (this.grid) this.grid.error = "ATENÇÃO" + "&" + error;
+      this.substituirItem(row, form.controls.atribuicoes.value.map((x: LookupItem) => x.key));
     }
     return undefined;
   }
+
+  public substituirItem(row: IntegranteConsolidado, atribuicoes: IntegranteAtribuicao[]){
+    let index = this.items!.findIndex(x => x["id"] == row["id"]);
+    this.items![index!] = this.integranteService.completarIntegrante(
+      { id: row.id, unidade_sigla: this.unidade?.selectedItem?.entity.sigla, unidade_nome: this.unidade?.selectedItem?.entity.nome, unidade_codigo: this.unidade?.selectedItem?.entity.codigo },
+      this.form!.controls.unidade_id.value, this.entity!.id, atribuicoes
+    );
+    this.cdRef.detectChanges();
+  }
+
+
 }

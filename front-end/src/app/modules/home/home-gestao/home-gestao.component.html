@@ -4,7 +4,7 @@
   <div class="col-6 col-sm-3 mb-3">
     <app-button-dashboard
       title="Planos de trabalho"
-      imgIcon="../../../../assets/icons/home/negociate.svg"
+      [imgIcon]="gb.getResourcePath('assets/icons/home/negociate.svg')"
       textColor="#1369f0"
       borderColor="#1369f0"
       [route]="{route: ['gestao/plano-trabalho']}"
@@ -15,7 +15,7 @@
   <div class="col-6 col-sm-3 mb-3">
     <app-button-dashboard
       title="Entregas da minha unidade"
-      imgIcon="../../../../assets/icons/home/service.svg"
+      [imgIcon]="gb.getResourcePath('assets/icons/home/service.svg')"
       textColor="#1369f0"
       borderColor="#1369f0"
       [route]="{route: ['execucao/plano-entrega']}"
@@ -25,7 +25,7 @@
   <div class="col-6 col-sm-3 mb-3">
     <app-button-dashboard
       title="Trabalho da minha equipe"
-      imgIcon="../../../../assets/icons/home/team.svg"
+      [imgIcon]="gb.getResourcePath('assets/icons/home/team.svg')"
       textColor="#1369f0"
       borderColor="#1369f0"
       [route]="{route: ['gestao/atividade']}"
@@ -35,7 +35,7 @@
   <div class="col-6 col-sm-3 mb-3">
     <app-button-dashboard
       title="Avaliar consolidados"
-      imgIcon="../../../../assets/icons/home/ranking.svg"
+      [imgIcon]="gb.getResourcePath('assets/icons/home/ranking.svg')"
       textColor="#1369f0"
       borderColor="#1369f0"
       [route]="{route: ['avaliacao/plano-trabalho/consolidacao/avaliacao']}"
