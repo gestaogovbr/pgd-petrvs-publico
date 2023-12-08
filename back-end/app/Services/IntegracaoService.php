@@ -138,9 +138,10 @@ class IntegracaoService extends ServiceBase {
             $dados_path_pai = $this->buscaOuInserePai($unidade, $entidade_id);
             $values[':path'] = !empty($dados_path_pai["unidade_id"]) ? $dados_path_pai["path"] . "/" . $dados_path_pai["unidade_id"] : "";
             $values[':unidade_id'] = $dados_path_pai["unidade_id"];
+            $values[':datamodificacao'] = $unidade->datamodificacao_siape;
 
             $sql = "UPDATE unidades SET path = :path, unidade_pai_id = :unidade_id, codigo = :codigo, ".
-                "nome = :nome, sigla = :sigla, cidade_id = :cidade_id WHERE id = :id";
+                "nome = :nome, sigla = :sigla, cidade_id = :cidade_id, datamodificacao = :datamodificacao WHERE id = :id";
             DB::update($sql, $values);
             $this->atualizaLogs($this->logged_user_id, 'unidades', $values[':id'], 'EDIT', [
                 'Rotina' => 'Integração',
@@ -174,8 +175,9 @@ class IntegracaoService extends ServiceBase {
         }
         else { /* Só entra aqui se a Unidade já existir e não tiver mudado o Pai. Nesse caso, atualiza apenas os outros dados (Nome, Sigla) */
             $values[':id'] = $unidade->id;
+            $values[':datamodificacao'] = $unidade->datamodificacao_siape;
 
-            $sql = "UPDATE unidades SET codigo = :codigo, nome = :nome, sigla = :sigla, cidade_id = :cidade_id WHERE id = :id";
+            $sql = "UPDATE unidades SET codigo = :codigo, nome = :nome, sigla = :sigla, cidade_id = :cidade_id,  datamodificacao = :datamodificacao WHERE id = :id";
             DB::update($sql, $values);
             /* $this->atualizaLogs($this->logged_user_id, 'unidades', $values[':id'], 'EDIT', [
                 'Rotina' => 'Integração',
@@ -313,43 +315,51 @@ class IntegracaoService extends ServiceBase {
                 // busca novo conteúdo com as unidades ATIVAS obtidas do Web Service
 
                 DB::transaction(function () use (&$uos, &$self) {
-                    DB::table('integracao_unidades')->delete();
+                    // DB::table('integracao_unidades')->delete();
                     // Iteração com lista de uorg's
                     foreach($uos as $uo) {
-                        if(!empty($self->UtilService->valueOrDefault($uo["id_servo"])) && $self->UtilService->valueOrDefault($uo["ativa"]) == 'true') {
+                        $uorg_codigo = $self->UtilService->valueOrDefault($uo["id_servo"]);
+                        $uorg_ativa = $self->UtilService->valueOrDefault($uo["ativa"]) == 'true';
 
-                              // Tratar dados. Tentando melhorar um pouco...
+                        $query_iu = DB::table('integracao_unidades')->where('id_servo', $uorg_codigo);
+                        $query_u = DB::table('unidades')->where('codigo', $uorg_codigo);
 
-                              $tel = $self->UtilService->valueOrDefault($uo["telefone"], null);
-                              if(!is_null($tel) && strlen($tel) == 19 &&
-                                  substr($tel,0,3) == '000' &&
-                                  substr($tel,14,5) == '00000'){
-                                  $tel = substr($tel,3,2) . substr($tel,6,8);
-                              }
+                        $uorg_siape_datamodificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($uo["datamodificacao"]));
+                        $iu_datamodificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($query_iu->value('datamodificacao')));
+                        $u_datamodificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($query_u->value('datamodificacao')));
 
-                              $sigla = $self->UtilService->valueOrDefault($uo["siglauorg"], null);
-                              if(!is_null($sigla)){
+                        if(!empty($uorg_codigo) && $uorg_ativa) {
+                            // Tratar dados. Tentando melhorar um pouco...
+                            $tel = $self->UtilService->valueOrDefault($uo["telefone"], null);
+                            if(!is_null($tel) && strlen($tel) == 19 &&
+                                substr($tel,0,3) == '000' &&
+                                substr($tel,14,5) == '00000'){
+                                $tel = substr($tel,3,2) . substr($tel,6,8);
+                            }
+
+                            $sigla = $self->UtilService->valueOrDefault($uo["siglauorg"], null);
+                            if(!is_null($sigla)){
                                 $sigla = mb_strtoupper(trim($sigla), 'UTF-8');
-                              }
+                            }
 
-                              $email = $self->UtilService->valueOrDefault($uo["email"], null);
-                              if(!is_null($email)){
-                                  $email = mb_strtolower(trim($email), 'UTF-8');
-                              }
+                            $email = $self->UtilService->valueOrDefault($uo["email"], null);
+                            if(!is_null($email)){
+                                $email = mb_strtolower(trim($email), 'UTF-8');
+                            }
 
-                              $cod_municipio_ibge = $self->UtilService->valueOrDefault($uo["municipio_ibge"], null);
-                              $municipio_nome = $self->UtilService->valueOrDefault($uo["municipio_nome"], null);
-                              if(!is_null($cod_municipio_ibge)){
-                                  $query = "SELECT nome FROM cidades where codigo_ibge = :cod_municipio_ibge";
-                                  $db_result = DB::select($query, ["cod_municipio_ibge" => $cod_municipio_ibge]);
-                                  if(is_array($db_result)) $municipio_nome = $db_result[0]->nome;
-                              }
+                            $cod_municipio_ibge = $self->UtilService->valueOrDefault($uo["municipio_ibge"], null);
+                            $municipio_nome = $self->UtilService->valueOrDefault($uo["municipio_nome"], null);
+                            if(!is_null($cod_municipio_ibge)){
+                                $query = "SELECT nome FROM cidades where codigo_ibge = :cod_municipio_ibge";
+                                $db_result = DB::select($query, ["cod_municipio_ibge" => $cod_municipio_ibge]);
+                                if(is_array($db_result)) $municipio_nome = $db_result[0]->nome;
+                            }
 
-                              // Formata nome da unidade organizacional
-                              $nomeuorg = $self->UtilService->valueOrDefault($uo["nomeuorg"], null);
-                              if(!is_null($nomeuorg)) $nomeuorg = $self->UtilService->getNomeFormatado($nomeuorg);
+                            // Formata nome da unidade organizacional
+                            $nomeuorg = $self->UtilService->valueOrDefault($uo["nomeuorg"], null);
+                            if(!is_null($nomeuorg)) $nomeuorg = $self->UtilService->getNomeFormatado($nomeuorg);
 
-                              $unidade = [
+                            $unidade = [
                                 'id_servo' => $self->UtilService->valueOrDefault($uo["id_servo"], null, $option = "uorg"),
                                 'pai_servo' => $self->UtilService->valueOrDefault($uo["pai_servo"], null, $option = "uorg"),
                                 'codigo_siape' => $self->UtilService->valueOrDefault($uo["codigo_siape"], null, $option = "uorg"),
@@ -380,13 +390,31 @@ class IntegracaoService extends ServiceBase {
                                 'regimental' => $self->UtilService->valueOrDefault($uo["regimental"], null),
                                 'datamodificacao' => $self->UtilService->valueOrDefault($uo["datamodificacao"], null),
                                 'und_nu_adicional' => $self->UtilService->valueOrDefault($uo["und_nu_adicional"], null),
-                                'cnpjupag' => $self->UtilService->valueOrDefault($uo["cnpjupag"], null)
+                                'cnpjupag' => $self->UtilService->valueOrDefault($uo["cnpjupag"], null),
+                                'deleted_at' => null,
                             ];
-                            $registro = new IntegracaoUnidade($unidade);
-                            $registro->save();
+
+                            if(empty($query_iu->value('id_servo'))){
+                                $registro = new IntegracaoUnidade($unidade);
+                                $registro->save();
+                            } else if((!empty($query_iu->value('id_servo'))  &&  ($uorg_siape_datamodificacao > $iu_datamodificacao || $uorg_siape_datamodificacao > $u_datamodificacao)) ||
+                                (!empty($query_iu->value('id_servo')) && $query_iu->value('deleted_at'))){
+                                    // Atualiza informações de unidade que já existe na tabela integracao_unidades ou remove dados de soft_delete da tabela integracao_unidade.
+                                    $query_iu->update($unidade);
+                                }
+                            }
                         }
-                    }
                 });
+
+                // Finalidade: remover uorgs que não existem mais no SIAPE, mas ainda constam na tabela integracao_unidades.
+                // Atividade vai refletir na desativação de unidades que nao existem mais no SIAPE.
+
+                $unidades_siape =  array_map(function ($uorg) { return $uorg['id_servo']; }, $uos);
+                $unidades_integracao = DB::table("integracao_unidades")->get('id_servo')->values('id_servo')->toArray();
+                $unidades_integracao = array_map(function ($uorg) { return $uorg->id_servo; }, $unidades_integracao);
+                $unidades_integracao_remover = array_diff($unidades_integracao, $unidades_siape);
+                $datahora_remocao = Carbon::now();
+                $unidades_integracao_remover ? DB::table('integracao_unidades')->wherein('id_servo', $unidades_integracao_remover)->update(['deleted_at' => $datahora_remocao]) : true;
 
                 if($this->echo) $this->imprimeNoTerminal("Concluída a fase de reconstrução da tabela integracao_unidades!.....");
                 $n = IntegracaoUnidade::count();
@@ -424,7 +452,7 @@ class IntegracaoService extends ServiceBase {
                     "OR iu.pai_servo != " .
                     "(SELECT codigo as cod_unidade_pai FROM unidades u2 " .
                     "WHERE id = u.unidade_pai_id)" .
-                    ") AND iu.ativa = 'true'";
+                    ") AND iu.ativa = 'true' AND iu.deleted_at is NULL";
 
                 $this->unidadesSelecionadas = DB::select($consulta_sql);
 
@@ -437,12 +465,9 @@ class IntegracaoService extends ServiceBase {
                     });
                 }
 
-                // integrção 1 2 3 4 (diferença .. novidades)
-                // unidaes 1 2 3 4 5 6 7 8 9 10
-
                 // Seta inativo nas unidades que não existem em integracao_unidades e garante que não esteja inativo as que existem em integracao_unidades.
-                $db_result = $this->inativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NOW() WHERE data_inativacao IS NULL AND u.codigo IS NOT NULL and u.codigo != '' AND NOT EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo)");
-                $db_result = $this->ativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NULL WHERE data_inativacao IS NOT NULL AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo);");
+                $db_result_desativadas = $this->inativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NOW() WHERE data_inativacao IS NULL AND u.codigo IS NOT NULL and u.codigo != '' AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo AND iu.deleted_at IS NOT NULL)");
+                $db_result_ativadas = $this->ativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NULL WHERE data_inativacao IS NOT NULL AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo AND iu.deleted_at IS NULL);");
 
                 $this->result['unidades']['Resultado'] = 'Sucesso';
                 array_push($this->result['unidades']['Observações'], 'Na tabela Unidades do Petrvs constam agora ' . DB::table('unidades')->get()->count() . ' unidades!');
