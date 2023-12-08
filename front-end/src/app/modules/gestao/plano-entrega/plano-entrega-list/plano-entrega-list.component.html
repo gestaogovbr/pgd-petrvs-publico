@@ -7,7 +7,8 @@
     </toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed" [visible]="showFilter">
         <div class="row">
-            <input-text [size]="4" label="Nome" controlName="nome" [control]="filter!.controls.nome" [placeholder]="'Nome do '+lex.translate('plano de entrega')" [attr.maxlength]=250></input-text>
+            <input-switch [size]="1" label="Meus" controlName="meus_planos" [control]="filter!.controls.meus_planos" labelInfo="Planos de entrega da unidade da qual faço parte da gestão"></input-switch>
+            <input-text [size]="3" label="Nome" controlName="nome" [control]="filter!.controls.nome" [placeholder]="'Nome do '+lex.translate('plano de entrega')" [attr.maxlength]=250></input-text>
             <input-search #unidade [size]="4" [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao"></input-search>
             <input-select [size]="3" label="Status" controlName="status" [control]="filter!.controls.status" [items]="lookup.PLANO_ENTREGA_STATUS" [filter]="avaliacao ? ['CONCLUIDO', 'AVALIADO'] : undefined" itemTodos="- Todos -" [valueTodos]="null"></input-select>
             <input-switch [size]="1" label="Arq." controlName="arquivadas" [control]="filter!.controls.arquivadas" labelInfo="Listar também os planos de entregas arquivados"></input-switch>
