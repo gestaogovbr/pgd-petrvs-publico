@@ -400,7 +400,7 @@ export class GridComponent extends ComponentBase implements OnInit {
 
   public get isSelectable(): boolean { /* Considera o sidePanel */
     return this.selectable || !!this.sidePanel;
-  }
+  } 
 
   /* Utilizado para caso esteja editando irá confirmar a gravação */
   public async confirm() {
@@ -819,3 +819,4 @@ export class GridComponent extends ComponentBase implements OnInit {
       return this.control!.errors?.errorMessage;
   }
 }
+
