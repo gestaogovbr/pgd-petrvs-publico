@@ -359,7 +359,7 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
   }
 
   public openDocumentos() {
-    this.go.navigate({route: ['utils', 'documentos']}, {metadata: {
+    this.go.navigate({route: ['uteis', 'documentos']}, {metadata: {
       needSign: (documento: Documento) => true,
       extraTags: (entity: HasDocumentos, documento: Documento, metadata: any) => [],
       especie: "TCR",

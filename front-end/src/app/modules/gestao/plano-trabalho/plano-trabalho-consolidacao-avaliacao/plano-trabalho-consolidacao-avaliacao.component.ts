@@ -46,9 +46,9 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
       "planoTrabalho.usuario:id,nome,apelido,url_foto"
     ];
     this.groupBy = [
-      { field: "plano_trabalho.unidade.sigla", label: "Unidade" }, 
+      { field: "plano_trabalho.unidade.sigla", label: this.lex.translate("Unidade") }, 
       { field: "plano_trabalho.unidade.id", label: "Unidade Id" }, 
-      { field: "plano_trabalho.usuario.nome", label: "Usuário" },
+      { field: "plano_trabalho.usuario.nome", label: this.lex.translate("Participante") },
       { field: "plano_trabalho.usuario.id", label: "Usuário Id" }
     ];
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
@@ -76,7 +76,8 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
     let result: any[] = [];
     let form: any = filter.value;
     result.push(["status", "in", ["CONCLUIDO", "AVALIADO"]]);
-    if(form.usuario_id?.length) result.push(["usuario_id", "==", form.usuario_id]);
+//    if(form.usuario_id?.length) result.push(["usuario_id", "==", form.usuario_id]);
+    if(form.usuario_id?.length) result.push(["plano_trabalho.usuario.id", "==", form.usuario_id]);
     if(form.unidade_id?.length) result.push(["plano_trabalho.unidade.id", "==", form.unidade_id]);
     if(form.unidades_subordinadas) result.push(["unidades_subordinadas", "==", true]);
     if(form.incluir_arquivados) result.push(["incluir_arquivados", "==", true]);

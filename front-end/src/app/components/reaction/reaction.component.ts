@@ -64,7 +64,7 @@ export class ReactionComponent extends PageFrameBase implements OnInit {
   }
 
   emojiPath(emoji: string) {
-    return `assets/icons/reactions/${emoji}.svg`;
+    return this.gb.baseURL + `assets/icons/reactions/${emoji}.svg`;
   }
 
   async react(reacao: LookupItem) {

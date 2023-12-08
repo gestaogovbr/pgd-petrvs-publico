@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { GlobalsService } from 'src/app/services/globals.service';
 
 @Component({
   selector: 'app-home-execucao',
@@ -6,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./home-execucao.component.scss']
 })
 export class HomeExecucaoComponent {
-
+  constructor(public gb: GlobalsService) {}
 }

@@ -6,8 +6,9 @@ use App\Http\Controllers\LoginController;
 use Stancl\Tenancy\Middleware\InitializeTenancyByPath;
 
 /* Testes *
-Route::get('/teste', function (Request $request) { return ["CENTRAL"]; }); *
-
+Route::get('/teste', function (Request $request) { return ["CENTRAL"]; }); */
+Route::middleware([OnlyLocal::class])
+    ->get('/rotinas-diarias/run', [RotinasDiariasController::class, 'run']);
 
 /* 
 Rota dinâmica para login social Microsoft (Azure) e

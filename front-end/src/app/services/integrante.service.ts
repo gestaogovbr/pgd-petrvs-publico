@@ -2,9 +2,7 @@ import { Injectable, Injector } from '@angular/core';
 import { LookupItem, LookupService } from './lookup.service';
 import { FormGroup } from '@angular/forms';
 import { IntegranteConsolidado } from '../models/unidade-integrante.model';
-import { Vinculo } from '../dao/unidade-integrante-dao.service';
 import { IntegranteAtribuicao } from '../models/base.model';
-import { PageBase } from '../modules/base/page-base';
 import { UtilService } from './util.service';
 import { DialogService } from './dialog.service';
 
@@ -49,8 +47,9 @@ export class IntegranteService {
     return items;
   }
 
-  public converterEmVinculo(base: any, unidade_id: string, usuario_id: string, atribuicoes: IntegranteAtribuicao[]): Vinculo {
-    return Object.assign(base, { 'unidade_id': unidade_id, 'usuario_id': usuario_id, 'atribuicoes': atribuicoes });
+  public completarIntegrante(base: any, unidade_id: string, usuario_id: string, atribuicoes: IntegranteAtribuicao[]): IntegranteConsolidado {
+    let obj = {'unidade_id': unidade_id, 'usuario_id': usuario_id, 'atribuicoes': atribuicoes};
+    return Object.assign({}, base, obj);
   }
 
   public permitidoApagar(atribuicao: string, noPersist: boolean): boolean {

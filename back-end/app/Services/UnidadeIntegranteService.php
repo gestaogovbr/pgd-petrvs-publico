@@ -136,13 +136,15 @@ class UnidadeIntegranteService extends ServiceBase
                   'unidade_id' => $unidade->id,
                   'usuario_id' => $usuario->id,
                   'atribuicoes' => $atribuicoesFinais,
-                  'msg' => $msg ?? ''
+                  '_metadata' => ['msg' => $msg ?? '']
               ]);
           } catch (Throwable $e) {
             if($transaction) DB::rollback();
               throw $e;
           }
       }
+      // TODO: EXCLUIR EVENTUAIS VINCULOS QUE EXISTAM E QUE NÃO ESTÃO NO ARRAY $VINCULOS
+
       return $result;
     }
 
