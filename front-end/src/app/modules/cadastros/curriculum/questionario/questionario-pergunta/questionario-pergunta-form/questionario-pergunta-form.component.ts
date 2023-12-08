@@ -13,11 +13,11 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
-  selector: 'questionario-form',
-  templateUrl: './questionario-form.component.html',
-  styleUrls: ['./questionario-form.component.scss']
+  selector: 'questionario-pergunta-form',
+  templateUrl: './questionario-pergunta-form.component.html',
+  styleUrls: ['./questionario-pergunta-form.component.scss']
 })
-export class QuestionarioFormComponent extends PageFormBase<Questionario, QuestionarioDaoService> {
+export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario, QuestionarioDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('listaExemplo', { static: false }) public listaExemplo?: InputSelectComponent;
   @ViewChild('listaTipoResposta', { static: false }) public listaTipoResposta?: InputSelectComponent;
@@ -36,12 +36,10 @@ export class QuestionarioFormComponent extends PageFormBase<Questionario, Questi
     this.join = ["perguntas"];
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
-      codigo: { default: "" },
-      tipo: { default: "" },
-      tipoResposta: { default: [] },
       perguntas: { default: [] },
+      codigo: { default: "" },
+      tipoQuestionario: { default: "" },
       switchExemplo: { default: false },
-      multiOpcaoResposta: { default: [] }
     }, this.cdRef, this.validate);
     this.formPergunta = this.fh.FormBuilder({
       pergunta: { default: "" },
@@ -51,6 +49,8 @@ export class QuestionarioFormComponent extends PageFormBase<Questionario, Questi
       inputValorResposta: { default: "" },
       inputMinimo: { default: 0 },
       inputMaximo: { default: 10 }
+      //criado_versao: number | undefined;
+      //deletado_versao: number | undefined;
     }, this.cdRef, this.perguntaValidate);
   }
 
@@ -79,8 +79,10 @@ export class QuestionarioFormComponent extends PageFormBase<Questionario, Questi
 
   public saveData(form: IIndexable): Promise<Questionario> {
     return new Promise<Questionario>((resolve, reject) => {
-      const questionario = this.util.fill(new Questionario(), this.entity!);
-      resolve(this.util.fillForm(questionario, this.form!.value));
+      let questionario = this.util.fill(new Questionario(), this.entity!);
+      questionario = this.util.fillForm(questionario, this.form!.value);
+      questionario.perguntas = this.form!.controls.perguntas.value.filter((x: QuestionarioPergunta) => x._status?.length);
+      resolve(questionario);
     });
   }
 
@@ -178,28 +180,31 @@ export class QuestionarioFormComponent extends PageFormBase<Questionario, Questi
   }
 
   public isList(tipo: QuestionarioPerguntaTipo) {
-    return ['LISTA_UNICA', 'LISTA_MULTIPLA'].includes(tipo);
+    return ['SELECT', 'MULTI_SELECT'].includes(tipo);
   }
 
   public isRange(tipo: QuestionarioPerguntaTipo) {
-    return ['CLASSIFICACAO', 'INTENSIDADE'].includes(tipo);
+    return ['RATE', 'NUMBER'].includes(tipo);
   }
 
   public async addPergunta() {
     const maxSequencia = Math.max(0, ...(this.form!.controls.perguntas.value || []).map((x: QuestionarioPergunta) => x.sequencia));
-    return new QuestionarioPergunta({ sequencia: maxSequencia + 1 });
+    return new QuestionarioPergunta({ sequencia: maxSequencia + 1 , _status: "ADD" });
   }
 
   public async loadPergunta(form: FormGroup, row: QuestionarioPergunta) {
     this.formPergunta.controls.pergunta.setValue(row.pergunta);
     this.formPergunta.controls.tipo.setValue(row.tipo);
-    this.formPergunta.controls.respostas.setValue(this.isList(row.tipo) ? row.respostas : []);
+    this.formPergunta.controls.respostas.setValue(this.isList(row.tipo) ? row.respostas || [] : []);
     this.formPergunta.controls.inputMinimo.setValue(this.isRange(row.tipo) ? row.respostas.min : 0);
     this.formPergunta.controls.inputMaximo.setValue(this.isRange(row.tipo) ? row.respostas.max : 10);
   }
 
   public async removePergunta(row: any) {
-    return await this.dialog.confirm("Exclui ?", "Deseja realmente excluir todas as atribuições do servidor?");
+    if(await this.dialog.confirm("Excluir ?", "Deseja realmente excluir esta pergunta?")) {
+      row._status = "DEL";
+    }
+    return undefined;
   }
 
   public async savePergunta(form: FormGroup, row: any) {
@@ -208,6 +213,7 @@ export class QuestionarioFormComponent extends PageFormBase<Questionario, Questi
       let values = form.value;
       row.pergunta = values.pergunta;
       row.tipo = values.tipo;
+      row._status = row._status == "ADD" ? "ADD" : "EDIT";
       row.respostas = this.isList(values.tipo) ? values.respostas : 
         (this.isRange(values.tipo) ? { min: values.inputMinimo, max: values.inputMaximo} : null);
       return row;
