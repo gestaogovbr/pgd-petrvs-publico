@@ -37,17 +37,19 @@
         </column>
         <column [titleTemplate]="titleUsuario" [template]="columnUsuario">
             <ng-template let-header="header" #titleUsuario>
-                <order by="usuario.nome" [header]="header">Usuário</order>
+                <order by="usuario.nome" [header]="header">Usuário</order><br>Programa
             </ng-template>
             <ng-template let-row="row" #columnUsuario>
-                <span> {{row.usuario?.nome || ""}}</span>
+                <span> {{row.usuario?.nome || ""}}</span><br>
+                <badge color="light" icon="bi bi-file-bar-graph" [label]="row.programa?.nome || ''"></badge>
             </ng-template>
         </column>
-        <column title="Programa" [template]="columnPrograma">
+        <!--<column title="Programa" [template]="columnPrograma">
             <ng-template let-row="row" #columnPrograma>
                 <span> {{row.programa?.nome || ""}}</span>
+                <badge color="blue" icon="bi bi-file-bar-graph" [label]="row.programa?.nome || ''"></badge>
             </ng-template>
-        </column>
+        </column>-->
         <column title="Unidade" [template]="columnUnidade">
             <ng-template let-row="row" #columnUnidade>
                 <span> {{row.unidade?.sigla || ""}}</span>

@@ -3,6 +3,7 @@ import { IIndexable } from 'src/app/models/base.model';
 import { FullRoute, NavigateService, RouteMetadata } from 'src/app/services/navigate.service';
 import { UtilService } from 'src/app/services/util.service';
 import { ComponentBase } from '../component-base';
+import { GlobalsService } from 'src/app/services/globals.service';
 
 export type ToolbarButton = {
   id?: string,
@@ -11,6 +12,7 @@ export type ToolbarButton = {
   metadata?: RouteMetadata,
   class?: string,
   icon?: string,
+  img?: string,
   disabled?: boolean | (() => boolean),
   iconChar?: string, 
   color?: string,
@@ -56,12 +58,14 @@ export class ToolbarComponent extends ComponentBase implements OnInit {
   }
 
   public go: NavigateService;
+  public gb: GlobalsService;
   private _buttons?: ToolbarButton[];
   private _title: string = "";
 
   constructor(public injector: Injector) {
     super(injector)
     this.go = injector.get<NavigateService>(NavigateService);
+    this.gb = injector.get<GlobalsService>(GlobalsService);
   }
 
   ngOnInit(): void {

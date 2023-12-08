@@ -9,19 +9,12 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
   <link rel="manifest" href="assets/site.webmanifest">
-
   <link href="assets/css/bootstrap-load-fonts.css" rel="stylesheet" type="text/css"> 
   <link href="assets/css/fontawesome-load-fonts.css" rel="stylesheet" type="text/css"> 
-
   <link rel="stylesheet" type="text/css" href="blue.css" id="primeng-thme">
-
-
-
   <link rel="preconnect" href="https://fonts.cdnfonts.com">
   <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin="">
   <link href="https://fonts.cdnfonts.com/css/rawline" rel="stylesheet">
-
-
   <script>
     /* 
     JavaScript contendo variáveis de ambiente para a aplicação de front-end. 

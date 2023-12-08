@@ -58,7 +58,7 @@ class ApiService
         $usuario->email = $credencial["email"];
         $usuario->cpf = $credencial["cpf"];
         $usuario->nome = $credencial["nome"];
-        $usuario->id_super = $credencial["id_super"];
+        $usuario->id_sei = $credencial["id_sei"];
         $usuario->apelido = $credencial["name"];
     }
 }

@@ -30,6 +30,7 @@ export class ActionButtonComponent extends ComponentBase {
   @Input() public set onClick(value: ((...args: any[]) => any) | undefined) { if(this._button.onClick != value) this._button.onClick = value; } public get onClick(): ((...args: any[]) => any) | undefined { return this._button.onClick; }
   @Input() public data?: any;
   @Input() public noArrow?: string;
+  @Input() public fullWidth?: string;
   @Input() public placeholder?: string;
 
   public go: NavigateService;
@@ -40,6 +41,10 @@ export class ActionButtonComponent extends ComponentBase {
     super(injector);
     this.go = injector.get<NavigateService>(NavigateService);
     this.button.id = this.generatedButtonId(this.button, this.util.md5());
+  }
+
+  public get isFullWidth(): boolean {
+    return this.fullWidth != undefined;
   }
 
   public get isNoArrow(): boolean {

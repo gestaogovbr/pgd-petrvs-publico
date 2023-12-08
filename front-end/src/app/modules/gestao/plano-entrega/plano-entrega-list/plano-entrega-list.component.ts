@@ -74,6 +74,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
     this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
     this.unidadeSelecionada = this.auth.unidade!;
+    this.code = "MOD_PLANE";
     /* Inicializações */
     this.title = this.lex.translate('Planos de Entregas');
     this.filter = this.fh.FormBuilder({
@@ -89,6 +90,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       unidades_filhas: { default: false },
       planejamento_id: { default: null },
       cadeia_valor_id: { default: null },
+      meus_planos: { default: true },
     }, this.cdRef, this.filterValidate);
     this.join = [
       'planejamento:id,nome',
@@ -130,6 +132,15 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       this.BOTAO_CANCELAR_HOMOLOGACAO, this.BOTAO_CONCLUIR, this.BOTAO_CONSULTAR, this.BOTAO_DESARQUIVAR, this.BOTAO_EXCLUIR, this.BOTAO_HOMOLOGAR, this.BOTAO_LIBERAR_HOMOLOGACAO,
       this.BOTAO_LOGS, this.BOTAO_REATIVAR, this.BOTAO_RETIRAR_HOMOLOGACAO, this.BOTAO_SUSPENDER];
     //this.BOTAO_ADERIR_OPTION, this.BOTAO_ADERIR_TOOLBAR,
+  }
+
+  public storeFilter = (filter?: FormGroup) => {
+    const form = filter?.value;
+    return {
+      meus_planos: form.meus_planos,
+      arquivadas: form.arquivadas,
+      unidade_id: form.unidade_id,
+    }
   }
 
   ngOnInit(): void {
@@ -216,6 +227,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     filter.controls.planejamento_id.setValue(null);
     filter.controls.cadeia_valor_id.setValue(null);
     filter.controls.status.setValue(null);
+    filter.controls.meus_planos.setValue(false);
     super.filterClear(filter);
   }
 
@@ -230,6 +242,18 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
           - os ativos das unidades imediatamente subordinadas (w3);
     */
     if (this.filter?.controls.principais.value) {
+      let w1: [string, string, string[]] = ["unidade_id", "in", (this.auth.unidades || []).map(u => u.id)];
+      if (this.auth.isGestorAlgumaAreaTrabalho()) {
+        let unidadesUsuarioEhGestor = this.auth.unidades?.filter(x => this.auth.isGestorUnidade(x));
+        let w2: string[] | undefined = unidadesUsuarioEhGestor?.map(u => u.unidade_pai?.id || "").filter(x => x.length);
+        if (w2?.length) w1[2].push(...w2);
+        let w3 = ["unidade.unidade_pai_id", "in", unidadesUsuarioEhGestor?.map(u => u.id)];
+        result.push(["or", w1, w3]);
+      } else {
+        result.push(w1)
+      }
+    }
+    if (this.filter?.controls.meus_planos.value) {
       let w1: [string, string, string[]] = ["unidade_id", "in", (this.auth.unidades || []).map(u => u.id)];
       if (this.auth.isGestorAlgumaAreaTrabalho()) {
         let unidadesUsuarioEhGestor = this.auth.unidades?.filter(x => this.auth.isGestorUnidade(x));

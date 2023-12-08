@@ -1,7 +1,7 @@
 <editable-form [form]="form!" [disabled]="formDisabled" initialFocus="descricao" (submit)="onSaveData()" (cancel)="onCancel()">
     <tabs display right [title]="titleAtividade">
-        <tab key="ATIVIDADE" [label]="lex.translate('Atividade')">
-            <documento-link [sei]="sei" [documento]="form!.controls.documento_requisicao.value"></documento-link>
+        <tab key="ATIVIDADE" label="Atividade">
+            <documento-link #requisicao [sei]="sei" [documento]="form!.controls.documento_requisicao.value"></documento-link>
             <div class="row">
                 <input-textarea label="Descrição" [size]="12" [rows]="2" controlName="descricao" [control]="form!.controls.descricao" required></input-textarea>
             </div>
@@ -12,9 +12,9 @@
                 <input-switch *ngIf="hasUsuarioActionNew" [size]="1" label="Concluído" controlName="concluido" (change)="onConcluidoChange($event)"></input-switch>
             </div>
             <div class="row">
-                <input-search label="Responsável" [size]="4" [emptyValue]="null" #usuario controlName="usuario_id" [dao]="usuarioDao" [join]="usuarioJoin" labelInfo="Responsável pela execução" (select)="onUsuarioSelect($event)" (change)="onUsuarioChange($event)"></input-search>
+                <input-search [label]="lex.translate('Responsável')" [size]="4" [emptyValue]="null" #usuario controlName="usuario_id" [dao]="usuarioDao" [join]="usuarioJoin" labelInfo="Participante responsável pela execução" (select)="onUsuarioSelect($event)" (change)="onUsuarioChange($event)"></input-search>
                 <input-select [label]="lex.translate('Plano de trabalho')" [size]="4" controlName="plano_trabalho_id" #planoTrabalho [control]="form!.controls.plano_trabalho_id" [items]="planosTrabalhos" (change)="onPlanoTrabalhoChange($event)" [labelInfo]="lex.translate('Plano de trabalho')"></input-select>
-                <input-select [label]="lex.translate('Entrega') + ' ' + lex.translate('plano de trabalho')" [size]="4" controlName="plano_trabalho_entrega_id" #entrega [control]="form!.controls.plano_trabalho_entrega_id" [items]="entregas" [labelInfo]="lex.translate('Entrega') + lex.translate('plano de trabalho') + ' que a ' + lex.translate('atividade') + ' é referente'"></input-select>
+                <input-select [label]="lex.translate('Entrega')" [size]="4" controlName="plano_trabalho_entrega_id" #entrega [control]="form!.controls.plano_trabalho_entrega_id" [items]="entregas" [labelInfo]="lex.translate('Entrega') + lex.translate('plano de trabalho') + ' que a ' + lex.translate('atividade') + ' é referente'"></input-select>
             </div>
             <div *ngIf="!planoTrabalho?.selectedItem?.data?.tipo_modalidade?.atividade_esforco; else comEsforco" class="row">
                 <input-datetime noIcon [size]="4" [label]="lex.translate('Data de distribuição')" controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" (change)="onDataDistribuicaoChange($event)" labelInfo="Data de inclusão/distribuição/lançamento"></input-datetime>
@@ -46,16 +46,16 @@
                 <documento-link [documento]="form!.controls.documento_entrega.value"></documento-link>
             </separator>
         </tab>
-        <!--<tab key="TAREFAS" [label]="lex.translate('Tarefas')">
+        <tab key="TAREFAS" [label]="lex.translate('Tarefas')">
             <atividade-list-tarefa [control]="form!.controls.tarefas" [atividade]="entity" [disabled]="formDisabled"></atividade-list-tarefa>
-        </tab>-->
+        </tab>
         <tab key="CARACTERIZACAO" label="Caracterização">
             <div class="row">
                 <input-multiselect label="Etiquetas" controlName="etiquetas" [size]="6" [control]="form!.controls.etiquetas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
                     <input-select [size]="12" #etiqueta controlName="etiqueta" [control]="form!.controls.etiqueta" [items]="etiquetas"></input-select>
                 </input-multiselect>
                 <div class="col-md-6">
-                   <br><h5>Requisitos</h5>
+                   <br><h5>Checklist</h5>
                    <grid [control]="form!.controls.checklist" [form]="formChecklist" [hasAdd]="true" [hasDelete]="true" editable>
                         <columns>
                             <column type="switch" title="Check" field="checked"></column>
@@ -66,12 +66,12 @@
                 </div>
             </div>
         </tab>
-        <!--<tab key="COMENTARIOS" label="Comentários">
+        <tab key="COMENTARIOS" label="Comentários">
             <div clss="row">
                 <comentarios #comentarios origem="ATIVIDADE" [control]="form!.controls.comentarios"></comentarios>
             </div>
-        </tab>-->
-        <!--<tab key="COMPLEMENTARES" label="Complementares">
+        </tab>
+        <tab key="COMPLEMENTARES" label="Complementares">
             <div class="row">
                 <input-search label="Demandante" [size]="12" controlName="demandante_id" [dao]="usuarioDao" disabled></input-search>
             </div>
@@ -91,6 +91,6 @@
                     </div>
                 </div>
             </div>
-        </tab>-->
+        </tab>
     </tabs>
 </editable-form>

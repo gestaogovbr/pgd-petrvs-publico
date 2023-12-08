@@ -30,7 +30,7 @@ export class ProjetoTarefaFormPrincipalComponent extends PageFrameBase {
     value: "Atividade"
   }, {
     key: "DOCUMENTO",
-    value: "Doc. SUPER/SEI"
+    value: "Doc. SEI"
   }, {
     key: "PROJETO",
     value: "Projeto"

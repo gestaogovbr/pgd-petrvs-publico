@@ -4,7 +4,7 @@
   <div class="col-6 col-sm-3 mb-3">
     <app-button-dashboard
       title="Registrar meu Trabalho"
-      imgIcon="../../../../assets/icons/home/todo-list.svg"
+      [imgIcon]="gb.getResourcePath('assets/icons/home/todo-list.svg')"
       textColor="#1369f0"
       borderColor="#1369f0"
       [route]="{route: ['gestao/atividade']}"
@@ -15,7 +15,7 @@
   <div class="col-6 col-sm-3 mb-3">
     <app-button-dashboard
       title="Consolidar meu registro mensal"
-      imgIcon="../../../../assets/icons/home/consolidation.svg"
+      [imgIcon]="gb.getResourcePath('assets/icons/home/consolidation.svg')"
       textColor="#1369f0"
       borderColor="#1369f0"
       [route]="{route: ['gestao/plano-trabalho/consolidacao']}"
@@ -25,7 +25,7 @@
   <div class="col-6 col-sm-3 mb-3">
     <app-button-dashboard
       title="Ver minhas avaliações"
-      imgIcon="../../../../assets/icons/home/podio.svg"
+      [imgIcon]="gb.getResourcePath('assets/icons/home/podio.svg')"
       textColor="#1369f0"
       borderColor="#1369f0"
       [route]="{route: ['gestao/plano-trabalho/consolidacao']}"
@@ -35,7 +35,7 @@
   <div class="col-6 col-sm-3 mb-3">
     <app-button-dashboard
       title="Propósito do meu trabalho"
-      imgIcon="../../../../assets/icons/home/monitoring.svg"
+      [imgIcon]="gb.getResourcePath('assets/icons/home/monitoring.svg')"
       textColor="#1369f0"
       borderColor="#1369f0"
       [route]="{route: ['execucao/plano-entrega']}"
