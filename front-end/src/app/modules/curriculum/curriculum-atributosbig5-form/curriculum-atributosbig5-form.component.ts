@@ -1,12 +1,23 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, Input, OnInit, ViewChild} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PageFormBase } from '../../base/page-form-base';
+import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 
 @Component({
   selector: 'curriculum-atributosbig5-form',
   templateUrl: './curriculum-atributosbig5-form.component.html',
   styleUrls: ['./curriculum-atributosbig5-form.component.scss']
 })
-export class CurriculumAtributosbig5FormComponent implements OnInit {
+export class CurriculumAtributosbig5FormComponent{
+  @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
+  @ViewChild("comunica", { static: false }) public comunicaV?: Input;
+  @ViewChild("lideranca", { static: false }) public liderancaV?: Input;
+  @ViewChild("resolucao", { static: false }) public resolucaoV?: Input;
+  @ViewChild("pensamento", { static: false }) public pensamentoV?: Input;
+  @ViewChild("criatividade", { static: false }) public criatividadeV?: Input;
+  @ViewChild("habilidade", { static: false }) public habilidadeV?: Input;
+  @ViewChild("adaptabilidade", { static: false }) public adaptabilidadeV?: Input;
+  @ViewChild("etica", { static: false }) public eticaV?: Input;
 
   comunica! : string;
   lideranca! : string;
@@ -54,9 +65,24 @@ export class CurriculumAtributosbig5FormComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  /*this.form = this.fh.FormBuilder({
+    nome: { default: "" },
+    perguntas: { default: [] },
+    codigo: { default: "" },
+    tipoQuestionario: { default: "" },
+    switchExemplo: { default: false },
+  }, this.cdRef, this.validate);
+
+  public validate = (control: AbstractControl, controlName: string) => {
+    let result = null;
+    if (['nome'].indexOf(controlName) >= 0 && !control.value?.length) {
+      result = "Obrigatório";
+    }
+    return result;
+  }*/
   
-  public onChangeValorSoft(soft:any){
-    console.log(soft)
+  public valorSoftChange(soft:string , name:any){
+    console.log(parseInt(soft), name)
   }
 
   public voltarb5(){}
