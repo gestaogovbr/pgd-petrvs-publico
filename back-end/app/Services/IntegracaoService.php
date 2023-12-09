@@ -232,7 +232,7 @@ class IntegracaoService extends ServiceBase {
 
     /**
      * Método usado quando a rotina de Integração é chamada direto na linha de comando:
-     * curl -G 'http://localhost/api/integracao' -d servidores=true -d unidades=true -d entidade=?
+     * curl -G 'http://localhost/api/integracao' -d servidores=true -d unidades=true -d entidade=? -H 'X-ENTIDADE: MGI'
      */
     public function sincronizar($inputs){
         $inputs['entidade_id'] = $inputs['entidade'];
