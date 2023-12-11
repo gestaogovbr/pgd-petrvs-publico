@@ -15,14 +15,14 @@ class AlterUnidadesTableAddDataModificacao extends Migration
     public function up()
     {
         Schema::table('unidades', function (Blueprint $table) {
-            $table->dateTime('datamodificacao')->nullable()->comment("Data de modificação informado pelo SIAPE.");
+            $table->dateTime('data_modificacao')->nullable()->comment("Data de modificação informada pelo SIAPE.");
         });
     }
 
     public function down()
     {
         Schema::table('unidades', function (Blueprint $table) {
-            $table->dropColumn('datamodificacao');
+            $table->dropColumn('data_modificacao');
         });
     }
 }
