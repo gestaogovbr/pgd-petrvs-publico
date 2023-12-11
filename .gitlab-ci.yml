@@ -1,12 +1,9 @@
 image: docker:latest
 
-stages:
-  - deploy_dsv
-
 variables:
+  DOCKER_HOST: tcp://localhost:2375/
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
-  DOCKER_HOST: tcp://docker:2375/
   DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
   DOCKER_HUB_TAG: dsv
   SSH_USER: marcocoelho
@@ -16,6 +13,13 @@ variables:
   DEPLOY_PATH: ./
   DOCKER_HUB_USERNAME: segescginf
   DOCKER_HUB_PASSWORD: dckr_pat_1JrKXQ3MUfthx_nZri5gq_wgjqo
+
+services:
+  - name: docker:19.03.12-dind
+    command: ["--insecure-registry", "registry.gitlab.com"]
+
+stages:
+  - deploy_dsv
 
 deploy_dsv:
   stage: deploy_dsv
