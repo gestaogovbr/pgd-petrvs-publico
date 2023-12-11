@@ -117,11 +117,10 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if ((['sigla', 'nome', 'cidade_id', 'entidade_id'].indexOf(controlName) >= 0) && !control.value?.length) {
+    if (controlName == 'unidade_pai_id' && !control.value?.length && !this.unidade_raiz) {
       result = "Obrigatório";
-    } else if (controlName == 'unidade_pai_id' && !control.value?.length && !this.unidade_raiz) {
-      result = "Obrigatório";
-    } else if (controlName == 'codigo' && !parseInt(control.value)) {
+    }
+    if (controlName == 'codigo' && !parseInt(control.value)) {
       result = "Obrigatório";
     }
     return result;
