@@ -99,7 +99,7 @@ class IntegracaoService extends ServiceBase {
                 $dados_path_pai = $this->buscaOuInserePai($unidade, $entidade_id);
                 $values[':id'] = Uuid::uuid4();
                 $values[':path'] = !empty($dados_path_pai["unidade_id"]) ? $dados_path_pai["path"] . "/" . $dados_path_pai["unidade_id"] : "";
-                $values[':datamodificacao'] = $unidade->datamodificacao_siape;
+                $values[':data_modificacao'] = $unidade->data_modificacao_siape;
                 $this->unidadesInseridas[$unidade->id_servo] = ["unidade_id" => $values[':id'], "path" => $values[':path']];
                 try {
                     $id = Unidade::insertGetId([
@@ -122,7 +122,7 @@ class IntegracaoService extends ServiceBase {
                         'checklist' => '[]',
                         'created_at' => $timenow,
                         'updated_at' => $timenow,
-                        'datamodificacao' => $values[':datamodificacao'],
+                        'data_modificacao' => $values[':data_modificacao'],
                     ]);
                     $this->atualizaLogs($this->logged_user_id, 'unidades', $id, 'ADD', ['Rotina' => 'Integração', 'Observação' => 'Unidade nova inserida informada pelo SIAPE: ' . $values[':nome'], 'Valores inseridos' => DB::table('unidades')->where('id', $id)->first()]);
                 } catch (Throwable $e) {
@@ -138,10 +138,10 @@ class IntegracaoService extends ServiceBase {
             $dados_path_pai = $this->buscaOuInserePai($unidade, $entidade_id);
             $values[':path'] = !empty($dados_path_pai["unidade_id"]) ? $dados_path_pai["path"] . "/" . $dados_path_pai["unidade_id"] : "";
             $values[':unidade_id'] = $dados_path_pai["unidade_id"];
-            $values[':datamodificacao'] = $unidade->datamodificacao_siape;
+            $values[':data_modificacao'] = $unidade->data_modificacao_siape;
 
             $sql = "UPDATE unidades SET path = :path, unidade_pai_id = :unidade_id, codigo = :codigo, ".
-                "nome = :nome, sigla = :sigla, cidade_id = :cidade_id, datamodificacao = :datamodificacao WHERE id = :id";
+                "nome = :nome, sigla = :sigla, cidade_id = :cidade_id, data_modificacao = :data_modificacao WHERE id = :id";
             DB::update($sql, $values);
             $this->atualizaLogs($this->logged_user_id, 'unidades', $values[':id'], 'EDIT', [
                 'Rotina' => 'Integração',
@@ -175,9 +175,9 @@ class IntegracaoService extends ServiceBase {
         }
         else { /* Só entra aqui se a Unidade já existir e não tiver mudado o Pai. Nesse caso, atualiza apenas os outros dados (Nome, Sigla) */
             $values[':id'] = $unidade->id;
-            $values[':datamodificacao'] = $unidade->datamodificacao_siape;
+            $values[':data_modificacao'] = $unidade->data_modificacao_siape;
 
-            $sql = "UPDATE unidades SET codigo = :codigo, nome = :nome, sigla = :sigla, cidade_id = :cidade_id,  datamodificacao = :datamodificacao WHERE id = :id";
+            $sql = "UPDATE unidades SET codigo = :codigo, nome = :nome, sigla = :sigla, cidade_id = :cidade_id,  data_modificacao = :data_modificacao WHERE id = :id";
             DB::update($sql, $values);
             /* $this->atualizaLogs($this->logged_user_id, 'unidades', $values[':id'], 'EDIT', [
                 'Rotina' => 'Integração',
@@ -324,9 +324,9 @@ class IntegracaoService extends ServiceBase {
                         $query_iu = DB::table('integracao_unidades')->where('id_servo', $uorg_codigo);
                         $query_u = DB::table('unidades')->where('codigo', $uorg_codigo);
 
-                        $uorg_siape_datamodificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($uo["datamodificacao"]));
-                        $iu_datamodificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($query_iu->value('datamodificacao')));
-                        $u_datamodificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($query_u->value('datamodificacao')));
+                        $uorg_siape_data_modificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($uo["data_modificacao"]));
+                        $iu_data_modificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($query_iu->value('data_modificacao')));
+                        $u_data_modificacao = $self->UtilService->asTimeStamp($self->UtilService->valueOrDefault($query_u->value('data_modificacao')));
 
                         if(!empty($uorg_codigo) && $uorg_ativa) {
                             // Tratar dados. Tentando melhorar um pouco...
@@ -388,7 +388,7 @@ class IntegracaoService extends ServiceBase {
                                 'municipio_uf' => $self->UtilService->valueOrDefault($uo["municipio_uf"], null),
                                 'ativa' => $self->UtilService->valueOrDefault($uo["ativa"]),
                                 'regimental' => $self->UtilService->valueOrDefault($uo["regimental"], null),
-                                'datamodificacao' => $self->UtilService->valueOrDefault($uo["datamodificacao"], null),
+                                'data_modificacao' => $self->UtilService->valueOrDefault($uo["data_modificacao"], null),
                                 'und_nu_adicional' => $self->UtilService->valueOrDefault($uo["und_nu_adicional"], null),
                                 'cnpjupag' => $self->UtilService->valueOrDefault($uo["cnpjupag"], null),
                                 'deleted_at' => null,
@@ -397,7 +397,7 @@ class IntegracaoService extends ServiceBase {
                             if(empty($query_iu->value('id_servo'))){
                                 $registro = new IntegracaoUnidade($unidade);
                                 $registro->save();
-                            } else if((!empty($query_iu->value('id_servo'))  &&  ($uorg_siape_datamodificacao > $iu_datamodificacao || $uorg_siape_datamodificacao > $u_datamodificacao)) ||
+                            } else if((!empty($query_iu->value('id_servo'))  &&  ($uorg_siape_data_modificacao > $iu_data_modificacao || $uorg_siape_data_modificacao > $u_data_modificacao)) ||
                                 (!empty($query_iu->value('id_servo')) && $query_iu->value('deleted_at'))){
                                     // Atualiza informações de unidade que já existe na tabela integracao_unidades ou remove dados de soft_delete da tabela integracao_unidade.
                                     $query_iu->update($unidade);
@@ -406,15 +406,18 @@ class IntegracaoService extends ServiceBase {
                         }
                 });
 
-                // Finalidade: remover uorgs que não existem mais no SIAPE, mas ainda constam na tabela integracao_unidades.
-                // Atividade vai refletir na desativação de unidades que nao existem mais no SIAPE.
 
+                /*
+                    Finalidade: Remover uorgs que não existem mais no SIAPE, mas ainda constam na tabela integracao_unidades.
+                    Como? Através de sofdelete, as unidades que não existem mais no SIAPE serão desativadas.
+                */
                 $unidades_siape =  array_map(function ($uorg) { return $uorg['id_servo']; }, $uos);
                 $unidades_integracao = DB::table("integracao_unidades")->get('id_servo')->values('id_servo')->toArray();
                 $unidades_integracao = array_map(function ($uorg) { return $uorg->id_servo; }, $unidades_integracao);
                 $unidades_integracao_remover = array_diff($unidades_integracao, $unidades_siape);
                 $datahora_remocao = Carbon::now();
                 $unidades_integracao_remover ? DB::table('integracao_unidades')->wherein('id_servo', $unidades_integracao_remover)->update(['deleted_at' => $datahora_remocao]) : true;
+                //
 
                 if($this->echo) $this->imprimeNoTerminal("Concluída a fase de reconstrução da tabela integracao_unidades!.....");
                 $n = IntegracaoUnidade::count();
@@ -422,11 +425,13 @@ class IntegracaoService extends ServiceBase {
                 array_push($this->result['unidades']["Observações"], 'Total de unidades importadas do SIAPE: ' . $n . ' (apenas ATIVAS)');
                 array_push($this->result['unidades']['Observações'], 'Os dados das Unidades foram obtidos ' . ($this->useLocalFiles ? 'através de arquivo XML armazenado localmente!' : 'através de consulta à API do SIAPE!'));
 
+
                 /* Insere as unidades faltantes ou atualiza dados e seus respectivos pais */
                 // OBS.: Não vejo a diferença de usar :entidade_id para restringir as Unidades.
                 // OBS.: Essa rotina de integração vai rodar nos diversos servidores onde estarão instaladas a aplicação... então ela tem que atualizar
                 //       todas as Unidades do SIAPE, de todas as agências que usarão o sistema. O ideal é essa consulta_sql utilizar um parâmetro de
                 //       identificação da entidade, presente no arquivo de configuração.
+
                 $this->unidadesSelecionadas = [];
 
                 $consulta_sql = "".
@@ -437,8 +442,8 @@ class IntegracaoService extends ServiceBase {
                     "c.id AS cidade_id, u.cidade_id as cidade_antiga, " .
                     "und.id AS unidade_pai_id, un.codigo AS codigoPai, " .
                     "und.path AS path_pai, " .
-                    "iu.datamodificacao as datamodificacao_siape, " .
-                    "u.datamodificacao as datamodificacao_und " .
+                    "iu.data_modificacao as data_modificacao_siape, " .
+                    "u.data_modificacao as data_modificacao_und " .
                     "" .
                     "FROM integracao_unidades iu " .
                     "" .
@@ -466,6 +471,7 @@ class IntegracaoService extends ServiceBase {
                 }
 
                 // Seta inativo nas unidades que não existem em integracao_unidades e garante que não esteja inativo as que existem em integracao_unidades.
+                // Agora, essa desativação é baseada no soft delete. As unidades permanecem na tabela integracao_unidades, porém com parâmetro deleted_at configurado.
                 $db_result_desativadas = $this->inativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NOW() WHERE data_inativacao IS NULL AND u.codigo IS NOT NULL and u.codigo != '' AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo AND iu.deleted_at IS NOT NULL)");
                 $db_result_ativadas = $this->ativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NULL WHERE data_inativacao IS NOT NULL AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo AND iu.deleted_at IS NULL);");
 
