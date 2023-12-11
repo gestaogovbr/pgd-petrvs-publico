@@ -15,16 +15,16 @@ variables:
   DOCKER_HUB_PASSWORD: dckr_pat_1JrKXQ3MUfthx_nZri5gq_wgjqo
 
 services:
-  - name: docker:19.03.12-dind
-    command: ["--insecure-registry", "registry.gitlab.com"]
+  - docker:dind
 
 stages:
   - deploy_dsv
 
 deploy_dsv:
   stage: deploy_dsv
+  before_script:
+    - docker login -u "$DOCKER_HUB_USERNAME" -p "$DOCKER_HUB_PASSWORD" $CI_REGISTRY
   script:
-    - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
     - docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f resources/dataprev/Dockerfile .
     - docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
     - sshpass -p "$SSH_PASSWORD" ssh -p $SSH_PORT $SSH_USER@$SSH_HOST "docker pull $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG && docker-compose -f $DEPLOY_PATH/docker-compose.yml up -d"
