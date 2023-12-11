@@ -23,7 +23,7 @@ stages:
 deploy_dsv:
   stage: deploy_dsv
   before_script:
-    - docker login -u "$DOCKER_HUB_USERNAME" -p "$DOCKER_HUB_PASSWORD" $CI_REGISTRY
+    - docker login -u "$DOCKER_HUB_USERNAME" -p "$DOCKER_HUB_PASSWORD" --password-stdin
   script:
     - docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f resources/dataprev/Dockerfile .
     - docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
