@@ -4,6 +4,8 @@ stages:
   - deploy_dsv
 
 variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
   DOCKER_HOST: tcp://docker:2375/
   DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
   DOCKER_HUB_TAG: dsv
@@ -15,12 +17,12 @@ variables:
   DOCKER_HUB_USERNAME: segescginf
   DOCKER_HUB_PASSWORD: dckr_pat_1JrKXQ3MUfthx_nZri5gq_wgjqo
 
-deploy:
+deploy_dsv:
   stage: deploy_dsv
   script:
     - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
     - docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f resources/dataprev/Dockerfile .
     - docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
-    - sshpass -p "$SSH_PASSWORD" ssh -p $SSH_PORT $SSH_USER@$SSH_HOST "docker pull $DOCKER_HUB_IMAGE:$CI_COMMIT_REF_NAME && docker-compose -f $DEPLOY_PATH/docker-compose.yml up -d"
+    - sshpass -p "$SSH_PASSWORD" ssh -p $SSH_PORT $SSH_USER@$SSH_HOST "docker pull $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG && docker-compose -f $DEPLOY_PATH/docker-compose.yml up -d"
   only:
     - dataprev_dsv
