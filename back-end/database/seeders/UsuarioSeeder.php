@@ -295,7 +295,8 @@ class UsuarioSeeder extends Seeder
         ];*/
 
         // Operação de inserção de usuários desenvolvedores
-        $unidade_pai = Unidade::where('SIGLA', 'MGI')->first();
+        # $unidade_pai = Unidade::where('SIGLA', 'MGI')->first();
+        $unidade_pai = Unidade::where('SIGLA', 'SENAPPEN')->first();
 
         foreach($usuarios_desenvolvedores as $usuario)
         {

@@ -99,7 +99,7 @@ class IntegracaoService extends ServiceBase {
                 $dados_path_pai = $this->buscaOuInserePai($unidade, $entidade_id);
                 $values[':id'] = Uuid::uuid4();
                 $values[':path'] = !empty($dados_path_pai["unidade_id"]) ? $dados_path_pai["path"] . "/" . $dados_path_pai["unidade_id"] : "";
-                $values[':data_modificacao'] = $unidade->data_modificacao_siape;
+                $values[':data_modificacao'] = $this->UtilService->asDateTime($unidade->data_modificacao_siape);
                 $this->unidadesInseridas[$unidade->id_servo] = ["unidade_id" => $values[':id'], "path" => $values[':path']];
                 try {
                     $id = Unidade::insertGetId([
@@ -138,7 +138,7 @@ class IntegracaoService extends ServiceBase {
             $dados_path_pai = $this->buscaOuInserePai($unidade, $entidade_id);
             $values[':path'] = !empty($dados_path_pai["unidade_id"]) ? $dados_path_pai["path"] . "/" . $dados_path_pai["unidade_id"] : "";
             $values[':unidade_id'] = $dados_path_pai["unidade_id"];
-            $values[':data_modificacao'] = $unidade->data_modificacao_siape;
+            $values[':data_modificacao'] = $this->UtilService->asDateTime($unidade->data_modificacao_siape);
 
             $sql = "UPDATE unidades SET path = :path, unidade_pai_id = :unidade_id, codigo = :codigo, ".
                 "nome = :nome, sigla = :sigla, cidade_id = :cidade_id, data_modificacao = :data_modificacao WHERE id = :id";
@@ -175,7 +175,7 @@ class IntegracaoService extends ServiceBase {
         }
         else { /* Só entra aqui se a Unidade já existir e não tiver mudado o Pai. Nesse caso, atualiza apenas os outros dados (Nome, Sigla) */
             $values[':id'] = $unidade->id;
-            $values[':data_modificacao'] = $unidade->data_modificacao_siape;
+            $values[':data_modificacao'] = $this->UtilService->asDateTime($unidade->data_modificacao_siape);
 
             $sql = "UPDATE unidades SET codigo = :codigo, nome = :nome, sigla = :sigla, cidade_id = :cidade_id,  data_modificacao = :data_modificacao WHERE id = :id";
             DB::update($sql, $values);
