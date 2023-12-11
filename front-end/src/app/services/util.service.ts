@@ -536,7 +536,7 @@ export class UtilService {
   /* Obrigatoriamente deve conter a hora, mesmo que seja T00:00:00 */
   public static iso8601ToDate(iso8601: string): Date {
     //const hasTimeZone = /([+-]\d\d(:?\d\d)?)|Z$/g;
-    const hasTime = /.+[\sT]\d\d:\d\d(:\d\d)?$/;
+    const hasTime = /.+[\sT]\d\d:\d\d(:\d\d)?(\.\d+Z)?$/;
     let date = new Date(iso8601.match(hasTime) ? iso8601 : iso8601 + 'T00:00:00');
     return date;
     //const userTimezoneOffset = date.getTimezoneOffset() * 60000;

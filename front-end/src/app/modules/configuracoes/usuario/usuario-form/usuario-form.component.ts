@@ -80,11 +80,11 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     return undefined;
   }
 
-  public loadData(entity: Usuario, form: FormGroup): void {
+  public async loadData(entity: Usuario, form: FormGroup): Promise<void> {
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
     this.formLotacao.controls.unidade_lotacao_id.setValue(entity.lotacao?.unidade?.id);
-    this.unidadesIntegrantes?.loadData(entity);
+    await this.unidadesIntegrantes?.loadData(entity);
   }
 
   public initializeData(form: FormGroup): void {

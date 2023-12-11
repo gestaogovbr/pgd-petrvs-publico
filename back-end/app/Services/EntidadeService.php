@@ -7,7 +7,7 @@ use App\Services\ServiceBase;
 use Exception;
 
 class EntidadeService extends ServiceBase {
-    public function generateApiKey($entidade_id) {
+    /*public function generateApiKey($entidade_id) {
         $entidade = Entidade::find($entidade_id);
         if(!empty($entidade)) {
             $keys = openssl_pkey_new(array('private_key_bits' => 2048));
@@ -21,5 +21,5 @@ class EntidadeService extends ServiceBase {
         } else {
             throw new Exception("Entidade não encontrada");
         }
-    }
+    }*/
 }

@@ -1,17 +1,17 @@
 
 <editable-form *ngIf="isSei || gb.isEmbedded" noButtons [form]="form!" confirmLabel="Assinar">
-    <separator title="Sei/Super"></separator>
+    <separator title="Sei"></separator>
     <separator transparent bottom>
         <div class="row">
-            <input-button label="Número Processo" [size]="4" #numeroProcesso controlName="numero_processo" [control]="form!.controls.numero_processo" [disabled]="!gb.isEmbedded || form!.controls.numero_requisicao.value?.length ? 'true' : undefined" (buttonClick)="onNumeroProcessoClick($event)" labelInfo="Número do processo, com a formatação de origem"></input-button>
-            <input-search [label]="lex.translate('Tipo de Processo')" [size]="8" #tipoProcesso controlName="tipo_processo_id"  disabled [dao]="tipoProcessoDao"></input-search>
+            <input-button label="Número Processo" [size]="4" #numeroProcesso controlName="numero_processo" [control]="form!.controls.numero_processo" [disabled]="!gb.isEmbedded || form!.controls.numero_documento.value?.length ? 'true' : undefined" (buttonClick)="onNumeroProcessoClick($event)" labelInfo="Número do processo, com a formatação de origem"></input-button>
+            <input-search [label]="lex.translate('Tipo de Processo')" [size]="8" #tipoProcesso controlName="tipo_processo_id" disabled [dao]="tipoProcessoDao"></input-search>
         </div>
         <div class="row">
             <input-button label="'Número Documento" [size]="4" #numeroDocumento controlName="numero_documento" [control]="form!.controls.numero_requisicao" [disabled]="!gb.isEmbedded ? 'true' : undefined" (buttonClick)="onNumeroDocumentoClick($event)" labelInfo="Numero do documento, caso seja o Sei é o numero Sei"></input-button>
-            <input-search [label]="lex.translate('Tipo de Documento')" [size]="8" #tipoDocumento controlName="tipo_documento_id"  disabled [dao]="tipoDocumentoDao"></input-search>
+            <input-search [label]="lex.translate('Tipo de Documento')" [size]="8" #tipoDocumento controlName="tipo_documento_id" disabled [dao]="tipoDocumentoDao"></input-search>
         </div>
         <div class="row">
-            <input-text label="Título do documento" [size]="12" controlName="titulo_documento" [control]="form!.controls.titulo_documento" disabled labelInfo="Título do documento no Sei/SUPER" [attr.maxlength]=250></input-text>
+            <input-text label="Título do documento" [size]="12" controlName="titulo_documento" [control]="form!.controls.titulo_documento" disabled labelInfo="Título do documento no Sei" [attr.maxlength]=250></input-text>
         </div>
     </separator>
 </editable-form>

@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterUsuarios2Table extends Migration
+class AlterUsuariosAddDataModificacaoTable extends Migration
 {
     /**
      * Run the migrations.
@@ -93,7 +93,7 @@ class AlterUsuarios2Table extends Migration
         COMMENT 'Vínculo do usuário com a administração.'");
 
         Schema::table('usuarios', function (Blueprint $table) {
-            $table->string('data_modificacao')->default(null)->nullable()->comment("Data de modificação informado pelo SIAPE.");
+            $table->dateTime('data_modificacao')->nullable()->comment("Data de modificação informado pelo SIAPE.");
         });
 
     }

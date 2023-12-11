@@ -5,6 +5,7 @@ import { catchError, map } from 'rxjs/operators';
 import { IIndexable } from '../models/base.model';
 import { AuthService } from './auth.service';
 import { GlobalsService } from './globals.service';
+import { SafeUrl } from '@angular/platform-browser';
 
 export type BatchActionMethod = "POST" | "GET";
 
@@ -162,8 +163,8 @@ export class ServerService {
     return result;
   }
 
-  public getSvg(svg: string): Observable<any> {
-    let request = this.http.get(svg, { responseType: 'text' })
+  public getSvg(svg: string | SafeUrl): Observable<any> {
+    let request = this.http.get(svg as string, { responseType: 'text' })
     request.pipe(catchError(this.errorHandle.bind(this)));
     return request;
   }

@@ -210,9 +210,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   MenuSuporteComponent: () => (/* binding */ MenuSuporteComponent)
 /* harmony export */ });
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 51197);
-/* harmony import */ var _components_button_dashboard_button_dashboard_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../components/button-dashboard/button-dashboard.component */ 959);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var src_app_services_globals_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/services/globals.service */ 91547);
+/* harmony import */ var _components_button_dashboard_button_dashboard_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../components/button-dashboard/button-dashboard.component */ 959);
 var _class;
+
 
 
 const _c0 = function () {
@@ -223,29 +225,33 @@ const _c1 = function (a0) {
     route: a0
   };
 };
-class MenuSuporteComponent {}
+class MenuSuporteComponent {
+  constructor(gb) {
+    this.gb = gb;
+  }
+}
 _class = MenuSuporteComponent;
 _class.ɵfac = function MenuSuporteComponent_Factory(t) {
-  return new (t || _class)();
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](src_app_services_globals_service__WEBPACK_IMPORTED_MODULE_0__.GlobalsService));
 };
-_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({
+_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineComponent"]({
   type: _class,
   selectors: [["app-menu-suporte"]],
   decls: 3,
-  vars: 4,
-  consts: [[1, "row", "mt-3"], [1, "col-6", "col-sm-3", "mb-3"], ["title", "Documenta\u00E7\u00E3o", "imgIcon", "../../../../assets/icons/home/documentacao.svg", "textColor", "#1369f0", "borderColor", "#1369f0", 3, "route"]],
+  vars: 5,
+  consts: [[1, "row", "mt-3"], [1, "col-6", "col-sm-3", "mb-3"], ["title", "Documenta\u00E7\u00E3o", "textColor", "#1369f0", "borderColor", "#1369f0", 3, "imgIcon", "route"]],
   template: function MenuSuporteComponent_Template(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 0)(1, "div", 1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](2, "app-button-dashboard", 2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](0, "div", 0)(1, "div", 1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](2, "app-button-dashboard", 2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()();
     }
     if (rf & 2) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("route", _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpureFunction1"](2, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpureFunction0"](1, _c0)));
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("imgIcon", ctx.gb.getResourcePath("assets/icons/home/documentacao.svg"))("route", _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵpureFunction1"](3, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵpureFunction0"](2, _c0)));
     }
   },
-  dependencies: [_components_button_dashboard_button_dashboard_component__WEBPACK_IMPORTED_MODULE_0__.ButtonDashboardComponent],
+  dependencies: [_components_button_dashboard_button_dashboard_component__WEBPACK_IMPORTED_MODULE_1__.ButtonDashboardComponent],
   styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
 });
 

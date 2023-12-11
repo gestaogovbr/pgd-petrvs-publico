@@ -1,6 +1,7 @@
-<tabs right [title]="isModal ? '' : title" [select]="onSelectTab.bind(this)">
-    <tab key="PRINCIPAL" label="Principal">
-        <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+
+    <tabs right [title]="isModal ? '' : title" [select]="onSelectTab.bind(this)">
+        <tab key="PRINCIPAL" label="Principal">
             <separator title="Entidade"></separator>
             <div class="row">
                 <input-text [size]="2" label="SIGLA" controlName="id" [disabled]="action == 'new' ? undefined : 'true'" [attr.maxlength]=250></input-text>
@@ -20,8 +21,8 @@
                 <input-text [size]="6" label="CPF" controlName="cpf" [attr.maxlength]=15></input-text>
                 <input-text [size]="6" label="Apelido" controlName="apelido" [attr.maxlength]=250></input-text>
             </div>
-<!--            <separator title="Notificações"></separator>
-            <div class="row">
+            <separator title="Notificações" hidden="true"></separator>
+            <div class="row" hidden="true">
                 <div class="col-md-6">
                     <div class="row">
                         <input-switch [size]="12" scale="small" labelPosition="right" label="Petrvs (Dentro do sistema)" controlName="notification_petrvs"></input-switch>
@@ -51,11 +52,9 @@
                         <input-text password [size]="6" label="Senha" controlName="notification_mail_password"></input-text>
                     </div>
                 </div>
-            </div>-->
-        </editable-form>
-    </tab>
-    <tab key="BANCO" label="Banco de dados">
-        <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+            </div>
+        </tab>
+        <tab key="BANCO" label="Banco de dados">
             <separator title="Banco de dados da aplicação"></separator>
             <div class="row">
                 <input-text [size]="4" label="Host" controlName="tenancy_db_host" [attr.maxlength]=250></input-text>
@@ -88,22 +87,8 @@
                     </div>
                 </div>
             </div>
-        </editable-form>
-    </tab>
-    <tab key="LOGIN" label="Login">
-        <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
-<!--            <separator title="Entidade"></separator>
-            <div class="row">
-                <input-switch [size]="3" labelPosition="left" label="Seleciona Entidade:" controlName="select_entidade"></input-switch>
-            </div>
-            <grid [control]="form!.controls.login" [form]="formLogin" #gridLogin editable [selectable]="false">
-                <columns>
-                    <column type="text" title="Tipo" field="Tipo" [editable]="false"></column>
-                    <column type="text" title="Web" field="Web" ></column>
-                    <column type="text" title="API" field="API" ></column>
-                    <column type="switch" title="Habilitado" field="Habilitado"></column>
-                </columns>
-            </grid>-->
+        </tab>
+        <tab key="LOGIN" label="Login">
 
             <separator title="Google"></separator>
             <div class="row">
@@ -124,16 +109,13 @@
                 <input-text [size]="5" label="Secret" controlName="login_login_unico_secret" [attr.maxlength]=250></input-text>
               <input-switch [size]="2" scale="large" labelPosition="right" label="" controlName="login_login_unico"></input-switch>
             </div>
-        </editable-form>
-    </tab>
-    <tab key="INTEGRACAO" label="Integração">
-        <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
+        </tab>
+        <tab key="INTEGRACAO" label="Integração">
             <div class="row">
                 <input-select [size]="4" label="Tipo da Integração" controlName="tipo_integracao" [items]="lookup.TIPO_INTEGRACAO"></input-select>
                 <input-switch [size]="2" labelPosition="top" label="Auto-incluir" controlName="integracao_auto_incluir"></input-switch>
                 <input-text [size]="6" label="Codigo unidade raiz" controlName="integracao_cod_unidade_raiz" [attr.maxlength]=250></input-text>
             </div>
-            <!--  -->
             <div *ngIf="form?.controls!.tipo_integracao.value == 'SIAPE'" class="row">
                 <separator title="Siape-WS" labeInfo="As informações dessa tela são referentes às inseridas no cadastro do SIAPE"></separator>
                 <div class="row">
@@ -153,7 +135,6 @@
                     <input-select [size]="3" label="Tipo de Vínculo" controlName="integracao_siape_tipovinculo" [items]="lookup.TIPO_VINCULO"></input-select>
                 </div>
             </div>
-            <!--  -->
             <div *ngIf="form?.controls?.tipo_integracao?.value == 'WSO2'" class="row">
                 <separator title="Siape-PRF"></separator>
                 <div class="row">
@@ -171,11 +152,26 @@
                     <input-text [size]="6" label="Token Password" controlName="integracao_wso2_token_password"></input-text>
                 </div>
             </div>
-        </editable-form>
-    </tab>
-    <tab key="ROTINAS" label="Rotinas Diárias">
-
-    </tab>
-</tabs>
+        </tab>
+        <tab key="SEI" label="Módulo SEI">
+            <div class="row">
+                <input-switch [size]="1" labelPosition="top" label="Habilitado" controlName="modulo_sei_habilitado"></input-switch>
+                <input-text [size]="11" label="Url do sei" controlName="modulo_sei_url" labelInfo="Url completa do SEI incluindo o https://, sem a barra no final"></input-text>
+            </div>
+            <separator title="Certificado digital (Comunicação B2B)">
+                <div class="row">
+                    <input-textarea [rows]="5" [size]="5" label="Chave privada" controlName="modulo_sei_private_key"></input-textarea>
+                    <input-textarea [rows]="5" [size]="5" label="Chave pública" controlName="modulo_sei_public_key"></input-textarea>
+                    <div class="col-md-2 one-per-line">
+                        <input-container label="Opções" labelInfo="Utilize os botões abaixo caso deseje gerar o certificado diretamente pelo sistema">
+                            <action-button fullWidth label="Gerar" [onClick]="gerarCertificado.bind(this)"></action-button>
+                            <action-button fullWidth label="Copiar" [onClick]="copiarPublicKeyClipboard.bind(this)"></action-button>
+                        </input-container>
+                    </div>
+                </div>
+            </separator>
+        </tab>
+    </tabs>
+</editable-form>
 
 

@@ -1,8 +1,8 @@
 /* Constantes globais */
-var PETRVS_IS_SUPER_MODULE = true;
+var PETRVS_IS_SEI_MODULE = true;
 /* 
 Variável config será carregada utilizando variáveis globais definidas no módulo MultiagenciaPetrvsIntegracao e 
-pelo arquivo app.json do endereço configurado no parâmetro MD_MULTIAGENCIA_PETRVS_URL do SUPER.
+pelo arquivo app.json do endereço configurado no parâmetro MD_MULTIAGENCIA_PETRVS_URL do SEI.
 Descrição dos Arquivos: 
     "https://apis.google.com/js/platform.js" - Biblioteca gpai
     "functions.js" -  Arquivo de funções gerais que podem ser utilizadas pela extensão
@@ -28,7 +28,7 @@ Formato da propriedade match:
 */
 let config = {
     baseUrl: MD_MULTIAGENCIA_PETRVS_URL.replace(/\/$/, "") + "/", // Url base que será utilizado para carregar todos os arquivos
-    servidorUrl: MD_MULTIAGENCIA_PETRVS_URL.replace(/\/$/, ""), // Url do servidor que irá responder as requisições de API
+    servidorUrl: MD_MULTIAGENCIA_PETRVS_BACKEND.replace(/\/$/, ""), // Url do servidor que irá responder as requisições de API
     versao: "", // Versão da aplicação que está sendo usada (versão do servidor)
     externalLibs: [], // Arquivos a JavaScript externos a aplicação a serem carregados
     preloadFiles: [], // Arquivos que será carregados inicialmente
@@ -62,7 +62,7 @@ function bootstrap() {
         /* Configura variáveis de ambiente */
         const environment = 
             "<script type='text/javascript'>\n" +
-                "var PETRVS_IS_SUPER_MODULE = true;\n" +
+                "var PETRVS_IS_SEI_MODULE = true;\n" +
                 "var PETRVS_TOOLBAR = " + stringify(!!matched.toolbar) + ";\n" +
                 "var PETRVS_ROUTE = " + stringify(matched.route) + ";\n" +
                 "var PETRVS_VERSION = " + stringify(config.versao) + ";\n" +
