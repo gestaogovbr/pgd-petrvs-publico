@@ -34,6 +34,7 @@ export class LexicalService {
     "cadeiaValor": {single: "cadeia de valor", plural: "cadeias de valor", female: true},
     "capacidade": {single: "capacidade", plural: "capacidades", female: true},
     "cidade": {single: "cidade", plural: "cidades", female: true},
+    "consolidação": {single: "consolidação", plural: "consolidações", female: false},
     "data de distribuição": {single: "data de distribuição", plural: "datas de distribuição", female: true},
     "data de homologação": {single: "data de homologação", plural: "datas de homologação", female: true},
     "demanda": {single: "demanda", plural: "demandas", female: true},

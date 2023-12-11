@@ -49,6 +49,9 @@
             </separator>
             <separator [title]="lex.translate('Avaliação') + lex.translate(' da Consolidação')">
                 <div class="row">
+                    <top-alert type="warning" [message]="'O sistema irá atribuir automaticamente a nota e o tipo de justificativa abaixo quando a tolerância para avaliação for alcançada'"></top-alert>
+                </div>
+                <div class="row">
                     <input-number [size]="6" label="Tolerância p/ avaliação" controlName="dias_tolerancia_avaliacao" [control]="form!.controls.dias_tolerancia_avaliacao" labelInfo="Dias de tolerância para realizar a avaliação, considerando a tolerância da consolidação. Caso seja zero não fará nada, caso contrário após esse prazo a consolidação será automaticamente avaliada com a nota padrão"></input-number>
                     <input-number [size]="6" label="Tolerância p/ recurso" controlName="dias_tolerancia_recurso_avaliacao" [control]="form!.controls.dias_tolerancia_recurso_avaliacao" labelInfo="Dias de tolerância para recorrer da avaliação"></input-number>
                 </div>                    
