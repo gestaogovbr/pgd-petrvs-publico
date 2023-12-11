@@ -4,6 +4,7 @@ stages:
   - deploy_dsv
 
 variables:
+  DOCKER_HOST: tcp://docker:2375/
   DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
   DOCKER_HUB_TAG: dsv
   SSH_USER: marcocoelho
