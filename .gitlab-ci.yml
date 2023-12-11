@@ -1,9 +1,6 @@
 image: docker:latest
 
 variables:
-  DOCKER_HOST: tcp://localhost:2375/
-  DOCKER_DRIVER: overlay2
-  DOCKER_TLS_CERTDIR: ""
   DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
   DOCKER_HUB_TAG: dsv
   SSH_USER: marcocoelho
