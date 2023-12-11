@@ -24,6 +24,7 @@ deploy_dsv:
   script:
     - docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f resources/dataprev/Dockerfile .
     - docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
-    - sshpass -p "$SSH_PASSWORD" ssh -p $SSH_PORT $SSH_USER@$SSH_HOST "docker pull $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG && docker-compose -f $DEPLOY_PATH/docker-compose.yml up -d"
+    - apt-get update && apt-get install -y ssh sshpass
+    - sshpass -p "$SSH_PASSWORD" ssh -p $SSH_PORT $SSH_USER@$SSH_HOST "docker-compose down && docker-compose pull && docker-compose && docker-compose up -d"
   only:
     - dataprev_dsv
