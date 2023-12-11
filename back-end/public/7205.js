@@ -259,7 +259,7 @@ function PerfilFormComponent_tab_9_Template(rf, ctx) {
     const _r9 = _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵreference"](14);
     const _r11 = _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵreference"](17);
     const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("label", ctx_r1.lex.noun("Capacidade", true));
+    _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("label", ctx_r1.lex.translate("Capacidades"));
     _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("items", ctx_r1.tiposCapacidades)("scrollable", true);
     _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](3);
@@ -267,7 +267,7 @@ function PerfilFormComponent_tab_9_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](5);
     _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("template", _r7)("minWidth", 160)("maxWidth", 160);
     _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("title", ctx_r1.lex.noun("M\u00F3dulo/Capacidade"))("template", _r9)("minWidth", 600);
+    _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("title", ctx_r1.lex.translate("M\u00F3dulo/Capacidade"))("template", _r9)("minWidth", 600);
     _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("template", _r11);
   }
