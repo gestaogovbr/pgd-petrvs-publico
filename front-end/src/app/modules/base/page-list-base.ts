@@ -7,9 +7,10 @@ import { FullRoute, NavigateService, RouteMetadata } from 'src/app/services/navi
 import { GridComponent, GroupBy } from 'src/app/components/grid/grid.component';
 import { QueryContext } from 'src/app/dao/query-context';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
-import { appInjector } from 'src/app/app.component';
+//import { appInjector } from 'src/app/app.component';
 import { QueryOptions } from 'src/app/dao/query-options';
 import { TreeNode } from 'primeng/api';
+import { AppComponent } from 'src/app/app.component';
 
 
 @Injectable()
@@ -89,12 +90,11 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
   public static modalSelect(params?: any): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       if(this.selectRoute) {
-        const go = appInjector.get<NavigateService>(NavigateService);
         const route = {
           route: this.selectRoute!.route,
           params: Object.assign(this.selectRoute!.params || {}, { selectable: true, modal: true }, params)
         };
-        go.navigate(route, {modalClose: resolve.bind(this)});
+        AppComponent.instance.go.navigate(route, {modalClose: resolve.bind(this)});
       } else {
         reject("Rota de seleção indefinida");
       }

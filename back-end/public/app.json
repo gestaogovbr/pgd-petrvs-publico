@@ -15,7 +15,6 @@
         "scripts.js",
         "runtime.js",
         "polyfills.js",
-        "vendor.js",
         "main.js"
     ],
     "cssFiles": [

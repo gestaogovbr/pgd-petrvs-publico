@@ -144,12 +144,10 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = Object.assign({}, form.value);
       form.patchValue(_this.util.fillForm(formValue, entity));
-      yield Promise.all([_this.lotacao.loadSearch(entity.lotacao || entity.lotacao.unidade?.id), _this.unidadesIntegrantes?.loadData(entity)]);
-      //this.formLotacao.controls.unidade_lotacao_id.setValue(entity.lotacao?.unidade?.id);
-      //await this.unidadesIntegrantes?.loadData(entity);
+      _this.formLotacao.controls.unidade_lotacao_id.setValue(entity.lotacao?.unidade?.id);
+      yield _this.unidadesIntegrantes?.loadData(entity);
     })();
   }
-
   initializeData(form) {
     this.entity = new src_app_models_usuario_model__WEBPACK_IMPORTED_MODULE_6__.Usuario();
     this.loadData(this.entity, form);

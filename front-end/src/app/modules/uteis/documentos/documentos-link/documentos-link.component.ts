@@ -23,15 +23,17 @@ export class DocumentosLinkComponent extends PageFrameBase {
   @ViewChild('numeroDocumento', { static: false }) public numeroDocumento?: InputButtonComponent;
   @ViewChild('tipoProcesso', { static: false }) public tipoProcesso?: InputSearchComponent;
   @ViewChild('tipoDocumento', { static: false }) public tipoDocumento?: InputSearchComponent;
-  @Input() set documento(value: Documento) {
+  @Input() set documento(value: Documento | undefined) {
     if(this._entity != value) {
       this._entity = value;
-      this.loadData(value);
+      if(value) this.loadData(value);
     }
   }
-  get documento(): Documento {
+  get documento(): Documento | undefined {
     this.loadEntity(this.form!.value);
-    return this._entity;
+    const linked = !!this._entity!.link!.id_processo;
+    this._entity._status = !linked && this._entity!._status != "ADD" ? "DEL" : (linked && !this._entity!._status ? "EDIT" : this._entity!._status);
+    return !linked && this._entity!._status == "ADD" ? undefined : this._entity;
   } 
   @Input() set sei(value: SeiKeys | undefined) {
     if(this._sei != value) {
@@ -63,7 +65,19 @@ export class DocumentosLinkComponent extends PageFrameBase {
   constructor(public injector: Injector) {
     super(injector);
     this.documentoDao = injector.get<DocumentoDaoService>(DocumentoDaoService);
-    this._entity = new Documento();
+    this._entity = new Documento({
+      tipo: "LINK",
+      especie: "SEI",
+      link: {
+        tipo: "SEI",
+        id_processo: null,
+        numero_processo: "",
+        id_documento: null,
+        numero_documento: "",
+        titulo_documento: ""
+      },
+      _status: "ADD"
+    });
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.tipoDocumentoDao = injector.get<TipoDocumentoDaoService>(TipoDocumentoDaoService);
     this.tipoProcessoDao = injector.get<TipoProcessoDaoService>(TipoProcessoDaoService);
@@ -135,6 +149,7 @@ export class DocumentosLinkComponent extends PageFrameBase {
             tipo_documento_requisicao_id: tipo_documento_id,
             titulo_documento: dados.documento?.titulo_documento
           });
+          this._entity.titulo = dados.documento?.titulo_documento;
           this.loadData(this._entity);
         } else {
           throw new Error("Documento não encontrado");
@@ -171,6 +186,7 @@ export class DocumentosLinkComponent extends PageFrameBase {
             tipo_documento_requisicao_id: null,
             titulo_documento: ""
           });
+          this._entity.title = "Processo " + dados.processo?.numero_processo;
           this.loadData(this._entity);
         } else {
           throw new Error("Processo não encontrado");

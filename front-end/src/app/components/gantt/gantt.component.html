@@ -12,7 +12,7 @@
                     </button>
                     <span *ngIf="button.divider" [class]="'ganttButtonSeparator ' + button.class"></span>
                 </ng-container>
-                <a href="https://gantt.twproject.com/" target="_blank" style="position:absolute;right:0px;"><img src="assets/gantt/res/twGanttLogo.png" alt="Twproject" align="absmiddle" style="max-width: 100px; margin-top: 5px; padding-right: 15px"></a>
+                <a href="https://gantt.twproject.com/" target="_blank" style="position:absolute;right:0px;"><img [src]="gb.getResourcePath('assets/gantt/res/twGanttLogo.png')" alt="Twproject" align="absmiddle" style="max-width: 100px; margin-top: 5px; padding-right: 15px"></a>
             </div>
         </div>
     </div>

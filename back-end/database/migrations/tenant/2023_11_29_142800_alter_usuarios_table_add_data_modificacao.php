@@ -93,7 +93,7 @@ class AlterUsuariosTableAddDataModificacao extends Migration
         COMMENT 'Vínculo do usuário com a administração.'");
 
         Schema::table('usuarios', function (Blueprint $table) {
-            $table->dateTime('data_modificacao')->nullable()->comment("Data de modificação informado pelo SIAPE.");
+            $table->dateTime('data_modificacao')->nullable()->comment("Data de modificação informada pelo SIAPE.");
         });
 
     }

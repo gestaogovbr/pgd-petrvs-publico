@@ -51,7 +51,9 @@ class Atividade extends ModelBase
     public $fillable_changes = [
         'comentarios',
         'reacoes',
-        'tarefas'
+        'tarefas',
+        'documentoRequisicao',
+        'documentoEntrega'
     ];
 
     protected static function booted()

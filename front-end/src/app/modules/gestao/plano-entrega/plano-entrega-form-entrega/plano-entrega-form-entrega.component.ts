@@ -133,7 +133,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if (['descricao'].indexOf(controlName) >= 0) {
+    if (['descricao','destinatario'].indexOf(controlName) >= 0) {
       if(!control.value?.length) {
         result = "Obrigatório";
       } else if(this.entrega!.selectedEntity && (this.entrega!.selectedEntity as Entrega).descricao == control.value) {
@@ -306,9 +306,9 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     if (this.entrega && this.entrega.selectedItem) {
       const entregaItem = this.entrega?.selectedEntity as Entrega;
       const tipoIndicador = entregaItem.tipo_indicador;
-      if(!this.form!.controls.descricao.value.length) {
+      /**if(!this.form!.controls.descricao.value.length) {
         this.form!.controls.descricao.setValue(entregaItem?.descricao || "");
-      }
+      }*/
       switch (tipoIndicador) {
         case 'QUALITATIVO':
           this.itensQualitativo = entregaItem.lista_qualitativos || [];
