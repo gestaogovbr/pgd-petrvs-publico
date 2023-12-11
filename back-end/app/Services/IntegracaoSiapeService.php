@@ -74,6 +74,7 @@ class IntegracaoSiapeService extends ServiceBase {
 
         if($uorgsWsdl){
             foreach($uorgsWsdl as $uo){
+
                 $uo_data = $date->createFromFormat('dmY', $uo['dataUltimaTransacao'])->format('Y-m-d 00:00:00');
                 $uo_data = $this->UtilService->asTimestamp($uo_data);
 
@@ -98,16 +99,24 @@ class IntegracaoSiapeService extends ServiceBase {
             if(!empty($uorgsWsdl)){
                 foreach($uorgsWsdl as $value){
                     if(!empty($value['codigo'])){
-                        $uorgWsdl = $this->siape->dadosUorg(
-                            $this->siapeSiglaSistema,
-                            $this->siapeNomeSistema,
-                            $this->siapeSenha,
-                            $this->siapeCpf,
-                            $this->siapeCodOrgao,
-                            $value['codigo']);
+                        $data_modificacao_siape = DateTime::createFromFormat('dmY', $value['dataUltimaTransacao'])->format('Y-m-d 00:00:00');
+                        $data_modificacao_siape  = $this->UtilService->asTimestamp($data_modificacao_siape);
 
-                        $uorgWsdl = $this->UtilService->object2array($uorgWsdl);
-                        if($this->UtilService->valueOrNull($uorgWsdl, "codUorgPagadora") == $this->siapeUpag){
+                        $uorg_iu = DB::table('integracao_unidades')->where('id_servo', $value['codigo'])->first();
+
+                        if(empty($data_modificacao_siape) || empty($uorg_iu) || empty($uorg_iu->data_modificacao) ||  $data_modificacao_siape > $this->UtilService->asTimestamp($uorg_iu->data_modificacao)){
+                            // Consulta cara - Uma a Uma
+                            $uorgWsdl = $this->siape->dadosUorg(
+                                $this->siapeSiglaSistema,
+                                $this->siapeNomeSistema,
+                                $this->siapeSenha,
+                                $this->siapeCpf,
+                                $this->siapeCodOrgao,
+                                $value['codigo']);
+                            //
+
+                            $uorgWsdl = $this->UtilService->object2array($uorgWsdl);
+
                             // Identifica informações sobre município e demais variáveis.
                             if(!empty($this->UtilService->valueOrNull($uorgWsdl, "nomeMunicipio"))){
                                 $consulta_sql = "SELECT * FROM cidades WHERE nome LIKE '".$uorgWsdl['nomeMunicipio']."'";
@@ -150,14 +159,14 @@ class IntegracaoSiapeService extends ServiceBase {
                                 'municipio_uf' => $this->UtilService->valueOrNull($uorgWsdl, "siglaUfMunicipio") ?: "",
                                 'ativa' => "true", // Todas as uorgs listadas são ativas no webservice siape.
                                 'regimental' => $this->UtilService->valueOrNull($uorgWsdl, "indicadorUorgRegimenta") ?: "",
-                                'datamodificacao' => $this->UtilService->valueOrNull($value, "dataUltimaTransacao") ?: "",
+                                'data_modificacao' => $this->UtilService->valueOrNull($value, "dataUltimaTransacao") ?: "",
                                 'und_nu_adicional' => $this->UtilService->valueOrNull($uorgWsdl, "und_nu_adicional") ?: "",
                                 'cnpjupag' => $this->UtilService->valueOrNull($uorgWsdl, "cnpjUpag") ?: ""
                             ];
-                            array_push($uorgsPetrvs['uorg'], $inserir_uorg);
-                        } else{
-                              LogError::newWarn("Web Service Siape: Uorg ".$this->UtilService->valueOrNull($uorgWsdl, "codUorg")." não pertence a(s) unidade(s) pagadora(s).", $this->siapeUpag);
-                        }
+                                array_push($uorgsPetrvs['uorg'], $inserir_uorg);
+                            } else {
+                                array_push($uorgsPetrvs['uorg'], $this->UtilService->object2array($uorg_iu));
+                            }
                       } else {
                             LogError::newWarn("Web Service Siape: Ausência de código uorg.");
                       }

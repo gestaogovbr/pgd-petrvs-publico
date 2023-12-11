@@ -46,9 +46,9 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
       "planoTrabalho.usuario:id,nome,apelido,url_foto"
     ];
     this.groupBy = [
-      { field: "plano_trabalho.unidade.sigla", label: "Unidade" }, 
+      { field: "plano_trabalho.unidade.sigla", label: this.lex.translate("Unidade") }, 
       { field: "plano_trabalho.unidade.id", label: "Unidade Id" }, 
-      { field: "plano_trabalho.usuario.nome", label: "Usuário" },
+      { field: "plano_trabalho.usuario.nome", label: this.lex.translate("Participante") },
       { field: "plano_trabalho.usuario.id", label: "Usuário Id" }
     ];
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);

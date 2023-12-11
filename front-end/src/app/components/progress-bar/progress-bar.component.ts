@@ -12,7 +12,7 @@ export class ProgressBarComponent implements OnInit {
   @Input() min: number = 0;
   @Input() value: number = 0;
   @Input() goal: number = 0;
-  @Input() height: number = 20;
+  @Input() height: number = 12;
   @Input() noPercentage?: string;
   @Input() minWidth?: number;
   @Input() color?: ProgressColor;

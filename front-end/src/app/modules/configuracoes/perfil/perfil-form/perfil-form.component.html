@@ -10,7 +10,7 @@
                 <input-text [size]="12" label="Descrição" controlName="descricao" [attr.maxlength]=250 required></input-text>
             </div>
         </tab>
-        <tab key="CAPACIDADES" *ngIf="auth.hasPermissionTo('MOD_TIPO_CAP')" [label]="lex.noun('Capacidade',true)">
+        <tab key="CAPACIDADES" *ngIf="auth.hasPermissionTo('MOD_TIPO_CAP')" [label]="lex.translate('Capacidades')">
             <grid #gridPai [items]="tiposCapacidades" [scrollable]="true">
                 <columns>
                     <column type="expand" icon="bi bi-shield-lock" [align]="'center'" [hint]="'Lista das capacidades com status módulo'" [template]="columnCapacidades" [expandTemplate]="columnExpandedCapacidades" [minWidth]="50">
@@ -54,7 +54,7 @@
                                 </span>
                         </ng-template>
                     </column>
-                    <column [title]="lex.noun('Módulo/Capacidade')" [template]="columnTipoCapacidade" [minWidth]="600">
+                    <column [title]="lex.translate('Módulo/Capacidade')" [template]="columnTipoCapacidade" [minWidth]="600">
                         <ng-template let-row="row" #columnTipoCapacidade>
                             <span class="badge bg-light text-dark"> {{row.descricao}}</span>
                         </ng-template>
