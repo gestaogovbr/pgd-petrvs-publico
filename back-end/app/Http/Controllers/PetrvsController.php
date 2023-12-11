@@ -54,8 +54,15 @@ class PetrvsController extends ControllerBase
 
         $tenant=json_decode($tenant['tenant'],true);
 
+        // Obtém a URL do aplicativo do arquivo de configuração
+        $appUrl = config('app.url');
+
+        // Obtém o esquema (HTTP ou HTTPS) da URL
+        $protocol = parse_url($appUrl, PHP_URL_SCHEME);
+
         $config = json_encode([
-            "api_url" => "https://".$tenant["dominio_url"],
+
+            "api_url" => $protocol."://".$tenant["dominio_url"],
             "app_env" => config("app.env"),
             "entidade" => $tenant["id"],
             "suporte_url" =>$tenant["dominio_url"],
