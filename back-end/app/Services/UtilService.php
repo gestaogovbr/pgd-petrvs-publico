@@ -38,15 +38,15 @@ class UtilService
     }
 
     public function valueOrDefault($value, $default = "", $option = "") {
-        
-        // Trata númerações códigos siapes de uorgs com fins 
+
+        // Trata númerações códigos siapes de uorgs com fins
         // de evitar erro nas respectivas querys
         if(strtolower($option) == "uorg" && !is_null($value)){
             $value = strval(intval($value));
             return empty($value) || gettype($value) == "array" ? $default : $value;
         }
 
-        // Retorna descrição de situação funcional baseado 
+        // Retorna descrição de situação funcional baseado
         // no código informado pelo web service
         if (strtolower($option) == "situacao_funcional" && !is_null($value)){
             $situacoes = array(
@@ -111,7 +111,7 @@ class UtilService
                 "96" => "QE/MRE_CEDIDO",
                 "97" => "QUADRO_ESPEC_QE/MRE",
             );
-            
+
             $value = intval($value);
             array_key_exists($value, $situacoes) ? $value = $situacoes[$value] : $value = null;
             return empty($value) || gettype($value) == "array" ? $default : $value;
@@ -166,7 +166,7 @@ class UtilService
      * A função devolve um DateTime, se receber uma data em qualquer um dos seguintes formatos: DateTime, Timestamp, string;
      */
     public static function asDateTime(DateTime | int | string $date): DateTime {
-        return $date instanceof DateTime ? $date : (gettype($date) == "integer" ? new DateTime(date(ServiceBase::ISO8601_FORMAT,$date)) : (gettype($date) == "string" ? new DateTime($date) : $date));
+        return empty($date) ? null : ($date instanceof DateTime ? $date : (gettype($date) == "integer" ? new DateTime(date(ServiceBase::ISO8601_FORMAT,$date)) : (gettype($date) == "string" ? new DateTime($date) : $date)));
     }
 
     public static function between($middle, $start, $end) {
@@ -204,7 +204,7 @@ class UtilService
 
     public static function avg($array) {
         $sum = 0;
-        foreach ($array as $value) $sum += $value; 
+        foreach ($array as $value) $sum += $value;
         return $sum / count($array);
     }
 
@@ -226,7 +226,7 @@ class UtilService
         $hash = empty($text) ? substr(bin2hex(random_bytes(20)), 0, 32) : md5($text);
         return substr($hash, 0, 8) . "-" . substr($hash, 8, 4) . "-" . substr($hash, 12, 4) . "-" . substr($hash, 16, 4) . "-" . substr($hash, 20, 12);
     }
- 
+
     /**
      * getStrTimeHours
      *
@@ -252,7 +252,7 @@ class UtilService
      * setStrTime
      *
      * @param  $dateRef: um DateTime.
-     * @param  $time: uma string representando um tempo (hh:mm:ss) 
+     * @param  $time: uma string representando um tempo (hh:mm:ss)
      * @return: retorna um DateTime
      */
     public static function setStrTime(DateTime $dateRef, string $time): DateTime {
@@ -272,7 +272,7 @@ class UtilService
      * @param  $dateRef: um DateTime.
      * @param  $hour: um inteiro representando as horas
      * @param  $min: um inteiro representando os minutos
-     * @param  $seg: um inteiro representando os segundos 
+     * @param  $seg: um inteiro representando os segundos
      * @return: retorna um DateTime
      */
     public static function setTime(DateTime $dateRef, int $hour, int $min, int $sec): DateTime {
@@ -309,7 +309,7 @@ class UtilService
 
     /**
      * @param   $intervals - esperado um array de intervalos, na seguinte forma:
-     *          [['start' => number | DateTime, 'end' => number | DateTime],...['start' => number | DateTime, 'end' => number | DateTime]], 
+     *          [['start' => number | DateTime, 'end' => number | DateTime],...['start' => number | DateTime, 'end' => number | DateTime]],
      *          onde number são Timestamps. Se houver uma interseção entre todos os intervalos do array, a função retorna essa interseção no formato
      *          de um intervalo, que poderá ser de DateTime ou de Timestamp, dependendo do formato recebido no start do primeiro elemento do parâmetro $intervals.
      */
@@ -330,9 +330,9 @@ class UtilService
 
     /**
      * @param   $intervals - esperado um array de intervalos, na seguinte forma:
-     *          [['start' => number | DateTime, 'end' => number | DateTime],...['start' => number | DateTime, 'end' => number | DateTime]], 
+     *          [['start' => number | DateTime, 'end' => number | DateTime],...['start' => number | DateTime, 'end' => number | DateTime]],
      *          onde number são Timestamps. A função retorna um array, com um ou mais intervalos, que representa a união de todos os intervalos recebidos como parâmetro.
-     *          Os elementos do array retornado poderão ser no formato DateTime ou Timestamp, dependendo do formato recebido 
+     *          Os elementos do array retornado poderão ser no formato DateTime ou Timestamp, dependendo do formato recebido
      *          no start do primeiro elemento do parâmetro $intervals.
      */
     public static function union(array $intervals) : array {
@@ -340,7 +340,7 @@ class UtilService
             return $intervals;
         } else {
             $isDate = ($intervals[0])->start instanceof DateTime;
-            $result = [array_shift($intervals)];                  
+            $result = [array_shift($intervals)];
             for($i = 0; $i < count($result); $i++) {
                 for($j = 0; $j < count($intervals); $j++) {
                     if($result[$i]->end >= $intervals[$j]->start && $result[$i]->start <= $intervals[$j]->end) {
@@ -348,7 +348,7 @@ class UtilService
                         $result[$i]->end = max($result[$i]->end, $intervals[$j]->end);
                         array_splice($intervals, $j, 1);
                         $j = -1;
-                    } 
+                    }
                 }
                 if($intervals) array_push($result, array_shift($intervals));
             }
@@ -357,24 +357,24 @@ class UtilService
     }
 
     /**
-     * @param $interval - esperado um array na seguinte forma ['start' => number | DateTime, 'end' => number | DateTime], 
+     * @param $interval - esperado um array na seguinte forma ['start' => number | DateTime, 'end' => number | DateTime],
      * onde number são Timestamps.
      */
     public static function asTimeInterval($interval) {
         return ([
-            'start' => $interval ? ($interval->start instanceof DateTime ? static::asTimestamp($interval->start) : $interval->start) : 0, 
+            'start' => $interval ? ($interval->start instanceof DateTime ? static::asTimestamp($interval->start) : $interval->start) : 0,
             'end' => $interval ? ($interval->end instanceof DateTime ? static::asTimestamp($interval->end) : $interval->end) : 0
         ]);
 
     }
 
     /**
-     * @param $interval - esperado um array na seguinte forma ['start' => number | DateTime, 'end' => number | DateTime], 
+     * @param $interval - esperado um array na seguinte forma ['start' => number | DateTime, 'end' => number | DateTime],
      * onde number são Timestamps.
      */
     public static function asDateInterval(array $interval) {
         return ([
-            'start' => $interval ? ($interval['start'] instanceof DateTime ? $interval['start'] : static::asDateTime($interval['start'])) : 0, 
+            'start' => $interval ? ($interval['start'] instanceof DateTime ? $interval['start'] : static::asDateTime($interval['start'])) : 0,
             'end' => $interval ? ($interval['end'] instanceof DateTime ? $interval['end'] : static::asDateTime($interval['end'])) : 0
         ]);
     }
@@ -391,7 +391,7 @@ class UtilService
                 $intervals[$i] = $interval;
                 return true;
             }
-        }        
+        }
         return false;
     }
 
@@ -408,7 +408,7 @@ class UtilService
         foreach($valoresAtuais as $atributo => $valorAtual) {
             $valorAnterior = $valoresAnteriores[$atributo] ?? null;
             if( is_array($valorAtual) || $valorAtual === '[]') {                    // SE O VALOR ATUAL FOR UM ARRAY
-                if( !(is_array($valorAnterior) || $valorAnterior === '[]')) { 
+                if( !(is_array($valorAnterior) || $valorAnterior === '[]')) {
 
                     if($valorAnterior) {
                         $incluirDiferenca($atributo,$valorAtual,$valorAnterior);
@@ -425,34 +425,34 @@ class UtilService
                         foreach ($new_diff as $dif) { $incluirDiferenca("{$atributo}*{$dif[0]}",$dif[1],$dif[2]); }
                     }
                 }
-            } else if( is_string($valorAtual) && json_decode($valorAtual) ){        // SE O VALOR ATUAL FOR UMA STRING JSON                    
+            } else if( is_string($valorAtual) && json_decode($valorAtual) ){        // SE O VALOR ATUAL FOR UMA STRING JSON
                 if( is_array($valorAnterior) ){                                         // E O VALOR ANTERIOR FOR UM ARRAY
                     if(is_array($this->object2array(json_decode($valorAtual)))) {     //... se o valor atual puder ser convertido para array,
                         $new_diff = $this->differentAttributes($this->object2array(json_decode($valorAtual)),$valorAnterior); //... chama a função recursivamente passando os dois arrays
                         if( !empty($new_diff) ) {
                             foreach ($new_diff as $dif) { $incluirDiferenca("{$atributo}*{$dif[0]}",$dif[1],$dif[2]); }
-                        }                    
+                        }
                     } else {
                         $incluirDiferenca($atributo,$valorAtual,$valorAnterior);      //... se não puder, inclui essa diferença
-                    }                               
-                }else if( (is_string($valorAnterior) && json_decode($valorAnterior)) || json_encode($valorAnterior) ) {  // E O VALOR ANTERIOR TAMBÉM FOR UMA STRING/OBJETO JSON 
-                    //... se ambos puderem ser convertidas para array, chama-se a função recursivamente                    
+                    }
+                }else if( (is_string($valorAnterior) && json_decode($valorAnterior)) || json_encode($valorAnterior) ) {  // E O VALOR ANTERIOR TAMBÉM FOR UMA STRING/OBJETO JSON
+                    //... se ambos puderem ser convertidas para array, chama-se a função recursivamente
                     if(is_array($this->object2array(json_decode($valorAtual))) && (json_encode($valorAnterior) ? is_array($this->object2array($valorAnterior)) : is_array($this->object2array(json_decode($valorAnterior),3)))){
                         $new_diff = $this->differentAttributes($this->object2array(json_decode($valorAtual)),json_encode($valorAnterior) ? $this->object2array($valorAnterior) : $this->object2array(json_decode($valorAnterior),3));
                         if( !empty($new_diff) ) {
                             foreach ($new_diff as $dif) { $incluirDiferenca("{$atributo}*{$dif[0]}",$dif[1],$dif[2]); }
-                        }                      
+                        }
                     }else{      //... caso contrário, inclui essa diferença
                         if($valorAnterior != $valorAtual) $incluirDiferenca($atributo,$valorAtual,$valorAnterior);
                     }
-                } else if( json_encode($valorAnterior) ) {                        
-                    if( json_encode($valorAnterior) != $valorAtual ) $incluirDiferenca($atributo,$valorAtual,json_encode($valorAnterior)); 
+                } else if( json_encode($valorAnterior) ) {
+                    if( json_encode($valorAnterior) != $valorAtual ) $incluirDiferenca($atributo,$valorAtual,json_encode($valorAnterior));
                 }
-            } else if( strtotime($valorAtual) && strtotime($valorAnterior) ) {      // SE OS VALORES ATUAL E ANTERIOR FOREM STRING DO TIPO DATA E/OU HORA 
-                if( strtotime($valorAtual) != strtotime($valorAnterior) ) $incluirDiferenca($atributo,$valorAtual,$valorAnterior); 
+            } else if( strtotime($valorAtual) && strtotime($valorAnterior) ) {      // SE OS VALORES ATUAL E ANTERIOR FOREM STRING DO TIPO DATA E/OU HORA
+                if( strtotime($valorAtual) != strtotime($valorAnterior) ) $incluirDiferenca($atributo,$valorAtual,$valorAnterior);
             } else if( strtotime($valorAtual) && is_a(new MomentPHP($valorAtual),'DateTime') && is_a(new MomentPHP($valorAnterior),'DateTime') ){
                 $incluirDiferenca($atributo,$valorAtual,$valorAnterior);          // SE O VALOR ATUAL FOR UMA STRING DO TIPO DATA E/OU HORA E O VALOR ANTERIOR FOR UM OBJETO DO TIPO DATETIME
-            } else if( $valorAnterior != $valorAtual ) { 
+            } else if( $valorAnterior != $valorAtual ) {
                 $incluirDiferenca($atributo,$valorAtual,$valorAnterior);          // SE NÃO FOR NENHUM DOS CASOS ANTERIORES
             }
         }
@@ -460,7 +460,7 @@ class UtilService
     }
 
     /**
-     * Método utilizado para validar os campos obrigatórios de uma entidade. 
+     * Método utilizado para validar os campos obrigatórios de uma entidade.
      * @param array $entity             Array com os dados a serem analisados.
      * @param array $requiredAttributes Array com os campos obrigatórios.
      * @return string                   Uma string vazia se todos os campos de $entity foram validados, ou uma string com o nome do campo que não passou na validação.
@@ -473,7 +473,7 @@ class UtilService
     /**
      * Método utilizado para validar os campos de uma entidade cujos valores precisam estar dentro de uma faixa.
      * @param array $entity             Array com os dados a serem analisados.
-     * @param array $rangeAttributes    Array com os campos e as suas respectivas faixas de valores, no seguinte formato: 
+     * @param array $rangeAttributes    Array com os campos e as suas respectivas faixas de valores, no seguinte formato:
      *                                  [campo: string, valorMinimo: number, valorMaximo: number, incluiValorMinimo: bool, incluiValorMaximo: bool]. Por padrão, os valores mínimo e máximo
      *                                  da escala são incluídos na faixa. Dois exemplos equivalentes: [['idade',1,100]['salario',1200.50,4.500.00]] e [['idade',1,100,true,true],['salario',1200.50,4.500.00,true,true]],
      * @return string                   Uma string vazia se todos os campos de $entity foram validados, ou uma string com o nome do campo que não passou na validação.
@@ -482,9 +482,9 @@ class UtilService
 
 /*         foreach ($entity as [$k, $v, $includeMinValue = true, $includeMaxValue = true]) {
             $value = floatVal($v);
-            foreach($rangeAttributes as $condition){ 
-                $condition1 = $includeMinValue ? $valor < $condition[1] : $valor <= $condition[1]; 
-                if($key == $condition[0] && ($valor < $condition[1] || $valor > $condition[2])) return [] . $key . " deve estar entre " . $condition[1] . " e " . $condition[2]; 
+            foreach($rangeAttributes as $condition){
+                $condition1 = $includeMinValue ? $valor < $condition[1] : $valor <= $condition[1];
+                if($key == $condition[0] && ($valor < $condition[1] || $valor > $condition[2])) return [] . $key . " deve estar entre " . $condition[1] . " e " . $condition[2];
             }
         } */
         return '';
@@ -506,13 +506,13 @@ class UtilService
             $in = mb_strtolower($in, 'UTF-8');
             $in = explode(" ",$in);
             $out = null;
-      
+
             $preposicoes = array(
                 'da', 'de', 'do', 'das', 'dos',
                 'a','as','o','os', 'ao', 'aos', 'e');
-        
+
             foreach ($in as $word) {
-                in_array($word, $preposicoes) ? 
+                in_array($word, $preposicoes) ?
                     $out = $out.$word.' ' : $out = $out.ucfirst($word). ' ';
             }
             $out = trim($out);

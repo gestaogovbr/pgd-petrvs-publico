@@ -97,7 +97,10 @@ class IntegracaoSiapeService extends ServiceBase {
         try {
             if(!empty($uorgsWsdl)){
                 foreach($uorgsWsdl as $value){
+
                     if(!empty($value['codigo'])){
+
+
                         $uorgWsdl = $this->siape->dadosUorg(
                             $this->siapeSiglaSistema,
                             $this->siapeNomeSistema,
