@@ -9,7 +9,7 @@ export class Questionario extends Base {
     public tipo: QuestionarioTipo = "INTERNO"; //Tipo interno | personalizado
     public nome: string = ""; //Nome do questionário
     public codigo: string = ""; // Código do questionario
-    public versao: number | undefined; //Perguntas do questionário
+    public versao: number | undefined = 0; //Perguntas do questionário
 
     public perguntas: QuestionarioPergunta[] = [];
 

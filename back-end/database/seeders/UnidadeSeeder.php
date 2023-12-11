@@ -32,7 +32,7 @@ class UnidadeSeeder extends Seeder
             "deleted_at" => NULL,
             "codigo" => "1",
             "sigla" => "MGI",
-            "nome" => "Ministério da Gestão e Inovação em Serviço Público",
+            "nome" => "Ministério da Gestão e da Inovação em Serviços Públicos",
             "instituidora" => 1,
             "path" => NULL,
             "texto_complementar_plano" => NULL,

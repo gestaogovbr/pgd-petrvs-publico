@@ -18,7 +18,7 @@ class Questionario extends ModelBase
         //'deleted_at', /* timestamp; */
     ];
 
-    //public $fillable_changes = ['perguntas'];
+    public $fillable_changes = ['perguntas'];
 
     //public $fillable_relation = [];
 

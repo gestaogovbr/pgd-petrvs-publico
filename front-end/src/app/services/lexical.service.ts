@@ -83,6 +83,7 @@ export class LexicalService {
     "tipo de indicador": {single: "tipo de indicador", plural: "tipos de indicadores", female: false},
     "tipo de atividade": {single: "tipo de atividade", plural: "tipos de atividades", female: false},
     "tipo de capacidade": {single: "tipo de capacidade", plural: "tipos de capacidades", female: false},
+    "tipo de meta": {single: "tipo de meta", plural: "tipos de metas", female: false},
     "unidade": {single: "unidade", plural: "unidades", female: true},
     "usuario": {single: "usuário", plural: "usuários", female: false},
     "valor institucional": {single: "valor institucional", plural: "valores institucionais", female: false}

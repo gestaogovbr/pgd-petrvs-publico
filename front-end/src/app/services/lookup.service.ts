@@ -718,11 +718,15 @@ export class LookupService {
   ];
 
   public QUESTIONARIO_PERGUNTA_TIPO: LookupItem[] = [
-    { key: 'LISTA', value: 'Lista' },
+    { key: 'SELECT', value: 'Única Escolha' },
+    { key: 'MULTI_SELECT', value: 'Multipla Escolha' },
+    { key: 'TEXT', value: 'Livre' },
+    { key: 'RATE', value: 'Classificação' },
     { key: 'SWITCH', value: 'Sim/Não' },
-    { key: 'MULTIPLA', value: 'Resposta Múltipla' },
-    { key: 'UNICA', value: 'Resposta Única' }
+    //{ key: 'INTENSIDADE', value: 'Intensidade' },
+    { key: 'NUMBER', value: 'Numérica' }
   ];
+ // "EMOJI" | "SELECT" | "MULTI_SELECT" | "TEXT" | "TEXT_AREA" | "TIMER" | "DATE_TIME" | "SWICTH" | "NUMBER" | "RATE" | "RADIO" | "CHECK";
 
   public THEMES: LookupItem[] = [
     { key: 'light', value: "Branco (light)" },

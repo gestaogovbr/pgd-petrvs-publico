@@ -3,12 +3,12 @@ import { LookupItem } from '../services/lookup.service';
 import { Base } from './base.model';
 
 
-export type QuestionarioPerguntaTipo = "VISUAL" | "LISTA_UNICA" | "LISTA_MULTIPLA" | "LIVRE" | "TEMPO" | "NUMERICA" | "CLASSIFICACAO" | "SWICTH" | "NUMERICA" | "INTENSIDADE" | "ORDENACAO" | "LACUNA";
+export type QuestionarioPerguntaTipo = "EMOJI" | "SELECT" | "MULTI_SELECT" | "TEXT" | "TEXT_AREA" | "TIMER" | "DATE_TIME" | "SWICTH" | "NUMBER" | "RATE" | "RADIO" | "CHECK";
 
 export class QuestionarioPergunta extends Base {
     public sequencia: number | undefined ; //sequencia da pergunta
     public pergunta: string = ""; //pergunta
-    public tipo:  QuestionarioPerguntaTipo = "LISTA_UNICA"; // tipo da resposta para esta pergunta
+    public tipo:  QuestionarioPerguntaTipo = "SELECT"; // tipo da resposta para esta pergunta
     public criado_versao: number | undefined; //versao de criacao
     public deletado_versao: number | undefined; //versao em que for deletado
     public respostas: any; // opções de respostas para essa pergunta
