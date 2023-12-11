@@ -22,7 +22,7 @@
             </div>
         </tab>
         <tab key="PLANO_ENTREGA" [label]="lex.translate('Plano de entrega')">
-            <input-search [label]="lex.translate('Tipo de avaliação do Plano de entrega')" [size]="12" #tipoAvaliacaoEntrega controlName="tipo_avaliacao_plano_entrega_id" [dao]="tipoAvaliacaoDao" [labelInfo]="lex.noun('Tipo de avaliação') + ' que especifica a forma que será avaliado ' + lex.noun('plano de trabalho') + ' e ' + lex.noun('plano de entrega')" required></input-search>
+            <input-search [label]="lex.translate('Tipo de avaliação do Plano de entrega')" [size]="12" #tipoAvaliacaoEntrega controlName="tipo_avaliacao_plano_entrega_id" [dao]="tipoAvaliacaoDao" [labelInfo]="lex.translate('Tipo de avaliação') + ' que especifica a forma que será avaliado ' + lex.translate('plano de trabalho') + ' e ' + lex.translate('plano de entrega')" required></input-search>
             <separator [title]="lex.translate('Avaliação') + lex.translate(' do Plano de Entrega')">
                 <input-multiselect label="Checklists das entregas" controlName="checklist_avaliacao_entregas_plano_entrega" [size]="12" [addItemHandle]="addItemHandlePlanoEntregaChecklist.bind(this)">
                     <input-text [size]="12" controlName="checklist_plano_entrega_texto" [attr.maxlength]=250></input-text>
@@ -37,7 +37,7 @@
             <input-switch [size]="12" scale="small" labelPosition="right" controlName="plano_trabalho_assinatura_gestor_entidade" [label]="'Exige assinatura do gestor ' + lex.translate('da entidade')"></input-switch>
             <input-search [label]="'Template ' + lex.translate('termo') + ' (TCR)'" [size]="12" detailsButton labelInfo="Template do termo utilizado no plano de trabalho" controlName="template_tcr_id" [dao]="templateDao" [where]="[['especie', '==', 'TCR']]" [selectRoute]="templateService.selectRoute('TCR', form?.controls?.template_tcr_id?.value)" (details)="templateService.details($event)" required></input-search>
             <input-search [label]="'Tipo de documento ' + lex.translate('termo')" [size]="12" #tipoDocumento controlName="tipo_documento_tcr_id" [dao]="tipoDocumentoDao" labelInfo="Tipo de documento utilizado para exportar o termo para o SEI/SUPER"></input-search>
-            <input-search [label]="lex.translate('Tipo de avaliação do Plano de trabalho')" [size]="12" #tipoAvaliacao controlName="tipo_avaliacao_plano_trabalho_id" [dao]="tipoAvaliacaoDao" [labelInfo]="lex.noun('Tipo de avaliação') + ' que especifica a forma que será avaliado ' + lex.noun('plano de trabalho') + ' e ' + lex.noun('plano de entrega')" required></input-search>
+            <input-search [label]="lex.translate('Tipo de avaliação do Plano de trabalho')" [size]="12" #tipoAvaliacao controlName="tipo_avaliacao_plano_trabalho_id" [dao]="tipoAvaliacaoDao" [labelInfo]="lex.translate('Tipo de avaliação') + ' que especifica a forma que será avaliado ' + lex.translate('plano de trabalho') + ' e ' + lex.translate('plano de entrega')" required></input-search>
             <separator [title]="lex.translate('Consolidação') + lex.translate(' do Plano de trabalho')">
                 <div class="row">
                     <input-select [size]="6" label="Periodicidade" controlName="periodicidade_consolidacao" [control]="form!.controls.periodicidade_consolidacao" [items]="lookup.PERIODICIDADE_CONSOLIDACAO" labelInfo="Período para avaliação do plano de trabalho"></input-select>

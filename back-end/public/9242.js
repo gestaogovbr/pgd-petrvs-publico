@@ -56,6 +56,7 @@ var _class;
 
 
 
+const _c0 = ["lotacao"];
 class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_7__.PageFormBase {
   constructor(injector) {
     super(injector, src_app_models_usuario_model__WEBPACK_IMPORTED_MODULE_6__.Usuario, src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_5__.UsuarioDaoService);
@@ -143,10 +144,12 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = Object.assign({}, form.value);
       form.patchValue(_this.util.fillForm(formValue, entity));
-      _this.formLotacao.controls.unidade_lotacao_id.setValue(entity.lotacao?.unidade?.id);
-      yield _this.unidadesIntegrantes?.loadData(entity);
+      yield Promise.all([_this.lotacao.loadSearch(entity.lotacao || entity.lotacao.unidade?.id), _this.unidadesIntegrantes?.loadData(entity)]);
+      //this.formLotacao.controls.unidade_lotacao_id.setValue(entity.lotacao?.unidade?.id);
+      //await this.unidadesIntegrantes?.loadData(entity);
     })();
   }
+
   initializeData(form) {
     this.entity = new src_app_models_usuario_model__WEBPACK_IMPORTED_MODULE_6__.Usuario();
     this.loadData(this.entity, form);
@@ -213,11 +216,13 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵdef
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, 5);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵviewQuery"](_usuario_integrante_usuario_integrante_component__WEBPACK_IMPORTED_MODULE_8__.UsuarioIntegranteComponent, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵviewQuery"](_c0, 5);
     }
     if (rf & 2) {
       let _t;
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵloadQuery"]()) && (ctx.unidadesIntegrantes = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵloadQuery"]()) && (ctx.lotacao = _t.first);
     }
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵInheritDefinitionFeature"]],

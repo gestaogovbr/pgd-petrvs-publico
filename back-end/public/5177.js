@@ -4009,7 +4009,7 @@ function PlanoEntregaListComponent_toolbar_1_input_switch_2_Template(rf, ctx) {
   }
   if (rf & 2) {
     const ctx_r23 = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵnextContext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 2)("control", ctx_r23.filter.controls.principais)("labelInfo", ctx_r23.lex.noun("Unidade", true) + " onde o " + ctx_r23.lex.noun("usuario") + " \u00E9 integrante, incluindo unidades superiores sob sua ger\u00EAncia.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 2)("control", ctx_r23.filter.controls.principais)("labelInfo", ctx_r23.lex.translate("Unidades") + " onde o " + ctx_r23.lex.translate("usuario") + " \u00E9 integrante, incluindo unidades superiores sob sua ger\u00EAncia.");
   }
 }
 function PlanoEntregaListComponent_toolbar_1_Template(rf, ctx) {

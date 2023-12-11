@@ -23,6 +23,7 @@ import { InputEditorComponent } from '../input/input-editor/input-editor.compone
 import { InputNumberComponent } from '../input/input-number/input-number.component';
 import { DOCUMENT } from '@angular/common';
 import { InputBase } from '../input/input-base';
+import { FormHelperService } from 'src/app/services/form-helper.service';
 
 
 @Component({
@@ -93,6 +94,7 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
   /* Propriedades publicas */
   public fb: FormBuilder;
   public go: NavigateService;
+  public fh: FormHelperService;
   public submitting: boolean = false;
   public set error(error: string | undefined) {
     this._error = error;
@@ -114,6 +116,7 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
     super(injector);
     this.fb = injector.get<FormBuilder>(FormBuilder);
     this.go = injector.get<NavigateService>(NavigateService);
+    this.fh = injector.get<FormHelperService>(FormHelperService);
   }
 
   ngOnInit(): void {
@@ -187,7 +190,7 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
   }
 
   public revalidate() {
-    Object.values(this.form?.controls || {}).forEach(x => x.updateValueAndValidity({emitEvent: false}));
+    this.fh.revalidate(this.form!);
   }
 
   public onButtonClick(button: ToolbarButton) {
@@ -198,8 +201,8 @@ export class EditableFormComponent extends ComponentBase implements OnInit {
     }
   }
 
-
   public onSubmit() {
+    this.revalidate();
     if(this.form!.valid){
       this.submitting = true;
       this.submit.emit(this);

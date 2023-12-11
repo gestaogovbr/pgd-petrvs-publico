@@ -481,7 +481,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("label", ctx.lex.translate("Plano de entrega"));
       _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("label", ctx.lex.translate("Tipo de avalia\u00E7\u00E3o do Plano de entrega"))("size", 12)("dao", ctx.tipoAvaliacaoDao)("labelInfo", ctx.lex.noun("Tipo de avalia\u00E7\u00E3o") + " que especifica a forma que ser\u00E1 avaliado " + ctx.lex.noun("plano de trabalho") + " e " + ctx.lex.noun("plano de entrega"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("label", ctx.lex.translate("Tipo de avalia\u00E7\u00E3o do Plano de entrega"))("size", 12)("dao", ctx.tipoAvaliacaoDao)("labelInfo", ctx.lex.translate("Tipo de avalia\u00E7\u00E3o") + " que especifica a forma que ser\u00E1 avaliado " + ctx.lex.translate("plano de trabalho") + " e " + ctx.lex.translate("plano de entrega"));
       _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("title", ctx.lex.translate("Avalia\u00E7\u00E3o") + ctx.lex.translate(" do Plano de Entrega"));
       _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
@@ -506,7 +506,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("label", "Tipo de documento " + ctx.lex.translate("termo"))("size", 12)("dao", ctx.tipoDocumentoDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("label", ctx.lex.translate("Tipo de avalia\u00E7\u00E3o do Plano de trabalho"))("size", 12)("dao", ctx.tipoAvaliacaoDao)("labelInfo", ctx.lex.noun("Tipo de avalia\u00E7\u00E3o") + " que especifica a forma que ser\u00E1 avaliado " + ctx.lex.noun("plano de trabalho") + " e " + ctx.lex.noun("plano de entrega"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("label", ctx.lex.translate("Tipo de avalia\u00E7\u00E3o do Plano de trabalho"))("size", 12)("dao", ctx.tipoAvaliacaoDao)("labelInfo", ctx.lex.translate("Tipo de avalia\u00E7\u00E3o") + " que especifica a forma que ser\u00E1 avaliado " + ctx.lex.translate("plano de trabalho") + " e " + ctx.lex.translate("plano de entrega"));
       _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵproperty"]("title", ctx.lex.translate("Consolida\u00E7\u00E3o") + ctx.lex.translate(" do Plano de trabalho"));
       _angular_core__WEBPACK_IMPORTED_MODULE_22__["ɵɵadvance"](2);

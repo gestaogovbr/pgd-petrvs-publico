@@ -1,6 +1,6 @@
 <!--filter [form]="filter" noButtons [where]="filterWhere" [collapsed]="false">
     <div class="row justify-content-md-center">
-        <input-search #programa [size]="9" [label]="lex.noun('Programa')" controlName="programa_id" [dao]="programaDao" placeholder="Selecione um Programa..." (change)="onChange($event)"></input-search>
+        <input-search #programa [size]="9" [label]="lex.translate('Programa')" controlName="programa_id" [dao]="programaDao" placeholder="Selecione um Programa..." (change)="onChange($event)"></input-search>
         <input-switch [size]="1" label="Sub." controlName="unidades_subordinadas" [control]="filter!.controls.unidades_subordinadas" (change)="onChange($event)" labelInfo="Incluir as unidades subordinadas"></input-switch>
     </div>
 </filter//-->
@@ -10,12 +10,12 @@
         <table class="table table-striped table-bordered table-hover my-4 align-middle">
             <thead>
                 <tr>
-                    <th colspan="2" class="text-center"><strong>{{ 'INFORMAÇÕES SOBRE O ' + lex.noun('PROGRAMA') }}</strong></th>
+                    <th colspan="2" class="text-center"><strong>{{ 'INFORMAÇÕES SOBRE O ' + lex.translate('PROGRAMA') }}</strong></th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>{{ 'Nome ' + lex.noun('Programa',false,true) }}</td>
+                    <td>{{ 'Nome ' + lex.translate('Programa',false,true) }}</td>
                     <td>{{ programaSelecionado?.nome || "" }}</td>
                 </tr>
                 <tr>
@@ -23,16 +23,16 @@
                     <td>{{ programaSelecionado?.normativa || "" }}</td>
                 </tr>
                 <tr>
-                    <td>{{ 'Qde. de ' + lex.noun('Unidade',true) + ' com PT Ativos' }}</td>
-                    <td>{{ (totalUnidades || 0) + (totalUnidades == 1 ? ' ' + lex.noun('Unidade') : ' ' + lex.noun('Unidade',true)) }}</td>
+                    <td>{{ 'Qde. de ' + lex.translate('Unidade',true) + ' com PT Ativos' }}</td>
+                    <td>{{ (totalUnidades || 0) + (totalUnidades == 1 ? ' ' + lex.translate('Unidade') : ' ' + lex.translate('Unidade',true)) }}</td>
                 </tr>
                 <tr>
                     <td>Qde. de PT Ativos</td>
-                    <td>{{ totalPlanosAtivos + (totalPlanosAtivos == 1 ? ' ' + lex.noun('Plano de Trabalho') : ' ' + lex.noun('Plano de Trabalho',true)) }}</td>
+                    <td>{{ totalPlanosAtivos + (totalPlanosAtivos == 1 ? ' ' + lex.translate('Plano de Trabalho') : ' ' + lex.translate('Plano de Trabalho',true)) }}</td>
                 </tr>
                 <tr>
-                    <td>{{ 'Nr. de ' + lex.noun('Servidor',true) }}</td>
-                    <td>{{ totalServidores + (totalServidores == 1 ? ' ' + lex.noun('Servidor') : ' ' + lex.noun('Servidor',true)) + ' (sem repetições)' }}</td>
+                    <td>{{ 'Nr. de ' + lex.translate('Servidor',true) }}</td>
+                    <td>{{ totalServidores + (totalServidores == 1 ? ' ' + lex.translate('Servidor') : ' ' + lex.translate('Servidor',true)) + ' (sem repetições)' }}</td>
                 </tr>
             </tbody>
         </table>
