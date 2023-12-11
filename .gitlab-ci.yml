@@ -1,3 +1,5 @@
+image: docker:latest
+
 stages:
   - deploy_dsv
 
@@ -11,7 +13,7 @@ variables:
   DEPLOY_PATH: ./
   DOCKER_HUB_USERNAME: segescginf
   DOCKER_HUB_PASSWORD: dckr_pat_1JrKXQ3MUfthx_nZri5gq_wgjqo
-  
+
 deploy:
   stage: deploy_dsv
   script:
