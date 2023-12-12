@@ -37,13 +37,16 @@ export class Tenant extends Base {
     public dominio_url: string | null = null
     // LOGIN
     public login_select_entidade: boolean = false;
-    public login_google_client_id:string = "";
-    public login_firebase_client_id:string = "";
-    public login_azure_client_id:string = "";
-    public login_azure_secret:string = "";
-    public login_azure_redirect_uri:string = "";
-    public login_login_unico_client_id:string = "";
-    public login_login_unico_secret:string = "";
+    public login_google_client_id:string = "" ;
+    public login_firebase_client_id:string = "" ;
+    public login_azure_client_id:string = "" ;
+    public login_azure_secret:string = "" ;
+    public login_azure_redirect_uri:string = "" ;
+    public login_login_unico_client_id:string = "" ;
+    public login_login_unico_secret:string = "" ;
+    public login_google: boolean = false;
+    public login_azure: boolean = false;
+    public login_login_unico: boolean = false;
     // INTEGRACAO
     public tipo_integracao: string = "";
     public integracao_auto_incluir: boolean = true;

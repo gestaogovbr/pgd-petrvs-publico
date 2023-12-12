@@ -16,10 +16,14 @@ class PetrvsController extends ControllerBase
     public function checkPermissions($action, $request, $service, $unidade, $usuario) { }
 
     public function environmentConfig(Request $request) {
-        $url = $request->url();
-        $parsedUrl = parse_url($url);
+
+        //Get URL
+        $parsedUrl = parse_url($request->url());
+
         // Obtém o host (domínio) do URL
         $domain = $parsedUrl['host'];
+
+        if($domain=="petrvs_php") $domain="localhost";
 
         $tenant = Domain::where('domain', $domain)->with('tenant')->first();
 
@@ -50,8 +54,15 @@ class PetrvsController extends ControllerBase
 
         $tenant=json_decode($tenant['tenant'],true);
 
+        // Obtém a URL do aplicativo do arquivo de configuração
+        $appUrl = config('app.url');
+
+        // Obtém o esquema (HTTP ou HTTPS) da URL
+        $protocol = parse_url($appUrl, PHP_URL_SCHEME);
+
         $config = json_encode([
-            "api_url" => $tenant["dominio_url"],
+
+            "api_url" => $protocol."://".$tenant["dominio_url"],
             "app_env" => config("app.env"),
             "entidade" => $tenant["id"],
             "suporte_url" =>$tenant["dominio_url"],
@@ -59,12 +70,12 @@ class PetrvsController extends ControllerBase
             "versao" => $tenant["version"],
             "login" => [
                 "google_client_id" =>   $tenant["login_google_client_id"],
-                "gsuit" =>              true,
-                "azure" =>              true,
-                "institucional" =>      true,
-                "firebase" =>           true,
-                "user_password" =>      true,
-                "login_unico" =>        true
+                "gsuit" =>              $tenant["login_google"],
+                "azure" =>              $tenant["login_azure"],
+                "institucional" =>      false,
+                "firebase" =>           $tenant["login_google"],
+                "user_password" =>      false,
+                "login_unico" =>        $tenant["login_login_unico"],
             ]
         ]);
         return response()->view('environment-config', ["config" => $config])
