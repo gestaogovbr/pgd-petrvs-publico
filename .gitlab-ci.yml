@@ -33,10 +33,10 @@ deploy_dsv:
   image: alpine:latest
   script:
     - apk update && apk add openssh sshpass
-    - sshpass -p "$SSH_PASSWORD" ssh -p $SSH_PORT $SSH_USER@$SSH_HOST "docker-compose down"
-    - sshpass -p "$SSH_PASSWORD" ssh -p $SSH_PORT $SSH_USER@$SSH_HOST "docker-compose pull"
-    - sshpass -p "$SSH_PASSWORD" ssh -p $SSH_PORT $SSH_USER@$SSH_HOST "docker-compose config > docker-compose_config.log"
-    - sshpass -p "$SSH_PASSWORD" ssh -p $SSH_PORT $SSH_USER@$SSH_HOST "docker-compose up -d"
-    - sshpass -p "$SSH_PASSWORD" ssh -p $SSH_PORT $SSH_USER@$SSH_HOST "docker logs pgd20_dsv"
+    - ssh -p $SSH_PORT $SSH_USER@$SSH_HOST "docker-compose down"
+    - ssh -p $SSH_PORT $SSH_USER@$SSH_HOST "docker-compose pull"
+    - ssh -p $SSH_PORT $SSH_USER@$SSH_HOST "docker-compose config > docker-compose_config.log"
+    - ssh -p $SSH_PORT $SSH_USER@$SSH_HOST "docker-compose up -d"
+    - ssh -p $SSH_PORT $SSH_USER@$SSH_HOST "docker logs pgd20_dsv"
   only:
     - dataprev_dsv
