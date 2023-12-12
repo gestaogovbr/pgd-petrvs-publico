@@ -33,6 +33,8 @@ deploy_dsv:
   image: alpine:latest
   script:
     - apk update && apk add openssh sshpass
+    - ssh-keyscan -p $SSH_PORT $SSH_HOST >> ~/.ssh/known_hosts
+    - cat ~/.ssh/known_hosts  # Exibe o conteúdo do arquivo para depuração
     - ssh -p $SSH_PORT $SSH_USER@$SSH_HOST "docker-compose down"
     - ssh -p $SSH_PORT $SSH_USER@$SSH_HOST "docker-compose pull"
     - ssh -p $SSH_PORT $SSH_USER@$SSH_HOST "docker-compose config > docker-compose_config.log"
@@ -40,3 +42,4 @@ deploy_dsv:
     - ssh -p $SSH_PORT $SSH_USER@$SSH_HOST "docker logs pgd20_dsv"
   only:
     - dataprev_dsv
+
