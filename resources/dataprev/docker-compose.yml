@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  petrvs_php_producao:
+    image: segescginf/pgdpetrvs:latest  # Substitua pelo nome da sua imagem no Docker Hub
+    container_name: pgd20_producao
+    ports:
+      - "80:80"
+      - "443:443"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 2048M
