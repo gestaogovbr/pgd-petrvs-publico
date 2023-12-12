@@ -33,6 +33,6 @@ deploy_dsv:
   before_script:
     - apt-get update -y && apt-get install -y sshpass
   script:
-    - sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST "docker-compose down" && "docker-compose pull" && "docker-compose up -d"
+    - sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST "docker-compose down && docker-compose pull && docker-compose up -d"
   only:
     - dataprev_dsv
