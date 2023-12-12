@@ -44,6 +44,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   //@ViewChild(InputSelectComponent, { static: false }) public titulo?: InputSelectComponent;
   @ViewChild("curso", { static: false }) public cursoV?: InputSelectComponent;
   @ViewChild("idiomasM", { static: false }) public idiomasM?: InputMultiselectComponent;
+  @ViewChild('municipio', { static: false }) public municipioV?: InputSelectComponent;
   
 
   public municipios: LookupItem[] = [];
@@ -148,6 +149,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     //const estados = this.estadosV!.value;
     const estados = this.form!.controls.estados.value;
     this.selecionaMunicipios(estados);
+    //this.municipioV?.disabled;
   }
 
   public selecionaMunicipios(uf: string) {
@@ -155,7 +157,6 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     this.cidadeDao?.query({ where: [['uf', '==', uf]], orderBy: [['nome', 'asc']] }).getAll().then((municipios) => {
       this.municipios = municipios.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
     });
-
   }
 
 

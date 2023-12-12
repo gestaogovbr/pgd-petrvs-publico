@@ -64,7 +64,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   @ViewChild('areaAtividadeInterna', { static: false }) public areaAtividadeInterna?: InputSearchComponent;
   @ViewChild('selectDocenciaInterna', { static: false }) public selectDocenciaInterna?: InputSelectComponent;
   @ViewChild('selectCursosInternos', { static: false }) public selectCursosInternos?: InputSelectComponent;
-  
+ 
    
   public testeLookup: LookupItem[] = [{ 'key': 'key 1', 'value': 'value 1' }];
   public opcoesEscolha: LookupItem[] = [{ 'key': 1, 'value': 'Feito' }, { 'key': 0, 'value': 'Pretendo Fazer' }];

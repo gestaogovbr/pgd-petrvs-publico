@@ -20,11 +20,12 @@ export class QuestionarioListComponent extends PageListBase<Questionario, Questi
   
   constructor(public injector: Injector) {
     super(injector, Questionario, QuestionarioDaoService);
+    this.join = ["perguntas"];
     /* Inicializações */
   
     this.title = this.lex.translate("Questionários");
     this.code = "MOD_RX";
-    this.orderBy = [['nome','asc']];
+    //this.orderBy = [['sequencia','asc']];
 
     this.filter = this.fh.FormBuilder({
       nome: {default: ""},
@@ -80,7 +81,7 @@ export class QuestionarioListComponent extends PageListBase<Questionario, Questi
     console.log('ROWS->',rows)
         rows?.forEach(v => {
         console.log('V->',v.perguntas);
-        v.exibePerguntas = v.perguntas!;
+       // v.exibePerguntas = v.perguntas!;
         
       });
   }
