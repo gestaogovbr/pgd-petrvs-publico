@@ -6,13 +6,12 @@ use App\Models\Cidade;
 use App\Models\Entidade;
 use App\Models\Perfil;
 use App\Models\Usuario;
-use App\Services\ServiceBase;
 use Illuminate\Support\Facades\Artisan;
 use Carbon\Carbon;
 use App\Models\Tenant;
-use Illuminate\Support\Facades\Log;
 
-include(getcwd() . '/../app/Helpers/Helpers.php');
+
+use Illuminate\Support\Facades\Log;
 
 class TenantService extends ServiceBase {
 
@@ -52,7 +51,8 @@ class TenantService extends ServiceBase {
         tenancy()->initialize($tenant);
 
         /* Executa migrations e seeds somente se for inclusão */
-        if ($action == ServiceBase::ACTION_INSERT) config('app.env') == 'production' ? $this->acoesProducao($dataOrEntity->id) : $this->acoesDev($dataOrEntity->id);
+        if ($action == ServiceBase::ACTION_INSERT)
+            $this->acoesDeploy($dataOrEntity->id);
 
         if($tenant) {
             $tenant->run(function () use ($dataOrEntity) {
@@ -173,40 +173,23 @@ class TenantService extends ServiceBase {
         }
     }
 
-    private function acoesProducao($id=null){
-        try {
-            Artisan::call('cache:clear');
-            logInfo();
-            Artisan::call('queue:clear', ['--force' => true]);
-            logInfo();
-            Artisan::call('optimize:clear');
-            logInfo();
-            // Execute the 'tenants:migrate' command
-            Artisan::call('tenants:migrate', ['--force' => true,'-n'=>true]);
-            logInfo();
-            Artisan::call('db:seed --class=CidadeSeeder --force');
-            logInfo();
-            Artisan::call('db:seed --class=PerfilSeeder --force');
-            logInfo();
-            return true;
-        } catch (\Exception $e) {
-            // Handle any exceptions that may occur during command execution
-            Log::error('Error executing commands: ' . $e->getMessage());
-            Log::channel('daily')->error('Error executing commands: ' . $e->getMessage());
-            // Optionally, rethrow the exception to let it be handled elsewhere
-            throw $e;
-        }
 
-    }
-
-    private function acoesDev($id = null)
+    private function acoesDeploy($id = null)
     {
         try {
             Artisan::call('tenants:migrate');
             logInfo();
-            $seedCommand = 'tenants:run db:seed --option="class=DatabaseSeeder"' . (empty($id) ? '' : ' --tenants=' . $id);
-            Artisan::call($seedCommand);
-            logInfo();
+
+            $diretorioAtual = getcwd();
+            // Mudar para o diretório do projeto Laravel
+            chdir(base_path());
+            // Executar comandos ou operações no novo diretório
+            $seedCommand = 'echo yes | php artisan tenants:run db:seed --option="class=DatabaseSeeder"' . (empty($id) ? '' : ' --tenants=' . $id);
+            exec($seedCommand, $output);
+            // Voltar para o diretório original
+            chdir($diretorioAtual);
+
+            logInfo($output);
             return true;
         } catch (\Exception $e) {
             // Handle any exceptions that may occur during command execution

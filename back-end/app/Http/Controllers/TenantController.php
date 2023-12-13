@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
@@ -21,6 +22,8 @@ class TenantController extends ControllerBase {
                     'entity' => ['required'],
                     'with' => ['array']
                 ]);
+                $data['entity']['created_at']=  Carbon::now()->toDateTimeString();
+                $data['entity']['updated_at']=  Carbon::now()->toDateTimeString();
                 $unidade = $this->getUnidade($request);
                 $entity = $this->service->store($data['entity'], $unidade);
                 $entity = $entity ?? (object) $data['entity'];
@@ -50,6 +53,7 @@ class TenantController extends ControllerBase {
             return response()->json(['error' => $e->getMessage()]);
         }
     }
+
 
     public function cidades(Request $request) {
         try {
