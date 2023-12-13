@@ -45,7 +45,7 @@ class IN24_2023Seeder extends Seeder
         $this->utilService = new UtilService();
 
         // Encontra unidade inicial (instituidora) para registro de programa
-        $this->unidade_inicial = Unidade::where('codigo', '3037')->first();
+        $this->unidade_inicial = Unidade::where('codigo', '1')->first();
     }
 
     public function run(){

@@ -165,7 +165,7 @@ class UtilService
     /**
      * A função devolve um DateTime, se receber uma data em qualquer um dos seguintes formatos: DateTime, Timestamp, string;
      */
-    public static function asDateTime(DateTime | int | string | null $date): DateTime {
+    public static function asDateTime(DateTime | int | string | null $date): DateTime | null {
         return empty($date) ? null : ($date instanceof DateTime ? $date : (gettype($date) == "integer" ? new DateTime(date(ServiceBase::ISO8601_FORMAT,$date)) : (gettype($date) == "string" ? new DateTime($date) : $date)));
     }
 
