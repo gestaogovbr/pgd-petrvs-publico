@@ -375,7 +375,7 @@ function UsuarioIntegranteComponent_ng_template_5_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtextInterpolate"](row_r10.unidade_sigla || "");
     _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtextInterpolate1"](" (IdServo: ", row_r10.unidade_codigo || "", ")");
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtextInterpolate1"](" ", row_r10.informal ? "(Unidade Informal)" : "(C\u00F3digo: " + (row_r10.unidade_codigo || "") + ")", "");
     _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtextInterpolate1"]("", row_r10.unidade_nome || "", " ");
   }
