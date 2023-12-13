@@ -604,7 +604,7 @@ class EntidadeListComponent extends src_app_modules_base_page_list_base__WEBPACK
       }
     });
     this.addOption(this.OPTION_INFORMACOES);
-    this.addOption(this.OPTION_EXCLUIR, "MOD_ENTD_EXCL");
+    //this.addOption(this.OPTION_EXCLUIR, "MOD_ENTD_EXCL");
     this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
     // Testa se o usuário possui permissão para configurar a entidade
     if (this.auth.hasPermissionTo("MOD_CFG_ENTD")) {
@@ -640,8 +640,8 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
   decls: 12,
-  vars: 23,
-  consts: [["class", "my-2", 4, "ngIf"], [3, "dao", "add", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "deleted", "form", "where", "submit", "collapseChange", "collapsed"], [1, "row"], ["controlName", "nome", "placeholder", "Nome...", 3, "size", "label", "control"], ["title", "Sigla", "field", "sigla"], ["title", "Nome", "field", "nome"], ["title", "Abrang\u00EAncia", "field", "abrangencia"], ["type", "options", 3, "onEdit", "options"], [3, "rows"], [1, "my-2"]],
+  vars: 21,
+  consts: [["class", "my-2", 4, "ngIf"], [3, "dao", "orderBy", "groupBy", "join", "selectable", "hasEdit", "select"], [4, "ngIf"], [3, "deleted", "form", "where", "submit", "collapseChange", "collapsed"], [1, "row"], ["controlName", "nome", "placeholder", "Nome...", 3, "size", "label", "control"], ["title", "Sigla", "field", "sigla"], ["title", "Nome", "field", "nome"], ["title", "Abrang\u00EAncia", "field", "abrangencia"], ["type", "options", 3, "onEdit", "options"], [3, "rows"], [1, "my-2"]],
   template: function EntidadeListComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](0, EntidadeListComponent_h3_0_Template, 2, 1, "h3", 0);
@@ -662,7 +662,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
     if (rf & 2) {
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("ngIf", !ctx.isModal);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("selectable", ctx.selectable)("hasAdd", ctx.auth.hasPermissionTo("MOD_ENTD_INCL"))("hasEdit", ctx.auth.hasPermissionTo("MOD_ENTD_EDT"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("dao", ctx.dao)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("selectable", ctx.selectable)("hasEdit", ctx.auth.hasPermissionTo("MOD_ENTD_EDT"));
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("ngIf", !ctx.selectable);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
