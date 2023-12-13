@@ -143,7 +143,7 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
       if (controlName == 'unidade_pai_id' && !control.value?.length && !this.unidade_raiz) {
         result = "Obrigatório";
       }
-      if (controlName == 'codigo' && !parseInt(control.value)) {
+      if (controlName == 'codigo' && !this.form?.controls.informal.value && !parseInt(control.value)) {
         result = "Obrigatório";
       }
       return result;
@@ -194,7 +194,7 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
         default: false
       },
       informal: {
-        default: false
+        default: true
       },
       atividades_arquivamento_automatico: {
         default: 1
@@ -267,7 +267,8 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
   initializeData(form) {
     this.entity = new src_app_models_unidade_model__WEBPACK_IMPORTED_MODULE_10__.Unidade({
       entidade_id: this.auth.unidade?.entidade_id,
-      entidade: this.auth.unidade?.entidade
+      entidade: this.auth.unidade?.entidade,
+      informal: 1
     });
     this.loadData(this.entity, form);
   }
@@ -299,10 +300,8 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
         unidade.notificacoes = _this2.entity.notificacoes;
         let salvarGestor = !!_this2.formGestor.controls.gestor_id?.value && (!_this2.entity?.gestor?.id.length || !!_this2.entity?.gestor?.id.length && _this2.entity?.gestor?.usuario?.id != _this2.formGestor.controls.gestor_id?.value);
         let salvarGestorSubstituto = !!_this2.formGestor.controls.gestor_substituto_id?.value && (!_this2.entity?.gestor_substituto?.id.length || !!_this2.entity?.gestor_substituto?.id.length && _this2.entity?.gestor_substituto?.usuario?.id != _this2.formGestor.controls.gestor_substituto_id?.value);
-        let salvarGestorDelegado = !!_this2.formGestor.controls.gestor_delegado_id?.value && (!_this2.entity?.gestor_delegado?.id.length || !!_this2.entity?.gestor_delegado?.id.length && _this2.entity?.gestor_delegado?.usuario?.id != _this2.formGestor.controls.gestor_delegado_id?.value);
         let apagarGestor = !_this2.formGestor.controls.gestor_id?.value && !!_this2.entity?.gestor?.id.length;
         let apagarGestorSubstituto = !_this2.formGestor.controls.gestor_substituto_id?.value && !!_this2.entity?.gestor_substituto?.id.length;
-        let apagarGestorDelegado = !_this2.formGestor.controls.gestor_delegado_id?.value && !!_this2.entity?.gestor_delegado?.id.length;
         let integrantesConsolidados = _this2.usuariosIntegrantes?.items || [];
         try {
           yield _this2.dao?.save(unidade, ["gestor.gestor:id", "gestor_substituto.gestor_substituto:id", "gestor_delegado.gestor_delegado:id"]).then( /*#__PURE__*/function () {
@@ -318,16 +317,10 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
                 'usuario_id': _this2.formGestor.controls.gestor_substituto_id.value,
                 'atribuicoes': ["GESTOR_SUBSTITUTO"]
               })]);
-              if (salvarGestorDelegado) yield _this2.integranteDao.saveIntegrante([Object.assign(new src_app_models_unidade_integrante_model__WEBPACK_IMPORTED_MODULE_14__.IntegranteConsolidado(), {
-                'unidade_id': unidadeBanco.id,
-                'usuario_id': _this2.formGestor.controls.gestor_delegado_id.value,
-                'atribuicoes': ["GESTOR_DELEGADO"]
-              })]);
               if (apagarGestor) yield _this2.integranteAtribuicaoDao.delete(_this2.entity?.gestor.gestor.id);
               if (apagarGestorSubstituto) yield _this2.integranteAtribuicaoDao.delete(_this2.entity?.gestor_substituto.gestor_substituto.id);
-              if (apagarGestorDelegado) yield _this2.integranteAtribuicaoDao.delete(_this2.entity?.gestor_delegado.gestor_delegado.id);
               integrantesConsolidados.forEach(v => v.unidade_id = unidadeBanco.id);
-              yield _this2.integranteDao.saveIntegrante(integrantesConsolidados);
+              if (integrantesConsolidados.length) yield _this2.integranteDao.saveIntegrante(integrantesConsolidados);
             });
             return function (_x3) {
               return _ref2.apply(this, arguments);
@@ -353,7 +346,8 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
     this.form.controls.expediente.setValue(this.form.controls.usar_expediente_entidade.value ? null : this.form.controls.expediente.value || new src_app_models_expediente_model__WEBPACK_IMPORTED_MODULE_9__.Expediente());
   }
   get informalIsDisabled() {
-    return this.action != 'new' ? 'true' : undefined;
+    //return this.action != 'new' ? 'true' : undefined;
+    return 'true';
   }
   get instituidoraIsDisabled() {
     return this.informal ? 'true' : undefined;
@@ -366,9 +360,6 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
   }
   get isDisabled() {
     return !this.informal && this.action == 'edit' ? 'true' : undefined;
-  }
-  teste() {
-    this.form.controls.unidade_pai_id.updateValueAndValidity();
   }
 }
 _class = UnidadeFormComponent;
@@ -404,7 +395,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵInheritDefinitionFeature"]],
   decls: 45,
   vars: 65,
-  consts: [["initialFocus", "sigla", 3, "title", "form", "disabled", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], ["label", "Informal", "labelClass", "text-nowrap", "controlName", "informal", 3, "disabled", "size", "labelInfo", "change"], ["label", "Instit.", "labelClass", "text-nowrap", "controlName", "instituidora", 3, "disabled", "size", "labelInfo", "change"], ["label", "C\u00F3digo", "controlName", "codigo", 3, "disabled", "size"], ["label", "Sigla", "controlName", "sigla", "required", "", 3, "disabled", "size"], ["label", "Nome", "controlName", "nome", "required", "", 3, "disabled", "size"], ["label", "Gestor", "controlName", "gestor_id", "labelInfo", "Respons\u00E1vel pela unidade", 3, "disabled", "size", "emptyValue", "control", "dao"], ["gestor", ""], ["label", "Gestor Substituto", "controlName", "gestor_substituto_id", "labelInfo", "Respons\u00E1vel substituto pela unidade", 3, "disabled", "size", "emptyValue", "control", "dao"], ["gestorSubstituto", ""], ["controlName", "cidade_id", "required", "", 3, "disabled", "size", "dao"], ["cidade", ""], ["controlName", "unidade_pai_id", 3, "disabled", "size", "label", "where", "dao"], ["unidade_pai", ""], ["disabled", "", "controlName", "entidade_id", "required", "", 3, "size", "dao"], ["entidade", ""], ["key", "CONFIGURACOES", "label", "Configura\u00E7\u00F5es"], ["controlName", "distribuicao_forma_contagem_prazos", "labelInfo", "A forma da contagem dos prazos para a distribui\u00E7\u00E3o (lan\u00E7amento da demanda).", 3, "size", "label", "items"], ["controlName", "entrega_forma_contagem_prazos", "labelInfo", "A forma da contagem dos prazos na entrega da demanda (data da entrega e tempo despendido)", 3, "size", "label", "items"], ["label", "Arquivamento autom\u00E1tico", "controlName", "atividades_arquivamento_automatico", "labelInfo", "Se ap\u00F3s a avalia\u00E7\u00E3o, arquivar\u00E1 automaticamente a atividade.", 3, "size", "items"], ["clss", "row"], ["label", "Etiquetas", "multiselectStyle", "inline", "controlName", "etiquetas", 3, "maxItemWidth", "size", "addItemHandle"], ["label", "Texto", "controlName", "etiqueta_texto", 3, "size"], ["label", "\u00CDcone", "controlName", "etiqueta_icone", 3, "size", "items"], ["label", "Cor", "controlName", "etiqueta_cor", 3, "size"], ["controlName", "texto_complementar_plano", 3, "label", "dataset"], ["key", "EXPEDIENTE", "label", "Expediente"], ["labelPosition", "right", "icon", "bi bi-check2", "controlName", "usar_expediente_entidade", "labelInfo", "Se utiliza o expediente configurado na entidade ao inv\u00E9s de especificar na unidade", 3, "label", "size", "change"], ["usarExpedienteEntidade", ""], [3, "disabled", "expedienteDisabled", "control"], ["expediente", ""], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es", 4, "ngIf"], ["key", "INTEGRANTES", 3, "label"], ["noPersist", "", 3, "entity"], ["usuariosIntegrantes", ""], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es"], [3, "unidadeId", "entity", "disabled"], ["notificacoes", ""]],
+  consts: [["initialFocus", "sigla", 3, "title", "form", "disabled", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], ["label", "Informal", "labelClass", "text-nowrap", "controlName", "informal", 3, "disabled", "size", "labelInfo", "change"], ["label", "Instit.", "labelClass", "text-nowrap", "controlName", "instituidora", 3, "disabled", "size", "labelInfo"], ["label", "C\u00F3digo", "controlName", "codigo", 3, "disabled", "size"], ["label", "Sigla", "controlName", "sigla", "required", "", 3, "disabled", "size"], ["label", "Nome", "controlName", "nome", "required", "", 3, "disabled", "size"], ["label", "Gestor", "controlName", "gestor_id", "labelInfo", "Respons\u00E1vel pela unidade", 3, "disabled", "size", "emptyValue", "control", "dao"], ["gestor", ""], ["label", "Gestor Substituto", "controlName", "gestor_substituto_id", "labelInfo", "Respons\u00E1vel substituto pela unidade", 3, "disabled", "size", "emptyValue", "control", "dao"], ["gestorSubstituto", ""], ["controlName", "cidade_id", "required", "", 3, "disabled", "size", "dao"], ["cidade", ""], ["controlName", "unidade_pai_id", 3, "disabled", "size", "label", "where", "dao"], ["unidade_pai", ""], ["disabled", "", "controlName", "entidade_id", "required", "", 3, "size", "dao"], ["entidade", ""], ["key", "CONFIGURACOES", "label", "Configura\u00E7\u00F5es"], ["controlName", "distribuicao_forma_contagem_prazos", "labelInfo", "A forma da contagem dos prazos para a distribui\u00E7\u00E3o (lan\u00E7amento da demanda).", 3, "size", "label", "items"], ["controlName", "entrega_forma_contagem_prazos", "labelInfo", "A forma da contagem dos prazos na entrega da demanda (data da entrega e tempo despendido)", 3, "size", "label", "items"], ["label", "Arquivamento autom\u00E1tico", "controlName", "atividades_arquivamento_automatico", "labelInfo", "Se ap\u00F3s a avalia\u00E7\u00E3o, arquivar\u00E1 automaticamente a atividade.", 3, "size", "items"], ["clss", "row"], ["label", "Etiquetas", "multiselectStyle", "inline", "controlName", "etiquetas", 3, "maxItemWidth", "size", "addItemHandle"], ["label", "Texto", "controlName", "etiqueta_texto", 3, "size"], ["label", "\u00CDcone", "controlName", "etiqueta_icone", 3, "size", "items"], ["label", "Cor", "controlName", "etiqueta_cor", 3, "size"], ["controlName", "texto_complementar_plano", 3, "label", "dataset"], ["key", "EXPEDIENTE", "label", "Expediente"], ["labelPosition", "right", "icon", "bi bi-check2", "controlName", "usar_expediente_entidade", "labelInfo", "Se utiliza o expediente configurado na entidade ao inv\u00E9s de especificar na unidade", 3, "label", "size", "change"], ["usarExpedienteEntidade", ""], [3, "disabled", "expedienteDisabled", "control"], ["expediente", ""], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es", 4, "ngIf"], ["key", "INTEGRANTES", 3, "label"], ["noPersist", "", 3, "entity"], ["usuariosIntegrantes", ""], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es"], [3, "unidadeId", "entity", "disabled"], ["notificacoes", ""]],
   template: function UnidadeFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵelementStart"](0, "editable-form", 0);
@@ -418,12 +409,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵdef
         return ctx.onInformalChange($event);
       });
       _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵelementStart"](5, "input-switch", 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵlistener"]("change", function UnidadeFormComponent_Template_input_switch_change_5_listener() {
-        return ctx.teste();
-      });
-      _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵelement"](6, "input-text", 6)(7, "input-text", 7)(8, "input-text", 8);
+      _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵelement"](5, "input-switch", 5)(6, "input-text", 6)(7, "input-text", 7)(8, "input-text", 8);
       _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵelementStart"](9, "div", 3);
       _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵelement"](10, "input-search", 9, 10)(12, "input-search", 11, 12);
