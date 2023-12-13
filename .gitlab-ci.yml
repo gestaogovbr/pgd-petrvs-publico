@@ -23,7 +23,7 @@ build_dsv:
   stage: build_dsv
   image: docker:latest
   script:
-    - docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f resources/dataprev/Dockerfile .
+    - docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f resources/dataprev/dev/Dockerfile .
     - docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
   only:
     - dataprev_dsv
