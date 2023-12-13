@@ -184,7 +184,7 @@ class IntegracaoSiapeService extends ServiceBase {
         $PessoasPetrvs = [ 'Pessoas' => []];
         $date = new Datetime();
 
-        $uorgs = DB::select("SELECT codigo_siape from integracao_unidades WHERE codupag=".$this->siapeUpag."");
+        $uorgs = DB::select("SELECT codigo_siape from integracao_unidades");
         $uorgs = $this->UtilService->object2array($uorgs);
 
         if(!empty($this->siape) and !empty($uorgs)){

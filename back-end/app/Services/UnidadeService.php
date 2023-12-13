@@ -19,32 +19,6 @@ use Throwable;
 
 class UnidadeService extends ServiceBase
 {
-/*     public function avaliadores($id) {
-        //$unidade = Unidade::find($id);
-        //return array_unique(array_map(fn($usuario) => $usuario->id, [...$unidade->avaliadoresPlanoEntrega, ...$unidade->avaliadoresPlanoTrabalho, $unidade->gestor, $unidade->gestorSubstituto]));
-        
-        $result = [];   
-        $unidade = Unidade::with("integrantes")->where("id", $id)->first();
-        if(!empty($unidade->gestor_id)) $result[] = $unidade->gestor_id;
-        if(!empty($unidade->gestor_substituto_id)) $result[] = $unidade->gestor_substituto_id;
-        foreach($unidade->integrantes as $integrante) {
-            if($integrante->atribuicao == "AVALIADOR_DEMANDAS") $result[] = $integrante->usuario_id;  
-        }
-        if($unidade->avaliacao_hierarquica) {
-            $parentId = $unidade->unidade_id;
-            $maxLevel = 50;
-            while(!empty($parentId) && $maxLevel) {
-                $pai = Unidade::find($parentId);
-                if(!empty($pai->gestor_id)) $result[] = $pai->gestor_id;
-                if(!empty($pai->gestor_substituto_id)) $result[] = $pai->gestor_substituto_id;
-                $parentId = $pai->unidade_id;
-                $maxLevel--;
-            }
-            if(!$maxLevel) throw new ServerException("ValidateUnidade", "Referência circular na hierarquia da unidade");
-        } 
-        return $result;
-    } */
-
     /** 
      * Um array com os IDs de todas as Unidades pesquisadas, que possuem Planos de Trabalho ativos, e seus respectivos dashboards.
      * 

@@ -11,6 +11,7 @@ use Throwable;
 
 class EntidadeController extends ControllerBase {
     public $updatable = [
+        "url_sei",
         "nomenclatura", 
         "notificacoes", 
         "notificacoes_templates",

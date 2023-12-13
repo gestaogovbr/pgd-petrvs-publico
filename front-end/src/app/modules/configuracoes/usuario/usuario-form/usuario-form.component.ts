@@ -75,6 +75,9 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     if (controlName == "cpf" && !this.util.validarCPF(control.value)) {
       result = "Inválido";
     }
+    if(['data_nascimento'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+      result = "Inválido";
+    }
     return result;
   }
 
