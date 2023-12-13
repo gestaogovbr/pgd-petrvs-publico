@@ -19,8 +19,8 @@ class EventServiceProvider extends ServiceProvider
             SendEmailVerificationNotification::class,
         ],
         \SocialiteProviders\Manager\SocialiteWasCalled::class => [
-            \SocialiteProviders\GovBR\GovBRExtendSocialite::class.'@handle',
-            //\SocialiteProviders\Azure\AzureExtendSocialite::class.'@handle',
+                \SocialiteProviders\GovBR\GovBRExtendSocialite::class.'@handle',
+                \SocialiteProviders\Azure\AzureExtendSocialite::class.'@handle',
         ],
     ];
 
