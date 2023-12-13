@@ -75,7 +75,7 @@ class UnidadeIntegranteService extends ServiceBase
                             $usuario->lotacao->lotado->delete();
                             $unidadeLotacao = null;
                         }
-                        if (!$unidade->informal) {
+                        if (empty($unidade->informal)) {
                             if (empty($unidadeLotacao->id)) UnidadeIntegranteAtribuicao::create(["atribuicao" => "LOTADO", "unidade_integrante_id" => $integranteNovoOuExistente->id])->save();
                             array_push($atribuicoesFinais, "LOTADO");
                         } else {
@@ -85,19 +85,19 @@ class UnidadeIntegranteService extends ServiceBase
 
                     $definirGerenciaTitular = function ($integranteNovoOuExistente) use ($unidadeGerenciaTitular, $atualGestorUnidade, $unidade, $usuario, $definirLotacao, &$atribuicoesFinais) {
                         // se a unidade for formal, é necessário garantir que a lotação do gestor titular é na unidade que gerencia
-                        if (!$unidade->informal) $definirLotacao($integranteNovoOuExistente);
+                        if (empty($unidade->informal)) $definirLotacao($integranteNovoOuExistente);
                         // se já existe um gestor titular diferente para essa unidade, é preciso excluir sua atribuição de gestor antes de entregar a gerência da unidade ao novo usuário. Isso é válido, inclusive, para unidades informais.
                         if (!empty($atualGestorUnidade->id) && $atualGestorUnidade->id != $usuario->id) {
                             $unidade->gestor->gestor->delete();
                             $atualGestorUnidade = null;
                         }
                         // se o usuário já é gestor titular de outra unidade, e ambas são formais (a outra e essa nova), é preciso perder aquela gerência antes de assumir essa nova gerência titular.
-                        if (!empty($unidadeGerenciaTitular->id) && $unidadeGerenciaTitular->id != $unidade->id && !$unidade->informal && !$unidadeGerenciaTitular->informal) {  
+                        if (!empty($unidadeGerenciaTitular->id) && $unidadeGerenciaTitular->id != $unidade->id && empty($unidade->informal) && empty($unidadeGerenciaTitular->informal)) {  
                             $usuario->gerenciaTitular->gestor->delete();
                             $unidadeGerenciaTitular = null;
                         }
                         // finalmente, se o usuário ainda não é gerente titular, ou se uma das duas gerências titulares (a já existente e essa nova que está sendo proposta) é de uma unidade informal, é criada a atribuição nova de gestor titular
-                        if (!$unidadeGerenciaTitular->id|| $unidadeGerenciaTitular->informal || $unidade->informal) UnidadeIntegranteAtribuicao::create(["atribuicao" => "GESTOR", "unidade_integrante_id" => $integranteNovoOuExistente->id])->save();
+                        if (empty($unidadeGerenciaTitular->id) || $unidadeGerenciaTitular->informal || $unidade->informal) UnidadeIntegranteAtribuicao::create(["atribuicao" => "GESTOR", "unidade_integrante_id" => $integranteNovoOuExistente->id])->save();
                         array_push($atribuicoesFinais, "GESTOR");
                     };
                     
