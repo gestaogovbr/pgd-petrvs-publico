@@ -21,8 +21,8 @@
                 <input-text [size]="6" label="CPF" controlName="cpf" [attr.maxlength]=15></input-text>
                 <input-text [size]="6" label="Apelido" controlName="apelido" [attr.maxlength]=250></input-text>
             </div>
-            <separator title="Notificações"></separator>
-            <div class="row">
+            <separator title="Notificações" hidden="true"></separator>
+            <div class="row" hidden="true">
                 <div class="col-md-6">
                     <div class="row">
                         <input-switch [size]="12" scale="small" labelPosition="right" label="Petrvs (Dentro do sistema)" controlName="notification_petrvs"></input-switch>
@@ -67,7 +67,7 @@
             </div>
             <separator title="Logs"></separator>
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-8">
                     <div class="row">
                         <input-text [size]="6" label="Host" controlName="log_host" [attr.maxlength]=250></input-text>
                         <input-text [size]="4" label="Banco de dados" controlName="log_database" [attr.maxlength]=250></input-text>
@@ -78,7 +78,7 @@
                         <input-text password [size]="6" label="Senha" controlName="log_password" [attr.maxlength]=250></input-text>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <separator title="Opções de log"></separator>
                     <div class="row">
                         <input-switch [size]="12" scale="small" labelPosition="right" label="Tráfego (traffic)" controlName="log_traffic"></input-switch>
@@ -89,33 +89,25 @@
             </div>
         </tab>
         <tab key="LOGIN" label="Login">
-            <separator title="Entidade"></separator>
-            <div class="row">
-                <input-switch [size]="3" labelPosition="left" label="Seleciona Entidade:" controlName="select_entidade"></input-switch>
-            </div>
-            <grid [control]="form!.controls.login" [form]="formLogin" #gridLogin editable [selectable]="false">
-                <columns>
-                    <column type="text" title="Tipo" field="Tipo" [editable]="false"></column>
-                    <column type="text" title="Web" field="Web" ></column>
-                    <column type="text" title="API" field="API" ></column>
-                    <column type="switch" title="Habilitado" field="Habilitado"></column>
-                </columns>
-            </grid>
+
             <separator title="Google"></separator>
             <div class="row">
-                <input-text [size]="6" label="Google Client ID" controlName="login_google_client_id" [attr.maxlength]=250></input-text>
-                <input-text [size]="6" label="Firebase Project ID" controlName="login_firebase_client_id" [attr.maxlength]=250></input-text>
+                <input-text [size]="5" label="Google Client ID" controlName="login_google_client_id" [attr.maxlength]=250></input-text>
+                <input-text [size]="5" label="Firebase Project ID" controlName="login_firebase_client_id" [attr.maxlength]=250></input-text>
+                <input-switch [size]="2" scale="large" labelPosition="right" label="" controlName="login_google"></input-switch>
             </div>
             <separator title="Microsoft"></separator>
             <div class="row">
                 <input-text [size]="4" label="Azure Client ID" controlName="login_azure_client_id" [attr.maxlength]=250></input-text>
-                <input-text [size]="4" label="Azure Client Secret" controlName="login_azure_secret" [attr.maxlength]=250></input-text>
-                <input-text [size]="4" label="Azure Redirect URI" controlName="login_azure_redirect_uri" [attr.maxlength]=250></input-text>
+                <input-text [size]="3" label="Azure Client Secret" controlName="login_azure_secret" [attr.maxlength]=250></input-text>
+                <input-text [size]="3" label="Azure Redirect URI" controlName="login_azure_redirect_uri" [attr.maxlength]=250></input-text>
+              <input-switch [size]="2" scale="large" labelPosition="right" label="" controlName="login_azure"></input-switch>
             </div>
-            <separator title="Login Unico"></separator>
+            <separator title="Login GOVBr"></separator>
             <div class="row">
-                <input-text [size]="6" label="Client ID" controlName="login_login_unico_client_id" [attr.maxlength]=250></input-text>
-                <input-text [size]="6" label="Secret" controlName="login_login_unico_secret" [attr.maxlength]=250></input-text>
+                <input-text [size]="5" label="Client ID" controlName="login_login_unico_client_id" [attr.maxlength]=250></input-text>
+                <input-text [size]="5" label="Secret" controlName="login_login_unico_secret" [attr.maxlength]=250></input-text>
+              <input-switch [size]="2" scale="large" labelPosition="right" label="" controlName="login_login_unico"></input-switch>
             </div>
         </tab>
         <tab key="INTEGRACAO" label="Integração">
@@ -134,7 +126,7 @@
                 <div class="row">
                     <input-text [size]="4" label="Nome do Sistema" controlName="integracao_siape_nome" [attr.maxlength]=250></input-text>
                     <input-text [size]="4" label="CPF" controlName="integracao_siape_cpf" [attr.maxlength]="15"></input-text>
-                    <input-text [size]="4" label="Senha" controlName="integracao_siape_senha" [attr.maxlength]=250></input-text> 
+                    <input-text [size]="4" label="Senha" controlName="integracao_siape_senha" [attr.maxlength]=250></input-text>
                 </div>
                 <div class="row">
                     <input-text [size]="3" label="Codigo do Órgão" controlName="integracao_siape_codorgao" [attr.maxlength]=250></input-text>
