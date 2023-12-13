@@ -12,11 +12,11 @@ use Throwable;
 class EntidadeController extends ControllerBase {
     public $updatable = [
         "url_sei",
-        "nomenclatura", 
-        "notificacoes", 
+        "nomenclatura",
+        "notificacoes",
         "notificacoes_templates",
-        "tipo_modalidade_id", 
-        "forma_contagem_carga_horaria", 
+        "tipo_modalidade_id",
+        "forma_contagem_carga_horaria",
         "carga_horaria_padrao",
         "expediente"
     ];
