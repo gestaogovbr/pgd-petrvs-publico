@@ -1,9 +1,9 @@
 variables:
   DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
-  DOCKER_HUB_TAG: dsv
-  SSH_USER: marcocoelho
+  DOCKER_HUB_TAG: latest
+  SSH_USER: root
   SSH_HOST: 200.152.38.137
-  SSH_PORT: 7223
+  SSH_PORT: 7225
   SSH_PASSWORD: dataprev12345
   DEPLOY_PATH: ./
   DOCKER_HUB_USERNAME: segescginf
@@ -13,26 +13,26 @@ services:
   - docker:dind
 
 stages:
-  - build_dsv
-  - deploy_dsv
+  - build_prod
+  - deploy_prod
 
 before_script:
   - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
 
-build_dsv:
-  stage: build_dsv
+build_prod:
+  stage: build_prod
   image: docker:latest
   script:
-    - docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f resources/dataprev/dev/Dockerfile .
+    - docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f resources/dataprev/prod/Dockerfile .
     - docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
   only:
-    - dataprev_dsv
+    - dataprev_prod
 
-deploy_dsv:
-  stage: deploy_dsv
+deploy_prod:
+  stage: deploy_prod
   before_script:
     - apt-get update -y && apt-get install -y sshpass
   script:
     - sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST "sh install-pgd.sh"
   only:
-    - dataprev_dsv
+    - dataprev_prod
