@@ -19,8 +19,13 @@
             <ng-template let-row="row" #columnOpcoes>
                 <ng-container *ngIf="['EMOJI', 'SELECT', 'MULTI_SELECT', 'RADIO', 'CHECK'].includes(row.tipo)">
                     <div class="one-per-line">
-                        <badge *ngFor="let resposta of row.respostas" [label]="resposta.key" [textValue]="resposta.value" [icon]="resposta.icon"></badge>
+                        <badge *ngFor="let resposta of row.respostas" [label]="resposta" [textValue]="resposta.value" [icon]="resposta.icon"></badge>
                     </div>
+                </ng-container>
+                <ng-container *ngIf="row.tipo == 'NUMBER'">
+                        <badge *ngIf="row.respostas.min == 0" label="Mínimo" textValue = "0"></badge>
+                        <badge *ngIf="row.respostas.min > 0" label="Mínimo" [textValue] = "row.respostas.min"></badge>
+                        <badge label="Máximo" [textValue]="row.respostas.max" class="ml" ></badge>
                 </ng-container>
                 <ng-container *ngIf="row.tipo == 'TIMER'">
                 </ng-container>
@@ -30,24 +35,3 @@
         </column>
     </columns>
 </grid>
-                <!--table class="table table-responsive table-striped table-hover table-sm">
-                    <thead>
-                        <tr>
-                            <th>Sequencia</th>
-                            <th>Pergunta</th>
-                            <th>Tipo de Resposta</th>
-                            <th>Opções de resposta e Valor</th>
-                            
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let pergunta of row.perguntas; index as i">
-                            <td>{{pergunta.sequencia}}</td>
-                            <td>{{pergunta.pergunta}}</td>
-                            <td>{{pergunta.tipo}}</td>
-                            <td id="tdOpcao"><span id="opcoes" *ngFor="let opcoes of pergunta.respostas; index as i">{{i+1}} - {{opcoes.data.opcaoResposta}} - Valor: {{opcoes.data.valorResposta}}</span></td>
-                        </tr>
-                    </tbody>
-                </table//-->
-
-

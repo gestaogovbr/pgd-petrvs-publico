@@ -67,12 +67,13 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
 
   constructor(public injector: Injector) {
     super(injector, Curriculum, CurriculumDaoService);
+    this.join = ['graduacoes'];
     //super(injector,Curso, CursoDaoService)
     this.cidadeDao = injector.get<CidadeDaoService>(CidadeDaoService);
     this.areaDao = injector.get<AreaConhecimentoDaoService>(AreaConhecimentoDaoService)
     this.cursoDao = injector.get<CursoDaoService>(CursoDaoService)
     this.curriculumGraduacaoDAO = injector.get<CurriculumGraduacaoDaoService>(CurriculumGraduacaoDaoService)
-    this.join = ['graduacoes'];
+    
     
     this.form = this.fh.FormBuilder({
       id: { default: "" },
@@ -133,12 +134,13 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     //console.log('FORMULARIO', this.form!.value)
     return new Promise<Curriculum>((resolve, reject) => {
       // this.entity!.usuario_id=this.auth.usuario!.id;
-      (this.form?.controls.idiomasM.value as Array<LookupItem>).forEach(element => curriculum.idiomas.push(element.data));
+      
       let curriculum = this.util.fill(new Curriculum(), this.entity!);
       //curriculum.usuario_id=this.auth.usuario?.id;
       curriculum = this.util.fillForm(curriculum, this.form!.value);
       curriculum.usuario_id = this.auth.usuario?.id;
       curriculum.graduacoes = this.form!.controls.graduacaopos.value.filter((x: CurriculumGraduacao) => x._status?.length);
+      //(this.form?.controls.idiomasM.value as Array<LookupItem>).forEach(element => curriculum.idiomas.push(element.data));
       resolve(curriculum);
 
     });
