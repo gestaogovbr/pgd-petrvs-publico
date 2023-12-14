@@ -179,7 +179,8 @@ export class UtilService {
   public fill(destination: any, source: any): any {
     if (destination) {
       Object.keys(destination).forEach(key => {
-        if (Array.isArray(destination[key]) && source && source[key] && Array.isArray(source[key])) {
+        if (source && source[key] && Array.isArray(source[key])) {
+          if (!Array.isArray(destination[key]) || typeof destination[key] == "undefined") destination[key] = [];
           destination[key].push(...source[key]);
         } else if (typeof destination[key] == "object" && source && typeof source[key] !== "undefined" && source[key] && !(destination[key] instanceof Date) && !(source[key] instanceof Date)) {
           destination[key] = this.fill(destination[key], source[key]);
