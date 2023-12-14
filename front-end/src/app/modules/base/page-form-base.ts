@@ -81,6 +81,7 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
 
   public async onSaveData() {
     const self = this;
+    console.log(self);
     let error: any = undefined;
     if(this.formValidation) {
       try {
