@@ -236,6 +236,8 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       resolve(curriculum);
       //resolve(this.util.fillForm(curriculum, this.form!.value));
     });
+
+    
   };
 
   public addItemFuncao(): LookupItem | undefined {

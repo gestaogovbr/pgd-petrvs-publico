@@ -16,6 +16,7 @@ import { trigger,state,style,animate,transition } from '@angular/animations';
 import { InputMultiselectComponent } from 'src/app/components/input/input-multiselect/input-multiselect.component';
 import { CurriculumGraduacaoDaoService } from 'src/app/dao/curriculum-graduacao.service';
 import { data } from 'jquery';
+import { CurriculumGraduacao } from 'src/app/models/currriculum-graduacao.model';
 
 @Component({
   selector: 'curriculum-pessoal-form',
@@ -128,19 +129,18 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   }
 
   public saveData(form: IIndexable): Promise<Curriculum> {
-    console.log('FORMULARIOGRAD', this.formGraduacao!.value)
-    console.log('FORMULARIO', this.form!.value)
+    //console.log('FORMULARIOGRAD', this.formGraduacao!.value)
+    //console.log('FORMULARIO', this.form!.value)
     return new Promise<Curriculum>((resolve, reject) => {
       // this.entity!.usuario_id=this.auth.usuario!.id;
+      (this.form?.controls.idiomasM.value as Array<LookupItem>).forEach(element => curriculum.idiomas.push(element.data));
       let curriculum = this.util.fill(new Curriculum(), this.entity!);
       //curriculum.usuario_id=this.auth.usuario?.id;
       curriculum = this.util.fillForm(curriculum, this.form!.value);
       curriculum.usuario_id = this.auth.usuario?.id;
-
-      (this.form?.controls.idiomasM.value as Array<LookupItem>).forEach(element => curriculum.idiomas.push(element.data));
-      // let graduacoes = this.util.fill(new CurriculumGraduacao(),)
+      curriculum.graduacoes = this.form!.controls.graduacaopos.value.filter((x: CurriculumGraduacao) => x._status?.length);
       resolve(curriculum);
-      //resolve(this.util.fillForm(curriculum, this.form!.value));
+
     });
   }
 

@@ -1,6 +1,6 @@
-<grid [items]="items" [title]="isModal ? '' : title">
+<grid [items]="items" [title]="isModal ? '' : title" [orderBy]="orderBy">
     <columns>
-        <column title="Sequencia" [template]="columnSequencia">
+        <column title="Sequencia" [template]="columnSequencia" orderBy="sequencia">
             <ng-template let-row="row" #columnSequencia>
                 <strong>{{row.sequencia}}</strong>
             </ng-template>

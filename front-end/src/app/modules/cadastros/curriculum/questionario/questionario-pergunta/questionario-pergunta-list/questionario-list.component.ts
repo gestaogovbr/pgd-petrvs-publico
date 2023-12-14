@@ -21,6 +21,7 @@ export class QuestionarioListComponent extends PageListBase<Questionario, Questi
   constructor(public injector: Injector) {
     super(injector, Questionario, QuestionarioDaoService);
     this.join = ["perguntas"];
+    this.orderBy = [['nome','asc']];
     /* Inicializações */
   
     this.title = this.lex.translate("Questionários");

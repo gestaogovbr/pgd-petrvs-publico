@@ -21,7 +21,7 @@ export class QuestionarioListPerguntaComponent extends PageFrameBase {
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: Questionario | undefined) { super.entity = value; } get entity(): Questionario | undefined { return super.entity; }
-
+  
   public get items(): QuestionarioPergunta[] {
     if (!this.gridControl.value) this.gridControl.setValue(new Questionario());
     if (!this.gridControl.value.perguntas) this.gridControl.value.perguntas = [];
@@ -31,5 +31,6 @@ export class QuestionarioListPerguntaComponent extends PageFrameBase {
   constructor(public injector: Injector){
     super(injector);
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
+    //this.orderBy = [['sequencia','asc']];
   } 
 }
