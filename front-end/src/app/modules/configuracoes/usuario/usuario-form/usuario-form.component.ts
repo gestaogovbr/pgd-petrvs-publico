@@ -11,7 +11,8 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { UsuarioIntegranteComponent } from '../usuario-integrante/usuario-integrante.component';
 import { TemplateDataset } from 'src/app/modules/uteis/templates/template.service';
 import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
-import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
+import { IntegranteConsolidado, UnidadeIntegrante } from 'src/app/models/unidade-integrante.model';
+import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 
 @Component({
   selector: 'app-usuario-form',
@@ -21,6 +22,7 @@ import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
 export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild(UsuarioIntegranteComponent, { static: false }) public unidadesIntegrantes?: UsuarioIntegranteComponent;
+  @ViewChild('lotacao', { static: false }) public lotacao?: InputSearchComponent;
 
   public formLotacao: FormGroup;
   public perfilDao: PerfilDaoService;
@@ -56,13 +58,24 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     this.join = ["lotacao.unidade:id"];
   }
 
+  public async loadData(entity: Usuario, form: FormGroup): Promise<void> {
+    let formValue = Object.assign({}, form.value);
+    form.patchValue(this.util.fillForm(formValue, entity));
+    this.formLotacao.controls.unidade_lotacao_id.setValue(entity.lotacao?.unidade?.id);
+    await this.unidadesIntegrantes?.loadData(entity);
+  }
+
+  public initializeData(form: FormGroup): void {
+    this.entity = new Usuario();
+    this.loadData(this.entity, form);
+  }
+
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if (['cpf', 'matricula', 'email', 'nome', 'apelido', 'perfil_id', 'unidade_lotacao_id'].indexOf(controlName) >= 0 && !control.value?.length) {
-      result = "Obrigatório";
-    } else if (controlName == "cpf" && !this.util.validarCPF(control.value)) {
+    if (controlName == "cpf" && !this.util.validarCPF(control.value)) {
       result = "Inválido";
-    } else if (['data_nascimento'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
+    }
+    if(['data_nascimento'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
     }
     return result;
@@ -78,18 +91,6 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     });
     if (erros_atribuicoes.length) return "Na aba 'Atribuições' há unidade não salva. Salve-a antes de salvar o usuário!"
     return undefined;
-  }
-
-  public async loadData(entity: Usuario, form: FormGroup): Promise<void> {
-    let formValue = Object.assign({}, form.value);
-    form.patchValue(this.util.fillForm(formValue, entity));
-    this.formLotacao.controls.unidade_lotacao_id.setValue(entity.lotacao?.unidade?.id);
-    await this.unidadesIntegrantes?.loadData(entity);
-  }
-
-  public initializeData(form: FormGroup): void {
-    this.entity = new Usuario();
-    this.loadData(this.entity, form);
   }
 
   public saveData(form: IIndexable): Promise<boolean> {

@@ -41,15 +41,7 @@
                 </div>
             </separator>
         </tab>
-        <!--tab key="ENTREGAS" [label]="lex.translate('Entrega', true)">
-            <top-alert *ngIf="!form!.controls.plano_entrega_id.value?.length" type="warning" [message]="'Antes de incluir ' + lex.translate('entrega',true) + ' neste ' + lex.translate('Plano de Trabalho') + ', é necessário selecionar um ' + lex.translate('Plano de Entregas') + '!'"></top-alert>
-            <div *ngIf="form!.controls.plano_entrega_id.value?.length">
-                <editable-form [form]="formEntregas!"  [noButtons]="'true'">
-                    <plano-trabalho-list-entrega noPersist [entity]="entity" [entregasDoPlanoEntrega]="entregas"></plano-trabalho-list-entrega>
-                </editable-form>
-            </div>
-        </tab//-->
-        <tab *ngIf="checkFilled(['usuario_id'])" key="MENSAGENS" [label]="lex.translate('Texto Complementar')">
+        <tab *ngIf="checkFilled(['usuario_id'])" key="MENSAGENS" label="Texto Complementar">
             <separator [title]="'Texto complementar da '+ lex.translate('unidade')">
                 <input-switch controlName="editar_texto_complementar_unidade" [size]="12" scale="small" labelPosition="right" [label]="'Editar texto complementar na '+ lex.translate('unidade')"></input-switch>
                 <input-editor controlName="unidade_texto_complementar" [disabled]="form!.controls.editar_texto_complementar_unidade.value ? undefined : 'true'" [dataset]="planoDataset"></input-editor>

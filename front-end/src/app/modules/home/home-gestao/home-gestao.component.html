@@ -3,7 +3,7 @@
 <div class="row mt-5">
   <div class="col-6 col-sm-3 mb-3">
     <app-button-dashboard
-      title="Planos de trabalho"
+      [title]="'Planos de trabalho'"
       [imgIcon]="gb.getResourcePath('assets/icons/home/negociate.svg')"
       textColor="#1369f0"
       borderColor="#1369f0"
@@ -14,7 +14,7 @@
 
   <div class="col-6 col-sm-3 mb-3">
     <app-button-dashboard
-      title="Entregas da minha unidade"
+      [title]="'Planos de entregas'"
       [imgIcon]="gb.getResourcePath('assets/icons/home/service.svg')"
       textColor="#1369f0"
       borderColor="#1369f0"
@@ -24,7 +24,7 @@
 
   <div class="col-6 col-sm-3 mb-3">
     <app-button-dashboard
-      title="Trabalho da minha equipe"
+      [title]="lex.translate('Consolidações')"
       [imgIcon]="gb.getResourcePath('assets/icons/home/team.svg')"
       textColor="#1369f0"
       borderColor="#1369f0"
@@ -34,7 +34,7 @@
 
   <div class="col-6 col-sm-3 mb-3">
     <app-button-dashboard
-      title="Avaliar consolidados"
+      [title]="'Avaliações de ' + lex.translate('consolidações')"
       [imgIcon]="gb.getResourcePath('assets/icons/home/ranking.svg')"
       textColor="#1369f0"
       borderColor="#1369f0"

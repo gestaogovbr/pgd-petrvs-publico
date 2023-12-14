@@ -1,50 +1,78 @@
-<editable-form [title]="isModal ? '' : title" [form]="form!" [disabled]="formDisabled" initialFocus="sigla" (submit)="onSaveData()" (cancel)="onCancel()">
+<editable-form [title]="isModal ? '' : title" [form]="form!" [disabled]="formDisabled" initialFocus="sigla"
+    (submit)="onSaveData()" (cancel)="onCancel()">
     <tabs display right>
         <tab key="PRINCIPAL" label="Principal">
             <div class="row">
-              <input-switch [size]="1" label="Instit." labelClass="text-nowrap" controlName="instituidora" [labelInfo]="'Se a ' + lex.noun('unidade') + ' é instituidora de Programas. Unidade administrativa prevista no art. 4º do Decreto nº 11.072, de 2022.'"></input-switch>
-              <input-switch [disabled]="raiz ? 'true' : undefined" [size]="1" label="Informal" labelClass="text-nowrap" controlName="informal" (change)="onInformalChange($event)" [labelInfo]="'Se a ' + lex.noun('unidade') + ' é informal. É possível ser utilizada para a composição de times volantes.'"></input-switch>
-              <input-text [disabled]="form!.controls.informal.value ? 'true': undefined" [size]="2" label="Código" controlName="codigo"></input-text>
-              <input-text [size]="2" label="Sigla" controlName="sigla" required></input-text>
-              <input-text [size]="6" label="Nome" controlName="nome" required></input-text>
+                <input-switch [disabled]="informalIsDisabled" [size]="1" label="Informal"
+                    labelClass="text-nowrap" controlName="informal" (change)="onInformalChange($event)"
+                    [labelInfo]="'Definir se ' + lex.translate('a unidade') + ' é informal ou não.' + lex.translate(' Unidades') + ' informais são, por exemplo: times volantes, comissões, grupos de trabalho, etc.' + lex.translate(' Unidades') + ' informais não podem mudar para formais, ou vice-versa.'"></input-switch>
+                <input-switch [disabled]="instituidoraIsDisabled" [size]="1" label="Instit." labelClass="text-nowrap" controlName="instituidora"
+                    [labelInfo]="'Se a ' + lex.translate('unidade') + ' é instituidora de Programas. Unidade administrativa prevista no art. 4º do Decreto nº 11.072, de 2022.'"></input-switch>
+                <input-text [disabled]="codigoIsDisabled" [size]="2" label="Código"
+                    controlName="codigo"></input-text>
+                <input-text [disabled]="isDisabled" [size]="2" label="Sigla" controlName="sigla" required></input-text>
+                <input-text [disabled]="isDisabled" [size]="6" label="Nome" controlName="nome" required></input-text>
             </div>
             <div class="row">
-                <input-search #gestor label="Gestor" [size]="6" [emptyValue]="null" [control]="formGestor!.controls.gestor_id" controlName="gestor_id" [dao]="usuarioDao" labelInfo="Responsável pela unidade"></input-search>
-                <input-search #gestorSubstituto label="Gestor Substituto" [size]="6" [emptyValue]="null" [control]="formGestor!.controls.gestor_substituto_id" controlName="gestor_substituto_id" [dao]="usuarioDao" labelInfo="Responsável substituto pela unidade"></input-search>
+                <input-search [disabled]="isDisabled" #gestor label="Gestor" [size]="6" [emptyValue]="null"
+                    [control]="formGestor!.controls.gestor_id" controlName="gestor_id" [dao]="usuarioDao"
+                    labelInfo="Responsável pela unidade"></input-search>
+                <input-search [disabled]="isDisabled" #gestorSubstituto label="Gestor Substituto" [size]="6" [emptyValue]="null"
+                    [control]="formGestor!.controls.gestor_substituto_id" controlName="gestor_substituto_id"
+                    [dao]="usuarioDao" labelInfo="Responsável substituto pela unidade"></input-search>
             </div>
             <div class="row">
-                <input-search #cidade [size]="4" controlName="cidade_id" [dao]="cidadeDao" required></input-search>
-                <input-search #unidade_pai [size]="4" [label]="lex.translate('Unidade') + ' pai'" controlName="unidade_pai_id" [where]="[['entidade_id', '==', form!.controls.entidade_id.value]]" [dao]="dao!" [required]="form!.controls.unidade_pai_id.value ? 'true': undefined" [disabled]="!form!.controls.unidade_pai_id.value ? 'true': undefined"></input-search>
-                <input-search #entidade [size]="4" disabled controlName="entidade_id" [dao]="entidadeDao" required></input-search>
+                <input-search [disabled]="isDisabled" #cidade [size]="4" controlName="cidade_id" [dao]="cidadeDao" required></input-search>
+                <input-search [disabled]="unidadePaiIsDisabled" #unidade_pai [size]="4"
+                    [label]="lex.translate('Unidade') + ' pai'" controlName="unidade_pai_id"
+                    [where]="[['entidade_id', '==', form!.controls.entidade_id.value]]" [dao]="dao!"></input-search>
+                <input-search #entidade [size]="4" disabled controlName="entidade_id" [dao]="entidadeDao"
+                    required></input-search>
             </div>
         </tab>
         <tab key="CONFIGURACOES" label="Configurações">
             <div class="row">
-                <input-select [size]="4" [label]="'Contagem ' + lex.translate('Prazo de Distribuição')" controlName="distribuicao_forma_contagem_prazos" [items]="lookup.DIA_HORA_CORRIDOS_OU_UTEIS" labelInfo="A forma da contagem dos prazos para a distribuição (lançamento da demanda)."></input-select>
-                <input-select [size]="4" [label]="'Contagem ' + lex.translate('Prazo de Entrega')" controlName="entrega_forma_contagem_prazos" [items]="lookup.HORAS_CORRIDAS_OU_UTEIS" labelInfo="A forma da contagem dos prazos na entrega da demanda (data da entrega e tempo despendido)"></input-select>
-                <input-radio [size]="4" label="Arquivamento automático" controlName="atividades_arquivamento_automatico" [items]="lookup.SIMNAO" labelInfo="Se após a avaliação, arquivará automaticamente a atividade."></input-radio>
+                <input-select [size]="4" [label]="'Contagem ' + lex.translate('Prazo de Distribuição')"
+                    controlName="distribuicao_forma_contagem_prazos" [items]="lookup.DIA_HORA_CORRIDOS_OU_UTEIS"
+                    labelInfo="A forma da contagem dos prazos para a distribuição (lançamento da demanda)."></input-select>
+                <input-select [size]="4" [label]="'Contagem ' + lex.translate('Prazo de Entrega')"
+                    controlName="entrega_forma_contagem_prazos" [items]="lookup.HORAS_CORRIDAS_OU_UTEIS"
+                    labelInfo="A forma da contagem dos prazos na entrega da demanda (data da entrega e tempo despendido)"></input-select>
+                <input-radio [size]="4" label="Arquivamento automático" controlName="atividades_arquivamento_automatico"
+                    [items]="lookup.SIMNAO"
+                    labelInfo="Se após a avaliação, arquivará automaticamente a atividade."></input-radio>
             </div>
             <separator></separator>
             <div clss="row">
-                <input-multiselect label="Etiquetas" multiselectStyle="inline" [maxItemWidth]="250" controlName="etiquetas" [size]="12" [addItemHandle]="addItemHandle.bind(this)">
+                <input-multiselect label="Etiquetas" multiselectStyle="inline" [maxItemWidth]="250"
+                    controlName="etiquetas" [size]="12" [addItemHandle]="addItemHandle.bind(this)">
                     <input-text [size]="6" label="Texto" controlName="etiqueta_texto" [attr.maxlength]=250></input-text>
-                    <input-select [size]="3" label="Ícone" controlName="etiqueta_icone" [items]="lookup.ICONES"></input-select>
+                    <input-select [size]="3" label="Ícone" controlName="etiqueta_icone"
+                        [items]="lookup.ICONES"></input-select>
                     <input-color [size]="3" label="Cor" controlName="etiqueta_cor"></input-color>
                 </input-multiselect>
             </div>
             <separator></separator>
             <div class="row">
-                <input-editor [label]="'Texto complementar ' + lex.translate('Plano de Trabalho')" controlName="texto_complementar_plano" [dataset]="planoDataset"></input-editor>
+                <input-editor [label]="'Texto complementar ' + lex.translate('Plano de Trabalho')"
+                    controlName="texto_complementar_plano" [dataset]="planoDataset"></input-editor>
             </div>
         </tab>
         <tab key="EXPEDIENTE" label="Expediente">
             <div class="row">
-                <input-switch #usarExpedienteEntidade [label]="'Usar o calendário ' + lex.translate('entidade')" labelPosition="right" icon="bi bi-check2" [size]="12" (change)="onUsarExpedienteEntidadeChange()" controlName="usar_expediente_entidade" labelInfo="Se utiliza o expediente configurado na entidade ao invés de especificar na unidade"></input-switch>
+                <input-switch #usarExpedienteEntidade [label]="'Usar o calendário ' + lex.translate('entidade')"
+                    labelPosition="right" icon="bi bi-check2" [size]="12" (change)="onUsarExpedienteEntidadeChange()"
+                    controlName="usar_expediente_entidade"
+                    labelInfo="Se utiliza o expediente configurado na entidade ao invés de especificar na unidade"></input-switch>
             </div>
-            <calendar-expediente #expediente [disabled]="form!.controls.usar_expediente_entidade.value ? undefined : 'true'" [expedienteDisabled]="entity?.entidade?.expediente" [control]="form!.controls.expediente"></calendar-expediente>
+            <calendar-expediente #expediente
+                [disabled]="form!.controls.usar_expediente_entidade.value ? undefined : 'true'"
+                [expedienteDisabled]="entity?.entidade?.expediente"
+                [control]="form!.controls.expediente"></calendar-expediente>
         </tab>
         <tab *ngIf="entity" key="NOTIFICACOES" label="Notificações">
-            <notificacoes-config #notificacoes [unidadeId]="entity.id.length ? entity!.id : 'ADD'" [entity]="entity!" [disabled]="formDisabled"></notificacoes-config>
+            <notificacoes-config #notificacoes [unidadeId]="entity.id.length ? entity!.id : 'ADD'" [entity]="entity!"
+                [disabled]="formDisabled"></notificacoes-config>
         </tab>
         <tab key="INTEGRANTES" [label]="lex.translate('Integrantes')">
             <unidade-integrante #usuariosIntegrantes noPersist [entity]="entity"></unidade-integrante>
