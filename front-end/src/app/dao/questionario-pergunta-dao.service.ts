@@ -7,10 +7,11 @@ import { QuestionarioPergunta } from '../models/questionario-pergunta.model';
   providedIn: 'root'
 })
 export class QuestionarioPerguntaDaoService extends DaoBaseService<QuestionarioPergunta>{
- 
+  
   constructor(protected injector: Injector) { 
     super("QuestionarioPergunta", injector);
     this.inputSearchConfig.searchFields = ["sequencia, pergunta, tipo, criado_versao,deletado_versao, respostas, deletedat"];
+    
   }  
 }
 

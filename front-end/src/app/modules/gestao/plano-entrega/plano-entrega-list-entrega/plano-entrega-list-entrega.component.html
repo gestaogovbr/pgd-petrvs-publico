@@ -84,7 +84,7 @@
                 </table>
             </ng-template>
         </column>
-        <column [title]="'Objetivos/Processos'" [width]="200" [template]="columnObjProc" [editTemplate]="columnObjProc">
+        <column [title]="'  Objetivos/Processos'" [width]="200" [template]="columnObjProc" [editTemplate]="columnObjProc" [icon]="'bi bi-info-circle'"[hint]="'Objetivos do Planejamento Institucional vinculado ao Plano de Entregas e Processos da Cadeia de Valor vinculada ao Plano de Entregas'" >
             <ng-template let-row="row" #columnObjProc>
                 <separator [title]="lex.translate('Objetivos')" *ngIf="row.objetivos?.length" collapse [collapsed]="true">
                     <div *ngFor="let pObjetivo of row.objetivos" class="objetivo d-flex align-items-center">
