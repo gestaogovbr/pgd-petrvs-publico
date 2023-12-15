@@ -21,9 +21,9 @@ export class CalendarExpedienteComponent implements OnInit {
   get disabled(): string | undefined {
     return this._disabled;
   }
-  @Input() set control(value: AbstractControl | undefined) {
+  @Input() set control(value: AbstractControl | undefined) {    
     if(this._control != value) {
-      this._control != value;
+      this._control = value;
       this.expediente = this.control?.value;
       value?.valueChanges.subscribe(async newValue => {
         this.expediente = newValue;
@@ -138,7 +138,10 @@ export class CalendarExpedienteComponent implements OnInit {
       this._expediente.sexta = this.form.controls.sexta.value.map((x: LookupItem) => x.data); 
       this._expediente.sabado = this.form.controls.sabado.value.map((x: LookupItem) => x.data); 
       this._expediente.especial = this.form.controls.especial.value.map((x: LookupItem) => x.data); 
-      if(this.control) this.control.setValue(this._expediente);
+      if(this.control) {
+        this.control.setValue(this._expediente);
+        this.cdRef.detectChanges();
+      } 
     }
   }
 
