@@ -76,15 +76,11 @@ export class QuestionarioListComponent extends PageListBase<Questionario, Questi
 
     return result;
   }
-
  
   public onGridLoad(rows?: any[]) {
-    console.log('ROWS->',rows)
-        rows?.forEach(v => {
-        console.log('V->',v.perguntas);
-       // v.exibePerguntas = v.perguntas!;
-        
-      });
+    rows?.forEach((questionario: Questionario) => {
+      questionario.perguntas = questionario.perguntas.sort((a, b) => a.sequencia! < b.sequencia! ? -1 : 1);
+    });
   }
    
 }

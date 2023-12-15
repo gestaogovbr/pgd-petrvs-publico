@@ -3,6 +3,7 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { QuestionarioDaoService } from 'src/app/dao/questionario-dao.service';
+import { QuestionarioPerguntaDaoService } from 'src/app/dao/questionario-pergunta-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { QuestionarioPergunta } from 'src/app/models/questionario-pergunta.model';
 import { Questionario} from 'src/app/models/questionario.model';
@@ -21,7 +22,24 @@ export class QuestionarioListPerguntaComponent extends PageFrameBase {
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: Questionario | undefined) { super.entity = value; } get entity(): Questionario | undefined { return super.entity; }
-  
+  @Input() set questionarioId(value: string | undefined) {
+    if(this._questionarioId != value) {
+      this._questionarioId = value;
+      this.loadPerguntas();
+    }
+  }
+  get questionarioId(): string | undefined {
+    return this._questionarioId;
+  }
+
+  private _questionarioId?: string;
+
+  public set items(value: QuestionarioPergunta[]) {
+    if(this.items != value) {
+      this.gridControl.value.perguntas = value;
+      if(this.viewInit) this.cdRef.detectChanges();
+    }    
+  }
   public get items(): QuestionarioPergunta[] {
     if (!this.gridControl.value) this.gridControl.setValue(new Questionario());
     if (!this.gridControl.value.perguntas) this.gridControl.value.perguntas = [];
@@ -30,7 +48,15 @@ export class QuestionarioListPerguntaComponent extends PageFrameBase {
 
   constructor(public injector: Injector){
     super(injector);
+    this.dao = injector.get<QuestionarioPerguntaDaoService>(QuestionarioPerguntaDaoService);
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
     //this.orderBy = [['sequencia','asc']];
   } 
+
+  public loadPerguntas() {
+    this.dao!.query({where: [["questionario_id", "==", this.questionarioId]], orderBy: [["sequencia", "asc"]]}).asPromise().then(rows => {
+      this.items = (rows as QuestionarioPergunta[]) || [];
+    });
+  }  
+
 }

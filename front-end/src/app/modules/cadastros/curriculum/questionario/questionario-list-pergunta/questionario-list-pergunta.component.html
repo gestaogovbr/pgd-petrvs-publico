@@ -1,6 +1,6 @@
-<grid [items]="items" [title]="isModal ? '' : title" [orderBy]="orderBy">
+<grid [items]="items" [title]="isModal ? '' : title">
     <columns>
-        <column title="Sequencia" [template]="columnSequencia" orderBy="sequencia">
+        <column title="Sequencia" [template]="columnSequencia">
             <ng-template let-row="row" #columnSequencia>
                 <strong>{{row.sequencia}}</strong>
             </ng-template>
@@ -23,9 +23,9 @@
                     </div>
                 </ng-container>
                 <ng-container *ngIf="row.tipo == 'NUMBER'">
-                        <badge *ngIf="row.respostas.min == 0" label="Mínimo" textValue = "0"></badge>
-                        <badge *ngIf="row.respostas.min > 0" label="Mínimo" [textValue] = "row.respostas.min"></badge>
-                        <badge label="Máximo" [textValue]="row.respostas.max" class="ml" ></badge>
+                    <badge *ngIf="row.respostas.min == 0" label="Mínimo" textValue="0"></badge>
+                    <badge *ngIf="row.respostas.min > 0" label="Mínimo" [textValue]="row.respostas.min"></badge>
+                    <badge label="Máximo" [textValue]="row.respostas.max" class="ml"></badge>
                 </ng-container>
                 <ng-container *ngIf="row.tipo == 'TIMER'">
                 </ng-container>

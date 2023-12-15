@@ -11,11 +11,11 @@ export type QuestionarioPerguntaRespostaRange = {min: number, max: number};
 export type QuestionarioPerguntaResposta = null | LookupItem[] | QuestionarioPerguntaRespostaRange | {tipo: QuestionarioPerguntaRespostaTimer | QuestionarioPerguntaRespostaDateTime};
 
 export class QuestionarioPergunta extends Base {
-    public sequencia: number | undefined ; //sequencia da pergunta
+    public sequencia: number = 0; //sequencia da pergunta
     public pergunta: string = ""; //pergunta
     public tipo:  QuestionarioPerguntaTipo = "SELECT"; // tipo da resposta para esta pergunta
-    public criado_versao: number | undefined = 0 ; //versao de criacao
-    public deletado_versao: number | undefined = 0; //versao em que for deletado
+    public criado_versao: number = 0 ; //versao de criacao
+    public deletado_versao: number | null = null; //versao em que for deletado
     public respostas: QuestionarioPerguntaResposta = null; // opções de respostas para essa pergunta
 
     public constructor(data?: any) { super(); this.initialization(data); }

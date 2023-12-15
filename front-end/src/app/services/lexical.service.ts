@@ -33,6 +33,7 @@ export class LexicalService {
     "avaliação": {single: "avaliação", plural: "avaliações", female: true},
     "cadeiaValor": {single: "cadeia de valor", plural: "cadeias de valor", female: true},
     "capacidade": {single: "capacidade", plural: "capacidades", female: true},
+    "chefe": {single: "chefe", plural: "chefes", female: true},
     "cidade": {single: "cidade", plural: "cidades", female: true},
     "consolidação": {single: "consolidação", plural: "consolidações", female: false},
     "data de distribuição": {single: "data de distribuição", plural: "datas de distribuição", female: true},
