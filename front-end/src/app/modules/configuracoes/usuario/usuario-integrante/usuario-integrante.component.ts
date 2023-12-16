@@ -72,6 +72,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
         this.entity = result[0]!;
         integrantes = result[1].integrantes.filter(x => x.atribuicoes?.length > 0);
       } finally {
+        this.items = [];
         integrantes.forEach(i => this.items?.push(this.integranteService.completarIntegrante(i, i.id, entity.id, i.atribuicoes)));
         this.items = this.integranteService.ordenar(this.items);
         this.cdRef.detectChanges();
