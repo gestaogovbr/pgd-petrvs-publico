@@ -200,15 +200,15 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
    * 
    * @returns boolean Informa se o planejamento é da Unidade Instituidora ou não.
    */
-  public isPlanejamentoUNINST(): boolean {
+/*   public isPlanejamentoUNINST(): boolean {
     return !this.form.controls.unidade_id.value?.length
-  }
+  } */
 
   /**
    * 
    * @returns boolean Informa se o planejamento é da Unidade Executora ou não.
    */
-  public isPlanejamentoUNEXEC(): boolean {
+/*   public isPlanejamentoUNEXEC(): boolean {
     return !this.isPlanejamentoUNINST();
-  }
+  } */
 }
