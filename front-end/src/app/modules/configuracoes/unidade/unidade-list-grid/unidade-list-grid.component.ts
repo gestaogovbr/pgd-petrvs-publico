@@ -64,7 +64,7 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
   }
 
   public async inativo(unidade: Unidade, inativo: boolean) {
-    if (await this.dialog.confirm(inativo ? "Inativar" : "Reativar", inativo ? "Deseja realmente inativar a unidade?" : "Deseja reativar a unidade?")) {
+    if (await this.dialog.confirm(inativo ? "Inativar" : "Reativar", inativo ? "Deseja realmente inativar essa unidade (" + unidade.nome + ")?" : "Deseja reativar essa unidade (" + unidade.nome + ")?")) {
       try {
         this.submitting = true;
         await this.dao!.inativar(unidade.id, inativo);
