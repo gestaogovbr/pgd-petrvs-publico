@@ -317,7 +317,9 @@ class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends src_app_modules_base_p
     this.join = ["avaliacao", "plano_trabalho:id" // "planoTrabalho.unidade:id,sigla,nome", "planoTrabalho.unidade.gestor:id,unidade_id,usuario_id", "planoTrabalho.unidade.gestorSubstituto:id,unidade_id,usuario_id", "planoTrabalho.tipoModalidade:id,nome", "planoTrabalho.usuario:id,nome,apelido,url_foto"
     ];
 
-    this.extraJoin = ["avaliacao.tipoAvaliacao.notas", "planoTrabalho.unidade:id,sigla,nome", "planoTrabalho.unidade.gestor:id,unidade_id,usuario_id", "planoTrabalho.unidade.gestorSubstituto:id,unidade_id,usuario_id", "planoTrabalho.tipoModalidade:id,nome", "planoTrabalho.usuario:id,nome,apelido,url_foto"];
+    this.extraJoin = ["avaliacao.tipoAvaliacao.notas", "planoTrabalho.unidade:id,sigla,nome", "planoTrabalho.unidade.gestor:id,unidade_id,usuario_id", "planoTrabalho.unidade.gestorSubstituto:id,unidade_id,usuario_id", "planoTrabalho.tipoModalidade:id,nome", "planoTrabalho.usuario:id,nome,apelido,foto_perfil,url_foto" //id,nome,apelido,url_foto,foto_perfil
+    ];
+
     this.groupBy = [{
       field: "plano_trabalho.unidade.sigla",
       label: this.lex.translate("Unidade")
@@ -362,6 +364,7 @@ class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends src_app_modules_base_p
     return this.auth.isGestorUnidade(this.filter.controls.unidade_id.value) ? undefined : 'true';
   }
   usuarioSeparator(separator) {
+    console.log(this.grid);
     let usuarioId = separator.group[3].value;
     separator.metadata = separator.metadata || {};
     separator.metadata.usuario = separator.metadata.usuario || this.extra?.planos_trabalhos?.find(x => x.usuario_id == usuarioId)?.usuario;
@@ -2488,6 +2491,7 @@ class PlanoTrabalhoConsolidacaoComponent extends src_app_modules_base_page_frame
     var _this = this;
     super.ngAfterViewInit();
     this.tabs.active = this.queryParams?.tab || "USUARIO";
+    this.tabs.title = this.lex.translate('Consolidações');
     (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       yield _this.loadData(_this.entity, _this.form);
     })();

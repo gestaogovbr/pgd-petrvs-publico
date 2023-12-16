@@ -26,7 +26,7 @@ class Curriculum extends ModelBase
         'idiomas' => AsJson::class,
     ];
 
-    //public $fillable_changes = ['graduacoes'];
+    public $fillable_changes = ['graduacoes'];
 
     //public $fillable_relation = [];
 

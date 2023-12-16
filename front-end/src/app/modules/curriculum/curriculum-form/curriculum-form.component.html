@@ -13,7 +13,7 @@
         <input-select [size]="4" #estados label="Estado" icon="fas fa-flag" controlName="estados"
             [control]="form!.controls.estados" [items]="lookup.UF" (change)="onEstadosChange()">
         </input-select>
-        <input-select [size]="4" label="Município" icon="far fa-flag" controlName="cidade_id"
+        <input-select #municipio [size]="4" label="Município" icon="far fa-flag" controlName="cidade_id"
             [control]="form!.controls.cidade_id" [items]="municipios">
         </input-select>
         <input-text [size]="4" label="Telefone de contato WhatsAPP" icon="fas fa-phone" controlName="telefone"
