@@ -80,6 +80,9 @@ use App\Http\Controllers\ComparecimentoController;
 use App\Http\Controllers\BatchController;
 use App\Http\Controllers\ReacaoController;
 use App\Http\Controllers\PlanoEntregaEntregaProgressoController;
+use App\Http\Controllers\QuestionarioPerguntaController;
+use App\Http\Controllers\QuestionarioRespostaController;
+use App\Http\Controllers\QuestionarioRespostaPerguntaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -274,10 +277,6 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
     Route::post('suspender', [PlanoEntregaController::class, 'suspender']);
 });
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntrega')->group(function () { defaultRoutes(PlanoEntregaEntregaController::class); });
-
-Route::middleware(['auth:sanctum'])->prefix('Adesao')->group(function () {
-    defaultRoutes(AdesaoController::class);
-});
 
 Route::middleware(['auth:sanctum'])->prefix('Projeto')->group(function () { defaultRoutes(ProjetoController::class); });
 

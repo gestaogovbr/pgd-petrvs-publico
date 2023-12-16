@@ -21,4 +21,17 @@ class CurriculumService extends ServiceBase {
         $cargos = Cargo::all()->map(fn($u) => ["key" => $u->id, "value" => $u->nome])->toArray();
         return ["unidades" => $unidades, "funcoes" => $funcoes, "grupos" => $grupos, "ct" => $ct, "cargos" => $cargos];
     }
+
+    public function proxyStore($data, $unidade, $action){
+
+        if ($action == ServiceBase::ACTION_INSERT){
+            
+  
+        foreach($data["graduacoes"] as $graduacao) {
+           
+        }
+        return $data;
+  
+        }
+    }
 }

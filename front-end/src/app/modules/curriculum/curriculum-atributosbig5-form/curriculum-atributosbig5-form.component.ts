@@ -81,8 +81,41 @@ export class CurriculumAtributosbig5FormComponent{
     return result;
   }*/
   
-  public valorSoftChange(soft:string , name:any){
-    console.log(parseInt(soft), name)
+  public valorSoftChange(soft:string , name:string){
+    
+
+    const comunicaEL = document.getElementsByName('comunica');
+    let comunica = comunicaEL
+    let lideranca = (this.liderancaV as HTMLInputElement).value;
+   
+    console.log(parseInt(soft), name, comunica, lideranca)
+    /**
+     * let $inputsFunc2 = $('.skills');
+
+    let soma2=0;
+
+    $inputsFunc2.each(function() {
+        if($(this).val()==''){
+          $(this).val(0);
+        }
+                                                
+        soma2 += parseInt($(this).val(), 0);
+                                                      
+    });
+    let soma=a+b+c+d+e+f+g;
+
+    if(soma2==20){
+      $('#lbltotalskill').text(soma2);
+      $('#lbltotalskill').css('color','red')
+      $('#lbltotalSK').css('color','red')
+
+    }else{
+      $('#lbltotalskill').text(soma2);
+      $('#lbltotalskill').css('color','black')
+      $('#lbltotalSK').css('color','black')
+
+    }
+     */
   }
 
   public voltarb5(){}

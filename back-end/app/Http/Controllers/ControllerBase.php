@@ -209,10 +209,10 @@ abstract class ControllerBase extends Controller
      * @param  string $file
      * @return \Illuminate\Http\Response
      */
-    public function download(Request $request, string $file)
+    public function download(Request $request, string $tenantId, string $file)
     {
         //$this->checkPermissions("DOWNLOAD", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
-        return response()->file($this->service->download($file));
+        return response()->file($this->service->download($tenantId, $file));
     }
 
     /**

@@ -9,12 +9,27 @@ class QuestionarioService extends ServiceBase {
 
    public function proxyStore($data, $unidade, $action){
 
-        if ($action == ServiceBase::ACTION_INSERT){
+      if ($action == ServiceBase::ACTION_INSERT){
            $data["versao"] = 1;
-        }else{
+      }else{
            $data["versao"] = Questionario::find($data['id'])->versao + 1;
-        }
-        return $data;
+           
+      }
+
+      foreach($data["perguntas"] as $pergunta) {
+         if($pergunta['_status']=='ADD'){
+            $pergunta['criado_versao']= $data['versao'];
+         }
+         if($pergunta['_status']=='EDIT'){
+            $pergunta['deletado_versao']= $data['versao'];
+         }
+         if($pergunta['_status']=='DEL'){
+            $clone = $pergunta;
+            $clone['id']=null;
+         }
+
+      }
+      return $data;
 
    }
 
@@ -31,13 +46,6 @@ class QuestionarioService extends ServiceBase {
  //}
 
 
- //$action == ServiceBase::ACTION_INSERT ? data.versao = 1 : questionarios.versao + 1 
-      /* foreach($data.perguntas as $pergunta) {
-           pergunta._status == "ADD" ? criado_versao = questionarios.versao,
-           if(pergunta._status == "EDIT"){
-               $pergunta.deletado_versao = questionario.versao,
-
-           }
      // _sataus == "EDIT" {
       //  deletado_versao = questionarios.versao,
        // _status: "DEL"
@@ -48,4 +56,3 @@ class QuestionarioService extends ServiceBase {
       //}
       //_status == "DEL" ? deletado_versao = questionarios.versao
   // }
-*/

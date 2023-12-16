@@ -81,7 +81,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       etiqueta_cor: { default: null },
       expediente24: { default: true },
       expediente: { default: null },
-      usar_expediente_entidade: { default: false },
+      usar_expediente_unidade: { default: false },
       texto_complementar_plano: { default: "" }
     }, this.cdRef, this.validate);
     this.formGestor = this.fh.FormBuilder({
@@ -106,6 +106,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     entity.etiquetas = entity.etiquetas || [];
     this.form!.controls.informal.setValue(entity.informal);
     this.unidade_raiz = this.action == 'edit' && !entity.unidade_pai_id;
+    this.form!.controls.usar_expediente_unidade.setValue(entity.expediente ? true : false);
     this.fh.revalidate(this.form!);
     await this.usuariosIntegrantes?.loadData(entity);
   }
@@ -164,11 +165,13 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       let unidade: Unidade = this.util.fill(new Unidade(), this.entity!);
       unidade = this.util.fillForm(unidade, this.form!.value);
       unidade.notificacoes = this.entity!.notificacoes;
+      unidade.notificacoes_templates = this.entity!.notificacoes_templates;
       let salvarGestor = !!this.formGestor!.controls.gestor_id?.value && (!this.entity?.gestor?.id.length || (!!this.entity?.gestor?.id.length && this.entity?.gestor?.usuario?.id != this.formGestor!.controls.gestor_id?.value));
       let salvarGestorSubstituto = !!this.formGestor!.controls.gestor_substituto_id?.value && (!this.entity?.gestor_substituto?.id.length || (!!this.entity?.gestor_substituto?.id.length && this.entity?.gestor_substituto?.usuario?.id != this.formGestor!.controls.gestor_substituto_id?.value));
       let apagarGestor = !this.formGestor!.controls.gestor_id?.value && !!this.entity?.gestor?.id.length;
       let apagarGestorSubstituto = !this.formGestor!.controls.gestor_substituto_id?.value && !!this.entity?.gestor_substituto?.id.length;
       let integrantesConsolidados: IntegranteConsolidado[] = this.usuariosIntegrantes?.items || [];
+      if(!this.form!.controls.usar_expediente_unidade) unidade.expediente = null;
       try {
         await this.dao?.save(unidade, ["gestor.gestor:id", "gestor_substituto.gestor_substituto:id", "gestor_delegado.gestor_delegado:id"]).then(async unidadeBanco => {
           //this.entity = unidadeBanco;
@@ -198,7 +201,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
   }
 
   public onUsarExpedienteEntidadeChange() {
-    this.form!.controls.expediente.setValue(this.form!.controls.usar_expediente_entidade.value ? null : this.form!.controls.expediente.value || new Expediente());
+    this.form!.controls.expediente.setValue(this.form!.controls.usar_expediente_unidade.value ? this.form!.controls.expediente.value || new Expediente() : null);
   }
 
   public get informalIsDisabled() {

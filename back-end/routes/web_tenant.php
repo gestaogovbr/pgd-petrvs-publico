@@ -67,7 +67,3 @@ Route::middleware([InitializeTenancyByPath::class])
     ->get('/login-unico/{tenant}',
           [LoginController::class, 'signInGovBrCallback']);
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/* Rotas diversas */
-//Route::get('environment-config', [PetrvsController::class, 'environmentConfig']);
-Route::middleware(['signed'])->get('/download/{file}', [DownloadController::class, 'download'])->name('download')->where('file', '.*');
