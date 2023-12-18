@@ -290,6 +290,7 @@ class UsuarioService extends ServiceBase
             $alreadyHas = $query1->first() ?? $query2->first();
             if(!empty($alreadyHas)) {
                 if($alreadyHas->deleted_at) { // Caso o usuário exista, mas esteja excluído, reabilita o usuário deletando todos os seus vínculos anteriores e recuperando seus dados sensíveis (cpf, e-mail funcional, matricula, nome, apelido, data_nascimento)
+                    // sugestão: refatorar esse código deixando para o usuário logado decidir se deseja reativar e, em caso positivo, decidir se atualiza os dados ou não
                     $this->removerVinculosUsuario($alreadyHas);
                     $data["id"] = $alreadyHas->id;
                     $data["cpf"] = $alreadyHas->cpf;

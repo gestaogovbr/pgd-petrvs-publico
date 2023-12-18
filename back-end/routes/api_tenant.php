@@ -298,7 +298,7 @@ Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
     Route::post('mesma-sigla', [UnidadeController::class, 'mesmaSigla']);
     Route::post('unificar', [UnidadeController::class, 'unificar']);
     Route::post('dashboards', [UnidadeController::class, 'dashboards']);
-    Route::post('inativo', [UnidadeController::class, 'inativo']);
+    Route::post('inativar', [UnidadeController::class, 'inativar']);
     Route::post('lotados', [UnidadeController::class, 'lotados']);
     Route::post('hierarquia', [UnidadeController::class, 'hierarquia']);
     Route::post('filhas', [UnidadeController::class, 'filhas']);
