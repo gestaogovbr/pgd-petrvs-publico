@@ -14,6 +14,8 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
+  public vigentesUnidadeExecutora: boolean = false;
+
   constructor(public injector: Injector, dao: ProgramaDaoService) {
     super(injector, Programa, ProgramaDaoService);
     /* Inicializações */
@@ -32,7 +34,7 @@ export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoSer
       this.options.push({
         icon: "bi bi-people",
         label: "Participantes",
-        onClick: (programa: Programa) => this.go.navigate({route: ["gestao", "programa", programa.id, "participantes"]})
+        onClick: (programa: Programa) => this.go.navigate({route: ["gestao", "programa", programa.id, "participantes"]}, {metadata: {'programa': programa}})
       });
     }
 
@@ -45,10 +47,15 @@ export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoSer
     }
   }
 
+  public ngOnInit(): void {
+    super.ngOnInit();
+    this.vigentesUnidadeExecutora = this.metadata?.vigentesUnidadeExecutora; 
+  }
+
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
-
+    if(this.vigentesUnidadeExecutora) result.push(['vigentesUnidadeExecutora',"==",this.auth.unidade!.id]);
     if(form.nome?.length) {
       result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }

@@ -4,18 +4,20 @@
     (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_PRGT_PART_INCL')"
     [hasEdit]="auth.hasPermissionTo('MOD_PRGT_PART_EDT')" [hasDelete]="auth.hasPermissionTo('MOD_PRGT_PART_EXCL')"
     [multiselectMenu]="multiselectMenu">
-    <span *ngIf="programa"><strong>{{ 'Programa: ' + programa.nome }}</strong></span>
     <toolbar *ngIf="!selectable">
-        <input-switch [size]="3" labelPosition="left" label="Todos" controlName="todos"
+        <input-switch [size]="3" labelPosition="left" label="Todos" controlName="todos" labelInfo="Se OFF, retorna apenas os usuários habilitados. Se ON, inclui também os não habilitados."
             [control]="filter!.controls.todos" (change)="grid!.reloadFilter()"></input-switch>
     </toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere"
         [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)"
         [collapsed]="!selectable && filterCollapsed">
         <div class="row">
-            <input-text [size]="6" label="Nome" controlName="nome" [control]="filter!.controls.nome"
+            <input-search #programaSearch [size]="12" [disabled]="isModal ? 'true' : undefined" controlName="programa_id" [control]="filter!.controls.programa_id" [dao]="programaDao" [where]="[['vigentesUnidadeExecutora', '==', auth.unidade!.id]]" [metadata]="{'vigentesUnidadeExecutora': true}" (change)="onProgramaChange()" required></input-search>
+        </div>
+        <div class="row">
+            <input-text [size]="6" [label]="'Nome do '+ lex.translate('usuário')" controlName="nome_usuario" [control]="filter!.controls.nome_usuario"
                 [placeholder]="'Nome do '+ lex.translate('usuario')+'...'" [attr.maxlength]=250></input-text>
-            <input-search [size]="6" #unidade [control]="filter!.controls.unidade_id" controlName="unidade_id"
+            <input-search #unidade [size]="6" [control]="filter!.controls.unidade_id" controlName="unidade_id" [label]="lex.translate('Unidade ') + lex.translate('de lotação')"
                 [dao]="unidadeDao"></input-search>
         </div>
     </filter>

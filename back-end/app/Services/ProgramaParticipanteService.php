@@ -7,7 +7,7 @@ use App\Models\ProgramaParticipante;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Services\ServiceBase;
-use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -18,13 +18,22 @@ class ProgramaParticipanteService extends ServiceBase {
 
     public function proxyQuery(&$query, &$data) {
         $where = [];
+        $todos = $this->extractWhere($data, "todos");
+        if(empty($todos) || $todos[2] == false) array_push($where, ["habilitado", "==", 1]);
+        foreach($data["where"] as $condition) array_push($where, $condition);
+        $data["where"] = $where;
+        return $data;
+    }
+
+/*     public function proxyQuery(&$query, &$data) {
+        $where = [];
         foreach($data["where"] as $condition) {
             if(is_array($condition) && $condition[0] == "usuario.lotacoes.unidade.id") { 
                 $query->whereHas('areasTrabalho', function (Builder $query) use ($condition) {
                     $query->where('unidade_id', $condition[2]);
                 });
                 $this->unidadeId =  $condition[2];
-            } else if (is_array($condition) && $condition[0][0] == "todos"){
+            } else if (is_array($condition) && $condition[0] == "todos"){
                 $this->todos = true;
             } else {
                 array_push($where, $condition);
@@ -32,15 +41,15 @@ class ProgramaParticipanteService extends ServiceBase {
         }
         $data["where"] = $where;
         return $data;
-    }
+    } */
 
     public function proxyRows($rows){
 
-        if ($this->todos) {
-            /* Se for todos, obter a lista de usuários, 
-                 depois verificar quais desses usuários já fazem parte da lista de participantes,
+/*         if ($this->todos) {
+            // Se for todos, obter a lista de usuários, 
+            //   depois verificar quais desses usuários já fazem parte da lista de participantes,
             //       os que não fizerem parte instanciar um novo ProgramaParticipante com esse uusuário 
-            //       e o ID iniciando 'NEW'+usuarioId e habilitado false */
+            //       e o ID iniciando 'NEW'+usuarioId e habilitado false
             $usuarios = Usuario::all();
             foreach ($usuarios->reject(function ($u) use ($rows) {
                 return in_array($u->id, array_map(fn ($x) => $x['usuario_id'], $rows->toArray()));
@@ -52,8 +61,8 @@ class ProgramaParticipanteService extends ServiceBase {
                 $novoParticipante->habilitado = 0;
                 $rows->push($novoParticipante);
             };
-        }
-        return $rows; // Lista de PRogramaParticipantes, só que contendo registro REAIS  e registros VIRTUAIS iniciados com 'NEW'+usuarioId
+        }*/
+        return $rows;  
     }
 
 
