@@ -7,9 +7,10 @@ import { FullRoute, NavigateService, RouteMetadata } from 'src/app/services/navi
 import { GridComponent, GroupBy } from 'src/app/components/grid/grid.component';
 import { QueryContext } from 'src/app/dao/query-context';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
-import { appInjector } from 'src/app/app.component';
+//import { appInjector } from 'src/app/app.component';
 import { QueryOptions } from 'src/app/dao/query-options';
 import { TreeNode } from 'primeng/api';
+import { AppComponent } from 'src/app/app.component';
 
 
 @Injectable()
@@ -89,12 +90,11 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
   public static modalSelect(params?: any): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       if(this.selectRoute) {
-        const go = appInjector.get<NavigateService>(NavigateService);
         const route = {
           route: this.selectRoute!.route,
           params: Object.assign(this.selectRoute!.params || {}, { selectable: true, modal: true }, params)
         };
-        go.navigate(route, {modalClose: resolve.bind(this)});
+        AppComponent.instance.go.navigate(route, {modalClose: resolve.bind(this)});
       } else {
         reject("Rota de seleção indefinida");
       }
@@ -102,11 +102,11 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
   }
 
   public modalRefreshId(entity: Base): RouteMetadata {
-    return { modal: true, modalClose: async (modalResult?: string) => (this.grid?.query || this.query!).refreshId(entity.id) };
+    return { modal: true, modalClose: (async (modalResult?: string) => this.refresh(entity.id)).bind(this) };
   }
 
   public modalRefresh() {
-    return { modal: true, modalClose: async (modalResult?: string) => this.refresh() };
+    return { modal: true, modalClose: (async (modalResult?: string) => this.refresh()).bind(this) };
   }
 
   public get queryOptions() {
@@ -129,6 +129,7 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
   }
 
   ngAfterViewInit() {
+    super.ngAfterViewInit();
     if(this.usuarioConfig?.filter) {
       this.filter?.patchValue(this.usuarioConfig.filter, { emitEvent: true });
     }
@@ -168,9 +169,9 @@ export abstract class PageListBase<M extends Base, D extends DaoBaseService<M>> 
 
   public refresh(id?: string) {
     if(id) {
-      return (this.grid!.query || this.query!).refreshId(id!);
+      return (this.grid?.query || this.query!).refreshId(id!);
     } else {
-      return (this.grid!.query || this.query!).refresh();
+      return (this.grid?.query || this.query!).refresh();
     }
   }
 

@@ -1,7 +1,7 @@
 import { Component, ElementRef, Injector, Input, TemplateRef, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRouteSnapshot } from '@angular/router';
-import { GridComponent } from 'src/app/components/grid/grid.component';
+import { GridComponent, GroupBy } from 'src/app/components/grid/grid.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { Atividade } from 'src/app/models/atividade.model';
@@ -9,6 +9,8 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { FullRoute, RouteMetadata } from 'src/app/services/navigate.service';
 import { AtividadeListBase } from '../atividade-list-base';
 import { BadgeButton } from 'src/app/components/badge/badge.component';
+import { Unidade } from 'src/app/models/unidade.model';
+import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
 
 @Component({
   selector: 'atividade-list-grid',
@@ -21,11 +23,15 @@ export class AtividadeListGridComponent extends AtividadeListBase {
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
   @ViewChild('usuario', { static: false }) public usuario?: InputSearchComponent;
   @ViewChild('etiqueta', { static: false }) public etiqueta?: InputSelectComponent;
+  @ViewChild('planoEntrega', { static: false }) public planoEntrega?: InputSelectComponent;
+  @ViewChild('planoEntregaEntrega', { static: false }) public planoEntregaEntrega?: InputSelectComponent;
   @Input() snapshot?: ActivatedRouteSnapshot;
   @Input() fixedFilter?: any[];
   @Input() minhas: boolean = false;
 
   public static selectRoute?: FullRoute = { route: ["gestao", "atividade", "grid"] };
+  public planosEntregas: LookupItem[] = [];
+  public planosEntregasEntregas: LookupItem[] = [];
   public formEdit: FormGroup;
 
   constructor(public injector: Injector) {
@@ -36,6 +42,7 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     this.modalWidth = 1100;
     this.filter = this.fh.FormBuilder({
       agrupar: { default: true },
+      agrupar_entrega: { default: true },
       atribuidas_para_mim: { default: false },
       usuario_id: { default: null },
       numero: { default: "" },
@@ -51,14 +58,16 @@ export class AtividadeListGridComponent extends AtividadeListBase {
       tipo_processo_id: { default: null },
       data_filtro: { default: null },
       data_inicio: { default: null },
-      data_fim: { default: null }
+      data_fim: { default: null },
+      plano_entrega_id: { default: null},
+      plano_entrega_entrega_id: { default: null},
     });
     this.formEdit = this.fh.FormBuilder({
       progresso: { default: 0 },
       etiquetas: { default: [] },
       etiqueta: { default: null }
     });
-    this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }];
+    this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }, { field: "plano_trabalho_entrega.descricao", label: "Entrega" }];
     this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 
@@ -90,10 +99,13 @@ export class AtividadeListGridComponent extends AtividadeListBase {
 
   public onAgruparChange(event: Event) {
     const agrupar = this.filter!.controls.agrupar.value;
-    if ((agrupar && !this.groupBy?.length) || (!agrupar && this.groupBy?.length)) {
-      this.groupBy = agrupar ? [{ field: "unidade.sigla", label: "Unidade" }] : [];
-      this.grid!.reloadFilter();
-    }
+    const agrupar_entrega = this.filter!.controls.agrupar_entrega.value;
+    const groupByOptions: GroupBy[] = [];
+
+    if (agrupar) groupByOptions.push({ field: "unidade.sigla", label: "Unidade" });  
+    if (agrupar_entrega) groupByOptions.push({ field: "plano_trabalho_entrega.descricao", label: "Entrega" });  
+    this.groupBy = groupByOptions;
+    this.grid!.reloadFilter();   
   }
 
   public onStatusClick(status: BadgeButton) {
@@ -188,6 +200,12 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     if (form.tipo_processo_id?.length) {
       result.push(["tipo_processo_id", "==", form.tipo_processo_id]);
     }
+    if (form.plano_entrega_id?.length) {
+      result.push(["plano_entrega_id", "==", form.plano_entrega_id]);
+    }
+    if (form.plano_entrega_entrega_id?.length) {
+      result.push(["plano_entrega_entrega_id", "==", form.plano_entrega_entrega_id]);
+    }
     if (form.data_filtro?.length) {
       const field = form.data_filtro == "DISTRIBUICAO" ? "data_distribuicao" : form.data_filtro == "PRAZO" ? "data_estipulada_entrega" : "data_entrega";
       if (form.data_inicio) {
@@ -197,7 +215,6 @@ export class AtividadeListGridComponent extends AtividadeListBase {
         result.push([field, "<=", form.data_fim]);
       }
     }
-
     return result;
   }
 
@@ -214,6 +231,8 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     this.filter!.controls.data_filtro.setValue(null);
     this.filter!.controls.data_inicio.setValue(null);
     this.filter!.controls.data_fim.setValue(null);
+    this.filter!.controls.plano_entrega_id.setValue(null);
+    this.filter!.controls.plano_entrega_entrega_id.setValue(null);
     if (!this.fixedFilter?.length || !this.fixedFilter.find(x => x[0] == "status")) this.filter!.controls.status.setValue(null);
     this.filter!.controls.etiquetas.setValue([]);
     super.filterClear(filter);
@@ -265,5 +284,24 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     });
   }
 
+  public async onUnidadeChange(event: Event) {
+    let unidade_selecionada = await this.unidadeDao.getById(this.filter?.controls.unidade_id.value, ['planos_entrega']);
+    this.planosEntregas = unidade_selecionada?.planos_entrega?.map(x => Object.assign({
+      key: x.id,
+      value: x.nome
+    })) || [];
+  }
+
+  public async onPlanoEntregaChange(event: Event) {
+    let plano_entrega_selecionado: any[] = [];
+    let unidade_selecionada = await this.unidadeDao.getById(this.filter?.controls.unidade_id.value, ['planos_entrega.entregas']);
+    unidade_selecionada?.planos_entrega?.forEach(element => {
+      if (element.id == this.filter!.controls.plano_entrega_id.value) plano_entrega_selecionado.push(element.entregas);
+    });
+    this.planosEntregasEntregas = plano_entrega_selecionado[0]!.map((x: { id: any; descricao: any; }) => Object.assign({
+      key: x.id,
+      value: x.descricao
+    })) || [];
+  }
 }
 

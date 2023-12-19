@@ -31,7 +31,7 @@ export class CapacidadeListComponent extends PageListBase<Capacidade, Capacidade
       descricao: {default: ""}
     });
     // Testa se o usuário possui permissão para exibir dados do tipo de capacidade
-    if (this.auth.hasPermissionTo("MOD_TIPO_CAP_CONS")) {
+    if (this.auth.hasPermissionTo("MOD_TIPO_CAP")) {
       this.options.push({
         icon: "bi bi-info-circle",
         label: "Informações",

@@ -18,15 +18,11 @@
 
 ## REGRAS DE NEGÓCIO APLICADAS AS UNIDADES
 
-1. (RN_UND_1) Não poderá haver mais de uma unidade com a mesma sigla dentro do mesmo pai como ATIVO
-2. (RN_UND_2) Não poderá haver mais de uma unidade com a mesmo código como ATIVO
-3. (RN_UND_3) Permitir inserir unidades sem código, e na exportação para API considerar o código da primeira unidade superior com código
-4. (RN_UND_4) Podem ser cadastradas e atualizadas automaticamente a partir da integração com o SIAPE, quando habilitado
-5. (RN_UND_5) Quando utilizando integração com o SIAPE, as unidades serão inativadas quando não constarem na lista de unidades vindas do SIAPE
-4. (RN_UND_6) Unidades cadastradas (com código vazio) devem permanecer ATIVO mesmo após a execução da rotina de integração com o SIAPE
+1. (RN_UND_A) Não poderá haver mais de uma unidade com a mesma sigla abaixo da mesma unidade-pai como ATIVA
+2. (RN_UND_B) Não poderá haver mais de uma unidade com o mesmo código como ATIVA
+3. (RN_UND_C) Permitir inserir unidades sem código, e na exportação para API considerar o mesmo código da primeira unidade superior com código
+4. (RN_UND_D) Podem ser cadastradas e atualizadas automaticamente a partir da integração com o SIAPE, quando habilitado
+5. (RN_UND_E) Quando utilizando integração com o SIAPE, as unidades serão inativadas quando não constarem na lista de unidades vindas do SIAPE, exceto as que se enquadrarem na regra RN_UND_F
+6. (RN_UND_F) Unidades cadastradas (com código vazio) devem permanecer ATIVO mesmo após a execução da rotina de integração com o SIAPE
 
 ## REGRAS DE INTERFACE
-
-
-
-

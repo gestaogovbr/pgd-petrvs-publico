@@ -25,7 +25,8 @@ export class DocumentoService {
 
   public preview(data: any) {
     const documento = data as Documento;
-    this.dialog.html({ title: "Pre-visualização do documento", modalWidth: 1000 }, documento.conteudo!, []);
+    this.go.navigate({route: ['uteis', 'documentos' , 'preview', documento.id]}, {metadata: {documento}});
+    //this.dialog.html({ title: "Pre-visualização do documento", modalWidth: 1000 }, documento.conteudo!, []);
   }
 
   public onLinkClick(link: DocumentoLink) {

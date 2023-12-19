@@ -14,7 +14,7 @@ class CentroTreinamentoSeeder extends Seeder
      */
     public function run()
     {
-        $centros = ['ANP','CTCO','CTNE','CTRJ','CTSUL','UniPRF','Não se aplica'];
+        $centros = ['ANP','CTCO','CTNE','CTRJ','CTSUL','UniPRF','ENASP','Não se aplica'];
         foreach($centros as $c) {
             $centro = new CentroTreinamento();
             $centro->fill([

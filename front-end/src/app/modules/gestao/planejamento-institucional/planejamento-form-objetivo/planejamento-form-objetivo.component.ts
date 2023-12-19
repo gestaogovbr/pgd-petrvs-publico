@@ -42,15 +42,15 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
       eixo_tematico_id: {default: null},
       objetivo_superior_id: {default: null},
       objetivo_pai_id: {default: null},
+      integra_okr: {default: true},
     }, this.cdRef, this.validate);
   }
 
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if(['nome','fundamentacao','eixo_tematico_id'].indexOf(controlName) >= 0 && !control.value?.length) {
-      result = "Obrigatório";
-    }
+    if(['nome','fundamentacao'].indexOf(controlName) >= 0 && !control.value?.length) result = "Obrigatório";
+    if(['eixo_tematico_id'].indexOf(controlName) >= 0 && !control.value?.length) result = "Obrigatório";
     return result;
   }
 
@@ -89,7 +89,7 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
 
   public saveData(form: IIndexable): Promise<NavigateResult> {
     return new Promise<NavigateResult>(async (resolve, reject) => {
-      const objetivo = Object.assign({}, this.entity!);
+      const objetivo = Object.assign({eixo_tematico: this.eixoTematico?.selectedItem?.entity}, this.entity!);
       resolve(new NavigateResult(this.util.fillForm(objetivo, this.form!.value)));
     });
   }
@@ -97,14 +97,18 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
   public isPlanejamentoUNEX(): boolean {
     return this.planejamento?.unidade_id != null;
   }
+
   public onObjetivoPaiChange(row: any) {
-    const objetivoPai = this.form!.controls.objetivo_pai_id.value as PlanejamentoObjetivo
-    const eixoTematico = this.objetivos.find(x => x.key === objetivoPai);
-    if (eixoTematico) {
-      this.form!.controls.eixo_tematico_id.setValue(eixoTematico?.data.eixo_tematico_id);
-    }
+    const objetivoPai = this.form!.controls.objetivo_pai_id.value;
+    const eixoTematicoId = this.objetivos.find(x => x.key === objetivoPai)?.data.eixo_tematico_id;
+    if (eixoTematicoId) this.form!.controls.eixo_tematico_id.setValue(eixoTematicoId);
     this.cdRef.detectChanges();
   }
 
-
+  public onObjetivoSuperiorChange(row: any) {
+    //let objetivoSuperior = this.objetivos_superiores.find(x => x.key === this.form?.controls.objetivo_superior_id.value)?.data.eixo_tematico_id;  
+    let idEixoTematicoObjetivoSuperior = this.objetivos_superiores.find(x => x.key === this.form?.controls.objetivo_superior_id.value)?.data.eixo_tematico_id;  
+    if (!this.form!.controls.eixo_tematico_id.value) this.form!.controls.eixo_tematico_id.setValue(idEixoTematicoObjetivoSuperior);
+    this.cdRef.detectChanges();
+  }
 }

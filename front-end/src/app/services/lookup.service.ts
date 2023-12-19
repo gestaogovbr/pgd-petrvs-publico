@@ -149,7 +149,8 @@ export class LookupService {
     { key: "PENSIONISTA", value: "Pensionista" },
     { key: "BENEFICIARIO_PENSAO", value: "Beneficiário de pensão" },
     { key: "QE/MRE_CEDIDO", value: "QE/MRE Cedido" },
-    { key: "QUADRO_ESPEC_QE/MRE", value: "Quadro ESPEC QE/MRE" }
+    { key: "QUADRO_ESPEC_QE/MRE", value: "Quadro ESPEC QE/MRE" },
+    { key: "DESCONHECIDO", value: "Desconhecido" }
   ];
 
   public ATIVIDADE_STATUS: LookupItem[] = [
@@ -174,8 +175,8 @@ export class LookupService {
   ];
 
   public DOCUMENTO_ESPECIE: LookupItem[] = [
-    { key: 'SEI', value: "Documento SEI", icon: "bi bi-exclamation", color: "primary"},
-    { key: 'TCR', value: "TCR", icon: "bi bi-file-medical-fill", color: "success"},
+    { key: 'SEI', value: "Documento SEI", icon: "bi bi-exclamation", color: "primary" },
+    { key: 'TCR', value: "TCR", icon: "bi bi-file-medical-fill", color: "success" },
     //{ key: 'TCR_CANCELAMENTO', value: "Cancelamento TCR", icon: "bi bi-file-earmark-x", color: "danger" },
     { key: 'OUTRO', value: "Outro", icon: "bi bi-question-circle", color: "danger" },
     { key: 'NOTIFICACAO', value: "Notificação", icon: "bi bi-bell", color: "info" }
@@ -184,10 +185,10 @@ export class LookupService {
   public UNIDADE_INTEGRANTE_TIPO: LookupItem[] = [
     { key: 'AVALIADOR_PLANO_ENTREGA', value: "Avaliador (Planos de Entrega)", icon: "bi bi-check-all", color: "warning" },
     { key: 'AVALIADOR_PLANO_TRABALHO', value: "Avaliador (Planos de Trabalho)", icon: "bi bi-check-circle", color: "info" },
-    { key: 'COLABORADOR', value: "Servidor Associado", icon: "bi bi-person-add", color: "secondary" },
-    { key: 'GESTOR', value: "Gestor", icon: "bi bi-star-fill", color: "primary" },
-    { key: 'GESTOR_DELEGADO', value: "Gestor Delegado", icon: "bi bi-star-fill", color: "danger" },
-    { key: 'GESTOR_SUBSTITUTO', value: "Gestor Substituto", icon: "bi bi-star-half", color: "primary" },
+    { key: 'COLABORADOR', value: "Servidor Vinculado", icon: "bi bi-person-add", color: "secondary" },
+    { key: 'GESTOR', value: "Chefe", icon: "bi bi-star-fill", color: "primary" },
+    { key: 'GESTOR_DELEGADO', value: "Servidor Delegado", icon: "bi bi-star-fill", color: "danger" },
+    { key: 'GESTOR_SUBSTITUTO', value: "Chefe Substituto", icon: "bi bi-star-half", color: "primary" },
     { key: 'HOMOLOGADOR_PLANO_ENTREGA', value: "Homologador (Planos de Entrega)", icon: "bi bi-check2-square", color: "success" },
     { key: 'LOTADO', value: "Lotado", icon: "bi bi-file-person", color: "dark" }
   ];
@@ -206,7 +207,7 @@ export class LookupService {
     { key: 'OUTRA_UNIDADE', value: "Outra Unidade", color: "primary" },
     { key: 'OUTRO_ORGAO', value: "Outro Órgão/Entidade", color: "warning" },
     { key: 'SEM_ENTREGA', value: "Não vinculadas a entregas", color: "info" }
-  ]; 
+  ];
 
   public HORAS_CORRIDAS_OU_UTEIS: LookupItem[] = [
     { key: 'HORAS_CORRIDAS', value: "Horas Corridas" },
@@ -563,7 +564,7 @@ export class LookupService {
     { key: "QUALITATIVO", value: "Qualitativo (conceitual)" },
     { key: "QUANTITATIVO", value: "Quantitativo (valor)" }
   ];
-  
+
   public ADESAO_STATUS: LookupItem[] = [
     { key: "SOLICITADO", value: "Solicitado", color: "bg-primary" },
     { key: "HOMOLOGADO", value: "Homologado", color: "bg-success" },
@@ -603,23 +604,23 @@ export class LookupService {
   ];
 
   public PLANO_ENTREGA_STATUS: LookupItem[] = [
-    { key: "INCLUIDO", value: "Incluído", icon: "bi bi-pencil-square", color: "secondary", data: { naoJustificar: [] } },
-    { key: "HOMOLOGANDO", value: "Aguardando homologação", icon: "bi bi-clock", color: "warning", data: { naoJustificar: ["INCLUIDO"] } },
-    { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success", data: { naoJustificar: ["HOMOLOGANDO"] } },
-    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-clipboard2-check", color: "primary", data: { naoJustificar: ["ATIVO","CONCLUIDO"] } },
-    { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info", data: { naoJustificar: ["CONCLUIDO","AVALIADO"] } },
-    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "dark", data: { naoJustificar: [] } },
-    { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "danger", data: { naoJustificar: [] } }
+    { key: "INCLUIDO", value: "Incluído", icon: "bi bi-pencil-square", color: "secondary", data: { justificar: ["HOMOLOGANDO"] } },
+    { key: "HOMOLOGANDO", value: "Aguardando homologação", icon: "bi bi-clock", color: "warning", data: { justificar: ["ATIVO"] } },
+    { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success", data: { justificar: ["CONCLUIDO"] } },
+    { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-clipboard2-check", color: "primary", data: { justificar: ["AVALIADO"] } },
+    { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info", data: { justificar: [] } },
+    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "dark", data: { justificar: [] } },
+    { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "danger", data: { justificar: [] } }
   ];
 
   public PLANO_TRABALHO_STATUS: LookupItem[] = [
-    { key: "INCLUIDO", value: "Incluído", icon: "bi bi-pencil-square", color: "secondary" },
-    { key: "AGUARDANDO_ASSINATURA", value: "Aguardando assinatura", icon: "bi bi-clock", color: "warning" },
-    { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success" },
-    { key: "CONCLUIDO", value: "Executado", icon: "bi bi-clipboard2-check", color: "primary" },
-    { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info" },
-    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "dark" },
-    { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "danger" }
+    { key: "INCLUIDO", value: "Incluído", icon: "bi bi-pencil-square", color: "secondary", data: { justificar: ["AGUARDANDO_ASSINATURA"] } },
+    { key: "AGUARDANDO_ASSINATURA", value: "Aguardando assinatura", icon: "bi bi-clock", color: "warning", data: { justificar: [] } },
+    { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success", data: { justificar: [] } },
+    { key: "CONCLUIDO", value: "Executado", icon: "bi bi-clipboard2-check", color: "primary", data: { justificar: [] } },
+    { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info", data: { justificar: [] } },  // Um plano de trabalho é considerado avaliado quando todas as suas consolidações o forem
+    { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "dark", data: { justificar: [] } },
+    { key: "CANCELADO", value: "Cancelado", icon: "bi bi-x-square", color: "danger", data: { justificar: [] } }
   ];
 
   public PROJETO_PERFIS: LookupItem[] = [
@@ -629,111 +630,126 @@ export class LookupService {
   ];
 
   public IDIOMAS: LookupItem[] = [
-    { 'key': "ALEMAO", 'value': 'Alemão' },
-    { 'key': "ARABE", 'value': 'Árabe' },
-    { 'key': "ARGELINO", 'value': 'Argelino' },
-    { 'key': "AZERI", 'value': 'Azeri' },
-    { 'key': "BENGALI", 'value': 'Bengali' },
-    { 'key': "CHINES", 'value': 'Chinês' },
-    { 'key': "COREANO", 'value': 'Coreano' },
-    { 'key': "EGIPCIO", 'value': 'Egípcio' },
-    { 'key': "ESPANHOL", 'value': 'Espanhol' },
-    { 'key': "FRANCES", 'value': 'Frances' },
-    { 'key': "INDI", 'value': 'indi' },
-    { 'key': "HOLANDES", 'value': 'Holandês' },
-    { 'key': "INDONESIO", 'value': 'Indonésio' },
-    { 'key': "INGLES", 'value': 'Inglês' },
-    { 'key': "IORUBA", 'value': 'Iorubá' },
-    { 'key': "ITALIANO", 'value': 'Italiano' },
-    { 'key': "JAPONES", 'value': 'Japonês' },
-    { 'key': "JAVANES", 'value': 'Javanês' },
-    { 'key': "MALAIO", 'value': 'Malaio' },
-    { 'key': "MALAIOB", 'value': 'Malaio/Bahasa' },
-    { 'key': "MARATA", 'value': 'Marata' },
-    { 'key': "PERSA ", 'value': 'Persa' },
-    { 'key': "PUNJABI ", 'value': 'Punjabi' },
-    { 'key': "ROMENO", 'value': 'Romeno' },
-    { 'key': "RUSSO", 'value': 'Russo' },
-    { 'key': "SUAILI", 'value': 'Suaíli' },
-    { 'key': "TAILANDES", 'value': 'Tailandes' },
-    { 'key': "TAMIL ", 'value': 'Tâmil' },
-    { 'key': "TELUGU", 'value': 'Telugu' },
-    { 'key': "TURCO", 'value': 'Turco' },
-    { 'key': "UCRANIANO", 'value': 'Ucraniano' },
-    { 'key': "URDU", 'value': 'Urdu' },
-    { 'key': "VIETNAMITA", 'value': 'Vietnamita' }
+    { key: "ALEMAO", value: 'Alemão' },
+    { key: "ARABE", value: 'Árabe' },
+    { key: "ARGELINO", value: 'Argelino' },
+    { key: "AZERI", value: 'Azeri' },
+    { key: "BENGALI", value: 'Bengali' },
+    { key: "CHINES", value: 'Chinês' },
+    { key: "COREANO", value: 'Coreano' },
+    { key: "EGIPCIO", value: 'Egípcio' },
+    { key: "ESPANHOL", value: 'Espanhol' },
+    { key: "FRANCES", value: 'Frances' },
+    { key: "INDI", value: 'indi' },
+    { key: "HOLANDES", value: 'Holandês' },
+    { key: "INDONESIO", value: 'Indonésio' },
+    { key: "INGLES", value: 'Inglês' },
+    { key: "IORUBA", value: 'Iorubá' },
+    { key: "ITALIANO", value: 'Italiano' },
+    { key: "JAPONES", value: 'Japonês' },
+    { key: "JAVANES", value: 'Javanês' },
+    { key: "MALAIO", value: 'Malaio' },
+    { key: "MALAIOB", value: 'Malaio/Bahasa' },
+    { key: "MARATA", value: 'Marata' },
+    { key: "PERSA ", value: 'Persa' },
+    { key: "PUNJABI ", value: 'Punjabi' },
+    { key: "ROMENO", value: 'Romeno' },
+    { key: "RUSSO", value: 'Russo' },
+    { key: "SUAILI", value: 'Suaíli' },
+    { key: "TAILANDES", value: 'Tailandes' },
+    { key: "TAMIL ", value: 'Tâmil' },
+    { key: "TELUGU", value: 'Telugu' },
+    { key: "TURCO", value: 'Turco' },
+    { key: "UCRANIANO", value: 'Ucraniano' },
+    { key: "URDU", value: 'Urdu' },
+    { key: "VIETNAMITA", value: 'Vietnamita' }
   ];
 
   public NIVEL_IDIOMA: LookupItem[] = [
-    { 'key': 'BASICO', 'value': 'Básico' },
-    { 'key': 'INTERMEDIARIO', 'value': 'Intermediário' },
-    { 'key': 'AVANCADO', 'value': 'Avançado' },
-    { 'key': 'FLUENTE', 'value': 'Fluente' }
+    { key: 'BASICO', value: 'Básico' },
+    { key: 'INTERMEDIARIO', value: 'Intermediário' },
+    { key: 'AVANCADO', value: 'Avançado' },
+    { key: 'FLUENTE', value: 'Fluente' }
   ];
 
   public ESTADO_CIVIL: LookupItem[] = [
-    { 'key': 'CASADO', 'value': 'Casado' },
-    { 'key': 'DIVORCIADO', 'value': 'Divorciado' },
-    { 'key': 'SOLTEIRO', 'value': 'Solteiro' },
-    { 'key': 'SEPARADO', 'value': 'Separado' },
-    { 'key': 'VIUVO', 'value': 'Viúvo' }
+    { key: 'CASADO', value: 'Casado' },
+    { key: 'DIVORCIADO', value: 'Divorciado' },
+    { key: 'SOLTEIRO', value: 'Solteiro' },
+    { key: 'SEPARADO', value: 'Separado' },
+    { key: 'VIUVO', value: 'Viúvo' }
   ];
 
   public TITULOS_CURSOS: LookupItem[] = [
-    { 'key': 'GRAD_TEC', 'value': 'Tecnólogo' },
-    { 'key': 'GRAD_BAC', 'value': 'Bacharelado' },
-    { 'key': 'GRAD_LIC', 'value': 'Licenciatura' },
-    { 'key': 'ESPECIAL', 'value': 'Especialização' },
-    { 'key': 'MESTRADO', 'value': 'Mestrado' },
-    { 'key': 'DOUTORADO', 'value': 'Doutorado' },
-    { 'key': 'POS_DOUTORADO', 'value': 'Pós Doutorado' }
+    { key: 'GRAD_TEC', value: 'Tecnólogo' },
+    { key: 'GRAD_BAC', value: 'Bacharelado' },
+    { key: 'GRAD_LIC', value: 'Licenciatura' },
+    { key: 'ESPECIAL', value: 'Especialização' },
+    { key: 'MESTRADO', value: 'Mestrado' },
+    { key: 'DOUTORADO', value: 'Doutorado' },
+    { key: 'POS_DOUTORADO', value: 'Pós Doutorado' }
   ];
 
   public TITULOS_CURSOS_INST: LookupItem[] = [
-    { 'key': 'INSTITUCIONAL', 'value': 'Institucional' },
-    { 'key': 'GRAD_TEC', 'value': 'Tecnólogo' },
-    { 'key': 'GRAD_BAC', 'value': 'Bacharelado' },
-    { 'key': 'GRAD_LIC', 'value': 'Licenciatura' },
-    { 'key': 'ESPECIAL', 'value': 'Especialização' },
-    { 'key': 'MESTRADO', 'value': 'Mestrado' },
-    { 'key': 'DOUTORADO', 'value': 'Doutorado' },
-    { 'key': 'POS_DOUTORADO', 'value': 'Pós Doutorado' }
+    { key: 'INSTITUCIONAL', value: 'Institucional' },
+    { key: 'GRAD_TEC', value: 'Tecnólogo' },
+    { key: 'GRAD_BAC', value: 'Bacharelado' },
+    { key: 'GRAD_LIC', value: 'Licenciatura' },
+    { key: 'ESPECIAL', value: 'Especialização' },
+    { key: 'MESTRADO', value: 'Mestrado' },
+    { key: 'DOUTORADO', value: 'Doutorado' },
+    { key: 'POS_DOUTORADO', value: 'Pós Doutorado' }
   ];
 
   public CARGOS_PRF: LookupItem[] = [
-    { 'key': 'PRF', 'value': 'PRF' },
-    { 'key': 'ADM', 'value': 'Agente Administrativo' }
+    { key: 'PRF', value: 'PRF' },
+    { key: 'ADM', value: 'Agente Administrativo' }
   ];
 
   public PG_PRF: LookupItem[] = [
-    { 'key': 'PRESENCIAL', 'value': 'Presencial' },
-    { 'key': 'REMOTO', 'value': 'Remoto' },
-    { 'key': 'HIBRIDO', 'value': 'Híbrido' }
+    { key: 'PRESENCIAL', value: 'Presencial' },
+    { key: 'REMOTO', value: 'Remoto' },
+    { key: 'HIBRIDO', value: 'Híbrido' }
   ];
 
+  public QUESTIONARIO_TIPO: LookupItem[] = [
+    { key: 'INTERNO', value: 'Interno' },
+    { key: 'PERSONALIZADO', value: 'Personalizado' }
+  ];
+
+  public QUESTIONARIO_PERGUNTA_TIPO: LookupItem[] = [
+    { key: 'SELECT', value: 'Única Escolha' },
+    { key: 'MULTI_SELECT', value: 'Multipla Escolha' },
+    { key: 'TEXT', value: 'Livre' },
+    { key: 'RATE', value: 'Classificação' },
+    { key: 'SWITCH', value: 'Sim/Não' },
+    //{ key: 'INTENSIDADE', value: 'Intensidade' },
+    { key: 'NUMBER', value: 'Numérica' }
+  ];
+ // "EMOJI" | "SELECT" | "MULTI_SELECT" | "TEXT" | "TEXT_AREA" | "TIMER" | "DATE_TIME" | "SWICTH" | "NUMBER" | "RATE" | "RADIO" | "CHECK";
+
   public THEMES: LookupItem[] = [
-    {'key': 'light', 'value': "Branco (light)"},
-    {'key': 'blue', 'value': "Azul (oxford)"}, 
-    {'key': 'dark', 'value': "Preto (dark)"}
+    { key: 'light', value: "Branco (light)" },
+    { key: 'blue', value: "Azul (oxford)" },
+    { key: 'dark', value: "Preto (dark)" }
   ];
 
   public TIPO_INTEGRACAO: LookupItem[] = [
-    { 'key': 'NENHUMA', 'value': 'Nenhuma' },
-    { 'key': 'WSO2', 'value': 'Siape-PRF' },
-    { 'key': 'SIAPE', 'value': 'Siape-WS' },
+    { key: 'NENHUMA', value: 'Nenhuma' },
+    { key: 'WSO2', value: 'Siape-PRF' },
+    { key: 'SIAPE', value: 'Siape-WS' },
   ];
 
   public EXISTE_PAGADOR: LookupItem[] = [
-    { 'key': 'A', 'value': 'Vínculos ativos sem ocorrência de exclusão' },
-    { 'key': 'B', 'value': 'Todos os vínculos' },
-  ];
-  
-  public TIPO_VINCULO: LookupItem[] = [
-    { 'key': 'A', 'value': 'Ativos em exercício no órgão' },
-    { 'key': 'B', 'value': 'Ativos e aposentados' },
-    { 'key': 'C', 'value': 'Ativos, aposentados e pensionistas' },
+    { key: 'A', value: 'Vínculos ativos sem ocorrência de exclusão' },
+    { key: 'B', value: 'Todos os vínculos' },
   ];
 
+  public TIPO_VINCULO: LookupItem[] = [
+    { key: 'A', value: 'Ativos em exercício no órgão' },
+    { key: 'B', value: 'Ativos e aposentados' },
+    { key: 'C', value: 'Ativos, aposentados e pensionistas' },
+  ];
 
   public getLookup(itens: LookupItem[], key: any) {
     return itens.find(x => x.key == key);
@@ -757,5 +773,16 @@ export class LookupService {
 
   public getData(itens: LookupItem[], key: any): any {
     return itens?.find(x => x.key == key)?.data;
+  }
+
+  /**
+   * Retorna um LookupItem[] com chaves únicas
+   * @param array Array original
+   * @returns
+   */
+  public uniqueLookupItem(array: LookupItem[]): LookupItem[] {
+    let novoArray: LookupItem[] = [];
+    array.forEach(elem => { if(!novoArray.find(x => x.key == elem.key)) novoArray.push(elem); });
+    return novoArray;
   }
 }

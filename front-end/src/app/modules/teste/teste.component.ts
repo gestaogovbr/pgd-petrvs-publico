@@ -22,6 +22,7 @@ import { NavigateService } from 'src/app/services/navigate.service';
 import { Documento, HasDocumentos } from 'src/app/models/documento.model';
 import { InputLevelItem } from 'src/app/components/input/input-level/input-level.component';
 import { TemplateDataset } from '../uteis/templates/template.service';
+import { ServerService } from 'src/app/services/server.service';
 
 @Component({
   selector: 'app-teste',
@@ -219,6 +220,7 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
     public lookup: LookupService,
     public util: UtilService,
     public go: NavigateService,
+    public server: ServerService,
     public calendar: CalendarService,
     @Inject('ID_GENERATOR_BASE') public ID_GENERATOR_BASE: any
   ) {
@@ -357,7 +359,7 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
   }
 
   public openDocumentos() {
-    this.go.navigate({route: ['utils', 'documentos']}, {metadata: {
+    this.go.navigate({route: ['uteis', 'documentos']}, {metadata: {
       needSign: (documento: Documento) => true,
       extraTags: (entity: HasDocumentos, documento: Documento, metadata: any) => [],
       especie: "TCR",
@@ -405,10 +407,25 @@ atividades: {{atividades[0].nome}}{{for:atividades[0..y]}}, {{atividades[y].nome
       }
       this.mapa = mapa;
     });
+
+    this.server.startBatch();
+    let usuarios = this.usuarioDao.query({limit: 100}).asPromise();    
+    let planejamentos = this.planejamentoDao.query({limit: 100}).asPromise();    
+    this.server.endBatch();
+    Promise.all([usuarios, planejamentos]).then(results => {
+      console.log(results[0]);
+      console.log(results[1]);
+    });
   }
 
   ngAfterViewInit() {
     //this.form.controls.search.setValue("dfcb36c8-4784-4d3c-b4bb-d4e9c9b2e68c");
+  }
+
+  public renderTemplate() {
+    this.server.post('api/Template/teste', {}).subscribe(response => {
+      console.log(response);
+    }, error => console.log(error));
   }
 
   public addItemHandle(): LookupItem | undefined {

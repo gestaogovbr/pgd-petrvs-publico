@@ -22,6 +22,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_dao_avaliacao_dao_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! src/app/dao/avaliacao-dao.service */ 41095);
 /* harmony import */ var _uteis_templates_template_service__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../uteis/templates/template.service */ 49367);
 
+var _class;
 
 
 
@@ -86,23 +87,24 @@ class PlanoTrabalhoService {
     return metadado.tags;
   }
   /**
-   * Método retorna um badge de acordo com o tipo de entrega recebida no parâmetro 'planoTrabalhoTrabalho': entrega associada a uma entrega do catálogo, entrega associada a uma entrega
-   * da mesma unidade, ou entrega associada a uma entrega de outra unidade.
-   * @param planoTrabalhoTrabalho  Trabalho do Plano de Trabalho cujo tipo será analisado.
+   * Método retorna um badge de acordo com o tipo de entrega recebida no parâmetro 'planoTrabalhoEntrega'. Esse tipo poderá ser 'entrega associada a uma entrega da própria unidade',
+   * 'entrega associada a uma entrega de outra unidade', 'entrega associada a outro órgão/entidade', ou ainda 'entrega não vinculada'.
+   * @param planoTrabalhoEntrega  Entrega do Plano de Trabalho cujo tipo será analisado.
    * @param planoTrabalho         Plano de Trabalho ao qual pertence a entrega a ser analisada. Se não for informado, o método tentará obtê-lo diretamente da própria entrega recebida.
    * @returns
    */
   tipoEntrega(planoTrabalhoEntrega, planoTrabalho) {
-    /* Se row for uma entrega vinda do banco de dados, ela já deve trazer consigo um dos seus relacionamentos: 'entrega' ou 'plano_entrega_entrega', que serão lidos diretamente de row quando necessário.
-       Se row não vier do banco, ela passou pelo método saveEntrega() e lá um desses objetos, escolhido em um dos 3 inputSearch, foi anexado à variável this.novaEntrega, que originalmente é vazia. Sendo assim,
-       quando necessário, os dados serão lidos em this.novaEntrega.entrega ou em this.novaEntrega.plano_entrega_entrega. */
+    /* Se planoTrabalhoEntrega for uma entrega vinda do banco de dados, e pertencer a alguma unidade (seja ela a própria do plano de trabalho, ou outra), ela traz consigo planoTrabalhoEntrega.plano_entrega_entrega?.plano_entrega?.unidade_id,
+       que será usado para definir a qual tipo de unidade ela está vinculada (própria ou outra). Se planoTrabalhoEntrega não estiver vinculada a nenhuma unidade, ela poderá possuir planoTrabalhoEntrega.orgao
+       (caso em que estará 'vinculada a outro órgão/entidade'), ou não (caso em que será uma 'entrega não vinculada').
+       Se planoTrabalhoEntrega não vier do banco, ou seja, acabou de ser incluída no grid, ela passou pelo método saveEntrega() e lá foi anexado o objeto 'plano?._metadata?.novaEntrega'. */
     let plano = planoTrabalho || planoTrabalhoEntrega.plano_trabalho;
     let key = planoTrabalhoEntrega.plano_entrega_entrega?.plano_entrega?.unidade_id == plano.unidade_id ? "PROPRIA_UNIDADE" : planoTrabalhoEntrega.plano_entrega_entrega ? "OUTRA_UNIDADE" : !!planoTrabalhoEntrega.orgao?.length ? "OUTRO_ORGAO" : "SEM_ENTREGA";
     let result = this.lookup.ORIGENS_ENTREGAS_PLANO_TRABALHO.find(x => x.key == key) || {
       key: "",
-      value: "Desconhecido"
+      value: "Desconhecido1"
     };
-    let nome = plano?._metadata?.novaEntrega?.plano_entrega_entrega?.entrega?.nome || planoTrabalhoEntrega.plano_entrega_entrega?.entrega?.nome || "Desconhecido";
+    let nome = plano?._metadata?.novaEntrega?.plano_entrega_entrega?.entrega?.nome || planoTrabalhoEntrega.plano_entrega_entrega?.entrega?.nome || "Desconhecido2";
     let descricao = plano?._metadata?.novaEntrega?.plano_entrega_entrega?.descricao || planoTrabalhoEntrega.plano_entrega_entrega?.descricao || "";
     return {
       titulo: result.value,
@@ -254,15 +256,24 @@ class PlanoTrabalhoService {
       }
     })();
   }
-  static #_ = this.ɵfac = function PlanoTrabalhoService_Factory(t) {
-    return new (t || PlanoTrabalhoService)(_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_2__.AuthService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_3__.UtilService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_services_navigate_service__WEBPACK_IMPORTED_MODULE_4__.NavigateService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_5__.LookupService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_6__.PlanoTrabalhoDaoService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_dao_avaliacao_dao_service__WEBPACK_IMPORTED_MODULE_7__.AvaliacaoDaoService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](_uteis_templates_template_service__WEBPACK_IMPORTED_MODULE_8__.TemplateService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_6__.PlanoTrabalhoDaoService));
-  };
-  static #_2 = this.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefineInjectable"]({
-    token: PlanoTrabalhoService,
-    factory: PlanoTrabalhoService.ɵfac,
-    providedIn: 'root'
-  });
+  assinaturasFaltantes(exigidas, assinaram) {
+    return {
+      "participante": exigidas.participante.filter(x => !assinaram.participante.includes(x)),
+      "gestores_unidade_executora": !exigidas.gestores_unidade_executora.length ? [] : exigidas.gestores_unidade_executora.filter(x => assinaram.gestores_unidade_executora.includes(x)).length ? [] : exigidas.gestores_unidade_executora,
+      "gestores_unidade_lotacao": !exigidas.gestores_unidade_lotacao.length ? [] : exigidas.gestores_unidade_lotacao.filter(x => assinaram.gestores_unidade_lotacao.includes(x)).length ? [] : exigidas.gestores_unidade_lotacao,
+      "gestores_entidade": !exigidas.gestores_entidade.length ? [] : exigidas.gestores_entidade.filter(x => assinaram.gestores_entidade.includes(x)).length ? [] : exigidas.gestores_entidade
+    };
+  }
 }
+_class = PlanoTrabalhoService;
+_class.ɵfac = function PlanoTrabalhoService_Factory(t) {
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_2__.AuthService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_3__.UtilService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_services_navigate_service__WEBPACK_IMPORTED_MODULE_4__.NavigateService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_5__.LookupService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_6__.PlanoTrabalhoDaoService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_dao_avaliacao_dao_service__WEBPACK_IMPORTED_MODULE_7__.AvaliacaoDaoService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](_uteis_templates_template_service__WEBPACK_IMPORTED_MODULE_8__.TemplateService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_6__.PlanoTrabalhoDaoService));
+};
+_class.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefineInjectable"]({
+  token: _class,
+  factory: _class.ɵfac,
+  providedIn: 'root'
+});
 
 /***/ })
 

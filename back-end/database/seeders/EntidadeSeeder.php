@@ -40,11 +40,11 @@ class EntidadeSeeder extends Seeder
             "layout_formulario_atividade" => "COMPLETO",
             "campos_ocultos_atividade" => NULL,
             "nomenclatura" => NULL,
-            "url_sei" => "https://sei.economia.gov.br/",
+            //"url_sei" => "https://sei.economia.gov.br/",
             "notificacoes" => "{\"enviar_email\": true, \"enviar_petrvs\": true, \"nao_notificar\": [], \"enviar_whatsapp\": true}",
             "forma_contagem_carga_horaria" => "DIA",
-            "api_public_key" => NULL,
-            "api_private_key" => NULL,
+            //"api_public_key" => NULL,
+            //"api_private_key" => NULL,
             "expediente" => "{\"sexta\": [], \"terca\": [], \"quarta\": [], \"quinta\": [], \"sabado\": [], \"domingo\": [], \"segunda\": [], \"especial\": []}",
             "tipo_modalidade_id" => NULL,
             "cidade_id" => $this->brasilia->id,
@@ -53,6 +53,6 @@ class EntidadeSeeder extends Seeder
           ),
         );
 
-        Entidade::insertOrIgnore($entidade);
+        Entidade::insert($entidade);
     }
 }

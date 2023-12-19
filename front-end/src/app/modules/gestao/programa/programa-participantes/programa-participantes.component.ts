@@ -1,12 +1,14 @@
 import { Component, Injector, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { AbstractControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 import { ProgramaParticipanteDaoService } from 'src/app/dao/programa-participante-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { ProgramaParticipante } from 'src/app/models/programa-participante.model';
+import { Programa } from 'src/app/models/programa.model';
 import { Usuario } from 'src/app/models/usuario.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
@@ -21,16 +23,19 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
 
   public unidadeDao: UnidadeDaoService;
   public usuarioDao: UsuarioDaoService;
+  public programaDao: ProgramaDaoService;
   public programaParticipanteService: ProgramaParticipanteDaoService;
   public programaId: string = "";
   public form: FormGroup;
   public multiselectAllFields: string[] = ["usuario_id", "habilitado"];
   public multiselectMenu: ToolbarButton[];
+  public programa: Programa | null = null;
 
   constructor(public injector: Injector) {
     super(injector, ProgramaParticipante, ProgramaParticipanteDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
+    this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.programaParticipanteService = injector.get<ProgramaParticipanteDaoService>(ProgramaParticipanteDaoService);
     /* Inicializações */
     this.code = "MOD_PRGT_PART";
@@ -42,8 +47,7 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
     this.form = this.fh.FormBuilder({
       usuario_id: { default: undefined },
       habilitado: { default: true },
-
-    });
+    }, this.cdRef, this.validate);
     this.multiselectMenu = !this.auth.hasPermissionTo('MOD_PRGT_PART_INCL') ? [] : [
       {
         icon: "bi bi-check",
@@ -54,23 +58,32 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
     this.join = ["usuario:id,nome,apelido,url_foto", "usuario.lotacao:id,nome,unidade_id","usuario.planos_trabalho"];
   }
 
+  public validate = (control: AbstractControl, controlName: string) => {
+    let result = null;
+    this.grid?.items.forEach( usuario => {
+      if (usuario.usuario_id == this.usuario?.selectedValue) {
+        result = "Usuário já é participante deste programa";
+      }
+    });
+    return result;
+  }
+
   public ngOnInit(): void {
     super.ngOnInit();
     this.programaId = this.urlParams?.get('id') || "";
+    this.programaDao.getById(this.programaId).then(p => this.programa = p);
   }
 
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
-
     if (this.filter?.controls.todos.value) {
       result.push([["todos", '==', true]]);
     } else {
       result.push(["programa_id", "==", this.programaId]);
       if (form.nome?.length) result.push(["usuario.nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
-      if (form.unidade_id?.length) result.push(["usuario.areas_trabalho.unidade.id", "==", form.unidade_id]);
+      if (form.unidade_id?.length) result.push(["usuario.lotacao.unidade.id", "==", form.unidade_id]);
     }
-
     return result;
   }
 

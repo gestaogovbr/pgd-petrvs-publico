@@ -4,13 +4,13 @@
             <div class="row">
                 <separator title="Vínculos da Entrega" collapse [collapsed]="false">
                     <div class="row">
-                        <input-search #entrega [size]="12" label="Modelo de Entrega" controlName="entrega_id" [dao]="entregaDao" (change)="onEntregaChange($event)" placeholder="Selecione ou cadastre uma entrega do catálogo usando a lupa" required></input-search>
+                        <input-search #entrega [size]="12" [label]="lex.translate('Tipo de Meta')" controlName="entrega_id" [dao]="entregaDao" (change)="onEntregaChange($event)" placeholder="Selecione ou cadastre uma entrega do catálogo usando a lupa" required></input-search>
                     </div>
                     <div class="row">
-                        <input-text [size]="12" label="Título/Detalhamento" controlName="descricao" placeholder="Descreva melhor a entrega" [attr.maxlength]=250 required></input-text>
+                        <input-text [size]="12" label="Título" controlName="descricao" placeholder="Descreva a entrega" [attr.maxlength]=250 required></input-text>
                     </div>
                     <div class="row">
-                        <input-search [size]="12" [label]="lex.translate('Entrega') + ' de ' + lex.translate('plano de entrega') + ' superior'" controlName="entrega_pai_id" [dao]="planoEntregaEntregaDao" [where]="['plano_entrega.unidade_id', 'in', idsUnidadesAscendentes]" [selectRoute]="{route: ['gestao', 'plano-entrega', 'entregaList']}" [metadata]="{'idsUnidadesAscendentes': idsUnidadesAscendentes}"></input-search>
+                        <input-search [size]="12" [label]="'Vínculo com ' + lex.translate('entrega') + ' de ' + lex.translate('plano de entrega') + ' superior'" controlName="entrega_pai_id" [dao]="planoEntregaEntregaDao" [where]="['plano_entrega.unidade_id', 'in', idsUnidadesAscendentes]" [selectRoute]="{route: ['gestao', 'plano-entrega', 'entregaList']}" [metadata]="{'idsUnidadesAscendentes': idsUnidadesAscendentes}"></input-search>
                     </div>
                 </separator>
                 <separator title="Especificações da Entrega" collapse [collapsed]="false">
@@ -32,13 +32,13 @@
                     <input-number [size]="6" label="Progresso Esperado" controlName="progresso_esperado" sufix="%"></input-number>
                     <input-number [size]="6" label="Progresso Realizado" [stepValue]="0.01" controlName="progresso_realizado" sufix="%" disabled></input-number>
                 </div>
-                <separator title="Caracterização da Entrega" collapse [collapsed]="false">
+                <separator title="Caracterização da Entrega" collapse [collapsed]="true">
                     <div class="row">
                         <input-multiselect label="Etiquetas" controlName="etiquetas" [size]="6" [control]="form!.controls.etiquetas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
                             <input-select [size]="12" #etiqueta controlName="etiqueta" [control]="form!.controls.etiqueta" [items]="etiquetas"></input-select>
                         </input-multiselect>
                         <div class="col-md-6">
-                            <br><h5>Checklist</h5>
+                            <br><h5>Requisitos</h5>
                             <grid [control]="form!.controls.checklist" [form]="formChecklist" [hasAdd]="true" [hasDelete]="true" editable>
                                 <columns>
                                     <!--<column type="switch" title="Check" field="checked"></column>-->

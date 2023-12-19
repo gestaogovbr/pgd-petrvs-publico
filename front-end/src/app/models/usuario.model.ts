@@ -94,6 +94,7 @@ export class Usuario extends Base implements HasNotificacao {
     public gerencia_entidade?: Entidade;
     public gerencia_substituta_entidade?: Entidade;
     public lotacao?: UnidadeIntegrante;
+    public lotacao_id?: string;
     public gerencia_titular?: UnidadeIntegrante;
 
     public afastamentos?: Afastamento[];
@@ -132,7 +133,7 @@ export class Usuario extends Base implements HasNotificacao {
     public matricula: string | null = null; /* Matrícula do usuário */
     public apelido: string = ""; /* Apelido / Nome de Guerra / Nome funcional */
     public telefone: string | null = null; /* Telefone */
-    public data_nascimento?: Date | null = null; /* Data de nascimento do Usuário */
+    public data_nascimento: Date = new Date(); /* Data de nascimento do Usuário */
     public uf: string = "DF"; /* UF - Setar a primeira do LIST */
     public sexo: string | null = null; /* Sexo */
     public config: UsuarioConfig & IIndexable = new UsuarioConfig(); /*UsuarioConfig = new UsuarioConfig();*/ /* Configurações diversas */

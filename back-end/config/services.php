@@ -38,12 +38,12 @@ return [
     ],
     # Login Único: Uhull..
     'govbr' => [
-      'code_verifier' => 'pgd20',
-      'code_challenge' => 'LwIDqJyJEGgdSQuwygHlkQDKsUXFz6jMIfkM_Jlv94w',
-      'code_challenge_method' => 'S256',
-      'client_id' => 'pgd-pre.dth.api.gov.br',
-      'client_secret' => 'AO4Gx1ykBB_nQf0aSYEQ4DzEZ0q0XWq-i9ZbvkmD2DjbhjEVjjw1lwsIRNQsLaI6_YhsGkOov7PvHpVguW5bklI',
-      'redirect' => 'https://pgd-pre.dth.api.gov.br/api/login-govbr-callback/',
-      'environment' => 'staging' //staging ou production
+      'code_verifier' => env('LOGIN_UNICO_CODE_CHALLENGE'),
+      'code_challenge' => env('LOGIN_UNICO_CODE_CHALLENGE_HASH'),
+      'code_challenge_method' => env('LOGIN_UNICO_CODE_CHALLENGE_METHOD'),
+      'client_id' => env('LOGIN_UNICO_CLIENT_ID'),
+      'client_secret' => env('LOGIN_UNICO_CLIENT_SECRET'),
+      'redirect' => env('LOGIN_UNICO_REDIRECT_URI'),
+      'environment' => env('LOGIN_UNICO_ENV')
     ],
 ];

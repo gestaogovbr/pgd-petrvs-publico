@@ -11,7 +11,13 @@ import { PlanoTrabalhoEntrega } from './plano-trabalho-entrega.model';
 import { HasReacoes, Reacao } from './reacao';
 import { Unidade } from './unidade.model';
 
-export class PlanoEntregaEntrega extends Base implements HasAvaliacao, HasComentarios, HasReacoes {
+export interface HasMetaRealizado {
+  entrega?: Entrega;
+  meta: EntregaValor;
+  realizado: EntregaValor;
+};
+
+export class PlanoEntregaEntrega extends Base implements HasAvaliacao, HasMetaRealizado, HasComentarios, HasReacoes {
   public entrega?: Entrega;
   public entrega_pai?: Entrega;
   public plano_entrega?: PlanoEntrega;

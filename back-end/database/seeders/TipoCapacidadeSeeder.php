@@ -6,7 +6,6 @@ use Illuminate\Database\Seeder;
 use App\Models\TipoCapacidade;
 use App\Models\Capacidade;
 use App\Models\Perfil;
-use Ramsey\Uuid\Uuid;
 use App\Services\TipoCapacidadeService;
 use App\Services\UtilService;
 
@@ -27,8 +26,8 @@ class TipoCapacidadeSeeder extends Seeder
         if(!$perfilDesenvolvedor){
             $perfilDesenvolvedor = new Perfil();
             $perfilDesenvolvedor->fill([
-                'id' => $utilService->uuid("Desenvolvedor"),   
-                'nivel' => 0,         
+                'id' => $utilService->uuid("Desenvolvedor"),
+                'nivel' => 0,
                 'nome' => 'Desenvolvedor',
                 'descricao' => 'Perfil de Desenvolvedor - Todas as permissões',
             ]);
@@ -38,7 +37,8 @@ class TipoCapacidadeSeeder extends Seeder
         $developerId = $perfilDesenvolvedor->id;
 
         // carrega os tipos de capacidades do vetor declarado no serviço TipoCapacidadeService
-        $dadosTiposCapacidades = array_map(fn ($capacidade) => array_merge([$utilService->uuid($capacidade['codigo'])], $capacidade), $tiposCapacidadesService->tiposCapacidades);
+        $dadosModulosCapacidades = $tiposCapacidadesService->tiposCapacidades;
+        $dadosTiposCapacidades = array_map(fn ($capacidade) => array_merge([$utilService->uuid($capacidade['codigo'])], $capacidade), $dadosModulosCapacidades);
         foreach ($dadosTiposCapacidades as $registro) {
             //insere no banco ou atualiza todos os tipos de capacidade constantes do vetor
             $tipocapacidade = TipoCapacidade::where('id', $registro[0])->first() ?? new TipoCapacidade();
@@ -82,24 +82,16 @@ class TipoCapacidadeSeeder extends Seeder
             }
         }
 
-        // exclui as capacidades que não existem mais no vetor declarado no serviço TipoCapacidadeService
-        $dadosModulosCapacidades = array_map(fn($x) => $x,$tiposCapacidadesService->tiposCapacidades);
-        
+        // exclui os tipos de capacidades filhas que não existem mais no vetor declarado no serviço TipoCapacidadeService 
         foreach ($dadosModulosCapacidades as $modulo) {
-            //foreach ($modulo['capacidades'] as $dadosModulosCapacidadesFilhas) {
-            $arrayCapacidades = array_map(fn($z) => $z[0], $modulo['capacidades']);
-            $tiposCapacidadesNulos = TipoCapacidade::where('grupo_id', $utilService->uuid($modulo['codigo']))
-                                                    ->whereNotIn('codigo',array_map(fn($z) => $z[0], $modulo['capacidades']))->get();
-            $i = 1;
-            foreach (TipoCapacidade::where('grupo_id', $utilService->uuid($modulo['codigo']))
-                                    ->whereNotIn('codigo',array_map(fn($z) => $z[0], $modulo['capacidades']))->get() as $tipo) {
-                foreach($tipo->capacidades as $tipoCap) {
-                    $cap = Capacidade::where('tipo_capacidade_id',$tipo->id)->first();
-                    $cap->delete();               
-                }
-                if ($tipo->grupo_id) $tipo->delete();
-                $i++;
-            }
+            $capacidades = array_map(fn($z) => $z[0], $modulo['capacidades']);
+            // representa todos os tipos de capacidade existentes na tabela, filhas do módulo, que não existem mais
+            $filhosNulos = TipoCapacidade::where('grupo_id', $utilService->uuid($modulo['codigo']))->whereNotIn('codigo',$capacidades)->get();        
+            foreach ($filhosNulos as $filhoNulo) $filhoNulo->deleteCascade();
         }
+        // Apagar os tipos de capacidades referentes aos próprios módulos (pais) que não contêm mais filhas, e aqueles módulos (pais) que mudaram de nome
+        $modulos = array_map(fn($z) => $z["codigo"], $dadosModulosCapacidades);
+        $modulosNulos = TipoCapacidade::whereNull('grupo_id')->whereNotIn('codigo',$modulos)->get(); 
+        foreach($modulosNulos as $moduloNulo) $moduloNulo->deleteCascade();      
     }
 }

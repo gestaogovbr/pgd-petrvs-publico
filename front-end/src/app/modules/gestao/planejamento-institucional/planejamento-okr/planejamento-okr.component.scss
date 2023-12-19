@@ -1,5 +1,6 @@
 .okr_header {
-    width: 350px;
+    min-width: 350px;
+    width: 30%;
     text-align: center;
     background: var(--petrvs-box-background);
     border-bottom: 3px solid #000;
@@ -14,18 +15,34 @@
 }
 
 .objetivo, .entrega, .unidade, .indicador, .atividades {
-    width: 350px;
+    min-width: 350px;
     border-right-style: solid;
     padding: 10px;
     background: var(--petrvs-box-background);
 }
-.entrega, .header_resultados {
-    width: 550px;
+.objetivo {
+    width: 30%;
 }
-.unidade, .header_unidade {
-    width: 250px;
+.unidades,  .header_unidades {
+    width: 70%;
 }
 
+.entrega, .header_resultados {
+    min-width: 550px;
+}
+.unidade, .header_unidade {
+    min-width: 250px;
+}
+.entrega, .atividades {
+    margin-bottom: 5px;
+}
+
+.atividades {    
+    visibility: hidden;
+}
+.atividadesVisivel {
+    visibility: visible;
+}
 
 .atividade {
     border-bottom: 1px solid #ddd;

@@ -18,7 +18,7 @@ import { UnidadeDaoService } from '../dao/unidade-dao.service';
 import { NotificacaoService } from '../modules/uteis/notificacoes/notificacao.service';
 import { AppComponent } from '../app.component';
 
-export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION" | "SUPER" | "LOGINUNICO";
+export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION" | "SEI" | "LOGINUNICO";
 export type Permission = string | (string | string[])[];
 
 @Injectable({
@@ -95,7 +95,7 @@ export class AuthService {
   constructor(public injector: Injector) { }
 
   public success(usuario: Usuario, redirectTo?: FullRoute) {
-    this.app!.go.navigate(redirectTo || { route: this.app!.globals.initialRoute });
+    this.app!.go.navigate(redirectTo || { route: this.app!.gb.initialRoute });
   };
 
   public fail(error: any) {
@@ -151,7 +151,7 @@ export class AuthService {
   }
 
   public registerUser(user: any, token?: string) {
-    if (user) {
+    if (user) {    
       this.usuario = Object.assign(new Usuario(), user) as Usuario;
       this.capacidades = this.usuario?.perfil?.capacidades?.filter(x => x.deleted_at == null).map(x => x.tipo_capacidade?.codigo || "") || [];
       this.kind = this.kind;
@@ -160,7 +160,8 @@ export class AuthService {
       this.unidade = this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade;
       if (this.unidade) this.calendar.loadFeriadosCadastrados(this.unidade.id);
       if (token?.length) localStorage.setItem("petrvs_api_token", token);
-      this.gb.setContexto(this.usuarioConfig.menu_contexto || this.app!.menuContexto[0].key);
+      this.gb.contexto = this.app?.menuContexto.find(c => c.key === this.usuario?.config.menu_contexto);
+      this.gb.setContexto(this.usuario.config.menu_contexto || this.app!.menuContexto[0].key);
       this.notificacao.updateNaoLidas();
     } else {
       this.usuario = undefined;
@@ -256,7 +257,7 @@ export class AuthService {
   }
 
   private logIn(kind: AuthKind, route: string, params: any, redirectTo?: FullRoute): Promise<boolean> {
-    let deviceName = this.gb.isExtension ? "EXTENSION" : this.gb.isSuperModule ? "SUPER" : "BROWSER";
+    let deviceName = this.gb.isExtension ? "EXTENSION" : this.gb.isSeiModule ? "SEI" : "BROWSER";
     let login = (): Promise<boolean> => {
       return this.server.post((this.gb.isEmbedded ? "api/" : "web/") + route, { ...params, device_name: deviceName }).toPromise().then(response => {
         if (response?.error)
@@ -265,6 +266,7 @@ export class AuthService {
         this.apiToken = response.token;
         this.registerEntity(response.entidade);
         this.registerUser(response.usuario, this.apiToken);
+        this.app?.setMenuVars(); // CONSULTAR O GENISSON
         if (response.horario_servidor?.length) {
           this.gb.horarioDelta.servidor = UtilService.iso8601ToDate(response.horario_servidor);
           this.gb.horarioDelta.local = new Date();

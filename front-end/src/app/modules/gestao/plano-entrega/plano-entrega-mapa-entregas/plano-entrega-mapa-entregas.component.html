@@ -1,22 +1,5 @@
 <ng-container *ngIf="objetivo">
-    <div class="planejamento arrow_box first-box w-100" *ngIf="objetivo.planejamento">
-        <h6>Planejamento:</h6>
-        <h4>{{objetivo.planejamento.nome}}</h4>
-        <div class="d-flex">
-            <div class="border-start border-4 border-warning ps-3 mt-3 w-100">
-                <h6>Missão</h6>
-                <cite>{{objetivo.planejamento.missao}}</cite>
-            </div>
-            <div class="border-start border-4 border-info ps-3 mt-3 ms-5 w-100">
-                <h6>Visão</h6>
-                <cite>{{objetivo.planejamento.visao}}</cite>
-            </div>
-            <div class="border-start border-4 border-primary ps-3 mt-3 ms-5 w-100">
-                <h6>Valores</h6>
-                <cite *ngFor="let valor of objetivo.planejamento.valores">{{valor.value}}<br></cite>
-            </div>
-        </div>
-    </div>
+    <planejamento-show [planejamento]="objetivo.planejamento" *ngIf="objetivo.planejamento"></planejamento-show>
     <div class="objetivos arrow_box w-100">
         <h5>Objetivo:</h5>
         <h6>{{objetivo.nome}}</h6>

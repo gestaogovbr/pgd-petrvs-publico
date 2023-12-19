@@ -156,7 +156,7 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
 
   public async carregaPlanejamentosSuperiores(unidadeId?: string | null) {
     if (unidadeId?.length) {
-      let pls = await this.dao?.query({ where: [['unidade_executora_id', '==', unidadeId], ['manut_planej_unidades_executoras', '==', true]], join: this.joinPlanejamentoSuperior }).asPromise();
+      let pls = await this.dao?.query({ where: [['unidade_id', '==', unidadeId], ['manut_planej_unidades_executoras', '==', true]], join: this.joinPlanejamentoSuperior }).asPromise();
       this.planejamentosSuperiores = (pls || []).map(x => Object.assign({}, { key: x.id, value: x.nome, data: x }) as LookupItem);
       this.planejamentosSuperiores.unshift({ key: null, value: 'Escolha um Planejamento superior...' });
       this.objetivos!.loadData(this.entity!, this.form!);
@@ -200,15 +200,15 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
    * 
    * @returns boolean Informa se o planejamento é da Unidade Instituidora ou não.
    */
-  public isPlanejamentoUNINST(): boolean {
+/*   public isPlanejamentoUNINST(): boolean {
     return !this.form.controls.unidade_id.value?.length
-  }
+  } */
 
   /**
    * 
    * @returns boolean Informa se o planejamento é da Unidade Executora ou não.
    */
-  public isPlanejamentoUNEXEC(): boolean {
+/*   public isPlanejamentoUNEXEC(): boolean {
     return !this.isPlanejamentoUNINST();
-  }
+  } */
 }

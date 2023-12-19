@@ -6,7 +6,7 @@
                     <!--span *ngIf="row?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row?.length}}</span//-->
                 </ng-template>
                 <ng-template let-row="row" #columnExpandedConsolidacao>
-                    <grid [items]="row.atividades" [minHeight]="0" #gridAtividade [form]="formAtividade" [hasAdd]="!disabled" [hasDelete]="false" [hasEdit]="false"
+                    <grid [items]="row.atividades" [minHeight]="0" #gridAtividades [form]="formAtividade" [hasAdd]="!disabled" [hasDelete]="false" [hasEdit]="false"
                         [add]="addAtividade.bind(this, row.entrega)" [load]="loadAtividade.bind(this)" [remove]="removeAtividade.bind(this, row.atividades)" [save]="saveAtividade.bind(this)" editable>
                         <columns>
                             <column [title]="'#ID/' + lex.translate('Tipo de Atividade') + '\nDescrição'" [template]="columnAtividadeDescricao" [editTemplate]="editAtividadeDescricao">
@@ -16,6 +16,7 @@
                                         <badge *ngIf="row.tipo_atividade" [icon]="entityService.getIcon('TipoAtividade')" [label]="row.tipo_atividade.nome" color="light"></badge>
                                     </span>
                                     <span class="micro-text fw-ligh atividade-descricao">{{row.descricao}}</span>
+                                    <reaction [entity]="row" origem="ATIVIDADE"></reaction>
                                 </ng-template>
                                 <ng-template let-row="row" #editAtividadeDescricao>
                                     <input-search [label]="lex.translate('Tipo de atividade')" [size]="12" [emptyValue]="null" controlName="tipo_atividade_id" [control]="formAtividade!.controls.tipo_atividade_id" [dao]="tipoAtividadeDao" (select)="onTipoAtividadeSelect($event)" [labelInfo]="lex.translate('Tipo de atividade') + ' utilizado para classificar a atividade'" [required]="!auth.hasPermissionTo('MOD_ATV_TIPO_ATV_VAZIO') ? 'true' : undefined"></input-search>
@@ -29,9 +30,12 @@
                                     </div>
                                 </ng-template>
                                 <ng-template let-row="row" #editTempos>
-                                    <input-datetime icon="bi bi-file-earmark-plus" [label]="lex.translate('Data de distribuição')" controlName="data_distribuicao" [control]="formAtividade!.controls.data_distribuicao" labelInfo="Data de inclusão/distribuição/lançamento"></input-datetime>
-                                    <input-datetime icon="bi bi-calendar-check" [label]="lex.translate('Prazo de entrega')" controlName="data_estipulada_entrega" [control]="formAtividade!.controls.data_estipulada_entrega" labelInfo="Data estipulada para entrega da atividade"></input-datetime>
-                                    <input-datetime icon="bi bi-check-circle" label="Conclusão" controlName="data_entrega" [control]="formAtividade!.controls.data_entrega" labelInfo="Data da conclusão da atividade"></input-datetime>
+                                    <input-datetime icon="bi bi-file-earmark-plus" [label]="lex.translate('Data de distribuição')" controlName="data_distribuicao" [control]="formAtividade!.controls.data_distribuicao" (change)="onDataDistribuicaoChange($event)" labelInfo="Data de inclusão/distribuição/lançamento"></input-datetime>
+                                    <input-datetime icon="bi bi-calendar-check" [label]="lex.translate('Prazo de entrega')" controlName="data_estipulada_entrega" [control]="formAtividade!.controls.data_estipulada_entrega" (change)="onDataEstipuladaEntregaChange($event)" labelInfo="Data estipulada para entrega da atividade"></input-datetime>
+                                    <separator title="Início e Conclusão" collapse [collapsed]="true">
+                                        <input-datetime icon="bi bi-play-circle" label="Início" controlName="data_inicio" [control]="formAtividade!.controls.data_inicio" labelInfo="Data de inicialização da atividade"></input-datetime>
+                                        <input-datetime icon="bi bi-check-circle" label="Conclusão" controlName="data_entrega" [control]="formAtividade!.controls.data_entrega" labelInfo="Data da conclusão da atividade"></input-datetime>
+                                    </separator>
                                 </ng-template>
                             </column>
                             <column [title]="'Progresso\nEtiquetas/Checklist'" [width]="200" [template]="columnProgressoEtiquetasChecklist" [editTemplate]="columnProgressoEtiquetasChecklist" [columnEditTemplate]="columnProgressoEtiquetasChecklistEdit" [edit]="onColumnProgressoEtiquetasChecklistEdit.bind(this)" [save]="onColumnProgressoEtiquetasChecklistSave.bind(this)">
@@ -66,7 +70,7 @@
                                     <span class="d-block">
                                         <badge *ngFor="let status of atividadeService.getStatus(row, entity)" [data]="status" [color]="status.color" [icon]="status.icon" [label]="status.label"></badge>
                                     </span>
-                                    <comentarios-widget *ngIf="!gridAtividade.editing" [entity]="row" [selectable]="false" origem="ATIVIDADE" [grid]="gridAtividade"></comentarios-widget>
+                                    <comentarios-widget *ngIf="!gridAtividades.editing" [entity]="row" [selectable]="false" origem="ATIVIDADE" [grid]="gridAtividades"></comentarios-widget>
                                 </ng-template>
                             </column>
                             <column type="options" [metadata]="atividadeOptionsMetadata" [dynamicOptions]="atividadeService.dynamicOptions.bind(this)" [dynamicButtons]="atividadeService.dynamicButtons.bind(this)"></column>
@@ -82,6 +86,7 @@
             <column title="Entrega" [template]="columnEntrega">
                 <ng-template let-row="row" #columnEntrega>
                     {{row.badge.descricao || row.entrega.descricao}}
+                    <reaction [entity]="row.entrega" origem="PLANO_TRABALHO_ENTREGA"></reaction>
                 </ng-template>
             </column>
             <column title="% CHD Planejado" [template]="columnForcaTrabalho" [width]="100" [titleHint]="'% Carga Horária Disponível Planejada'">

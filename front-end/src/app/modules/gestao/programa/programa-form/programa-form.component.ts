@@ -48,6 +48,7 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
       unidade_id: {default: ""},
       nome: {default: ""},
       normativa: {default: ""},
+      link_normativa: {default: null},
       config: {default: null},
       data_inicio: {default: new Date()},
       data_fim: {default: new Date()},
@@ -181,6 +182,10 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
 
   public titleEdit = (entity: Programa): string => {
     return "Editando " + this.lex.translate("Programa") + ': ' + (entity?.nome || "");
+  }
+
+  public onClickIN(){
+    window.open(this.form?.controls.link_normativa.value);
   }
 
 }

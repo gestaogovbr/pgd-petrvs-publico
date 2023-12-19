@@ -11,12 +11,12 @@ use Throwable;
 
 class EntidadeController extends ControllerBase {
     public $updatable = [
-        "nomenclatura", 
-        "url_sei", 
-        "notificacoes", 
+        "url_sei",
+        "nomenclatura",
+        "notificacoes",
         "notificacoes_templates",
-        "tipo_modalidade_id", 
-        "forma_contagem_carga_horaria", 
+        "tipo_modalidade_id",
+        "forma_contagem_carga_horaria",
         "carga_horaria_padrao",
         "expediente"
     ];
@@ -35,7 +35,7 @@ class EntidadeController extends ControllerBase {
         }
     }
 
-    public function generateApiKey(Request $request) {
+    /*public function generateApiKey(Request $request) {
         try {
             $data = $request->validate([
                 'entidade_id' => ['required']
@@ -47,6 +47,6 @@ class EntidadeController extends ControllerBase {
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
-    }
+    }*/
 
 }

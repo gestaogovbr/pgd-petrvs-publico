@@ -33,7 +33,7 @@ export const environment = {
     env: global?.app_env || "local",
     suporte: global?.suporte_url || "https://suporte.prf.gov.br",
     entidade: global?.entidade || "PRF",
-    images: { login: global?.logo_url || "logo_vertical.png" },
+    images: { login: global?.logo_url || "logo.png" },
     versao: global?.versao || "1.0.0",
     login: global?.login || {
         google_client_id: global?.google_client_id || "",

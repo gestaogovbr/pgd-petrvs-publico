@@ -16,7 +16,7 @@ class GrupoEspecializadoSeeder extends Seeder
     {
         $grupos = [
             'COE','GECAM','GECGH','GECDH','GEFRAV','GETRAN','GFIS','GFT','GIAT','GMD','GMR','GNARC',
-            'GOC', 'GPAT','GPT','GTARM','NOE'
+            'GOC', 'GPAT','GPT','GTARM','NOE','GAEP'
         ];
         foreach($grupos as $g) {
             $grupo = new GrupoEspecializado();

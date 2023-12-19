@@ -119,7 +119,7 @@ class UsuarioService extends ServiceBase
     }
 
     public function extraStore($entity, $unidade, $action) {
-        $this->unidadeIntegranteAtribuicaoService->checkLotacoes($entity->id);
+        if($action != ServiceBase::ACTION_INSERT) $this->unidadeIntegranteAtribuicaoService->checkLotacoes($entity->id);
     }
 
     public function hasLotacao($id, $usuario = null, $subordinadas = true) {
@@ -131,7 +131,7 @@ class UsuarioService extends ServiceBase
      * @param string $unidade_id 
      */
     public function isGestorUnidade(string $unidade_id): bool {
-        return $this->isIntegrante('GESTOR',$unidade_id) || $this->isIntegrante('GESTOR_SUBSTITUTO',$unidade_id);
+        return $this->isIntegrante('GESTOR',$unidade_id) || $this->isIntegrante('GESTOR_SUBSTITUTO',$unidade_id) || $this->isIntegrante('GESTOR_DELEGADO',$unidade_id);
     }
 
     /**
@@ -178,18 +178,6 @@ class UsuarioService extends ServiceBase
     public function isLotacao(string | null $usuario_id = null, string $unidade_id): bool {
         $usuario = isset($usuario_id) ? Usuario::find($usuario_id) : parent::loggedUser();
         return $usuario->lotacao->unidade_id == $unidade_id;
-    }
-
-    /**
-     * Recebe o ID de um plano de trabalho como parâmetro e retorna um array com os IDs dos usuários que já assinaram o TCR atual do plano.
-     */
-    public function jaAssinaramTCR(string $plano_trabalho_id): array {
-        $result = [];
-        $planoTrabalho = PlanoTrabalho::find($plano_trabalho_id);
-        if($planoTrabalho && $planoTrabalho->documento_id) {
-            $result = $planoTrabalho->documento->assinaturas->map(fn($a) => $a->usuario_id)->toArray();
-        }
-        return $result;
     }
 
     /**
@@ -285,32 +273,91 @@ class UsuarioService extends ServiceBase
     }
 
     /**
-     * Este método impede que um usuário seja inserido com e-mail/CPF/Matrícula já existentes no Banco de Dados, bem como
+     * Este método impede que um usuário seja inserido com e-mail/CPF já existentes no Banco de Dados, bem como
      * impede também a inserção de um usuário com o perfil de Desenvolvedor. Usuários com esse perfil só podem ser inseridos
      * através do próprio código da aplicação.
      */
-    public function validateStore($data, $unidade, $action) {
+    public function validateStore(&$data, $unidade, $action) {
         if($action == ServiceBase::ACTION_INSERT) {
             if(empty($data["email"])) throw new Exception("O campo de e-mail é obrigatório");
             if(empty($data["cpf"])) throw new Exception("O campo de CPF é obrigatório");
-            $alreadyHas = Usuario::where("id", "!=", $data["id"])->where("email", $data["email"])->orWhere("cpf", $data["cpf"])->first();
+            $query1 = Usuario::where("id", "!=", $data["id"])->where(function ($query) use ($data) {
+                                                                return $query->where("cpf", UtilService::onlyNumbers($data["cpf"]))->orWhere("email", $data["email"]);
+                                                            });
+            $query2 = Usuario::where("id", "!=", $data["id"])->whereNotNull("deleted_at")->where(function ($query) use ($data) {
+                                                                                                return $query->where("cpf", UtilService::onlyNumbers($data["cpf"]))->orWhere("email", $data["email"]);
+                                                                                            });
+            $alreadyHas = $query1->first() ?? $query2->first();
             if(!empty($alreadyHas)) {
-                if($alreadyHas->trashed()) { /* Caso o usuário exista, mas esteja excluído, reabilita o usuário deletando todos os seus vínculos anteriores */
+                if($alreadyHas->deleted_at) { // Caso o usuário exista, mas esteja excluído, reabilita o usuário deletando todos os seus vínculos anteriores e recuperando seus dados sensíveis (cpf, e-mail funcional, matricula, nome, apelido, data_nascimento)
+                    // sugestão: refatorar esse código deixando para o usuário logado decidir se deseja reativar e, em caso positivo, decidir se atualiza os dados ou não
                     $this->removerVinculosUsuario($alreadyHas);
-                    $alreadyHas->restore();
+                    $data["id"] = $alreadyHas->id;
+                    $data["cpf"] = $alreadyHas->cpf;
+                    $data["email"] = $alreadyHas->email;
+                    $data["matricula"] = $alreadyHas->matricula;
+                    $data["nome"] = $alreadyHas->nome;
+                    $data["apelido"] = $alreadyHas->apelido;
+                    $data["data_nascimento"] = $alreadyHas->data_nascimento;
+                    $alreadyHas->deleted_at = null;
                     return $alreadyHas;
                 } else {
                     throw new Exception("Já existe um usuário com mesmo e-mail ou CPF no sistema");
                 }
+                /*
+                        if($alreadyHas->trashed()) { // Caso o usuário exista, mas esteja excluído, reabilita o usuário deletando todos os seus vínculos anteriores
+                        $this->removerVinculosUsuario($alreadyHas);
+                        $alreadyHas->restore();
+                        return $alreadyHas;
+                    } else {
+                        throw new Exception("Já existe um usuário com mesmo e-mail ou CPF no sistema");
+                    } 
+                */
             }
             if($data["perfil_id"] == $this->developerId && !$this->isLoggedUserADeveloper()) throw new Exception("Tentativa de inserir um usuário com o perfil de Desenvolvedor");
+            //$query->toSql();    $query->getBindings();
         }
     }
 
     public function removerVinculosUsuario(&$usuario) {
         if(!empty($usuario)) {
-            foreach($usuario->vinculosUnidades as $vinculo){ $vinculo->deleteCascade(); }
+            foreach($usuario->unidadesIntegrante as $vinculo){ $vinculo->deleteCascade(); }
             $usuario->fresh();
         }
     }
 }
+/*
+ANALISE DO ERRO: usuário está conseguindo inserir plano de trabalho, sendo participante do plano, e o plano está entrando em execução mesmo sem a assinatura dos gestores
+
+participante
+FARIAS - 5e695cfe-a27f-42f3-a6b0-2fb41477aaec
+
+unidade_executora_plano_trabalho
+DEL01 - 9dc59ac4-89c4-4310-9b7c-9b0ae3388014
+
+gestores da DEL01
+gestor - 455eaa64-9f2b-4a4e-8959-b0c518be81ff (Susana)
+gestorSubstituto - 3381144b-2753-416a-a66d-1f87060cf4b3 (Alex)
+gestorDelegado - 2c2ee28a-e6d3-4ab5-9911-f37c42bc25b0 (Carol)
+
+lotação do participante
+UOP01/Del01-PI - 07546ab7-0e14-4ed9-a6ad-ab1d6edf7a55
+
+gestores da UOP01/Del01-PI
+gestor - 26d7b204-27f0-4e8b-8ee1-f9f64b1d3b9c (Karina)
+gestorSubstituto - c2155987-538c-47a1-8634-9df9a35f0147 (Guilherme)
+gestorDelegado - 5f6878d3-025b-4ea6-8fe8-0d4177e4d302 (Marian)
+
+entidade
+PRF - 52d78c7d-e0c1-422b-b094-2ca5958d5ac1
+
+gestores da entidade
+gestor - af8aa254-a04f-4650-98d8-d2cc6e942e01 (Paiva)
+gestorSubstituto - 7b0797fe-19b4-4a5c-a325-c39186645ade (Genisson)
+
+
+
+ERROS ENCONTRADOS
+1 - Quando o servidor está apagado, seu nome e matricula  não aparece no form de atribuições
+2 - Quando o servidor é reativado, a linha do grid é atualizada, mas não vem a mensagem de sucesso nem aparece o botão para editar
+*/

@@ -22,17 +22,5 @@ export class ProgramaDaoService extends DaoBaseService<Programa> {
     ], deeps);
   }
 
-/*   public assinaturasExigidas(programa_id: string): Promise<string[]> {
-    return new Promise<string[]>((resolve,reject) => {
-      this.server.post('api/Programa/assinaturasExigidas',{ programa_id: programa_id})
-        .subscribe(response => {
-          resolve(response);
-        }, error => {
-          console.log("Erro no acesso aos dados das assinaturas!", error);
-          resolve([]);
-        });
-    });
-  } */
-
 }
 

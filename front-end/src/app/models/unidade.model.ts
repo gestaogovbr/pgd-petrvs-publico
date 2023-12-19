@@ -32,7 +32,7 @@ export class Unidade extends Base implements HasNotificacao {
     public entregas_plano_entrega?: PlanoEntregaEntrega[]; /* Lista de entregas de plano de entrega */
     public programas?: Programa[]; /* Lista de programas */
     public recursos_projeto?: ProjetoRecurso[]; /* Lista de recursos de projeto */
-    public notificacoes_templates?: Template[]; /* Lista de templates */
+    public notificacoes_templates?: Template[];  /* Lista de templates */
     public unidades?: Unidade[]; /* Lista de unidades */
     public planejamentos?: Planejamento[]; /* Lista de planejamentos institucionais */
     public cadeias_valor?: CadeiaValor[]; /* Lista de cadeias de valor */
@@ -50,6 +50,7 @@ export class Unidade extends Base implements HasNotificacao {
     public checklist: LookupItem[] = []; //Nome dos checklist
     public data_inativacao: Date | null = null; //Data em que a unidade foi inativada, se for o caso
     public instituidora: number = 0; //Se a unidade é instituidora (Programas)
+    public informal: number = 1; //Se a unidade é informal
     public expediente: Expediente | null = null; // Expediente (Não nulo)
     public texto_complementar_plano: string | null = ""; // Mensagem adicional para o plano de trabalho
 

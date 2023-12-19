@@ -1,12 +1,23 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, Input, OnInit, ViewChild} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PageFormBase } from '../../base/page-form-base';
+import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 
 @Component({
   selector: 'curriculum-atributosbig5-form',
   templateUrl: './curriculum-atributosbig5-form.component.html',
   styleUrls: ['./curriculum-atributosbig5-form.component.scss']
 })
-export class CurriculumAtributosbig5FormComponent implements OnInit {
+export class CurriculumAtributosbig5FormComponent{
+  @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
+  @ViewChild("comunica", { static: false }) public comunicaV?: Input;
+  @ViewChild("lideranca", { static: false }) public liderancaV?: Input;
+  @ViewChild("resolucao", { static: false }) public resolucaoV?: Input;
+  @ViewChild("pensamento", { static: false }) public pensamentoV?: Input;
+  @ViewChild("criatividade", { static: false }) public criatividadeV?: Input;
+  @ViewChild("habilidade", { static: false }) public habilidadeV?: Input;
+  @ViewChild("adaptabilidade", { static: false }) public adaptabilidadeV?: Input;
+  @ViewChild("etica", { static: false }) public eticaV?: Input;
 
   comunica! : string;
   lideranca! : string;
@@ -33,7 +44,7 @@ export class CurriculumAtributosbig5FormComponent implements OnInit {
     this.bigicoAmarelo="/assets/images/iconBigAmarelo.png";
     this.bigico="/assets/images/iconBig.png";
 
-    const range = document.getElementById('range') as HTMLInputElement;
+    /*const range = document.getElementById('range') as HTMLInputElement;
     console.log('RANGE-->',range)
      const rangeV = document.getElementById('rangeV');
           
@@ -47,35 +58,64 @@ export class CurriculumAtributosbig5FormComponent implements OnInit {
           };
     document.addEventListener('DOMContentLoaded', setValue);
     console.log(range)
-    //range.addEventListener('input', setValue);
+    //range.addEventListener('input', setValue);*/
 
   }
 
   ngOnInit(): void {
   }
 
-  public inicio(): void{
-    if ($('#big5').is(":hidden")){
-      $('#big5').show();
-      $('#lblinicio').text('Voltar')
-      $('#btnInicio').removeClass().addClass('btn btn-dark')
+  /*this.form = this.fh.FormBuilder({
+    nome: { default: "" },
+    perguntas: { default: [] },
+    codigo: { default: "" },
+    tipoQuestionario: { default: "" },
+    switchExemplo: { default: false },
+  }, this.cdRef, this.validate);
+
+  public validate = (control: AbstractControl, controlName: string) => {
+    let result = null;
+    if (['nome'].indexOf(controlName) >= 0 && !control.value?.length) {
+      result = "Obrigatório";
+    }
+    return result;
+  }*/
+  
+  public valorSoftChange(soft:string , name:string){
+    
+
+    const comunicaEL = document.getElementsByName('comunica');
+    let comunica = comunicaEL
+    let lideranca = (this.liderancaV as HTMLInputElement).value;
+   
+    console.log(parseInt(soft), name, comunica, lideranca)
+    /**
+     * let $inputsFunc2 = $('.skills');
+
+    let soma2=0;
+
+    $inputsFunc2.each(function() {
+        if($(this).val()==''){
+          $(this).val(0);
+        }
+                                                
+        soma2 += parseInt($(this).val(), 0);
+                                                      
+    });
+    let soma=a+b+c+d+e+f+g;
+
+    if(soma2==20){
+      $('#lbltotalskill').text(soma2);
+      $('#lbltotalskill').css('color','red')
+      $('#lbltotalSK').css('color','red')
+
+    }else{
+      $('#lbltotalskill').text(soma2);
+      $('#lbltotalskill').css('color','black')
+      $('#lbltotalSK').css('color','black')
 
     }
-    else{
-      $('#big5').hide();
-      $('#lblinicio').text('Iniciar')
-      $('#btnInicio').removeClass().addClass('btn btn-success')
-    }       
-  }
-
-  public onChangePerma(){
-    console.log()
-    let value = $('#rangePerma').val()
-    $('#lblPerma').text(value!.toString())
-  }
-
-  public onChangeValorSoft(soft:any){
-    console.log(soft)
+     */
   }
 
   public voltarb5(){}

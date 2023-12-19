@@ -14,6 +14,7 @@ export type EntidadePetrvs = "ANTAQ" | "PRF" | "";
 })
 export class GlobalsService {
   public VERSAO_DB: number = 1;
+  public VERSAO_SYS: number =  environment.versao;
   public URL_SEI: string = "https://sei.prf.gov.br/"; /* Buscar essa configuração da Entidade */
   public IMAGES = environment.images;
   public ENTIDADE = environment.entidade || "";
@@ -42,25 +43,26 @@ export class GlobalsService {
 
   constructor(@Inject(DOCUMENT) private document: any, public injector: Injector) {
     this.auth = injector.get<AuthService>(AuthService);
-    this.go = injector.get<NavigateService>(NavigateService);
-   }
+    this.go = injector.get<NavigateService>(NavigateService);    
+  }
 
   public refresh() {
-    this.document.getElementById("html-petrvs").setAttribute("data-bs-theme", this.theme)
-    const ngTheme = this.document.getElementById("primeng-thme") as HTMLLinkElement
-    if (ngTheme)
-      ngTheme.href = this.theme +".css"
+    //this.document.getElementById("html-petrvs").setAttribute("data-bs-theme", this.theme)
+    document.getElementsByTagName("html")[0].setAttribute("data-bs-theme", this.theme);
+    const ngTheme = this.document.getElementById("primeng-thme") as HTMLLinkElement;
+    if (ngTheme) ngTheme.href = this.theme + ".css";
     this.app!.cdRef.detectChanges();
   }
 
   public setContexto(context: string, goToContextoHome: boolean = true) {
     if(this.contexto?.key != context) {
-      this.contexto = this.app!.menuContexto.find(x => x.key == context);
+      let novoContexto = this.app!.menuContexto.find(x => x.key == context);
+      if(!novoContexto?.permition || this.auth.capacidades.includes(novoContexto.permition)) this.contexto = novoContexto;
       if(this.contexto && goToContextoHome) this.goHome();
       this.app!.cdRef.detectChanges();
     }
-    if(this.auth.usuario && this.auth.usuarioConfig.menu_contexto != context) {
-      this.auth.usuarioConfig = { menu_contexto: context };
+    if(this.auth.usuario && this.auth.usuarioConfig.menu_contexto != this.contexto?.key) {
+      this.auth.usuarioConfig = { menu_contexto: this.contexto?.key || "" };
     }
   }
 
@@ -69,7 +71,7 @@ export class GlobalsService {
   }
 
   public get isEmbedded(): boolean {
-    return this.isExtension || this.isSuperModule;
+    return this.isExtension || this.isSeiModule;
   }
 
   public get isExtension(): boolean {
@@ -77,9 +79,9 @@ export class GlobalsService {
     return (typeof IS_PETRVS_EXTENSION != "undefined" && !!IS_PETRVS_EXTENSION) || (typeof PETRVS_IS_EXTENSION != "undefined" && !!PETRVS_IS_EXTENSION);
   };
 
-  public get isSuperModule(): boolean {
+  public get isSeiModule(): boolean {
     //@ts-ignore
-    return typeof PETRVS_IS_SUPER_MODULE != "undefined" && !!PETRVS_IS_SUPER_MODULE;
+    return typeof PETRVS_IS_SEI_MODULE != "undefined" && !!PETRVS_IS_SEI_MODULE;
   };
 
   public is(entidade: string): boolean {
@@ -130,8 +132,9 @@ export class GlobalsService {
 
   public getResourcePath(resource: string) {
     const key = "URL_" + encodeURI(resource);
-    if(this.isEmbedded && !this.urlBuffer[key]) this.urlBuffer[key] = this.sanitizer.bypassSecurityTrustResourceUrl(this.baseURL + resource);
-    return this.isEmbedded ? this.urlBuffer[key] : resource;
+    const isAsset = !!resource.match(/\/?assets\//);
+    if(this.isEmbedded && !this.urlBuffer[key]) this.urlBuffer[key] = this.sanitizer.bypassSecurityTrustResourceUrl((isAsset ? this.baseURL : this.servidorURL + "/") + resource);
+    return this.isEmbedded ? this.urlBuffer[key] : (!isAsset && !resource.startsWith("http") ? this.servidorURL + "/" + resource : resource);
   }
 
   public get isFirefox(): boolean {

@@ -1,0 +1,4 @@
+<toolbar [title]="documento?.titulo || ''" [buttons]="buttons"></toolbar>
+<separator></separator>
+<document-preview *ngIf="documento?.tipo == 'HTML'" [html]="documento?.conteudo || ''" emptysDocumentMensage="Vazio"></document-preview>
+<!--toolbar [buttons]="footerButtons"></toolbar/-->

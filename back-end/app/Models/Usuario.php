@@ -37,6 +37,7 @@ use App\Traits\LogChanges;
 use App\Traits\HasPermissions;
 use App\Services\UsuarioService;
 use Throwable;
+use App\Exceptions\ServerException;
 
 class UsuarioConfig {}
 
@@ -73,12 +74,21 @@ class Usuario extends Authenticatable
         //'foto_google', /* text; */// Foto do G-Suit (Google)
         //'foto_microsoft', /* text; */// Foto do Azure (Microsoft)
         //'foto_firebase', /* text; */// Foto do Firebase (Google, Facebook, Instagram, Twiter, etc...)
-        //'id_super', /* text; */// Id do usuário no SUPER
+        //'id_sei', /* text; */// Id do usuário no SEI
         //'vinculacao', /* enum('SERVIDOR_EFETIVO','SERVIDOR_COMISSIONADO','EMPREGADO','CONTRATADO_TEMPORARIO'); NOT NULL; DEFAULT: 'SERVIDOR_EFETIVO'; */// Vínculo do usuário com a administração
         //'metadados', /* json; */// Metadados do usuário
     ];
 
-    //public $fillable_changes = ["unidades_integrante"];
+    public function proxyFill(&$dataOrEntity, $unidade, $action) {
+        $this->fill($dataOrEntity);
+        if($action == 'INSERT'){
+            $this->save();
+            $vinculoLotacao = $this->unidadesIntegrante()->save(new UnidadeIntegrante(['unidade_id' => $dataOrEntity['lotacao_id']]));
+            $lotacao = $vinculoLotacao->atribuicoes()->save(new UnidadeIntegranteAtribuicao(['atribuicao' => 'LOTADO']));
+            if(!$vinculoLotacao || !$lotacao) throw new ServerException("ValidateLotacao", "Erro com a definição da lotação. Usuário não cadastrado!");
+        }
+        return $this;
+    }
 
     protected $keyType = 'string';
 
@@ -104,10 +114,10 @@ class Usuario extends Authenticatable
         'notificacoes' => AsJson::class
     ];
 
-    public $delete_cascade = ['favoritos', 'vinculosUnidades'];
+    public $delete_cascade = ['favoritos', 'unidadesIntegrante'];
 
     // hasOne
-    public function gerenciaEntidade() { return $this->hasOne(Entidade::class, 'gestor_id'); } 
+    public function gerenciaEntidade() { return $this->hasOne(Entidade::class, 'gestor_id'); }
     public function gerenciaSubstitutaEntidade() { return $this->hasOne(Entidade::class, 'gestor_substituto_id'); }
     // hasMany
     public function afastamentos() { return $this->hasMany(Afastamento::class); }
@@ -115,10 +125,10 @@ class Usuario extends Authenticatable
     public function consolidacoes() { return $this->hasMany(PlanoTrabalhoConsolidacao::class, 'avaliador_id'); }
     public function assinaturas() { return $this->hasMany(DocumentoAssinatura::class); }
     public function avaliacoes() { return $this->hasMany(Avaliacao::class); }
-    public function atividades() { return $this->hasMany(Atividade::class); } 
-    public function atividadesDemandadas() { return $this->hasMany(Atividade::class, 'demandante_id'); } 
-    public function tarefasAtividade() { return $this->hasMany(AtividadeTarefa::class); } 
-    public function tarefasProjeto() { return $this->hasMany(ProjetoTarefa::class); } 
+    public function atividades() { return $this->hasMany(Atividade::class); }
+    public function atividadesDemandadas() { return $this->hasMany(Atividade::class, 'demandante_id'); }
+    public function tarefasAtividade() { return $this->hasMany(AtividadeTarefa::class); }
+    public function tarefasProjeto() { return $this->hasMany(ProjetoTarefa::class); }
     public function favoritos() { return $this->hasMany(Favorito::class); }
     public function comentarios() { return $this->hasMany(Comentario::class); }
     public function projetos() { return $this->hasMany(Projeto::class); }
@@ -130,8 +140,8 @@ class Usuario extends Authenticatable
     public function planosTrabalho() { return $this->hasMany(PlanoTrabalho::class); }
     public function participacoesProgramas() { return $this->hasMany(ProgramaParticipante::class); }
     public function integracoes() { return $this->hasMany(Integracao::class); }
-    public function planosEntregaCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }  
-    public function planosTrabalhoCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); } 
+    public function planosEntregaCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }
+    public function planosTrabalhoCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }
     public function unidadesIntegrante() { return $this->hasMany(UnidadeIntegrante::class); }
     public function statusHistorico() { return $this->hasMany(StatusJustificativa::class, "usuario_id"); }
     // belongsTo
@@ -147,7 +157,7 @@ class Usuario extends Authenticatable
     public function areasTrabalho() { return $this->hasMany(UnidadeIntegrante::class)->has('atribuicoes'); }
     public function colaboracao() { return $this->hasOne(UnidadeIntegrante::class)->has('colaborador'); } // unidade com a qual possui TCR
     // Mutattors e Casts
-    public function getUrlFotoAttribute($value) 
+    public function getUrlFotoAttribute($value)
     {
         $usuarioService = new UsuarioService();
         $url = "/assets/images/profile.png";
@@ -176,17 +186,17 @@ class Usuario extends Authenticatable
     {
         $this->attributes['notificacoes'] = json_encode($value);
     }
-    public function getChangesAttribute() 
+    public function getChangesAttribute()
     {
-        return Change::where('user_id', $this->id)->get()->toArray() ?? []; 
+        return Change::where('user_id', $this->id)->get()->toArray() ?? [];
         //Não pode ser usado um relacionamento do Laravel porque as tabelas estão em bancos distintos
     }
     public function getUnidadesAtribuicoesAttribute()
-    { 
+    {
         $result = [];
         foreach($this->unidadesIntegrante as $vinculo){
             $atribuicoes = $vinculo->atribuicoes->toArray();
-            if(count($atribuicoes) > 0) $result[$vinculo->unidade_id] = array_map(fn($a) => $a["atribuicao"], $atribuicoes); 
+            if(count($atribuicoes) > 0) $result[$vinculo->unidade_id] = array_map(fn($a) => $a["atribuicao"], $atribuicoes);
         }
         return $result;
     }

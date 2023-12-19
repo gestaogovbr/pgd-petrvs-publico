@@ -12,6 +12,7 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { RouteMetadata } from 'src/app/services/navigate.service';
 import { AtividadeListBase } from '../atividade-list-base';
 import { BadgeButton } from 'src/app/components/badge/badge.component';
+import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 
 export type StatusDockerConfig = {
   naoIniciado: boolean, 
@@ -32,6 +33,8 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
   @ViewChild("dockerPausado", {static: false}) dockerPausado?: DockerComponent;
   @ViewChild("dockerIniciado", {static: false}) dockerIniciado?: DockerComponent;
   @ViewChild("dockerConcluido", {static: false}) dockerConcluido?: DockerComponent;
+  @ViewChild('planoEntrega', { static: false }) public planoEntrega?: InputSelectComponent;
+  @ViewChild('planoEntregaEntrega', { static: false }) public planoEntregaEntrega?: InputSelectComponent;
   @Input() snapshot?: ActivatedRouteSnapshot;
   @Input() fixedFilter?: any[];
 
@@ -51,6 +54,8 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
   public kanbanQueryOptions: QueryOptions = {};
   public formEdit: FormGroup;
   public etiquetasEdit: LookupItem[] = [];
+  public planosEntregas: LookupItem[] = [];
+  public planosEntregasEntregas: LookupItem[] = [];
   public toolbarButtons: ToolbarButton[] = [
     {
       icon: "bi bi-search",
@@ -103,7 +108,9 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
       status: {default: ""},
       usarEtiquetas: {default: !!this.usuarioConfig?.kanban_usar_etiquetas},
       resumido: {default: !!this.usuarioConfig?.kanban_resumido},
-      etiquetas: {default: []}
+      etiquetas: {default: []},
+      plano_entrega_id: { default: null},
+      plano_entrega_entrega_id: { default: null},
     });
     this.formEdit = this.fh.FormBuilder({
       etiqueta: {default: null}
@@ -481,6 +488,12 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
     if(form.status?.length && !result.find(x => x[0] == "status")) {
       result.push(["status", "==", form.status]);
     }
+    if (form.plano_entrega_id?.length) {
+      result.push(["plano_entrega_id", "==", form.plano_entrega_id]);
+    }
+    if (form.plano_entrega_entrega_id?.length) {
+      result.push(["plano_entrega_entrega_id", "==", form.plano_entrega_entrega_id]);
+    }
     result.push(["data_arquivamento", "==", null]); /* Não trazer as arquivadas */
 
     return result;
@@ -493,6 +506,8 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
     this.filter!.controls.unidades_subordinadas.setValue(false);
     this.filter!.controls.unidade_id.setValue("");
     this.filter!.controls.numero_processo.setValue("");
+    this.filter!.controls.plano_entrega_id.setValue(null);
+    this.filter!.controls.plano_entrega_entrega_id.setValue(null);
     if(!this.fixedFilter?.length || !this.fixedFilter.find(x => x[0] == "status")) this.filter!.controls.status.setValue(null);
     this.filter!.controls.etiquetas.setValue([]);
     super.filterClear(filter);
@@ -506,5 +521,28 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
     this.saveEtiquetasUsuarioConfig();
   }
 
+  public onEntregaClick(atividade: Atividade){
+    this.go.navigate({route: ['gestao', 'atividade', atividade.id, 'hierarquia']}, {metadata: {atividade: atividade}})
+  }
+
+  public async onUnidadeChange(event: Event) {
+    let unidade_selecionada = await this.unidadeDao.getById(this.filter?.controls.unidade_id.value, ['planos_entrega']);
+    this.planosEntregas = unidade_selecionada?.planos_entrega?.map(x => Object.assign({
+      key: x.id,
+      value: x.nome
+    })) || [];
+  }
+
+  public async onPlanoEntregaChange(event: Event) {
+    let plano_entrega_selecionado: any[] = [];
+    let unidade_selecionada = await this.unidadeDao.getById(this.filter?.controls.unidade_id.value, ['planos_entrega.entregas']);
+    unidade_selecionada?.planos_entrega?.forEach(element => {
+      if (element.id == this.filter!.controls.plano_entrega_id.value) plano_entrega_selecionado.push(element.entregas);
+    });
+    this.planosEntregasEntregas = plano_entrega_selecionado[0]!.map((x: { id: any; descricao: any; }) => Object.assign({
+      key: x.id,
+      value: x.descricao
+    })) || [];
+  }
 }
 

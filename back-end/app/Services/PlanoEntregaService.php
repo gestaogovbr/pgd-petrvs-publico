@@ -11,7 +11,6 @@ use App\Models\Programa;
 use App\Models\TipoAvaliacao;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 use DateTime;
 use Throwable;
 
@@ -58,7 +57,7 @@ class PlanoEntregaService extends ServiceBase
     }
   }
 
-  public function arquivar($data, $unidade, $request)
+  public function arquivar($data, $unidade)
   { // ou 'desarquivar'
     try {
       DB::beginTransaction();
@@ -70,7 +69,7 @@ class PlanoEntregaService extends ServiceBase
           "data_arquivamento" => $data["arquivar"] ? $this->unidadeService->hora($unidadeLogin->id) : null
         ], $unidade, false);
       } else {
-        throw new ServerException("ValidatePlanoTrabalho", "Plano de Entrega não encontrado!");
+        throw new ServerException("ValidatePlanoEntrega", "Plano de Entrega não encontrado!");
       }
       DB::commit();
     } catch (Throwable $e) {
@@ -141,11 +140,10 @@ class PlanoEntregaService extends ServiceBase
 
   public function cancelarAvaliacao($data, $unidade)
   {
-
     try {
       DB::beginTransaction();
       $planoEntrega = PlanoEntrega::find($data["id"]);
-      $this->status->atualizaStatus($planoEntrega, 'CONCLUIDO', 'A avaliação do plano de entregas foi cancelada nesta data.');
+      $this->status->atualizaStatus($planoEntrega, 'CONCLUIDO', $data["justificativa"]);
       DB::commit();
     } catch (Throwable $e) {
       DB::rollback();
@@ -157,11 +155,11 @@ class PlanoEntregaService extends ServiceBase
   public function cancelarConclusao($data, $unidade)
   {
     // (RN_PENT_J) Uma Unidade de execução poderá ter mais de um Plano de Entregas com status 'HOMOLOGANDO' e 'ATIVO', desde que sejam para períodos diferentes;
-    $this->verificaUnicidadeMesmaUnidade('ATIVO', $data);
+    $this->verificaUnicidadeMesmaUnidade('ATIVO', $data, 'o cancelamento da conclusão');
     try {
       DB::beginTransaction();
       $planoEntrega = PlanoEntrega::find($data["id"]);
-      $this->status->atualizaStatus($planoEntrega, 'ATIVO', 'A conclusão do plano de entregas foi cancelada nesta data.');
+      $this->status->atualizaStatus($planoEntrega, 'ATIVO', $data["justificativa"]);
       DB::commit();
     } catch (Throwable $e) {
       DB::rollback();
@@ -173,11 +171,11 @@ class PlanoEntregaService extends ServiceBase
   public function cancelarHomologacao($data, $unidade)
   {
     // (RN_PENT_J) Uma Unidade de execução poderá ter mais de um Plano de Entregas com status 'HOMOLOGANDO' e 'ATIVO', desde que sejam para períodos diferentes;
-    $this->verificaUnicidadeMesmaUnidade('HOMOLOGANDO', $data);
+    $this->verificaUnicidadeMesmaUnidade('HOMOLOGANDO', $data, 'o cancelamento da homologação');
     try {
       DB::beginTransaction();
       $planoEntrega = PlanoEntrega::find($data["id"]);
-      $this->status->atualizaStatus($planoEntrega, 'HOMOLOGANDO', 'A homologação do plano de entregas foi cancelada nesta data.');
+      $this->status->atualizaStatus($planoEntrega, 'HOMOLOGANDO', $data["justificativa"]);
       DB::commit();
     } catch (Throwable $e) {
       DB::rollback();
@@ -188,11 +186,15 @@ class PlanoEntregaService extends ServiceBase
 
   public function cancelarPlano($data, $unidade)
   {
-
     try {
       DB::beginTransaction();
       $planoEntrega = PlanoEntrega::find($data["id"]);
-      $this->status->atualizaStatus($planoEntrega, 'CANCELADO', 'O Plano de entregas foi cancelado nesta data.');
+      if(!empty($planoEntrega)){
+        $this->status->atualizaStatus($planoEntrega, 'CANCELADO', $data["justificativa"]);
+        $this->arquivar($data, $unidade);
+      }else {
+        throw new ServerException("ValidatePlanoEntrega", "Plano de Entrega não encontrado!");
+      }
       DB::commit();
     } catch (Throwable $e) {
       DB::rollback();
@@ -206,7 +208,7 @@ class PlanoEntregaService extends ServiceBase
     try {
       DB::beginTransaction();
       $planoEntrega = PlanoEntrega::find($data["id"]);
-      $this->status->atualizaStatus($planoEntrega, 'CONCLUIDO', 'O plano de entregas foi concluído nesta data.');
+      $this->status->atualizaStatus($planoEntrega, 'CONCLUIDO', $data["justificativa"]);
       DB::commit();
     } catch (Throwable $e) {
       DB::rollback();
@@ -229,11 +231,11 @@ class PlanoEntregaService extends ServiceBase
   public function homologar($data, $unidade)
   {
     // (RN_PENT_J) Uma Unidade de execução poderá ter mais de um Plano de Entregas com status 'HOMOLOGANDO' e 'ATIVO', desde que sejam para períodos diferentes;
-    $this->verificaUnicidadeMesmaUnidade('ATIVO', $data);
+    $this->verificaUnicidadeMesmaUnidade('ATIVO', $data, 'a homologação');
     try {
       DB::beginTransaction();
       $planoEntrega = PlanoEntrega::find($data["id"]);
-      $this->status->atualizaStatus($planoEntrega, 'ATIVO', 'O plano de entregas foi homologado nesta data.');
+      $this->status->atualizaStatus($planoEntrega, 'ATIVO', $data["justificativa"]);
       DB::commit();
     } catch (Throwable $e) {
       DB::rollback();
@@ -268,11 +270,11 @@ class PlanoEntregaService extends ServiceBase
   public function liberarHomologacao($data, $unidade)
   {
     // (RN_PENT_J) Uma Unidade de execução poderá ter mais de um Plano de Entregas com status 'HOMOLOGANDO' e 'ATIVO', desde que sejam para períodos diferentes;
-    $this->verificaUnicidadeMesmaUnidade('HOMOLOGANDO', $data);
+    $this->verificaUnicidadeMesmaUnidade('HOMOLOGANDO', $data, 'a liberação para a homologação');
     try {
       DB::beginTransaction();
       $planoEntrega = PlanoEntrega::find($data["id"]);
-      $this->status->atualizaStatus($planoEntrega, 'HOMOLOGANDO', 'O plano de entregas foi liberado para homologação nesta data.');
+      $this->status->atualizaStatus($planoEntrega, 'HOMOLOGANDO', $data["justificativa"]);
       DB::commit();
     } catch (Throwable $e) {
       DB::rollback();
@@ -301,12 +303,10 @@ class PlanoEntregaService extends ServiceBase
 
   public function proxyQuery($query, &$data)
   {
-    //  (RI_PENT_5) Garante que, se não houver um interesse específico na data de arquivamento, só retornarão os planos de entrega não arquivados. Se não houver interesse em um status
-    //  específico, incluir todos os status exceto os cancelados.
+    $where = [];
+    //  (RI_PENT_C) Garante que, se não houver um interesse específico na data de arquivamento, só retornarão os planos de entrega não arquivados. 
     $arquivados = $this->extractWhere($data, "incluir_arquivados");
     if (empty($arquivados) || !$arquivados[2]) $data["where"][] = ["data_arquivamento", "==", null];
-    $status = $this->extractWhere($data, "status");
-    $data["where"][] = empty($status) ? ["status", "!=", 'CANCELADO'] : $status;
     // (RI_PENT_D) Na visualização de Avaliação, deverá trazer a unidade ao qual o usuário é gestor e todas as suas subordinadas imediatas.
     $filhas = $this->extractWhere($data, "unidades_filhas");
     $unidadeId = $this->extractWhere($data, "unidade_id");
@@ -318,7 +318,32 @@ class PlanoEntregaService extends ServiceBase
         $data["where"][] = $unidadeId;
       }
     }
-    return $data;
+    foreach ($data["where"] as $condition) {
+      if (is_array($condition) && $condition[0] == "data_filtro") {
+        $dataInicio = $this->getFilterValue($data["where"], "data_filtro_inicio");
+        $dataFim = $this->getFilterValue($data["where"], "data_filtro_fim");
+        switch ($condition[2]) {
+          case "VIGENTE":
+            $where[] = ["data_inicio", "<=", $dataFim];
+            $where[] = ["data_fim", ">=", $dataInicio];
+            break;
+          case "NAOVIGENTE":;
+            $where[] = ["OR", ["data_inicio", ">", $dataFim], ["data_fim", "<", $dataInicio]];
+            break;
+          case "INICIAM":;
+            $where[] = ["data_inicio", ">=", $dataInicio];
+            $where[] = ["data_inicio", "<=", $dataFim];
+            break;
+          case "FINALIZAM":;
+            $where[] = ["data_fim", ">=", $dataInicio];
+            $where[] = ["data_fim", "<=", $dataFim];
+            break;
+        }
+      } else if (!(is_array($condition) && in_array($condition[0], ["data_filtro_inicio", "data_filtro_fim"]))) {
+        array_push($where, $condition);
+      }
+    }
+    $data["where"] = $where;
   }
 
   public function proxyRows($rows)
@@ -351,11 +376,11 @@ class PlanoEntregaService extends ServiceBase
   public function reativar($data, $unidade)
   {
     // (RN_PENT_J) Uma Unidade de execução poderá ter mais de um Plano de Entregas com status 'HOMOLOGANDO' e 'ATIVO', desde que sejam para períodos diferentes;
-    $this->verificaUnicidadeMesmaUnidade('ATIVO', $data);
+    $this->verificaUnicidadeMesmaUnidade('ATIVO', $data, 'a reativação');
     try {
       DB::beginTransaction();
       $planoEntrega = PlanoEntrega::find($data["id"]);
-      $this->status->atualizaStatus($planoEntrega, 'ATIVO', 'O plano de entregas foi reativado nesta data.');
+      $this->status->atualizaStatus($planoEntrega, 'ATIVO', $data["justificativa"]);
       DB::commit();
     } catch (Throwable $e) {
       DB::rollback();
@@ -366,11 +391,10 @@ class PlanoEntregaService extends ServiceBase
 
   public function retirarHomologacao($data, $unidade)
   {
-
     try {
       DB::beginTransaction();
       $planoEntrega = PlanoEntrega::find($data["id"]);
-      $this->status->atualizaStatus($planoEntrega, 'INCLUIDO', 'O plano de entregas foi retirado de homologação nesta data.');
+      $this->status->atualizaStatus($planoEntrega, 'INCLUIDO', $data["justificativa"]);
       DB::commit();
     } catch (Throwable $e) {
       DB::rollback();
@@ -385,7 +409,7 @@ class PlanoEntregaService extends ServiceBase
     try {
       DB::beginTransaction();
       $planoEntrega = PlanoEntrega::find($data["id"]);
-      $this->status->atualizaStatus($planoEntrega, 'SUSPENSO', 'O plano de entregas foi suspenso nesta data.');
+      $this->status->atualizaStatus($planoEntrega, 'SUSPENSO', $data["justificativa"]);
       DB::commit();
     } catch (Throwable $e) {
       DB::rollback();
@@ -414,10 +438,10 @@ class PlanoEntregaService extends ServiceBase
     $condition1 = $condicoes['gestorUnidadePlano'] || $condicoes['gestorUnidadePaiUnidadePlano'];
     $condition2 = !empty($dataOrEntity['unidade']['unidade_pai_id']) && UsuarioService::isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $dataOrEntity['unidade']['unidade_pai_id']) && $usuario->hasPermissionTo('MOD_PENT_EDT_FLH');
     $condition3 = $usuario->hasPermissionTo('MOD_PENT_QQR_UND');
-    if (!$condition3 && !($condition1 || $condition2)) throw new ServerException("ValidateUsuario", "\nO usuário logado precisa atender a pelo menos uma das seguintes condições:\n" .
+    if (!$condition3 && !($condition1 || $condition2)) throw new ServerException("ValidateUsuario", "O usuário logado precisa atender a pelo menos uma das seguintes condições:\n" .
       "1. ser um dos gestores da unidade do plano ou da sua unidade-pai;\n" .
       "2. ser homologador de plano de entrega da unidade-pai do plano e possuir a capacidade MOD_PENT_EDT_FLH;\n" .
-      "3. possuir a capacidade MOD_PENT_QQR_UND.\n[RN_PENT_Z]");
+      "3. possuir a capacidade MOD_PENT_QQR_UND.\n[ver RN_PENT_Z]");
     if (!$this->verificaDuracaoPlano($dataOrEntity) || !$this->verificaDatasEntregas($dataOrEntity)) throw new ServerException("ValidatePlanoEntrega", "O prazo das datas não satisfaz a duração estipulada no programa.");
     if ($action == ServiceBase::ACTION_EDIT) {
       /*  
@@ -429,26 +453,26 @@ class PlanoEntregaService extends ServiceBase
             - o Plano de Entregas precisa estar com o status ATIVO, a Unidade do plano precisa ser a Unidade de lotação do usuário logado, e ele possuir a capacidade "MOD_PENT_EDT_ATV_HOMOL" (RN_PENT_AE) ou "MOD_PENT_EDT_ATV_ATV" (RN_PENT_AF); ou
             - o usuário precisa possuir também a capacidade "MOD_PENT_QQR_UND" (independente de qualquer outra condição);
       */
-      if (!$condicoes['planoValido']) throw new ServerException("ValidatePlanoEntrega", "O plano de entregas não é válido, ou seja, foi apagado, cancelado ou arquivado. [RN_PENT_L]");
+      if (!$condicoes['planoValido']) throw new ServerException("ValidatePlanoEntrega", "O plano de entregas não é válido, ou seja, foi apagado, cancelado ou arquivado.\n[ver RN_PENT_L]");
       $condition1 = ($condicoes['planoIncluido'] || $condicoes['planoHomologando']) && ($condicoes['gestorUnidadePlano'] || $condicoes['unidadePlanoEhLotacao']);
       $condition2 = $usuario->hasPermissionTo("MOD_PENT_EDT_FLH") && $condicoes['gestorUnidadePaiUnidadePlano'];
       $condition3 = !empty($data['entity']['unidade']['unidade_pai_id']) && UsuarioService::isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $data['entity']['unidade']['unidade_pai_id']);
       $condition4 = $condicoes['planoAtivo'] && $condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo(['MOD_PENT_EDT_ATV_HOMOL', 'MOD_PENT_EDT_ATV_ATV']);
       $condition5 = $usuario->hasPermissionTo('MOD_PENT_QQR_UND');
-      if (!$condition5 && !($condition1 || $condition2 || $condition3 || $condition4)) throw new ServerException("ValidatePlanoEntrega", "\nAo menos uma das seguintes condições precisa ser atendida:\n" .
+      if (!$condition5 && !($condition1 || $condition2 || $condition3 || $condition4)) throw new ServerException("ValidatePlanoEntrega", "Ao menos uma das seguintes condições precisa ser atendida:\n" .
         "1. o plano de entregas estar com o status INCLUIDO ou HOMOLOGANDO, e o usuário logado ser um dos gestores da unidade executora ou nela ser lotado;\n" .
         "2. o usuário logado possuir a capacidade MOD_PENT_EDT_FLH e ser um dos gestores da unidade-pai do plano de entregas;\n" .
         "3. o usuário logado ser homologador de plano de entregas da unidade-pai do plano de entregas;\n" .
         "4. o plano de entregas estar com o status ATIVO, o usuário logado ser lotado na sua unidade executora e possuir a capacidade MOD_PENT_EDT_ATV_HOMOL ou MOD_PENT_EDT_ATV_ATV;\n" .
-        "5. o usuário logado possuir a capacidade MOD_PENT_QQR_UND.\n[RN_PENT_L]");
+        "5. o usuário logado possuir a capacidade MOD_PENT_QQR_UND.\n[ver RN_PENT_L]");
       /* (RN_PENT_K)
           Após criado um plano de entregas, os seguintes campos não poderão mais ser alterados: unidade_id, programa_id;
       */
       $planoEntrega = PlanoEntrega::find($dataOrEntity["id"]);
-      if ($dataOrEntity["unidade_id"] != $planoEntrega->unidade_id) throw new ServerException("ValidatePlanoEntrega", "Depois de criado um Plano de Entregas, não é possível alterar a sua Unidade. [RN_PENT_K]");
-      if ($dataOrEntity["programa_id"] != $planoEntrega->programa_id) throw new ServerException("ValidatePlanoEntrega", "Depois de criado um Plano de Entregas, não é possível alterar o seu Programa. [RN_PENT_K]");
+      if ($dataOrEntity["unidade_id"] != $planoEntrega->unidade_id) throw new ServerException("ValidatePlanoEntrega", "Depois de criado um Plano de Entregas, não é possível alterar a sua Unidade.\n[ver RN_PENT_K]");
+      if ($dataOrEntity["programa_id"] != $planoEntrega->programa_id) throw new ServerException("ValidatePlanoEntrega", "Depois de criado um Plano de Entregas, não é possível alterar o seu Programa.\n[ver RN_PENT_K]");
       // (RN_PENT_J) Uma Unidade de execução poderá ter mais de um Plano de Entregas com status 'HOMOLOGANDO' e 'ATIVO', desde que sejam para períodos diferentes;
-      if ($condicoes['planoAtivo'] && $condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo('MOD_PENT_EDT_ATV_HOMOL') && !$usuario->hasPermissionTo('MOD_PENT_EDT_ATV_ATV')) $this->verificaUnicidadeMesmaUnidade('HOMOLOGANDO', $dataOrEntity);
+      if ($condicoes['planoAtivo'] && $condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo('MOD_PENT_EDT_ATV_HOMOL') && !$usuario->hasPermissionTo('MOD_PENT_EDT_ATV_ATV')) $this->verificaUnicidadeMesmaUnidade('HOMOLOGANDO', $dataOrEntity, 'a alteração');
     }
   }
 
@@ -489,9 +513,9 @@ class PlanoEntregaService extends ServiceBase
   }
 
   /**
-   * Verifica se há apenas um plano de entregas com o status HOMOLOGANDO ou ATIVO em uma mesma unidade executora, para um mesmo período de vigência [RN_PENT_J]
+   * Verifica se há apenas um plano de entregas com o status HOMOLOGANDO ou ATIVO em uma mesma unidade executora, para um mesmo período de vigência [ver RN_PENT_J]
    */
-  public function verificaUnicidadeMesmaUnidade($status, $data)
+  public function verificaUnicidadeMesmaUnidade($status, $data, $msg)
   {
     $planoEntrega = PlanoEntrega::find($data["id"]);
     $planos = PlanoEntrega::where("unidade_id", $planoEntrega->unidade_id)->where("status", $status)->get();
@@ -500,10 +524,11 @@ class PlanoEntregaService extends ServiceBase
         UtilService::intersect($plano->data_inicio, $plano->data_fim, $planoEntrega->data_inicio, $planoEntrega->data_fim) &&
         $planoEntrega->id != $plano->id
       ) {
-        throw new ServerException("ValidatePlanoEntrega", "Com base na capacidade do usuário logado (" . ($status == 'HOMOLOGANDO' ? "MOD_PENT_EDT_ATV_HOMOL" : "MOD_PENT_EDT_ATV_ATV)") .
-          ", a alteração do plano retornaria o seu status para " . ($status == 'HOMOLOGANDO' ? "AGUARDANDO HOMOLOGAÇÃO" : "ATIVO") .
-          ", mas seu período de vigência (" . UtilService::getDateTimeFormatted($planoEntrega->data_inicio) . " a " . UtilService::getDateTimeFormatted($planoEntrega->data_fim) .
-          ") entraria em conflito com o do plano de entregas #" . $plano->numero . " (" . UtilService::getDateTimeFormatted($plano->data_inicio) . " a " . UtilService::getDateTimeFormatted($plano->data_fim) . "). [RN_PENT_J]");
+        throw new ServerException("ValidatePlanoEntrega", "Não é possível realizar " . $msg . " do Plano de Entregas porque este assumiria o status de " .
+          ($status == 'HOMOLOGANDO' ? "AGUARDANDO HOMOLOGAÇÃO" : "ATIVO") . ", e seu período de vigência (De " . UtilService::getDateFormatted($planoEntrega->data_inicio) . " a " . 
+          UtilService::getDateFormatted($planoEntrega->data_fim) . ") entraria em conflito com a vigência do Plano de Entregas #" . $plano->numero . 
+          " (De " . UtilService::getDateFormatted($plano->data_inicio) . " a " . UtilService::getDateFormatted($plano->data_fim) . "), que se encontra com o mesmo " .
+          " status e pertence à mesma Unidade (" . $plano->unidade->sigla . ").\n[vide RN_PENT_J].");
       }
     }
   }

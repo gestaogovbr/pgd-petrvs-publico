@@ -1,15 +1,32 @@
 import { HttpClient, HttpErrorResponse, HttpXsrfTokenExtractor } from '@angular/common/http';
 import { Injectable, Injector } from '@angular/core';
-import { Observable, ObservableInput, throwError } from 'rxjs';
+import { Observable, ObservableInput, Subject, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { IIndexable } from '../models/base.model';
 import { AuthService } from './auth.service';
 import { GlobalsService } from './globals.service';
+import { SafeUrl } from '@angular/platform-browser';
+
+export type BatchActionMethod = "POST" | "GET";
+
+export type BatchAction = {
+  route: string,
+  method: BatchActionMethod,
+  data: any,
+  response: Subject<any>
+}
+
+export type Batch = {
+  sameTransaction: boolean,
+  actions: BatchAction[]
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class ServerService {
+
+  public static BATCH_TIMEOUT = 5000;
 
   private _auth?: AuthService;
   public get auth(): AuthService { this._auth = this._auth || this.injector.get<AuthService>(AuthService); return this._auth }
@@ -20,7 +37,58 @@ export class ServerService {
   private _tokenExtractor?: HttpXsrfTokenExtractor;
   public get tokenExtractor(): HttpXsrfTokenExtractor { this._tokenExtractor = this._tokenExtractor || this.injector.get<HttpXsrfTokenExtractor>(HttpXsrfTokenExtractor); return this._tokenExtractor }
 
+  public batch?: Batch;
+
+  private _batchTimeout?: number;
+
   constructor(public injector: Injector) { }
+
+  public startBatch(sameTransaction: boolean = true, ignoreStarted: boolean = false) {
+    if(!ignoreStarted && typeof this.batch != "undefined") throw new Error("Already exists a batch started");
+    this.batch = {
+      sameTransaction: sameTransaction,
+      actions: []
+    };
+    //@ts-ignore
+    this._batchTimeout = setTimeout(() => {
+      this.endBatch();
+    }, ServerService.BATCH_TIMEOUT);
+  }
+
+  public endBatch() {
+    if(typeof this.batch == "undefined") throw new Error("Batch not started");
+    let params = {
+      sameTransaction: this.batch.sameTransaction,
+      actions: this.batch.actions.map(x => Object.assign({}, {
+        route: x.route,
+        method: x.method,
+        data: x.data
+      }))
+    };
+    /* Clean */
+    let batch = this.batch;
+    this.batch = undefined;
+    clearTimeout(this._batchTimeout);
+    /* X-XSRF-TOKEN add from requestOptions because Angular do not add automatic */
+    let request: Observable<any> = this.http.post(this.gb.servidorURL + '/api/batch', params, this.requestOptions());
+    /* Error handle */
+    request.pipe(catchError((err: any, caught: Observable<Object>): ObservableInput<any> => {
+      let subjects = batch.actions.map(x => x.response);
+      subjects.forEach((x, i) => {
+        x.error(err);
+      });
+      return this.errorHandle(err, caught);
+    }));
+    /* Process response */
+    request.subscribe(response => {
+      let subjects = batch.actions.map(x => x.response);
+      subjects.forEach((x, i) => {
+        x.next(response.error ? response : response.returns[i]);
+        x.complete();
+      });
+    });
+    return request;
+  }
 
   public errorHandle(err: any, caught: Observable<Object>): ObservableInput<any> {
     const httpError = err instanceof HttpErrorResponse;
@@ -52,28 +120,51 @@ export class ServerService {
     }
     options.headers["X-PETRVS"] = btoa(JSON.stringify(xPetrvs));
     options.headers["X-ENTIDADE"] = this.gb.ENTIDADE;
-
     return options;
   }
 
   public get(url: string): Observable<any> {
-    /* X-XSRF-TOKEN add from requestOptions because Angular do not add automatic */
-    let request = this.http.get(this.gb.servidorURL + '/' + url, this.requestOptions());
-    /* Error handle */
-    request.pipe(catchError(this.errorHandle.bind(this)));
-    return request;
+    let result;
+    if(typeof this.batch != "undefined") {
+      let action: BatchAction = {
+        route: this.gb.servidorURL + '/' + url,
+        method: "GET",
+        data: null,
+        response: new Subject<any>()
+      };
+      this.batch.actions.push(action);
+      result = action.response.asObservable();
+    } else {
+      /* X-XSRF-TOKEN add from requestOptions because Angular do not add automatic */
+      result = this.http.get(this.gb.servidorURL + '/' + url, this.requestOptions());
+      /* Error handle */
+      result.pipe(catchError(this.errorHandle.bind(this)));
+    }
+    return result;
   }
 
   public post(url: string, params: any): Observable<any> {
-    /* X-XSRF-TOKEN add from requestOptions because Angular do not add automatic */
-    let request = this.http.post(this.gb.servidorURL + '/' + url, params, this.requestOptions());
-    /* Error handle */
-    request.pipe(catchError(this.errorHandle.bind(this)));
-    return request;
+    let result;
+    if(typeof this.batch != "undefined") {
+      let action: BatchAction = {
+        route: this.gb.servidorURL + '/' + url,
+        method: "POST",
+        data: params,
+        response: new Subject<any>()
+      };
+      this.batch.actions.push(action);
+      result = action.response.asObservable();
+    } else {
+      /* X-XSRF-TOKEN add from requestOptions because Angular do not add automatic */
+      result = this.http.post(this.gb.servidorURL + '/' + url, params, this.requestOptions());
+      /* Error handle */
+      result.pipe(catchError(this.errorHandle.bind(this)));
+    }
+    return result;
   }
 
-  public getSvg(svg: string): Observable<any> {
-    let request = this.http.get(svg, { responseType: 'text' })
+  public getSvg(svg: string | SafeUrl): Observable<any> {
+    let request = this.http.get(svg as string, { responseType: 'text' })
     request.pipe(catchError(this.errorHandle.bind(this)));
     return request;
   }

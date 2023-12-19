@@ -30,7 +30,7 @@ export class PlanoTrabalhoEntregaAtividadesComponent extends PageFrameBase {
   constructor(public injector: Injector){
     super(injector);
     this.AtividadeDao = injector.get<AtividadeDaoService>(AtividadeDaoService);
-    this.join = ['unidade', 'usuario','demandante']
+    this.join = ['unidade', 'usuario','demandante', 'reacoes.usuario:id,nome,apelido']
   }
 
   ngOnInit(): void {
@@ -40,7 +40,7 @@ export class PlanoTrabalhoEntregaAtividadesComponent extends PageFrameBase {
 
   public loadData() {
     this.loader = true;
-    this.AtividadeDao.query({where: [["plano_trabalho_entrega_id", "==", this._entregaId]], join: this.join}).asPromise().then(response => {
+    this.AtividadeDao.query({where: [["plano_trabalho_entrega_id", "==", this._entregaId],["unidades_subordinadas", "==", true]], join: this.join}).asPromise().then(response => {
       this.items = response
     }).finally(()=> {
       this.loader = false;

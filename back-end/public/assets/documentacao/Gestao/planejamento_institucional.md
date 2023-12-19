@@ -32,15 +32,15 @@ Campos obrigatórios:
 
 ## REGRAS DE NEGÓCIO
 
-(RN_PLAN_INST_A) Para a criação de um planejamento institucional são informações obrigatórias: nome, missão, visão, data de início, unidade responsável e ao menos um dos valores institucionais.
+(RN_PLAN_INST_A) Para a criação de um planejamento institucional são informações obrigatórias: nome, missão, visão, data de início, data de fim, unidade responsável e ao menos um dos valores institucionais.
 (RN_PLAN_INST_B) Não pode existir mais de um planejamento institucional para uma mesma unidade em um mesmo período de tempo.
 (RN_PLAN_INST_C) Um Planejamento Institucional pode ser ou não vinculado ao planejamento institucional de uma unidade hierarquicamente superior.
+(RN_PLAN_INST_D) Cada objetivo de um Planejamento Institucional deve estar associado a um eixo temático.
+(RN_PLAN_INST_E) Um objetivo de um Planejamento Institucional pode agrupar outros objetivos do mesmo Planejamento (um objetivo pode ser objetivo-pai de outros, dentro do mesmo Planejamento).
+(RN_PLAN_INST_F) Quando um objetivo de um Planejamento Institucional é pai de outros, todos os seus filhos estarão obrigatoriamente vinculados ao mesmo eixo temático do objetivo-pai.
+(RN_PLAN_INST_G) Quando um Planejamento Institucional possui vínculo com um Planejamento Institucional Superior, os objetivos daquele podem estar ou não vinculados aos objetivos deste.
+(RN_PLAN_INST_H) Quando um objetivo de um Planejamento Institucional está vinculado a um objetivo de um Planejamento Institucional superior, o eixo temático daquele pode ser diverso do eixo temático deste.
 
-(RN_PLAN_INST_) 
-(RN_PLAN_INST_) 
-(RN_PLAN_INST_) 
-(RN_PLAN_INST_) 
-(RN_PLAN_INST_) 
 (RN_PLAN_INST_) 
 (RN_PLAN_INST_) 
 (RN_PLAN_INST_) 

@@ -1,0 +1,8 @@
+<div class="row">
+  <ng-container *ngFor="let coluna of colunas; index as i">
+    <div class="border-start border-4 ps-3 mt-3 col-md-6 col-12" [style.border-color]="util.getBackgroundColor(i, colunas.length) + '!important'">
+      <h6>{{coluna.titulo}}</h6>
+      <cite [innerHTML]="coluna.texto"></cite>
+    </div>
+  </ng-container>
+</div>

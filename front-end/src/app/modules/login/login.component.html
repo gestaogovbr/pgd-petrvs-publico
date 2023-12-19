@@ -1,5 +1,5 @@
 <div class="d-flex vh-100 g-0 bg-gray-100">
-    <div class="col-lg-6 position-relative d-none d-lg-block bg-primary-subtle">
+    <div class="col-lg-6 position-relative d-none d-lg-block bg-primary-subtle">        
         <div class="bg-holder" style="background-image: url(../../../assets/images/intro-login.jpg)"></div>
     </div>
 
@@ -12,11 +12,12 @@
         <div class="d-flex align-items-center justify-content-center h-100 g-0 px-4 px-sm-0">
             <div class=".col col-sm-6 col-lg-7 col-xl-6">
                 <div *ngIf="error?.length" class="alert alert-danger mt-2 mb-5" role="alert">
-                    {{ error }}
+                    <span><u><strong>{{ (error || '').split('&')[0] }}</strong></u></span><br>{{ (error || '').split('&')[1] }}
                 </div>
 
-                <div class="text-center mb-5">
-                    <img [src]="globals.getResourcePath('assets/images/' + globals.IMAGES.login)" class="login-logo" alt="Petrvs"/>
+                <div class="text-center mb-5 d-flex align-items-center justify-content-center">
+                    <img src="../assets/images/logo_pgd.png" class="logo-pgd">
+                    <img [src]="globals.getResourcePath('assets/images/' + globals.IMAGES.login)" class="logo-petrvs" alt="Petrvs"/>
                 </div>
                 <div class="text-center mb-5">
                     <h3 class="fw-bold">Acesso</h3>
@@ -24,23 +25,47 @@
                 </div>
 
                 <div class="text-center">
-                    <div *ngIf="globals.is('PRF'); else naoPRF" class="card-body">
+                    <div class="card-body">
 
+                      <div *ngIf="globals.hasGoogleLogin" class="card-body">
                         <div id="gbtn"></div>
-
-                        <div class="govbr">
+                      </div>
+                        <div class="or-container" *ngIf="globals.hasGoogleLogin">
+                          <div class="line-separator"></div>
+                          <div class="or-label">ou</div>
+                          <div class="line-separator"></div>
+                        </div>
+                        <div class="govbr" *ngIf="globals.hasLoginUnicoLogin">
                             <button class="br-button btn btn-primary rounded-pill mt-3" type="button" (click)="signInLoginUnicoBackEnd()">
-                                Entrar com <span>gov.br</span>
+                                Entrar com <span>gov.br</span> ok
                             </button>
                         </div>
+                      <div class="or-container"  *ngIf="globals.hasLoginUnicoLogin">
+                        <div class="line-separator"></div>
+                        <div class="or-label">ou</div>
+                        <div class="line-separator"></div>
+                      </div>
+                        <div *ngIf="globals.hasAzureLogin" class="card-body">
 
-                        <div class="or-container">
+                          <div class="row mt-2">
+                            <div class="col-md-12 d-flex justify-content-center">
+                              <a *ngIf="!auth.logging" class="btn btn-lg btn-google text-uppercase btn-outline" (click)="signInAzure()">
+                                <img [src]="globals.getResourcePath('assets/images/microsoft-logo.png')"/>
+                                Microsoft (Login Institucional)
+                              </a>
+                              <div *ngIf="auth.logging" class="spinner-border spinner-border-sm" role="status">
+                                <span class="visually-hidden"></span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="or-container" *ngIf="globals.hasAzureLogin">
                             <div class="line-separator"></div>
                             <div class="or-label">ou</div>
                             <div class="line-separator"></div>
                         </div>
 
-                        <div class="d-flex flex-column" *ngIf="buttonDprfSeguranca; else dprfSeguranca">
+                      <div class="d-flex flex-column" *ngIf="globals.hasInstitucionalLogin && buttonDprfSeguranca; else dprfSeguranca">
                             <div class="">
                                 <a class="btn btn-lg btn-google text-uppercase btn-outline" (click)="showDprfSeguranca()">
                                     <img [src]="globals.getResourcePath('assets/images/prf.ico')" width="20" height="20"/>
@@ -48,8 +73,8 @@
                                 </a>
                             </div>
                         </div>
-                        <ng-template #dprfSeguranca>
-                            <form [formGroup]="login">
+                        <ng-template #dprfSeguranca >
+                            <form [formGroup]="login" *ngIf="globals.hasInstitucionalLogin">
                                 <div class="form-group form-primary mb-2">
                                     <input-text controlName="usuario" maskFormat="000.000.000-00" placeholder="CPF" [attr.maxlength]=15></input-text>
                                 </div>
@@ -69,39 +94,13 @@
                             </form>
                         </ng-template>
                     </div>
-                    <ng-template #naoPRF>
-                        <div *ngIf="globals.hasGoogleLogin" class="card-body">
-                            <div id="gbtn"></div>
-                        </div>
-
-                        <div class="govbr">
-                            <button class="br-sign-in medium primary mt-3 mt-sm-0 ml-sm-3" type="button">Entrar com&nbsp;<span class="text-black">gov.br</span>
-                            </button>
-                        </div>
-
-                        <div class="or-container">
-                            <div class="line-separator"></div>
-                            <div class="or-label">ou</div>
-                            <div class="line-separator"></div>
-                        </div>
-                        <div *ngIf="globals.hasAzureLogin" class="card-body">
-
-                            <div class="row mt-2">
-                                <div class="col-md-12 d-flex justify-content-center">
-                                    <a *ngIf="!auth.logging" class="btn btn-lg btn-google text-uppercase btn-outline" (click)="signInAzure()">
-                                        <img [src]="globals.getResourcePath('assets/images/microsoft-logo.png')"/>
-                                        Microsoft (Login Institucional)
-                                    </a>
-                                    <div *ngIf="auth.logging" class="spinner-border spinner-border-sm" role="status">
-                                        <span class="visually-hidden"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </ng-template>
                 </div>
             </div>
         </div>
+        <div class="logos">            
+            <img src="../assets/images/logo_gov.png">
+        </div>
     </div>
+    
 
 </div>

@@ -10,17 +10,17 @@
                 <input-text [size]="12" label="Descrição" controlName="descricao" [attr.maxlength]=250 required></input-text>
             </div>
         </tab>
-        <tab key="CAPACIDADES" *ngIf="auth.hasPermissionTo('MOD_TIPO_CAP_CONS')" [label]="lex.noun('Capacidade',true)">
+        <tab key="CAPACIDADES" *ngIf="auth.hasPermissionTo('MOD_TIPO_CAP')" [label]="lex.translate('Capacidades')">
             <grid #gridPai [items]="tiposCapacidades" [scrollable]="true">
                 <columns>
                     <column type="expand" icon="bi bi-shield-lock" [align]="'center'" [hint]="'Lista das capacidades com status módulo'" [template]="columnCapacidades" [expandTemplate]="columnExpandedCapacidades" [minWidth]="50">
                         <ng-template let-row="row" #columnCapacidades>
-                            <span *ngIf="row.grupos?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-grid"></i> {{row.grupos?.length}}</span>
+                            <span *ngIf="row.filhos?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-grid"></i> {{row.filhos?.length}}</span>
                         </ng-template>
                         <ng-template let-row="row" #columnExpandedCapacidades style="justify-content: inherit;">
                             <table class="table table-hover" >
                                 <tbody>
-                                    <tr *ngFor="let row of row.grupos">
+                                    <tr *ngFor="let row of row.filhos">
                                         <td>
                                             <div style="width: 220px;">
                                             <span class="text-wrap text-center">
@@ -54,7 +54,7 @@
                                 </span>
                         </ng-template>
                     </column>
-                    <column [title]="lex.noun('Módulo/Capacidade')" [template]="columnTipoCapacidade" [minWidth]="600">
+                    <column [title]="lex.translate('Módulo/Capacidade')" [template]="columnTipoCapacidade" [minWidth]="600">
                         <ng-template let-row="row" #columnTipoCapacidade>
                             <span class="badge bg-light text-dark"> {{row.descricao}}</span>
                         </ng-template>

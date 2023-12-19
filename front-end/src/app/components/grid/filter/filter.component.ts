@@ -83,7 +83,8 @@ export class FilterComponent extends ComponentBase implements OnInit {
   public onButtonFilterClick() {
     let queryOptions = this.submit ? this.submit(this.form!) : undefined;
     queryOptions = queryOptions || this.grid?.queryOptions || this.queryOptions || {};
-    if(this.deletedControl.value) queryOptions.deleted = true;
+    //if(this.deletedControl.value) queryOptions.deleted = true;
+    queryOptions.deleted = this.deletedControl.value ? true : false;
     (this.grid?.query || this.query!).reload(queryOptions);
   }
 }

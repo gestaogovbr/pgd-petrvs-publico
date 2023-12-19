@@ -18,6 +18,9 @@ class TruncateAllTables extends Command
 
     public function handle()
     {
+        // Desative as verificações de chave estrangeira
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+
         // Obtenha uma lista de todas as tabelas no banco de dados
         $tables = DB::select('SHOW TABLES');
 
@@ -29,6 +32,9 @@ class TruncateAllTables extends Command
 
             $this->info("Table $table truncated.");
         }
+
+        // Ative novamente as verificações de chave estrangeira
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
         $this->info('All tables truncated.');
     }

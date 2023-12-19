@@ -25,6 +25,7 @@ import { SeiKeys } from 'src/app/listeners/procedimento-trabalhar/procedimento-t
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { AtividadeService } from '../atividade.service';
+import { DocumentosLinkComponent } from 'src/app/modules/uteis/documentos/documentos-link/documentos-link.component';
 
 @Component({
   selector: 'app-atividade-form',
@@ -39,6 +40,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
   @ViewChild('usuario', { static: false }) public usuario?: InputSearchComponent;
   @ViewChild('comentarios', { static: false }) public comentarios?: ComentariosComponent;
+  @ViewChild('requisicao', { static: false }) public requisicao?: DocumentosLinkComponent;
 
   public sei?: SeiKeys;
   public form: FormGroup;
@@ -171,7 +173,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     this.loadEtiquetas();
     if (this.form.controls.tipo_atividade_id.value) {
       let checkAtividade = this.tipoAtividade?.selectedEntity.checklist;
-      if (this.form.controls.checklist.value.length == checkAtividade.length) this.loadChecklist();// this.loadChecklist();
+      if (checkAtividade && this.form.controls.checklist.value.length == checkAtividade.length) this.loadChecklist();// this.loadChecklist();
     }
     const etiquetasKeys = this.etiquetas.map(x => x.key);
     const checklistKeys = this.checklist.map(x => x.id);//const checklistKeys = this.checklist.map(x => x.key);
@@ -179,6 +181,10 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     const checklst = (this.form.controls.checklist.value || []).find((x: Checklist) => !checklistKeys.includes(x.id) && x.checked) as Checklist;
     if(etiqueta) result = "Etiqueta " + etiqueta.value + "não pode ser utilizada!";
     if(checklst) result = "Checklist " + checklst.texto + "não pode ser utilizado!";
+    /* (RN_ATV_5) A atividade deverá ter perído compatível com o do plano de trabalho (Data de distribuição e Prazo de entrega devem estar dentro do período do plano de trabalho); */
+    if(this.planoTrabalhoSelecionado && (this.util.asTimestamp(this.form.controls.data_distribuicao.value) < this.util.asTimestamp(this.planoTrabalhoSelecionado.data_inicio) || this.util.asTimestamp(this.form.controls.data_estipulada_entrega.value) > this.util.asTimestamp(this.planoTrabalhoSelecionado.data_fim))) {
+      result = "A atividade deverá ter perído compatível com o do plano de trabalho (" + this.util.getDateFormatted(this.planoTrabalhoSelecionado.data_inicio) + " até " + this.util.getDateFormatted(this.planoTrabalhoSelecionado.data_fim) + ") [RN_ATV_5]";
+    }
     return result;
   }
 
@@ -250,7 +256,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
 
   public loadChecklist() {
     const tipoAtividade = this.tipoAtividade?.selectedEntity as TipoAtividade;
-    let checkAdd: Checklist[] = tipoAtividade.checklist.map((a: { key: any; value: any; }) => {
+    let checkAdd: Checklist[] = tipoAtividade.checklist?.map((a: { key: any; value: any; }) => {
       return {
         id: a.key,
         texto: a.value,
@@ -445,12 +451,6 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
         this.entity.usuario_id = usuario?.id || null;
         this.entity.usuario = usuario || undefined;
       }
-      /* Verificar isso (TODO)
-      if(this.queryParams?.numero_requisicao?.length) {
-        this.entity.numero_requisicao = this.queryParams?.numero_requisicao;
-      } else if(this.queryParams?.numero_processo?.length) {
-        this.entity.numero_processo = this.queryParams?.numero_processo;
-      }*/
     }
     await this.loadData(this.entity, form);
   }
@@ -473,6 +473,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
           }
         }
       }
+      atividade.documento_requisicao = this.requisicao?.documento;
       atividade.comentarios = atividade.comentarios.filter((x: Comentario) => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.texto?.length);
       atividade.tarefas = atividade.tarefas.filter((tarefa: AtividadeTarefa) => {
         tarefa.comentarios = tarefa.comentarios.filter((x: Comentario) => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.texto?.length);

@@ -31,7 +31,7 @@ Campos obrigatórios:
     usuario_id
     unidade_id
     tipo_modalidade_id
-    criacao_usuario_id
+    criacao_usuario_id+
 ~~~
 
 ## REGRAS DE NEGÓCIO
