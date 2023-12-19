@@ -17,7 +17,7 @@ import { SafeUrl } from '@angular/platform-browser';
 
 //export let appInjector: Injector;
 //export type Contexto = "PGD" | "EXECUCAO" | "AVALIACAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
-export type Contexto = "PGD" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
+export type Contexto = "EXECUCAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
 export type Schema = {
   name: string,
   permition?: string,
@@ -413,7 +413,7 @@ export class AppComponent {
 
     let gestaoPGD = this.auth.hasPermissionTo("CTXT_GEST");
     this.menuContexto = [
-      { key: "PGD", permition: gestaoPGD ? "CTXT_GEST" : "CTXT_EXEC", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: gestaoPGD ? this.menuGestao : this.menuExecucao},
+      { key: gestaoPGD ? "GESTAO" : "EXECUCAO", permition: gestaoPGD ? "CTXT_GEST" : "CTXT_EXEC", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: gestaoPGD ? this.menuGestao : this.menuExecucao},
       { key: "ADMINISTRADOR", permition: "CTXT_ADM", icon: "bi bi-emoji-sunglasses", name: this.lex.translate("Administrador"), menu: this.menuAdministrador },
       { key: "DEV", permition: "CTXT_DEV", icon: "bi bi-braces", name: this.lex.translate("Desenvolvedor"), menu: this.menuDev },
       { key: "PONTO", permition: "CTXT_PNT", icon: "bi bi-stopwatch", name: this.lex.translate("Ponto Eletrônico"), menu: this.menuPonto },
@@ -440,9 +440,9 @@ export class AppComponent {
   }
 
   public get menu(): any {
-    let gestaoPGD = this.auth.hasPermissionTo("CTXT_GEST");
     switch (this.gb.contexto?.key) {
-      case "PGD": return gestaoPGD ? this.menuGestao : this.menuExecucao;
+      case "GESTAO": return this.menuGestao;
+      case "EXECUCAO": return this.menuExecucao;
       case "ADMINISTRADOR": return this.menuAdministrador;
       case "DEV": return this.menuDev;
       case "PONTO": return this.menuPonto;
