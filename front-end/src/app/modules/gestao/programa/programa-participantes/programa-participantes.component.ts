@@ -25,7 +25,6 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
   public unidadeDao: UnidadeDaoService;
   public usuarioDao: UsuarioDaoService;
   public programaDao: ProgramaDaoService;
-  //public programaParticipanteService: ProgramaParticipanteDaoService;
   public form: FormGroup;
   public multiselectAllFields: string[] = ["usuario_id", "habilitado"];
   public multiselectMenu: ToolbarButton[];
@@ -36,11 +35,10 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
-    //this.programaParticipanteService = injector.get<ProgramaParticipanteDaoService>(ProgramaParticipanteDaoService);
     /* Inicializações */
     this.code = "MOD_PRGT_PART";
     this.filter = this.fh.FormBuilder({
-      programa_id: { default: undefined },
+      programa_id: { default: this.programa?.id },
       unidade_id: { default: undefined },
       nome_usuario: { default: "" },
       todos: { default: false },
@@ -57,7 +55,7 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
       }
     ];
     //this.join = ["usuario:id,nome,apelido,url_foto", "usuario.lotacao:id,nome,unidade_id","usuario.planos_trabalho"];
-    this.join = ["usuario:id"];
+    this.join = ["usuario.lotacao.unidade:id,sigla"];
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -80,13 +78,18 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
       this.programa = programas[0];
     });
     await this.programaSearch?.loadSearch(this.programa);
-    this.grid!.reloadFilter();
+    if(this.programa) this.grid!.reloadFilter();
   }
 
   public ngAfterViewInit(): void {
     super.ngAfterViewInit();
     this.programaSearch?.loadSearch(this.programa);
-    this.grid!.reloadFilter();
+  }
+
+  public filterClear(filter: FormGroup<any>): void {
+    filter.controls.unidade_id.setValue(undefined);
+    filter.controls.nome_usuario.setValue('');
+    filter.controls.todos.setValue(false);
   }
 
   public filterWhere = (filter: FormGroup) => {
@@ -102,8 +105,8 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
   // todos = false => retorna apenas os usuários habilitados no programa selecionado
 
   // SE TODOS = FALSE
-  // unidade_id = null => retorna os usuários habilitados no programa selecionado, independentemente da sua unidade de lotação
-  // unidade_id = alguma unidade => retorna apenas os usuários habilitados no programa selecionado, e lotados na unidade selecionada
+  // unidade_id = null => retorna os usuários vinculados ao programa selecionado, independentemente da sua unidade de lotação, e de acordo com a opção TODOS (só os habilitados, ou também os desabilitados)
+  // unidade_id = alguma unidade => retorna apenas os usuários vinculados ao programa selecionado, lotados na unidade selecionada, e de acordo com a opção TODOS (só os habilitados, ou também os desabilitados)
 
   // SE TODOS = TRUE
   // unidade_id = null => retorna todos os usuários vinculados ao programa selecionado, habilitados ou desabilitados.
@@ -177,7 +180,6 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
   }
 
   public onHabilitadoChange(row: ProgramaParticipante, habilitado: boolean) {
-    console.log(habilitado);
     if (!habilitado && row.usuario?.planos_trabalho?.length){
       this.dialog.alert("Atenção", "Usuário com " + row.usuario?.planos_trabalho?.length + " plano(s) de trabalho ativo.");
     }
@@ -185,7 +187,8 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
 
   public onProgramaChange(){
     this.programa = this.programaSearch?.selectedItem?.entity;
-    if(this.programa && this.grid?.items && this.programa.id != this.grid?.items[0]?.programa_id) this.grid?.reloadFilter();
+    //if(this.programa && this.grid?.items && this.programa.id != this.grid?.items[0]?.programa_id) this.grid?.reloadFilter();
+    if(this.programa) this.grid?.reloadFilter();
   }
 }
 

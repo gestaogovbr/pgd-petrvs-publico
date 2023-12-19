@@ -32,7 +32,7 @@ class TemplateService extends ServiceBase
         }
     }
 
-    public function proxyExtra($rows, $data)
+    public function proxyExtra($rows, $data, $count)
     {
         $result = null;
         if (!empty(array_filter($data["where"], fn ($v) => $v[0] == 'especie' && $v[2] == 'NOTIFICACAO'))) {
