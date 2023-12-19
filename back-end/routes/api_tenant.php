@@ -83,7 +83,7 @@ use App\Http\Controllers\PlanoEntregaEntregaProgressoController;
 use App\Http\Controllers\QuestionarioPerguntaController;
 use App\Http\Controllers\QuestionarioRespostaController;
 use App\Http\Controllers\QuestionarioRespostaPerguntaController;
-
+use App\Http\Controllers\PgdController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -111,6 +111,10 @@ $actions = config('petrvs')['actions']['api'];
 
 /* Testes */
 Route::get('/teste', function (Request $request) { return ["OK"]; });
+
+/* PGD */
+Route::get('/exportar/dados', [PgdController::class, 'exportarDados']);
+Route::get('/exportar/dados/job', [PgdController::class, 'exportarDadosJob']);
 
 /* Rotinas diárias */
 Route::get('/rotinas-diarias', [RotinaDiariaController::class, 'run']);

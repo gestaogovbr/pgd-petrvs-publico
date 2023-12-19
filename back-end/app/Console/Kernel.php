@@ -24,7 +24,17 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $agendamentos = JobAgendado::where('ativo', true)->get();
+        foreach ($agendamentos as $agendamento) {
+            $jobClass = 'App\Jobs\\' . $agendamento->nome_do_job;
+            if (class_exists($jobClass)) {
+                if ($agendamento->diario) {
+                    $schedule->job(new $jobClass)->dailyAt($agendamento->horario);
+                } else {
+                    $schedule->job(new $jobClass)->cron($agendamento->expressao_cron);
+                }
+            }
+        }
     }
 
     /**
