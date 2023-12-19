@@ -6,7 +6,7 @@ import { Usuario } from './usuario.model';
 export class Curriculum extends Base {
 
     public usuario?: Usuario;
-    public graduacoes?: CurriculumGraduacao[];
+    public graduacoes: CurriculumGraduacao[] = [];
     public profissional?: CurriculumProfissional;
 
     public apresentacao: string = ""; //Apresentação do servidor

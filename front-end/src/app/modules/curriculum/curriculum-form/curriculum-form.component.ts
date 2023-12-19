@@ -17,6 +17,7 @@ import { InputMultiselectComponent } from 'src/app/components/input/input-multis
 import { CurriculumGraduacaoDaoService } from 'src/app/dao/curriculum-graduacao.service';
 import { data } from 'jquery';
 import { CurriculumGraduacao } from 'src/app/models/currriculum-graduacao.model';
+import { UNKNOWN_ERROR_CODE } from '@angular/compiler-cli';
 
 @Component({
   selector: 'curriculum-pessoal-form',
@@ -44,7 +45,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   @ViewChild("estados", { static: false }) public estadosV?: InputSelectComponent;
   //@ViewChild(InputSelectComponent, { static: false }) public titulo?: InputSelectComponent;
   @ViewChild("curso", { static: false }) public cursoV?: InputSelectComponent;
-  @ViewChild("idiomasM", { static: false }) public idiomasM?: InputMultiselectComponent;
+  @ViewChild("idiomas", { static: false }) public idiomasM?: InputMultiselectComponent;
   @ViewChild('municipio', { static: false }) public municipioV?: InputSelectComponent;
   
 
@@ -61,9 +62,10 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   public areaDao?: AreaConhecimentoDaoService;
   public curriculumGraduacaoDAO?: CurriculumGraduacaoDaoService;
   public formGraduacao?: FormGroup;
+  public formIdiomaGrid?: FormGroup;
   public cursoWhere: any[] = [["id", "==", null]];
   public dataTableIdioma : {entender: string, falar: string, idioma:string, escrever:string}[] = [];
-  show = false;
+  public show : string =  'true';
 
   constructor(public injector: Injector) {
     super(injector, Curriculum, CurriculumDaoService);
@@ -90,7 +92,6 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
       idiomaFala: { default: "" },
       idiomaEscrita: { default: "" },
       idiomaEntendimento: { default: "" },
-      idiomasM: { default: [] },
       idiomas: { default: [] },
       ativo: { default: true },
     }, this.cdRef, this.validate);
@@ -105,9 +106,16 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
       cursoPos: { default: "" },
       titulo: { default: "" },
       graduacaopos: { default: [] },
-    }, this.cdRef, this.validate)
+    }, this.cdRef, this.validate);
+    this.formIdiomaGrid = this.fh.FormBuilder({
+      idioma: { default: "" },
+      idiomaFala: { default: "" },
+      idiomaEscrita: { default: "" },
+      idiomaEntendimento: { default: "" },
+      idiomas: { default: [] },
+    }, this.cdRef, this.validate);
   }
-
+  
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
 
@@ -119,9 +127,8 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     return result;
   }
 
-  public loadData(entity: Curriculum, form: FormGroup): void {
+  public async loadData(entity: Curriculum, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
-
     form.patchValue(this.util.fillForm(formValue, entity));
   }
 
@@ -139,8 +146,11 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
       //curriculum.usuario_id=this.auth.usuario?.id;
       curriculum = this.util.fillForm(curriculum, this.form!.value);
       curriculum.usuario_id = this.auth.usuario?.id;
-      curriculum.graduacoes = this.form!.controls.graduacaopos.value.filter((x: CurriculumGraduacao) => x._status?.length);
-      //(this.form?.controls.idiomasM.value as Array<LookupItem>).forEach(element => curriculum.idiomas.push(element.data));
+      curriculum.cidade_id = "86297f92-d919-e12f-476d-6aff99c46809";
+      //(this.form?.controls.idiomasM.value as Array<LookupItem>).forEach(element => curriculum.idiomas.push(element.data));// iNSERE DADOS DO MULTI-SELECT IDIOMAS
+      curriculum.graduacoes = this.formGraduacao!.controls.graduacaopos.value.map((x: any) => Object.assign({},{curso_id:x.data.curso , pretensao:x.data.pretensao}));
+      //curriculum.graduacoes = this.formGraduacao!.controls.graduacaopos.value.filter((x: CurriculumGraduacao) => x._status?.length);
+      
       resolve(curriculum);
 
     });
@@ -149,6 +159,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   public onEstadosChange() {
     //console.log('onEstadosChange', this.form?.controls.estados)
     //const estados = this.estadosV!.value;
+    this.show = 'false';
     const estados = this.form!.controls.estados.value;
     this.selecionaMunicipios(estados);
     //this.municipioV?.disabled;
@@ -159,22 +170,22 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     this.cidadeDao?.query({ where: [['uf', '==', uf]], orderBy: [['nome', 'asc']] }).getAll().then((municipios) => {
       this.municipios = municipios.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
     });
+    this.show = 'true';
   }
 
 
   public addItemIdioma(): LookupItem | undefined {
-   // $("#tableIdiomas tbody").empty();
+  
     let result = undefined;
-    //console.log('addItemGraduacao',this.formGraduacao!.value)
     let res = this.form!.value
     //console.log('addItemIdioma', res)
     const idioma = this.lookup.IDIOMAS.find(x => x.key == this.form!.controls.idioma.value)
-    const escrita = this.lookup.NIVEL_IDIOMA.find(x => x.key == this.form!.controls.idiomaEscrita.value)//this.form!.controls.idiomaEscrita.value;
-    const fala = this.lookup.NIVEL_IDIOMA.find(x => x.key == this.form!.controls.idiomaFala.value)//this.form!.controls.idiomaFala.value;
-    const entende = this.lookup.NIVEL_IDIOMA.find(x => x.key == this.form!.controls.idiomaEntendimento.value)//idiomaFalathis.form!.controls.idiomaEntendimento.value;
+    const escrita = this.lookup.NIVEL_IDIOMA.find(x => x.key == this.form!.controls.idiomaEscrita.value);
+    const fala = this.lookup.NIVEL_IDIOMA.find(x => x.key == this.form!.controls.idiomaFala.value);
+    const entende = this.lookup.NIVEL_IDIOMA.find(x => x.key == this.form!.controls.idiomaEntendimento.value);
     const key = idioma?.key != "" ? this.util.textHash(idioma?.key) : null;
    // console.log('addItemIdioma', ' - ', idioma, ' - ', escrita, ' - ', fala, ' - ', entende, ' - ', key)
-    if (idioma && escrita && fala && entende && this.util.validateLookupItem(this.form!.controls.idiomasM.value, key)) {// && this.util.validateLookupItem(key,value)) {
+    if (idioma && escrita && fala && entende && this.util.validateLookupItem(this.form!.controls.idiomas.value, key)) {
       result = {
         key: key,
         value: idioma.value + ' - ' + escrita.value + ' - ' + fala.value + ' - ' + entende.value,
@@ -191,23 +202,6 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
       this.form!.controls.idiomaEntendimento.setValue("");
     }
     
-    this.dataTableIdioma=[]
-    //console.log('idiomasM',this.form?.controls.idiomasM.value)
-    let itens = this.idiomasM?.items
-    //console.log('ITENS',itens?.length)
-    if(itens?.length != 0){
-      this.form?.controls.idiomasM.value.forEach((element: { data: { entende: any; fala: any; idioma: any; escrita: any; }; }) => {
-        this.dataTableIdioma.push({entender:element.data.entende,falar:element.data.fala,idioma:element.data.idioma,escrever:element.data.escrita});
-      });
-      this.dataTableIdioma.push({entender:result!.data.entende,falar:result!.data.fala,idioma:result!.data.idioma,escrever:result!.data.escrita});
-      this.tableIdioma(this.dataTableIdioma)
-    }else{
-      this.dataTableIdioma.push({entender:result!.data.entende,falar:result!.data.fala,idioma:result!.data.idioma,escrever:result!.data.escrita});
-      console.log('DATATABLEIDIOMA',this.dataTableIdioma)
-      //this.tableIdioma(this.dataTableIdioma)
-    }
-    console.log('DATATABLEIDIOMA',this.dataTableIdioma)
-   
     return result;
   };
 
@@ -283,7 +277,9 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
 
   }
 
-  get stateName() {
+  public togglePopOver() {}
+
+  /*get stateName() {
     return this.show ? 'show' : 'hide'
   }
 
@@ -300,21 +296,91 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     }
     this.show = !this.show;
   }
-    
+    */
   
-  public tableIdioma(itens : any){
-    //console.log('TABLEIDIOMA',itens[0].entender)
-    if(itens?.length != 0){
-        itens.forEach((element: { entender: string; falar: string; idioma: string; escrever: string }) => {
-            this.dataTableIdioma.push({entender:element.entender,falar:element.falar,idioma:element.idioma,escrever:element.escrever});
-          });
-    }
-  }
 
-  public onIdiomaChange(){
-    console.log('onIdiomaChange')
-    
-    
+/**
+  * Método chamado na edição de um integrante da Unidade.
+  * @param form 
+  * @param row 
+  */
+public async load(form: FormGroup, row: any) {
+  ///form.controls.usuario_id.setValue(this.grid?.adding ? row.usuario_id : row.id);
+  ///form.controls.atribuicoes.setValue(this.unidadeIntegranteService.converterAtribuicoes(row.atribuicoes));
+  ///form.controls.atribuicao.setValue("");
+}
+
+/**
+ * Método chamado para a exclusão de um integrante do grid, seja este componente persistente ou não. 
+ * @param row 
+ * @returns 
+ */
+public async remove(row: any) {
+  return await this.dialog.confirm("Exclui ?", "Deseja realmente excluir esse registro de idioma?");
+}
+
+/**
+ * Método chamado no salvamento de um integrante da unidade, seja este componente persistente ou não.
+ * @param form 
+ * @param row 
+ * @returns 
+ */
+public async save(form: IIndexable, row: any) {
+  form?.markAllAsTouched();
+  if (form?.valid) {
+    row.idioma = form.idioma;
+    row.fala = form.fala;
+    row.escrita = form.escrita;
+    row.entendimento = form.entendimento;
+
+    // limpar campos do formulario
+    // TODO
+    return row;
   }
+  return undefined;
+}
+
+
+public async addIdiomas() {
+  /*return new Curriculum({
+    idiomas: this.formIdiomaGrid!.controls.idiomas,
+  }) as IIndexable;*/
+}
+
+public async loadIdiomas(form: FormGroup, row: Curriculum) {
+  /*this.form!.controls.idioma.setValue(row.idioma);
+  this.form!.controls.idiomaFala.setValue(row.fala);
+  this.form!.controls.idiomaEscrita.setValue(row.escrita);
+  this.form!.controls.idiomaEntendimento.setValue(row.entendimento);*/
+  
+  
+}
+
+public async removeIdiomas(row: any) {
+  if(await this.dialog.confirm("Excluir ?", "Deseja realmente excluir esta pergunta?")) {
+    row._status = "DEL";
+  }
+  return undefined;
+}
+
+public async saveIdiomas(form: FormGroup, row: any) {
+  form?.markAllAsTouched();
+  if (form?.valid) {
+    let values = form.value;
+    row.idioma = values.idioma;
+    row.fala = values.fala;
+    row.escrita = values.escrita;
+    row.entendimento = values.entendimento;
+    row._status = row._status == "ADD" ? "ADD" : "EDIT";
+    
+    return row;
+  }
+  return undefined;
+}
+
+
+public addItemHandle() { return { 'key': 'key', 'value': 'value' } }
+
+public deleteItemHandle() { }
 
 }
