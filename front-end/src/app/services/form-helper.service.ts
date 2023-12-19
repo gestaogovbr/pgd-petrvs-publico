@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Injectable, Injector } from '@angular/core';
-import { AbstractControl, AsyncValidatorFn, FormBuilder, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { IIndexable } from '../models/base.model';
 import { LookupItem } from './lookup.service';
 
@@ -51,6 +51,11 @@ export class FormHelperService {
       return !result ? null : { errorMessage: result };
     };
   } 
+
+  public revalidate(form: FormGroup) {
+    form.markAllAsTouched();
+    Object.values(form.controls || {}).forEach(x => x.updateValueAndValidity({emitEvent: false}));
+  }
 
   public asyncValidate(controlName: string, cdRef?: ChangeDetectorRef, asyncValidate?: AsyncValidateForm): AsyncValidatorFn {
     return (control: AbstractControl): Promise<ValidationErrors | null>  => {

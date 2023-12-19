@@ -315,7 +315,7 @@ class IN24_2023Seeder extends Seeder
                 "justifica" => 0,
                 "icone" => "bi bi-emoji-smile",
                 "cor" => "#198754",
-                "codigo" => "Excepcional",
+                "codigo" => "5",
                 "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390",
             ),
             array(
@@ -331,7 +331,7 @@ class IN24_2023Seeder extends Seeder
                 "justifica" => 1,
                 "icone" => "bi bi-emoji-smile",
                 "cor" => "#198754",
-                "codigo" => "Excepcional",
+                "codigo" => "5",
                 "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
             ),
             array(
@@ -347,7 +347,7 @@ class IN24_2023Seeder extends Seeder
                 "justifica" => 0,
                 "icone" => "bi bi-emoji-smile",
                 "cor" => "#42f09f",
-                "codigo" => "Alto desempenho",
+                "codigo" => "4",
                 "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
             ),
             array(
@@ -363,7 +363,7 @@ class IN24_2023Seeder extends Seeder
                 "justifica" => 0,
                 "icone" => "bi bi-emoji-smile",
                 "cor" => "#1de286",
-                "codigo" => "Alto desempenho",
+                "codigo" => "4",
                 "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390",
             ),
             array(
@@ -379,7 +379,7 @@ class IN24_2023Seeder extends Seeder
                 "justifica" => 0,
                 "icone" => "bi bi-emoji-neutral",
                 "cor" => "#ffc107",
-                "codigo" => "Adequado",
+                "codigo" => "3",
                 "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
             ),
             array(
@@ -395,7 +395,7 @@ class IN24_2023Seeder extends Seeder
                 "justifica" => 0,
                 "icone" => "bi bi-emoji-neutral",
                 "cor" => "#ffc107",
-                "codigo" => "Adequado",
+                "codigo" => "3",
                 "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390",
             ),
             array(
@@ -411,7 +411,7 @@ class IN24_2023Seeder extends Seeder
                 "justifica" => 1,
                 "icone" => "bi bi-emoji-frown",
                 "cor" => "#fd7e14",
-                "codigo" => "Inadequado",
+                "codigo" => "2",
                 "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
             ),
             array(
@@ -427,7 +427,7 @@ class IN24_2023Seeder extends Seeder
                 "justifica" => 0,
                 "icone" => "bi bi-emoji-frown",
                 "cor" => "#fd7e14",
-                "codigo" => "Inadequado",
+                "codigo" => "2",
                 "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390",
             ),
             array(
@@ -443,7 +443,7 @@ class IN24_2023Seeder extends Seeder
                 "justifica" => 0,
                 "icone" => "bi bi-emoji-frown",
                 "cor" => "#dc3545",
-                "codigo" => "Não executado",
+                "codigo" => "1",
                 "tipo_avaliacao_id" => "b0db190d-823d-4222-bc92-abff634f5390",
             ),
             array(
@@ -459,7 +459,7 @@ class IN24_2023Seeder extends Seeder
                 "justifica" => 1,
                 "icone" => "bi bi-emoji-frown",
                 "cor" => "#dc3545",
-                "codigo" => "Não executado",
+                "codigo" => "1",
                 "tipo_avaliacao_id" => "005b3fbd-c457-4a50-b28e-de17da2d73a5",
             ),
         );

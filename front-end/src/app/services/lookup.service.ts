@@ -185,10 +185,10 @@ export class LookupService {
   public UNIDADE_INTEGRANTE_TIPO: LookupItem[] = [
     { key: 'AVALIADOR_PLANO_ENTREGA', value: "Avaliador (Planos de Entrega)", icon: "bi bi-check-all", color: "warning" },
     { key: 'AVALIADOR_PLANO_TRABALHO', value: "Avaliador (Planos de Trabalho)", icon: "bi bi-check-circle", color: "info" },
-    { key: 'COLABORADOR', value: "Servidor Associado", icon: "bi bi-person-add", color: "secondary" },
-    { key: 'GESTOR', value: "Gestor", icon: "bi bi-star-fill", color: "primary" },
-    { key: 'GESTOR_DELEGADO', value: "Gestor Delegado", icon: "bi bi-star-fill", color: "danger" },
-    { key: 'GESTOR_SUBSTITUTO', value: "Gestor Substituto", icon: "bi bi-star-half", color: "primary" },
+    { key: 'COLABORADOR', value: "Servidor Vinculado", icon: "bi bi-person-add", color: "secondary" },
+    { key: 'GESTOR', value: "Chefe", icon: "bi bi-star-fill", color: "primary" },
+    { key: 'GESTOR_DELEGADO', value: "Servidor Delegado", icon: "bi bi-star-fill", color: "danger" },
+    { key: 'GESTOR_SUBSTITUTO', value: "Chefe Substituto", icon: "bi bi-star-half", color: "primary" },
     { key: 'HOMOLOGADOR_PLANO_ENTREGA', value: "Homologador (Planos de Entrega)", icon: "bi bi-check2-square", color: "success" },
     { key: 'LOTADO', value: "Lotado", icon: "bi bi-file-person", color: "dark" }
   ];
@@ -718,11 +718,15 @@ export class LookupService {
   ];
 
   public QUESTIONARIO_PERGUNTA_TIPO: LookupItem[] = [
-    { key: 'LISTA', value: 'Lista' },
+    { key: 'SELECT', value: 'Única Escolha' },
+    { key: 'MULTI_SELECT', value: 'Multipla Escolha' },
+    { key: 'TEXT', value: 'Livre' },
+    { key: 'RATE', value: 'Classificação' },
     { key: 'SWITCH', value: 'Sim/Não' },
-    { key: 'MULTIPLA', value: 'Resposta Múltipla' },
-    { key: 'UNICA', value: 'Resposta Única' }
+    //{ key: 'INTENSIDADE', value: 'Intensidade' },
+    { key: 'NUMBER', value: 'Numérica' }
   ];
+ // "EMOJI" | "SELECT" | "MULTI_SELECT" | "TEXT" | "TEXT_AREA" | "TIMER" | "DATE_TIME" | "SWICTH" | "NUMBER" | "RATE" | "RADIO" | "CHECK";
 
   public THEMES: LookupItem[] = [
     { key: 'light', value: "Branco (light)" },

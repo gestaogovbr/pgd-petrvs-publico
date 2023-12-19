@@ -1,9 +1,11 @@
 import { ChangeDetectorRef, Component, Injector, Input, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { QuestionarioDaoService } from 'src/app/dao/questionario-dao.service';
+import { QuestionarioPerguntaDaoService } from 'src/app/dao/questionario-pergunta-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
+import { QuestionarioPergunta } from 'src/app/models/questionario-pergunta.model';
 import { Questionario} from 'src/app/models/questionario.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
@@ -14,41 +16,47 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
   styleUrls: ['./questionario-list-pergunta.component.scss']
 })
 export class QuestionarioListPerguntaComponent extends PageFrameBase {
-  @ViewChild('listaAtividades', { static: false }) public listaAtividades?: GridComponent;
-
-  @Input() set entregaId(value: string) {
-    if(this._entregaId != value) {
-      this._entregaId = value;
+  @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
+  @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
+  @Input() cdRef: ChangeDetectorRef;
+  @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
+  @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
+  @Input() set entity(value: Questionario | undefined) { super.entity = value; } get entity(): Questionario | undefined { return super.entity; }
+  @Input() set questionarioId(value: string | undefined) {
+    if(this._questionarioId != value) {
+      this._questionarioId = value;
+      this.loadPerguntas();
     }
-  }  
-  get entregaId(): string {
-    return this._entregaId;
+  }
+  get questionarioId(): string | undefined {
+    return this._questionarioId;
   }
 
-  private _entregaId!: string;
-  public questionarioDao: QuestionarioDaoService | undefined;
-  public items: any[] = [];
+  private _questionarioId?: string;
 
-  public loader: boolean = false;
+  public set items(value: QuestionarioPergunta[]) {
+    if(this.items != value) {
+      this.gridControl.value.perguntas = value;
+      if(this.viewInit) this.cdRef.detectChanges();
+    }    
+  }
+  public get items(): QuestionarioPergunta[] {
+    if (!this.gridControl.value) this.gridControl.setValue(new Questionario());
+    if (!this.gridControl.value.perguntas) this.gridControl.value.perguntas = [];
+    return this.gridControl.value.perguntas;
+  }
 
   constructor(public injector: Injector){
     super(injector);
-    this.questionarioDao = injector.get<QuestionarioDaoService>(QuestionarioDaoService);
-    //this.join = ['unidade', 'usuario','demandante']
-  }
-  ngOnInit(): void {
-    super.ngOnInit();
-    this.loadData();
-  }
-  
-  public loadData() {
-    this.loader = true;
-   // this.questionarioDao.query({where: [["plano_trabalho_entrega_id", "==", this._entregaId]], join: this.join}).asPromise().then(response => {
-    this.questionarioDao!.query({}).asPromise().then(response => {
-      this.items = response
-    }).finally(()=> {
-      this.loader = false;
-    })
-  }
-  
+    this.dao = injector.get<QuestionarioPerguntaDaoService>(QuestionarioPerguntaDaoService);
+    this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
+    //this.orderBy = [['sequencia','asc']];
+  } 
+
+  public loadPerguntas() {
+    this.dao!.query({where: [["questionario_id", "==", this.questionarioId]], orderBy: [["sequencia", "asc"]]}).asPromise().then(rows => {
+      this.items = (rows as QuestionarioPergunta[]) || [];
+    });
+  }  
+
 }

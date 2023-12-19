@@ -4,6 +4,7 @@ use App\Http\Controllers\LoginController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PetrvsController;
 use App\Http\Controllers\AngularController;
+use App\Http\Controllers\DownloadController;
 use App\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Routing\Middleware\SubstituteBindings;
@@ -30,3 +31,4 @@ Route::get('environment-config', [PetrvsController::class, 'environmentConfig'])
         VerifyCsrfToken::class,
         SubstituteBindings::class
     ]);*/
+Route::middleware(['signed.relative'])->get('/download/{tenant}/{file}', [DownloadController::class, 'download'])->name('download')->where('file', '.*');

@@ -146,5 +146,4 @@ export class NotificacoesTemplateComponent extends PageFrameBase {
     }
     return result;
   }
-
 }

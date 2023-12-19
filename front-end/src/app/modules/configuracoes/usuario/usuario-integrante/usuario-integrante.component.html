@@ -4,7 +4,7 @@
     <columns>
         <column [title]="lex.translate('Unidades')" [template]="columnUnidade" [editTemplate]="editUnidade">
             <ng-template let-row="row" #columnUnidade>
-                <strong>{{ row.unidade_sigla || '' }}</strong><span> (IdServo: {{ row.unidade_codigo || '' }})</span><br>
+                <strong>{{ row.unidade_sigla || '' }}</strong><span> {{ row.informal ? '(Unidade Informal)' : '(Código: ' + (row.unidade_codigo || '') + ')' }}</span><br>
                 <span>{{ row.unidade_nome || '' }} </span>
             </ng-template>
             <ng-template let-row="row" #editUnidade>

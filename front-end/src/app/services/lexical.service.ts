@@ -25,23 +25,30 @@ export class LexicalService {
   * caso queira fazer a modificação, utilizar seeders alterando na entidade as nomenclaturas. */
   public defaults: Translate = {
     "adesao": {single: "adesão", plural: "adesões", female: true},
+    "administrador": {single: "administrador", plural: "administradores", female: false},
     "afastamento": {single: "afastamento", plural: "afastamentos", female: false},
     "área de trabalho": {single: "área de trabalho", plural: "áreas de trabalho", female: true},
     "area do conhecimento": {single: "area do conhecimento", plural: "areas dos conhecimentos", female: true},
     "atividade": {single: "atividade", plural: "atividades", female: false},
     "atribuição": {single: "atribuição", plural: "atribuições", female: true},
     "avaliação": {single: "avaliação", plural: "avaliações", female: true},
+    "cadastro": {single: "cadastro", plural: "cadastros", female: false},
     "cadeiaValor": {single: "cadeia de valor", plural: "cadeias de valor", female: true},
     "capacidade": {single: "capacidade", plural: "capacidades", female: true},
+    "chefe": {single: "chefe", plural: "chefes", female: true},
     "cidade": {single: "cidade", plural: "cidades", female: true},
+    "consolidação": {single: "consolidação", plural: "consolidações", female: false},
     "data de distribuição": {single: "data de distribuição", plural: "datas de distribuição", female: true},
     "data de homologação": {single: "data de homologação", plural: "datas de homologação", female: true},
     "demanda": {single: "demanda", plural: "demandas", female: true},
+    "desenvolvedor": {single: "desenvolvedor", plural: "desenvolvedores", female: false},
     "documento": {single: "documento", plural: "documentos", female: false},
     "entidade": {single: "entidade", plural: "entidades", female: true},
     "entrega": {single: "entrega", plural: "entregas", female: true},
     "eixo temático": {single: "eixo temático", plural: "eixos temáticos", female: false},
+    "execução": {single: "execução", plural: "execuções", female: false},
     "feriado": {single: "feriado", plural: "feriados", female: false},
+    "gerenciamento": {single: "gerenciamento", plural: "gerenciamentos", female: false},
     "justificativa": {single: "justificativa", plural: "justificativas", female: true},
     "lotação": {single: "lotação", plural: "lotações", female: true},
     "material e serviço": {single: "material e serviço", plural: "materiais e serviços", female: false},
@@ -52,10 +59,13 @@ export class LexicalService {
     "objetivo": {single: "objetivo", plural: "objetivos", female: false},
     "pela unidade gestora": {single: "pela Unidade Gestora", plural: "pelas Unidades Gestoras", female: true},
     "perfil": {single: "perfil", plural: "perfis", female: false},
+    "perfil do menu": {single: "perfil do menu", plural: "perfis do menu", female: false},
+    "planejamento": {single: "planejamento", plural: "planejamentos", female: false},
     "planejamento institucional": {single: "planejamento institucional", plural: "planejamentos institucionais", female: false},
     "plano de trabalho": {single: "plano de trabalho", plural: "planos de trabalho", female: false},
     "plano de entrega": {single: "plano de entrega", plural: "planos de entrega", female: false},
     "ponto de controle": {single: "ponto de controle", plural: "pontos de controle", female: false},
+    "ponto eletrônico": {single: "ponto eletrônico", plural: "pontos eletrônicos", female: false},
     "prazo de distribuição": {single: "prazo de distribuição", plural: "prazos de distribuição", female: false},
     "prazo de entrega": {single: "prazo de entrega", plural: "prazos de entrega", female: false},
     "prazo recalculado": {single: "prazo recalculado", plural: "prazos recalculados", female: false},
@@ -65,6 +75,7 @@ export class LexicalService {
     "programa de gestão": {single: "programa de gestão", plural: "programas de gestão", female: false},
     "projeto": {single: "projeto", plural: "projetos", female: false},
     "requisição": {single: "requisição", plural: "requisições", female: true},
+    "responsável": {single: "responsável", plural: "responsáveis", female: false},
     "resultado institucional": {single: "resultado institucional", plural: "resultados institucionais", female: false},
     "rotina de integração": {single: "rotina de integração", plural: "rotinas de integração", female: true},
     "servidor": {single: "servidor", plural: "servidores", female: false},
@@ -77,9 +88,11 @@ export class LexicalService {
     "tempo planejado": {single: "tempo planejado", plural: "tempos planejados", female: false},
     "template": {single: "template", plural: "templates", female: false},
     "termo": {single: "termo", plural: "termos", female: false},
+    "texto complementar": {single: "texto complementar", plural: "textos complementares", female: false},
     "tipo de indicador": {single: "tipo de indicador", plural: "tipos de indicadores", female: false},
     "tipo de atividade": {single: "tipo de atividade", plural: "tipos de atividades", female: false},
     "tipo de capacidade": {single: "tipo de capacidade", plural: "tipos de capacidades", female: false},
+    "tipo de meta": {single: "tipo de meta", plural: "tipos de metas", female: false},
     "unidade": {single: "unidade", plural: "unidades", female: true},
     "usuario": {single: "usuário", plural: "usuários", female: false},
     "valor institucional": {single: "valor institucional", plural: "valores institucionais", female: false}
@@ -160,15 +173,16 @@ export class LexicalService {
     let noun = groups ? groups[3] : "";
     let plural = this.plurals[noun.toLowerCase()];
     let key = (plural || noun).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-    let native = this.defaults[key];
-    let database = this.vocabulary[key];
+    let keyComAcento = (plural || noun).toLowerCase();
+    let native = this.defaults[key] ? this.defaults[key] : this.defaults[keyComAcento] ? this.defaults[keyComAcento] : null;
+    let database = this.vocabulary[key] ? this.vocabulary[key] : this.vocabulary[keyComAcento] ? this.vocabulary[keyComAcento] : null;
     /* Verifica se é necessário fazer a transformação */
-    if(native && (native.single != database.single || native.plural != database.plural)) {
+    if(native && (native.single != database!.single || native.plural != database!.plural)) {
       /* Tem preposição */
-      if(preposition?.length && !["de", "em", "por"].includes(preposition.toLowerCase()) && native.female !== database.female) {
+      if(preposition?.length && !["de", "em", "por"].includes(preposition.toLowerCase()) && native.female !== database!.female) {
         preposition = this.keepCase(preposition, native.female ? this.PREPOSITIONS_MALE[this.PREPOSITIONS_FEMALE.indexOf(preposition.toLowerCase())] : this.PREPOSITIONS_FEMALE[this.PREPOSITIONS_MALE.indexOf(preposition.toLowerCase())]);
       }
-      noun = this.keepCase(noun, plural ? database.plural : database.single);
+      noun = this.keepCase(noun, plural ? database!.plural : database!.single);
     }
     return spaces + (preposition?.length ? preposition + " " : "") + noun;
   }

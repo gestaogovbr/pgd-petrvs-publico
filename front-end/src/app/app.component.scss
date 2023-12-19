@@ -94,6 +94,17 @@
 
     .contextoDropdown {
         min-width: 15rem;
+
+        .divider {
+            height: 1px;
+            width: 100%;
+            display: block;
+            background: var(--bs-nav-link-color);
+            margin: 6px 0;
+        }
+        small {
+            font-size: 0.775em;
+        }
     }
     .avatar-info {
         h6 {
@@ -107,6 +118,9 @@
 .submenu { 
     list-style: none;
     padding-left: 10px;
+}
+.texto-modulo {
+    color: var(--petrvs-nav-link-color);
 }
 
 .footer {

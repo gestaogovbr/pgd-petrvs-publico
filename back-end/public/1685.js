@@ -520,20 +520,6 @@ class PlanejamentoFormComponent extends src_app_modules_base_page_form_base__WEB
       _this7.cdRef.detectChanges();
     })();
   }
-  /**
-   *
-   * @returns boolean Informa se o planejamento é da Unidade Instituidora ou não.
-   */
-  isPlanejamentoUNINST() {
-    return !this.form.controls.unidade_id.value?.length;
-  }
-  /**
-   *
-   * @returns boolean Informa se o planejamento é da Unidade Executora ou não.
-   */
-  isPlanejamentoUNEXEC() {
-    return !this.isPlanejamentoUNINST();
-  }
 }
 _class = PlanejamentoFormComponent;
 _class.ɵfac = function PlanejamentoFormComponent_Factory(t) {

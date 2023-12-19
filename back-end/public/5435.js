@@ -20,19 +20,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_models_expediente_model__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/models/expediente.model */ 22559);
 /* harmony import */ var src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! src/app/modules/base/page-form-base */ 1184);
 /* harmony import */ var src_app_modules_uteis_notificacoes_notificacao_service__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! src/app/modules/uteis/notificacoes/notificacao.service */ 22067);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! @angular/core */ 51197);
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! @angular/common */ 89650);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! @angular/common */ 89650);
 /* harmony import */ var _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/grid/grid.component */ 73150);
 /* harmony import */ var _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../../components/grid/columns/columns.component */ 57224);
 /* harmony import */ var _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../../components/grid/column/column.component */ 83351);
 /* harmony import */ var _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../../../components/input/input-search/input-search.component */ 32802);
-/* harmony import */ var _components_input_input_button_input_button_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../../../components/input/input-button/input-button.component */ 48935);
-/* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ 92392);
-/* harmony import */ var _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../../components/tabs/tabs.component */ 66384);
-/* harmony import */ var _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../../../components/tabs/tab/tab.component */ 74978);
-/* harmony import */ var _components_input_input_workload_input_workload_component__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../../../components/input/input-workload/input-workload.component */ 43417);
-/* harmony import */ var _uteis_calendar_expediente_calendar_expediente_component__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../../uteis/calendar-expediente/calendar-expediente.component */ 75007);
-/* harmony import */ var _uteis_notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../../../uteis/notificacoes/notificacoes-config/notificacoes-config.component */ 92739);
+/* harmony import */ var _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../../../components/tabs/tabs.component */ 66384);
+/* harmony import */ var _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../../../components/tabs/tab/tab.component */ 74978);
+/* harmony import */ var _components_input_input_workload_input_workload_component__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../../components/input/input-workload/input-workload.component */ 43417);
+/* harmony import */ var _uteis_calendar_expediente_calendar_expediente_component__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../../uteis/calendar-expediente/calendar-expediente.component */ 75007);
+/* harmony import */ var _uteis_notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../../uteis/notificacoes/notificacoes-config/notificacoes-config.component */ 92739);
 
 var _class;
 
@@ -55,20 +53,18 @@ var _class;
 
 
 
-
-
 const _c0 = ["cargaHoraria"];
 const _c1 = ["notificacoes"];
-function EntidadeConfComponent_tab_13_Template(rf, ctx) {
+function EntidadeConfComponent_tab_10_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelementStart"](0, "tab", 21);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelement"](1, "notificacoes-config", 22, 23);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](0, "tab", 19);
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](1, "notificacoes-config", 20, 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
-    const ctx_r2 = _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("entity", ctx_r2.entity)("entidadeId", ctx_r2.entity.id)("disabled", ctx_r2.formDisabled);
+    const ctx_r2 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("entity", ctx_r2.entity)("entidadeId", ctx_r2.entity.id)("disabled", ctx_r2.formDisabled);
   }
 }
 class EntidadeConfComponent extends src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_7__.PageFormBase {
@@ -194,13 +190,16 @@ class EntidadeConfComponent extends src_app_modules_base_page_form_base__WEBPACK
   saveData(form) {
     return new Promise((resolve, reject) => {
       this.notificacoes?.saveData();
-      let entidade = this.util.fill(new src_app_models_entidade_model__WEBPACK_IMPORTED_MODULE_5__.Entidade(), this.entity);
+      let entidade = this.util.fill(new src_app_models_entidade_model__WEBPACK_IMPORTED_MODULE_5__.Entidade({
+        notificacoes_templates: []
+      }), this.entity);
       entidade = this.util.fillForm(entidade, this.form.value);
       this.dao.update(entidade.id, {
         url_sei: entidade.url_sei,
         tipo_modalidade_id: entidade.tipo_modalidade_id,
         nomenclatura: entidade.nomenclatura,
         notificacoes: entidade.notificacoes,
+        notificacoes_templates: entidade.notificacoes_templates,
         expediente: entidade.expediente,
         carga_horaria_padrao: entidade.carga_horaria_padrao,
         forma_contagem_carga_horaria: entidade.forma_contagem_carga_horaria
@@ -210,80 +209,68 @@ class EntidadeConfComponent extends src_app_modules_base_page_form_base__WEBPACK
 }
 _class = EntidadeConfComponent;
 _class.ɵfac = function EntidadeConfComponent_Factory(t) {
-  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_20__.Injector));
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_18__.Injector));
 };
-_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵdefineComponent"]({
+_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdefineComponent"]({
   type: _class,
   selectors: [["app-entidade-conf"]],
   viewQuery: function EntidadeConfComponent_Query(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵviewQuery"](_c0, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵviewQuery"](_c1, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵviewQuery"](_c0, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵviewQuery"](_c1, 5);
     }
     if (rf & 2) {
       let _t;
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵloadQuery"]()) && (ctx.cargaHoraria = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵloadQuery"]()) && (ctx.notificacoes = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵloadQuery"]()) && (ctx.cargaHoraria = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵloadQuery"]()) && (ctx.notificacoes = _t.first);
     }
   },
-  features: [_angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵInheritDefinitionFeature"]],
-  decls: 23,
-  vars: 19,
-  consts: [[3, "form", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "GERAL", "label", "Geral"], [1, "row"], ["controlName", "tipo_modalidade_id", "labelInfo", "Tipo de modalidade padr\u00E3o utilizada ao criar plano de trabalho.", 3, "size", "dao"], ["label", "Carga Hor\u00E1ria", "icon", "bi bi-hourglass-split", "controlName", "carga_horaria_padrao", "labelInfo", "Carga hor\u00E1ria e forma de contagem (horas por dia, semana ou m\u00EAs) padr\u00E3o utilizada ao criar plano de trabalho.", 3, "size", "unit", "unitChange"], ["cargaHoraria", ""], ["label", "Url do Sei", "icon", "bi bi-lin", "controlName", "url_sei", "labelInfo", "Url base do Sei, deve ser semelhante a: https://sei.minha-entidade.gov.br/", 3, "size", "control"], ["label", "Chave de API", "icon", "bi bi-lin", "placeholder", "Vis\u00EDvel somente no momento em que foi gerado", "iconButton", "bi bi-arrow-clockwise", "controlName", "api_public_key", "labelInfo", "Chave publica para comunica\u00E7\u00E3o por API, o valor \u00E9 vis\u00EDvel somente no momento em que for gerado.", 3, "size", "buttonClick"], ["key", "EXPEDIENTE", "label", "Expediente"], [3, "control"], ["expediente", ""], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es", 4, "ngIf"], ["key", "NOMENCLATURA", "label", "Nomenclatura"], ["clss", "row"], ["editable", "", 3, "control", "form", "hasAdd"], ["type", "text", "title", "Nome", "field", "nome", 3, "editable"], ["type", "text", "title", "Singular", "field", "singular", 3, "onChange"], ["type", "text", "title", "Plural", "field", "plural", 3, "onChange"], ["type", "switch", "title", "Feminino", "field", "feminino"], ["type", "options"], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es"], [3, "entity", "entidadeId", "disabled"], ["notificacoes", ""]],
+  features: [_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵInheritDefinitionFeature"]],
+  decls: 20,
+  vars: 15,
+  consts: [[3, "form", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "GERAL", "label", "Geral"], [1, "row"], ["controlName", "tipo_modalidade_id", "labelInfo", "Tipo de modalidade padr\u00E3o utilizada ao criar plano de trabalho.", 3, "size", "dao"], ["label", "Carga Hor\u00E1ria", "icon", "bi bi-hourglass-split", "controlName", "carga_horaria_padrao", "labelInfo", "Carga hor\u00E1ria e forma de contagem (horas por dia, semana ou m\u00EAs) padr\u00E3o utilizada ao criar plano de trabalho.", 3, "size", "unit", "unitChange"], ["cargaHoraria", ""], ["key", "EXPEDIENTE", "label", "Expediente"], [3, "control"], ["expediente", ""], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es", 4, "ngIf"], ["key", "NOMENCLATURA", "label", "Nomenclatura"], ["clss", "row"], ["editable", "", 3, "control", "form", "hasAdd"], ["type", "text", "title", "Nome", "field", "nome", 3, "editable"], ["type", "text", "title", "Singular", "field", "singular", 3, "onChange"], ["type", "text", "title", "Plural", "field", "plural", 3, "onChange"], ["type", "switch", "title", "Feminino", "field", "feminino"], ["type", "options"], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es"], [3, "entity", "entidadeId", "disabled"], ["notificacoes", ""]],
   template: function EntidadeConfComponent_Template(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelementStart"](0, "editable-form", 0);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵlistener"]("submit", function EntidadeConfComponent_Template_editable_form_submit_0_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](0, "editable-form", 0);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵlistener"]("submit", function EntidadeConfComponent_Template_editable_form_submit_0_listener() {
         return ctx.onSaveData();
       })("cancel", function EntidadeConfComponent_Template_editable_form_cancel_0_listener() {
         return ctx.onCancel();
       });
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelementStart"](1, "tabs", 1)(2, "tab", 2)(3, "div", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelement"](4, "input-search", 4)(5, "input-workload", 5, 6);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelementStart"](7, "div", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelement"](8, "input-text", 7);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelementStart"](9, "input-button", 8);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵlistener"]("buttonClick", function EntidadeConfComponent_Template_input_button_buttonClick_9_listener($event) {
-        return ctx.onApiKeyClick($event);
-      });
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelementEnd"]()()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelementStart"](10, "tab", 9);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelement"](11, "calendar-expediente", 10, 11);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵtemplate"](13, EntidadeConfComponent_tab_13_Template, 3, 3, "tab", 12);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelementStart"](14, "tab", 13)(15, "div", 14)(16, "grid", 15)(17, "columns");
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelement"](18, "column", 16)(19, "column", 17)(20, "column", 18)(21, "column", 19)(22, "column", 20);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelementEnd"]()()()()()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](1, "tabs", 1)(2, "tab", 2)(3, "div", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](4, "input-search", 4)(5, "input-workload", 5, 6);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](7, "tab", 7);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](8, "calendar-expediente", 8, 9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](10, EntidadeConfComponent_tab_10_Template, 3, 3, "tab", 10);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](11, "tab", 11)(12, "div", 12)(13, "grid", 13)(14, "columns");
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](15, "column", 14)(16, "column", 15)(17, "column", 16)(18, "column", 17)(19, "column", 18);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]()()()()()();
     }
     if (rf & 2) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("form", ctx.form)("title", ctx.isModal ? "" : ctx.title);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](4);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 8)("dao", ctx.tipoModalidadeDao);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("unit", ctx.formaContagemCargaHoraria)("unitChange", ctx.onFormaContagemCargaHorariaChange.bind(ctx));
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.url_sei);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵattribute"]("maxlength", 250);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 6);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("control", ctx.form.controls.expediente);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("ngIf", ctx.entity);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("control", ctx.form.controls.nomenclatura)("form", ctx.formNomenclatura)("hasAdd", false);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("editable", false);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("onChange", ctx.onSingularChange.bind(ctx));
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("onChange", ctx.onPluralChange.bind(ctx));
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("form", ctx.form)("title", ctx.isModal ? "" : ctx.title);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](4);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 8)("dao", ctx.tipoModalidadeDao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 4)("unit", ctx.formaContagemCargaHoraria)("unitChange", ctx.onFormaContagemCargaHorariaChange.bind(ctx));
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("control", ctx.form.controls.expediente);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", ctx.entity);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("control", ctx.form.controls.nomenclatura)("form", ctx.formNomenclatura)("hasAdd", false);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("editable", false);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("onChange", ctx.onSingularChange.bind(ctx));
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("onChange", ctx.onPluralChange.bind(ctx));
     }
   },
-  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_21__.NgIf, _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_9__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_10__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_11__.ColumnComponent, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_12__.InputSearchComponent, _components_input_input_button_input_button_component__WEBPACK_IMPORTED_MODULE_13__.InputButtonComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_14__.InputTextComponent, _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_15__.TabsComponent, _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_16__.TabComponent, _components_input_input_workload_input_workload_component__WEBPACK_IMPORTED_MODULE_17__.InputWorkloadComponent, _uteis_calendar_expediente_calendar_expediente_component__WEBPACK_IMPORTED_MODULE_18__.CalendarExpedienteComponent, _uteis_notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_19__.NotificacoesConfigComponent],
+  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_19__.NgIf, _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_9__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_10__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_11__.ColumnComponent, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_12__.InputSearchComponent, _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_13__.TabsComponent, _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_14__.TabComponent, _components_input_input_workload_input_workload_component__WEBPACK_IMPORTED_MODULE_15__.InputWorkloadComponent, _uteis_calendar_expediente_calendar_expediente_component__WEBPACK_IMPORTED_MODULE_16__.CalendarExpedienteComponent, _uteis_notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_17__.NotificacoesConfigComponent],
   styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
 });
 
@@ -604,7 +591,7 @@ class EntidadeListComponent extends src_app_modules_base_page_list_base__WEBPACK
       }
     });
     this.addOption(this.OPTION_INFORMACOES);
-    this.addOption(this.OPTION_EXCLUIR, "MOD_ENTD_EXCL");
+    //this.addOption(this.OPTION_EXCLUIR, "MOD_ENTD_EXCL");
     this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
     // Testa se o usuário possui permissão para configurar a entidade
     if (this.auth.hasPermissionTo("MOD_CFG_ENTD")) {
@@ -640,8 +627,8 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
   decls: 12,
-  vars: 23,
-  consts: [["class", "my-2", 4, "ngIf"], [3, "dao", "add", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "deleted", "form", "where", "submit", "collapseChange", "collapsed"], [1, "row"], ["controlName", "nome", "placeholder", "Nome...", 3, "size", "label", "control"], ["title", "Sigla", "field", "sigla"], ["title", "Nome", "field", "nome"], ["title", "Abrang\u00EAncia", "field", "abrangencia"], ["type", "options", 3, "onEdit", "options"], [3, "rows"], [1, "my-2"]],
+  vars: 21,
+  consts: [["class", "my-2", 4, "ngIf"], [3, "dao", "orderBy", "groupBy", "join", "selectable", "hasEdit", "select"], [4, "ngIf"], [3, "deleted", "form", "where", "submit", "collapseChange", "collapsed"], [1, "row"], ["controlName", "nome", "placeholder", "Nome...", 3, "size", "label", "control"], ["title", "Sigla", "field", "sigla"], ["title", "Nome", "field", "nome"], ["title", "Abrang\u00EAncia", "field", "abrangencia"], ["type", "options", 3, "onEdit", "options"], [3, "rows"], [1, "my-2"]],
   template: function EntidadeListComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](0, EntidadeListComponent_h3_0_Template, 2, 1, "h3", 0);
@@ -662,7 +649,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdef
     if (rf & 2) {
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("ngIf", !ctx.isModal);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("selectable", ctx.selectable)("hasAdd", ctx.auth.hasPermissionTo("MOD_ENTD_INCL"))("hasEdit", ctx.auth.hasPermissionTo("MOD_ENTD_EDT"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("dao", ctx.dao)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("selectable", ctx.selectable)("hasEdit", ctx.auth.hasPermissionTo("MOD_ENTD_EDT"));
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("ngIf", !ctx.selectable);
       _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);

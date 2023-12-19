@@ -132,8 +132,9 @@ export class GlobalsService {
 
   public getResourcePath(resource: string) {
     const key = "URL_" + encodeURI(resource);
-    if(this.isEmbedded && !this.urlBuffer[key]) this.urlBuffer[key] = this.sanitizer.bypassSecurityTrustResourceUrl(this.baseURL + resource);
-    return this.isEmbedded ? this.urlBuffer[key] : resource;
+    const isAsset = !!resource.match(/\/?assets\//);
+    if(this.isEmbedded && !this.urlBuffer[key]) this.urlBuffer[key] = this.sanitizer.bypassSecurityTrustResourceUrl((isAsset ? this.baseURL : this.servidorURL + "/") + resource);
+    return this.isEmbedded ? this.urlBuffer[key] : (!isAsset && !resource.startsWith("http") ? this.servidorURL + "/" + resource : resource);
   }
 
   public get isFirefox(): boolean {

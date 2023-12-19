@@ -17,7 +17,7 @@ import { SafeUrl } from '@angular/platform-browser';
 
 //export let appInjector: Injector;
 //export type Contexto = "PGD" | "EXECUCAO" | "AVALIACAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
-export type Contexto = "GESTAO" | "EXECUCAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
+export type Contexto = "PGD" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
 export type Schema = {
   name: string,
   permition?: string,
@@ -45,11 +45,6 @@ export type MenuContexto = {
   name: string,
   menu?: MenuItem[],
   petrvsModule?: string
-};
-
-export type NovoMenuContexto = {
-  module: PetrvsModule | null,
-  items: MenuContexto[]
 };
 
 @Component({
@@ -89,7 +84,6 @@ export class AppComponent {
   public menuSchema: MenuSchema = {};
   public menuToolbar: any[] = [];
   public menuContexto: MenuContexto[] = [];
-  public novoMenuContexto: NovoMenuContexto[] = [];
   public menuProjeto: any;
   public menuGestao: any;
   public menuOperacional: any;
@@ -179,8 +173,8 @@ export class AppComponent {
       ENTIDADES: { name: this.lex.translate("Entidades"), permition: 'MOD_CFG_ENTD', route: ['configuracoes', 'entidade'], icon: this.entity.getIcon('Entidade') },
       UNIDADES: { name: this.lex.translate("Unidades"), permition: 'MOD_CFG_UND', route: ['configuracoes', 'unidade'], icon: this.entity.getIcon('Unidade') },
       USUARIOS: { name: this.lex.translate("Usuários"), permition: 'MOD_CFG_USER', route: ['configuracoes', 'usuario'], icon: this.entity.getIcon('Usuario') },
-      PERFIS: { name: "Perfis", permition: 'MOD_CFG_PERFS', route: ['configuracoes', 'perfil'], icon: this.entity.getIcon('Perfil') },
-      SOBRE: { name: "Sobre", permition: '', route: ['configuracoes', 'sobre'], icon: "" },
+      PERFIS: { name: this.lex.translate("Perfis"), permition: 'MOD_CFG_PERFS', route: ['configuracoes', 'perfil'], icon: this.entity.getIcon('Perfil') },
+      SOBRE: { name:this.lex.translate("Sobre"), permition: '', route: ['configuracoes', 'sobre'], icon: "" },
       /* LOGS */
       ROTINAS_INTEGRACAO: { name: "Rotina de Integração", permition: '', route: ['rotinas', 'integracao'], icon: this.entity.getIcon('Integracao') },
       LOGS_ALTERACOES: { name: "Log das Alterações", permition: '', route: ['logs', 'change'], icon: this.entity.getIcon('Change') },
@@ -218,7 +212,7 @@ export class AppComponent {
     };
 
     this.menuGestao = [{
-      name: "Planejamento",
+      name: this.lex.translate("Planejamento"),
       permition: "MENU_GESTAO_ACESSO",
       id: "navbarDropdownGestaoPlanejamento",
       menu: [
@@ -229,7 +223,7 @@ export class AppComponent {
         this.menuSchema.PROGRAMAS_GESTAO
       ].sort(this.orderMenu)
     }, {
-      name: "Execução",
+      name: this.lex.translate("Execução"),
       permition: "MENU_GESTAO_ACESSO",
       id: "navbarDropdownGestaoExecucao",
       menu: [
@@ -239,7 +233,7 @@ export class AppComponent {
         Object.assign({}, this.menuSchema.CONSOLIDACOES, { params: { tab: "USUARIO" } })
       ].sort(this.orderMenu)
     }, {
-      name: "Avaliação",
+      name: this.lex.translate("Avaliação"),
       permition: "MENU_GESTAO_ACESSO",
       id: "navbarDropdownGestaoAvaliacao",
       menu: [
@@ -247,7 +241,7 @@ export class AppComponent {
         this.menuSchema.AVALIACAO_PLANOS_ENTREGAS
       ].sort(this.orderMenu)
     }, {
-      name: "Gerenciamento",
+      name: this.lex.translate("Gerenciamento"),
       permition: "MENU_CONFIG_ACESSO",
       id: "navbarDropdownGestaoGerencial",
       menu: [
@@ -257,7 +251,7 @@ export class AppComponent {
         this.menuSchema.PERFIS
       ].sort(this.orderMenu)
     }, {
-      name: "Cadastros",
+      name:this.lex.translate("Cadastros"),
       permition: "MENU_CAD_ACESSO",
       id: "navbarDropdownGestaoCadastros",
       menu: [
@@ -280,7 +274,7 @@ export class AppComponent {
     ];
 
     this.menuAdministrador = [{
-      name: "Cadastros",
+      name: this.lex.translate("Cadastros"),
       permition: "MENU_CAD_ACESSO",
       id: "navbarDropdownCadastrosAdm",
       menu: [
@@ -301,7 +295,7 @@ export class AppComponent {
         this.menuSchema.TIPOS_TAREFAS
       ].sort(this.orderMenu)
     }, {
-      name: "Gerenciamento",
+      name: this.lex.translate("Gerenciamento"),
       permition: "MENU_CONFIG_ACESSO",
       id: "navbarDropdownGerencialAdm",
       menu: [
@@ -313,7 +307,7 @@ export class AppComponent {
     }];
 
     this.menuDev = [{
-      name: "Manutenção",
+      name: this.lex.translate("Manutenção"),
       permition: "DEV_MENU_LOGS_ACESSO",
       id: "navbarDropdownDevManutencao",
       menu: [
@@ -321,7 +315,7 @@ export class AppComponent {
         this.menuSchema.PAINEL
       ]
     }, {
-      name: "Logs e Auditoria",
+      name: this.lex.translate("Logs e Auditorias"),
       permition: "DEV_MENU_LOGS_ACESSO",
       id: "navbarDropdownDevLogs",
       menu: [
@@ -330,7 +324,7 @@ export class AppComponent {
         this.menuSchema.LOGS_TRAFEGOS
       ]
     }, {
-      name: "Testes",
+      name: this.lex.translate("Testes"),
       permition: "DEV_MENU_LOGS_ACESSO",
       id: "navbarDropdownDevTestes",
       menu: [
@@ -342,14 +336,14 @@ export class AppComponent {
     this.menuPonto = [];
 
     this.menuProjeto = [{
-      name: "Cadastros",
+      name: this.lex.translate("Cadastros"),
       permition: "MENU_CAD_ACESSO",
       id: "navbarDropdownProjetoCadastros",
       menu: [
         this.menuSchema.MATERIAIS_SERVICOS
       ]
     }, {
-      name: "Gerencial",
+      name: this.lex.translate("Gerencial"),
       permition: "MENU_CAD_ACESSO",
       id: "navbarDropdownProjetoGerencial",
       menu: [
@@ -362,7 +356,7 @@ export class AppComponent {
     ];
 
     this.menuRaioX = [{
-      name: "Curriculum",
+      name: this.lex.translate("Curriculum"),
       permition: "MOD_RX_VIS_DPE",
       id: "navbarDropdownRXCadastros",
       menu: [
@@ -372,14 +366,14 @@ export class AppComponent {
         //this.menuSchema.RXCADASTRO_OPORTUNIDADES
       ]
     }, {
-      name: "Oportunidades",
+      name: this.lex.translate("Oportunidades"),
       permition: "MOD_RX_VIS_DPE",
       id: "navbarDropdownRXOportunidades",
       menu: [
         this.menuSchema.CURRICULUM_CADASTRO_OPORTUNIDADES
       ]
     }, {
-      name: "Pesquisas",
+      name: this.lex.translate("Pesquisas"),
       permition: "MOD_RX_VIS_DPE",
       id: "navbarDropdownRXPesquisas",
       menu: [
@@ -387,7 +381,7 @@ export class AppComponent {
         this.menuSchema.CURRICULUM_VISUALIZA_PESQUISA2
       ]
     }, {
-      name: "Questionários Dinâmicos",
+      name: this.lex.translate("Questionários Dinâmicos"),
       permition: "MOD_RX_VIS_DPE",
       id: "navbarDropdownRXQD",
       menu: [
@@ -396,7 +390,7 @@ export class AppComponent {
         this.menuSchema.CURRICULUM_CADASTRO_QUESTIONARIOS_TESTE
       ]
     }, {
-      name: "Cadastros",
+      name: this.lex.translate("Cadastros"),
       permition: "MOD_RX_VIS_DPE",
       id: "navbarDropdownRXCadastrosGerais",
       menu: [
@@ -417,38 +411,16 @@ export class AppComponent {
       ]
     }];
 
+    let gestaoPGD = this.auth.hasPermissionTo("CTXT_GEST");
     this.menuContexto = [
-      { key: "EXECUCAO", permition: "CTXT_EXEC", icon: "bi bi-person-check", name: "Participante", menu: this.menuExecucao, petrvsModule: 'PGD' },
-      { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-people-fill", name: "Chefe", menu: this.menuGestao, petrvsModule: 'PGD' },
-      { key: "ADMINISTRADOR", permition: "CTXT_ADM", icon: "bi bi-emoji-sunglasses", name: "Administrador", menu: this.menuAdministrador },
-      { key: "DEV", permition: "CTXT_DEV", icon: "bi bi-braces", name: "Desenvolvedor", menu: this.menuDev },
-      { key: "PONTO", permition: "CTXT_PNT", icon: "bi bi-stopwatch", name: "Ponto eletrônico", menu: this.menuPonto },
-      { key: "PROJETO", permition: "CTXT_PROJ", icon: "bi bi-graph-up-arrow", name: "Projetos", menu: this.menuProjeto },
-      { key: "RAIOX", permition: "CTXT_RX", icon: "bi bi-camera", name: "Raio X", menu: this.menuRaioX }
+      { key: "PGD", permition: gestaoPGD ? "CTXT_GEST" : "CTXT_EXEC", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: gestaoPGD ? this.menuGestao : this.menuExecucao},
+      { key: "ADMINISTRADOR", permition: "CTXT_ADM", icon: "bi bi-emoji-sunglasses", name: this.lex.translate("Administrador"), menu: this.menuAdministrador },
+      { key: "DEV", permition: "CTXT_DEV", icon: "bi bi-braces", name: this.lex.translate("Desenvolvedor"), menu: this.menuDev },
+      { key: "PONTO", permition: "CTXT_PNT", icon: "bi bi-stopwatch", name: this.lex.translate("Ponto Eletrônico"), menu: this.menuPonto },
+      { key: "PROJETO", permition: "CTXT_PROJ", icon: "bi bi-graph-up-arrow", name: this.lex.translate("Projetos"), menu: this.menuProjeto },
+      { key: "RAIOX", permition: "CTXT_RX", icon: "bi bi-camera", name: this.lex.translate("Raio X"), menu: this.menuRaioX }
     ]
-
-    const petrvsModules = [{
-      name: 'PGD',
-      icon: 'bi bi-clipboard2-data'
-    }];
-
-    this.novoMenuContexto = [];
-    petrvsModules.forEach(module => {
-      const groupedItems = this.menuContexto.filter(item => item.petrvsModule === module.name && (!item.permition || this.auth.capacidades.includes(item.permition)));
-      if (groupedItems.length > 0) {
-        this.novoMenuContexto.push({
-          module: module,
-          items: groupedItems
-        });
-      }
-      const itemsWithoutModules = this.menuContexto.filter(item => !item.petrvsModule && (!item.permition || this.auth.capacidades.includes(item.permition)));
-      if (itemsWithoutModules.length > 0) {
-        this.novoMenuContexto.push({
-          module: null,
-          items: itemsWithoutModules
-        });
-      }
-    });
+    
   }
 
   /*public onContextoSelect(item: any) {
@@ -468,9 +440,9 @@ export class AppComponent {
   }
 
   public get menu(): any {
+    let gestaoPGD = this.auth.hasPermissionTo("CTXT_GEST");
     switch (this.gb.contexto?.key) {
-      case "GESTAO": return this.menuGestao;
-      case "EXECUCAO": return this.menuExecucao;
+      case "PGD": return gestaoPGD ? this.menuGestao : this.menuExecucao;
       case "ADMINISTRADOR": return this.menuAdministrador;
       case "DEV": return this.menuDev;
       case "PONTO": return this.menuPonto;
@@ -559,23 +531,6 @@ export class AppComponent {
 
   public get isConfig(): boolean {
     return this.router.url.indexOf("/extension/options") >= 0;
-  }
-
-  public activeModule(menu: NovoMenuContexto) {
-    return menu.items?.find(s => s.name == this.gb.contexto?.name)
-  }
-
-  public showSubMenu(e: any) {
-    console.log(e);
-    let nextEl = e.target.nextElementSibling;
-    if (nextEl && nextEl.classList.contains('submenu')) {
-      e.preventDefault();
-      if (nextEl.style.display == 'block') {
-        nextEl.style.display = 'none';
-      } else {
-        nextEl.style.display = 'block';
-      }
-    }
   }
 
 }

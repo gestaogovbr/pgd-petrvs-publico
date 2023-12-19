@@ -15,6 +15,8 @@ import { Curriculum } from 'src/app/models/currriculum.model';
 import { trigger,state,style,animate,transition } from '@angular/animations';
 import { InputMultiselectComponent } from 'src/app/components/input/input-multiselect/input-multiselect.component';
 import { CurriculumGraduacaoDaoService } from 'src/app/dao/curriculum-graduacao.service';
+import { data } from 'jquery';
+import { CurriculumGraduacao } from 'src/app/models/currriculum-graduacao.model';
 
 @Component({
   selector: 'curriculum-pessoal-form',
@@ -43,6 +45,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   //@ViewChild(InputSelectComponent, { static: false }) public titulo?: InputSelectComponent;
   @ViewChild("curso", { static: false }) public cursoV?: InputSelectComponent;
   @ViewChild("idiomasM", { static: false }) public idiomasM?: InputMultiselectComponent;
+  @ViewChild('municipio', { static: false }) public municipioV?: InputSelectComponent;
   
 
   public municipios: LookupItem[] = [];
@@ -64,12 +67,13 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
 
   constructor(public injector: Injector) {
     super(injector, Curriculum, CurriculumDaoService);
+    this.join = ['graduacoes'];
     //super(injector,Curso, CursoDaoService)
     this.cidadeDao = injector.get<CidadeDaoService>(CidadeDaoService);
     this.areaDao = injector.get<AreaConhecimentoDaoService>(AreaConhecimentoDaoService)
     this.cursoDao = injector.get<CursoDaoService>(CursoDaoService)
     this.curriculumGraduacaoDAO = injector.get<CurriculumGraduacaoDaoService>(CurriculumGraduacaoDaoService)
-    this.join = ['graduacoes'];
+    
     
     this.form = this.fh.FormBuilder({
       id: { default: "" },
@@ -126,19 +130,19 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   }
 
   public saveData(form: IIndexable): Promise<Curriculum> {
-    console.log('FORMULARIOGRAD', this.formGraduacao!.value)
-    console.log('FORMULARIO', this.form!.value)
+    //console.log('FORMULARIOGRAD', this.formGraduacao!.value)
+    //console.log('FORMULARIO', this.form!.value)
     return new Promise<Curriculum>((resolve, reject) => {
       // this.entity!.usuario_id=this.auth.usuario!.id;
+      
       let curriculum = this.util.fill(new Curriculum(), this.entity!);
       //curriculum.usuario_id=this.auth.usuario?.id;
       curriculum = this.util.fillForm(curriculum, this.form!.value);
       curriculum.usuario_id = this.auth.usuario?.id;
-
-      (this.form?.controls.idiomasM.value as Array<LookupItem>).forEach(element => curriculum.idiomas.push(element.data));
-      // let graduacoes = this.util.fill(new CurriculumGraduacao(),)
+      curriculum.graduacoes = this.form!.controls.graduacaopos.value.filter((x: CurriculumGraduacao) => x._status?.length);
+      //(this.form?.controls.idiomasM.value as Array<LookupItem>).forEach(element => curriculum.idiomas.push(element.data));
       resolve(curriculum);
-      //resolve(this.util.fillForm(curriculum, this.form!.value));
+
     });
   }
 
@@ -147,6 +151,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     //const estados = this.estadosV!.value;
     const estados = this.form!.controls.estados.value;
     this.selecionaMunicipios(estados);
+    //this.municipioV?.disabled;
   }
 
   public selecionaMunicipios(uf: string) {
@@ -154,7 +159,6 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     this.cidadeDao?.query({ where: [['uf', '==', uf]], orderBy: [['nome', 'asc']] }).getAll().then((municipios) => {
       this.municipios = municipios.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
     });
-
   }
 
 
@@ -188,20 +192,22 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     }
     
     this.dataTableIdioma=[]
-    console.log('idiomasM',this.form?.controls.idiomasM.value)
+    //console.log('idiomasM',this.form?.controls.idiomasM.value)
     let itens = this.idiomasM?.items
-    console.log('ITENS',itens?.length)
+    //console.log('ITENS',itens?.length)
     if(itens?.length != 0){
       this.form?.controls.idiomasM.value.forEach((element: { data: { entende: any; fala: any; idioma: any; escrita: any; }; }) => {
         this.dataTableIdioma.push({entender:element.data.entende,falar:element.data.fala,idioma:element.data.idioma,escrever:element.data.escrita});
       });
       this.dataTableIdioma.push({entender:result!.data.entende,falar:result!.data.fala,idioma:result!.data.idioma,escrever:result!.data.escrita});
-      this.tableidioma(this.dataTableIdioma)
+      this.tableIdioma(this.dataTableIdioma)
     }else{
       this.dataTableIdioma.push({entender:result!.data.entende,falar:result!.data.fala,idioma:result!.data.idioma,escrever:result!.data.escrita});
-      this.tableidioma(this.dataTableIdioma)
+      console.log('DATATABLEIDIOMA',this.dataTableIdioma)
+      //this.tableIdioma(this.dataTableIdioma)
     }
-    //console.log('DATATABLEIDIOMA',this.dataTableIdioma)
+    console.log('DATATABLEIDIOMA',this.dataTableIdioma)
+   
     return result;
   };
 
@@ -219,7 +225,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     const titulo = this.lookup.TITULOS_CURSOS.find(x => x.key == this.formGraduacao!.controls.titulo.value);
     const pretensao = this.opcoesEscolha.find(value => value.key == (this.formGraduacao!.controls.pretensao.value ? 1 : 0));//converte o value do switch
     const key = this.util.textHash((area.key || "") + (curso?.key || "") + (titulo?.key || ""));// + (pretensao?.key || ""));
-    console.log('AREA', area, 'AREA', curso, 'AREA', titulo, 'AREA', pretensao)
+    //console.log('AREA', area, 'AREA', curso, 'AREA', titulo, 'AREA', pretensao)
     if (curso && area && titulo && pretensao && this.util.validateLookupItem(this.formGraduacao!.controls.graduacaopos.value, key)) {
       result = {
         key: key,
@@ -233,7 +239,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
           _status: "ADD"
         }
       };
-      console.log('FORMULARIOGRAD', this.formGraduacao!.value)
+      //console.log('FORMULARIOGRAD', this.formGraduacao!.value)
       this.formGraduacao!.controls.areaPos.setValue("");
       this.formGraduacao!.controls.cursoPos.setValue("");
       this.formGraduacao!.controls.titulo.setValue("");
@@ -263,7 +269,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
 
   ngOnInit(): void {
     this.dao?.query({ where: ['usuario_id', '==', this.auth.usuario?.id] }).getAll().then((user) => {
-      console.log('USER', user.map(x => x.id))
+      //console.log('USER', user.map(x => x.id))
       if (!(user == null || user.length == 0)) {
         //console.log('VAZIO')
         const userID = (user.map(x => x.id)).toString()
@@ -285,7 +291,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   public togglePopOver() {
     
     const pop = document.getElementById('divPop');
-    console.log(pop?.hidden)
+    //console.log(pop?.hidden)
     if (pop?.hidden){
       pop!.hidden=false;
 
@@ -293,12 +299,16 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
       pop!.hidden=true;
     }
     this.show = !this.show;
-    
   }
-
-  public tableidioma(itens : any){
-    console.log('TABLEIDIOMA',itens)
-    //this.dataTableIdioma.push({entender:itens!.data.entende,falar:itens!.data.fala,idioma:itens!.data.idioma,escrever:itens!.data.escrita});
+    
+  
+  public tableIdioma(itens : any){
+    //console.log('TABLEIDIOMA',itens[0].entender)
+    if(itens?.length != 0){
+        itens.forEach((element: { entender: string; falar: string; idioma: string; escrever: string }) => {
+            this.dataTableIdioma.push({entender:element.entender,falar:element.falar,idioma:element.idioma,escrever:element.escrever});
+          });
+    }
   }
 
   public onIdiomaChange(){

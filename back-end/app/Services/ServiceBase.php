@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Tenant;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\DB;
@@ -627,12 +628,15 @@ class ServiceBase extends DynamicMethods
      * @param  string $file
      * @return string
      */
-    public function download(string $file)
+    public function download($tenantId, string $file)
     {
-        if(!Storage::exists($file)) {
-            throw new Exception("Arquivo não encontrado");
-        }
-        return Storage::path($file);
+        $tenant = tenancy()->find($tenantId);
+        return $tenant->run(function () use ($file) {
+            if(!Storage::exists($file)) {
+                throw new Exception("Arquivo não encontrado");
+            }
+            return Storage::path($file);
+        });
     }
 
     /**
@@ -647,7 +651,7 @@ class ServiceBase extends DynamicMethods
         if(!Storage::exists($file)) {
             throw new Exception("Arquivo não encontrado");
         }
-        $url = URL::temporarySignedRoute('download', now()->addMinutes(30), ['file' => $file]);
+        $url = URL::temporarySignedRoute('download', now()->addMinutes(30), ['tenant' => tenant('id'), 'file' => $file], false);
         $url = substr($url, strpos($url, "download/")); /* Convert to relative path from absolute */
         return $url;
     }
