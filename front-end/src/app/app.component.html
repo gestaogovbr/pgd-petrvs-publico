@@ -2,14 +2,14 @@
     <ng-template #dialogs></ng-template>
     <nav *ngIf="auth.logged || gb.isEmbedded || isConfig" [class.fixed-top]="!gb.isEmbedded" class="navbar navbar-expand-lg px-3">
         <div class="navbar-logo">
-            <button *ngIf="!isConfig && !gb.isToolbar" class="navbar-toggler" type="button"  [attr.data-bs-toggle]="'collapse'"  [attr.data-bs-target]="'#navbarSupportedContent'" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Abri menu">
+            <button *ngIf="!isConfig && !gb.isToolbar" class="navbar-toggler" type="button" [attr.data-bs-toggle]="'collapse'" [attr.data-bs-target]="'#navbarSupportedContent'" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Abri menu">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <a class="navbar-brand" role="button">
-                <div class="d-flex align-items-center">    
-                    <img [src]="gb.getResourcePath('assets/images/icon-' + gb.theme + '.png')" alt="Logo Petrvs" width="30"  class="d-inline-block align-text-top"/>
+                <div class="d-flex align-items-center">
+                    <img [src]="gb.getResourcePath('assets/images/icon-' + gb.theme + '.png')" alt="Logo Petrvs" width="30" class="d-inline-block align-text-top" />
                     <span class="logo-text ms-2 d-none d-sm-block">PETRVS</span>
-                </div>   
+                </div>
             </a>
         </div>
         <div *ngIf="isMinimized" class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -30,10 +30,10 @@
             <div *ngIf="gb.toolbarButtons?.length" class="btn-group" role="group" aria-label="Opções">
                 <div *ngFor="let btn of gb.toolbarButtons" class="btn-group" role="group">
                     <button type="button" [attr.id]="(btn.onClick ? '_' : '') + buttonId(btn)" [class.disabled]="isButtonRunning(btn)" [class]="'btn ' + (btn.color || 'btn-outline-primary')" [class.dropdown-toggle]="btn.items && !btn.onClick" [attr.data-bs-toggle]="btn.items && !btn.onClick ? 'dropdown' : undefined" aria-expanded="false" (click)="onToolbarButtonClick(btn)">
-                        <i *ngIf="btn.icon?.length" [class]="btn.icon"  [attr.data-bs-toggle]="'tooltip'" data-bs-placement="top" title="{{ btn.hint || btn.label || '' }}"></i>
+                        <i *ngIf="btn.icon?.length" [class]="btn.icon" [attr.data-bs-toggle]="'tooltip'" data-bs-placement="top" title="{{ btn.hint || btn.label || '' }}"></i>
                         {{ btn.label || "" }}
                     </button>
-                    <button *ngIf="btn.items?.length && btn.onClick" type="button" [attr.id]="buttonId(btn)" [class.disabled]="isButtonRunning(btn)" [class]="'btn dropdown-toggle dropdown-toggle-split ' + (btn.color || 'btn-outline-primary')"  [attr.data-bs-toggle]="'dropdown'" aria-expanded="false" data-bs-reference="parent">
+                    <button *ngIf="btn.items?.length && btn.onClick" type="button" [attr.id]="buttonId(btn)" [class.disabled]="isButtonRunning(btn)" [class]="'btn dropdown-toggle dropdown-toggle-split ' + (btn.color || 'btn-outline-primary')" [attr.data-bs-toggle]="'dropdown'" aria-expanded="false" data-bs-reference="parent">
                         <span class="visually-hidden">Toggle Dropdown</span>
                     </button>
                     <ul *ngIf="btn.items" class="dropdown-menu" [class.dropdown-menu-end]="btn.onClick" [attr.aria-labelledby]="buttonId(btn)">
@@ -53,7 +53,7 @@
                 </li>
                 <ng-container *ngFor="let item of menu">
                     <li *ngIf="item && (!item.permition?.length || auth.hasPermissionTo(item.permition))" class="nav-item" [ngClass]="item.menu?.length ? 'dropdown' : '' ">
-                        <a [class]="menuItemClass('nav-link' + (!item.route ? ' dropdown-toggle' : ''), item)" role="button" [attr.id]="item.id" role="button"  [attr.data-bs-target]="item.menu?.length ? '' : '.navbar-collapse.show'" [attr.data-bs-toggle]="item.menu?.length ? 'dropdown' : 'collapse'" aria-expanded="false" (click)="openModule(item)">
+                        <a [class]="menuItemClass('nav-link' + (!item.route ? ' dropdown-toggle' : ''), item)" role="button" [attr.id]="item.id" role="button" [attr.data-bs-target]="item.menu?.length ? '' : '.navbar-collapse.show'" [attr.data-bs-toggle]="item.menu?.length ? 'dropdown' : 'collapse'" aria-expanded="false" (click)="openModule(item)">
                             {{ item.name }}
                         </a>
                         <ul *ngIf="!item.route" class="dropdown-menu navbar-dropdown-caret shadow border border-300  py-0" [attr.aria-labelledby]="item.id">
@@ -61,12 +61,12 @@
                                 <div class="card-body py-3 px-3">
                                     <ng-container *ngFor="let itemMenu of item.menu">
                                         <li *ngIf="itemMenu && (!itemMenu.permition?.length || auth.hasPermissionTo(itemMenu.permition))">
-                                            <a *ngIf="itemMenu != '-'; else divider" [class]="menuItemClass('dropdown-item', itemMenu)" role="button" (click)="openModule(itemMenu)" >
+                                            <a *ngIf="itemMenu != '-'; else divider" [class]="menuItemClass('dropdown-item', itemMenu)" role="button" (click)="openModule(itemMenu)">
                                                 <i [class]="itemMenu.icon"></i>
                                                 {{ itemMenu.name }}
                                             </a>
                                             <ng-template #divider>
-                                                <hr class="dropdown-divider"/>
+                                                <hr class="dropdown-divider" />
                                             </ng-template>
                                         </li>
                                     </ng-container>
@@ -81,9 +81,10 @@
             </div>
         </div>
         <ul class="navbar-nav navbar-nav-icons flex-row align-items-center justify-content-end ">
-            <li class="nav-item dropdown">                
-                <a class="nav-link" id="petrvs-context" href="#" role="button"  [attr.data-bs-toggle]="'dropdown'" aria-haspopup="true"  aria-expanded="false"  data-bs-auto-close="outside">
+            <li class="nav-item dropdown">
+                <a class="nav-link" id="petrvs-context" href="#" role="button" [attr.data-bs-toggle]="'dropdown'" aria-haspopup="true" aria-expanded="false" data-bs-auto-close="outside">
                     <span class="d-none d-md-block">
+                        <small>Módulo:</small>
                         {{ gb.contexto?.name || "Selecione..." }}
                         <i class="bi bi-chevron-down fs-6"></i>
                     </span>
@@ -91,38 +92,18 @@
                         <i [class]="gb.contexto?.icon"></i>
                     </span>
                 </a>
-                <div class="dropdown-menu contextoDropdown navbar-dropdown-caret py-0 shadow border border-300" aria-labelledby="petrvs-context" >
+                <div class="dropdown-menu contextoDropdown navbar-dropdown-caret py-0 shadow border border-300" aria-labelledby="petrvs-context">
                     <div class="card position-relative border-0">
                         <div class="card-body py-3 px-3">
+                            <small class="texto-modulo">Escolha o módulo que deseja usar</small>
+                            <div class="divider"></div>
                             <ul class="nav d-flex flex-column">
-                                <ng-container *ngFor="let menu of novoMenuContexto">
-                                    <ng-container *ngIf="menu.module">
-                                        <li class="nav-item">
-                                            <a  class="nav-link" role="button" [class.active]="activeModule(menu)"  [attr.data-bs-toggle]="'collapse'" [attr.data-bs-target]="'#menu'+ menu.module.name" aria-expanded="false"  [attr.aria-controls]="menu.module.name">
-                                                <i [class]="menu.module.icon"></i> {{ menu.module.name }}
-                                            </a>
-                                            <div class="collapse multi-collapse" id="menu{{menu.module.name}}">
-                                                <ul *ngIf="menu.items" class="submenu">
-                                                    <ng-container *ngFor="let submenuItem of menu.items">
-                                                        <li  class="nav-item mt-1" (click)="gb.setContexto(submenuItem.key)">
-                                                            <a [class.active]="gb.contexto?.name == submenuItem.name" class="nav-link" role="button">
-                                                                <i [class]="submenuItem.icon"></i> {{ submenuItem.name }}
-                                                            </a>
-                                                        </li>
-                                                    </ng-container>
-                                                </ul>
-                                            </div>
-                                        </li>
-                                    </ng-container>
-                                    <ng-container *ngIf="!menu.module">
-                                        <ng-container *ngFor="let submenuItem of menu.items">
-                                            <li (click)="gb.setContexto(submenuItem.key)" class="nav-item">
-                                                <a [class.active]="gb.contexto?.name == submenuItem.name" class="nav-link" role="button">
-                                                    <i [class]="submenuItem.icon"></i> {{ submenuItem.name }}
-                                                </a>
-                                            </li>
-                                        </ng-container>
-                                    </ng-container>
+                                <ng-container *ngFor="let item of menuContexto">
+                                    <li *ngIf="gb.contexto?.key != item.key" (click)="gb.setContexto(item.key)" class="nav-item">
+                                        <a [class.active]="gb.contexto?.name == item.name" class="nav-link " role="button">
+                                            <i [class]="item.icon"></i> {{ item.name }}
+                                        </a>
+                                    </li>
                                 </ng-container>
                             </ul>
                         </div>
@@ -130,7 +111,7 @@
                 </div>
             </li>
             <li class="nav-item ms-3 ms-lg-2">
-                <a class="nav-link" role="button" (click)="openModule({route: ['suporte']})"  [attr.data-bs-toggle]="'tooltip'" data-bs-placement="top" title="Suporte Petrvs">
+                <a class="nav-link" role="button" (click)="openModule({route: ['suporte']})" [attr.data-bs-toggle]="'tooltip'" data-bs-placement="top" title="Suporte Petrvs">
                     <i class="bi bi-headset"></i>
                 </a>
             </li>
@@ -155,7 +136,7 @@
                     </span>
                 </li>
                 <li class="nav-item dropdown ms-3 ms-lg-2">
-                    <a class="nav-link" id="navbarDropdownBranch" href="#" role="button"  [attr.data-bs-toggle]="'dropdown'" aria-haspopup="true" data-bs-auto-close="outside" aria-expanded="false">
+                    <a class="nav-link" id="navbarDropdownBranch" href="#" role="button" [attr.data-bs-toggle]="'dropdown'" aria-haspopup="true" data-bs-auto-close="outside" aria-expanded="false">
                         {{ auth.unidade?.sigla }}
                         <i class="bi bi-chevron-down fs-6"></i>
                     </a>
@@ -164,7 +145,7 @@
                             <div class="card-body py-3 px-3 pb-0 overflow-auto scrollbar" style="height: 20rem">
                                 <ul *ngIf="unidades?.length" class="nav d-flex flex-column">
                                     <li *ngFor="let unidade of unidades" class="nav-item">
-                                        <a [class.active]="unidade.id == auth.unidade?.id" class="nav-link " role="button" (click)="selecionaUnidade(unidade.id)">{{ unidade.sigla }}</a>                                            
+                                        <a [class.active]="unidade.id == auth.unidade?.id" class="nav-link " role="button" (click)="selecionaUnidade(unidade.id)">{{ unidade.sigla }}</a>
                                     </li>
                                 </ul>
                             </div>
@@ -172,7 +153,7 @@
                     </div>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link " id="navbarDropdownUser" href="#!" role="button"  [attr.data-bs-toggle]="'dropdown'" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link " id="navbarDropdownUser" href="#!" role="button" [attr.data-bs-toggle]="'dropdown'" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
                         <div class="">
                             <profile-picture [url]="usuarioFoto" [hint]="auth.usuario?.nome || 'Usuário desconhecido'"></profile-picture>
                         </div>
@@ -203,43 +184,43 @@
                             </ul>
                             <div class="card-footer p-0 border-top">
                                 <div class="px-3 py-2">
-                                    <li class="nav-item d-grid">
-                                        <a class="btn btn-outline-secondary btn-sm" role="button" (click)="logout()">
-                                            <i class="bi bi-arrow-bar-right"></i>
-                                            Sair
-                                        </a>
-                                    </li>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <li class="nav-item d-grid">
+                    <a class="btn btn-outline-secondary btn-sm" role="button" (click)="logout()">
+                        <i class="bi bi-arrow-bar-right"></i>
+                        Sair
+                    </a>
                 </li>
-                <button type="button" *ngIf="gb.isToolbar && !auth.logged && gb.requireLogged" class="btn btn-outline-danger" role="button" (click)="toolbarLogin()">
-                    Login
-                </button>
-                <button *ngIf="gb.isEmbedded && auth.logged && !gb.isToolbar" class="btn btn-outline-secondary" type="button" (click)="onCollapseContainerClick()">
-                    <i [class]="'bi ' + (collapseContainer ? 'bi bi-plus' : 'bi bi-dash')"  [attr.data-bs-toggle]="'tooltip'" data-bs-placement="top" [title]="collapseContainer ? 'Expandir Petrvs' : 'Contrair Petrvs'"></i>
-                </button>
-            </ng-container>
-        </ul>
-    </nav>
-    <div *ngIf="error?.length" class="alert alert-danger mt-2" role="alert">
-        <span><u><strong>{{ (error || '').split('&')[0] }}</strong></u></span><br>{{ (error || '').split('&')[1] }}
-    </div>
-    <div class="content" [class.d-none]="gb.isToolbar || collapseContainer">
-        <top-alert *ngFor="let topAlert of dialog.topAlerts" type="alert" [id]="topAlert.id" [close]="topAlert.close" [message]="topAlert.message" [closable]="topAlert.closable"></top-alert>
-        <router-outlet></router-outlet>
-    </div>
+</div>
+</div>
+</div>
+</div>
+</li>
+<button type="button" *ngIf="gb.isToolbar && !auth.logged && gb.requireLogged" class="btn btn-outline-danger" role="button" (click)="toolbarLogin()">
+    Login
+</button>
+<button *ngIf="gb.isEmbedded && auth.logged && !gb.isToolbar" class="btn btn-outline-secondary" type="button" (click)="onCollapseContainerClick()">
+    <i [class]="'bi ' + (collapseContainer ? 'bi bi-plus' : 'bi bi-dash')" [attr.data-bs-toggle]="'tooltip'" data-bs-placement="top" [title]="collapseContainer ? 'Expandir Petrvs' : 'Contrair Petrvs'"></i>
+</button>
+</ng-container>
+</ul>
+</nav>
+<div *ngIf="error?.length" class="alert alert-danger mt-2" role="alert">
+    <span><u><strong>{{ (error || '').split('&')[0] }}</strong></u></span><br>{{ (error || '').split('&')[1] }}
+</div>
+<div class="content" [class.d-none]="gb.isToolbar || collapseContainer">
+    <top-alert *ngFor="let topAlert of dialog.topAlerts" type="alert" [id]="topAlert.id" [close]="topAlert.close" [message]="topAlert.message" [closable]="topAlert.closable"></top-alert>
+    <router-outlet></router-outlet>
+</div>
 
-    <footer class="footer mt-auto" *ngIf="auth.usuario && !gb.isEmbedded">
-        <div class="d-flex justify-content-between">
-            <div>
-                <p><small class="text-primary">Versão: {{gb.VERSAO_SYS}}</small></p>
-            </div>
-            <div class="logos">
-                <img [src]="gb.getResourcePath('assets/images/logo_pgd_' + (gb.theme != 'light' ? 'light' : 'normal') + '.png')">
-                <img [src]="gb.getResourcePath('assets/images/logo_gov_' + (gb.theme != 'light' ? 'light' : 'normal') + '.png')">
-            </div>
+<footer class="footer mt-auto" *ngIf="auth.usuario && !gb.isEmbedded">
+    <div class="d-flex justify-content-between">
+        <div>
+            <p><small class="text-primary">Versão: {{gb.VERSAO_SYS}}</small></p>
         </div>
-    </footer>
+        <div class="logos">
+            <img [src]="gb.getResourcePath('assets/images/logo_pgd_' + (gb.theme != 'light' ? 'light' : 'normal') + '.png')">
+            <img [src]="gb.getResourcePath('assets/images/logo_gov_' + (gb.theme != 'light' ? 'light' : 'normal') + '.png')">
+        </div>
+    </div>
+</footer>
 </div>
