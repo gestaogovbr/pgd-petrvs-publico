@@ -108,6 +108,8 @@ export class GlobalsService {
   }
 
   public get initialRoute(): string[] {
+    console.log(this.contexto);
+    
     //@ts-ignore
     const route = typeof PETRVS_EXTENSION_ROUTE != "undefined" ? PETRVS_EXTENSION_ROUTE : typeof PETRVS_ROUTE != "undefined" ? PETRVS_ROUTE : "/home";
     const strRoute = this.isEmbedded ? route : (this.contexto ? "/home/"+ this.contexto!.key.toLowerCase() : "/home");

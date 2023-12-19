@@ -17,7 +17,7 @@ import { SafeUrl } from '@angular/platform-browser';
 
 //export let appInjector: Injector;
 //export type Contexto = "PGD" | "EXECUCAO" | "AVALIACAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
-export type Contexto = "GESTAO" | "EXECUCAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
+export type Contexto = "EXECUCAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
 export type Schema = {
   name: string,
   permition?: string,
@@ -45,11 +45,6 @@ export type MenuContexto = {
   name: string,
   menu?: MenuItem[],
   petrvsModule?: string
-};
-
-export type NovoMenuContexto = {
-  module: PetrvsModule | null,
-  items: MenuContexto[]
 };
 
 @Component({
@@ -89,7 +84,6 @@ export class AppComponent {
   public menuSchema: MenuSchema = {};
   public menuToolbar: any[] = [];
   public menuContexto: MenuContexto[] = [];
-  public novoMenuContexto: NovoMenuContexto[] = [];
   public menuProjeto: any;
   public menuGestao: any;
   public menuOperacional: any;
@@ -419,38 +413,16 @@ export class AppComponent {
       ]
     }];
 
+    let gestaoPGD = this.auth.hasPermissionTo("CTXT_GEST");
     this.menuContexto = [
-      { key: "EXECUCAO", permition: "CTXT_EXEC", icon: "bi bi-person-check", name: this.lex.translate("Participante"), menu: this.menuExecucao, petrvsModule: 'PGD' },
-      { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-people-fill", name: this.lex.translate("Chefe"), menu: this.menuGestao, petrvsModule: 'PGD' },
+      { key: gestaoPGD ? "GESTAO" : "EXECUCAO", permition: gestaoPGD ? "CTXT_GEST" : "CTXT_EXEC", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: gestaoPGD ? this.menuGestao : this.menuExecucao},
       { key: "ADMINISTRADOR", permition: "CTXT_ADM", icon: "bi bi-emoji-sunglasses", name: this.lex.translate("Administrador"), menu: this.menuAdministrador },
       { key: "DEV", permition: "CTXT_DEV", icon: "bi bi-braces", name: this.lex.translate("Desenvolvedor"), menu: this.menuDev },
       { key: "PONTO", permition: "CTXT_PNT", icon: "bi bi-stopwatch", name: this.lex.translate("Ponto Eletrônico"), menu: this.menuPonto },
       { key: "PROJETO", permition: "CTXT_PROJ", icon: "bi bi-graph-up-arrow", name: this.lex.translate("Projetos"), menu: this.menuProjeto },
       { key: "RAIOX", permition: "CTXT_RX", icon: "bi bi-camera", name: this.lex.translate("Raio X"), menu: this.menuRaioX }
     ]
-
-    const petrvsModules = [{
-      name: this.lex.translate("PGD"),
-      icon: 'bi bi-clipboard2-data'
-    }];
-
-    this.novoMenuContexto = [];
-    petrvsModules.forEach(module => {
-      const groupedItems = this.menuContexto.filter(item => item.petrvsModule === module.name && (!item.permition || this.auth.capacidades.includes(item.permition)));
-      if (groupedItems.length > 0) {
-        this.novoMenuContexto.push({
-          module: module,
-          items: groupedItems
-        });
-      }
-      const itemsWithoutModules = this.menuContexto.filter(item => !item.petrvsModule && (!item.permition || this.auth.capacidades.includes(item.permition)));
-      if (itemsWithoutModules.length > 0) {
-        this.novoMenuContexto.push({
-          module: null,
-          items: itemsWithoutModules
-        });
-      }
-    });
+    
   }
 
   /*public onContextoSelect(item: any) {
@@ -561,23 +533,6 @@ export class AppComponent {
 
   public get isConfig(): boolean {
     return this.router.url.indexOf("/extension/options") >= 0;
-  }
-
-  public activeModule(menu: NovoMenuContexto) {
-    return menu.items?.find(s => s.name == this.gb.contexto?.name)
-  }
-
-  public showSubMenu(e: any) {
-    console.log(e);
-    let nextEl = e.target.nextElementSibling;
-    if (nextEl && nextEl.classList.contains('submenu')) {
-      e.preventDefault();
-      if (nextEl.style.display == 'block') {
-        nextEl.style.display = 'none';
-      } else {
-        nextEl.style.display = 'block';
-      }
-    }
   }
 
 }
