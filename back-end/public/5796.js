@@ -4541,7 +4541,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdef
       const _r19 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](26);
       const _r21 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](28);
       const _r25 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](32);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("items", ctx.items)("form", ctx.form)("selectable", false)("minHeight", ctx.items.length > 2 ? 0 : 220)("join", ctx.join)("groupBy", ctx.groupBy)("add", ctx.addEntrega.bind(ctx))("remove", ctx.removeEntrega.bind(ctx))("save", ctx.saveEntrega.bind(ctx))("load", ctx.loadEntrega.bind(ctx))("saveEnd", ctx.saveEndEntrega.bind(ctx))("hasDelete", !ctx.disabled)("hasEdit", !ctx.disabled)("hasAdd", !ctx.disabled);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("items", ctx.items)("form", ctx.form)("selectable", false)("minHeight", ctx.items.length > 2 ? 0 : 300)("join", ctx.join)("groupBy", ctx.groupBy)("add", ctx.addEntrega.bind(ctx))("remove", ctx.removeEntrega.bind(ctx))("save", ctx.saveEntrega.bind(ctx))("load", ctx.loadEntrega.bind(ctx))("saveEnd", ctx.saveEndEntrega.bind(ctx))("hasDelete", !ctx.disabled)("hasEdit", !ctx.disabled)("hasAdd", !ctx.disabled);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("titleTemplate", _r1)("template", _r3)("editTemplate", _r5)("verticalAlign", "middle")("width", 300)("align", "center");
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](7);
