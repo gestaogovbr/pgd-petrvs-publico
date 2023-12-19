@@ -1,13 +1,13 @@
 <?php
 
 /*
-As classes e funções abaixo processam a linguagem de templates utilizando a seguinte gramática:
+As classes e funções abaixo processam a linguagem de templates utilizando a seguinte Gramática Sintática:
 
-<TEMPLATE>   ::= (<TEXT>|<TAG>)+
-<TEXT>       ::= .*
+<TEMPLATE>   ::= (<TEXT>|<TAG>)*
+<TEXT>       ::= .*?({{|$)
 <INDEX>      ::= [0-9]+
 <IDENTIFIER> ::= [a-zA-Z_](a-zA-Z0-9_)*
-<LITERAL>    ::= true|false|[0-9]+(\.[0-9]*)?|".*"|'.*'
+<LITERAL>    ::= true|false|<INDEX>|[0-9]+\.[0-9]+|".*"|'.*'
 <VAR>        ::= <IDENTIFIER>(\.<VAR> | "["<INDEX>"]")*
 <TAG>        ::= {{<STATEMENT>}}
 <STATEMENT>  ::= <IF> | <END-IF> | <FOR> | <END-FOR> | <VAR>
@@ -17,6 +17,20 @@ As classes e funções abaixo processam a linguagem de templates utilizando a se
 <END-FOR>    ::= end-for
 <EXPRESSION> ::= (<LITERAL>|<VAR>)(=|==|\>|\>=|\<|\<=|\<\>|\!=)(<LITERAL>|<VAR>)
 <PARAM>     ::= <IDENTIFIER>=<LITERAL>
+
+Gramática Lexica:
+<TEXT>         ::= .*?({{|$)
+<INDEX>        ::= [0-9]+
+<IDENTIFIER>   ::= [a-zA-Z_](a-zA-Z0-9_)*
+<LITERAL>      ::= true|false|[0-9]+(\.[0-9]*)?|".*"|'.*'
+<TAG>          ::= {{ | }}
+<BRACKET>      ::= []
+<IF>           ::= if:
+<END-IF>       ::= end-if
+<FOR>          ::= for:
+<END-FOR>      ::= end-for
+<OPERATOR>     ::= =|==|\>|\>=|\<|\<=|\<\>|\!=
+
 */
 
 #region Interface Visitor que deverá ser implementado pelo Parser e pelo Builder
@@ -164,35 +178,27 @@ class NodeParam implements Node {
 #endregion
 
 #region Léxico
-class Token {
-    const TEXT = ".*";
-    const INDEX = "[0-9]+";
-    const IDENTIFIER = "I";
-    const TRUE = "true";
-    const FALSE = "false";
-    const NUMBER = "[0-9]+(\.[0-9]*)?";
-    const STRING = "'.*'";
-    const DOT = ".";
-    const OPEN_TAG = "{{";
-    const CLOSE_TAG = "}}";
-    const OPEN_BRACKET = "[";
-    const CLOSE_BRACKET = "[";
-    const IF = "if:";
-    const END_IF = "end-if";
-    const FOR = "for:";
-    const END_FOR = "end-for";
-    const SEMICOLON = ";";
-    const OPERATOR = "=|==|\>|\>=|\<|\<=|\<\>|\!=";
-    const EOF = "$";
-    
-    public $kind = null;
-    public $start = 0;
-    public $end = 0;
+enum TokenKind
+{
+    case TEXT;
+    case TAG;
+    case BRACKET;
+    case IF;
+    case END_IF;
+    case FOR;
+    case END_FOR;
+    case SEMICOLON;
+    case OPERATOR;
+    case EOF;
+}
 
-    public function __construct($kind, $start, $end) {
+class Token {
+    public $kind = null;
+    public $value = "";
+
+    public function __construct($kind, $value) {
         $this->kind = $kind;
-        $this->start = $start;
-        $this->end = $end;
+        $this->value = $value;
     }
 }
 
@@ -202,22 +208,103 @@ class Scanner {
     public $start = 0;
     public $eof = false;
 
-    public function getCurrentChar() {
-        return substr($this->source, $this->cursos, 1);
+    function __construct($source = "") {
+        $this->setSource($source);
     }
 
-    public function take($expectedChar) {
-        
+    public function setSource($source) {
+        $this->source = $source;
+        $this->start = 0;
+        $this->cursor = 0;
+        $this->eof = empty($source);
     }
 
-    public function takeIt() {
-        if($this->cursor + 1 > strlen($this->source)) {
-            $this->eof = true;
-            return null;
+    public function getCurrent($lenght = 1) {
+        return substr($this->source, $this->cursor, $lenght);
+    }
+
+    public function lookahead($expected) {
+        return $expected == substr($this->source, $this->cursor, strlen($expected));
+    }
+
+    public function getCurrentSppeling() {
+        return substr($this->source, $this->start, $this->cursor - $this->start);
+    }
+
+    public function take($expected) {
+        if($expected == $this->lookahead($expected)) {
+            return $this->takeIt(strlen($expected));
         } else {
-            $this->cursor++;
-            return $this->getCurrentChar();
+            return null;
         }
+    }
+
+    public function takeIt($lenght = 1) {
+        $result = null;
+        if (!$this->eof) {
+            $result = $this->getCurrent($lenght);
+            $this->cursor = min($this->cursor + $lenght, strlen($this->source));
+            $this->eof = $this->cursor >= strlen($this->source);
+        }
+        return $result;
+    }
+
+    public function tryTakeToken($kind, $expecteds) {
+        foreach($expecteds as $expected) {
+            if($this->lookahead($expected)) { 
+                return new Token($kind, $this->take($expected));
+            }
+        }
+        return null;
+    }
+
+    public function tryTakePattern($kind, $pattern) {
+        if(preg_match($pattern, $this->getCurrent(null), $matches)) {
+            return $this->take($matches[0]);
+        }
+        return null;
+    }
+
+    public function scanText() {
+        while(!$this->eof && !$this->lookahead("{{")) {
+            $this->takeIt();
+        }
+        $buffer = $this->getCurrentSppeling();
+        return empty($buffer) ? null : new Token(TokenKind::TEXT, $buffer);
+    }
+
+    public function scanIndex() {
+        while(!$this->eof && preg_match("/[0-9]/", $this->getCurrent())) {
+            $this->takeIt();
+        }
+        $buffer = $this->getCurrentSppeling();
+        return empty($buffer) ? null : new Token(TokenKind::INDEX, $buffer);
+    }
+
+    public function scanIdentifier() {
+        while(!$this->eof && preg_match("/[0-9]/", $this->getCurrent())) {
+            $this->takeIt();
+        }
+        $buffer = $this->getCurrentSppeling();
+        return empty($buffer) ? null : new Token(TokenKind::INDEX, $buffer);
+    }
+
+    <IDENTIFIER>   ::= [a-zA-Z_](a-zA-Z0-9_)*
+    <LITERAL>      ::= true|false|[0-9]+(\.[0-9]*)?|".*"|'.*'
+    
+
+    public function scanToken() {
+        $result = null;
+        if(!$this->eof) {
+            $result = $this->tryTakeToken(TokenKind::TAG, ["{{", "}}"]) ??
+                $this->tryTakeToken(TokenKind::BRACKET, ["[", "]"]) ??
+                $this->tryTakeToken(TokenKind::IF, ["if:"]) ?? 
+                $this->tryTakeToken(TokenKind::END_IF, ["end-if:"]) ?? 
+                $this->tryTakeToken(TokenKind::IF, ["for:"]) ?? 
+                $this->tryTakeToken(TokenKind::END_IF, ["end-for:"]) ?? 
+                $this->tryTakeToken(TokenKind::OPERATOR, ["==", ">=", "<=", "!=", "<>", "=", ">", "<"]) ?? 
+        }
+        return new Token(TokenKind::TEXT, $this->getCurrentSppeling());
     }
 }
 #endregion
@@ -232,4 +319,5 @@ class Parser implements Visitor {
 class Builder implements Visitor {
     
 }
+
 #endregion
