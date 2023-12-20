@@ -30,7 +30,7 @@ class PGDCarregarDadosFila implements ShouldQueue
        foreach ($planos_trabalhos as $pt){
                 $dados['plano_trabalho_id'] = $pt->numero;
                 $dados['tipo'] = 'PLANO_TRABALHO';
-                $dados['cod_SIAPE_instituidora'] = 17500 
+                $dados['cod_SIAPE_instituidora'] = 17500;
                 $dados['id_plano_trabalho_participante'] = 10;
                 PGDExportarDados::dispath($dados);
        }
@@ -40,7 +40,7 @@ class PGDCarregarDadosFila implements ShouldQueue
        foreach ($planos_entregas as $pe){
                 $dados['plano_entrega_id'] = $pe->numero;
                 $dados['tipo'] = 'PLANO_ENTREGA';
-                $dados['cod_SIAPE_instituidora'] = 17500 
+                $dados['cod_SIAPE_instituidora'] = 17500;
                 $dados['id_plano_trabalho_participante'] = 10;
                 PGDExportarDados::dispath($dados);
        }
