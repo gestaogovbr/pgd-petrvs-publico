@@ -78,6 +78,7 @@ export class QuestionarioListComponent extends PageListBase<Questionario, Questi
   }
  
   public onGridLoad(rows?: any[]) {
+    //console.log('ITEMS',rows)
     rows?.forEach((questionario: Questionario) => {
       questionario.perguntas = questionario.perguntas.sort((a, b) => a.sequencia! < b.sequencia! ? -1 : 1);
     });

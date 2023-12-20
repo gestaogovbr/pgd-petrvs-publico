@@ -57,6 +57,7 @@ export class QuestionarioListPerguntaComponent extends PageFrameBase {
     this.dao!.query({where: [["questionario_id", "==", this.questionarioId]], orderBy: [["sequencia", "asc"]]}).asPromise().then(rows => {
       this.items = (rows as QuestionarioPergunta[]) || [];
     });
+  
   }  
 
 }

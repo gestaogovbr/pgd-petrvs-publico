@@ -1,3 +1,4 @@
+import { AreaConhecimento } from './area-conhecimento.model';
 import { Base } from './base.model';
 import { CurriculumGraduacao } from './currriculum-graduacao.model';
 import { CurriculumProfissional } from './currriculum-profissional.model';
@@ -8,6 +9,7 @@ export class Curriculum extends Base {
     public usuario?: Usuario;
     public graduacoes: CurriculumGraduacao[] = [];
     public profissional?: CurriculumProfissional;
+    public area_conhecimento?: AreaConhecimento;
 
     public apresentacao: string = ""; //Apresentação do servidor
     public telefone: string = ""; // Telefone do servidor

@@ -8,10 +8,8 @@
     </div>
 
     <div class="row mt-2">
-        <input-select [size]="4" #estados label="Estado" icon="fas fa-flag" controlName="estados" [control]="form!.controls.estados" [items]="lookup.UF" (change)="onEstadosChange()">
-        </input-select>
-        <input-select #municipio [size]="4" label="Município" icon="far fa-flag" controlName="cidade_id" [control]="form!.controls.cidade_id" [items]="municipios">
-        </input-select>
+        <input-select [size]="4" #estados label="Estado" icon="fas fa-flag" controlName="estados" [control]="form!.controls.estados" [items]="lookup.UF" ></input-select>
+        <input-select #municipio [size]="4" label="Município" icon="far fa-flag" controlName="cidade_id" [control]="form!.controls.cidade_id" [dao]="cidadeDao" [where]="['uf', '==', form!.controls.estados.value]"></input-select>
         <input-text [size]="4" label="Telefone de contato WhatsAPP" icon="fas fa-phone" controlName="telefone" [control]="form!.controls.telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'" [attr.maxlength]=250></input-text>
     </div>
 
@@ -42,11 +40,13 @@
             <input-select [size]="3" label="Nível de entendimento?" icon="fas fa-sign-out-alt" controlName="idiomaEntendimento" [control]="form!.controls.idiomaEntendimento" [items]="this.lookup.NIVEL_IDIOMA"></input-select>
         </input-multiselect>-->
 
-        <grid *ngIf="form!.controls.radioFalaIdioma.value" [control]="formIdiomaGrid!.controls.idiomas" [minHeight]="500" [form]="form!" [hasDelete]="true" [add]="addIdiomas.bind(this)" [load]="loadIdiomas.bind(this)" [remove]="removeIdiomas.bind(this)" [save]="saveIdiomas.bind(this)" editable>
+        <grid *ngIf="form!.controls.radioFalaIdioma.value" [control]="form!.controls.idiomas" [minHeight]="500" 
+            [form]="formIdiomaGrid!" [hasDelete]="true" [add]="addIdiomas.bind(this)" [load]="loadIdiomas.bind(this)" [remove]="removeIdiomas.bind(this)" 
+            [save]="saveIdiomas.bind(this)" editable>
             <columns>
                 <column title="Idioma" titleHint="Escolha o idioma." [template]="columnIdioma" [editTemplate]="editIdioma">
                     <ng-template let-row="row" #columnIdioma>
-                        {{row.idioma}}
+                        {{lookup.getValue(lookup.IDIOMAS, row.idioma)}}
                     </ng-template>
                     <ng-template let-row="row" #editIdioma>
                         <input-select [size]="12" label icon controlName="idioma" [items]="this.lookup.IDIOMAS"></input-select>
@@ -54,7 +54,8 @@
                 </column>
                 <column title="Nível de fala" titleHint="Escolha o seu nível de fala." [template]="columnNivelFala" [editTemplate]="editNivelFala">
                     <ng-template let-row="row" #columnNivelFala>
-                        {{row.nivelFala}}
+                        {{lookup.getValue(lookup.NIVEL_IDIOMA, row.idiomaFala)}}
+                        
                     </ng-template>
                     <ng-template let-row="row" #editNivelFala>
                         <input-select [size]="12" label icon controlName="idiomaFala" [items]="this.lookup.NIVEL_IDIOMA"></input-select>
@@ -62,7 +63,7 @@
                 </column>
                 <column title="Nível de escrita" titleHint="Escolha o seu nível de escrita." [template]="columnNivelEscrita" [editTemplate]="editNivelEscrita">
                     <ng-template let-row="row" #columnNivelEscrita>
-                        {{row.nivelEscrita}}
+                        {{lookup.getValue(lookup.NIVEL_IDIOMA, row.idiomaEscrita)}}
                     </ng-template>
                     <ng-template let-row="row" #editNivelEscrita>
                         <input-select [size]="12" label icon controlName="idiomaEscrita" [items]="this.lookup.NIVEL_IDIOMA"></input-select>
@@ -70,7 +71,7 @@
                 </column>
                 <column title="Nível de entendimento" titleHint="Escolha o seu nível de entendimento." [template]="columnNivelEntendimento" [editTemplate]="editNivelEntendimento">
                     <ng-template let-row="row" #columnNivelEntendimento>
-                        {{row.nivelEntendimento}}
+                        {{lookup.getValue(lookup.NIVEL_IDIOMA, row.idiomaEntendimento)}}
                     </ng-template>
                     <ng-template let-row="row" #editNivelEntendimento>
                         <input-select [size]="12" label icon controlName="idiomaEntendimento" [items]="this.lookup.NIVEL_IDIOMA"></input-select>

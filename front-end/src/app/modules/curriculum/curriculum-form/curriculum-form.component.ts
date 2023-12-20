@@ -18,6 +18,9 @@ import { CurriculumGraduacaoDaoService } from 'src/app/dao/curriculum-graduacao.
 import { data } from 'jquery';
 import { CurriculumGraduacao } from 'src/app/models/currriculum-graduacao.model';
 import { UNKNOWN_ERROR_CODE } from '@angular/compiler-cli';
+import { CurriculumIdioma } from 'src/app/models/curriculum-idioma.model';
+import { forEachChild } from 'typescript';
+import { TreeDragDropService } from 'primeng/api';
 
 @Component({
   selector: 'curriculum-pessoal-form',
@@ -132,9 +135,52 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     form.patchValue(this.util.fillForm(formValue, entity));
   }
 
-  public initializeData(form: FormGroup): void {
-    form.patchValue(new Curriculum());
+  public async initializeData(form: FormGroup) {
+    const curriculuns = await this.dao?.query({ where: ['usuario_id', '==', this.auth.usuario?.id], join: this.join }).asPromise();
+    let entity = curriculuns?.length ? curriculuns[0] : new Curriculum();//this.entity
+    const cidade = entity.cidade_id != '' ? await this.cidadeDao?.getById(entity.cidade_id) : null;
+    console.log('CIDADE',cidade)
+    //this.form?.controls.estados.setValue(this.lookup.UF.find(x => x.key == 'AM'));//cidade.uf));
+    let uf = this.lookup.getLookup(this.lookup.UF, cidade?.uf);
+    this.form?.controls.estados.setValue(uf?.key);//cidade.uf));
+    
+    const municipio = this.lookup.UF.find(x => x.key == cidade?.uf);
+    entity.idiomas.length > 0 ? this.form?.controls.radioFalaIdioma.setValue(true) : this.form?.controls.radioFalaIdioma.setValue(false);
+    entity.graduacoes.length > 0 ?  this.formGraduacao!.controls.graduacaopos.setValue(this.montaGraduacaoPos(entity.graduacoes)) : '';
+    //entity.graduacoes.length > 0 ?  this.montaGraduacaoPos(entity.graduacoes) : '';
+         
+    await this.loadData(entity, this.form!);
   }
+
+  public montaGraduacaoPos(cursoId : CurriculumGraduacao []){
+    let result = undefined;
+    let gard: any[] = [];
+    cursoId.forEach(async curso1 => {
+      const graduacao = await this.cursoDao?.getById(curso1.curso_id, ['areaConhecimento','tipoCurso']);
+      //console.log('AREA', graduacao, graduacao?.nome, graduacao?.area_conhecimento, graduacao?.area_conhecimento?.nome)
+      const area = { 'key': graduacao?.area_id, 'value': graduacao?.area_conhecimento?.nome };
+      const curso = { 'key': graduacao?.id, 'value': graduacao?.nome } as LookupItem;//this.cursosGradPos.find(value => value.key == this.formGraduacao!.controls.cursoPos.value)
+      const titulo = this.lookup.TITULOS_CURSOS.find(x => x.key == graduacao?.titulo);
+      const pretensao = this.opcoesEscolha.find(value => value.key == curso1.pretensao);//converte o value do switch
+      const key = this.util.textHash((area.key || "") + (curso?.key || "") + (titulo?.key || ""));// + (pretensao?.key || ""));
+      result = {
+        key: key,
+        value: area.value + ' - ' + curso!.value + ' - ' + titulo?.value + ' - ' + pretensao?.value,
+        data: {
+          id: this.dao?.generateUuid(),
+          area: area.key,
+          curso: curso!.key,
+          titulo: titulo?.key,
+          pretensao: pretensao?.key,
+          _status: "ADD"
+        }
+      };
+     gard.push(result)
+    });
+    console.log('Gard', gard)
+    //this.formGraduacao?.controls.graduacaopos.setValue(gard)
+    return gard; 
+  };
 
   public saveData(form: IIndexable): Promise<Curriculum> {
     //console.log('FORMULARIOGRAD', this.formGraduacao!.value)
@@ -207,14 +253,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
 
   public addItemGraduacaoPos(): LookupItem | undefined {
     let result = undefined;
-
-    /*this.cursoDao?.query({where: [['id', '==', this.formGraduacao!.controls.curso.value]]}).getAll().then((curso2)=>{
-        curso = curso2.map(x => Object.assign({},{key: x.id, value: x.nome_curso}) as LookupItem);
-        console.log('CURSO DENTRO->',curso)
-    })*/
-
     const area = { 'key': this.formGraduacao!.controls.areaPos.value, 'value': this.areaPosV?.selectedItem?.text };
-
     const curso = this.cursoV!.selectedItem;//this.cursosGradPos.find(value => value.key == this.formGraduacao!.controls.cursoPos.value)
     const titulo = this.lookup.TITULOS_CURSOS.find(x => x.key == this.formGraduacao!.controls.titulo.value);
     const pretensao = this.opcoesEscolha.find(value => value.key == (this.formGraduacao!.controls.pretensao.value ? 1 : 0));//converte o value do switch
@@ -261,8 +300,13 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     });*/
   }
 
-  ngOnInit(): void {
-    this.dao?.query({ where: ['usuario_id', '==', this.auth.usuario?.id] }).getAll().then((user) => {
+  
+
+  /*ngOnInit(): void {
+    super.ngOnInit();
+    /*this.action = "edit";
+    this.id = this.auth.usuario?.id;* /
+    /*this.dao?.query({ where: ['usuario_id', '==', this.auth.usuario?.id] }).getAll().then((user) => {
       //console.log('USER', user.map(x => x.id))
       if (!(user == null || user.length == 0)) {
         //console.log('VAZIO')
@@ -270,13 +314,8 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
         //console.log('USERID',userID)          
         this.form?.controls.id.setValue(userID)//.toString())))
       }
-    });
-  }
-
-  public onAddClick() {
-
-  }
-
+    });* /
+  }*/
   public togglePopOver() {}
 
   /*get stateName() {
@@ -300,32 +339,12 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   
 
 /**
-  * Método chamado na edição de um integrante da Unidade.
-  * @param form 
-  * @param row 
-  */
-public async load(form: FormGroup, row: any) {
-  ///form.controls.usuario_id.setValue(this.grid?.adding ? row.usuario_id : row.id);
-  ///form.controls.atribuicoes.setValue(this.unidadeIntegranteService.converterAtribuicoes(row.atribuicoes));
-  ///form.controls.atribuicao.setValue("");
-}
-
-/**
- * Método chamado para a exclusão de um integrante do grid, seja este componente persistente ou não. 
- * @param row 
- * @returns 
- */
-public async remove(row: any) {
-  return await this.dialog.confirm("Exclui ?", "Deseja realmente excluir esse registro de idioma?");
-}
-
-/**
  * Método chamado no salvamento de um integrante da unidade, seja este componente persistente ou não.
  * @param form 
  * @param row 
  * @returns 
  */
-public async save(form: IIndexable, row: any) {
+/*public async save(form: IIndexable, row: any) {
   form?.markAllAsTouched();
   if (form?.valid) {
     row.idioma = form.idioma;
@@ -338,27 +357,23 @@ public async save(form: IIndexable, row: any) {
     return row;
   }
   return undefined;
-}
+}*/
 
 
 public async addIdiomas() {
-  /*return new Curriculum({
-    idiomas: this.formIdiomaGrid!.controls.idiomas,
-  }) as IIndexable;*/
+  return new CurriculumIdioma() as IIndexable;
 }
 
-public async loadIdiomas(form: FormGroup, row: Curriculum) {
-  /*this.form!.controls.idioma.setValue(row.idioma);
-  this.form!.controls.idiomaFala.setValue(row.fala);
-  this.form!.controls.idiomaEscrita.setValue(row.escrita);
-  this.form!.controls.idiomaEntendimento.setValue(row.entendimento);*/
-  
-  
+public async loadIdiomas(form: FormGroup, row: CurriculumIdioma) {
+  this.formIdiomaGrid!.controls.idioma.setValue(row.idioma);
+  this.formIdiomaGrid!.controls.idiomaFala.setValue(row.idiomaFala);
+  this.formIdiomaGrid!.controls.idiomaEscrita.setValue(row.idiomaEscrita);
+  this.formIdiomaGrid!.controls.idiomaEntendimento.setValue(row.idiomaEntendimento);
 }
 
 public async removeIdiomas(row: any) {
   if(await this.dialog.confirm("Excluir ?", "Deseja realmente excluir esta pergunta?")) {
-    row._status = "DEL";
+    return true;
   }
   return undefined;
 }
@@ -368,11 +383,9 @@ public async saveIdiomas(form: FormGroup, row: any) {
   if (form?.valid) {
     let values = form.value;
     row.idioma = values.idioma;
-    row.fala = values.fala;
-    row.escrita = values.escrita;
-    row.entendimento = values.entendimento;
-    row._status = row._status == "ADD" ? "ADD" : "EDIT";
-    
+    row.idiomaFala = values.idiomaFala;
+    row.idiomaEscrita = values.idiomaEscrita;
+    row.idiomaEntendimento = values.idiomaEntendimento;
     return row;
   }
   return undefined;

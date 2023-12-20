@@ -19,7 +19,7 @@
             <ng-template let-row="row" #columnOpcoes>
                 <ng-container *ngIf="['EMOJI', 'SELECT', 'MULTI_SELECT', 'RADIO', 'CHECK'].includes(row.tipo)">
                     <div class="one-per-line">
-                        <badge *ngFor="let resposta of row.respostas" [label]="resposta" [textValue]="resposta.value" [icon]="resposta.icon"></badge>
+                        <badge *ngFor="let resposta of row.respostas; index as i" [label]="resposta.key" [textValue]="resposta.data.valorResposta ? resposta.data.valorResposta : (i + 1).toString()" [icon]="resposta.icon" class="ml"></badge>
                     </div>
                 </ng-container>
                 <ng-container *ngIf="row.tipo == 'NUMBER'">
