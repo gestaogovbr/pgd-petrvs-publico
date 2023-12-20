@@ -30,8 +30,6 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Throwable;
 
-use function PHPSTORM_META\map;
-
 class AtividadeService extends ServiceBase
 {
     public $unidades = []; /* Buffer de unidades para funções que fazem consulta frequentes em unidades */
@@ -250,7 +248,7 @@ class AtividadeService extends ServiceBase
         return $rows;
     }
 
-    public function proxyExtra($rows, $data) {
+    public function proxyExtra($rows, $data, $count) {
         $afastamentos = [];
         $planosTrabalhos = [];
         $result = [

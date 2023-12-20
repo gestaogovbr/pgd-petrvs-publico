@@ -9,4 +9,30 @@ use App\Models\PlanoTrabalho;
 use App\Services\ServiceBase;
 use App\Exceptions\ServerException;
 
-class ProgramaService extends ServiceBase { }
+class ProgramaService extends ServiceBase {
+
+    public function proxyQuery(&$query, &$data) {
+        $where = [];
+        $vigentesUnidadeExecutora = $this->extractWhere($data, "vigentesUnidadeExecutora");
+        if(!empty($vigentesUnidadeExecutora)) {
+            array_push($where, ['unidade_id', '==', $vigentesUnidadeExecutora[2]]);
+            array_push($where, ['data_inicio', '<=', now()]);
+            array_push($where, ['data_fim', '>=', now()]);
+        }
+        foreach($data["where"] as $condition) array_push($where, $condition);
+        $data["where"] = $where;
+    }
+
+    public function proxySearch(&$query, &$data, &$text) {
+        $where = [];
+        $vigentesUnidadeExecutora = $this->extractWhere($data, "vigentesUnidadeExecutora");
+        if(!empty($vigentesUnidadeExecutora)) {
+            array_push($where, ['unidade_id', '==', $vigentesUnidadeExecutora[2]]);
+            array_push($where, ['data_inicio', '<=', now()]);
+            array_push($where, ['data_fim', '>=', now()]);
+        }
+        foreach($data["where"] as $condition) array_push($where, $condition);
+        $data["where"] = $where;
+    }
+
+ }
