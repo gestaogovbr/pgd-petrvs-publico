@@ -11,7 +11,7 @@ use Illuminate\Queue\SerializesModels;
 
 use App\Services\PGD\OrgaoCentralService;
 
-class CarregarDadosPGD implements ShouldQueue
+class PGDCarregarDadosFila implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 

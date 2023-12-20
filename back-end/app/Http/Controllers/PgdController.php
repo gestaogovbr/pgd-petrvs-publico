@@ -32,7 +32,7 @@ class PgdController extends Controller
         $dados['id_plano_entrega_unidade'] = 10;
         $api_pgd =  $this->orgaoCentralService->exportarDados($dados);
         
-        return response()->json( $api_pgd);
+        return response()->json($api_pgd);
     }
 
     public function exportarDadosJob()

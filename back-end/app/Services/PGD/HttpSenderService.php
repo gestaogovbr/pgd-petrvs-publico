@@ -10,17 +10,15 @@ class HttpSenderService
     {
         $header = ['Content-Type' => 'application/json-patch+json'];
 
-        $exportacaoService = new ExportacaoService();
-        $exportacao = $exportacaoService->registrarExportacao($tipo, $dados, $body);
+        //$exportacaoService = new ExportacaoService();
+        //$exportacao = $exportacaoService->registrarExportacao($tipo, $dados, $body);
         
         $response = Http::withOptions(['verify'=> false, 'timeout'=> 35])
         ->withHeaders($header)
-        ->withToken($token, 'Bearer')
-        ->asForm()->post($dados['url'], $body);
+        ->withToken($token, 'Bearer')->put($dados['url'], $body);
 
-        $exportacaoService->atualizarRetorno($exportacao, $response->json());
-        
-        if($response->succesful()){
+        //$exportacaoService->atualizarRetorno($exportacao, $response->json());
+        if($response->successful()){
             return $response->json();
             //return "succesful";
         }else{
