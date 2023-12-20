@@ -14,26 +14,23 @@ class AuthenticationService
             'Accept' => 'application/json',
             'Content-Type' => 'application/x-www-form-urlencoded'
         ];
-        //dd(config('pgd')['password']);
-        
-            $form_params = [
-              'username' => config('pgd')['username'],
-              'password' => config('pgd')['password']
-            ]        ;
+
+        $form_params = [
+            'username' => config('pgd')['username'],
+            'password' => config('pgd')['password']
+        ];
 
         $response = Http::withOptions(['verify'=> false, 'timeout'=> 29])
         ->withHeaders($header)
-        ->asForm()->post(config('pgd.host_token'), $form_params);
+        ->asForm()->post(config('pgd.host').'/token', $form_params);
     
-
-
         if($response->successful()){
             $reponse_obj = $response->json();
             if(isset($reponse_obj['access_token'])){
                 return $reponse_obj['access_token'];
             }
         }else{
-            dd("Falha");
+            dd("Falha autenticação");
         }
         return false;
     }

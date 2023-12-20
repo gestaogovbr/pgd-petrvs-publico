@@ -25,11 +25,11 @@ class PgdController extends Controller
 
     public function exportarDados(Request $request)
     {
-
+        $dados['mock'] = 1;
         $dados['plano_trabalho_id'] = 10;
-        $dados['tipo'] = 'PLANO_TRABALHO';
+        $dados['tipo'] = 'PLANO_ENTREGA';
         $dados['cod_SIAPE_instituidora'] = 17500;
-        $dados['id_plano_trabalho_participante'] = 10;
+        $dados['id_plano_entrega_unidade'] = 10;
         $api_pgd =  $this->orgaoCentralService->exportarDados($dados);
         
         return response()->json( $api_pgd);
@@ -38,7 +38,6 @@ class PgdController extends Controller
     public function exportarDadosJob()
     {
         dd("exportarDadosJob");
-        echo "FIM"; die;
         $request->validate(['dados'=>'required']);
         try {
             PGDCarregarDadosFila::dispatch();

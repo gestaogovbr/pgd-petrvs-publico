@@ -15,17 +15,16 @@ class ExportarPlanoEntregasService
     }
 
 
-    public function enviarDados($token, $dados)
+    public function enviar($token, $dados)
     {
-        dd("ExportarPlanoEntregasService");
         if(isset($dados['mock']) && $dados['mock']){
             $body = $this->getBodyMock($dados);
         } else{
             $body = $this->getBody($dados);
         }
         
-        $url = config('pgd.host')."/organizacao/{$dados['cod_SIAPE_instituidora']}/plano_trabalho/{$dados['id_plano_trabalho_participante']}";
-        return $this->httpSender->enviarDados('url_plano_trabalho', $token, $body);
+        $dados['url'] = config('pgd.host')."/organizacao/{$dados['cod_SIAPE_instituidora']}/plano_trabalho/{$dados['id_plano_entrega_unidade']}";
+        return $this->httpSender->enviarDados('PLANO_ENTREGA', $dados, $token, $body);
     }
 
     public function getBody($dados)
@@ -62,7 +61,7 @@ class ExportarPlanoEntregasService
     public function getBodyMock($dados){
         return [
             "cod_SIAPE_instituidora"=> $dados['cod_SIAPE_instituidora'],
-            "id_plano_entrega_unidade"=> $dados['id_plano_trabalho_participante'],
+            "id_plano_entrega_unidade"=> $dados['id_plano_entrega_unidade'],
             "cancelado"=> false,
             "data_inicio_plano_entregas"=> "2023-12-01",
             "data_termino_plano_entregas"=> "2023-12-10",

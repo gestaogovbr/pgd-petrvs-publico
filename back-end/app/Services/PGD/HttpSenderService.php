@@ -6,21 +6,28 @@ use Illuminate\Support\Facades\Http;
 class HttpSenderService
 {
 
-    public function enviarDados($url, $token, $body)
+    public function enviarDados($tipo,  $dados, $token, $body)
     {
         $header = ['Content-Type' => 'application/json-patch+json'];
 
+        $exportacaoService = new ExportacaoService();
+        $exportacao = $exportacaoService->registrarExportacao($tipo, $dados, $body);
+        
         $response = Http::withOptions(['verify'=> false, 'timeout'=> 35])
         ->withHeaders($header)
         ->withToken($token, 'Bearer')
-        ->asForm()->post($url, $body);
+        ->asForm()->post($dados['url'], $body);
 
+        $exportacaoService->atualizarRetorno($exportacao, $response->json());
+        
         if($response->succesful()){
-            $reponse_obj = $response->json();
-            return "succesful";
+            return $response->json();
+            //return "succesful";
         }else{
             return "error";
         }
+
     }
+        
 }
 
