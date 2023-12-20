@@ -14,6 +14,8 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
+  public vigentesUnidadeExecutora: boolean = false;
+
   constructor(public injector: Injector, dao: ProgramaDaoService) {
     super(injector, Programa, ProgramaDaoService);
     /* Inicializações */
@@ -27,28 +29,33 @@ export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoSer
     this.addOption(this.OPTION_INFORMACOES);
     this.addOption(this.OPTION_EXCLUIR, "MOD_PRGT_EXCL");
     this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
-    // Testa se o usuário possui permissão para excluir o programa de gestão
+    // Testa se o usuário possui permissão para visualizar os participantes do programa de gestão
     if (this.auth.hasPermissionTo("MOD_PRGT_PART")) {
       this.options.push({
         icon: "bi bi-people",
         label: "Participantes",
-        onClick: (programa: Programa) => this.go.navigate({route: ["gestao", "programa", programa.id, "participantes"]})
+        onClick: (programa: Programa) => this.go.navigate({route: ["gestao", "programa", programa.id, "participantes"]}, {metadata: {'programa': programa}})
       });
     }
 
-    if (this.auth.hasPermissionTo("MOD_PRGT_PART")) {
+/*     if (this.auth.hasPermissionTo("MOD_PRGT_PART")) {
       this.options.push({
         icon: "bi bi-folder",
         label: "Desdobramentos",
         onClick: (programa: Programa) => this.go.navigate({route: ["gestao", "desdobramento", programa.id, "programa"]})
       });
-    }
+    } */
+  }
+
+  public ngOnInit(): void {
+    super.ngOnInit();
+    this.vigentesUnidadeExecutora = this.metadata?.vigentesUnidadeExecutora; 
   }
 
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
-
+    if(this.vigentesUnidadeExecutora) result.push(['vigentesUnidadeExecutora',"==",this.auth.unidade!.id]);
     if(form.nome?.length) {
       result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     }

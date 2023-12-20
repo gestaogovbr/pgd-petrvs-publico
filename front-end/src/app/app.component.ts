@@ -17,7 +17,7 @@ import { SafeUrl } from '@angular/platform-browser';
 
 //export let appInjector: Injector;
 //export type Contexto = "PGD" | "EXECUCAO" | "AVALIACAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
-export type Contexto = "PGD" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
+export type Contexto = "EXECUCAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
 export type Schema = {
   name: string,
   permition?: string,
@@ -140,6 +140,7 @@ export class AppComponent {
       EIXOS_TEMATICOS: { name: this.lex.translate("Eixos Temáticos"), permition: 'MOD_EXTM', route: ['cadastros', 'eixo-tematico'], icon: this.entity.getIcon('EixoTematico') },
       ENTREGAS: { name: this.lex.translate("Modelos de Entregas"), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: this.entity.getIcon('Entrega') },
       FERIADOS: { name: this.lex.translate("Feriados"), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: this.entity.getIcon('Feriado') },
+      HABILITACOES_PROGRAMA: { name: this.lex.translate("Habilitações"), permition: 'MOD_PRGT_PART', route: ["gestao", "programa", "participantes"], icon: this.entity.getIcon('Programa') },
       MATERIAIS_SERVICOS: { name: this.lex.translate("Materiais e Serviços"), permition: '', route: ['cadastros', 'material-servico'], icon: this.entity.getIcon('MaterialServico') },
       TEMPLATES: { name: this.lex.translate("Templates"), permition: 'MOD_TEMP', route: ['cadastros', 'templates'], icon: this.entity.getIcon('Template'), params: { modo: "listagem" } },
       TIPOS_TAREFAS: { name: this.lex.translate("Tipos de Tarefas"), permition: 'MOD_TIPO_TRF', route: ['cadastros', 'tipo-tarefa'], icon: this.entity.getIcon('TipoTarefa') },
@@ -217,6 +218,7 @@ export class AppComponent {
       id: "navbarDropdownGestaoPlanejamento",
       menu: [
         this.menuSchema.CADEIAS_VALORES,
+        this.menuSchema.HABILITACOES_PROGRAMA,
         this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
         this.menuSchema.PLANOS_ENTREGAS,
         this.menuSchema.PLANOS_TRABALHOS,
@@ -413,7 +415,7 @@ export class AppComponent {
 
     let gestaoPGD = this.auth.hasPermissionTo("CTXT_GEST");
     this.menuContexto = [
-      { key: "PGD", permition: gestaoPGD ? "CTXT_GEST" : "CTXT_EXEC", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: gestaoPGD ? this.menuGestao : this.menuExecucao},
+      { key: gestaoPGD ? "GESTAO" : "EXECUCAO", permition: gestaoPGD ? "CTXT_GEST" : "CTXT_EXEC", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: gestaoPGD ? this.menuGestao : this.menuExecucao},
       { key: "ADMINISTRADOR", permition: "CTXT_ADM", icon: "bi bi-emoji-sunglasses", name: this.lex.translate("Administrador"), menu: this.menuAdministrador },
       { key: "DEV", permition: "CTXT_DEV", icon: "bi bi-braces", name: this.lex.translate("Desenvolvedor"), menu: this.menuDev },
       { key: "PONTO", permition: "CTXT_PNT", icon: "bi bi-stopwatch", name: this.lex.translate("Ponto Eletrônico"), menu: this.menuPonto },
@@ -440,9 +442,9 @@ export class AppComponent {
   }
 
   public get menu(): any {
-    let gestaoPGD = this.auth.hasPermissionTo("CTXT_GEST");
     switch (this.gb.contexto?.key) {
-      case "PGD": return gestaoPGD ? this.menuGestao : this.menuExecucao;
+      case "GESTAO": return this.menuGestao;
+      case "EXECUCAO": return this.menuExecucao;
       case "ADMINISTRADOR": return this.menuAdministrador;
       case "DEV": return this.menuDev;
       case "PONTO": return this.menuPonto;

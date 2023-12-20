@@ -354,7 +354,7 @@ class PlanoEntregaService extends ServiceBase
     return $rows;
   }
 
-  public function proxyExtra($rows, $data)
+  public function proxyExtra($rows, $data, $count)
   {
     if (in_array("avaliacao", $data["with"])) {
       $tiposAvaliacoesIds = array_unique(array_map(fn ($v) => ($v["avaliacao"] ?? ["tipo_avaliacao_id" => null])["tipo_avaliacao_id"], $rows->toArray()));
