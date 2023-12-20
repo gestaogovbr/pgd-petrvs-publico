@@ -46,7 +46,6 @@
     "chart.js": "^4.3.2",
     "chartjs-plugin-datalabels": "^2.0.0",
     "classlist.js": "^1.1.20150312",
-    "face-api.js": "^0.22.2",
     "jquery": "^3.6.0",
     "jquery-mask-plugin": "^1.14.16",
     "jquery-ui": "^1.13.2",
