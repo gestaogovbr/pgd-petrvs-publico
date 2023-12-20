@@ -34,7 +34,7 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
     this.templateDao = injector.get<TemplateDaoService>(TemplateDaoService);
     this.notificacao = injector.get<NotificacaoService>(NotificacaoService);
     this.modalWidth = 1200;
-    this.join = ["notificacoes_templates"];
+    this.join = ["notificacoes_templates", "relatorios_templates"];
     this.form = this.fh.FormBuilder({
       url_sei: {default: ""},
       tipo_modalidade_id: {default: null},
