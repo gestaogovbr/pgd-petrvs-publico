@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Programa;
 use App\Models\ProgramaParticipante;
-use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Services\ServiceBase;
 use Illuminate\Database\Eloquent\Builder;
@@ -31,21 +30,15 @@ class ProgramaParticipanteService extends ServiceBase {
         $data["where"] = $where;
         return $data;
     }
-vi /etc/resolve.conf
-nameserver 8.8.8.8
-vi /etc/resolve.conf
 
     public function proxyExtra(&$rows, $data, &$count){
         $extra = [];
-
-        if($this->todos && !empty($this->lotacao_id)) 
-        
-        $extra = Usuario::whereHas("lotacao", function (Builder $query) {
-            $query->where('unidade_id','==',$this->lotacao_id);
-        })->get();
-
         if($this->todos && !empty($this->lotacao_id)) {
-            $extra = Usuario::with('lotacao.unidade')->where('nome', 'like', '%Ricardo%')->get();
+            $extra = Usuario::with(['lotacao.unidade','planosTrabalho'])->whereHas("unidadesIntegrante", function (Builder $query) {
+                $query->where('unidade_id', $this->lotacao_id)->whereHas('atribuicoes', function (Builder $query) {
+                    $query->where('atribuicao', 'LOTADO');
+                });
+            })->get();
             foreach ($extra as $usuario) {
                 $fake = (object) [
                     'id' => $this->utilService->uuid(),
@@ -58,49 +51,41 @@ vi /etc/resolve.conf
                 $fake->usuario = $usuario;
                 $rows->push($fake);
             }
+            foreach ($rows as $r) {
+                $r->usuario->planosTrabalho->reject(function ($item) {
+                    return $item->status != 'ATIVO';
+                });
+            }
             $count = count($rows);        
         }
         return null;
     }
 
-    public function habilitar($data)
+    public function habilitar($data)    // ou desabilitar
     {
         try {
             DB::beginTransaction();
-            $programaParticipantes = ProgramaParticipante::whereIn("id", $data["participantes_ids"])->get();
-            $count = 0;
-            foreach ($programaParticipantes as $programaParticipante) {
-                $usuarioId = $programaParticipante->usuario_id;
-                if (strpos($usuarioId, 'VIRT_') === 0) {
-                    $usuarioId = substr($usuarioId, 5);
-                }
-                $programaParticipante->usuario_id = $usuarioId;
-                $programaParticipante->habilitado = $data['habilitado'];
-                $programaParticipante->programa_id = $data['programa_id'];
-                $programaParticipante->save();
-                $count++;
+            foreach($data['participantes_ids'] as $pp){
+                $registro = ProgramaParticipante::firstOrCreate(['programa_id' => $data['programa_id'], 'usuario_id' => $pp]);
+                $registro->habilitado = $data['habilitar'];
+                $registro->save();
             }
             DB::commit();
         } catch (Throwable $e) {
             DB::rollback();
             throw $e;
         }
-    
-        $this->notificar($data);
-        
+        //$this->notificar($data);
         return true;
     }
 
     public function notificar($data)
     {
-        $this->notificacoesService->send("PRG_PART_HABILITACAO", 
-        [
-            "programa" => Programa::find($data['programa_id']), 
-            "programa_participante"  => ProgramaParticipante::find($data['participantes_ids'] )
+        $this->notificacoesService->send("PRG_PART_HABILITACAO",
+                [
+                    "programa" => Programa::find($data['programa_id']),
+                    "programa_participante"  => ProgramaParticipante::find($data['participantes_ids'] )
         ]);
-        
     }
-
-
 }
 

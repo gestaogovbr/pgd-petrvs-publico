@@ -29235,6 +29235,9 @@ a > .petrvs code {
 .petrvs label .badge {
   font-size: var(--bs-badge-font-size);
 }
+.petrvs .form-check-input:checked {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%231571ff'/%3e%3c/svg%3e") !important;
+}
 .petrvs .navbar {
   box-shadow: 0px 2px 3px #ddd;
   margin-bottom: 30px;
