@@ -7,6 +7,7 @@ import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 import { ProgramaParticipanteDaoService } from 'src/app/dao/programa-participante-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
+import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { ProgramaParticipante } from 'src/app/models/programa-participante.model';
 import { Programa } from 'src/app/models/programa.model';
 import { Usuario } from 'src/app/models/usuario.model';
@@ -19,73 +20,106 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 })
 export class ProgramaParticipantesComponent extends PageListBase<ProgramaParticipante, ProgramaParticipanteDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
+  @ViewChild("programaSearch", { static: false }) public programaSearch?: InputSearchComponent;
   @ViewChild("usuario", { static: false }) public usuario?: InputSearchComponent;
 
   public unidadeDao: UnidadeDaoService;
   public usuarioDao: UsuarioDaoService;
   public programaDao: ProgramaDaoService;
-  public programaParticipanteService: ProgramaParticipanteDaoService;
-  public programaId: string = "";
   public form: FormGroup;
-  public multiselectAllFields: string[] = ["usuario_id", "habilitado"];
-  public multiselectMenu: ToolbarButton[];
+  //public multiselectAllFields: string[] = ["usuario_id", "habilitado"];
+  public multiselectMenu: ToolbarButton[] = [];
   public programa: Programa | null = null;
+  public BOTAO_HABILITAR: ToolbarButton = { label: "Habilitar", icon: "bi bi-person-check-fill", color: "btn-outline-success", onClick: this.habilitaParticipante.bind(this) };
+  public BOTAO_DESABILITAR: ToolbarButton = { label: "Desabilitar", icon: "bi bi-person-x-fill", color: "btn-outline-danger", onClick: this.desabilitaParticipante.bind(this) };
 
   constructor(public injector: Injector) {
     super(injector, ProgramaParticipante, ProgramaParticipanteDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
-    this.programaParticipanteService = injector.get<ProgramaParticipanteDaoService>(ProgramaParticipanteDaoService);
     /* Inicializações */
     this.code = "MOD_PRGT_PART";
     this.filter = this.fh.FormBuilder({
+      programa_id: { default: this.programa?.id },
       unidade_id: { default: undefined },
-      nome: { default: "" },
+      nome_usuario: { default: "" },
       todos: { default: false },
-    });
+    }, this.cdRef, this.validate);
     this.form = this.fh.FormBuilder({
       usuario_id: { default: undefined },
       habilitado: { default: true },
     }, this.cdRef, this.validate);
-    this.multiselectMenu = !this.auth.hasPermissionTo('MOD_PRGT_PART_INCL') ? [] : [
-      {
-        icon: "bi bi-check",
-        label: "Habilitar",
-        onClick: this.habilitarParticipantes.bind(this)
-      }
-    ];
-    this.join = ["usuario:id,nome,apelido,url_foto", "usuario.lotacao:id,nome,unidade_id","usuario.planos_trabalho"];
+    if(this.auth.hasPermissionTo('MOD_PRGT_PART_HAB')) this.multiselectMenu.push({
+      icon: "bi bi-person-check-fill",
+      label: "Habilitar",
+      color: "btn-outline-success",
+      onClick: this.habilitarParticipantes.bind(this)
+    });
+    if(this.auth.hasPermissionTo('MOD_PRGT_PART_DESAB')) this.multiselectMenu.push({
+      icon: "bi bi-person-x-fill",
+      label: "Desabilitar",
+      color: "btn-outline-danger",
+      onClick: this.desabilitarParticipantes.bind(this)
+    });
+    this.join = ["usuario.lotacao.unidade:id,sigla","usuario.planos_trabalho:id,status"];
+  }
+
+  public dynamicButtons(row: any): ToolbarButton[] {
+    let result: ToolbarButton[] = [];
+    if(this.auth.hasPermissionTo('MOD_PRGT_PART_HAB') && !row.habilitado) result.push(this.BOTAO_HABILITAR);
+    if(this.auth.hasPermissionTo('MOD_PRGT_PART_DESAB') && row.habilitado) result.push(this.BOTAO_DESABILITAR);
+    return result;
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    this.grid?.items.forEach( usuario => {
-      if (usuario.usuario_id == this.usuario?.selectedValue) {
-        result = "Usuário já é participante deste programa";
-      }
-    });
+    if(['programa_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+      result = "Obrigatório";
+    }
     return result;
   }
 
-  public ngOnInit(): void {
+  public async ngOnInit(): Promise<void> {
     super.ngOnInit();
-    this.programaId = this.urlParams?.get('id') || "";
-    this.programaDao.getById(this.programaId).then(p => this.programa = p);
+    this.programa = this.metadata?.programa;
+    if(!this.programa) await this.programaDao.query({where: [['vigentesUnidadeExecutora', "==", this.auth.unidade!.id]]}).asPromise().then( programas => {
+      this.programa = programas[0];
+    });
+    await this.programaSearch?.loadSearch(this.programa);
+    if(this.programa) this.grid!.reloadFilter();
+  }
+
+  public ngAfterViewInit(): void {
+    super.ngAfterViewInit();
+    this.programaSearch?.loadSearch(this.programa);
+  }
+
+  public filterClear(filter: FormGroup<any>): void {
+    filter.controls.unidade_id.setValue(undefined);
+    filter.controls.nome_usuario.setValue('');
+    filter.controls.todos.setValue(false);
   }
 
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
-    if (this.filter?.controls.todos.value) {
-      result.push([["todos", '==', true]]);
-    } else {
-      result.push(["programa_id", "==", this.programaId]);
-      if (form.nome?.length) result.push(["usuario.nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
-      if (form.unidade_id?.length) result.push(["usuario.lotacao.unidade.id", "==", form.unidade_id]);
-    }
+    result.push(["todos", '==', this.filter?.controls.todos.value]);
+    result.push(["programa_id", "==", this.programa?.id]);
+    if (form.nome_usuario?.length) result.push(["usuario.nome", "like", "%" + form.nome_usuario.trim().replace(" ", "%") + "%"]);
+    if (form.unidade_id?.length) result.push(["usuario.lotacao.unidade.id", "==", form.unidade_id]);
     return result;
   }
+  // todos = true => retorna todos os usuários vinculados ao programa selecionado, habilitados ou desabilitados.
+  // todos = false => retorna apenas os usuários habilitados no programa selecionado
+
+  // SE TODOS = FALSE
+  // unidade_id = null => retorna os usuários vinculados ao programa selecionado, independentemente da sua unidade de lotação, e de acordo com a opção TODOS (só os habilitados, ou também os desabilitados)
+  // unidade_id = alguma unidade => retorna apenas os usuários vinculados ao programa selecionado, lotados na unidade selecionada, e de acordo com a opção TODOS (só os habilitados, ou também os desabilitados)
+
+  // SE TODOS = TRUE
+  // unidade_id = null => retorna todos os usuários vinculados ao programa selecionado, habilitados ou desabilitados.
+  // unidade_id = alguma unidade => retorna todos os usuários vinculados ao programa selecionado, habilitados ou desabilitados, e mais os usuários lotados na unidade selecionada e não habilitados
 
   public async addParticipante() {
     return new ProgramaParticipante({
@@ -104,14 +138,44 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
     this.cdRef.detectChanges();
   }
 
-  public async removeParticipante(row: any) {
-    let confirm = await this.dialog.confirm("Exclui ?", "Deseja remover o participante?");
+  public async habilitaParticipante(row: any) {
+    await this.dao!.habilitar([row.usuario.id], this.programa!.id, 1).then(resposta => {
+      row.habilitado = 1;
+      this.cdRef.detectChanges();
+    });
+    return false;
+  }
+
+  public async desabilitaParticipante(row: any) {
+    let confirm = await this.dialog.confirm("Desabilitar ?", "Deseja DESABILITAR " + this.lex.translate("o servidor") + " " + (row.usuario.nome as string).toUpperCase() + " do programa " + (this.programa?.nome as string).toUpperCase() + "?");
     if (confirm) {
-      await this.dao!.delete(row);
-      return true;
-    } else {
-      return false;
+      let plano_trabalho_ativo: boolean = !!(row.usuario.planos_trabalho as PlanoTrabalho[]).filter( p => p.status == 'ATIVO' && p.programa_id == this.programa?.id).length;
+      if(plano_trabalho_ativo) {
+        await this.dialog.alert("ATENÇÃO", this.lex.translate("Usuário") + " não pode ser desabilitado porque possui " + this.lex.translate("Plano de Trabalho") + " ativo vinculado a " + this.lex.translate("este Programa") + "!");
+      } else {
+        await this.dao!.habilitar([row.usuario.id], this.programa!.id, 0).then(resposta => {
+          row.habilitado = 0;
+          this.cdRef.detectChanges();
+        });
+      }
     }
+    return false;
+  }
+
+  public async desabilitarParticipantes(row: any) {
+    let confirm = await this.dialog.confirm("Desabilitar ?", "Deseja DESABILITAR " + this.lex.translate("o servidor") + " " + (row.usuario.nome as string).toUpperCase() + " do programa " + (this.programa?.nome as string).toUpperCase() + "?");
+    if (confirm) {
+      let plano_trabalho_ativo: boolean = !!(row.usuario.planos_trabalho as PlanoTrabalho[]).filter( p => p.status == 'ATIVO' && p.programa_id == this.programa?.id).length;
+      if(plano_trabalho_ativo) {
+        await this.dialog.alert("ATENÇÃO", this.lex.translate("Usuário") + " não pode ser desabilitado porque possui " + this.lex.translate("Plano de Trabalho") + " ativo vinculado a " + this.lex.translate("este Programa") + "!");
+      } else {
+        await this.dao!.habilitar([row.usuario.id], this.programa!.id, 0).then(resposta => {
+          row.habilitado = 0;
+          this.cdRef.detectChanges();
+        });
+      }
+    }
+    return false;
   }
 
   public async saveParticipante(form: FormGroup, item: ProgramaParticipante) {
@@ -121,7 +185,7 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
       item.usuario_id = form.controls.usuario_id.value;
       item.habilitado = !!form.controls.habilitado.value;
       item.usuario = this.usuario?.selectedEntity as Usuario;
-      item.programa_id = this.programaId;
+      item.programa_id = this.programa!.id;
       this.submitting = true;
       try {
         result = await this.dao!.save(item);
@@ -139,13 +203,13 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
 
   public habilitarParticipantes() {
     if (!this.grid!.multiselectedCount) {
-      this.dialog.alert("Selecione", "Nenhum participante selecionado para a habilitção");
+      this.dialog.alert("Selecione", "Nenhum participante selecionado para a habilitação");
     } else {
       const self = this;
-      this.dialog.confirm("Habilitar Participantes ?", "Deseja realmente habilitar os participantes?").then(confirm => {
+      this.dialog.confirm("Habilitar Participantes ?", "Confirma a habilitação de todos esses participantes?").then(confirm => {
         if (confirm) {
-          this.dao!.habilitar(Object.keys(this.grid!.multiselected), this.programaId, 1).then(function () {
-            self.dialog.alert("Sucesso", "Habilitado com sucesso!");
+          this.dao!.habilitar(Object.keys(this.grid!.multiselected), this.programa!.id, 1).then(function () {
+            self.dialog.alert("Sucesso", "Participantes habilitados com sucesso!");
           }).catch(function (error) {
             self.dialog.alert("Erro", "Erro ao habilitar os participantes: " + error?.message ? error?.message : error);
           });
@@ -154,11 +218,9 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
     }
   }
 
-  public onHabilitadoChange(row: ProgramaParticipante, habilitado: boolean) {
-    console.log(habilitado);
-    if (!habilitado && row.usuario?.planos_trabalho?.length){
-      this.dialog.alert("Atenção", "Usuário com " + row.usuario?.planos_trabalho?.length + " plano(s) de trabalho ativo.");
-    }
+  public onProgramaChange(){
+    this.programa = this.programaSearch?.selectedItem?.entity;
+    if(this.programa) this.grid?.reloadFilter();
   }
 }
 

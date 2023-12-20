@@ -9,6 +9,7 @@ import { ProgramaParticipantesComponent } from './programa-participantes/program
 const routes: Routes = [
   { path: '', component: ProgramaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Programas" } },
   { path: 'new', component: ProgramaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Programa", modal: true } },
+  { path: 'participantes', component: ProgramaParticipantesComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Participantes do Programa" } },
   { path: ':id/edit', component: ProgramaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de Programa", modal: true } },
   { path: ':id/consult', component: ProgramaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Programa", modal: true } },
   { path: ':id/participantes', component: ProgramaParticipantesComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Participantes do Programa", modal: true } }
