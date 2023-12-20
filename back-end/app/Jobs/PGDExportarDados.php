@@ -23,6 +23,6 @@ class PGDExportarDados implements ShouldQueue
 
     public function handle(OrgaoCentralService $orgaoCentralService)
     {
-        $exportarDados->exportarDados($this->dados);
+        $orgaoCentralService->exportarDados($this->dados);
     }
 }
