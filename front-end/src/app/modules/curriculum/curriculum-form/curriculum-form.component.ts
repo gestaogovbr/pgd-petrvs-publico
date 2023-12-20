@@ -157,12 +157,11 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     let gard: any[] = [];
     cursoId.forEach(async curso1 => {
       const graduacao = await this.cursoDao?.getById(curso1.curso_id, ['areaConhecimento','tipoCurso']);
-      //console.log('AREA', graduacao, graduacao?.nome, graduacao?.area_conhecimento, graduacao?.area_conhecimento?.nome)
       const area = { 'key': graduacao?.area_id, 'value': graduacao?.area_conhecimento?.nome };
-      const curso = { 'key': graduacao?.id, 'value': graduacao?.nome } as LookupItem;//this.cursosGradPos.find(value => value.key == this.formGraduacao!.controls.cursoPos.value)
+      const curso = { 'key': graduacao?.id, 'value': graduacao?.nome } as LookupItem;
       const titulo = this.lookup.TITULOS_CURSOS.find(x => x.key == graduacao?.titulo);
-      const pretensao = this.opcoesEscolha.find(value => value.key == curso1.pretensao);//converte o value do switch
-      const key = this.util.textHash((area.key || "") + (curso?.key || "") + (titulo?.key || ""));// + (pretensao?.key || ""));
+      const pretensao = this.opcoesEscolha.find(value => value.key == curso1.pretensao);
+      const key = this.util.textHash((area.key || "") + (curso?.key || "") + (titulo?.key || ""));
       result = {
         key: key,
         value: area.value + ' - ' + curso!.value + ' - ' + titulo?.value + ' - ' + pretensao?.value,
@@ -172,7 +171,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
           curso: curso!.key,
           titulo: titulo?.key,
           pretensao: pretensao?.key,
-          _status: "ADD"
+          _status: "EDIT"
         }
       };
      gard.push(result)
