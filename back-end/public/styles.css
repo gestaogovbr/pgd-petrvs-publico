@@ -29235,6 +29235,9 @@ a > .petrvs code {
 .petrvs label .badge {
   font-size: var(--bs-badge-font-size);
 }
+.petrvs .form-check-input:checked {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%231571ff'/%3e%3c/svg%3e") !important;
+}
 .petrvs .navbar {
   box-shadow: 0px 2px 3px #ddd;
   margin-bottom: 30px;
@@ -29481,6 +29484,29 @@ body {
 
 .p-organizationchart-node-content .p-node-toggler .p-node-toggler-icon {
   vertical-align: inherit;
+}
+
+.p-treeselect {
+  display: flex;
+  background: var(--bs-body-bg);
+  border-color: var(--bs-border-color);
+}
+
+.p-tree-container {
+  padding-left: 0 !important;
+}
+
+.p-tree {
+  background: var(--bs-body-bg);
+}
+.p-tree .p-highlight {
+  background: #24374f;
+}
+
+@media print {
+  .hidden-print {
+    display: none !important;
+  }
 }
 /*!*************************************************************************************************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[5].rules[0].oneOf[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[5].rules[0].oneOf[0].use[2]!./node_modules/bootstrap-icons/font/bootstrap-icons.css?ngGlobalStyle ***!

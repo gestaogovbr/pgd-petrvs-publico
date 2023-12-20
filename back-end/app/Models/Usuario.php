@@ -14,6 +14,7 @@ use App\Models\AtividadeTarefa;
 use App\Models\Avaliacao;
 use App\Models\Change;
 use App\Models\Comentario;
+use App\Models\Documento;
 use App\Models\DocumentoAssinatura;
 use App\Models\Entidade;
 use App\Models\Favorito;
@@ -144,6 +145,7 @@ class Usuario extends Authenticatable
     public function planosTrabalhoCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }
     public function unidadesIntegrante() { return $this->hasMany(UnidadeIntegrante::class); }
     public function statusHistorico() { return $this->hasMany(StatusJustificativa::class, "usuario_id"); }
+    public function documentos() { return $this->hasMany(Documento::class); }
     // belongsTo
     public function perfil() { return $this->belongsTo(Perfil::class); }     //nullable
     // belongsToMany

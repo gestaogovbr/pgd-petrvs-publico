@@ -1,7 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 
 .petrvs {
-
+ 
   html, body {
     height:100%;
   }
@@ -88,6 +88,10 @@
   /* Sobrecarrega classes com problema após compilação */
   label .badge {
     font-size: var(--bs-badge-font-size);
+  }
+
+  .form-check-input:checked {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%231571ff'/%3e%3c/svg%3e")!important;
   }
 
   .navbar {
@@ -389,4 +393,25 @@ body {
 }
 .p-organizationchart-node-content .p-node-toggler .p-node-toggler-icon {
   vertical-align: inherit;
+}
+
+.p-treeselect {
+  display: flex;
+  background: var(--bs-body-bg);
+  border-color: var(--bs-border-color);
+}
+.p-tree-container {
+  padding-left: 0 !important;
+}
+.p-tree {
+  background: var(--bs-body-bg);
+  .p-highlight {
+    background: #24374f;
+  }
+}
+
+@media print {    
+  .hidden-print {
+    display: none !important;
+  }
 }

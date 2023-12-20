@@ -11,7 +11,7 @@ use Throwable;
 
 class DocumentoController extends ControllerBase 
 {
-    public $updatable = ["status", "numero_documento"];
+    public $updatable = ["status", "numero_documento", "usuario_id"];
     public $planoTrabalhoService = null;
 
     public function __construct() {
@@ -74,6 +74,22 @@ class DocumentoController extends ControllerBase
                 'success' => true,
                 'rows' => $this->service->assinar($data,$request)
             ]); 
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function gerarPDF(Request $request) {
+        try {
+            $data = $request->validate([
+                'documento_id' => ['required']
+            ]);
+            
+            $pdfContent = $this->service->gerarPDF($data);
+    
+            return response($pdfContent)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'inline; filename="document.pdf"');
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }

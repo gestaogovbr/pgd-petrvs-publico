@@ -28,6 +28,7 @@
             <button *ngIf="addRoute" [id]="generatedId(controlName) + '_route_button'" class="btn btn-outline-success" type="button" (click)="onAddClick($event)">
                 <i class="bi bi-plus-circle"></i>
             </button>
+            <button class="btn btn-outline-secondary" (click)="clear(true, false)" type="button" *ngIf="selectedItem && required == undefined"><i class="bi bi-x"></i></button>
             <button class="btn btn-outline-secondary" [id]="generatedId(controlName) + '_select_button'" type="button" (click)="onSelectClick($event)">
                 <i *ngIf="!searching && !loading" class="bi bi-search"></i>
                 <div *ngIf="searching || loading" class="spinner-border spinner-border-sm" role="status">

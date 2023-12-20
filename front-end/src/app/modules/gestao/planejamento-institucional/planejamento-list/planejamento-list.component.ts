@@ -62,6 +62,8 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
       });
     }
     this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
+    this.addOption({ label: "Relatório", icon: "bi bi-file-pdf", onClick: (row: Planejamento) => this.report(row, 'PLAN_INSTITUCIONAL') });
+
   }  
 
   ngAfterViewInit(): void {
@@ -71,6 +73,14 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
 
   /* override */
   public onLoad() {}
+
+
+  public report(planejamento: Planejamento, codigo: string){
+    const consulta: any = { 
+      id: planejamento.id, 
+      join: ["objetivos"] }
+    this.grid?.buildRowReport(codigo, consulta)
+  }
 
   public initGrid(grid: GridComponent) {
     grid.queryInit();

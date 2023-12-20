@@ -55,7 +55,7 @@ class PlanejamentoService extends ServiceBase
 
     }
 
-    public function proxyExtra($rows, $data) {
+    public function proxyExtra($rows, $data, $count) {
         $eixos = EixoTematico::all();
         $result["eixos"] = $eixos->toArray();
         return $result;
