@@ -1,0 +1,38 @@
+variables:
+  DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
+  DOCKER_HUB_TAG: dsv
+  SSH_USER: marcocoelho
+  SSH_HOST: 200.152.38.137
+  SSH_PORT: 7223
+  SSH_PASSWORD: dataprev12345
+  DEPLOY_PATH: ./
+  DOCKER_HUB_USERNAME: segescginf
+  DOCKER_HUB_PASSWORD: dckr_pat_1JrKXQ3MUfthx_nZri5gq_wgjqo
+
+services:
+  - docker:dind
+
+stages:
+  - build_dsv
+  - deploy_dsv
+
+before_script:
+  - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
+
+build_dsv:
+  stage: build_dsv
+  image: docker:latest
+  script:
+    - docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f resources/dataprev/dev/Dockerfile .
+    - docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
+  only:
+    - dataprev_dsv
+
+deploy_dsv:
+  stage: deploy_dsv
+  before_script:
+    - apt-get update -y && apt-get install -y sshpass
+  script:
+    - sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST "sh install-pgd.sh"
+  only:
+    - dataprev_dsv
