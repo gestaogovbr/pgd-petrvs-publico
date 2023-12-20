@@ -39,7 +39,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     return $data;
   }
 
-  public function proxyExtra($rows, $data) 
+  public function proxyExtra($rows, $data, $count) 
   {
     $result = [];
     if(in_array("avaliacao", $data["with"])) {

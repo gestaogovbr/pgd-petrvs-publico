@@ -1,4 +1,4 @@
-<div [class.grid-invisible]="!visible" class="h-100">
+<div [class.grid-invisible]="!visible" class="h-100 hidden-print">
     <div *ngIf="error?.length && !editing" class="alert alert-danger mt-2" role="alert">
         {{error}}
     </div>
@@ -6,7 +6,7 @@
         <div class="row m-0 p-0 h-100">
             <div [class]="classColTable">
                 <ng-content></ng-content>
-                <div class="table-responsive">
+                <div class="table-responsive" [style.min-height]="minHeight + 'px'">
                     <table class="table" [class.table-hover]="isSelectable" [class.scrollable]="scrollable">
                         <thead *ngIf="!isNoHeader">
                             <tr>

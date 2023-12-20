@@ -26,6 +26,7 @@ services:
     ports:
       - "80:80"
     dns:
+      - 8.8.8.8
       - 1.1.1.1
     depends_on:
       - petrvs_db

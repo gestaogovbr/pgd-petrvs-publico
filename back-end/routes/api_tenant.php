@@ -179,6 +179,7 @@ Route::middleware(['auth:sanctum'])->prefix('Documento')->group(function () {
     defaultRoutes(DocumentoController::class);
     Route::post('pendente-sei', [DocumentoController::class, 'pendenteSei']);
     Route::post('assinar', [DocumentoController::class, 'assinar']);
+    Route::get('gerarPDF', [DocumentoController::class, 'gerarPDF']);
 });
 Route::middleware(['auth:sanctum'])->prefix('EixoTematico')->group(function () { defaultRoutes(EixoTematicoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Entrega')->group(function () { defaultRoutes(EntregaController::class); });
@@ -197,6 +198,9 @@ Route::middleware(['auth:sanctum'])->prefix('TipoTarefa')->group(function () { d
 Route::middleware(['auth:sanctum'])->prefix('Template')->group(function () {
     defaultRoutes(TemplateController::class);
     Route::post('teste', [TemplateController::class, 'teste']);
+    Route::post('gera-relatorio', [TemplateController::class, 'geraRelatorio']);
+    Route::post('carrega-dataset', [TemplateController::class, 'carregaDataset']);
+
 });
 Route::middleware(['auth:sanctum'])->prefix('CadeiaValor')->group(function () { defaultRoutes(CadeiaValorController::class); });
 Route::middleware(['auth:sanctum'])->prefix('CadeiaValorProcesso')->group(function () { defaultRoutes(CadeiaValorProcessoController::class); });
