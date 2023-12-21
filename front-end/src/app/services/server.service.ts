@@ -168,4 +168,17 @@ export class ServerService {
     request.pipe(catchError(this.errorHandle.bind(this)));
     return request;
   }
+
+  public getPDF(url: string, params: any): Observable<any>{
+    let options = this.requestOptions();
+    options = this.addCustomHeaders(options);
+    return this.http.get(this.gb.servidorURL + '/' + url, {...options, params: params, responseType: 'blob'});
+  }
+
+  private addCustomHeaders(options: any): any {
+    options.headers['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
+    options.headers['Accept'] =  "application/pdf";    
+    return options;
+  }
+
 }

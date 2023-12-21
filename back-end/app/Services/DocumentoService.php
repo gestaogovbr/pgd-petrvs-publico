@@ -8,6 +8,11 @@ use App\Models\DocumentoAssinatura;
 use App\Services\ServiceBase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Exceptions\ServerException;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\App;
+
+
 use Throwable;
 
 class DocumentoService extends ServiceBase {
@@ -80,6 +85,15 @@ class DocumentoService extends ServiceBase {
         //$assinatura->assinatura = hash('md5', $assinatura->data_assinatura->toDateTimeString() . $usuario_id . $documento->conteudo);
         $assinatura->assinatura = hash('md5', $assinatura->data_assinatura . $usuario_id . $documento->conteudo);
         return $assinatura->save();
+    }
+
+    public function gerarPDF($data){
+        $documento = Documento::find($data["documento_id"]);
+        if(empty($documento)) throw new ServerException("ValidateDocumento", "Documento não encontrado");        
+        $head = '<head><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1" /><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">';
+        $pdf = Pdf::loadHTML($head . $documento->conteudo);        
+        $pdf->render();
+        return $pdf->output();
     }
 
 }
