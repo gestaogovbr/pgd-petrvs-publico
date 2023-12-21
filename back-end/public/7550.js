@@ -844,7 +844,7 @@ const _c1 = ["usuario"];
 function ProgramaParticipantesComponent_toolbar_1_Template(rf, ctx) {
   if (rf & 1) {
     const _r21 = _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementStart"](0, "toolbar")(1, "input-switch", 24);
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementStart"](0, "toolbar")(1, "input-switch", 25);
     _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵlistener"]("change", function ProgramaParticipantesComponent_toolbar_1_Template_input_switch_change_1_listener() {
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵrestoreView"](_r21);
       const ctx_r20 = _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵnextContext"]();
@@ -860,7 +860,7 @@ function ProgramaParticipantesComponent_toolbar_1_Template(rf, ctx) {
 }
 function ProgramaParticipantesComponent_div_10_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementStart"](0, "div", 25)(1, "span")(2, "strong");
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementStart"](0, "div", 26)(1, "span")(2, "strong");
     _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtext"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementEnd"]()()();
   }
@@ -872,7 +872,7 @@ function ProgramaParticipantesComponent_div_10_Template(rf, ctx) {
 }
 function ProgramaParticipantesComponent_ng_template_13_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelement"](0, "profile-picture", 26);
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelement"](0, "profile-picture", 27);
   }
   if (rf & 2) {
     const row_r22 = ctx.row;
@@ -881,7 +881,7 @@ function ProgramaParticipantesComponent_ng_template_13_Template(rf, ctx) {
 }
 function ProgramaParticipantesComponent_ng_template_15_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelement"](0, "profile-picture", 27);
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelement"](0, "profile-picture", 28);
   }
   if (rf & 2) {
     const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵnextContext"]();
@@ -908,7 +908,7 @@ function ProgramaParticipantesComponent_ng_template_18_Template(rf, ctx) {
 }
 function ProgramaParticipantesComponent_ng_template_20_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelement"](0, "input-search", 28, 29);
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelement"](0, "input-search", 29, 30);
   }
   if (rf & 2) {
     const ctx_r11 = _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵnextContext"]();
@@ -917,18 +917,18 @@ function ProgramaParticipantesComponent_ng_template_20_Template(rf, ctx) {
 }
 function ProgramaParticipantesComponent_ng_template_23_i_0_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelement"](0, "i", 32);
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelement"](0, "i", 33);
   }
 }
 function ProgramaParticipantesComponent_ng_template_23_i_1_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelement"](0, "i", 33);
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelement"](0, "i", 34);
   }
 }
 function ProgramaParticipantesComponent_ng_template_23_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplate"](0, ProgramaParticipantesComponent_ng_template_23_i_0_Template, 1, 0, "i", 30);
-    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplate"](1, ProgramaParticipantesComponent_ng_template_23_i_1_Template, 1, 0, "i", 31);
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplate"](0, ProgramaParticipantesComponent_ng_template_23_i_0_Template, 1, 0, "i", 31);
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplate"](1, ProgramaParticipantesComponent_ng_template_23_i_1_Template, 1, 0, "i", 32);
   }
   if (rf & 2) {
     const row_r27 = ctx.row;
@@ -939,7 +939,7 @@ function ProgramaParticipantesComponent_ng_template_23_Template(rf, ctx) {
 }
 function ProgramaParticipantesComponent_ng_template_25_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelement"](0, "input-switch", 34, 35);
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelement"](0, "input-switch", 35, 36);
   }
   if (rf & 2) {
     const ctx_r15 = _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵnextContext"]();
@@ -985,7 +985,6 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
   constructor(injector) {
     super(injector, src_app_models_programa_participante_model__WEBPACK_IMPORTED_MODULE_6__.ProgramaParticipante, src_app_dao_programa_participante_dao_service__WEBPACK_IMPORTED_MODULE_3__.ProgramaParticipanteDaoService);
     this.injector = injector;
-    //public multiselectAllFields: string[] = ["usuario_id", "habilitado"];
     this.multiselectMenu = [];
     this.programa = null;
     this.BOTAO_HABILITAR = {
@@ -1119,8 +1118,8 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
   habilitaParticipante(row) {
     var _this4 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      yield _this4.dao.habilitar([row.usuario.id], _this4.programa.id, 1).then(resposta => {
-        row.habilitado = 1;
+      yield _this4.dao.habilitar([row.usuario.id], _this4.programa.id, 1, false).then(resposta => {
+        (_this4.grid?.query || _this4.query).refreshId(row.id);
         _this4.cdRef.detectChanges();
       });
       return false;
@@ -1129,79 +1128,84 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
   desabilitaParticipante(row) {
     var _this5 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      let confirm = yield _this5.dialog.confirm("Desabilitar ?", "Deseja DESABILITAR " + _this5.lex.translate("o servidor") + " " + row.usuario.nome.toUpperCase() + " do programa " + (_this5.programa?.nome).toUpperCase() + "?");
-      if (confirm) {
-        let plano_trabalho_ativo = !!row.usuario.planos_trabalho.filter(p => p.status == 'ATIVO' && p.programa_id == _this5.programa?.id).length;
+      let desabilitar = yield _this5.dialog.confirm("Desabilitar ?", "Deseja DESABILITAR " + _this5.lex.translate("o servidor") + " - " + row.usuario.nome.toUpperCase() + " - " + _this5.lex.translate("do programa") + " - " + (_this5.programa?.nome).toUpperCase() + " ?");
+      if (desabilitar) {
+        let plano_trabalho_ativo = !!row.usuario.planos_trabalho.length;
+        let suspender = false;
         if (plano_trabalho_ativo) {
-          yield _this5.dialog.alert("ATENÇÃO", _this5.lex.translate("Usuário") + " não pode ser desabilitado porque possui " + _this5.lex.translate("Plano de Trabalho") + " ativo vinculado a " + _this5.lex.translate("este Programa") + "!");
-        } else {
-          yield _this5.dao.habilitar([row.usuario.id], _this5.programa.id, 0).then(resposta => {
-            row.habilitado = 0;
+          suspender = yield _this5.dialog.confirm("ATENÇÃO", _this5.lex.translate("O usuário") + " possui " + _this5.lex.translate("Plano de Trabalho") + " ativo vinculado a " + _this5.lex.translate("este Programa") + "!" + " Deseja continuar com a desabilitação, suspendendo o seu " + _this5.lex.translate("Plano de Trabalho" + " ?"));
+        }
+        if (!plano_trabalho_ativo || suspender) {
+          yield _this5.dao.habilitar([row.usuario.id], _this5.programa.id, 0, true).then(resposta => {
+            (_this5.grid?.query || _this5.query).refreshId(row.id);
             _this5.cdRef.detectChanges();
           });
         }
       }
-      return false;
-    })();
-  }
-  desabilitarParticipantes(row) {
-    var _this6 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      let confirm = yield _this6.dialog.confirm("Desabilitar ?", "Deseja DESABILITAR " + _this6.lex.translate("o servidor") + " " + row.usuario.nome.toUpperCase() + " do programa " + (_this6.programa?.nome).toUpperCase() + "?");
-      if (confirm) {
-        let plano_trabalho_ativo = !!row.usuario.planos_trabalho.filter(p => p.status == 'ATIVO' && p.programa_id == _this6.programa?.id).length;
-        if (plano_trabalho_ativo) {
-          yield _this6.dialog.alert("ATENÇÃO", _this6.lex.translate("Usuário") + " não pode ser desabilitado porque possui " + _this6.lex.translate("Plano de Trabalho") + " ativo vinculado a " + _this6.lex.translate("este Programa") + "!");
-        } else {
-          yield _this6.dao.habilitar([row.usuario.id], _this6.programa.id, 0).then(resposta => {
-            row.habilitado = 0;
-            _this6.cdRef.detectChanges();
-          });
-        }
-      }
-      return false;
-    })();
-  }
-  saveParticipante(form, item) {
-    var _this7 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      let result = undefined;
-      _this7.form.markAllAsTouched();
-      if (_this7.form.valid) {
-        item.usuario_id = form.controls.usuario_id.value;
-        item.habilitado = !!form.controls.habilitado.value;
-        item.usuario = _this7.usuario?.selectedEntity;
-        item.programa_id = _this7.programa.id;
-        _this7.submitting = true;
-        try {
-          result = yield _this7.dao.save(item);
-          item.id = result.id;
-          yield _this7.dao.notificar(item);
-        } catch (error) {
-          _this7.error(error.message ? error.message : error);
-        } finally {
-          _this7.submitting = false;
-        }
-        _this7.cdRef.detectChanges();
-      }
-      return result;
     })();
   }
   habilitarParticipantes() {
-    if (!this.grid.multiselectedCount) {
-      this.dialog.alert("Selecione", "Nenhum participante selecionado para a habilitação");
-    } else {
-      const self = this;
-      this.dialog.confirm("Habilitar Participantes ?", "Confirma a habilitação de todos esses participantes?").then(confirm => {
-        if (confirm) {
-          this.dao.habilitar(Object.keys(this.grid.multiselected), this.programa.id, 1).then(function () {
-            self.dialog.alert("Sucesso", "Participantes habilitados com sucesso!");
-          }).catch(function (error) {
-            self.dialog.alert("Erro", "Erro ao habilitar os participantes: " + error?.message ? error?.message : 0);
+    var _this6 = this;
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      if (!_this6.grid.multiselectedCount) {
+        _this6.dialog.alert("Selecione", "Nenhum participante selecionado para a habilitação");
+      } else {
+        const self = _this6;
+        _this6.dialog.confirm("Habilitar Participantes ?", "Confirma a habilitação de todos esses participantes?").then(habilitar_todos => {
+          if (habilitar_todos) {
+            _this6.dao.habilitar(Object.keys(_this6.grid.multiselected), _this6.programa.id, 1, false).then(function () {
+              self.dialog.alert("Sucesso", "Participantes habilitados com sucesso!");
+            }).catch(function (error) {
+              self.dialog.alert("Erro", "Erro ao habilitar os participantes: " + error?.message ? error?.message : 0);
+            });
+          }
+        });
+      }
+    })();
+  }
+  desabilitarParticipantes() {
+    var _this7 = this;
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      let desabilitar = yield _this7.dialog.confirm("Desabilitar ?", "Deseja DESABILITAR, " + _this7.lex.translate("do programa") + " - " + (_this7.programa?.nome).toUpperCase() + " - todos " + _this7.lex.translate("os usuários") + " selecionados ?");
+      if (desabilitar) {
+        let qde_usuarios_com_plano_trabalho_ativo = _this7.grid.multiselected.filter(pp => pp.usuario?.planos_trabalho?.length).length;
+        let suspender = false;
+        if (!!qde_usuarios_com_plano_trabalho_ativo) {
+          suspender = yield _this7.dialog.confirm("ATENÇÃO", "Há " + qde_usuarios_com_plano_trabalho_ativo + _this7.lex.translate(qde_usuarios_com_plano_trabalho_ativo == 1 ? "usuário" : "usuários") + " com " + _this7.lex.translate("Plano de Trabalho") + " ativo vinculado a " + _this7.lex.translate("este Programa") + "!" + "Deseja continuar com a desabilitação, suspendendo " + (qde_usuarios_com_plano_trabalho_ativo == 1 ? "o seu " : "todos ") + _this7.lex.translate(qde_usuarios_com_plano_trabalho_ativo == 1 ? "Plano de Trabalho" : "os Planos de Trabalho") + " ?");
+        }
+        if (!qde_usuarios_com_plano_trabalho_ativo || suspender) {
+          yield _this7.dao.habilitar(Object.keys(_this7.grid.multiselected), _this7.programa.id, 0, true).then(resposta => {
+            (_this7.grid?.query || _this7.query).refresh();
+            _this7.cdRef.detectChanges();
           });
         }
-      });
-    }
+      }
+    })();
+  }
+  saveParticipante(form, item) {
+    var _this8 = this;
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      let result = undefined;
+      _this8.form.markAllAsTouched();
+      if (_this8.form.valid) {
+        item.usuario_id = form.controls.usuario_id.value;
+        item.habilitado = !!form.controls.habilitado.value;
+        item.usuario = _this8.usuario?.selectedEntity;
+        item.programa_id = _this8.programa.id;
+        _this8.submitting = true;
+        try {
+          result = yield _this8.dao.save(item);
+          item.id = result.id;
+          yield _this8.dao.notificar(item);
+        } catch (error) {
+          _this8.error(error.message ? error.message : error);
+        } finally {
+          _this8.submitting = false;
+        }
+        _this8.cdRef.detectChanges();
+      }
+      return result;
+    })();
   }
   onProgramaChange() {
     this.programa = this.programaSearch?.selectedItem?.entity;
@@ -1229,7 +1233,7 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
     features: [_angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵInheritDefinitionFeature"]],
     decls: 35,
     vars: 59,
-    consts: [["multiselect", "", "editable", "", 3, "dao", "form", "title", "orderBy", "groupBy", "join", "add", "load", "remove", "save", "selectable", "hasAdd", "hasEdit", "hasDelete", "multiselectMenu", "select"], [4, "ngIf"], [3, "deleted", "form", "where", "clear", "submit", "collapseChange", "collapsed"], [1, "row"], ["controlName", "programa_id", "required", "", 3, "size", "disabled", "control", "dao", "where", "metadata", "change"], ["programaSearch", ""], ["controlName", "nome_usuario", 3, "size", "label", "control", "placeholder"], ["controlName", "unidade_id", 3, "size", "control", "label", "labelInfo", "dao"], ["unidade", ""], ["class", "mt-2 mb-4", 4, "ngIf"], ["icon", "bi-person", 1, "text-center", 3, "template", "editTemplate"], ["columnFoto", ""], ["editFoto", ""], [3, "title", "template", "editTemplate"], ["columnUsuario", ""], ["editUsuario", ""], ["title", "Habilitado", 3, "align", "template", "editTemplate"], ["columnHabilitado", ""], ["editHabilitado", ""], [3, "title", "template"], ["columnLotacao", ""], ["columnPlanoTrabalho", ""], ["type", "options", 3, "dynamicButtons"], [3, "rows"], ["labelPosition", "left", "label", "Todos", "controlName", "todos", 3, "size", "labelInfo", "control", "change"], [1, "mt-2", "mb-4"], [3, "url", "size", "hint"], [3, "url", "size"], ["label", "", "icon", "", "required", "", 3, "size", "control", "dao"], ["usuario", ""], ["class", "bi bi-person-check habilitado", 4, "ngIf"], ["class", "bi bi-person-fill-slash desabilitado", 4, "ngIf"], [1, "bi", "bi-person-check", "habilitado"], [1, "bi", "bi-person-fill-slash", "desabilitado"], ["disabled", "", "controlName", "habilitado", 3, "control"], ["habilitado", ""]],
+    consts: [["multiselect", "", "editable", "", 3, "dao", "form", "title", "orderBy", "groupBy", "join", "add", "load", "save", "selectable", "hasAdd", "hasEdit", "hasDelete", "multiselectMenu", "select"], [4, "ngIf"], [3, "deleted", "form", "where", "clear", "submit", "collapseChange", "collapsed"], [1, "row"], ["controlName", "programa_id", "required", "", 3, "size", "disabled", "control", "dao", "where", "metadata", "change"], ["programaSearch", ""], ["controlName", "nome_usuario", 3, "size", "label", "control", "placeholder"], ["controlName", "unidade_id", 3, "size", "control", "label", "labelInfo", "dao"], ["unidade", ""], ["class", "mt-2 mb-4", 4, "ngIf"], ["icon", "bi-person", 1, "text-center", 3, "template", "editTemplate"], ["columnFoto", ""], ["editFoto", ""], [3, "title", "template", "editTemplate"], ["columnUsuario", ""], ["editUsuario", ""], ["title", "Habilitado", 3, "align", "template", "editTemplate"], ["columnHabilitado", ""], ["editHabilitado", ""], [3, "title", "template"], ["columnLotacao", ""], [3, "title", "align", "template"], ["columnPlanoTrabalho", ""], ["type", "options", 3, "dynamicButtons"], [3, "rows"], ["labelPosition", "left", "label", "Todos", "controlName", "todos", 3, "size", "labelInfo", "control", "change"], [1, "mt-2", "mb-4"], [3, "url", "size", "hint"], [3, "url", "size"], ["label", "", "icon", "", "required", "", 3, "size", "control", "dao"], ["usuario", ""], ["class", "bi bi-person-check habilitado", 4, "ngIf"], ["class", "bi bi-person-fill-slash desabilitado", 4, "ngIf"], [1, "bi", "bi-person-check", "habilitado"], [1, "bi", "bi-person-fill-slash", "desabilitado"], ["disabled", "", "controlName", "habilitado", 3, "control"], ["habilitado", ""]],
     template: function ProgramaParticipantesComponent_Template(rf, ctx) {
       if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementStart"](0, "grid", 0);
@@ -1261,12 +1265,12 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
         _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementStart"](27, "column", 19);
         _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplate"](28, ProgramaParticipantesComponent_ng_template_28_Template, 2, 1, "ng-template", null, 20, _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementStart"](30, "column", 19);
-        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplate"](31, ProgramaParticipantesComponent_ng_template_31_Template, 2, 1, "ng-template", null, 21, _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementStart"](30, "column", 21);
+        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplate"](31, ProgramaParticipantesComponent_ng_template_31_Template, 2, 1, "ng-template", null, 22, _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelement"](33, "column", 22);
+        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelement"](33, "column", 23);
         _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelement"](34, "pagination", 23);
+        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelement"](34, "pagination", 24);
         _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementEnd"]();
       }
       if (rf & 2) {
@@ -1278,7 +1282,7 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
         const _r14 = _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵreference"](26);
         const _r16 = _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵreference"](29);
         const _r18 = _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵreference"](32);
-        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("dao", ctx.dao)("form", ctx.form)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("add", ctx.addParticipante.bind(ctx))("load", ctx.loadParticipante.bind(ctx))("remove", ctx.desabilitaParticipante.bind(ctx))("save", ctx.saveParticipante.bind(ctx))("selectable", ctx.selectable)("hasAdd", ctx.auth.hasPermissionTo("MOD_PRGT_PART_INCL"))("hasEdit", false)("hasDelete", false)("multiselectMenu", ctx.multiselectMenu);
+        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("dao", ctx.dao)("form", ctx.form)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("add", ctx.addParticipante.bind(ctx))("load", ctx.loadParticipante.bind(ctx))("save", ctx.saveParticipante.bind(ctx))("selectable", ctx.selectable)("hasAdd", ctx.auth.hasPermissionTo("MOD_PRGT_PART_INCL"))("hasEdit", false)("hasDelete", false)("multiselectMenu", ctx.multiselectMenu);
         _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("ngIf", !ctx.selectable);
         _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](1);
@@ -1301,7 +1305,7 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
         _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](5);
         _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("title", ctx.lex.translate("Lota\u00E7\u00E3o"))("template", _r16);
         _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("title", ctx.lex.translate("Plano de Trabalho") + " ativo?")("template", _r18);
+        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("title", ctx.lex.translate("Plano de Trabalho") + " ativo?")("align", "center")("template", _r18);
         _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("dynamicButtons", ctx.dynamicButtons.bind(ctx));
         _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](1);
@@ -1309,7 +1313,7 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
       }
     },
     dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_18__.NgIf, src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_8__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_9__.ColumnComponent, _components_grid_filter_filter_component__WEBPACK_IMPORTED_MODULE_10__.FilterComponent, _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_11__.ToolbarComponent, _components_grid_pagination_pagination_component__WEBPACK_IMPORTED_MODULE_12__.PaginationComponent, _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_13__.InputSwitchComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_14__.InputSearchComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_15__.InputTextComponent, _components_profile_picture_profile_picture_component__WEBPACK_IMPORTED_MODULE_16__.ProfilePictureComponent],
-    styles: [".habilitado[_ngcontent-%COMP%] {\n  background: #388E3C;\n  border: 2px solid #1B5E20;\n}\n\n.desabilitado[_ngcontent-%COMP%] {\n  background: #D32F2F;\n  border: 2px solid #B71C1C;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvbW9kdWxlcy9nZXN0YW8vcHJvZ3JhbWEvcHJvZ3JhbWEtcGFydGljaXBhbnRlcy9wcm9ncmFtYS1wYXJ0aWNpcGFudGVzLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksbUJBQUE7RUFDQSx5QkFBQTtBQUNKOztBQUVBO0VBQ0ksbUJBQUE7RUFDQSx5QkFBQTtBQUNKIiwic291cmNlc0NvbnRlbnQiOlsiLmhhYmlsaXRhZG8ge1xuICAgIGJhY2tncm91bmQ6ICMzODhFM0M7IFxuICAgIGJvcmRlcjogMnB4IHNvbGlkICMxQjVFMjBcbn1cblxuLmRlc2FiaWxpdGFkbyB7XG4gICAgYmFja2dyb3VuZDogI0QzMkYyRjsgXG4gICAgYm9yZGVyOiAycHggc29saWQgI0I3MUMxQ1xufSJdLCJzb3VyY2VSb290IjoiIn0= */"]
+    styles: [".habilitado[_ngcontent-%COMP%] {\n  background: #198754;\n  border: 2px solid #1B5E20;\n}\n\n.desabilitado[_ngcontent-%COMP%] {\n  background: #dc3545;\n  border: 2px solid #B71C1C;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvbW9kdWxlcy9nZXN0YW8vcHJvZ3JhbWEvcHJvZ3JhbWEtcGFydGljaXBhbnRlcy9wcm9ncmFtYS1wYXJ0aWNpcGFudGVzLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksbUJBQUE7RUFDQSx5QkFBQTtBQUNKOztBQUVBO0VBQ0ksbUJBQUE7RUFDQSx5QkFBQTtBQUNKIiwic291cmNlc0NvbnRlbnQiOlsiLmhhYmlsaXRhZG8ge1xyXG4gICAgYmFja2dyb3VuZDogIzE5ODc1NDsgXHJcbiAgICBib3JkZXI6IDJweCBzb2xpZCAjMUI1RTIwXHJcbn1cclxuXHJcbi5kZXNhYmlsaXRhZG8ge1xyXG4gICAgYmFja2dyb3VuZDogI2RjMzU0NTsgXHJcbiAgICBib3JkZXI6IDJweCBzb2xpZCAjQjcxQzFDXHJcbn0iXSwic291cmNlUm9vdCI6IiJ9 */"]
   });
 }
 
