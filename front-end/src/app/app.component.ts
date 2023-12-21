@@ -414,14 +414,22 @@ export class AppComponent {
     }];
 
     let gestaoPGD = this.auth.hasPermissionTo("CTXT_GEST");
+    let execucaoPGD = this.auth.hasPermissionTo("CTXT_EXEC");
     this.menuContexto = [
-      { key: gestaoPGD ? "GESTAO" : "EXECUCAO", permition: gestaoPGD ? "CTXT_GEST" : "CTXT_EXEC", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: gestaoPGD ? this.menuGestao : this.menuExecucao},
+      { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.menuGestao},
+      { key: "EXECUCAO", permition: "CTXT_EXEC", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.menuExecucao},
       { key: "ADMINISTRADOR", permition: "CTXT_ADM", icon: "bi bi-emoji-sunglasses", name: this.lex.translate("Administrador"), menu: this.menuAdministrador },
       { key: "DEV", permition: "CTXT_DEV", icon: "bi bi-braces", name: this.lex.translate("Desenvolvedor"), menu: this.menuDev },
       { key: "PONTO", permition: "CTXT_PNT", icon: "bi bi-stopwatch", name: this.lex.translate("Ponto Eletrônico"), menu: this.menuPonto },
       { key: "PROJETO", permition: "CTXT_PROJ", icon: "bi bi-graph-up-arrow", name: this.lex.translate("Projetos"), menu: this.menuProjeto },
       { key: "RAIOX", permition: "CTXT_RX", icon: "bi bi-camera", name: this.lex.translate("Raio X"), menu: this.menuRaioX }
     ]
+    
+    if(gestaoPGD){
+      this.menuContexto = this.menuContexto.filter(item => item.key !== "EXECUCAO");
+    } else if(execucaoPGD && !gestaoPGD){
+      this.menuContexto = this.menuContexto.filter(item => item.key !== "GESTAO");
+    }
     
   }
 
