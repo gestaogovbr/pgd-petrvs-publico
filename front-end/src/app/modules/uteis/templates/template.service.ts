@@ -19,7 +19,19 @@ export type TemplateNotificacao = {
   template: string
 }
 
+export type TemplateRelatorio = TemplateNotificacao;
+
 export type TemplateFieldType = "VALUE" | "DATE" | "DATETIME" | "TEMPLATE" | "OBJECT" | "ARRAY" | "LAMBDA";
+
+export type Operator = {
+  type: string;
+  label: string;
+}
+
+export type OperatorType = {
+  type: string;
+  label: string;
+}
 
 export type TemplateDataset = {
   field: string,
@@ -28,7 +40,8 @@ export type TemplateDataset = {
   dao?: DaoBaseService<Base>,
   fields?: TemplateDataset[],
   lookup?: LookupItem[],
-  lambda?: (entity: any) => string 
+  lambda?: (entity: any) => string,
+  path?: string
 }
 
 export type TemplateTag = {
@@ -89,12 +102,14 @@ export class TemplateService {
     this.dialog.html({ title: "Pre-visualização do documento", modalWidth: 1000 }, template.conteudo!, []);
   }
 
-  public dataset(especie: TemplateEspecie, codigo?: string): TemplateDataset[] {
+  public async dataset(especie: TemplateEspecie, codigo?: string): Promise<TemplateDataset[]> {
     let result: TemplateDataset[] = [];
     if(["TCR"].includes(especie)) {
-      result = this.planoTrabalhoDao.dataset();
+      result = await this.planoTrabalhoDao.dataset();
     } else if(especie == "NOTIFICACAO") {
-      result = this.notificacoes.find(x => x.codigo == codigo)?.dataset || [];
+      result = await this.notificacoes.find(x => x.codigo == codigo)?.dataset || [];
+    } else if(especie == "RELATORIO") {
+      result = await this.templateDao.getDataset("REPORT", codigo!)
     }
     return result; 
   }
@@ -114,7 +129,6 @@ export class TemplateService {
       let {dao: _, ...newItem} = item; // equivalente a newItem.dao = undefined;
       if(["OBJECT", "ARRAY"].includes(newItem.type || "") || newItem.fields?.length) newItem.fields = this.prepareDatasetToSave(newItem.fields || []);
       result.push(newItem);
-
     }
     return result;
   }  
@@ -133,6 +147,20 @@ export class TemplateService {
       result = await query.asPromise();
       this.notificacoes = (query.extra?.notificacoes as TemplateNotificacao[])?.sort((a, b) => a.codigo < b.codigo ? -1 : 1) || [];
       this.notifica = Object.assign(this.notifica, query.extra?.notifica_enviroment || {});
+    }
+    return result;
+  }
+
+  public async loadRelatorios(entidadeId?: string) {
+    let result: Template[] = [];
+    if(entidadeId) {
+      let query = this.templateDao.query({
+        where: [["especie", "==", "RELATORIO"], ["entidade_id", "==", entidadeId]],
+        orderBy: [],
+        join: [],
+        limit: undefined
+      });
+      result = (await query.asPromise())?.sort((a, b) => (a.codigo || '') < (b.codigo || '') ? -1 : 1) || [];
     }
     return result;
   }

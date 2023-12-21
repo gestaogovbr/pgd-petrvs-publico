@@ -14,6 +14,7 @@ use App\Models\Template;
 use App\Models\TipoDocumento;
 use App\Models\TipoProcesso;
 use App\Models\Entidade;
+use App\Models\Usuario;
 use Illuminate\Support\Facades\DB;
 
 class Documento extends ModelBase
@@ -41,6 +42,7 @@ class Documento extends ModelBase
         'plano_trabalho_id', /* char(36); */
         'template_id', /* char(36); */
         'plano_trabalho_id', /* char(36); */
+        'usuario_id', /* char(36); */
         //'deleted_at', /* timestamp; */
         //'numero', /* int; NOT NULL; */// Número do documento (Gerado pelo sistema)
     ];
@@ -78,5 +80,6 @@ class Documento extends ModelBase
     public function entidade() { return $this->belongsTo(Entidade::class); }      //nullable
     public function atividade() { return $this->belongsTo(Atividade::class); }    //nullable  
     public function atividadeTarefa() { return $this->belongsTo(AtividadeTarefa::class); }    //nullable  
+    public function usuario() { return $this->belongsTo(Usuario::class); }    //nullable  
     
 }

@@ -35,4 +35,38 @@ class TemplateController extends ControllerBase
         }
     }
 
+    public function carregaDataset(Request $request) {
+        try {
+            $data = $request->validate([
+                'especie' => ['required'],
+                'codigo' => ['required']
+            ]);
+            return response()->json([
+                'success' => true,
+                'dataset' => $this->service->loadDataset($data['especie'], $data['codigo'])
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function geraRelatorio(Request $request) {
+        try {
+            $params = $request->input();
+            $data = $request->validate([
+                'entidade' => ['required'],
+                'codigo' => ['required'],
+                'params' => ['required']
+            ]);
+            unset($data['params']['limit']);
+            return response()->json([
+                'success' => true,
+                'report' => $this->service->gerarRelatorio($data)
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+
 }

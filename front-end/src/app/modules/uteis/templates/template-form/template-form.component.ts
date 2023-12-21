@@ -37,10 +37,10 @@ export class TemplateFormComponent extends PageFormBase<Template, TemplateDaoSer
     return result;
   }
 
-  public loadData(entity: Template, form: FormGroup): void {
+  public async loadData(entity: Template, form: FormGroup): Promise<void> {
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
-    this.dataset = this.templateService.dataset(form.controls.especie.value);
+    this.dataset = await this.templateService.dataset(form.controls.especie.value);
   }
 
   public initializeData(form: FormGroup): void {

@@ -151,7 +151,7 @@ export class AuthService {
   }
 
   public registerUser(user: any, token?: string) {
-    if (user) {    
+    if (user) {
       this.usuario = Object.assign(new Usuario(), user) as Usuario;
       this.capacidades = this.usuario?.perfil?.capacidades?.filter(x => x.deleted_at == null).map(x => x.tipo_capacidade?.codigo || "") || [];
       this.kind = this.kind;
@@ -338,7 +338,7 @@ export class AuthService {
   }
 
   /**
-   * Informa se o usuário logado é gestor(titular, substituto ou delegado) da unidade recebida como parâmetro. Se nenhuma unidade for repassada, 
+   * Informa se o usuário logado é gestor(titular, substituto ou delegado) da unidade recebida como parâmetro. Se nenhuma unidade for repassada,
    * será adotada a unidade selecionada pelo servidor na homepage.
    * @param pUnidade
    * @returns
@@ -386,7 +386,7 @@ export class AuthService {
   }
 
   /**
-   * Informa se a unidade recebida como parâmetro é a lotação do usuário logado. Se nenhuma unidade for recebida, 
+   * Informa se a unidade recebida como parâmetro é a lotação do usuário logado. Se nenhuma unidade for recebida,
    * será adotada a unidade selecionada pelo servidor na homepage.
    * @param pUnidade
    * @returns
@@ -408,10 +408,10 @@ export class AuthService {
   }
 
   /**
-   * Informa se o usuário logado tem como área de trabalho alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
+   * Informa se o usuário logado tem como área de trabalho alguma das unidades pertencentes à linha hierárquica ascendente da unidade
    * recebida como parâmetro.
-   * @param unidade 
-   * @returns 
+   * @param unidade
+   * @returns
    */
   public isLotadoNaLinhaAscendente(unidade: Unidade): boolean {
     let result = false;
@@ -420,10 +420,10 @@ export class AuthService {
   }
 
   /**
-   * Informa se o usuário logado é gestor (titular, substituto ou delegado) de alguma das unidades pertencentes à linha hierárquica ascendente da unidade 
+   * Informa se o usuário logado é gestor (titular, substituto ou delegado) de alguma das unidades pertencentes à linha hierárquica ascendente da unidade
    * recebida como parâmetro.
-   * @param unidade 
-   * @returns 
+   * @param unidade
+   * @returns
    */
   public isGestorLinhaAscendente(unidade: Unidade): boolean {
     let result = false;
@@ -433,6 +433,13 @@ export class AuthService {
     if(this.usuario?.gerencia_titular?.unidade?.id) $ids_gerencias.push(this.usuario?.gerencia_titular!.unidade_id);
     $ids_gerencias.forEach(x => { if (!!unidade.path && unidade.path.split('/').slice(1).includes(x)) result = true; });
     return false;
+  }
+
+
+  public loginPanel(user: string,password: string) {
+    return this.server.post("api/panel-login", { user: user,password: password }).toPromise().then(response => {
+      return response;
+    });
   }
 
 }

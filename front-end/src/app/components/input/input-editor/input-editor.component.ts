@@ -1,11 +1,14 @@
 import { Component, ElementRef, EventEmitter, HostBinding, Injector, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
-import { AbstractControl, ControlContainer, FormGroup, FormGroupDirective } from "@angular/forms";
+import { AbstractControl, ControlContainer, FormControl, FormGroup, FormGroupDirective, Validators } from "@angular/forms";
 import { EditorComponent } from '@tinymce/tinymce-angular';
 import { IIndexable } from 'src/app/models/base.model';
 import { DialogService } from 'src/app/services/dialog.service';
 import { Editor, EditorEvent, RawEditorOptions } from 'tinymce';
 import { InputBase, LabelPosition } from "../input-base";
 import { TemplateDataset, TemplateService, VariableTemplate } from 'src/app/modules/uteis/templates/template.service';
+import { LookupItem, LookupService } from 'src/app/services/lookup.service';
+import { TreeNode } from 'primeng/api';
+import { TreeNodeSelectEvent } from 'primeng/tree';
 
 @Component({
   selector: 'input-editor',
@@ -89,14 +92,15 @@ export class InputEditorComponent extends InputBase implements OnInit {
 
   public toolbars: string[] = [
     'customEditTemplateButton',
-    'customDoneEditTemplateButton customCancelEditTemplateButton | customAddMacroTemplate customHelpTemplate | undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl visualblocks',
-    'customAddMacroTemplate customHelpTemplate | undo redo | customLockTemplate customUnlockTemplate | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl visualblocks',
-    'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl visualblocks'
+    'customDoneEditTemplateButton customCancelEditTemplateButton | customAddMacroTemplate customHelpTemplate | undo redo | bold italic underline strikethrough | fontselect fontsize formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl visualblocks code',
+    'customAddMacroTemplate customHelpTemplate | undo redo | customLockTemplate customUnlockTemplate | bold italic underline strikethrough | fontselect fontsize formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl visualblocks code',
+    'undo redo | bold italic underline strikethrough | fontselect fontsize formatselect | alignleft aligncenter alignright alignjustify | outdent indent | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl visualblocks code'
   ];
 
   public editor?: Editor;
   public dialog: DialogService;
   public templateService: TemplateService;
+  public lookup: LookupService;
   public plugins: string = 'print preview paste importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists wordcount imagetools textpattern noneditable help charmap quickbars emoticons';
   public editorConfig: RawEditorOptions = {
     imagetools_cors_hosts: ['picsum.photos'],
@@ -115,6 +119,14 @@ export class InputEditorComponent extends InputBase implements OnInit {
     noneditable_noneditable_class: 'mceNonEditable',
     toolbar_mode: 'sliding',
     contextmenu: 'link image imagetools table',
+    fontsize_formats: '8pt 10pt 12pt 14pt 16pt 18pt 24pt 36pt 48pt',
+    table_class_list: [
+      {title: 'Sem classe', value: ''},
+      {title: 'Padrão', value: 'table table-sm'},
+      {title: 'Sem bordas', value: 'table table-borderless table-sm'},
+      {title: 'Com bordas', value: 'table table-sm table-bordered'},
+      {title: 'Zebrada', value: 'table table-striped table-sm'}
+    ],
     setup: ((editor: Editor) => {
       this.editor = editor;
       /* Hack para manter compatibilidade entre o @tinymce/tinymce-angular 4.2.4 e o tinymce 6.3.2 */
@@ -196,6 +208,12 @@ export class InputEditorComponent extends InputBase implements OnInit {
     }).bind(this)*/
   };
 
+  public listas: LookupItem[] = [];
+  public variaveis: TreeNode[] = [];
+  public tipoComparadorUm: string | null = '';
+  public tipoComparadorDois: string | null = '';
+
+
   public get variables(): VariableTemplate[] {
     let result: VariableTemplate[] = [];
     const recursive = (vars: TemplateDataset[], level: number, prefix: string) => {
@@ -210,16 +228,59 @@ export class InputEditorComponent extends InputBase implements OnInit {
     return result;
   }
 
+
   private _editingTemplate?: string;
   private _template?: string;
   private _datasource?: any; 
-  private _variables: VariableTemplate[] = [];
+  private _variables: VariableTemplate[] = [];  
+  public operatorForm: FormGroup;
+  public blockForForm: FormGroup;
+  public selectedVariable!: TreeNode;
+  public expressaoIf: string = "{{if}}{{end-if}}"
+  public expressaoFor: string = "{{for}}{{end-for}}"
+  
 
   constructor(public injector: Injector) {
     super(injector);
+    this.lookup = this.injector.get<LookupService>(LookupService);
     this.dialog = injector.get<DialogService>(DialogService);
     this.templateService = injector.get<TemplateService>(TemplateService);
     this._value = "";
+
+    this.operatorForm = this.fb.group({
+      operador: [''],
+      comparadorUmTipo: ['', [Validators.required]],
+      comparadorUmValor: [''],
+      comparadorDoisTipo: ['', [Validators.required]],
+      comparadorDoisValor: [''],
+    }, this.cdRef);
+
+    this.blockForForm = this.fb.group({
+      tipo: ['indice'],
+      variavel: ['item'],
+      variavelIndice: ['x'],
+      lista: ['', [Validators.required]],
+    }, this.cdRef );
+  }
+
+  validarVariaveis(formGroup: FormGroup) {
+    const tipo = formGroup.get('tipo')?.value;
+    const variavel = formGroup.get('variavel');
+    const variavelIndice = formGroup.get('variavelIndice');
+  
+    if (tipo === 'variavel') {
+      variavel?.setValidators([Validators.required]);
+    } else {    
+      variavel?.clearValidators();
+    }
+  
+    if (tipo === 'indice') {
+      variavelIndice?.setValidators([Validators.required]);
+    } else {
+      variavelIndice?.clearValidators();
+    }  
+    variavel?.updateValueAndValidity();
+    variavelIndice?.updateValueAndValidity();
   }
 
   public onEditTemplateClick() {
@@ -313,7 +374,8 @@ export class InputEditorComponent extends InputBase implements OnInit {
   }
 
   ngOnInit(): void {
-    super.ngOnInit();
+    super.ngOnInit();    
+    if(this.dataset) this.variaveis = this.convertArrayToTreeNodes(this.dataset)
   }
 
   ngAfterViewInit() {
@@ -328,6 +390,87 @@ export class InputEditorComponent extends InputBase implements OnInit {
       this.value = this.control.value;
     }
     this.updateEditor();
+    this.operatorForm.valueChanges.subscribe(o => {
+      const tipoUm = o.comparadorUmTipo;
+      const tipoDois = o.comparadorDoisTipo;
+      let valorUm = '';
+      let valorDois = '';
+      if(tipoUm == 'list') valorUm = `${o.comparadorUmValor}[+]`;
+      if(tipoUm == 'string') valorUm = `"${o.comparadorUmValor}"`;
+      if(tipoUm == 'number' || tipoUm == 'boolean') valorUm = `${o.comparadorUmValor}`;
+      if(tipoUm == 'variable') valorUm = `${o.comparadorUmValor.data?.path}`;
+
+      if(tipoDois == 'list') valorDois = `${o.comparadorDoisValor}[+]`;
+      if(tipoDois == 'string') valorDois = `"${o.comparadorDoisValor}"`;
+      if(tipoDois == 'number' || tipoDois == 'boolean') valorDois = `${o.comparadorDoisValor}`;
+      if(tipoDois == 'variable') valorDois = `${o.comparadorDoisValor.data?.path}`;
+
+      this.expressaoIf = `{{if:${valorUm}${o.operador}${valorDois}}}{{end-if}}`;
+    });
+
+    this.blockForForm.valueChanges.subscribe(b => {        
+      if(b.tipo == 'indice'){
+        this.expressaoFor = `{{for:${b.lista}[0..${b.variavelIndice}..t]}} {{end-for}}`;
+      } else {
+        this.expressaoFor = `{{for:${b.lista}[${b.variavel}]}} {{end-for}}`;
+      }
+    })
   }
 
+  getVariableString(): string {
+    return this.selectedVariable ? `{{${this.selectedVariable.data?.path}}}` : '';
+  }
+
+  insertVariable() {
+    this.editor?.insertContent(`{{${this.selectedVariable.data.path}}}`); 
+    this.dialog.close();   
+  }
+
+  nodeSelect(event: any) {
+    this.selectedVariable = event.node
+  }
+
+  insertBlockFor(){
+    this.editor?.insertContent(this.expressaoFor);   
+    this.dialog.close();   
+  }
+
+  insertOperator(){
+    this.editor?.insertContent(this.expressaoIf);   
+    this.dialog.close();   
+  }
+  
+  convertToTreeNode(templateDataset: TemplateDataset, parentPath?: string): TreeNode {
+    const currentPath = parentPath ? parentPath + "." + templateDataset.field : templateDataset.field;
+    const treeNode: TreeNode = {
+      label: templateDataset.label,
+      data: {path: currentPath},
+      type: templateDataset.type,
+      children: [],
+      selectable: templateDataset.type && !["ARRAY", "OBJECT"].includes(templateDataset.type)
+    };
+  
+    if (templateDataset.fields) {
+      treeNode.children = this.convertArrayToTreeNodes(templateDataset.fields, currentPath);
+    }
+    if (templateDataset.type === "ARRAY") this.listas.push({ key: templateDataset.field, value: templateDataset.label });
+
+  
+    return treeNode;
+  }
+
+  convertArrayToTreeNodes(templateDatasets: TemplateDataset[], parentPath?: string): TreeNode[] {
+    return templateDatasets.map(dataset => this.convertToTreeNode(dataset, parentPath));
+  }
+
+  changeTypeOperator(comparador: number){
+    if(comparador == 1) this.tipoComparadorUm = this.operatorForm.controls.comparadorUmTipo.value;
+    if(comparador == 2) this.tipoComparadorDois = this.operatorForm.controls.comparadorDoisTipo.value;
+    console.log(this.operatorForm.controls);
+  }
+
+  selectVariable(event: TreeNodeSelectEvent, input: number){
+    if(input == 1) this.operatorForm.controls.comparadorUmValor.patchValue(event.node);
+    if(input == 2) this.operatorForm.controls.comparadorDoisValor.patchValue(event.node);     
+  }
 }
