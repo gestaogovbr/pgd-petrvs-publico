@@ -28,5 +28,20 @@ export class DocumentoDaoService extends DaoBaseService<Documento> {
     });
   }
 
+  public gerarPDF(documento_id: string): Promise<any>  {
+    return new Promise<any>((resolve, reject) => {
+        this.server.getPDF('api/' + this.collection + '/gerarPDF', {documento_id}).subscribe(
+            response => {
+                if (response.error) {
+                    reject(response.error);
+                } else {
+                  resolve(this.toPDF(response));
+                }
+            },
+            error => reject(error)
+        );
+    });
+}
+
 }
 

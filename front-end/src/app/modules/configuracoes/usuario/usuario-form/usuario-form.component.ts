@@ -78,8 +78,8 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     if(['data_nascimento'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
     }
-    return result;
-  }
+    return result;
+  }
 
   public formValidation = (form?: FormGroup) => {
     if (!this.formLotacao?.controls.unidade_lotacao_id.value?.length) {

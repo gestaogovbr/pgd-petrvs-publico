@@ -1,5 +1,5 @@
 <grid multiselect [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
-    [selectable]="selectable" (select)="onSelect($event)"
+    [selectable]="selectable" (select)="onSelect($event)" [relatorios]="relatorios"
     [hasAdd]="canAdd()" [hasEdit]="false" [dynamicMultiselectMenu]="dynamicMultiselectMenu.bind(this)" [multiselectAllFields]="multiselectAllFields">
     <toolbar *ngIf="!selectable">
       <input-switch [size]="4" labelPosition="left" label="Agrupar por Un." controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
