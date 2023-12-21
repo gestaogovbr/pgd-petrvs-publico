@@ -78,7 +78,7 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
   public report(planejamento: Planejamento, codigo: string){
     const consulta: any = { 
       id: planejamento.id, 
-      join: ["objetivos"] }
+      join: ["objetivos", "objetivos.objetivos_filhos"] }
     this.grid?.buildRowReport(codigo, consulta)
   }
 
