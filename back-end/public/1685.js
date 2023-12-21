@@ -1559,7 +1559,7 @@ class PlanejamentoListComponent extends src_app_modules_base_page_list_base__WEB
   report(planejamento, codigo) {
     const consulta = {
       id: planejamento.id,
-      join: ["objetivos"]
+      join: ["objetivos", "objetivos.objetivos_filhos"]
     };
     this.grid?.buildRowReport(codigo, consulta);
   }
