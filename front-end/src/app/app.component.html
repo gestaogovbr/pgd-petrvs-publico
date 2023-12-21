@@ -82,9 +82,8 @@
         </div>
         <ul class="navbar-nav navbar-nav-icons flex-row align-items-center justify-content-end ">
             <li class="nav-item dropdown">
-                <a class="nav-link" id="petrvs-context" href="#" role="button" [attr.data-bs-toggle]="'dropdown'" aria-haspopup="true" aria-expanded="false" data-bs-auto-close="outside">
+                <a class="nav-link" id="petrvs-context" href="#" role="button" [attr.data-bs-toggle]="'dropdown'" aria-haspopup="true" aria-expanded="false" data-bs-auto-close="outside" title="Módulo">
                     <span class="d-none d-md-block">
-                        <small>Módulo:</small>
                         {{ gb.contexto?.name || "Selecione..." }}
                         <i class="bi bi-chevron-down fs-6"></i>
                     </span>
@@ -99,7 +98,7 @@
                             <div class="divider"></div>
                             <ul class="nav d-flex flex-column">
                                 <ng-container *ngFor="let item of menuContexto">
-                                    <li *ngIf="gb.contexto?.key != item.key" (click)="gb.setContexto(item.key)" class="nav-item">
+                                    <li *ngIf="gb.contexto?.key != item.key && auth.hasPermissionTo(item.permition!)" (click)="gb.setContexto(item.key)" class="nav-item">
                                         <a [class.active]="gb.contexto?.name == item.name" class="nav-link " role="button">
                                             <i [class]="item.icon"></i> {{ item.name }}
                                         </a>
