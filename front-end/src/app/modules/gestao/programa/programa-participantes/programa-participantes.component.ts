@@ -7,7 +7,6 @@ import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 import { ProgramaParticipanteDaoService } from 'src/app/dao/programa-participante-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
-import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { ProgramaParticipante } from 'src/app/models/programa-participante.model';
 import { Programa } from 'src/app/models/programa.model';
 import { Usuario } from 'src/app/models/usuario.model';
@@ -27,7 +26,6 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
   public usuarioDao: UsuarioDaoService;
   public programaDao: ProgramaDaoService;
   public form: FormGroup;
-  //public multiselectAllFields: string[] = ["usuario_id", "habilitado"];
   public multiselectMenu: ToolbarButton[] = [];
   public programa: Programa | null = null;
   public BOTAO_HABILITAR: ToolbarButton = { label: "Habilitar", icon: "bi bi-person-check-fill", color: "btn-outline-success", onClick: this.habilitaParticipante.bind(this) };
@@ -139,43 +137,62 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
   }
 
   public async habilitaParticipante(row: any) {
-    await this.dao!.habilitar([row.usuario.id], this.programa!.id, 1).then(resposta => {
-      row.habilitado = 1;
+    await this.dao!.habilitar([row.usuario.id], this.programa!.id, 1, false).then(resposta => {
+      (this.grid?.query || this.query!).refreshId(row.id);
       this.cdRef.detectChanges();
     });
     return false;
   }
 
   public async desabilitaParticipante(row: any) {
-    let confirm = await this.dialog.confirm("Desabilitar ?", "Deseja DESABILITAR " + this.lex.translate("o servidor") + " " + (row.usuario.nome as string).toUpperCase() + " do programa " + (this.programa?.nome as string).toUpperCase() + "?");
-    if (confirm) {
-      let plano_trabalho_ativo: boolean = !!(row.usuario.planos_trabalho as PlanoTrabalho[]).filter( p => p.status == 'ATIVO' && p.programa_id == this.programa?.id).length;
+    let desabilitar = await this.dialog.confirm("Desabilitar ?", "Deseja DESABILITAR " + this.lex.translate("o servidor") + " - " + (row.usuario.nome as string).toUpperCase() + " - " + this.lex.translate("do programa") + " - " + (this.programa?.nome as string).toUpperCase() + " ?");
+    if (desabilitar) {
+      let plano_trabalho_ativo: boolean = !!row.usuario.planos_trabalho.length;
+      let suspender: boolean = false;
       if(plano_trabalho_ativo) {
-        await this.dialog.alert("ATENÇÃO", this.lex.translate("Usuário") + " não pode ser desabilitado porque possui " + this.lex.translate("Plano de Trabalho") + " ativo vinculado a " + this.lex.translate("este Programa") + "!");
-      } else {
-        await this.dao!.habilitar([row.usuario.id], this.programa!.id, 0).then(resposta => {
-          row.habilitado = 0;
+        suspender = await this.dialog.confirm("ATENÇÃO", this.lex.translate("O usuário") + " possui " + this.lex.translate("Plano de Trabalho") + " ativo vinculado a " + this.lex.translate("este Programa") + "!" + " Deseja continuar com a desabilitação, suspendendo o seu " + this.lex.translate("Plano de Trabalho" + " ?"));
+      }
+      if (!plano_trabalho_ativo || suspender) {
+        await this.dao!.habilitar([row.usuario.id], this.programa!.id, 0, true).then(resposta => {
+          (this.grid?.query || this.query!).refreshId(row.id);
           this.cdRef.detectChanges();
         });
       }
     }
-    return false;
   }
 
-  public async desabilitarParticipantes(row: any) {
-    let confirm = await this.dialog.confirm("Desabilitar ?", "Deseja DESABILITAR " + this.lex.translate("o servidor") + " " + (row.usuario.nome as string).toUpperCase() + " do programa " + (this.programa?.nome as string).toUpperCase() + "?");
-    if (confirm) {
-      let plano_trabalho_ativo: boolean = !!(row.usuario.planos_trabalho as PlanoTrabalho[]).filter( p => p.status == 'ATIVO' && p.programa_id == this.programa?.id).length;
-      if(plano_trabalho_ativo) {
-        await this.dialog.alert("ATENÇÃO", this.lex.translate("Usuário") + " não pode ser desabilitado porque possui " + this.lex.translate("Plano de Trabalho") + " ativo vinculado a " + this.lex.translate("este Programa") + "!");
-      } else {
-        await this.dao!.habilitar([row.usuario.id], this.programa!.id, 0).then(resposta => {
-          row.habilitado = 0;
+  public async habilitarParticipantes() {
+    if (!this.grid!.multiselectedCount) {
+      this.dialog.alert("Selecione", "Nenhum participante selecionado para a habilitação");
+    } else {
+      const self = this;
+      this.dialog.confirm("Habilitar Participantes ?", "Confirma a habilitação de todos esses participantes?").then(habilitar_todos => {
+        if (habilitar_todos) {
+          this.dao!.habilitar(Object.keys(this.grid!.multiselected), this.programa!.id, 1, false).then(function () {
+            self.dialog.alert("Sucesso", "Participantes habilitados com sucesso!");
+          }).catch(function (error) {
+            self.dialog.alert("Erro", "Erro ao habilitar os participantes: " + error?.message ? error?.message : error);
+          });
+        }
+      });
+    }
+  }
+
+  public async desabilitarParticipantes() {
+    let desabilitar = await this.dialog.confirm("Desabilitar ?", "Deseja DESABILITAR, " + this.lex.translate("do programa") + " - " + (this.programa?.nome as string).toUpperCase() + " - todos " + this.lex.translate("os usuários") + " selecionados ?");
+    if (desabilitar) {
+      let qde_usuarios_com_plano_trabalho_ativo: number = (this.grid!.multiselected as ProgramaParticipante[]).filter(pp => pp.usuario?.planos_trabalho?.length).length;
+      let suspender: boolean = false;
+      if(!!qde_usuarios_com_plano_trabalho_ativo) {
+        suspender = await this.dialog.confirm("ATENÇÃO", "Há " + qde_usuarios_com_plano_trabalho_ativo + this.lex.translate(qde_usuarios_com_plano_trabalho_ativo == 1 ? "usuário" : "usuários") + " com " + this.lex.translate("Plano de Trabalho") + " ativo vinculado a " + this.lex.translate("este Programa") + "!" + "Deseja continuar com a desabilitação, suspendendo " + (qde_usuarios_com_plano_trabalho_ativo == 1 ? "o seu " : "todos ") + this.lex.translate(qde_usuarios_com_plano_trabalho_ativo == 1 ? "Plano de Trabalho" : "os Planos de Trabalho") + " ?");
+      }
+      if (!qde_usuarios_com_plano_trabalho_ativo || suspender) {
+        await this.dao!.habilitar(Object.keys(this.grid!.multiselected), this.programa!.id, 0, true).then(resposta => {
+          (this.grid?.query || this.query!).refresh();
           this.cdRef.detectChanges();
         });
       }
     }
-    return false;
   }
 
   public async saveParticipante(form: FormGroup, item: ProgramaParticipante) {
@@ -199,23 +216,6 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
       this.cdRef.detectChanges();
     }
     return result;
-  }
-
-  public habilitarParticipantes() {
-    if (!this.grid!.multiselectedCount) {
-      this.dialog.alert("Selecione", "Nenhum participante selecionado para a habilitação");
-    } else {
-      const self = this;
-      this.dialog.confirm("Habilitar Participantes ?", "Confirma a habilitação de todos esses participantes?").then(confirm => {
-        if (confirm) {
-          this.dao!.habilitar(Object.keys(this.grid!.multiselected), this.programa!.id, 1).then(function () {
-            self.dialog.alert("Sucesso", "Participantes habilitados com sucesso!");
-          }).catch(function (error) {
-            self.dialog.alert("Erro", "Erro ao habilitar os participantes: " + error?.message ? error?.message : error);
-          });
-        }
-      });
-    }
   }
 
   public onProgramaChange(){

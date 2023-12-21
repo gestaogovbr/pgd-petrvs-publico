@@ -30,6 +30,7 @@ class ProgramaParticipanteController extends ControllerBase {
                 'participantes_ids' => ['array'],
                 'habilitar' => ['required'],
                 'programa_id' => ['string'],
+                'suspender_plano_trabalho' => ['required']
             ]);
             $this->checkPermissions($data['habilitar'] ? "HABILITAR" : "DESABILITAR", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             return response()->json([
