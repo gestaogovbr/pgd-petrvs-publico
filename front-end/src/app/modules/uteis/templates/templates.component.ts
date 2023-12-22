@@ -38,10 +38,10 @@ export class TemplatesComponent extends PageListBase<Template, TemplateDaoServic
     if(this.selectId && rows?.find(x => x.id == this.selectId)) this.grid!.selectById(this.selectId);
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     super.ngOnInit();
     this.especie = this.urlParams?.has("especie") ? this.urlParams!.get("especie") : this.metadata?.especie || this.especie || "OUTRO";
-    this.dataset = this.dataset || this.templateService.dataset(this.especie!);
+    this.dataset = this.dataset || await this.templateService.dataset(this.especie!);
     this.title = this.lookup.getValue(this.lookup.TEMPLATE_ESPECIE, this.especie);
     this.selectId = this.queryParams?.selectId;
   }

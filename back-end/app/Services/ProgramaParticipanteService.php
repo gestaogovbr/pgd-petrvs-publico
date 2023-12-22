@@ -2,9 +2,10 @@
 
 namespace App\Services;
 
+use App\Exceptions\ServerException;
 use App\Models\Programa;
+use App\Models\PlanoTrabalho;
 use App\Models\ProgramaParticipante;
-use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Services\ServiceBase;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,89 +13,90 @@ use Illuminate\Support\Facades\DB;
 use Throwable;
 
 class ProgramaParticipanteService extends ServiceBase {
-    public $participantes = []; /* Buffer de unidades para funções que fazem consulta frequentes em unidades */
-    public $todos = false; 
-    public $unidadeId = null; 
+    public $todos = true; 
+    public $lotacao_id = ''; 
+    public $programa_id = ''; 
 
     public function proxyQuery(&$query, &$data) {
         $where = [];
+        $todos = $this->extractWhere($data, "todos");
+        if(empty($todos) || $todos[2] == false) {
+            array_push($where, ["habilitado", "==", 1]);
+            $this->todos = false;
+        }
         foreach($data["where"] as $condition) {
-            if(is_array($condition) && $condition[0] == "usuario.lotacoes.unidade.id") { 
-                $query->whereHas('areasTrabalho', function (Builder $query) use ($condition) {
-                    $query->where('unidade_id', $condition[2]);
-                });
-                $this->unidadeId =  $condition[2];
-            } else if (is_array($condition) && $condition[0][0] == "todos"){
-                $this->todos = true;
-            } else {
-                array_push($where, $condition);
-            }
+            if($condition[0] == "usuario.lotacao.unidade.id") $this->lotacao_id = $condition[2];
+            if($condition[0] == "programa_id" && !empty($condition[2])) $this->programa_id = $condition[2];
+            array_push($where, $condition);
         }
         $data["where"] = $where;
         return $data;
     }
 
-    public function proxyRows($rows){
-
-        if ($this->todos) {
-            /* Se for todos, obter a lista de usuários, 
-                 depois verificar quais desses usuários já fazem parte da lista de participantes,
-            //       os que não fizerem parte instanciar um novo ProgramaParticipante com esse uusuário 
-            //       e o ID iniciando 'NEW'+usuarioId e habilitado false */
-            $usuarios = Usuario::all();
-            foreach ($usuarios->reject(function ($u) use ($rows) {
-                return in_array($u->id, array_map(fn ($x) => $x['usuario_id'], $rows->toArray()));
-            }) as $np) {
-                $novoParticipante = new ProgramaParticipante();
-                $novoParticipante->id = 'VIRT_' . $np->id;
-                $novoParticipante->usuario_id = $np->id;
-                $novoParticipante->usuario = $np;
-                $novoParticipante->habilitado = 0;
-                $rows->push($novoParticipante);
-            };
+    public function proxyExtra(&$rows, $data, &$count){
+        $extra = [];
+        if($this->todos && !empty($this->lotacao_id)) {
+            $extra = Usuario::with(['lotacao.unidade','planosTrabalho'])->whereHas("unidadesIntegrante", function (Builder $query) {
+                $query->where('unidade_id', $this->lotacao_id)->whereHas('atribuicoes', function (Builder $query) {
+                    $query->where('atribuicao', 'LOTADO');
+                });
+            })->get();
+            foreach ($extra as $usuario) {
+                $fake = (object) [
+                    'id' => $this->utilService->uuid(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                    'deleted_at' => null,
+                    'programa_id' => $this->programa_id,
+                    'usuario_id' => $usuario->id
+                ];
+                $fake->usuario = $usuario;
+                $rows->push($fake);
+            }       
         }
-        return $rows; // Lista de PRogramaParticipantes, só que contendo registro REAIS  e registros VIRTUAIS iniciados com 'NEW'+usuarioId
+        $rows->each(function ($item, $key) use ($rows) {
+            $filtro = $item->usuario->planosTrabalho->filter(function ($item) {
+                return $item->status == 'ATIVO' && UtilService::between(now(),$item->data_inicio,$item->data_fim);
+            });
+            $item->usuario->planosTrabalho = $filtro;
+            $rows[$key] = $item;
+        });
+        $count = count($rows);
+        return null;
     }
 
-
-    public function habilitar($data)
+    public function habilitar($data)    // ou desabilitar
     {
         try {
             DB::beginTransaction();
-            $programaParticipantes = ProgramaParticipante::whereIn("id", $data["participantes_ids"])->get();
-            $count = 0;
-            foreach ($programaParticipantes as $programaParticipante) {
-                $usuarioId = $programaParticipante->usuario_id;
-                if (strpos($usuarioId, 'VIRT_') === 0) {
-                    $usuarioId = substr($usuarioId, 5);
+            foreach($data['participantes_ids'] as $idp){
+                $registro = ProgramaParticipante::firstOrCreate(['programa_id' => $data['programa_id'], 'usuario_id' => $idp]);
+                $plano_trabalho_ativo = PlanoTrabalho::where('usuario_id',$idp)->where('programa_id',$data['programa_id'])->where('status','ATIVO')->where('data_inicio','<=',now())->where('data_fim','>=',now())->first();
+                if(empty($data['habilitar']) && !empty($plano_trabalho_ativo)) {
+                    if(!$data['suspender_plano_trabalho']) throw new ServerException("","Foi identificado que o usuário - " . Usuario::find($idp)->nome . " - possui Plano de Trabalho ATIVO e não foi repassada autorização para suspendê-lo. Portanto, a operação de desabilitação foi abortada " . count($data['participantes_ids']) > 1 ? "para todos os usuários " : "" . "!");
+                    //PlanoTrabalho::find($plano_trabalho_ativo->id)->update(['status' => 'SUSPENSO']);
+                    $plano_trabalho_ativo->update(['status' => 'SUSPENSO']);
+                    // verificar se depende de mais alguma coisa a mudança do status
                 }
-                $programaParticipante->usuario_id = $usuarioId;
-                $programaParticipante->habilitado = $data['habilitado'];
-                $programaParticipante->programa_id = $data['programa_id'];
-                $programaParticipante->save();
-                $count++;
+                $registro->habilitado = $data['habilitar'];
+                $registro->save();
             }
             DB::commit();
         } catch (Throwable $e) {
             DB::rollback();
             throw $e;
         }
-    
-        $this->notificar($data);
-        
+        //$this->notificar($data);
         return true;
     }
 
     public function notificar($data)
     {
-        $this->notificacoesService->send("PRG_PART_HABILITACAO", 
-        [
-            "programa" => Programa::find($data['programa_id']), 
-            "programa_participante"  => ProgramaParticipante::find($data['participantes_ids'] )
+        $this->notificacoesService->send("PRG_PART_HABILITACAO",
+                [
+                    "programa" => Programa::find($data['programa_id']),
+                    "programa_participante"  => ProgramaParticipante::find($data['participantes_ids'] )
         ]);
-        
     }
-
-
 }
 

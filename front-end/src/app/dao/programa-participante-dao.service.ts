@@ -23,12 +23,13 @@ export class ProgramaParticipanteDaoService extends DaoBaseService<ProgramaParti
     ], deeps);
   }
 
-  public habilitar(participantesIds: string[], programaId: string, habilitado: number) {
+  public habilitar(participantesIds: string[], programaId: string, habilitar: number, suspenderPlanoTrabalho: boolean) {
     return new Promise<boolean>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/habilitar', { 
         participantes_ids: participantesIds,
         programa_id: programaId,
-        habilitado: habilitado 
+        habilitar: habilitar,
+        suspender_plano_trabalho: suspenderPlanoTrabalho
       }).subscribe(response => {
         if (response.error) {
           reject(response.error);

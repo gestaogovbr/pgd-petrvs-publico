@@ -248,7 +248,7 @@ class AtividadeService extends ServiceBase
         return $rows;
     }
 
-    public function proxyExtra($rows, $data) {
+    public function proxyExtra($rows, $data, $count) {
         $afastamentos = [];
         $planosTrabalhos = [];
         $result = [

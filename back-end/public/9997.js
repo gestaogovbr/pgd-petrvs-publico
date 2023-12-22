@@ -329,6 +329,10 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
       route: ["uteis", "status"]
     };
     this.multiselectAllFields = ["tipo_modalidade_id", "usuario_id", "unidade_id", "documento_id"];
+    this.relatorios = [{
+      key: "PTR_LISTA",
+      value: "Lista Planos de Trabalhos"
+    }];
     this.botoes = [];
     this.DATAS_FILTRO = [{
       key: "VIGENTE",
@@ -478,6 +482,11 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
       icon: "bi bi-info-circle",
       onClick: this.consult.bind(this)
     };
+    this.BOTAO_RELATORIO = {
+      label: "Relatório",
+      icon: "bi bi-file-pdf",
+      onClick: row => this.report(row, 'PTR_LISTA_ENTREGAS')
+    };
     this.BOTAO_TERMOS = {
       label: "Termos",
       icon: "bi bi-file-earmark-check",
@@ -510,7 +519,7 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
       color: this.lookup.getColor(this.lookup.PLANO_TRABALHO_STATUS, "SUSPENSO"),
       onClick: this.suspender.bind(this)
     };
-    this.botoes = [this.BOTAO_ALTERAR, this.BOTAO_ARQUIVAR, this.BOTAO_ASSINAR, this.BOTAO_ATIVAR, this.BOTAO_CANCELAR_ASSINATURA, this.BOTAO_CANCELAR_PLANO, this.BOTAO_DESARQUIVAR, this.BOTAO_ENVIAR_ASSINATURA, this.BOTAO_INFORMACOES, this.BOTAO_TERMOS, this.BOTAO_CONSOLIDACOES, this.BOTAO_REATIVAR, this.BOTAO_SUSPENDER];
+    this.botoes = [this.BOTAO_ALTERAR, this.BOTAO_ARQUIVAR, this.BOTAO_ASSINAR, this.BOTAO_ATIVAR, this.BOTAO_CANCELAR_ASSINATURA, this.BOTAO_CANCELAR_PLANO, this.BOTAO_DESARQUIVAR, this.BOTAO_ENVIAR_ASSINATURA, this.BOTAO_INFORMACOES, this.BOTAO_RELATORIO, this.BOTAO_TERMOS, this.BOTAO_CONSOLIDACOES, this.BOTAO_REATIVAR, this.BOTAO_SUSPENDER];
   }
   ngOnInit() {
     super.ngOnInit();
@@ -582,7 +591,7 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
         */
         break;
     }
-    if (!result.length) result.push(this.BOTAO_INFORMACOES);
+    if (!result.length) result.push(this.BOTAO_INFORMACOES, this.BOTAO_RELATORIO);
     return result;
   }
   filterClear(filter) {
@@ -608,11 +617,12 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
   }
   botaoAtendeCondicoes(botao, planoTrabalho) {
     let assinaturasExigidas = planoTrabalho.assinaturasExigidas;
+    let todasAssinaturasExigidas = [...assinaturasExigidas.gestores_entidade, ...assinaturasExigidas.gestores_unidade_executora, ...assinaturasExigidas.gestores_unidade_lotacao, ...assinaturasExigidas.participante];
     let assinaturasFaltantes = this.planoTrabalhoService.assinaturasFaltantes(planoTrabalho.assinaturasExigidas, planoTrabalho.jaAssinaramTCR);
     let haAssinaturasFaltantes = !!assinaturasFaltantes.participante.length || !!assinaturasFaltantes.gestores_unidade_executora.length || !!assinaturasFaltantes.gestores_unidade_lotacao.length || !!assinaturasFaltantes.gestores_entidade.length;
     let usuarioEhGestorUnidadeExecutora = this.auth.isGestorUnidade(planoTrabalho.unidade_id);
     let usuarioJaAssinouTCR = !!planoTrabalho.jaAssinaramTCR?.todas?.includes(this.auth.usuario?.id);
-    let assinaturaUsuarioEhExigida = !!planoTrabalho.assinaturasExigidas?.todas?.includes(this.auth.usuario?.id);
+    let assinaturaUsuarioEhExigida = !!todasAssinaturasExigidas?.includes(this.auth.usuario?.id);
     let planoIncluido = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'INCLUIDO';
     let usuarioEhParticipante = this.auth.usuario?.id == planoTrabalho.usuario_id;
     let planoAguardandoAssinatura = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'AGUARDANDO_ASSINATURA';
@@ -832,6 +842,13 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
       }
     });
   }
+  report(planoTrabalho, codigo) {
+    const consulta = {
+      id: planoTrabalho.id,
+      join: ["unidade.entidade", "unidade.gestor.usuario:id", "usuario", "programa.template_tcr", "tipo_modalidade", "entregas.plano_entrega_entrega.entrega", "entregas.plano_entrega_entrega.plano_entrega:id,unidade_id", "entregas.plano_entrega_entrega.plano_entrega.unidade", "entregas.entrega"]
+    };
+    this.grid?.buildRowReport(codigo, consulta);
+  }
   enviarParaAssinatura(planoTrabalho) {
     this.go.navigate(this.routeStatus, {
       metadata: {
@@ -914,8 +931,8 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵInheritDefinitionFeature"]],
   decls: 69,
-  vars: 69,
-  consts: [["multiselect", "", 3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "hasAdd", "hasEdit", "dynamicMultiselectMenu", "multiselectAllFields", "select"], [4, "ngIf"], [3, "deleted", "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["controlName", "usuario", "placeholder", "Usu\u00E1rio", 3, "size", "label", "control"], ["controlName", "unidade_id", 3, "size", "control", "dao"], ["label", "Status", "controlName", "status", "itemTodos", "- Todos -", 3, "size", "items", "control", "valueTodos"], ["label", "Arq.", "controlName", "arquivados", "labelInfo", "Listar tamb\u00E9m os planos de trabalho arquivados", 3, "size", "control"], ["controlName", "tipo_modalidade_id", 3, "size", "control", "dao"], ["label", "Data", "itemTodos", "- Nenhum -", "controlName", "data_filtro", 3, "size", "valueTodos", "control", "items"], ["date", "", "label", "In\u00EDcio", "controlName", "data_filtro_inicio", "labelInfo", "Data in\u00EDcio do per\u00EDodo", 3, "size", "disabled", "control"], ["date", "", "label", "Fim", "controlName", "data_filtro_fim", "labelInfo", "Data fim do per\u00EDodo", 3, "size", "disabled", "control"], ["type", "expand", "icon", "bi bi-list-check", 3, "align", "hint", "template", "expandTemplate", 4, "ngIf"], [3, "titleTemplate", "template", "minWidth"], ["titleNumero", ""], ["columnNumero", ""], [3, "titleTemplate", "template"], ["titleUsuario", ""], ["columnUsuario", ""], ["title", "Unidade", 3, "template"], ["columnUnidade", ""], ["title", "Modalidade", 3, "template"], ["columnModalidade", ""], ["titleVigencia", ""], ["columnInicioVigencia", ""], [3, "title", "template"], ["documento", ""], ["title", "Status", 3, "template"], ["columnStatus", ""], ["type", "options", 3, "dynamicOptions", "dynamicButtons"], ["title", "Numero", 3, "template"], ["reportNumero", ""], ["title", "Matricula usu\u00E1rio", 3, "template"], ["reportMatricula", ""], ["title", "Programa", 3, "template"], ["reportPrograma", ""], ["reportUnidade", ""], ["reportModalidade", ""], ["title", "In\u00EDcio vig\u00EAncia", 3, "template"], ["reportInicioVigencia", ""], ["title", "Fim vig\u00EAncia", 3, "template"], ["reportFimVigencia", ""], ["title", "Termo de Ades\u00E3o", 3, "template"], ["reportTermoAdesao", ""], [3, "rows"], ["labelPosition", "left", "label", "Agrupar por Un.", "controlName", "agrupar", 3, "size", "control", "change"], ["type", "expand", "icon", "bi bi-list-check", 3, "align", "hint", "template", "expandTemplate"], ["columnEntregas", ""], ["columnExpandedEntregas", ""], ["class", "badge rounded-pill bg-light text-dark", 4, "ngIf"], [1, "badge", "rounded-pill", "bg-light", "text-dark"], [1, "bi", "bi-list-check"], [3, "entity"], ["by", "numero", 3, "header"], ["by", "usuario.nome", 3, "header"], ["color", "light", "icon", "bi bi-file-bar-graph", 3, "label"], ["by", "data_inicio", 3, "header"], ["by", "data_fim", 3, "header"], ["signatures", "", "noRounded", "", "withLink", "", 3, "documento", "maxWidth"], [3, "color", "icon", "label"], ["color", "warning", "icon", "bi bi-inboxes", "label", "Arquivado", 4, "ngIf"], ["color", "danger", "icon", "bi bi-trash3", "label", "Exclu\u00EDdo", 4, "ngIf"], ["color", "warning", "icon", "bi bi-inboxes", "label", "Arquivado"], ["color", "danger", "icon", "bi bi-trash3", "label", "Exclu\u00EDdo"]],
+  vars: 70,
+  consts: [["multiselect", "", 3, "dao", "add", "title", "orderBy", "groupBy", "join", "selectable", "relatorios", "hasAdd", "hasEdit", "dynamicMultiselectMenu", "multiselectAllFields", "select"], [4, "ngIf"], [3, "deleted", "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["controlName", "usuario", "placeholder", "Usu\u00E1rio", 3, "size", "label", "control"], ["controlName", "unidade_id", 3, "size", "control", "dao"], ["label", "Status", "controlName", "status", "itemTodos", "- Todos -", 3, "size", "items", "control", "valueTodos"], ["label", "Arq.", "controlName", "arquivados", "labelInfo", "Listar tamb\u00E9m os planos de trabalho arquivados", 3, "size", "control"], ["controlName", "tipo_modalidade_id", 3, "size", "control", "dao"], ["label", "Data", "itemTodos", "- Nenhum -", "controlName", "data_filtro", 3, "size", "valueTodos", "control", "items"], ["date", "", "label", "In\u00EDcio", "controlName", "data_filtro_inicio", "labelInfo", "Data in\u00EDcio do per\u00EDodo", 3, "size", "disabled", "control"], ["date", "", "label", "Fim", "controlName", "data_filtro_fim", "labelInfo", "Data fim do per\u00EDodo", 3, "size", "disabled", "control"], ["type", "expand", "icon", "bi bi-list-check", 3, "align", "hint", "template", "expandTemplate", 4, "ngIf"], [3, "titleTemplate", "template", "minWidth"], ["titleNumero", ""], ["columnNumero", ""], [3, "titleTemplate", "template"], ["titleUsuario", ""], ["columnUsuario", ""], ["title", "Unidade", 3, "template"], ["columnUnidade", ""], ["title", "Modalidade", 3, "template"], ["columnModalidade", ""], ["titleVigencia", ""], ["columnInicioVigencia", ""], [3, "title", "template"], ["documento", ""], ["title", "Status", 3, "template"], ["columnStatus", ""], ["type", "options", 3, "dynamicOptions", "dynamicButtons"], ["title", "Numero", 3, "template"], ["reportNumero", ""], ["title", "Matricula usu\u00E1rio", 3, "template"], ["reportMatricula", ""], ["title", "Programa", 3, "template"], ["reportPrograma", ""], ["reportUnidade", ""], ["reportModalidade", ""], ["title", "In\u00EDcio vig\u00EAncia", 3, "template"], ["reportInicioVigencia", ""], ["title", "Fim vig\u00EAncia", 3, "template"], ["reportFimVigencia", ""], ["title", "Termo de Ades\u00E3o", 3, "template"], ["reportTermoAdesao", ""], [3, "rows"], ["labelPosition", "left", "label", "Agrupar por Un.", "controlName", "agrupar", 3, "size", "control", "change"], ["type", "expand", "icon", "bi bi-list-check", 3, "align", "hint", "template", "expandTemplate"], ["columnEntregas", ""], ["columnExpandedEntregas", ""], ["class", "badge rounded-pill bg-light text-dark", 4, "ngIf"], [1, "badge", "rounded-pill", "bg-light", "text-dark"], [1, "bi", "bi-list-check"], [3, "entity"], ["by", "numero", 3, "header"], ["by", "usuario.nome", 3, "header"], ["color", "light", "icon", "bi bi-file-bar-graph", 3, "label"], ["by", "data_inicio", 3, "header"], ["by", "data_fim", 3, "header"], ["signatures", "", "noRounded", "", "withLink", "", 3, "documento", "maxWidth"], [3, "color", "icon", "label"], ["color", "warning", "icon", "bi bi-inboxes", "label", "Arquivado", 4, "ngIf"], ["color", "danger", "icon", "bi bi-trash3", "label", "Exclu\u00EDdo", 4, "ngIf"], ["color", "warning", "icon", "bi bi-inboxes", "label", "Arquivado"], ["color", "danger", "icon", "bi bi-trash3", "label", "Exclu\u00EDdo"]],
   template: function PlanoTrabalhoListComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "grid", 0);
@@ -1003,7 +1020,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdef
       const _r32 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵreference"](61);
       const _r34 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵreference"](64);
       const _r36 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵreference"](67);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("selectable", ctx.selectable)("hasAdd", ctx.canAdd())("hasEdit", false)("dynamicMultiselectMenu", ctx.dynamicMultiselectMenu.bind(ctx))("multiselectAllFields", ctx.multiselectAllFields);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("selectable", ctx.selectable)("relatorios", ctx.relatorios)("hasAdd", ctx.canAdd())("hasEdit", false)("dynamicMultiselectMenu", ctx.dynamicMultiselectMenu.bind(ctx))("multiselectAllFields", ctx.multiselectAllFields);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("ngIf", !ctx.selectable);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);

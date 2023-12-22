@@ -16,6 +16,7 @@ import { FullRoute } from 'src/app/services/navigate.service';
 import { PlanoTrabalhoService } from '../plano-trabalho.service';
 import { DocumentoService } from 'src/app/modules/uteis/documentos/documento.service';
 import { UtilService } from 'src/app/services/util.service';
+import { QueryOptions } from 'src/app/dao/query-options';
 
 @Component({
   selector: 'plano-trabalho-list',
@@ -35,6 +36,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
   public routeStatus: FullRoute = { route: ["uteis", "status"] };
   public tipoModalidadeDao: TipoModalidadeDaoService;
   public multiselectAllFields: string[] = ["tipo_modalidade_id", "usuario_id", "unidade_id", "documento_id"];
+  public relatorios: LookupItem[] = [{ key: "PTR_LISTA", value: "Lista Planos de Trabalhos" }];
   public botoes: ToolbarButton[] = [];
   public BOTAO_ALTERAR: ToolbarButton;
   public BOTAO_ARQUIVAR: ToolbarButton;
@@ -48,6 +50,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
   public BOTAO_REATIVAR: ToolbarButton;
   public BOTAO_SUSPENDER: ToolbarButton;
   public BOTAO_TERMOS: ToolbarButton;
+  public BOTAO_RELATORIO: ToolbarButton;
   public BOTAO_CONSOLIDACOES: ToolbarButton;
   public DATAS_FILTRO: LookupItem[] = [
     { key: "VIGENTE", value: "Vigente" },
@@ -103,12 +106,13 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     this.BOTAO_DESARQUIVAR = { label: "Desarquivar", icon: "bi bi-reply", onClick: this.desarquivar.bind(this) };
     this.BOTAO_ENVIAR_ASSINATURA = { label: "Enviar para assinatura", icon: this.lookup.getIcon(this.lookup.PLANO_TRABALHO_STATUS, "AGUARDANDO_ASSINATURA"), color: this.lookup.getColor(this.lookup.PLANO_TRABALHO_STATUS, "AGUARDANDO_ASSINATURA"), onClick: this.enviarParaAssinatura.bind(this) };
     this.BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: this.consult.bind(this) };
+    this.BOTAO_RELATORIO = { label: "Relatório", icon: "bi bi-file-pdf", onClick: (row: PlanoTrabalho) => this.report(row, 'PTR_LISTA_ENTREGAS') };
     this.BOTAO_TERMOS = { label: "Termos", icon: "bi bi-file-earmark-check", onClick: ((row: PlanoTrabalho) => this.go.navigate({ route: ['uteis', 'documentos', 'TCR', row.id] }, { modalClose: (modalResult) => (this.grid?.query || this.query!).refreshId(row.id), metadata: this.planoTrabalhoService.metadados(row) })).bind(this) };
     this.BOTAO_CONSOLIDACOES = { label: "Consolidações", icon: this.entityService.getIcon('PlanoTrabalhoConsolidacao'), onClick: ((row: PlanoTrabalho) => this.go.navigate({ route: ['gestao', 'plano-trabalho', 'consolidacao', row.usuario_id, row.id] }, { modalClose: (modalResult) => (this.grid?.query || this.query!).refreshId(row.id), modal: true })).bind(this) };
     this.BOTAO_REATIVAR = { label: "Reativar", icon: this.lookup.getIcon(this.lookup.PLANO_TRABALHO_STATUS, "ATIVO"), color: this.lookup.getColor(this.lookup.PLANO_TRABALHO_STATUS, "ATIVO"), onClick: this.reativar.bind(this) };
     this.BOTAO_SUSPENDER = { label: "Suspender", icon: this.lookup.getIcon(this.lookup.PLANO_TRABALHO_STATUS, "SUSPENSO"), color: this.lookup.getColor(this.lookup.PLANO_TRABALHO_STATUS, "SUSPENSO"), onClick: this.suspender.bind(this) };
     this.botoes = [this.BOTAO_ALTERAR, this.BOTAO_ARQUIVAR, this.BOTAO_ASSINAR, this.BOTAO_ATIVAR, this.BOTAO_CANCELAR_ASSINATURA, this.BOTAO_CANCELAR_PLANO,
-    this.BOTAO_DESARQUIVAR, this.BOTAO_ENVIAR_ASSINATURA, this.BOTAO_INFORMACOES, this.BOTAO_TERMOS, this.BOTAO_CONSOLIDACOES, this.BOTAO_REATIVAR, this.BOTAO_SUSPENDER];
+    this.BOTAO_DESARQUIVAR, this.BOTAO_ENVIAR_ASSINATURA, this.BOTAO_INFORMACOES, this.BOTAO_RELATORIO, this.BOTAO_TERMOS, this.BOTAO_CONSOLIDACOES, this.BOTAO_REATIVAR, this.BOTAO_SUSPENDER];
   }
 
   ngOnInit(): void {
@@ -185,7 +189,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
         */
         break;
     }
-    if (!result.length) result.push(this.BOTAO_INFORMACOES);
+    if (!result.length) result.push(this.BOTAO_INFORMACOES, this.BOTAO_RELATORIO);
     return result;
   }
 
@@ -250,11 +254,17 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
 
   public botaoAtendeCondicoes(botao: ToolbarButton, planoTrabalho: PlanoTrabalho): boolean {
     let assinaturasExigidas = planoTrabalho.assinaturasExigidas;
+    let todasAssinaturasExigidas = [
+      ...assinaturasExigidas.gestores_entidade,
+      ...assinaturasExigidas.gestores_unidade_executora,
+      ...assinaturasExigidas.gestores_unidade_lotacao,
+      ...assinaturasExigidas.participante
+    ];
     let assinaturasFaltantes = this.planoTrabalhoService.assinaturasFaltantes(planoTrabalho.assinaturasExigidas, planoTrabalho.jaAssinaramTCR);
     let haAssinaturasFaltantes = !!assinaturasFaltantes.participante.length || !!assinaturasFaltantes.gestores_unidade_executora.length || !!assinaturasFaltantes.gestores_unidade_lotacao.length || !!assinaturasFaltantes.gestores_entidade.length;
     let usuarioEhGestorUnidadeExecutora: boolean = this.auth.isGestorUnidade(planoTrabalho.unidade_id);
     let usuarioJaAssinouTCR: boolean = !!planoTrabalho.jaAssinaramTCR?.todas?.includes(this.auth.usuario?.id!);
-    let assinaturaUsuarioEhExigida: boolean = !!planoTrabalho.assinaturasExigidas?.todas?.includes(this.auth.usuario?.id!);
+    let assinaturaUsuarioEhExigida: boolean = !!todasAssinaturasExigidas?.includes(this.auth.usuario?.id!);
     let planoIncluido = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'INCLUIDO';
     let usuarioEhParticipante = this.auth.usuario?.id == planoTrabalho.usuario_id;
     let planoAguardandoAssinatura = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'AGUARDANDO_ASSINATURA';
@@ -442,6 +452,21 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
         };
       }
     });
+  }
+
+  public report(planoTrabalho: PlanoTrabalho, codigo: string){
+    const consulta: any = { 
+      id: planoTrabalho.id, 
+      join: ["unidade.entidade",
+      "unidade.gestor.usuario:id",
+      "usuario",
+      "programa.template_tcr",
+      "tipo_modalidade",
+      "entregas.plano_entrega_entrega.entrega",
+      "entregas.plano_entrega_entrega.plano_entrega:id,unidade_id",
+      "entregas.plano_entrega_entrega.plano_entrega.unidade",
+      "entregas.entrega"] }
+    this.grid?.buildRowReport(codigo, consulta)
   }
 
   public enviarParaAssinatura(planoTrabalho: PlanoTrabalho) {

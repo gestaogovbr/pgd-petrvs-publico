@@ -456,9 +456,9 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵproperty"]("disabled", ctx.isDisabled)("size", 6);
       _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵproperty"]("disabled", ctx.isDisabled)("size", 6)("emptyValue", null)("control", ctx.formGestor.controls.gestor_id)("dao", ctx.usuarioDao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵproperty"]("disabled", ctx.auth.hasPermissionTo("MOD_UND_INTG_GST") ? undefined : "true")("size", 6)("emptyValue", null)("control", ctx.formGestor.controls.gestor_id)("dao", ctx.usuarioDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵproperty"]("disabled", ctx.isDisabled)("size", 6)("emptyValue", null)("control", ctx.formGestor.controls.gestor_substituto_id)("dao", ctx.usuarioDao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵproperty"]("disabled", ctx.auth.hasPermissionTo("MOD_UND_INTG_GST") ? undefined : "true")("size", 6)("emptyValue", null)("control", ctx.formGestor.controls.gestor_substituto_id)("dao", ctx.usuarioDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵproperty"]("disabled", ctx.isDisabled)("size", 4)("dao", ctx.cidadeDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_28__["ɵɵadvance"](2);
@@ -1235,7 +1235,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("deleted", ctx.auth.hasPermissionTo("MOD_AUDIT_DEL"))("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("size", 5)("control", ctx.filter.controls.nome);
+      _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("size", 10)("control", ctx.filter.controls.nome);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("size", 1)("control", ctx.filter.controls.instituidora)("labelInfo", "Se lista SOMENTE as " + ctx.lex.translate("unidades") + " instituidoras de " + ctx.lex.translate("programas"));

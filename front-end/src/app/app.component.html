@@ -1,6 +1,6 @@
 <div class="d-flex flex-column h-100 petrvs">
     <ng-template #dialogs></ng-template>
-    <nav *ngIf="auth.logged || gb.isEmbedded || isConfig" [class.fixed-top]="!gb.isEmbedded" class="navbar navbar-expand-lg px-3">
+    <nav *ngIf="auth.logged || gb.isEmbedded || isConfig" [class.fixed-top]="!gb.isEmbedded" class="navbar navbar-expand-lg px-3 hidden-print">
         <div class="navbar-logo">
             <button *ngIf="!isConfig && !gb.isToolbar" class="navbar-toggler" type="button" [attr.data-bs-toggle]="'collapse'" [attr.data-bs-target]="'#navbarSupportedContent'" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Abri menu">
                 <span class="navbar-toggler-icon"></span>
@@ -82,9 +82,8 @@
         </div>
         <ul class="navbar-nav navbar-nav-icons flex-row align-items-center justify-content-end ">
             <li class="nav-item dropdown">
-                <a class="nav-link" id="petrvs-context" href="#" role="button" [attr.data-bs-toggle]="'dropdown'" aria-haspopup="true" aria-expanded="false" data-bs-auto-close="outside">
+                <a class="nav-link" id="petrvs-context" href="#" role="button" [attr.data-bs-toggle]="'dropdown'" aria-haspopup="true" aria-expanded="false" data-bs-auto-close="outside" title="Módulo">
                     <span class="d-none d-md-block">
-                        <small>Módulo:</small>
                         {{ gb.contexto?.name || "Selecione..." }}
                         <i class="bi bi-chevron-down fs-6"></i>
                     </span>
@@ -99,7 +98,7 @@
                             <div class="divider"></div>
                             <ul class="nav d-flex flex-column">
                                 <ng-container *ngFor="let item of menuContexto">
-                                    <li *ngIf="gb.contexto?.key != item.key" (click)="gb.setContexto(item.key)" class="nav-item">
+                                    <li *ngIf="gb.contexto?.key != item.key && auth.hasPermissionTo(item.permition!)" (click)="gb.setContexto(item.key)" class="nav-item">
                                         <a [class.active]="gb.contexto?.name == item.name" class="nav-link " role="button">
                                             <i [class]="item.icon"></i> {{ item.name }}
                                         </a>
@@ -184,43 +183,44 @@
                             </ul>
                             <div class="card-footer p-0 border-top">
                                 <div class="px-3 py-2">
-                <li class="nav-item d-grid">
-                    <a class="btn btn-outline-secondary btn-sm" role="button" (click)="logout()">
-                        <i class="bi bi-arrow-bar-right"></i>
-                        Sair
-                    </a>
-                </li>
-</div>
-</div>
-</div>
-</div>
-</li>
-<button type="button" *ngIf="gb.isToolbar && !auth.logged && gb.requireLogged" class="btn btn-outline-danger" role="button" (click)="toolbarLogin()">
-    Login
-</button>
-<button *ngIf="gb.isEmbedded && auth.logged && !gb.isToolbar" class="btn btn-outline-secondary" type="button" (click)="onCollapseContainerClick()">
-    <i [class]="'bi ' + (collapseContainer ? 'bi bi-plus' : 'bi bi-dash')" [attr.data-bs-toggle]="'tooltip'" data-bs-placement="top" [title]="collapseContainer ? 'Expandir Petrvs' : 'Contrair Petrvs'"></i>
-</button>
-</ng-container>
-</ul>
-</nav>
-<div *ngIf="error?.length" class="alert alert-danger mt-2" role="alert">
-    <span><u><strong>{{ (error || '').split('&')[0] }}</strong></u></span><br>{{ (error || '').split('&')[1] }}
-</div>
-<div class="content" [class.d-none]="gb.isToolbar || collapseContainer">
-    <top-alert *ngFor="let topAlert of dialog.topAlerts" type="alert" [id]="topAlert.id" [close]="topAlert.close" [message]="topAlert.message" [closable]="topAlert.closable"></top-alert>
-    <router-outlet></router-outlet>
-</div>
+                                    <li class="nav-item d-grid">
+                                        <a class="btn btn-outline-secondary btn-sm" role="button" (click)="logout()">
+                                            <i class="bi bi-arrow-bar-right"></i>
+                                            Sair
+                                        </a>
+                                    </li>
 
-<footer class="footer mt-auto" *ngIf="auth.usuario && !gb.isEmbedded">
-    <div class="d-flex justify-content-between">
-        <div>
-            <p><small class="text-primary">Versão: {{gb.VERSAO_SYS}}</small></p>
-        </div>
-        <div class="logos">
-            <img [src]="gb.getResourcePath('assets/images/logo_pgd_' + (gb.theme != 'light' ? 'light' : 'normal') + '.png')">
-            <img [src]="gb.getResourcePath('assets/images/logo_gov_' + (gb.theme != 'light' ? 'light' : 'normal') + '.png')">
-        </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <button type="button" *ngIf="gb.isToolbar && !auth.logged && gb.requireLogged" class="btn btn-outline-danger" role="button" (click)="toolbarLogin()">
+                    Login
+                </button>
+                <button *ngIf="gb.isEmbedded && auth.logged && !gb.isToolbar" class="btn btn-outline-secondary" type="button" (click)="onCollapseContainerClick()">
+                    <i [class]="'bi ' + (collapseContainer ? 'bi bi-plus' : 'bi bi-dash')" [attr.data-bs-toggle]="'tooltip'" data-bs-placement="top" [title]="collapseContainer ? 'Expandir Petrvs' : 'Contrair Petrvs'"></i>
+                </button>
+            </ng-container>
+        </ul>
+    </nav>
+    <div *ngIf="error?.length" class="alert alert-danger mt-2" role="alert">
+        <span><u><strong>{{ (error || '').split('&')[0] }}</strong></u></span><br>{{ (error || '').split('&')[1] }}
     </div>
-</footer>
+    <div class="content" [class.d-none]="gb.isToolbar || collapseContainer">
+        <top-alert *ngFor="let topAlert of dialog.topAlerts" type="alert" [id]="topAlert.id" [close]="topAlert.close" [message]="topAlert.message" [closable]="topAlert.closable"></top-alert>
+        <router-outlet></router-outlet>
+    </div>
+
+    <footer class="footer mt-auto" *ngIf="auth.usuario && !gb.isEmbedded">
+        <div class="d-flex justify-content-between">
+            <div>
+                <p><small class="text-primary">Versão: {{gb.VERSAO_SYS}}</small></p>
+            </div>
+            <div class="logos">
+                <img [src]="gb.getResourcePath('assets/images/logo_pgd_' + (gb.theme != 'light' ? 'light' : 'normal') + '.png')">
+                <img [src]="gb.getResourcePath('assets/images/logo_gov_' + (gb.theme != 'light' ? 'light' : 'normal') + '.png')">
+            </div>
+        </div>
+    </footer>
 </div>

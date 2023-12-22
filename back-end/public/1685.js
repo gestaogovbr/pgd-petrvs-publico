@@ -201,8 +201,8 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵInheritDefinitionFeature"]],
   decls: 12,
-  vars: 15,
-  consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["icon", "bi bi-textarea-t", "label", "Nome", "controlName", "nome", "required", "", 3, "size", "control"], ["controlName", "eixo_tematico_id", "required", "", 3, "size", "disabled", "dao"], ["eixoTematico", ""], ["label", "Objetivo Pai", "icon", "fab fa-unity", "controlName", "objetivo_pai_id", 3, "size", "items", "change"], ["objetivoPai", ""], ["title", "Vinculo com Planejamento Superior", 3, "margin", 4, "ngIf"], ["icon", "bi bi-textarea-t", "label", "Fundamenta\u00E7\u00E3o", "controlName", "fundamentacao", "required", "", 3, "size", "rows", "control"], ["title", "Vinculo com Planejamento Superior", 3, "margin"], ["disabled", "", "label", "Planejamento Superior vinculado", "controlName", "planejamento_superior_nome", 3, "size", "icon"], ["label", "Objetivo de Planejamento Superior (Vinculado)", "icon", "fab fa-unity", "controlName", "objetivo_superior_id", 3, "items", "size", "control", "change"]],
+  vars: 16,
+  consts: [["initialFocus", "nome", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["icon", "bi bi-textarea-t", "label", "Nome", "controlName", "nome", "required", "", 3, "size", "rows", "control"], ["controlName", "eixo_tematico_id", "required", "", 3, "size", "disabled", "dao"], ["eixoTematico", ""], ["label", "Objetivo Pai", "icon", "fab fa-unity", "controlName", "objetivo_pai_id", 3, "size", "items", "change"], ["objetivoPai", ""], ["title", "Vinculo com Planejamento Superior", 3, "margin", 4, "ngIf"], ["icon", "bi bi-textarea-t", "label", "Fundamenta\u00E7\u00E3o", "controlName", "fundamentacao", "required", "", 3, "size", "rows", "control"], ["title", "Vinculo com Planejamento Superior", 3, "margin"], ["disabled", "", "label", "Planejamento Superior vinculado", "controlName", "planejamento_superior_nome", 3, "size", "icon"], ["label", "Objetivo de Planejamento Superior (Vinculado)", "icon", "fab fa-unity", "controlName", "objetivo_superior_id", 3, "items", "size", "control", "change"]],
   template: function PlanejamentoFormObjetivoComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](0, "editable-form", 0);
@@ -212,7 +212,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdef
         return ctx.onCancel();
       });
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](1, "div", 1)(2, "div", 1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelement"](3, "input-text", 2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelement"](3, "input-textarea", 2);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](4, "div", 1);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelement"](5, "input-search", 3, 4);
@@ -229,7 +229,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdef
     if (rf & 2) {
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 12)("control", ctx.form.controls.nome);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 12)("rows", 2)("control", ctx.form.controls.nome);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 6)("disabled", (ctx.form == null ? null : ctx.form.controls == null ? null : ctx.form.controls.objetivo_pai_id == null ? null : ctx.form.controls.objetivo_pai_id.value) ? "true" : undefined)("dao", ctx.eixoTematicoDao);
@@ -1553,6 +1553,11 @@ class PlanejamentoListComponent extends src_app_modules_base_page_list_base__WEB
       });
     }
     this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
+    this.addOption({
+      label: "Relatório",
+      icon: "bi bi-file-pdf",
+      onClick: row => this.report(row, 'PLAN_INSTITUCIONAL')
+    });
   }
   ngAfterViewInit() {
     super.ngAfterViewInit();
@@ -1560,6 +1565,13 @@ class PlanejamentoListComponent extends src_app_modules_base_page_list_base__WEB
   }
   /* override */
   onLoad() {}
+  report(planejamento, codigo) {
+    const consulta = {
+      id: planejamento.id,
+      join: ["objetivos", "objetivos.objetivos_filhos"]
+    };
+    this.grid?.buildRowReport(codigo, consulta);
+  }
   initGrid(grid) {
     grid.queryInit();
   }
