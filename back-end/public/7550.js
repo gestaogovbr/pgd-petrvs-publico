@@ -1070,25 +1070,27 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
     if (this.auth.hasPermissionTo('MOD_PRGT_PART_DESAB') && row.habilitado) result.push(this.BOTAO_DESABILITAR);
     return result;
   }
-  ngOnInit() {
-    var _superprop_getNgOnInit = () => super.ngOnInit,
-      _this = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      _superprop_getNgOnInit().call(_this);
-      _this.programa = _this.metadata?.programa;
-      if (!_this.programa) yield _this.programaDao.query({
-        where: [['vigentesUnidadeExecutora', "==", _this.auth.unidade.id]]
-      }).asPromise().then(programas => {
-        _this.programa = programas[0];
-      });
-      yield _this.programaSearch?.loadSearch(_this.programa);
-      if (_this.programa) _this.grid.reloadFilter();
+  ngAfterViewInit() {
+    var _this = this;
+    super.ngAfterViewInit();
+    (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      _this.loading = true;
+      try {
+        _this.programa = _this.metadata?.programa;
+        if (!_this.programa) yield _this.programaDao.query({
+          where: [['vigentesUnidadeExecutora', "==", _this.auth.unidade.id]]
+        }).asPromise().then(programas => {
+          _this.programa = programas[0];
+        });
+        yield _this.programaSearch?.loadSearch(_this.programa);
+        if (_this.programa) _this.grid.reloadFilter();
+      } finally {
+        _this.loading = false;
+      }
+      //this.programaSearch?.loadSearch(this.programa);
     })();
   }
-  ngAfterViewInit() {
-    super.ngAfterViewInit();
-    this.programaSearch?.loadSearch(this.programa);
-  }
+
   filterClear(filter) {
     filter.controls.unidade_id.setValue(undefined);
     filter.controls.nome_usuario.setValue('');

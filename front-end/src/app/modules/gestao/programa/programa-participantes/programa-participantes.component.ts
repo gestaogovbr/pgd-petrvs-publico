@@ -78,19 +78,22 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
     return result;
   }
 
-  public async ngOnInit(): Promise<void> {
-    super.ngOnInit();
-    this.programa = this.metadata?.programa;
-    if(!this.programa) await this.programaDao.query({where: [['vigentesUnidadeExecutora', "==", this.auth.unidade!.id]]}).asPromise().then( programas => {
-      this.programa = programas[0];
-    });
-    await this.programaSearch?.loadSearch(this.programa);
-    if(this.programa) this.grid!.reloadFilter();
-  }
-
   public ngAfterViewInit(): void {
     super.ngAfterViewInit();
-    this.programaSearch?.loadSearch(this.programa);
+    (async () => {
+      this.loading = true;
+      try {
+        this.programa = this.metadata?.programa;
+        if(!this.programa) await this.programaDao.query({where: [['vigentesUnidadeExecutora', "==", this.auth.unidade!.id]]}).asPromise().then(programas => {
+          this.programa = programas[0];
+        });
+        await this.programaSearch?.loadSearch(this.programa);
+        if(this.programa) this.grid!.reloadFilter();
+      } finally {
+        this.loading = false;
+      }
+      //this.programaSearch?.loadSearch(this.programa);
+    })();
   }
 
   public filterClear(filter: FormGroup<any>): void {
