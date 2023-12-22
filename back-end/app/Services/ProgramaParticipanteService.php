@@ -55,11 +55,13 @@ class ProgramaParticipanteService extends ServiceBase {
             }       
         }
         $rows->each(function ($item, $key) use ($rows) {
-            $filtro = $item->usuario->planosTrabalho->filter(function ($item) {
-                return $item->status == 'ATIVO' && UtilService::between(now(),$item->data_inicio,$item->data_fim);
-            });
-            $item->usuario->planosTrabalho = $filtro;
-            $rows[$key] = $item;
+            if(!empty($item?->usuario?->planosTrabalho)) {
+                $filtro = $item->usuario->planosTrabalho->filter(function ($item) {
+                    return $item->status == 'ATIVO' && UtilService::between(now(),$item->data_inicio,$item->data_fim);
+                });
+                $item->usuario->planosTrabalho = $filtro;
+                $rows[$key] = $item;
+            }
         });
         $count = count($rows);
         return null;
@@ -88,6 +90,13 @@ class ProgramaParticipanteService extends ServiceBase {
         }
         //$this->notificar($data);
         return true;
+    }
+
+    public function quantidadesPlanosTrabalhosAtivo($programasParticipantesIds)
+    {
+        return ProgramaParticipante::whereIn("id", $programasParticipantesIds)->whereHas('usuario.planosTrabalho', function ($query) {
+            return $query->where('status', 'ATIVO')->where('data_inicio', '<=', now())->where('data_fim', '>=', now());
+        })->count();
     }
 
     public function notificar($data)

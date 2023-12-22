@@ -1632,10 +1632,10 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
         default: false
       },
       documento_requisicao: {
-        default: new src_app_models_documento_model__WEBPACK_IMPORTED_MODULE_11__.Documento()
+        default: undefined
       },
       documento_entrega: {
-        default: new src_app_models_documento_model__WEBPACK_IMPORTED_MODULE_11__.Documento()
+        default: undefined
       }
     }, this.cdRef, this.validate);
     this.formChecklist = this.fh.FormBuilder({
