@@ -256,7 +256,6 @@ class UnidadeService extends ServiceBase
             $areasTrabalhoWhere = $this->usuarioService->areasTrabalhoWhere($subordinadas, null, "unidades");
             array_push($where, new RawWhere("($areasTrabalhoWhere)", []));
         }
-        $where = array_filter($where, fn($w) => ($w instanceof RawWhere) || ($w[0] == 'data_inativacao'));
         $data["where"] = $where;
         return $data;
     } 

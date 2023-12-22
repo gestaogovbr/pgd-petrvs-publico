@@ -59,7 +59,7 @@ class TemplateDatasetService extends ServiceBase
 				"fields" => [
 					["field" => "nome", "label" => "Nome"],
 					["field" => "fundamentacao", "label" => "Fundamentação"],
-					//["field" => "objetivos_filhos", "label" => "Objetivos Filhos", "fields" => "OBJETIVO", "type" => "ARRAY", "value" => function ($contexto) { return $contexto->objetivosFilhos; }],
+					["field" => "objetivos_filhos", "label" => "Objetivos Filhos", "fields" => "OBJETIVO", "type" => "ARRAY", "value" => function ($contexto) { return $contexto->objetivos_filhos; }],
 				]
 			],
 			"PLANEJAMENTO" => [
@@ -70,8 +70,8 @@ class TemplateDatasetService extends ServiceBase
 					["field" => "visao", "label" => "Visão"],
 					["field" => "data_inicio", "label" => "Data início", "type" => "DATE"],
 					["field" => "data_fim", "label" => "Data término", "type" => "DATE"],
-				//	["field" => "valores", "label" => "Valores", "type" => "ARRAY", "fields" => "KEY_VALUE", "value" => function ($contexto) { return $contexto->valores; }],
-				//	["field" => "resultados_institucionais", "label" => "Resultados Institucionais", "type" => "ARRAY", "fields" => "KEY_VALUE", "value" => function ($contexto) { return $contexto->resultados_institucionais; }],
+					["field" => "valores", "label" => "Valores", "type" => "ARRAY", "fields" => "KEY_VALUE", "value" => function ($contexto) { return $contexto->valores; }],
+					["field" => "resultados_institucionais", "label" => "Resultados Institucionais", "type" => "ARRAY", "fields" => "KEY_VALUE", "value" => function ($contexto) { return $contexto->resultados_institucionais; }],
 					["field" => "objetivos", "label" => "Objetivos", "fields" => "OBJETIVO", "type" => "ARRAY", "value" => function ($contexto) { return $contexto->objetivos; }],
 				]
 			],
@@ -84,7 +84,7 @@ class TemplateDatasetService extends ServiceBase
 					["field" => "status", "label" => "Status do plano"],
 					["field" => "data_inicio", "label" => "Data inicial do plano", "type" => "DATETIME"],
 					["field" => "data_fim", "label" => "Data final do plano", "type" => "DATETIME"],
-					["field" => "tipo_modalidade", "label" => "Tipo de modalidade", "fields" => "TIPO_MODALIDADE", "type" => "OBJECT", "value" => function ($contexto) { return $contexto->tipoModalidade; }],
+					["field" => "tipo_modalidade", "label" => "Tipo de modalidade", "fields" => "TIPO_MODALIDADE", "type" => "OBJECT", "value" => function ($contexto) { return $contexto->tipo_modalidade; }],
 					["field" => "usuario", "label" => "Usuário", "fields" => "USUARIO", "type" => "OBJECT", "value" => function ($contexto) { return $contexto->usuario; }],
 					["field" => "unidade", "label" => "Unidade", "fields" => "UNIDADE", "type" => "OBJECT", "value" => function ($contexto) { return $contexto->unidade; }],
 					["field" => "programa", "label" => "Programa", "fields" => "PROGRAMA", "type" => "OBJECT", "value" => function ($contexto) { return $contexto->programa; }],
@@ -156,7 +156,7 @@ class TemplateDatasetService extends ServiceBase
 				],
 			],
 			"KEY_VALUE" => [
-				"context" => function ($params) {	return $params; },
+				"context" => function ($params) {	return $params ?? []; },
 				"fields" => [
 					["field" => "key", "label" => "Chave"],
 					["field" => "value", "label" => "Valor"]
