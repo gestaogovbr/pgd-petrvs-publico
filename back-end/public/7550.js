@@ -975,13 +975,16 @@ function ProgramaParticipantesComponent_ng_template_31_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtextInterpolate"](row_r33.usuario.planos_trabalho.length ? "sim" : "n\u00E3o");
   }
 }
-const _c2 = function (a2) {
+const _c2 = function () {
+  return ["usuario_id"];
+};
+const _c3 = function (a2) {
   return ["vigentesUnidadeExecutora", "==", a2];
 };
-const _c3 = function (a0) {
+const _c4 = function (a0) {
   return [a0];
 };
-const _c4 = function () {
+const _c5 = function () {
   return {
     "vigentesUnidadeExecutora": true
   };
@@ -1158,8 +1161,11 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
         const self = _this6;
         _this6.dialog.confirm("Habilitar Participantes ?", "Confirma a habilitação de todos esses participantes?").then(habilitar_todos => {
           if (habilitar_todos) {
-            _this6.dao.habilitar(Object.keys(_this6.grid.multiselected), _this6.programa.id, 1, false).then(function () {
-              self.dialog.alert("Sucesso", "Participantes habilitados com sucesso!");
+            const idsUsuarios = Object.values(_this6.grid.multiselected).map(x => x.usuario_id);
+            _this6.dao.habilitar(idsUsuarios, _this6.programa.id, 1, false).then(function () {
+              self.dialog.topAlert("Participantes habilitados com sucesso!", 5000);
+              (self.grid?.query || self.query).refresh();
+              self.cdRef.detectChanges();
             }).catch(function (error) {
               self.dialog.alert("Erro", "Erro ao habilitar os participantes: " + error?.message ? error?.message : 0);
             });
@@ -1172,14 +1178,16 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
     var _this7 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let desabilitar = yield _this7.dialog.confirm("Desabilitar ?", "Deseja DESABILITAR, " + _this7.lex.translate("do programa") + " - " + (_this7.programa?.nome).toUpperCase() + " - todos " + _this7.lex.translate("os usuários") + " selecionados ?");
+      let idsProgramasParticipantes = Object.keys(_this7.grid.multiselected);
       if (desabilitar) {
-        let qde_usuarios_com_plano_trabalho_ativo = _this7.grid.multiselected.filter(pp => pp.usuario?.planos_trabalho?.length).length;
+        let qde_usuarios_com_plano_trabalho_ativo = yield _this7.dao.quantidadesPlanosTrabalhosAtivo(idsProgramasParticipantes); //(this.grid!.multiselected as ProgramaParticipante[]).filter(pp => pp.usuario?.planos_trabalho?.length).length;
         let suspender = false;
         if (!!qde_usuarios_com_plano_trabalho_ativo) {
-          suspender = yield _this7.dialog.confirm("ATENÇÃO", "Há " + qde_usuarios_com_plano_trabalho_ativo + _this7.lex.translate(qde_usuarios_com_plano_trabalho_ativo == 1 ? "usuário" : "usuários") + " com " + _this7.lex.translate("Plano de Trabalho") + " ativo vinculado a " + _this7.lex.translate("este Programa") + "!" + "Deseja continuar com a desabilitação, suspendendo " + (qde_usuarios_com_plano_trabalho_ativo == 1 ? "o seu " : "todos ") + _this7.lex.translate(qde_usuarios_com_plano_trabalho_ativo == 1 ? "Plano de Trabalho" : "os Planos de Trabalho") + " ?");
+          suspender = yield _this7.dialog.confirm("ATENÇÃO", "Há " + qde_usuarios_com_plano_trabalho_ativo + _this7.lex.translate(qde_usuarios_com_plano_trabalho_ativo == 1 ? " usuário" : " usuários") + " com " + _this7.lex.translate("Plano de Trabalho") + " ativo vinculado a " + _this7.lex.translate("este Programa") + "!" + " Deseja continuar com a desabilitação, suspendendo " + (qde_usuarios_com_plano_trabalho_ativo == 1 ? "o seu " : "todos ") + _this7.lex.translate(qde_usuarios_com_plano_trabalho_ativo == 1 ? "Plano de Trabalho" : "os Planos de Trabalho") + " ?");
         }
         if (!qde_usuarios_com_plano_trabalho_ativo || suspender) {
-          yield _this7.dao.habilitar(Object.keys(_this7.grid.multiselected), _this7.programa.id, 0, true).then(resposta => {
+          const idsUsuarios = Object.values(_this7.grid.multiselected).map(x => x.usuario_id);
+          yield _this7.dao.habilitar(idsUsuarios, _this7.programa.id, 0, true).then(resposta => {
             (_this7.grid?.query || _this7.query).refresh();
             _this7.cdRef.detectChanges();
           });
@@ -1239,8 +1247,8 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵInheritDefinitionFeature"]],
   decls: 35,
-  vars: 59,
-  consts: [["multiselect", "", "editable", "", 3, "dao", "form", "title", "orderBy", "groupBy", "join", "add", "load", "save", "selectable", "hasAdd", "hasEdit", "hasDelete", "multiselectMenu", "select"], [4, "ngIf"], [3, "deleted", "form", "where", "clear", "submit", "collapseChange", "collapsed"], [1, "row"], ["controlName", "programa_id", "required", "", 3, "size", "disabled", "control", "dao", "where", "metadata", "change"], ["programaSearch", ""], ["controlName", "nome_usuario", 3, "size", "label", "control", "placeholder"], ["controlName", "unidade_id", 3, "size", "control", "label", "labelInfo", "dao"], ["unidade", ""], ["class", "mt-2 mb-4", 4, "ngIf"], ["icon", "bi-person", 1, "text-center", 3, "template", "editTemplate"], ["columnFoto", ""], ["editFoto", ""], [3, "title", "template", "editTemplate"], ["columnUsuario", ""], ["editUsuario", ""], ["title", "Habilitado", 3, "align", "template", "editTemplate"], ["columnHabilitado", ""], ["editHabilitado", ""], [3, "title", "template"], ["columnLotacao", ""], [3, "title", "align", "template"], ["columnPlanoTrabalho", ""], ["type", "options", 3, "dynamicButtons"], [3, "rows"], ["labelPosition", "left", "label", "Todos", "controlName", "todos", 3, "size", "labelInfo", "control", "change"], [1, "mt-2", "mb-4"], [3, "url", "size", "hint"], [3, "url", "size"], ["label", "", "icon", "", "required", "", 3, "size", "control", "dao"], ["usuario", ""], ["class", "bi bi-person-check habilitado", 4, "ngIf"], ["class", "bi bi-person-fill-slash desabilitado", 4, "ngIf"], [1, "bi", "bi-person-check", "habilitado"], [1, "bi", "bi-person-fill-slash", "desabilitado"], ["disabled", "", "controlName", "habilitado", 3, "control"], ["habilitado", ""]],
+  vars: 61,
+  consts: [["multiselect", "", "editable", "", 3, "dao", "form", "title", "orderBy", "groupBy", "join", "add", "load", "save", "selectable", "multiselectAllFields", "hasAdd", "hasEdit", "hasDelete", "multiselectMenu", "select"], [4, "ngIf"], [3, "deleted", "form", "where", "clear", "submit", "collapseChange", "collapsed"], [1, "row"], ["controlName", "programa_id", "required", "", 3, "size", "disabled", "control", "dao", "where", "metadata", "change"], ["programaSearch", ""], ["controlName", "nome_usuario", 3, "size", "label", "control", "placeholder"], ["controlName", "unidade_id", 3, "size", "control", "label", "labelInfo", "dao"], ["unidade", ""], ["class", "mt-2 mb-4", 4, "ngIf"], ["icon", "bi-person", 1, "text-center", 3, "template", "editTemplate"], ["columnFoto", ""], ["editFoto", ""], [3, "title", "template", "editTemplate"], ["columnUsuario", ""], ["editUsuario", ""], ["title", "Habilitado", 3, "align", "template", "editTemplate"], ["columnHabilitado", ""], ["editHabilitado", ""], [3, "title", "template"], ["columnLotacao", ""], [3, "title", "align", "template"], ["columnPlanoTrabalho", ""], ["type", "options", 3, "dynamicButtons"], [3, "rows"], ["labelPosition", "left", "label", "Todos", "controlName", "todos", 3, "size", "labelInfo", "control", "change"], [1, "mt-2", "mb-4"], [3, "url", "size", "hint"], [3, "url", "size"], ["label", "", "icon", "", "required", "", 3, "size", "control", "dao"], ["usuario", ""], ["class", "bi bi-person-check habilitado", 4, "ngIf"], ["class", "bi bi-person-fill-slash desabilitado", 4, "ngIf"], [1, "bi", "bi-person-check", "habilitado"], [1, "bi", "bi-person-fill-slash", "desabilitado"], ["disabled", "", "controlName", "habilitado", 3, "control"], ["habilitado", ""]],
   template: function ProgramaParticipantesComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementStart"](0, "grid", 0);
@@ -1289,13 +1297,13 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdef
       const _r14 = _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵreference"](26);
       const _r16 = _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵreference"](29);
       const _r18 = _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵreference"](32);
-      _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("dao", ctx.dao)("form", ctx.form)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("add", ctx.addParticipante.bind(ctx))("load", ctx.loadParticipante.bind(ctx))("save", ctx.saveParticipante.bind(ctx))("selectable", ctx.selectable)("hasAdd", ctx.auth.hasPermissionTo("MOD_PRGT_PART_INCL"))("hasEdit", false)("hasDelete", false)("multiselectMenu", ctx.multiselectMenu);
+      _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("dao", ctx.dao)("form", ctx.form)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("add", ctx.addParticipante.bind(ctx))("load", ctx.loadParticipante.bind(ctx))("save", ctx.saveParticipante.bind(ctx))("selectable", ctx.selectable)("multiselectAllFields", _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵpureFunction0"](55, _c2))("hasAdd", ctx.auth.hasPermissionTo("MOD_PRGT_PART_INCL"))("hasEdit", false)("hasDelete", false)("multiselectMenu", ctx.multiselectMenu);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("ngIf", !ctx.selectable);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("deleted", ctx.auth.hasPermissionTo("MOD_AUDIT_DEL"))("form", ctx.filter)("where", ctx.filterWhere)("clear", ctx.filterClear.bind(ctx))("submit", ctx.filterSubmit.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("size", 12)("disabled", ctx.isModal ? "true" : undefined)("control", ctx.filter.controls.programa_id)("dao", ctx.programaDao)("where", _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵpureFunction1"](56, _c3, _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵpureFunction1"](54, _c2, ctx.auth.unidade.id)))("metadata", _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵpureFunction0"](58, _c4));
+      _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("size", 12)("disabled", ctx.isModal ? "true" : undefined)("control", ctx.filter.controls.programa_id)("dao", ctx.programaDao)("where", _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵpureFunction1"](58, _c4, _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵpureFunction1"](56, _c3, ctx.auth.unidade.id)))("metadata", _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵpureFunction0"](60, _c5));
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("size", 6)("label", "Nome do " + ctx.lex.translate("usu\u00E1rio"))("control", ctx.filter.controls.nome_usuario)("placeholder", "Nome do " + ctx.lex.translate("usuario") + "...");
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵattribute"]("maxlength", 250);

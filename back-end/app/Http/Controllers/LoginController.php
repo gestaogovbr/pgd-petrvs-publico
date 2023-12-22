@@ -14,6 +14,7 @@ use App\Models\Usuario;
 use App\Models\UnidadeIntegrante;
 use App\Models\Entidade;
 use App\Models\Tenant;
+use App\Models\Unidade;
 use App\Services\UnidadeService;
 use App\Services\CalendarioService;
 use App\Services\UsuarioService;
@@ -95,7 +96,7 @@ class LoginController extends Controller
                 $request->session()->put("unidade_id", $usuario->areasTrabalho[0]->id);
                 return response()->json([
                     "status" => "OK",
-                    "unidade" => $usuario->areasTrabalho[0]
+                    "unidade" => Unidade::find($data["unidade_id"])
                 ]);
             } else {
                 return LogError::newError('Unidade não encontrada no usuário');
