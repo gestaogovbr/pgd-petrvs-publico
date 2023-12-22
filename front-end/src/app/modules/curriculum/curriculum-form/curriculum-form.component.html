@@ -33,13 +33,7 @@
     <div class="row my-3">
 
         <input-switch [size]="2" label="Fala outros idiomas?" icon="fas fa-language" controlName="radioFalaIdioma" [control]="form!.controls.radioFalaIdioma"></input-switch>
-        <!--<input-multiselect #idiomas *ngIf="form!.controls.radioFalaIdioma.value" controlName="idiomas" [size]="10" [control]="form!.controls.idiomas" [addItemHandle]="addItemIdioma.bind(this)" noBox>
-            <input-select [size]="3" label="Idioma" icon="fas fa-sign-out-alt" controlName="idioma" liveSearch [control]="form!.controls.idioma" [items]="this.lookup.IDIOMAS"></input-select>
-            <input-select [size]="3" label="Nível de fala?" icon="fas fa-sign-out-alt" controlName="idiomaFala" [control]="form!.controls.idiomaFala" [items]="this.lookup.NIVEL_IDIOMA"></input-select>
-            <input-select [size]="3" label="Nível de escrita?" icon="fas fa-sign-out-alt" controlName="idiomaEscrita" [control]="form!.controls.idiomaEscrita" [items]="this.lookup.NIVEL_IDIOMA"></input-select>
-            <input-select [size]="3" label="Nível de entendimento?" icon="fas fa-sign-out-alt" controlName="idiomaEntendimento" [control]="form!.controls.idiomaEntendimento" [items]="this.lookup.NIVEL_IDIOMA"></input-select>
-        </input-multiselect>-->
-
+       
         <grid *ngIf="form!.controls.radioFalaIdioma.value" [control]="form!.controls.idiomas" [minHeight]="500" 
             [form]="formIdiomaGrid!" [hasDelete]="true" [add]="addIdiomas.bind(this)" [load]="loadIdiomas.bind(this)" [remove]="removeIdiomas.bind(this)" 
             [save]="saveIdiomas.bind(this)" editable>

@@ -143,9 +143,10 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     //this.form?.controls.estados.setValue(this.lookup.UF.find(x => x.key == 'AM'));//cidade.uf));
     let uf = this.lookup.getLookup(this.lookup.UF, cidade?.uf);
     this.form?.controls.estados.setValue(uf?.key);//cidade.uf));
-    
+    entity.quantidade_filhos > 0 ? this.form?.controls.filhos.setValue(true) : this.form?.controls.filhos.setValue(false);
     const municipio = this.lookup.UF.find(x => x.key == cidade?.uf);
     entity.idiomas.length > 0 ? this.form?.controls.radioFalaIdioma.setValue(true) : this.form?.controls.radioFalaIdioma.setValue(false);
+    //entity.filhos == 1 ? this.form?.controls.radioFalaIdioma.setValue(true) : this.form?.controls.radioFalaIdioma.setValue(false);
     entity.graduacoes.length > 0 ?  this.formGraduacao!.controls.graduacaopos.setValue(this.montaGraduacaoPos(entity.graduacoes)) : '';
     //entity.graduacoes.length > 0 ?  this.montaGraduacaoPos(entity.graduacoes) : '';
          
