@@ -538,7 +538,7 @@ class IntegracaoService extends ServiceBase {
                         &$cpfs_emails_funcionais_vazios,
                         &$emails_funcionais_duplicados) {
 
-                    DB::table('integracao_servidores')->delete();
+                    //DB::table('integracao_servidores')->delete();
 
                     foreach($servidores as $servidor) {
                         if(isset($servidor['matriculas']) && isset($servidor['matriculas']['dados']) &&

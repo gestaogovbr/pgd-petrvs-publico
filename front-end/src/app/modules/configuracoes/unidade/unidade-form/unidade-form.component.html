@@ -14,10 +14,10 @@
                 <input-text [disabled]="isDisabled" [size]="6" label="Nome" controlName="nome" required></input-text>
             </div>
             <div class="row">
-                <input-search [disabled]="isDisabled" #gestor label="Gestor" [size]="6" [emptyValue]="null"
+                <input-search [disabled]="isDisabled" #gestor label="Chefe" [size]="6" [emptyValue]="null"
                     [control]="formGestor!.controls.gestor_id" controlName="gestor_id" [dao]="usuarioDao"
                     labelInfo="Responsável pela unidade"></input-search>
-                <input-search [disabled]="isDisabled" #gestorSubstituto label="Gestor Substituto" [size]="6" [emptyValue]="null"
+                <input-search [disabled]="isDisabled" #gestorSubstituto label="Chefe substituto" [size]="6" [emptyValue]="null"
                     [control]="formGestor!.controls.gestor_substituto_id" controlName="gestor_substituto_id"
                     [dao]="usuarioDao" labelInfo="Responsável substituto pela unidade"></input-search>
             </div>

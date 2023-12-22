@@ -13,8 +13,8 @@ services:
       MYSQL_USER: petrvs
       MYSQL_PASSWORD: PsEeTnRhVaS
       MYSQL_TCP_PORT: 3308
-
-
+      TZ: "America/Bahia"
+      
   petrvs_php:
     build:
       context: .
@@ -23,6 +23,8 @@ services:
       - "host.docker.internal:host-gateway"
     container_name: petrvs_php
     working_dir: /var/www
+    environment:
+      - TZ=America/Bahia
     ports:
       - "80:80"
     dns:
@@ -35,7 +37,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.5'
+          #cpus: '1.0'
           memory: 2048M
 
   petrvs_node:
@@ -47,6 +49,7 @@ services:
     working_dir: /usr/src/app
     environment:
       - NODE_ENV=production
+      - TZ=America/Bahia
     ports:
       - "4200:4200"
     dns:
