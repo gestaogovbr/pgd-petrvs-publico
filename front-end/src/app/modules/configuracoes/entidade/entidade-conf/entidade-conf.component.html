@@ -14,7 +14,7 @@
             <notificacoes-config #notificacoes [entity]="entity" [entidadeId]="entity.id" [disabled]="formDisabled"></notificacoes-config>
         </tab>
         <tab *ngIf="entity" key="RELATORIOS" label="Relatórios">
-            <relatorios-template #relatorios [entity]="entity" [entidadeId]="entity?.id"></relatorios-template>
+            <relatorios-template #relatorios [entity]="entity" [entidadeId]="entity.id"></relatorios-template>
         </tab>
         <tab key="NOMENCLATURA" label="Nomenclatura">
             <div clss="row">

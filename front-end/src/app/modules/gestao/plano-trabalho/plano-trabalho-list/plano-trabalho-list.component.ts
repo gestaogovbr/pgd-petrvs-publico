@@ -254,11 +254,17 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
 
   public botaoAtendeCondicoes(botao: ToolbarButton, planoTrabalho: PlanoTrabalho): boolean {
     let assinaturasExigidas = planoTrabalho.assinaturasExigidas;
+    let todasAssinaturasExigidas = [
+      ...assinaturasExigidas.gestores_entidade,
+      ...assinaturasExigidas.gestores_unidade_executora,
+      ...assinaturasExigidas.gestores_unidade_lotacao,
+      ...assinaturasExigidas.participante
+    ];
     let assinaturasFaltantes = this.planoTrabalhoService.assinaturasFaltantes(planoTrabalho.assinaturasExigidas, planoTrabalho.jaAssinaramTCR);
     let haAssinaturasFaltantes = !!assinaturasFaltantes.participante.length || !!assinaturasFaltantes.gestores_unidade_executora.length || !!assinaturasFaltantes.gestores_unidade_lotacao.length || !!assinaturasFaltantes.gestores_entidade.length;
     let usuarioEhGestorUnidadeExecutora: boolean = this.auth.isGestorUnidade(planoTrabalho.unidade_id);
     let usuarioJaAssinouTCR: boolean = !!planoTrabalho.jaAssinaramTCR?.todas?.includes(this.auth.usuario?.id!);
-    let assinaturaUsuarioEhExigida: boolean = !!planoTrabalho.assinaturasExigidas?.todas?.includes(this.auth.usuario?.id!);
+    let assinaturaUsuarioEhExigida: boolean = !!todasAssinaturasExigidas?.includes(this.auth.usuario?.id!);
     let planoIncluido = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'INCLUIDO';
     let usuarioEhParticipante = this.auth.usuario?.id == planoTrabalho.usuario_id;
     let planoAguardandoAssinatura = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'AGUARDANDO_ASSINATURA';
