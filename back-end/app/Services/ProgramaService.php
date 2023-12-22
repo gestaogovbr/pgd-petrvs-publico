@@ -15,7 +15,9 @@ class ProgramaService extends ServiceBase {
         $where = [];
         $vigentesUnidadeExecutora = $this->extractWhere($data, "vigentesUnidadeExecutora");
         if(!empty($vigentesUnidadeExecutora)) {
-            array_push($where, ['unidade.path', 'like', '%' . $vigentesUnidadeExecutora[2] . '%']);
+            $unidadesIds = $this->unidadeService->linhaAscendente($vigentesUnidadeExecutora[2]);
+            $unidadesIds[] = $vigentesUnidadeExecutora[2];
+            array_push($where, ['unidade_id', 'in', $unidadesIds]);
             array_push($where, ['data_inicio', '<=', now()]);
             array_push($where, ['data_fim', '>=', now()]);
         }
