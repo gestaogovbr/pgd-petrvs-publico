@@ -11,18 +11,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   TemplateFormComponent: () => (/* binding */ TemplateFormComponent)
 /* harmony export */ });
-<<<<<<< HEAD
-/* harmony import */ var _base_page_form_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../base/page-form-base */ 1184);
-/* harmony import */ var _models_template_model__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../models/template.model */ 98409);
-/* harmony import */ var _dao_template_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../dao/template-dao.service */ 99230);
-/* harmony import */ var _components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
-/* harmony import */ var _template_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../template.service */ 49367);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/core */ 51197);
-/* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ 92392);
-/* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../components/input/input-select/input-select.component */ 64603);
-/* harmony import */ var _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../components/separator/separator.component */ 25560);
-/* harmony import */ var _components_input_input_editor_input_editor_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../components/input/input-editor/input-editor.component */ 55795);
-=======
 /* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var _base_page_form_base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../base/page-form-base */ 1184);
 /* harmony import */ var _models_template_model__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../models/template.model */ 98409);
@@ -35,8 +23,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../components/separator/separator.component */ 25560);
 /* harmony import */ var _components_input_input_editor_input_editor_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/input/input-editor/input-editor.component */ 55795);
 
-var _class;
->>>>>>> develop
 
 
 
@@ -95,108 +81,55 @@ class TemplateFormComponent extends _base_page_form_base__WEBPACK_IMPORTED_MODUL
     });
   }
   static #_ = this.ɵfac = function TemplateFormComponent_Factory(t) {
-    return new (t || TemplateFormComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_9__.Injector));
+    return new (t || TemplateFormComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_10__.Injector));
   };
-  static #_2 = this.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefineComponent"]({
+  static #_2 = this.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdefineComponent"]({
     type: TemplateFormComponent,
     selectors: [["app-template-form"]],
     viewQuery: function TemplateFormComponent_Query(rf, ctx) {
       if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵviewQuery"](_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_3__.EditableFormComponent, 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵviewQuery"](_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_4__.EditableFormComponent, 5);
       }
       if (rf & 2) {
         let _t;
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
       }
     },
-    features: [_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵInheritDefinitionFeature"]],
+    features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
     decls: 7,
     vars: 8,
     consts: [["initialFocus", "titulo", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "T\u00EDtulo", "icon", "bi bi-upc", "controlName", "titulo", "required", "", 3, "size"], ["disabled", "", "label", "Esp\u00E9cie", "controlName", "especie", 3, "size", "items"], ["title", "Design"], ["controlName", "conteudo", 3, "dataset"]],
     template: function TemplateFormComponent_Template(rf, ctx) {
       if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "editable-form", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("submit", function TemplateFormComponent_Template_editable_form_submit_0_listener() {
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "editable-form", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("submit", function TemplateFormComponent_Template_editable_form_submit_0_listener() {
           return ctx.onSaveData();
         })("cancel", function TemplateFormComponent_Template_editable_form_cancel_0_listener() {
           return ctx.onCancel();
         });
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](1, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](2, "input-text", 2)(3, "input-select", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](4, "separator", 4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](5, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](6, "input-editor", 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](1, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](2, "input-text", 2)(3, "input-select", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](4, "separator", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](5, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](6, "input-editor", 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
       }
       if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 8);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵattribute"]("maxlength", 250);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("size", 4)("items", ctx.lookup.TEMPLATE_ESPECIE);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("dataset", ctx.dataset);
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 8);
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵattribute"]("maxlength", 250);
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 4)("items", ctx.lookup.TEMPLATE_ESPECIE);
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("dataset", ctx.dataset);
       }
     },
-    dependencies: [_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_3__.EditableFormComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_5__.InputTextComponent, _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_6__.InputSelectComponent, _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_7__.SeparatorComponent, _components_input_input_editor_input_editor_component__WEBPACK_IMPORTED_MODULE_8__.InputEditorComponent],
+    dependencies: [_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_4__.EditableFormComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_6__.InputTextComponent, _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_7__.InputSelectComponent, _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_8__.SeparatorComponent, _components_input_input_editor_input_editor_component__WEBPACK_IMPORTED_MODULE_9__.InputEditorComponent],
     styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
   });
 }
-<<<<<<< HEAD
-=======
-_class = TemplateFormComponent;
-_class.ɵfac = function TemplateFormComponent_Factory(t) {
-  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_10__.Injector));
-};
-_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdefineComponent"]({
-  type: _class,
-  selectors: [["app-template-form"]],
-  viewQuery: function TemplateFormComponent_Query(rf, ctx) {
-    if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵviewQuery"](_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_4__.EditableFormComponent, 5);
-    }
-    if (rf & 2) {
-      let _t;
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-    }
-  },
-  features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
-  decls: 7,
-  vars: 8,
-  consts: [["initialFocus", "titulo", 3, "form", "disabled", "title", "submit", "cancel"], [1, "row"], ["label", "T\u00EDtulo", "icon", "bi bi-upc", "controlName", "titulo", "required", "", 3, "size"], ["disabled", "", "label", "Esp\u00E9cie", "controlName", "especie", 3, "size", "items"], ["title", "Design"], ["controlName", "conteudo", 3, "dataset"]],
-  template: function TemplateFormComponent_Template(rf, ctx) {
-    if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "editable-form", 0);
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("submit", function TemplateFormComponent_Template_editable_form_submit_0_listener() {
-        return ctx.onSaveData();
-      })("cancel", function TemplateFormComponent_Template_editable_form_cancel_0_listener() {
-        return ctx.onCancel();
-      });
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](1, "div", 1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](2, "input-text", 2)(3, "input-select", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](4, "separator", 4);
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](5, "div", 1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](6, "input-editor", 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
-    }
-    if (rf & 2) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 8);
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵattribute"]("maxlength", 250);
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("size", 4)("items", ctx.lookup.TEMPLATE_ESPECIE);
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("dataset", ctx.dataset);
-    }
-  },
-  dependencies: [_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_4__.EditableFormComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_6__.InputTextComponent, _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_7__.InputSelectComponent, _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_8__.SeparatorComponent, _components_input_input_editor_input_editor_component__WEBPACK_IMPORTED_MODULE_9__.InputEditorComponent],
-  styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
-});
->>>>>>> develop
 
 /***/ }),
 

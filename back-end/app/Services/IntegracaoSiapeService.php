@@ -36,7 +36,6 @@ class IntegracaoSiapeService extends ServiceBase {
         $this->siapeCodUorg = strval(intval($config['codUorg']));
         $this->siapeParmExistPag = $config['parmExistPag'];
         $this->siapeParmTipoVinculo = $config['parmTipoVinculo'];
-        // Inicializando o Soap (API Siape).
         $this->siape = new SoapClient($this->siapeUrl);
     }
 
@@ -56,7 +55,6 @@ class IntegracaoSiapeService extends ServiceBase {
                 );
                 $dadosPessoais = $this->UtilService->object2array($dadosPessoais);
 
-                // Busca dados funcionais
                 $dadosFuncionais = $this->siape->consultaDadosFuncionais(
                     $this->siapeSiglaSistema,
                     $this->siapeNomeSistema,
@@ -284,11 +282,12 @@ class IntegracaoSiapeService extends ServiceBase {
             foreach($cpfsPorUorgsWsdl as $pessoa){
                 $data_modificacao_servidor_siape  = $this->UtilService->asTimestamp($pessoa['dataUltimaTransacao']);
                 $pessoa_is = DB::table('integracao_servidores')->where('cpf', $pessoa['cpf'])->first();
+                $data_modificacao_servidor_is = $pessoa_is ? $this->UtilService->asTimestamp($pessoa_is->data_modificacao) : null;
 
                 if(empty($data_modificacao_servidor_siape) ||
                     empty($pessoa_is) ||
                     empty($pessoa_is->data_modificacao) ||
-                    $data_modificacao_servidor_siape > $this->UtilService->asTimestamp($pessoa_is->data_modificacao)){
+                    $data_modificacao_servidor_siape > $data_modificacao_servidor_is){
 
                     // inicio da leitura
                     $qtd_tentativas= 2;
@@ -300,6 +299,7 @@ class IntegracaoSiapeService extends ServiceBase {
                             if(!empty($query)) array_push($PessoasPetrvs['Pessoas'], $query);
                             break;
                         } catch (Throwable $e) {
+                            $msg = $e->getMessage();
                             $this->siape = new SoapClient($this->siapeUrl);
                             $tentativa++;
                             usleep(10000);

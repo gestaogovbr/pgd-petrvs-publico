@@ -658,6 +658,11 @@ class IntegracaoService extends ServiceBase {
                         }
                 });
 
+                // Ratificar quem foi deletado
+
+                // Ratificar quem não foi deletado
+
+
                 if($this->echo) $this->imprimeNoTerminal("Concluída a fase de reconstrução da tabela integração_servidores.....");
                 $n = IntegracaoServidor::count();
                 $n_emails_funcionais_vazios = count($cpfs_emails_funcionais_vazios);
@@ -680,27 +685,28 @@ class IntegracaoService extends ServiceBase {
 
                 array_push($this->result['servidores']['Observações'], 'Total de servidores importados do SIAPE: ' . $n . ' (apenas ATIVOS).');
 
-                DB::transaction(function () use (&$atualizacoes) {
-                    // Seleciona todos os servidores que sofreram alteração nos seus dados pessoais ou estão com dat
-                        $atualizacoes = DB::select(
-                        "SELECT u.id, isr.cpf AS cpf_servidor, u.nome AS nome_anterior, ".
-                        "isr.nome AS nome_servidor, u.apelido AS apelido_anterior, ".
-                        "isr.nomeguerra AS nome_guerra, u.email AS email_anterior, ".
-                        "isr.emailfuncional, u.matricula AS matricula_anterior, ".
-                        "isr.matriculasiape, u.telefone AS telefone_anterior, isr.telefone, ".
-                        "isr.data_modificacao as data_modificacao, u.data_modificacao as data_modificacao_anterior ".
-                        "FROM integracao_servidores isr LEFT JOIN usuarios u ON (isr.cpf = u.cpf) ".
-                        "WHERE isr.nome != u.nome OR isr.emailfuncional != u.email OR ".
-                        "isr.matriculasiape != u.matricula OR isr.nomeguerra != u.apelido OR ".
-                        "isr.telefone != u.telefone OR ".
-                        "isr.data_modificacao != u.data_modificacao");
+                // Seleciona todos os servidores que sofreram alteração nos seus dados pessoais ou estão com data
 
-                    $sql_update = "UPDATE usuarios SET ".
-                        "nome = :nome, apelido = :nomeguerra, ".
-                        "email = :email, matricula = :matricula, ".
-                        "telefone = :telefone, ".
-                        "data_modificacao = :data_modificacao WHERE id = :id";
+                $atualizacoes = DB::select(
+                    "SELECT u.id, isr.cpf AS cpf_servidor, u.nome AS nome_anterior, ".
+                    "isr.nome AS nome_servidor, u.apelido AS apelido_anterior, ".
+                    "isr.nomeguerra AS nome_guerra, u.email AS email_anterior, ".
+                    "isr.emailfuncional, u.matricula AS matricula_anterior, ".
+                    "isr.matriculasiape, u.telefone AS telefone_anterior, isr.telefone, ".
+                    "isr.data_modificacao as data_modificacao, u.data_modificacao as data_modificacao_anterior ".
+                    "FROM integracao_servidores isr LEFT JOIN usuarios u ON (isr.cpf = u.cpf) ".
+                    "WHERE isr.nome != u.nome OR isr.emailfuncional != u.email OR ".
+                    "isr.matriculasiape != u.matricula OR isr.nomeguerra != u.apelido OR ".
+                    "isr.telefone != u.telefone OR ".
+                    "u.data_modificacao IS NULL or isr.data_modificacao > u.data_modificacao");
 
+                $sql_update = "UPDATE usuarios SET ".
+                    "nome = :nome, apelido = :nomeguerra, ".
+                    "email = :email, matricula = :matricula, ".
+                    "telefone = :telefone, ".
+                    "data_modificacao = :data_modificacao WHERE id = :id";
+
+                DB::transaction(function () use (&$atualizacoes, &$sql_update) {
                     /* Atualiza os dados pessoais de todos os servidores ATIVOS
                     presentes na tabela USUARIOS.
                     *** ESTA ROTINA NÃO DEVE INSERIR NOVOS SERVIDORES *** */
@@ -713,7 +719,8 @@ class IntegracaoService extends ServiceBase {
                                 'matricula'     => $linha->matriculasiape,
                                 'telefone'      => $linha->telefone,
                                 'id'            => $linha->id,
-                                'data_modificacao' => $linha->data_modificacao,
+                                'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao),
+
                             ]);
                             $this->atualizaLogs($this->logged_user_id, 'usuarios', $linha->id, 'EDIT', [
                                 'Rotina' => 'Integração',
@@ -726,7 +733,7 @@ class IntegracaoService extends ServiceBase {
                                     'matricula'     => $linha->matricula_anterior,
                                     'telefone'      => $linha->telefone_anterior,
                                     'id'            => $linha->id,
-                                    'data_modificacao' => $linha->data_modificacao,
+                                    'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao_anterior),
                                 ],
                                 'Valores atuais' => [
                                     'nome'          => $linha->nome_servidor,
@@ -735,7 +742,7 @@ class IntegracaoService extends ServiceBase {
                                     'matricula'     => $linha->matriculasiape,
                                     'telefone'      => $linha->telefone,
                                     'id'            => $linha->id,
-                                    'data_modificacao' => $linha->data_modificacao,
+                                    'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao),
                                 ]
                             ]);
                         }

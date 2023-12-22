@@ -220,143 +220,74 @@ class EntidadeConfComponent extends src_app_modules_base_page_form_base__WEBPACK
     });
   }
   static #_ = this.ɵfac = function EntidadeConfComponent_Factory(t) {
-    return new (t || EntidadeConfComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_18__.Injector));
+    return new (t || EntidadeConfComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_19__.Injector));
   };
-  static #_2 = this.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdefineComponent"]({
+  static #_2 = this.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵdefineComponent"]({
     type: EntidadeConfComponent,
     selectors: [["app-entidade-conf"]],
     viewQuery: function EntidadeConfComponent_Query(rf, ctx) {
       if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵviewQuery"](_c0, 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵviewQuery"](_c1, 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵviewQuery"](_c0, 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵviewQuery"](_c1, 5);
       }
       if (rf & 2) {
         let _t;
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵloadQuery"]()) && (ctx.cargaHoraria = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵloadQuery"]()) && (ctx.notificacoes = _t.first);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵloadQuery"]()) && (ctx.cargaHoraria = _t.first);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵloadQuery"]()) && (ctx.notificacoes = _t.first);
       }
     },
-    features: [_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵInheritDefinitionFeature"]],
-    decls: 20,
-    vars: 15,
-    consts: [[3, "form", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "GERAL", "label", "Geral"], [1, "row"], ["controlName", "tipo_modalidade_id", "labelInfo", "Tipo de modalidade padr\u00E3o utilizada ao criar plano de trabalho.", 3, "size", "dao"], ["label", "Carga Hor\u00E1ria", "icon", "bi bi-hourglass-split", "controlName", "carga_horaria_padrao", "labelInfo", "Carga hor\u00E1ria e forma de contagem (horas por dia, semana ou m\u00EAs) padr\u00E3o utilizada ao criar plano de trabalho.", 3, "size", "unit", "unitChange"], ["cargaHoraria", ""], ["key", "EXPEDIENTE", "label", "Expediente"], [3, "control"], ["expediente", ""], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es", 4, "ngIf"], ["key", "NOMENCLATURA", "label", "Nomenclatura"], ["clss", "row"], ["editable", "", 3, "control", "form", "hasAdd"], ["type", "text", "title", "Nome", "field", "nome", 3, "editable"], ["type", "text", "title", "Singular", "field", "singular", 3, "onChange"], ["type", "text", "title", "Plural", "field", "plural", 3, "onChange"], ["type", "switch", "title", "Feminino", "field", "feminino"], ["type", "options"], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es"], [3, "entity", "entidadeId", "disabled"], ["notificacoes", ""]],
+    features: [_angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵInheritDefinitionFeature"]],
+    decls: 21,
+    vars: 16,
+    consts: [[3, "form", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "GERAL", "label", "Geral"], [1, "row"], ["controlName", "tipo_modalidade_id", "labelInfo", "Tipo de modalidade padr\u00E3o utilizada ao criar plano de trabalho.", 3, "size", "dao"], ["label", "Carga Hor\u00E1ria", "icon", "bi bi-hourglass-split", "controlName", "carga_horaria_padrao", "labelInfo", "Carga hor\u00E1ria e forma de contagem (horas por dia, semana ou m\u00EAs) padr\u00E3o utilizada ao criar plano de trabalho.", 3, "size", "unit", "unitChange"], ["cargaHoraria", ""], ["key", "EXPEDIENTE", "label", "Expediente"], [3, "control"], ["expediente", ""], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es", 4, "ngIf"], ["key", "RELATORIOS", "label", "Relat\u00F3rios", 4, "ngIf"], ["key", "NOMENCLATURA", "label", "Nomenclatura"], ["clss", "row"], ["editable", "", 3, "control", "form", "hasAdd"], ["type", "text", "title", "Nome", "field", "nome", 3, "editable"], ["type", "text", "title", "Singular", "field", "singular", 3, "onChange"], ["type", "text", "title", "Plural", "field", "plural", 3, "onChange"], ["type", "switch", "title", "Feminino", "field", "feminino"], ["type", "options"], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es"], [3, "entity", "entidadeId", "disabled"], ["notificacoes", ""], ["key", "RELATORIOS", "label", "Relat\u00F3rios"], [3, "entity", "entidadeId"], ["relatorios", ""]],
     template: function EntidadeConfComponent_Template(rf, ctx) {
       if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](0, "editable-form", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵlistener"]("submit", function EntidadeConfComponent_Template_editable_form_submit_0_listener() {
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelementStart"](0, "editable-form", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵlistener"]("submit", function EntidadeConfComponent_Template_editable_form_submit_0_listener() {
           return ctx.onSaveData();
         })("cancel", function EntidadeConfComponent_Template_editable_form_cancel_0_listener() {
           return ctx.onCancel();
         });
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](1, "tabs", 1)(2, "tab", 2)(3, "div", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](4, "input-search", 4)(5, "input-workload", 5, 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](7, "tab", 7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](8, "calendar-expediente", 8, 9);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](10, EntidadeConfComponent_tab_10_Template, 3, 3, "tab", 10);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](11, "tab", 11)(12, "div", 12)(13, "grid", 13)(14, "columns");
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](15, "column", 14)(16, "column", 15)(17, "column", 16)(18, "column", 17)(19, "column", 18);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]()()()()()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelementStart"](1, "tabs", 1)(2, "tab", 2)(3, "div", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelement"](4, "input-search", 4)(5, "input-workload", 5, 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelementStart"](7, "tab", 7);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelement"](8, "calendar-expediente", 8, 9);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵtemplate"](10, EntidadeConfComponent_tab_10_Template, 3, 3, "tab", 10);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵtemplate"](11, EntidadeConfComponent_tab_11_Template, 3, 2, "tab", 11);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelementStart"](12, "tab", 12)(13, "div", 13)(14, "grid", 14)(15, "columns");
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelement"](16, "column", 15)(17, "column", 16)(18, "column", 17)(19, "column", 18)(20, "column", 19);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelementEnd"]()()()()()();
       }
       if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("form", ctx.form)("title", ctx.isModal ? "" : ctx.title);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 8)("dao", ctx.tipoModalidadeDao);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 4)("unit", ctx.formaContagemCargaHoraria)("unitChange", ctx.onFormaContagemCargaHorariaChange.bind(ctx));
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("control", ctx.form.controls.expediente);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", ctx.entity);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("control", ctx.form.controls.nomenclatura)("form", ctx.formNomenclatura)("hasAdd", false);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("editable", false);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("onChange", ctx.onSingularChange.bind(ctx));
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("onChange", ctx.onPluralChange.bind(ctx));
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("form", ctx.form)("title", ctx.isModal ? "" : ctx.title);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("size", 8)("dao", ctx.tipoModalidadeDao);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("size", 4)("unit", ctx.formaContagemCargaHoraria)("unitChange", ctx.onFormaContagemCargaHorariaChange.bind(ctx));
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("control", ctx.form.controls.expediente);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("ngIf", ctx.entity);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("ngIf", ctx.entity);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("control", ctx.form.controls.nomenclatura)("form", ctx.formNomenclatura)("hasAdd", false);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("editable", false);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("onChange", ctx.onSingularChange.bind(ctx));
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("onChange", ctx.onPluralChange.bind(ctx));
       }
     },
-    dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_19__.NgIf, _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_9__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_10__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_11__.ColumnComponent, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_12__.InputSearchComponent, _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_13__.TabsComponent, _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_14__.TabComponent, _components_input_input_workload_input_workload_component__WEBPACK_IMPORTED_MODULE_15__.InputWorkloadComponent, _uteis_calendar_expediente_calendar_expediente_component__WEBPACK_IMPORTED_MODULE_16__.CalendarExpedienteComponent, _uteis_notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_17__.NotificacoesConfigComponent],
+    dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_20__.NgIf, _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_9__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_10__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_11__.ColumnComponent, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_12__.InputSearchComponent, _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_13__.TabsComponent, _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_14__.TabComponent, _components_input_input_workload_input_workload_component__WEBPACK_IMPORTED_MODULE_15__.InputWorkloadComponent, _uteis_calendar_expediente_calendar_expediente_component__WEBPACK_IMPORTED_MODULE_16__.CalendarExpedienteComponent, _uteis_notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_17__.NotificacoesConfigComponent, _uteis_relatorios_relatorios_template_relatorios_template_component__WEBPACK_IMPORTED_MODULE_18__.RelatoriosTemplateComponent],
     styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
   });
 }
-<<<<<<< HEAD
-=======
-_class = EntidadeConfComponent;
-_class.ɵfac = function EntidadeConfComponent_Factory(t) {
-  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_19__.Injector));
-};
-_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵdefineComponent"]({
-  type: _class,
-  selectors: [["app-entidade-conf"]],
-  viewQuery: function EntidadeConfComponent_Query(rf, ctx) {
-    if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵviewQuery"](_c0, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵviewQuery"](_c1, 5);
-    }
-    if (rf & 2) {
-      let _t;
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵloadQuery"]()) && (ctx.cargaHoraria = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵloadQuery"]()) && (ctx.notificacoes = _t.first);
-    }
-  },
-  features: [_angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵInheritDefinitionFeature"]],
-  decls: 21,
-  vars: 16,
-  consts: [[3, "form", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "GERAL", "label", "Geral"], [1, "row"], ["controlName", "tipo_modalidade_id", "labelInfo", "Tipo de modalidade padr\u00E3o utilizada ao criar plano de trabalho.", 3, "size", "dao"], ["label", "Carga Hor\u00E1ria", "icon", "bi bi-hourglass-split", "controlName", "carga_horaria_padrao", "labelInfo", "Carga hor\u00E1ria e forma de contagem (horas por dia, semana ou m\u00EAs) padr\u00E3o utilizada ao criar plano de trabalho.", 3, "size", "unit", "unitChange"], ["cargaHoraria", ""], ["key", "EXPEDIENTE", "label", "Expediente"], [3, "control"], ["expediente", ""], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es", 4, "ngIf"], ["key", "RELATORIOS", "label", "Relat\u00F3rios", 4, "ngIf"], ["key", "NOMENCLATURA", "label", "Nomenclatura"], ["clss", "row"], ["editable", "", 3, "control", "form", "hasAdd"], ["type", "text", "title", "Nome", "field", "nome", 3, "editable"], ["type", "text", "title", "Singular", "field", "singular", 3, "onChange"], ["type", "text", "title", "Plural", "field", "plural", 3, "onChange"], ["type", "switch", "title", "Feminino", "field", "feminino"], ["type", "options"], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es"], [3, "entity", "entidadeId", "disabled"], ["notificacoes", ""], ["key", "RELATORIOS", "label", "Relat\u00F3rios"], [3, "entity", "entidadeId"], ["relatorios", ""]],
-  template: function EntidadeConfComponent_Template(rf, ctx) {
-    if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelementStart"](0, "editable-form", 0);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵlistener"]("submit", function EntidadeConfComponent_Template_editable_form_submit_0_listener() {
-        return ctx.onSaveData();
-      })("cancel", function EntidadeConfComponent_Template_editable_form_cancel_0_listener() {
-        return ctx.onCancel();
-      });
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelementStart"](1, "tabs", 1)(2, "tab", 2)(3, "div", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelement"](4, "input-search", 4)(5, "input-workload", 5, 6);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelementStart"](7, "tab", 7);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelement"](8, "calendar-expediente", 8, 9);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵtemplate"](10, EntidadeConfComponent_tab_10_Template, 3, 3, "tab", 10);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵtemplate"](11, EntidadeConfComponent_tab_11_Template, 3, 2, "tab", 11);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelementStart"](12, "tab", 12)(13, "div", 13)(14, "grid", 14)(15, "columns");
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelement"](16, "column", 15)(17, "column", 16)(18, "column", 17)(19, "column", 18)(20, "column", 19);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelementEnd"]()()()()()();
-    }
-    if (rf & 2) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("form", ctx.form)("title", ctx.isModal ? "" : ctx.title);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](4);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("size", 8)("dao", ctx.tipoModalidadeDao);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("size", 4)("unit", ctx.formaContagemCargaHoraria)("unitChange", ctx.onFormaContagemCargaHorariaChange.bind(ctx));
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("control", ctx.form.controls.expediente);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("ngIf", ctx.entity);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("ngIf", ctx.entity);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("control", ctx.form.controls.nomenclatura)("form", ctx.formNomenclatura)("hasAdd", false);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("editable", false);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("onChange", ctx.onSingularChange.bind(ctx));
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵproperty"]("onChange", ctx.onPluralChange.bind(ctx));
-    }
-  },
-  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_20__.NgIf, _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_9__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_10__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_11__.ColumnComponent, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_12__.InputSearchComponent, _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_13__.TabsComponent, _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_14__.TabComponent, _components_input_input_workload_input_workload_component__WEBPACK_IMPORTED_MODULE_15__.InputWorkloadComponent, _uteis_calendar_expediente_calendar_expediente_component__WEBPACK_IMPORTED_MODULE_16__.CalendarExpedienteComponent, _uteis_notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_17__.NotificacoesConfigComponent, _uteis_relatorios_relatorios_template_relatorios_template_component__WEBPACK_IMPORTED_MODULE_18__.RelatoriosTemplateComponent],
-  styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
-});
->>>>>>> develop
 
 /***/ }),
 
