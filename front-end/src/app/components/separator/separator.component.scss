@@ -1,3 +1,10 @@
 .separator-background {
     background-color: var(--bs-body-bg);
 }
+
+@media print {    
+    :host {
+      display: none !important;
+    }
+}
+  

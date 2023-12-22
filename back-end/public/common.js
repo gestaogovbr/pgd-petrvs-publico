@@ -37,10 +37,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
 
 class IntegranteConsolidado extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
-  constructor() {
-    super(...arguments);
+  constructor(data) {
+    super();
     this.id = ""; /* Utilizado somente para garantir o funcionamento do grid */
     this.atribuicoes = [];
+    this.initialization(data);
   }
 }
 ;

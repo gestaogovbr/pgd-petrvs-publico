@@ -1,6 +1,7 @@
 "use strict";
 (self["webpackChunkpetrvs"] = self["webpackChunkpetrvs"] || []).push([[9124],{
 
+<<<<<<< HEAD
 /***/ 96167:
 /*!*********************************************************************!*\
   !*** ./node_modules/primeng/fesm2022/primeng-icons-chevrondown.mjs ***!
@@ -73,6 +74,8 @@ class ChevronDownIcon extends primeng_baseicon__WEBPACK_IMPORTED_MODULE_0__.Base
 
 /***/ }),
 
+=======
+>>>>>>> develop
 /***/ 62560:
 /*!*******************************************************************!*\
   !*** ./node_modules/primeng/fesm2022/primeng-icons-chevronup.mjs ***!

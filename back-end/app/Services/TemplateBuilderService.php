@@ -288,24 +288,26 @@ class Scanner {
         $buffer = $this->getCurrentSppeling();
         return empty($buffer) ? null : new Token(TokenKind::INDEX, $buffer);
     }
+    /*
+    <IDENTIFIER>   ::= [a-zA-Z_](a-zA-Z0-9_)*
+    <LITERAL>      ::= true|false|[0-9]+(\.[0-9]*)?|".*"|'.*'
+    */
 
-    //<IDENTIFIER>   ::= [a-zA-Z_](a-zA-Z0-9_)*
-    //<LITERAL>      ::= true|false|[0-9]+(\.[0-9]*)?|".*"|'.*'
-
-
-    // public function scanToken() {
-    //     $result = null;
-    //     if(!$this->eof) {
-    //         $result = $this->tryTakeToken(TokenKind::TAG, ["{{", "}}"]) ??
-    //             $this->tryTakeToken(TokenKind::BRACKET, ["[", "]"]) ??
-    //             $this->tryTakeToken(TokenKind::IF, ["if:"]) ??
-    //             $this->tryTakeToken(TokenKind::END_IF, ["end-if:"]) ??
-    //             $this->tryTakeToken(TokenKind::IF, ["for:"]) ??
-    //             $this->tryTakeToken(TokenKind::END_IF, ["end-for:"]) ??
-    //             $this->tryTakeToken(TokenKind::OPERATOR, ["==", ">=", "<=", "!=", "<>", "=", ">", "<"]) ??
-    //     }
-    //     return new Token(TokenKind::TEXT, $this->getCurrentSppeling());
-    // }
+    /*
+    public function scanToken() {
+        $result = null;
+        if(!$this->eof) {
+            $result = $this->tryTakeToken(TokenKind::TAG, ["{{", "}}"]) ??
+                $this->tryTakeToken(TokenKind::BRACKET, ["[", "]"]) ??
+                $this->tryTakeToken(TokenKind::IF, ["if:"]) ??
+                $this->tryTakeToken(TokenKind::END_IF, ["end-if:"]) ??
+                $this->tryTakeToken(TokenKind::IF, ["for:"]) ??
+                $this->tryTakeToken(TokenKind::END_IF, ["end-for:"]) ??
+                $this->tryTakeToken(TokenKind::OPERATOR, ["==", ">=", "<=", "!=", "<>", "=", ">", "<"]) ??
+        }
+        return new Token(TokenKind::TEXT, $this->getCurrentSppeling());
+    }
+    */
 }
 #endregion
 

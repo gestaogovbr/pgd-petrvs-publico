@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <editable-form [form]="form!" [disabled]="formDisabled" [noButtons]="isTermos ? 'true' : undefined" initialFocus="plano_entrega_id" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
     <tabs #tabs display right [hidden]="isTermos ? 'true' : undefined" [title]="!isModal ? title : ''" [select]="onTabSelect.bind(this)">
         <tab key="DADOS" label="Dados">
@@ -59,3 +60,66 @@
         </tab>
     </tabs>
 </editable-form>
+=======
+<editable-form [form]="form!" [disabled]="formDisabled" [noButtons]="isTermos ? 'true' : undefined" initialFocus="plano_entrega_id" (submit)="onSaveData()" (cancel)="onCancel()"><!--</editable-form>(submit)="onSaveData()" (cancel)="onCancel()">-->
+    <tabs #tabs display right [hidden]="isTermos ? 'true' : undefined" [title]="!isModal ? title : ''" [select]="onTabSelect.bind(this)">
+        <tab key="DADOS" label="Dados">
+            <div class="row">
+                <div class="col-md-10">
+                    <div class="row">
+                        <!-- (RI_PTR_1) No formulário de inclusão/edição de um plano de trabalho, o input-search de unidade, programa e usuario devem ficar desabilitados nas edições e habilitado apenas nas inclusões; -->
+                        <input-search #usuario [size]="4" required controlName="usuario_id" [dao]="usuarioDao" [join]="['afastamentos','lotacao','unidades','participacoes_programas']" (select)="onUsuarioSelect($event)"></input-search>
+                        <input-search #unidade [size]="4" required [disabled]="action == 'new' ? undefined : 'true'" controlName="unidade_id" [dao]="unidadeDao" (select)="onUnidadeSelect($event)"></input-search>
+                        <input-search #programa [size]="4" [label]="lex.translate('Programa de gestão')" icon="bi bi-file-bar-graph" required [disabled]="action == 'new' ? undefined : 'true'" controlName="programa_id" [join]="joinPrograma" [dao]="programaDao" (select)="onProgramaSelect($event)"></input-search>
+                    </div>
+                    <div class="row">
+                        <input-datetime [size]="3" label="Início" icon="bi bi-calendar-date" controlName="data_inicio" [control]="form!.controls.data_inicio" (change)="onDataInicioChange($event)" labelInfo="'Início da Vigência do '+ lex.translate('Plano de trabalho')" required></input-datetime>
+                        <input-datetime [size]="3" label="Final" icon="bi bi-calendar-date" controlName="data_fim" [control]="form!.controls.data_fim" (change)="onDataFimChange($event)" labelInfo="'Final da Vigência do ' +lex.translate('Plano de trabalho')" required></input-datetime>
+                        <input-search #tipoModalidade [size]="6" controlName="tipo_modalidade_id" [dao]="tipoModalidadeDao" required></input-search>
+                    </div>
+                    <ng-container *ngIf="tipoModalidade!.selectedEntity?.plano_trabalho_calcula_horas">
+                        <div class="row">
+                            <input-workload [size]="4" [unit]="formaContagemCargaHoraria" label="Carga Horária" icon="bi bi-hourglass-split" controlName="carga_horaria" [control]="form!.controls.carga_horaria" [unitChange]="onFormaContagemCargaHorariaChange.bind(this)" (change)="onCargaHorariaChenge($event)" labelInfo="Carga horária do usuário (Máx.: diária 24 horas; semana 24*5=240 horas; mensal 24*20=480 horas)" required></input-workload>
+                            <input-timer onlyHours disabled [size]="4" label="Horas Totais" icon="bi bi-clock" controlName="tempo_total" [control]="form!.controls.tempo_total" labelInfo="Horas úteis de trabalho no período de vigência considerando a carga horária, feriados e fins de semana"></input-timer>
+                            <input-timer onlyHours disabled [size]="4" label="Horas Parciais" icon="bi bi-clock" controlName="tempo_proporcional" [control]="form!.controls.tempo_proporcional" labelInfo="Total de horas menos os afastamentos."></input-timer>
+                        </div>
+                        <separator *ngIf="horasTotais" title="Cálculos das horas totais" collapse>
+                            <calendar-efemerides [efemerides]="horasTotais" [partial]="false"></calendar-efemerides>
+                        </separator>
+                        <separator *ngIf="horasParciais" title="Cálculos das horas parciais" collapse>
+                            <calendar-efemerides [efemerides]="horasParciais"></calendar-efemerides>
+                        </separator>
+                    </ng-container>
+                </div>
+                <div class="col-md-2">
+                    <input-multiselect label="Critérios de avaliação" noBox [maxListHeight]="100" controlName="criterios_avaliacao" [size]="12" [addItemHandle]="addItemHandleCriteriosAvaliacao.bind(this)" required>
+                        <input-text [size]="12" controlName="criterio_avaliacao" [attr.maxlength]=250></input-text>
+                    </input-multiselect>
+                </div>
+            </div>
+            <separator [title]="lex.translate('Entregas') + lex.translate(' do plano de trabalho')">
+                <top-alert *ngIf="!form!.controls.programa_id.value?.length || !form!.controls.unidade_id.value?.length" type="warning" [message]="'Antes de incluir ' + lex.translate('entrega') + ' neste ' + lex.translate('Plano de Trabalho') + ', é necessário selecionar ' + lex.translate('a Unidade') + ' e ' + lex.translate('o Programa') + '!'"></top-alert>
+                <div *ngIf="form!.controls.programa_id.value?.length && form!.controls.unidade_id.value?.length">
+                    <plano-trabalho-list-entrega noPersist [disabled]="formDisabled" [entity]="entity"></plano-trabalho-list-entrega>
+                </div>
+            </separator>
+        </tab>
+        <tab *ngIf="checkFilled(['usuario_id'])" key="MENSAGENS" [label]="lex.translate('Texto Complementar')">
+            <separator [title]="'Texto complementar da '+ lex.translate('unidade')">
+                <input-switch controlName="editar_texto_complementar_unidade" [size]="12" scale="small" labelPosition="right" [label]="'Editar texto complementar '+ lex.translate('na unidade')"></input-switch>
+                <input-editor controlName="unidade_texto_complementar" [disabled]="form!.controls.editar_texto_complementar_unidade.value ? undefined : 'true'" [dataset]="planoDataset"></input-editor>
+            </separator>
+            <separator title="Texto complementar do usuario">
+                <input-switch controlName="editar_texto_complementar_usuario" [size]="12" scale="small" labelPosition="right" [label]="'Editar texto complementar '+ lex.translate('do usuário')"></input-switch>
+                <input-editor controlName="usuario_texto_complementar" [disabled]="form!.controls.editar_texto_complementar_usuario.value ? undefined : 'true'" [dataset]="planoDataset"></input-editor>
+            </separator>
+        </tab>
+        <tab *ngIf="checkFilled(['usuario_id', 'programa_id', 'tipo_modalidade_id'])" key="TERMO" [label]="lex.translate('Termo')">
+            <!--top-alert *ngIf="!isTermos" type="warning" message="Para [INSERIR] ou [ASSINAR] termos escolha opção Termos de adesão na tela de listagem, ou utilize o Sei"></top-alert/-->
+            <div clss="row">
+                <documentos #documentos [entity]="entity" [disabled]="formDisabled" noPersist [cdRef]="cdRef" [needSign]="planoTrabalhoService.needSign" [extraTags]="planoTrabalhoService.extraTags" especie="TCR" [editingId]="formDisabled ? undefined : editingId" [datasource]="datasource" [template]="programa?.selectedEntity?.template_tcr"></documentos>
+            </div>
+        </tab>
+    </tabs>
+</editable-form>
+>>>>>>> develop

@@ -2726,7 +2726,7 @@ function PlanoEntregaListEntregaComponent_ng_template_27_separator_0_div_1_Templ
   if (rf & 2) {
     const pObjetivo_r73 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵtextInterpolate"](pObjetivo_r73.objetivo.nome);
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵtextInterpolate"](pObjetivo_r73.objetivo == null ? null : pObjetivo_r73.objetivo.nome);
   }
 }
 function PlanoEntregaListEntregaComponent_ng_template_27_separator_0_Template(rf, ctx) {

@@ -457,6 +457,7 @@ class AngleRightIcon extends primeng_baseicon__WEBPACK_IMPORTED_MODULE_0__.BaseI
 
 /***/ }),
 
+<<<<<<< HEAD
 /***/ 96167:
 /*!*********************************************************************!*\
   !*** ./node_modules/primeng/fesm2022/primeng-icons-chevrondown.mjs ***!
@@ -601,6 +602,8 @@ class ChevronRightIcon extends primeng_baseicon__WEBPACK_IMPORTED_MODULE_0__.Bas
 
 /***/ }),
 
+=======
+>>>>>>> develop
 /***/ 65617:
 /*!*************************************************************!*\
   !*** ./node_modules/primeng/fesm2022/primeng-panelmenu.mjs ***!

@@ -100,8 +100,8 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
       tarefas: {default: []},
       iniciado: {default: false},
       concluido: {default: false},
-      documento_requisicao: {default: new Documento()},
-      documento_entrega: {default: new Documento()}
+      documento_requisicao: {default: undefined},
+      documento_entrega: {default: undefined}
     }, this.cdRef, this.validate);
     this.formChecklist = this.fh.FormBuilder({
       id: {default: ""},
