@@ -38,6 +38,7 @@ class IntegracaoService extends ServiceBase {
     public $storeLocalFiles = "";       // eventual alteração deve ser feita no arquivo .env
     public $localUnidades = "";         // eventual alteração deve ser feita no arquivo .env
     public $localServidores = "";       // eventual alteração deve ser feita no arquivo .env
+    private $servidores_registrados_is = [];
 
     function __construct($config = null) {
         parent::__construct();
@@ -627,6 +628,7 @@ class IntegracaoService extends ServiceBase {
                                     'dataexercicionoorgao' => $self->UtilService->valueOrDefault($ativo['dataexercicionoorgao'], null),
                                     'funcoes' => $ativo['funcoes'],
                                     'matricula' => $self->UtilService->valueOrDefault($ativo['matriculasiape'], null),
+                                    'deleted_at' => null,
                                 ];
 
                                 /* Caso não existe na memória nem na tabela usuários OU
@@ -643,12 +645,18 @@ class IntegracaoService extends ServiceBase {
                                     $registro = new IntegracaoServidor($servidor);
                                     $registro->save();
 
+                                    // Variável utilizada para fazer batimento no final (softdelete)
+                                    array_push($this->servidores_registrados_is, $registro);
+
                                     // Adiciona na memória para verificar próximos e evitar duplicidade.
                                     array_push($emails_integracao_na_memoria, $email);
 
                                     // Contabiliza servidores com e-mail funcional vazio no cadastro SIAPE.
                                     str_contains($servidor['emailfuncional'], '@petrvs.gov.br') ?
                                         array_push($cpfs_emails_funcionais_vazios, [$servidor['cpf'],$servidor['emailfuncional']]) : true;
+
+                                    // Variável utilizada para fazer batimento no final (softdelete)
+                                    array_push($this->servidores_registrados_is, $registro);
 
                                 } else { // Caso e-mail esteja duplicado, segue registro para rotina de avisos no final.
                                         array_push($emails_funcionais_duplicados, [$servidor['cpf'],$servidor['emailfuncional']]);
@@ -659,6 +667,7 @@ class IntegracaoService extends ServiceBase {
                 });
 
                 // Ratificar quem foi deletado
+                $n_servidores = count($this->servidores_registrados_is);
 
                 // Ratificar quem não foi deletado
 
@@ -747,6 +756,9 @@ class IntegracaoService extends ServiceBase {
                             ]);
                         }
                     };
+
+                    // $db_result_servidor_desativado = $this->inativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NOW() WHERE data_inativacao IS NULL AND u.codigo IS NOT NULL and u.codigo != '' AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo AND iu.deleted_at IS NOT NULL)");
+                    // $db_result_servidor_ativado = $this->ativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NULL WHERE data_inativacao IS NOT NULL AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo AND iu.deleted_at IS NULL);");
 
                     if($this->echo) $this->imprimeNoTerminal('Concluída a fase de atualização de servidores que apresentaram alteração nos seus dados pessoais!.....');
                     $n = count($atualizacoes);

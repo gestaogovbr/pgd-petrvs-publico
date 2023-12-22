@@ -531,6 +531,7 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
     this.botoes.forEach(botao => {
       if (this.botaoAtendeCondicoes(botao, row)) result.push(botao);
     });
+    result.push(this.BOTAO_RELATORIO);
     return result;
   }
   dynamicButtons(row) {
@@ -590,7 +591,7 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
         */
         break;
     }
-    if (!result.length) result.push(this.BOTAO_INFORMACOES, this.BOTAO_RELATORIO);
+    if (!result.length) result.push(this.BOTAO_INFORMACOES);
     return result;
   }
   filterClear(filter) {

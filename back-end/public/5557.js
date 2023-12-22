@@ -100,7 +100,7 @@ class AtividadeListBase extends src_app_modules_base_page_list_base__WEBPACK_IMP
     this.atividadeService = injector.get(_atividade_service__WEBPACK_IMPORTED_MODULE_10__.AtividadeService);
     this.calendar = injector.get(src_app_services_calendar_service__WEBPACK_IMPORTED_MODULE_5__.CalendarService);
     this.comentario = injector.get(src_app_services_comentario_service__WEBPACK_IMPORTED_MODULE_8__.ComentarioService);
-    this.join = ["tipo_atividade", "plano_trabalho_entrega:id,descricao", "demandante", "pausas", "usuario", "unidade", "comentarios.usuario:id,nome,apelido", "tarefas.tipo_tarefa", "tarefas.comentarios.usuario:id,nome,apelido", "reacoes.usuario:id,nome,apelido"];
+    this.join = ["tipo_atividade", "plano_trabalho_entrega.plano_entrega_entrega:id,descricao", "demandante", "pausas", "usuario", "unidade", "comentarios.usuario:id,nome,apelido", "tarefas.tipo_tarefa", "tarefas.comentarios.usuario:id,nome,apelido", "reacoes.usuario:id,nome,apelido"];
     /* Inicializações */
     this.extra = {
       planos_trabalho: {},
@@ -1044,7 +1044,7 @@ class AtividadeListGridComponent extends _atividade_list_base__WEBPACK_IMPORTED_
       field: "unidade.sigla",
       label: "Unidade"
     }, {
-      field: "plano_trabalho_entrega.descricao",
+      field: "plano_trabalho_entrega.plano_entrega_entrega.descricao",
       label: "Entrega"
     }];
     this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
@@ -1069,7 +1069,7 @@ class AtividadeListGridComponent extends _atividade_list_base__WEBPACK_IMPORTED_
       label: "Unidade"
     });
     if (agrupar_entrega) groupByOptions.push({
-      field: "plano_trabalho_entrega.descricao",
+      field: "plano_trabalho_entrega.plano_entrega_entrega.descricao",
       label: "Entrega"
     });
     this.groupBy = groupByOptions;

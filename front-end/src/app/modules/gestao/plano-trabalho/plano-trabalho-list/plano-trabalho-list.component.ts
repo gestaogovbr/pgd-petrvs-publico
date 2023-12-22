@@ -127,6 +127,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     this.botoes.forEach(botao => {
       if (this.botaoAtendeCondicoes(botao, row)) result.push(botao);
     });
+    result.push(this.BOTAO_RELATORIO);
     return result;
   }
 
@@ -189,7 +190,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
         */
         break;
     }
-    if (!result.length) result.push(this.BOTAO_INFORMACOES, this.BOTAO_RELATORIO);
+    if (!result.length) result.push(this.BOTAO_INFORMACOES);   
     return result;
   }
 
