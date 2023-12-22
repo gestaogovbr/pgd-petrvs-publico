@@ -36,7 +36,7 @@ class AtividadeService extends ServiceBase
 
     public $joinable = [
         "tipo_atividade",
-        "plano_trabalho_entrega",
+        "plano_trabalho_entrega.plano_entrega_entrega",
         "tarefas.tipo_tarefa",
         "demandante:id,nome,apelido,email,url_foto",
         "pausas",
