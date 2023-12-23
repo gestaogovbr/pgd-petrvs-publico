@@ -291,9 +291,10 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
     return result;
   }
   saveData(form) {
-    var _this2 = this;
-    return new Promise( /*#__PURE__*/function () {
-      var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (resolve, reject) {
+    var _this2 = this,
+      _ref;
+    return new Promise(function (_x, _x2) {
+      return (_ref = _ref || (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (resolve, reject) {
         _this2.notificacoes.saveData();
         _this2.usuariosIntegrantes.grid.confirm();
         let unidade = _this2.util.fill(new src_app_models_unidade_model__WEBPACK_IMPORTED_MODULE_10__.Unidade(), _this2.entity);
@@ -307,8 +308,9 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
         let integrantesConsolidados = _this2.usuariosIntegrantes?.items || [];
         if (!_this2.form.controls.usar_expediente_unidade) unidade.expediente = null;
         try {
-          yield _this2.dao?.save(unidade, ["gestor.gestor:id", "gestor_substituto.gestor_substituto:id", "gestor_delegado.gestor_delegado:id"]).then( /*#__PURE__*/function () {
-            var _ref2 = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (unidadeBanco) {
+          var _ref2;
+          yield _this2.dao?.save(unidade, ["gestor.gestor:id", "gestor_substituto.gestor_substituto:id", "gestor_delegado.gestor_delegado:id"]).then(function (_x3) {
+            return (_ref2 = _ref2 || (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (unidadeBanco) {
               //this.entity = unidadeBanco;
               if (salvarGestor) yield _this2.integranteDao.saveIntegrante([Object.assign(new src_app_models_unidade_integrante_model__WEBPACK_IMPORTED_MODULE_14__.IntegranteConsolidado(), {
                 'unidade_id': unidadeBanco.id,
@@ -324,20 +326,14 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
               if (apagarGestorSubstituto) yield _this2.integranteAtribuicaoDao.delete(_this2.entity?.gestor_substituto.gestor_substituto.id);
               integrantesConsolidados.forEach(v => v.unidade_id = unidadeBanco.id);
               if (integrantesConsolidados.length) yield _this2.integranteDao.saveIntegrante(integrantesConsolidados);
-            });
-            return function (_x3) {
-              return _ref2.apply(this, arguments);
-            };
-          }());
+            })).apply(this, arguments);
+          });
           resolve(true);
         } catch (error) {
           if (_this2.editableForm) _this2.editableForm.error = error;
         }
-      });
-      return function (_x, _x2) {
-        return _ref.apply(this, arguments);
-      };
-    }());
+      })).apply(this, arguments);
+    });
   }
   onInformalChange(event) {
     this.informal = this.form.controls.informal.value;
@@ -1118,21 +1114,19 @@ class UnidadeListGridComponent extends src_app_modules_base_page_list_base__WEBP
     this.addOption(this.OPTION_EXCLUIR, "MOD_UND_EXCL");
   }
   dynamicOptions(row) {
-    var _this = this;
+    var _this = this,
+      _ref;
     let result = [];
     let unidade = row;
     // Testa se o usuário logado possui permissão de inativar a unidade do grid
     if (this.auth.hasPermissionTo("MOD_UND_INATV")) result.push({
       icon: unidade.data_inativacao ? "bi bi-check-circle" : "bi bi-x-circle",
       label: unidade.data_inativacao ? 'Reativar' : 'Inativar',
-      onClick: function () {
-        var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (unidade) {
+      onClick: function onClick(_x) {
+        return (_ref = _ref || (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (unidade) {
           return yield _this.inativo(unidade, !unidade.data_inativacao);
-        });
-        return function onClick(_x) {
-          return _ref.apply(this, arguments);
-        };
-      }()
+        })).apply(this, arguments);
+      }
     });
     // Testa se o usuário logado possui permissão para gerenciar integrantes da unidade do grid
     if (this.auth.hasPermissionTo("MOD_UND_INTG")) result.push({

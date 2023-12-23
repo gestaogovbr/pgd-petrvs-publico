@@ -2653,7 +2653,7 @@ function AtividadeListKanbanComponent_kanban_28_Template(rf, ctx) {
 }
 class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTED_MODULE_1__.AtividadeListBase {
   constructor(injector) {
-    var _this;
+    var _this, _ref, _ref2;
     super(injector);
     _this = this;
     this.injector = injector;
@@ -2687,14 +2687,11 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
       icon: "bi bi-plus-circle",
       color: "btn-outline-success",
       label: "Incluir",
-      onClick: function () {
-        var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      onClick: function onClick() {
+        return (_ref = _ref || (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
           return yield _this.add();
-        });
-        return function onClick() {
-          return _ref.apply(this, arguments);
-        };
-      }()
+        })).apply(this, arguments);
+      }
     }];
     this.outrasButtons = [{
       icon: "bi bi-plus-circle",
@@ -2712,14 +2709,11 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
       icon: "bi bi-plus-circle",
       color: "btn-outline-primary",
       hint: "Incluir",
-      onClick: function () {
-        var _ref2 = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      onClick: function onClick() {
+        return (_ref2 = _ref2 || (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
           return yield _this.add();
-        });
-        return function onClick() {
-          return _ref2.apply(this, arguments);
-        };
-      }()
+        })).apply(this, arguments);
+      }
     }];
     this.filterWhere = filter => {
       let result = this.fixedFilter || [];
@@ -3474,7 +3468,7 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
     return this._atividade;
   }
   constructor(injector) {
-    var _this;
+    var _this, _ref;
     super(injector);
     _this = this;
     this.injector = injector;
@@ -3487,8 +3481,8 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
       icon: "bi bi-plus-circle",
       hint: "Incluir comentário"
     };
-    this.editTarefa = /*#__PURE__*/function () {
-      var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (row) {
+    this.editTarefa = function (_x) {
+      return (_ref = _ref || (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (row) {
         _this.go.navigate({
           route: ['gestao', 'atividade', 'tarefa']
         }, {
@@ -3526,11 +3520,8 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
           }
         });
         return undefined;
-      });
-      return function (_x) {
-        return _ref.apply(this, arguments);
-      };
-    }();
+      })).apply(this, arguments);
+    };
     this.dao = injector.get(src_app_dao_atividade_tarefa_dao_service__WEBPACK_IMPORTED_MODULE_2__.AtividadeTarefaDaoService);
     this.atividadeService = injector.get(_atividade_service__WEBPACK_IMPORTED_MODULE_6__.AtividadeService);
     this.allPages = injector.get(src_app_listeners_listener_all_pages_service__WEBPACK_IMPORTED_MODULE_3__.ListenerAllPagesService);

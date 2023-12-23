@@ -154,9 +154,10 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
     this.loadData(this.entity, form);
   }
   saveData(form) {
-    var _this2 = this;
-    return new Promise( /*#__PURE__*/function () {
-      var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (resolve, reject) {
+    var _this2 = this,
+      _ref;
+    return new Promise(function (_x, _x2) {
+      return (_ref = _ref || (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (resolve, reject) {
         _this2.unidadesIntegrantes.grid.confirm();
         let usuario = _this2.util.fill(new src_app_models_usuario_model__WEBPACK_IMPORTED_MODULE_6__.Usuario(), _this2.entity);
         usuario = _this2.util.fillForm(usuario, _this2.form.value);
@@ -173,10 +174,11 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
           reject(false);
         } else {
           try {
+            var _ref2;
             yield _this2.dao?.save(Object.assign(usuario, {
               'lotacao_id': _this2.formLotacao?.controls.unidade_lotacao_id.value
-            })).then( /*#__PURE__*/function () {
-              var _ref2 = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (usuarioBanco) {
+            })).then(function (_x3) {
+              return (_ref2 = _ref2 || (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (usuarioBanco) {
                 if (lotacaoAlterada) {
                   // garantindo a coerência entre o campo de lotação do usuário e o vínculo de lotado dos integrantes
                   if (indiceVinculoLotacao != -1) integrantesConsolidados[indiceVinculoLotacao].atribuicoes = integrantesConsolidados[indiceVinculoLotacao].atribuicoes.filter(x => x != "LOTADO");
@@ -195,21 +197,15 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
                 });
                 integrantesConsolidados.forEach(ic => ic.usuario_id = usuarioBanco.id);
                 yield _this2.integranteDao.saveIntegrante(integrantesConsolidados);
-              });
-              return function (_x3) {
-                return _ref2.apply(this, arguments);
-              };
-            }());
+              })).apply(this, arguments);
+            });
             resolve(true);
           } catch (error) {
             if (_this2.editableForm) _this2.editableForm.error = error;
           }
         }
-      });
-      return function (_x, _x2) {
-        return _ref.apply(this, arguments);
-      };
-    }());
+      })).apply(this, arguments);
+    });
   }
 }
 _class = UsuarioFormComponent;

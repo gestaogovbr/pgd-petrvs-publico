@@ -2980,6 +2980,7 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
   add() {
     var _this = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      var _ref;
       let entrega = new src_app_models_plano_entrega_entrega_model__WEBPACK_IMPORTED_MODULE_4__.PlanoEntregaEntrega({
         _status: "ADD",
         id: _this.dao.generateUuid(),
@@ -2995,8 +2996,8 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
           unidade_id: _this.unidadeId,
           entrega: entrega
         },
-        modalClose: function () {
-          var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (modalResult) {
+        modalClose: function modalClose(_x) {
+          return (_ref = _ref || (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (modalResult) {
             if (modalResult) {
               try {
                 _this.isNoPersist ? _this.items.push(modalResult) : _this.items.push(yield _this.dao.save(modalResult, _this.join));
@@ -3006,11 +3007,8 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
               }
             }
             ;
-          });
-          return function modalClose(_x) {
-            return _ref.apply(this, arguments);
-          };
-        }()
+          })).apply(this, arguments);
+        }
       });
     })();
   }
@@ -3037,6 +3035,7 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
       if (_this2.execucao) {
         _this2.grid.edit(entrega);
       } else {
+        var _ref2;
         entrega._status = entrega._status == "ADD" ? "ADD" : "EDIT";
         let index = _this2.items.indexOf(entrega);
         _this2.go.navigate({
@@ -3049,18 +3048,15 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
             unidade_id: _this2.unidadeId,
             entrega: entrega
           },
-          modalClose: function () {
-            var _ref2 = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (modalResult) {
+          modalClose: function modalClose(_x2) {
+            return (_ref2 = _ref2 || (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (modalResult) {
               if (modalResult) {
                 if (!_this2.isNoPersist) yield _this2.dao?.save(modalResult);
                 _this2.items[index] = modalResult;
               }
               ;
-            });
-            return function modalClose(_x2) {
-              return _ref2.apply(this, arguments);
-            };
-          }()
+            })).apply(this, arguments);
+          }
         });
       }
     })();

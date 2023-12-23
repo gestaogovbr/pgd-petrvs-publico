@@ -401,11 +401,11 @@ public saveGraduacao(form: FormGroup, row: any){
   form?.markAllAsTouched();
     if (form?.valid) {
       let values = form.value;
-      console.log('SAVE FORM e ROW', row)
+      console.log('SAVE FORM e ROW VALUES', values)
       row.pretensao = values.pretensao;
       row.area_conhecimento = values.area_conhecimento;
       row.titulo = values.titulo;
-      row.curso = values.curso_id;
+      row.curso_id = values.curso_id;
       console.log('SAVE FORM e ROW', row)
       return row;
     }
@@ -414,10 +414,12 @@ public saveGraduacao(form: FormGroup, row: any){
 
 public async loadGraduacao(form: FormGroup, row: CurriculumGraduacao){
   console.log('loadGraduacao',row)
-  this.formGraduacao!.controls.pretensao.setValue(row.pretensao);
+  //let cursoID=row.curso_id?.id;
+  //const graduacao = await this.cursoDao?.getById(cursoID!, ['areaConhecimento','tipoCurso']);
+   this.formGraduacao!.controls.pretensao.setValue(row.pretensao);
   this.formGraduacao!.controls.area_conhecimento.setValue(row.area_conhecimento);
   this.formGraduacao!.controls.titulo.setValue(row.curso_id?.titulo);
-  this.formGraduacao!.controls.curso_id.setValue(row.curso_id?.id);
+  this.formGraduacao!.controls.curso_id.setValue(row.curso_id);
 }
 
 public async removeGraduacao(row: any){ 

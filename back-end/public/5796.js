@@ -3052,6 +3052,7 @@ const _c13 = function () {
 };
 class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_9__.PageFormBase {
   constructor(injector) {
+    var _ref;
     super(injector, src_app_models_plano_trabalho_model__WEBPACK_IMPORTED_MODULE_8__.PlanoTrabalho, src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_3__.PlanoTrabalhoDaoService);
     this.injector = injector;
     this.entregas = [];
@@ -3075,17 +3076,14 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
       }
       return result;
     };
-    this.formValidation = /*#__PURE__*/function () {
-      var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (form) {
+    this.formValidation = function (_x) {
+      return (_ref = _ref || (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (form) {
         let result = "";
         return result;
         // TODO:
         // Validar se as entregas pertencem ao plano de entregas da unidade
-      });
-      return function (_x) {
-        return _ref.apply(this, arguments);
-      };
-    }();
+      })).apply(this, arguments);
+    };
     this.titleEdit = entity => {
       return "Editando " + this.lex.translate("Plano de Trabalho") + ': ' + (entity?.usuario?.apelido || "");
     };
@@ -3212,8 +3210,9 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
     var _this = this;
     this.form.controls.usuario_texto_complementar.setValue(selected.entity?.texto_complementar_plano || "");
     if (!this.form?.controls.unidade_id.value) {
-      selected.entity.unidades.every( /*#__PURE__*/function () {
-        var _ref2 = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (unidade) {
+      var _ref2;
+      selected.entity.unidades.every(function (_x2) {
+        return (_ref2 = _ref2 || (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (unidade) {
           if (selected.entity.lotacao.unidade_id == unidade.id) {
             if (!_this.form?.controls.programa_id.value) {
               let niveis = unidade.path.split("/").reverse();
@@ -3235,11 +3234,8 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
             }
             return false;
           } else return true;
-        });
-        return function (_x2) {
-          return _ref2.apply(this, arguments);
-        };
-      }());
+        })).apply(this, arguments);
+      });
     }
     this.calculaTempos();
     this.cdRef.detectChanges();
