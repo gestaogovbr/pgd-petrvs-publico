@@ -18,7 +18,7 @@ export class CidadeDaoService extends DaoBaseService<Cidade> {
 
   constructor(protected injector: Injector) { 
     super("Cidade", injector);
-    this.inputSearchConfig.searchFields = ["uf", "nome"];
+    this.inputSearchConfig.searchFields = ["nome"];
   }  
 }
 
