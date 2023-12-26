@@ -70,6 +70,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     this.atividadeService = injector.get<AtividadeService>(AtividadeService);
     this.calendar = injector.get<CalendarService>(CalendarService);
     this.comentario = injector.get<ComentarioService>(ComentarioService);
+    this.title = this.lex.translate('Inclusão de Atividade');
     this.form = this.fh.FormBuilder({
       numero: {default: 0},
       descricao: {default: ""},
