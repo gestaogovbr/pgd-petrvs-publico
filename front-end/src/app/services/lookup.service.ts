@@ -1,4 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
+import { IIndexable } from '../models/base.model';
 
 export type LookupItem = {
   key: any,
@@ -9,6 +10,26 @@ export type LookupItem = {
   icon?: string,
   data?: any,
 };
+
+export interface LookupTreeNode<T = any> {
+  label?: string;
+  data?: T;
+  icon?: string;
+  expandedIcon?: string;
+  collapsedIcon?: string;
+  children?: LookupTreeNode<T>[];
+  leaf?: boolean;
+  expanded?: boolean;
+  type?: string;
+  parent?: LookupTreeNode<T>;
+  partialSelected?: boolean;
+  style?: any;
+  styleClass?: string;
+  draggable?: boolean;
+  droppable?: boolean;
+  selectable?: boolean;
+  key?: string;
+}
 
 export type LookupCurriculum = {
   unidades: LookupItem[],
@@ -21,9 +42,12 @@ export type LookupCurriculum = {
 @Injectable({
   providedIn: 'root'
 })
-export class LookupService {
+export class LookupService implements IIndexable {
 
-  constructor(public injector: Injector) { }
+  constructor(public injector: Injector) {
+    // Verificar uma forma de ir no servidor buscar todos os lookups
+    // Carregar os lookups diretamente na instancia do LookupService (IIndexable)
+  }
 
   public SIMNAO: LookupItem[] = [
     { key: 1, value: "Sim" },
@@ -179,7 +203,8 @@ export class LookupService {
     { key: 'TCR', value: "TCR", icon: "bi bi-file-medical-fill", color: "success" },
     //{ key: 'TCR_CANCELAMENTO', value: "Cancelamento TCR", icon: "bi bi-file-earmark-x", color: "danger" },
     { key: 'OUTRO', value: "Outro", icon: "bi bi-question-circle", color: "danger" },
-    { key: 'NOTIFICACAO', value: "Notificação", icon: "bi bi-bell", color: "info" }
+    { key: 'NOTIFICACAO', value: "Notificação", icon: "bi bi-bell", color: "info" },
+    { key: 'RELATORIO', value: "Relatório", icon: "bi bi-file", color: "secondary" }
   ];
 
   public UNIDADE_INTEGRANTE_TIPO: LookupItem[] = [
@@ -651,13 +676,13 @@ export class LookupService {
     { key: "MALAIO", value: 'Malaio' },
     { key: "MALAIOB", value: 'Malaio/Bahasa' },
     { key: "MARATA", value: 'Marata' },
-    { key: "PERSA", value: 'Persa' },
-    { key: "PUNJABI", value: 'Punjabi' },
+    { key: "PERSA ", value: 'Persa' },
+    { key: "PUNJABI ", value: 'Punjabi' },
     { key: "ROMENO", value: 'Romeno' },
     { key: "RUSSO", value: 'Russo' },
     { key: "SUAILI", value: 'Suaíli' },
     { key: "TAILANDES", value: 'Tailandes' },
-    { key: "TAMIL", value: 'Tâmil' },
+    { key: "TAMIL ", value: 'Tâmil' },
     { key: "TELUGU", value: 'Telugu' },
     { key: "TURCO", value: 'Turco' },
     { key: "UCRANIANO", value: 'Ucraniano' },
@@ -750,6 +775,35 @@ export class LookupService {
     { key: 'B', value: 'Ativos e aposentados' },
     { key: 'C', value: 'Ativos, aposentados e pensionistas' },
   ];
+
+  public LOGICOS: LookupItem[] = [
+    { 'key': true, 'value': 'Verdadeiro' },
+    { 'key': false, 'value': 'Falso' }
+  ];
+
+  public TIPO_OPERADOR: LookupItem[] = [
+    { 'key': 'number', 'value': 'Número'},
+    { 'key': 'string', 'value': 'Texto'},
+    { 'key': 'boolean', 'value': 'Lógico'},
+    { 'key': 'variable', 'value': 'Variável'},
+    { 'key': 'list', 'value': 'Lista'}
+  ]
+
+  public OPERADOR: LookupItem[] = [
+    { 'key': '==', 'value': 'É igual'},
+    { 'key': '<', 'value': 'É menor'},
+    { 'key': '<=', 'value': 'É menor ou igual'},
+    { 'key': '>', 'value': 'É maior'},
+    { 'key': '>=', 'value': 'É maior ou igual'},
+    { 'key': '<>', 'value': 'É diferente'}
+  ];
+
+  public LISTA_TIPO: LookupItem[] = [
+    { 'key': 'indice', 'value': 'Lista utilizando índice'},
+    { 'key': 'variavel', 'value': 'Lista utilizando variável'}
+  ];
+
+
 
   public getLookup(itens: LookupItem[], key: any) {
     return itens.find(x => x.key == key);

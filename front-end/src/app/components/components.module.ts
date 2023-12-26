@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { NgxMaskDirective, NgxMaskPipe, IConfig, provideNgxMask, provideEnvironmentNgxMask } from 'ngx-mask';
+import { TreeModule } from 'primeng/tree';
+import { TreeSelectModule } from 'primeng/treeselect';
 import { GridComponent } from './grid/grid.component';
 import { ColumnComponent } from './grid/column/column.component';
 import { ColumnHeaderComponent } from './grid/column-header/column-header.component';
@@ -155,7 +157,9 @@ const maskConfigFunction: () => Partial<IConfig> = () => {
     NgxMaskDirective, 
     NgxMaskPipe,
     EditorModule,
-    NgScrollbarModule
+    NgScrollbarModule,
+    TreeModule,
+    TreeSelectModule
   ],
   exports: [
     BarChartComponent,

@@ -42,7 +42,7 @@ class DynamicMethods {
  * @method proxyRows($rows)
  * @method proxyGetAllIdsExtra($result, $data)
  * @method proxyQuery($query, $data)
- * @method proxyExtra($rows, $data)
+ * @method proxyExtra($rows, $data, $count)
  * @method validateStore($dataOrEntity, $unidade, $action)
  * @method proxyStore($dataOrEntity, $unidade, $action)
  * @method extraStore($entity, $unidade, $action)
@@ -614,7 +614,7 @@ class ServiceBase extends DynamicMethods
         }
         $rows = $query->get();
         $rows = method_exists($this, 'proxyRows') ? $this->proxyRows($rows) : $rows;
-        $extra = method_exists($this, 'proxyExtra') ? $this->proxyExtra($rows, $data) : null;
+        $extra = method_exists($this, 'proxyExtra') ? $this->proxyExtra($rows, $data, $count) : null;
         return [
             'count' => $count,
             'rows' => $rows,
@@ -921,4 +921,4 @@ class ServiceBase extends DynamicMethods
         return $model;
     }
 }
-
+//$query->toSql();    $query->getBindings();

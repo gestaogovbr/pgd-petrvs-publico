@@ -14,6 +14,8 @@ export class IntegranteConsolidado extends Base {
     public unidade_sigla?: string;
     public unidade_codigo?: string;
     public atribuicoes: IntegranteAtribuicao[] = [];
+
+    public constructor(data?: any) { super(); this.initialization(data); }
 };
 
 export class UnidadeIntegrante extends Base {

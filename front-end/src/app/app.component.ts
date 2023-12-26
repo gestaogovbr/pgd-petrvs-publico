@@ -140,6 +140,7 @@ export class AppComponent {
       EIXOS_TEMATICOS: { name: this.lex.translate("Eixos Temáticos"), permition: 'MOD_EXTM', route: ['cadastros', 'eixo-tematico'], icon: this.entity.getIcon('EixoTematico') },
       ENTREGAS: { name: this.lex.translate("Modelos de Entregas"), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: this.entity.getIcon('Entrega') },
       FERIADOS: { name: this.lex.translate("Feriados"), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: this.entity.getIcon('Feriado') },
+      HABILITACOES_PROGRAMA: { name: this.lex.translate("Habilitações"), permition: 'MOD_PRGT_PART', route: ["gestao", "programa", "participantes"], icon: this.entity.getIcon('Programa') },
       MATERIAIS_SERVICOS: { name: this.lex.translate("Materiais e Serviços"), permition: '', route: ['cadastros', 'material-servico'], icon: this.entity.getIcon('MaterialServico') },
       TEMPLATES: { name: this.lex.translate("Templates"), permition: 'MOD_TEMP', route: ['cadastros', 'templates'], icon: this.entity.getIcon('Template'), params: { modo: "listagem" } },
       TIPOS_TAREFAS: { name: this.lex.translate("Tipos de Tarefas"), permition: 'MOD_TIPO_TRF', route: ['cadastros', 'tipo-tarefa'], icon: this.entity.getIcon('TipoTarefa') },
@@ -217,6 +218,7 @@ export class AppComponent {
       id: "navbarDropdownGestaoPlanejamento",
       menu: [
         this.menuSchema.CADEIAS_VALORES,
+        this.menuSchema.HABILITACOES_PROGRAMA,
         this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
         this.menuSchema.PLANOS_ENTREGAS,
         this.menuSchema.PLANOS_TRABALHOS,
@@ -412,14 +414,22 @@ export class AppComponent {
     }];
 
     let gestaoPGD = this.auth.hasPermissionTo("CTXT_GEST");
+    let execucaoPGD = this.auth.hasPermissionTo("CTXT_EXEC");
     this.menuContexto = [
-      { key: gestaoPGD ? "GESTAO" : "EXECUCAO", permition: gestaoPGD ? "CTXT_GEST" : "CTXT_EXEC", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: gestaoPGD ? this.menuGestao : this.menuExecucao},
+      { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.menuGestao},
+      { key: "EXECUCAO", permition: "CTXT_EXEC", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.menuExecucao},
       { key: "ADMINISTRADOR", permition: "CTXT_ADM", icon: "bi bi-emoji-sunglasses", name: this.lex.translate("Administrador"), menu: this.menuAdministrador },
       { key: "DEV", permition: "CTXT_DEV", icon: "bi bi-braces", name: this.lex.translate("Desenvolvedor"), menu: this.menuDev },
       { key: "PONTO", permition: "CTXT_PNT", icon: "bi bi-stopwatch", name: this.lex.translate("Ponto Eletrônico"), menu: this.menuPonto },
       { key: "PROJETO", permition: "CTXT_PROJ", icon: "bi bi-graph-up-arrow", name: this.lex.translate("Projetos"), menu: this.menuProjeto },
       { key: "RAIOX", permition: "CTXT_RX", icon: "bi bi-camera", name: this.lex.translate("Raio X"), menu: this.menuRaioX }
     ]
+    
+    if(gestaoPGD){
+      this.menuContexto = this.menuContexto.filter(item => item.key !== "EXECUCAO");
+    } else if(execucaoPGD && !gestaoPGD){
+      this.menuContexto = this.menuContexto.filter(item => item.key !== "GESTAO");
+    }
     
   }
 

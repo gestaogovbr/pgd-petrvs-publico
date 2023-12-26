@@ -288,10 +288,10 @@ class Scanner {
         $buffer = $this->getCurrentSppeling();
         return empty($buffer) ? null : new Token(TokenKind::INDEX, $buffer);
     }
-
+/*
     <IDENTIFIER>   ::= [a-zA-Z_](a-zA-Z0-9_)*
     <LITERAL>      ::= true|false|[0-9]+(\.[0-9]*)?|".*"|'.*'
-    
+  */  
 
     public function scanToken() {
         $result = null;
