@@ -8,7 +8,7 @@ import { LexicalService } from 'src/app/services/lexical.service';
 
 const routes: Routes = [
   { path: '', component: AfastamentoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Afastamentos" } },
-  { path: 'new', component: AfastamentoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Afastamento", modal: true } },
+  { path: 'new', component: AfastamentoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "", modal: true } },
   { path: ':id/edit', component: AfastamentoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de Afastamento", modal: true } },
   { path: ':id/consult', component: AfastamentoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Afastamento", modal: true } }
 ];
