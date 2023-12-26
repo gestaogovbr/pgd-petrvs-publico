@@ -49,6 +49,7 @@ export class LexicalService {
     "execução": {single: "execução", plural: "execuções", female: false},
     "feriado": {single: "feriado", plural: "feriados", female: false},
     "gerenciamento": {single: "gerenciamento", plural: "gerenciamentos", female: false},
+    "inclusão de atividade": {single: "inclusão de atividade", plural: "inclusões de atividades", female: false},
     "justificativa": {single: "justificativa", plural: "justificativas", female: true},
     "lotação": {single: "lotação", plural: "lotações", female: true},
     "material e serviço": {single: "material e serviço", plural: "materiais e serviços", female: false},
