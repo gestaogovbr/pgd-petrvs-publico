@@ -361,11 +361,3 @@ Route::middleware(['auth:sanctum'])->prefix('Reacao')->group(function () { defau
 
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntregaProgresso')->group(function () { defaultRoutes(PlanoEntregaEntregaProgressoController::class); });
 
-/* Login Panel */
-Route::post('/panel-login', function (Request $request) {
-    $return=false;
-    if($request->user==config('petrvs')['panel']['username'] && $request->password==config('petrvs')['panel']['password']) {
-        $return=true;
-    }
-    return response()->json($return);
-});
