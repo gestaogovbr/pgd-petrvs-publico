@@ -16,6 +16,7 @@ export class TipoMotivoAfastamentoFormComponent extends PageFormBase<TipoMotivoA
 
   constructor(public injector: Injector) {
     super(injector, TipoMotivoAfastamento, TipoMotivoAfastamentoDaoService);
+    this.title = this.lex.translate("Motivos de Afastamento")
     this.form = this.fh.FormBuilder({
       codigo: {default: null},
       nome: {default: ""}, 
