@@ -28,7 +28,7 @@ class Curriculum extends ModelBase
 
     public $fillable_changes = ['graduacoes'];
 
-    //public $fillable_relation = [];
+    //public $fillable_relation = ['graduacoes'];
 
     //Has Many
     public function graduacoes() { return $this->hasMany(CurriculumGraduacao::class); }

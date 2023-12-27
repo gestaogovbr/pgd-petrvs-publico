@@ -27,11 +27,11 @@ class CurriculumService extends ServiceBase {
         if ($action == ServiceBase::ACTION_INSERT){
             
   
-        foreach($data["graduacoes"] as $graduacao) {
-           
+            foreach($data["graduacoes"] as $graduacao) {
+            
+            }
+          
         }
         return $data;
-  
-        }
     }
 }
