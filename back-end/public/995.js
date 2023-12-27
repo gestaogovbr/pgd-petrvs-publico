@@ -813,9 +813,9 @@ function PanelMenuSub_ng_template_2_li_1_Template(rf, ctx) {
     const index_r3 = ctx_r53.index;
     const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassMap"](ctx_r5.getItemProp(processedItem_r2, "styleClass"));
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassProp"]("p-hidden", processedItem_r2.visible === false)("p-focus", ctx_r5.isItemFocused(processedItem_r2) && !ctx_r5.isItemDisabled(processedItem_r2));
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngClass", ctx_r5.getItemClass(processedItem_r2))("ngStyle", ctx_r5.getItemProp(processedItem_r2, "style"))("pTooltip", ctx_r5.getItemProp(processedItem_r2, "tooltip"))("tooltipOptions", ctx_r5.getItemProp(processedItem_r2, "tooltipOptions"));
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵattribute"]("id", ctx_r5.getItemId(processedItem_r2))("aria-label", ctx_r5.getItemProp(processedItem_r2, "label"))("aria-expanded", ctx_r5.isItemGroup(processedItem_r2) ? ctx_r5.isItemActive(processedItem_r2) : undefined)("aria-level", ctx_r5.level + 1)("aria-setsize", ctx_r5.getAriaSetSize())("aria-posinset", ctx_r5.getAriaPosInset(index_r3))("data-p-disabled", ctx_r5.isItemDisabled(processedItem_r2));
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassProp"]("p-hidden", processedItem_r2.visible === false)("p-focus", ctx_r5.isItemFocused(processedItem_r2));
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("id", ctx_r5.getItemId(processedItem_r2))("ngStyle", ctx_r5.getItemProp(processedItem_r2, "style"))("pTooltip", ctx_r5.getItemProp(processedItem_r2, "tooltip"))("tooltipOptions", ctx_r5.getItemProp(processedItem_r2, "tooltipOptions"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵattribute"]("aria-label", ctx_r5.getItemProp(processedItem_r2, "label"))("aria-expanded", ctx_r5.isItemGroup(processedItem_r2) ? ctx_r5.isItemActive(processedItem_r2) : undefined)("aria-level", ctx_r5.level + 1)("aria-setsize", ctx_r5.getAriaSetSize())("aria-posinset", ctx_r5.getAriaPosInset(index_r3));
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", !ctx_r5.getItemProp(processedItem_r2, "routerLink"));
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
@@ -829,7 +829,7 @@ function PanelMenuSub_ng_template_2_li_1_Template(rf, ctx) {
 function PanelMenuSub_ng_template_2_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](0, PanelMenuSub_ng_template_2_li_0_Template, 1, 0, "li", 3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, PanelMenuSub_ng_template_2_li_1_Template, 6, 21, "li", 4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, PanelMenuSub_ng_template_2_li_1_Template, 6, 19, "li", 4);
   }
   if (rf & 2) {
     const processedItem_r2 = ctx.$implicit;
@@ -1126,8 +1126,8 @@ function PanelMenu_ng_container_2_div_1_div_5_Template(rf, ctx) {
     const item_r2 = ctx_r47.$implicit;
     const i_r5 = ctx_r47.index;
     const ctx_r9 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngClass", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](13, _c6, ctx_r9.isItemActive(item_r2)))("@rootItem", ctx_r9.getAnimation(item_r2));
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵattribute"]("id", ctx_r9.getContentId(item_r2, i_r5))("aria-labelledby", ctx_r9.getHeaderId(item_r2, i_r5))("data-pc-section", "toggleablecontent");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngClass", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](13, _c6, ctx_r9.isItemActive(item_r2)))("@rootItem", ctx_r9.getAnimation(item_r2))("id", ctx_r9.getContentId(item_r2, i_r5));
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵattribute"]("aria-labelledby", ctx_r9.getHeaderId(item_r2, i_r5))("data-pc-section", "toggleablecontent");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵattribute"]("data-pc-section", "menucontent");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
@@ -1176,8 +1176,8 @@ function PanelMenu_ng_container_2_div_1_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵattribute"]("data-pc-section", "panel");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵclassMap"](ctx_r6.getItemProp(item_r2, "styleClass"));
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngClass", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction2"](21, _c7, ctx_r6.isItemActive(item_r2), ctx_r6.isItemDisabled(item_r2)))("ngStyle", ctx_r6.getItemProp(item_r2, "style"))("pTooltip", ctx_r6.getItemProp(item_r2, "tooltip"))("tabindex", 0)("tooltipOptions", ctx_r6.getItemProp(item_r2, "tooltipOptions"));
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵattribute"]("id", ctx_r6.getHeaderId(item_r2, i_r5))("aria-expanded", ctx_r6.isItemActive(item_r2))("aria-label", ctx_r6.getItemProp(item_r2, "label"))("aria-controls", ctx_r6.getContentId(item_r2, i_r5))("aria-disabled", ctx_r6.isItemDisabled(item_r2))("data-p-highlight", ctx_r6.isItemActive(item_r2))("data-p-disabled", ctx_r6.isItemDisabled(item_r2))("data-pc-section", "header");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngClass", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction2"](21, _c7, ctx_r6.isItemActive(item_r2), ctx_r6.isItemDisabled(item_r2)))("ngStyle", ctx_r6.getItemProp(item_r2, "style"))("pTooltip", ctx_r6.getItemProp(item_r2, "tooltip"))("id", ctx_r6.getHeaderId(item_r2, i_r5))("tabindex", 0)("tooltipOptions", ctx_r6.getItemProp(item_r2, "tooltipOptions"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵattribute"]("aria-expanded", ctx_r6.isItemActive(item_r2))("aria-label", ctx_r6.getItemProp(item_r2, "label"))("aria-controls", ctx_r6.getContentId(item_r2, i_r5))("aria-disabled", ctx_r6.isItemDisabled(item_r2))("data-p-highlight", ctx_r6.isItemActive(item_r2))("data-p-disabled", ctx_r6.isItemDisabled(item_r2))("data-pc-section", "header");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", !ctx_r6.getItemProp(item_r2, "routerLink"));
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
@@ -1227,12 +1227,6 @@ class PanelMenuSub {
   getItemKey(processedItem) {
     return this.getItemId(processedItem);
   }
-  getItemClass(processedItem) {
-    return {
-      'p-menuitem': true,
-      'p-disabled': this.isItemDisabled(processedItem)
-    };
-  }
   getItemProp(processedItem, name, params) {
     return processedItem && processedItem.item ? primeng_utils__WEBPACK_IMPORTED_MODULE_1__.ObjectUtils.getItemValue(processedItem.item[name], params) : undefined;
   }
@@ -1279,16 +1273,14 @@ class PanelMenuSub {
     return index - this.items.slice(0, index).filter(processedItem => this.isItemVisible(processedItem) && this.getItemProp(processedItem, 'separator')).length + 1;
   }
   onItemClick(event, processedItem) {
-    if (!this.isItemDisabled(processedItem)) {
-      this.getItemProp(processedItem, 'command', {
-        originalEvent: event,
-        item: processedItem.item
-      });
-      this.itemToggle.emit({
-        processedItem,
-        expanded: !this.isItemActive(processedItem)
-      });
-    }
+    this.getItemProp(processedItem, 'command', {
+      originalEvent: event,
+      item: processedItem.item
+    });
+    this.itemToggle.emit({
+      processedItem,
+      expanded: !this.isItemActive(processedItem)
+    });
   }
   onItemToggle(event) {
     this.itemToggle.emit(event);
@@ -1328,7 +1320,7 @@ class PanelMenuSub {
     },
     decls: 3,
     vars: 8,
-    consts: [["role", "tree", 3, "ngClass", "tabindex", "focusin", "focusout", "keydown"], ["list", ""], ["ngFor", "", 3, "ngForOf"], ["class", "p-menuitem-separator", "role", "separator", 4, "ngIf"], ["role", "treeitem", 3, "ngClass", "class", "p-hidden", "p-focus", "ngStyle", "pTooltip", "tooltipOptions", 4, "ngIf"], ["role", "separator", 1, "p-menuitem-separator"], ["role", "treeitem", 3, "ngClass", "ngStyle", "pTooltip", "tooltipOptions"], [1, "p-menuitem-content", 3, "click"], ["class", "p-menuitem-link", 3, "ngClass", "target", 4, "ngIf"], ["class", "p-menuitem-link", 3, "routerLink", "queryParams", "routerLinkActive", "routerLinkActiveOptions", "ngClass", "target", "fragment", "queryParamsHandling", "preserveFragment", "skipLocationChange", "replaceUrl", "state", 4, "ngIf"], [1, "p-toggleable-content"], [3, "id", "panelId", "items", "transitionOptions", "focusedItemId", "activeItemPath", "level", "parentExpanded", "itemToggle", 4, "ngIf"], [1, "p-menuitem-link", 3, "ngClass", "target"], [4, "ngIf"], ["class", "p-menuitem-icon", 3, "ngClass", "ngStyle", 4, "ngIf"], ["class", "p-menuitem-text", 4, "ngIf", "ngIfElse"], ["htmlLabel", ""], ["class", "p-menuitem-badge", 3, "ngClass", 4, "ngIf"], [4, "ngTemplateOutlet"], [3, "styleClass", "ngStyle", 4, "ngIf"], [3, "styleClass", "ngStyle"], [1, "p-menuitem-icon", 3, "ngClass", "ngStyle"], [1, "p-menuitem-text"], [1, "p-menuitem-text", 3, "innerHTML"], [1, "p-menuitem-badge", 3, "ngClass"], [1, "p-menuitem-link", 3, "routerLink", "queryParams", "routerLinkActive", "routerLinkActiveOptions", "ngClass", "target", "fragment", "queryParamsHandling", "preserveFragment", "skipLocationChange", "replaceUrl", "state"], ["htmlRouteLabel", ""], [3, "id", "panelId", "items", "transitionOptions", "focusedItemId", "activeItemPath", "level", "parentExpanded", "itemToggle"]],
+    consts: [["role", "tree", 3, "ngClass", "tabindex", "focusin", "focusout", "keydown"], ["list", ""], ["ngFor", "", 3, "ngForOf"], ["class", "p-menuitem-separator", "role", "separator", 4, "ngIf"], ["class", "p-menuitem", "role", "treeitem", 3, "id", "class", "p-hidden", "p-focus", "ngStyle", "pTooltip", "tooltipOptions", 4, "ngIf"], ["role", "separator", 1, "p-menuitem-separator"], ["role", "treeitem", 1, "p-menuitem", 3, "id", "ngStyle", "pTooltip", "tooltipOptions"], [1, "p-menuitem-content", 3, "click"], ["class", "p-menuitem-link", 3, "ngClass", "target", 4, "ngIf"], ["class", "p-menuitem-link", 3, "routerLink", "queryParams", "routerLinkActive", "routerLinkActiveOptions", "ngClass", "target", "fragment", "queryParamsHandling", "preserveFragment", "skipLocationChange", "replaceUrl", "state", 4, "ngIf"], [1, "p-toggleable-content"], [3, "id", "panelId", "items", "transitionOptions", "focusedItemId", "activeItemPath", "level", "parentExpanded", "itemToggle", 4, "ngIf"], [1, "p-menuitem-link", 3, "ngClass", "target"], [4, "ngIf"], ["class", "p-menuitem-icon", 3, "ngClass", "ngStyle", 4, "ngIf"], ["class", "p-menuitem-text", 4, "ngIf", "ngIfElse"], ["htmlLabel", ""], ["class", "p-menuitem-badge", 3, "ngClass", 4, "ngIf"], [4, "ngTemplateOutlet"], [3, "styleClass", "ngStyle", 4, "ngIf"], [3, "styleClass", "ngStyle"], [1, "p-menuitem-icon", 3, "ngClass", "ngStyle"], [1, "p-menuitem-text"], [1, "p-menuitem-text", 3, "innerHTML"], [1, "p-menuitem-badge", 3, "ngClass"], [1, "p-menuitem-link", 3, "routerLink", "queryParams", "routerLinkActive", "routerLinkActiveOptions", "ngClass", "target", "fragment", "queryParamsHandling", "preserveFragment", "skipLocationChange", "replaceUrl", "state"], ["htmlRouteLabel", ""], [3, "id", "panelId", "items", "transitionOptions", "focusedItemId", "activeItemPath", "level", "parentExpanded", "itemToggle"]],
     template: function PanelMenuSub_Template(rf, ctx) {
       if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "ul", 0, 1);
@@ -1384,9 +1376,9 @@ class PanelMenuSub {
                 <li *ngIf="processedItem.separator" class="p-menuitem-separator" role="separator"></li>
                 <li
                     *ngIf="!processedItem.separator && isItemVisible(processedItem)"
-                    [ngClass]="getItemClass(processedItem)"
+                    class="p-menuitem"
                     role="treeitem"
-                    [attr.id]="getItemId(processedItem)"
+                    [id]="getItemId(processedItem)"
                     [attr.aria-label]="getItemProp(processedItem, 'label')"
                     [attr.aria-expanded]="isItemGroup(processedItem) ? isItemActive(processedItem) : undefined"
                     [attr.aria-level]="level + 1"
@@ -1394,10 +1386,9 @@ class PanelMenuSub {
                     [attr.aria-posinset]="getAriaPosInset(index)"
                     [class]="getItemProp(processedItem, 'styleClass')"
                     [class.p-hidden]="processedItem.visible === false"
-                    [class.p-focus]="isItemFocused(processedItem) && !isItemDisabled(processedItem)"
+                    [class.p-focus]="isItemFocused(processedItem)"
                     [ngStyle]="getItemProp(processedItem, 'style')"
                     [pTooltip]="getItemProp(processedItem, 'tooltip')"
-                    [attr.data-p-disabled]="isItemDisabled(processedItem)"
                     [tooltipOptions]="getItemProp(processedItem, 'tooltipOptions')"
                 >
                     <div class="p-menuitem-content" (click)="onItemClick($event, processedItem)">
@@ -2251,7 +2242,7 @@ class PanelMenu {
     },
     decls: 3,
     vars: 5,
-    consts: [[3, "ngStyle", "ngClass"], ["container", ""], [4, "ngFor", "ngForOf"], ["class", "p-panelmenu-panel", 3, "ngClass", "ngStyle", 4, "ngIf"], [1, "p-panelmenu-panel", 3, "ngClass", "ngStyle"], ["role", "button", 3, "ngClass", "ngStyle", "pTooltip", "tabindex", "tooltipOptions", "click", "keydown"], [1, "p-panelmenu-header-content"], ["class", "p-panelmenu-header-action", 3, "target", 4, "ngIf"], ["class", "p-panelmenu-header-action", 3, "routerLink", "queryParams", "routerLinkActive", "routerLinkActiveOptions", "target", "fragment", "queryParamsHandling", "preserveFragment", "skipLocationChange", "replaceUrl", "state", 4, "ngIf"], ["class", "p-toggleable-content", "role", "region", 3, "ngClass", 4, "ngIf"], [1, "p-panelmenu-header-action", 3, "target"], [4, "ngIf"], ["class", "p-menuitem-icon", 3, "ngClass", "ngStyle", 4, "ngIf"], ["class", "p-menuitem-text", 4, "ngIf", "ngIfElse"], ["htmlLabel", ""], ["class", "p-menuitem-badge", 3, "ngClass", 4, "ngIf"], [4, "ngTemplateOutlet"], [3, "styleClass", 4, "ngIf"], [3, "styleClass"], [1, "p-menuitem-icon", 3, "ngClass", "ngStyle"], [1, "p-menuitem-text"], [1, "p-menuitem-text", 3, "innerHTML"], [1, "p-menuitem-badge", 3, "ngClass"], [1, "p-panelmenu-header-action", 3, "routerLink", "queryParams", "routerLinkActive", "routerLinkActiveOptions", "target", "fragment", "queryParamsHandling", "preserveFragment", "skipLocationChange", "replaceUrl", "state"], ["htmlRouteLabel", ""], ["role", "region", 1, "p-toggleable-content", 3, "ngClass"], [1, "p-panelmenu-content"], [3, "panelId", "items", "transitionOptions", "root", "activeItem", "tabindex", "parentExpanded", "headerFocus"]],
+    consts: [[3, "ngStyle", "ngClass"], ["container", ""], [4, "ngFor", "ngForOf"], ["class", "p-panelmenu-panel", 3, "ngClass", "ngStyle", 4, "ngIf"], [1, "p-panelmenu-panel", 3, "ngClass", "ngStyle"], ["role", "button", 3, "ngClass", "ngStyle", "pTooltip", "id", "tabindex", "tooltipOptions", "click", "keydown"], [1, "p-panelmenu-header-content"], ["class", "p-panelmenu-header-action", 3, "target", 4, "ngIf"], ["class", "p-panelmenu-header-action", 3, "routerLink", "queryParams", "routerLinkActive", "routerLinkActiveOptions", "target", "fragment", "queryParamsHandling", "preserveFragment", "skipLocationChange", "replaceUrl", "state", 4, "ngIf"], ["class", "p-toggleable-content", "role", "region", 3, "ngClass", "id", 4, "ngIf"], [1, "p-panelmenu-header-action", 3, "target"], [4, "ngIf"], ["class", "p-menuitem-icon", 3, "ngClass", "ngStyle", 4, "ngIf"], ["class", "p-menuitem-text", 4, "ngIf", "ngIfElse"], ["htmlLabel", ""], ["class", "p-menuitem-badge", 3, "ngClass", 4, "ngIf"], [4, "ngTemplateOutlet"], [3, "styleClass", 4, "ngIf"], [3, "styleClass"], [1, "p-menuitem-icon", 3, "ngClass", "ngStyle"], [1, "p-menuitem-text"], [1, "p-menuitem-text", 3, "innerHTML"], [1, "p-menuitem-badge", 3, "ngClass"], [1, "p-panelmenu-header-action", 3, "routerLink", "queryParams", "routerLinkActive", "routerLinkActiveOptions", "target", "fragment", "queryParamsHandling", "preserveFragment", "skipLocationChange", "replaceUrl", "state"], ["htmlRouteLabel", ""], ["role", "region", 1, "p-toggleable-content", 3, "ngClass", "id"], [1, "p-panelmenu-content"], [3, "panelId", "items", "transitionOptions", "root", "activeItem", "tabindex", "parentExpanded", "headerFocus"]],
     template: function PanelMenu_Template(rf, ctx) {
       if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0, 1);
@@ -2294,7 +2285,7 @@ class PanelMenu {
                         [class]="getItemProp(item, 'styleClass')"
                         [ngStyle]="getItemProp(item, 'style')"
                         [pTooltip]="getItemProp(item, 'tooltip')"
-                        [attr.id]="getHeaderId(item, i)"
+                        [id]="getHeaderId(item, i)"
                         [tabindex]="0"
                         role="button"
                         [tooltipOptions]="getItemProp(item, 'tooltipOptions')"
@@ -2368,7 +2359,7 @@ class PanelMenu {
                         [@rootItem]="getAnimation(item)"
                         (@rootItem.done)="onToggleDone()"
                         role="region"
-                        [attr.id]="getContentId(item, i)"
+                        [id]="getContentId(item, i)"
                         [attr.aria-labelledby]="getHeaderId(item, i)"
                         [attr.data-pc-section]="'toggleablecontent'"
                     >
@@ -2478,10 +2469,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Tooltip: () => (/* binding */ Tooltip),
 /* harmony export */   TooltipModule: () => (/* binding */ TooltipModule)
 /* harmony export */ });
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/common */ 89650);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/common */ 89650);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ 51197);
-/* harmony import */ var primeng_dom__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! primeng/dom */ 5163);
-/* harmony import */ var primeng_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! primeng/utils */ 13432);
+/* harmony import */ var primeng_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! primeng/dom */ 5163);
+/* harmony import */ var primeng_utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! primeng/utils */ 13432);
 /* harmony import */ var primeng_api__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! primeng/api */ 55397);
 
 
@@ -2614,8 +2605,7 @@ class Tooltip {
     positionLeft: null,
     life: null,
     autoHide: true,
-    hideOnEscape: true,
-    id: (0,primeng_utils__WEBPACK_IMPORTED_MODULE_0__.UniqueComponentId)() + '_tooltip'
+    hideOnEscape: true
   };
   _disabled;
   container;
@@ -2641,7 +2631,7 @@ class Tooltip {
     this.viewContainer = viewContainer;
   }
   ngAfterViewInit() {
-    if ((0,_angular_common__WEBPACK_IMPORTED_MODULE_1__.isPlatformBrowser)(this.platformId)) {
+    if ((0,_angular_common__WEBPACK_IMPORTED_MODULE_0__.isPlatformBrowser)(this.platformId)) {
       this.zone.runOutsideAngular(() => {
         if (this.getOption('tooltipEvent') === 'hover') {
           this.mouseEnterListener = this.onMouseEnter.bind(this);
@@ -2748,11 +2738,6 @@ class Tooltip {
         autoHide: simpleChange.autoHide.currentValue
       });
     }
-    if (simpleChange.id) {
-      this.setOption({
-        id: simpleChange.id.currentValue
-      });
-    }
     if (simpleChange.tooltipOptions) {
       this._tooltipOptions = {
         ...this._tooltipOptions,
@@ -2783,7 +2768,7 @@ class Tooltip {
   }
   onMouseLeave(e) {
     if (!this.isAutoHide()) {
-      const valid = primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.hasClass(e.target, 'p-tooltip') || primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.hasClass(e.target, 'p-tooltip-arrow') || primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.hasClass(e.target, 'p-tooltip-text') || primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.hasClass(e.relatedTarget, 'p-tooltip');
+      const valid = primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.hasClass(e.target, 'p-tooltip') || primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.hasClass(e.target, 'p-tooltip-arrow') || primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.hasClass(e.target, 'p-tooltip-text') || primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.hasClass(e.relatedTarget, 'p-tooltip') || primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.hasClass(e.relatedTarget, 'p-tooltip-text') || primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.hasClass(e.relatedTarget, 'p-tooltip-arrow');
       !valid && this.deactivate();
     } else {
       this.deactivate();
@@ -2834,8 +2819,6 @@ class Tooltip {
       this.remove();
     }
     this.container = document.createElement('div');
-    this.container.setAttribute('id', this.getOption('id'));
-    this.container.setAttribute('role', 'tooltip');
     let tooltipArrow = document.createElement('div');
     tooltipArrow.className = 'p-tooltip-arrow';
     this.container.appendChild(tooltipArrow);
@@ -2846,15 +2829,12 @@ class Tooltip {
       this.container.style.position = this.getOption('positionStyle');
     }
     this.container.appendChild(this.tooltipText);
-    if (this.getOption('appendTo') === 'body') document.body.appendChild(this.container);else if (this.getOption('appendTo') === 'target') primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.appendChild(this.container, this.el.nativeElement);else primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.appendChild(this.container, this.getOption('appendTo'));
+    if (this.getOption('appendTo') === 'body') document.body.appendChild(this.container);else if (this.getOption('appendTo') === 'target') primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.appendChild(this.container, this.el.nativeElement);else primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.appendChild(this.container, this.getOption('appendTo'));
     this.container.style.display = 'inline-block';
     if (this.fitContent) {
       this.container.style.width = 'fit-content';
     }
-    if (this.isAutoHide()) {
-      this.container.style.pointerEvents = 'none';
-    } else {
-      this.container.style.pointerEvents = 'unset';
+    if (!this.isAutoHide()) {
       this.bindContainerMouseleaveListener();
     }
   }
@@ -2878,14 +2858,14 @@ class Tooltip {
     }
     this.create();
     this.align();
-    primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.fadeIn(this.container, 250);
-    if (this.getOption('tooltipZIndex') === 'auto') primeng_utils__WEBPACK_IMPORTED_MODULE_0__.ZIndexUtils.set('tooltip', this.container, this.config.zIndex.tooltip);else this.container.style.zIndex = this.getOption('tooltipZIndex');
+    primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.fadeIn(this.container, 250);
+    if (this.getOption('tooltipZIndex') === 'auto') primeng_utils__WEBPACK_IMPORTED_MODULE_2__.ZIndexUtils.set('tooltip', this.container, this.config.zIndex.tooltip);else this.container.style.zIndex = this.getOption('tooltipZIndex');
     this.bindDocumentResizeListener();
     this.bindScrollListener();
   }
   hide() {
     if (this.getOption('tooltipZIndex') === 'auto') {
-      primeng_utils__WEBPACK_IMPORTED_MODULE_0__.ZIndexUtils.clear(this.container);
+      primeng_utils__WEBPACK_IMPORTED_MODULE_2__.ZIndexUtils.clear(this.container);
     }
     this.remove();
   }
@@ -2958,8 +2938,8 @@ class Tooltip {
   getHostOffset() {
     if (this.getOption('appendTo') === 'body' || this.getOption('appendTo') === 'target') {
       let offset = this.el.nativeElement.getBoundingClientRect();
-      let targetLeft = offset.left + primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.getWindowScrollLeft();
-      let targetTop = offset.top + primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.getWindowScrollTop();
+      let targetLeft = offset.left + primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.getWindowScrollLeft();
+      let targetTop = offset.top + primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.getWindowScrollTop();
       return {
         left: targetLeft,
         top: targetTop
@@ -2974,32 +2954,32 @@ class Tooltip {
   alignRight() {
     this.preAlign('right');
     let hostOffset = this.getHostOffset();
-    let left = hostOffset.left + primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.getOuterWidth(this.el.nativeElement);
-    let top = hostOffset.top + (primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.getOuterHeight(this.el.nativeElement) - primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.getOuterHeight(this.container)) / 2;
+    let left = hostOffset.left + primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.getOuterWidth(this.el.nativeElement);
+    let top = hostOffset.top + (primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.getOuterHeight(this.el.nativeElement) - primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.getOuterHeight(this.container)) / 2;
     this.container.style.left = left + this.getOption('positionLeft') + 'px';
     this.container.style.top = top + this.getOption('positionTop') + 'px';
   }
   alignLeft() {
     this.preAlign('left');
     let hostOffset = this.getHostOffset();
-    let left = hostOffset.left - primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.getOuterWidth(this.container);
-    let top = hostOffset.top + (primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.getOuterHeight(this.el.nativeElement) - primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.getOuterHeight(this.container)) / 2;
+    let left = hostOffset.left - primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.getOuterWidth(this.container);
+    let top = hostOffset.top + (primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.getOuterHeight(this.el.nativeElement) - primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.getOuterHeight(this.container)) / 2;
     this.container.style.left = left + this.getOption('positionLeft') + 'px';
     this.container.style.top = top + this.getOption('positionTop') + 'px';
   }
   alignTop() {
     this.preAlign('top');
     let hostOffset = this.getHostOffset();
-    let left = hostOffset.left + (primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.getOuterWidth(this.el.nativeElement) - primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.getOuterWidth(this.container)) / 2;
-    let top = hostOffset.top - primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.getOuterHeight(this.container);
+    let left = hostOffset.left + (primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.getOuterWidth(this.el.nativeElement) - primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.getOuterWidth(this.container)) / 2;
+    let top = hostOffset.top - primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.getOuterHeight(this.container);
     this.container.style.left = left + this.getOption('positionLeft') + 'px';
     this.container.style.top = top + this.getOption('positionTop') + 'px';
   }
   alignBottom() {
     this.preAlign('bottom');
     let hostOffset = this.getHostOffset();
-    let left = hostOffset.left + (primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.getOuterWidth(this.el.nativeElement) - primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.getOuterWidth(this.container)) / 2;
-    let top = hostOffset.top + primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.getOuterHeight(this.el.nativeElement);
+    let left = hostOffset.left + (primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.getOuterWidth(this.el.nativeElement) - primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.getOuterWidth(this.container)) / 2;
+    let top = hostOffset.top + primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.getOuterHeight(this.el.nativeElement);
     this.container.style.left = left + this.getOption('positionLeft') + 'px';
     this.container.style.top = top + this.getOption('positionTop') + 'px';
   }
@@ -3013,7 +2993,7 @@ class Tooltip {
     return this._tooltipOptions[option];
   }
   getTarget(el) {
-    return primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.hasClass(el, 'p-inputwrapper') ? primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.findSingle(el, 'input') : el;
+    return primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.hasClass(el, 'p-inputwrapper') ? primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.findSingle(el, 'input') : el;
   }
   preAlign(position) {
     this.container.style.left = -999 + 'px';
@@ -3025,9 +3005,9 @@ class Tooltip {
     let offset = this.container.getBoundingClientRect();
     let targetTop = offset.top;
     let targetLeft = offset.left;
-    let width = primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.getOuterWidth(this.container);
-    let height = primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.getOuterHeight(this.container);
-    let viewport = primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.getViewport();
+    let width = primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.getOuterWidth(this.container);
+    let height = primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.getOuterHeight(this.container);
+    let viewport = primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.getViewport();
     return targetLeft + width > viewport.width || targetLeft < 0 || targetTop < 0 || targetTop + height > viewport.height;
   }
   onWindowResize(e) {
@@ -3047,7 +3027,7 @@ class Tooltip {
   }
   bindScrollListener() {
     if (!this.scrollHandler) {
-      this.scrollHandler = new primeng_dom__WEBPACK_IMPORTED_MODULE_2__.ConnectedOverlayScrollHandler(this.el.nativeElement, () => {
+      this.scrollHandler = new primeng_dom__WEBPACK_IMPORTED_MODULE_1__.ConnectedOverlayScrollHandler(this.el.nativeElement, () => {
         if (this.container) {
           this.hide();
         }
@@ -3074,7 +3054,7 @@ class Tooltip {
   }
   remove() {
     if (this.container && this.container.parentElement) {
-      if (this.getOption('appendTo') === 'body') document.body.removeChild(this.container);else if (this.getOption('appendTo') === 'target') this.el.nativeElement.removeChild(this.container);else primeng_dom__WEBPACK_IMPORTED_MODULE_2__.DomHandler.removeChild(this.container, this.getOption('appendTo'));
+      if (this.getOption('appendTo') === 'body') document.body.removeChild(this.container);else if (this.getOption('appendTo') === 'target') this.el.nativeElement.removeChild(this.container);else primeng_dom__WEBPACK_IMPORTED_MODULE_1__.DomHandler.removeChild(this.container, this.getOption('appendTo'));
     }
     this.unbindDocumentResizeListener();
     this.unbindScrollListener();
@@ -3102,7 +3082,7 @@ class Tooltip {
   ngOnDestroy() {
     this.unbindEvents();
     if (this.container) {
-      primeng_utils__WEBPACK_IMPORTED_MODULE_0__.ZIndexUtils.clear(this.container);
+      primeng_utils__WEBPACK_IMPORTED_MODULE_2__.ZIndexUtils.clear(this.container);
     }
     this.remove();
     if (this.scrollHandler) {
@@ -3245,14 +3225,14 @@ class TooltipModule {
     type: TooltipModule
   });
   static ɵinj = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineInjector"]({
-    imports: [_angular_common__WEBPACK_IMPORTED_MODULE_1__.CommonModule]
+    imports: [_angular_common__WEBPACK_IMPORTED_MODULE_0__.CommonModule]
   });
 }
 (function () {
   (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵsetClassMetadata"](TooltipModule, [{
     type: _angular_core__WEBPACK_IMPORTED_MODULE_3__.NgModule,
     args: [{
-      imports: [_angular_common__WEBPACK_IMPORTED_MODULE_1__.CommonModule],
+      imports: [_angular_common__WEBPACK_IMPORTED_MODULE_0__.CommonModule],
       exports: [Tooltip],
       declarations: [Tooltip]
     }]
