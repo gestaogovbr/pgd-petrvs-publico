@@ -67,7 +67,7 @@ class UsuarioSeeder extends Seeder
                 'nome' => 'Caroline da Costa Freire Ribeiro',
                 'cpf' => '01492368164',
                 'apelido' => 'Caroline',
-                'perfil_id' => $perfis->where('nome', 'Administrador')->first()->id,
+                'perfil_id' => $perfis->where('nome', 'Administrador Negocial')->first()->id,
                 'sexo' => 'FEMININO',
             ],
             [
