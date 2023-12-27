@@ -67,6 +67,7 @@ class AfastamentoFormComponent extends src_app_modules_base_page_form_base__WEBP
     };
     this.tipoMotivoAfastamentoDao = injector.get(src_app_dao_tipo_motivo_afastamento_dao_service__WEBPACK_IMPORTED_MODULE_5__.TipoMotivoAfastamentoDaoService);
     this.usuarioDao = injector.get(src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_6__.UsuarioDaoService);
+    this.title = this.lex.translate('Inclusão de Afastamento');
     this.form = this.fh.FormBuilder({
       observacoes: {
         default: ""
@@ -496,7 +497,7 @@ const routes = [{
   },
   runGuardsAndResolvers: 'always',
   data: {
-    title: "Inclusão de Afastamento",
+    title: "",
     modal: true
   }
 }, {

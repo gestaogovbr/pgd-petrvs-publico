@@ -250,7 +250,8 @@ function QuestionarioListPerguntaComponent_ng_template_12_ng_container_0_badge_2
   }
   if (rf & 2) {
     const resposta_r17 = ctx.$implicit;
-    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("label", resposta_r17)("textValue", resposta_r17.value)("icon", resposta_r17.icon);
+    const i_r18 = ctx.index;
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("label", resposta_r17.key)("textValue", resposta_r17.data.valorResposta ? resposta_r17.data.valorResposta : (i_r18 + 1).toString())("icon", resposta_r17.icon);
   }
 }
 function QuestionarioListPerguntaComponent_ng_template_12_ng_container_0_Template(rf, ctx) {
@@ -412,7 +413,7 @@ class QuestionarioListPerguntaComponent extends src_app_modules_base_page_frame_
     features: [_angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵInheritDefinitionFeature"]],
     decls: 14,
     vars: 6,
-    consts: [[3, "items", "title"], ["title", "Sequencia", 3, "template"], ["columnSequencia", ""], ["title", "Perguntas", 3, "template"], ["columnPerguntas", ""], ["title", "Tipo", 3, "template"], ["columnTipo", ""], ["title", "Op\u00E7\u00F5es - Valores", 3, "template"], ["columnOpcoes", ""], [4, "ngIf"], [1, "one-per-line"], [3, "label", "textValue", "icon", 4, "ngFor", "ngForOf"], [3, "label", "textValue", "icon"], ["label", "M\u00EDnimo", "textValue", "0", 4, "ngIf"], ["label", "M\u00EDnimo", 3, "textValue", 4, "ngIf"], ["label", "M\u00E1ximo", 1, "ml", 3, "textValue"], ["label", "M\u00EDnimo", "textValue", "0"], ["label", "M\u00EDnimo", 3, "textValue"]],
+    consts: [[3, "items", "title"], ["title", "Sequencia", 3, "template"], ["columnSequencia", ""], ["title", "Perguntas", 3, "template"], ["columnPerguntas", ""], ["title", "Tipo", 3, "template"], ["columnTipo", ""], ["title", "Op\u00E7\u00F5es - Valores", 3, "template"], ["columnOpcoes", ""], [4, "ngIf"], [1, "one-per-line"], ["class", "ml", 3, "label", "textValue", "icon", 4, "ngFor", "ngForOf"], [1, "ml", 3, "label", "textValue", "icon"], ["label", "M\u00EDnimo", "textValue", "0", 4, "ngIf"], ["label", "M\u00EDnimo", 3, "textValue", 4, "ngIf"], ["label", "M\u00E1ximo", 1, "ml", 3, "textValue"], ["label", "M\u00EDnimo", "textValue", "0"], ["label", "M\u00EDnimo", 3, "textValue"]],
     template: function QuestionarioListPerguntaComponent_Template(rf, ctx) {
       if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](0, "grid", 0)(1, "columns")(2, "column", 1);
