@@ -31,7 +31,7 @@ export class AfastamentoFormComponent extends PageFormBase<Afastamento, Afastame
     super(injector, Afastamento, AfastamentoDaoService);
     this.tipoMotivoAfastamentoDao = injector.get<TipoMotivoAfastamentoDaoService>(TipoMotivoAfastamentoDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
-
+    this.title = this.lex.translate('Inclusão de Afastamento');
     this.form = this.fh.FormBuilder({
       observacoes: {default: ""},
       data_inicio: {default: new Date()},

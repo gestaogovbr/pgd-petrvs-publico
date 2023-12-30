@@ -73,6 +73,7 @@ class TipoMotivoAfastamentoFormComponent extends src_app_modules_base_page_form_
     this.titleEdit = entity => {
       return "Editando " + this.lex.translate("Tipo de Motivo de Afastamento") + ': ' + (entity?.nome || "");
     };
+    this.title = this.lex.translate("Motivos de Afastamento");
     this.form = this.fh.FormBuilder({
       codigo: {
         default: null
@@ -268,7 +269,7 @@ class TipoMotivoAfastamentoListComponent extends src_app_modules_base_page_list_
       return result;
     };
     /* Inicializações */
-    this.title = this.lex.translate("Tipos de Motivo de Afastamento");
+    this.title = this.lex.translate("Motivos de Afastamento");
     this.code = "MOD_TIPO_MTV_AFT";
     this.filter = this.fh.FormBuilder({
       codigo: {
@@ -424,7 +425,7 @@ const routes = [{
   },
   runGuardsAndResolvers: 'always',
   data: {
-    title: "Tipos de Motivo de Afastamento"
+    title: "Motivos de Afastamento"
   }
 }, {
   path: 'new',
@@ -435,7 +436,7 @@ const routes = [{
   },
   runGuardsAndResolvers: 'always',
   data: {
-    title: "Inclusão de Tipo de Motivo de Afastamento",
+    title: "Inclusão de Motivos de Afastamento",
     modal: true
   }
 }, {
@@ -447,7 +448,7 @@ const routes = [{
   },
   runGuardsAndResolvers: 'always',
   data: {
-    title: "Edição de Tipo de Motivo de Afastamento",
+    title: "Edição de Motivos de Afastamento",
     modal: true
   }
 }, {
@@ -459,7 +460,7 @@ const routes = [{
   },
   runGuardsAndResolvers: 'always',
   data: {
-    title: "Consulta a Tipo de Motivo de Afastamento",
+    title: "Consulta a Motivos de Afastamento",
     modal: true
   }
 }];
