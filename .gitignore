@@ -1,6 +1,15 @@
 /back-end/.vscode/launch.json
 /back-end/.vscode/tasks.json
-/back-end/*.bak
+
+*.bak
+
+back-end/vendor/*
+front-end/node_modules/*
+front-end/.angular/*
+
+*Zone.Identifier*
+
+package-lock.json
 
 /resources/mysql/*
 
@@ -39,3 +48,6 @@ front-end/.vscode/settings.json
 back-end/storage/tenant*/*/
 back-end/database/seeders/ZUnidadesSeeder.php
 resources/documentacao/Gestão/plano_trabalho.pdf
+
+# Para Apple
+*.DS_Store

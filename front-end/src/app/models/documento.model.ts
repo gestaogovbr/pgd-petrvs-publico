@@ -8,8 +8,8 @@ import { PlanoTrabalho } from './plano-trabalho.model';
 import { TipoDocumento } from './tipo-documento.model';
 import { TipoProcesso } from './tipo-processo.model';
 
-export type DocumentoTipo = "HTML" | "PDF" | "LINK";
-export type DocumentoEspecie = "SEI" | "TCR" | "OUTRO" | "NOTIFICACAO";
+export type DocumentoTipo = "HTML" | "PDF" | "LINK" | "RELATORIO";
+export type DocumentoEspecie = "SEI" | "TCR" | "OUTRO" | "NOTIFICACAO" | "RELATORIO";
 export type DocumentoStatus = "GERADO" | "AGUARDANDO_SEI";
 export type DocumentoLinkTipo = "SEI" | "URL";
 export type DocumentoLink = {

@@ -34,6 +34,7 @@
             </div>
         </tab>
         <tab key="ATRIBUICOES" [label]="lex.translate('Atribuições')">
+            <top-alert type="alert" [message]="'A alteração ' + lex.translate('de lotação') + ' só pode ser realizada através da abra Principal!'"></top-alert>
             <usuario-integrante #unidadesIntegrantes noPersist [entity]="entity"></usuario-integrante>
         </tab>
     </tabs>

@@ -70,6 +70,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     this.atividadeService = injector.get<AtividadeService>(AtividadeService);
     this.calendar = injector.get<CalendarService>(CalendarService);
     this.comentario = injector.get<ComentarioService>(ComentarioService);
+    this.title = this.lex.translate('Inclusão de Atividade');
     this.form = this.fh.FormBuilder({
       numero: {default: 0},
       descricao: {default: ""},
@@ -100,8 +101,8 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
       tarefas: {default: []},
       iniciado: {default: false},
       concluido: {default: false},
-      documento_requisicao: {default: new Documento()},
-      documento_entrega: {default: new Documento()}
+      documento_requisicao: {default: undefined},
+      documento_entrega: {default: undefined}
     }, this.cdRef, this.validate);
     this.formChecklist = this.fh.FormBuilder({
       id: {default: ""},

@@ -13,10 +13,11 @@ import { AtividadeListGridComponent } from './atividade-list-grid/atividade-list
 import { AtividadeListComponent } from './atividade-list/atividade-list.component';
 import { AtividadeHierarquiaComponent } from './atividade-hierarquia/atividade-hierarquia.component';
 
+
 const routes: Routes = [
   { path: '', component: AtividadeListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Atividades" } },
   { path: 'grid', component: AtividadeListGridComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Atividades" } },
-  { path: 'new', component: AtividadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Inclusão de Atividade", modal: true } },
+  { path: 'new', component: AtividadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "", modal: true } },
   { path: 'tarefa', component: AtividadeFormTarefaComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Tarefa da Atividade", modal: true } },
   { path: 'tarefa/concluir', component: AtividadeListTarefaComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Concluir Tarefa", modal: true } },
   { path: 'tarefa/:tarefa_id/comentar', component: AtividadeFormTarefaComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Comentários", modal: true } },

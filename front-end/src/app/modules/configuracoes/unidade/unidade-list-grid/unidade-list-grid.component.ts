@@ -64,10 +64,10 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
   }
 
   public async inativo(unidade: Unidade, inativo: boolean) {
-    if (await this.dialog.confirm(inativo ? "Inativar" : "Reativar", inativo ? "Deseja realmente inativar a unidade?" : "Deseja reativar a unidade?")) {
+    if (await this.dialog.confirm(inativo ? "Inativar" : "Reativar", inativo ? "Deseja realmente inativar essa unidade (" + unidade.nome + ")?" : "Deseja reativar essa unidade (" + unidade.nome + ")?")) {
       try {
         this.submitting = true;
-        await this.dao!.inativo(unidade.id, inativo);
+        await this.dao!.inativar(unidade.id, inativo);
         await this.modalRefreshId(unidade).modalClose!(undefined);
       } finally {
         this.submitting = false;
@@ -88,5 +88,9 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
     if (form.nome?.length) result.push(["or", ["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"], ["sigla", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]]);
     if (form.instituidora) result.push(["instituidora", "==", 1]);
     return result;
+  }
+
+  public get labelInfoInativas(): string {
+    return this.selectable ? 'Se lista só as unidades inativas' : 'Se lista também as unidades inativas';
   }
 }

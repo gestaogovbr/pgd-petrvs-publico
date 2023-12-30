@@ -71,7 +71,7 @@ export class NotificacoesTemplateComponent extends PageFrameBase {
   }*/
 
   public async loadTemplate(form: FormGroup, row: any) {
-    this.dataset = this.templateService.dataset("NOTIFICACAO", row.codigo);
+    this.dataset = await this.templateService.dataset("NOTIFICACAO", row.codigo);
     form.controls.codigo.setValue(row.codigo);
     form.controls.titulo.setValue(row.titulo);
     form.controls.conteudo.setValue(row.conteudo);
@@ -146,5 +146,4 @@ export class NotificacoesTemplateComponent extends PageFrameBase {
     }
     return result;
   }
-
 }

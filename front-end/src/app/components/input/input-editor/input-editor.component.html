@@ -1,5 +1,104 @@
 <ng-template #addMacroTemplate>
     Funcionalidade em desenvolvimento. Utilize as instruções do botão "Ajuda sobre como utilizar variáveis" para adicionar manualmente macros no template.
+    <tabs display>
+        <tab key="VARIAVEIS_DISPONIVEIS" label="Variáveis">    
+            <div class="d-flex align-items-center my-2">
+                <div class="card card-body me-2">                    
+                    <code>                            
+                        {{getVariableString()}}
+                    </code>
+                </div>
+                <button (click)="insertVariable()" class="btn btn-success" [disabled]="getVariableString() == ''">Inserir</button>
+            </div>
+            <ng-scrollbar autoHeightDisabled="false" style="max-height: 400px;">
+                <p-tree [value]="variaveis" class="w-full md:w-30rem" selectionMode="single" (onNodeSelect)="nodeSelect($event)" [selection]="selectedVariable"></p-tree>
+            </ng-scrollbar> 
+            
+        </tab>
+
+        <tab key="OPERADORES" label="Operadores lógicos">
+            <form  [formGroup]="operatorForm" (submit)="insertOperator()">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="d-flex align-items-center my-2">
+                            <div class="card card-body me-2">
+                                <code>                            
+                                    {{expressaoIf}}
+                                </code>
+                            </div>
+                            <button type="submit" class="btn btn-success" [disabled]="!operatorForm.valid">Inserir</button>
+                        </div>
+                    </div>
+          
+                    <div class="col-md-12 mb-3">
+                        <div class="card card-body">
+                            <label class="form-label">Valor Um</label>                                
+                            <div class="row">
+                                <input-select  [size]="6" [items]="lookup.TIPO_OPERADOR" controlName="comparadorUmTipo" label="Tipo" (change)="changeTypeOperator(1)"></input-select>
+                                <input-text [size]="6" controlName="comparadorUmValor" *ngIf="tipoComparadorUm == 'string' " label="Texto"></input-text>
+                                <input-number [size]="6" controlName="comparadorUmValor" *ngIf="tipoComparadorUm == 'number' " label="Número"></input-number>                                    
+                                <input-select [size]="6" [items]="listas" controlName="comparadorUmValor" *ngIf="tipoComparadorUm == 'list' " label="Lista"></input-select>
+                                <input-radio [size]="6" [items]="lookup.LOGICOS" controlName="comparadorUmValor" *ngIf="tipoComparadorUm == 'boolean' "></input-radio>
+                                <div class="col-md-6"  *ngIf="tipoComparadorUm == 'variable' ">
+                                    <label class="d-block mb-1">Variável</label>
+                                    <div class="d-block">
+                                        <p-treeSelect class="md:w-20rem w-full" containerStyleClass="w-full"  formControlName="comparadorUmValor" [options]="variaveis" (onNodeSelect)="selectVariable($event, 1)"></p-treeSelect>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input-select  [size]="12" [items]="lookup.OPERADOR" controlName="operador" label="Operador"></input-select>
+                
+
+                    <div class="col-md-12 my-3">
+                        <div class="card card-body">
+                            <label class="form-label">Valor Dois</label>                                
+                            <div class="row">
+                                <input-select  [size]="6" [items]="lookup.TIPO_OPERADOR" controlName="comparadorDoisTipo" label="Tipo" (change)="changeTypeOperator(2)"></input-select>
+                                <input-text [size]="6" controlName="comparadorDoisValor" *ngIf="tipoComparadorDois == 'string' " label="Texto"></input-text>
+                                <input-number [size]="6" controlName="comparadorDoisValor" *ngIf="tipoComparadorDois == 'number' " label="Número"></input-number>                                    
+                                <input-select [size]="6" [items]="listas" controlName="comparadorDoisValor" *ngIf="tipoComparadorDois == 'list' " label="Lista"></input-select>
+                                <input-radio [size]="6" [items]="lookup.LOGICOS" controlName="comparadorDoisValor" *ngIf="tipoComparadorDois == 'boolean' "></input-radio>
+                                <div class="col-md-6"  *ngIf="tipoComparadorDois == 'variable' ">
+                                    <label class="d-block mb-1">Variável</label>
+                                    <div class="d-block">
+                                        <p-treeSelect class="md:w-20rem w-full" containerStyleClass="w-full" formControlName="comparadorDoisValor" [options]="variaveis" (onNodeSelect)="selectVariable($event, 2)"></p-treeSelect>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </form>
+        </tab>
+
+        <tab key="BLOCOS" label="Blocos de código">
+            <form  [formGroup]="blockForForm" (ngSubmit)="insertBlockFor()">
+                <div class="row">
+                    <div class="col-md-12">    
+                        <div class="d-flex align-items-center my-2">                    
+                            <div class="card card-body me-2">
+                                <code>                            
+                                    {{expressaoFor}}
+                                </code>
+                            </div> 
+                            <button type="submit" class="btn btn-success" [disabled]="!blockForForm.valid">Inserir</button>
+                        </div>                   
+                    </div>
+                    
+                    <input-radio [size]="12" [items]="lookup.LISTA_TIPO" controlName="tipo" label="Tipo da lista"></input-radio>
+                    <input-text [size]="6" controlName="variavel" label="Variável da lista" *ngIf="blockForForm.controls.tipo.value == 'variavel'"></input-text>
+                    <input-text [size]="6" controlName="variavelIndice" label="Váriavel do índice" *ngIf="blockForForm.controls.tipo.value == 'indice'"></input-text>
+                    <input-select [size]="6" [items]="listas" controlName="lista" label="Selecione a lista para iterar"></input-select>
+                </div>
+            </form>
+        </tab>
+    </tabs>
 </ng-template>
 <ng-template #helpTemplate>
     <tabs display>
@@ -120,3 +219,5 @@
     <!--toolbar *ngIf="hasToolbar" [buttons]="toolbarButtons"></toolbar//-->
     <editor #editor *ngIf="viewInit" [disabled]="isDisabled" [(ngModel)]="value" [ngModelOptions]="{standalone: true}" [init]="editorConfig" [plugins]="plugins" [toolbar]="toolbar"></editor>
 </input-container>
+
+

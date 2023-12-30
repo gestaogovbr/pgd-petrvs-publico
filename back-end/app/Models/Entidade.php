@@ -79,7 +79,8 @@ class Entidade extends ModelBase
     public function planejamentos() { return $this->hasMany(Planejamento::class); }        
     public function cadeiasValores() { return $this->hasMany(CadeiaValor::class); }        
     public function integracoes() { return $this->hasMany(Integracao::class); }        
-    public function notificacoesTemplates() { return $this->hasMany(Template::class); }
+    public function notificacoesTemplates() { return $this->hasMany(Template::class)->where("especie", "NOTIFICACAO"); }
+    public function relatoriosTemplates() { return $this->hasMany(Template::class)->where("especie", "RELATORIO"); }
     public function unidades() { return $this->hasMany(Unidade::class); }
     public function tiposTarefas() { return $this->hasMany(TipoTarefa::class); }
     // Belongs

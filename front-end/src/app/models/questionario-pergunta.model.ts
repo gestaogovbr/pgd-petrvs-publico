@@ -1,20 +1,48 @@
 import { ExpressionStatement } from '@angular/compiler';
 import { LookupItem } from '../services/lookup.service';
 import { Base } from './base.model';
+import { constructorParametersDownlevelTransform } from '@angular/compiler-cli';
 
 
 export type QuestionarioPerguntaTipo = "EMOJI" | "SELECT" | "MULTI_SELECT" | "TEXT" | "TEXT_AREA" | "TIMER" | "DATE_TIME" | "SWICTH" | "NUMBER" | "RATE" | "RADIO" | "CHECK";
+export type QuestionarioPerguntaRespostaTimer = "DAYS_HOURS" | "DAYS" | "HOURS";
+export type QuestionarioPerguntaRespostaDateTime = "DATE_TIME" | "DATE" | "TIME";
+export type QuestionarioPerguntaRespostaRange = {min: number, max: number};
+export type QuestionarioPerguntaResposta = null | LookupItem[] | QuestionarioPerguntaRespostaRange | {tipo: QuestionarioPerguntaRespostaTimer | QuestionarioPerguntaRespostaDateTime};
 
 export class QuestionarioPergunta extends Base {
-    public sequencia: number | undefined ; //sequencia da pergunta
+    public sequencia: number = 0; //sequencia da pergunta
     public pergunta: string = ""; //pergunta
     public tipo:  QuestionarioPerguntaTipo = "SELECT"; // tipo da resposta para esta pergunta
-    public criado_versao: number | undefined; //versao de criacao
-    public deletado_versao: number | undefined; //versao em que for deletado
-    public respostas: any; // opções de respostas para essa pergunta
+    public criado_versao: number = 0 ; //versao de criacao
+    public deletado_versao: number | null = null; //versao em que for deletado
+    public respostas: QuestionarioPerguntaResposta = null; // opções de respostas para essa pergunta
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }
+
+/*
+Preenchimento do campo respostas a depender do tipo:
+
+EMOJI: LookupItem[] {key: "ICONE", value: "DESCRICAO", icon: "ICONE"}
+SELECT: LookupItem[] {key: "CODIGO", value: "DESCRICAO"}
+MULTI_SELECT: LookupItem[] {key: "CODIGO", value: "DESCRICAO"}
+TEXT: undefined
+TEXT_AREA: undefined
+TIMER: {tipo: "DAYS_HOURS" | "DAYS" | "HOURS"}
+DATE_TIME: {tipo: "DATE_TIME" | "DATE" | "TIME"}
+SWICTH: LookupItem[] lookup.SIMNAO
+NUMBER: undefined
+RATE: {max: NUMBER, min: NUMBER},
+RADIO: LookupItem[] {key: "CODIGO", value: "DESCRICAO"}
+CHECK: LookupItem[] {key: "CODIGO", value: "DESCRICAO"}
+*/
+
+
+
+
+
+
 
 // tipos
 

@@ -7,8 +7,8 @@ use Stancl\Tenancy\Middleware\InitializeTenancyByPath;
 
 /* Testes *
 Route::get('/teste', function (Request $request) { return ["CENTRAL"]; }); */
-Route::middleware([OnlyLocal::class])
-    ->get('/rotinas-diarias/run', [RotinasDiariasController::class, 'run']);
+/*Route::middleware([OnlyLocal::class])
+    ->get('/rotinas-diarias/run', [RotinasDiariasController::class, 'run']);*/
 
 /*
 Rota dinâmica para login social Microsoft (Azure) e
@@ -26,3 +26,13 @@ Route::middleware([InitializeTenancyByPath::class])
 Route::middleware([InitializeTenancyByPath::class])
     ->get('/login-unico/{tenant}',
         [LoginController::class, 'signInGovBrCallback']);
+
+
+/* Login Panel */
+Route::post('/panel-login', function (Request $request) {
+    $return=false;
+    if($request->user==config('petrvs')['panel']['username'] && $request->password==config('petrvs')['panel']['password']) {
+        $return=true;
+    }
+    return response()->json($return);
+});

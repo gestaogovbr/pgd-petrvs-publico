@@ -68,7 +68,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       cidade_id: { default: "" },
       uf: { default: "" },
       instituidora: { default: false },
-      informal: { default: false },
+      informal: { default: true },
       atividades_arquivamento_automatico: { default: 1 },
       distribuicao_forma_contagem_prazos: { default: "DIAS_UTEIS" },
       entrega_forma_contagem_prazos: { default: "HORAS_UTEIS" },
@@ -81,7 +81,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       etiqueta_cor: { default: null },
       expediente24: { default: true },
       expediente: { default: null },
-      usar_expediente_entidade: { default: false },
+      usar_expediente_unidade: { default: false },
       texto_complementar_plano: { default: "" }
     }, this.cdRef, this.validate);
     this.formGestor = this.fh.FormBuilder({
@@ -106,22 +106,26 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     entity.etiquetas = entity.etiquetas || [];
     this.form!.controls.informal.setValue(entity.informal);
     this.unidade_raiz = this.action == 'edit' && !entity.unidade_pai_id;
+    this.form!.controls.usar_expediente_unidade.setValue(entity.expediente ? true : false);
     this.fh.revalidate(this.form!);
     await this.usuariosIntegrantes?.loadData(entity);
   }
 
   public initializeData(form: FormGroup): void {
-    this.entity = new Unidade({ entidade_id: this.auth.unidade?.entidade_id, entidade: this.auth.unidade?.entidade });
+    this.entity = new Unidade({
+      entidade_id: this.auth.unidade?.entidade_id,
+      entidade: this.auth.unidade?.entidade,
+      informal: 1
+    });
     this.loadData(this.entity, form);
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if ((['sigla', 'nome', 'cidade_id', 'entidade_id'].indexOf(controlName) >= 0) && !control.value?.length) {
+    if (controlName == 'unidade_pai_id' && !control.value?.length && !this.unidade_raiz) {
       result = "Obrigatório";
-    } else if (controlName == 'unidade_pai_id' && !control.value?.length && !this.unidade_raiz) {
-      result = "Obrigatório";
-    } else if (controlName == 'codigo' && !parseInt(control.value)) {
+    }
+    if (controlName == 'codigo' && !this.form?.controls.informal.value && !parseInt(control.value)) {
       result = "Obrigatório";
     }
     return result;
@@ -161,24 +165,22 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       let unidade: Unidade = this.util.fill(new Unidade(), this.entity!);
       unidade = this.util.fillForm(unidade, this.form!.value);
       unidade.notificacoes = this.entity!.notificacoes;
+      unidade.notificacoes_templates = this.entity!.notificacoes_templates;
       let salvarGestor = !!this.formGestor!.controls.gestor_id?.value && (!this.entity?.gestor?.id.length || (!!this.entity?.gestor?.id.length && this.entity?.gestor?.usuario?.id != this.formGestor!.controls.gestor_id?.value));
       let salvarGestorSubstituto = !!this.formGestor!.controls.gestor_substituto_id?.value && (!this.entity?.gestor_substituto?.id.length || (!!this.entity?.gestor_substituto?.id.length && this.entity?.gestor_substituto?.usuario?.id != this.formGestor!.controls.gestor_substituto_id?.value));
-      let salvarGestorDelegado = !!this.formGestor!.controls.gestor_delegado_id?.value && (!this.entity?.gestor_delegado?.id.length || (!!this.entity?.gestor_delegado?.id.length && this.entity?.gestor_delegado?.usuario?.id != this.formGestor!.controls.gestor_delegado_id?.value));
       let apagarGestor = !this.formGestor!.controls.gestor_id?.value && !!this.entity?.gestor?.id.length;
       let apagarGestorSubstituto = !this.formGestor!.controls.gestor_substituto_id?.value && !!this.entity?.gestor_substituto?.id.length;
-      let apagarGestorDelegado = !this.formGestor!.controls.gestor_delegado_id?.value && !!this.entity?.gestor_delegado?.id.length;
       let integrantesConsolidados: IntegranteConsolidado[] = this.usuariosIntegrantes?.items || [];
+      if(!this.form!.controls.usar_expediente_unidade) unidade.expediente = null;
       try {
         await this.dao?.save(unidade, ["gestor.gestor:id", "gestor_substituto.gestor_substituto:id", "gestor_delegado.gestor_delegado:id"]).then(async unidadeBanco => {
           //this.entity = unidadeBanco;
           if (salvarGestor) await this.integranteDao.saveIntegrante([Object.assign(new IntegranteConsolidado, { 'unidade_id': unidadeBanco.id, 'usuario_id': this.formGestor!.controls.gestor_id!.value, 'atribuicoes': ["GESTOR"] })]);
           if (salvarGestorSubstituto) await this.integranteDao.saveIntegrante([Object.assign(new IntegranteConsolidado, { 'unidade_id': unidadeBanco.id, 'usuario_id': this.formGestor!.controls.gestor_substituto_id!.value, 'atribuicoes': ["GESTOR_SUBSTITUTO"] })]);
-          if (salvarGestorDelegado) await this.integranteDao.saveIntegrante([Object.assign(new IntegranteConsolidado, { 'unidade_id': unidadeBanco.id, 'usuario_id': this.formGestor!.controls.gestor_delegado_id!.value, 'atribuicoes': ["GESTOR_DELEGADO"] })]);
           if (apagarGestor) await this.integranteAtribuicaoDao.delete(this.entity?.gestor!.gestor!.id!);
           if (apagarGestorSubstituto) await this.integranteAtribuicaoDao.delete(this.entity?.gestor_substituto!.gestor_substituto!.id!);
-          if (apagarGestorDelegado) await this.integranteAtribuicaoDao.delete(this.entity?.gestor_delegado!.gestor_delegado!.id!);
           integrantesConsolidados.forEach(v => v.unidade_id = unidadeBanco.id);
-          await this.integranteDao.saveIntegrante(integrantesConsolidados as IntegranteConsolidado[]);
+          if (integrantesConsolidados.length) await this.integranteDao.saveIntegrante(integrantesConsolidados as IntegranteConsolidado[]);
         });
         resolve(true);
       } catch (error: any) {
@@ -199,31 +201,28 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
   }
 
   public onUsarExpedienteEntidadeChange() {
-    this.form!.controls.expediente.setValue(this.form!.controls.usar_expediente_entidade.value ? null : this.form!.controls.expediente.value || new Expediente());
+    this.form!.controls.expediente.setValue(this.form!.controls.usar_expediente_unidade.value ? this.form!.controls.expediente.value || new Expediente() : null);
   }
 
   public get informalIsDisabled() {
-    return this.action != 'new' ? 'true' : undefined;
+    //return this.action != 'new' ? 'true' : undefined;
+    return 'true';
   }
 
   public get instituidoraIsDisabled() {
     return this.informal ? 'true' : undefined;
   }
 
-  public get codigoIsDisabled(){
+  public get codigoIsDisabled() {
     return !this.informal && this.action == 'new' ? undefined : 'true';
   }
 
-  public get unidadePaiIsDisabled(){
+  public get unidadePaiIsDisabled() {
     return this.unidade_raiz || (!this.informal && this.action == 'edit') ? 'true' : undefined
   }
 
-  public get isDisabled(){
+  public get isDisabled() {
     return !this.informal && this.action == 'edit' ? 'true' : undefined;
-  }
-
-  public teste() {
-    this.form!.controls.unidade_pai_id.updateValueAndValidity();
   }
 
 }

@@ -34,7 +34,7 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
     this.templateDao = injector.get<TemplateDaoService>(TemplateDaoService);
     this.notificacao = injector.get<NotificacaoService>(NotificacaoService);
     this.modalWidth = 1200;
-    this.join = ["notificacoes_templates"];
+    this.join = ["notificacoes_templates", "relatorios_templates"];
     this.form = this.fh.FormBuilder({
       url_sei: {default: ""},
       tipo_modalidade_id: {default: null},
@@ -128,13 +128,14 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
   public saveData(form: IIndexable): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.notificacoes?.saveData();
-      let entidade = this.util.fill(new Entidade(), this.entity!);
+      let entidade = this.util.fill(new Entidade({notificacoes_templates: []}), this.entity!);
       entidade = this.util.fillForm(entidade, this.form!.value);
       this.dao!.update(entidade.id, {
         url_sei: entidade.url_sei,
         tipo_modalidade_id: entidade.tipo_modalidade_id,
         nomenclatura: entidade.nomenclatura,
         notificacoes: entidade.notificacoes,
+        notificacoes_templates: entidade.notificacoes_templates,
         expediente: entidade.expediente,
         carga_horaria_padrao: entidade.carga_horaria_padrao,
         forma_contagem_carga_horaria: entidade.forma_contagem_carga_horaria  

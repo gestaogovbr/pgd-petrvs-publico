@@ -43,7 +43,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
       "planoTrabalho.unidade.gestor:id,unidade_id,usuario_id", 
       "planoTrabalho.unidade.gestorSubstituto:id,unidade_id,usuario_id", 
       "planoTrabalho.tipoModalidade:id,nome", 
-      "planoTrabalho.usuario:id,nome,apelido,url_foto"
+      "planoTrabalho.usuario:id,nome,apelido,foto_perfil,url_foto"//id,nome,apelido,url_foto,foto_perfil
     ];
     this.groupBy = [
       { field: "plano_trabalho.unidade.sigla", label: this.lex.translate("Unidade") }, 
@@ -89,6 +89,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
   }
 
   public usuarioSeparator(separator: GridGroupSeparator) {
+    console.log(this.grid)
     let usuarioId = separator.group[3].value;
     separator.metadata = separator.metadata || {};
     separator.metadata.usuario = separator.metadata.usuario || this.extra?.planos_trabalhos?.find((x: PlanoTrabalho) => x.usuario_id == usuarioId)?.usuario;
