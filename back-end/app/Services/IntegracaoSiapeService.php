@@ -74,10 +74,6 @@ class IntegracaoSiapeService extends ServiceBase {
                     // Aguardando evolução de ticket aberto no MGI para reparo no SIAPE WEB SERVICE na data de 09/08/2023 20:22.
                 }
 
-                //if(!empty($pessoa['dataUltimaTransacao'])){
-                //    $pessoa['dataUltimaTransacao'] = DateTime::createFromFormat('dmY', $pessoa['dataUltimaTransacao'])->format('Y-m-d 00:00:00');
-                //}
-
                 if(!empty($dadosPessoais['dataNascimento'])){
                     $dadosPessoais['dataNascimento'] = DateTime::createFromFormat('dmY', $dadosPessoais['dataNascimento'])->format('Y-m-d 00:00:00');
                 }
@@ -101,6 +97,8 @@ class IntegracaoSiapeService extends ServiceBase {
                     'uf' => $this->UtilService->valueOrDefault($dadosPessoais['ufNascimento'], null),
                     'datanascimento' => $this->UtilService->valueOrDefault($dadosPessoais['dataNascimento']),
                     'telefone' =>  '', // Web Service Siape não fornece (23/09/2022) informação.
+                    'cpf_chefia_imediata' => $this->UtilService->valueOrDefault($dadosFuncionais['cpfChefiaImediata'], null),
+                    'email_chefia_imediata' => $this->UtilService->valueOrDefault($dadosFuncionais['emailChefiaImediata'], null),
                     'matriculas' => [ 'dados' => [
                         'vinculo_ativo' => true,
                         'matriculasiape' => $this->UtilService->valueOrDefault($dadosFuncionais['matriculaSiape']),
@@ -222,7 +220,6 @@ class IntegracaoSiapeService extends ServiceBase {
                                 array_push($uorgsPetrvs['uorg'], $inserir_uorg);
                             } else {
                                 $uorg_iu = $this->UtilService->object2array($uorg_iu);
-                                # LogError::newWarn('ISiape: ('. $uorg_iu['id_servo'] . ' - ' .  $uorg_iu['nomeuorg'] .') não possui atualização.');
                                 array_push($uorgsPetrvs['uorg'], $uorg_iu);
                             }
                       } else {
@@ -241,6 +238,7 @@ class IntegracaoSiapeService extends ServiceBase {
         $cpfsPorUorgsWsdl = [];
         $PessoasPetrvs = [ 'Pessoas' => []];
 
+        ## Remover código da upag, posteriormente.
         $uorgs = DB::select("SELECT codigo_siape from integracao_unidades WHERE deleted_at is NULL");
         $uorgs = $this->UtilService->object2array($uorgs);
 
@@ -296,8 +294,11 @@ class IntegracaoSiapeService extends ServiceBase {
                         try
                         {
                             $query = $this->retornarPessoa($pessoa);
-                            if(!empty($query)) array_push($PessoasPetrvs['Pessoas'], $query);
-                            break;
+                            if(!empty($query)) {
+                                 array_push($PessoasPetrvs['Pessoas'], $query);
+                                 break;
+                            }
+                            $tentativa++;
                         } catch (Throwable $e) {
                             $msg = $e->getMessage();
                             $this->siape = new SoapClient($this->siapeUrl);
@@ -312,7 +313,6 @@ class IntegracaoSiapeService extends ServiceBase {
                 }
             }
         }
-        // Aqui temos todas os dados após processamento de consulta ao Web Service Siape.
         return $PessoasPetrvs;
     }
 }

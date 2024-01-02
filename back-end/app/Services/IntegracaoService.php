@@ -39,6 +39,7 @@ class IntegracaoService extends ServiceBase {
     public $localUnidades = "";         // eventual alteração deve ser feita no arquivo .env
     public $localServidores = "";       // eventual alteração deve ser feita no arquivo .env
     private $servidores_registrados_is = [];
+    private $gestores_siape = [];
 
     function __construct($config = null) {
         parent::__construct();
@@ -508,9 +509,6 @@ class IntegracaoService extends ServiceBase {
                     $servidores = $this->IntegracaoSiapeService->retornarPessoas()["Pessoas"];
                 } else {
                     if($this->useLocalFiles) {
-                        // Ajuste na forma antiga
-                            // $xmlStream = utf8_encode(file_get_contents(base_path($this->localServidores)));
-                        // Ajuste na forma nova.
                         $xmlStream = mb_convert_encoding(file_get_contents(base_path($this->localServidores)), 'UTF-8', 'ISO-8859-1' );
                     } else {
                         $url = $this->integracao_config["baseUrlpessoas"];
@@ -526,7 +524,7 @@ class IntegracaoService extends ServiceBase {
                 }
                 if($this->echo) $this->imprimeNoTerminal("Concluída a fase de obtenção dos dados dos servidores informados pelo SIAPE.....");
 
-                // Reseta tabela integracao_servidores e faz nova leitura do Web Service.
+                // Processamento de dados dos servidores...
 
                 // Usada para verificar email's duplicados,
                 $emails_integracao_na_memoria = [];
@@ -538,8 +536,6 @@ class IntegracaoService extends ServiceBase {
                         &$self, &$emails_integracao_na_memoria,
                         &$cpfs_emails_funcionais_vazios,
                         &$emails_funcionais_duplicados) {
-
-                    //DB::table('integracao_servidores')->delete();
 
                     foreach($servidores as $servidor) {
                         if(isset($servidor['matriculas']) && isset($servidor['matriculas']['dados']) &&
@@ -562,9 +558,11 @@ class IntegracaoService extends ServiceBase {
                                 $email = str_contains($email, "@") ? $email : $email . "@prf.gov.br";
                                 $email = mb_strtolower($email, 'UTF-8');
 
+                                // Tratamento de e-mail da chefia imediata
+                                $email_chefia_imediata = $self->UtilService->valueOrDefault($servidor['email_chefia_imediata'], null);
+                                if (!empty($email_chefia_imediata)) $email_chefia_imediata = mb_strtolower($email_chefia_imediata, 'UTF-8');
+
                                 // Trata nomedeguerra
-                                // Caso não exista variável (SIAPE WEB SERVICE não tem)
-                                // pega primeiro nome e vai.
                                 if(!empty($ativo['nomeguerra'])) {
                                     $nomeguerra = $ativo['nomeguerra'];
                                 } else {
@@ -628,6 +626,8 @@ class IntegracaoService extends ServiceBase {
                                     'dataexercicionoorgao' => $self->UtilService->valueOrDefault($ativo['dataexercicionoorgao'], null),
                                     'funcoes' => $ativo['funcoes'],
                                     'matricula' => $self->UtilService->valueOrDefault($ativo['matriculasiape'], null),
+                                    'cpf_chefia_imediata' => $self->UtilService->valueOrDefault($servidor['cpf_chefia_imediata'], null),
+                                    'email_chefia_imediata' => $email_chefia_imediata,
                                     'deleted_at' => null,
                                 ];
 
@@ -645,9 +645,6 @@ class IntegracaoService extends ServiceBase {
                                     $registro = new IntegracaoServidor($servidor);
                                     $registro->save();
 
-                                    // Variável utilizada para fazer batimento no final (softdelete)
-                                    array_push($this->servidores_registrados_is, $registro);
-
                                     // Adiciona na memória para verificar próximos e evitar duplicidade.
                                     array_push($emails_integracao_na_memoria, $email);
 
@@ -655,7 +652,7 @@ class IntegracaoService extends ServiceBase {
                                     str_contains($servidor['emailfuncional'], '@petrvs.gov.br') ?
                                         array_push($cpfs_emails_funcionais_vazios, [$servidor['cpf'],$servidor['emailfuncional']]) : true;
 
-                                    // Variável utilizada para fazer batimento no final (softdelete)
+                                    // Variável utilizada para fazer batimento no final (softdelete). Ainda em construção...
                                     array_push($this->servidores_registrados_is, $registro);
 
                                 } else { // Caso e-mail esteja duplicado, segue registro para rotina de avisos no final.
@@ -666,11 +663,10 @@ class IntegracaoService extends ServiceBase {
                         }
                 });
 
-                // Ratificar quem foi deletado
+                /* Posteriormente, será decidido o que fazer com as diferenças entre tabela usuários e integração_servidores.
                 $n_servidores = count($this->servidores_registrados_is);
-
                 // Ratificar quem não foi deletado
-
+                */
 
                 if($this->echo) $this->imprimeNoTerminal("Concluída a fase de reconstrução da tabela integração_servidores.....");
                 $n = IntegracaoServidor::count();
@@ -694,8 +690,7 @@ class IntegracaoService extends ServiceBase {
 
                 array_push($this->result['servidores']['Observações'], 'Total de servidores importados do SIAPE: ' . $n . ' (apenas ATIVOS).');
 
-                // Seleciona todos os servidores que sofreram alteração nos seus dados pessoais ou estão com data
-
+                // Seleciona todos os servidores que sofreram alteração nos seus dados pessoais ou atingiu critério quanto data_modificação.
                 $atualizacoes = DB::select(
                     "SELECT u.id, isr.cpf AS cpf_servidor, u.nome AS nome_anterior, ".
                     "isr.nome AS nome_servidor, u.apelido AS apelido_anterior, ".
@@ -707,7 +702,7 @@ class IntegracaoService extends ServiceBase {
                     "WHERE isr.nome != u.nome OR isr.emailfuncional != u.email OR ".
                     "isr.matriculasiape != u.matricula OR isr.nomeguerra != u.apelido OR ".
                     "isr.telefone != u.telefone OR ".
-                    "u.data_modificacao IS NULL or isr.data_modificacao > u.data_modificacao");
+                    "isr.data_modificacao > u.data_modificacao");
 
                 $sql_update = "UPDATE usuarios SET ".
                     "nome = :nome, apelido = :nomeguerra, ".
@@ -757,9 +752,6 @@ class IntegracaoService extends ServiceBase {
                         }
                     };
 
-                    // $db_result_servidor_desativado = $this->inativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NOW() WHERE data_inativacao IS NULL AND u.codigo IS NOT NULL and u.codigo != '' AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo AND iu.deleted_at IS NOT NULL)");
-                    // $db_result_servidor_ativado = $this->ativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NULL WHERE data_inativacao IS NOT NULL AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo AND iu.deleted_at IS NULL);");
-
                     if($this->echo) $this->imprimeNoTerminal('Concluída a fase de atualização de servidores que apresentaram alteração nos seus dados pessoais!.....');
                     $n = count($atualizacoes);
                     if($n > 0) array_push($this->result['servidores']["Observações"], $n . ($n == 1 ? ' servidor foi atualizado porque sofreu alteração em seus dados pessoais!' : ' servidores foram atualizados porque sofreram alteração em seus dados pessoais!'));
@@ -791,7 +783,7 @@ class IntegracaoService extends ServiceBase {
                     $vinculos_isr = DB::select($query);
 
                     $perfil_participante = Perfil::where('nome', 'Participante')->first()->id;
-                    $perfil_chefe = Perfil::where('nome', 'Chefe de Unidade Executora')->first()->id;
+                    $perfil_chefe = Perfil::where('nome', 'Chefia de Unidade Executora')->first()->id;
 
                     foreach($vinculos_isr as $v_isr){
                         $v_isr = $this->UtilService->object2array($v_isr);
@@ -809,16 +801,19 @@ class IntegracaoService extends ServiceBase {
                             'situacao_funcional' => $this->UtilService->valueOrDefault($v_isr['situacao_funcional'], "DESCONHECIDO"),
                             'perfil_id' => $perfil,
                             'exercicio' => $this->UtilService->valueOrDefault($v_isr['exercicio']),
-                            'uf' => $this->UtilService->valueOrDefault($v_isr['uf']),
+                            'uf' => $this->UtilService->valueOrDefault($v_isr['uf'], null),
                             'data_modificacao' => $this->UtilService->valueOrDefault($v_isr['data_modificacao']),
                         ]);
                         $registro->save();
+
+                        // Registrar exercício...
+
                         $id_user = $registro->id;
                         $unidade_exercicio = Unidade::where("codigo", $v_isr["exercicio"])->first();
 
                         // Alguns servidores possuem unidades de exercícios não válidas (provavelmente aposentados).
-                        // Dessa forma, como resolução, alocar eles na unidade
-                        // instituidora para ciência dos administradores do sistema e posterior remanejamento.
+                        // Dessa forma, como resolução, alocar eles na unidade instituidora para ciência dos
+                        // administradores do sistema e posterior remanejamento.
 
                         if(is_null($unidade_exercicio)){
                             $unidade_exercicio = Unidade::where("codigo", "1")->first();
@@ -830,9 +825,9 @@ class IntegracaoService extends ServiceBase {
                             'atribuicoes' => ["LOTADO"],
                         ]);
 
-                        /* Farias criou rotina para gerar exercícios (antiga lotação)
+                        /* QueryMan, Farias, criou rotina para gerar exercícios (antiga lotação)
                         de forma simplificada. Aqui é criado o exercício vinculando
-                        o usuário a unidade. Olhar rotina para entender melhor. */
+                        o usuário a unidade. Em caso de dúvida, olhar rotina para entender melhor. */
                         $this->unidadeIntegrante->saveIntegrante($vinculo, false);
                     }
                     if($this->echo) $this->imprimeNoTerminal('Concluída a fase de atualização das lotações dos servidores!.....');
@@ -844,7 +839,7 @@ class IntegracaoService extends ServiceBase {
 
             } catch (Throwable $e) {
                 LogError::newError("Erro ao importar servidores", $e);
-                $this->result["servidores"]['Resultado'] = 'ERRO: '. $e->getMessage();
+                $this->result["servidores"]['Resultado'] = 'ERRO: '. $e->getMessage() . ' - Linha: ' . $e->getLine() . ' - Trace: ' . $e->getTrace();
             }
         }
 

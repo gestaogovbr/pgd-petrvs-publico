@@ -14,6 +14,10 @@ services:
       MYSQL_PASSWORD: PsEeTnRhVaS
       MYSQL_TCP_PORT: 3308
       TZ: "America/Bahia"
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
       
   petrvs_php:
     build:
@@ -37,8 +41,8 @@ services:
     deploy:
       resources:
         limits:
-          #cpus: '1.0'
-          memory: 2048M
+          memory: 1024M
+ 
 
   petrvs_node:
     build:
