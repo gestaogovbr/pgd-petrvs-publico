@@ -235,7 +235,6 @@ class UsuarioService extends ServiceBase
         $subordinadas = true;
         foreach($data["where"] as $condition) {
             if(is_array($condition) && $condition[0] == "lotacao") {
-                //array_push($where, new RawWhere("EXISTS(SELECT id FROM lotacoes where_lotacoes WHERE where_lotacoes.usuario_id = usuarios.id AND where_lotacoes.unidade_id = ?)", [$condition[2]]));
                 $query->whereHas('lotacao', function (Builder $query) use ($condition) {
                     $query->where('unidade_id', $condition[2]);
                 });
@@ -290,6 +289,7 @@ class UsuarioService extends ServiceBase
             $alreadyHas = $query1->first() ?? $query2->first();
             if(!empty($alreadyHas)) {
                 if($alreadyHas->deleted_at) { // Caso o usuário exista, mas esteja excluído, reabilita o usuário deletando todos os seus vínculos anteriores e recuperando seus dados sensíveis (cpf, e-mail funcional, matricula, nome, apelido, data_nascimento)
+                    // sugestão: refatorar esse código deixando para o usuário logado decidir se deseja reativar e, em caso positivo, decidir se atualiza os dados ou não
                     $this->removerVinculosUsuario($alreadyHas);
                     $data["id"] = $alreadyHas->id;
                     $data["cpf"] = $alreadyHas->cpf;

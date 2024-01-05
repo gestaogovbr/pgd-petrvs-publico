@@ -17,7 +17,7 @@ import { SafeUrl } from '@angular/platform-browser';
 
 //export let appInjector: Injector;
 //export type Contexto = "PGD" | "EXECUCAO" | "AVALIACAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
-export type Contexto = "GESTAO" | "EXECUCAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
+export type Contexto = "EXECUCAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
 export type Schema = {
   name: string,
   permition?: string,
@@ -45,11 +45,6 @@ export type MenuContexto = {
   name: string,
   menu?: MenuItem[],
   petrvsModule?: string
-};
-
-export type NovoMenuContexto = {
-  module: PetrvsModule | null,
-  items: MenuContexto[]
 };
 
 @Component({
@@ -89,7 +84,6 @@ export class AppComponent {
   public menuSchema: MenuSchema = {};
   public menuToolbar: any[] = [];
   public menuContexto: MenuContexto[] = [];
-  public novoMenuContexto: NovoMenuContexto[] = [];
   public menuProjeto: any;
   public menuGestao: any;
   public menuOperacional: any;
@@ -146,6 +140,7 @@ export class AppComponent {
       EIXOS_TEMATICOS: { name: this.lex.translate("Eixos Temáticos"), permition: 'MOD_EXTM', route: ['cadastros', 'eixo-tematico'], icon: this.entity.getIcon('EixoTematico') },
       ENTREGAS: { name: this.lex.translate("Modelos de Entregas"), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: this.entity.getIcon('Entrega') },
       FERIADOS: { name: this.lex.translate("Feriados"), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: this.entity.getIcon('Feriado') },
+      HABILITACOES_PROGRAMA: { name: this.lex.translate("Habilitações"), permition: 'MOD_PRGT_PART', route: ["gestao", "programa", "participantes"], icon: this.entity.getIcon('Programa') },
       MATERIAIS_SERVICOS: { name: this.lex.translate("Materiais e Serviços"), permition: '', route: ['cadastros', 'material-servico'], icon: this.entity.getIcon('MaterialServico') },
       TEMPLATES: { name: this.lex.translate("Templates"), permition: 'MOD_TEMP', route: ['cadastros', 'templates'], icon: this.entity.getIcon('Template'), params: { modo: "listagem" } },
       TIPOS_TAREFAS: { name: this.lex.translate("Tipos de Tarefas"), permition: 'MOD_TIPO_TRF', route: ['cadastros', 'tipo-tarefa'], icon: this.entity.getIcon('TipoTarefa') },
@@ -154,7 +149,7 @@ export class AppComponent {
       TIPOS_DOCUMENTOS: { name: this.lex.translate("Tipos de Documento"), permition: 'MOD_TIPO_DOC', route: ['cadastros', 'tipo-documento'], icon: this.entity.getIcon('TipoDocumento') },
       TIPOS_JUSTIFICATIVAS: { name: this.lex.translate("Tipos de Justificativa"), permition: 'MOD_TIPO_JUST', route: ['cadastros', 'tipo-justificativa'], icon: this.entity.getIcon('TipoJustificativa') },
       TIPOS_MODALIDADES: { name: this.lex.translate("Tipos de Modalidade"), permition: 'MOD_TIPO_MDL', route: ['cadastros', 'tipo-modalidade'], icon: this.entity.getIcon('TipoModalidade') },
-      TIPOS_MOTIVOS_AFASTAMENTOS: { name: this.lex.translate("Tipos de Motivo de Afastamento"), permition: 'MOD_TIPO_MTV_AFT', route: ['cadastros', 'tipo-motivo-afastamento'], icon: this.entity.getIcon('TipoMotivoAfastamento') },
+      TIPOS_MOTIVOS_AFASTAMENTOS: { name: this.lex.translate("Motivo de Afastamento"), permition: 'MOD_TIPO_MTV_AFT', route: ['cadastros', 'tipo-motivo-afastamento'], icon: this.entity.getIcon('TipoMotivoAfastamento') },
       TIPOS_PROCESSOS: { name: this.lex.translate("Tipos de Processo"), permition: 'MOD_TIPO_PROC', route: ['cadastros', 'tipo-processo'], icon: this.entity.getIcon('TipoProcesso') },
       /*Gestão*/
       CADEIAS_VALORES: { name: this.lex.translate("Cadeias de Valores"), permition: 'MOD_CADV', route: ['gestao', 'cadeia-valor'], icon: this.entity.getIcon('CadeiaValor') },
@@ -223,6 +218,7 @@ export class AppComponent {
       id: "navbarDropdownGestaoPlanejamento",
       menu: [
         this.menuSchema.CADEIAS_VALORES,
+        this.menuSchema.HABILITACOES_PROGRAMA,
         this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
         this.menuSchema.PLANOS_ENTREGAS,
         this.menuSchema.PLANOS_TRABALHOS,
@@ -276,7 +272,7 @@ export class AppComponent {
       this.menuSchema.PLANOS_TRABALHOS,
       this.menuSchema.ATIVIDADES,
       Object.assign({}, this.menuSchema.CONSOLIDACOES, { params: { tab: "UNIDADE" } }),
-      this.menuSchema.AFASTAMENTOS
+      //this.menuSchema.AFASTAMENTOS
     ];
 
     this.menuAdministrador = [{
@@ -417,38 +413,24 @@ export class AppComponent {
       ]
     }];
 
+    let gestaoPGD = this.auth.hasPermissionTo("CTXT_GEST");
+    let execucaoPGD = this.auth.hasPermissionTo("CTXT_EXEC");
     this.menuContexto = [
-      { key: "EXECUCAO", permition: "CTXT_EXEC", icon: "bi bi-person-check", name: this.lex.translate("Participante"), menu: this.menuExecucao, petrvsModule: 'PGD' },
-      { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-people-fill", name: this.lex.translate("Chefe"), menu: this.menuGestao, petrvsModule: 'PGD' },
+      { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.menuGestao},
+      { key: "EXECUCAO", permition: "CTXT_EXEC", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.menuExecucao},
       { key: "ADMINISTRADOR", permition: "CTXT_ADM", icon: "bi bi-emoji-sunglasses", name: this.lex.translate("Administrador"), menu: this.menuAdministrador },
       { key: "DEV", permition: "CTXT_DEV", icon: "bi bi-braces", name: this.lex.translate("Desenvolvedor"), menu: this.menuDev },
       { key: "PONTO", permition: "CTXT_PNT", icon: "bi bi-stopwatch", name: this.lex.translate("Ponto Eletrônico"), menu: this.menuPonto },
       { key: "PROJETO", permition: "CTXT_PROJ", icon: "bi bi-graph-up-arrow", name: this.lex.translate("Projetos"), menu: this.menuProjeto },
       { key: "RAIOX", permition: "CTXT_RX", icon: "bi bi-camera", name: this.lex.translate("Raio X"), menu: this.menuRaioX }
     ]
-
-    const petrvsModules = [{
-      name: this.lex.translate("PGD"),
-      icon: 'bi bi-clipboard2-data'
-    }];
-
-    this.novoMenuContexto = [];
-    petrvsModules.forEach(module => {
-      const groupedItems = this.menuContexto.filter(item => item.petrvsModule === module.name && (!item.permition || this.auth.capacidades.includes(item.permition)));
-      if (groupedItems.length > 0) {
-        this.novoMenuContexto.push({
-          module: module,
-          items: groupedItems
-        });
-      }
-      const itemsWithoutModules = this.menuContexto.filter(item => !item.petrvsModule && (!item.permition || this.auth.capacidades.includes(item.permition)));
-      if (itemsWithoutModules.length > 0) {
-        this.novoMenuContexto.push({
-          module: null,
-          items: itemsWithoutModules
-        });
-      }
-    });
+    
+    if(gestaoPGD){
+      this.menuContexto = this.menuContexto.filter(item => item.key !== "EXECUCAO");
+    } else if(execucaoPGD && !gestaoPGD){
+      this.menuContexto = this.menuContexto.filter(item => item.key !== "GESTAO");
+    }
+    
   }
 
   /*public onContextoSelect(item: any) {
@@ -559,23 +541,6 @@ export class AppComponent {
 
   public get isConfig(): boolean {
     return this.router.url.indexOf("/extension/options") >= 0;
-  }
-
-  public activeModule(menu: NovoMenuContexto) {
-    return menu.items?.find(s => s.name == this.gb.contexto?.name)
-  }
-
-  public showSubMenu(e: any) {
-    console.log(e);
-    let nextEl = e.target.nextElementSibling;
-    if (nextEl && nextEl.classList.contains('submenu')) {
-      e.preventDefault();
-      if (nextEl.style.display == 'block') {
-        nextEl.style.display = 'none';
-      } else {
-        nextEl.style.display = 'block';
-      }
-    }
   }
 
 }

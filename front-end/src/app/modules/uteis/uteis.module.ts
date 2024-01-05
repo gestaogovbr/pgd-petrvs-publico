@@ -20,6 +20,7 @@ import { AvaliarNotaInputComponent } from './avaliar/avaliar-nota-input/avaliar-
 import { AvaliarNotaBadgeComponent } from './avaliar/avaliar-nota-badge/avaliar-nota-badge.component';
 import { PlanejamentoShowComponent } from './planejamento-show/planejamento-show.component';
 import { ColunasComponent } from './colunas/colunas.component';
+import { RelatoriosTemplateComponent } from './relatorios/relatorios-template/relatorios-template.component';
 import { DocumentosPreviewComponent } from './documentos/documentos-preview/documentos-preview.component';
 
 @NgModule({
@@ -42,6 +43,7 @@ import { DocumentosPreviewComponent } from './documentos/documentos-preview/docu
     AvaliarNotaBadgeComponent,
     ColunasComponent,
     PlanejamentoShowComponent,
+    RelatoriosTemplateComponent,
     DocumentosPreviewComponent
   ],
   imports: [
@@ -66,6 +68,7 @@ import { DocumentosPreviewComponent } from './documentos/documentos-preview/docu
     AvaliarNotaBadgeComponent,
     ColunasComponent,
     PlanejamentoShowComponent,
+    RelatoriosTemplateComponent,
     DocumentosPreviewComponent
   ]
 })

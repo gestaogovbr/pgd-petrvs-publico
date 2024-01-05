@@ -32,7 +32,7 @@ export class Unidade extends Base implements HasNotificacao {
     public entregas_plano_entrega?: PlanoEntregaEntrega[]; /* Lista de entregas de plano de entrega */
     public programas?: Programa[]; /* Lista de programas */
     public recursos_projeto?: ProjetoRecurso[]; /* Lista de recursos de projeto */
-    public notificacoes_templates?: Template[]; /* Lista de templates */
+    public notificacoes_templates?: Template[];  /* Lista de templates */
     public unidades?: Unidade[]; /* Lista de unidades */
     public planejamentos?: Planejamento[]; /* Lista de planejamentos institucionais */
     public cadeias_valor?: CadeiaValor[]; /* Lista de cadeias de valor */

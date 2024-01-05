@@ -16,11 +16,14 @@ export class DocumentosPreviewComponent extends PageFrameBase {
   @Input() documentoId?: string;
   @Input() documento?: Documento;
 
+  public documentoSalvo: boolean = false;
+
   public documentoDao: DocumentoDaoService;
   public buttons: ToolbarButton[] = [
-    { icon: "bi bi-printer", hint: "Imprimir", color: "btn-outline-secondary border-0" },
+    { icon: "bi bi-floppy", hint: "Salvar documento", color: "btn-outline-info border-0", onClick: () => this.salvarParaUsuario(), id: 'salvarDocumento' },
+    { icon: "bi bi-printer", hint: "Imprimir", color: "btn-outline-secondary border-0", onClick: () => this.imprimir() },
     { icon: "bi bi-envelope-at", hint: "Enviar E-mail", color: "btn-outline-warning border-0" },
-    { icon: "bi bi-file-earmark-pdf", hint: "Exportar PDF", color: "btn-outline-danger border-0" },
+    { icon: "bi bi-file-earmark-pdf", hint: "Exportar PDF", color: "btn-outline-danger border-0", onClick: () => this.geraPDF() },
     { icon: "bi bi-whatsapp", hint: "Enviar WhatsApp", color: "btn-outline-success border-0" },
     { img: "assets/images/sei-icon.png", hint: "Enviar SEI", color: "btn-outline-primary border-0" }
   ];
@@ -52,5 +55,28 @@ export class DocumentosPreviewComponent extends PageFrameBase {
     let result = null;
     return result;
   }
+
+  salvarParaUsuario(){
+    if(this.documento){
+      this.documentoDao.update(this.documento.id, {usuario_id: this.auth.usuario?.id}).then(doc => {
+        this.documentoSalvo = true;
+        const botaoSalvar = this.buttons.find(b => b.id == 'salvarDocumento')
+        if(botaoSalvar) botaoSalvar.disabled = true;
+      });
+    }
+  }
+
+  geraPDF(){
+    if(this.documento){
+      this.documentoDao.gerarPDF(this.documento.id).then(res => {
+        
+      })
+    }
+  }
+
+  imprimir() {
+    window.print();
+  }
+
 }
 

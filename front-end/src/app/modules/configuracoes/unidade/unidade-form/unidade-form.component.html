@@ -14,10 +14,10 @@
                 <input-text [disabled]="isDisabled" [size]="6" label="Nome" controlName="nome" required></input-text>
             </div>
             <div class="row">
-                <input-search [disabled]="isDisabled" #gestor label="Gestor" [size]="6" [emptyValue]="null"
+                <input-search [disabled]="auth.hasPermissionTo('MOD_UND_INTG_GST') ? undefined : 'true'" #gestor label="Chefe" [size]="6" [emptyValue]="null"
                     [control]="formGestor!.controls.gestor_id" controlName="gestor_id" [dao]="usuarioDao"
                     labelInfo="Responsável pela unidade"></input-search>
-                <input-search [disabled]="isDisabled" #gestorSubstituto label="Gestor Substituto" [size]="6" [emptyValue]="null"
+                <input-search [disabled]="auth.hasPermissionTo('MOD_UND_INTG_GST') ? undefined : 'true'" #gestorSubstituto label="Chefe substituto" [size]="6" [emptyValue]="null"
                     [control]="formGestor!.controls.gestor_substituto_id" controlName="gestor_substituto_id"
                     [dao]="usuarioDao" labelInfo="Responsável substituto pela unidade"></input-search>
             </div>
@@ -60,13 +60,13 @@
         </tab>
         <tab key="EXPEDIENTE" label="Expediente">
             <div class="row">
-                <input-switch #usarExpedienteEntidade [label]="'Usar o calendário ' + lex.translate('entidade')"
+                <input-switch #usarExpedienteEntidade [label]="'Usar o calendário ' + lex.translate('unidade')"
                     labelPosition="right" icon="bi bi-check2" [size]="12" (change)="onUsarExpedienteEntidadeChange()"
-                    controlName="usar_expediente_entidade"
-                    labelInfo="Se utiliza o expediente configurado na entidade ao invés de especificar na unidade"></input-switch>
+                    controlName="usar_expediente_unidade"
+                    labelInfo="Se o expediente da {{lex.translate('unidade')}} não for definido usaremos o da {{lex.translate('entidade')}}"></input-switch>
             </div>
             <calendar-expediente #expediente
-                [disabled]="form!.controls.usar_expediente_entidade.value ? undefined : 'true'"
+                [disabled]="form!.controls.usar_expediente_unidade.value ? undefined : 'true'"
                 [expedienteDisabled]="entity?.entidade?.expediente"
                 [control]="form!.controls.expediente"></calendar-expediente>
         </tab>

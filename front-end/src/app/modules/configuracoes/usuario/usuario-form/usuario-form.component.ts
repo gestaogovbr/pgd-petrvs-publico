@@ -78,8 +78,8 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     if(['data_nascimento'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
     }
-    return result;
-  }
+    return result;
+  }
 
   public formValidation = (form?: FormGroup) => {
     if (!this.formLotacao?.controls.unidade_lotacao_id.value?.length) {
@@ -98,30 +98,48 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
       this.unidadesIntegrantes!.grid!.confirm();
       let usuario = this.util.fill(new Usuario(), this.entity!);
       usuario = this.util.fillForm(usuario, this.form!.value);
-      try {
-        await this.dao?.save(Object.assign(usuario,{'lotacao_id': this.formLotacao?.controls.unidade_lotacao_id.value})).then(async usuarioBanco => {
-          usuario.lotacao_id = this.formLotacao?.controls.unidade_lotacao_id.value;
-          let integrantesConsolidados: IntegranteConsolidado[] = this.unidadesIntegrantes?.items || [];
-          let indicesIntegrantesExcluir: number[] = [];
-          integrantesConsolidados.filter(x => x._status == "DELETE").forEach((x,i) => indicesIntegrantesExcluir.push(i));
-          let indiceVinculoLotacao = integrantesConsolidados.findIndex(ic => ic.atribuicoes.includes("LOTADO"));
-          let lotacaoAlterada: boolean = indiceVinculoLotacao == -1 || usuario.lotacao_id != integrantesConsolidados[indiceVinculoLotacao].unidade_id;
-          if (lotacaoAlterada) {    // garantindo a coerência entre o campo de lotação do usuário e o vínculo de lotado dos integrantes
-            if(indiceVinculoLotacao != -1) integrantesConsolidados[indiceVinculoLotacao].atribuicoes = integrantesConsolidados[indiceVinculoLotacao].atribuicoes.filter(x => x != "LOTADO");
-            let indiceNovaUnidadeLotacao = integrantesConsolidados.findIndex(ic => ic.unidade_id == usuario.lotacao_id);
-            indiceNovaUnidadeLotacao == -1 ? integrantesConsolidados.push(Object.assign(new IntegranteConsolidado (), { unidade_id: usuario.lotacao_id, usuario_id: usuarioBanco.id, atribuicoes: ["LOTADO"] })) : integrantesConsolidados[indiceNovaUnidadeLotacao].atribuicoes.push("LOTADO");
-            indiceVinculoLotacao = integrantesConsolidados.findIndex(ic => ic.atribuicoes.includes("LOTADO"));
-          }
-          // uma vez garantida a coerência entre o campo de lotação do usuário e o vínculo de lotado dos integrantes, vamos tratar do eventual vínculo a ser excluído 
-          indicesIntegrantesExcluir.forEach( i => {
-            integrantesConsolidados[i].atribuicoes = i != indiceVinculoLotacao ? [] : ["LOTADO"];
-          });
-          integrantesConsolidados.forEach(ic => ic.usuario_id = usuarioBanco.id);
-          await this.integranteDao.saveIntegrante(integrantesConsolidados as IntegranteConsolidado[]);
+      usuario.lotacao_id = this.formLotacao?.controls.unidade_lotacao_id.value;
+      let integrantesConsolidados: IntegranteConsolidado[] = this.unidadesIntegrantes?.items || [];
+      let indicesIntegrantesExcluir: number[] = [];
+      integrantesConsolidados.filter(x => x._status == "DELETE").forEach((x,i) => indicesIntegrantesExcluir.push(i));
+      let indiceVinculoLotacao = integrantesConsolidados.findIndex(ic => ic.atribuicoes.includes("LOTADO"));
+      let lotacaoAlterada: boolean = indiceVinculoLotacao == -1 || usuario.lotacao_id != integrantesConsolidados[indiceVinculoLotacao].unidade_id;
+      /* Caso não tenha lotação na lista de atribuições adiciona uma
+      if (indiceVinculoLotacao < 0) {
+        const unidadeIntegrante = integrantesConsolidados.find(ic => ic.unidade_id == usuario.lotacao_id) || new IntegranteConsolidado({
+          usuario_id: usuario.id,
+          _status: "ADD"
         });
-        resolve(true);
-      } catch (error: any) {
-        if (this.editableForm) this.editableForm.error = error;
+        unidadeIntegrante.atribuicoes.push("LOTADO");
+        if(integrantesConsolidados.indexOf(unidadeIntegrante) < 0) integrantesConsolidados.push(unidadeIntegrante);
+        indiceVinculoLotacao = integrantesConsolidados.findIndex(ic => ic.atribuicoes.includes("LOTADO"));
+      }*/
+      let usuarioEhGestor: boolean = indiceVinculoLotacao != -1 && integrantesConsolidados[indiceVinculoLotacao].atribuicoes.includes("GESTOR");
+      if(lotacaoAlterada && usuarioEhGestor) {
+        this.submitting = false;
+        await this.dialog.alert("PROIBIDO ALTERAR A LOTAÇÃO !", "Não é possível alterar a lotação de um servidor que exerce a função de Gestor Titular da Unidade onde atualmente está lotado.");
+        reject(false);
+      } else {
+        try {
+          await this.dao?.save(Object.assign(usuario, {'lotacao_id': this.formLotacao?.controls.unidade_lotacao_id.value})).then(async usuarioBanco => {
+            if (lotacaoAlterada) {    // garantindo a coerência entre o campo de lotação do usuário e o vínculo de lotado dos integrantes
+              if(indiceVinculoLotacao != -1) integrantesConsolidados[indiceVinculoLotacao].atribuicoes = integrantesConsolidados[indiceVinculoLotacao].atribuicoes.filter(x => x != "LOTADO");
+              let indiceNovaUnidadeLotacao = integrantesConsolidados.findIndex(ic => ic.unidade_id == usuario.lotacao_id);
+              indiceNovaUnidadeLotacao == -1 ? integrantesConsolidados.push(Object.assign(new IntegranteConsolidado (), { unidade_id: usuario.lotacao_id, usuario_id: usuarioBanco.id, atribuicoes: ["LOTADO"] })) : integrantesConsolidados[indiceNovaUnidadeLotacao].atribuicoes.push("LOTADO");
+              indiceVinculoLotacao = integrantesConsolidados.findIndex(ic => ic.atribuicoes.includes("LOTADO"));
+            }
+            // uma vez garantida a coerência entre o campo de lotação do usuário e o vínculo de lotado dos integrantes, vamos tratar do eventual vínculo a ser excluído 
+            indicesIntegrantesExcluir.forEach(i => {
+              //integrantesConsolidados[i].atribuicoes = i != indiceVinculoLotacao ? [] : ["LOTADO"];
+              if(i != indiceVinculoLotacao) integrantesConsolidados[i].atribuicoes = [];
+            });
+            integrantesConsolidados.forEach(ic => ic.usuario_id = usuarioBanco.id);
+            await this.integranteDao.saveIntegrante(integrantesConsolidados as IntegranteConsolidado[]);
+          });
+          resolve(true);
+        } catch (error: any) {
+          if (this.editableForm) this.editableForm.error = error;
+        }
       }
     });
   }

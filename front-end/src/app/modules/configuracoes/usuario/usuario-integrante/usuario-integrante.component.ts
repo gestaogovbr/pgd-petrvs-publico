@@ -72,6 +72,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
         this.entity = result[0]!;
         integrantes = result[1].integrantes.filter(x => x.atribuicoes?.length > 0);
       } finally {
+        this.items = [];
         integrantes.forEach(i => this.items?.push(this.integranteService.completarIntegrante(i, i.id, entity.id, i.atribuicoes)));
         this.items = this.integranteService.ordenar(this.items);
         this.cdRef.detectChanges();
@@ -100,6 +101,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
    * @returns 
    */
   public async addIntegrante() {
+    if (this.grid) this.grid.error = '';
     let novo = {
       id: this.integranteDao!.generateUuid(),
       unidade_id: "",
@@ -145,8 +147,8 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   public async removeIntegrante(row: IntegranteConsolidado) {
     let nomeServidor = this.entity!.nome;
     let nomeUnidade = row.unidade_nome;
-    if (this.isNoPersist && row.atribuicoes.length == 1 && row.atribuicoes[0] == "LOTADO") {
-      await this.dialog.alert("IMPOSSÍVEL EXCLUIR !", "Um vínculo não pode ser excluído quando sua única atribuição é a lotação do servidor. Se quiser alterar a lotação, use a aba principal.");
+    if (row.atribuicoes.length == 1 && row.atribuicoes[0] == "LOTADO") {
+      await this.dialog.alert("IMPOSSÍVEL EXCLUIR !", "Um vínculo não pode ser excluído quando sua única atribuição é " + this.lex.translate('a lotação') + " " + this.lex.translate('do servidor') + ". Se quiser alterar " + this.lex.translate('a lotação') + ", " + (this.isNoPersist ? "use a aba Principal." : "utilize a aba Principal na edição do cadastro " + this.lex.translate('do usuário') + "."));
     } else {
       let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir todas as atribuições do servidor '" + nomeServidor + "' na unidade '" + nomeUnidade + "' ?");
       if (confirm) {

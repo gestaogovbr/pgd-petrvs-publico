@@ -61,12 +61,12 @@ class UnidadeService extends ServiceBase
         return ServiceBase::toIso8601($dateTime);
     }
 
-    public function inativo($id, $data_inativacao) {
+    public function inativar($id, $inativo) {
         DB::beginTransaction();
         try {
             $unidade = Unidade::find($id);
             if(empty($unidade)) throw new Exception("Unidade não encontrada");
-            $unidade->data_inativacao = $data_inativacao ? date("Y-m-d H:i:s") : null;
+            $unidade->data_inativacao = $inativo ? date("Y-m-d H:i:s") : null;
             $unidade->save();
             DB::commit();
         } catch (Throwable $e) {
@@ -238,31 +238,24 @@ class UnidadeService extends ServiceBase
     public function proxyQuery($query, &$data) {
         $usuario = parent::loggedUser();
         $where = [];
-        $subordinadas = true;
-        $dataInativacao = $this->extractWhere($data, "data_inativacao"); //  !empty(array_filter($data["where"], fn($w) => $w[0] == "data_inativacao"));
-        $inativos = empty($dataInativacao) || $dataInativacao[2];
-        //Esta variável '$unidadesPlanejamento' informa se a consulta está vindo do formulário de inclusão de 
-        //Planejamento Institucional para uma unidade executora
-        $unidadesPlanejamento = !empty(array_filter($data["where"], fn($w) => $w[0] == "unidades_planejamento")); 
-        //$unidadesPlanejamento = !empty(array_filter($data["where"], fn($w) => $w[0] == "unidades_planejamento"));
-        foreach($data["where"] as $condition) {
-            if(is_array($condition) && $condition[0] == "subordinadas") {
-                $subordinadas = $condition[2];
-            } else if(is_array($condition) && $condition[0] == "inativos") {
-                $inativos = $inativos || $condition[2];
+        $subordinadas = true; 
+        // TODO: acredito que esse controle dataInativação/inativos pode ser melhorado      //  unidades-list-grid
+        $dataInativacao = $this->extractWhere($data, "data_inativacao");                    //  	data_inativacao (selectable)
+        $inativos = empty($dataInativacao) || $dataInativacao[1] == "!=" ? true : false;    //  		!= null		......................	retornar somente as unidades inativas   => $inativos = true
+        foreach($data["where"] as $condition) {                                             //  		== null		......................	retornar somente as unidades ativas     => $inativos = false
+            if(is_array($condition) && $condition[0] == "subordinadas") {                   //  	inativos (not selectable)
+                $subordinadas = $condition[2];                                              //  		== true		......................	retornar unidades ativas e inativas     => $inativos = true
+            } else if(is_array($condition) && $condition[0] == "inativos") {                //  		== false	......................	retornar somente as unidades ativas     => $inativos = false
+                $inativos = $condition[2];                                  
             } else {
                 array_push($where, $condition);
             }
         }
-        if(!$inativos) {
-            array_push($where, ["data_inativacao", "==", null]);
-        }
-        if(!$usuario->hasPermissionTo("MOD_UND_TUDO")) { // || ($unidadesPlanejamento && ($usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_SUBORD") || $usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_QQLOT")))) {
-            //if($unidadesPlanejamento && $usuario->hasPermissionTo("MOD_PLAN_INST_INCL_UNEX_QQLOT")) $subordinadas = false;
+        if(!empty($dataInativacao) || empty($inativos)) array_push($where, ["data_inativacao", $inativos ? "!=" : "==", null]);
+        if(!$usuario->hasPermissionTo("MOD_UND_TUDO")) { 
             $areasTrabalhoWhere = $this->usuarioService->areasTrabalhoWhere($subordinadas, null, "unidades");
             array_push($where, new RawWhere("($areasTrabalhoWhere)", []));
         }
-        $where = array_filter($where, fn($w) => ($w instanceof RawWhere) || ($w[0] != "unidades_planejamento"));
         $data["where"] = $where;
         return $data;
     } 
@@ -396,4 +389,16 @@ class UnidadeService extends ServiceBase
             $query->where('status','ATIVO');
         }])->whereHas('planosEntrega')->get()->map(fn($u) => $u->id)->toArray();
     }
+
+
+    /*
+    (*) vide no front end, unidade-list-grid.component.ts
+    unidades-list-grid
+		data_inativacao (selectable)
+			!= null		......................	retornar somente as unidades inativas
+			== null		......................	retornar somente as unidades ativas
+		inativos (not selectable)
+			== true		......................	retornar unidades ativas e inativas
+			== false	......................	retornar somente as unidades ativas
+    */
 }
