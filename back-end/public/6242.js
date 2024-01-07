@@ -591,6 +591,7 @@ var _class;
 
 
 
+let lex;
 const routes = [{
   path: '',
   component: _tipo_atividade_list_tipo_atividade_list_component__WEBPACK_IMPORTED_MODULE_3__.TipoAtividadeListComponent,
@@ -609,7 +610,7 @@ const routes = [{
     config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_1__.ConfigResolver
   },
   data: {
-    title: "Inclusão de Atividade",
+    title: lex.translate("Inclusão de Atividade"),
     modal: true
   }
 }, {

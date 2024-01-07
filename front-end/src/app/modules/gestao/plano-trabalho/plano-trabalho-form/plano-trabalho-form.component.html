@@ -35,7 +35,7 @@
                 </div>
             </div>
             <separator [title]="lex.translate('Entregas') + lex.translate(' do plano de trabalho')">
-                <top-alert *ngIf="!form!.controls.programa_id.value?.length || !form!.controls.unidade_id.value?.length" type="warning" [message]="'Antes de incluir ' + lex.translate('entrega') + ' neste ' + lex.translate('Plano de Trabalho') + ', é necessário selecionar ' + lex.translate('a Unidade') + ' e ' + lex.translate('o Programa') + '!'"></top-alert>
+                <top-alert *ngIf="!form!.controls.programa_id.value?.length || !form!.controls.unidade_id.value?.length" type="warning" [message]="'Antes de incluir ' + lex.translate('entrega') + ' neste ' + lex.translate('Plano de Trabalho') + ', é necessário selecionar ' + lex.translate('a Unidade') + ' e ' + ' o ' +  lex.translate('Programa') + '!'"></top-alert>
                 <div *ngIf="form!.controls.programa_id.value?.length && form!.controls.unidade_id.value?.length">
                     <plano-trabalho-list-entrega noPersist [disabled]="formDisabled" [entity]="entity"></plano-trabalho-list-entrega>
                 </div>

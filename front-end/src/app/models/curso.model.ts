@@ -4,7 +4,7 @@ import { TipoCurso } from './tipo-curso.model';
 
 export class Curso extends Base {
     
-    public area?: AreaConhecimento;
+    public area_conhecimento?: AreaConhecimento;
     public tipo?: TipoCurso;
 
     public nome: string = ""; //Nome do curso

@@ -378,7 +378,7 @@ function UsuarioIntegranteComponent_span_2_Template(rf, ctx) {
   if (rf & 2) {
     const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵtextInterpolate"]("Servidor: " + (ctx_r1.entity == null ? null : ctx_r1.entity.nome) + " - Matr\u00EDcula: " + (ctx_r1.entity == null ? null : ctx_r1.entity.matricula));
+    _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵtextInterpolate"]("Servidor: " + (ctx_r1.entity == null ? null : ctx_r1.entity.nome));
   }
 }
 function UsuarioIntegranteComponent_top_alert_3_Template(rf, ctx) {

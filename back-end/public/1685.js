@@ -851,6 +851,8 @@ class PlanejamentoListObjetivoComponent extends src_app_modules_base_page_frame_
   }
   marcador(row) {
     let level = row._metadata?.level || 0;
+    //if (!this.gridControl) this.sortObjetivos();
+    //console.log(row,"ROW");
     return level < 1 ? "" : level < 2 ? "• " : level < 3 ? "- " : "+ ";
   }
   addObjetivo() {

@@ -80,7 +80,7 @@ export class EntityService {
 
     public list: EntityItem[];
     public lex: LexicalService;
-        public constructor(public injector: Injector) {
+    public constructor(public injector: Injector) {
         this.lex = injector.get<LexicalService>(LexicalService);
         this.list = [
             { collection: 'Adesao', icon: 'bi bi-universal-access-circle', label: "Adesão" },
@@ -140,7 +140,7 @@ export class EntityService {
             { collection: 'TipoDocumento', codigo: 'MOD_TIPO_DOC', table: 'tipos_documentos', campo: 'nome', icon: 'bi bi-files', dao: injector.get<TipoDocumentoDaoService>(TipoDocumentoDaoService), label: "Tipo de Documento", selectRoute: { route: ['cadastros', 'tipo-documento'] } },
             { collection: 'TipoJustificativa', codigo: 'MOD_TIPO_JUST', table: 'tipos_justificativas', campo: 'nome', icon: 'bi bi-window-stack', dao: injector.get<TipoJustificativaDaoService>(TipoJustificativaDaoService), label: "Tipo de Justificativa", selectRoute: { route: ['cadastros', 'tipo-justificativa'] } },
             { collection: 'TipoModalidade', codigo: 'MOD_TIPO_MDL', table: 'tipos_modalidades', campo: 'nome', icon: 'bi bi-bar-chart-steps', dao: injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService), label: "Tipo de Modalidade", selectRoute: { route: ['cadastros', 'tipo-modalidade'] } },
-            { collection: 'TipoMotivoAfastamento', codigo: 'MOD_TIPO_MTV_AFT', table: 'tipos_motivos_afastamentos', campo: 'nome', icon: 'bi bi-list-ol', dao: injector.get<TipoMotivoAfastamentoDaoService>(TipoMotivoAfastamentoDaoService), label: "Tipo de Motivo de Afastamento", selectRoute: { route: ['cadastros', 'tipo-motivo-afastamento'] } },
+            { collection: 'TipoMotivoAfastamento', codigo: 'MOD_TIPO_MTV_AFT', table: 'tipos_motivos_afastamentos', campo: 'nome', icon: 'bi bi-list-ol', dao: injector.get<TipoMotivoAfastamentoDaoService>(TipoMotivoAfastamentoDaoService), label: this.lex.translate("Motivo de Afastamento"), selectRoute: { route: ['cadastros', 'tipo-motivo-afastamento'] } },
             { collection: 'TipoProcesso', codigo: 'MOD_TIPO_PROC', table: 'tipos_processos', campo: 'nome', icon: 'bi bi-folder-check', dao: injector.get<TipoProcessoDaoService>(TipoProcessoDaoService), label: "Tipo de Processo", selectRoute: { route: ['cadastros', 'tipo-processo'] } },
             { collection: 'Traffic', table: 'traffic', campo: 'url', icon: 'bi bi-stoplights', dao: injector.get<TrafficDaoService>(TrafficDaoService), label: "Log de Tráfego", selectRoute: { route: ['logs', 'traffic'] } },
             { collection: 'Unidade', codigo: 'MOD_UND', table: 'unidades', campo: 'nome', icon: 'fa-unity fab', dao: injector.get<UnidadeDaoService>(UnidadeDaoService), label: "Unidade", selectRoute: { route: ['configuracoes', 'unidade'] } },
