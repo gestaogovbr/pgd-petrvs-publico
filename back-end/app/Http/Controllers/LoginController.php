@@ -681,6 +681,7 @@ class LoginController extends Controller
     {
         if ($config) {
             // O método setConfig existe mesmo VSCode dizendo que não.
+            // @php-ignore
             return Socialite::driver('azure')->setConfig($config);
         }
         return Socialite::driver('azure');
@@ -755,6 +756,7 @@ class LoginController extends Controller
     {
         if ($config) {
             // O método setConfig existe mesmo VSCode dizendo que não.
+            // @php-ignore
             return Socialite::driver('govbr')->setConfig($config);
         }
         return Socialite::driver('govbr');

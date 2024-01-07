@@ -65,6 +65,8 @@ class ServiceBase extends DynamicMethods
     public string $collection = "";
     public string $developerId = "";
 
+    public $buffer; /* Utilizado para passar informações entre os Proxys */
+
     /* instancia automaticamente os serviços */
     private $_services = [];
     public function __get($name) {
