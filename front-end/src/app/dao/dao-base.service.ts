@@ -82,10 +82,7 @@ export class DaoBaseService<T extends Base> {
     }, {} as IIndexable);
   }
 
-  public deepsFilter(
-    fields: TemplateDataset[],
-    deeps?: string[]
-  ): TemplateDataset[] {
+  public deepsFilter(fields: TemplateDataset[], deeps?: string[]): TemplateDataset[] {
     fields = fields.filter(
       (x) =>
         typeof deeps == 'undefined' ||
@@ -99,13 +96,7 @@ export class DaoBaseService<T extends Base> {
     );
   }
 
-  public deep(
-    deeps: string[] | undefined,
-    field: string,
-    label: string,
-    type: 'ARRAY' | 'OBJECT',
-    dao: DaoBaseService<Base>
-  ): TemplateDataset | undefined {
+  public deep(deeps: string[] | undefined, field: string, label: string, type: 'ARRAY' | 'OBJECT', dao: DaoBaseService<Base>): TemplateDataset | undefined {
     return typeof deeps == 'undefined' || deeps.includes(field)
       ? { field, label, type, fields: dao.dataset([]) }
       : undefined;
@@ -117,12 +108,7 @@ export class DaoBaseService<T extends Base> {
       : (values || []).join(' - ');
   }
 
-  public searchText(
-    query: string,
-    fieldsToSearch?: string[],
-    where?: any[],
-    orderBy?: QueryOrderBy[]
-  ): Promise<SelectItem[]> {
+  public searchText(query: string, fieldsToSearch?: string[], where?: any[], orderBy?: QueryOrderBy[]): Promise<SelectItem[]> {
     return new Promise<SelectItem[]>((resolve, reject) => {
       try {
         let fields = fieldsToSearch || this.inputSearchConfig.searchFields;
@@ -164,9 +150,7 @@ export class DaoBaseService<T extends Base> {
 
   public entityToSelectItem(entity: T, fieldsToSearch?: string[]): SelectItem {
     const fields = fieldsToSearch || this.inputSearchConfig.searchFields || [];
-    const text = this.getSelectItemText(
-      fields.map((x) => (entity as IIndexable)[x] || '')
-    );
+    const text = this.getSelectItemText(fields.map((x) => this.util.getNested(entity as IIndexable, x) || ''));
     return {
       value: entity.id,
       text: text,
@@ -174,11 +158,7 @@ export class DaoBaseService<T extends Base> {
     };
   }
 
-  public searchKey(
-    key: string,
-    fieldsToSearch?: string[],
-    join?: string[]
-  ): Promise<SelectItem | null> {
+  public searchKey(key: string, fieldsToSearch?: string[], join?: string[]): Promise<SelectItem | null> {
     return new Promise<SelectItem | null>((resolve, reject) => {
       try {
         let fields = fieldsToSearch || this.inputSearchConfig.searchFields;
@@ -228,8 +208,7 @@ export class DaoBaseService<T extends Base> {
     formData.append('name', name);
     formData.append('path', path);
     return new Promise<any>((resolve, reject) => {
-      this.server
-        .post(this.PREFIX_URL + '/' + this.collection + '/upload', formData)
+      this.server.post(this.PREFIX_URL + '/' + this.collection + '/upload', formData)
         .subscribe(
           (response) => resolve(response),
           (error) => reject(error)
@@ -241,11 +220,7 @@ export class DaoBaseService<T extends Base> {
     let formData: FormData = new FormData();
     formData.append('file', filePath);
     return new Promise<any>((resolve, reject) => {
-      this.server
-        .post(
-          this.PREFIX_URL + '/' + this.collection + '/delete-file',
-          formData
-        )
+      this.server.post(this.PREFIX_URL + '/' + this.collection + '/delete-file', formData)
         .subscribe(
           (response) => resolve(response),
           (error) => reject(error)
@@ -369,10 +344,7 @@ export class DaoBaseService<T extends Base> {
     }
   }
 
-  public getAllIds(
-    options: QueryOptions = {},
-    extraFields: string[]
-  ): Promise<{ rows: any[]; extra: any }> {
+  public getAllIds(options: QueryOptions = {}, extraFields: string[]): Promise<{ rows: any[]; extra: any }> {
     return new Promise<{ rows: any[]; extra: any }>((resolve, reject) => {
       try {
         let request = this.server
@@ -442,22 +414,14 @@ export class DaoBaseService<T extends Base> {
     return where;
   }
 
-  public intersectionWhere(
-    fieldStart: string,
-    fieldEnd: string,
-    startValue: any,
-    endValue: any
-  ): any[] {
+  public intersectionWhere(fieldStart: string, fieldEnd: string, startValue: any, endValue: any): any[] {
     return [
       [fieldEnd, '>=', startValue],
       [fieldStart, '<=', endValue],
     ];
   }
 
-  public query(
-    options: QueryOptions = {},
-    events: queryEvents = {}
-  ): QueryContext<T> {
+  public query(options: QueryOptions = {}, events: queryEvents = {}): QueryContext<T> {
     return this.contextQuery(
       new QueryContext<T>(
         this,
@@ -491,19 +455,11 @@ export class DaoBaseService<T extends Base> {
         if (response.error) {
           context.subject.error(response.error);
         } else {
-          context.rows =
-            !context.cumulate || !context.rows?.length ? [] : context.rows;
-          context.rows.push(
-            ...this.getRows(response).filter(
-              (x) => !context.rows.find((y) => y.id == x.id)
-            )
-          );
+          context.rows = !context.cumulate || !context.rows?.length ? [] : context.rows;
+          context.rows.push(...this.getRows(response).filter((x) => !context.rows.find((y) => y.id == x.id)));
           context.extra = this.iso8601ToDate(response.extra);
           context.enablePrior = context.page > 1;
-          context.enableNext =
-            !!context.options.limit &&
-            response.count >
-              (context.page - 1) * context.options.limit + response.rows.length;
+          context.enableNext = !!context.options.limit && response.count > (context.page - 1) * context.options.limit + response.rows.length;
           context.loading = false;
           this.mergeExtra(context.rows, context.extra);
           context.subject.next(context.rows);
@@ -545,28 +501,16 @@ export class DaoBaseService<T extends Base> {
       result = UtilService.dateToIso8601(data);
     } else if (typeof data == 'object' && data) {
       if (Array.isArray(data)) {
-        data.forEach(
-          (item, index) => (result[index] = this.prepareToSave(item))
-        );
+        data.forEach((item, index) => (result[index] = this.prepareToSave(item)));
       } else {
         result = typeof relations != 'undefined' ? {} : result;
         Object.entries(data).forEach(([key, value]) => {
           try {
-            let found = (relations || []).filter(
-              (x) => (x + '.').substring(0, key.length + 1) == key + '.'
-            );
-            let newRelations = found
-              .map((x) => x.substring(key.length + 1))
-              .filter((x) => x.length);
+            let found = (relations || []).filter((x) => (x + '.').substring(0, key.length + 1) == key + '.');
+            let newRelations = found.map((x) => x.substring(key.length + 1)).filter((x) => x.length);
             let isObject = typeof value == 'object' && !(value instanceof Date);
             if (!relations || !isObject || found.length)
-              (result as IIndexable)[key] =
-                typeof value == 'object' && value instanceof DaoBaseService
-                  ? undefined
-                  : this.prepareToSave(
-                      value,
-                      newRelations.length ? newRelations : undefined
-                    );
+              (result as IIndexable)[key] = typeof value == 'object' && value instanceof DaoBaseService ? undefined : this.prepareToSave(value, newRelations.length ? newRelations : undefined);
           } catch (erro) {
             console.log('Erro ao tentar atribuir valor a ' + key);
           }
@@ -576,19 +520,13 @@ export class DaoBaseService<T extends Base> {
     return result;
   }
 
-  public save(
-    entity: T,
-    join: string[] = [],
-    rellations?: string[]
-  ): Promise<T> {
+  public save(entity: T, join: string[] = [], rellations?: string[]): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       try {
-        this.server
-          .post(this.PREFIX_URL + '/' + this.collection + '/store', {
+        this.server.post(this.PREFIX_URL + '/' + this.collection + '/store', {
             entity: this.prepareToSave(entity, rellations),
             with: join,
-          })
-          .subscribe(
+          }).subscribe(
             (response) => {
               if (response.error) {
                 reject(response.error);
@@ -608,13 +546,11 @@ export class DaoBaseService<T extends Base> {
   public update(id: string, data: IIndexable, join: string[] = []): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       if (data.id) delete data.id;
-      this.server
-        .post(this.PREFIX_URL + '/' + this.collection + '/update', {
+      this.server.post(this.PREFIX_URL + '/' + this.collection + '/update', {
           id: id,
           data: this.prepareToSave(data),
           with: join,
-        })
-        .subscribe(
+        }).subscribe(
           (response) => {
             if (response.error) {
               reject(response.error);
@@ -628,12 +564,7 @@ export class DaoBaseService<T extends Base> {
     });
   }
 
-  public updateJson(
-    id: string,
-    field: string,
-    data: IIndexable,
-    join: string[] = []
-  ): Promise<T> {
+  public updateJson(id: string, field: string, data: IIndexable, join: string[] = []): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       this.server
         .post(this.PREFIX_URL + '/' + this.collection + '/update-json', {
@@ -641,8 +572,7 @@ export class DaoBaseService<T extends Base> {
           field: field,
           data: data,
           with: join,
-        })
-        .subscribe(
+        }).subscribe(
           (response) => {
             if (response.error) {
               reject(response.error);
@@ -661,8 +591,7 @@ export class DaoBaseService<T extends Base> {
       this.server
         .post(this.PREFIX_URL + '/' + this.collection + '/destroy', {
           id: typeof entity == 'string' ? entity : entity.id,
-        })
-        .subscribe(
+        }).subscribe(
           (response) => {
             if (response.error) {
               reject(response.error);

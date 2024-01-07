@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Casts\AsJson;
 use App\Models\ModelBase;
 use App\Models\PlanoTrabalhoConsolidacao;
+use App\Models\Ocorrencia;
 
 class PlanoTrabalhoConsolidacaoOcorrencia extends ModelBase
 {
@@ -12,10 +14,10 @@ class PlanoTrabalhoConsolidacaoOcorrencia extends ModelBase
     protected $with = [];
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
-        'data_inicio', /* datetime; NOT NULL; */// Data inicial da consolidacão
-        'data_fim', /* datetime; NOT NULL; */// Data final da consolidação
-        'descricao', /* text; NOT NULL; */// Descrição da ocorrência
-        'plano_trabalho_consolidacao_id', /* char(36); NOT NULL; */// Consolidação do Plano de Trabalho à qual está associada esta entrega
+        'data_conclusao',
+        'snapshot',
+        'ocorrencia_id',
+        'plano_trabalho_consolidacao_id'
         //'deleted_at', /* timestamp; */
     ];
 
@@ -23,7 +25,13 @@ class PlanoTrabalhoConsolidacaoOcorrencia extends ModelBase
 
     public $delete_cascade = [];
 
+    protected $casts = [
+        "data_conclusao" => "datetime",
+        "snapshot" => AsJson::class
+    ];
+
     // Has
     // Belongs
     public function consolidacao() { return $this->belongsTo(PlanoTrabalhoConsolidacao::class); }
+    public function ocorrencia() { return $this->belongsTo(Ocorrencia::class); }
 }

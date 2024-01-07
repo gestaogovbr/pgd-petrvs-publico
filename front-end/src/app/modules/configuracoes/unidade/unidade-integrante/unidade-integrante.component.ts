@@ -28,7 +28,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
   public integranteService: IntegranteService;
   public integranteDao: UnidadeIntegranteDaoService;
   public usuarioDao: UsuarioDaoService;
-  //public unidade?: Unidade;
+  public unidade?: Unidade;
   public tiposAtribuicao: LookupItem[] = [];
 
   constructor(public injector: Injector) {
@@ -46,7 +46,8 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
   ngOnInit() {
     super.ngOnInit();
     this.entity_id = this.metadata?.entity_id || this.entity?.id;
-    this.tiposAtribuicao = this.isNoPersist ? this.lookup.UNIDADE_INTEGRANTE_TIPO.filter((atribuicao) => !["GESTOR","GESTOR_SUBSTITUTO"].includes(atribuicao.key)) : this.lookup.UNIDADE_INTEGRANTE_TIPO;
+    this.unidade = this.metadata?.unidade;
+    this.tiposAtribuicao = this.lookup.UNIDADE_INTEGRANTE_TIPO; //this.isNoPersist ? this.lookup.UNIDADE_INTEGRANTE_TIPO.filter((atribuicao) => !["GESTOR","GESTOR_SUBSTITUTO"].includes(atribuicao.key)) : this.lookup.UNIDADE_INTEGRANTE_TIPO;
   }
 
   ngAfterViewInit() {
@@ -64,7 +65,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     if (entity.id) {
       let integrantes: IntegranteConsolidado[] = [];
       try {
-        await this.integranteDao!.loadIntegrantes(entity.id, "").then( resposta =>  integrantes = resposta.integrantes.filter(x => x.atribuicoes?.length > 0)); 
+        await this.integranteDao!.loadIntegrantes(entity.id, "").then(resposta => integrantes = resposta.integrantes.filter(x => x.atribuicoes?.length > 0)); 
       } finally {
         integrantes.forEach(i => this.items?.push(this.integranteService.completarIntegrante(i, entity.id, i.id, i.atribuicoes)));
         this.items = this.integranteService.ordenar(this.items);
@@ -180,10 +181,9 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
    */
   public async saveIntegrante(form: FormGroup, row: IntegranteConsolidado) {
     form.controls.atribuicoes.setValue(this.lookup.uniqueLookupItem(form.controls.atribuicoes.value));
-    /*     if (this.grid) this.grid!.error = "";
-    this.cdRef.detectChanges(); */
-    let error: any = undefined;
-    //error = this.formValidation(form);
+    if (this.grid) this.grid.error = "";
+    this.cdRef.detectChanges();
+    let error = this.formValidation(form);
     if (!error) {
       let confirm = true;
       let n = this.integranteService.alterandoGestor(form, row.atribuicoes || []);
@@ -198,7 +198,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
               if (msg = resposta?.find(v => v._metadata.msg?.length)?._metadata.msg) { if (this.grid) this.grid.error = msg; };
             });
             await this.loadData({ id: this.entity!.id }, this.form);
-            if (this.grid) this.grid!.error = "";
+            //if (this.grid) this.grid!.error = "";
           } else {                // se não persistente
             this.substituirItem(row, novasAtribuicoes);
 //            await this.loadData({ id: this.entity!.id }, this.form);
@@ -223,6 +223,13 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
       { id: row.id, usuario_apelido: this.usuario?.selectedItem?.entity.apelido, usuario_nome: this.usuario?.selectedItem?.entity.nome },
       this.entity!.id, this.form!.controls.usuario_id.value, atribuicoes
     );
+    let atribuicoesChefia = atribuicoes.filter(x => ["GESTOR", "GESTOR_SUBSTITUTO", "GESTOR_DELEGADO"].includes(x));
+    if(atribuicoesChefia.length) {
+      this.items!.forEach(x => {
+        let intersection = atribuicoesChefia.filter(y => x["atribuicoes"].includes(y));
+        if(x["id"] != row["id"] && intersection.length) x["atribuicoes"] = x["atribuicoes"].filter(y => !intersection.includes(y));
+      });
+    }
     this.cdRef.detectChanges();
   }
 }

@@ -11,7 +11,7 @@ use Throwable;
 
 class AtividadeController extends ControllerBase
 {
-    public $updatable = ["etiquetas", "checklist", "comentarios", "progresso"];
+    public $updatable = ["etiquetas", "checklist", "comentarios", "progresso", "descricao", "tipo_atividade_id"];
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {

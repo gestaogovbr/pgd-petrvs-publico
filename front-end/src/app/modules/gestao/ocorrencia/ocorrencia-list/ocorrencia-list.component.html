@@ -1,0 +1,45 @@
+<!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
+    [hasAdd]="auth.hasPermissionTo('MOD_OCOR_INCL')"
+    [hasEdit]="auth.hasPermissionTo('MOD_OCOR_EDT')">
+    <toolbar *ngIf="!selectable"></toolbar>
+    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed" [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')">
+        <div class="row">
+            <input-search [size]="6" #usuario [control]="filter!.controls.usuario_id" controlName="usuario_id" [dao]="usuarioDao"></input-search>
+            <input-search [size]="6" #planoTrabalho [control]="filter!.controls.plano_trabalho_id" controlName="plano_trabalho_id" [dao]="planoTrabalhoDao"></input-search>
+        </div>
+        <div class="row">
+            <input-text [size]="6" label="Contém a descrição" [control]="filter!.controls.descricao" controlName="descricao"></input-text>
+            <input-datetime date [size]="3" label="Início" [control]="filter!.controls.data_inicio" controlName="data_inicio" (click)="filtro()"></input-datetime>
+            <input-datetime date [size]="3" label="Fim" [control]="filter!.controls.data_fim" controlName="data_fim" (click)="filtro()"></input-datetime>
+        </div>
+    </filter>
+    <columns>
+        <column [title]="lex.translate('Usuário')" [template]="columnUsuario">
+            <ng-template let-row="row" #columnUsuario>
+                <div class="d-flex">
+                    <div class="ms-3">
+                        <profile-picture [url]="row.usuario.url_foto" [size]="40" [hint]="row.usuario.nome"></profile-picture>
+                    </div>
+                    <div class="flex-fill ms-3">
+                        <strong>{{row.usuario.nome || ""}}</strong><br>
+                        <badge *ngIf="row.plano_trabalho" color="light" [maxWidth]="300" [icon]="entityService.getIcon('PlanoTrabalho')" [label]="row.plano_trabalho.unidade.sigla + ' - #' + row.plano_trabalho.numero" [textValue]="util.getDateFormatted(row.plano_trabalho.data_inicio) + ' à ' + util.getDateFormatted(row.plano_trabalho.data_fim)" [hint]="lex.translate('Plano de trabalho')"></badge>
+                    </div>
+                </div>
+            </ng-template>
+        </column>
+        <column title="Início" [template]="columnInicio">
+            <ng-template let-row="row" #columnInicio>
+                <span> {{dao!.getDateFormatted(row.data_inicio)}}</span>
+            </ng-template>
+        </column>
+        <column title="Fim" [template]="columnFim">
+            <ng-template let-row="row" #columnFim>
+                <span> {{dao!.getDateFormatted(row.data_fim)}}</span>
+            </ng-template>
+        </column>
+        <column title="Descrição" field="descricao"></column>
+        <column type="options" [onEdit]="edit" [options]="options"></column>
+    </columns>
+    <pagination [rows]="rowsLimit"></pagination>
+</grid>

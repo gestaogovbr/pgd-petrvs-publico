@@ -19,7 +19,7 @@ import { NotificacoesConfigComponent } from 'src/app/modules/uteis/notificacoes/
 import { TemplateDataset } from 'src/app/modules/uteis/templates/template.service';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { UnidadeIntegranteComponent } from '../unidade-integrante/unidade-integrante.component';
-import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
+import { IntegranteConsolidado, UnidadeIntegrante } from 'src/app/models/unidade-integrante.model';
 
 @Component({
   selector: 'app-unidade-form',
@@ -34,6 +34,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
   @ViewChild('cidade', { static: false }) public cidade?: InputSearchComponent;
   @ViewChild('gestor', { static: false }) public gestor?: InputSearchComponent;
   @ViewChild('gestorSubstituto', { static: false }) public gestorSubstituto?: InputSearchComponent;
+  @ViewChild('gestorDelegado', { static: false }) public gestorDelegado?: InputSearchComponent;
   @ViewChild('entidade', { static: false }) public entidade?: InputSearchComponent;
   @ViewChild('notificacoes', { static: false }) public notificacoes?: NotificacoesConfigComponent;
 
@@ -85,10 +86,11 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       texto_complementar_plano: { default: "" }
     }, this.cdRef, this.validate);
     this.formGestor = this.fh.FormBuilder({
-      gestor_id: { default: "" },
-      gestor_substituto_id: { default: "" }
+      gestor_id: { default: null },
+      gestor_substituto_id: { default: null },
+      gestor_delegado_id: { default: null }
     }, this.cdRef);
-    this.join = ["cidade", "entidade", "unidade_pai", "gestor.usuario:id,nome", "gestor_substituto.usuario:id,nome", "notificacoes_templates", "gestor.gestor:id", "gestor_substituto.gestor_substituto:id"];
+    this.join = ["cidade", "entidade", "unidade_pai", "gestor.usuario:id,nome", "gestor_substituto.usuario:id,nome", "gestor_delegado.usuario:id,nome", "notificacoes_templates", "gestor.gestor:id", "gestor_substituto.gestor_substituto:id", "gestor_delegado.gestor_delegado:id"];
   }
 
   public async loadData(entity: Unidade, form: FormGroup) {
@@ -99,8 +101,9 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     await Promise.all([
       this.unidadePai!.loadSearch(entity.unidade_pai || entity.unidade_pai_id),
       this.cidade!.loadSearch(entity.cidade || entity.cidade_id),
-      this.gestor!.loadSearch(entity?.gestor?.usuario || entity.gestor?.usuario!.id),
+      /*this.gestor!.loadSearch(entity?.gestor?.usuario || entity.gestor?.usuario!.id),
       this.gestorSubstituto!.loadSearch(entity?.gestor_substituto?.usuario || entity.gestor_substituto?.usuario!.id),
+      this.gestorDelegado!.loadSearch(entity?.gestor_delegado?.usuario || entity.gestor_delegado?.usuario!.id),*/
       this.entidade!.loadSearch(entity.entidade || entity.entidade_id)
     ]);
     entity.etiquetas = entity.etiquetas || [];
@@ -158,23 +161,35 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     return result;
   };
 
-  public saveData(form: IIndexable): Promise<boolean> {
-    return new Promise<boolean>(async (resolve, reject) => {
+  public saveData(form: IIndexable): Promise<Unidade> {
+    return new Promise<Unidade>(async (resolve, reject) => {
       this.notificacoes!.saveData();
       this.usuariosIntegrantes!.grid!.confirm();
       let unidade: Unidade = this.util.fill(new Unidade(), this.entity!);
       unidade = this.util.fillForm(unidade, this.form!.value);
       unidade.notificacoes = this.entity!.notificacoes;
       unidade.notificacoes_templates = this.entity!.notificacoes_templates;
-      let salvarGestor = !!this.formGestor!.controls.gestor_id?.value && (!this.entity?.gestor?.id.length || (!!this.entity?.gestor?.id.length && this.entity?.gestor?.usuario?.id != this.formGestor!.controls.gestor_id?.value));
-      let salvarGestorSubstituto = !!this.formGestor!.controls.gestor_substituto_id?.value && (!this.entity?.gestor_substituto?.id.length || (!!this.entity?.gestor_substituto?.id.length && this.entity?.gestor_substituto?.usuario?.id != this.formGestor!.controls.gestor_substituto_id?.value));
-      let apagarGestor = !this.formGestor!.controls.gestor_id?.value && !!this.entity?.gestor?.id.length;
-      let apagarGestorSubstituto = !this.formGestor!.controls.gestor_substituto_id?.value && !!this.entity?.gestor_substituto?.id.length;
-      let integrantesConsolidados: IntegranteConsolidado[] = this.usuariosIntegrantes?.items || [];
       if(!this.form!.controls.usar_expediente_unidade) unidade.expediente = null;
-      try {
+      /* Validações DEVEM ser feitas no BACK-END, e todo salvamento OBRIGATORIAMENTE deve ser feito em uma únida transaction
+      let salvarGestor = !!this.formGestor!.controls.gestor_id?.value && (this.entity?.gestor?.usuario?.id != this.formGestor!.controls.gestor_id?.value);
+      let salvarGestorSubstituto = !!this.formGestor!.controls.gestor_substituto_id?.value && (this.entity?.gestor_substituto?.usuario?.id != this.formGestor!.controls.gestor_substituto_id?.value);
+      let apagarGestor = !this.formGestor!.controls.gestor_id?.value && !!this.entity?.gestor?.id.length;
+      let apagarGestorSubstituto = !this.formGestor!.controls.gestor_substituto_id?.value && !!this.entity?.gestor_substituto?.id.length;*/
+      /* Prepara as informações dos integrantes para serem enviadas juntamente com as chefias */
+      /* tentativa de enviar os gestores separadamente
+      let gestoresIds = this.formGestor!.value;
+      unidade.gestor = !!gestoresIds.gestor_id.length ? new UnidadeIntegrante({usuario_id: gestoresIds.gestor_id, atribuicoes: ["GESTOR"]}) : null;
+      unidade.gestor_substituto = !!gestoresIds.gestor_id.length ? new UnidadeIntegrante({usuario_id: gestoresIds.gestor_id, atribuicoes: ["GESTOR"]}) : null;
+      unidade.gestor_delegado = !!gestoresIds.gestor_id.length ? new UnidadeIntegrante({usuario_id: gestoresIds.gestor_id, atribuicoes: ["GESTOR"]}) : null; */
+      let integrantesConsolidados: IntegranteConsolidado[] = this.usuariosIntegrantes?.items || [];
+      unidade.integrantes = integrantesConsolidados.map(x => new UnidadeIntegrante({
+        usuario_id: x.usuario_id,
+        unidade_id: x.unidade_id,
+        atribuicoes: x.atribuicoes
+      }));
+      //try {
+        /*
         await this.dao?.save(unidade, ["gestor.gestor:id", "gestor_substituto.gestor_substituto:id", "gestor_delegado.gestor_delegado:id"]).then(async unidadeBanco => {
-          //this.entity = unidadeBanco;
           if (salvarGestor) await this.integranteDao.saveIntegrante([Object.assign(new IntegranteConsolidado, { 'unidade_id': unidadeBanco.id, 'usuario_id': this.formGestor!.controls.gestor_id!.value, 'atribuicoes': ["GESTOR"] })]);
           if (salvarGestorSubstituto) await this.integranteDao.saveIntegrante([Object.assign(new IntegranteConsolidado, { 'unidade_id': unidadeBanco.id, 'usuario_id': this.formGestor!.controls.gestor_substituto_id!.value, 'atribuicoes': ["GESTOR_SUBSTITUTO"] })]);
           if (apagarGestor) await this.integranteAtribuicaoDao.delete(this.entity?.gestor!.gestor!.id!);
@@ -182,10 +197,12 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
           integrantesConsolidados.forEach(v => v.unidade_id = unidadeBanco.id);
           if (integrantesConsolidados.length) await this.integranteDao.saveIntegrante(integrantesConsolidados as IntegranteConsolidado[]);
         });
-        resolve(true);
-      } catch (error: any) {
+        */
+        //resolve(true);
+        resolve(unidade);
+      /*} catch (error: any) {
         if (this.editableForm) this.editableForm.error = error;
-      }
+      }*/
     });
   }
 

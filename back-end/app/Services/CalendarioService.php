@@ -438,8 +438,8 @@ class CalendarioService
         
         /* Calculo do expediente (inicio, fim, e intervalos. Considerando os especiais). Caso expediente seja undefined então será 24h, e caso não tenha expediente no dia será undefined */
         $expedienteDia = function (string $sInicio = null, string $sFim = null) use (&$dDiaAtual, &$expediente, &$result): ExpedienteDia {
-            $diaSemana = LookupService::getCode(LookupService::DIA_SEMANA, date('w', UtilService::asTimestamp($dDiaAtual)));
-            $diaLiteral = LookupService::getValue(LookupService::DIA_SEMANA, date('w', UtilService::asTimestamp($dDiaAtual)));
+            $diaSemana = LookupService::getCode(LookupService::LOOKUPS['DIA_SEMANA'], date('w', UtilService::asTimestamp($dDiaAtual)));
+            $diaLiteral = LookupService::getValue(LookupService::LOOKUPS['DIA_SEMANA'], date('w', UtilService::asTimestamp($dDiaAtual)));
             $tLimiteInicio = UtilService::asTimestamp(UtilService::setStrTime($dDiaAtual, $sInicio ?? "00:00")); 
             $tLimiteFim = UtilService::asTimestamp(UtilService::setStrTime($dDiaAtual, $sFim ?? "24:00")); 
             $dia = new ExpedienteDia([
