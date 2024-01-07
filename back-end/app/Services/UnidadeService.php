@@ -275,8 +275,22 @@ class UnidadeService extends ServiceBase
             Unidade::where('path', 'like', $oldPath . "%")
                 ->update(['path' => DB::raw(sprintf("CONCAT('%s', SUBSTR(path, %d))", $newPath, strlen($newPath)))]);
         }
+        /* Armazena as informações que serão necessárias no extraStore */
+        $this->buffer = [ "integrantes" => $this->UtilService->getNested($data, "integrantes") ];
         return $data;
     }
+
+    public function extraStore(&$entity, $unidade, $action) {
+        foreach($this->buffer["integrantes"] as $integrante) {
+            $integrante["unidade_id"] = $entity->id;
+        }        
+        $this->UnidadeIntegranteService->saveIntegrante($this->buffer["integrantes"]);
+    }
+
+/*  let salvarGestor = !!this.formGestor!.controls.gestor_id?.value && (this.entity?.gestor?.usuario?.id != this.formGestor!.controls.gestor_id?.value);
+    let salvarGestorSubstituto = !!this.formGestor!.controls.gestor_substituto_id?.value && (this.entity?.gestor_substituto?.usuario?.id != this.formGestor!.controls.gestor_substituto_id?.value);
+    let apagarGestor = !this.formGestor!.controls.gestor_id?.value && !!this.entity?.gestor?.id.length;
+    let apagarGestorSubstituto = !this.formGestor!.controls.gestor_substituto_id?.value && !!this.entity?.gestor_substituto?.id.length; */
 
     /** 
      * Retorna um array com os IDs de todas as suas unidades-filhas, ou seja,
