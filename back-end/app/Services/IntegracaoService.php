@@ -783,11 +783,10 @@ class IntegracaoService extends ServiceBase {
                     $vinculos_isr = DB::select($query);
 
                     $perfil_participante = Perfil::where('nome', 'Participante')->first()->id;
-                    $perfil_chefe = Perfil::where('nome', 'Chefia de Unidade Executora')->first()->id;
 
                     foreach($vinculos_isr as $v_isr){
                         $v_isr = $this->UtilService->object2array($v_isr);
-                        $perfil = $v_isr['gestor'] ? $perfil_chefe : $perfil_participante;
+                        $perfil = $perfil_participante;
                         $registro = new Usuario([
                             'id' => Uuid::uuid4(),
                             'email' => $this->UtilService->valueOrDefault($v_isr['emailfuncional']),
@@ -852,17 +851,39 @@ class IntegracaoService extends ServiceBase {
             if($this->echo) $this->imprimeNoTerminal("Iniciando a fase de reconstrução das funções de chefia!.....");
             try {
                 DB::beginTransaction();
-                // seleciona o ID do usuário e as funções de todos os servidores ativos trazidos do SIAPE, e que já existem na tabela Usuários
-                $query_selecionar_chefes = "SELECT u.id, isr.funcoes FROM integracao_servidores as isr " .
-                         "INNER JOIN usuarios as u " .
-                         "ON isr.cpf = u.cpf " .
-                         "WHERE isr.vinculo_ativo = '1' AND u.cpf IS NOT NULL AND u.deleted_at IS NULL AND isr.funcoes is NOT NULL";
 
-                // filtra apenas aqueles que são gestores ou gestores substitutos
-                // $servidores = DB::select($query_selecionar_chefes);
-                // $chefes = array_filter($servidores, fn($s) => $s->funcoes != null);     //encontrar uma forma de juntar no sql
+                // Seleciona o ID do usuário e as funções de todos os servidores ativos trazidos do SIAPE e que já existem na tabela Usuários
+                // Filtra apenas aqueles que são gestores ou gestores substitutos
+                $query_selecionar_chefes = "";
+
+                if($this->integracao_config["tipo"] == "SIAPE"){
+                    $query_selecionar_chefes = "".
+                        "SELECT u.id, isr.funcoes ".
+                        "FROM integracao_servidores as isr ".
+                        "INNER JOIN usuarios as u ".
+                        "ON isr.cpf = u.cpf ".
+                        "WHERE isr.vinculo_ativo = '1' AND ".
+                        "u.cpf IS NOT NULL AND ".
+                        "u.deleted_at IS NULL AND ".
+                        "isr.funcoes is NOT NULL AND ".
+                        "u.cpf IN ".
+                        "(SELECT distinct(cpf_chefia_imediata) ".
+                        "FROM integracao_servidores ".
+                        "WHERE cpf_chefia_imediata IS NOT NULL)";
+                }
+                else {
+                    $query_selecionar_chefes = "".
+                        "SELECT u.id, isr.funcoes ".
+                        "FROM integracao_servidores as isr ".
+                        "INNER JOIN usuarios as u ".
+                        "ON isr.cpf = u.cpf ".
+                        "WHERE isr.vinculo_ativo = '1' AND ".
+                        "u.cpf IS NOT NULL AND ".
+                        "u.deleted_at IS NULL AND ".
+                        "isr.funcoes is NOT NULL";
+                }
+
                 $chefes = DB::select($query_selecionar_chefes);
-
                 // percorre todos os gestores, montando um array com os dados da chefia (matricula do chefe, código siape da unidade, tipo de função)
                 $chefias = [];
 
@@ -881,6 +902,8 @@ class IntegracaoService extends ServiceBase {
 
                 if($this->echo) $this->imprimeNoTerminal("Concluída a fase de montagem do array de chefias!.....");
 
+                // Localiza ID do perfil Chefia de Unidade Executora para posterior atualização do usuário
+                $perfil_chefia = Perfil::where('nome', 'Chefia de Unidade Executora')->first()->id;
                 foreach($chefias as $chefia){
                     // Descobre o ID da Unidade
                     $query_selecionar_unidade = "SELECT u.id " .
@@ -896,7 +919,6 @@ class IntegracaoService extends ServiceBase {
                     Monta a consulta de acordo com o tipo de função e efetua
                     o registro na tabela unidade_integrante_atribucoes.
                     */
-
                     if($unidade_exercicio){
                         if($chefia['tipo_funcao'] == '1'){
                             $vinculo = array([
@@ -905,7 +927,17 @@ class IntegracaoService extends ServiceBase {
                                 'atribuicoes' => ["LOTADO", "GESTOR"],
                             ]);
 
+                            // Registra atribuições.
                             $this->unidadeIntegrante->saveIntegrante($vinculo, false);
+
+                            // Atualiza nível de acesso.
+                            $values = [
+                                ':perfil_id' => $perfil_chefia,
+                                ':id' => $chefia['id_usuario']
+                            ];
+                            $sql_perfil_update = "UPDATE usuarios SET perfil_id = :perfil_id WHERE id = :id";
+                            DB::update($sql_perfil_update, $values);
+
                         } else if($chefia['tipo_funcao'] == '2'){
                               $vinculo = array([
                               'usuario_id' => $chefia['id_usuario'],
@@ -914,6 +946,13 @@ class IntegracaoService extends ServiceBase {
                               ]);
 
                               $this->unidadeIntegrantsaveIntegrantee->saveIntegrante($vinculo, false);
+                                                          // Atualiza nível de acesso.
+                              $values = [
+                                  ':perfil_id' => $perfil_chefia,
+                                  ':id' => $chefia['id_usuario']
+                              ];
+                              $sql_perfil_update = "UPDATE usuarios SET perfil_id = :perfil_id WHERE id = :id";
+                              DB::update($sql_perfil_update, $values);
                         } else{
                             throw new Exception("Falha no array de funções do servidor");
                         }
