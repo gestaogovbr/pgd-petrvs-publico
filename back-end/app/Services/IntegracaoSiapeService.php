@@ -238,8 +238,9 @@ class IntegracaoSiapeService extends ServiceBase {
         $cpfsPorUorgsWsdl = [];
         $PessoasPetrvs = [ 'Pessoas' => []];
 
-        ## Remover código da upag, posteriormente.
+        ## Remover código da upag, posteriormente (Filtra por UPAG caso necessário)
         $uorgs = DB::select("SELECT codigo_siape from integracao_unidades WHERE deleted_at is NULL");
+        # $uorgs = DB::select("SELECT codigo_siape from integracao_unidades WHERE codupag=2690 and deleted_at is NULL");
         $uorgs = $this->UtilService->object2array($uorgs);
 
         if(!empty($this->siape) and !empty($uorgs)){
@@ -309,7 +310,38 @@ class IntegracaoSiapeService extends ServiceBase {
 
                 } else {
                     $pessoa_is = $this->UtilService->object2array($pessoa_is);
-                    array_push($PessoasPetrvs['Pessoas'], $pessoa_is);
+
+                    //$cod_situacao_funcional = $this->UtilService->valueOrDefault($pessoa_is['situacao_funcional'],
+                    //   "DESCONHECIDO", $option = "situacao_funcional");
+
+                    $Pessoa = [
+                        'cpf_ativo' => true,
+                        'data_modificacao' => $pessoa_is['data_modificacao'],
+                        'cpf' => $pessoa_is['cpf'],
+                        'nome' => $pessoa_is['nome'],
+                        'emailfuncional' => $pessoa_is['emailfuncional'],
+                        'sexo' => $pessoa_is['sexo'],
+                        'municipio' => $pessoa_is['municipio'],
+                        'uf' => $pessoa_is['uf'],
+                        'datanascimento' => $pessoa_is['data_nascimento'],
+                        'telefone' =>  null, // Web Service Siape não fornece (23/09/2022) informação.
+                        'cpf_chefia_imediata' => $pessoa_is['cpf_chefia_imediata'],
+                        'email_chefia_imediata' => $pessoa_is['email_chefia_imediata'],
+                        'matriculas' => [ 'dados' => [
+                            'vinculo_ativo' => true,
+                            'matriculasiape' => $pessoa_is['matriculasiape'],
+                            'tipo' => $pessoa_is['codigo_cargo'], // código siape do cargo
+                            'coduorgexercicio' => $pessoa_is['coduorgexercicio'],
+                            'coduorglotacao' => $pessoa_is['coduorglotacao'],
+                            'codigo_servo_exercicio' => $pessoa_is['codigo_servo_exercicio'],
+                            'nomeguerra' => $pessoa_is['nomeguerra'], // Web Service Siape não fornece (23/09/2022) informação. Tratada no IntegracaoService.
+                            'codsitfuncional' => $this->UtilService->valueOrDefault($pessoa_is['codigo_situacao_funcional']),
+                            'codupag' => $pessoa_is['codupag'],
+                            'dataexercicionoorgao' => $pessoa_is['dataexercicionoorgao'],
+                            'funcoes' => $pessoa_is['funcoes']]
+                            ]
+                    ];
+                    array_push($PessoasPetrvs['Pessoas'], $Pessoa);
                 }
             }
         }

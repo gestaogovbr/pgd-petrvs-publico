@@ -616,11 +616,12 @@ class IntegracaoService extends ServiceBase {
                                     'telefone' => $self->UtilService->valueOrDefault($servidor['telefone'], null),
                                     'vinculo_ativo' => $self->UtilService->valueOrDefault($ativo['vinculo_ativo'], null),
                                     'matriculasiape' => $self->UtilService->valueOrDefault($ativo['matriculasiape'], null),
-                                    'cargo' => $self->UtilService->valueOrDefault($ativo['tipo'], null),
+                                    'codigo_cargo' => $self->UtilService->valueOrDefault($ativo['tipo'], null),
                                     'coduorgexercicio' => $self->UtilService->valueOrDefault($ativo['coduorgexercicio'], null, $option = "uorg"),
                                     'coduorglotacao' => $self->UtilService->valueOrDefault($ativo['coduorglotacao'], null, $option = "uorg"),
                                     'codigo_servo_exercicio' => $self->UtilService->valueOrDefault($ativo['codigo_servo_exercicio'], null, $option = "uorg"),
                                     'nomeguerra' => $nomeguerra,
+                                    'codsitfuncional' => $self->UtilService->valueOrDefault($ativo['codsitfuncional'], null),
                                     'situacao_funcional' => !is_null($situacao_funcional) ? $situacao_funcional : "DESCONHECIDO",
                                     'codupag' => $self->UtilService->valueOrDefault($ativo['codupag'], null),
                                     'dataexercicionoorgao' => $self->UtilService->valueOrDefault($ativo['dataexercicionoorgao'], null),
@@ -781,7 +782,6 @@ class IntegracaoService extends ServiceBase {
                         "WHERE u.cpf is NULL";
 
                     $vinculos_isr = DB::select($query);
-
                     $perfil_participante = Perfil::where('nome', 'Participante')->first()->id;
 
                     foreach($vinculos_isr as $v_isr){
