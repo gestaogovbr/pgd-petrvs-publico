@@ -206,7 +206,7 @@ class PlanoTrabalhoService extends ServiceBase
     // ************ TRECHO COMENTADO TEMPORARIAMENTE (ENQUANTO É CRIADO O RELACIONAMENTO ENTREGAS 'DENTRO' DO MODEL DE PLANOTRABALHOCONSOLIDACAO) **********
     /*     foreach($plano->consolidacoes as $consolidacao) {
       $data = strtotime($consolidacao->status != "INCLUIDO" ? $consolidacao->data_fim : 
-        ($consolidacao->ocorrencias()->count() ? $consolidacao->ocorrencias()->max('data_fim') : $result
+        //($consolidacao->ocorrencias()->count() ? $consolidacao->ocorrencias()->max('data_fim') : $result
         ($consolidacao->entregas()->count() ? $consolidacao->data_inicio : $result)));
       $result = max($result, $data);
     } */
@@ -220,7 +220,7 @@ class PlanoTrabalhoService extends ServiceBase
     // ************ TRECHO COMENTADO TEMPORARIAMENTE (ENQUANTO É CRIADO O RELACIONAMENTO ENTREGAS 'DENTRO' DO MODEL DE PLANOTRABALHOCONSOLIDACAO) **********
     /*     foreach($plano->consolidacoes as $consolidacao) {
       $data = strtotime($consolidacao->status != "INCLUIDO" ? $consolidacao->data_inicio : 
-        ($consolidacao->ocorrencias()->count() ? $consolidacao->ocorrencias()->min('data_inicio') :
+        //($consolidacao->ocorrencias()->count() ? $consolidacao->ocorrencias()->min('data_inicio') :
         ($consolidacao->entregas()->count() ? $consolidacao->data_fim : $result)));
       $result = min($result, $data);
     } */
@@ -270,17 +270,17 @@ class PlanoTrabalhoService extends ServiceBase
   public function atualizaConsolidacoes($plano)
   {
     $existentes = $plano->consolidacoes->all();
-    $ocorrencias = array_reduce($existentes, fn ($carry, $item) => array_merge($carry, $item->ocorrencias->all()), []);
+    //$ocorrencias = array_reduce($existentes, fn ($carry, $item) => array_merge($carry, $item->ocorrencias->all()), []);
     $merged = [];
     $dataInicioVigencia = date("Y-m-d", strtotime($plano->data_inicio)); /* Transforma de datetime para date */
     $dataFimVigencia = date("Y-m-d", strtotime($plano->data_fim)); /* Transforma de datetime para date */
     $dataInicio = $dataInicioVigencia;
     while (strtotime($dataInicio) <= strtotime($dataFimVigencia)) {
       $dataFim = date("Y-m-d", min(strtotime($this->proxDataConsolidacao($dataInicio, $plano->programa)), strtotime($dataFimVigencia)));
-      $intersecaoOcorrencias = array_filter($ocorrencias, fn ($o) => strtotime($dataInicio) <= strtotime($o->data_fim) && strtotime($dataFim) >= strtotime($o->data_inicio));
-      $maxDataFimOcorrencia = count($intersecaoOcorrencias) ? max(array_map(fn ($item) => strtotime($item->data_fim), $intersecaoOcorrencias)) : strtotime($dataFim);
-      /* (RN_CSLD_3) Caso exista uma ocorrência que faça interseção no período e tenha data_fim maior que a calculada, a data_fim do período irá crescer */
-      $dataFim = $maxDataFimOcorrencia > strtotime($dataFim) ? date("Y-m-d", $maxDataFimOcorrencia) : $dataFim;
+      //$intersecaoOcorrencias = array_filter($ocorrencias, fn ($o) => strtotime($dataInicio) <= strtotime($o->data_fim) && strtotime($dataFim) >= strtotime($o->data_inicio));
+      //$maxDataFimOcorrencia = count($intersecaoOcorrencias) ? max(array_map(fn ($item) => strtotime($item->data_fim), $intersecaoOcorrencias)) : strtotime($dataFim);
+      /* (RN_CSLD_3) (REVOGADO) Caso exista uma ocorrência que faça interseção no período e tenha data_fim maior que a calculada, a data_fim do período irá crescer */
+      //$dataFim = $maxDataFimOcorrencia > strtotime($dataFim) ? date("Y-m-d", $maxDataFimOcorrencia) : $dataFim;
       $igual = array_filter($existentes, fn ($c) => $c->data_inicio == $dataInicio && $c->data_fim == $dataFim)[0] ?? null;
       $intersecao = array_filter($existentes, fn ($c) => $c->status != "INCLUIDO" && strtotime($dataInicio) <= strtotime($c->data_fim) && strtotime($dataFim) >= strtotime($c->data_inicio))[0] ?? null;
       if (!empty($igual)) { /* (RN_CSLD_4) Caso exista períodos iguais, o período existente será mantido (para este perído nada será feito, manterá a mesma ID) */
@@ -314,15 +314,19 @@ class PlanoTrabalhoService extends ServiceBase
         $dataInicio = date("Y-m-d", strtotime($dataFim . ' + 1 days'));
       }
     }
-    /* (RN_CSLD_7) Ocorrências e Atividades devem ser transferiadas para os novos perídos */
+    /* (RN_CSLD_7) (REVOGADO) Ocorrências e Atividades devem ser transferiadas para os novos perídos 
     foreach ($existentes as $anterior) {
-      /* Realoca ocorrencias */
+      /* Realoca ocorrencias 
       foreach ($anterior->ocorrencias as $ocorrencia) {
         $consolidacao = array_filter($merged, fn ($item) => strtotime($item->data_inicio) <= strtotime($ocorrencia->data_inicio) && strtotime($ocorrencia->data_inicio) <= strtotime($item->data_fim))[0] ?? null;
         if (empty($consolidacao)) throw new ServerException("ValidatePlanoTrabalho", "Erro ao realocar ocorrência para novo período: " . $ocorrencia->data_inicio);
         $ocorrencia->plano_trabalho_consolidacao_id = $consolidacao->id;
         $ocorrencia->save();
       }
+      /* Remove o registro da consolidação completamente vazio 
+      $anterior->delete();
+    }*/
+    foreach ($existentes as $anterior) {
       /* Remove o registro da consolidação completamente vazio */
       $anterior->delete();
     }

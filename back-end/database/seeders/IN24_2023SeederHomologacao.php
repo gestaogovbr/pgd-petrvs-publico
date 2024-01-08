@@ -1824,7 +1824,7 @@ class IN24_2023SeederHomologacao extends Seeder
                 "updated_at" => $this->timenow,
                 "deleted_at" => NULL,
                 "perfil_id" => $this->utilService->uuid("Participante"),
-                "tipo_capacidade_id" => $this->utilService->uuid("MOD_PTR_CSLD_OCOR"),
+                "tipo_capacidade_id" => $this->utilService->uuid("MOD_OCOR"),
             ),
             array(
                 "id" => "e1aae282-732c-4e29-92b6-ddb488825bc5",
@@ -1944,7 +1944,7 @@ class IN24_2023SeederHomologacao extends Seeder
                 "updated_at" => $this->timenow,
                 "deleted_at" => NULL,
                 "perfil_id" => $this->utilService->uuid("Participante"),
-                "tipo_capacidade_id" => $this->utilService->uuid("MOD_PTR_CSLD_OCOR_INCL"),
+                "tipo_capacidade_id" => $this->utilService->uuid("MOD_OCOR_INCL"),
             ),
             array(
                 "id" => "48149050-88f6-40f6-a74c-d52d746dcd03",
@@ -2016,7 +2016,7 @@ class IN24_2023SeederHomologacao extends Seeder
                 "updated_at" => $this->timenow,
                 "deleted_at" => NULL,
                 "perfil_id" => $this->utilService->uuid("Participante"),
-                "tipo_capacidade_id" => $this->utilService->uuid("MOD_PTR_CSLD_OCOR_EDT"),
+                "tipo_capacidade_id" => $this->utilService->uuid("MOD_OCOR_EDT"),
             ),
             array(
                 "id" => "9447ee5e-654e-454a-ac59-5988ae192868",
@@ -2096,7 +2096,7 @@ class IN24_2023SeederHomologacao extends Seeder
                 "updated_at" => $this->timenow,
                 "deleted_at" => NULL,
                 "perfil_id" => $this->utilService->uuid("Chefe de Unidade Executora"),
-                "tipo_capacidade_id" => $this->utilService->uuid("MOD_PTR_CSLD_OCOR_INCL"),
+                "tipo_capacidade_id" => $this->utilService->uuid("MOD_OCOR_INCL"),
             ),
             array(
                 "id" => "6b74b1d2-6bcc-4631-9fb8-34c3765e9212",
@@ -2376,7 +2376,7 @@ class IN24_2023SeederHomologacao extends Seeder
                 "updated_at" => $this->timenow,
                 "deleted_at" => NULL,
                 "perfil_id" => $this->utilService->uuid("Chefe de Unidade Executora"),
-                "tipo_capacidade_id" => $this->utilService->uuid("MOD_PTR_CSLD_OCOR"),
+                "tipo_capacidade_id" => $this->utilService->uuid("MOD_OCOR"),
             ),
             array(
                 "id" => "cea8e632-257e-4398-9fbf-9b5250f8b358",
@@ -2488,7 +2488,7 @@ class IN24_2023SeederHomologacao extends Seeder
                 "updated_at" => $this->timenow,
                 "deleted_at" => NULL,
                 "perfil_id" => $this->utilService->uuid("Chefe de Unidade Executora"),
-                "tipo_capacidade_id" => $this->utilService->uuid("MOD_PTR_CSLD_OCOR_EXCL"),
+                "tipo_capacidade_id" => $this->utilService->uuid("MOD_OCOR_EXCL"),
             ),
             array(
                 "id" => "13e57f0a-db4f-472d-a966-677be3c04e8f",
@@ -2672,7 +2672,7 @@ class IN24_2023SeederHomologacao extends Seeder
                 "updated_at" => $this->timenow,
                 "deleted_at" => NULL,
                 "perfil_id" => $this->utilService->uuid("Chefe de Unidade Executora"),
-                "tipo_capacidade_id" => $this->utilService->uuid("MOD_PTR_CSLD_OCOR_EDT"),
+                "tipo_capacidade_id" => $this->utilService->uuid("MOD_OCOR_EDT"),
             ),
             array(
                 "id" => "44270617-fba4-4a33-a09d-4bd974742340",
