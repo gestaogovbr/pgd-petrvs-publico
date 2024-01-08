@@ -78,6 +78,7 @@ class Usuario extends Authenticatable
         //'id_sei', /* text; */// Id do usuário no SEI
         //'vinculacao', /* enum('SERVIDOR_EFETIVO','SERVIDOR_COMISSIONADO','EMPREGADO','CONTRATADO_TEMPORARIO'); NOT NULL; DEFAULT: 'SERVIDOR_EFETIVO'; */// Vínculo do usuário com a administração
         //'metadados', /* json; */// Metadados do usuário
+        'data_modificacao',
     ];
 
     public function proxyFill(&$dataOrEntity, $unidade, $action) {

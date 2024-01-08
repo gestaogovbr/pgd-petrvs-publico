@@ -35,6 +35,8 @@ class IntegracaoServidor extends ModelBase
         'codupag', /* varchar(50); */
         'dataexercicionoorgao', /* varchar(50); */
         'funcoes', /* json; */
+        'cpf_chefia_imediata',
+        'email_chefia_imediata',
     ];
 
     protected $keyType = 'string';
