@@ -274,7 +274,7 @@ export class AppComponent {
       this.menuSchema.PLANOS_TRABALHOS,
       this.menuSchema.ATIVIDADES,
       Object.assign({}, this.menuSchema.CONSOLIDACOES, { params: { tab: "UNIDADE" } }),
-      this.menuSchema.AFASTAMENTOS,
+      //this.menuSchema.AFASTAMENTOS,
       this.menuSchema.OCORRENCIAS
     ];
 

@@ -32,6 +32,6 @@ class PlanoTrabalhoConsolidacaoOcorrencia extends ModelBase
 
     // Has
     // Belongs
-    public function consolidacao() { return $this->belongsTo(PlanoTrabalhoConsolidacao::class); }
+    public function consolidacao() { return $this->belongsTo(PlanoTrabalhoConsolidacao::class, 'plano_trabalho_consolidacao_id'); }
     public function ocorrencia() { return $this->belongsTo(Ocorrencia::class); }
 }
