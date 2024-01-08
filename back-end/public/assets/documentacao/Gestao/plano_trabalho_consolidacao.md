@@ -14,14 +14,14 @@
 ## REGRAS DE NEGÓCIO APLICADAS AS CONSOLIDAÇÕES
 
 1. (RN_CSLD_1) Após criado ou alterado um plano de trabalho, os períodos de consolidação são automaticamente gerados ou recriados com base na periodicidade configurada no programa;
-2. (RN_CSLD_2) O plano de trabalho somente poderá ser alterado: se a nova data de início não for superior a algum perído já CONCLUIDO ou AVALIADO, ou até o limite da primeira ocorrência ou atividade já lançados; e se a nova data de fim não for inferior a algum perído já CONCLUIDO ou AVALIADO, ou até o limite da última ocorrência ou atividade já lançados;  
+2. (RN_CSLD_2) O plano de trabalho somente poderá ser alterado: se a nova data de início não for superior a algum perído já CONCLUIDO ou AVALIADO, ou até o limite da primeira ~~ocorrência~~ ~~ou~~ atividade já lançados; e se a nova data de fim não for inferior a algum perído já CONCLUIDO ou AVALIADO, ou até o limite da última ~~ocorrência~~ ~~ou~~ atividade já lançados;  
 3. Caso o plano seja alterado:
-    1. (RN_CSLD_3) Caso exista uma ocorrência que faça interseção no período e tenha data_fim maior que a calculada, a data_fim do período irá crescer;
+    1. (~~RN_CSLD_3~~) (REVOGADO) Caso exista uma ocorrência que faça interseção no período e tenha data_fim maior que a calculada, a data_fim do período irá crescer;
     2. (RN_CSLD_4) Caso exista períodos iguais, o período existente será mantido (para este perído nada será feito, manterá a mesma ID);
     3. Se houver intersecção do período gerado com um existente que esteja com status CONCLUIDO ou AVALIADO:
         1. (RN_CSLD_5) Se as datas de início forem iguais o periodo existente será mantido;
         2. (RN_CSLD_6) Se as datas de início forem diferente, então será criado um novo perído entre o novo início e o início do período CONCLUIDO/AVALIADO, e o período CONCLUIDO/AVALIADO será mantido.
-    4. (RN_CSLD_7) Ocorrências e Atividades devem ser transferiadas para os novos perídos.
+    4. (~~RN_CSLD_7~~) (REVOGADO) Ocorrências e Atividades devem ser transferiadas para os novos perídos.
 4. (RN_CSLD_8) Após a data fim, e passado-se os dias determinado na Tolerância determinada no programa para lançamento da consolidação, o sistema automaticamente irá alterar o status de INCLUIDO para CONCLUIDO;
 5. (RN_CSLD_9) Se uma atividade for iniciada em uma outra consolidação anterior (CONCLUIDO ou AVALIADO), não poderá mais retroceder nem editar o inicio (Exemplo.: Retroceder de INICIADO para INCLUIDO, ou de CONCLUIDO para INICIADO);
 6. (RN_CSLD_10) A atividade já iniciado so não pode pausar com data retroativa da última consolidação CONCLUIDO ou AVALIADO;
