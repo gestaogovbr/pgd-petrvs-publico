@@ -1,10 +1,10 @@
 variables:
   DOCKER_HUB_IMAGE: segescginf/pgdpetrvs
-  DOCKER_HUB_TAG: latest
+  DOCKER_HUB_TAG: hmg
   SSH_USER: root
   SSH_HOST: 200.152.38.137
-  SSH_PORT: 7225
-  SSH_PASSWORD: dataprev12345
+  SSH_PORT: 7222
+  SSH_PASSWORD: Petrvs3125734@#
   DEPLOY_PATH: ./
   DOCKER_HUB_USERNAME: segescginf
   DOCKER_HUB_PASSWORD: dckr_pat_1JrKXQ3MUfthx_nZri5gq_wgjqo
@@ -13,26 +13,26 @@ services:
   - docker:dind
 
 stages:
-  - build_prod
-  - deploy_prod
+  - build_hmg
+  - deploy_hmg
 
 before_script:
   - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
 
-build_prod:
-  stage: build_prod
-  image: docker:latest
+build_hmg:
+  stage: build_hmg
+  image: docker:hmg
   script:
-    - docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f resources/dataprev/prod/Dockerfile .
+    - docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f resources/dataprev/hmg/Dockerfile .
     - docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
   only:
-    - dataprev_prod
+    - dataprev_hmg
 
-deploy_prod:
-  stage: deploy_prod
+deploy_hmg:
+  stage: deploy_hmg
   before_script:
     - apt-get update -y && apt-get install -y sshpass
   script:
     - sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST "sh install-pgd.sh"
   only:
-    - dataprev_prod
+    - dataprev_hmg
