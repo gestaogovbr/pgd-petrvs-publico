@@ -21,7 +21,7 @@ before_script:
 
 build_hmg:
   stage: build_hmg
-  image: docker:hmg
+  image: docker:prod
   script:
     - docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f resources/dataprev/hmg/Dockerfile .
     - docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
