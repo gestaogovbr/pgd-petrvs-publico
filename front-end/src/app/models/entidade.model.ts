@@ -3,6 +3,8 @@ import { Base } from './base.model';
 import { Cidade } from './cidade.model';
 import { Expediente } from './expediente.model';
 import { HasNotificacao, NotificacoesConfig } from './notificacao.model';
+import { HasRelatorio } from './relatorio.model';
+import { Template } from './template.model';
 import { TipoModalidade } from './tipo-modalidade.model';
 import { Usuario } from './usuario.model';
 
@@ -16,11 +18,12 @@ export type Nomenclatura = {
 
 export type TipoCargaHoraria = "DIA" | "SEMANA" | "MES";
 
-export class Entidade extends Base implements HasNotificacao {
+export class Entidade extends Base implements HasNotificacao, HasRelatorio {
     public cidade?: Cidade;
     public tipo_modalidade?: TipoModalidade;
     public gestor?: Usuario; /* Objeto do ususario gestor */
-    public gestor_substituto?: Usuario; /* Objeto do ususario gestor substituto */
+    public gestor_substituto?: Usuario;
+    public relatorios_templates?: Template[] | undefined;
 
     public sigla: string = ""; // Sigla da entidade
     public nome: string = ""; // Nome da entidade
@@ -34,6 +37,7 @@ export class Entidade extends Base implements HasNotificacao {
     public nomenclatura: Nomenclatura[] = []; /* Nomenclatura da entidade */
     public url_sei: string = ""; /* Url base do sei */
     public notificacoes: NotificacoesConfig = new NotificacoesConfig();
+    public notificacoes_templates?: Template[];  /* Lista de templates */
     public forma_contagem_carga_horaria: TipoCargaHoraria = "DIA"; // Forma de contagem padrão da carga horária
     public expediente: Expediente = new Expediente(); // Expediente (Não nulo)
 

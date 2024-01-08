@@ -66,7 +66,7 @@ class NotificacoesService
                 "validacao" => (fn(&$params) => true),
                 "dataset" => [["field" => "programa_nome", "label" => "Nome do Programa"]],
                 "datasource" => (fn(&$params) => ["programa_nome" => $params["programa"]->nome]),
-                "template" => "Você foi habilitado no programa {{programa_nome}}, acesse o PETRVS para continuar o seu trabalho!"
+                "template" => "Você foi habilitado no programa {{programa_nome}}.  Acesse o PETRVS para continuar o seu trabalho!"
             ],
             "PENT_ALTERACAO" => [
                 "descricao" => "Notificação de alteração no plano de entregas",

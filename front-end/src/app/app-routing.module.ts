@@ -9,9 +9,10 @@ import { TesteFormComponent } from './modules/teste/teste-form/teste-form.compon
 import { TesteComponent } from './modules/teste/teste.component';
 import { ConfigResolver } from './resolvies/config.resolver';
 import { LoginUnicoComponent } from "./modules/login/login-unico/login-unico.component";
+import {PanelGuard} from "./guards/panel.guard";
 
 const routes: Routes = [
-  { path: 'panel', loadChildren: () => import('./modules/panel/panel.module').then(m => m.PanelModule) },
+  { path: 'panel', loadChildren: () => import('./modules/panel/panel.module').then(m => m.PanelModule),canActivate: [PanelGuard] },
   { path: 'teste', component: TesteComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Teste" } },
   { path: 'teste/calcula-tempo', component: TesteFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Teste - CalculaTempo" } },
   { path: 'home', loadChildren: () => import('./modules/home/home.module').then(m => m.HomeModule), canActivate: [AuthGuard] },
@@ -21,7 +22,6 @@ const routes: Routes = [
   { path: 'config', component: ConfigComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Configurações", modal: true } },
   { path: 'suporte', loadChildren: () => import('./modules/suporte/suporte.module').then(m => m.SuporteModule), resolve: { config: ConfigResolver } },
   { path: 'uteis', loadChildren: () => import('./modules/uteis/uteis.module').then(m => m.UteisModule), canActivate: [AuthGuard] },
-  { path: 'cadastros/afastamento', loadChildren: () => import('./modules/cadastros/afastamento/afastamento.module').then(m => m.AfastamentoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/cidade', loadChildren: () => import('./modules/cadastros/cidade/cidade.module').then(m => m.CidadeModule), canActivate: [AuthGuard] },
   { path: 'cadastros/entrega', loadChildren: () => import('./modules/cadastros/entrega/entrega.module').then(m => m.EntregaModule), canActivate: [AuthGuard] },
   { path: 'cadastros/eixo-tematico', loadChildren: () => import('./modules/cadastros/eixo-tematico/eixo-tematico.module').then(m => m.EixoTematicoModule), canActivate: [AuthGuard] },
@@ -36,6 +36,8 @@ const routes: Routes = [
   { path: 'cadastros/tipo-modalidade', loadChildren: () => import('./modules/cadastros/tipo-modalidade/tipo-modalidade.module').then(m => m.TipoModalidadeModule), canActivate: [AuthGuard] },
   { path: 'cadastros/tipo-motivo-afastamento', loadChildren: () => import('./modules/cadastros/tipo-motivo-afastamento/tipo-motivo-afastamento.module').then(m => m.TipoMotivoAfastamentoModule), canActivate: [AuthGuard] },
   { path: 'cadastros/tipo-processo', loadChildren: () => import('./modules/cadastros/tipo-processo/tipo-processo.module').then(m => m.TipoProcessoModule), canActivate: [AuthGuard] },
+  { path: 'gestao/afastamento', loadChildren: () => import('./modules/gestao/afastamento/afastamento.module').then(m => m.AfastamentoModule), canActivate: [AuthGuard] },
+  { path: 'gestao/ocorrencia', loadChildren: () => import('./modules/gestao/ocorrencia/ocorrencia.module').then(m => m.OcorrenciaModule), canActivate: [AuthGuard] },
   { path: 'gestao/programa', loadChildren: () => import('./modules/gestao/programa/programa.module').then(m => m.ProgramaModule), canActivate: [AuthGuard] },
   { path: 'gestao/cadeia-valor', loadChildren: () => import('./modules/gestao/cadeia-valor/cadeia-valor.module').then(m => m.CadeiaValorModule), canActivate: [AuthGuard] },
   { path: 'gestao/atividade', loadChildren: () => import('./modules/gestao/atividade/atividade.module').then(m => m.AtividadeModule), canActivate: [AuthGuard] },

@@ -30,15 +30,13 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Throwable;
 
-use function PHPSTORM_META\map;
-
 class AtividadeService extends ServiceBase
 {
     public $unidades = []; /* Buffer de unidades para funções que fazem consulta frequentes em unidades */
 
     public $joinable = [
         "tipo_atividade",
-        "plano_trabalho_entrega",
+        "plano_trabalho_entrega.plano_entrega_entrega",
         "tarefas.tipo_tarefa",
         "demandante:id,nome,apelido,email,url_foto",
         "pausas",
@@ -250,7 +248,7 @@ class AtividadeService extends ServiceBase
         return $rows;
     }
 
-    public function proxyExtra($rows, $data) {
+    public function proxyExtra($rows, $data, $count) {
         $afastamentos = [];
         $planosTrabalhos = [];
         $result = [

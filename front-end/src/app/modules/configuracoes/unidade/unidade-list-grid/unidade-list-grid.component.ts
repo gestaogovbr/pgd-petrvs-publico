@@ -59,15 +59,15 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
     // Testa se o usuário logado possui permissão de inativar a unidade do grid
     if (this.auth.hasPermissionTo("MOD_UND_INATV")) result.push({icon: unidade.data_inativacao ? "bi bi-check-circle" : "bi bi-x-circle", label: unidade.data_inativacao ? 'Reativar' : 'Inativar', onClick: async (unidade: Unidade) => await this.inativo(unidade, !unidade.data_inativacao)});
     // Testa se o usuário logado possui permissão para gerenciar integrantes da unidade do grid
-    if (this.auth.hasPermissionTo("MOD_UND_INTG")) result.push({ label: "Integrantes", icon: "bi bi-people", onClick: (unidade: Unidade) => this.go.navigate({ route: ['configuracoes', 'unidade', '', unidade.id, 'integrante'] }, { metadata: { entity_id: row.id } })});
+    if (this.auth.hasPermissionTo("MOD_UND_INTG")) result.push({ label: "Integrantes", icon: "bi bi-people", onClick: (unidade: Unidade) => this.go.navigate({ route: ['configuracoes', 'unidade', '', unidade.id, 'integrante'] }, { metadata: { entity_id: row.id, unidade: row } })});
     return result;
   }
 
   public async inativo(unidade: Unidade, inativo: boolean) {
-    if (await this.dialog.confirm(inativo ? "Inativar" : "Reativar", inativo ? "Deseja realmente inativar a unidade?" : "Deseja reativar a unidade?")) {
+    if (await this.dialog.confirm(inativo ? "Inativar" : "Reativar", inativo ? "Deseja realmente inativar essa unidade (" + unidade.nome + ")?" : "Deseja reativar essa unidade (" + unidade.nome + ")?")) {
       try {
         this.submitting = true;
-        await this.dao!.inativo(unidade.id, inativo);
+        await this.dao!.inativar(unidade.id, inativo);
         await this.modalRefreshId(unidade).modalClose!(undefined);
       } finally {
         this.submitting = false;
@@ -88,5 +88,9 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
     if (form.nome?.length) result.push(["or", ["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"], ["sigla", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]]);
     if (form.instituidora) result.push(["instituidora", "==", 1]);
     return result;
+  }
+
+  public get labelInfoInativas(): string {
+    return this.selectable ? 'Se lista só as unidades inativas' : 'Se lista também as unidades inativas';
   }
 }

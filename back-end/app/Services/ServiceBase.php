@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Tenant;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\DB;
@@ -41,7 +42,7 @@ class DynamicMethods {
  * @method proxyRows($rows)
  * @method proxyGetAllIdsExtra($result, $data)
  * @method proxyQuery($query, $data)
- * @method proxyExtra($rows, $data)
+ * @method proxyExtra($rows, $data, $count)
  * @method validateStore($dataOrEntity, $unidade, $action)
  * @method proxyStore($dataOrEntity, $unidade, $action)
  * @method extraStore($entity, $unidade, $action)
@@ -63,6 +64,8 @@ class ServiceBase extends DynamicMethods
 
     public string $collection = "";
     public string $developerId = "";
+
+    public $buffer; /* Utilizado para passar informações entre os Proxys */
 
     /* instancia automaticamente os serviços */
     private $_services = [];
@@ -613,7 +616,7 @@ class ServiceBase extends DynamicMethods
         }
         $rows = $query->get();
         $rows = method_exists($this, 'proxyRows') ? $this->proxyRows($rows) : $rows;
-        $extra = method_exists($this, 'proxyExtra') ? $this->proxyExtra($rows, $data) : null;
+        $extra = method_exists($this, 'proxyExtra') ? $this->proxyExtra($rows, $data, $count) : null;
         return [
             'count' => $count,
             'rows' => $rows,
@@ -627,12 +630,15 @@ class ServiceBase extends DynamicMethods
      * @param  string $file
      * @return string
      */
-    public function download(string $file)
+    public function download($tenantId, string $file)
     {
-        if(!Storage::exists($file)) {
-            throw new Exception("Arquivo não encontrado");
-        }
-        return Storage::path($file);
+        $tenant = tenancy()->find($tenantId);
+        return $tenant->run(function () use ($file) {
+            if(!Storage::exists($file)) {
+                throw new Exception("Arquivo não encontrado");
+            }
+            return Storage::path($file);
+        });
     }
 
     /**
@@ -647,7 +653,7 @@ class ServiceBase extends DynamicMethods
         if(!Storage::exists($file)) {
             throw new Exception("Arquivo não encontrado");
         }
-        $url = URL::temporarySignedRoute('download', now()->addMinutes(30), ['file' => $file]);
+        $url = URL::temporarySignedRoute('download', now()->addMinutes(30), ['tenant' => tenant('id'), 'file' => $file], false);
         $url = substr($url, strpos($url, "download/")); /* Convert to relative path from absolute */
         return $url;
     }
@@ -917,4 +923,4 @@ class ServiceBase extends DynamicMethods
         return $model;
     }
 }
-
+//$query->toSql();    $query->getBindings();

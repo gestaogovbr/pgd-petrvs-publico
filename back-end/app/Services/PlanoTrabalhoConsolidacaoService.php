@@ -7,10 +7,12 @@ use App\Models\PlanoEntrega;
 use App\Models\Afastamento;
 use App\Services\ServiceBase;
 use App\Models\Atividade;
+use App\Models\Ocorrencia;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\PlanoTrabalhoConsolidacaoAfastamento;
 use App\Models\PlanoTrabalhoConsolidacaoAtividade;
+use App\Models\PlanoTrabalhoConsolidacaoOcorrencia;
 use App\Models\Programa;
 use App\Models\TipoAvaliacao;
 use App\Models\Unidade;
@@ -39,7 +41,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     return $data;
   }
 
-  public function proxyExtra($rows, $data) 
+  public function proxyExtra($rows, $data, $count) 
   {
     $result = [];
     if(in_array("avaliacao", $data["with"])) {
@@ -54,7 +56,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
         "unidade.gestor:id,unidade_id,usuario_id",
         "unidade.gestorSubstituto:id,unidade_id,usuario_id",
         "tipoModalidade:id,nome",
-        "usuario:id,nome,apelido,url_foto"
+        "usuario:id,nome,apelido,url_foto,foto_perfil"
       ])->whereIn("id", $planosTrabalhosIds)->get()->all();
       $programasIds = array_unique(array_map(fn ($v) => $v["programa_id"], $planosTrabalhos));
       $programas = Programa::with(["tipoAvaliacaoPlanoTrabalho.notas.justificativas"])->whereIn("id", $programasIds)->get()->all();
@@ -73,7 +75,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
   public function consolidacaoDados($id): array
   {
     $consolidacao = PlanoTrabalhoConsolidacao::with([
-      'ocorrencias', 
+      //'ocorrencias', 
       'comparecimentos.unidade:id,nome,sigla',
       'avaliacao',
       'avaliacoes',
@@ -103,11 +105,15 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       'reacoes.usuario:id,nome,apelido'
     ]);
     $afastamentos = Afastamento::with(['tipoMotivoAfastamento']);
+    $ocorrencias = Ocorrencia::with(['usuario']);
     if($concluido) { /* Carrega atividades e afastamentos baseado no snapshot */
       $atividades = $atividades->withTrashed()->whereHas('consolidacoes', function (Builder $query) use ($consolidacao) {
         $query->where('plano_trabalho_consolidacao_id', $consolidacao->id)->where('data_conclusao', $consolidacao->data_conclusao);
       })->get();
       $afastamentos = $afastamentos->withTrashed()->whereHas('consolidacoes', function (Builder $query) use ($consolidacao) {
+        $query->where('plano_trabalho_consolidacao_id', $consolidacao->id)->where('data_conclusao', $consolidacao->data_conclusao);
+      })->get();
+      $ocorrencias = $ocorrencias->withTrashed()->whereHas('consolidacoes', function (Builder $query) use ($consolidacao) {
         $query->where('plano_trabalho_consolidacao_id', $consolidacao->id)->where('data_conclusao', $consolidacao->data_conclusao);
       })->get();
     } else {
@@ -117,22 +123,27 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       $afastamentos = $afastamentos->where("data_fim", ">=", $consolidacao->data_inicio)->
         where('data_inicio', '<=', $consolidacao->data_fim)->
         where('usuario_id', $planoTrabalho->usuario_id)->get();
+      /* RN_CSLD_15 - Será considerado apenas as ocorrências (que tenha intersecção do período da consolidação) cujo plano de trabalho seja o mesmo da consolidação ou caso o plano de trabalho esteja em branco. (ocorrência não vinculada a plano de trabalho) */
+      $ocorrencias = $ocorrencias->where("data_fim", ">=", $consolidacao->data_inicio)->
+        where('data_inicio', '<=', $consolidacao->data_fim)->
+        where('usuario_id', $planoTrabalho->usuario_id)->
+        where(function ($query) use ($planoTrabalho) { $query->whereNull('plano_trabalho_id')->orWhere('plano_trabalho_id', '=', $planoTrabalho->id); })->get();
     }
     $atividades = array_map(fn($atividade) => $this->buildAtividadeConsolidacao($atividade->toArray(), $consolidacao), $atividades->all());
     $atividades = array_map(fn($atividade) => array_merge($atividade, ["metadados" => $this->atividadeService->metadados($atividade)]), $atividades);
     $afastamentos = array_map(fn($afastamento) => $this->buildAfastamentoConsolidacao($afastamento->toArray(), $consolidacao), $afastamentos->all());
+    $ocorrencias = array_map(fn($ocorrencia) => $this->buildOcorrenciaConsolidacao($ocorrencia->toArray(), $consolidacao), $ocorrencias->all());
     return [
-      'atividades' => $atividades,
       'programa' => $consolidacao->programa,
       'planoTrabalho' => $consolidacao->planoTrabalho,
       'planosEntregas' => PlanoEntrega::whereIn("id", $planosEntregasIds)->get(),
-      'ocorrencias' => $consolidacao->ocorrencias ?? [],
-      'comparecimentos' => $consolidacao->comparecimentos ?? [],
+      'atividades' => $atividades,
       'afastamentos' => $afastamentos,
+      'ocorrencias' => $ocorrencias,
+      'comparecimentos' => $consolidacao->comparecimentos ?? [],
       'status' => $consolidacao->status
     ];
   }
-
 
   /** 
    * Reconstroi o Afastameto para ter a aparência de quando a consolidação foi concluída
@@ -148,12 +159,36 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
         where("afastamento_id", $afastamento["id"])->first();
       if(!empty($consolidacaoAfastameto)) {
         $snapshot = (object) $consolidacaoAfastameto->snapshot;
+        $afastamento["observacoes"] = $snapshot->observacoes;
         $afastamento["data_inicio"] = $snapshot->data_inicio;
         $afastamento["data_fim"] = $snapshot->data_fim;
         $afastamento["deleted_at"] = $snapshot->deleted_at;
       }
     }
     return $afastamento;
+  }
+
+  /** 
+   * Reconstroi a Ocorrencia para ter a aparência de quando a consolidação foi concluída
+   * 
+   * @param   array  $ocorrencia          Ocorrencia (Array) que se deseja atualizar
+   * @param   Consolidacao  $consolidacao Consolidacao
+   * @return  array
+   */
+  public function buildOcorrenciaConsolidacao($ocorrencia, $consolidacao) {
+    if(!empty($consolidacao->data_conclusao)) {
+      $consolidacaoOcorrencia = PlanoTrabalhoConsolidacaoOcorrencia::where("plano_trabalho_consolidacao_id", $consolidacao->id)->
+        where("data_conclusao", $consolidacao->data_conclusao)->
+        where("ocorrencia_id", $ocorrencia["id"])->first();
+      if(!empty($consolidacaoOcorrencia)) {
+        $snapshot = (object) $consolidacaoOcorrencia->snapshot;
+        $ocorrencia["descricao"] = $snapshot->descricao;
+        $ocorrencia["data_inicio"] = $snapshot->data_inicio;
+        $ocorrencia["data_fim"] = $snapshot->data_fim;
+        $ocorrencia["deleted_at"] = $snapshot->deleted_at;
+      }
+    }
+    return $ocorrencia;
   }
 
   /** 
@@ -258,6 +293,17 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
         ]);
         $consolidacaoAfastamento->save();
       }
+      /* Snapshot das ocorrencias */
+      foreach(array_map(fn($a) => $a["id"], $dados["ocorrencias"] ?? []) as $ocorrenciaId) {
+        $ocorrencia = Ocorrencia::find($ocorrenciaId);
+        $consolidacaoOcorrencia = new PlanoTrabalhoConsolidacaoOcorrencia([
+          "data_conclusao" => $dataConclusao,
+          "snapshot" => $ocorrencia->toArray(),
+          "plano_trabalho_consolidacao_id" => $id,
+          "ocorrencia_id" => $ocorrencia->id
+        ]);
+        $consolidacaoOcorrencia->save();
+      }
       /* Atualiza o status */
       $this->status->atualizaStatus($consolidacao, 'CONCLUIDO', 'A consolidação foi concluída nesta data.');
       DB::commit();
@@ -288,6 +334,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       $consolidacao->save();
       PlanoTrabalhoConsolidacaoAtividade::where("plano_trabalho_consolidacao_id", $id)->delete();
       PlanoTrabalhoConsolidacaoAfastamento::where("plano_trabalho_consolidacao_id", $id)->delete();
+      PlanoTrabalhoConsolidacaoOcorrencia::where("plano_trabalho_consolidacao_id", $id)->delete();
       $this->status->atualizaStatus($consolidacao, 'INCLUIDO', 'Cancelado a conclusão nesta data.');
       DB::commit();
       return $this->consolidacaoDados($id);

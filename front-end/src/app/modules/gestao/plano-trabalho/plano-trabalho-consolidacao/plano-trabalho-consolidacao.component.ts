@@ -32,6 +32,7 @@ export class PlanoTrabalhoConsolidacaoComponent extends PageFrameBase {
   ngAfterViewInit() {
     super.ngAfterViewInit();
     this.tabs!.active = this.queryParams?.tab || "USUARIO";
+    this.tabs!.title = this.lex.translate('Consolidações');
     (async () => {
       await this.loadData(this.entity!, this.form);
     })();

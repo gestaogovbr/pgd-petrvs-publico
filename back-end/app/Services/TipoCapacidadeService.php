@@ -201,13 +201,13 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_PTR_CSLD_REC_AVAL", "Permite recorrer da avaliação"]
             ]
         ], [
-            "codigo"=> "MOD_PTR_CSLD_OCOR",
-            "descricao"=> "Módulo de Plano de Trabalho - Ocorrências",
+            "codigo"=> "MOD_OCOR",
+            "descricao"=> "Módulo de Ocorrências",
             "capacidades"=> [
                 /* Capacidades do módulo PLANO DE TRABALHO */
-                ["MOD_PTR_CSLD_OCOR_EDT", "Permite editar ocorrência de um plano de trabalho"],
-                ["MOD_PTR_CSLD_OCOR_EXCL", "Permite excluir ocorrência de um plano de trabalho"],
-                ["MOD_PTR_CSLD_OCOR_INCL", "Permite incluir ocorrência de um plano de trabalho"],
+                ["MOD_OCOR_EDT", "Permite editar ocorrência"],
+                ["MOD_OCOR_EXCL", "Permite excluir ocorrência"],
+                ["MOD_OCOR_INCL", "Permite incluir ocorrência"]
             ]
         ], [
             "codigo"=> "MOD_PENT",
@@ -253,9 +253,9 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_PRGT_EXCL", "Permite excluir programas de gestão"],
                 ["MOD_PRGT_INCL", "Permite incluir programas de gestão"],
                 ["MOD_PRGT_PART", "Participantes do programa"],
+                ["MOD_PRGT_PART_HAB", "Permite habilitar participantes do programa"],
                 ["MOD_PRGT_PART_INCL", "Permite incluir participantes do programa"],
-                ["MOD_PRGT_PART_EDT", "Permite editar participantes do programa"],
-                ["MOD_PRGT_PART_EXCL", "Permite excluir participantes do programa"],
+                ["MOD_PRGT_PART_DESAB", "Permite desabilitar participantes do programa"],
             ]
         ], [
             "codigo"=> "MOD_PROJ", //ok
@@ -389,17 +389,18 @@ class TipoCapacidadeService extends ServiceBase {
                 /* Capacidades do módulo UNIDADES*/
                 ["MOD_UND", "Permite consultar unidade"],
                 ["MOD_UND_EDT", "Permite editar unidade"],
-                ["MOD_UND_EDT_SIAPE", "Permite editar unidades formais do SIAPE"],  // a ser implementado
+                ["MOD_UND_EDT_FRM", "Permite editar unidades formais (SIAPE ou não)"],  // a ser implementado
                 ["MOD_UND_EXCL", "Permite excluir unidade"],
                 ["MOD_UND_INCL", "Permite incluir unidade"],
-                ["MOD_UND_INCL_SIAPE", "Permite incluir unidades formais do SIAPE"],
+                ["MOD_UND_INCL_FRM", "Permite incluir unidades formais (SIAPE ou não)"],    // a ser implementado
                 ["MOD_UND_UNIR", "Permite unificar unidade"],
-                ["MOD_UND_TUDO", "Permite consultar qualquer unidade independente de subordinação"],        // a ser implementado
+                ["MOD_UND_TUDO", "Permite consultar qualquer unidade independente de subordinação"],        
                 ["MOD_UND_INATV", "Permite inativar uma unidade"],
                 ["MOD_UND_INTG", "Permite gerenciar integrantes da unidade"],
                 ["MOD_UND_INTG_INCL", "Permite incluir integrantes da unidade"],
                 ["MOD_UND_INTG_EDT", "Permite editar integrantes da unidade"],
                 ["MOD_UND_INTG_EXCL", "Permite excluir integrantes da unidade"],
+                ["MOD_UND_INTG_GST", "Permite alterar gestor e substituto"],
             ]
         ], [
             "codigo"=> "MOD_USER", //ok

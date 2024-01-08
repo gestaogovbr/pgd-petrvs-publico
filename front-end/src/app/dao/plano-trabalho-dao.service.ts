@@ -36,8 +36,8 @@ export class PlanoTrabalhoDaoService extends DaoBaseService<PlanoTrabalho> {
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.planoTrabalhoEntregaDao = injector.get<PlanoTrabalhoEntregaDaoService>(PlanoTrabalhoEntregaDaoService);
     this.lookup = injector.get<LookupService>(LookupService);
-    this.inputSearchConfig.searchFields = ["data_inicio", "data_fim", "usuario.nome"];
-    this.inputSearchConfig.display = (data: any[]) => this.util.getDateFormatted(data[0]) + " a " + this.util.getDateFormatted(data[1]) + " - " + data[2];
+    this.inputSearchConfig.searchFields = ["numero", "data_inicio", "data_fim", "usuario.nome"];
+    this.inputSearchConfig.display = (data: any[]) => "#" + data[0] + ": " + this.util.getDateFormatted(data[1]) + " a " + this.util.getDateFormatted(data[2]) + " - " + data[3];
   }
 
   public dataset(deeps?: string[]): TemplateDataset[] {

@@ -118,11 +118,31 @@ __webpack_require__.r(__webpack_exports__);
 class QuestionarioPergunta extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
   constructor(data) {
     super();
+    this.sequencia = 0; //sequencia da pergunta
     this.pergunta = ""; //pergunta
     this.tipo = "SELECT"; // tipo da resposta para esta pergunta
+    this.criado_versao = 0; //versao de criacao
+    this.deletado_versao = null; //versao em que for deletado
+    this.respostas = null; // opções de respostas para essa pergunta
     this.initialization(data);
   }
 }
+/*
+Preenchimento do campo respostas a depender do tipo:
+
+EMOJI: LookupItem[] {key: "ICONE", value: "DESCRICAO", icon: "ICONE"}
+SELECT: LookupItem[] {key: "CODIGO", value: "DESCRICAO"}
+MULTI_SELECT: LookupItem[] {key: "CODIGO", value: "DESCRICAO"}
+TEXT: undefined
+TEXT_AREA: undefined
+TIMER: {tipo: "DAYS_HOURS" | "DAYS" | "HOURS"}
+DATE_TIME: {tipo: "DATE_TIME" | "DATE" | "TIME"}
+SWICTH: LookupItem[] lookup.SIMNAO
+NUMBER: undefined
+RATE: {max: NUMBER, min: NUMBER},
+RADIO: LookupItem[] {key: "CODIGO", value: "DESCRICAO"}
+CHECK: LookupItem[] {key: "CODIGO", value: "DESCRICAO"}
+*/
 // tipos
 //LIVRE - Resposta Aberta (Texto Livre): Permite que os respondentes expressem suas opiniões em suas próprias palavras.
 //LISTA UNICA - Resposta de Escolha Única: respondente seleciona uma única opção entre as fornecidas.
@@ -174,12 +194,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   QuestionarioListPerguntaComponent: () => (/* binding */ QuestionarioListPerguntaComponent)
 /* harmony export */ });
-/* harmony import */ var src_app_dao_questionario_dao_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/dao/questionario-dao.service */ 10535);
-/* harmony import */ var src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/modules/base/page-frame-base */ 76298);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/core */ 51197);
-/* harmony import */ var _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../components/grid/grid.component */ 73150);
-/* harmony import */ var _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../../components/grid/columns/columns.component */ 57224);
-/* harmony import */ var _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../../components/grid/column/column.component */ 83351);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/components/editable-form/editable-form.component */ 74040);
+/* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../../components/grid/grid.component */ 73150);
+/* harmony import */ var src_app_dao_questionario_pergunta_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/questionario-pergunta-dao.service */ 8305);
+/* harmony import */ var src_app_models_questionario_model__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/models/questionario.model */ 29453);
+/* harmony import */ var src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/modules/base/page-frame-base */ 76298);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/common */ 89650);
+/* harmony import */ var _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../../components/grid/columns/columns.component */ 57224);
+/* harmony import */ var _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../../components/grid/column/column.component */ 83351);
+/* harmony import */ var _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../../components/badge/badge.component */ 95489);
 var _class;
 
 
@@ -187,90 +211,251 @@ var _class;
 
 
 
-const _c0 = ["listaAtividades"];
+
+
+
+
+
+
 function QuestionarioListPerguntaComponent_ng_template_3_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "span");
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](2, "br");
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](0, "strong");
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
-    const row_r2 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](row_r2.data.pergunta.pergunta);
+    const row_r8 = ctx.row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtextInterpolate"](row_r8.sequencia);
   }
 }
-class QuestionarioListPerguntaComponent extends src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_1__.PageFrameBase {
-  set entregaId(value) {
-    if (this._entregaId != value) {
-      this._entregaId = value;
+function QuestionarioListPerguntaComponent_ng_template_6_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](0, "strong");
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementEnd"]();
+  }
+  if (rf & 2) {
+    const row_r9 = ctx.row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtextInterpolate"](row_r9.pergunta);
+  }
+}
+function QuestionarioListPerguntaComponent_ng_template_9_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtext"](0);
+  }
+  if (rf & 2) {
+    const row_r10 = ctx.row;
+    const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtextInterpolate1"](" ", ctx_r5.lookup.getValue(ctx_r5.lookup.QUESTIONARIO_PERGUNTA_TIPO, row_r10.tipo), " ");
+  }
+}
+function QuestionarioListPerguntaComponent_ng_template_12_ng_container_0_badge_2_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelement"](0, "badge", 12);
+  }
+  if (rf & 2) {
+    const resposta_r17 = ctx.$implicit;
+    const i_r18 = ctx.index;
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("label", resposta_r17.key)("textValue", resposta_r17.data.valorResposta ? resposta_r17.data.valorResposta : (i_r18 + 1).toString())("icon", resposta_r17.icon);
+  }
+}
+function QuestionarioListPerguntaComponent_ng_template_12_ng_container_0_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementContainerStart"](0);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](1, "div", 10);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtemplate"](2, QuestionarioListPerguntaComponent_ng_template_12_ng_container_0_badge_2_Template, 1, 3, "badge", 11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementContainerEnd"]();
+  }
+  if (rf & 2) {
+    const row_r11 = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵnextContext"]().row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("ngForOf", row_r11.respostas);
+  }
+}
+function QuestionarioListPerguntaComponent_ng_template_12_ng_container_1_badge_1_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelement"](0, "badge", 16);
+  }
+}
+function QuestionarioListPerguntaComponent_ng_template_12_ng_container_1_badge_2_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelement"](0, "badge", 17);
+  }
+  if (rf & 2) {
+    const row_r11 = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵnextContext"](2).row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("textValue", row_r11.respostas.min);
+  }
+}
+function QuestionarioListPerguntaComponent_ng_template_12_ng_container_1_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementContainerStart"](0);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtemplate"](1, QuestionarioListPerguntaComponent_ng_template_12_ng_container_1_badge_1_Template, 1, 0, "badge", 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtemplate"](2, QuestionarioListPerguntaComponent_ng_template_12_ng_container_1_badge_2_Template, 1, 1, "badge", 14);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelement"](3, "badge", 15);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementContainerEnd"]();
+  }
+  if (rf & 2) {
+    const row_r11 = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵnextContext"]().row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("ngIf", row_r11.respostas.min == 0);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("ngIf", row_r11.respostas.min > 0);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("textValue", row_r11.respostas.max);
+  }
+}
+function QuestionarioListPerguntaComponent_ng_template_12_ng_container_2_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementContainer"](0);
+  }
+}
+function QuestionarioListPerguntaComponent_ng_template_12_ng_container_3_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementContainer"](0);
+  }
+}
+const _c0 = function () {
+  return ["EMOJI", "SELECT", "MULTI_SELECT", "RADIO", "CHECK"];
+};
+function QuestionarioListPerguntaComponent_ng_template_12_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtemplate"](0, QuestionarioListPerguntaComponent_ng_template_12_ng_container_0_Template, 3, 1, "ng-container", 9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtemplate"](1, QuestionarioListPerguntaComponent_ng_template_12_ng_container_1_Template, 4, 3, "ng-container", 9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtemplate"](2, QuestionarioListPerguntaComponent_ng_template_12_ng_container_2_Template, 1, 0, "ng-container", 9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtemplate"](3, QuestionarioListPerguntaComponent_ng_template_12_ng_container_3_Template, 1, 0, "ng-container", 9);
+  }
+  if (rf & 2) {
+    const row_r11 = ctx.row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵpureFunction0"](4, _c0).includes(row_r11.tipo));
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("ngIf", row_r11.tipo == "NUMBER");
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("ngIf", row_r11.tipo == "TIMER");
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("ngIf", row_r11.tipo == "DATE_TIME");
+  }
+}
+class QuestionarioListPerguntaComponent extends src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_4__.PageFrameBase {
+  set noPersist(value) {
+    super.noPersist = value;
+  }
+  get noPersist() {
+    return super.noPersist;
+  }
+  set control(value) {
+    super.control = value;
+  }
+  get control() {
+    return super.control;
+  }
+  set entity(value) {
+    super.entity = value;
+  }
+  get entity() {
+    return super.entity;
+  }
+  set questionarioId(value) {
+    if (this._questionarioId != value) {
+      this._questionarioId = value;
+      this.loadPerguntas();
     }
   }
-  get entregaId() {
-    return this._entregaId;
+  get questionarioId() {
+    return this._questionarioId;
+  }
+  set items(value) {
+    if (this.items != value) {
+      this.gridControl.value.perguntas = value;
+      if (this.viewInit) this.cdRef.detectChanges();
+    }
+  }
+  get items() {
+    if (!this.gridControl.value) this.gridControl.setValue(new src_app_models_questionario_model__WEBPACK_IMPORTED_MODULE_3__.Questionario());
+    if (!this.gridControl.value.perguntas) this.gridControl.value.perguntas = [];
+    return this.gridControl.value.perguntas;
   }
   constructor(injector) {
     super(injector);
     this.injector = injector;
-    this.items = [];
-    this.loader = false;
-    this.questionarioDao = injector.get(src_app_dao_questionario_dao_service__WEBPACK_IMPORTED_MODULE_0__.QuestionarioDaoService);
-    //this.join = ['unidade', 'usuario','demandante']
+    this.dao = injector.get(src_app_dao_questionario_pergunta_dao_service__WEBPACK_IMPORTED_MODULE_2__.QuestionarioPerguntaDaoService);
+    this.cdRef = injector.get(_angular_core__WEBPACK_IMPORTED_MODULE_8__.ChangeDetectorRef);
+    //this.orderBy = [['sequencia','asc']];
   }
 
-  ngOnInit() {
-    super.ngOnInit();
-    this.loadData();
-  }
-  loadData() {
-    this.loader = true;
-    // this.questionarioDao.query({where: [["plano_trabalho_entrega_id", "==", this._entregaId]], join: this.join}).asPromise().then(response => {
-    this.questionarioDao.query({}).asPromise().then(response => {
-      this.items = response;
-    }).finally(() => {
-      this.loader = false;
+  loadPerguntas() {
+    this.dao.query({
+      where: [["questionario_id", "==", this.questionarioId]],
+      orderBy: [["sequencia", "asc"]]
+    }).asPromise().then(rows => {
+      this.items = rows || [];
     });
   }
 }
 _class = QuestionarioListPerguntaComponent;
 _class.ɵfac = function QuestionarioListPerguntaComponent_Factory(t) {
-  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_5__.Injector));
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_8__.Injector));
 };
-_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineComponent"]({
+_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵdefineComponent"]({
   type: _class,
   selectors: [["questionario-list-pergunta"]],
   viewQuery: function QuestionarioListPerguntaComponent_Query(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵviewQuery"](_c0, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_0__.EditableFormComponent, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵviewQuery"](src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__.GridComponent, 5);
     }
     if (rf & 2) {
       let _t;
-      _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵloadQuery"]()) && (ctx.listaAtividades = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵloadQuery"]()) && (ctx.grid = _t.first);
     }
   },
   inputs: {
-    entregaId: "entregaId"
+    cdRef: "cdRef",
+    noPersist: "noPersist",
+    control: "control",
+    entity: "entity",
+    questionarioId: "questionarioId"
   },
-  features: [_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵInheritDefinitionFeature"]],
-  decls: 5,
+  features: [_angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵInheritDefinitionFeature"]],
+  decls: 14,
   vars: 6,
-  consts: [[3, "items", "title", "orderBy", "groupBy", "join"], ["title", "Perguntas", 3, "template"], ["columnPerguntas", ""]],
+  consts: [[3, "items", "title"], ["title", "Sequencia", 3, "template"], ["columnSequencia", ""], ["title", "Perguntas", 3, "template"], ["columnPerguntas", ""], ["title", "Tipo", 3, "template"], ["columnTipo", ""], ["title", "Op\u00E7\u00F5es - Valores", 3, "template"], ["columnOpcoes", ""], [4, "ngIf"], [1, "one-per-line"], ["class", "ml", 3, "label", "textValue", "icon", 4, "ngFor", "ngForOf"], [1, "ml", 3, "label", "textValue", "icon"], ["label", "M\u00EDnimo", "textValue", "0", 4, "ngIf"], ["label", "M\u00EDnimo", 3, "textValue", 4, "ngIf"], ["label", "M\u00E1ximo", 1, "ml", 3, "textValue"], ["label", "M\u00EDnimo", "textValue", "0"], ["label", "M\u00EDnimo", 3, "textValue"]],
   template: function QuestionarioListPerguntaComponent_Template(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "grid", 0)(1, "columns")(2, "column", 1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplate"](3, QuestionarioListPerguntaComponent_ng_template_3_Template, 3, 1, "ng-template", null, 2, _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtemplateRefExtractor"]);
-      _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]()()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](0, "grid", 0)(1, "columns")(2, "column", 1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtemplate"](3, QuestionarioListPerguntaComponent_ng_template_3_Template, 2, 1, "ng-template", null, 2, _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](5, "column", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtemplate"](6, QuestionarioListPerguntaComponent_ng_template_6_Template, 2, 1, "ng-template", null, 4, _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](8, "column", 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtemplate"](9, QuestionarioListPerguntaComponent_ng_template_9_Template, 1, 1, "ng-template", null, 6, _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementStart"](11, "column", 7);
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtemplate"](12, QuestionarioListPerguntaComponent_ng_template_12_Template, 4, 5, "ng-template", null, 8, _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementEnd"]()()();
     }
     if (rf & 2) {
-      const _r0 = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵreference"](4);
-      _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("items", ctx.items)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join);
-      _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("template", _r0);
+      const _r0 = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵreference"](4);
+      const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵreference"](7);
+      const _r4 = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵreference"](10);
+      const _r6 = _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵreference"](13);
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("items", ctx.items)("title", ctx.isModal ? "" : ctx.title);
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("template", _r0);
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("template", _r2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("template", _r4);
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("template", _r6);
     }
   },
-  dependencies: [_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_2__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_3__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_4__.ColumnComponent],
-  styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
+  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_9__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_9__.NgIf, src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_5__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_6__.ColumnComponent, _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_7__.BadgeComponent],
+  styles: [".ml[_ngcontent-%COMP%] {\n  margin-left: 5px;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvbW9kdWxlcy9jYWRhc3Ryb3MvY3VycmljdWx1bS9xdWVzdGlvbmFyaW8vcXVlc3Rpb25hcmlvLWxpc3QtcGVyZ3VudGEvcXVlc3Rpb25hcmlvLWxpc3QtcGVyZ3VudGEuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDSSxnQkFBQTtBQUNKIiwic291cmNlc0NvbnRlbnQiOlsiLm1se1xyXG4gICAgbWFyZ2luLWxlZnQ6IDVweDtcclxufSJdLCJzb3VyY2VSb290IjoiIn0= */"]
 });
 
 /***/ }),
@@ -285,7 +470,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   QuestionarioPerguntaFormComponent: () => (/* binding */ QuestionarioPerguntaFormComponent)
 /* harmony export */ });
-/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../../../components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_dao_questionario_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/questionario-dao.service */ 10535);
 /* harmony import */ var src_app_dao_questionario_pergunta_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/questionario-pergunta-dao.service */ 8305);
@@ -491,6 +676,9 @@ class QuestionarioPerguntaFormComponent extends src_app_modules_base_page_form_b
     };
     this.validate = (control, controlName) => {
       let result = null;
+      if (['codigo'].indexOf(controlName) >= 0 && !control.value?.length) {
+        result = "Obrigatório";
+      }
       if (['nome'].indexOf(controlName) >= 0 && !control.value?.length) {
         result = "Obrigatório";
       }
@@ -547,14 +735,14 @@ class QuestionarioPerguntaFormComponent extends src_app_modules_base_page_form_b
   }
   loadData(entity, form) {
     var _this = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = Object.assign({}, form.value);
       form.patchValue(_this.util.fillForm(formValue, entity));
     })();
   }
   initializeData(form) {
     var _this2 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.entity = new src_app_models_questionario_model__WEBPACK_IMPORTED_MODULE_6__.Questionario();
       yield _this2.loadData(_this2.entity, _this2.form);
     })();
@@ -567,16 +755,6 @@ class QuestionarioPerguntaFormComponent extends src_app_modules_base_page_form_b
       resolve(questionario);
     });
   }
-  /*public onEscolheTipoChange(){
-    let select = document.getElementById('tdID') as HTMLInputElement;
-    let table = document.getElementById('tables') as HTMLInputElement;
-    let input = this.listaExemplo?.value
-    let teste = `<input-text [size]="4" label="Opção de resposta" icon="bi bi-pen" controlName="opres" [control]="form!.controls.opres" [attr.maxlength]=250></input-text>`;
-    if(input != "SWICTH"){
-      //select.innerHTML += '<input-text [size]="4" label="Opção de resposta" icon="bi bi-pen" controlName="opres" [control]="form!.controls.opres" [attr.maxlength]=250></input-text>';
-          select.innerHTML +=teste;
-    }
-  }*/
   addMultiRespostas() {
     let result = undefined;
     const opcaoResposta = this.formPergunta.controls.inputOpcoesResposta.value;
@@ -592,11 +770,7 @@ class QuestionarioPerguntaFormComponent extends src_app_modules_base_page_form_b
           _status: "ADD"
         }
       };
-      //console.log('FORMULARIOGRAD', this.formGraduacao!.value)
-      //this.formPergunta.controls.inputOpcoesRespostaB.setValue("");
-      //this.formPergunta.controls.inputValorRespostaB.setValue("");
     }
-
     return result;
   }
   /**
@@ -620,7 +794,7 @@ class QuestionarioPerguntaFormComponent extends src_app_modules_base_page_form_b
   * @param row
   */
   load(form, row) {
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {})();
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {})();
   } ///form.controls.usuario_id.setValue(this.grid?.adding ? row.usuario_id : row.id);
   ///form.controls.atribuicoes.setValue(this.unidadeIntegranteService.converterAtribuicoes(row.atribuicoes));
   ///form.controls.atribuicao.setValue("");
@@ -631,7 +805,7 @@ class QuestionarioPerguntaFormComponent extends src_app_modules_base_page_form_b
    */
   remove(row) {
     var _this3 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       return yield _this3.dialog.confirm("Exclui ?", "Deseja realmente excluir todas as atribuições do servidor?");
     })();
   }
@@ -642,7 +816,7 @@ class QuestionarioPerguntaFormComponent extends src_app_modules_base_page_form_b
    * @returns
    */
   save(form, row) {
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       form?.markAllAsTouched();
       if (form?.valid) {
         row.pergunta = form.pergunta;
@@ -662,7 +836,7 @@ class QuestionarioPerguntaFormComponent extends src_app_modules_base_page_form_b
   }
   addPergunta() {
     var _this4 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       const maxSequencia = Math.max(0, ...(_this4.form.controls.perguntas.value || []).map(x => x.sequencia));
       return new src_app_models_questionario_pergunta_model__WEBPACK_IMPORTED_MODULE_5__.QuestionarioPergunta({
         sequencia: maxSequencia + 1,
@@ -672,7 +846,7 @@ class QuestionarioPerguntaFormComponent extends src_app_modules_base_page_form_b
   }
   loadPergunta(form, row) {
     var _this5 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this5.formPergunta.controls.pergunta.setValue(row.pergunta);
       _this5.formPergunta.controls.tipo.setValue(row.tipo);
       _this5.formPergunta.controls.respostas.setValue(_this5.isList(row.tipo) ? row.respostas || [] : []);
@@ -682,7 +856,7 @@ class QuestionarioPerguntaFormComponent extends src_app_modules_base_page_form_b
   }
   removePergunta(row) {
     var _this6 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (yield _this6.dialog.confirm("Excluir ?", "Deseja realmente excluir esta pergunta?")) {
         row._status = "DEL";
       }
@@ -691,7 +865,7 @@ class QuestionarioPerguntaFormComponent extends src_app_modules_base_page_form_b
   }
   savePergunta(form, row) {
     var _this7 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       form?.markAllAsTouched();
       if (form?.valid) {
         let values = form.value;
@@ -838,8 +1012,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_dao_questionario_dao_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/dao/questionario-dao.service */ 10535);
 /* harmony import */ var src_app_models_questionario_model__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/models/questionario.model */ 29453);
 /* harmony import */ var src_app_modules_base_page_list_base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/modules/base/page-list-base */ 78509);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/core */ 51197);
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @angular/common */ 89650);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @angular/common */ 89650);
 /* harmony import */ var _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../../../components/grid/columns/columns.component */ 57224);
 /* harmony import */ var _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../../../../components/grid/column/column.component */ 83351);
 /* harmony import */ var _components_grid_filter_filter_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../../../components/grid/filter/filter.component */ 57765);
@@ -847,8 +1021,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_grid_pagination_pagination_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../../../components/grid/pagination/pagination.component */ 42704);
 /* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../../../components/input/input-text/input-text.component */ 92392);
 /* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../../../../components/input/input-select/input-select.component */ 64603);
-/* harmony import */ var _questionario_list_pergunta_questionario_list_pergunta_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../questionario-list-pergunta/questionario-list-pergunta.component */ 69262);
+/* harmony import */ var _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../../../../components/badge/badge.component */ 95489);
+/* harmony import */ var _questionario_list_pergunta_questionario_list_pergunta_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../questionario-list-pergunta/questionario-list-pergunta.component */ 69262);
 var _class;
+
 
 
 
@@ -866,99 +1042,48 @@ var _class;
 
 function QuestionarioListComponent_toolbar_1_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](0, "toolbar");
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelement"](0, "toolbar");
   }
 }
-function QuestionarioListComponent_column_8_ng_template_1_span_0_Template(rf, ctx) {
+function QuestionarioListComponent_column_8_ng_template_1_badge_0_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "span", 17);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](1, "i", 18);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelement"](0, "badge", 17);
   }
   if (rf & 2) {
-    const row_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵnextContext"]().row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtextInterpolate1"](" ", row_r6.perguntas == null ? null : row_r6.perguntas.length, "");
+    const row_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵnextContext"]().row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("label", row_r6.perguntas == null ? null : row_r6.perguntas.length);
   }
 }
 function QuestionarioListComponent_column_8_ng_template_1_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](0, QuestionarioListComponent_column_8_ng_template_1_span_0_Template, 3, 1, "span", 16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](0, QuestionarioListComponent_column_8_ng_template_1_badge_0_Template, 1, 1, "badge", 16);
   }
   if (rf & 2) {
     const row_r6 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("ngIf", row_r6.perguntas == null ? null : row_r6.perguntas.length);
-  }
-}
-function QuestionarioListComponent_column_8_ng_template_3_tr_9_span_5_Template(rf, ctx) {
-  if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "span", 23);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtext"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
-  }
-  if (rf & 2) {
-    const opcoes_r14 = ctx.$implicit;
-    const i_r15 = ctx.index;
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtextInterpolate3"]("", i_r15 + 1, " - ", opcoes_r14.data.opcao, " - Valor: ", opcoes_r14.data.valor, "");
-  }
-}
-function QuestionarioListComponent_column_8_ng_template_3_tr_9_Template(rf, ctx) {
-  if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "tr");
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtext"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](2, "td");
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtext"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](4, "td", 21);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](5, QuestionarioListComponent_column_8_ng_template_3_tr_9_span_5_Template, 2, 3, "span", 22);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]()();
-  }
-  if (rf & 2) {
-    const pergunta_r11 = ctx.$implicit;
-    const i_r12 = ctx.index;
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtextInterpolate2"]("", i_r12 + 1, " - ", pergunta_r11.data.pergunta.pergunta, " ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtextInterpolate"](pergunta_r11.data.tipo.value);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("ngForOf", pergunta_r11.data.opcaoResposta);
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("ngIf", row_r6.perguntas == null ? null : row_r6.perguntas.length);
   }
 }
 function QuestionarioListComponent_column_8_ng_template_3_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "table", 19)(1, "thead")(2, "tr")(3, "th");
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtext"](4, "Pergunta");
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](5, "th");
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtext"](6, "Tipo de Resposta");
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](7, "th");
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtext"](8, "Op\u00E7\u00F5es de resposta e Valor");
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]()()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](9, QuestionarioListComponent_column_8_ng_template_3_tr_9_Template, 6, 4, "tr", 20);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](10, "questionario-list-pergunta");
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelement"](0, "questionario-list-pergunta", 18);
   }
   if (rf & 2) {
     const row_r9 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](9);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("ngForOf", row_r9.perguntas);
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("entity", row_r9);
   }
 }
 function QuestionarioListComponent_column_8_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "column", 13);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](1, QuestionarioListComponent_column_8_ng_template_1_Template, 1, 1, "ng-template", null, 14, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](3, QuestionarioListComponent_column_8_ng_template_3_Template, 11, 1, "ng-template", null, 15, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](0, "column", 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](1, QuestionarioListComponent_column_8_ng_template_1_Template, 1, 1, "ng-template", null, 14, _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplateRefExtractor"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](3, QuestionarioListComponent_column_8_ng_template_3_Template, 1, 1, "ng-template", null, 15, _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplateRefExtractor"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
-    const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵreference"](2);
-    const _r4 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵreference"](4);
-    const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("align", "center")("hint", ctx_r1.lex.translate("Perguntas"))("template", _r2)("expandTemplate", _r4);
+    const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵreference"](2);
+    const _r4 = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵreference"](4);
+    const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("align", "center")("hint", ctx_r1.lex.translate("Perguntas"))("template", _r2)("expandTemplate", _r4);
   }
 }
 class QuestionarioListComponent extends src_app_modules_base_page_list_base__WEBPACK_IMPORTED_MODULE_3__.PageListBase {
@@ -987,10 +1112,12 @@ class QuestionarioListComponent extends src_app_modules_base_page_list_base__WEB
       }
       return result;
     };
+    this.join = ["perguntas"]; //perguntas.sequencia
+    this.orderBy = [['nome', 'asc']];
     /* Inicializações */
     this.title = this.lex.translate("Questionários");
     this.code = "MOD_RX";
-    this.orderBy = [['nome', 'asc']];
+    //this.orderBy = [['sequencia','asc']];
     this.filter = this.fh.FormBuilder({
       nome: {
         default: ""
@@ -1026,73 +1153,71 @@ class QuestionarioListComponent extends src_app_modules_base_page_list_base__WEB
     super.filterClear(filter);
   }
   onGridLoad(rows) {
-    console.log('ROWS->', rows);
-    rows?.forEach(v => {
-      console.log('V->', v.perguntas);
-      v.exibePerguntas = v.perguntas;
+    rows?.forEach(questionario => {
+      questionario.perguntas = questionario.perguntas.sort((a, b) => a.sequencia < b.sequencia ? -1 : 1);
     });
   }
 }
 _class = QuestionarioListComponent;
 _class.ɵfac = function QuestionarioListComponent_Factory(t) {
-  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_12__.Injector));
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_13__.Injector));
 };
-_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdefineComponent"]({
+_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdefineComponent"]({
   type: _class,
   selectors: [["questionario-list"]],
   viewQuery: function QuestionarioListComponent_Query(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵviewQuery"](src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__.GridComponent, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵviewQuery"](src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__.GridComponent, 5);
     }
     if (rf & 2) {
       let _t;
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵloadQuery"]()) && (ctx.grid = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵloadQuery"]()) && (ctx.grid = _t.first);
     }
   },
-  features: [_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵInheritDefinitionFeature"]],
+  features: [_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵInheritDefinitionFeature"]],
   decls: 14,
   vars: 31,
-  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "loadList", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "deleted", "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome", "controlName", "nome", "placeholder", "Nome", 3, "size", "control"], ["label", "C\u00F3digo", "controlName", "codigo", "placeholder", "C\u00F3digo", 3, "size", "control"], ["label", "Tipo do Question\u00E1rio", "controlName", "tipo", "placeholder", "Tipo", 3, "size", "control", "items"], ["type", "expand", "icon", "bi bi-list-check", 3, "align", "hint", "template", "expandTemplate", 4, "ngIf"], ["title", "Nome", "field", "nome", "orderBy", "nome"], ["title", "C\u00F3digo", "field", "codigo"], ["title", "Tipo", "field", "tipo"], ["type", "options", 3, "onEdit", "options"], [3, "rows"], ["type", "expand", "icon", "bi bi-list-check", 3, "align", "hint", "template", "expandTemplate"], ["columnPerguntas", ""], ["columnExpandedPerguntas", ""], ["class", "badge rounded-pill bg-light text-dark", 4, "ngIf"], [1, "badge", "rounded-pill", "bg-light", "text-dark"], [1, "bi", "bi-list-check"], [1, "table", "table-responsive", "table-striped", "table-hover", "table-sm"], [4, "ngFor", "ngForOf"], ["id", "tdOpcao"], ["id", "opcoes", 4, "ngFor", "ngForOf"], ["id", "opcoes"]],
+  consts: [[3, "dao", "add", "title", "orderBy", "groupBy", "join", "loadList", "selectable", "hasAdd", "hasEdit", "select"], [4, "ngIf"], [3, "deleted", "form", "where", "submit", "clear", "collapseChange", "collapsed"], [1, "row"], ["label", "Nome", "controlName", "nome", "placeholder", "Nome", 3, "size", "control"], ["label", "C\u00F3digo", "controlName", "codigo", "placeholder", "C\u00F3digo", 3, "size", "control"], ["label", "Tipo do Question\u00E1rio", "controlName", "tipo", "placeholder", "Tipo", 3, "size", "control", "items"], ["type", "expand", "icon", "bi bi-list-check", 3, "align", "hint", "template", "expandTemplate", 4, "ngIf"], ["title", "Nome", "field", "nome", "orderBy", "nome"], ["title", "C\u00F3digo", "field", "codigo"], ["title", "Tipo", "field", "tipo"], ["type", "options", 3, "onEdit", "options"], [3, "rows"], ["type", "expand", "icon", "bi bi-list-check", 3, "align", "hint", "template", "expandTemplate"], ["columnPerguntas", ""], ["columnExpandedPerguntas", ""], ["icon", "bi bi-list-check", "color", "light", 3, "label", 4, "ngIf"], ["icon", "bi bi-list-check", "color", "light", 3, "label"], [3, "entity"]],
   template: function QuestionarioListComponent_Template(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "grid", 0);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵlistener"]("select", function QuestionarioListComponent_Template_grid_select_0_listener($event) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](0, "grid", 0);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵlistener"]("select", function QuestionarioListComponent_Template_grid_select_0_listener($event) {
         return ctx.onSelect($event);
       });
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](1, QuestionarioListComponent_toolbar_1_Template, 1, 0, "toolbar", 1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](2, "filter", 2)(3, "div", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](4, "input-text", 4)(5, "input-text", 5)(6, "input-select", 6);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](7, "columns");
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](8, QuestionarioListComponent_column_8_Template, 5, 4, "column", 7);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](9, "column", 8)(10, "column", 9)(11, "column", 10)(12, "column", 11);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](13, "pagination", 12);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](1, QuestionarioListComponent_toolbar_1_Template, 1, 0, "toolbar", 1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](2, "filter", 2)(3, "div", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelement"](4, "input-text", 4)(5, "input-text", 5)(6, "input-select", 6);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](7, "columns");
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](8, QuestionarioListComponent_column_8_Template, 5, 4, "column", 7);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelement"](9, "column", 8)(10, "column", 9)(11, "column", 10)(12, "column", 11);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelement"](13, "pagination", 12);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]();
     }
     if (rf & 2) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("loadList", ctx.onGridLoad.bind(ctx))("selectable", ctx.selectable)("hasAdd", ctx.auth.hasPermissionTo("MOD_RX_VIS_DPE"))("hasEdit", ctx.auth.hasPermissionTo("MOD_RX_VIS_DPE"));
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("ngIf", !ctx.selectable);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("deleted", ctx.auth.hasPermissionTo("MOD_AUDIT_DEL"))("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.nome);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵattribute"]("maxlength", 250);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.codigo);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵattribute"]("maxlength", 250);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.tipo)("items", ctx.tipoQuestionario);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("ngIf", !ctx.selectable);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](4);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("onEdit", ctx.edit)("options", ctx.options);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("rows", ctx.rowsLimit);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("loadList", ctx.onGridLoad.bind(ctx))("selectable", ctx.selectable)("hasAdd", ctx.auth.hasPermissionTo("MOD_RX_VIS_DPE"))("hasEdit", ctx.auth.hasPermissionTo("MOD_RX_VIS_DPE"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("ngIf", !ctx.selectable);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("deleted", ctx.auth.hasPermissionTo("MOD_AUDIT_DEL"))("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapseChange", ctx.filterCollapseChange.bind(ctx))("collapsed", !ctx.selectable && ctx.filterCollapsed);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.nome);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵattribute"]("maxlength", 250);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.codigo);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵattribute"]("maxlength", 250);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 3)("control", ctx.filter.controls.tipo)("items", ctx.tipoQuestionario);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("ngIf", !ctx.selectable);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](4);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("onEdit", ctx.edit)("options", ctx.options);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("rows", ctx.rowsLimit);
     }
   },
-  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_13__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_13__.NgIf, src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_4__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_5__.ColumnComponent, _components_grid_filter_filter_component__WEBPACK_IMPORTED_MODULE_6__.FilterComponent, _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_7__.ToolbarComponent, _components_grid_pagination_pagination_component__WEBPACK_IMPORTED_MODULE_8__.PaginationComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_9__.InputTextComponent, _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_10__.InputSelectComponent, _questionario_list_pergunta_questionario_list_pergunta_component__WEBPACK_IMPORTED_MODULE_11__.QuestionarioListPerguntaComponent],
+  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_14__.NgIf, src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_4__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_5__.ColumnComponent, _components_grid_filter_filter_component__WEBPACK_IMPORTED_MODULE_6__.FilterComponent, _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_7__.ToolbarComponent, _components_grid_pagination_pagination_component__WEBPACK_IMPORTED_MODULE_8__.PaginationComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_9__.InputTextComponent, _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_10__.InputSelectComponent, _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_11__.BadgeComponent, _questionario_list_pergunta_questionario_list_pergunta_component__WEBPACK_IMPORTED_MODULE_12__.QuestionarioListPerguntaComponent],
   styles: ["\n\n\n\n\n\n#opcoes[_ngcontent-%COMP%] {\n  display: block;\n}\n\n#tdOpcao[_ngcontent-%COMP%] {\n  align-items: center;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvbW9kdWxlcy9jYWRhc3Ryb3MvY3VycmljdWx1bS9xdWVzdGlvbmFyaW8vcXVlc3Rpb25hcmlvLXBlcmd1bnRhL3F1ZXN0aW9uYXJpby1wZXJndW50YS1saXN0L3F1ZXN0aW9uYXJpby1saXN0LmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBOzs7O01BQUE7QUFLQTtFQUNJLGNBQUE7QUFDSjs7QUFFQTtFQUNJLG1CQUFBO0FBQ0oiLCJzb3VyY2VzQ29udGVudCI6WyIvKiNvcGNvZXM6OmJlZm9yZXtcclxuICAgIGNvbnRlbnQ6IFwiXFxhXCI7XHJcbiAgICB3aGl0ZS1zcGFjZTogcHJlO1xyXG4gICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcclxuICAgIH0qL1xyXG4jb3Bjb2VzIHtcclxuICAgIGRpc3BsYXk6IGJsb2NrO1xyXG4gfVxyXG5cclxuI3RkT3BjYW97XHJcbiAgICBhbGlnbi1pdGVtczogY2VudGVyO1xyXG59Il0sInNvdXJjZVJvb3QiOiIifQ== */"]
 });
 

@@ -17,7 +17,7 @@ export class PlanoEntregaService {
       case "PORCENTAGEM": result = entrega.meta.porcentagem + " %"; break;
       case "QUANTIDADE": result = entrega.meta.quantitativo + ""; break;
       case "VALOR": result = entrega.meta.valor + ""; break;
-      case "QUALITATIVO": result = this.lookup.getValue(entrega.entrega.lista_qualitativos, entrega.meta.qualitativo); break;
+      case "QUALITATIVO": result = this.lookup.getValue(entrega.entrega.lista_qualitativos || [], entrega.meta.qualitativo); break;
       default: result = "Indicador desconhecido";
     }
     return result;
@@ -29,7 +29,7 @@ export class PlanoEntregaService {
       case "PORCENTAGEM": result = entrega.realizado.porcentagem + " %"; break;
       case "QUANTIDADE": result = entrega.realizado.quantitativo + ""; break;
       case "VALOR": result = entrega.realizado.valor + ""; break;
-      case "QUALITATIVO": result = this.lookup.getValue(entrega.entrega.lista_qualitativos, entrega.realizado.qualitativo); break;
+      case "QUALITATIVO": result = this.lookup.getValue(entrega.entrega.lista_qualitativos || [], entrega.realizado.qualitativo); break;
       default: result = "Indicador desconhecido";
     }
     return result;

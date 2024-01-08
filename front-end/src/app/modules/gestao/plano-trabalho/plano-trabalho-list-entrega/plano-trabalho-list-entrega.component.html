@@ -1,4 +1,4 @@
-<grid [items]="items" [form]="form!" noMargin #gridEntregas editable [selectable]="false" [minHeight]="items.length > 2 ? 0 : 220" [join]="join" [groupBy]="groupBy"
+<grid [items]="items" [form]="form!" noMargin #gridEntregas editable [selectable]="false" [minHeight]="items.length > 2 ? 0 : 300" [join]="join" [groupBy]="groupBy"
     [add]="addEntrega.bind(this)" [remove]="removeEntrega.bind(this)" [save]="saveEntrega.bind(this)" [load]="loadEntrega.bind(this)" [saveEnd]="saveEndEntrega.bind(this)"
     [hasDelete]="!disabled" [hasEdit]="!disabled" [hasAdd]="!disabled">
     <columns>
@@ -60,8 +60,9 @@
                 <div *ngIf="row.descricao != planoTrabalhoService.tipoEntrega(row, entity).descricao; else solicitarDescricao"><small>{{ row.descricao }}</small></div>
             </ng-template>
             <ng-template #solicitarDescricao><small>Detalhe/Descreva os trabalhos</small></ng-template>
-            <!--<ng-template let-row="row" #columnDescricao><small>{{ row.descricao }}</small></ng-template>-->
-            <ng-template let-row="row" #editDescricao><input-text controlName="descricao" [control]="form!.controls.descricao" [attr.maxlength]=250></input-text></ng-template>
+            <ng-template let-row="row" #editDescricao>
+                <input-textarea [rows]="2" controlName="descricao" [control]="form!.controls.descricao"></input-textarea>
+            </ng-template>
         </column>
         <column type="options"></column>
     </columns>

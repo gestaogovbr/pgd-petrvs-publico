@@ -23,6 +23,7 @@ class ServerException extends Exception
         "ValidateDocumento" => "Erro ao validar Documento",
         "ValidateIntegrante" => "Erro ao validar vínculos/atribuições entre Unidade e Usuário",
         "ValidateLotacao" => "Erro ao validar Lotação do usuário",
+        "ValidateOcorrencia" => "Erro ao validar Ocorrencia",
         "ValidatePainel" => "Erro ao validar Painel",
         "ValidatePlanejamentoInstitucional" => "Erro ao validar Planejamento Institucional",
         "ValidatePlanoEntrega" => "Erro ao validar Plano de Entregas",

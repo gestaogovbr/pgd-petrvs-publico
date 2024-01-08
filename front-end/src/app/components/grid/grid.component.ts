@@ -16,6 +16,9 @@ import { GridColumn } from './grid-column';
 import { PaginationComponent } from './pagination/pagination.component';
 import { ReportComponent } from './report/report.component';
 import { SidePanelComponent } from './side-panel/side-panel.component';
+import { LookupItem } from 'src/app/services/lookup.service';
+import { TemplateDaoService } from 'src/app/dao/template-dao.service';
+import { DocumentoService } from 'src/app/modules/uteis/documentos/documento.service';
 
 export type GroupBy = {field: string, label: string, value?: any};
 
@@ -69,6 +72,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   @Input() orderBy?: QueryOrderBy[];
   @Input() groupBy?: GroupBy[];
   @Input() join: string[] = [];
+  @Input() relatorios: LookupItem[] = [];
   @Input() form: FormGroup = new FormGroup({});
   @Input() noHeader?: string;
   @Input() noMargin?: string;
@@ -79,7 +83,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   @Input() control?: AbstractControl = undefined;
   @Input() expanded?: string;
   @Input() noToggleable?: string;
-  @Input() minHeight: number = 300;
+  @Input() minHeight: number = 350;
   @Input() multiselect?: string;
   @Input() multiselectEnabled?: string;
   @Input() multiselectAllFields: string[] = [];
@@ -215,6 +219,8 @@ export class GridComponent extends ComponentBase implements OnInit {
   public groupIds: IIndexable = { _qtdRows: -1 };
   public expandedIds: IIndexable = {};
   public metadatas: IIndexable = {};
+  public templateDao: TemplateDaoService;
+  public documentoService: DocumentoService;
   public set error(error: string | undefined) {
     this._error = error;
     //this.detectChanges();
@@ -287,6 +293,26 @@ export class GridComponent extends ComponentBase implements OnInit {
       }
     ]
   };
+
+  public BUTTON_REPORTS: ToolbarButton = {
+    label: "Relatórios",
+    icon: "bi bi-file-earmark-ruled",
+    toggle: true,
+    pressed: false,
+    color: "btn-outline-info",
+    onClick: this.onMultiselectClick.bind(this),
+    items: [
+      {
+        label: "Exportar para Excel",
+        icon: "bi bi-file-spreadsheet",
+        hint: "Excel",
+        color: "btn-outline-danger",
+        onClick: this.report.bind(this)
+      }
+    ]
+  };
+
+
   public panelButtons: ToolbarButton[] = [
     {
       id: "concluir_valid",
@@ -312,16 +338,34 @@ export class GridComponent extends ComponentBase implements OnInit {
       onClick: this.onCancelItem.bind(this)
     }
   ];
+  
 
   constructor(public injector: Injector) {
     super(injector);
     this.go = this.injector.get<NavigateService>(NavigateService);
     this.dialog = this.injector.get<DialogService>(DialogService);
     this.dao = new DaoBaseService<Base>("", injector);
+    this.templateDao = this.injector.get<TemplateDaoService>(TemplateDaoService);
+    this.documentoService = this.injector.get<DocumentoService>(DocumentoService);
   }
 
   ngOnInit(): void {
     this.BUTTON_ADD.label = this.labelAdd;
+    if(this.relatorios) {
+      this.relatorios.forEach(relatorio => {
+        const existingItem = this.BUTTON_REPORTS.items?.find(item => item.id === relatorio.key);
+        if (!existingItem) {
+          this.BUTTON_REPORTS.items?.push({
+            label: relatorio.value,
+            icon: "bi bi-file-pdf",
+            hint: "Visualizar",
+            id: relatorio.key,
+            onClick: () => this.buildReport(relatorio.key)
+          })
+        }
+      });
+     
+    }
   }
 
   public getId(relativeId?: string) {
@@ -453,6 +497,31 @@ export class GridComponent extends ComponentBase implements OnInit {
       })();
     }
   }
+  public buildReport(codigo: string, query: QueryOptions = this.queryOptions){
+    let params =  {
+      where: DaoBaseService.prepareWhere(query?.where || []),
+      orderBy: query?.orderBy || [],
+      with: query?.join || [],
+    };
+    this.showPreview(codigo, params)
+  }
+
+  public buildRowReport(codigo: string, row: any){
+    let params =  {
+      id: row.id,
+      with: row?.join || [],
+    };   
+    this.showPreview(codigo, params)
+  }
+
+  showPreview(codigo: string, params: any){
+    if(this.go.gb.auth.entidade?.id){
+      this.templateDao.getReport(this.go.gb.auth.entidade?.id, codigo, params).then(documento => {        
+        this.documentoService.preview(documento)
+      }) 
+    }
+  }
+
 
   public expand(id: string) {
     this.expandedIds[id] = true;
@@ -581,7 +650,7 @@ export class GridComponent extends ComponentBase implements OnInit {
   public loadReport() {
     if(this.reportRef) {
       this.reportRef.grid = this;
-      if(this.hasReport) this.toolbarButtons.push(this.BUTTON_REPORT);
+      if(this.hasReport) this.toolbarButtons.push(this.BUTTON_REPORTS);
     }
   }
 

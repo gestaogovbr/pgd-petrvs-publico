@@ -38,7 +38,11 @@ return [
         "firebase" => env('PETRVS_LOGIN_FIREBASE', false),
         "login-unico" => env('PETRVS_LOGIN_UNICO', true)
     ],
-    'ids-fixos' => [ 
+    'ids-fixos' => [
         'developer-id' => env('PETRVS_PERFIS_DEV', null),
+    ],
+    'panel' => [
+        'username' => env('PETRVS_PANEL_USERNAME', 'petrvs'),
+        'password' => env('PETRVS_PANEL_PASSWORD', 'petrvs@123'),
     ]
 ];

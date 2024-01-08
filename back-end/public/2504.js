@@ -11,7 +11,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AfastamentoFormComponent: () => (/* binding */ AfastamentoFormComponent)
 /* harmony export */ });
-/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_dao_afastamento_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/afastamento-dao.service */ 74561);
 /* harmony import */ var src_app_models_afastamento_model__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/models/afastamento.model */ 34684);
@@ -68,6 +68,7 @@ class AfastamentoFormComponent extends src_app_modules_base_page_form_base__WEBP
     };
     this.tipoMotivoAfastamentoDao = injector.get(src_app_dao_tipo_motivo_afastamento_dao_service__WEBPACK_IMPORTED_MODULE_5__.TipoMotivoAfastamentoDaoService);
     this.usuarioDao = injector.get(src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_6__.UsuarioDaoService);
+    this.title = this.lex.translate('Inclusão de Afastamento');
     this.form = this.fh.FormBuilder({
       observacoes: {
         default: ""
@@ -95,7 +96,7 @@ class AfastamentoFormComponent extends src_app_modules_base_page_form_base__WEBP
   }
   loadData(entity, form) {
     var _this = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = Object.assign({}, form.value);
       /* Caso venha pela chamada da consolidação do plano de trabalho */
       if (_this.metadata?.consolidacao) {
@@ -501,7 +502,7 @@ const routes = [{
   },
   runGuardsAndResolvers: 'always',
   data: {
-    title: "Inclusão de Afastamento",
+    title: "",
     modal: true
   }
 }, {

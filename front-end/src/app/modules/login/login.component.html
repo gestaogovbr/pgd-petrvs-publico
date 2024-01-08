@@ -37,7 +37,7 @@
                         </div>
                         <div class="govbr" *ngIf="globals.hasLoginUnicoLogin">
                             <button class="br-button btn btn-primary rounded-pill mt-3" type="button" (click)="signInLoginUnicoBackEnd()">
-                                Entrar com <span>gov.br</span> ok
+                                Entrar com <span>gov.br</span>
                             </button>
                         </div>
                       <div class="or-container"  *ngIf="globals.hasLoginUnicoLogin">
@@ -49,7 +49,7 @@
 
                           <div class="row mt-2">
                             <div class="col-md-12 d-flex justify-content-center">
-                              <a *ngIf="!auth.logging" class="btn btn-lg btn-google text-uppercase btn-outline" (click)="signInAzure()">
+                              <a *ngIf="!auth.logging" class="btn btn-lg btn-google btn-outline" (click)="signInAzure()">
                                 <img [src]="globals.getResourcePath('assets/images/microsoft-logo.png')"/>
                                 Microsoft (Login Institucional)
                               </a>
@@ -67,7 +67,7 @@
 
                       <div class="d-flex flex-column" *ngIf="globals.hasInstitucionalLogin && buttonDprfSeguranca; else dprfSeguranca">
                             <div class="">
-                                <a class="btn btn-lg btn-google text-uppercase btn-outline" (click)="showDprfSeguranca()">
+                                <a class="btn btn-lg btn-google btn-outline" (click)="showDprfSeguranca()">
                                     <img [src]="globals.getResourcePath('assets/images/prf.ico')" width="20" height="20"/>
                                     DPRF-Segurança
                                 </a>

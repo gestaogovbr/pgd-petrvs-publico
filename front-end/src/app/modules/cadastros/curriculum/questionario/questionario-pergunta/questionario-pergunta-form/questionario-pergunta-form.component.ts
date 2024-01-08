@@ -7,7 +7,7 @@ import { QuestionarioPerguntaDaoService } from 'src/app/dao/questionario-pergunt
 import { QuestionarioRespostaDaoService } from 'src/app/dao/questionario-resposta-dao.service';
 import { QuestionarioRespostaPerguntaDaoService } from 'src/app/dao/questionario-resposta-pergunta-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
-import { QuestionarioPergunta, QuestionarioPerguntaTipo } from 'src/app/models/questionario-pergunta.model';
+import { QuestionarioPergunta, QuestionarioPerguntaRespostaRange, QuestionarioPerguntaTipo } from 'src/app/models/questionario-pergunta.model';
 import { Questionario } from 'src/app/models/questionario.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
@@ -61,9 +61,13 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
+    if (['codigo'].indexOf(controlName) >= 0 && !control.value?.length) {
+      result = "Obrigatório";
+    }
     if (['nome'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
+    
     return result;
   }
 
@@ -90,17 +94,6 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
     return "Editando " + (entity?.nome || "");
   }
 
-  /*public onEscolheTipoChange(){
-    let select = document.getElementById('tdID') as HTMLInputElement;
-    let table = document.getElementById('tables') as HTMLInputElement;
-    let input = this.listaExemplo?.value
-    let teste = `<input-text [size]="4" label="Opção de resposta" icon="bi bi-pen" controlName="opres" [control]="form!.controls.opres" [attr.maxlength]=250></input-text>`;
-    if(input != "SWICTH"){
-      //select.innerHTML += '<input-text [size]="4" label="Opção de resposta" icon="bi bi-pen" controlName="opres" [control]="form!.controls.opres" [attr.maxlength]=250></input-text>';
-          select.innerHTML +=teste;
-    }
-  }*/
-
   public addMultiRespostas() {
     let result = undefined;
     const opcaoResposta = this.formPergunta.controls.inputOpcoesResposta.value;
@@ -116,9 +109,6 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
           _status: "ADD"
         }
       };
-      //console.log('FORMULARIOGRAD', this.formGraduacao!.value)
-      //this.formPergunta.controls.inputOpcoesRespostaB.setValue("");
-      //this.formPergunta.controls.inputValorRespostaB.setValue("");
     }
     return result;
   }
@@ -196,8 +186,8 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
     this.formPergunta.controls.pergunta.setValue(row.pergunta);
     this.formPergunta.controls.tipo.setValue(row.tipo);
     this.formPergunta.controls.respostas.setValue(this.isList(row.tipo) ? row.respostas || [] : []);
-    this.formPergunta.controls.inputMinimo.setValue(this.isRange(row.tipo) ? row.respostas.min : 0);
-    this.formPergunta.controls.inputMaximo.setValue(this.isRange(row.tipo) ? row.respostas.max : 10);
+    this.formPergunta.controls.inputMinimo.setValue(this.isRange(row.tipo) ? (row.respostas as QuestionarioPerguntaRespostaRange).min : 0);
+    this.formPergunta.controls.inputMaximo.setValue(this.isRange(row.tipo) ? (row.respostas as QuestionarioPerguntaRespostaRange).max : 10);
   }
 
   public async removePergunta(row: any) {

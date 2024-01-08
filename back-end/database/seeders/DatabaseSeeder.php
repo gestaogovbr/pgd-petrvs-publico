@@ -44,6 +44,7 @@ class DatabaseSeeder extends Seeder
                AreaAtividadeExternaSeeder::class,
                CapacidadeTecnicaSeeder::class,
                IN24_2023Seeder::class,
+               TemplateSeeder::class,
 
                /*
                Após a execução das Seeds acima, executar a rotina de integração com o comando

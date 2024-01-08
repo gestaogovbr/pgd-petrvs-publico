@@ -1,6 +1,6 @@
 <editable-form [form]="form!" [disabled]="formDisabled" initialFocus="descricao" (submit)="onSaveData()" (cancel)="onCancel()">
     <tabs display right [title]="titleAtividade">
-        <tab key="ATIVIDADE" label="Atividade">
+        <tab key="ATIVIDADE" [label]="lex.translate('Atividade')">
             <documento-link #requisicao [sei]="sei" [documento]="form!.controls.documento_requisicao.value"></documento-link>
             <div class="row">
                 <input-textarea label="Descrição" [size]="12" [rows]="2" controlName="descricao" [control]="form!.controls.descricao" required></input-textarea>
@@ -46,7 +46,7 @@
                 <documento-link [documento]="form!.controls.documento_entrega.value"></documento-link>
             </separator>
         </tab>
-        <tab key="TAREFAS" [label]="lex.translate('Tarefas')">
+        <!--<tab key="TAREFAS" [label]="lex.translate('Tarefas')">
             <atividade-list-tarefa [control]="form!.controls.tarefas" [atividade]="entity" [disabled]="formDisabled"></atividade-list-tarefa>
         </tab>
         <tab key="CARACTERIZACAO" label="Caracterização">
@@ -91,6 +91,6 @@
                     </div>
                 </div>
             </div>
-        </tab>
+        </tab>-->
     </tabs>
 </editable-form>
