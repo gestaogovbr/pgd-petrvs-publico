@@ -64,9 +64,11 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
   public async loadData(entity: IIndexable, form?: FormGroup | undefined) {
     if (entity.id) {
       let integrantes: IntegranteConsolidado[] = [];
+      this.loading = true;
       try {
         await this.integranteDao!.loadIntegrantes(entity.id, "").then(resposta => integrantes = resposta.integrantes.filter(x => x.atribuicoes?.length > 0)); 
       } finally {
+        this.loading = false;
         integrantes.forEach(i => this.items?.push(this.integranteService.completarIntegrante(i, entity.id, i.id, i.atribuicoes)));
         this.items = this.integranteService.ordenar(this.items);
         this.cdRef.detectChanges();
