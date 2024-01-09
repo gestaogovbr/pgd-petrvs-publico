@@ -6,12 +6,9 @@ import { TipoAtividadeFormComponent } from './tipo-atividade-form/tipo-atividade
 import { TipoAtividadeListComponent } from './tipo-atividade-list/tipo-atividade-list.component';
 import { LexicalService } from 'src/app/services/lexical.service';
 
-
-let lex!: LexicalService
-
 const routes: Routes = [
   { path: '', component: TipoAtividadeListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Atividades" } },
-  { path: 'new', component: TipoAtividadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: lex.translate("Inclusão de Atividade"), modal: true } },
+  { path: 'new', component: TipoAtividadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Inclusão de Atividade", modal: true } },
   { path: ':id/edit', component: TipoAtividadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Edição de Atividade", modal: true } },
   { path: ':id/consult', component: TipoAtividadeFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, data: { title: "Consulta a Atividade", modal: true } }
 ];

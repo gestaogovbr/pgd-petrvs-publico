@@ -19,6 +19,7 @@ export class TipoAtividadeFormComponent extends PageFormBase<TipoAtividade, Tipo
 
   constructor(public injector: Injector) {
     super(injector, TipoAtividade, TipoAtividadeDaoService);
+    this.title = this.lex.translate("Tipo de Atividade");
     this.form = this.fh.FormBuilder({
       nome: {default: ""},
       esforco: {default: 48},
