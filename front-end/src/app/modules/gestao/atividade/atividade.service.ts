@@ -59,10 +59,13 @@ export class AtividadeService {
   public getStatus(row: any, consolidacao?: PlanoTrabalhoConsolidacao): BadgeButton[] {
     const atividade: Atividade = row as Atividade;
     const status = this.lookup.ATIVIDADE_STATUS.find(x => x.key == atividade.status) || { key: "DESCONHECIDO", value: "Desconhecido", icon: "bi bi-question-circle", color: "light" };
+    const consolidacaoDataInicio = this.util.setTime(consolidacao!.data_inicio, 0, 0, 0); 
+    const consolidacaoDataFim = this.util.setTime(consolidacao!.data_fim, 23, 59, 59);
     let result: BadgeButton[] = [{ data: {status: status.key, filter: true}, label: status.value, icon: status.icon!, color: status.color! }];
     if (atividade.metadados?.atrasado) result.push({ data: {status: "ATRASADO", filter: false}, label: "Atrasado", icon: "bi bi-alarm", color: "danger" });
-    if (consolidacao && ((atividade.data_inicio && this.util.asTimestamp(atividade.data_inicio) < this.util.asTimestamp(consolidacao.data_inicio)) ||
-      (atividade.data_entrega && this.util.asTimestamp(atividade.data_entrega) > this.util.asTimestamp(consolidacao!.data_fim)))) {
+    if (consolidacao && ((atividade.data_inicio && this.util.asTimestamp(atividade.data_inicio) < this.util.asTimestamp(consolidacaoDataInicio)) ||
+      (atividade.data_entrega && this.util.asTimestamp(atividade.data_entrega) > this.util.asTimestamp(consolidacaoDataFim)))) {
+      console.log(atividade.data_inicio, consolidacao.data_inicio, atividade.data_entrega, consolidacao!.data_fim);
       result.push({ data: {status: "EXTRAPOLADO", filter: false}, label: "Extrapolado", icon: "bi bi-arrow-left-right", color: "danger", hint: "Data de início ou conclusão " + this.lex.translate("da Atividade") + " extrapola os da consolidação" });
     }
     if (atividade.metadados?.arquivado) result.push({ data: {status: "ARQUIVADO", filter: false}, label: "Arquivado", icon: "bi bi-inboxes", color: "danger" });
