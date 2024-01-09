@@ -152,6 +152,7 @@ export abstract class PageFrameBase extends PageBase implements OnInit {
     if (this.editableForm) {
       this.editableForm.error = error;
     } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       this.dialog.topAlert(error);
     }
   }

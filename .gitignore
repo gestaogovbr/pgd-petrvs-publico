@@ -1,6 +1,15 @@
 /back-end/.vscode/launch.json
 /back-end/.vscode/tasks.json
-/back-end/*.bak
+
+*.bak
+
+back-end/vendor/*
+front-end/node_modules/*
+front-end/.angular/*
+
+*Zone.Identifier*
+
+package-lock.json
 
 /resources/mysql/*
 

@@ -1,8 +1,6 @@
 <ng-template #calendarEfemerides>
     <calendar-efemerides [efemerides]="efemerides"></calendar-efemerides>
 </ng-template>
-
-
 <grid [dao]="dao" [add]="add" [form]="formEdit" [hasEdit]="false" [hasDelete]="false" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [loadList]="onGridLoad.bind(this)" [selectable]="selectable" (select)="onSelect($event)" [groupTemplate]="groupAtividades">
     <ng-template #groupAtividades let-grid='grid' let-separator='separator' let-group='group'>
         <div class="d-flex ps-3"> 
@@ -11,7 +9,6 @@
             </ng-container>
         </div>
     </ng-template>
-
     <toolbar *ngIf="!fixedFilter && !selectable">
         <input-switch [size]="3" labelPosition="left" label="Agrupar por Entrega" controlName="agrupar_entrega" [control]="filter!.controls.agrupar_entrega" (change)="onAgruparChange($event)"></input-switch>
         <input-switch [size]="3" labelPosition="left" label="Agrupar por Unidade" controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
@@ -53,7 +50,7 @@
                 <atividade-list-tarefa persist [selectable]="selectable" [editable]="!row.metadados.concluido" [atividade]="row"></atividade-list-tarefa>
             </ng-template>
         </column>
-        <column [titleTemplate]="titleIdAtividadeDescricao" [template]="columnAtividadeDescricao">
+        <column [titleTemplate]="titleIdAtividadeDescricao" [template]="columnAtividadeDescricao" [editTemplate]="columnAtividadeDescricao" [columnEditTemplate]="selectable ? undefined : columnAtividadeDescricaoEdit" [edit]="selectable ? undefined : onColumnAtividadeDescricaoEdit.bind(this)" [save]="selectable ? undefined : onColumnAtividadeDescricaoSave.bind(this)">
             <ng-template let-header="header" #titleIdAtividadeDescricao>
                 <order by="numero" [header]="header">#ID</order>/{{lex.translate('Tipo de Atividade')}}/
                 <order by="plano_trabalho_entrega.descricao" [header]="header">{{lex.translate('Entrega')}}</order><br>
@@ -67,6 +64,10 @@
                 </span>
                 <span class="micro-text fw-ligh atividade-descricao">{{row.descricao}}</span>
                 <reaction [entity]="row" origem="ATIVIDADE"></reaction>
+            </ng-template>
+            <ng-template let-row="row" #columnAtividadeDescricaoEdit>
+                <input-textarea label="Descrição" [size]="12" [rows]="2" controlName="descricao" [control]="formEdit!.controls.descricao" required></input-textarea>
+                <input-search [label]="lex.translate('Tipo de atividade')" relativeId="columnTipoAtividade" #tipoAtividade [size]="12" [emptyValue]="null" controlName="tipo_atividade_id" [control]="formEdit!.controls.tipo_atividade_id" [dao]="tipoAtividadeDao" [labelInfo]="lex.translate('Tipo de atividade') + ' utilizado para classificar a atividade'" [required]="!auth.hasPermissionTo('MOD_ATV_TIPO_ATV_VAZIO') ? 'true' : undefined"></input-search>
             </ng-template>
         </column>
         <column [title]="'Etiquetas'" [width]="100" [template]="columnEtiquetas" [editTemplate]="columnEtiquetas" [columnEditTemplate]="selectable ? undefined : columnEtiquetasEdit" [edit]="selectable ? undefined : onColumnEtiquetasEdit.bind(this)" [save]="selectable ? undefined : onColumnEtiquetasSave.bind(this)">

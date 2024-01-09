@@ -241,7 +241,7 @@ const _c4 = function () {
   return ["execucao/plano-entrega"];
 };
 const _c5 = function () {
-  return ["gestao/atividade"];
+  return ["gestao/plano-trabalho/consolidacao"];
 };
 const _c6 = function () {
   return ["avaliacao/plano-trabalho/consolidacao/avaliacao"];

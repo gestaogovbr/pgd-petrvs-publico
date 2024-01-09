@@ -60,6 +60,7 @@ import { AreaTematicaDaoService } from '../dao/area-tematica-dao.service';
 import { CapacidadeTecnicaDaoService } from '../dao/capacidade-tecnica-dao.service';
 import { AtividadeDaoService } from '../dao/atividade-dao.service';
 import { PlanoTrabalhoConsolidacaoDaoService } from '../dao/plano-trabalho-consolidacao-dao.service';
+import { OcorrenciaDaoService } from '../dao/ocorrencia-dao.service';
 
 export type EntityItem = {
     collection: string,
@@ -79,11 +80,11 @@ export class EntityService {
 
     public list: EntityItem[];
     public lex: LexicalService;
-        public constructor(public injector: Injector) {
+    public constructor(public injector: Injector) {
         this.lex = injector.get<LexicalService>(LexicalService);
         this.list = [
             { collection: 'Adesao', icon: 'bi bi-universal-access-circle', label: "Adesão" },
-            { collection: 'Afastamento', codigo: 'MOD_AFT', table: 'afastamentos', campo: 'observacoes', icon: 'bi bi-toggle-off', dao: injector.get<AfastamentoDaoService>(AfastamentoDaoService), label: "Afastamento", selectRoute: { route: ['cadastros', 'afastamento'] } },
+            { collection: 'Afastamento', codigo: 'MOD_AFT', table: 'afastamentos', campo: 'observacoes', icon: 'bi bi-toggle-off', dao: injector.get<AfastamentoDaoService>(AfastamentoDaoService), label: "Afastamento", selectRoute: { route: ['gestao', 'afastamento'] } },
             { collection: 'AreaAtividadeExterna', codigo: 'MOD_RX', table: 'areas_atividades_externas', campo: 'nome', icon: 'bi bi-box-arrow-in-down', dao: injector.get<AreaAtividadeExternaDaoService>(AreaAtividadeExternaDaoService), label: "Área Atividade Externa ", selectRoute: { route: ['raiox','cadastros', 'areaatividadeexterna'] } },
             { collection: 'AreaConhecimento', codigo: 'MOD_RX', table: 'areas_conhecimentos', campo: 'nome_area', icon: 'bi bi-mortarboard', dao: injector.get<AreaConhecimentoDaoService>(AreaConhecimentoDaoService), label: "Area do Conhecimento", selectRoute: { route: ['raiox', 'cadastros','areaconhecimento'] } },
             { collection: 'AreaTematica', codigo: 'MOD_RX', table: 'areas_tematicas', campo: 'nome', icon: 'bi bi-mortarboard', dao: injector.get<AreaTematicaDaoService>(AreaTematicaDaoService), label: "Area do Conhecimento", selectRoute: { route: ['raiox', 'cadastros','areatematica'] } },
@@ -109,6 +110,7 @@ export class EntityService {
             { collection: 'Materia', codigo: 'MOD_RX', table: 'materias', campo: 'nome', icon: 'bi bi-list-check', dao: injector.get<CursoDaoService>(CursoDaoService), label: "Matérias", selectRoute: { route: ['raiox', 'cadastros','materia'] } },
             { collection: 'MaterialServico', codigo: 'MOD_MATSRV', table: 'materiais_servicos', campo: 'descricao', icon: 'bi bi-list-check', dao: injector.get<MaterialServicoDaoService>(MaterialServicoDaoService), label: "Material/Serviço", selectRoute: { route: ['cadastros', 'material-servico'] } },
             { collection: 'Perfil', codigo: 'MOD_PERF', table: 'perfis', campo: 'nome', icon: 'bi bi-fingerprint', dao: injector.get<PerfilDaoService>(PerfilDaoService), label: "Perfil", selectRoute: { route: ['configuracoes', 'perfil'] } },
+            { collection: 'Ocorrencia', codigo: 'MOD_OCOR', table: 'ocorrencias', campo: 'descricao', icon: 'bi bi-exclamation-diamond', dao: injector.get<OcorrenciaDaoService>(OcorrenciaDaoService), label: "Ocorrência", selectRoute: { route: ['gestao', 'ocorrencia'] } },
             { collection: 'Planejamento', codigo: 'MOD_PLAN_INST', table: 'planejamentos', campo: 'nome', icon: 'bi bi-journals', dao: injector.get<PlanejamentoDaoService>(PlanejamentoDaoService), label: "Planejamento Institucional", selectRoute: { route: ['gestao', 'planejamento'] } },
             { collection: 'PlanejamentoObjetivo', table: 'planejamentos_objetivos', campo: 'nome', icon: 'bi bi-bullseye', dao: injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService), label: "Objetivo do Planejamento", selectRoute: { route: ['gestao', 'planejamento', 'objetivoList'] } },
             { collection: 'PlanoTrabalho', codigo: 'MOD_PTR', table: 'planos_trabalhos', campo: 'numero', icon: 'bi bi-list-stars', dao: injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService), label: "Plano de Trabalho", selectRoute: { route: ['gestao', 'plano-trabalho'] } },
@@ -138,7 +140,7 @@ export class EntityService {
             { collection: 'TipoDocumento', codigo: 'MOD_TIPO_DOC', table: 'tipos_documentos', campo: 'nome', icon: 'bi bi-files', dao: injector.get<TipoDocumentoDaoService>(TipoDocumentoDaoService), label: "Tipo de Documento", selectRoute: { route: ['cadastros', 'tipo-documento'] } },
             { collection: 'TipoJustificativa', codigo: 'MOD_TIPO_JUST', table: 'tipos_justificativas', campo: 'nome', icon: 'bi bi-window-stack', dao: injector.get<TipoJustificativaDaoService>(TipoJustificativaDaoService), label: "Tipo de Justificativa", selectRoute: { route: ['cadastros', 'tipo-justificativa'] } },
             { collection: 'TipoModalidade', codigo: 'MOD_TIPO_MDL', table: 'tipos_modalidades', campo: 'nome', icon: 'bi bi-bar-chart-steps', dao: injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService), label: "Tipo de Modalidade", selectRoute: { route: ['cadastros', 'tipo-modalidade'] } },
-            { collection: 'TipoMotivoAfastamento', codigo: 'MOD_TIPO_MTV_AFT', table: 'tipos_motivos_afastamentos', campo: 'nome', icon: 'bi bi-list-ol', dao: injector.get<TipoMotivoAfastamentoDaoService>(TipoMotivoAfastamentoDaoService), label: "Tipo de Motivo de Afastamento", selectRoute: { route: ['cadastros', 'tipo-motivo-afastamento'] } },
+            { collection: 'TipoMotivoAfastamento', codigo: 'MOD_TIPO_MTV_AFT', table: 'tipos_motivos_afastamentos', campo: 'nome', icon: 'bi bi-list-ol', dao: injector.get<TipoMotivoAfastamentoDaoService>(TipoMotivoAfastamentoDaoService), label: this.lex.translate("Motivo de Afastamento"), selectRoute: { route: ['cadastros', 'tipo-motivo-afastamento'] } },
             { collection: 'TipoProcesso', codigo: 'MOD_TIPO_PROC', table: 'tipos_processos', campo: 'nome', icon: 'bi bi-folder-check', dao: injector.get<TipoProcessoDaoService>(TipoProcessoDaoService), label: "Tipo de Processo", selectRoute: { route: ['cadastros', 'tipo-processo'] } },
             { collection: 'Traffic', table: 'traffic', campo: 'url', icon: 'bi bi-stoplights', dao: injector.get<TrafficDaoService>(TrafficDaoService), label: "Log de Tráfego", selectRoute: { route: ['logs', 'traffic'] } },
             { collection: 'Unidade', codigo: 'MOD_UND', table: 'unidades', campo: 'nome', icon: 'fa-unity fab', dao: injector.get<UnidadeDaoService>(UnidadeDaoService), label: "Unidade", selectRoute: { route: ['configuracoes', 'unidade'] } },

@@ -60,8 +60,9 @@
                 <div *ngIf="row.descricao != planoTrabalhoService.tipoEntrega(row, entity).descricao; else solicitarDescricao"><small>{{ row.descricao }}</small></div>
             </ng-template>
             <ng-template #solicitarDescricao><small>Detalhe/Descreva os trabalhos</small></ng-template>
-            <!--<ng-template let-row="row" #columnDescricao><small>{{ row.descricao }}</small></ng-template>-->
-            <ng-template let-row="row" #editDescricao><input-text controlName="descricao" [control]="form!.controls.descricao" [attr.maxlength]=250></input-text></ng-template>
+            <ng-template let-row="row" #editDescricao>
+                <input-textarea [rows]="2" controlName="descricao" [control]="form!.controls.descricao"></input-textarea>
+            </ng-template>
         </column>
         <column type="options"></column>
     </columns>

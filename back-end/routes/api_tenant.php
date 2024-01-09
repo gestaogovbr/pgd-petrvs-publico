@@ -78,6 +78,7 @@ use App\Http\Controllers\HistoricoLotacaoCurriculumController;
 use App\Http\Controllers\PlanoTrabalhoConsolidacaoOcorrenciaController;
 use App\Http\Controllers\ComparecimentoController;
 use App\Http\Controllers\BatchController;
+use App\Http\Controllers\OcorrenciaController;
 use App\Http\Controllers\ReacaoController;
 use App\Http\Controllers\PlanoEntregaEntregaProgressoController;
 use App\Http\Controllers\QuestionarioPerguntaController;
@@ -177,7 +178,6 @@ Route::middleware('auth:sanctum')->post('/Teste/calculaDataTempoUnidade', [Usuar
 Route::middleware(['auth:sanctum'])->post('batch', [BatchController::class, 'run']);
 
 /* Modulos: Cadastros */
-Route::middleware(['auth:sanctum'])->prefix('Afastamento')->group(function () { defaultRoutes(AfastamentoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Cidade')->group(function () { defaultRoutes(CidadeController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Documento')->group(function () {
     defaultRoutes(DocumentoController::class);
@@ -195,6 +195,7 @@ Route::middleware(['auth:sanctum'])->prefix('Programa')->group(function () {
  });
 Route::middleware(['auth:sanctum'])->prefix('ProgramaParticipante')->group(function () {
      defaultRoutes(ProgramaParticipanteController::class);
+     Route::post('quantidades-planos-trabalhos-ativo', [ProgramaParticipanteController::class, 'quantidadesPlanosTrabalhosAtivo']);
      Route::post('habilitar', [ProgramaParticipanteController::class, 'habilitar']);
      Route::post('notificar', [ProgramaParticipanteController::class, 'notificar']);
 });
@@ -224,6 +225,8 @@ Route::middleware(['auth:sanctum'])->prefix('TipoProcesso')->group(function () {
 });
 
 /* Modulos: Gestão */
+Route::middleware(['auth:sanctum'])->prefix('Afastamento')->group(function () { defaultRoutes(AfastamentoController::class); });
+Route::middleware(['auth:sanctum'])->prefix('Ocorrencia')->group(function () { defaultRoutes(OcorrenciaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('Atividade')->group(function () {
     defaultRoutes(AtividadeController::class);
     Route::post('prazo', [AtividadeController::class, 'prazo']);
@@ -261,7 +264,6 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalho')->group(function () 
 });
 Route::middleware(['auth:sanctum'])->prefix('Comparecimento')->group(function () { defaultRoutes(ComparecimentoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoEntrega')->group(function () { defaultRoutes(PlanoTrabalhoEntregaController::class); });
-Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoConsolidacaoOcorrencia')->group(function () { defaultRoutes(PlanoTrabalhoConsolidacaoOcorrenciaController::class); });
 Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoConsolidacao')->group(function () {
     defaultRoutes(PlanoTrabalhoConsolidacaoController::class);
     Route::post('consolidacao-dados', [PlanoTrabalhoConsolidacaoController::class, 'consolidacaoDados']);
@@ -360,11 +362,3 @@ Route::middleware(['auth:sanctum'])->prefix('Reacao')->group(function () { defau
 
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntregaProgresso')->group(function () { defaultRoutes(PlanoEntregaEntregaProgressoController::class); });
 
-/* Login Panel */
-Route::post('/panel-login', function (Request $request) {
-    $return=false;
-    if($request->user==config('petrvs')['panel']['username'] && $request->password==config('petrvs')['panel']['password']) {
-        $return=true;
-    }
-    return response()->json($return);
-});

@@ -135,7 +135,6 @@ export class AppComponent {
   public setMenuVars() {
     this.menuSchema = {
       /* Cadastros */
-      AFASTAMENTOS: { name: this.lex.translate("Afastamentos"), permition: 'MOD_AFT', route: ['cadastros', 'afastamento'], icon: this.entity.getIcon('Afastamento') },
       CIDADES: { name: this.lex.translate("Cidades"), permition: 'MOD_CID', route: ['cadastros', 'cidade'], icon: this.entity.getIcon('Cidade') },
       EIXOS_TEMATICOS: { name: this.lex.translate("Eixos Temáticos"), permition: 'MOD_EXTM', route: ['cadastros', 'eixo-tematico'], icon: this.entity.getIcon('EixoTematico') },
       ENTREGAS: { name: this.lex.translate("Modelos de Entregas"), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: this.entity.getIcon('Entrega') },
@@ -152,6 +151,8 @@ export class AppComponent {
       TIPOS_MOTIVOS_AFASTAMENTOS: { name: this.lex.translate("Tipos de Motivo de Afastamento"), permition: 'MOD_TIPO_MTV_AFT', route: ['cadastros', 'tipo-motivo-afastamento'], icon: this.entity.getIcon('TipoMotivoAfastamento') },
       TIPOS_PROCESSOS: { name: this.lex.translate("Tipos de Processo"), permition: 'MOD_TIPO_PROC', route: ['cadastros', 'tipo-processo'], icon: this.entity.getIcon('TipoProcesso') },
       /*Gestão*/
+      AFASTAMENTOS: { name: this.lex.translate("Afastamentos"), permition: 'MOD_AFT', route: ['gestao', 'afastamento'], icon: this.entity.getIcon('Afastamento') },
+      OCORRENCIAS: { name: this.lex.translate("Ocorrencias"), permition: 'MOD_OCOR', route: ['gestao', 'ocorrencia'], icon: this.entity.getIcon('Ocorrencia') },
       CADEIAS_VALORES: { name: this.lex.translate("Cadeias de Valores"), permition: 'MOD_CADV', route: ['gestao', 'cadeia-valor'], icon: this.entity.getIcon('CadeiaValor') },
       ATIVIDADES: { name: this.lex.translate("Atividades"), permition: 'MOD_ATV', route: ['gestao', 'atividade'], icon: this.entity.getIcon('Atividade') },
       PLANEJAMENTOS_INSTITUCIONAIS: { name: this.lex.translate("Planejamentos Institucionais"), permition: 'MOD_PLAN_INST', route: ['gestao', 'planejamento'], icon: this.entity.getIcon('Planejamento') },
@@ -231,6 +232,7 @@ export class AppComponent {
       menu: [
         this.menuSchema.ATIVIDADES,
         this.menuSchema.AFASTAMENTOS,
+        this.menuSchema.OCORRENCIAS,
         this.menuSchema.EXECUCAO_PLANOS_ENTREGAS,
         Object.assign({}, this.menuSchema.CONSOLIDACOES, { params: { tab: "USUARIO" } })
       ].sort(this.orderMenu)
@@ -272,7 +274,8 @@ export class AppComponent {
       this.menuSchema.PLANOS_TRABALHOS,
       this.menuSchema.ATIVIDADES,
       Object.assign({}, this.menuSchema.CONSOLIDACOES, { params: { tab: "UNIDADE" } }),
-      this.menuSchema.AFASTAMENTOS
+      //this.menuSchema.AFASTAMENTOS,
+      this.menuSchema.OCORRENCIAS
     ];
 
     this.menuAdministrador = [{
@@ -286,6 +289,7 @@ export class AppComponent {
         this.menuSchema.ENTREGAS,
         this.menuSchema.FERIADOS,
         this.menuSchema.MATERIAIS_SERVICOS,
+        this.menuSchema.OCORRENCIAS,
         this.menuSchema.TEMPLATES,
         this.menuSchema.TIPOS_ATIVIDADES,
         this.menuSchema.TIPOS_AVALIACOES,
@@ -414,14 +418,22 @@ export class AppComponent {
     }];
 
     let gestaoPGD = this.auth.hasPermissionTo("CTXT_GEST");
+    let execucaoPGD = this.auth.hasPermissionTo("CTXT_EXEC");
     this.menuContexto = [
-      { key: gestaoPGD ? "GESTAO" : "EXECUCAO", permition: gestaoPGD ? "CTXT_GEST" : "CTXT_EXEC", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: gestaoPGD ? this.menuGestao : this.menuExecucao},
+      { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.menuGestao},
+      { key: "EXECUCAO", permition: "CTXT_EXEC", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.menuExecucao},
       { key: "ADMINISTRADOR", permition: "CTXT_ADM", icon: "bi bi-emoji-sunglasses", name: this.lex.translate("Administrador"), menu: this.menuAdministrador },
       { key: "DEV", permition: "CTXT_DEV", icon: "bi bi-braces", name: this.lex.translate("Desenvolvedor"), menu: this.menuDev },
       { key: "PONTO", permition: "CTXT_PNT", icon: "bi bi-stopwatch", name: this.lex.translate("Ponto Eletrônico"), menu: this.menuPonto },
       { key: "PROJETO", permition: "CTXT_PROJ", icon: "bi bi-graph-up-arrow", name: this.lex.translate("Projetos"), menu: this.menuProjeto },
       { key: "RAIOX", permition: "CTXT_RX", icon: "bi bi-camera", name: this.lex.translate("Raio X"), menu: this.menuRaioX }
     ]
+    
+    if(gestaoPGD){
+      this.menuContexto = this.menuContexto.filter(item => item.key !== "EXECUCAO");
+    } else if(execucaoPGD && !gestaoPGD){
+      this.menuContexto = this.menuContexto.filter(item => item.key !== "GESTAO");
+    }
     
   }
 

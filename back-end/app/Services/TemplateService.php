@@ -314,14 +314,15 @@ class TemplateService extends ServiceBase
     
     public function buildFields($context, $fields) {
         $result = [];
-        $values = ($context instanceof ModelBase || get_class($context) == "App\Models\Usuario") ? $context->toArray() : (array) $context;
+        $values = $context instanceof ModelBase || (is_object($context) ? (get_class($context) == "App\Models\Usuario") : false) ? $context->toArray() : (array) $context;
         foreach($fields as $field) {
             $valor = array_key_exists("value", $field) ? $field["value"]($context) : (array_key_exists($field["field"], $values) ? $values[$field["field"]] : null);
             if(is_array($valor) || ($valor instanceof Collection)) {
                 $list = [];
-                $valor->each(function ($item, $key) use (&$list, $field) {
-                     $list[] = $this->buildFields($item, $this->getFields($field["fields"]));
-                });
+                $items = $valor ?? [];
+                foreach($items as $item){
+                    $list[] = $this->buildFields($item, $this->getFields($field["fields"]));
+                }
                 $result[$field["field"]] = $list;
             } else if ($valor !== null) {
                 if(array_key_exists("fields", $field)) { // Objecto

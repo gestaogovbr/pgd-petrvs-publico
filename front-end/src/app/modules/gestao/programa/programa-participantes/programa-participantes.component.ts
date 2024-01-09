@@ -78,19 +78,22 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
     return result;
   }
 
-  public async ngOnInit(): Promise<void> {
-    super.ngOnInit();
-    this.programa = this.metadata?.programa;
-    if(!this.programa) await this.programaDao.query({where: [['vigentesUnidadeExecutora', "==", this.auth.unidade!.id]]}).asPromise().then( programas => {
-      this.programa = programas[0];
-    });
-    await this.programaSearch?.loadSearch(this.programa);
-    if(this.programa) this.grid!.reloadFilter();
-  }
-
   public ngAfterViewInit(): void {
     super.ngAfterViewInit();
-    this.programaSearch?.loadSearch(this.programa);
+    (async () => {
+      this.loading = true;
+      try {
+        this.programa = this.metadata?.programa;
+        if(!this.programa) await this.programaDao.query({where: [['vigentesUnidadeExecutora', "==", this.auth.unidade!.id]]}).asPromise().then(programas => {
+          this.programa = programas[0];
+        });
+        await this.programaSearch?.loadSearch(this.programa);
+        if(this.programa) this.grid!.reloadFilter();
+      } finally {
+        this.loading = false;
+      }
+      //this.programaSearch?.loadSearch(this.programa);
+    })();
   }
 
   public filterClear(filter: FormGroup<any>): void {
@@ -168,8 +171,11 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
       const self = this;
       this.dialog.confirm("Habilitar Participantes ?", "Confirma a habilitação de todos esses participantes?").then(habilitar_todos => {
         if (habilitar_todos) {
-          this.dao!.habilitar(Object.keys(this.grid!.multiselected), this.programa!.id, 1, false).then(function () {
-            self.dialog.alert("Sucesso", "Participantes habilitados com sucesso!");
+          const idsUsuarios = Object.values(this.grid!.multiselected).map(x => x.usuario_id);
+          this.dao!.habilitar(idsUsuarios, this.programa!.id, 1, false).then(function () {
+            self.dialog.topAlert("Participantes habilitados com sucesso!", 5000);
+            (self.grid?.query || self.query!).refresh();
+            self.cdRef.detectChanges();
           }).catch(function (error) {
             self.dialog.alert("Erro", "Erro ao habilitar os participantes: " + error?.message ? error?.message : error);
           });
@@ -180,14 +186,16 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
 
   public async desabilitarParticipantes() {
     let desabilitar = await this.dialog.confirm("Desabilitar ?", "Deseja DESABILITAR, " + this.lex.translate("do programa") + " - " + (this.programa?.nome as string).toUpperCase() + " - todos " + this.lex.translate("os usuários") + " selecionados ?");
+    let idsProgramasParticipantes = Object.keys(this.grid!.multiselected);
     if (desabilitar) {
-      let qde_usuarios_com_plano_trabalho_ativo: number = (this.grid!.multiselected as ProgramaParticipante[]).filter(pp => pp.usuario?.planos_trabalho?.length).length;
+      let qde_usuarios_com_plano_trabalho_ativo: number = await this.dao!.quantidadesPlanosTrabalhosAtivo(idsProgramasParticipantes);//(this.grid!.multiselected as ProgramaParticipante[]).filter(pp => pp.usuario?.planos_trabalho?.length).length;
       let suspender: boolean = false;
       if(!!qde_usuarios_com_plano_trabalho_ativo) {
-        suspender = await this.dialog.confirm("ATENÇÃO", "Há " + qde_usuarios_com_plano_trabalho_ativo + this.lex.translate(qde_usuarios_com_plano_trabalho_ativo == 1 ? "usuário" : "usuários") + " com " + this.lex.translate("Plano de Trabalho") + " ativo vinculado a " + this.lex.translate("este Programa") + "!" + "Deseja continuar com a desabilitação, suspendendo " + (qde_usuarios_com_plano_trabalho_ativo == 1 ? "o seu " : "todos ") + this.lex.translate(qde_usuarios_com_plano_trabalho_ativo == 1 ? "Plano de Trabalho" : "os Planos de Trabalho") + " ?");
+        suspender = await this.dialog.confirm("ATENÇÃO", "Há " + qde_usuarios_com_plano_trabalho_ativo + this.lex.translate(qde_usuarios_com_plano_trabalho_ativo == 1 ? " usuário" : " usuários") + " com " + this.lex.translate("Plano de Trabalho") + " ativo vinculado a " + this.lex.translate("este Programa") + "!" + " Deseja continuar com a desabilitação, suspendendo " + (qde_usuarios_com_plano_trabalho_ativo == 1 ? "o seu " : "todos ") + this.lex.translate(qde_usuarios_com_plano_trabalho_ativo == 1 ? "Plano de Trabalho" : "os Planos de Trabalho") + " ?");
       }
       if (!qde_usuarios_com_plano_trabalho_ativo || suspender) {
-        await this.dao!.habilitar(Object.keys(this.grid!.multiselected), this.programa!.id, 0, true).then(resposta => {
+        const idsUsuarios = Object.values(this.grid!.multiselected).map(x => x.usuario_id);
+        await this.dao!.habilitar(idsUsuarios, this.programa!.id, 0, true).then(resposta => {
           (this.grid?.query || this.query!).refresh();
           this.cdRef.detectChanges();
         });

@@ -201,13 +201,13 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_PTR_CSLD_REC_AVAL", "Permite recorrer da avaliação"]
             ]
         ], [
-            "codigo"=> "MOD_PTR_CSLD_OCOR",
-            "descricao"=> "Módulo de Plano de Trabalho - Ocorrências",
+            "codigo"=> "MOD_OCOR",
+            "descricao"=> "Módulo de Ocorrências",
             "capacidades"=> [
                 /* Capacidades do módulo PLANO DE TRABALHO */
-                ["MOD_PTR_CSLD_OCOR_EDT", "Permite editar ocorrência de um plano de trabalho"],
-                ["MOD_PTR_CSLD_OCOR_EXCL", "Permite excluir ocorrência de um plano de trabalho"],
-                ["MOD_PTR_CSLD_OCOR_INCL", "Permite incluir ocorrência de um plano de trabalho"],
+                ["MOD_OCOR_EDT", "Permite editar ocorrência"],
+                ["MOD_OCOR_EXCL", "Permite excluir ocorrência"],
+                ["MOD_OCOR_INCL", "Permite incluir ocorrência"]
             ]
         ], [
             "codigo"=> "MOD_PENT",
@@ -400,6 +400,7 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_UND_INTG_INCL", "Permite incluir integrantes da unidade"],
                 ["MOD_UND_INTG_EDT", "Permite editar integrantes da unidade"],
                 ["MOD_UND_INTG_EXCL", "Permite excluir integrantes da unidade"],
+                ["MOD_UND_INTG_GST", "Permite alterar gestor e substituto"],
             ]
         ], [
             "codigo"=> "MOD_USER", //ok

@@ -14,6 +14,7 @@ import { AvaliacaoDaoService } from 'src/app/dao/avaliacao-dao.service';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { PlanoTrabalhoService } from '../plano-trabalho.service';
 import { Programa } from 'src/app/models/programa.model';
+import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
   selector: 'app-plano-trabalho-consolidacao-avaliacao',
@@ -29,6 +30,11 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
   public planoTrabalhoService: PlanoTrabalhoService;
   public extraJoin: string[];
   public extra: any;
+
+  public avaliacoes: Avaliacao[] = [];
+  public avaliacao: Avaliacao = new Avaliacao();
+  public consolidacaoId?: string[] = [];//public consolidacaoId?: PlanoTrabalhoConsolidacao[] = [];
+  public joinAvaliacao: string[] = ["avaliador", "entregas_checklist", "tipo_avaliacao.notas"];
 
   constructor(public injector: Injector) {
     super(injector, PlanoTrabalhoConsolidacao, PlanoTrabalhoConsolidacaoDaoService);
@@ -89,7 +95,6 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
   }
 
   public usuarioSeparator(separator: GridGroupSeparator) {
-    console.log(this.grid)
     let usuarioId = separator.group[3].value;
     separator.metadata = separator.metadata || {};
     separator.metadata.usuario = separator.metadata.usuario || this.extra?.planos_trabalhos?.find((x: PlanoTrabalho) => x.usuario_id == usuarioId)?.usuario;
@@ -173,5 +178,57 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
     return result;
   }
 
+  public async onSelectTab(tab: LookupItem) {
+    if(this.viewInit) this.saveUsuarioConfig({active_tab: tab.key});
+  }
+
+  public initGrid(grid: GridComponent) {
+    grid.queryInit();
+  }
+
+  public filterWhereHistorico = (filter: FormGroup) => {
+    let result: any[] = [];
+    let form: any = filter.value;
+    result.push(["status", "in", ["AVALIADO"]]);
+    if(form.usuario_id?.length) result.push(["plano_trabalho.usuario.id", "==", form.usuario_id]);
+    if(form.unidade_id?.length) result.push(["plano_trabalho.unidade.id", "==", form.unidade_id]);
+    if(form.unidades_subordinadas) result.push(["unidades_subordinadas", "==", true]);
+    if(form.incluir_arquivados) result.push(["incluir_arquivados", "==", true]);
+    return result;
+  }
+
+  public getAvaliacoes(row: any) {
+    return this.avaliacoes!.filter((x: Avaliacao) => x.plano_trabalho_consolidacao_id == row.id);
+  }
+
+  public async loadData() {
+    this.loading = true;
+    try {
+      this.avaliacoes = await this.avaliacaoDao!.query({where: [["plano_trabalho_consolidacao_id", "in", this.consolidacaoId]], join: this.joinAvaliacao, orderBy: [["data_avaliacao", "desc"]]}).asPromise();
+      this.avaliacao = this.avaliacoes[0] || this.avaliacao;
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  public onGridLoadHistorico(rows?: Base[]) {
+    this.extra = (this.grid?.query || this.query!).extra;
+    let planosTrabalhos = (this.extra?.planos_trabalhos || []) as PlanoTrabalho[];
+    planosTrabalhos.forEach(p => {
+      let plano = p as PlanoTrabalho;
+      plano.programa = this.extra?.programas?.find((x: Programa) => x.id == plano.programa_id);
+    });
+    rows?.forEach(v => {
+      this.consolidacaoId?.push(v.id);
+      let consolidacao = v as PlanoTrabalhoConsolidacao;
+      consolidacao.plano_trabalho = this.extra?.planos_trabalhos?.find((x: PlanoTrabalho) => x.id == consolidacao.plano_trabalho_id);
+      if(consolidacao.avaliacao) consolidacao.avaliacao.tipo_avaliacao = this.extra?.tipos_avaliacoes?.find((x: TipoAvaliacao) => x.id == consolidacao.avaliacao!.tipo_avaliacao_id);
+    });
+    this.loadData();
+  }
+
+  public getNota(row:any) {
+    return row.tipo_avaliacao.notas.find((x: any) => x.codigo == row.nota);
+  }
 }
 

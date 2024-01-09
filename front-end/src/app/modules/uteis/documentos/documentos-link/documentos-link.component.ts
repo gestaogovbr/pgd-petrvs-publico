@@ -30,10 +30,13 @@ export class DocumentosLinkComponent extends PageFrameBase {
     }
   }
   get documento(): Documento | undefined {
-    this.loadEntity(this.form!.value);
-    const linked = !!this._entity!.link!.id_processo;
-    this._entity._status = !linked && this._entity!._status != "ADD" ? "DEL" : (linked && !this._entity!._status ? "EDIT" : this._entity!._status);
-    return !linked && this._entity!._status == "ADD" ? undefined : this._entity;
+    if(this._entity) {
+      this.loadEntity(this.form!.value);
+      const linked = !!this._entity!.link?.id_processo;
+      this._entity._status = !linked && this._entity!._status != "ADD" ? "DEL" : (linked && !this._entity!._status ? "EDIT" : this._entity!._status);
+      return !linked && this._entity!._status == "ADD" ? undefined : this._entity;
+    }
+    return undefined;
   } 
   @Input() set sei(value: SeiKeys | undefined) {
     if(this._sei != value) {

@@ -65,7 +65,7 @@ class NodeTemplate implements Node {
     }
 }
 
-// <TEXT> ::= .* 
+// <TEXT> ::= .*
 class NodeText implements Node {
     public $text = ""; /* string */
     public function visit($visitor) {
@@ -89,7 +89,7 @@ class NodeIdentifier implements Node {
     }
 }
 
-// <LITERAL> ::= true|false|[0-9]+("."[0-9])?|".*"|'.*' 
+// <LITERAL> ::= true|false|[0-9]+("."[0-9])?|".*"|'.*'
 class NodeLiteral implements Node {
     public $literal; /* int | double | string | boolean */
     public function visit($visitor) {
@@ -251,7 +251,7 @@ class Scanner {
 
     public function tryTakeToken($kind, $expecteds) {
         foreach($expecteds as $expected) {
-            if($this->lookahead($expected)) { 
+            if($this->lookahead($expected)) {
                 return new Token($kind, $this->take($expected));
             }
         }
@@ -288,24 +288,26 @@ class Scanner {
         $buffer = $this->getCurrentSppeling();
         return empty($buffer) ? null : new Token(TokenKind::INDEX, $buffer);
     }
-
+    /*
     <IDENTIFIER>   ::= [a-zA-Z_](a-zA-Z0-9_)*
     <LITERAL>      ::= true|false|[0-9]+(\.[0-9]*)?|".*"|'.*'
-    
+    */
 
+    /*
     public function scanToken() {
         $result = null;
         if(!$this->eof) {
             $result = $this->tryTakeToken(TokenKind::TAG, ["{{", "}}"]) ??
                 $this->tryTakeToken(TokenKind::BRACKET, ["[", "]"]) ??
-                $this->tryTakeToken(TokenKind::IF, ["if:"]) ?? 
-                $this->tryTakeToken(TokenKind::END_IF, ["end-if:"]) ?? 
-                $this->tryTakeToken(TokenKind::IF, ["for:"]) ?? 
-                $this->tryTakeToken(TokenKind::END_IF, ["end-for:"]) ?? 
-                $this->tryTakeToken(TokenKind::OPERATOR, ["==", ">=", "<=", "!=", "<>", "=", ">", "<"]) ?? 
+                $this->tryTakeToken(TokenKind::IF, ["if:"]) ??
+                $this->tryTakeToken(TokenKind::END_IF, ["end-if:"]) ??
+                $this->tryTakeToken(TokenKind::IF, ["for:"]) ??
+                $this->tryTakeToken(TokenKind::END_IF, ["end-for:"]) ??
+                $this->tryTakeToken(TokenKind::OPERATOR, ["==", ">=", "<=", "!=", "<>", "=", ">", "<"]) ??
         }
         return new Token(TokenKind::TEXT, $this->getCurrentSppeling());
     }
+    */
 }
 #endregion
 
@@ -317,7 +319,7 @@ class Parser implements Visitor {
 
 #region Montador
 class Builder implements Visitor {
-    
+
 }
 
 #endregion

@@ -1,6 +1,6 @@
 <grid #grid [items]="items" [minHeight]="500" [form]="form!" [hasDelete]="true" editable
     [add]="addIntegrante.bind(this)" [load]="loadIntegrante.bind(this)" [remove]="removeIntegrante.bind(this)" [save]="saveIntegrante.bind(this)">
-    <span *ngIf="!isNoPersist"><strong>{{ 'Unidade: ' + entity?.nome }}</strong></span>
+    <span *ngIf="!isNoPersist"><strong>{{ 'Unidade: ' + (unidade?.nome || "")}}</strong></span>
     <columns>
         <column [title]="lex.translate('Usuários')" [template]="columnUsuario" [editTemplate]="editUsuario">
             <ng-template let-row="row" #columnUsuario>

@@ -14,6 +14,7 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
   public form?: FormGroup;
   public entity?: M;
   public dao?: D;
+  public id?: string;
   public action: string = "";
   public formValidation?: (form?: FormGroup) => string | undefined | null | Promise<string | undefined | null>;
   public titleEdit?: (entity: M) => string;
@@ -33,6 +34,7 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
     super.ngOnInit();
     const segment = (this.url ? this.url[this.url.length-1]?.path : "") || "";  
     this.action = ["edit", "consult"].includes(segment) ? segment : "new";
+    this.id = this.action != "new" ? this.urlParams!.get("id")! : undefined;
   }
 
   ngAfterViewInit() {
@@ -64,7 +66,7 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
       this.loading = true;
       try {
         if (["edit", "consult"].includes(this.action)) {
-          const entity = await this.dao!.getById(this.urlParams!.get("id")!, this.join);
+          const entity = await this.dao!.getById(this.id!, this.join);
           this.entity = entity!;
           await this.loadData(this.entity, this.form!);
         } else { /* if (this.action == "new") */

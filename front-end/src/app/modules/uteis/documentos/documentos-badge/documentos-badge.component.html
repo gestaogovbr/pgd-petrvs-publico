@@ -14,7 +14,9 @@
         {{documento?.titulo || emptyMessage}}
     </ng-container>
     <separator *ngIf="isSignatures && documento?.assinaturas?.length" transparent>
-        <profile-picture *ngFor="let assinatura of documento!.assinaturas" [url]="assinatura.usuario?.url_foto || ''" [hint]="assinatura.usuario?.nome || 'Desconhecido'"></profile-picture>
+        <div class="d-flex flex-wrap">
+            <profile-picture *ngFor="let assinatura of documento!.assinaturas" [url]="assinatura.usuario?.url_foto || ''" [hint]="assinatura.usuario?.nome || 'Desconhecido'"></profile-picture>
+        </div>
     </separator>
 </div>
 </badge>

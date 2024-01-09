@@ -14,6 +14,7 @@ use App\Models\Usuario;
 use App\Models\UnidadeIntegrante;
 use App\Models\Entidade;
 use App\Models\Tenant;
+use App\Models\Unidade;
 use App\Services\UnidadeService;
 use App\Services\CalendarioService;
 use App\Services\UsuarioService;
@@ -27,7 +28,7 @@ class LoginController extends Controller
     {
         $with = ["feriados", "gestor", "gestorSubstituto"];
         $entidade = $session ? Entidade::with($with)->find($request->session()->put("entidade_id")) : null;
-        $sigla = $request->has('entidade') ? $request->input('entidade') : config("petrvs")["entidade"];
+        $sigla = $request->has('entidade') ? $request->input('entidade') : ($request->headers->has("X-Entidade") ? $request->headers->get("X-Entidade") : config("petrvs")["entidade"]);
         if (empty($entidade) && !empty($sigla)) {
             $entidade = Entidade::with($with)->where("sigla", $sigla)->first();
             $request->session()->put("entidade_id", $entidade->id);
@@ -95,7 +96,7 @@ class LoginController extends Controller
                 $request->session()->put("unidade_id", $usuario->areasTrabalho[0]->id);
                 return response()->json([
                     "status" => "OK",
-                    "unidade" => $usuario->areasTrabalho[0]
+                    "unidade" => Unidade::find($data["unidade_id"])
                 ]);
             } else {
                 return LogError::newError('Unidade não encontrada no usuário');
@@ -680,6 +681,7 @@ class LoginController extends Controller
     {
         if ($config) {
             // O método setConfig existe mesmo VSCode dizendo que não.
+            // @php-ignore
             return Socialite::driver('azure')->setConfig($config);
         }
         return Socialite::driver('azure');
@@ -754,6 +756,7 @@ class LoginController extends Controller
     {
         if ($config) {
             // O método setConfig existe mesmo VSCode dizendo que não.
+            // @php-ignore
             return Socialite::driver('govbr')->setConfig($config);
         }
         return Socialite::driver('govbr');

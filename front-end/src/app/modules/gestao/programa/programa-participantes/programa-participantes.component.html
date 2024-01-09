@@ -1,6 +1,6 @@
 <grid multiselect [dao]="dao" [form]="form!" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy"
     [join]="join" editable [add]="addParticipante.bind(this)" [load]="loadParticipante.bind(this)"
-    [save]="saveParticipante.bind(this)" [selectable]="selectable"
+    [save]="saveParticipante.bind(this)" [selectable]="selectable" [multiselectAllFields]="['usuario_id']"
     (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_PRGT_PART_INCL')" [hasEdit]="false" [hasDelete]="false" [multiselectMenu]="multiselectMenu">
     <toolbar *ngIf="!selectable">
         <input-switch [size]="3" labelPosition="left" label="Todos" controlName="todos" [labelInfo]="'Se OFF, retorna apenas ' + lex.translate('os usuários') + ' habilitados ' + lex.translate('no programa') + '. Se ON, inclui também os desabilitados.'"
@@ -41,11 +41,10 @@
         </column>
         <column title="Habilitado" [align]="'center'" [template]="columnHabilitado" [editTemplate]="editHabilitado">
             <ng-template let-row="row" #columnHabilitado>
-                <i *ngIf="row.habilitado" class="bi bi-person-check habilitado"></i>
-                <i *ngIf="row.habilitado == 0" class="bi bi-person-fill-slash desabilitado"></i>
+                <badge [icon]="row.habilitado ? 'bi bi-person-check' : 'bi-person-fill-slash'" [label]="row.habilitado ? 'Habilitado' : 'Desabilitado'" [color]="row.habilitado ? 'success' : 'danger'"></badge>
             </ng-template>
             <ng-template let-row="row" #editHabilitado>
-                    <input-switch #habilitado disabled controlName="habilitado" [control]="form!.controls.habilitado"></input-switch>                    
+                <input-switch #habilitado disabled controlName="habilitado" [control]="form!.controls.habilitado"></input-switch>                    
             </ng-template>
         </column>
         <column [title]="lex.translate('Lotação')" [template]="columnLotacao">

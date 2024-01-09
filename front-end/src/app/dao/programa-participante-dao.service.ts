@@ -23,6 +23,18 @@ export class ProgramaParticipanteDaoService extends DaoBaseService<ProgramaParti
     ], deeps);
   }
 
+  public quantidadesPlanosTrabalhosAtivo(ids: string[]) {
+    return new Promise<number>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/quantidades-planos-trabalhos-ativo', { ids: ids }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(response.count);
+        }
+      }, error => reject(error));
+    });
+  }
+
   public habilitar(participantesIds: string[], programaId: string, habilitar: number, suspenderPlanoTrabalho: boolean) {
     return new Promise<boolean>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/habilitar', { 

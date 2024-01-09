@@ -13,6 +13,7 @@ export abstract class ComponentBase {
     public viewInit: boolean = false;
     public util: UtilService;
     public selfElement: ElementRef;
+    public relativeId?: string;
     public ID_GENERATOR_BASE: string;
     /* Protected e get|set */
     protected _generatedId?: string;
@@ -54,10 +55,11 @@ export abstract class ComponentBase {
     }
 
     public generatedId(relativeId?: string | null): string {
+        let relative = this.relativeId || relativeId;
         if(!this._generatedId) {
             this._generatedId = "ID_" + this.ID_GENERATOR_BASE;
         }
-        return this._generatedId + (relativeId?.length ? "_" + this.util.onlyAlphanumeric(relativeId) : ""); //this.util.md5()
+        return this._generatedId + (relative?.length ? "_" + this.util.onlyAlphanumeric(relative) : ""); //this.util.md5()
     }
 
     public generatedButtonId(button: ToolbarButton, relativeId?: string) {

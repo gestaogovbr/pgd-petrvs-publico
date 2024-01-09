@@ -532,6 +532,7 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
     this.botoes.forEach(botao => {
       if (this.botaoAtendeCondicoes(botao, row)) result.push(botao);
     });
+    result.push(this.BOTAO_RELATORIO);
     return result;
   }
   dynamicButtons(row) {
@@ -591,7 +592,7 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
         */
         break;
     }
-    if (!result.length) result.push(this.BOTAO_INFORMACOES, this.BOTAO_RELATORIO);
+    if (!result.length) result.push(this.BOTAO_INFORMACOES);
     return result;
   }
   filterClear(filter) {
@@ -617,11 +618,12 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
   }
   botaoAtendeCondicoes(botao, planoTrabalho) {
     let assinaturasExigidas = planoTrabalho.assinaturasExigidas;
+    let todasAssinaturasExigidas = [...assinaturasExigidas.gestores_entidade, ...assinaturasExigidas.gestores_unidade_executora, ...assinaturasExigidas.gestores_unidade_lotacao, ...assinaturasExigidas.participante];
     let assinaturasFaltantes = this.planoTrabalhoService.assinaturasFaltantes(planoTrabalho.assinaturasExigidas, planoTrabalho.jaAssinaramTCR);
     let haAssinaturasFaltantes = !!assinaturasFaltantes.participante.length || !!assinaturasFaltantes.gestores_unidade_executora.length || !!assinaturasFaltantes.gestores_unidade_lotacao.length || !!assinaturasFaltantes.gestores_entidade.length;
     let usuarioEhGestorUnidadeExecutora = this.auth.isGestorUnidade(planoTrabalho.unidade_id);
     let usuarioJaAssinouTCR = !!planoTrabalho.jaAssinaramTCR?.todas?.includes(this.auth.usuario?.id);
-    let assinaturaUsuarioEhExigida = !!planoTrabalho.assinaturasExigidas?.todas?.includes(this.auth.usuario?.id);
+    let assinaturaUsuarioEhExigida = !!todasAssinaturasExigidas?.includes(this.auth.usuario?.id);
     let planoIncluido = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'INCLUIDO';
     let usuarioEhParticipante = this.auth.usuario?.id == planoTrabalho.usuario_id;
     let planoAguardandoAssinatura = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'AGUARDANDO_ASSINATURA';

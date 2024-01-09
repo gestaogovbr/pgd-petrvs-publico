@@ -1,5 +1,4 @@
-<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="cpf"
-    (submit)="onSaveData()" (cancel)="onCancel()">
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="cpf" (submit)="onSaveData()" (cancel)="onCancel()">
     <tabs display right>
         <tab key="PRINCIPAL" label="Principal">
             <div class="row">
@@ -8,46 +7,30 @@
                 </div>
                 <div class="form-group col-md-9">
                     <div class="row">
-
-                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_CPF') ? 'true' : undefined"
-                            [size]="3" label="CPF" controlName="cpf" [maskFormat]="'000.000.000-00'" [attr.maxlength]=15
-                            required></input-text>
-                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAT') ? 'true' : undefined"
-                            [size]="2" label="Matrícula" controlName="matricula" [attr.maxlength]=250
-                            required></input-text>
-                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAIL') ? 'true' : undefined"
-                            [size]="4" label="E-mail" controlName="email" textCase="lower" [attr.maxlength]=250
-                            required></input-text>
-                        <input-datetime date [size]="3" label="Nascimento" noIcon controlName="data_nascimento"
-                            [labelInfo]="'Data de nascimento'"></input-datetime>
+                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_CPF') ? 'true' : undefined" [size]="3" label="CPF" controlName="cpf" [maskFormat]="'000.000.000-00'" [attr.maxlength]=15 required></input-text>
+                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAT') ? 'true' : undefined" [size]="2" label="Matrícula" controlName="matricula" [attr.maxlength]=250 required></input-text>
+                        <input-text [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_MAIL') ? 'true' : undefined" [size]="4" label="E-mail" controlName="email" textCase="lower" [attr.maxlength]=250 required></input-text>
+                        <input-datetime date [size]="3" label="Nascimento" noIcon controlName="data_nascimento" [labelInfo]="'Data de nascimento'"></input-datetime>
                     </div>
                     <div class="row">
-                        <input-text [size]="8" label="Nome" controlName="nome" [attr.maxlength]=250
-                            required></input-text>
-                        <input-text [size]="4" label="Apelido" controlName="apelido" [attr.maxlength]=250
-                            required></input-text>
+                        <input-text [size]="8" label="Nome" controlName="nome" [attr.maxlength]=250 required></input-text>
+                        <input-text [size]="4" label="Apelido" controlName="apelido" [attr.maxlength]=250 required></input-text>
                     </div>
                     <div class="row">
-                        <input-select [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_PERFIL') ? 'true' : undefined"
-                            [size]="4" label="Perfil" controlName="perfil_id" [dao]="perfilDao" required></input-select>
-                        <input-search #lotacao label="Lotação" [size]="8" [emptyValue]="null"
-                            [control]="formLotacao!.controls.unidade_lotacao_id" controlName="unidade_lotacao_id"
-                            [dao]="unidadeDao" labelInfo="Unidade de lotação do Usuário" required></input-search>
+                        <input-select [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_PERFIL') ? 'true' : undefined" [size]="4" label="Perfil" controlName="perfil_id" [dao]="perfilDao" required></input-select>
+                        <input-search #lotacao label="Lotação" [size]="8" [emptyValue]="null" [control]="formLotacao!.controls.unidade_lotacao_id" controlName="unidade_lotacao_id" [dao]="unidadeDao" labelInfo="Unidade de lotação do Usuário" required></input-search>
                     </div>
                     <div class="row">
-                        <input-select [size]="4" label="UF" icon="bi bi-flag" controlName="uf"
-                            [items]="lookup.UF"></input-select>
+                        <input-select [size]="4" label="UF" icon="bi bi-flag" controlName="uf" [items]="lookup.UF"></input-select>
                         <input-radio [size]="4" label="Sexo" controlName="sexo" [items]="lookup.SEXO"></input-radio>
-                        <input-text [size]="4" label="Telefone" controlName="telefone"
-                            [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'" [attr.maxlength]=250></input-text>
+                        <input-text [size]="4" label="Telefone" controlName="telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'" [attr.maxlength]=250></input-text>
                     </div>
                 </div>
             </div>
         </tab>
         <tab key="CONFIGURACOES" label="Configurações">
             <div class="row">
-                <input-editor [label]="'Texto complementar ' + lex.translate('Plano de Trabalho')"
-                    controlName="texto_complementar_plano" [dataset]="planoDataset"></input-editor>
+                <input-editor [label]="'Texto complementar ' + lex.translate('Plano de Trabalho')" controlName="texto_complementar_plano" [dataset]="planoDataset"></input-editor>
             </div>
         </tab>
         <tab key="ATRIBUICOES" [label]="lex.translate('Atribuições')">
