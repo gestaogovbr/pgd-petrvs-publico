@@ -55,6 +55,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
   @Input() sufix?: string;
   @Input() required?: string;
   @Input() filter?: string[];
+  @Input() join?: string[];
   @Input() set where(value: any[] | undefined) {
     if(JSON.stringify(this._where) != JSON.stringify(value)) {
       this._where = value;
@@ -226,7 +227,7 @@ export class InputSelectComponent extends InputBase implements OnInit {
     this.loading = true;
     this.detectChanges();
     if(this.isFullEntity) {
-      this.dao?.query({where: this.where}).asPromise().then(result => {
+      this.dao?.query({where: this.where, join: this.join}).asPromise().then(result => {
         this.loading = false;
         this.items = result.map(x => {
           return {
@@ -304,3 +305,5 @@ export class InputSelectComponent extends InputBase implements OnInit {
     });
   }
 }
+
+
