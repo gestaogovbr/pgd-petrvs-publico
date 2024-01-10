@@ -18,7 +18,6 @@ resources/docker/dev/docker-compose.yml
 Dump Tabela Atividades.sql
 
 # Farias
-**/*.Identifier
 back-end/database/seeders/BackupUnidadeSeeder.php
 back-end/database/seeders/ZBackupUnidadeSeeder.php
 back-end/database/seeders/DemandaEntregaSeeder.php
