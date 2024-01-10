@@ -29,6 +29,8 @@ import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { SeparatorComponent } from 'src/app/components/separator/separator.component';
 import { OcorrenciaDaoService } from 'src/app/dao/ocorrencia-dao.service';
 import { Ocorrencia } from 'src/app/models/ocorrencia.model';
+import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
+import { Comentario } from 'src/app/models/comentario';
 
 export type ConsolidacaoEntrega = {
   id: string,
@@ -47,6 +49,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   @ViewChild('gridEntregas', { static: false }) public gridEntregas?: GridComponent;
   @ViewChild('gridAtividades', { static: false }) public gridAtividades?: GridComponent;
   @ViewChild('etiqueta', { static: false }) public etiqueta?: InputSelectComponent;
+  @ViewChild('tipoAtividade', { static: false }) public tipoAtividade?: InputSearchComponent;
   @Input() cdRef: ChangeDetectorRef;
   @Input() planoTrabalho?: PlanoTrabalho;
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
@@ -129,6 +132,9 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       detalhamento: { default: "" }
     }, this.cdRef, this.validateComparecimento);
     this.formEdit = this.fh.FormBuilder({
+      descricao: { default: "" },
+      tipo_atividade_id: { default: null },
+      comentarios: { default: [] },
       progresso: { default: 0 },
       etiquetas: { default: [] },
       etiqueta: { default: null }
@@ -264,8 +270,8 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     let planoTrabalho: PlanoTrabalho | undefined = entrega.plano_trabalho || this.entity!.plano_trabalho;
     let efemerides = this.calendar.calculaDataTempoUnidade(this.entity!.data_inicio, this.entity!.data_fim, planoTrabalho!.carga_horaria, this.unidade!, "ENTREGA");
     const tempoPlanejado = this.calendar.horasUteis(this.entity!.data_inicio, this.entity!.data_fim, planoTrabalho!.carga_horaria, this.unidade!, "DISTRIBUICAO");
-    const dataInicio = this.util.setTime(this.entity!.data_inicio, 0, 0, 0);
-    const dataFim = this.util.setTime(this.entity!.data_fim, 23, 59, 59);
+    const dataInicio = this.util.maxDate(this.util.setTime(this.entity!.data_inicio, 0, 0, 0), planoTrabalho!.data_inicio);
+    const dataFim = this.util.minDate(this.util.setTime(this.entity!.data_fim, 23, 59, 59), planoTrabalho!.data_fim);
     return new Atividade({
       id: this.dao!.generateUuid(),
       plano_trabalho: planoTrabalho,
@@ -432,6 +438,30 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     this.cdRef.detectChanges();
   }
 
+  public async onColumnAtividadeDescricaoEdit(row: any) {
+    this.formEdit.controls.descricao.setValue(row.descricao);
+    this.formEdit.controls.tipo_atividade_id.setValue(row.tipo_atividade_id);
+    this.formEdit.controls.comentarios.setValue(row.comentarios);
+  }
+
+  public async onColumnAtividadeDescricaoSave(row: any) {
+    try {
+      this.atividadeService.comentarioAtividade(this.tipoAtividade?.selectedEntity, this.formEdit!.controls.comentarios);
+      const saved = await this.atividadeDao!.update(row.id, {
+        descricao: this.formEdit.controls.descricao.value,
+        tipo_atividade_id: this.formEdit.controls.tipo_atividade_id.value,
+        comentarios: (this.formEdit.controls.comentarios.value || []).filter((x: Comentario) => ["ADD", "EDIT", "DELETE"].includes(x._status || ""))
+      });
+      row.descricao = this.formEdit.controls.descricao.value;
+      row.tipo_atividade_id = this.formEdit.controls.tipo_atividade_id.value;
+      row.tipo_atividade = this.tipoAtividade?.selectedEntity || null;
+      row.comentarios = this.formEdit.controls.comentarios.value;
+      return !!saved;
+    } catch (error) {
+      return false;
+    }
+  }
+
   /***************************************************************************************
   * Ocorrências 
   ****************************************************************************************/
@@ -595,5 +625,5 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   public async showCadeiaValor(cadeia_valor_id_id: string){
     this.go.navigate({ route: ['gestao', 'cadeia-valor', cadeia_valor_id_id, 'consult'] }, {modal: true})
   }
- 
+
 }
