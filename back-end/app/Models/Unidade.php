@@ -51,6 +51,7 @@ class Unidade extends ModelBase
         'entidade_id', /* char(36); NOT NULL; */
         'cidade_id', /* char(36); */
         //'deleted_at', /* timestamp; */
+        'data_modificacao',
     ];
 
     public $fillable_relations = [];

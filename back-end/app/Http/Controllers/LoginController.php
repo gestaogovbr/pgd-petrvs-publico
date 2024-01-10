@@ -28,7 +28,7 @@ class LoginController extends Controller
     {
         $with = ["feriados", "gestor", "gestorSubstituto"];
         $entidade = $session ? Entidade::with($with)->find($request->session()->put("entidade_id")) : null;
-        $sigla = $request->has('entidade') ? $request->input('entidade') : config("petrvs")["entidade"];
+        $sigla = $request->has('entidade') ? $request->input('entidade') : ($request->headers->has("X-Entidade") ? $request->headers->get("X-Entidade") : config("petrvs")["entidade"]);
         if (empty($entidade) && !empty($sigla)) {
             $entidade = Entidade::with($with)->where("sigla", $sigla)->first();
             $request->session()->put("entidade_id", $entidade->id);
@@ -681,6 +681,7 @@ class LoginController extends Controller
     {
         if ($config) {
             // O método setConfig existe mesmo VSCode dizendo que não.
+            // @php-ignore
             return Socialite::driver('azure')->setConfig($config);
         }
         return Socialite::driver('azure');
@@ -755,6 +756,7 @@ class LoginController extends Controller
     {
         if ($config) {
             // O método setConfig existe mesmo VSCode dizendo que não.
+            // @php-ignore
             return Socialite::driver('govbr')->setConfig($config);
         }
         return Socialite::driver('govbr');

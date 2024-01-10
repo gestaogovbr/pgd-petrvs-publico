@@ -13,14 +13,17 @@
                 <input-text [disabled]="isDisabled" [size]="2" label="Sigla" controlName="sigla" required></input-text>
                 <input-text [disabled]="isDisabled" [size]="6" label="Nome" controlName="nome" required></input-text>
             </div>
-            <div class="row">
-                <input-search [disabled]="auth.hasPermissionTo('MOD_UND_INTG_GST') ? undefined : 'true'" #gestor label="Chefe" [size]="6" [emptyValue]="null"
+            <!-- div class="row">
+                <input-search [disabled]="auth.hasPermissionTo('MOD_UND_INTG_GST') ? undefined : 'true'" #gestor label="Chefe" [size]="4" [emptyValue]="null"
                     [control]="formGestor!.controls.gestor_id" controlName="gestor_id" [dao]="usuarioDao"
                     labelInfo="Responsável pela unidade"></input-search>
-                <input-search [disabled]="auth.hasPermissionTo('MOD_UND_INTG_GST') ? undefined : 'true'" #gestorSubstituto label="Chefe substituto" [size]="6" [emptyValue]="null"
+                <input-search [disabled]="auth.hasPermissionTo('MOD_UND_INTG_GST') ? undefined : 'true'" #gestorSubstituto label="Chefe substituto" [size]="4" [emptyValue]="null"
                     [control]="formGestor!.controls.gestor_substituto_id" controlName="gestor_substituto_id"
                     [dao]="usuarioDao" labelInfo="Responsável substituto pela unidade"></input-search>
-            </div>
+                <input-search [disabled]="auth.hasPermissionTo('MOD_UND_INTG_GST') ? undefined : 'true'" #gestorDelegado label="Chefe delegado" [size]="4" [emptyValue]="null"
+                    [control]="formGestor!.controls.gestor_delegado_id" controlName="gestor_delegado_id"
+                    [dao]="usuarioDao" labelInfo="Responsável substituto pela unidade"></input-search>
+            </div !-->
             <div class="row">
                 <input-search [disabled]="isDisabled" #cidade [size]="4" controlName="cidade_id" [dao]="cidadeDao" required></input-search>
                 <input-search [disabled]="unidadePaiIsDisabled" #unidade_pai [size]="4"
@@ -60,7 +63,7 @@
         </tab>
         <tab key="EXPEDIENTE" label="Expediente">
             <div class="row">
-                <input-switch #usarExpedienteEntidade [label]="'Usar o calendário ' + lex.translate('unidade')"
+                <input-switch #usarExpedienteEntidade label="Usar calendário próprio"
                     labelPosition="right" icon="bi bi-check2" [size]="12" (change)="onUsarExpedienteEntidadeChange()"
                     controlName="usar_expediente_unidade"
                     labelInfo="Se o expediente da {{lex.translate('unidade')}} não for definido usaremos o da {{lex.translate('entidade')}}"></input-switch>

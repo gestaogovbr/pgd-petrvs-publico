@@ -26,3 +26,13 @@ Route::middleware([InitializeTenancyByPath::class])
 Route::middleware([InitializeTenancyByPath::class])
     ->get('/login-unico/{tenant}',
         [LoginController::class, 'signInGovBrCallback']);
+
+
+/* Login Panel */
+Route::post('/panel-login', function (Request $request) {
+    $return=false;
+    if($request->user==config('petrvs')['panel']['username'] && $request->password==config('petrvs')['panel']['password']) {
+        $return=true;
+    }
+    return response()->json($return);
+});

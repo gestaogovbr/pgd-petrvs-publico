@@ -11,15 +11,22 @@ use Illuminate\Database\Seeder;
 
 class UsuarioSeeder extends Seeder
 {
+
+    public $timenow;
+
+    public function __construct(){
+        $this->timenow = now();
+    }
+
     /**
      * Run the database seeds.
      *
      * @return void
      */
+
     public function run()
     {
         $perfis = Perfil::all();
-
         $usuarios_desenvolvedores = [
             [
                 'email' => 'genisson.albuquerque@prf.gov.br',
@@ -67,7 +74,7 @@ class UsuarioSeeder extends Seeder
                 'nome' => 'Caroline da Costa Freire Ribeiro',
                 'cpf' => '01492368164',
                 'apelido' => 'Caroline',
-                'perfil_id' => $perfis->where('nome', 'Administrador')->first()->id,
+                'perfil_id' => $perfis->where('nome', 'Administrador Negocial')->first()->id,
                 'sexo' => 'FEMININO',
             ],
             [
@@ -164,6 +171,7 @@ class UsuarioSeeder extends Seeder
                     STR_PAD_LEFT),
                 'uf' => 'DF',
                 'sexo' => $usuario['sexo'],
+                'data_modificacao' => $this->timenow,
             ]);
             $user->save();
 
