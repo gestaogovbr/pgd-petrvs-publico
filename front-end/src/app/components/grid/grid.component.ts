@@ -18,10 +18,9 @@ import { ReportComponent } from './report/report.component';
 import { SidePanelComponent } from './side-panel/side-panel.component';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { TemplateDaoService } from 'src/app/dao/template-dao.service';
-import { Documento } from 'src/app/models/documento.model';
 import { DocumentoService } from 'src/app/modules/uteis/documentos/documento.service';
 
-export type GroupBy = {field: string, label: string, value?: any};
+export type GroupBy = {field: string, label: string, value?: any, order?: 'asc' | 'desc'};
 
 export class GridGroupSeparator {
   constructor(public group: GroupBy[]) {}
@@ -294,7 +293,6 @@ export class GridComponent extends ComponentBase implements OnInit {
       }
     ]
   };
-
   public BUTTON_REPORTS: ToolbarButton = {
     label: "Relatórios",
     icon: "bi bi-file-earmark-ruled",
@@ -312,8 +310,6 @@ export class GridComponent extends ComponentBase implements OnInit {
       }
     ]
   };
-
-
   public panelButtons: ToolbarButton[] = [
     {
       id: "concluir_valid",
@@ -339,7 +335,6 @@ export class GridComponent extends ComponentBase implements OnInit {
       onClick: this.onCancelItem.bind(this)
     }
   ];
-  
 
   constructor(public injector: Injector) {
     super(injector);
@@ -468,20 +463,42 @@ export class GridComponent extends ComponentBase implements OnInit {
   public get queryOptions(): QueryOptions {
     return {
       where: this.filterRef?.where && this.filterRef?.form ? this.filterRef?.where(this.filterRef.form) : [],
-      orderBy: [...(this.groupBy || []).map(x => [x.field, "asc"] as QueryOrderBy), ...(this.orderBy || [])],
+      orderBy: [...(this.groupBy || []).map(x => [x.field, x.order || "asc"] as QueryOrderBy), ...(this.orderBy || [])],
       join: this.join || [],
       limit: this.rowsLimit
     };
   }
 
   public group(items: IIndexable[]) {
+    const sortGroupOrder = (a: IIndexable, b: IIndexable) => {
+      const aGroups = a._group as GroupBy[];
+      const bGroups = b._group as GroupBy[];
+      let result = 0;
+      /* Compara os campos do groupBy */ 
+      for(let i = 0; i < this.groupBy!.length && result == 0; i++) {
+        if(aGroups[i].value != bGroups[i].value) {
+          const inverse = this.groupBy![i].order == "desc" ? -1 : 1;
+          result = (aGroups[i].value < bGroups[i].value ? -1 : 1) * inverse;
+        }
+      }
+      /* Compara os campos do orderBy */
+      for(let i = 0; i < (this.orderBy?.length || 0) && result == 0; i++) {
+        const aValue = this.util.getNested(a, this.orderBy![i][0]);
+        const bValue = this.util.getNested(b, this.orderBy![i][0]);
+        if(aValue != bValue) {
+          const inverse = this.orderBy![i][1] == "desc" ? -1 : 1;
+          result = (aGroups[i].value < bGroups[i].value ? -1 : 1) * inverse;
+        }
+      }
+      return result;
+    };
     if(this.groupBy && items?.length) {
       let buffer = "";
       this.groupIds = { _qtdRows: items.length };
       let mapItems = items.filter(x => !(x instanceof GridGroupSeparator)).map(x => Object.assign(x, {_group: this.groupBy!.map(g => Object.assign({}, g, { value: this.util.getNested(x, g.field) }))}));
       //items = items.filter(x => !(x instanceof GridGroupSeparator)).map(x => Object.assign(x, {_group: this.groupBy!.map(g => Object.assign({}, g, { value: this.util.getNested(x, g.field) }))}));
       items.splice(0, items.length, ...mapItems);
-      if(!this.query) items.sort((a: IIndexable, b: IIndexable) => JSON.stringify(a._group) > JSON.stringify(b._group) ? 1 : JSON.stringify(a._group) < JSON.stringify(b._group) ? -1 : 0);
+      if(!this.query) items.sort(sortGroupOrder);
       for(let i = 0; i < items.length; i++) {
         if(buffer != JSON.stringify(items[i]._group)) {
           buffer = JSON.stringify(items[i]._group);
@@ -522,7 +539,6 @@ export class GridComponent extends ComponentBase implements OnInit {
       }) 
     }
   }
-
 
   public expand(id: string) {
     this.expandedIds[id] = true;

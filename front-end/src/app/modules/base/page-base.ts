@@ -60,14 +60,26 @@ export abstract class PageBase implements OnInit, ModalPage {
   public OPTION_INFORMACOES: ToolbarButton =  {
     icon: "bi bi-info-circle",
     label: "Informações",
+    hint: "Informações",
+    color: "btn-outline-info",
+  };
+  public OPTION_ALTERAR: ToolbarButton = {
+    icon: "bi bi-pencil-square",
+    label: "Alterar",
+    hint: "Alterar",
+    color: "btn-outline-warning",
   };
   public OPTION_EXCLUIR: ToolbarButton = {
     icon: "bi bi-trash",
     label: "Excluir",
+    hint: "Excluir",
+    color: "btn-outline-danger",
   };
   public OPTION_LOGS: ToolbarButton = {
     icon: "bi bi-list-ul",
     label: "Logs",
+    hint: "Alterar",
+    color: "btn-outline-secondary",
   };
 
   /* Injections */
