@@ -91,7 +91,7 @@
     <separator class="mb-1"></separator>-->
 
     <div class="row my-3">
-        <grid [minHeight]="150" [form]="formGraduacao!" [control]="form!.controls.graduacoesLista" [hasDelete]="true" [add]="addGraduacao.bind(this)" [load]="loadGraduacao.bind(this)" 
+        <grid [minHeight]="150" [form]="formGraduacao!" [control]="form!.controls.graduacoes" [hasDelete]="true" [add]="addGraduacao.bind(this)" [load]="loadGraduacao.bind(this)" 
              [remove]="removeGraduacao.bind(this)" [save]="saveGraduacao.bind(this)" editable>
             <columns>
                 <column title="Pretende Cursar?" titleHint="Pretende cursar ou já esta concluido." [template]="columnPretende" [editTemplate]="editPretende">
@@ -99,31 +99,31 @@
                        {{row.pretensao == 0 ? 'Finalizado' : 'Pretendo Fazer' }}
                     </ng-template>
                     <ng-template let-row="row" #editPretende>
-                        <input-switch [size]="2" [label]="formGraduacao!.controls.pretensao.value ? 'Sim' : 'Concluído'" icon="fas fa-user-graduate" controlName="pretensao" [control]="formGraduacao!.controls.pretensao" labelInfo="Pretendo Cursar"></input-switch>
+                        <input-switch [size]="2" [label]="formGraduacao!.controls.pretensao.value ? 'Sim' : 'Concluído'" icon="fas fa-user-graduate" controlName="pretensao" [control]="formGraduacao!.controls.pretensao"></input-switch>
                     </ng-template>
                 </column>               
                 <column title="Área do Conhecimento" titleHint="colha a Área de conhecimento." [template]="columnArea" [editTemplate]="editArea">
                     <ng-template let-row="row" #columnArea>
-                       {{row.area_conhecimento}}
+                       {{row.curso.area_conhecimento.nome}}
                     </ng-template>
                     <ng-template let-row="row" #editArea>
-                        <input-search #areaPos [size]="3" [dao]="areaDao" label="Área de conhecimento" [control]="formGraduacao!.controls.area_conhecimento" controlName="area_conhecimento"></input-search>
+                        <input-search #area [size]="3" [dao]="areaDao" label="Área de conhecimento" [control]="formGraduacao!.controls.area_conhecimento_id" controlName="area_conhecimento_id"></input-search>
                     </ng-template>
                 </column> 
                 <column title="Título" titleHint="Qual a titulação que se refere ao curso." [template]="columnTitulo" [editTemplate]="editTitulo">
                     <ng-template let-row="row" #columnTitulo>
-                        {{lookup.getValue(lookup.TITULOS_CURSOS, row.titulo)}}
+                        {{lookup.getValue(lookup.TITULOS_CURSOS, row.curso.titulo)}}
                     </ng-template>
                     <ng-template let-row="row" #editTitulo>
-                        <input-select [size]="2" label="Titulo" icon="bi bi-mortarboard-fill" controlName="titulo" liveSearch [control]="formGraduacao!.controls.titulo" [items]="this.lookup.TITULOS_CURSOS" (change)="onAreaPosGraduacaoChange()"></input-select>
+                        <input-select [size]="2" label="Titulo" icon="bi bi-mortarboard-fill" controlName="titulo" liveSearch [control]="formGraduacao!.controls.titulo" [items]="this.lookup.TITULOS_CURSOS" (change)="onAreaConhecimentoChange()"></input-select>
                     </ng-template>
                 </column>
                 <column title="Curso" titleHint="Escolha o curso." [template]="columnCurso" [editTemplate]="editCurso">
                     <ng-template let-row="row" #columnCurso>
-                        {{row.curso_id}}
+                        {{row.curso.nome}}
                     </ng-template>
                     <ng-template let-row="row" #editCurso>
-                        <input-select #cursoV [size]="3" #curso label="Curso" icon="fas fa-graduation-cap" controlName="curso_id" liveSearch [control]="formGraduacao!.controls.curso_id" [dao]="cursoDao" [where]="cursoWhere" [addRoute]="{route: ['raiox','cadastros','curso','new']}"></input-select>
+                        <input-select #curso [size]="3" label="Curso" icon="fas fa-graduation-cap" controlName="curso_id" fullEntity liveSearch [control]="formGraduacao!.controls.curso_id" [dao]="cursoDao" [join]="['area_conhecimento']" [where]="cursoWhere" [addRoute]="{route: ['raiox','cadastros','curso','new']}"></input-select>
                     </ng-template>
                 </column>
                 <column type="options"></column>

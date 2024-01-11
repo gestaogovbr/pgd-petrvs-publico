@@ -35,7 +35,6 @@ export class InputSearchComponent extends InputBase implements OnInit {
   @Output() select = new EventEmitter<SelectItem>();
   @Output() load = new EventEmitter<SelectItem | undefined>();
   @Output() change = new EventEmitter<Event>();
-  @Input() relativeId?: string;
   @Input() hostClass: string = "";
   @Input() labelPosition: LabelPosition = "top";
   @Input() controlName: string | null = null;
@@ -79,7 +78,6 @@ export class InputSearchComponent extends InputBase implements OnInit {
       this._disabled = value;
       this.detectChanges();
       this.dropdown?.toString(); /* Força atualização do dropdown */
-      if(this.selectedValue) this.selectItem(this.selectedValue, false, false);
     }
   }
   get disabled(): string | undefined {
@@ -363,5 +361,7 @@ export class InputSearchComponent extends InputBase implements OnInit {
     }
   }
 }
+
+
 
 
