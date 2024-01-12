@@ -179,6 +179,8 @@ class CurriculumGraduacao extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base 
   constructor(data) {
     super();
     this.pretensao = 0; //Pretensão de fazer curso caso não tenha
+    this.curriculum_id = "";
+    this.curso_id = "";
     this.initialization(data);
   }
 }
@@ -588,9 +590,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const _c0 = ["areaPos"];
+const _c0 = ["area"];
 const _c1 = ["estados"];
-const _c2 = ["curso_id"];
+const _c2 = ["curso"];
 const _c3 = ["idiomas"];
 const _c4 = ["municipio"];
 function CurriculumFormComponent_grid_21_ng_template_3_Template(rf, ctx) {
@@ -735,7 +737,7 @@ function CurriculumFormComponent_ng_template_31_Template(rf, ctx) {
   }
   if (rf & 2) {
     const row_r45 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵtextInterpolate1"](" ", row_r45.area_conhecimento, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵtextInterpolate1"](" ", row_r45.curso.area_conhecimento.nome, " ");
   }
 }
 function CurriculumFormComponent_ng_template_33_Template(rf, ctx) {
@@ -744,7 +746,7 @@ function CurriculumFormComponent_ng_template_33_Template(rf, ctx) {
   }
   if (rf & 2) {
     const ctx_r10 = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 3)("dao", ctx_r10.areaDao)("control", ctx_r10.formGraduacao.controls.area_conhecimento);
+    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 3)("dao", ctx_r10.areaDao)("control", ctx_r10.formGraduacao.controls.area_conhecimento_id);
   }
 }
 function CurriculumFormComponent_ng_template_36_Template(rf, ctx) {
@@ -754,7 +756,7 @@ function CurriculumFormComponent_ng_template_36_Template(rf, ctx) {
   if (rf & 2) {
     const row_r48 = ctx.row;
     const ctx_r12 = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵtextInterpolate1"](" ", ctx_r12.lookup.getValue(ctx_r12.lookup.TITULOS_CURSOS, row_r48.titulo), " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵtextInterpolate1"](" ", ctx_r12.lookup.getValue(ctx_r12.lookup.TITULOS_CURSOS, row_r48.curso.titulo), " ");
   }
 }
 function CurriculumFormComponent_ng_template_38_Template(rf, ctx) {
@@ -764,7 +766,7 @@ function CurriculumFormComponent_ng_template_38_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵlistener"]("change", function CurriculumFormComponent_ng_template_38_Template_input_select_change_0_listener() {
       _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵrestoreView"](_r51);
       const ctx_r50 = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵresetView"](ctx_r50.onAreaPosGraduacaoChange());
+      return _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵresetView"](ctx_r50.onAreaConhecimentoChange());
     });
     _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementEnd"]();
   }
@@ -779,13 +781,16 @@ function CurriculumFormComponent_ng_template_41_Template(rf, ctx) {
   }
   if (rf & 2) {
     const row_r52 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵtextInterpolate1"](" ", row_r52.curso_id, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵtextInterpolate1"](" ", row_r52.curso.nome, " ");
   }
 }
 const _c5 = function () {
+  return ["area_conhecimento"];
+};
+const _c6 = function () {
   return ["raiox", "cadastros", "curso", "new"];
 };
-const _c6 = function (a0) {
+const _c7 = function (a0) {
   return {
     route: a0
   };
@@ -796,10 +801,10 @@ function CurriculumFormComponent_ng_template_43_Template(rf, ctx) {
   }
   if (rf & 2) {
     const ctx_r18 = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 3)("control", ctx_r18.formGraduacao.controls.curso_id)("dao", ctx_r18.cursoDao)("where", ctx_r18.cursoWhere)("addRoute", _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵpureFunction1"](6, _c6, _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵpureFunction0"](5, _c5)));
+    _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 3)("control", ctx_r18.formGraduacao.controls.curso_id)("dao", ctx_r18.cursoDao)("join", _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵpureFunction0"](6, _c5))("where", ctx_r18.cursoWhere)("addRoute", _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵpureFunction1"](8, _c7, _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵpureFunction0"](7, _c6)));
   }
 }
-const _c7 = function (a2) {
+const _c8 = function (a2) {
   return ["uf", "==", a2];
 };
 class CurriculumFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_2__.PageFormBase {
@@ -831,19 +836,13 @@ class CurriculumFormComponent extends src_app_modules_base_page_form_base__WEBPA
       }*/
       return result;
     };
-    this.join = ['graduacoes'];
+    this.join = ['graduacoes.curso.area_conhecimento'];
     //super(injector,Curso, CursoDaoService)
     this.cidadeDao = injector.get(src_app_dao_cidade_dao_service__WEBPACK_IMPORTED_MODULE_3__.CidadeDaoService);
     this.areaDao = injector.get(src_app_dao_area_conhecimento_dao_service__WEBPACK_IMPORTED_MODULE_4__.AreaConhecimentoDaoService);
     this.cursoDao = injector.get(src_app_dao_curso_dao_service__WEBPACK_IMPORTED_MODULE_5__.CursoDaoService);
     this.curriculumGraduacaoDAO = injector.get(src_app_dao_curriculum_graduacao_service__WEBPACK_IMPORTED_MODULE_8__.CurriculumGraduacaoDaoService);
     this.form = this.fh.FormBuilder({
-      id: {
-        default: ""
-      },
-      usuario_id: {
-        default: ""
-      },
       cidade_id: {
         default: ""
       },
@@ -868,58 +867,28 @@ class CurriculumFormComponent extends src_app_modules_base_page_form_base__WEBPA
       radioFalaIdioma: {
         default: false
       },
-      idioma: {
-        default: ""
-      },
-      idiomaFala: {
-        default: ""
-      },
-      idiomaEscrita: {
-        default: ""
-      },
-      idiomaEntendimento: {
-        default: ""
-      },
       idiomas: {
         default: []
       },
       ativo: {
         default: true
       },
-      graduacoesLista: {
+      graduacoes: {
         default: []
       }
     }, this.cdRef, this.validate);
     this.formGraduacao = this.fh.FormBuilder({
-      curriculum_id: {
-        default: ""
-      },
       curso_id: {
         default: ""
       },
-      area_conhecimento: {
+      area_conhecimento_id: {
         default: ""
-      },
-      curso: {
-        default: ""
-      },
-      graduacao: {
-        default: []
       },
       pretensao: {
         default: 0
       },
-      areaPos: {
-        default: ""
-      },
-      cursoPos: {
-        default: ""
-      },
       titulo: {
         default: ""
-      },
-      graduacaopos: {
-        default: []
       }
     }, this.cdRef, this.validate);
     this.formIdiomaGrid = this.fh.FormBuilder({
@@ -934,9 +903,6 @@ class CurriculumFormComponent extends src_app_modules_base_page_form_base__WEBPA
       },
       idiomaEntendimento: {
         default: ""
-      },
-      idiomas: {
-        default: []
       }
     }, this.cdRef, this.validate);
   }
@@ -963,51 +929,8 @@ class CurriculumFormComponent extends src_app_modules_base_page_form_base__WEBPA
       entity.quantidade_filhos > 0 ? _this2.form?.controls.filhos.setValue(true) : _this2.form?.controls.filhos.setValue(false);
       const municipio = _this2.lookup.UF.find(x => x.key == cidade?.uf);
       entity.idiomas.length > 0 ? _this2.form?.controls.radioFalaIdioma.setValue(true) : _this2.form?.controls.radioFalaIdioma.setValue(false);
-      //entity.filhos == 1 ? this.form?.controls.radioFalaIdioma.setValue(true) : this.form?.controls.radioFalaIdioma.setValue(false);
-      entity.graduacoes.length > 0 ? _this2.formGraduacao.controls.graduacaopos.setValue(_this2.montaGraduacaoPos(entity.graduacoes)) : '';
-      //entity.graduacoes.length > 0 ?  this.montaGraduacaoPos(entity.graduacoes) : '';
       yield _this2.loadData(entity, _this2.form);
     })();
-  }
-  montaGraduacaoPos(cursoId) {
-    var _this3 = this;
-    let result = undefined;
-    let gard = [];
-    cursoId.forEach( /*#__PURE__*/function () {
-      var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (curso1) {
-        const graduacao = yield _this3.cursoDao?.getById(curso1.id, ['areaConhecimento', 'tipoCurso']);
-        const area = {
-          'key': graduacao?.area_id,
-          'value': graduacao?.area_conhecimento?.nome
-        };
-        const curso = {
-          'key': graduacao?.id,
-          'value': graduacao?.nome
-        };
-        const titulo = _this3.lookup.TITULOS_CURSOS.find(x => x.key == graduacao?.titulo);
-        const pretensao = _this3.opcoesEscolha.find(value => value.key == curso1.pretensao);
-        const key = _this3.util.textHash((area.key || "") + (curso?.key || "") + (titulo?.key || ""));
-        result = {
-          key: key,
-          value: area.value + ' - ' + curso.value + ' - ' + titulo?.value + ' - ' + pretensao?.value,
-          data: {
-            id: _this3.dao?.generateUuid(),
-            area: area.key,
-            curso: curso.key,
-            titulo: titulo?.key,
-            pretensao: pretensao?.key,
-            _status: "EDIT"
-          }
-        };
-        gard.push(result);
-      });
-      return function (_x) {
-        return _ref.apply(this, arguments);
-      };
-    }());
-    console.log('Gard', gard);
-    //this.formGraduacao?.controls.graduacaopos.setValue(gard)
-    return gard;
   }
   saveData(form) {
     //console.log('FORMULARIOGRAD', this.formGraduacao!.value)
@@ -1019,12 +942,8 @@ class CurriculumFormComponent extends src_app_modules_base_page_form_base__WEBPA
       curriculum = this.util.fillForm(curriculum, this.form.value);
       curriculum.usuario_id = this.auth.usuario?.id;
       curriculum.cidade_id = "86297f92-d919-e12f-476d-6aff99c46809";
-      //(this.form?.controls.idiomasM.value as Array<LookupItem>).forEach(element => curriculum.idiomas.push(element.data));// iNSERE DADOS DO MULTI-SELECT IDIOMAS
-      curriculum.graduacoes = this.formGraduacao.controls.graduacaopos.value.map(x => Object.assign({}, {
-        curso_id: x.data.curso,
-        pretensao: x.data.pretensao
-      }));
-      //curriculum.graduacoes = this.formGraduacao!.controls.graduacaopos.value.filter((x: CurriculumGraduacao) => x._status?.length);
+      //curriculum.graduacoes = this.formGraduacao!.controls.graduacoes.value.map((x: any) => Object.assign({},{curso_id:x.data.curso , pretensao:x.data.pretensao}));
+      curriculum.graduacoes = this.form.controls.graduacoes.value; //.filter((x: CurriculumGraduacao) => x._status?.length);
       resolve(curriculum);
     });
   }
@@ -1050,156 +969,35 @@ class CurriculumFormComponent extends src_app_modules_base_page_form_base__WEBPA
     });
     this.show = 'true';
   }
-  addItemIdioma() {
-    let result = undefined;
-    let res = this.form.value;
-    //console.log('addItemIdioma', res)
-    const idioma = this.lookup.IDIOMAS.find(x => x.key == this.form.controls.idioma.value);
-    const escrita = this.lookup.NIVEL_IDIOMA.find(x => x.key == this.form.controls.idiomaEscrita.value);
-    const fala = this.lookup.NIVEL_IDIOMA.find(x => x.key == this.form.controls.idiomaFala.value);
-    const entende = this.lookup.NIVEL_IDIOMA.find(x => x.key == this.form.controls.idiomaEntendimento.value);
-    const key = idioma?.key != "" ? this.util.textHash(idioma?.key) : null;
-    // console.log('addItemIdioma', ' - ', idioma, ' - ', escrita, ' - ', fala, ' - ', entende, ' - ', key)
-    if (idioma && escrita && fala && entende && this.util.validateLookupItem(this.form.controls.idiomas.value, key)) {
-      result = {
-        key: key,
-        value: idioma.value + ' - ' + escrita.value + ' - ' + fala.value + ' - ' + entende.value,
-        data: {
-          idioma: idioma.key,
-          escrita: escrita.key,
-          fala: fala.key,
-          entende: entende.key
-        }
-      };
-      this.form.controls.idioma.setValue("");
-      this.form.controls.idiomaFala.setValue("");
-      this.form.controls.idiomaEscrita.setValue("");
-      this.form.controls.idiomaEntendimento.setValue("");
-    }
-    return result;
-  }
-  addItemGraduacaoPos() {
-    let result = undefined;
-    const area = {
-      'key': this.formGraduacao.controls.areaPos.value,
-      'value': this.areaPosV?.selectedItem?.text
-    };
-    const curso = this.cursoV.selectedItem; //this.cursosGradPos.find(value => value.key == this.formGraduacao!.controls.cursoPos.value)
+  onAreaConhecimentoChange() {
     const titulo = this.lookup.TITULOS_CURSOS.find(x => x.key == this.formGraduacao.controls.titulo.value);
-    const pretensao = this.opcoesEscolha.find(value => value.key == (this.formGraduacao.controls.pretensao.value ? 1 : 0)); //converte o value do switch
-    const key = this.util.textHash((area.key || "") + (curso?.key || "") + (titulo?.key || "")); // + (pretensao?.key || ""));
-    //console.log('AREA', area, 'AREA', curso, 'AREA', titulo, 'AREA', pretensao)
-    if (curso && area && titulo && pretensao && this.util.validateLookupItem(this.formGraduacao.controls.graduacaopos.value, key)) {
-      result = {
-        key: key,
-        value: area.value + ' - ' + curso.value + ' - ' + titulo?.value + ' - ' + pretensao?.value,
-        data: {
-          id: this.dao?.generateUuid(),
-          area: area.key,
-          curso: curso.key,
-          titulo: titulo?.key,
-          pretensao: pretensao?.key,
-          _status: "ADD"
-        }
-      };
-      //console.log('FORMULARIOGRAD', this.formGraduacao!.value)
-      this.formGraduacao.controls.areaPos.setValue("");
-      this.formGraduacao.controls.cursoPos.setValue("");
-      this.formGraduacao.controls.titulo.setValue("");
-      this.formGraduacao.controls.pretensao.setValue(false);
-    }
-    return result;
-  }
-  onAreaGraducaoPosChange() {
-    this.cursoDao?.query({
-      where: [['area_curso_id', '==', this.formGraduacao.controls.area_conhecimento.value], ['titulo', 'like', 'GRAD%']]
-    }).getAll().then(cursos2 => {
-      this.cursos = cursos2.map(x => Object.assign({}, {
-        key: x.id,
-        value: x.nome
-      }));
-      this.cdRef.detectChanges();
-    });
-  }
-  onAreaPosGraduacaoChange() {
-    const titulo = this.lookup.TITULOS_CURSOS.find(x => x.key == this.formGraduacao.controls.titulo.value);
-    // this.cursoDao?.query({where: [['area_curso_id', '==', this.formGraduacao!.controls.areaPos.value && 'titulo','==',titulo?.key], ['titulo', 'in', ["GRAD_TEC", "GRAD_BAC","GRAD_LIC","ESPECIAL","MESTRADO","DOUTORADO","POS_DOUTORADO"]]]}).getAll().then((cursos3) => {
-    this.cursoWhere = [['area_id', '==', this.formGraduacao.controls.area_conhecimento.value], ['titulo', '==', titulo?.key], ['titulo', 'in', ["GRAD_TEC", "GRAD_BAC", "GRAD_LIC", "ESPECIAL", "MESTRADO", "DOUTORADO", "POS_DOUTORADO"]]];
+    this.cursoWhere = [['area_id', '==', this.formGraduacao.controls.area_conhecimento_id.value], ['titulo', '==', titulo?.key], ['titulo', 'in', ["GRAD_TEC", "GRAD_BAC", "GRAD_LIC", "ESPECIAL", "MESTRADO", "DOUTORADO", "POS_DOUTORADO"]]];
     this.cdRef.detectChanges();
-    /*this.cursoDao?.query({ where: [['area_curso_id', '==', this.formGraduacao!.controls.areaPos.value], ['titulo', '==', titulo?.key], ['titulo', 'in', ["GRAD_TEC", "GRAD_BAC", "GRAD_LIC", "ESPECIAL", "MESTRADO", "DOUTORADO", "POS_DOUTORADO"]]] }).getAll().then((cursos3) => {
-      this.cursosGradPos = cursos3.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
-      this.cdRef.detectChanges();
-    });*/
   }
-  /*ngOnInit(): void {
-    super.ngOnInit();
-    /*this.action = "edit";
-    this.id = this.auth.usuario?.id;* /
-    /*this.dao?.query({ where: ['usuario_id', '==', this.auth.usuario?.id] }).getAll().then((user) => {
-      //console.log('USER', user.map(x => x.id))
-      if (!(user == null || user.length == 0)) {
-        //console.log('VAZIO')
-        const userID = (user.map(x => x.id)).toString()
-        //console.log('USERID',userID)
-        this.form?.controls.id.setValue(userID)//.toString())))
-      }
-    });* /
-  }*/
-  togglePopOver() {}
-  /*get stateName() {
-    return this.show ? 'show' : 'hide'
-  }
-   
-  public togglePopOver() {
-    
-    const pop = document.getElementById('divPop');
-    //console.log(pop?.hidden)
-    if (pop?.hidden){
-      pop!.hidden=false;
-       }else{
-      pop!.hidden=true;
-    }
-    this.show = !this.show;
-  }
-    */
   /**
    * Método chamado no salvamento de um integrante da unidade, seja este componente persistente ou não.
    * @param form
    * @param row
    * @returns
    */
-  /*public async save(form: IIndexable, row: any) {
-    form?.markAllAsTouched();
-    if (form?.valid) {
-      row.idioma = form.idioma;
-      row.fala = form.fala;
-      row.escrita = form.escrita;
-      row.entendimento = form.entendimento;
-  
-      // limpar campos do formulario
-      // TODO
-      return row;
-    }
-    return undefined;
-  }*/
   addIdiomas() {
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       return new src_app_models_curriculum_idioma_model__WEBPACK_IMPORTED_MODULE_10__.CurriculumIdioma();
     })();
   }
   loadIdiomas(form, row) {
-    var _this4 = this;
+    var _this3 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      _this4.formIdiomaGrid.controls.idioma.setValue(row.idioma);
-      _this4.formIdiomaGrid.controls.idiomaFala.setValue(row.idiomaFala);
-      _this4.formIdiomaGrid.controls.idiomaEscrita.setValue(row.idiomaEscrita);
-      _this4.formIdiomaGrid.controls.idiomaEntendimento.setValue(row.idiomaEntendimento);
+      _this3.formIdiomaGrid.controls.idioma.setValue(row.idioma);
+      _this3.formIdiomaGrid.controls.idiomaFala.setValue(row.idiomaFala);
+      _this3.formIdiomaGrid.controls.idiomaEscrita.setValue(row.idiomaEscrita);
+      _this3.formIdiomaGrid.controls.idiomaEntendimento.setValue(row.idiomaEntendimento);
     })();
   }
   removeIdiomas(row) {
-    var _this5 = this;
+    var _this4 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      if (yield _this5.dialog.confirm("Excluir ?", "Deseja realmente excluir esta pergunta?")) {
+      if (yield _this4.dialog.confirm("Excluir ?", "Deseja realmente excluir esta pergunta?")) {
         return true;
       }
       return undefined;
@@ -1228,37 +1026,48 @@ class CurriculumFormComponent extends src_app_modules_base_page_form_base__WEBPA
     form?.markAllAsTouched();
     if (form?.valid) {
       let values = form.value;
-      console.log('SAVE FORM e ROW VALUES', values);
       row.pretensao = values.pretensao;
-      row.area_conhecimento = values.area_conhecimento;
-      row.titulo = values.titulo;
       row.curso_id = values.curso_id;
-      console.log('SAVE FORM e ROW', row);
+      row.curso = this.curso?.selectedItem?.data;
       return row;
     }
     return undefined;
   }
   loadGraduacao(form, row) {
-    var _this6 = this;
+    var _this5 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      console.log('loadGraduacao', row);
-      //let cursoID=row.curso_id?.id;
-      //const graduacao = await this.cursoDao?.getById(cursoID!, ['areaConhecimento','tipoCurso']);
-      _this6.formGraduacao.controls.pretensao.setValue(row.pretensao);
-      _this6.formGraduacao.controls.area_conhecimento.setValue(row.area_conhecimento);
-      _this6.formGraduacao.controls.titulo.setValue(row.curso_id?.titulo);
-      _this6.formGraduacao.controls.curso_id.setValue(row.curso_id);
+      //this.area?.loadSearch(row.curso?.area_conhecimento || row.curso?.area_id);
+      _this5.area?.setValue(row.curso?.area_id);
+      _this5.formGraduacao.controls.area_conhecimento_id.setValue(row.curso?.area_id);
+      _this5.formGraduacao.controls.pretensao.setValue(row.pretensao);
+      _this5.formGraduacao.controls.titulo.setValue(row.curso?.titulo);
+      _this5.formGraduacao.controls.curso_id.setValue(row.curso_id);
     })();
   }
   removeGraduacao(row) {
-    var _this7 = this;
+    var _this6 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      if (yield _this7.dialog.confirm("Excluir ?", "Deseja realmente excluir este registro?")) {
+      if (yield _this6.dialog.confirm("Excluir ?", "Deseja realmente excluir este registro?")) {
         row._status = "DEL";
       }
       return undefined;
     })();
   }
+  /*ngOnInit(): void {
+    super.ngOnInit();
+    /*this.action = "edit";
+    this.id = this.auth.usuario?.id;* /
+    /*this.dao?.query({ where: ['usuario_id', '==', this.auth.usuario?.id] }).getAll().then((user) => {
+      //console.log('USER', user.map(x => x.id))
+      if (!(user == null || user.length == 0)) {
+        //console.log('VAZIO')
+        const userID = (user.map(x => x.id)).toString()
+        //console.log('USERID',userID)
+        this.form?.controls.id.setValue(userID)//.toString())))
+      }
+    });* /
+  }*/
+  togglePopOver() {}
   static #_ = this.ɵfac = function CurriculumFormComponent_Factory(t) {
     return new (t || CurriculumFormComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_21__.Injector));
   };
@@ -1277,9 +1086,9 @@ class CurriculumFormComponent extends src_app_modules_base_page_form_base__WEBPA
       if (rf & 2) {
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵloadQuery"]()) && (ctx.areaPosV = _t.first);
+        _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵloadQuery"]()) && (ctx.area = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵloadQuery"]()) && (ctx.estadosV = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵloadQuery"]()) && (ctx.cursoV = _t.first);
+        _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵloadQuery"]()) && (ctx.curso = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵloadQuery"]()) && (ctx.idiomasM = _t.first);
         _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵloadQuery"]()) && (ctx.municipioV = _t.first);
       }
@@ -1287,7 +1096,7 @@ class CurriculumFormComponent extends src_app_modules_base_page_form_base__WEBPA
     features: [_angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵInheritDefinitionFeature"]],
     decls: 46,
     vars: 47,
-    consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row", "mt-3"], ["label", "Apresente-se", "icon", "bi-card-list", "controlName", "apresentacao", 3, "size", "bold", "control"], ["title", "Dados Residenciais"], [1, "row", "mt-2"], ["label", "Estado", "icon", "fas fa-flag", "controlName", "estados", 3, "size", "control", "items"], ["estados", ""], ["label", "Munic\u00EDpio", "icon", "far fa-flag", "controlName", "cidade_id", 3, "size", "control", "dao", "where"], ["municipio", ""], ["label", "Telefone de contato WhatsAPP", "icon", "fas fa-phone", "controlName", "telefone", 3, "size", "control", "maskFormat"], ["title", "Estado Civil"], ["label", "Estado Civil", "icon", "fas fa-ring", "controlName", "estado_civil", 3, "size", "control", "items"], ["label", "Possui Filhos?", "icon", "fas fa-child", "controlName", "filhos", 3, "size", "control"], ["label", "Quantos?", "icon", "bi bi-arrow-up-right-circle", "controlName", "quantidade_filhos", 3, "hidden", "size", "control", "minValue"], ["title", "Idiomas", 3, "click"], [1, "row", "my-3"], ["label", "Fala outros idiomas?", "icon", "fas fa-language", "controlName", "radioFalaIdioma", 3, "size", "control"], ["editable", "", 3, "control", "minHeight", "form", "hasDelete", "add", "load", "remove", "save", 4, "ngIf"], ["editable", "", 3, "minHeight", "form", "control", "hasDelete", "add", "load", "remove", "save"], ["title", "Pretende Cursar?", "titleHint", "Pretende cursar ou j\u00E1 esta concluido.", 3, "template", "editTemplate"], ["columnPretende", ""], ["editPretende", ""], ["title", "\u00C1rea do Conhecimento", "titleHint", "colha a \u00C1rea de conhecimento.", 3, "template", "editTemplate"], ["columnArea", ""], ["editArea", ""], ["title", "T\u00EDtulo", "titleHint", "Qual a titula\u00E7\u00E3o que se refere ao curso.", 3, "template", "editTemplate"], ["columnTitulo", ""], ["editTitulo", ""], ["title", "Curso", "titleHint", "Escolha o curso.", 3, "template", "editTemplate"], ["columnCurso", ""], ["editCurso", ""], ["type", "options"], ["editable", "", 3, "control", "minHeight", "form", "hasDelete", "add", "load", "remove", "save"], ["title", "Idioma", "titleHint", "Escolha o idioma.", 3, "template", "editTemplate"], ["columnIdioma", ""], ["editIdioma", ""], ["title", "N\u00EDvel de fala", "titleHint", "Escolha o seu n\u00EDvel de fala.", 3, "template", "editTemplate"], ["columnNivelFala", ""], ["editNivelFala", ""], ["title", "N\u00EDvel de escrita", "titleHint", "Escolha o seu n\u00EDvel de escrita.", 3, "template", "editTemplate"], ["columnNivelEscrita", ""], ["editNivelEscrita", ""], ["title", "N\u00EDvel de entendimento", "titleHint", "Escolha o seu n\u00EDvel de entendimento.", 3, "template", "editTemplate"], ["columnNivelEntendimento", ""], ["editNivelEntendimento", ""], ["label", "", "icon", "", "controlName", "idioma", 3, "size", "items"], ["label", "", "icon", "", "controlName", "idiomaFala", 3, "size", "items"], ["label", "", "icon", "", "controlName", "idiomaEscrita", 3, "size", "items"], ["label", "", "icon", "", "controlName", "idiomaEntendimento", 3, "size", "items"], ["icon", "fas fa-user-graduate", "controlName", "pretensao", "labelInfo", "Pretendo Cursar", 3, "size", "label", "control"], ["label", "\u00C1rea de conhecimento", "controlName", "area_conhecimento", 3, "size", "dao", "control"], ["areaPos", ""], ["label", "Titulo", "icon", "bi bi-mortarboard-fill", "controlName", "titulo", "liveSearch", "", 3, "size", "control", "items", "change"], ["label", "Curso", "icon", "fas fa-graduation-cap", "controlName", "curso_id", "liveSearch", "", 3, "size", "control", "dao", "where", "addRoute"], ["cursoV", "", "curso", ""]],
+    consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row", "mt-3"], ["label", "Apresente-se", "icon", "bi-card-list", "controlName", "apresentacao", 3, "size", "bold", "control"], ["title", "Dados Residenciais"], [1, "row", "mt-2"], ["label", "Estado", "icon", "fas fa-flag", "controlName", "estados", 3, "size", "control", "items"], ["estados", ""], ["label", "Munic\u00EDpio", "icon", "far fa-flag", "controlName", "cidade_id", 3, "size", "control", "dao", "where"], ["municipio", ""], ["label", "Telefone de contato WhatsAPP", "icon", "fas fa-phone", "controlName", "telefone", 3, "size", "control", "maskFormat"], ["title", "Estado Civil"], ["label", "Estado Civil", "icon", "fas fa-ring", "controlName", "estado_civil", 3, "size", "control", "items"], ["label", "Possui Filhos?", "icon", "fas fa-child", "controlName", "filhos", 3, "size", "control"], ["label", "Quantos?", "icon", "bi bi-arrow-up-right-circle", "controlName", "quantidade_filhos", 3, "hidden", "size", "control", "minValue"], ["title", "Idiomas", 3, "click"], [1, "row", "my-3"], ["label", "Fala outros idiomas?", "icon", "fas fa-language", "controlName", "radioFalaIdioma", 3, "size", "control"], ["editable", "", 3, "control", "minHeight", "form", "hasDelete", "add", "load", "remove", "save", 4, "ngIf"], ["editable", "", 3, "minHeight", "form", "control", "hasDelete", "add", "load", "remove", "save"], ["title", "Pretende Cursar?", "titleHint", "Pretende cursar ou j\u00E1 esta concluido.", 3, "template", "editTemplate"], ["columnPretende", ""], ["editPretende", ""], ["title", "\u00C1rea do Conhecimento", "titleHint", "colha a \u00C1rea de conhecimento.", 3, "template", "editTemplate"], ["columnArea", ""], ["editArea", ""], ["title", "T\u00EDtulo", "titleHint", "Qual a titula\u00E7\u00E3o que se refere ao curso.", 3, "template", "editTemplate"], ["columnTitulo", ""], ["editTitulo", ""], ["title", "Curso", "titleHint", "Escolha o curso.", 3, "template", "editTemplate"], ["columnCurso", ""], ["editCurso", ""], ["type", "options"], ["editable", "", 3, "control", "minHeight", "form", "hasDelete", "add", "load", "remove", "save"], ["title", "Idioma", "titleHint", "Escolha o idioma.", 3, "template", "editTemplate"], ["columnIdioma", ""], ["editIdioma", ""], ["title", "N\u00EDvel de fala", "titleHint", "Escolha o seu n\u00EDvel de fala.", 3, "template", "editTemplate"], ["columnNivelFala", ""], ["editNivelFala", ""], ["title", "N\u00EDvel de escrita", "titleHint", "Escolha o seu n\u00EDvel de escrita.", 3, "template", "editTemplate"], ["columnNivelEscrita", ""], ["editNivelEscrita", ""], ["title", "N\u00EDvel de entendimento", "titleHint", "Escolha o seu n\u00EDvel de entendimento.", 3, "template", "editTemplate"], ["columnNivelEntendimento", ""], ["editNivelEntendimento", ""], ["label", "", "icon", "", "controlName", "idioma", 3, "size", "items"], ["label", "", "icon", "", "controlName", "idiomaFala", 3, "size", "items"], ["label", "", "icon", "", "controlName", "idiomaEscrita", 3, "size", "items"], ["label", "", "icon", "", "controlName", "idiomaEntendimento", 3, "size", "items"], ["icon", "fas fa-user-graduate", "controlName", "pretensao", 3, "size", "label", "control"], ["label", "\u00C1rea de conhecimento", "controlName", "area_conhecimento_id", 3, "size", "dao", "control"], ["area", ""], ["label", "Titulo", "icon", "bi bi-mortarboard-fill", "controlName", "titulo", "liveSearch", "", 3, "size", "control", "items", "change"], ["label", "Curso", "icon", "fas fa-graduation-cap", "controlName", "curso_id", "fullEntity", "", "liveSearch", "", 3, "size", "control", "dao", "join", "where", "addRoute"], ["curso", ""]],
     template: function CurriculumFormComponent_Template(rf, ctx) {
       if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementStart"](0, "editable-form", 0);
@@ -1334,7 +1143,7 @@ class CurriculumFormComponent extends src_app_modules_base_page_form_base__WEBPA
         _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementStart"](40, "column", 28);
         _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵtemplate"](41, CurriculumFormComponent_ng_template_41_Template, 1, 1, "ng-template", null, 29, _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵtemplateRefExtractor"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵtemplate"](43, CurriculumFormComponent_ng_template_43_Template, 3, 8, "ng-template", null, 30, _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵtemplate"](43, CurriculumFormComponent_ng_template_43_Template, 2, 10, "ng-template", null, 30, _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelement"](45, "column", 31);
         _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵelementEnd"]()()()();
@@ -1354,7 +1163,7 @@ class CurriculumFormComponent extends src_app_modules_base_page_form_base__WEBPA
         _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](4);
         _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.estados)("items", ctx.lookup.UF);
         _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.cidade_id)("dao", ctx.cidadeDao)("where", _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵpureFunction1"](45, _c7, ctx.form.controls.estados.value));
+        _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.cidade_id)("dao", ctx.cidadeDao)("where", _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵpureFunction1"](45, _c8, ctx.form.controls.estados.value));
         _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.telefone)("maskFormat", "(00) 0000-0000||(00) 0 0000-0000");
         _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵattribute"]("maxlength", 250);
@@ -1369,7 +1178,7 @@ class CurriculumFormComponent extends src_app_modules_base_page_form_base__WEBPA
         _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("ngIf", ctx.form.controls.radioFalaIdioma.value);
         _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("minHeight", 150)("form", ctx.formGraduacao)("control", ctx.form.controls.graduacoesLista)("hasDelete", true)("add", ctx.addGraduacao.bind(ctx))("load", ctx.loadGraduacao.bind(ctx))("remove", ctx.removeGraduacao.bind(ctx))("save", ctx.saveGraduacao.bind(ctx));
+        _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("minHeight", 150)("form", ctx.formGraduacao)("control", ctx.form.controls.graduacoes)("hasDelete", true)("add", ctx.addGraduacao.bind(ctx))("load", ctx.loadGraduacao.bind(ctx))("remove", ctx.removeGraduacao.bind(ctx))("save", ctx.saveGraduacao.bind(ctx));
         _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("template", _r3)("editTemplate", _r5);
         _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](5);

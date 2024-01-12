@@ -19,8 +19,8 @@
                                     <reaction [entity]="row" origem="ATIVIDADE"></reaction>
                                 </ng-template>
                                 <ng-template let-row="row" #editAtividadeDescricao>
-                                    <input-search [label]="lex.translate('Tipo de atividade')" #tipoAtividade [size]="12" [emptyValue]="null" controlName="tipo_atividade_id" [control]="formAtividade!.controls.tipo_atividade_id" [dao]="tipoAtividadeDao" (select)="onTipoAtividadeSelect($event)" [labelInfo]="lex.translate('Tipo de atividade') + ' utilizado para classificar a atividade'" [required]="!auth.hasPermissionTo('MOD_ATV_TIPO_ATV_VAZIO') ? 'true' : undefined"></input-search>
                                     <input-textarea label="Descrição" [size]="12" [rows]="2" controlName="descricao" [control]="formAtividade!.controls.descricao" required></input-textarea>
+                                    <input-search [label]="lex.translate('Tipo de atividade')" #tipoAtividade [size]="12" [emptyValue]="null" controlName="tipo_atividade_id" [control]="formAtividade!.controls.tipo_atividade_id" [dao]="tipoAtividadeDao" (select)="onTipoAtividadeSelect($event)" [labelInfo]="lex.translate('Tipo de atividade') + ' utilizado para classificar a atividade'" [required]="!auth.hasPermissionTo('MOD_ATV_TIPO_ATV_VAZIO') ? 'true' : undefined"></input-search>
                                 </ng-template>
                             </column>
                             <column [title]="'Tempos'" [width]="300" [template]="columnTempos" [editTemplate]="editTempos">
