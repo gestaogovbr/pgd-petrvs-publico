@@ -1,0 +1,7 @@
+{
+    "/environment-config": {
+      "target": "http://petrvs_php",
+      "secure": false,
+      "changeOrigin": true
+    }
+}
