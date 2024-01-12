@@ -84,21 +84,17 @@ export class LoginComponent implements OnInit, ModalPage, OnDestroy {
     this.auth.registerPopupLoginResultListener();
     /* Verifica se o usuário não já está logado (login-session), e caso não esteja verifica tambem se algum dos login (Google, Microsoft, etc), estão com sessão ativas e tenta logar com essa sessão */
     (async () => {
-      let result = false;
-      if (!this.noSession) result = await this.auth.authSession();
       // Inicializa Google Auth e cria o botão na tela
       if (this.globals.hasGoogleLogin) {
-        try {
-          let res = await this.googleApi.initialize(true);//.then((res: any) => {
-            res.renderButton(document.getElementById('gbtn') as HTMLElement, {
-              size: 'large',
-              width: 320,
-            });
-        } catch {
-          console.log("Inpossível carregar login google");
-        }
+        let res = await this.googleApi.initialize(true);//.then((res: any) => {
+        res.renderButton(document.getElementById('gbtn') as HTMLElement, {
+          size: 'large',
+          width: 320,
+        });
         //})
       }
+      let result = false;
+      if (!this.noSession) result = await this.auth.authSession();
       /* verifica tambem se algum dos login (Google, Microsoft, etc), estão com sessão ativas */
       if (!result) {
         if (this.globals.hasGoogleLogin) {

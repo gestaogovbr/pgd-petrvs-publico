@@ -1,0 +1,9 @@
+1- I downloaded the cacert.pem from https://curl.se/docs/caextract.html
+
+2- I copied the cert to /usr/local/etc/ssl/certs/cacert.pem
+
+3- I added this line to the php.ini:
+openssl.cafile="/usr/local/etc/ssl/certs/cacert.pem"
+curl.cainfo="/usr/local/etc/ssl/certs/cacert.pem"
+
+4- restart the server and done.

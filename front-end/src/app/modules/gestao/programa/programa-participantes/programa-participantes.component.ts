@@ -37,7 +37,7 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     /* Inicializações */
-    this.code = "MOD_PART";
+    this.code = "MOD_PRGT_PART";
     this.filter = this.fh.FormBuilder({
       programa_id: { default: this.programa?.id },
       unidade_id: { default: undefined },
@@ -48,13 +48,13 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
       usuario_id: { default: undefined },
       habilitado: { default: true },
     }, this.cdRef, this.validate);
-    if(this.auth.hasPermissionTo('MOD_PART_HAB')) this.multiselectMenu.push({
+    if(this.auth.hasPermissionTo('MOD_PRGT_PART_HAB')) this.multiselectMenu.push({
       icon: "bi bi-person-check-fill",
       label: "Habilitar",
       color: "btn-outline-success",
       onClick: this.habilitarParticipantes.bind(this)
     });
-    if(this.auth.hasPermissionTo('MOD_PART_DESAB')) this.multiselectMenu.push({
+    if(this.auth.hasPermissionTo('MOD_PRGT_PART_DESAB')) this.multiselectMenu.push({
       icon: "bi bi-person-x-fill",
       label: "Desabilitar",
       color: "btn-outline-danger",
@@ -65,8 +65,8 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
 
   public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
-    if(this.auth.hasPermissionTo('MOD_PART_HAB') && !row.habilitado) result.push(this.BOTAO_HABILITAR);
-    if(this.auth.hasPermissionTo('MOD_PART_DESAB') && row.habilitado) result.push(this.BOTAO_DESABILITAR);
+    if(this.auth.hasPermissionTo('MOD_PRGT_PART_HAB') && !row.habilitado) result.push(this.BOTAO_HABILITAR);
+    if(this.auth.hasPermissionTo('MOD_PRGT_PART_DESAB') && row.habilitado) result.push(this.BOTAO_DESABILITAR);
     return result;
   }
 

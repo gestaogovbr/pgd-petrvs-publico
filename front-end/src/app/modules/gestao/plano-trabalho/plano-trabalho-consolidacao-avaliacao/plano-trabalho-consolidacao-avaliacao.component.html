@@ -1,5 +1,5 @@
 <tabs right [title]="isModal ? '' : title" [select]="onSelectTab.bind(this)">
-    <tab key="CONSOLIDACOES" icon="bi bi-clipboard-check" [label]="lex.translate('Consolidações')" [template]="consolidacoes">
+    <tab key="CONSOLIDACOES" icon="bi bi-clipboard-check" label="Consolidações" [template]="consolidacoes">
         <ng-template #consolidacoes>
             <grid [dao]="dao" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [init]="initGrid.bind(this)"
                 [hasAdd]="false" [hasEdit]="false" [loadList]="onGridLoad.bind(this)" [groupTemplate]="groupUnidadeUsuario"><!--[title]="isModal ? '' : title"-->
