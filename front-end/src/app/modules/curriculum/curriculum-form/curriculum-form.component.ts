@@ -64,8 +64,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   public formGraduacao?: FormGroup;
   public formIdiomaGrid?: FormGroup;
   public cursoWhere: any[] = [["id", "==", null]];
-  public dataTableIdioma : {entender: string, falar: string, idioma:string, escrever:string}[] = [];
-  public show : string =  'true';
+  public show : boolean =  true;
 
   constructor(public injector: Injector) {
     super(injector, Curriculum, CurriculumDaoService);
@@ -77,6 +76,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     this.curriculumGraduacaoDAO = injector.get<CurriculumGraduacaoDaoService>(CurriculumGraduacaoDaoService)
      
     this.form = this.fh.FormBuilder({
+        id : { default: "" },
         cidade_id: { default: "" },
         apresentacao: { default: "" },
         estados: { default: "" },
@@ -122,6 +122,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   public async initializeData(form: FormGroup) {
     const curriculuns = await this.dao?.query({ where: ['usuario_id', '==', this.auth.usuario?.id], join: this.join }).asPromise();
     let entity = curriculuns?.length ? curriculuns[0] : new Curriculum();//this.entity
+    curriculuns?.length ? (this.id = curriculuns[0].id) : (this.id = "");
     const cidade = entity.cidade_id != '' ? await this.cidadeDao?.getById(entity.cidade_id) : null;
     console.log('CIDADE',cidade)
     //this.form?.controls.estados.setValue(this.lookup.UF.find(x => x.key == 'AM'));//cidade.uf));
@@ -141,11 +142,12 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
       
       let curriculum = this.util.fill(new Curriculum(), this.entity!);
       //curriculum.usuario_id=this.auth.usuario?.id;
+      curriculum.id = this.id!;
       curriculum = this.util.fillForm(curriculum, this.form!.value);
       curriculum.usuario_id = this.auth.usuario?.id;
       curriculum.cidade_id = "86297f92-d919-e12f-476d-6aff99c46809";
       //curriculum.graduacoes = this.formGraduacao!.controls.graduacoes.value.map((x: any) => Object.assign({},{curso_id:x.data.curso , pretensao:x.data.pretensao}));
-      curriculum.graduacoes = this.form!.controls.graduacoes.value;//.filter((x: CurriculumGraduacao) => x._status?.length);
+      curriculum.graduacoes = this.form!.controls.graduacoes.value.filter((x: CurriculumGraduacao) => x._status?.length);
       
       resolve(curriculum);
 
@@ -155,7 +157,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   public onEstadosChange() {
     //console.log('onEstadosChange', this.form?.controls.estados)
     //const estados = this.estadosV!.value;
-    this.show = 'false';
+    this.show = false;
     const estados = this.form!.controls.estados.value;
     this.selecionaMunicipios(estados);
     //this.municipioV?.disabled;
@@ -166,7 +168,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     this.cidadeDao?.query({ where: [['uf', '==', uf]], orderBy: [['nome', 'asc']] }).getAll().then((municipios) => {
       this.municipios = municipios.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
     });
-    this.show = 'true';
+    this.show = true;
   }
 
 
@@ -196,7 +198,7 @@ public async loadIdiomas(form: FormGroup, row: CurriculumIdioma) {
 }
 
 public async removeIdiomas(row: any) {
-  if(await this.dialog.confirm("Excluir ?", "Deseja realmente excluir esta pergunta?")) {
+  if(await this.dialog.confirm("Excluir ?", "Deseja realmente excluir este registro?")) {
     return true;
   }
   return undefined;
@@ -216,7 +218,9 @@ public async saveIdiomas(form: FormGroup, row: any) {
 }
 
 public async addGraduacao() { 
-  return new CurriculumGraduacao({}) as IIndexable;
+  return new CurriculumGraduacao({
+    _status: "ADD"
+  }) as IIndexable;
 }
 
 public saveGraduacao(form: FormGroup, row: any){ 
@@ -226,6 +230,7 @@ public saveGraduacao(form: FormGroup, row: any){
     row.pretensao = values.pretensao;
     row.curso_id = values.curso_id;
     row.curso = this.curso?.selectedItem?.data;
+    row._status = row._status == "ADD" ? "ADD" : "EDIT";
     return row;
   }
   return undefined;
@@ -245,6 +250,7 @@ public async loadGraduacao(form: FormGroup, row: CurriculumGraduacao){
 public async removeGraduacao(row: any){ 
   if(await this.dialog.confirm("Excluir ?", "Deseja realmente excluir este registro?")) {
     row._status = "DEL";
+    return true;
   }
   return undefined;
 }
