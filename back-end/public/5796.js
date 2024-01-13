@@ -4528,7 +4528,7 @@ function PlanoTrabalhoListEntregaComponent_ng_template_22_Template(rf, ctx) {
 function PlanoTrabalhoListEntregaComponent_ng_template_25_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelementStart"](0, "div", 20)(1, "span")(2, "strong");
-    _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵtext"](3, "Detalhamento/Descri\u00E7\u00E3o dos Trabalhos");
+    _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵtext"](3, "Descri\u00E7\u00E3o dos Trabalhos");
     _angular_core__WEBPACK_IMPORTED_MODULE_19__["ɵɵelementEnd"]()()();
   }
 }
