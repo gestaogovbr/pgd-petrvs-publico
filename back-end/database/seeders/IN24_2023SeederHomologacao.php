@@ -1856,7 +1856,7 @@ class IN24_2023SeederHomologacao extends Seeder
                 "updated_at" => $this->timenow,
                 "deleted_at" => NULL,
                 "perfil_id" => $this->utilService->uuid("Participante"),
-                "tipo_capacidade_id" => $this->utilService->uuid("MOD_PART"),
+                "tipo_capacidade_id" => $this->utilService->uuid("MOD_PRGT_PART"),
             ),
             array(
                 "id" => "06f9fd56-7da5-4596-829c-3ec21dab9552",
