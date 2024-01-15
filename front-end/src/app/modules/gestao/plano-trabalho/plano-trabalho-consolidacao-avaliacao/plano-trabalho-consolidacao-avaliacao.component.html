@@ -1,5 +1,5 @@
 <tabs right [title]="isModal ? '' : title" [select]="onSelectTab.bind(this)">
-    <tab key="CONSOLIDACOES" icon="bi bi-clipboard-check" label="Consolidações" [template]="consolidacoes">
+    <tab key="CONSOLIDACOES" icon="bi bi-clipboard-check" [label]="lex.translate('Consolidações')" [template]="consolidacoes">
         <ng-template #consolidacoes>
             <grid [dao]="dao" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [init]="initGrid.bind(this)"
                 [hasAdd]="false" [hasEdit]="false" [loadList]="onGridLoad.bind(this)" [groupTemplate]="groupUnidadeUsuario"><!--[title]="isModal ? '' : title"-->
@@ -76,9 +76,9 @@
     <tab key="HISTORICO" icon="bi bi-clipboard-pulse" label="Histórico de Avaliações" [template]="historico">
         <ng-template #historico>
             <grid [dao]="dao" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [init]="initGrid.bind(this)"
-                [hasAdd]="false" [hasEdit]="false" [loadList]="onGridLoadHistorico.bind(this)" [groupTemplate]="groupHistorico"><!--[title]="isModal ? '' : title"-->
+                [hasAdd]="false" [hasEdit]="false" [loadList]="onGridLoadHistorico.bind(this)" [groupTemplate]="groupHistorico">
                 <ng-template let-separator="separator" let-row="row" #groupHistorico>
-                    <div class="d-flex"><!--*ngIf="row.avaliacao?.length"-->
+                    <div class="d-flex">
                         <div class="ms-3">
                             <profile-picture [url]="usuarioSeparator(separator)?.url_foto" [size]="40" [hint]="usuarioSeparator(separator)?.nome"></profile-picture>
                         </div> 

@@ -66,8 +66,8 @@
                 <reaction [entity]="row" origem="ATIVIDADE"></reaction>
             </ng-template>
             <ng-template let-row="row" #columnAtividadeDescricaoEdit>
-                <input-search [label]="lex.translate('Tipo de atividade')" relativeId="columnTipoAtividade" #tipoAtividade [size]="12" [emptyValue]="null" controlName="tipo_atividade_id" [control]="formEdit!.controls.tipo_atividade_id" [dao]="tipoAtividadeDao" [labelInfo]="lex.translate('Tipo de atividade') + ' utilizado para classificar a atividade'" [required]="!auth.hasPermissionTo('MOD_ATV_TIPO_ATV_VAZIO') ? 'true' : undefined"></input-search>
                 <input-textarea label="Descrição" [size]="12" [rows]="2" controlName="descricao" [control]="formEdit!.controls.descricao" required></input-textarea>
+                <input-search [label]="lex.translate('Tipo de atividade')" relativeId="columnTipoAtividade" #tipoAtividade [size]="12" [emptyValue]="null" controlName="tipo_atividade_id" [control]="formEdit!.controls.tipo_atividade_id" [dao]="tipoAtividadeDao" [labelInfo]="lex.translate('Tipo de atividade') + ' utilizado para classificar a atividade'" [required]="!auth.hasPermissionTo('MOD_ATV_TIPO_ATV_VAZIO') ? 'true' : undefined"></input-search>
             </ng-template>
         </column>
         <column [title]="'Etiquetas'" [width]="100" [template]="columnEtiquetas" [editTemplate]="columnEtiquetas" [columnEditTemplate]="selectable ? undefined : columnEtiquetasEdit" [edit]="selectable ? undefined : onColumnEtiquetasEdit.bind(this)" [save]="selectable ? undefined : onColumnEtiquetasSave.bind(this)">
