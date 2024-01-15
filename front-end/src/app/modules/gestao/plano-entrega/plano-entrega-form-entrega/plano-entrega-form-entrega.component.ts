@@ -86,9 +86,11 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.join = ["entrega", "objetivos.objetivo", "processos.processo"];
     this.form = this.fh.FormBuilder({
       descricao: { default: "" },
+      descricao_entrega: { default: "" },
       data_inicio: { default: new Date() },
       data_fim: { default: new Date() },
       meta: { default: 100 },
+      descricao_meta: { default: "" },
       realizado: { default: null },
       plano_entrega_id: { default: "" },
       entrega_pai_id: { default: null },
