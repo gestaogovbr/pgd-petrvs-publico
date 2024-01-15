@@ -4,7 +4,7 @@ import { CurriculumProfissional } from './currriculum-profissional.model';
 
 export class HistoricoCursoExternoCurriculum extends Base {
 
-    public profissional?: CurriculumProfissional;
+    public curriculumProfissional?: CurriculumProfissional;
     public areaAtividadeExterna?: AreaAtividadeExterna;
 
     public nome : string = '';

@@ -23,6 +23,7 @@ import { CurriculumIdioma } from 'src/app/models/curriculum-idioma.model';
 import { forEachChild } from 'typescript';
 import { TreeDragDropService } from 'primeng/api';
 import { Indexable } from 'chartjs-plugin-datalabels/types/options';
+import { InputNumberComponent } from 'src/app/components/input/input-number/input-number.component';
 
 @Component({
   selector: 'curriculum-pessoal-form',
@@ -41,7 +42,7 @@ import { Indexable } from 'chartjs-plugin-datalabels/types/options';
 })
 export class CurriculumFormComponent extends PageFormBase<Curriculum, CurriculumDaoService>{
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  //@ViewChild(InputSearchComponent, { static: false }) public area?: InputSearchComponent;
+  @ViewChild("quantidade_filhos", { static: false }) public quantidade_filhos?: InputNumberComponent;
   @ViewChild("area", { static: false }) public area?: InputSearchComponent;
   @ViewChild("estados", { static: false }) public estadosV?: InputSelectComponent;
   //@ViewChild(InputSelectComponent, { static: false }) public titulo?: InputSelectComponent;
@@ -143,7 +144,8 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
       let curriculum = this.util.fill(new Curriculum(), this.entity!);
       //curriculum.usuario_id=this.auth.usuario?.id;
       curriculum.id = this.id!;
-      curriculum = this.util.fillForm(curriculum, this.form!.value);
+     // curriculum.quantidade_filhos == "" ? (curriculum.quantidade_filhos = 0) : (curriculum.quantidade_filhos = 2);
+          curriculum = this.util.fillForm(curriculum, this.form!.value);
       curriculum.usuario_id = this.auth.usuario?.id;
       curriculum.cidade_id = "86297f92-d919-e12f-476d-6aff99c46809";
       //curriculum.graduacoes = this.formGraduacao!.controls.graduacoes.value.map((x: any) => Object.assign({},{curso_id:x.data.curso , pretensao:x.data.pretensao}));
@@ -255,9 +257,14 @@ public async removeGraduacao(row: any){
   return undefined;
 }
 
+public qtdeFilhosOnChange(){
+   if(this.form!.controls.quantidade_filhos?.value == ""){
+      this.form!.controls.quantidade_filhos.setValue(0);
+      this.form?.controls.filhos.setValue(false);
+   }
+}
 
 
-  
 
   /*ngOnInit(): void {
     super.ngOnInit();

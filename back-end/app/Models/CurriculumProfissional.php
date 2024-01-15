@@ -13,6 +13,7 @@ class CurriculumProfissional extends ModelBase
     protected $table = 'curriculums_profissionais';
 
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */// COMMENT
+        'ano_ingresso',
         'lotacao_atual', /* varchar(255); */// Lotação atual
         'especifique_habilidades', /* json; */// Especifique suas habilidades: (Ex: Desenvolvo em JavaScript)
         'viagem_nacional', /* tinyint; NOT NULL; */// Já fez viagem nacional a trabalho
@@ -34,7 +35,8 @@ class CurriculumProfissional extends ModelBase
         'especifique_habilidades' => AsJson::class,
     ];
 
-    //public $fillable_changes = ['graduacoes'];
+    public $fillable_changes = ['historicoAtividadeInterna','historicoAtividadeExterna','historicoCursoInterno','historicoCursoExterno','historicoDocenciaInterna',
+                                'historicoDocenciaExterna','historicoFuncao','historicoLotacao'];
 
     //public $fillable_relation = [];
 

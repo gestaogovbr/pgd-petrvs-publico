@@ -3,28 +3,28 @@
         <tab key="FUNCIONAIS" class="fw-bold" label="Funcionais">
             <div class="row mb-2 mt-4">
                 <input-select [size]="4" label="Ingresso na Instituição" icon="bi bi-calendar-check-fill" controlName="ano_ingresso" [control]="form!.controls.ano_ingresso" [items]="anos"></input-select>
-                <input-select #centroTreinamento [size]="4" label="Centro de Treinamento" icon="bi bi-building-fill" controlName="centro_treinamento" [control]="form!.controls.centro_treinamento" [items]="centroTreinamentoItems"></input-select>
-                <input-search #cargos [size]="4" label="Cargo" controlName="cargo" [control]="form!.controls.cargo" [dao]="cargoDao"></input-search>
+                <input-select #centroTreinamento [size]="4" label="Centro de Treinamento" icon="bi bi-building-fill" controlName="centro_treinamento_id" [control]="form!.controls.centro_treinamento_id" [items]="centroTreinamentoItems"></input-select>
+                <input-search #cargos [size]="4" label="Cargo" controlName="cargo_id" [control]="form!.controls.cargo_id" [dao]="cargoDao"></input-search>
             </div>
             <div class="row">
                 <separator class="mb-3 mt-3" title="Histórico de Lotações e Funções Gratificadas" [bold]="true"></separator>
-                <input-multiselect [size]="6" label="Funções ocupadas como titular ou substituto" [control]="form!.controls.funcoes" controlName="funcoes" [addItemHandle]="addItemFuncao.bind(this)" noBox [bold]="true">
-                    <input-select #funcoes [size]="12" icon="bi bi-check-circle-fill" controlName="funcoesOcupadas" [control]="form!.controls.funcoesOcupadas" [items]="funcoesItems"></input-select>
+                <input-multiselect [size]="6" label="Funções ocupadas como titular ou substituto" [control]="form!.controls.historicoFuncao" controlName="historicoFuncao" [addItemHandle]="addItemFuncao.bind(this)" noBox [bold]="true">
+                    <input-select #funcao [size]="12" icon="bi bi-check-circle-fill" controlName="funcao_id" [control]="form!.controls.funcao_id" [items]="funcoesItems"></input-select>
                 </input-multiselect>
-                <input-select #gruposEspecializados [size]="6" label="Você faz parte de algum grupo especializado?" icon="bi bi-check-circle" controlName="gruposEspecializados" [control]="form!.controls.gruposEspecializados" id="gruposEspecializados"  [items]="gruposItems"></input-select>
+                <input-select #gruposEspecializados [size]="6" label="Você faz parte de algum grupo especializado?" icon="bi bi-check-circle" controlName="grupo_especializado_id" [control]="form!.controls.grupo_especializado_id" id="grupo_especializado_id"  [items]="gruposItems"></input-select>
             </div>
             <div class="row my-3">
-                <input-multiselect [size]="6"  label="Selecione todas as unidades em que já foi lotado" [control]="form!.controls.lotaces" controlName="lotacoes" [addItemHandle]="addItemLotacao.bind(this)" noBox [bold]="true">
-                    <input-search #selectLotacao [size]="12" controlName="selectLotacao" [control]="form!.controls.selectLotacao" [dao]="unidadeDao" liveSearch></input-search>
+                <input-multiselect [size]="6"  label="Selecione todas as unidades em que já foi lotado" [control]="form!.controls.historicoLotacao" controlName="historicoLotacao" [addItemHandle]="addItemLotacao.bind(this)" noBox [bold]="true">
+                    <input-search #selecionaLotacao [size]="12" controlName="lotacao_id" [control]="form!.controls.lotacao_id" [dao]="unidadeDao" liveSearch></input-search>
                 </input-multiselect>
-                <input-search #lotacaoAtual [size]="6" label="Lotação atual" controlName="lotacaoAtual" [control]="form!.controls.lotacaoAtual" [dao]="unidadeDao"></input-search>
+                <input-search #lotacaoAtual [size]="6" label="Lotação atual" controlName="lotacao_atual" [control]="form!.controls.lotacao_atual" [dao]="unidadeDao"></input-search>
             </div>
         </tab>
         <tab key="HARD_SKILLS" class="fw-bold" label="Hard Skills">
             <div class="row mb-2 mt-3">
                 <separator class="mb-3" title="Desempenhou atividades externamente e que podem contribuir para a instituição?" [bold]="true"></separator>
                 <input-switch #radioAtividadeExterna [size]="2" [label]="radioAtividadeExterna.value ? 'Sim' : 'Não'" icon="fas fa-chalkboard" controlName="radioAtividadeExterna" [control]="formAtividadeExterna!.controls.radioAtividadeExterna"></input-switch>
-                <input-multiselect [size]="10" [hidden]="!(formAtividadeExterna!.controls.radioAtividadeExterna.value)" [control]="formAtividadeExterna!.controls.atividadesDesempenhou" controlName="atividadesDesempenhou" [addItemHandle]="addItemAtividadeExterna.bind(this)" noBox [bold]="true">
+                <input-multiselect [size]="10" [hidden]="!(formAtividadeExterna!.controls.radioAtividadeExterna.value)" [control]="formAtividadeExterna!.controls.historicoAtividadeExterna" controlName="historicoAtividadeExterna" [addItemHandle]="addItemAtividadeExterna.bind(this)" noBox [bold]="true">
                     <input-search #selectAreaAtividadeExterna [size]="12" label="Área da Atividade Externa" controlName="selectAreaAtividadeExterna" [control]="formAtividadeExterna!.controls.selectAreaAtividadeExterna"  [dao]="areaAtividadeExternaDao" ></input-search>
                 </input-multiselect>
             </div>
@@ -32,7 +32,7 @@
                 <separator class="my-3" title="Desempenhou atividades internamente que podem contribuir ou contribuiram para a instituição?" [bold]="true">
                 </separator>
                 <input-switch #radioAtividadeInterna [size]="2" [label]="radioAtividadeInterna.value ? 'Sim' : 'Não'" icon="fas fa-chalkboard" controlName="radioAtividadeInterna" [control]="formAtividadeInterna!.controls.radioAtividadeInterna"></input-switch>
-                <input-multiselect [size]="10" [hidden]="!(formAtividadeInterna!.controls.radioAtividadeInterna.value)" label="" [control]="formAtividadeInterna!.controls.atividadesDesempenhouInterna" controlName="atividadesDesempenhouInterna" [addItemHandle]="addItemAtividadeInterna.bind(this)" noBox>
+                <input-multiselect [size]="10" [hidden]="!(formAtividadeInterna!.controls.radioAtividadeInterna.value)" label="" [control]="formAtividadeInterna!.controls.historicoAtividadeInterna" controlName="historicoAtividadeInterna" [addItemHandle]="addItemAtividadeInterna.bind(this)" noBox>
                     <input-search #areaAtividadeInterna [size]="4" label="Área Temática" [control]="formAtividadeInterna!.controls.areaAtividadeInterna" controlName="areaAtividadeInterna"  [dao]="areaTematicaDao" ></input-search>
                     <input-text [size]="8" label="Atividade" icon="bi bi-arrows-angle-contract" controlName="inputAtividadeInterna" [control]="formAtividadeInterna!.controls.inputAtividadeInterna"></input-text>
                 </input-multiselect>
@@ -48,15 +48,15 @@
         <tab key="DOCENCIA" class="fw-bold mb-3" label="Docência">
             <div class="row">
                 <separator class="my-3" title="Você já realizou algum trabalho de docência fora da Instituição?" [bold]="true"></separator>
-                <input-switch [size]="2" #radioDocenciaFora [label]="radioDocenciaFora.value ? 'Sim' : 'Não'" icon="fas fa-chalkboard" controlName="radioDocenciaFora" [control]="formDocenciaExterna!.controls.radioDocenciaFora"></input-switch>
-                <input-multiselect [hidden]="!(formDocenciaExterna!.controls.radioDocenciaFora.value)" [size]="8" label="" [control]="formDocenciaExterna!.controls.docenciaFora" controlName="docenciaFora" [addItemHandle]="addItemDocenciaExterna.bind(this)" noBox>
-                    <input-text [size]="8" label="Qual/Quais" icon="bi bi-mortarboard-fill" controlName="inputDocenciaFora" [control]="formDocenciaExterna!.controls.inputDocenciaFora" [attr.maxlength]=250></input-text>
+                <input-switch [size]="2" #radioDocenciaExterna [label]="radioDocenciaExterna.value ? 'Sim' : 'Não'" icon="fas fa-chalkboard" controlName="radioDocenciaExterna" [control]="formDocenciaExterna!.controls.radioDocenciaExterna"></input-switch>
+                <input-multiselect [hidden]="!(formDocenciaExterna!.controls.radioDocenciaExterna.value)" [size]="8" label="" [control]="formDocenciaExterna!.controls.historicoDocenciaExterna" controlName="historicoDocenciaExterna" [addItemHandle]="addItemDocenciaExterna.bind(this)" noBox>
+                    <input-text [size]="8" label="Qual/Quais" icon="bi bi-mortarboard-fill" controlName="inputDocenciaExterna" [control]="formDocenciaExterna!.controls.inputDocenciaExterna" [attr.maxlength]=250></input-text>
                 </input-multiselect>
             </div>
             <div class="row">
                 <separator class="my-3" title="Você é docente ou instrutor da Instituição?" [bold]="true"></separator>
-                <input-switch [size]="2" #radioDocenciaPRF [label]="radioDocenciaPRF.value ? 'Sim' : 'Não'" icon="fas fa-chalkboard" controlName="radioDocenciaPRF" [control]="formDocenciaInterna!.controls.radioDocenciaPRF"></input-switch>
-                <input-multiselect [hidden]="!((formDocenciaInterna!.controls.radioDocenciaPRF.value))" [size]="8" label="Em qual/quais disciplinas?" icon="bi bi-mortarboard-fill" [control]="formDocenciaInterna.controls.docenciaPRF" controlName="docenciaPRF" [addItemHandle]="addItemDocenciaInterna.bind(this)" noBox>
+                <input-switch [size]="2" #radioDocenciaInterna [label]="radioDocenciaInterna.value ? 'Sim' : 'Não'" icon="fas fa-chalkboard" controlName="radioDocenciaInterna" [control]="formDocenciaInterna!.controls.radioDocenciaInterna"></input-switch>
+                <input-multiselect [hidden]="!((formDocenciaInterna!.controls.radioDocenciaInterna.value))" [size]="8" label="Em qual/quais disciplinas?" icon="bi bi-mortarboard-fill" [control]="formDocenciaInterna.controls.historicoDocenciaInterna" controlName="historicoDocenciaInterna" [addItemHandle]="addItemDocenciaInterna.bind(this)" noBox>
                     <input-select #selectDocenciaInterna [size]="8" icon="bi bi-mortarboard-fill" controlName="selectDocenciaInterna"  [control]="formDocenciaInterna!.controls.selectDocenciaInterna" [items]="disciplinasItens2"></input-select>
                 </input-multiselect>
             </div>
@@ -67,8 +67,8 @@
                 <separator class="my-3" title="Quais os principais cursos que você já fez e pretende fazer na Instituição?" [bold]="true">
                 </separator>
                 <input-switch #radioCursosInternos [size]="2" [label]="radioCursosInternos.value ? 'Fiz' : 'Pretendo'" icon="fas fa-user-graduate" controlName="radioCursosInternos" [control]="formCursoInterno!.controls.radioCursosInternos"></input-switch>
-                <input-multiselect  [size]="8" label="" [control]="formCursoInterno!.controls.cursosInternos" controlName="cursosInternos" [addItemHandle]="addItemCursoInterno.bind(this)" noBox>
-                    <input-search #areaConhecimento [size]="4" label="Área" [control]="formCursoInterno!.controls.areaInterna" controlName="areaInterna" [dao]="areaConhecimentoDao" (change)="onAreaConhecimentoChange()"></input-search>
+                <input-multiselect  [size]="8" label="" [control]="formCursoInterno!.controls.historicoCursoInterno" controlName="historicoCursoInterno" [addItemHandle]="addItemCursoInterno.bind(this)" noBox>
+                    <input-search #areaCursoInterno [size]="4" label="Área" [control]="formCursoInterno!.controls.areaCursoInterno" controlName="areaCursoInterno" [dao]="areaConhecimentoDao" (change)="onAreaConhecimentoChange()"></input-search>
                     <input-select #selectCursosInternos [size]="8" label="Curso" icon="bi bi-mortarboard-fill" controlName="selectCursosInternos"  [control]="formCursoInterno!.controls.selectCursosInternos" [items]="disciplinasItens"></input-select>
                 </input-multiselect>
             </div>
@@ -76,8 +76,8 @@
             <div class="row mb-3">
                 <separator class="my-3" title="Quais cursos você já fez e quais pretende fazer fora da Instituição?" [bold]="true"></separator>
                 <input-switch #radioCursosExternos [size]="2" [label]="radioCursosExternos.value ? 'Fiz' : 'Pretendo'" icon="fas fa-user-graduate" controlName="radioCursosExternos" [control]="formCursoExterno!.controls.radioCursosExternos"></input-switch>
-                <input-multiselect  [size]="8" label="" [control]="formCursoExterno!.controls.cursosExternos" controlName="cursosExternos" [addItemHandle]="addItemCursoExterno.bind(this)" noBox>
-                    <input-search #areaExterna [size]="4" label="Área/Instituição/Coorporação" [control]="formCursoExterno!.controls.areaExterna" controlName="areaExterna" [dao]="areaExternaDao"></input-search>
+                <input-multiselect  [size]="8" label="" [control]="formCursoExterno!.controls.historicoCursoExterno" controlName="historicoCursoExterno" [addItemHandle]="addItemCursoExterno.bind(this)" noBox>
+                    <input-search #areaCursoExterno [size]="4" label="Área/Instituição/Coorporação" [control]="formCursoExterno!.controls.areaCursoExterno" controlName="areaCursoExterno" [dao]="areaExternaDao"></input-search>
                     <input-text [size]="8" label="Curso" icon="bi bi-mortarboard-fill" controlName="inputCursosExternos" liveSearch [control]="formCursoExterno!.controls.inputCursosExternos"></input-text>
                 </input-multiselect>
             </div>
@@ -89,12 +89,12 @@
                 <separator class="mb-3 mt-3" title="Viagens" [bold]="true"></separator>
                 <div class="col-lg-6">
                     <label><i class="bi bi-flag-fill"></i> Já fez viagem nacional a trabalho?</label>
-                    <input-switch #radioViajaNacional [size]="2" [label]="radioViajaNacional.value ? 'Sim' : 'Não'" labelPosition="right" controlName="radioViajaNacional" [control]="form!.controls.radioViajaNacional">
+                    <input-switch #radioViajemNacional [size]="2" [label]="radioViajemNacional.value ? 'Sim' : 'Não'" labelPosition="right" controlName="radioViajemNacional" [control]="form!.controls.radioViajaNacional">
                     </input-switch>
                 </div>
                 <div class="col-lg-6">
                     <label><i class="bi bi-globe-americas"></i> Já fez viagem internacional a trabalho?</label>
-                    <input-switch  #radioViajaInternacional [size]="2" [label]="radioViajaInternacional.value ? 'Sim' : 'Não'" labelPosition="right" controlName="radioViajaInternacional" [control]="form!.controls.radioViajaInternacional">
+                    <input-switch  #radioViajemInternacional [size]="2" [label]="radioViajemInternacional.value ? 'Sim' : 'Não'" labelPosition="right" controlName="radioViajemInternacional" [control]="form!.controls.radioViajaInternacional">
                     </input-switch>
                 </div>
 
