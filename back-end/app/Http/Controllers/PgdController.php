@@ -37,7 +37,7 @@ class PgdController extends Controller
 
     public function exportarDadosJob()
     {
-        dd("exportarDadosJob");
+        dd("exportarDadosJob 252525");
         $request->validate(['dados'=>'required']);
         try {
             PGDCarregarDadosFila::dispatch();
