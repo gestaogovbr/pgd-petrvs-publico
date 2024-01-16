@@ -251,8 +251,8 @@ public async loadGraduacao(form: FormGroup, row: CurriculumGraduacao){
 
 public async removeGraduacao(row: any){ 
   if(await this.dialog.confirm("Excluir ?", "Deseja realmente excluir este registro?")) {
-    row._status = "DEL";
-    return true;
+    row._status = "DELETE";
+    
   }
   return undefined;
 }

@@ -106,7 +106,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   
   constructor(public injector: Injector) {
     super(injector, CurriculumProfissional, CurriculumProfissionalDaoService);
-    this.join = ['historicoAtividadeInterna','historicoAtividadeExterna','historicoCursoInterno','historicoCursoExterno','historicoDocenciaInterna',
+    this.join = ['historico_atividade_interna','historicoAtividadeExterna','historicoCursoInterno','historicoCursoExterno','historicoDocenciaInterna',
     'historicoDocenciaExterna','historicoFuncao','historicoLotacao', 'curriculum'];
     this.curriculumDao = injector.get<CurriculumDaoService>(CurriculumDaoService);
     this.userDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
@@ -242,9 +242,9 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       curriculumProfissional = this.util.fillForm(curriculumProfissional, this.form!.value);
       curriculumProfissional.id = curriculumProfissional.curriculum.id;
       curriculumProfissional.usuario_id = this.auth.usuario?.id;
-      curriculumProfissional.historicoAtividadeInterna = this.form!.controls.historicoAtividadeInterna.value;//.filter((x: HistoricoAtividadeInternaCurriculum) => x._status?.length);
+      curriculumProfissional.historicoAtividadeInterna = this.form!.controls.historicoAtividadeInterna.value.filter((x: HistoricoAtividadeInternaCurriculum) => x._status?.length);
       //(this.form?.controls.idiomasM.value as Array<LookupItem>).forEach(element => curriculumProfissional.idiomas.push(element.data));
-      resolve(curriculumProfissional);
+      resolve(curriculumProfissional);  
       //resolve(this.util.fillForm(curriculum, this.form!.value));
     });
     
