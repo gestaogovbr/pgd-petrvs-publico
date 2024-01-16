@@ -31,6 +31,14 @@ import { CursoDaoService } from 'src/app/dao/curso-dao.service';
 import { AreaConhecimentoDaoService } from 'src/app/dao/area-conhecimento-dao.service';
 import { AreaConhecimento } from 'src/app/models/area-conhecimento.model';
 import { HistoricoAtividadeInternaCurriculum } from 'src/app/models/historico-atividade-interna-currriculum.model';
+import { HistoricoLotacaoCurriculum } from 'src/app/models/historico-lotacao-currriculum.model';
+import { HistoricoFuncaoCurriculum } from 'src/app/models/historico-funcao-currriculum.model';
+import { HistoricoAtividadeExternaCurriculum } from 'src/app/models/historico-atividade-externa-currriculum.model';
+import { HistoricoDocenciaExternaCurriculum } from 'src/app/models/historico-docencia-externa-currriculum.model';
+import { HistoricoDocenciaInternaCurriculum } from 'src/app/models/historico-docencia-interna-currriculum.model';
+import { HistoricoCursoInternoCurriculum } from 'src/app/models/historico-curso-interno-currriculum.model';
+import { HistoricoCursoExternoCurriculumDaoService } from 'src/app/dao/historico-curso-externo-curriculum-dao.service';
+import { HistoricoCursoExternoCurriculum } from 'src/app/models/historico-curso-externo-currriculum.model';
 
 @Component({
   selector: 'curriculum-profissional-form',
@@ -53,19 +61,24 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   @ViewChild('escolhaRadioProgramaGestao', { static: false }) public escolhaRadioProgramaGestao?: InputRadioComponent;
   @ViewChild('escolhaInteresseProgramaGestao', { static: false }) public escolhaInteresseProgramaGestao?: InputRadioComponent;
   @ViewChild('funcao', { static: false }) public funcao?: InputSelectComponent;
-  @ViewChild('unidades', { static: false }) public unidades?: InputSearchComponent;
+  @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
   @ViewChild('lotacaoAtual', { static: false }) public lotacaoAtual?: InputSearchComponent;
   @ViewChild('gruposEspecializados', { static: false }) public gruposEspecializados?: InputSelectComponent;
   @ViewChild('centroTreinamento', { static: false }) public centroTreinamento?: InputSelectComponent;
   @ViewChild('cargos', { static: false }) public cargos?: InputSearchComponent;
   @ViewChild('selecionaLotacao', { static: false }) public selecionaLotacao?: InputSearchComponent;
-  @ViewChild('selectAreaAtividadeExterna', { static: false }) public selectAreaAtividadeExterna?: InputSearchComponent;
+  @ViewChild('areaAtividadeExterna', { static: false }) public areaAtividadeExterna?: InputSearchComponent;
+  @ViewChild('areaAtividadeExternaDocencia', { static: false }) public areaAtividadeExternaDocencia?: InputSearchComponent;
   @ViewChild('areaCursoInterno', { static: false }) public areaCursoInterno?: InputSearchComponent;
   @ViewChild('areaCursoExterno', { static: false }) public areaCursoExterno?: InputSearchComponent;
+  @ViewChild('cursoDocenciaInterna', { static: false }) public cursoDocenciaInterna?: InputSearchComponent;
+  @ViewChild('historicoCursoInterno', { static: false }) public historicoCursoInterno?: InputSelectComponent;
+  @ViewChild('areaHistoricoCursoExterno', { static: false }) public areaHistoricoCursoExterno?: InputSearchComponent;
   @ViewChild('areaAtividadeInterna', { static: false }) public areaAtividadeInterna?: InputSearchComponent;
   @ViewChild('selectDocenciaInterna', { static: false }) public selectDocenciaInterna?: InputSelectComponent;
   @ViewChild('selectCursosInternos', { static: false }) public selectCursosInternos?: InputSelectComponent;
- 
+  @ViewChild('areaTematica', { static: false }) public areaTematica?: InputSearchComponent;
+  
    
   public testeLookup: LookupItem[] = [{ 'key': 'key 1', 'value': 'value 1' }];
   public opcoesEscolha: LookupItem[] = [{ 'key': 1, 'value': 'Feito' }, { 'key': 0, 'value': 'Pretendo Fazer' }];
@@ -102,12 +115,20 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   public formDocenciaInterna : FormGroup;
   public formCursoExterno : FormGroup;
   public formCursoInterno : FormGroup;
+  public formHistoricoFuncaoGrid : FormGroup;
+  public formHistoricoLotacaoGrid : FormGroup;
+  public formHistoricoAtividadeExternaGrid : FormGroup;
+  public formHistoricoAtividadeInternaGrid : FormGroup;
+  public formHistoricoDocenciaExternaGrid : FormGroup;
+  public formHistoricoDocenciaInternaGrid : FormGroup;
+  public formHistoricoCursoExternoGrid : FormGroup;
+  public formHistoricoCursoInternoGrid : FormGroup;
   public materiaWhere: any[] = [["id", "==", null]];
-  
+    
   constructor(public injector: Injector) {
     super(injector, CurriculumProfissional, CurriculumProfissionalDaoService);
-    this.join = ['historico_atividade_interna','historicoAtividadeExterna','historicoCursoInterno','historicoCursoExterno','historicoDocenciaInterna',
-    'historicoDocenciaExterna','historicoFuncao','historicoLotacao', 'curriculum'];
+    this.join = ['historico_atividade_interna','historico_atividade_externa','historico_curso_interno','historico_curso_externo','historico_docencia_interna',
+    'historico_docencia_externa','historico_funcao.funcao','historico_lotacao', 'curriculum'];
     this.curriculumDao = injector.get<CurriculumDaoService>(CurriculumDaoService);
     this.userDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.lotacaoDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
@@ -130,19 +151,31 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       radioInteresseRemocao: { default: false },
       radioViajemNacional: { default: false },
       radioViajemInternacional: { default: false },
+      radioAtividadeExterna: { default: false },
+      radioAtividadeInterna: { default: false },
+      radioDocenciaExterna: { default: false },
+      radioDocenciaInterna: { default: false },
+      radioCursoExterno: { default: false },
+      
+
       ano_ingresso: { default: false },
       telefone: { default: "" },
       lotacao_atual: { default: "" },
 
       centro_treinamento_id: { default: false },
       cargo_id: { default: "" },
-      funcao_id: { default: "" },
       grupo_especializado_id: { default: "" },
-      lotacao_id: { default: "" },
-
+   
       especifique_habilidades: { default: [] },
       historicoFuncao: { default: [] },
       historicoLotacao: { default: [] },
+      historicoAtividadeExterna: { default: [] },
+      historicoAtividadeInterna: { default: [] },
+      historicoDocenciaExterna: { default: [] },
+      historicoDocenciaInterna: { default: [] },
+      historicoCursoInterno: { default: [] },
+      historicoCursoExterno: { default: [] },
+      
       
       inputEspecifiqueHabilidade: { default:"" },
       selecionaLotacao: { default: "" },
@@ -152,27 +185,26 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     }, this.cdRef, this.validate);
 
     this.formAtividadeExterna = this.fh.FormBuilder({
-      radioAtividadeExterna: { default: false },
-      historicoAtividadeExterna: { default: [] },
+      
+      
       selectAreaAtividadeExterna: { default:"" },
     }, this.cdRef, this.validate);
 
     this.formAtividadeInterna = this.fh.FormBuilder({
-      radioAtividadeInterna: { default: false },
-      historicoAtividadeInterna: { default: [] },
-      areaAtividadeInterna: { default:"" },
-      inputAtividadeInterna: { default:"" },
+    
+      
+      
     }, this.cdRef, this.validate);
 
     this.formDocenciaExterna = this.fh.FormBuilder({
-      radioDocenciaExterna: { default: false },
+      
       docenciaExterna: { default: [] },
       inputDocenciaExterna: { default:"" },
       
     }, this.cdRef, this.validate);
 
     this.formDocenciaInterna = this.fh.FormBuilder({
-      radioDocenciaInterna: { default: false },
+      
       historicoDocenciaInterna: { default: [] },
       selectDocenciaInterna: { default:"" },
     }, this.cdRef, this.validate);
@@ -185,13 +217,53 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     }, this.cdRef, this.validate);
 
     this.formCursoExterno = this.fh.FormBuilder({
-      radioCursosExternos: { default: false },
+      
       historicoCursoExterno: { default: [] },
       areaCursoExterno: { default:"" },
       inputCursosExternos: { default:"" },
     }, this.cdRef, this.validate);
-  }
 
+    this.formHistoricoFuncaoGrid = this.fh.FormBuilder({
+      funcao_id: { default: "" },
+    }, this.cdRef, this.validate);
+    
+    this.formHistoricoLotacaoGrid = this.fh.FormBuilder({
+      unidade_id: { default: "" },
+    }, this.cdRef, this.validate);
+
+    this.formHistoricoAtividadeExternaGrid = this.fh.FormBuilder({
+      area_atividade_externa_id: { default: "" },
+    }, this.cdRef, this.validate);
+
+    this.formHistoricoAtividadeInternaGrid = this.fh.FormBuilder({
+      areaAtividadeInterna: { default:"" },
+      inputAtividadeInterna: { default:"" },
+      area_tematica_id: { default: "" },
+      atividade_desempenhada: { default: ""}
+    }, this.cdRef, this.validate);
+
+    this.formHistoricoDocenciaExternaGrid = this.fh.FormBuilder({
+      area_atividade_externa_id: { default: "" },
+    }, this.cdRef, this.validate);
+
+    this.formHistoricoDocenciaInternaGrid = this.fh.FormBuilder({
+      curso_id: { default: "" },
+    }, this.cdRef, this.validate);
+
+    this.formHistoricoCursoInternoGrid = this.fh.FormBuilder({
+      radioPretensaoHistoricoCursoInterno: { default: false },
+      curso_id: { default: "" },
+      pretensao: { default: 0 },
+    }, this.cdRef, this.validate);
+
+    this.formHistoricoCursoExternoGrid = this.fh.FormBuilder({
+      area_atividade_externa_id: { default: "" },
+      pretensao: { default: 0 },
+      nome: { default: "" },
+    }, this.cdRef, this.validate);
+
+  }
+  
   ngOnInit(): void {
       for (let i = 1980; i <= (new Date()).getFullYear(); i++) {
         this.anos.push(Object.assign({}, { key: i, value: (i.toString()) }));
@@ -311,7 +383,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
 
   public addItemAtividadeExterna(): LookupItem | undefined {
     let result = undefined;
-    const area = this.selectAreaAtividadeExterna?.selectedEntity as AreaTematica;
+    const area = this.areaAtividadeExterna?.selectedEntity as AreaTematica;
     const key = area?.id; 
 
     if (area && this.util.validateLookupItem(this.formAtividadeExterna!.controls.historicoAtividadeExterna.value, key)) {
@@ -465,8 +537,336 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     }else{
       this.dialog.confirm("Preencher dados pessoais", "É necessário preencher dados pessoais");
     }
-
+    
+    this.lotacaoAtual?.setValue(this.auth.unidade?.id)
 
   }
+
+  //GRID FUNCAO
+
+  public async addHistoricoFuncao() { 
+    return new HistoricoFuncaoCurriculum({
+      _status: "ADD"
+      
+    }) as IIndexable;
+  }
+  
+  public saveHistoricoFuncao(form: FormGroup, row: any){ 
+    form?.markAllAsTouched();
+    if (form?.valid) {
+      console.log('ROW',row)
+      let values = form.value;
+      /*row.pretensao = values.pretensao;
+      row.curso_id = values.curso_id;*/
+      row.funcao = this.funcao?.selectedItem?.data;
+      row.funcao_id = values.funcao_id;
+      row._status = row._status == "ADD" ? "ADD" : "EDIT";
+      return row;
+    }
+    return undefined;
+  }
+  
+  public async loadHistoricoFuncao(form: FormGroup, row: HistoricoFuncaoCurriculum){
+    
+    //this.area?.loadSearch(row.curso?.area_conhecimento || row.curso?.area_id);
+    //this.area?.setValue(row.curso?.area_id)
+    this.formHistoricoFuncaoGrid!.controls.funcao_id.setValue(row.funcao?.id);
+   
+  }
+  
+  public async removeHistoricoFuncao(row: any){ 
+    if(await this.dialog.confirm("Excluir ?", "Deseja realmente excluir este registro?")) {
+      row._status = "DELETE";
+      
+    }
+    return undefined;
+  }
+
+
+//GRID LOTACAO
+   public async addHistoricoLotacao() { 
+    return new HistoricoLotacaoCurriculum({
+      _status: "ADD"
+      
+    }) as IIndexable;
+  }
+  
+  public saveHistoricoLotacao(form: FormGroup, row: any){ 
+    form?.markAllAsTouched();
+    if (form?.valid) {
+      let values = form.value;
+      console.log('VALUES',values)
+      console.log('ROW',row)
+     // row.unidade = this.unidade!.loadSearch(row.unidade_id);
+      row.unidade = this.unidade!.selectedItem;
+      row.unidade_id = values.unidade_id;
+      row._status = row._status == "ADD" ? "ADD" : "EDIT";
+      return row;
+    }
+    return undefined;
+  }
+  
+  public async loadHistoricoLotacao(form: FormGroup, row: HistoricoLotacaoCurriculum){
+    
+    //this.area?.loadSearch(row.curso?.area_conhecimento || row.curso?.area_id);
+    /*this.area?.setValue(row.curso?.area_id)*/
+    this.formHistoricoLotacaoGrid!.controls.unidade_id.setValue(row.unidade_id);
+  }
+  
+  public async removeHistoricoLotacao(row: any){ 
+    if(await this.dialog.confirm("Excluir ?", "Deseja realmente excluir este registro?")) {
+      row._status = "DELETE";
+      
+    }
+    return undefined;
+  }
+
+  // GRID ATIVIDADE EXTERNA
+
+  public async addHistoricoAtividadeExterna() { 
+    return new HistoricoAtividadeExternaCurriculum({
+      _status: "ADD"
+      
+    }) as IIndexable;
+  }
+  
+  public saveHistoricoAtividadeExterna(form: FormGroup, row: any){ 
+    form?.markAllAsTouched();
+    if (form?.valid) {
+      let values = form.value;
+      console.log('VALUES',values)
+      console.log('ROW',row)
+     /*row.unidade = this.unidade!.loadSearch(row.unidade_id);*/
+      row.areaAtividadeExternaDocencia = this.areaAtividadeExternaDocencia!.selectedItem;
+      row.area_atividade_externa_id = values.area_atividade_externa_id;
+      row._status = row._status == "ADD" ? "ADD" : "EDIT";
+      return row;
+    }
+    return undefined;
+  }
+  
+  public async loadHistoricoAtividadeExterna(form: FormGroup, row: HistoricoAtividadeExternaCurriculum){
+    
+    //this.area?.loadSearch(row.curso?.area_conhecimento || row.curso?.area_id);
+    /*this.area?.setValue(row.curso?.area_id)*/
+    this.formHistoricoAtividadeExternaGrid!.controls.area_atividade_externa_id.setValue(row.area_atividade_externa_id);
+  }
+  
+  public async removeHistoricoAtividadeExterna(row: any){ 
+    if(await this.dialog.confirm("Excluir ?", "Deseja realmente excluir este registro?")) {
+      row._status = "DELETE";
+      
+    }
+    return undefined;
+  }
+
+  // GRID ATIVIDADE Interna
+
+  public async addHistoricoAtividadeInterna() { 
+    return new HistoricoAtividadeInternaCurriculum({
+      _status: "ADD"
+      
+    }) as IIndexable;
+  }
+  
+  public saveHistoricoAtividadeInterna(form: FormGroup, row: any){ 
+    form?.markAllAsTouched();
+    if (form?.valid) {
+      let values = form.value;
+      console.log('VALUES',values)
+      console.log('ROW',row)
+     /*row.unidade = this.unidade!.loadSearch(row.unidade_id);*/
+      row.areaTematica = this.areaTematica!.selectedItem;
+      row.area_tematica_id = values.area_tematica_id;
+      row.atividade_desempenhada = values.atividade_desempenhada;
+      row._status = row._status == "ADD" ? "ADD" : "EDIT";
+      return row;
+    }
+    return undefined;
+  }
+  
+  public async loadHistoricoAtividadeInterna(form: FormGroup, row: HistoricoAtividadeInternaCurriculum){
+    
+    //this.area?.loadSearch(row.curso?.area_conhecimento || row.curso?.area_id);
+    /*this.area?.setValue(row.curso?.area_id)*/
+    this.formHistoricoAtividadeInternaGrid!.controls.area_tematica_id.setValue(row.area_tematica_id);
+    this.formHistoricoAtividadeInternaGrid!.controls.atividade_desempenhada.setValue(row.atividade_desempenhada);
+  }
+  
+  public async removeHistoricoAtividadeInterna(row: any){ 
+    if(await this.dialog.confirm("Excluir ?", "Deseja realmente excluir este registro?")) {
+      row._status = "DELETE";
+      
+    }
+    return undefined;
+  }
+
+  // GRID Docencia Externa
+
+  public async addHistoricoDocenciaExterna() { 
+    return new HistoricoDocenciaExternaCurriculum({
+      _status: "ADD"
+      
+    }) as IIndexable;
+  }
+  
+  public saveHistoricoDocenciaExterna(form: FormGroup, row: any){ 
+    form?.markAllAsTouched();
+    if (form?.valid) {
+      let values = form.value;
+      console.log('VALUES',values)
+      console.log('ROW',row)
+     /*row.unidade = this.unidade!.loadSearch(row.unidade_id);*/
+      row.areaAtividadeExternaDocencia = this.areaAtividadeExternaDocencia!.selectedItem;
+      row.area_atividade_externa_id = values.area_atividade_externa_id;
+      row._status = row._status == "ADD" ? "ADD" : "EDIT";
+      return row;
+    }
+    return undefined;
+  }
+  
+  public async loadHistoricoDocenciaExterna(form: FormGroup, row: HistoricoDocenciaExternaCurriculum){
+    
+    //this.area?.loadSearch(row.curso?.area_conhecimento || row.curso?.area_id);
+    /*this.area?.setValue(row.curso?.area_id)*/
+    this.formHistoricoDocenciaExternaGrid!.controls.area_atividade_externa_id.setValue(row.area_atividade_externa_id );
+    
+  }
+  
+  public async removeHistoricoDocenciaExterna(row: any){ 
+    if(await this.dialog.confirm("Excluir ?", "Deseja realmente excluir este registro?")) {
+      row._status = "DELETE";
+      
+    }
+    return undefined;
+  }
+
+  // GRID Docencia Interna
+
+  public async addHistoricoDocenciaInterna() { 
+    return new HistoricoDocenciaInternaCurriculum({
+      _status: "ADD"
+      
+    }) as IIndexable;
+  }
+  
+  public saveHistoricoDocenciaInterna(form: FormGroup, row: any){ 
+    form?.markAllAsTouched();
+    if (form?.valid) {
+      let values = form.value;
+      console.log('VALUES',values)
+      console.log('ROW',row)
+     /*row.unidade = this.unidade!.loadSearch(row.unidade_id);*/
+      row.cursoDocenciaInterna = this.cursoDocenciaInterna?.selectedItem;
+      row.curso_id = values.curso_id;
+      row.pretensao = values.pretensao;
+      row._status = row._status == "ADD" ? "ADD" : "EDIT";
+     
+      return row;
+    }
+    return undefined;
+  }
+  
+  public async loadHistoricoDocenciaInterna(form: FormGroup, row: HistoricoDocenciaInternaCurriculum){
+    
+    //this.area?.loadSearch(row.curso?.area_conhecimento || row.curso?.area_id);
+    /*this.area?.setValue(row.curso?.area_id)*/
+    this.formHistoricoDocenciaInternaGrid!.controls.curso_id.setValue(row.curso_id);
+    
+  }
+  
+  public async removeHistoricoDocenciaInterna(row: any){ 
+    if(await this.dialog.confirm("Excluir ?", "Deseja realmente excluir este registro?")) {
+      row._status = "DELETE";
+      
+    }
+    return undefined;
+  }
+
+  // GRID Curso Interno
+
+  public async addHistoricoCursoInterno() { 
+    return new HistoricoCursoInternoCurriculum({
+      _status: "ADD"
+      
+    }) as IIndexable;
+  }
+  
+  public saveHistoricoCursoInterno(form: FormGroup, row: any){ 
+    form?.markAllAsTouched();
+    if (form?.valid) {
+      let values = form.value;
+      console.log('VALUES',values)
+      console.log('ROW',row)
+     /*row.unidade = this.unidade!.loadSearch(row.unidade_id);*/
+      row.historicoCursoInterno = this.historicoCursoInterno!.selectedItem;
+      row.curso_id = values.curso_id;
+      row.pretensao = values.pretensao;
+      row._status = row._status == "ADD" ? "ADD" : "EDIT";
+      return row;
+    }
+    return undefined;
+  }
+  
+  public async loadHistoricoCursoInterno(form: FormGroup, row: HistoricoCursoInternoCurriculum){
+    
+    //this.area?.loadSearch(row.curso?.area_conhecimento || row.curso?.area_id);
+    /*this.area?.setValue(row.curso?.area_id)*/
+    this.formHistoricoCursoInternoGrid!.controls.curso_id.setValue(row.curso_id);
+    this.formHistoricoCursoInternoGrid!.controls.pretensao.setValue(row.pretensao);
+    
+  }
+  
+  public async removeHistoricoCursoInterno(row: any){ 
+    if(await this.dialog.confirm("Excluir ?", "Deseja realmente excluir este registro?")) {
+      row._status = "DELETE";
+      
+    }
+    return undefined;
+  }
+
+   // GRID Curso Externo
+
+   public async addHistoricoCursoExterno() { 
+    return new HistoricoCursoExternoCurriculum({
+      _status: "ADD"
+      
+    }) as IIndexable;
+  }
+  
+  public saveHistoricoCursoExterno(form: FormGroup, row: any){ 
+    form?.markAllAsTouched();
+    if (form?.valid) {
+      let values = form.value;
+      console.log('VALUES',values)
+      console.log('ROW',row)
+     /*row.unidade = this.unidade!.loadSearch(row.unidade_id);*/
+      row.areaHistoricoCursoExterno = this.areaHistoricoCursoExterno!.selectedItem;
+      row.area_atividade_externa_id = values.area_atividade_externa_id;
+      row.nome = values.nome;
+      row.pretensao = values.pretensao;
+      row._status = row._status == "ADD" ? "ADD" : "EDIT";
+      return row;
+    }
+    return undefined;
+  }
+  
+  public async loadHistoricoCursoExterno(form: FormGroup, row: HistoricoCursoExternoCurriculum){
+    
+    //this.area?.loadSearch(row.curso?.area_conhecimento || row.curso?.area_id);
+    /*this.area?.setValue(row.curso?.area_id)*/
+    this.formHistoricoCursoExternoGrid!.controls.area_atividade_externa_id.setValue(row.area_atividade_externa_id);
+    this.formHistoricoCursoExternoGrid!.controls.pretensao.setValue(row.pretensao);
+    this.formHistoricoCursoExternoGrid!.controls.nome.setValue(row.nome);
+  }
+  
+  public async removeHistoricoCursoExterno(row: any){ 
+    if(await this.dialog.confirm("Excluir ?", "Deseja realmente excluir este registro?")) {
+      row._status = "DELETE";
+      
+    }
+    return undefined;
+  }
+
 
 }

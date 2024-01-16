@@ -16,12 +16,8 @@ import { Curriculum } from 'src/app/models/currriculum.model';
 import { trigger,state,style,animate,transition } from '@angular/animations';
 import { InputMultiselectComponent } from 'src/app/components/input/input-multiselect/input-multiselect.component';
 import { CurriculumGraduacaoDaoService } from 'src/app/dao/curriculum-graduacao.service';
-import { data } from 'jquery';
 import { CurriculumGraduacao } from 'src/app/models/currriculum-graduacao.model';
-import { UNKNOWN_ERROR_CODE } from '@angular/compiler-cli';
 import { CurriculumIdioma } from 'src/app/models/curriculum-idioma.model';
-import { forEachChild } from 'typescript';
-import { TreeDragDropService } from 'primeng/api';
 import { Indexable } from 'chartjs-plugin-datalabels/types/options';
 import { InputNumberComponent } from 'src/app/components/input/input-number/input-number.component';
 

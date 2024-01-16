@@ -75,20 +75,6 @@
             </columns>
         </grid>
     </div>
-    
-    <!--<div class="row mt-3 mb-5">
-        <input-multiselect label="Graduação e Pós-Graduação - Especialização, Mestrado, Doutorado e Pós Doutorado" [size]="12" controlName="graduacaopos" [control]="formGraduacao!.controls.graduacaopos" [addItemHandle]="addItemGraduacaoPos.bind(this)" [bold]="true" noBox>
-            <input-switch [size]="2" label="Pretende Cursar?" icon="fas fa-user-graduate" controlName="pretensao" [control]="formGraduacao!.controls.pretensao" labelInfo="Pretendo Cursar">
-            </input-switch>
-            <input-search #areaPos [size]="4" [dao]="areaDao" label="Área de conhecimento" [control]="formGraduacao!.controls.areaPos" controlName="areaPos"></input-search>
-            <input-select [size]="2" label="Titulo" icon="bi bi-mortarboard-fill" controlName="titulo" liveSearch [control]="formGraduacao!.controls.titulo" [items]="this.lookup.TITULOS_CURSOS" (change)="onAreaPosGraduacaoChange()"></input-select>
-
-            <input-select [size]="4" #curso label="Curso" icon="fas fa-graduation-cap" controlName="cursoPos" liveSearch [control]="formGraduacao!.controls.cursoPos" [dao]="cursoDao" [where]="cursoWhere" [addRoute]="{route: ['raiox','cadastros','curso','new']}">
-            </input-select>
-
-        </input-multiselect>
-    </div>
-    <separator class="mb-1"></separator>-->
     <div class="row mt-3">
         <separator title="Graduação e Pós-Graduação - Especialização, Mestrado, Doutorado e Pós Doutorado" (click)="togglePopOver()"></separator>
     </div>
@@ -134,3 +120,18 @@
     </div>
 
 </editable-form>
+
+    
+    <!--<div class="row mt-3 mb-5">
+        <input-multiselect label="Graduação e Pós-Graduação - Especialização, Mestrado, Doutorado e Pós Doutorado" [size]="12" controlName="graduacaopos" [control]="formGraduacao!.controls.graduacaopos" [addItemHandle]="addItemGraduacaoPos.bind(this)" [bold]="true" noBox>
+            <input-switch [size]="2" label="Pretende Cursar?" icon="fas fa-user-graduate" controlName="pretensao" [control]="formGraduacao!.controls.pretensao" labelInfo="Pretendo Cursar">
+            </input-switch>
+            <input-search #areaPos [size]="4" [dao]="areaDao" label="Área de conhecimento" [control]="formGraduacao!.controls.areaPos" controlName="areaPos"></input-search>
+            <input-select [size]="2" label="Titulo" icon="bi bi-mortarboard-fill" controlName="titulo" liveSearch [control]="formGraduacao!.controls.titulo" [items]="this.lookup.TITULOS_CURSOS" (change)="onAreaPosGraduacaoChange()"></input-select>
+
+            <input-select [size]="4" #curso label="Curso" icon="fas fa-graduation-cap" controlName="cursoPos" liveSearch [control]="formGraduacao!.controls.cursoPos" [dao]="cursoDao" [where]="cursoWhere" [addRoute]="{route: ['raiox','cadastros','curso','new']}">
+            </input-select>
+
+        </input-multiselect>
+    </div>
+    <separator class="mb-1"></separator>-->
