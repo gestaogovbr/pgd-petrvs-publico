@@ -79,7 +79,6 @@ class TipoAtividadeFormComponent extends src_app_modules_base_page_form_base__WE
     this.titleEdit = entity => {
       return "Editando " + this.lex.translate("Tipo de Atividade") + ': ' + (entity?.nome || "");
     };
-    this.title = this.lex.translate("Tipo de Atividade");
     this.form = this.fh.FormBuilder({
       nome: {
         default: ""
@@ -592,6 +591,7 @@ var _class;
 
 
 
+let lex;
 const routes = [{
   path: '',
   component: _tipo_atividade_list_tipo_atividade_list_component__WEBPACK_IMPORTED_MODULE_3__.TipoAtividadeListComponent,
@@ -610,7 +610,7 @@ const routes = [{
     config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_1__.ConfigResolver
   },
   data: {
-    title: "Inclusão de Atividade",
+    title: lex.translate("Inclusão de Atividade"),
     modal: true
   }
 }, {

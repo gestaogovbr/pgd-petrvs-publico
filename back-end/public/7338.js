@@ -376,8 +376,6 @@ class AtividadeService {
       icon: "bi bi-question-circle",
       color: "light"
     };
-    const consolidacaoDataInicio = this.util.setTime(consolidacao.data_inicio, 0, 0, 0);
-    const consolidacaoDataFim = this.util.setTime(consolidacao.data_fim, 23, 59, 59);
     let result = [{
       data: {
         status: status.key,
@@ -396,8 +394,7 @@ class AtividadeService {
       icon: "bi bi-alarm",
       color: "danger"
     });
-    if (consolidacao && (atividade.data_inicio && this.util.asTimestamp(atividade.data_inicio) < this.util.asTimestamp(consolidacaoDataInicio) || atividade.data_entrega && this.util.asTimestamp(atividade.data_entrega) > this.util.asTimestamp(consolidacaoDataFim))) {
-      console.log(atividade.data_inicio, consolidacao.data_inicio, atividade.data_entrega, consolidacao.data_fim);
+    if (consolidacao && (atividade.data_inicio && this.util.asTimestamp(atividade.data_inicio) < this.util.asTimestamp(consolidacao.data_inicio) || atividade.data_entrega && this.util.asTimestamp(atividade.data_entrega) > this.util.asTimestamp(consolidacao.data_fim))) {
       result.push({
         data: {
           status: "EXTRAPOLADO",
