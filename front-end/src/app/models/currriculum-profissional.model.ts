@@ -21,8 +21,8 @@ export class CurriculumProfissional extends Base {
     public cargo?:Cargo;
     public grupoEspecializado?:GrupoEspecializado;
     public areaConhecimento?: AreaConhecimento;
-
-    public historicoFuncoes: HistoricoFuncaoCurriculum [] = [];
+   
+    public historicoFuncao: HistoricoFuncaoCurriculum [] = [];
     public historicoLotacao: HistoricoLotacaoCurriculum [] = [];// Unidades de lotação em toda carreira
     public historicoAtividadeExterna: HistoricoAtividadeExternaCurriculum [] = [];//Atividades desempenhadas externamente que podem contribuir para intituição
     public historicoAtividadeInterna: HistoricoAtividadeInternaCurriculum [] = [];//Atividades desempenhadas internamente que podem contribuir para intituição

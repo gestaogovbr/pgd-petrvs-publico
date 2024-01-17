@@ -7,6 +7,7 @@ use App\Models\Curriculum;
 use App\Models\CentroTreinamento;
 use App\Models\Cargo;
 use App\Models\GrupoEspecializado;
+use App\Casts\AsJson;
 
 class CurriculumProfissional extends ModelBase
 {

@@ -1,14 +1,20 @@
-import { Component, Input, OnInit, ViewChild} from '@angular/core';
+import { Component, Injector, Input, OnInit, ViewChild} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PageFormBase } from '../../base/page-form-base';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
+import { Questionario } from 'src/app/models/questionario.model';
+import { QuestionarioDaoService } from 'src/app/dao/questionario-dao.service';
+import { AbstractControl, FormGroup } from '@angular/forms';
+import { IIndexable } from 'src/app/models/base.model';
 
 @Component({
   selector: 'curriculum-atributosbig5-form',
   templateUrl: './curriculum-atributosbig5-form.component.html',
   styleUrls: ['./curriculum-atributosbig5-form.component.scss']
 })
-export class CurriculumAtributosbig5FormComponent{
+export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questionario, QuestionarioDaoService>{
+
+
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild("comunica", { static: false }) public comunicaV?: Input;
   @ViewChild("lideranca", { static: false }) public liderancaV?: Input;
@@ -19,30 +25,46 @@ export class CurriculumAtributosbig5FormComponent{
   @ViewChild("adaptabilidade", { static: false }) public adaptabilidadeV?: Input;
   @ViewChild("etica", { static: false }) public eticaV?: Input;
 
-  comunica! : string;
-  lideranca! : string;
-  resolucao! :string;
-  pensamento! :string;
-  criatividade! : string;
-  habilidade! :string;
-  adaptabilidade! :string;
-  etica! :string;
-  bigico! :string;
-  bigicoAmarelo! :string;
+  comunicaIMG! : string;
+  liderancaIMG! : string;
+  resolucaoIMG! :string;
+  pensamentoIMG! :string;
+  criatividadeIMG! : string;
+  habilidadeIMG! :string;
+  adaptabilidadeIMG! :string;
+  eticaIMG! :string;
+  bigicoIMG! :string;
+  bigicoAmareloIMG! :string;
 
 
-  constructor(private router:Router) { 
+  constructor(public injector: Injector) {
+    super(injector, Questionario, QuestionarioDaoService);
 
-    this.comunica="/assets/icons/iconeComunicacao.png";//"../assets/icons/Comunica.jpg";
-    this.lideranca="/assets/icons/iconeLideranca.png";
-    this.resolucao="/assets/icons/iconeResolucao.png";
-    this.pensamento="/assets/icons/iconePensamento.png";
-    this.criatividade="/assets/icons/iconeCriatividade.png";
-    this.habilidade="/assets/icons/iconeHabilidades.png";
-    this.adaptabilidade="/assets/icons/iconeAdaptabilidade.png";
-    this.etica="/assets/icons/iconeEtica.png";
-    this.bigicoAmarelo="/assets/images/iconBigAmarelo.png";
-    this.bigico="/assets/images/iconBig.png";
+    this.comunicaIMG="/assets/icons/iconeComunicacao.png";//"../assets/icons/Comunica.jpg";
+    this.liderancaIMG="/assets/icons/iconeLideranca.png";
+    this.resolucaoIMG="/assets/icons/iconeResolucao.png";
+    this.pensamentoIMG="/assets/icons/iconePensamento.png";
+    this.criatividadeIMG="/assets/icons/iconeCriatividade.png";
+    this.habilidadeIMG="/assets/icons/iconeHabilidades.png";
+    this.adaptabilidadeIMG="/assets/icons/iconeAdaptabilidade.png";
+    this.eticaIMG="/assets/icons/iconeEtica.png";
+    this.bigicoAmareloIMG="/assets/images/iconBigAmarelo.png";
+    this.bigicoIMG="/assets/images/iconBig.png";
+
+    this.form = this.fh.FormBuilder({
+      comunica: { default: 0 },
+      lideranca: { default: 0 },
+      resolucao: { default: 0 },
+      pretensao: { default: 0 },
+      criatividade: { default: 0 },
+      pensamento: { default: 0 },
+      habilidade: { default: 0 },
+      adaptabilidade: { default: 0 },
+      etica: { default: 0 },
+         
+      
+    }, this.cdRef, this.validate);
+
 
     /*const range = document.getElementById('range') as HTMLInputElement;
     console.log('RANGE-->',range)
@@ -59,7 +81,34 @@ export class CurriculumAtributosbig5FormComponent{
     document.addEventListener('DOMContentLoaded', setValue);
     console.log(range)
     //range.addEventListener('input', setValue);*/
+  }
 
+  public validate = (control: AbstractControl, controlName: string) => {
+    let result = null;
+
+    return result;
+  }
+
+  public async loadData(entity: Questionario, form: FormGroup) {
+    
+  }
+
+  public async initializeData(form: FormGroup) {
+    return await this.loadData(this.entity!, form);
+  }
+
+  public async saveData(form: IIndexable): Promise<Questionario> {
+    return new Promise<Questionario>((resolve, reject) => {
+      // this.entity!.usuario_id=this.auth.usuario!.id;
+      let questionario = this.util.fill(new Questionario(), this.entity!);
+      //curriculum.usuario_id=this.auth.usuario?.id;
+      questionario = this.util.fillForm(questionario, this.form!.value);
+     
+   
+      //(this.form?.controls.idiomasM.value as Array<LookupItem>).forEach(element => questionario.idiomas.push(element.data));
+      resolve(questionario);  
+      //resolve(this.util.fillForm(curriculum, this.form!.value));
+    });
   }
 
   ngOnInit(): void {
@@ -81,48 +130,37 @@ export class CurriculumAtributosbig5FormComponent{
     return result;
   }*/
   
-  public valorSoftChange(soft:string , name:string){
+  public valorSoftChange(control:any){
     
+      const comunica = this.form?.controls.comunica.value;
+      const lideranca = this.form?.controls.lideranca.value;
+      const resolucao = this.form?.controls.resolucao.value;
+      const pretensao = this.form?.controls.pretensao.value;
+      const criatividade = this.form?.controls.criatividade.value;
+      const pensamento = this.form?.controls.pensamento.value;
+      const habilidade = this.form?.controls.habilidade.value;
+      const adaptabilidade = this.form?.controls.adaptabilidade.value;
+      const etica = this.form?.controls.etica.value;
 
-    const comunicaEL = document.getElementsByName('comunica');
-    let comunica = comunicaEL
-    let lideranca = (this.liderancaV as HTMLInputElement).value;
-   
-    console.log(parseInt(soft), name, comunica, lideranca)
-    /**
-     * let $inputsFunc2 = $('.skills');
+      const array = [comunica,lideranca,resolucao,pretensao,criatividade,pensamento,habilidade,adaptabilidade,etica]
 
-    let soma2=0;
+      let soma:number = 0;
 
-    $inputsFunc2.each(function() {
-        if($(this).val()==''){
-          $(this).val(0);
-        }
-                                                
-        soma2 += parseInt($(this).val(), 0);
-                                                      
-    });
-    let soma=a+b+c+d+e+f+g;
-
-    if(soma2==20){
-      $('#lbltotalskill').text(soma2);
-      $('#lbltotalskill').css('color','red')
-      $('#lbltotalSK').css('color','red')
-
-    }else{
-      $('#lbltotalskill').text(soma2);
-      $('#lbltotalskill').css('color','black')
-      $('#lbltotalSK').css('color','black')
-
-    }
-     */
+      for (const val of array) {
+        //console.log('SUM SEQUENCIA', sum)
+         if(val ==''){
+          soma = soma + 0;
+         }else{
+          soma = soma + parseInt(val);
+         }
+         //sum =='' ? (soma = soma + 0) : (soma = soma + sum)
+         if(soma > 20){
+          this.dialog.alert("Valor excedido", "O valor máximo são 20 pontos.");
+          control.setValue( control.value - (soma - 20));
+          break;
+         }
+      }
   }
 
-  public voltarb5(){}
-
-  public resposta(){}
-
-  public proxb5(){}
-
-
+  
 }

@@ -101,7 +101,7 @@
 
             <div class="row mt-3">
                 <separator class="mb-3 mt-3" title="Desempenhou atividades internamente que podem contribuir ou contribuiram para a instituição?" [bold]="true"></separator>
-                <input-switch #radioAtividadeInterna [size]="2" [label]="radioAtividadeInterna.value ? 'Sim' : 'Não'" icon="fas fa-chalkboard" controlName="radioAtividadeInterna" [control]="formAtividadeInterna!.controls.radioAtividadeInterna"></input-switch>
+                <input-switch #radioAtividadeInterna [size]="2" [label]="radioAtividadeInterna.value ? 'Sim' : 'Não'" icon="fas fa-chalkboard" controlName="radioAtividadeInterna" [control]="form!.controls.radioAtividadeInterna"></input-switch>
                 <grid *ngIf="form!.controls.radioAtividadeInterna.value" [control]="form!.controls.historicoAtividadeInterna" [minHeight]="150" [form]="formHistoricoAtividadeInternaGrid!" [hasDelete]="true" [add]="addHistoricoAtividadeInterna.bind(this)" [load]="loadHistoricoAtividadeInterna.bind(this)" [remove]="removeHistoricoAtividadeInterna.bind(this)" [save]="saveHistoricoAtividadeInterna.bind(this)" editable>
                     <columns>
                         <column title="Área temática" titleHint="Escolha a área." [template]="columnAtividadeInterna" [editTemplate]="editAtividadeInterna">
@@ -283,12 +283,12 @@
                 <separator class="mb-3 mt-3" title="Viagens" [bold]="true"></separator>
                 <div class="col-lg-6">
                     <label><i class="bi bi-flag-fill"></i> Já fez viagem nacional a trabalho?</label>
-                    <input-switch #radioViajemNacional [size]="2" [label]="radioViajemNacional.value ? 'Sim' : 'Não'" labelPosition="right" controlName="radioViajemNacional" [control]="form!.controls.radioViajaNacional">
+                    <input-switch #radioViajemNacional [size]="2" [label]="radioViajemNacional.value ? 'Sim' : 'Não'" labelPosition="right" controlName="viagem_nacional" [control]="form!.controls.viagem_nacional">
                     </input-switch>
                 </div>
                 <div class="col-lg-6">
                     <label><i class="bi bi-globe-americas"></i> Já fez viagem internacional a trabalho?</label>
-                    <input-switch #radioViajemInternacional [size]="2" [label]="radioViajemInternacional.value ? 'Sim' : 'Não'" labelPosition="right" controlName="radioViajemInternacional" [control]="form!.controls.radioViajaInternacional">
+                    <input-switch #radioViajemInternacional [size]="2" [label]="radioViajemInternacional.value ? 'Sim' : 'Não'" labelPosition="right" controlName=" viagem_internacional" [control]="form!.controls. viagem_internacional">
                     </input-switch>
                 </div>
 
@@ -296,7 +296,7 @@
             <div class="row">
                 <separator class="my-3" title="Você tem interesse na participação do Banco Nacional de Talentos (BNT IN PRF Nº 58 de 27 de agosto de 2021) SEI 35010079?" [bold]="true">
                 </separator>
-                <input-switch #radioInteresseBNT [size]="1" [label]="radioInteresseBNT.value ? 'Sim' : 'Não'" icon="bi bi-universal-access" controlName="radioInteresseBNT" [control]="form!.controls.radioInteresseBNT">
+                <input-switch #radioInteresseBNT [size]="1" [label]="radioInteresseBNT.value ? 'Sim' : 'Não'" icon="bi bi-universal-access" controlName="interesse_bnt" [control]="form!.controls.interesse_bnt">
                 </input-switch>
 
             </div>
@@ -305,7 +305,7 @@
                 </separator>
                 <input-switch #radioProgramaGestao [size]="1" [label]="radioProgramaGestao.value ? 'Sim' : 'Não'" icon="bi bi-calendar2-check" controlName="radioProgramaGestao" [control]="form!.controls.radioProgramaGestao" (change)="onChangeEscolhePG()">
                 </input-switch>
-                <input-radio #escolhaRadioProgramaGestao *ngIf="form!.controls.radioProgramaGestao.value" [size]="4" label="Opções" [items]="lookup.PG_PRF" controlName="escolhaRadioProgramaGestao">
+                <input-radio #escolhaRadioProgramaGestao *ngIf="form!.controls.radioProgramaGestao.value" [size]="4" label="Opções" [items]="lookup.PG_PRF" controlName="pgd_inserido" [control]="form!.controls.pgd_inserido">
                 </input-radio>
 
             </div>
@@ -315,7 +315,7 @@
                 <input-switch #radioInteresseProgramaGestao [size]="1" [label]="radioInteresseProgramaGestao.value ? 'Sim' : 'Não'" icon="bi bi-bookmark-check" controlName="radioInteresseProgramaGestao" [control]="form!.controls.radioInteresseProgramaGestao" (change)="onChangeEscolheInteressePG()">
                 </input-switch>
 
-                <input-radio #escolhaInteresseProgramaGestao *ngIf="form!.controls.radioInteresseProgramaGestao.value" [size]="4" label="Opções" [items]="lookup.PG_PRF" controlName="escolhaInteresseProgramaGestao">
+                <input-radio #escolhaInteresseProgramaGestao *ngIf="form!.controls.radioInteresseProgramaGestao.value" [size]="4" label="Opções" [items]="lookup.PG_PRF" controlName="pgd_interesse"  [control]="form!.controls.pgd_interesse">
                 </input-radio>
                 <input-text *ngIf="form!.controls.radioInteresseProgramaGestao.value" [size]="4" label="Telefone de contato do Chefe Imediato" icon="fas fa-phone" controlName="telefone" [control]="form!.controls.telefone" [maskFormat]="'(00) 0000-0000 || (00) 0 0000-0000'" [attr.maxlength]=250></input-text>
 
@@ -323,7 +323,7 @@
                 <div class="row">
                     <separator class="my-3" title="Você tem interesse em remoção?" [bold]="true">
                     </separator>
-                    <input-switch #radioInteresseRemocao [size]="1" [label]="radioInteresseRemocao.value ? 'Sim' : 'Não'" icon="bi bi-house-door-fill" controlName="radioInteresseRemocao" [control]="form!.controls.radioInteresseRemocao">
+                    <input-switch #radioInteresseRemocao [size]="1" [label]="radioInteresseRemocao.value ? 'Sim' : 'Não'" icon="bi bi-house-door-fill" controlName="remocao" [control]="form!.controls.remocao">
                     </input-switch>
                 </div>
             </div>
