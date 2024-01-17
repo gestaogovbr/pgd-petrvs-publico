@@ -791,6 +791,7 @@ class PlanejamentoListObjetivoComponent extends src_app_modules_base_page_frame_
       field: "eixo_tematico_id",
       label: "Eixo Temático"
     }];
+    this.orderBy = [['nome', 'asc']];
     this.form = this.fh.FormBuilder({
       nome: {
         default: ""
@@ -851,8 +852,6 @@ class PlanejamentoListObjetivoComponent extends src_app_modules_base_page_frame_
   }
   marcador(row) {
     let level = row._metadata?.level || 0;
-    //if (!this.gridControl) this.sortObjetivos();
-    //console.log(row,"ROW");
     return level < 1 ? "" : level < 2 ? "• " : level < 3 ? "- " : "+ ";
   }
   addObjetivo() {
@@ -915,10 +914,12 @@ class PlanejamentoListObjetivoComponent extends src_app_modules_base_page_frame_
           level
         });
         items.push(item);
-        if (item._status != "DELETE") addItens(this.items.filter(x => x.objetivo_pai_id == item.id).sort((a, b) => a.sequencia - b.sequencia), level + 1);
+        //if(item._status != "DELETE") addItens(this.items.filter(x => x.objetivo_pai_id == item.id).sort((a,b) => a.sequencia - b.sequencia), level + 1);
+        if (item._status != "DELETE") addItens(this.items.filter(x => x.objetivo_pai_id == item.id).sort((a, b) => a.nome > b.nome ? -1 : 1), level + 1);
       }
     };
-    addItens(this.items.filter(x => !x.objetivo_pai_id).sort((a, b) => a.sequencia - b.sequencia), 0);
+    //addItens(this.items.filter(x => !x.objetivo_pai_id).sort((a,b) => a.sequencia - b.sequencia), 0);
+    addItens(this.items.filter(x => !x.objetivo_pai_id).sort((a, b) => a.nome > b.nome ? -1 : 1), 0);
     this.items.length = 0;
     this.items.push(...items);
     this.cdRef.detectChanges();
@@ -1009,8 +1010,8 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdef
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵInheritDefinitionFeature"]],
   decls: 16,
-  vars: 18,
-  consts: [["editable", "", 3, "items", "form", "selectable", "minHeight", "add", "remove", "hasDelete", "hasEdit", "hasAdd", "join", "groupBy", "groupTemplate"], ["gridObjetivos", ""], ["groupEixoTematico", ""], ["title", "Nome", 3, "template"], ["columnNome", ""], ["title", "Eixo Tem\u00E1tico", 3, "template"], ["columnEixoTematico", ""], ["title", "Fundamenta\u00E7\u00E3o", 3, "template"], ["columnFundamentacao", ""], ["title", "Objetivo Superior", 3, "template", 4, "ngIf"], ["type", "options", 3, "dynamicButtons", "options"], [1, "text-wrap"], [3, "icon", "color", "label"], [1, "text-break", "w-100"], ["title", "Objetivo Superior", 3, "template"], ["columnObjetivoSuperior", ""]],
+  vars: 19,
+  consts: [["editable", "", 3, "items", "form", "selectable", "minHeight", "add", "remove", "hasDelete", "hasEdit", "hasAdd", "join", "groupBy", "groupTemplate", "orderBy"], ["gridObjetivos", ""], ["groupEixoTematico", ""], ["title", "Nome", 3, "template"], ["columnNome", ""], ["title", "Eixo Tem\u00E1tico", 3, "template"], ["columnEixoTematico", ""], ["title", "Fundamenta\u00E7\u00E3o", 3, "template"], ["columnFundamentacao", ""], ["title", "Objetivo Superior", 3, "template", 4, "ngIf"], ["type", "options", 3, "dynamicButtons", "options"], [1, "text-wrap"], [3, "icon", "color", "label"], [1, "text-break", "w-100"], ["title", "Objetivo Superior", 3, "template"], ["columnObjetivoSuperior", ""]],
   template: function PlanejamentoListObjetivoComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "grid", 0, 1);
@@ -1033,7 +1034,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdef
       const _r3 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵreference"](7);
       const _r5 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵreference"](10);
       const _r7 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵreference"](13);
-      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("items", ctx.items)("form", ctx.form)("selectable", false)("minHeight", ctx.minHeight)("add", ctx.addObjetivo.bind(ctx))("remove", ctx.removeObjetivo.bind(ctx))("hasDelete", false)("hasEdit", false)("hasAdd", !ctx.disabled)("join", ctx.join)("groupBy", ctx.groupBy)("groupTemplate", _r1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("items", ctx.items)("form", ctx.form)("selectable", false)("minHeight", ctx.minHeight)("add", ctx.addObjetivo.bind(ctx))("remove", ctx.removeObjetivo.bind(ctx))("hasDelete", false)("hasEdit", false)("hasAdd", !ctx.disabled)("join", ctx.join)("groupBy", ctx.groupBy)("groupTemplate", _r1)("orderBy", ctx.orderBy);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](5);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("template", _r3);
       _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](3);

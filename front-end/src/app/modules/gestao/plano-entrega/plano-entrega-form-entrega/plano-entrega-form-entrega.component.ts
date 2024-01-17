@@ -86,9 +86,11 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.join = ["entrega", "objetivos.objetivo", "processos.processo"];
     this.form = this.fh.FormBuilder({
       descricao: { default: "" },
+      descricao_entrega: { default: "" },
       data_inicio: { default: new Date() },
       data_fim: { default: new Date() },
       meta: { default: 100 },
+      descricao_meta: { default: "" },
       realizado: { default: null },
       plano_entrega_id: { default: "" },
       entrega_pai_id: { default: null },
@@ -330,7 +332,8 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
         default:
           break;
       }
-      if (entregaItem.etiquetas) this.loadEtiquetas();
+      //if (entregaItem.etiquetas) this.loadEtiquetas();
+      this.loadEtiquetas();
       if (entregaItem.checklist) this.loadChecklist();
       this.calculaRealizado();
     }
@@ -338,6 +341,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
 
   public loadEtiquetas() {
     this.etiquetas = this.util.merge(this.entrega?.selectedEntity.etiquetas, this.unidade?.selectedEntity.etiquetas, (a, b) => a.key == b.key);
+    this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);//
   }
 
   public loadChecklist() {

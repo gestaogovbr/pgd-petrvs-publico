@@ -21,7 +21,7 @@
         <input-select [size]="5" label="Estado Civil" icon="fas fa-ring" controlName="estado_civil" [control]="form!.controls.estado_civil" [items]="this.lookup.ESTADO_CIVIL">
         </input-select>
         <input-switch [size]="2" label="Possui Filhos?" icon="fas fa-child" controlName="filhos" [control]="form!.controls.filhos"></input-switch>
-        <input-number [hidden]="form!.controls.filhos.value ? undefined : 'true'" [size]="1" label="Quantos?" icon="bi bi-arrow-up-right-circle" controlName="quantidade_filhos" [control]="form!.controls.quantidade_filhos" [minValue]="0"></input-number>
+        <input-number #qtdefilhos [hidden]="form!.controls.filhos.value ? undefined : 'true'" [size]="1" label="Quantos?" icon="bi bi-arrow-up-right-circle" controlName="quantidade_filhos" [control]="form!.controls.quantidade_filhos" [attr.min]="0" [minValue]="0" (change)="qtdeFilhosOnChange()"></input-number>
     </div>
     <div class="row mt-3">
         <separator title="Idiomas" (click)="togglePopOver()"></separator>
@@ -30,11 +30,11 @@
         <i class="bi bi-exclamation-triangle-fill"></i>
         <p>Hello! I'm a helpful message.</p>
     </div>-->
-    <div class="row my-3">
+    <div class="row mt-3">
 
         <input-switch [size]="2" label="Fala outros idiomas?" icon="fas fa-language" controlName="radioFalaIdioma" [control]="form!.controls.radioFalaIdioma"></input-switch>
        
-        <grid *ngIf="form!.controls.radioFalaIdioma.value" [control]="form!.controls.idiomas" [minHeight]="150" 
+        <grid *ngIf="form!.controls.radioFalaIdioma.value" [control]="form!.controls.idiomas" [minHeight]="100" 
             [form]="formIdiomaGrid!" [hasDelete]="true" [add]="addIdiomas.bind(this)" [load]="loadIdiomas.bind(this)" [remove]="removeIdiomas.bind(this)" 
             [save]="saveIdiomas.bind(this)" editable>
             <columns>
@@ -75,21 +75,9 @@
             </columns>
         </grid>
     </div>
-    
-    <!--<div class="row mt-3 mb-5">
-        <input-multiselect label="Graduação e Pós-Graduação - Especialização, Mestrado, Doutorado e Pós Doutorado" [size]="12" controlName="graduacaopos" [control]="formGraduacao!.controls.graduacaopos" [addItemHandle]="addItemGraduacaoPos.bind(this)" [bold]="true" noBox>
-            <input-switch [size]="2" label="Pretende Cursar?" icon="fas fa-user-graduate" controlName="pretensao" [control]="formGraduacao!.controls.pretensao" labelInfo="Pretendo Cursar">
-            </input-switch>
-            <input-search #areaPos [size]="4" [dao]="areaDao" label="Área de conhecimento" [control]="formGraduacao!.controls.areaPos" controlName="areaPos"></input-search>
-            <input-select [size]="2" label="Titulo" icon="bi bi-mortarboard-fill" controlName="titulo" liveSearch [control]="formGraduacao!.controls.titulo" [items]="this.lookup.TITULOS_CURSOS" (change)="onAreaPosGraduacaoChange()"></input-select>
-
-            <input-select [size]="4" #curso label="Curso" icon="fas fa-graduation-cap" controlName="cursoPos" liveSearch [control]="formGraduacao!.controls.cursoPos" [dao]="cursoDao" [where]="cursoWhere" [addRoute]="{route: ['raiox','cadastros','curso','new']}">
-            </input-select>
-
-        </input-multiselect>
+    <div class="row mt-3">
+        <separator title="Graduação e Pós-Graduação - Especialização, Mestrado, Doutorado e Pós Doutorado" (click)="togglePopOver()"></separator>
     </div>
-    <separator class="mb-1"></separator>-->
-
     <div class="row my-3">
         <grid [minHeight]="150" [form]="formGraduacao!" [control]="form!.controls.graduacoes" [hasDelete]="true" [add]="addGraduacao.bind(this)" [load]="loadGraduacao.bind(this)" 
              [remove]="removeGraduacao.bind(this)" [save]="saveGraduacao.bind(this)" editable>
@@ -132,3 +120,18 @@
     </div>
 
 </editable-form>
+
+    
+    <!--<div class="row mt-3 mb-5">
+        <input-multiselect label="Graduação e Pós-Graduação - Especialização, Mestrado, Doutorado e Pós Doutorado" [size]="12" controlName="graduacaopos" [control]="formGraduacao!.controls.graduacaopos" [addItemHandle]="addItemGraduacaoPos.bind(this)" [bold]="true" noBox>
+            <input-switch [size]="2" label="Pretende Cursar?" icon="fas fa-user-graduate" controlName="pretensao" [control]="formGraduacao!.controls.pretensao" labelInfo="Pretendo Cursar">
+            </input-switch>
+            <input-search #areaPos [size]="4" [dao]="areaDao" label="Área de conhecimento" [control]="formGraduacao!.controls.areaPos" controlName="areaPos"></input-search>
+            <input-select [size]="2" label="Titulo" icon="bi bi-mortarboard-fill" controlName="titulo" liveSearch [control]="formGraduacao!.controls.titulo" [items]="this.lookup.TITULOS_CURSOS" (change)="onAreaPosGraduacaoChange()"></input-select>
+
+            <input-select [size]="4" #curso label="Curso" icon="fas fa-graduation-cap" controlName="cursoPos" liveSearch [control]="formGraduacao!.controls.cursoPos" [dao]="cursoDao" [where]="cursoWhere" [addRoute]="{route: ['raiox','cadastros','curso','new']}">
+            </input-select>
+
+        </input-multiselect>
+    </div>
+    <separator class="mb-1"></separator>-->
