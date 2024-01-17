@@ -1396,8 +1396,7 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
           default:
             break;
         }
-        //if (entregaItem.etiquetas) this.loadEtiquetas();
-        _this9.loadEtiquetas();
+        if (entregaItem.etiquetas) _this9.loadEtiquetas();
         if (entregaItem.checklist) _this9.loadChecklist();
         _this9.calculaRealizado();
       }
@@ -1405,9 +1404,7 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
   }
   loadEtiquetas() {
     this.etiquetas = this.util.merge(this.entrega?.selectedEntity.etiquetas, this.unidade?.selectedEntity.etiquetas, (a, b) => a.key == b.key);
-    this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario.config?.etiquetas, (a, b) => a.key == b.key); //
   }
-
   loadChecklist() {
     const modeloEntrega = this.entrega?.selectedEntity;
     let checkAdd = modeloEntrega.checklist.map(a => {
