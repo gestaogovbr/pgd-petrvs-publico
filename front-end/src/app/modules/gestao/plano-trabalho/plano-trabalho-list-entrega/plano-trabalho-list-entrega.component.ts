@@ -276,10 +276,10 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   }
 
   public onEntregaChange(event: Event) {
-    let entrega = this.entrega!.selectedItem?.data as PlanoEntregaEntrega;
+    /*let entrega = this.entrega!.selectedItem?.data as PlanoEntregaEntrega;
     if(!this.form!.controls.descricao.value?.length) {
       this.form!.controls.descricao.setValue(entrega?.descricao || "");
-    }
+    }*/
   }
 
   public onForcaTrabalhoChange(row: any) {

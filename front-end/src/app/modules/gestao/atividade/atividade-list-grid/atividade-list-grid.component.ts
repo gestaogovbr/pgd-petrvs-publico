@@ -72,7 +72,7 @@ export class AtividadeListGridComponent extends AtividadeListBase {
       etiquetas: { default: [] },
       etiqueta: { default: null }
     });
-    this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }, { field: "plano_trabalho_entrega.plano_entrega_entrega.descricao", label: "Entrega" }];
+    this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }, { field: "plano_trabalho_entrega.plano_entrega_entrega.descricao", label: "Entrega" }, { field: "plano_trabalho_entrega.descricao", label: "Descrição dos trabalhos" }];
     this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 
