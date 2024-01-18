@@ -39,6 +39,7 @@ import { HistoricoDocenciaInternaCurriculum } from 'src/app/models/historico-doc
 import { HistoricoCursoInternoCurriculum } from 'src/app/models/historico-curso-interno-currriculum.model';
 import { HistoricoCursoExternoCurriculumDaoService } from 'src/app/dao/historico-curso-externo-curriculum-dao.service';
 import { HistoricoCursoExternoCurriculum } from 'src/app/models/historico-curso-externo-currriculum.model';
+import { CapacidadeTecnicaDaoService } from 'src/app/dao/capacidade-tecnica-dao.service';
 
 @Component({
   selector: 'curriculum-profissional-form',
@@ -78,6 +79,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   @ViewChild('selectDocenciaInterna', { static: false }) public selectDocenciaInterna?: InputSelectComponent;
   @ViewChild('selectCursosInternos', { static: false }) public selectCursosInternos?: InputSelectComponent;
   @ViewChild('areaTematica', { static: false }) public areaTematica?: InputSearchComponent;
+  @ViewChild('capacidadeTecnica', { static: false }) public capacidadeTecnica?: InputSelectComponent;
   
    
   public testeLookup: LookupItem[] = [{ 'key': 'key 1', 'value': 'value 1' }];
@@ -107,14 +109,9 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   public materiaDao : MateriaDaoService;
   public cursoDao : CursoDaoService;
   public areaExternaDao : AreaAtividadeExternaDaoService;
+  public capacidadeTecnicaDao : CapacidadeTecnicaDaoService;
   public lookupService: LookupService;
   public unidadesArray?:any;
-  public formAtividadeExterna : FormGroup;
-  public formAtividadeInterna : FormGroup;
-  public formDocenciaExterna : FormGroup;
-  public formDocenciaInterna : FormGroup;
-  public formCursoExterno : FormGroup;
-  public formCursoInterno : FormGroup;
   public formHistoricoFuncaoGrid : FormGroup;
   public formHistoricoLotacaoGrid : FormGroup;
   public formHistoricoAtividadeExternaGrid : FormGroup;
@@ -124,11 +121,14 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   public formHistoricoCursoExternoGrid : FormGroup;
   public formHistoricoCursoInternoGrid : FormGroup;
   public materiaWhere: any[] = [["id", "==", null]];
+  public areaTematicaWhere: any[] = [["id", "==", null]];
+
+  public curriculumID: string = "";
     
   constructor(public injector: Injector) {
     super(injector, CurriculumProfissional, CurriculumProfissionalDaoService);
-    this.join = ['historico_atividade_interna','historico_atividade_externa','historico_curso_interno','historico_curso_externo','historico_docencia_interna',
-    'historico_docencia_externa','historico_funcao.funcao','historico_lotacao', 'curriculum'];
+    this.join = ['historico_atividade_interna.capacidade_tecnica','historico_atividade_externa','historico_curso_interno.curso','historico_curso_externo','historico_docencia_interna',
+    'historico_docencia_externa','historico_funcao','historico_lotacao.unidade', 'curriculum'];
     this.curriculumDao = injector.get<CurriculumDaoService>(CurriculumDaoService);
     this.userDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.lotacaoDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
@@ -143,6 +143,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     this.areaConhecimentoDao = injector.get<AreaConhecimentoDaoService>(AreaConhecimentoDaoService)
     this.cursoDao = injector.get<CursoDaoService>(CursoDaoService);
     this.areaExternaDao = injector.get<AreaAtividadeExternaDaoService>(AreaAtividadeExternaDaoService);
+    this.capacidadeTecnicaDao = injector.get<CapacidadeTecnicaDaoService>(CapacidadeTecnicaDaoService);
     this.lookupService = injector.get<LookupService>(LookupService);
     this.form = this.fh.FormBuilder({
       radioProgramaGestao: { default: false },
@@ -157,15 +158,8 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       radioDocenciaInterna: { default: false },
       radioCursoExterno: { default: false },
       
-
-      ano_ingresso: { default: false },
-      telefone: { default: "" },
-      lotacao_atual: { default: "" },
-
-      centro_treinamento_id: { default: false },
-      cargo_id: { default: "" },
-      grupo_especializado_id: { default: "" },
-   
+      inputEspecifiqueHabilidade: { default:"" },
+      
       especifique_habilidades: { default: [] },
       historicoFuncao: { default: [] },
       historicoLotacao: { default: [] },
@@ -176,53 +170,27 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       historicoCursoInterno: { default: [] },
       historicoCursoExterno: { default: [] },
       
-      
-      inputEspecifiqueHabilidade: { default:"" },
+      ano_ingresso: { default: false },
+      telefone: { default: "" },
+      lotacao_atual: { default: "" },
       selecionaLotacao: { default: "" },
-      
+      viagem_nacional: { default: false },
+      viagem_internacional: { default: false },
+      interesse_bnt: { default: false },
+      remocao: { default: false },
+      pgd_inserido: { default : "" },
+      pgd_interesse: { default : "" },
       escolhaInteresseProgramaGestao: { default: "" },
-      escolhaRadioProgramaGestao: { default: "" },      
-    }, this.cdRef, this.validate);
+      escolhaRadioProgramaGestao: { default: "" },
 
-    this.formAtividadeExterna = this.fh.FormBuilder({
-      
-      
-      selectAreaAtividadeExterna: { default:"" },
-    }, this.cdRef, this.validate);
-
-    this.formAtividadeInterna = this.fh.FormBuilder({
-    
-      
+      centro_treinamento_id: { default: "" },
+      cargo_id: { default: "" },
+      grupo_especializado_id: { default: "" },
+   
       
     }, this.cdRef, this.validate);
 
-    this.formDocenciaExterna = this.fh.FormBuilder({
-      
-      docenciaExterna: { default: [] },
-      inputDocenciaExterna: { default:"" },
-      
-    }, this.cdRef, this.validate);
-
-    this.formDocenciaInterna = this.fh.FormBuilder({
-      
-      historicoDocenciaInterna: { default: [] },
-      selectDocenciaInterna: { default:"" },
-    }, this.cdRef, this.validate);
-
-    this.formCursoInterno = this.fh.FormBuilder({
-      radioCursosInternos: { default: false },
-      historicoCursoInterno: { default: [] },
-      areaCursoInterno: { default:"" },
-      selectCursosInternos: { default:"" },
-    }, this.cdRef, this.validate);
-
-    this.formCursoExterno = this.fh.FormBuilder({
-      
-      historicoCursoExterno: { default: [] },
-      areaCursoExterno: { default:"" },
-      inputCursosExternos: { default:"" },
-    }, this.cdRef, this.validate);
-
+  
     this.formHistoricoFuncaoGrid = this.fh.FormBuilder({
       funcao_id: { default: "" },
     }, this.cdRef, this.validate);
@@ -239,6 +207,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       areaAtividadeInterna: { default:"" },
       inputAtividadeInterna: { default:"" },
       area_tematica_id: { default: "" },
+      capacidade_tecnica_id: { default: "" },
       atividade_desempenhada: { default: ""}
     }, this.cdRef, this.validate);
 
@@ -307,14 +276,28 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
 
   public async saveData(form: IIndexable): Promise<CurriculumProfissional> {
     
+    const curriculuns = await this.curriculumDao?.query({ where: ['usuario_id', '==', this.auth.usuario?.id] }).asPromise();
+        
     return new Promise<CurriculumProfissional>((resolve, reject) => {
       // this.entity!.usuario_id=this.auth.usuario!.id;
       let curriculumProfissional = this.util.fill(new CurriculumProfissional(), this.entity!);
       //curriculum.usuario_id=this.auth.usuario?.id;
       curriculumProfissional = this.util.fillForm(curriculumProfissional, this.form!.value);
-      curriculumProfissional.id = curriculumProfissional.curriculum.id;
-      curriculumProfissional.usuario_id = this.auth.usuario?.id;
+      curriculumProfissional.curriculum_id = curriculuns[0].id;
+      curriculumProfissional.viagem_nacional = (this.form?.controls.viagem_nacional.value ? 1 : 0);
+      curriculumProfissional.viagem_internacional = (this.form?.controls.viagem_internacional.value ? 1 : 0);
+      curriculumProfissional.interesse_bnt = (this.form?.controls.interesse_bnt.value ? 1 : 0);
+      curriculumProfissional.remocao = (this.form?.controls.remocao.value ? 1 : 0);
+      //curriculumProfissional.usuario_id = this.auth.usuario?.id;
       curriculumProfissional.historicoAtividadeInterna = this.form!.controls.historicoAtividadeInterna.value.filter((x: HistoricoAtividadeInternaCurriculum) => x._status?.length);
+      curriculumProfissional.historicoAtividadeExterna = this.form!.controls.historicoAtividadeExterna.value.filter((x: HistoricoAtividadeExternaCurriculum) => x._status?.length);
+      curriculumProfissional.historicoCursoInterno = this.form!.controls.historicoCursoInterno.value.filter((x: HistoricoCursoInternoCurriculum) => x._status?.length);
+      curriculumProfissional.historicoCursoExterno = this.form!.controls.historicoCursoExterno.value.filter((x: HistoricoCursoExternoCurriculum) => x._status?.length);
+      curriculumProfissional.historicoDocenciaInterna = this.form!.controls.historicoDocenciaInterna.value.filter((x: HistoricoDocenciaInternaCurriculum) => x._status?.length);
+      curriculumProfissional.historicoDocenciaExterna = this.form!.controls.historicoDocenciaExterna.value.filter((x: HistoricoDocenciaExternaCurriculum) => x._status?.length);
+      curriculumProfissional.historicoFuncao = this.form!.controls.historicoFuncao.value.filter((x: HistoricoFuncaoCurriculum) => x._status?.length);
+      curriculumProfissional.historicoLotacao = this.form!.controls.historicoLotacao.value.filter((x: HistoricoLotacaoCurriculum) => x._status?.length);
+   
       //(this.form?.controls.idiomasM.value as Array<LookupItem>).forEach(element => curriculumProfissional.idiomas.push(element.data));
       resolve(curriculumProfissional);  
       //resolve(this.util.fillForm(curriculum, this.form!.value));
@@ -322,200 +305,12 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     
   };
 
-  public addItemFuncao(): LookupItem | undefined {
-    let result = undefined;
-    let res = this.form!.value;
-    console.log('addItemFuncao', res);
-    const funcao = this.funcao?.selectedItem;
-    const key = this.util.textHash(funcao!.key);
-    console.log('addItemFuncao', ' - ', funcao,'-', key);
-    if (funcao && this.util.validateLookupItem(this.form!.controls.historicoFuncao.value, key)) {// && this.util.validateLookupItem(key,value)) {
-      result = {
-        key: key,
-        value: funcao.value,
-        data: { 
-            _status: "ADD",
-        }
-      };
-      this.form!.controls.funcao_id.setValue("");
-    
-    }
-    return result;
-  };
-
-  public addItemLotacao(): LookupItem | undefined {
-    let result = undefined;
-    //this.funcoesItems = lotacao!.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
-    const lotacao = this.selecionaLotacao?.selectedEntity as Unidade;
-    const key = lotacao?.id; 
-
-    if (lotacao && this.util.validateLookupItem(this.form!.controls.historicoLotacao.value, key)) {// && this.util.validateLookupItem(key,value)) {
-      result = {
-        key: key,
-        value: lotacao.sigla + " - " + lotacao.nome,
-        data: { 
-          _status: "ADD",
-        }
-      };
-      this.form!.controls.selecionaLotacao.setValue("");
-    }
-    return result;
-  };
-
-    public addItemHabilidades(): LookupItem | undefined {
-    let result = undefined;
-    const habilidades = this.form!.controls.inputEspecifiqueHabilidade.value;
-    const key = this.util.textHash(habilidades);
-    const especifiqueHabilidades = { 'key' : key , 'value' : habilidades };
-    
-    if (especifiqueHabilidades && this.util.validateLookupItem(this.form!.controls.especifique_habilidades.value, key)) {
-      result = {
-        key: key,
-        value: habilidades,
-        data: { 
-          _status: "ADD",
-        }
-      };
-      this.form!.controls.inputEspecifiqueHabilidade.setValue("");
-    }
-    return result;
-  };
-
-  public addItemAtividadeExterna(): LookupItem | undefined {
-    let result = undefined;
-    const area = this.areaAtividadeExterna?.selectedEntity as AreaTematica;
-    const key = area?.id; 
-
-    if (area && this.util.validateLookupItem(this.formAtividadeExterna!.controls.historicoAtividadeExterna.value, key)) {
-      result = {
-        key: key,
-        value: area.nome,
-        data: { 
-          _status: "ADD",
-        }
-      };
-      this.formAtividadeExterna!.controls.selectAreaAtividadeExterna.setValue("");
-    }
-    return result;
-  };
-
-
-  public addItemAtividadeInterna(): LookupItem | undefined {
-    let result = undefined;
-    //this.funcoesItems = lotacao!.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
-    const area = this.areaAtividadeInterna?.selectedEntity as AreaTematica;
-    const atividade = this.formAtividadeInterna.controls.inputAtividadeInterna.value;
-    const key = this.util.textHash(atividade);
-
-    if (atividade && this.util.validateLookupItem(this.formAtividadeInterna!.controls.historicoAtividadeInterna.value, key)) {// && this.util.validateLookupItem(key,value)) {
-      result = {
-        key: key,
-        value: area.nome + " - " + atividade,
-        data: { 
-          _status: "ADD",
-        }
-      };
-      this.formAtividadeInterna!.controls.inputAtividadeInterna.setValue("");
-      this.formAtividadeInterna!.controls.areaAtividadeInterna.setValue("");
-    }
-    return result;
-  };
-
-  public addItemDocenciaExterna(): LookupItem | undefined {
-    let result = undefined;
-    const docencia = this.formDocenciaExterna!.controls.inputDocenciaFora.value;
-    const key = this.util.textHash(docencia);
-    const docencias = { 'key' : key , 'value' : docencia };
-    
-    if (docencias && this.util.validateLookupItem(this.formDocenciaExterna!.controls.historicoDocenciaExterna.value, key)) {
-      result = {
-        key: key,
-        value: docencia,
-        data: { 
-          _status: "ADD",
-        }
-      };
-      this.formDocenciaExterna!.controls.inputDocenciaExterna.setValue("");
-    }
-    return result;
-  };
-
-  public addItemDocenciaInterna(): LookupItem | undefined {
-    let result = undefined;
-    const docencia = this.selectDocenciaInterna?.selectedItem;
-    console.log('DOCENCIA',docencia)
-    const key = this.formDocenciaInterna!.controls.selectDocenciaInterna.value;
-    const docencias = { 'key' : docencia?.key , 'value' : docencia?.value };
-    
-    if (docencias && this.util.validateLookupItem(this.formDocenciaInterna!.controls.historicoDocenciaInterna.value, key)) {
-      result = {
-        key: docencia!.key,
-        value: docencia!.value,
-        data: { 
-          _status: "ADD",
-        }
-      };
-      this.formDocenciaInterna!.controls.selectDocenciaInterna.setValue("");
-    }
-    return result;
-  };
-
-  public onAreaConhecimentoChange() {
+  /*public onAreaConhecimentoChange() {
     this.cursoDao?.query({ where: [['area_id', '==', this.formCursoInterno!.controls.areaCursoInterno.value]] }).getAll().then((cursos2) => {
       this.disciplinasItens = cursos2.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
       this.cdRef.detectChanges();
     });
-  }
-
-  public addItemCursoExterno(): LookupItem | undefined {
-    let result = undefined;
-    const areaCurso = this.areaCursoExterno?.selectedEntity as AreaAtividadeExterna;
-    const curso = this.formCursoExterno.controls.inputCursosExternos.value;
-    const pretensao = this.opcoesEscolha.find(value => value.key == (this.formCursoExterno!.controls.radioCursosExternos.value ? 1 : 0));//converte o value do switch
-    const key = this.util.textHash(curso);
-    
-    if (areaCurso && curso && pretensao && this.util.validateLookupItem(this.formCursoExterno!.controls.historicoCursoExterno.value,key)) {
-      result = {
-        key: key,
-        value: areaCurso.nome + ' - ' + curso + ' - ' + pretensao.value,
-        data: {
-          area: areaCurso.id,
-          curso: curso,
-          pretensao: pretensao.key,
-          _status: "ADD",
-        }
-      };
-      this.formCursoExterno!.controls.areaCursoExterno.setValue("");
-      this.formCursoExterno!.controls.inputCursosExternos.setValue("");
-    }
-    return result;
-  };
-
-  public addItemCursoInterno(): LookupItem | undefined {
-    let result = undefined;
-    const areaCurso = this.areaCursoInterno?.selectedEntity as AreaConhecimento;
-    const curso = this.selectCursosInternos?.selectedItem;
-    const pretensao = this.opcoesEscolha.find(value => value.key == (this.formCursoInterno!.controls.radioCursosInternos.value ? 1 : 0));//converte o value do switch
-    const key = curso?.key;
-    
-    if (areaCurso && curso && pretensao && this.util.validateLookupItem(this.formCursoInterno!.controls.historicoCursoInterno.value,key)) {
-      result = {
-        key: key,
-        value: areaCurso.nome + ' - ' + curso.value + ' - ' + pretensao.value,
-        data: {
-          area: areaCurso.id,
-          curso: curso.key,
-          pretensao: pretensao.key,
-          _status: "ADD",
-        }
-      };
-      this.formCursoInterno!.controls.areaCursoInterno.setValue("");
-      this.formCursoInterno!.controls.selectCursosInternos.setValue("");
-    }
-    return result;
-  };
-
-
+  }*/
 
   public onChangeEscolhePG(){
     this.escolhaRadioProgramaGestao?.setValue("");
@@ -637,7 +432,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       console.log('VALUES',values)
       console.log('ROW',row)
      /*row.unidade = this.unidade!.loadSearch(row.unidade_id);*/
-      row.areaAtividadeExternaDocencia = this.areaAtividadeExternaDocencia!.selectedItem;
+      row.areaAtividadeExterna = this.areaAtividadeExterna!.selectedItem;
       row.area_atividade_externa_id = values.area_atividade_externa_id;
       row._status = row._status == "ADD" ? "ADD" : "EDIT";
       return row;
@@ -678,6 +473,8 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
      /*row.unidade = this.unidade!.loadSearch(row.unidade_id);*/
       row.areaTematica = this.areaTematica!.selectedItem;
       row.area_tematica_id = values.area_tematica_id;
+      row.capacidadeTecnica = this.capacidadeTecnica?.selectedItem;
+      row.capacidade_tecnica_id = values.capacidade_tecnica_id;
       row.atividade_desempenhada = values.atividade_desempenhada;
       row._status = row._status == "ADD" ? "ADD" : "EDIT";
       return row;
@@ -690,6 +487,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     //this.area?.loadSearch(row.curso?.area_conhecimento || row.curso?.area_id);
     /*this.area?.setValue(row.curso?.area_id)*/
     this.formHistoricoAtividadeInternaGrid!.controls.area_tematica_id.setValue(row.area_tematica_id);
+    this.formHistoricoAtividadeInternaGrid!.controls.capacidade_tecnica_id.setValue(row.capacidade_tecnica_id);
     this.formHistoricoAtividadeInternaGrid!.controls.atividade_desempenhada.setValue(row.atividade_desempenhada);
   }
   
@@ -783,6 +581,26 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     return undefined;
   }
 
+  public addItemHabilidades(): LookupItem | undefined {
+    let result = undefined;
+    const habilidades = this.form!.controls.inputEspecifiqueHabilidade.value;
+    const key = this.util.textHash(habilidades);
+    const especifiqueHabilidades = { 'key' : key , 'value' : habilidades };
+    
+    if (especifiqueHabilidades && this.util.validateLookupItem(this.form!.controls.especifique_habilidades.value, key)) {
+      result = {
+        key: key,
+        value: habilidades,
+        data: { 
+          _status: "ADD",
+        }
+      };
+      this.form!.controls.inputEspecifiqueHabilidade.setValue("");
+    }
+    return result;
+  };
+
+
   // GRID Curso Interno
 
   public async addHistoricoCursoInterno() { 
@@ -868,5 +686,180 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     return undefined;
   }
 
+  public onAreaAtividadeInternaChange(){
+    this.areaTematicaWhere = [['area_tematica_id', '==', this.formHistoricoAtividadeInternaGrid!.controls.area_tematica_id.value]];
+    this.cdRef.detectChanges();
+  }
+
 
 }
+
+/* public addItemFuncao(): LookupItem | undefined {
+    let result = undefined;
+    let res = this.form!.value;
+    console.log('addItemFuncao', res);
+    const funcao = this.funcao?.selectedItem;
+    const key = this.util.textHash(funcao!.key);
+    console.log('addItemFuncao', ' - ', funcao,'-', key);
+    if (funcao && this.util.validateLookupItem(this.form!.controls.historicoFuncao.value, key)) {// && this.util.validateLookupItem(key,value)) {
+      result = {
+        key: key,
+        value: funcao.value,
+        data: { 
+            _status: "ADD",
+        }
+      };
+      this.form!.controls.funcao_id.setValue("");
+    
+    }
+    return result;
+  };
+
+  public addItemLotacao(): LookupItem | undefined {
+    let result = undefined;
+    //this.funcoesItems = lotacao!.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
+    const lotacao = this.selecionaLotacao?.selectedEntity as Unidade;
+    const key = lotacao?.id; 
+
+    if (lotacao && this.util.validateLookupItem(this.form!.controls.historicoLotacao.value, key)) {// && this.util.validateLookupItem(key,value)) {
+      result = {
+        key: key,
+        value: lotacao.sigla + " - " + lotacao.nome,
+        data: { 
+          _status: "ADD",
+        }
+      };
+      this.form!.controls.selecionaLotacao.setValue("");
+    }
+    return result;
+  };
+
+    
+  public addItemAtividadeExterna(): LookupItem | undefined {
+    let result = undefined;
+    const area = this.areaAtividadeExterna?.selectedEntity as AreaTematica;
+    const key = area?.id; 
+
+    if (area && this.util.validateLookupItem(this.formAtividadeExterna!.controls.historicoAtividadeExterna.value, key)) {
+      result = {
+        key: key,
+        value: area.nome,
+        data: { 
+          _status: "ADD",
+        }
+      };
+      this.formAtividadeExterna!.controls.selectAreaAtividadeExterna.setValue("");
+    }
+    return result;
+  };
+
+
+  public addItemAtividadeInterna(): LookupItem | undefined {
+    let result = undefined;
+    //this.funcoesItems = lotacao!.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
+    const area = this.areaAtividadeInterna?.selectedEntity as AreaTematica;
+    const atividade = this.formAtividadeInterna.controls.inputAtividadeInterna.value;
+    const key = this.util.textHash(atividade);
+
+    if (atividade && this.util.validateLookupItem(this.formAtividadeInterna!.controls.historicoAtividadeInterna.value, key)) {// && this.util.validateLookupItem(key,value)) {
+      result = {
+        key: key,
+        value: area.nome + " - " + atividade,
+        data: { 
+          _status: "ADD",
+        }
+      };
+      this.formAtividadeInterna!.controls.inputAtividadeInterna.setValue("");
+      this.formAtividadeInterna!.controls.areaAtividadeInterna.setValue("");
+    }
+    return result;
+  };
+
+  public addItemDocenciaExterna(): LookupItem | undefined {
+    let result = undefined;
+    const docencia = this.formDocenciaExterna!.controls.inputDocenciaFora.value;
+    const key = this.util.textHash(docencia);
+    const docencias = { 'key' : key , 'value' : docencia };
+    
+    if (docencias && this.util.validateLookupItem(this.formDocenciaExterna!.controls.historicoDocenciaExterna.value, key)) {
+      result = {
+        key: key,
+        value: docencia,
+        data: { 
+          _status: "ADD",
+        }
+      };
+      this.formDocenciaExterna!.controls.inputDocenciaExterna.setValue("");
+    }
+    return result;
+  };
+
+  public addItemDocenciaInterna(): LookupItem | undefined {
+    let result = undefined;
+    const docencia = this.selectDocenciaInterna?.selectedItem;
+    console.log('DOCENCIA',docencia)
+    const key = this.formDocenciaInterna!.controls.selectDocenciaInterna.value;
+    const docencias = { 'key' : docencia?.key , 'value' : docencia?.value };
+    
+    if (docencias && this.util.validateLookupItem(this.formDocenciaInterna!.controls.historicoDocenciaInterna.value, key)) {
+      result = {
+        key: docencia!.key,
+        value: docencia!.value,
+        data: { 
+          _status: "ADD",
+        }
+      };
+      this.formDocenciaInterna!.controls.selectDocenciaInterna.setValue("");
+    }
+    return result;
+  };
+
+ 
+
+  public addItemCursoExterno(): LookupItem | undefined {
+    let result = undefined;
+    const areaCurso = this.areaCursoExterno?.selectedEntity as AreaAtividadeExterna;
+    const curso = this.formCursoExterno.controls.inputCursosExternos.value;
+    const pretensao = this.opcoesEscolha.find(value => value.key == (this.formCursoExterno!.controls.radioCursosExternos.value ? 1 : 0));//converte o value do switch
+    const key = this.util.textHash(curso);
+    
+    if (areaCurso && curso && pretensao && this.util.validateLookupItem(this.formCursoExterno!.controls.historicoCursoExterno.value,key)) {
+      result = {
+        key: key,
+        value: areaCurso.nome + ' - ' + curso + ' - ' + pretensao.value,
+        data: {
+          area: areaCurso.id,
+          curso: curso,
+          pretensao: pretensao.key,
+          _status: "ADD",
+        }
+      };
+      this.formCursoExterno!.controls.areaCursoExterno.setValue("");
+      this.formCursoExterno!.controls.inputCursosExternos.setValue("");
+    }
+    return result;
+  };
+
+  public addItemCursoInterno(): LookupItem | undefined {
+    let result = undefined;
+    const areaCurso = this.areaCursoInterno?.selectedEntity as AreaConhecimento;
+    const curso = this.selectCursosInternos?.selectedItem;
+    const pretensao = this.opcoesEscolha.find(value => value.key == (this.formCursoInterno!.controls.radioCursosInternos.value ? 1 : 0));//converte o value do switch
+    const key = curso?.key;
+    
+    if (areaCurso && curso && pretensao && this.util.validateLookupItem(this.formCursoInterno!.controls.historicoCursoInterno.value,key)) {
+      result = {
+        key: key,
+        value: areaCurso.nome + ' - ' + curso.value + ' - ' + pretensao.value,
+        data: {
+          area: areaCurso.id,
+          curso: curso.key,
+          pretensao: pretensao.key,
+          _status: "ADD",
+        }
+      };
+      this.formCursoInterno!.controls.areaCursoInterno.setValue("");
+      this.formCursoInterno!.controls.selectCursosInternos.setValue("");
+    }
+    return result;
+  };*/

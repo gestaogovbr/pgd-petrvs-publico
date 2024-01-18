@@ -7,6 +7,7 @@ use App\Models\Curriculum;
 use App\Models\CentroTreinamento;
 use App\Models\Cargo;
 use App\Models\GrupoEspecializado;
+use App\Casts\AsJson;
 
 class CurriculumProfissional extends ModelBase
 {
@@ -26,7 +27,7 @@ class CurriculumProfissional extends ModelBase
         'curriculum_id', /* char(36); NOT NULL; */
         'centro_treinamento_id', /* char(36); NOT NULL; */
         'cargo_id', /* char(36); NOT NULL; */
-        'grupo_especializado_id', /* char(36); NOT NULL; */
+        'grupo_especializado_id', /* char(36); NULL; */
         //'deleted_at', /* timestamp; */
         //'ano_ingresso', /* tinyint; NOT NULL; */// Ano de ingresso
     ];
