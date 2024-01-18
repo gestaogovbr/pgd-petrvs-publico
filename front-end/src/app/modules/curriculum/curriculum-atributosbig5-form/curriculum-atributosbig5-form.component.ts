@@ -132,6 +132,8 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
   
   public valorSoftChange(control:any){
     
+      control.value == '' ? control.setValue(0) : '';
+
       const comunica = this.form?.controls.comunica.value;
       const lideranca = this.form?.controls.lideranca.value;
       const resolucao = this.form?.controls.resolucao.value;
@@ -148,12 +150,8 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
 
       for (const val of array) {
         //console.log('SUM SEQUENCIA', sum)
-         if(val ==''){
-          soma = soma + 0;
-         }else{
-          soma = soma + parseInt(val);
-         }
-         //sum =='' ? (soma = soma + 0) : (soma = soma + sum)
+         soma = soma + parseInt(val);
+         
          if(soma > 20){
           this.dialog.alert("Valor excedido", "O valor máximo são 20 pontos.");
           control.setValue( control.value - (soma - 20));

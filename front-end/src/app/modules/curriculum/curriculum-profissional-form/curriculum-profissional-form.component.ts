@@ -39,6 +39,7 @@ import { HistoricoDocenciaInternaCurriculum } from 'src/app/models/historico-doc
 import { HistoricoCursoInternoCurriculum } from 'src/app/models/historico-curso-interno-currriculum.model';
 import { HistoricoCursoExternoCurriculumDaoService } from 'src/app/dao/historico-curso-externo-curriculum-dao.service';
 import { HistoricoCursoExternoCurriculum } from 'src/app/models/historico-curso-externo-currriculum.model';
+import { CapacidadeTecnicaDaoService } from 'src/app/dao/capacidade-tecnica-dao.service';
 
 @Component({
   selector: 'curriculum-profissional-form',
@@ -78,6 +79,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   @ViewChild('selectDocenciaInterna', { static: false }) public selectDocenciaInterna?: InputSelectComponent;
   @ViewChild('selectCursosInternos', { static: false }) public selectCursosInternos?: InputSelectComponent;
   @ViewChild('areaTematica', { static: false }) public areaTematica?: InputSearchComponent;
+  @ViewChild('capacidadeTecnica', { static: false }) public capacidadeTecnica?: InputSelectComponent;
   
    
   public testeLookup: LookupItem[] = [{ 'key': 'key 1', 'value': 'value 1' }];
@@ -107,6 +109,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   public materiaDao : MateriaDaoService;
   public cursoDao : CursoDaoService;
   public areaExternaDao : AreaAtividadeExternaDaoService;
+  public capacidadeTecnicaDao : CapacidadeTecnicaDaoService;
   public lookupService: LookupService;
   public unidadesArray?:any;
   public formHistoricoFuncaoGrid : FormGroup;
@@ -118,12 +121,14 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   public formHistoricoCursoExternoGrid : FormGroup;
   public formHistoricoCursoInternoGrid : FormGroup;
   public materiaWhere: any[] = [["id", "==", null]];
+  public areaTematicaWhere: any[] = [["id", "==", null]];
+
   public curriculumID: string = "";
     
   constructor(public injector: Injector) {
     super(injector, CurriculumProfissional, CurriculumProfissionalDaoService);
-    this.join = ['historico_atividade_interna','historico_atividade_externa','historico_curso_interno','historico_curso_externo','historico_docencia_interna',
-    'historico_docencia_externa','historico_funcao','historico_lotacao', 'curriculum'];
+    this.join = ['historico_atividade_interna.capacidade_tecnica','historico_atividade_externa','historico_curso_interno.curso','historico_curso_externo','historico_docencia_interna',
+    'historico_docencia_externa','historico_funcao','historico_lotacao.unidade', 'curriculum'];
     this.curriculumDao = injector.get<CurriculumDaoService>(CurriculumDaoService);
     this.userDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.lotacaoDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
@@ -138,6 +143,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     this.areaConhecimentoDao = injector.get<AreaConhecimentoDaoService>(AreaConhecimentoDaoService)
     this.cursoDao = injector.get<CursoDaoService>(CursoDaoService);
     this.areaExternaDao = injector.get<AreaAtividadeExternaDaoService>(AreaAtividadeExternaDaoService);
+    this.capacidadeTecnicaDao = injector.get<CapacidadeTecnicaDaoService>(CapacidadeTecnicaDaoService);
     this.lookupService = injector.get<LookupService>(LookupService);
     this.form = this.fh.FormBuilder({
       radioProgramaGestao: { default: false },
@@ -168,10 +174,10 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       telefone: { default: "" },
       lotacao_atual: { default: "" },
       selecionaLotacao: { default: "" },
-      viagem_nacional: { default: 0 },
-      viagem_internacional: { default: 0 },
-      interesse_bnt: { default: 0 },
-      remocao: { default: 0 },
+      viagem_nacional: { default: false },
+      viagem_internacional: { default: false },
+      interesse_bnt: { default: false },
+      remocao: { default: false },
       pgd_inserido: { default : "" },
       pgd_interesse: { default : "" },
       escolhaInteresseProgramaGestao: { default: "" },
@@ -201,6 +207,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       areaAtividadeInterna: { default:"" },
       inputAtividadeInterna: { default:"" },
       area_tematica_id: { default: "" },
+      capacidade_tecnica_id: { default: "" },
       atividade_desempenhada: { default: ""}
     }, this.cdRef, this.validate);
 
@@ -277,6 +284,10 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       //curriculum.usuario_id=this.auth.usuario?.id;
       curriculumProfissional = this.util.fillForm(curriculumProfissional, this.form!.value);
       curriculumProfissional.curriculum_id = curriculuns[0].id;
+      curriculumProfissional.viagem_nacional = (this.form?.controls.viagem_nacional.value ? 1 : 0);
+      curriculumProfissional.viagem_internacional = (this.form?.controls.viagem_internacional.value ? 1 : 0);
+      curriculumProfissional.interesse_bnt = (this.form?.controls.interesse_bnt.value ? 1 : 0);
+      curriculumProfissional.remocao = (this.form?.controls.remocao.value ? 1 : 0);
       //curriculumProfissional.usuario_id = this.auth.usuario?.id;
       curriculumProfissional.historicoAtividadeInterna = this.form!.controls.historicoAtividadeInterna.value.filter((x: HistoricoAtividadeInternaCurriculum) => x._status?.length);
       curriculumProfissional.historicoAtividadeExterna = this.form!.controls.historicoAtividadeExterna.value.filter((x: HistoricoAtividadeExternaCurriculum) => x._status?.length);
@@ -462,6 +473,8 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
      /*row.unidade = this.unidade!.loadSearch(row.unidade_id);*/
       row.areaTematica = this.areaTematica!.selectedItem;
       row.area_tematica_id = values.area_tematica_id;
+      row.capacidadeTecnica = this.capacidadeTecnica?.selectedItem;
+      row.capacidade_tecnica_id = values.capacidade_tecnica_id;
       row.atividade_desempenhada = values.atividade_desempenhada;
       row._status = row._status == "ADD" ? "ADD" : "EDIT";
       return row;
@@ -474,6 +487,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     //this.area?.loadSearch(row.curso?.area_conhecimento || row.curso?.area_id);
     /*this.area?.setValue(row.curso?.area_id)*/
     this.formHistoricoAtividadeInternaGrid!.controls.area_tematica_id.setValue(row.area_tematica_id);
+    this.formHistoricoAtividadeInternaGrid!.controls.capacidade_tecnica_id.setValue(row.capacidade_tecnica_id);
     this.formHistoricoAtividadeInternaGrid!.controls.atividade_desempenhada.setValue(row.atividade_desempenhada);
   }
   
@@ -670,6 +684,11 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       
     }
     return undefined;
+  }
+
+  public onAreaAtividadeInternaChange(){
+    this.areaTematicaWhere = [['area_tematica_id', '==', this.formHistoricoAtividadeInternaGrid!.controls.area_tematica_id.value]];
+    this.cdRef.detectChanges();
   }
 
 

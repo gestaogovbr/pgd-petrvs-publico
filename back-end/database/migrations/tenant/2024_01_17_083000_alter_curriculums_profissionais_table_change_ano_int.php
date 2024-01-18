@@ -34,4 +34,5 @@ class AlterCurriculumsProfissionaisTableChangeAnoInt extends Migration
          
         });
     }
+   
 }
