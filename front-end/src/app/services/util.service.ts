@@ -613,7 +613,7 @@ export class UtilService {
     return dates.reduce(function (a, b) { return !a || !b ? a || b : (a.getTime() > b.getTime() ? a : b); });
   }
 
-  public loadScript(src: string): HTMLScriptElement {
+  public loadScript(src: string): any {
     const script = this.renderer.createElement('script');
     script.type = 'text/javascript';
     script.src = src;
