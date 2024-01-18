@@ -167,9 +167,26 @@
                             <action-button fullWidth label="Gerar" [onClick]="gerarCertificado.bind(this)"></action-button>
                             <action-button fullWidth label="Copiar" [onClick]="copiarPublicKeyClipboard.bind(this)"></action-button>
                         </input-container>
-                    </div>
+                    </div>  
                 </div>
             </separator>
+        </tab>
+        <tab key="SEEDERS" label="Seeders">
+            <div class="row">
+                <div class="col-md-8">
+                    <input-container label="Seeders">
+                        <select (change)="onSeederChange($event)" class="form-control" controlName="selectedSeeder">
+                            <option *ngFor="let s of seeders" [value]="s">{{s}}</option>
+                        </select>
+                    </input-container>
+                </div>
+                <div class="col-md-4">
+                    <input-container label="Opções">
+                        <action-button fullWidth label="Executar" [onClick]="executeSeeder.bind(this)"></action-button>
+                    </input-container>
+                
+                </div>
+            </div>
         </tab>
     </tabs>
 </editable-form>

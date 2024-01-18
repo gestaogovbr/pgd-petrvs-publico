@@ -9,6 +9,8 @@ import { IIndexable } from 'src/app/models/base.model';
 import { Tenant } from 'src/app/models/tenant.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
+import { SeederService } from 'src/app/services/seeder.service';
+
 
 @Component({
   selector: 'app-panel-form',
@@ -21,12 +23,14 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
   @ViewChild(TabsComponent, { static: false }) public tabs?: TabsComponent;
 
   public formLogin: FormGroup;
+  public seeders: string[] = [];
+  public selectedSeeder: string = '';  
 
   public encryption: LookupItem[] = [
     { key: "SSL", value: "SSL" },
     { key: "TLS", value: "TLS" }
   ];
-
+  
   tiposLogin = [
     { Tipo: 'Usuário/Senha', Web: '', API: '', Habilitado: true },
     { Tipo: 'Firebase', Web: '', API: '', Habilitado: true },
@@ -36,7 +40,7 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
     { Tipo: 'Institucional', Web: '', API: '', Habilitado: true }
   ];
 
-  constructor(public injector: Injector) {
+  constructor(public injector: Injector,  private seederService: SeederService ) {
     super(injector, Tenant, TenantDaoService);
     this.form = this.fh.FormBuilder({
       id: { default: "" },
@@ -119,6 +123,44 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       API: { default: "" },
       Habilitado: { default: false }
     });
+  }
+
+  ngOnInit() {
+    this.loadSeeders(); 
+    console.log(this.seederService)
+  }
+
+  private loadSeeders() {
+    this.seederService.getSeeders().subscribe(
+      data => {
+        this.seeders = data; 
+      },
+      error => {
+        console.error('Erro ao carregar seeders:', error);
+      }
+    );
+  }
+  onSeederChange(event: any) {
+    this.selectedSeeder = event.target.value;
+  }
+
+  executeSeeder(seeder: string) {
+    if (!this.selectedSeeder) {
+      alert('Por favor, selecione um seeder para executar.');
+      return;
+    }
+    
+    this.seederService.executeSeeder(this.selectedSeeder).subscribe(
+      response => {
+        alert(response.message);
+        console.log('Seeder executado com sucesso:', response);
+      },
+      error => {
+        console.error('Erro ao executar seeder:', error);
+        let errorMessage = error.error.message; 
+        alert(errorMessage);
+      }
+    );
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
