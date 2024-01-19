@@ -124,11 +124,12 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   public areaTematicaWhere: any[] = [["id", "==", null]];
 
   public curriculumID: string = "";
+  public curriculuns : Curriculum [] = []; 
     
   constructor(public injector: Injector) {
     super(injector, CurriculumProfissional, CurriculumProfissionalDaoService);
-    this.join = ['historico_atividade_interna.capacidade_tecnica','historico_atividade_externa','historico_curso_interno.curso','historico_curso_externo','historico_docencia_interna',
-    'historico_docencia_externa','historico_funcao','historico_lotacao.unidade', 'curriculum'];
+    this.join = ['historico_atividade_interna.capacidade_tecnica','historico_atividade_externa.area_atividade_externa','historico_curso_interno.curso','historico_curso_externo.area_atividade_externa','historico_docencia_interna',
+    'historico_docencia_externa.area_atividade_externa','historico_funcao','historico_lotacao.unidade', 'curriculum'];
     this.curriculumDao = injector.get<CurriculumDaoService>(CurriculumDaoService);
     this.userDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.lotacaoDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
@@ -271,7 +272,20 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   }
 
   public async initializeData(form: FormGroup) {
-    return await this.loadData(this.entity!, form);
+    
+    const curriculunsProfissional = await this.dao?.query({ where: ['curriculum_id', '==', this.curriculumID], join: this.join }).asPromise();
+    let entity = curriculunsProfissional?.length ? curriculunsProfissional[0] : new CurriculumProfissional();//this.entity
+    //curriculunsProfissional?.length ? (this.id = curriculunsProfissional[0].id) : (this.id = "");
+    //const cidade = entity.cidade_id != '' ? await this.cidadeDao?.getById(entity.cidade_id) : null;
+    //console.log('CIDADE',cidade)
+    //this.form?.controls.estados.setValue(this.lookup.UF.find(x => x.key == 'AM'));//cidade.uf));
+    //let uf = this.lookup.getLookup(this.lookup.UF, cidade?.uf);
+    //this.form?.controls.estados.setValue(uf?.key);//cidade.uf));
+    //entity.quantidade_filhos > 0 ? this.form?.controls.filhos.setValue(true) : this.form?.controls.filhos.setValue(false);
+    //const municipio = this.lookup.UF.find(x => x.key == cidade?.uf);
+    //entity.historicoAtividadeExterna.length > 0 ? this.form?.controls.radioAtividadeExterna.setValue(true) : this.form?.controls.radioAtividadeExterna.setValue(false);
+    
+    await this.loadData(entity, this.form!);
   }
 
   public async saveData(form: IIndexable): Promise<CurriculumProfissional> {
@@ -325,10 +339,11 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
 
   async ngOnInitit(){
 
-    const curriculuns = await this.dao?.query({ where: ['usuario_id', '==', this.auth.usuario?.id], join: this.join }).asPromise();
+    this.curriculuns = await this.curriculumDao?.query({ where: ['usuario_id', '==', this.auth.usuario?.id], join: this.join }).asPromise();
     
-    if(curriculuns?.length){
-      let entity = curriculuns![0];
+    if(this.curriculuns?.length){
+      let entity = this.curriculuns![0];
+      this.curriculumID = this.curriculuns![0].id;
     }else{
       this.dialog.confirm("Preencher dados pessoais", "É necessário preencher dados pessoais");
     }

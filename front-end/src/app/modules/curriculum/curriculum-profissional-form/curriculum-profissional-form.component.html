@@ -119,7 +119,7 @@
                                 [join]="['capacidade_tecnica']" [addRoute]="{route: ['raiox','cadastros','areatematica','new']}" fullEntity (change)="onAreaAtividadeInternaChange()"></input-search>
                             </ng-template>
                         </column>
-                        <column title="Sei lá" titleHint="Escolha o ." [template]="columnCapacidade" [editTemplate]="editCapacidade">
+                        <column title="Capacidade" titleHint="Escolha a capacidade." [template]="columnCapacidade" [editTemplate]="editCapacidade">
                             <ng-template let-row="row" #columnCapacidade>
                                {{row.capacidadeTecnica.value}}
                             </ng-template>
@@ -274,7 +274,7 @@
                                     {{row.areaHistoricoCursoExterno.text}}
                                 </ng-template>
                                 <ng-template let-row="row" #editArea>
-                                    <input-search #areaHistoricoCursoExterno [size]="4" label="Área/Instituição/Coorporação" controlName="area_atividade_externa_id" [dao]="areaAtividadeExternaDao" [join]="['historico_atividade_externa','historico_curso_externo','historico_docencia_externa']" [addRoute]="{route: ['raiox','cadastros','areaatividadeexterna','new']}" fullEntity></input-search>
+                                    <input-search #areaHistoricoCursoExterno [size]="4" label="Área/Instituição/Coorporação" controlName="area_atividade_externa_id" [dao]="areaAtividadeExternaDao"  [addRoute]="{route: ['raiox','cadastros','areaatividadeexterna','new']}" fullEntity></input-search>
                                 </ng-template>
                             </column>
                             <column title="Nome do Curso" titleHint="Informe o nome do curso." [template]="columnNome" [editTemplate]="editNome">
