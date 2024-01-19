@@ -162,7 +162,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       inputEspecifiqueHabilidade: { default:"" },
       
       especifique_habilidades: { default: [] },
-      historicoFuncao: { default: [] },
+      historico_funcao: { default: [] },
       historicoLotacao: { default: [] },
       historicoAtividadeExterna: { default: [] },
       historicoAtividadeInterna: { default: [] },
@@ -234,11 +234,25 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
 
   }
   
-  ngOnInit(): void {
-      for (let i = 1980; i <= (new Date()).getFullYear(); i++) {
+  async ngOnInit(): Promise<void> {
+
+    //this.curriculuns = await this.curriculumDao?.query({ where: ['usuario_id', '==', this.auth.usuario?.id]}).asPromise();
+    this.curriculumDao?.query({ where: ['usuario_id', '==', this.auth.usuario?.id]}).getAllIds().then((x) => {
+      console.log('X',x.rows[0].id)
+      if(x.rows?.length){
+          this.curriculumID = x.rows[0].id;
+      }else{
+        this.dialog.confirm("Preencher dados pessoais", "É necessário preencher dados pessoais");
+      }
+    });
+   // console.log(this.curriculuns)  
+
+    for (let i = 1980; i <= (new Date()).getFullYear(); i++) {
         this.anos.push(Object.assign({}, { key: i, value: (i.toString()) }));
       }
-      
+
+      this.lotacaoAtual?.setValue(this.auth.unidade?.id)
+       
       const userUnidade = this.auth.unidade;
       console.log('userUnidade',userUnidade)
 
@@ -255,27 +269,29 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   }
 
   public async loadData(entity: CurriculumProfissional, form: FormGroup) {
-    let lookups = await this.curriculumDao.lookupsCurriculum();
+    /*let lookups = await this.curriculumDao.lookupsCurriculum();
     this.unidadesItems = lookups.unidades;
     this.funcoesItems = lookups.funcoes;
     this.gruposItems = lookups.grupos;
     this.centroTreinamentoItems = lookups.ct;
     this.cargosItems = lookups.cargos;
     this.lotacaoAtual!.loadSearch(this.auth.lotacao);
-    //let institucional_id = await this.cursoDao.idInstitucional();
+    //let institucional_id = await this.cursoDao.idInstitucional();*/
     this.materiaDao?.query({ where: [[]], orderBy: [['nome', 'asc']] }).getAll().then((materias) => {
       this.disciplinasItens2 = materias.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
     });  
     this.cursoDao?.query({ where: [['titulo', '==', 'INSTITUCIONAL']], orderBy: [['nome', 'asc']] }).getAll().then((materias) => {
         this.cursosItens = materias.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
     });
+    let formValue = Object.assign({}, form.value);
+    form.patchValue(this.util.fillForm(formValue, entity));
   }
 
   public async initializeData(form: FormGroup) {
     
     const curriculunsProfissional = await this.dao?.query({ where: ['curriculum_id', '==', this.curriculumID], join: this.join }).asPromise();
     let entity = curriculunsProfissional?.length ? curriculunsProfissional[0] : new CurriculumProfissional();//this.entity
-    //curriculunsProfissional?.length ? (this.id = curriculunsProfissional[0].id) : (this.id = "");
+    curriculunsProfissional?.length ? (this.id = curriculunsProfissional[0].id) : (this.id = "");
     //const cidade = entity.cidade_id != '' ? await this.cidadeDao?.getById(entity.cidade_id) : null;
     //console.log('CIDADE',cidade)
     //this.form?.controls.estados.setValue(this.lookup.UF.find(x => x.key == 'AM'));//cidade.uf));
@@ -337,20 +353,6 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
 
   public onAddClick() { }
 
-  async ngOnInitit(){
-
-    this.curriculuns = await this.curriculumDao?.query({ where: ['usuario_id', '==', this.auth.usuario?.id], join: this.join }).asPromise();
-    
-    if(this.curriculuns?.length){
-      let entity = this.curriculuns![0];
-      this.curriculumID = this.curriculuns![0].id;
-    }else{
-      this.dialog.confirm("Preencher dados pessoais", "É necessário preencher dados pessoais");
-    }
-    
-    this.lotacaoAtual?.setValue(this.auth.unidade?.id)
-
-  }
 
   //GRID FUNCAO
 
