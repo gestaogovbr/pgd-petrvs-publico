@@ -33,7 +33,6 @@ export class GoogleApiService {
     return new Promise((resolve, reject) => {
       try {
         const script = this.utilService.loadScript('https://accounts.google.com/gsi/client')
-        script.onerror = (error) => reject(error);
         script.onload = () => {
           let socialUser = GoogleApiService.retrieveSocialUser()
 

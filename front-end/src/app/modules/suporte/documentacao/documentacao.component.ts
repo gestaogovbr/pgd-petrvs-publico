@@ -47,11 +47,6 @@ export class DocumentacaoComponent implements OnInit {
             target: 'docs/Gestao/avaliacao.md'   
           },
           {
-            label: 'Ocorrência',
-            icon: 'bi bi-exclamation-diamond',
-            target: 'docs/Gestao/ocorrencia.md'   
-          },
-          {
             label: 'Planejamento Institucional',
             icon: 'bi bi-journals',
             target: 'docs/Gestao/planejamento_institucional.md'   
