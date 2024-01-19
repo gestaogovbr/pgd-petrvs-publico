@@ -31,6 +31,7 @@ export class PlanoEntregaListEntregaListComponent extends PageListBase<PlanoEntr
     this.title = this.lex.translate("Entregas");
     this.filter = this.fh.FormBuilder({
       descricao: { default: "" },
+      descricao_entrega: { default: "" },
       unidade_id: { default: "" },
       destinatario: { default: "" },
     });
@@ -40,6 +41,7 @@ export class PlanoEntregaListEntregaListComponent extends PageListBase<PlanoEntr
   ngOnInit(): void {
     super.ngOnInit();
     this.idsUnidadesAscendentes = this.metadata?.idsUnidadesAscendentes || this.idsUnidadesAscendentes;
+    this.filter?.controls.unidade_id.setValue(this.idsUnidadesAscendentes[0]);
   }
 
   public dynamicOptions(row: any): ToolbarButton[] {
@@ -61,6 +63,9 @@ export class PlanoEntregaListEntregaListComponent extends PageListBase<PlanoEntr
     }
     if (form.descricao?.length) {
       result.push(["descricao", "like", "%" + form.descricao.trim().replace(" ", "%") + "%"]);
+    }
+    if (form.descricao?.length) {
+      result.push(["descricao_entrega", "like", "%" + form.descricao_entrega.trim().replace(" ", "%") + "%"]);
     }
     if (form.destinatario?.length) {
       result.push(["destinatario", "like", "%" + form.destinatario.trim().replace(" ", "%") + "%"]);

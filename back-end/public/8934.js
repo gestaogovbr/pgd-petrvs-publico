@@ -1,40 +1,6 @@
 "use strict";
 (self["webpackChunkpetrvs"] = self["webpackChunkpetrvs"] || []).push([[8934],{
 
-/***/ 10535:
-/*!*************************************************!*\
-  !*** ./src/app/dao/questionario-dao.service.ts ***!
-  \*************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   QuestionarioDaoService: () => (/* binding */ QuestionarioDaoService)
-/* harmony export */ });
-/* harmony import */ var _dao_base_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./dao-base.service */ 29995);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 51197);
-var _class;
-
-
-class QuestionarioDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0__.DaoBaseService {
-  constructor(injector) {
-    super("Questionario", injector);
-    this.injector = injector;
-    this.inputSearchConfig.searchFields = ["nome, codigo, versao, tipo"];
-  }
-}
-_class = QuestionarioDaoService;
-_class.ɵfac = function QuestionarioDaoService_Factory(t) {
-  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__.Injector));
-};
-_class.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({
-  token: _class,
-  factory: _class.ɵfac,
-  providedIn: 'root'
-});
-
-/***/ }),
-
 /***/ 8305:
 /*!**********************************************************!*\
   !*** ./src/app/dao/questionario-pergunta-dao.service.ts ***!
@@ -155,32 +121,6 @@ CHECK: LookupItem[] {key: "CODIGO", value: "DESCRICAO"}
 //ORDENACAO - O respondente ordena itens de acordo com suas preferências.
 //LACUNA - O respondente preenche espaços em branco em uma frase.
 //SWITCH-Resposta de Escolha Única: respondente seleciona uma única opção entre SIM ou NÃO.
-
-/***/ }),
-
-/***/ 29453:
-/*!**********************************************!*\
-  !*** ./src/app/models/questionario.model.ts ***!
-  \**********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Questionario: () => (/* binding */ Questionario)
-/* harmony export */ });
-/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
-
-class Questionario extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
-  constructor(data) {
-    super();
-    this.tipo = "INTERNO"; //Tipo interno | personalizado
-    this.nome = ""; //Nome do questionário
-    this.codigo = ""; // Código do questionario
-    this.versao = 0; //Perguntas do questionário
-    this.perguntas = [];
-    this.initialization(data);
-  }
-}
 
 /***/ }),
 
@@ -773,31 +713,6 @@ class QuestionarioPerguntaFormComponent extends src_app_modules_base_page_form_b
     }
     return result;
   }
-  /**
-  * Método chamado para inserir um integrante no grid, seja este componente persistente ou não.
-  /** @returns
-      public async add() {
-   return {
-     id: this.dao!.generateUuid(),
-     perguntaB: "",
-     listaTipoRespostaB:"",
-     tipoRespostaB:"",
-     multiOpcaoRespostaB:[],
-     inputOpcoesRespostaB:"",
-     inputValorRespostaB:"",
-     opcoesResposta:{'opcao':'','valor':''},
-   } as IIndexable;
-  }
-     /**
-  * Método chamado na edição de um integrante da Unidade.
-  * @param form
-  * @param row
-  */
-  load(form, row) {
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {})();
-  } ///form.controls.usuario_id.setValue(this.grid?.adding ? row.usuario_id : row.id);
-  ///form.controls.atribuicoes.setValue(this.unidadeIntegranteService.converterAtribuicoes(row.atribuicoes));
-  ///form.controls.atribuicao.setValue("");
   /**
    * Método chamado para a exclusão de um integrante do grid, seja este componente persistente ou não.
    * @param row

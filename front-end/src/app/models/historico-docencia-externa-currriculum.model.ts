@@ -7,9 +7,9 @@ export class HistoricoDocenciaExternaCurriculum extends Base {
 
     public profissional?: CurriculumProfissional;
     public areaAtividadeExterna?: AreaAtividadeExterna;
-    public curso?: Curso;
+   // public curso?: Curso;
 
-    public curso_id : string = "";
+    //public curso_id : string = "";
     public curriculum_profissional_id : string = "";
     public area_atividade_externa_id : string = "";
             

@@ -25,12 +25,20 @@ class CurriculumService extends ServiceBase {
     public function proxyStore($data, $unidade, $action){
 
         if ($action == ServiceBase::ACTION_INSERT){
-            
-  
-            foreach($data["graduacoes"] as $graduacao) {
-            
-            }
+              
           
+        }
+        
+        foreach($data["graduacoes"] as $graduacao) {
+            /*if($graduacao['_status']=='ADD'){
+                
+             }
+             if($graduacao['_status']=='EDIT'){
+                
+             }
+             if($graduacao['_status']=='DEL'){
+                
+             }*/
         }
         return $data;
     }
