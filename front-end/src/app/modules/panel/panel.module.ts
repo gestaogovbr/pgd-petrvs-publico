@@ -6,7 +6,6 @@ import { PanelRoutingModule } from './panel-routing.module';
 import { ComponentsModule } from 'src/app/components/components.module';
 import { UteisModule } from '../uteis/uteis.module';
 import { PanelListLogsComponent } from './panel-list-logs/panel-list-logs.component';
-import { SeederService } from 'src/app/services/seeder.service';
 
 @NgModule({
   declarations: [
@@ -19,7 +18,6 @@ import { SeederService } from 'src/app/services/seeder.service';
     PanelRoutingModule,
     ComponentsModule,
     UteisModule
-  ],
-  providers: [SeederService]
+  ]
 })
 export class PanelModule { }

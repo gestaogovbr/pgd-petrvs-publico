@@ -123,9 +123,6 @@ Route::get('/exportar/dados/job', [PgdController::class, 'exportarDadosJob']);
 Route::get('/jobs-agendados', [JobAgendadoController::class, 'listar']);
 Route::post('/job-agendado/{id}', [JobAgendadoController::class, 'update']);
 
-/* Seeders */
-Route::get('/seeders', [SeederController::class, 'index']);
-Route::post('seeder-execute', [SeederController::class, 'execute']);
 
 /* Rotinas diárias */
 Route::get('/rotinas-diarias', [RotinaDiariaController::class, 'run']);

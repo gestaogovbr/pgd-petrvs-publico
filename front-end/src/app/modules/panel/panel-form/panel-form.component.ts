@@ -9,7 +9,7 @@ import { IIndexable } from 'src/app/models/base.model';
 import { Tenant } from 'src/app/models/tenant.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
-import { SeederService } from 'src/app/services/seeder.service';
+import { SeederDaoService } from 'src/app/dao/seeder-dao.service';
 
 
 @Component({
@@ -24,7 +24,9 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
 
   public formLogin: FormGroup;
   public seeders: string[] = [];
-  public selectedSeeder: string = '';  
+  public selectedSeeder: string = '';
+
+  public seederDao: SeederDaoService;
 
   public encryption: LookupItem[] = [
     { key: "SSL", value: "SSL" },
@@ -40,8 +42,9 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
     { Tipo: 'Institucional', Web: '', API: '', Habilitado: true }
   ];
 
-  constructor(public injector: Injector,  private seederService: SeederService ) {
+  constructor(public injector: Injector) {
     super(injector, Tenant, TenantDaoService);
+    this.seederDao = injector.get<SeederDaoService>(SeederDaoService);
     this.form = this.fh.FormBuilder({
       id: { default: "" },
       tenancy_db_name: { default: "" },
@@ -127,18 +130,13 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
 
   ngOnInit() {
     this.loadSeeders(); 
-    console.log(this.seederService)
   }
 
-  private loadSeeders() {
-    this.seederService.getSeeders().subscribe(
-      data => {
-        this.seeders = data; 
-      },
-      error => {
-        console.error('Erro ao carregar seeders:', error);
-      }
-    );
+  private async loadSeeders() {
+    const result = await this.seederDao.getAllSeeder()
+    if(result){
+      this.seeders = result
+    }
   }
   onSeederChange(event: any) {
     this.selectedSeeder = event.target.value;
@@ -149,18 +147,27 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       alert('Por favor, selecione um seeder para executar.');
       return;
     }
-    
-    this.seederService.executeSeeder(this.selectedSeeder).subscribe(
-      response => {
-        alert(response.message);
-        console.log('Seeder executado com sucesso:', response);
-      },
-      error => {
-        console.error('Erro ao executar seeder:', error);
-        let errorMessage = error.error.message; 
-        alert(errorMessage);
-      }
+
+    this.seederDao.executeSeeder(this.selectedSeeder).then(
+        response => {
+          // Verificar se response é um objeto e tem a propriedade 'message'
+          if (response && typeof response === 'object' && 'message' in response) {
+            this.dialog.alert('Sucesso',String(response?.message));
+            console.log('Seeder executado com sucesso:', response);
+          } else {
+            console.error('Resposta inválida ou sem propriedade "message":', response);
+          }
+        },
+        error => {
+          console.error('Erro ao executar seeder:', error);
+          let errorMessage = error.error && error.error.message ? error.error.message : 'Erro desconhecido';
+          alert(errorMessage);
+        }
     );
+
+
+
+
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
