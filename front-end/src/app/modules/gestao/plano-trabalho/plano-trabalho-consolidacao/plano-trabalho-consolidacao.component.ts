@@ -1,6 +1,5 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
@@ -16,22 +15,17 @@ import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 })
 export class PlanoTrabalhoConsolidacaoComponent extends PageFrameBase {
   @ViewChild(TabsComponent, { static: false }) public tabs?: TabsComponent;
-  @ViewChild(InputSearchComponent, { static: false }) public unidadeSelecionada?: InputSearchComponent;
 
   public usuarios: Usuario[] = [];
   public unidade?: Unidade;
   public unidadeDao: UnidadeDaoService;
   public loadingUnidade: boolean = false;
-  public filter: FormGroup;
 
   constructor(public injector: Injector) {
     super(injector);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.form = this.fh.FormBuilder({
       arquivados: { default: false }
-    });
-    this.filter = this.fh.FormBuilder({
-      unidade_id: { default: false }
     });
   }
 
@@ -46,28 +40,17 @@ export class PlanoTrabalhoConsolidacaoComponent extends PageFrameBase {
 
   public async loadData(entity: IIndexable, form?: FormGroup) {
     this.unidade = this.auth.unidadeGestor();
-    this.filter!.controls.unidade_id.setValue(this.unidade?.id || this.auth.lotacao || null);
     if(this.unidade) {
-      await this.loadUsuarios(this.unidade.id);
+      this.usuarios = [];
+      this.loadingUnidade = true;
+      this.cdRef.detectChanges()
+      try {
+        this.usuarios = await this.unidadeDao.lotados(this.unidade.id);
+      } finally {
+        this.loadingUnidade = false;
+        this.cdRef.detectChanges()
+      }
     }
   }
 
-  public async loadUsuarios(unidade: any) {
-    this.usuarios = [];
-    this.loadingUnidade = true;
-    this.loading = true;
-    this.cdRef.detectChanges();
-    try {
-      this.usuarios = await this.unidadeDao.lotados(unidade);
-    } finally {
-      this.loading = false;
-      this.loadingUnidade = false;
-      this.cdRef.detectChanges();
-    }
-  }
-
-  public filterWhere = (filter: FormGroup) => {
-    let form: any = filter.value;
-    this.loadUsuarios(form.unidade_id);
-  }
 }
