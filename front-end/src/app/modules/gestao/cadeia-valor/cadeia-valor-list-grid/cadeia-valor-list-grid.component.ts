@@ -5,6 +5,7 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { CadeiaValorDaoService } from 'src/app/dao/cadeia-valor-dao.service';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
+import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { CadeiaValor } from 'src/app/models/cadeia-valor.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
@@ -16,22 +17,26 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 export class CadeiaValorListGridComponent  extends PageListBase<CadeiaValor, CadeiaValorDaoService>{
   // @Input() snapshot?: ActivatedRouteSnapshot;
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
+  @ViewChild('unidade', { static: true }) public unidade?: InputSearchComponent;
   @Input() snapshot?: ActivatedRouteSnapshot;
   @Input() fixedFilter?: any[];
   @Input() selectable: boolean = false;
   
   public entidadeDao: EntidadeDaoService;
+  public unidadeDao: UnidadeDaoService;
 
   constructor(public injector: Injector) {
     super(injector, CadeiaValor, CadeiaValorDaoService);
     this.entidadeDao = injector.get<EntidadeDaoService>(EntidadeDaoService);
+    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.join = ['processos'];
     this.code = "MOD_CADV"
     /* Inicializações */
     this.filter = this.fh.FormBuilder({
       data_inicio: {default: null},
       data_fim: {default: null},
-      nome: {default: ""},
+      //nome: {default: ""},
+      unidade_id: { default: "" },
       entidade_id: {default: null}
      });
      this.addOption(this.OPTION_INFORMACOES);
@@ -43,8 +48,11 @@ export class CadeiaValorListGridComponent  extends PageListBase<CadeiaValor, Cad
     let result: any[] = [];
     let form: any = filter.value;
 
-    if(form.nome?.length) {
+    /*if(form.nome?.length) {
       result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
+    }*/
+    if(form.unidade_id?.length) {
+      result.push(["unidade_id", "==", form.unidade_id]);
     }
     if(form.data_inicio) {
       result.push(["data_fim", ">=", form.data_inicio]);
