@@ -17,7 +17,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _listener_base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../listener-base */ 40922);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 51197);
 
-var _class;
 
 
 
@@ -52,26 +51,25 @@ class EditorMontarComponent extends _listener_base__WEBPACK_IMPORTED_MODULE_3__.
       _this2.gb.toolbarButtons = [];
     })();
   }
+  static #_ = this.ɵfac = function EditorMontarComponent_Factory(t) {
+    return new (t || EditorMontarComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_4__.Injector));
+  };
+  static #_2 = this.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineComponent"]({
+    type: EditorMontarComponent,
+    selectors: [["app-editor-montar"]],
+    features: [_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵInheritDefinitionFeature"]],
+    decls: 2,
+    vars: 0,
+    template: function EditorMontarComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "p");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1, "editor-montar works!");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+      }
+    },
+    styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
+  });
 }
-_class = EditorMontarComponent;
-_class.ɵfac = function EditorMontarComponent_Factory(t) {
-  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_4__.Injector));
-};
-_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineComponent"]({
-  type: _class,
-  selectors: [["app-editor-montar"]],
-  features: [_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵInheritDefinitionFeature"]],
-  decls: 2,
-  vars: 0,
-  template: function EditorMontarComponent_Template(rf, ctx) {
-    if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "p");
-      _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1, "editor-montar works!");
-      _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-    }
-  },
-  styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
-});
 
 /***/ }),
 
@@ -91,7 +89,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _procedimento_escolher_tipo_procedimento_escolher_tipo_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./procedimento-escolher-tipo/procedimento-escolher-tipo.component */ 79100);
 /* harmony import */ var _procedimento_trabalhar_procedimento_trabalhar_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./procedimento-trabalhar/procedimento-trabalhar.component */ 40510);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 51197);
-var _class;
 
 
 
@@ -112,17 +109,17 @@ const routes = [{
   path: 'petrvs',
   component: _petrvs_listener_petrvs_listener_component__WEBPACK_IMPORTED_MODULE_1__.PetrvsListenerComponent
 }];
-class ListenersRoutingModule {}
-_class = ListenersRoutingModule;
-_class.ɵfac = function ListenersRoutingModule_Factory(t) {
-  return new (t || _class)();
-};
-_class.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineNgModule"]({
-  type: _class
-});
-_class.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineInjector"]({
-  imports: [_angular_router__WEBPACK_IMPORTED_MODULE_5__.RouterModule.forChild(routes), _angular_router__WEBPACK_IMPORTED_MODULE_5__.RouterModule]
-});
+class ListenersRoutingModule {
+  static #_ = this.ɵfac = function ListenersRoutingModule_Factory(t) {
+    return new (t || ListenersRoutingModule)();
+  };
+  static #_2 = this.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineNgModule"]({
+    type: ListenersRoutingModule
+  });
+  static #_3 = this.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineInjector"]({
+    imports: [_angular_router__WEBPACK_IMPORTED_MODULE_5__.RouterModule.forChild(routes), _angular_router__WEBPACK_IMPORTED_MODULE_5__.RouterModule]
+  });
+}
 (function () {
   (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵsetNgModuleScope"](ListenersRoutingModule, {
     imports: [_angular_router__WEBPACK_IMPORTED_MODULE_5__.RouterModule],
@@ -149,7 +146,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _editor_montar_editor_montar_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./editor-montar/editor-montar.component */ 99089);
 /* harmony import */ var _petrvs_listener_petrvs_listener_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./petrvs-listener/petrvs-listener.component */ 70912);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/core */ 51197);
-var _class;
 
 
 
@@ -157,17 +153,17 @@ var _class;
 
 
 
-class ListenersModule {}
-_class = ListenersModule;
-_class.ɵfac = function ListenersModule_Factory(t) {
-  return new (t || _class)();
-};
-_class.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineNgModule"]({
-  type: _class
-});
-_class.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineInjector"]({
-  imports: [_angular_common__WEBPACK_IMPORTED_MODULE_6__.CommonModule, _listeners_routing_module__WEBPACK_IMPORTED_MODULE_0__.ListenersRoutingModule]
-});
+class ListenersModule {
+  static #_ = this.ɵfac = function ListenersModule_Factory(t) {
+    return new (t || ListenersModule)();
+  };
+  static #_2 = this.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineNgModule"]({
+    type: ListenersModule
+  });
+  static #_3 = this.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineInjector"]({
+    imports: [_angular_common__WEBPACK_IMPORTED_MODULE_6__.CommonModule, _listeners_routing_module__WEBPACK_IMPORTED_MODULE_0__.ListenersRoutingModule]
+  });
+}
 (function () {
   (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵsetNgModuleScope"](ListenersModule, {
     declarations: [_procedimento_trabalhar_procedimento_trabalhar_component__WEBPACK_IMPORTED_MODULE_1__.ProcedimentoTrabalharComponent, _procedimento_escolher_tipo_procedimento_escolher_tipo_component__WEBPACK_IMPORTED_MODULE_2__.ProcedimentoEscolherTipoComponent, _editor_montar_editor_montar_component__WEBPACK_IMPORTED_MODULE_3__.EditorMontarComponent, _petrvs_listener_petrvs_listener_component__WEBPACK_IMPORTED_MODULE_4__.PetrvsListenerComponent],
@@ -189,7 +185,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _listener_base__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../listener-base */ 40922);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 51197);
-var _class;
 
 
 class PetrvsListenerComponent extends _listener_base__WEBPACK_IMPORTED_MODULE_0__.ListenerBase {
@@ -198,26 +193,25 @@ class PetrvsListenerComponent extends _listener_base__WEBPACK_IMPORTED_MODULE_0_
     this.injector = injector;
   }
   ngOnInit() {}
+  static #_ = this.ɵfac = function PetrvsListenerComponent_Factory(t) {
+    return new (t || PetrvsListenerComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__.Injector));
+  };
+  static #_2 = this.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({
+    type: PetrvsListenerComponent,
+    selectors: [["app-petrvs-listener"]],
+    features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]],
+    decls: 2,
+    vars: 0,
+    template: function PetrvsListenerComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "p");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](1, "petrvs-listener works!");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+      }
+    },
+    styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
+  });
 }
-_class = PetrvsListenerComponent;
-_class.ɵfac = function PetrvsListenerComponent_Factory(t) {
-  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__.Injector));
-};
-_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({
-  type: _class,
-  selectors: [["app-petrvs-listener"]],
-  features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵInheritDefinitionFeature"]],
-  decls: 2,
-  vars: 0,
-  template: function PetrvsListenerComponent_Template(rf, ctx) {
-    if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "p");
-      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](1, "petrvs-listener works!");
-      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-    }
-  },
-  styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
-});
 
 /***/ }),
 
@@ -236,7 +230,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _listener_base__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../listener-base */ 40922);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ 51197);
 
-var _class;
 
 
 
@@ -271,26 +264,25 @@ class ProcedimentoEscolherTipoComponent extends _listener_base__WEBPACK_IMPORTED
       }
     })();
   }
+  static #_ = this.ɵfac = function ProcedimentoEscolherTipoComponent_Factory(t) {
+    return new (t || ProcedimentoEscolherTipoComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_3__.Injector));
+  };
+  static #_2 = this.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineComponent"]({
+    type: ProcedimentoEscolherTipoComponent,
+    selectors: [["app-procedimento-escolher-tipo"]],
+    features: [_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵInheritDefinitionFeature"]],
+    decls: 2,
+    vars: 0,
+    template: function ProcedimentoEscolherTipoComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "p");
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](1, "procedimento-escolher-tipo works!");
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
+      }
+    },
+    styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
+  });
 }
-_class = ProcedimentoEscolherTipoComponent;
-_class.ɵfac = function ProcedimentoEscolherTipoComponent_Factory(t) {
-  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_3__.Injector));
-};
-_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineComponent"]({
-  type: _class,
-  selectors: [["app-procedimento-escolher-tipo"]],
-  features: [_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵInheritDefinitionFeature"]],
-  decls: 2,
-  vars: 0,
-  template: function ProcedimentoEscolherTipoComponent_Template(rf, ctx) {
-    if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "p");
-      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](1, "procedimento-escolher-tipo works!");
-      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
-    }
-  },
-  styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
-});
 
 /***/ }),
 
@@ -316,7 +308,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _listener_base__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../listener-base */ 40922);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/core */ 51197);
 
-var _class;
 
 
 
@@ -591,26 +582,25 @@ class ProcedimentoTrabalharComponent extends _listener_base__WEBPACK_IMPORTED_MO
       }
     })();
   }
+  static #_ = this.ɵfac = function ProcedimentoTrabalharComponent_Factory(t) {
+    return new (t || ProcedimentoTrabalharComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_10__.Injector));
+  };
+  static #_2 = this.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdefineComponent"]({
+    type: ProcedimentoTrabalharComponent,
+    selectors: [["app-procedimento-trabalhar"]],
+    features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
+    decls: 2,
+    vars: 0,
+    template: function ProcedimentoTrabalharComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "p");
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](1, "procedimento-trabalhar works!");
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
+      }
+    },
+    styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
+  });
 }
-_class = ProcedimentoTrabalharComponent;
-_class.ɵfac = function ProcedimentoTrabalharComponent_Factory(t) {
-  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_10__.Injector));
-};
-_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdefineComponent"]({
-  type: _class,
-  selectors: [["app-procedimento-trabalhar"]],
-  features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
-  decls: 2,
-  vars: 0,
-  template: function ProcedimentoTrabalharComponent_Template(rf, ctx) {
-    if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "p");
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](1, "procedimento-trabalhar works!");
-      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
-    }
-  },
-  styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
-});
 
 /***/ })
 

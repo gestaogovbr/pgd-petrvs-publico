@@ -34,6 +34,8 @@ class PlanoEntregaEntrega extends ModelBase
         'entrega_pai_id', /* char(36); */
         'etiquetas', /* json; */// Etiquetas da entrega
         'checklist', /* json; */// Checklist da entrega
+        'descricao_meta', /* longtext*/// Descrição da meta da entrega
+        'descricao_entrega', /* longtext*/// Descrição do título da entrega
         //'deleted_at', /* timestamp; */
     ];
 

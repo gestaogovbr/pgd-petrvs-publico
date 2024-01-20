@@ -76,7 +76,7 @@ export class PlanoTrabalhoService {
       let ids: string[] = [];
       if (programa?.plano_trabalho_assinatura_participante) ids.push(plano.usuario_id);
       if (programa?.plano_trabalho_assinatura_gestor_lotacao) ids.push(...this.auth.gestoresLotacao.map(x => x.id));
-      if (programa?.plano_trabalho_assinatura_gestor_unidade) ids.push(plano.unidade?.gestor?.id || "", plano.unidade?.gestor_substituto?.id || "");
+      if (programa?.plano_trabalho_assinatura_gestor_unidade) ids.push(plano.unidade?.gestor?.id || "", ...plano.unidade?.gestores_substitutos?.map(x => x.id) || "");
       if (programa?.plano_trabalho_assinatura_gestor_entidade) ids.push(entidade.gestor_id || "", entidade.gestor_substituto_id || "");
       return !!tipoModalidade && ids.includes(this.auth.usuario!.id);
     }

@@ -29,5 +29,7 @@ return [
         'codUorg' => env('INTEGRACAO_SIAPE_CODUORG', ""),
         'parmExistPag' => env('INTEGRACAO_SIAPE_PARMEXISTPAG', ""),
         'parmTipoVinculo' => env('INTEGRACAO_SIAPE_PARMTIPOVINCULO', "")
-    ]
+    ],
+    'perfilComum' => 'Participante',
+    'perfilChefe' => 'Chefia de Unidade Executora'
 ];

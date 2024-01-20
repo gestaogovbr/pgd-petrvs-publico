@@ -59,6 +59,9 @@ export class AtividadeService {
   public getStatus(row: any, consolidacao?: PlanoTrabalhoConsolidacao): BadgeButton[] {
     const atividade: Atividade = row as Atividade;
     const status = this.lookup.ATIVIDADE_STATUS.find(x => x.key == atividade.status) || { key: "DESCONHECIDO", value: "Desconhecido", icon: "bi bi-question-circle", color: "light" };
+    if (!consolidacao) {
+      consolidacao = new PlanoTrabalhoConsolidacao;
+    }
     const consolidacaoDataInicio = this.util.setTime(consolidacao!.data_inicio, 0, 0, 0); 
     const consolidacaoDataFim = this.util.setTime(consolidacao!.data_fim, 23, 59, 59);
     let result: BadgeButton[] = [{ data: {status: status.key, filter: true}, label: status.value, icon: status.icon!, color: status.color! }];
@@ -218,7 +221,7 @@ export class AtividadeService {
   public dynamicOptions = (row: any, metadata?: any): ToolbarButton[] => {
     let result: ToolbarButton[] = [];
     let atividade: Atividade = row as Atividade;
-    const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || this.auth.usuario?.id == atividade.unidade?.gestor_substituto?.id;
+    const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || atividade.unidade?.gestores_substitutos?.map(x => x.id).includes(this.auth.usuario?.id || "");
     const isDemandante = this.auth.usuario?.id == atividade.demandante_id;
     const isResponsavel = this.auth.usuario?.id == atividade.usuario_id;
     const lastConsolidacao = this.lastConsolidacao(row.metadados?.consolidacoes);
@@ -291,7 +294,7 @@ export class AtividadeService {
   public dynamicButtons = (row: any, metadata?: any): ToolbarButton[] => {
     let result: ToolbarButton[] = [];
     let atividade: Atividade = row as Atividade;
-    const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || this.auth.usuario?.id == atividade.unidade?.gestor_substituto?.id;
+    const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || atividade.unidade?.gestores_substitutos?.map(x => x.usuario_id).includes(this.auth.usuario?.id || "");
     const isResponsavel = this.auth.usuario?.id == atividade.usuario_id;
     const lastConsolidacao = this.lastConsolidacao(row.metadados?.consolidacoes);
     const BOTAO_ALTERAR_AVALIACAO = { hint: "Alterar avaliação", icon: "bi bi-check-all", color: "btn-outline-danger", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'avaliar'] }, this.modalRefreshId(metadata, atividade)) };
