@@ -3,7 +3,8 @@
         <tab key="FUNCIONAIS" class="fw-bold" label="Funcionais">
             <div class="row my-4">
                 <input-select [size]="4" label="Ingresso na Instituição" icon="bi bi-calendar-check-fill" controlName="ano_ingresso" [control]="form!.controls.ano_ingresso" [items]="anos"></input-select>
-                <input-select #centroTreinamento [size]="4" label="Centro de Treinamento" icon="bi bi-building-fill" controlName="centro_treinamento_id" [control]="form!.controls.centro_treinamento_id" [items]="centroTreinamentoItems"></input-select>
+                <!--<input-select #centroTreinamento [size]="4" label="Centro de Treinamento" icon="bi bi-building-fill" controlName="centro_treinamento_id" [control]="form!.controls.centro_treinamento_id" [items]="centroTreinamentoItems"></input-select>-->
+                <input-select #centroTreinamento [size]="4" label="Centro de Treinamento" icon="bi bi-building-fill" controlName="centro_treinamento_id" [control]="form!.controls.centro_treinamento_id" fullEntity liveSearch [dao]="centroTreinamentoDao"  [addRoute]="{route: ['raiox','cadastros','centrotreinamento','new']}"></input-select>
                 <input-search #cargos [size]="4" label="Cargo" controlName="cargo_id" [control]="form!.controls.cargo_id" [dao]="cargoDao"></input-search>
             </div>
             <!--<div class="row">
@@ -16,7 +17,7 @@
             <div class="row mt-3">
                 <!--<separator class="mb-3 mt-3" title="Histórico de Funções, funções ocupadas como titular ou substituto" [bold]="true"></separator>-->
                 <div class="col-md-6">
-                    <grid [control]="form!.controls.historico_uncao" [minHeight]="150" [form]="formHistoricoFuncaoGrid!" [hasDelete]="true" [add]="addHistoricoFuncao.bind(this)" [load]="loadHistoricoFuncao.bind(this)" [remove]="removeHistoricoFuncao.bind(this)" [save]="saveHistoricoFuncao.bind(this)" editable>
+                    <grid [control]="form!.controls.historico_funcao" [minHeight]="150" [form]="formHistoricoFuncaoGrid!" [hasDelete]="true" [add]="addHistoricoFuncao.bind(this)" [load]="loadHistoricoFuncao.bind(this)" [remove]="removeHistoricoFuncao.bind(this)" [save]="saveHistoricoFuncao.bind(this)" editable>
                         <columns>
                             <column title="Histórico de Funções" titleHint="Funções ocupadas como titular ou substituto." [template]="columnFuncao" [editTemplate]="editFuncao">
                                 <ng-template let-row="row" #columnFuncao>
@@ -39,11 +40,11 @@
             <div class="row mt-3">
                 <div class="col-md-6">
                     <!--<separator class="mb-3 mt-3" title="Histórico de Lotação" [bold]="true"></separator>-->
-                    <grid [control]="form!.controls.historicoLotacao" [minHeight]="150" [form]="formHistoricoLotacaoGrid!" [hasDelete]="true" [add]="addHistoricoLotacao.bind(this)" [load]="loadHistoricoLotacao.bind(this)" [remove]="removeHistoricoLotacao.bind(this)" [save]="saveHistoricoLotacao.bind(this)" editable>
+                    <grid [control]="form!.controls.historico_lotacao" [minHeight]="150" [form]="formHistoricoLotacaoGrid!" [hasDelete]="true" [add]="addHistoricoLotacao.bind(this)" [load]="loadHistoricoLotacao.bind(this)" [remove]="removeHistoricoLotacao.bind(this)" [save]="saveHistoricoLotacao.bind(this)" editable>
                         <columns>
                             <column title="Histórico de Lotações" titleHint="Escolha a lotação." [template]="columnLotacao" [editTemplate]="editLotacao">
                                 <ng-template let-row="row" #columnLotacao>
-                                    {{row.unidade.text}}
+                                    {{row.unidade.nome}}
 
                                 </ng-template>
                                 <ng-template let-row="row" #editLotacao>
@@ -77,12 +78,11 @@
             <div class="row mt-3">
                 <separator class="mb-3 mt-3" title="Desempenhou atividades externamente e que podem contribuir para a instituição?" [bold]="true"></separator>
                 <input-switch #radioAtividadeExterna [size]="2" [label]="radioAtividadeExterna.value ? 'Sim' : 'Não'" icon="fas fa-chalkboard" controlName="radioAtividadeExterna" [control]="form!.controls.radioAtividadeExterna"></input-switch>
-                <grid *ngIf="form!.controls.radioAtividadeExterna.value" [control]="form!.controls.historicoAtividadeExterna" [minHeight]="150" [form]="formHistoricoAtividadeExternaGrid!" [hasDelete]="true" [add]="addHistoricoAtividadeExterna.bind(this)" [load]="loadHistoricoAtividadeExterna.bind(this)" [remove]="removeHistoricoAtividadeExterna.bind(this)" [save]="saveHistoricoAtividadeExterna.bind(this)" editable>
+                <grid *ngIf="form!.controls.radioAtividadeExterna.value" [control]="form!.controls.historico_atividade_externa" [minHeight]="150" [form]="formHistoricoAtividadeExternaGrid!" [hasDelete]="true" [add]="addHistoricoAtividadeExterna.bind(this)" [load]="loadHistoricoAtividadeExterna.bind(this)" [remove]="removeHistoricoAtividadeExterna.bind(this)" [save]="saveHistoricoAtividadeExterna.bind(this)" editable>
                     <columns>
                         <column title="Histórico de Atividades Externas" titleHint="Escolha a atividade." [template]="columnAtividadeExterna" [editTemplate]="editAtividadeExterna">
                             <ng-template let-row="row" #columnAtividadeExterna>
-                                {{row.areaAtividadeExterna.text}}
-
+                               {{row.area_atividade_externa.nome}}
                             </ng-template>
                             <ng-template let-row="row" #editAtividadeExterna>
                                 <!--<input-search #unidade [size]="12" controlName="unidade_id" [dao]="unidadeDao" [join]="['historico_AtividadeExterna']" fullEntity liveSearch></input-search>-->
@@ -107,11 +107,11 @@
             <div class="row mt-3">
                 <separator class="mb-3 mt-3" title="Desempenhou atividades internamente que podem contribuir ou contribuiram para a instituição?" [bold]="true"></separator>
                 <input-switch #radioAtividadeInterna [size]="2" [label]="radioAtividadeInterna.value ? 'Sim' : 'Não'" icon="fas fa-chalkboard" controlName="radioAtividadeInterna" [control]="form!.controls.radioAtividadeInterna"></input-switch>
-                <grid *ngIf="form!.controls.radioAtividadeInterna.value" [control]="form!.controls.historicoAtividadeInterna" [minHeight]="150" [form]="formHistoricoAtividadeInternaGrid!" [hasDelete]="true" [add]="addHistoricoAtividadeInterna.bind(this)" [load]="loadHistoricoAtividadeInterna.bind(this)" [remove]="removeHistoricoAtividadeInterna.bind(this)" [save]="saveHistoricoAtividadeInterna.bind(this)" editable>
+                <grid *ngIf="form!.controls.radioAtividadeInterna.value" [control]="form!.controls.historico_atividade_interna" [minHeight]="150" [form]="formHistoricoAtividadeInternaGrid!" [hasDelete]="true" [add]="addHistoricoAtividadeInterna.bind(this)" [load]="loadHistoricoAtividadeInterna.bind(this)" [remove]="removeHistoricoAtividadeInterna.bind(this)" [save]="saveHistoricoAtividadeInterna.bind(this)" editable>
                     <columns>
                         <column title="Área temática" titleHint="Escolha a área." [template]="columnAtividadeInterna" [editTemplate]="editAtividadeInterna">
                             <ng-template let-row="row" #columnAtividadeInterna>
-                                {{row.areaTematica.text}}
+                               {{row.capacidade_tecnica.area_tematica.nome}}
 
                             </ng-template>
                             <ng-template let-row="row" #editAtividadeInterna>
@@ -121,7 +121,7 @@
                         </column>
                         <column title="Capacidade" titleHint="Escolha a capacidade." [template]="columnCapacidade" [editTemplate]="editCapacidade">
                             <ng-template let-row="row" #columnCapacidade>
-                               {{row.capacidadeTecnica.value}}
+                              {{row.capacidade_tecnica.nome}}
                             </ng-template>
                             <ng-template let-row="row" #editCapacidade>
                                 <input-select #capacidadeTecnica [size]="4" label="Capacidade" icon="fas fa-graduation-cap" controlName="capacidade_tecnica_id" fullEntity liveSearch  [dao]="capacidadeTecnicaDao" 
@@ -163,11 +163,11 @@
                 <separator class="my-3" title="Você já realizou algum trabalho de docência fora da Instituição?" [bold]="true"></separator>
                 <input-switch [size]="2" #radioDocenciaExterna [label]="radioDocenciaExterna.value ? 'Sim' : 'Não'" icon="fas fa-chalkboard" controlName="radioDocenciaExterna" [control]="form!.controls.radioDocenciaExterna"></input-switch>
 
-                <grid *ngIf="form!.controls.radioDocenciaExterna.value" [control]="form!.controls.historicoDocenciaExterna" [minHeight]="150" [form]="formHistoricoDocenciaExternaGrid!" [hasDelete]="true" [add]="addHistoricoDocenciaExterna.bind(this)" [load]="loadHistoricoDocenciaExterna.bind(this)" [remove]="removeHistoricoDocenciaExterna.bind(this)" [save]="saveHistoricoDocenciaExterna.bind(this)" editable>
+                <grid *ngIf="form!.controls.radioDocenciaExterna.value" [control]="form!.controls.historico_docencia_externa" [minHeight]="150" [form]="formHistoricoDocenciaExternaGrid!" [hasDelete]="true" [add]="addHistoricoDocenciaExterna.bind(this)" [load]="loadHistoricoDocenciaExterna.bind(this)" [remove]="removeHistoricoDocenciaExterna.bind(this)" [save]="saveHistoricoDocenciaExterna.bind(this)" editable>
                     <columns>
                         <column title="Área Externa" titleHint="Escolha a área." [template]="columnDocenciaExterna" [editTemplate]="editDocenciaExterna">
                             <ng-template let-row="row" #columnDocenciaExterna>
-                                {{row.areaAtividadeExternaDocencia.text}}
+                                {{row.area_atividade_externa.nome}}
 
                             </ng-template>
                             <ng-template let-row="row" #editDocenciaExterna>
@@ -191,11 +191,11 @@
                 <separator class="my-3" title="Você é docente ou instrutor da Instituição?" [bold]="true"></separator>
                 <input-switch [size]="2" #radioDocenciaInterna [label]="radioDocenciaInterna.value ? 'Sim' : 'Não'" icon="fas fa-chalkboard" controlName="radioDocenciaInterna" [control]="form!.controls.radioDocenciaInterna"></input-switch>
 
-                <grid *ngIf="form!.controls.radioDocenciaInterna.value" [control]="form!.controls.historicoDocenciaInterna" [minHeight]="150" [form]="formHistoricoDocenciaInternaGrid!" [hasDelete]="true" [add]="addHistoricoDocenciaInterna.bind(this)" [load]="loadHistoricoDocenciaInterna.bind(this)" [remove]="removeHistoricoDocenciaInterna.bind(this)" [save]="saveHistoricoDocenciaInterna.bind(this)" editable>
+                <grid *ngIf="form!.controls.radioDocenciaInterna.value" [control]="form!.controls.historico_docencia_interna" [minHeight]="150" [form]="formHistoricoDocenciaInternaGrid!" [hasDelete]="true" [add]="addHistoricoDocenciaInterna.bind(this)" [load]="loadHistoricoDocenciaInterna.bind(this)" [remove]="removeHistoricoDocenciaInterna.bind(this)" [save]="saveHistoricoDocenciaInterna.bind(this)" editable>
                     <columns>
                         <column title="Curso" titleHint="Escolha a área." [template]="columnDocenciaInterna" [editTemplate]="editDocenciaInterna">
                             <ng-template let-row="row" #columnDocenciaInterna>
-                                {{row.cursoDocenciaInterna.value}}
+                              {{row.curso.nome}}
 
                             </ng-template>
                             <ng-template let-row="row" #editDocenciaInterna>
@@ -222,7 +222,7 @@
             <div class="row mt-3">
                 <separator class="my-3" title="Quais os principais cursos que você já fez e pretende fazer na Instituição?" [bold]="true"></separator>
 
-                    <grid [control]="form!.controls.historicoCursoInterno" [minHeight]="150" [form]="formHistoricoCursoInternoGrid!" [hasDelete]="true" [add]="addHistoricoCursoInterno.bind(this)" [load]="loadHistoricoCursoInterno.bind(this)" [remove]="removeHistoricoCursoInterno.bind(this)" [save]="saveHistoricoCursoInterno.bind(this)" editable>
+                    <grid [control]="form!.controls.historico_curso_interno" [minHeight]="150" [form]="formHistoricoCursoInternoGrid!" [hasDelete]="true" [add]="addHistoricoCursoInterno.bind(this)" [load]="loadHistoricoCursoInterno.bind(this)" [remove]="removeHistoricoCursoInterno.bind(this)" [save]="saveHistoricoCursoInterno.bind(this)" editable>
                         <columns>
                             <column title="Pretende Cursar?" titleHint="Pretende cursar ou já esta concluido." [template]="columnPretende" [editTemplate]="editPretende">
                                 <ng-template let-row="row" #columnPretende>
@@ -234,7 +234,7 @@
                             </column>
                             <column title="Curso Institucional" titleHint="Escolha o curso." [template]="columnCurso" [editTemplate]="editCurso">
                                 <ng-template let-row="row" #columnCurso>
-                                    {{row.historicoCursoInterno.value}}
+                                    {{row.curso.nome}}
                                 </ng-template>
                                 <ng-template let-row="row" #editCurso>
                                     <input-select #historicoCursoInterno [size]="3" label="Curso" icon controlName="curso_id" fullEntity liveSearch [dao]="cursoDao"  [where]="[['titulo', '==', 'INSTITUCIONAL']]" orderBy="[['nome', 'asc']]" [addRoute]="{route: ['raiox','cadastros','curso','new']}"></input-select>
@@ -259,7 +259,7 @@
             <div class="row mt-3">
                 <separator class="my-3" title="Quais os principais cursos que você já fez e pretende fazer fora da Instituição?" [bold]="true"></separator>
 
-                    <grid [control]="form!.controls.historicoCursoExterno" [minHeight]="150" [form]="formHistoricoCursoExternoGrid!" [hasDelete]="true" [add]="addHistoricoCursoExterno.bind(this)" [load]="loadHistoricoCursoExterno.bind(this)" [remove]="removeHistoricoCursoExterno.bind(this)" [save]="saveHistoricoCursoExterno.bind(this)" editable>
+                    <grid [control]="form!.controls.historico_curso_externo" [minHeight]="150" [form]="formHistoricoCursoExternoGrid!" [hasDelete]="true" [add]="addHistoricoCursoExterno.bind(this)" [load]="loadHistoricoCursoExterno.bind(this)" [remove]="removeHistoricoCursoExterno.bind(this)" [save]="saveHistoricoCursoExterno.bind(this)" editable>
                         <columns>
                             <column title="Pretende Cursar?" titleHint="Pretende cursar ou já esta concluido." [template]="columnPretende" [editTemplate]="editPretende">
                                 <ng-template let-row="row" #columnPretende>
@@ -271,7 +271,7 @@
                             </column>
                             <column title="Área Externa" titleHint="Escolha a área externa." [template]="columnArea" [editTemplate]="editArea">
                                 <ng-template let-row="row" #columnArea>
-                                    {{row.areaHistoricoCursoExterno.text}}
+                                   {{row.area_atividade_externa.nome}}
                                 </ng-template>
                                 <ng-template let-row="row" #editArea>
                                     <input-search #areaHistoricoCursoExterno [size]="4" label="Área/Instituição/Coorporação" controlName="area_atividade_externa_id" [dao]="areaAtividadeExternaDao"  [addRoute]="{route: ['raiox','cadastros','areaatividadeexterna','new']}" fullEntity></input-search>
@@ -279,7 +279,7 @@
                             </column>
                             <column title="Nome do Curso" titleHint="Informe o nome do curso." [template]="columnNome" [editTemplate]="editNome">
                                 <ng-template let-row="row" #columnNome>
-                                   {{row.nome}}
+                                  {{row.nome}}
                                 </ng-template>
                                 <ng-template let-row="row" #editNome>
                                     <input-text [size]="8" label="Nome do Curso" icon controlName="nome" liveSearch [control]="formHistoricoCursoExternoGrid!.controls.nome"></input-text>
