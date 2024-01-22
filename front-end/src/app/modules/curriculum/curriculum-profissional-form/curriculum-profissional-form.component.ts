@@ -124,12 +124,12 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   public areaTematicaWhere: any[] = [["id", "==", null]];
 
   public curriculumID: string = "";
-  public curriculuns : Curriculum [] = []; 
+  public curriculuns : Curriculum [] = [];
     
   constructor(public injector: Injector) {
     super(injector, CurriculumProfissional, CurriculumProfissionalDaoService);
-    this.join = ['historico_atividade_interna.capacidade_tecnica','historico_atividade_externa.area_atividade_externa','historico_curso_interno.curso','historico_curso_externo.area_atividade_externa','historico_docencia_interna',
-    'historico_docencia_externa.area_atividade_externa','historico_funcao','historico_lotacao.unidade', 'curriculum'];
+    this.join = ['historico_atividade_interna.capacidade_tecnica.area_tematica','historico_atividade_externa.area_atividade_externa','historico_curso_interno.curso','historico_curso_externo.area_atividade_externa','historico_docencia_interna.curso',
+    'historico_docencia_externa.area_atividade_externa','historico_funcao.funcao','historico_lotacao.unidade', 'curriculum'];
     this.curriculumDao = injector.get<CurriculumDaoService>(CurriculumDaoService);
     this.userDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.lotacaoDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
@@ -158,18 +158,19 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       radioDocenciaExterna: { default: false },
       radioDocenciaInterna: { default: false },
       radioCursoExterno: { default: false },
-      
+      escolhaInteresseProgramaGestao: { default: "" },
+      escolhaRadioProgramaGestao: { default: "" },
       inputEspecifiqueHabilidade: { default:"" },
       
       especifique_habilidades: { default: [] },
       historico_funcao: { default: [] },
-      historicoLotacao: { default: [] },
-      historicoAtividadeExterna: { default: [] },
-      historicoAtividadeInterna: { default: [] },
-      historicoDocenciaExterna: { default: [] },
-      historicoDocenciaInterna: { default: [] },
-      historicoCursoInterno: { default: [] },
-      historicoCursoExterno: { default: [] },
+      historico_lotacao: { default: [] },
+      historico_atividade_externa: { default: [] },
+      historico_atividade_interna: { default: [] },
+      historico_docencia_externa: { default: [] },
+      historico_docencia_interna: { default: [] },
+      historico_curso_interno: { default: [] },
+      historico_curso_externo: { default: [] },
       
       ano_ingresso: { default: false },
       telefone: { default: "" },
@@ -181,9 +182,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       remocao: { default: false },
       pgd_inserido: { default : "" },
       pgd_interesse: { default : "" },
-      escolhaInteresseProgramaGestao: { default: "" },
-      escolhaRadioProgramaGestao: { default: "" },
-
+      
       centro_treinamento_id: { default: "" },
       cargo_id: { default: "" },
       grupo_especializado_id: { default: "" },
@@ -237,8 +236,8 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   async ngOnInit(): Promise<void> {
 
     //this.curriculuns = await this.curriculumDao?.query({ where: ['usuario_id', '==', this.auth.usuario?.id]}).asPromise();
-    this.curriculumDao?.query({ where: ['usuario_id', '==', this.auth.usuario?.id]}).getAllIds().then((x) => {
-      console.log('X',x.rows[0].id)
+    this.curriculumDao?.query({ where: [['usuario_id', '==', this.auth.usuario?.id]]}).getAllIds().then((x) => {
+      console.log('X CURRICULUM ID',x.rows[0].id)
       if(x.rows?.length){
           this.curriculumID = x.rows[0].id;
       }else{
@@ -306,7 +305,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
 
   public async saveData(form: IIndexable): Promise<CurriculumProfissional> {
     
-    const curriculuns = await this.curriculumDao?.query({ where: ['usuario_id', '==', this.auth.usuario?.id] }).asPromise();
+    const curriculuns = await this.curriculumDao?.query({ where: [['usuario_id', '==', this.auth.usuario?.id]] }).asPromise();
         
     return new Promise<CurriculumProfissional>((resolve, reject) => {
       // this.entity!.usuario_id=this.auth.usuario!.id;
@@ -319,14 +318,14 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       curriculumProfissional.interesse_bnt = (this.form?.controls.interesse_bnt.value ? 1 : 0);
       curriculumProfissional.remocao = (this.form?.controls.remocao.value ? 1 : 0);
       //curriculumProfissional.usuario_id = this.auth.usuario?.id;
-      curriculumProfissional.historicoAtividadeInterna = this.form!.controls.historicoAtividadeInterna.value.filter((x: HistoricoAtividadeInternaCurriculum) => x._status?.length);
-      curriculumProfissional.historicoAtividadeExterna = this.form!.controls.historicoAtividadeExterna.value.filter((x: HistoricoAtividadeExternaCurriculum) => x._status?.length);
-      curriculumProfissional.historicoCursoInterno = this.form!.controls.historicoCursoInterno.value.filter((x: HistoricoCursoInternoCurriculum) => x._status?.length);
-      curriculumProfissional.historicoCursoExterno = this.form!.controls.historicoCursoExterno.value.filter((x: HistoricoCursoExternoCurriculum) => x._status?.length);
-      curriculumProfissional.historicoDocenciaInterna = this.form!.controls.historicoDocenciaInterna.value.filter((x: HistoricoDocenciaInternaCurriculum) => x._status?.length);
-      curriculumProfissional.historicoDocenciaExterna = this.form!.controls.historicoDocenciaExterna.value.filter((x: HistoricoDocenciaExternaCurriculum) => x._status?.length);
-      curriculumProfissional.historicoFuncao = this.form!.controls.historicoFuncao.value.filter((x: HistoricoFuncaoCurriculum) => x._status?.length);
-      curriculumProfissional.historicoLotacao = this.form!.controls.historicoLotacao.value.filter((x: HistoricoLotacaoCurriculum) => x._status?.length);
+      curriculumProfissional.historico_atividade_interna = this.form!.controls.historico_atividade_interna.value.filter((x: HistoricoAtividadeInternaCurriculum) => x._status?.length);
+      curriculumProfissional.historico_atividade_externa = this.form!.controls.historico_atividade_externa.value.filter((x: HistoricoAtividadeExternaCurriculum) => x._status?.length);
+      curriculumProfissional.historico_curso_interno = this.form!.controls.historico_curso_interno.value.filter((x: HistoricoCursoInternoCurriculum) => x._status?.length);
+      curriculumProfissional.historico_curso_externo = this.form!.controls.historico_curso_externo.value.filter((x: HistoricoCursoExternoCurriculum) => x._status?.length);
+      curriculumProfissional.historico_docencia_interna = this.form!.controls.historico_docencia_interna.value.filter((x: HistoricoDocenciaInternaCurriculum) => x._status?.length);
+      curriculumProfissional.historico_docencia_externa = this.form!.controls.historico_docencia_externa.value.filter((x: HistoricoDocenciaExternaCurriculum) => x._status?.length);
+      curriculumProfissional.historico_funcao = this.form!.controls.historico_funcao.value.filter((x: HistoricoFuncaoCurriculum) => x._status?.length);
+      curriculumProfissional.historico_lotacao = this.form!.controls.historico_lotacao.value.filter((x: HistoricoLotacaoCurriculum) => x._status?.length);
    
       //(this.form?.controls.idiomasM.value as Array<LookupItem>).forEach(element => curriculumProfissional.idiomas.push(element.data));
       resolve(curriculumProfissional);  
@@ -371,6 +370,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       /*row.pretensao = values.pretensao;
       row.curso_id = values.curso_id;*/
       row.funcao = this.funcao?.selectedItem?.data;
+      console.log('row.funcao',row.funcao.nome);
       row.funcao_id = values.funcao_id;
       row._status = row._status == "ADD" ? "ADD" : "EDIT";
       return row;
@@ -407,10 +407,10 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     form?.markAllAsTouched();
     if (form?.valid) {
       let values = form.value;
-      console.log('VALUES',values)
-      console.log('ROW',row)
+      //console.log('VALUES',values)
+      //console.log('ROW',row)
      // row.unidade = this.unidade!.loadSearch(row.unidade_id);
-      row.unidade = this.unidade!.selectedItem;
+      //row.unidade = this.unidade!.selectedItem;
       row.unidade_id = values.unidade_id;
       row._status = row._status == "ADD" ? "ADD" : "EDIT";
       return row;
@@ -446,10 +446,11 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     form?.markAllAsTouched();
     if (form?.valid) {
       let values = form.value;
-      console.log('VALUES',values)
-      console.log('ROW',row)
+     // console.log('VALUES',values)
+     // console.log('ROW',row)
      /*row.unidade = this.unidade!.loadSearch(row.unidade_id);*/
-      row.areaAtividadeExterna = this.areaAtividadeExterna!.selectedItem;
+      //row.areaAtividadeExterna = this.areaAtividadeExterna!.selectedItem;
+      //console.log(row.areaAtividadeExterna)
       row.area_atividade_externa_id = values.area_atividade_externa_id;
       row._status = row._status == "ADD" ? "ADD" : "EDIT";
       return row;
@@ -485,8 +486,8 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     form?.markAllAsTouched();
     if (form?.valid) {
       let values = form.value;
-      console.log('VALUES',values)
-      console.log('ROW',row)
+      //console.log('VALUES',values)
+      //console.log('ROW',row)
      /*row.unidade = this.unidade!.loadSearch(row.unidade_id);*/
       row.areaTematica = this.areaTematica!.selectedItem;
       row.area_tematica_id = values.area_tematica_id;
@@ -532,7 +533,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       console.log('VALUES',values)
       console.log('ROW',row)
      /*row.unidade = this.unidade!.loadSearch(row.unidade_id);*/
-      row.areaAtividadeExternaDocencia = this.areaAtividadeExternaDocencia!.selectedItem;
+      //row.areaAtividadeExternaDocencia = this.areaAtividadeExternaDocencia!.selectedItem;
       row.area_atividade_externa_id = values.area_atividade_externa_id;
       row._status = row._status == "ADD" ? "ADD" : "EDIT";
       return row;
@@ -572,7 +573,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       console.log('VALUES',values)
       console.log('ROW',row)
      /*row.unidade = this.unidade!.loadSearch(row.unidade_id);*/
-      row.cursoDocenciaInterna = this.cursoDocenciaInterna?.selectedItem;
+     // row.cursoDocenciaInterna = this.cursoDocenciaInterna?.selectedItem;
       row.curso_id = values.curso_id;
       row.pretensao = values.pretensao;
       row._status = row._status == "ADD" ? "ADD" : "EDIT";
@@ -634,7 +635,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       console.log('VALUES',values)
       console.log('ROW',row)
      /*row.unidade = this.unidade!.loadSearch(row.unidade_id);*/
-      row.historicoCursoInterno = this.historicoCursoInterno!.selectedItem;
+      //row.historicoCursoInterno = this.historicoCursoInterno!.selectedItem;
       row.curso_id = values.curso_id;
       row.pretensao = values.pretensao;
       row._status = row._status == "ADD" ? "ADD" : "EDIT";
@@ -676,7 +677,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       console.log('VALUES',values)
       console.log('ROW',row)
      /*row.unidade = this.unidade!.loadSearch(row.unidade_id);*/
-      row.areaHistoricoCursoExterno = this.areaHistoricoCursoExterno!.selectedItem;
+     // row.areaHistoricoCursoExterno = this.areaHistoricoCursoExterno!.selectedItem;
       row.area_atividade_externa_id = values.area_atividade_externa_id;
       row.nome = values.nome;
       row.pretensao = values.pretensao;
