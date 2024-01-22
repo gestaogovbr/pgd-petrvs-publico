@@ -291,15 +291,11 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     const curriculunsProfissional = await this.dao?.query({ where: ['curriculum_id', '==', this.curriculumID], join: this.join }).asPromise();
     let entity = curriculunsProfissional?.length ? curriculunsProfissional[0] : new CurriculumProfissional();//this.entity
     curriculunsProfissional?.length ? (this.id = curriculunsProfissional[0].id) : (this.id = "");
-    //const cidade = entity.cidade_id != '' ? await this.cidadeDao?.getById(entity.cidade_id) : null;
-    //console.log('CIDADE',cidade)
-    //this.form?.controls.estados.setValue(this.lookup.UF.find(x => x.key == 'AM'));//cidade.uf));
-    //let uf = this.lookup.getLookup(this.lookup.UF, cidade?.uf);
-    //this.form?.controls.estados.setValue(uf?.key);//cidade.uf));
-    //entity.quantidade_filhos > 0 ? this.form?.controls.filhos.setValue(true) : this.form?.controls.filhos.setValue(false);
-    //const municipio = this.lookup.UF.find(x => x.key == cidade?.uf);
-    //entity.historicoAtividadeExterna.length > 0 ? this.form?.controls.radioAtividadeExterna.setValue(true) : this.form?.controls.radioAtividadeExterna.setValue(false);
-    
+    entity.historico_atividade_interna.length > 0 ? this.form?.controls.radioAtividadeInterna.setValue(true) : this.form?.controls.radioAtividadeInterna.setValue(false);
+    entity.historico_atividade_externa.length > 0 ? this.form?.controls.radioAtividadeExterna.setValue(true) : this.form?.controls.radioAtividadeExterna.setValue(false);
+    entity.historico_docencia_interna.length > 0 ? this.form?.controls.radioDocenciaInterna.setValue(true) : this.form?.controls.radioDocenciaInterna.setValue(false);
+    entity.historico_docencia_externa.length > 0 ? this.form?.controls.radioDocenciaExterna.setValue(true) : this.form?.controls.radioDocenciaExterna.setValue(false);
+       
     await this.loadData(entity, this.form!);
   }
 
