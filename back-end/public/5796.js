@@ -35,34 +35,6 @@ _class.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdef
 
 /***/ }),
 
-/***/ 61210:
-/*!*************************************************************!*\
-  !*** ./src/app/models/plano-trabalho-consolidacao.model.ts ***!
-  \*************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   PlanoTrabalhoConsolidacao: () => (/* binding */ PlanoTrabalhoConsolidacao)
-/* harmony export */ });
-/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
-
-class PlanoTrabalhoConsolidacao extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
-  constructor(data) {
-    super();
-    this.data_inicio = new Date();
-    this.data_fim = new Date();
-    this.status = "INCLUIDO"; // Status atual da consolidação
-    this.avaliacoes = [];
-    this.status_historico = [];
-    this.plano_trabalho_id = "";
-    this.avaliacao_id = null;
-    this.initialization(data);
-  }
-}
-
-/***/ }),
-
 /***/ 65862:
 /*!****************************************************************************************************************************************!*\
   !*** ./src/app/modules/gestao/plano-trabalho/plano-trabalho-consolidacao-avaliacao/plano-trabalho-consolidacao-avaliacao.component.ts ***!
