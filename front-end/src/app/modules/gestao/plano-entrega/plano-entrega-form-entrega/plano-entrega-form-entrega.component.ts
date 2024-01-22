@@ -335,7 +335,8 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
         default:
           break;
       }
-      if (entregaItem.etiquetas) this.loadEtiquetas();
+      //if (entregaItem.etiquetas) this.loadEtiquetas();
+      this.loadEtiquetas();
       if (entregaItem.checklist) this.loadChecklist();
       this.calculaRealizado();
     }
@@ -343,6 +344,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
 
   public loadEtiquetas() {
     this.etiquetas = this.util.merge(this.entrega?.selectedEntity.etiquetas, this.unidade?.selectedEntity.etiquetas, (a, b) => a.key == b.key);
+    this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);
   }
 
   public loadChecklist() {
