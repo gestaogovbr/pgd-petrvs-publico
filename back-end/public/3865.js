@@ -313,7 +313,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   PanelFormComponent: () => (/* binding */ PanelFormComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/components/grid/grid.component */ 73150);
 /* harmony import */ var src_app_components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../components/tabs/tabs.component */ 66384);
@@ -364,6 +364,9 @@ function PanelFormComponent_div_88_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementStart"](10, "div", 4);
     _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelement"](11, "input-text", 86)(12, "input-text", 87)(13, "input-select", 88)(14, "input-select", 89);
+    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementStart"](15, "div", 4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelement"](16, "input-text", 90)(17, "input-text", 91);
     _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementEnd"]()();
   }
   if (rf & 2) {
@@ -396,20 +399,26 @@ function PanelFormComponent_div_88_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("size", 3)("items", ctx_r0.lookup.EXISTE_PAGADOR);
     _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("size", 3)("items", ctx_r0.lookup.TIPO_VINCULO);
+    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("size", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵattribute"]("maxlength", 250);
+    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("size", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵattribute"]("maxlength", 250);
   }
 }
 function PanelFormComponent_div_89_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementStart"](0, "div", 4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelement"](1, "separator", 90);
+    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelement"](1, "separator", 92);
     _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementStart"](2, "div", 4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelement"](3, "input-text", 91)(4, "input-text", 92)(5, "input-text", 93);
+    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelement"](3, "input-text", 93)(4, "input-text", 94)(5, "input-text", 95);
     _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementStart"](6, "div", 4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelement"](7, "input-text", 94)(8, "input-text", 95)(9, "input-text", 96);
+    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelement"](7, "input-text", 96)(8, "input-text", 97)(9, "input-text", 98);
     _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementStart"](10, "div", 4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelement"](11, "input-text", 97)(12, "input-text", 98);
+    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelement"](11, "input-text", 99)(12, "input-text", 100);
     _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementEnd"]()();
   }
   if (rf & 2) {
@@ -692,6 +701,12 @@ class PanelFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IM
       integracao_wso2_token_password: {
         default: ""
       },
+      integracao_siape_usuario_comum: {
+        default: "Participante"
+      },
+      integracao_siape_usuario_chefe: {
+        default: "Chefia de Unidade Executora"
+      },
       // SEI
       modulo_sei_habilitado: {
         default: false
@@ -723,7 +738,7 @@ class PanelFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IM
   }
   onSelectTab(tab) {
     var _this = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (_this.viewInit) _this.saveUsuarioConfig({
         active_tab: tab.key
       });
@@ -731,7 +746,7 @@ class PanelFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IM
   }
   loadData(entity, form) {
     var _this2 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = Object.assign({}, form.value);
       let login = _this2.tiposLogin || [];
       formValue.login = login;
@@ -740,14 +755,14 @@ class PanelFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IM
   }
   initializeData(form) {
     var _this3 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this3.entity = yield _this3.dao.getById(_this3.urlParams.get("id"), _this3.join);
       yield _this3.loadData(_this3.entity, form);
     })();
   }
   saveData(form) {
     var _this4 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       return new Promise((resolve, reject) => {
         const entrega = _this4.util.fill(new src_app_models_tenant_model__WEBPACK_IMPORTED_MODULE_5__.Tenant(), _this4.entity);
         resolve(_this4.util.fillForm(entrega, _this4.form.value));
@@ -756,7 +771,7 @@ class PanelFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IM
   }
   gerarCertificado() {
     var _this5 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let certificado = yield _this5.dao.generateCertificateKeys();
       _this5.form.controls.modulo_sei_private_key.setValue(certificado.private_key);
       _this5.form.controls.modulo_sei_public_key.setValue(certificado.public_key);
@@ -789,7 +804,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵInheritDefinitionFeature"]],
   decls: 102,
   vars: 94,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["right", "", 3, "title", "select"], ["key", "PRINCIPAL", "label", "Principal"], ["title", "Entidade"], [1, "row"], ["label", "SIGLA", "controlName", "id", 3, "size", "disabled"], ["label", "Nome", "controlName", "nome_entidade", 3, "size"], ["label", "Abrang\u00EAncia", "controlName", "abrangencia", 3, "size", "items"], ["label", "Cod. IBGE", "icon", "bi bi-clock", 3, "size", "control"], ["label", "Dom\u00EDnio", "controlName", "dominio_url", 3, "size", "disabled"], ["title", "Super Usu\u00E1rio"], ["label", "Email", "controlName", "email", 3, "size"], ["label", "Nome", "controlName", "nome_usuario", 3, "size"], ["label", "CPF", "controlName", "cpf", 3, "size"], ["label", "Apelido", "controlName", "apelido", 3, "size"], ["title", "Notifica\u00E7\u00F5es", "hidden", "true"], ["hidden", "true", 1, "row"], [1, "col-md-6"], ["scale", "small", "labelPosition", "right", "label", "Petrvs (Dentro do sistema)", "controlName", "notification_petrvs", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "E-mail", "controlName", "notification_mail", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "WhatsApp", "controlName", "notification_whatsapp", 3, "size"], ["title", "WhatsApp"], ["label", "URL", "controlName", "notification_whatsapp_url", 3, "size"], ["label", "Token", "controlName", "notification_whatsapp_token", 3, "size"], ["title", "E-mail"], ["label", "Imagem assinatura", "controlName", "notification_mail_signature", 3, "size"], ["label", "Host", "controlName", "notification_mail_host", 3, "size"], ["label", "Porta", "controlName", "notification_mail_port", 3, "size"], ["label", "Protocolo", "controlName", "notification_mail_encryption", 3, "size", "items"], ["label", "Usu\u00E1rio", "controlName", "notification_mail_username", 3, "size"], ["password", "", "label", "Senha", "controlName", "notification_mail_password", 3, "size"], ["key", "BANCO", "label", "Banco de dados"], ["title", "Banco de dados da aplica\u00E7\u00E3o"], ["label", "Host", "controlName", "tenancy_db_host", 3, "size"], ["label", "Banco de dados", "controlName", "tenancy_db_name", 3, "size"], ["label", "Porta", "controlName", "tenancy_db_port", 3, "size"], ["label", "Usu\u00E1rio", "controlName", "tenancy_db_username", 3, "size"], ["password", "", "label", "Senha", "controlName", "tenancy_db_password", 3, "size"], ["title", "Logs"], [1, "col-md-8"], ["label", "Host", "controlName", "log_host", 3, "size"], ["label", "Banco de dados", "controlName", "log_database", 3, "size"], ["label", "Porta", "controlName", "log_port", 3, "size"], ["label", "Usu\u00E1rio", "controlName", "log_username", 3, "size"], ["password", "", "label", "Senha", "controlName", "log_password", 3, "size"], [1, "col-md-4"], ["title", "Op\u00E7\u00F5es de log"], ["scale", "small", "labelPosition", "right", "label", "Tr\u00E1fego (traffic)", "controlName", "log_traffic", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "Auditoria (changes)", "controlName", "log_changes", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "Erros (errors)", "controlName", "log_errors", 3, "size"], ["key", "LOGIN", "label", "Login"], ["title", "Google"], ["label", "Google Client ID", "controlName", "login_google_client_id", 3, "size"], ["label", "Firebase Project ID", "controlName", "login_firebase_client_id", 3, "size"], ["scale", "large", "labelPosition", "right", "label", "", "controlName", "login_google", 3, "size"], ["title", "Microsoft"], ["label", "Azure Client ID", "controlName", "login_azure_client_id", 3, "size"], ["label", "Azure Client Secret", "controlName", "login_azure_secret", 3, "size"], ["label", "Azure Redirect URI", "controlName", "login_azure_redirect_uri", 3, "size"], ["scale", "large", "labelPosition", "right", "label", "", "controlName", "login_azure", 3, "size"], ["title", "Login GOVBr"], ["label", "Client ID", "controlName", "login_login_unico_client_id", 3, "size"], ["label", "Secret", "controlName", "login_login_unico_secret", 3, "size"], ["scale", "large", "labelPosition", "right", "label", "", "controlName", "login_login_unico", 3, "size"], ["key", "INTEGRACAO", "label", "Integra\u00E7\u00E3o"], ["label", "Tipo da Integra\u00E7\u00E3o", "controlName", "tipo_integracao", 3, "size", "items"], ["labelPosition", "top", "label", "Auto-incluir", "controlName", "integracao_auto_incluir", 3, "size"], ["label", "Codigo unidade raiz", "controlName", "integracao_cod_unidade_raiz", 3, "size"], ["class", "row", 4, "ngIf"], ["key", "SEI", "label", "M\u00F3dulo SEI"], ["labelPosition", "top", "label", "Habilitado", "controlName", "modulo_sei_habilitado", 3, "size"], ["label", "Url do sei", "controlName", "modulo_sei_url", "labelInfo", "Url completa do SEI incluindo o https://, sem a barra no final", 3, "size"], ["title", "Certificado digital (Comunica\u00E7\u00E3o B2B)"], ["label", "Chave privada", "controlName", "modulo_sei_private_key", 3, "rows", "size"], ["label", "Chave p\u00FAblica", "controlName", "modulo_sei_public_key", 3, "rows", "size"], [1, "col-md-2", "one-per-line"], ["label", "Op\u00E7\u00F5es", "labelInfo", "Utilize os bot\u00F5es abaixo caso deseje gerar o certificado diretamente pelo sistema"], ["fullWidth", "", "label", "Gerar", 3, "onClick"], ["fullWidth", "", "label", "Copiar", 3, "onClick"], ["title", "Siape-WS", "labeInfo", "As informa\u00E7\u00F5es dessa tela s\u00E3o referentes \u00E0s inseridas no cadastro do SIAPE"], ["label", "URL", "controlName", "integracao_siape_url", 3, "size"], ["label", "Upag", "controlName", "integracao_siape_upag", 3, "size"], ["label", "Sigla do Sistema", "controlName", "integracao_siape_sigla", 3, "size"], ["label", "Nome do Sistema", "controlName", "integracao_siape_nome", 3, "size"], ["label", "CPF", "controlName", "integracao_siape_cpf", 3, "size"], ["label", "Senha", "controlName", "integracao_siape_senha", 3, "size"], ["label", "Codigo do \u00D3rg\u00E3o", "controlName", "integracao_siape_codorgao", 3, "size"], ["label", "Codigo UORG", "controlName", "integracao_siape_uorg", 3, "size"], ["label", "Existe Pagador", "controlName", "integracao_siape_existepag", 3, "size", "items"], ["label", "Tipo de V\u00EDnculo", "controlName", "integracao_siape_tipovinculo", 3, "size", "items"], ["title", "Siape-PRF"], ["label", "URL", "controlName", "integracao_wso2_url", 3, "size"], ["label", "URL Unidades", "controlName", "integracao_wso2_unidades", 3, "size"], ["label", "URL Pessoas", "controlName", "integracao_wso2_pessoas", 3, "size"], ["label", "Token URL", "controlName", "integracao_wso2_token_url", 3, "size"], ["label", "Token AUTHORIZATION", "controlName", "integracao_wso2_token_authorization", 3, "size"], ["label", "Token Acesso", "controlName", "integracao_wso2_token_acesso", 3, "size"], ["label", "Token USER", "controlName", "integracao_wso2_token_user", 3, "size"], ["label", "Token Password", "controlName", "integracao_wso2_token_password", 3, "size"]],
+  consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["right", "", 3, "title", "select"], ["key", "PRINCIPAL", "label", "Principal"], ["title", "Entidade"], [1, "row"], ["label", "SIGLA", "controlName", "id", 3, "size", "disabled"], ["label", "Nome", "controlName", "nome_entidade", 3, "size"], ["label", "Abrang\u00EAncia", "controlName", "abrangencia", 3, "size", "items"], ["label", "Cod. IBGE", "icon", "bi bi-clock", 3, "size", "control"], ["label", "Dom\u00EDnio", "controlName", "dominio_url", 3, "size", "disabled"], ["title", "Super Usu\u00E1rio"], ["label", "Email", "controlName", "email", 3, "size"], ["label", "Nome", "controlName", "nome_usuario", 3, "size"], ["label", "CPF", "controlName", "cpf", 3, "size"], ["label", "Apelido", "controlName", "apelido", 3, "size"], ["title", "Notifica\u00E7\u00F5es", "hidden", "true"], ["hidden", "true", 1, "row"], [1, "col-md-6"], ["scale", "small", "labelPosition", "right", "label", "Petrvs (Dentro do sistema)", "controlName", "notification_petrvs", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "E-mail", "controlName", "notification_mail", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "WhatsApp", "controlName", "notification_whatsapp", 3, "size"], ["title", "WhatsApp"], ["label", "URL", "controlName", "notification_whatsapp_url", 3, "size"], ["label", "Token", "controlName", "notification_whatsapp_token", 3, "size"], ["title", "E-mail"], ["label", "Imagem assinatura", "controlName", "notification_mail_signature", 3, "size"], ["label", "Host", "controlName", "notification_mail_host", 3, "size"], ["label", "Porta", "controlName", "notification_mail_port", 3, "size"], ["label", "Protocolo", "controlName", "notification_mail_encryption", 3, "size", "items"], ["label", "Usu\u00E1rio", "controlName", "notification_mail_username", 3, "size"], ["password", "", "label", "Senha", "controlName", "notification_mail_password", 3, "size"], ["key", "BANCO", "label", "Banco de dados"], ["title", "Banco de dados da aplica\u00E7\u00E3o"], ["label", "Host", "controlName", "tenancy_db_host", 3, "size"], ["label", "Banco de dados", "controlName", "tenancy_db_name", 3, "size"], ["label", "Porta", "controlName", "tenancy_db_port", 3, "size"], ["label", "Usu\u00E1rio", "controlName", "tenancy_db_username", 3, "size"], ["password", "", "label", "Senha", "controlName", "tenancy_db_password", 3, "size"], ["title", "Logs"], [1, "col-md-8"], ["label", "Host", "controlName", "log_host", 3, "size"], ["label", "Banco de dados", "controlName", "log_database", 3, "size"], ["label", "Porta", "controlName", "log_port", 3, "size"], ["label", "Usu\u00E1rio", "controlName", "log_username", 3, "size"], ["password", "", "label", "Senha", "controlName", "log_password", 3, "size"], [1, "col-md-4"], ["title", "Op\u00E7\u00F5es de log"], ["scale", "small", "labelPosition", "right", "label", "Tr\u00E1fego (traffic)", "controlName", "log_traffic", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "Auditoria (changes)", "controlName", "log_changes", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "Erros (errors)", "controlName", "log_errors", 3, "size"], ["key", "LOGIN", "label", "Login"], ["title", "Google"], ["label", "Google Client ID", "controlName", "login_google_client_id", 3, "size"], ["label", "Firebase Project ID", "controlName", "login_firebase_client_id", 3, "size"], ["scale", "large", "labelPosition", "right", "label", "", "controlName", "login_google", 3, "size"], ["title", "Microsoft"], ["label", "Azure Client ID", "controlName", "login_azure_client_id", 3, "size"], ["label", "Azure Client Secret", "controlName", "login_azure_secret", 3, "size"], ["label", "Azure Redirect URI", "controlName", "login_azure_redirect_uri", 3, "size"], ["scale", "large", "labelPosition", "right", "label", "", "controlName", "login_azure", 3, "size"], ["title", "Login GOVBr"], ["label", "Client ID", "controlName", "login_login_unico_client_id", 3, "size"], ["label", "Secret", "controlName", "login_login_unico_secret", 3, "size"], ["scale", "large", "labelPosition", "right", "label", "", "controlName", "login_login_unico", 3, "size"], ["key", "INTEGRACAO", "label", "Integra\u00E7\u00E3o"], ["label", "Tipo da Integra\u00E7\u00E3o", "controlName", "tipo_integracao", 3, "size", "items"], ["labelPosition", "top", "label", "Auto-incluir", "controlName", "integracao_auto_incluir", 3, "size"], ["label", "Codigo unidade raiz", "controlName", "integracao_cod_unidade_raiz", 3, "size"], ["class", "row", 4, "ngIf"], ["key", "SEI", "label", "M\u00F3dulo SEI"], ["labelPosition", "top", "label", "Habilitado", "controlName", "modulo_sei_habilitado", 3, "size"], ["label", "Url do sei", "controlName", "modulo_sei_url", "labelInfo", "Url completa do SEI incluindo o https://, sem a barra no final", 3, "size"], ["title", "Certificado digital (Comunica\u00E7\u00E3o B2B)"], ["label", "Chave privada", "controlName", "modulo_sei_private_key", 3, "rows", "size"], ["label", "Chave p\u00FAblica", "controlName", "modulo_sei_public_key", 3, "rows", "size"], [1, "col-md-2", "one-per-line"], ["label", "Op\u00E7\u00F5es", "labelInfo", "Utilize os bot\u00F5es abaixo caso deseje gerar o certificado diretamente pelo sistema"], ["fullWidth", "", "label", "Gerar", 3, "onClick"], ["fullWidth", "", "label", "Copiar", 3, "onClick"], ["title", "Siape-WS", "labeInfo", "As informa\u00E7\u00F5es dessa tela s\u00E3o referentes \u00E0s inseridas no cadastro do SIAPE"], ["label", "URL", "controlName", "integracao_siape_url", 3, "size"], ["label", "Upag", "controlName", "integracao_siape_upag", 3, "size"], ["label", "Sigla do Sistema", "controlName", "integracao_siape_sigla", 3, "size"], ["label", "Nome do Sistema", "controlName", "integracao_siape_nome", 3, "size"], ["label", "CPF", "controlName", "integracao_siape_cpf", 3, "size"], ["label", "Senha", "controlName", "integracao_siape_senha", 3, "size"], ["label", "Codigo do \u00D3rg\u00E3o", "controlName", "integracao_siape_codorgao", 3, "size"], ["label", "Codigo UORG", "controlName", "integracao_siape_uorg", 3, "size"], ["label", "Existe Pagador", "controlName", "integracao_siape_existepag", 3, "size", "items"], ["label", "Tipo de V\u00EDnculo", "controlName", "integracao_siape_tipovinculo", 3, "size", "items"], ["label", "Perfil Usu\u00E1rio Comum", "controlName", "integracao_siape_usuario_comum", 3, "size"], ["label", "Perfil Usu\u00E1rio Chefe", "controlName", "integracao_siape_usuario_chefe", 3, "size"], ["title", "Siape-PRF"], ["label", "URL", "controlName", "integracao_wso2_url", 3, "size"], ["label", "URL Unidades", "controlName", "integracao_wso2_unidades", 3, "size"], ["label", "URL Pessoas", "controlName", "integracao_wso2_pessoas", 3, "size"], ["label", "Token URL", "controlName", "integracao_wso2_token_url", 3, "size"], ["label", "Token AUTHORIZATION", "controlName", "integracao_wso2_token_authorization", 3, "size"], ["label", "Token Acesso", "controlName", "integracao_wso2_token_acesso", 3, "size"], ["label", "Token USER", "controlName", "integracao_wso2_token_user", 3, "size"], ["label", "Token Password", "controlName", "integracao_wso2_token_password", 3, "size"]],
   template: function PanelFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementStart"](0, "editable-form", 0);
@@ -871,7 +886,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementStart"](83, "tab", 64)(84, "div", 4);
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelement"](85, "input-select", 65)(86, "input-switch", 66)(87, "input-text", 67);
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵtemplate"](88, PanelFormComponent_div_88_Template, 15, 20, "div", 68);
+      _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵtemplate"](88, PanelFormComponent_div_88_Template, 18, 24, "div", 68);
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵtemplate"](89, PanelFormComponent_div_89_Template, 13, 12, "div", 68);
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementStart"](90, "tab", 69)(91, "div", 4);
