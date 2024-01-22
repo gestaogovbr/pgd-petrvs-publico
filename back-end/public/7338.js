@@ -53,7 +53,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_services_dialog_service__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! src/app/services/dialog.service */ 19899);
 /* harmony import */ var src_app_dao_atividade_dao_service__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! src/app/dao/atividade-dao.service */ 84971);
 
-var _class;
 
 
 
@@ -581,16 +580,15 @@ class AtividadeService {
   lastConsolidacao(consolidacoes) {
     return consolidacoes?.reduce((a, v) => a = !a || this.util.asTimestamp(v.data_conclusao) > this.util.asTimestamp(a.data_conclusao) ? v : a, undefined);
   }
+  static #_ = this.ɵfac = function AtividadeService_Factory(t) {
+    return new (t || AtividadeService)(_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_3__.LookupService), _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_services_lexical_service__WEBPACK_IMPORTED_MODULE_4__.LexicalService), _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_services_calendar_service__WEBPACK_IMPORTED_MODULE_5__.CalendarService), _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_services_comentario_service__WEBPACK_IMPORTED_MODULE_6__.ComentarioService), _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_7__.AuthService), _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_8__.UtilService), _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_services_navigate_service__WEBPACK_IMPORTED_MODULE_9__.NavigateService), _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_services_dialog_service__WEBPACK_IMPORTED_MODULE_10__.DialogService), _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_dao_atividade_dao_service__WEBPACK_IMPORTED_MODULE_11__.AtividadeDaoService));
+  };
+  static #_2 = this.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdefineInjectable"]({
+    token: AtividadeService,
+    factory: AtividadeService.ɵfac,
+    providedIn: 'root'
+  });
 }
-_class = AtividadeService;
-_class.ɵfac = function AtividadeService_Factory(t) {
-  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_3__.LookupService), _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_services_lexical_service__WEBPACK_IMPORTED_MODULE_4__.LexicalService), _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_services_calendar_service__WEBPACK_IMPORTED_MODULE_5__.CalendarService), _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_services_comentario_service__WEBPACK_IMPORTED_MODULE_6__.ComentarioService), _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_7__.AuthService), _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_8__.UtilService), _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_services_navigate_service__WEBPACK_IMPORTED_MODULE_9__.NavigateService), _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_services_dialog_service__WEBPACK_IMPORTED_MODULE_10__.DialogService), _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_dao_atividade_dao_service__WEBPACK_IMPORTED_MODULE_11__.AtividadeDaoService));
-};
-_class.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdefineInjectable"]({
-  token: _class,
-  factory: _class.ɵfac,
-  providedIn: 'root'
-});
 
 /***/ })
 
