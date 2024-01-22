@@ -59,6 +59,9 @@ export class AtividadeService {
   public getStatus(row: any, consolidacao?: PlanoTrabalhoConsolidacao): BadgeButton[] {
     const atividade: Atividade = row as Atividade;
     const status = this.lookup.ATIVIDADE_STATUS.find(x => x.key == atividade.status) || { key: "DESCONHECIDO", value: "Desconhecido", icon: "bi bi-question-circle", color: "light" };
+    if (!consolidacao) {
+      consolidacao = new PlanoTrabalhoConsolidacao;
+    }
     const consolidacaoDataInicio = this.util.setTime(consolidacao!.data_inicio, 0, 0, 0); 
     const consolidacaoDataFim = this.util.setTime(consolidacao!.data_fim, 23, 59, 59);
     let result: BadgeButton[] = [{ data: {status: status.key, filter: true}, label: status.value, icon: status.icon!, color: status.color! }];
