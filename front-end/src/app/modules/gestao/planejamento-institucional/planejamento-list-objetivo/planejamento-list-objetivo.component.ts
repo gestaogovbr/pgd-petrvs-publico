@@ -43,6 +43,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
     this.objetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
     this.eixoDao = injector.get<EixoTematicoDaoService>(EixoTematicoDaoService);
     this.groupBy = [{ field: "eixo_tematico_id", label: "Eixo Temático" }];
+    this.orderBy = [['nome','asc']];
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
       fundamentacao: { default: "" },
@@ -75,8 +76,6 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
 
   public marcador(row: PlanejamentoObjetivo): string {
     let level = row._metadata?.level || 0;
-    //if (!this.gridControl) this.sortObjetivos();
-    //console.log(row,"ROW");
     return level < 1 ? "" : (level < 2 ? "• " : (level < 3 ? "- " : "+ "));
   }
 
@@ -129,10 +128,12 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
       for(let item of list) {
         item._metadata = Object.assign(item._metadata || {}, { level });
         items.push(item);
-        if(item._status != "DELETE") addItens(this.items.filter(x => x.objetivo_pai_id == item.id).sort((a,b) => a.sequencia - b.sequencia), level + 1);
+        //if(item._status != "DELETE") addItens(this.items.filter(x => x.objetivo_pai_id == item.id).sort((a,b) => a.sequencia - b.sequencia), level + 1);
+        if(item._status != "DELETE") addItens(this.items.filter(x => x.objetivo_pai_id == item.id).sort((a,b) => (a.nome > b.nome ? -1 : 1)), level + 1);
       }
     }
-    addItens(this.items.filter(x => !x.objetivo_pai_id).sort((a,b) => a.sequencia - b.sequencia), 0);
+    //addItens(this.items.filter(x => !x.objetivo_pai_id).sort((a,b) => a.sequencia - b.sequencia), 0);
+    addItens(this.items.filter(x => !x.objetivo_pai_id).sort((a,b) => (a.nome > b.nome ? -1 : 1)), 0);
     this.items.length = 0;
     this.items.push(...items);
     this.cdRef.detectChanges();
