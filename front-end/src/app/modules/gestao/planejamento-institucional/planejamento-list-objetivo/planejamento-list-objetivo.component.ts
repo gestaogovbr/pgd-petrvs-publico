@@ -75,6 +75,8 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
 
   public marcador(row: PlanejamentoObjetivo): string {
     let level = row._metadata?.level || 0;
+    //if (!this.gridControl) this.sortObjetivos();
+    //console.log(row,"ROW");
     return level < 1 ? "" : (level < 2 ? "• " : (level < 3 ? "- " : "+ "));
   }
 

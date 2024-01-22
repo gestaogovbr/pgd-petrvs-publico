@@ -58,6 +58,13 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   } get unidadeId(): string | undefined {
     return this._unidadeId;
   }
+  @Input() set dataFim(value: Date | undefined) {
+    if(this._dataFim != value) {
+      this._dataFim = value;
+  }
+  } get dataFim(): Date | undefined {
+    return this._dataFim;
+  }
   @Input() execucao: boolean = false;
 
   public get items(): PlanoEntregaEntrega[] {
@@ -68,6 +75,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   private _cadeiaValorId?: string;
   private _planejamentoId?: string;
   private _unidadeId?: string;
+  private _dataFim?: Date;
 
   public entityToControl = (value: any) => (value as PlanoEntrega).entregas || [];
   public options: ToolbarButton[] = [];
@@ -147,6 +155,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
         planejamento_id: this.planejamentoId,
         cadeia_valor_id: this.cadeiaValorId,
         unidade_id: this.unidadeId,
+        data_fim: this.dataFim,
         entrega: entrega,
       },
       modalClose: async (modalResult) => {

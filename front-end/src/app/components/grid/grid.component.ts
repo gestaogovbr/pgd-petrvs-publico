@@ -18,7 +18,6 @@ import { ReportComponent } from './report/report.component';
 import { SidePanelComponent } from './side-panel/side-panel.component';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { TemplateDaoService } from 'src/app/dao/template-dao.service';
-import { Documento } from 'src/app/models/documento.model';
 import { DocumentoService } from 'src/app/modules/uteis/documentos/documento.service';
 
 export type GroupBy = {field: string, label: string, value?: any};
@@ -294,7 +293,6 @@ export class GridComponent extends ComponentBase implements OnInit {
       }
     ]
   };
-
   public BUTTON_REPORTS: ToolbarButton = {
     label: "Relatórios",
     icon: "bi bi-file-earmark-ruled",
@@ -312,8 +310,6 @@ export class GridComponent extends ComponentBase implements OnInit {
       }
     ]
   };
-
-
   public panelButtons: ToolbarButton[] = [
     {
       id: "concluir_valid",
@@ -339,7 +335,6 @@ export class GridComponent extends ComponentBase implements OnInit {
       onClick: this.onCancelItem.bind(this)
     }
   ];
-  
 
   constructor(public injector: Injector) {
     super(injector);
@@ -522,7 +517,6 @@ export class GridComponent extends ComponentBase implements OnInit {
       }) 
     }
   }
-
 
   public expand(id: string) {
     this.expandedIds[id] = true;

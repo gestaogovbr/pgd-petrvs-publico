@@ -16,7 +16,7 @@ export class TipoMotivoAfastamentoListComponent extends PageListBase<TipoMotivoA
   constructor(public injector: Injector) {
     super(injector, TipoMotivoAfastamento, TipoMotivoAfastamentoDaoService);
     /* Inicializações */
-    this.title = this.lex.translate("Tipos de Motivo de Afastamento");
+    this.title = this.lex.translate("Motivos de Afastamento");
     this.code="MOD_TIPO_MTV_AFT";
     this.filter = this.fh.FormBuilder({
       codigo: {default: null},

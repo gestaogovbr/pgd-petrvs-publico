@@ -42,7 +42,7 @@ class IntegracaoUnidade extends ModelBase
         'municipio_uf', /* varchar(50); */
         'ativa', /* varchar(50); */
         'regimental', /* varchar(50); */
-        'datamodificacao', /* varchar(50); */
+        'data_modificacao', /* varchar(50); */
         'und_nu_adicional', /* varchar(50); */
         'cnpjupag', /* varchar(60); */
     ];

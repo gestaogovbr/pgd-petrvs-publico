@@ -50,7 +50,7 @@ class UnidadeIntegranteService extends ServiceBase
 
                 $atribuicoesFinais = [];
                 $integranteNovoOuExistente = UnidadeIntegrante::firstOrCreate(['unidade_id' => $unidade->id, 'usuario_id' => $usuario->id]);
-                if ($usuario && !$vinculo["atribuicoes"]) {     // excluir o vínculo e suas atribuições
+                if ($usuario && empty($vinculo["atribuicoes"])) {     // excluir o vínculo e suas atribuições
                     if (!empty($usuario->lotacao) && $usuario->lotacao->id == $integranteNovoOuExistente->id) {     // o vínculo de lotação não pode ser excluído, apenas através da definição da lotação em outra unidade
                         $integranteNovoOuExistente->atribuicoes->each(function ($a) {
                             if ($a->atribuicao != 'LOTADO') $a->delete();
@@ -63,7 +63,7 @@ class UnidadeIntegranteService extends ServiceBase
                         return $result;
                     };
                 } else {
-                    $this->validateIntegrante($vinculo["atribuicoes"]);
+                    $this->validateIntegrante($vinculo["atribuicoes"]);   // Verifica se é 'GESTOR', 'GESTOR_SUBSTITUTO' e 'GESTOR_DELEGADO' ao mesmo tempo
                     $unidadeLotacao = $usuario->lotacao ? $usuario->lotacao->unidade : null;                                    // unidade de lotação do usuário
                     $unidadeGerenciaTitular = $usuario->gerenciaTitular ? $usuario->gerenciaTitular->unidade : null;            // unidade onde eventualmente o usuário já é gestor titular
                     $atualGestorUnidade = $unidade->gestor ? $unidade->gestor->usuario : null;                                  // usuário que é o atual gestor titular da unidade

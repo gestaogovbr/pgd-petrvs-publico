@@ -201,13 +201,13 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_PTR_CSLD_REC_AVAL", "Permite recorrer da avaliação"]
             ]
         ], [
-            "codigo"=> "MOD_PTR_CSLD_OCOR",
-            "descricao"=> "Módulo de Plano de Trabalho - Ocorrências",
+            "codigo"=> "MOD_OCOR",
+            "descricao"=> "Módulo de Ocorrências",
             "capacidades"=> [
                 /* Capacidades do módulo PLANO DE TRABALHO */
-                ["MOD_PTR_CSLD_OCOR_EDT", "Permite editar ocorrência de um plano de trabalho"],
-                ["MOD_PTR_CSLD_OCOR_EXCL", "Permite excluir ocorrência de um plano de trabalho"],
-                ["MOD_PTR_CSLD_OCOR_INCL", "Permite incluir ocorrência de um plano de trabalho"],
+                ["MOD_OCOR_EDT", "Permite editar ocorrência"],
+                ["MOD_OCOR_EXCL", "Permite excluir ocorrência"],
+                ["MOD_OCOR_INCL", "Permite incluir ocorrência"]
             ]
         ], [
             "codigo"=> "MOD_PENT",
@@ -238,6 +238,7 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_PENT_ENTR_EDT", "Permite editar entregas de um plano de entregas"],
                 ["MOD_PENT_ENTR_EXCL", "Permite excluir entregas de um plano de entregas"],
                 ["MOD_PENT_ENTR_INCL", "Permite incluir entregas de um plano de entregas"],
+                ["MOD_PENT_ENTR_EXTRPL", "Permite incluir entregas que extrapolem o plano de entregas"],
 
                 /* Capacidades do módulo PLANO DE ENTREGAS - ENTREGAS - PROGRESSOS*/
                 ["MOD_PENT_ENTR_PRO_INCL", "Permite incluir o progresso da entrega de um plano de entregas"],

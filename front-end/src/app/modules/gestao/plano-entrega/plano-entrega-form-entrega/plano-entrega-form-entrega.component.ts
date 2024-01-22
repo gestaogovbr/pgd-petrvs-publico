@@ -70,6 +70,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   public checklist: Checklist[] = [];
   public formChecklist: FormGroup;
   public etiquetas: LookupItem[] = [];
+  public dataFim?: Date;
 
   constructor(public injector: Injector) {
     super(injector, PlanoEntregaEntrega, PlanoEntregaEntregaDaoService);
@@ -86,9 +87,11 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.join = ["entrega", "objetivos.objetivo", "processos.processo"];
     this.form = this.fh.FormBuilder({
       descricao: { default: "" },
+      descricao_entrega: { default: "" },
       data_inicio: { default: new Date() },
       data_fim: { default: new Date() },
       meta: { default: 100 },
+      descricao_meta: { default: "" },
       realizado: { default: null },
       plano_entrega_id: { default: "" },
       entrega_pai_id: { default: null },
@@ -128,6 +131,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.planejamentoId = this.metadata?.planejamento_id;
     this.cadeiaValorId = this.metadata?.cadeia_valor_id;
     this.unidadeId = this.metadata?.unidade_id;
+    this.dataFim = this.metadata?.data_fim;
     this.entity = this.metadata?.entrega as PlanoEntregaEntrega; 
   }
 
@@ -178,10 +182,10 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       return "Data de fim inválida";
     } else if(inicio > fim) {
       return "A data do fim não pode ser anterior à data do início!";
-    } else if(this.planoEntrega && inicio < this.planoEntrega.data_inicio) {
-      return "Data de inicio menor que a data de inicio" + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(this.planoEntrega.data_inicio);
-    } else if(this.planoEntrega && this.planoEntrega.data_fim && fim > this.planoEntrega.data_fim) {
-      return "Data de fim maior que a data de fim" + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(this.planoEntrega.data_fim);
+    } else if(!this.auth.hasPermissionTo("MOD_PENT_ENTR_EXTRPL") && this.planoEntrega && inicio < this.planoEntrega.data_inicio) {
+      return "Data de inicio menor que a data de inicio " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(this.planoEntrega.data_inicio);
+    } else if(!this.auth.hasPermissionTo("MOD_PENT_ENTR_EXTRPL") && this.planoEntrega && this.planoEntrega.data_fim && fim > this.planoEntrega.data_fim) {
+      return "Data de fim maior que a data de fim " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(this.planoEntrega.data_fim);
     }
     return undefined;
   }
@@ -201,6 +205,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     form.controls.realizado.setValue(this.planoEntregaService.getValor(entity.realizado));
     form.controls.objetivos.setValue(entity.objetivos);
     form.controls.processos.setValue(entity.processos);
+    form.controls.data_fim.setValue(this.dataFim);
   }
 
   public async initializeData(form: FormGroup) {

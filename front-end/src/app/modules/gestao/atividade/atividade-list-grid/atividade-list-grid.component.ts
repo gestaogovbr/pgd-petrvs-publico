@@ -11,6 +11,7 @@ import { AtividadeListBase } from '../atividade-list-base';
 import { BadgeButton } from 'src/app/components/badge/badge.component';
 import { Unidade } from 'src/app/models/unidade.model';
 import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
+import { Comentario } from 'src/app/models/comentario';
 
 @Component({
   selector: 'atividade-list-grid',
@@ -22,6 +23,7 @@ export class AtividadeListGridComponent extends AtividadeListBase {
   @ViewChild('calendarEfemerides', { static: false }) public calendarEfemerides?: TemplateRef<any>;
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
   @ViewChild('usuario', { static: false }) public usuario?: InputSearchComponent;
+  @ViewChild('tipoAtividade', { static: false }) public tipoAtividade?: InputSearchComponent;
   @ViewChild('etiqueta', { static: false }) public etiqueta?: InputSelectComponent;
   @ViewChild('planoEntrega', { static: false }) public planoEntrega?: InputSelectComponent;
   @ViewChild('planoEntregaEntrega', { static: false }) public planoEntregaEntrega?: InputSelectComponent;
@@ -63,11 +65,14 @@ export class AtividadeListGridComponent extends AtividadeListBase {
       plano_entrega_entrega_id: { default: null},
     });
     this.formEdit = this.fh.FormBuilder({
+      descricao: { default: "" },
+      tipo_atividade_id: { default: null },
+      comentarios: { default: [] },
       progresso: { default: 0 },
       etiquetas: { default: [] },
       etiqueta: { default: null }
     });
-    this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }, { field: "plano_trabalho_entrega.plano_entrega_entrega.descricao", label: "Entrega" }];
+    this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }, { field: "plano_trabalho_entrega.plano_entrega_entrega.descricao", label: "Entrega" }, { field: "plano_trabalho_entrega.descricao", label: "Descrição dos trabalhos" }];
     this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 
@@ -303,5 +308,30 @@ export class AtividadeListGridComponent extends AtividadeListBase {
       value: x.descricao
     })) || [];
   }
+
+  public async onColumnAtividadeDescricaoEdit(row: any) {
+    this.formEdit.controls.descricao.setValue(row.descricao);
+    this.formEdit.controls.tipo_atividade_id.setValue(row.tipo_atividade_id);
+    this.formEdit.controls.comentarios.setValue(row.comentarios);
+  }
+
+  public async onColumnAtividadeDescricaoSave(row: any) {
+    try {
+      this.atividadeService.comentarioAtividade(this.tipoAtividade?.selectedEntity, this.formEdit!.controls.comentarios);
+      const saved = await this.dao!.update(row.id, {
+        descricao: this.formEdit.controls.descricao.value,
+        tipo_atividade_id: this.formEdit.controls.tipo_atividade_id.value,
+        comentarios: (this.formEdit.controls.comentarios.value || []).filter((x: Comentario) => ["ADD", "EDIT", "DELETE"].includes(x._status || ""))
+      });
+      row.descricao = this.formEdit.controls.descricao.value;
+      row.tipo_atividade_id = this.formEdit.controls.tipo_atividade_id.value;
+      row.tipo_atividade = this.tipoAtividade?.selectedEntity || null;
+      row.comentarios = this.formEdit.controls.comentarios.value;
+      return !!saved;
+    } catch (error) {
+      return false;
+    }
+  }
+
 }
 
