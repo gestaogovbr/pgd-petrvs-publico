@@ -684,7 +684,7 @@ class ProgramaListComponent extends src_app_modules_base_page_list_base__WEBPACK
     this.addOption(this.OPTION_EXCLUIR, "MOD_PRGT_EXCL");
     this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
     // Testa se o usuário possui permissão para visualizar os participantes do programa de gestão
-    if (this.auth.hasPermissionTo("MOD_PART")) {
+    if (this.auth.hasPermissionTo("MOD_PRGT_PART")) {
       this.options.push({
         icon: "bi bi-people",
         label: "Participantes",
@@ -697,7 +697,7 @@ class ProgramaListComponent extends src_app_modules_base_page_list_base__WEBPACK
         })
       });
     }
-    /*     if (this.auth.hasPermissionTo("MOD_PART")) {
+    /*     if (this.auth.hasPermissionTo("MOD_PRGT_PART")) {
           this.options.push({
             icon: "bi bi-folder",
             label: "Desdobramentos",
@@ -705,6 +705,7 @@ class ProgramaListComponent extends src_app_modules_base_page_list_base__WEBPACK
           });
         } */
   }
+
   ngOnInit() {
     super.ngOnInit();
     this.vigentesUnidadeExecutora = this.metadata?.vigentesUnidadeExecutora;
@@ -1010,7 +1011,7 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
     this.usuarioDao = injector.get(src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_5__.UsuarioDaoService);
     this.programaDao = injector.get(src_app_dao_programa_dao_service__WEBPACK_IMPORTED_MODULE_2__.ProgramaDaoService);
     /* Inicializações */
-    this.code = "MOD_PART";
+    this.code = "MOD_PRGT_PART";
     this.filter = this.fh.FormBuilder({
       programa_id: {
         default: this.programa?.id
@@ -1033,13 +1034,13 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
         default: true
       }
     }, this.cdRef, this.validate);
-    if (this.auth.hasPermissionTo('MOD_PART_HAB')) this.multiselectMenu.push({
+    if (this.auth.hasPermissionTo('MOD_PRGT_PART_HAB')) this.multiselectMenu.push({
       icon: "bi bi-person-check-fill",
       label: "Habilitar",
       color: "btn-outline-success",
       onClick: this.habilitarParticipantes.bind(this)
     });
-    if (this.auth.hasPermissionTo('MOD_PART_DESAB')) this.multiselectMenu.push({
+    if (this.auth.hasPermissionTo('MOD_PRGT_PART_DESAB')) this.multiselectMenu.push({
       icon: "bi bi-person-x-fill",
       label: "Desabilitar",
       color: "btn-outline-danger",
@@ -1049,8 +1050,8 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
   }
   dynamicButtons(row) {
     let result = [];
-    if (this.auth.hasPermissionTo('MOD_PART_HAB') && !row.habilitado) result.push(this.BOTAO_HABILITAR);
-    if (this.auth.hasPermissionTo('MOD_PART_DESAB') && row.habilitado) result.push(this.BOTAO_DESABILITAR);
+    if (this.auth.hasPermissionTo('MOD_PRGT_PART_HAB') && !row.habilitado) result.push(this.BOTAO_HABILITAR);
+    if (this.auth.hasPermissionTo('MOD_PRGT_PART_DESAB') && row.habilitado) result.push(this.BOTAO_DESABILITAR);
     return result;
   }
   ngAfterViewInit() {
@@ -1073,6 +1074,7 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
       //this.programaSearch?.loadSearch(this.programa);
     })();
   }
+
   filterClear(filter) {
     filter.controls.unidade_id.setValue(undefined);
     filter.controls.nome_usuario.setValue('');
@@ -1279,7 +1281,7 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
         const _r14 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](26);
         const _r16 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](29);
         const _r18 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](32);
-        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("dao", ctx.dao)("form", ctx.form)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("add", ctx.addParticipante.bind(ctx))("load", ctx.loadParticipante.bind(ctx))("save", ctx.saveParticipante.bind(ctx))("selectable", ctx.selectable)("multiselectAllFields", _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction0"](55, _c2))("hasAdd", ctx.auth.hasPermissionTo("MOD_PART_INCL"))("hasEdit", false)("hasDelete", false)("multiselectMenu", ctx.multiselectMenu);
+        _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("dao", ctx.dao)("form", ctx.form)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("add", ctx.addParticipante.bind(ctx))("load", ctx.loadParticipante.bind(ctx))("save", ctx.saveParticipante.bind(ctx))("selectable", ctx.selectable)("multiselectAllFields", _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction0"](55, _c2))("hasAdd", ctx.auth.hasPermissionTo("MOD_PRGT_PART_INCL"))("hasEdit", false)("hasDelete", false)("multiselectMenu", ctx.multiselectMenu);
         _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", !ctx.selectable);
         _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);

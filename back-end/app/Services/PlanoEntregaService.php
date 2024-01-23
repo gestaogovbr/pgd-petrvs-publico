@@ -444,7 +444,9 @@ class PlanoEntregaService extends ServiceBase
       "1. ser um dos gestores da unidade do plano ou da sua unidade-pai;\n" .
       "2. ser homologador de plano de entrega da unidade-pai do plano e possuir a capacidade MOD_PENT_EDT_FLH;\n" .
       "3. possuir a capacidade MOD_PENT_QQR_UND.\n[ver RN_PENT_Z]");
-    if (!$this->verificaDuracaoPlano($dataOrEntity) || !$this->verificaDatasEntregas($dataOrEntity)) throw new ServerException("ValidatePlanoEntrega", "O prazo das datas não satisfaz a duração estipulada no programa.");
+    if (!$usuario->hasPermissionTo('MOD_PENT_ENTR_EXTRPL')) {
+      if (!$this->verificaDuracaoPlano($dataOrEntity) || !$this->verificaDatasEntregas($dataOrEntity)) throw new ServerException("ValidatePlanoEntrega", "O prazo das datas não satisfaz a duração estipulada no programa.");
+    }    
     if ($action == ServiceBase::ACTION_EDIT) {
       /*  
         (RN_PENT_L) Para ALTERAR um plano de entregas:

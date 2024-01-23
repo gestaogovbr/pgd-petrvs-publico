@@ -115,7 +115,7 @@
                 </div>
             </ng-template>
         </column>
-        <column [title]="'Progresso\nChecklist'" [width]="150" [columnEditTemplate]="selectable ? undefined : columnProgressoEtiquetasChecklistEdit" [template]="columnProgressoEtiquetasChecklist" [edit]="selectable ? undefined : onColumnProgressoEtiquetasChecklistEdit.bind(this)" [save]="selectable ? undefined : onColumnProgressoEtiquetasChecklistSave.bind(this)">
+        <column [title]="'Progresso\nChecklist'" [width]="200" [columnEditTemplate]="selectable ? undefined : columnProgressoEtiquetasChecklistEdit" [template]="columnProgressoEtiquetasChecklist" [edit]="selectable ? undefined : onColumnProgressoEtiquetasChecklistEdit.bind(this)" [save]="selectable ? undefined : onColumnProgressoEtiquetasChecklistSave.bind(this)">
             <ng-template let-row="row" #columnProgressoEtiquetasChecklist>
                 <progress-bar [value]="row.progresso" color="success"></progress-bar>
                 <separator *ngIf="row.checklist?.length" small title="Checklist"></separator>
@@ -137,7 +137,7 @@
                 </table>
             </ng-template>
         </column>
-        <column [title]="'nº Processo/Status\nComentários'" [width]="300" [template]="columnNumero">
+        <column [title]="'nº Processo/Status\nComentários'" [width]="250" [template]="columnNumero">
             <ng-template let-row="row" #columnNumero>
                 <documentos-badge [documento]="row.documento_requisicao"></documentos-badge>
                 <span class="d-block">

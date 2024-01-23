@@ -1,7 +1,7 @@
 import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { TabsComponent } from 'src/app/components/tabs/tabs.component';
+import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Unidade } from 'src/app/models/unidade.model';
@@ -33,6 +33,7 @@ export class PlanoTrabalhoConsolidacaoComponent extends PageFrameBase {
     this.filter = this.fh.FormBuilder({
       unidade_id: { default: false }
     });
+
   }
 
   ngAfterViewInit() {
@@ -51,7 +52,7 @@ export class PlanoTrabalhoConsolidacaoComponent extends PageFrameBase {
       await this.loadUsuarios(this.unidade.id);
     }
   }
-
+  
   public async loadUsuarios(unidade: any) {
     this.usuarios = [];
     this.loadingUnidade = true;

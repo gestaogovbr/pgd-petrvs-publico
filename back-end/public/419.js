@@ -107,8 +107,8 @@ class EntregaFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
       return "Editando " + this.lex.translate("Entrega") + ': ' + (entity?.nome || "");
     };
     this.unidadeDao = injector.get(src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_5__.UnidadeDaoService);
+    this.modalWidth = 900;
     this.title = "Inclusão de " + this.lex.translate('Entregas');
-    this.modalWidth = 800;
     this.join = ["unidade"];
     this.form = this.fh.FormBuilder({
       nome: {

@@ -277,7 +277,11 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     if (form.unidade_id) result.push(["unidade_id", "==", form.unidade_id]);
     if (form.planejamento_id) result.push(["planejamento_id", "==", form.planejamento_id]);
     if (form.cadeia_valor_id) result.push(["cadeia_valor_id", "==", form.cadeia_valor_id]);
-    if (form.status || this.avaliacao) result.push(["status", "in", form.status ? [form.status] : ['CONCLUIDO', 'AVALIADO']]);
+    if (this.isModal) {
+      result.push(["status", "==", "ATIVO"]);
+    } else if (form.status || this.avaliacao) {
+      result.push(["status", "in", form.status ? [form.status] : ['CONCLUIDO', 'AVALIADO']]);
+    } 
     if (form.unidades_filhas) result.push(["unidades_filhas", "==", true]);
     //  (RI_PENT_C) Por padrão, os planos de entregas retornados na listagem do grid são os que não foram arquivados.
     result.push(["incluir_arquivados", "==", this.filter!.controls.arquivadas.value]);

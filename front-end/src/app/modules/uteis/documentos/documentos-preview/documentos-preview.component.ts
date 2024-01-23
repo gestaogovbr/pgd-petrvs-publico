@@ -44,6 +44,18 @@ export class DocumentosPreviewComponent extends PageFrameBase {
       try {
         this.documentoId = this.documentoId || this.metadata?.documentoId || this.urlParams?.get("documentoId");
         this.documento = this.documento || this.metadata?.documento || await this.dao!.getById(this.documentoId!);
+        if(this.documento?.assinaturas?.length){
+          let assinaturas = "<div style='display:block; '><br><hr><h5>Assinatura(s):</h5>";
+          this.documento?.assinaturas.forEach(assinatura => {
+            assinaturas += `<div class='mb-2'><p class="m-0"><b>${assinatura.usuario?.nome}</b></p><small>${this.util.getDateTimeFormatted(assinatura.data_assinatura)}<br>${assinatura.assinatura}</small></div>`;
+          });
+          assinaturas += "</div>";
+
+          if(!this.documento.conteudo?.includes(assinaturas)) this.documento.conteudo = this.documento.conteudo?.concat(assinaturas) || null;
+
+        }
+        
+        
         this.cdRef.detectChanges();
       } finally {
         this.loading = false;

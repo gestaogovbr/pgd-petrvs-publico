@@ -1,6 +1,34 @@
 "use strict";
 (self["webpackChunkpetrvs"] = self["webpackChunkpetrvs"] || []).push([[7338],{
 
+/***/ 61210:
+/*!*************************************************************!*\
+  !*** ./src/app/models/plano-trabalho-consolidacao.model.ts ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PlanoTrabalhoConsolidacao: () => (/* binding */ PlanoTrabalhoConsolidacao)
+/* harmony export */ });
+/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
+
+class PlanoTrabalhoConsolidacao extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
+  constructor(data) {
+    super();
+    this.data_inicio = new Date();
+    this.data_fim = new Date();
+    this.status = "INCLUIDO"; // Status atual da consolidação
+    this.avaliacoes = [];
+    this.status_historico = [];
+    this.plano_trabalho_id = "";
+    this.avaliacao_id = null;
+    this.initialization(data);
+  }
+}
+
+/***/ }),
+
 /***/ 57338:
 /*!***************************************************************!*\
   !*** ./src/app/modules/gestao/atividade/atividade.service.ts ***!
@@ -13,16 +41,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_models_comentario__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/models/comentario */ 11597);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/core */ 51197);
-/* harmony import */ var src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/services/lookup.service */ 39702);
-/* harmony import */ var src_app_services_lexical_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/services/lexical.service */ 15908);
-/* harmony import */ var src_app_services_calendar_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/services/calendar.service */ 6551);
-/* harmony import */ var src_app_services_comentario_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/services/comentario.service */ 2124);
-/* harmony import */ var src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/services/auth.service */ 32333);
-/* harmony import */ var src_app_services_util_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! src/app/services/util.service */ 49193);
-/* harmony import */ var src_app_services_navigate_service__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! src/app/services/navigate.service */ 92307);
-/* harmony import */ var src_app_services_dialog_service__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! src/app/services/dialog.service */ 19899);
-/* harmony import */ var src_app_dao_atividade_dao_service__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! src/app/dao/atividade-dao.service */ 84971);
+/* harmony import */ var src_app_models_plano_trabalho_consolidacao_model__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/models/plano-trabalho-consolidacao.model */ 61210);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/services/lookup.service */ 39702);
+/* harmony import */ var src_app_services_lexical_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/services/lexical.service */ 15908);
+/* harmony import */ var src_app_services_calendar_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/services/calendar.service */ 6551);
+/* harmony import */ var src_app_services_comentario_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/services/comentario.service */ 2124);
+/* harmony import */ var src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! src/app/services/auth.service */ 32333);
+/* harmony import */ var src_app_services_util_service__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! src/app/services/util.service */ 49193);
+/* harmony import */ var src_app_services_navigate_service__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! src/app/services/navigate.service */ 92307);
+/* harmony import */ var src_app_services_dialog_service__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! src/app/services/dialog.service */ 19899);
+/* harmony import */ var src_app_dao_atividade_dao_service__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! src/app/dao/atividade-dao.service */ 84971);
+
 
 
 
@@ -93,7 +123,7 @@ class AtividadeService {
     this.dynamicOptions = (row, metadata) => {
       let result = [];
       let atividade = row;
-      const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || atividade.unidade?.gestores_substitutos?.map(x => x.id).includes(this.auth.usuario?.id || "");
+      const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || this.auth.usuario?.id == atividade.unidade?.gestor_substituto?.id;
       const isDemandante = this.auth.usuario?.id == atividade.demandante_id;
       const isResponsavel = this.auth.usuario?.id == atividade.usuario_id;
       const lastConsolidacao = this.lastConsolidacao(row.metadados?.consolidacoes);
@@ -273,7 +303,7 @@ class AtividadeService {
     this.dynamicButtons = (row, metadata) => {
       let result = [];
       let atividade = row;
-      const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || atividade.unidade?.gestores_substitutos?.map(x => x.usuario_id).includes(this.auth.usuario?.id || "");
+      const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || this.auth.usuario?.id == atividade.unidade?.gestor_substituto?.id;
       const isResponsavel = this.auth.usuario?.id == atividade.usuario_id;
       const lastConsolidacao = this.lastConsolidacao(row.metadados?.consolidacoes);
       const BOTAO_ALTERAR_AVALIACAO = {
@@ -375,6 +405,9 @@ class AtividadeService {
       icon: "bi bi-question-circle",
       color: "light"
     };
+    if (!consolidacao) {
+      consolidacao = new src_app_models_plano_trabalho_consolidacao_model__WEBPACK_IMPORTED_MODULE_2__.PlanoTrabalhoConsolidacao();
+    }
     const consolidacaoDataInicio = this.util.setTime(consolidacao.data_inicio, 0, 0, 0);
     const consolidacaoDataFim = this.util.setTime(consolidacao.data_fim, 23, 59, 59);
     let result = [{
@@ -548,9 +581,9 @@ class AtividadeService {
     return consolidacoes?.reduce((a, v) => a = !a || this.util.asTimestamp(v.data_conclusao) > this.util.asTimestamp(a.data_conclusao) ? v : a, undefined);
   }
   static #_ = this.ɵfac = function AtividadeService_Factory(t) {
-    return new (t || AtividadeService)(_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵinject"](src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_2__.LookupService), _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵinject"](src_app_services_lexical_service__WEBPACK_IMPORTED_MODULE_3__.LexicalService), _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵinject"](src_app_services_calendar_service__WEBPACK_IMPORTED_MODULE_4__.CalendarService), _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵinject"](src_app_services_comentario_service__WEBPACK_IMPORTED_MODULE_5__.ComentarioService), _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵinject"](src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_6__.AuthService), _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵinject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_7__.UtilService), _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵinject"](src_app_services_navigate_service__WEBPACK_IMPORTED_MODULE_8__.NavigateService), _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵinject"](src_app_services_dialog_service__WEBPACK_IMPORTED_MODULE_9__.DialogService), _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵinject"](src_app_dao_atividade_dao_service__WEBPACK_IMPORTED_MODULE_10__.AtividadeDaoService));
+    return new (t || AtividadeService)(_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_3__.LookupService), _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_services_lexical_service__WEBPACK_IMPORTED_MODULE_4__.LexicalService), _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_services_calendar_service__WEBPACK_IMPORTED_MODULE_5__.CalendarService), _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_services_comentario_service__WEBPACK_IMPORTED_MODULE_6__.ComentarioService), _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_7__.AuthService), _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_8__.UtilService), _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_services_navigate_service__WEBPACK_IMPORTED_MODULE_9__.NavigateService), _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_services_dialog_service__WEBPACK_IMPORTED_MODULE_10__.DialogService), _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵinject"](src_app_dao_atividade_dao_service__WEBPACK_IMPORTED_MODULE_11__.AtividadeDaoService));
   };
-  static #_2 = this.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵdefineInjectable"]({
+  static #_2 = this.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdefineInjectable"]({
     token: AtividadeService,
     factory: AtividadeService.ɵfac,
     providedIn: 'root'
