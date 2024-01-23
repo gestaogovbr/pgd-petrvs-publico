@@ -129,7 +129,7 @@ class TemplateDatasetService extends ServiceBase
 					["field" => "sigla", "label" => "Sigla"],
 					["field" => "nome", "label" => "Nome"],
 					["field" => "gestor", "label" => "Gestor", "fields" => 'USUARIO', "type" => "OBJECT", "value" => function ($contexto) { return $contexto->gestor;}],
-					["field" => "gestor_substituto", "label" => "Gestor substituto", "fields" => 'USUARIO', "type" => "OBJECT", "value" => function ($contexto) { return $contexto->gestorSubstituto;}],
+					["field" => "gestor_substituto", "label" => "Gestor substituto", "fields" => 'USUARIO', "type" => "ARRAY", "value" => function ($contexto) { return $contexto->gestoresSubstitutos;}],
 					["field" => "entidade", "label" => "Entidade", "fields" => 'ENTIDADE', "type" => "OBJECT", "value" => function ($contexto) { return $contexto->entidade;}],
 					["field" => "cidade", "label" => "Cidade", "fields" => 'CIDADE', "type" => "OBJECT", "value" => function ($contexto) { return $contexto->cidade;}],
 					["field" => "texto_complementar_plano", "label" => "Mensagem do Plano de trabalho", "type" => "TEMPLATE"]
