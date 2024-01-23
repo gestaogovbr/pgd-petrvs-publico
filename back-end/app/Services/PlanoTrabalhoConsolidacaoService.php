@@ -54,7 +54,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       $planosTrabalhos = PlanoTrabalho::with([
         "unidade:id,sigla,nome",
         "unidade.gestor:id,unidade_id,usuario_id",
-        "unidade.gestorSubstituto:id,unidade_id,usuario_id",
+        "unidade.gestoresSubstitutos:id,unidade_id,usuario_id",
         "tipoModalidade:id,nome",
         "usuario:id,nome,apelido,url_foto,foto_perfil"
       ])->whereIn("id", $planosTrabalhosIds)->get()->all();
@@ -81,7 +81,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       'avaliacoes',
       'planoTrabalho.programa',
       'planoTrabalho.unidade.gestor:id,usuario_id',
-      'planoTrabalho.unidade.gestorSubstituto:id,usuario_id',
+      'planoTrabalho.unidade.gestoresSubstitutos:id,usuario_id',
       'planoTrabalho.entregas.entrega', 
       'planoTrabalho.entregas.reacoes', 
       'planoTrabalho.entregas.planoEntregaEntrega:id,descricao,plano_entrega_id,entrega_id,meta,realizado,progresso_realizado', 

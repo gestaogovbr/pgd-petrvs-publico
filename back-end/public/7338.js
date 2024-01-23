@@ -123,7 +123,7 @@ class AtividadeService {
     this.dynamicOptions = (row, metadata) => {
       let result = [];
       let atividade = row;
-      const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || this.auth.usuario?.id == atividade.unidade?.gestor_substituto?.id;
+      const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || atividade.unidade?.gestores_substitutos?.map(x => x.id).includes(this.auth.usuario?.id || "");
       const isDemandante = this.auth.usuario?.id == atividade.demandante_id;
       const isResponsavel = this.auth.usuario?.id == atividade.usuario_id;
       const lastConsolidacao = this.lastConsolidacao(row.metadados?.consolidacoes);
@@ -303,7 +303,7 @@ class AtividadeService {
     this.dynamicButtons = (row, metadata) => {
       let result = [];
       let atividade = row;
-      const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || this.auth.usuario?.id == atividade.unidade?.gestor_substituto?.id;
+      const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || atividade.unidade?.gestores_substitutos?.map(x => x.usuario_id).includes(this.auth.usuario?.id || "");
       const isResponsavel = this.auth.usuario?.id == atividade.usuario_id;
       const lastConsolidacao = this.lastConsolidacao(row.metadados?.consolidacoes);
       const BOTAO_ALTERAR_AVALIACAO = {
