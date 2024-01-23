@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use Stancl\Tenancy\Middleware\InitializeTenancyByPath;
+use App\Http\Controllers\SeederController;
 
 /* Testes *
 Route::get('/teste', function (Request $request) { return ["CENTRAL"]; }); */
@@ -35,4 +36,10 @@ Route::post('/panel-login', function (Request $request) {
         $return=true;
     }
     return response()->json($return);
+});
+
+/* Seeders */
+Route::prefix('Seeder')->group(function () {
+    Route::get('getAll', [SeederController::class, 'index']);
+    Route::post('execute', [SeederController::class, 'execute']);
 });
