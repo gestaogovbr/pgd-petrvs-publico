@@ -31,7 +31,7 @@
 (RN_UND_H) Uma unidade informal não pode possuir vínculo de lotação com nenhum servidor
 (RN_UND_I) Um mesmo usuário não pode ser gestor titular simultaneamente de mais de uma unidade formal
 (RN_UND_J) Um mesmo usuário pode ser gestor titular simultaneamente de mais de uma unidade informal, inclusive se já for gestor titular de uma unidade formal
-(RN_UND_K) Uma unidade, seja formal ou informal, só pode possuir, no máximo, um gestor titular, um gestor substituto, e um gestor delegado
+(RN_UND_K) Uma unidade, seja formal ou informal, só pode possuir, no máximo, um gestor titular, mas pode possuir vários gestores substitutos e vários gestores delegados
 (RN_UND_L) 
 (RN_UND_) 
 (RN_UND_) 

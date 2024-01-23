@@ -21,7 +21,7 @@ export type TipoCargaHoraria = "DIA" | "SEMANA" | "MES";
 export class Entidade extends Base implements HasNotificacao, HasRelatorio {
     public cidade?: Cidade;
     public tipo_modalidade?: TipoModalidade;
-    public gestor?: Usuario; /* Objeto do ususario gestor */
+    public gestor?: Usuario; /* Objeto do usuario gestor */
     public gestor_substituto?: Usuario;
     public relatorios_templates?: Template[] | undefined;
 
