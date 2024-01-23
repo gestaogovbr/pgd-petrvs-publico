@@ -50,7 +50,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
       "avaliacao.tipoAvaliacao.notas",
       "planoTrabalho.unidade:id,sigla,nome", 
       "planoTrabalho.unidade.gestor:id,unidade_id,usuario_id", 
-      "planoTrabalho.unidade.gestorSubstituto:id,unidade_id,usuario_id", 
+      "planoTrabalho.unidade.gestoresSubstitutos:id,unidade_id,usuario_id", 
       "planoTrabalho.tipoModalidade:id,nome", 
       "planoTrabalho.usuario:id,nome,apelido,foto_perfil,url_foto"//id,nome,apelido,url_foto,foto_perfil
     ];
