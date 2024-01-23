@@ -408,7 +408,7 @@ class UnidadeService extends ServiceBase
         $result = [];
         if(!empty($unidade_id)) $unidade = Unidade::find($unidade_id);
         if(!empty($unidade)) {
-            $result = array_map(fn($x) => $x->usuario, $unidade->gestoresSubstitutos ?? []);
+            $result = array_map(fn($x) => $x->usuario, ($unidade->gestoresSubstitutos ?? [])->toArray());
             if($unidade->gestor) $result[] = $unidade->gestor->usuario;
             array_merge($result, array_map(fn($x) => $x->usuario, $unidade->gestoresDelegados ?? []));
         }
