@@ -184,7 +184,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.entity!.unidade_id = unidade.id;
     this.form!.controls.forma_contagem_carga_horaria.setValue(unidade?.entidade?.forma_contagem_carga_horaria || "DIA");
     this.form!.controls.unidade_texto_complementar.setValue(unidade?.texto_complementar_plano || "");
-    this.unidadeDao.getById(unidade.id, ['gestor:id,usuario_id','gestor_substituto:id,usuario_id','gestor_delegado:id,usuario_id']).then( unidade => {
+    this.unidadeDao.getById(unidade.id, ['gestor:id,usuario_id','gestores_substitutos:id,usuario_id','gestores_delegados:id,usuario_id']).then( unidade => {
       this.buscaGestoresUnidadeExecutora(unidade);
     });
   }
@@ -235,7 +235,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.entity!.unidade_id = unidade.id;
     this.form!.controls.forma_contagem_carga_horaria.setValue(unidade?.entidade?.forma_contagem_carga_horaria || "DIA");
     this.form!.controls.unidade_texto_complementar.setValue(unidade?.texto_complementar_plano || "");
-    this.unidadeDao.getById(unidade.id, ['gestor:id,usuario_id','gestor_substituto:id,usuario_id','gestor_delegado:id,usuario_id']).then( unidade => {
+    this.unidadeDao.getById(unidade.id, ['gestor:id,usuario_id','gestores_substitutos:id,usuario_id','gestores_delegados:id,usuario_id']).then( unidade => {
       this.buscaGestoresUnidadeExecutora(unidade);
     });
   }
@@ -393,7 +393,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public buscaGestoresUnidadeExecutora(unidade: Unidade | null){
-    if (unidade) [unidade.gestor?.usuario_id, unidade.gestor_substituto?.usuario_id, unidade!.gestor_delegado?.usuario_id].forEach(gestor => {
+    if (unidade) [unidade.gestor?.usuario_id, ...unidade.gestores_substitutos?.map(x => x.usuario_id), ...unidade!.gestores_delegados?.map(x => x.usuario_id)].forEach(gestor => {
       if (gestor) this.gestoresUnidadeExecutora.push(gestor);
     });
     return this.gestoresUnidadeExecutora;

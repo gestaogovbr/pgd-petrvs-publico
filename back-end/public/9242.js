@@ -1,6 +1,40 @@
 "use strict";
 (self["webpackChunkpetrvs"] = self["webpackChunkpetrvs"] || []).push([[9242],{
 
+/***/ 83337:
+/*!****************************************************!*\
+  !*** ./src/app/models/unidade-integrante.model.ts ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   IntegranteConsolidado: () => (/* binding */ IntegranteConsolidado),
+/* harmony export */   UnidadeIntegrante: () => (/* binding */ UnidadeIntegrante)
+/* harmony export */ });
+/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
+
+class IntegranteConsolidado extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
+  constructor(data) {
+    super();
+    this.id = ""; /* Utilizado somente para garantir o funcionamento do grid */
+    this.atribuicoes = [];
+    this.initialization(data);
+  }
+}
+;
+class UnidadeIntegrante extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
+  constructor(data) {
+    super();
+    this.atribuicoes = [];
+    this.usuario_id = ""; /* Usuário vinculado */
+    this.unidade_id = ""; /* Unidade Vinculada */
+    this.initialization(data);
+  }
+}
+
+/***/ }),
+
 /***/ 11180:
 /*!**************************************************************************************!*\
   !*** ./src/app/modules/configuracoes/usuario/usuario-form/usuario-form.component.ts ***!
@@ -212,6 +246,7 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
             resolve(true);
           } catch (error) {
             if (_this2.editableForm) _this2.editableForm.error = error;
+            _this2.submitting = false;
           }
         }
       });
@@ -637,7 +672,6 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
           //return msg ? false : true;
         }
       }
-
       return false;
     })();
   }
@@ -899,7 +933,6 @@ class UsuarioListComponent extends src_app_modules_base_page_list_base__WEBPACK_
     this.addOption(this.OPTION_INFORMACOES, "MOD_USER");
     //this.addOption(this.OPTION_EXCLUIR, "MOD_USER_EXCL");       // Tratar de forma diferenciada a exclusão de usuário
   }
-
   dynamicOptions(row) {
     let result = [];
     // Testa se o usuário logado possui permissão para gerenciar as atribuições do usuário do grid

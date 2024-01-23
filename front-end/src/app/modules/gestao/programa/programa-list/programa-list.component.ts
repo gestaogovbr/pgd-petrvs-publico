@@ -30,7 +30,7 @@ export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoSer
     this.addOption(this.OPTION_EXCLUIR, "MOD_PRGT_EXCL");
     this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
     // Testa se o usuário possui permissão para visualizar os participantes do programa de gestão
-    if (this.auth.hasPermissionTo("MOD_PRGT_PART")) {
+    if (this.auth.hasPermissionTo("MOD_PART")) {
       this.options.push({
         icon: "bi bi-people",
         label: "Participantes",
@@ -38,7 +38,7 @@ export class ProgramaListComponent extends PageListBase<Programa, ProgramaDaoSer
       });
     }
 
-/*     if (this.auth.hasPermissionTo("MOD_PRGT_PART")) {
+/*     if (this.auth.hasPermissionTo("MOD_PART")) {
       this.options.push({
         icon: "bi bi-folder",
         label: "Desdobramentos",
