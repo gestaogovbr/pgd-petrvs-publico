@@ -111,11 +111,7 @@
                         {{row.curso.nome}}
                     </ng-template>
                     <ng-template let-row="row" #editCurso>
-<<<<<<< be3229002a8f2762ebfadf0dbcb030c7c1d37941
                         <input-select #curso [size]="3" label="Curso" icon="fas fa-graduation-cap" controlName="curso_id" fullEntity liveSearch [control]="formGraduacao!.controls.curso_id" [dao]="cursoDao"  [where]="cursoWhere" [addRoute]="{route: ['raiox','cadastros','curso','new']}"></input-select>
-=======
-                        <input-select #curso [size]="3" #curso label="Curso" icon="fas fa-graduation-cap" controlName="curso_id" liveSearch [control]="formGraduacao!.controls.curso_id" [dao]="cursoDao" [where]="cursoWhere" [addRoute]="{route: ['raiox','cadastros','curso','new']}"></input-select>
->>>>>>> 2a822068a89f8f26a3c27ffd1a7e14ac55df1299
                     </ng-template>
                 </column>
                 <column type="options"></column>
@@ -138,8 +134,4 @@
 
         </input-multiselect>
     </div>
-<<<<<<< be3229002a8f2762ebfadf0dbcb030c7c1d37941
     <separator class="mb-1"></separator>-->
-=======
-    <separator class="mb-1"></separator>-->
->>>>>>> 2a822068a89f8f26a3c27ffd1a7e14ac55df1299

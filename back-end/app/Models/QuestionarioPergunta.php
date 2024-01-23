@@ -34,7 +34,8 @@ class QuestionarioPergunta extends ModelBase
      // Belongs
      public function questionario() { return $this->belongsTo(Questionario::class); }
      //public function curriculum() { return $this->belongsTo(Curriculum::class); }
-    // public function origem() { return $this->hasMany(QuestionarioPergunta::class); }
+     //hasMany
+     public function questionarioRespostaPergunta() { return $this->hasMany(questionarioRespostaPergunta::class); }
  
     
 }

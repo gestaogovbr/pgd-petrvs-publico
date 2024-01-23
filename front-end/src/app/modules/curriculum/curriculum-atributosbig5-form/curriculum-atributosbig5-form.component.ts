@@ -11,6 +11,7 @@ import { QuestionarioResposta } from 'src/app/models/questionario-resposta.model
 import { QuestionarioRespostaPergunta } from 'src/app/models/questionario-resposta-pergunta.model';
 import { QuestionarioRespostaPerguntaDaoService } from 'src/app/dao/questionario-resposta-pergunta-dao.service';
 import { QuestionarioRespostaDaoService } from 'src/app/dao/questionario-resposta-dao.service';
+import { QuestionarioPergunta } from 'src/app/models/questionario-pergunta.model';
 
 @Component({
   selector: 'curriculum-atributosbig5-form',
@@ -44,28 +45,19 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
   public questionarioDao : QuestionarioDaoService;
   public questionarioPerguntasDao : QuestionarioPerguntaDaoService;
   public questionarioRespostasPerguntas : QuestionarioRespostaPerguntaDaoService ;
-  public questionarioID : string = "";
+  public questionario! : Questionario;
+  public questionario_perguntas! : QuestionarioPergunta;
   
-  public resposta = { 
-  
-      comunica: 0,
-      lideranca: 0,
-      resolucao: 0,
-      pretensao: 0,
-      criatividade: 0,
-      pensamento: 0,
-      habilidade: 0,
-      adaptabilidade: 0,
-      etica: 0,
-
-  };  
+  public respostas : QuestionarioRespostaPergunta [] = [];
 
 
   constructor(public injector: Injector) {
     super(injector, QuestionarioResposta, QuestionarioRespostaDaoService);
+    this.join = [];
     this.questionarioDao = injector.get<QuestionarioDaoService>(QuestionarioDaoService);
     this.questionarioPerguntasDao = injector.get<QuestionarioPerguntaDaoService>(QuestionarioPerguntaDaoService);
     this.questionarioRespostasPerguntas = injector.get<QuestionarioRespostaPerguntaDaoService>(QuestionarioRespostaPerguntaDaoService);
+    
    
     this.comunicaIMG="/assets/icons/iconeComunicacao.png";//"../assets/icons/Comunica.jpg";
     this.liderancaIMG="/assets/icons/iconeLideranca.png";
@@ -121,8 +113,8 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
     const questionario = await this.questionarioDao?.query({ where: [['codigo', '==', "SOFTSKILLS"]]}).asPromise() // .then((x) => {
       //console.log('X QUESTIONARIO ATRIBUTOS',x[0].id)//x.rows[0].id)
       if(questionario?.length){
-          this.questionarioID = questionario[0].id;
-          console.log('X QUESTIONARIO ATRIBUTOS',this.questionarioID)//x.rows[0].id)
+          this.questionario = questionario[0];
+          console.log('X QUESTIONARIO ATRIBUTOS',this.questionario.id)//x.rows[0].id)
       }else{
         this.dialog.alert("Teste Soft-Skills não localizado","Teste não localizado");
       }
@@ -140,9 +132,9 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
       questionarioResposta.data_respostas = Date();
       questionarioResposta.editavel = 1;
       questionarioResposta.versao = 1;
-      questionarioResposta.questionario_id = this.questionarioID;
+      questionarioResposta.questionario_id = this.questionario.id;
       //questionarioResposta = this.util.fillForm(questionarioResposta, this.form!.value);
-      questionarioResposta.questionarioRespostaPergunta = this.resposta;
+      questionarioResposta.questionarioRespostaPergunta = this.respostas;
      
    
       //(this.form?.controls.idiomasM.value as Array<LookupItem>).forEach(element => questionario.idiomas.push(element.data));

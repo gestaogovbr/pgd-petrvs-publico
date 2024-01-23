@@ -1,8 +1,3 @@
-<<<<<<< be3229002a8f2762ebfadf0dbcb030c7c1d37941
-
-
-=======
->>>>>>> 2a822068a89f8f26a3c27ffd1a7e14ac55df1299
 import { Component, Injector, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { AbstractControl, FormGroup } from '@angular/forms';
@@ -444,8 +439,4 @@ public togglePopOver() {}
     }, this.cdRef, this.validate);
   }*/
 
-<<<<<<< be3229002a8f2762ebfadf0dbcb030c7c1d37941
 }
-=======
-}
->>>>>>> 2a822068a89f8f26a3c27ffd1a7e14ac55df1299
