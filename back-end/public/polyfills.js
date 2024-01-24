@@ -1177,6 +1177,7 @@ var __assign = this && this.__assign || function () {
         // Do not return value or you will break the Promise spec.
       };
     }
+
     var once = function () {
       var wasCalled = false;
       return function wrapper(wrappedFunction) {
@@ -2792,6 +2793,7 @@ var __assign = this && this.__assign || function () {
       });
     }
   });
+
   Zone.__load_patch('geolocation', function (global) {
     /// GEO_LOCATION
     if (global['navigator'] && global['navigator'].geolocation) {
