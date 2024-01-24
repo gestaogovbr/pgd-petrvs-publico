@@ -13,8 +13,8 @@ class QuestionarioRespostaService extends ServiceBase {
               
           
         }
-        
-        /*foreach($data["graduacoes"] as $graduacao) {
+        /*
+        foreach($data["questionario_resposta_pergunta"] as $graduacao) {
             if($graduacao['_status']=='ADD'){
                 
              }

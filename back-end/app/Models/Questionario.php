@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Casts\AsJson;
 use App\Models\QuestionarioPergunta;
+use App\Models\QuestionarioResposta;
 
 class Questionario extends ModelBase
 {
@@ -18,13 +19,13 @@ class Questionario extends ModelBase
         //'deleted_at', /* timestamp; */
     ];
 
-    public $fillable_changes = ['questionarioPergunta'];
+    public $fillable_changes = ['perguntas'];
 
     //public $fillable_relation = [];
 
     //Has
-    public function questionarioPergunta() { return $this->hasMany(QuestionarioPergunta::class); }
-    public function questionarioResposta() { return $this->hasMany(questionarioResposta::class); }
+    public function perguntas() { return $this->hasMany(QuestionarioPergunta::class); }
+    public function questionarioResposta() { return $this->hasMany(QuestionarioResposta::class); }
 
     // Belongs
 

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
+use App\Models\Questionario;
+use App\Models\QuestionarioRespostaPergunta;
 use App\Casts\AsJson;
 
 
@@ -35,7 +37,7 @@ class QuestionarioPergunta extends ModelBase
      public function questionario() { return $this->belongsTo(Questionario::class); }
      //public function curriculum() { return $this->belongsTo(Curriculum::class); }
      //hasMany
-     public function questionarioRespostaPergunta() { return $this->hasMany(questionarioRespostaPergunta::class); }
+     public function questionarioRespostaPergunta() { return $this->hasMany(QuestionarioRespostaPergunta::class); }
  
     
 }

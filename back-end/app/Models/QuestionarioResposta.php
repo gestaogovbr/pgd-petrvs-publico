@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
+use App\Models\Questionario;
+use App\Models\Usuario;
+use App\Models\QuestionarioRespostaPergunta;
 use App\Casts\AsJson;
 
 
@@ -23,7 +26,7 @@ class QuestionarioResposta extends ModelBase
         'respostas' => AsJson::class
     ];**/
   
-    //public $fillable_changes = ['graduacoes'];
+    public $fillable_changes = ['questionario_resposta_pergunta'];
 
     //public $fillable_relation = [];
 
@@ -33,7 +36,7 @@ class QuestionarioResposta extends ModelBase
      public function usuario() { return $this->belongsTo(Usuario::class); }
 
      //has Many
-     public function questionarioRespostaPergunta() { return $this->hasMany(questionarioRespostaPergunta::class); }
+     public function questionarioRespostaPergunta() { return $this->hasMany(QuestionarioRespostaPergunta::class); }
  
     
 }
