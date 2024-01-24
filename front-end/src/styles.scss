@@ -395,6 +395,11 @@ body {
   vertical-align: inherit;
 }
 
+.p-organizationchart-table>tbody>tr>td {
+  border-width: 1px !important;
+  border-style: revert-layer !important;
+}
+
 .p-treeselect {
   display: flex;
   background: var(--bs-body-bg);
