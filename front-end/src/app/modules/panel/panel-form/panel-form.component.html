@@ -10,7 +10,7 @@
                 <input-number [size]="3" label="Cod. IBGE" icon="bi bi-clock" [control]="form!.controls.codigo_cidade"></input-number>
             </div>
             <div class="row">
-                <input-text [size]="12" label="Domínio" controlName="dominio_url" [disabled]="action == 'new' ? undefined : 'true'" [attr.maxlength]=250></input-text>
+                <input-text [size]="12" label="Domínio" controlName="dominio_url" [attr.maxlength]=250></input-text>
             </div>
             <separator title="Super Usuário"></separator>
             <div class="row">
@@ -188,7 +188,7 @@
                     <input-container label="Opções">
                         <action-button fullWidth label="Executar" [onClick]="executeSeeder.bind(this)"></action-button>
                     </input-container>
-                
+
                 </div>
             </div>
         </tab>

@@ -183,7 +183,6 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   }
 
   public async edit(entrega: PlanoEntregaEntrega) {
-    //console.log(this.form?.controls.progresso_realizado.value);
     if(this.execucao) {
       this.grid!.edit(entrega);
     } else {
@@ -371,5 +370,9 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     } catch (error) {
       return false;
     }
-  }  
+  }
+  
+  public getObjetivos(row: any){
+    return row.objetivos.filter((x: any) => x._status != 'DELETE');
+  }
 }

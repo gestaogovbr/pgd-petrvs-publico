@@ -131,7 +131,8 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
   }
 
   ngOnInit() {
-    this.loadSeeders(); 
+    super.ngOnInit();
+    this.loadSeeders();
   }
 
   private async loadSeeders() {
