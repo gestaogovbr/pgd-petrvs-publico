@@ -253,10 +253,15 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_PRGT_EDT", "Permite editar programas de gestão"],
                 ["MOD_PRGT_EXCL", "Permite excluir programas de gestão"],
                 ["MOD_PRGT_INCL", "Permite incluir programas de gestão"],
-                ["MOD_PRGT_PART", "Participantes do programa"],
-                ["MOD_PRGT_PART_HAB", "Permite habilitar participantes do programa"],
-                ["MOD_PRGT_PART_INCL", "Permite incluir participantes do programa"],
-                ["MOD_PRGT_PART_DESAB", "Permite desabilitar participantes do programa"],
+            ]
+        ], [
+            "codigo"=> "MOD_PART",
+            "descricao"=> "Módulo de Participantes do Programa de Gestão",
+            "capacidades"=> [
+                /* Capacidades do módulo PARTICIPANTES DO PROGRAMA DE GESTÃO */
+                ["MOD_PART_HAB", "Permite habilitar participantes do programa"],
+                ["MOD_PART_INCL", "Permite incluir participantes do programa"],
+                ["MOD_PART_DESAB", "Permite desabilitar participantes do programa"],
             ]
         ], [
             "codigo"=> "MOD_PROJ", //ok

@@ -39,7 +39,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AtividadeService: () => (/* binding */ AtividadeService)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_models_comentario__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/models/comentario */ 11597);
 /* harmony import */ var src_app_models_plano_trabalho_consolidacao_model__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/models/plano-trabalho-consolidacao.model */ 61210);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/core */ 51197);
@@ -124,7 +124,7 @@ class AtividadeService {
     this.dynamicOptions = (row, metadata) => {
       let result = [];
       let atividade = row;
-      const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || this.auth.usuario?.id == atividade.unidade?.gestor_substituto?.id;
+      const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || atividade.unidade?.gestores_substitutos?.map(x => x.id).includes(this.auth.usuario?.id || "");
       const isDemandante = this.auth.usuario?.id == atividade.demandante_id;
       const isResponsavel = this.auth.usuario?.id == atividade.usuario_id;
       const lastConsolidacao = this.lastConsolidacao(row.metadados?.consolidacoes);
@@ -304,7 +304,7 @@ class AtividadeService {
     this.dynamicButtons = (row, metadata) => {
       let result = [];
       let atividade = row;
-      const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || this.auth.usuario?.id == atividade.unidade?.gestor_substituto?.id;
+      const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || atividade.unidade?.gestores_substitutos?.map(x => x.usuario_id).includes(this.auth.usuario?.id || "");
       const isResponsavel = this.auth.usuario?.id == atividade.usuario_id;
       const lastConsolidacao = this.lastConsolidacao(row.metadados?.consolidacoes);
       const BOTAO_ALTERAR_AVALIACAO = {
@@ -563,7 +563,7 @@ class AtividadeService {
     return {
       modal: true,
       modalClose: function () {
-        var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (modalResult) {
+        var _ref = (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (modalResult) {
           return metadata.refreshId(entity.id);
         });
         return function modalClose(_x) {

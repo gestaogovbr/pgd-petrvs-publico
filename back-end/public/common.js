@@ -23,40 +23,6 @@ class TipoJustificativa extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
 
 /***/ }),
 
-/***/ 83337:
-/*!****************************************************!*\
-  !*** ./src/app/models/unidade-integrante.model.ts ***!
-  \****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   IntegranteConsolidado: () => (/* binding */ IntegranteConsolidado),
-/* harmony export */   UnidadeIntegrante: () => (/* binding */ UnidadeIntegrante)
-/* harmony export */ });
-/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
-
-class IntegranteConsolidado extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
-  constructor(data) {
-    super();
-    this.id = ""; /* Utilizado somente para garantir o funcionamento do grid */
-    this.atribuicoes = [];
-    this.initialization(data);
-  }
-}
-;
-class UnidadeIntegrante extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
-  constructor(data) {
-    super();
-    this.atribuicoes = [];
-    this.usuario_id = ""; /* Usuário vinculado */
-    this.unidade_id = ""; /* Unidade Vinculada */
-    this.initialization(data);
-  }
-}
-
-/***/ }),
-
 /***/ 34269:
 /*!************************************************!*\
   !*** ./src/app/modules/home/home.component.ts ***!
@@ -67,7 +33,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   HomeComponent: () => (/* binding */ HomeComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/core */ 51197);
 /* harmony import */ var src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/services/auth.service */ 32333);
 /* harmony import */ var src_app_services_util_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/services/util.service */ 49193);
@@ -111,7 +77,7 @@ class HomeComponent {
     }
   }
   ngAfterViewInit() {
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {})();
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {})();
   }
   mensagemSaudacao() {
     const hora = parseInt(this.auth.unidadeHora.replace(":", ""));
@@ -171,7 +137,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   IntegranteService: () => (/* binding */ IntegranteService)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var _lookup_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./lookup.service */ 39702);
 /* harmony import */ var _util_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./util.service */ 49193);
 /* harmony import */ var _dialog_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./dialog.service */ 19899);
@@ -201,7 +167,8 @@ class IntegranteService {
   alterandoGestor(form, items) {
     let result = [];
     let novasAtribuicoes = form.controls.atribuicoes.value.map(a => a.key);
-    ['GESTOR', 'GESTOR_DELEGADO', 'GESTOR_SUBSTITUTO'].forEach(g => {
+    //['GESTOR', 'GESTOR_DELEGADO', 'GESTOR_SUBSTITUTO'].forEach(g => {
+    ['GESTOR'].forEach(g => {
       if (this.util.array_diff_simm(novasAtribuicoes, items).includes(g)) result.push(this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, g));
     });
     return result;
@@ -211,6 +178,9 @@ class IntegranteService {
       let x = (a.usuario_nome || a.unidade_nome)?.toLowerCase();
       let y = (b.usuario_nome || b.unidade_nome)?.toLowerCase();
       return x < y ? -1 : x > y ? 1 : 0;
+    });
+    items.forEach(item => {
+      item.atribuicoes.sort();
     });
     return items;
   }
@@ -224,10 +194,12 @@ class IntegranteService {
   }
   permitidoApagar(atribuicao, noPersist) {
     var _this = this;
-    let proibicoes = noPersist ? ["LOTADO", "GESTOR", "GESTOR_SUBSTITUTO"] : ["LOTADO"];
+    //let proibicoes = noPersist ? ["LOTADO", "GESTOR", "GESTOR_SUBSTITUTO"] : ["LOTADO"];
+    let proibicoes = ["LOTADO"];
     let permitidoApagar = !proibicoes.includes(atribuicao);
-    let msg = atribuicao == "LOTADO" ? "A lotação do servidor não pode ser apagada. Para alterá-la, lote-o em outra Unidade." : "Para alterar/excluir o Gestor/Substituto use a aba 'Principal'.";
-    (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    //let msg = atribuicao == "LOTADO" ? "A lotação do servidor não pode ser apagada. Para alterá-la, lote-o em outra Unidade." : "Para alterar/excluir o Gestor/Substituto use a aba 'Principal'.";
+    let msg = atribuicao == "LOTADO" ? "A lotação do servidor não pode ser apagada. Para alterá-la, lote-o em outra Unidade." : "";
+    (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (!permitidoApagar) yield _this.dialog.alert("Não permitido!", msg);
     })();
     return permitidoApagar;

@@ -1,6 +1,40 @@
 "use strict";
 (self["webpackChunkpetrvs"] = self["webpackChunkpetrvs"] || []).push([[9242],{
 
+/***/ 83337:
+/*!****************************************************!*\
+  !*** ./src/app/models/unidade-integrante.model.ts ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   IntegranteConsolidado: () => (/* binding */ IntegranteConsolidado),
+/* harmony export */   UnidadeIntegrante: () => (/* binding */ UnidadeIntegrante)
+/* harmony export */ });
+/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
+
+class IntegranteConsolidado extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
+  constructor(data) {
+    super();
+    this.id = ""; /* Utilizado somente para garantir o funcionamento do grid */
+    this.atribuicoes = [];
+    this.initialization(data);
+  }
+}
+;
+class UnidadeIntegrante extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
+  constructor(data) {
+    super();
+    this.atribuicoes = [];
+    this.usuario_id = ""; /* Usuário vinculado */
+    this.unidade_id = ""; /* Unidade Vinculada */
+    this.initialization(data);
+  }
+}
+
+/***/ }),
+
 /***/ 11180:
 /*!**************************************************************************************!*\
   !*** ./src/app/modules/configuracoes/usuario/usuario-form/usuario-form.component.ts ***!
@@ -11,7 +45,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   UsuarioFormComponent: () => (/* binding */ UsuarioFormComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_dao_perfil_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/perfil-dao.service */ 65298);
 /* harmony import */ var src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/plano-trabalho-dao.service */ 87744);
@@ -142,7 +176,7 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
   }
   loadData(entity, form) {
     var _this = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = Object.assign({}, form.value);
       form.patchValue(_this.util.fillForm(formValue, entity));
       _this.formLotacao.controls.unidade_lotacao_id.setValue(entity.lotacao?.unidade?.id);
@@ -156,7 +190,7 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
   saveData(form) {
     var _this2 = this;
     return new Promise( /*#__PURE__*/function () {
-      var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (resolve, reject) {
+      var _ref = (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (resolve, reject) {
         _this2.unidadesIntegrantes.grid.confirm();
         let usuario = _this2.util.fill(new src_app_models_usuario_model__WEBPACK_IMPORTED_MODULE_6__.Usuario(), _this2.entity);
         usuario = _this2.util.fillForm(usuario, _this2.form.value);
@@ -186,7 +220,7 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
             yield _this2.dao?.save(Object.assign(usuario, {
               'lotacao_id': _this2.formLotacao?.controls.unidade_lotacao_id.value
             })).then( /*#__PURE__*/function () {
-              var _ref2 = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (usuarioBanco) {
+              var _ref2 = (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (usuarioBanco) {
                 if (lotacaoAlterada) {
                   // garantindo a coerência entre o campo de lotação do usuário e o vínculo de lotado dos integrantes
                   if (indiceVinculoLotacao != -1) integrantesConsolidados[indiceVinculoLotacao].atribuicoes = integrantesConsolidados[indiceVinculoLotacao].atribuicoes.filter(x => x != "LOTADO");
@@ -213,6 +247,7 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
             resolve(true);
           } catch (error) {
             if (_this2.editableForm) _this2.editableForm.error = error;
+            _this2.submitting = false;
           }
         }
       });
@@ -334,7 +369,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   UsuarioIntegranteComponent: () => (/* binding */ UsuarioIntegranteComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/grid/grid.component */ 73150);
 /* harmony import */ var src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/unidade-dao.service */ 81214);
 /* harmony import */ var src_app_dao_unidade_integrante_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/unidade-integrante-dao.service */ 88631);
@@ -519,7 +554,7 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
   }
   ngAfterViewInit() {
     var _this = this;
-    (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       yield _this.loadData({
         id: _this.entity_id
       }, _this.form);
@@ -532,7 +567,7 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
    */
   loadData(entity, form) {
     var _this2 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (entity.id) {
         let integrantes = [];
         try {
@@ -555,7 +590,7 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
    */
   addIntegrante() {
     var _this3 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (_this3.grid) _this3.grid.error = '';
       let novo = {
         id: _this3.integranteDao.generateUuid(),
@@ -589,7 +624,7 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
    */
   loadIntegrante(form, row) {
     var _this4 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       form.controls.unidade_id.setValue(_this4.grid?.adding ? row.unidade_id : row.id);
       form.controls.atribuicoes.setValue(_this4.integranteService.converterAtribuicoes(row.atribuicoes));
       form.controls.atribuicao.setValue("");
@@ -602,7 +637,7 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
    */
   removeIntegrante(row) {
     var _this5 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let nomeServidor = _this5.entity.nome;
       let nomeUnidade = row.unidade_nome;
       if (row.atribuicoes.length == 1 && row.atribuicoes[0] == "LOTADO") {
@@ -660,7 +695,7 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
    */
   saveIntegrante(form, row) {
     var _this6 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       form.controls.atribuicoes.setValue(_this6.lookup.uniqueLookupItem(form.controls.atribuicoes.value));
       /*     if (this.grid) this.grid!.error = "";
           this.cdRef.detectChanges(); */

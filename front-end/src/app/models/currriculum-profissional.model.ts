@@ -1,4 +1,5 @@
 import { AreaAtividadeExternaRoutingModule } from '../modules/cadastros/curriculum/area-atividade-externa/area-atividade-externa-routing.module';
+import { LookupItem } from '../services/lookup.service';
 import { AreaConhecimento } from './area-conhecimento.model';
 import { Base } from './base.model';
 import { Cargo } from './cargo.model';
@@ -17,23 +18,23 @@ import { HistoricoLotacaoCurriculum } from './historico-lotacao-currriculum.mode
 export class CurriculumProfissional extends Base {
 
     public curriculum?: Curriculum;
-    public centroTreinamento?:CentroTreinamento;
+    public centro_treinamento?:CentroTreinamento;
     public cargo?:Cargo;
-    public grupoEspecializado?:GrupoEspecializado;
-    public areaConhecimento?: AreaConhecimento;
+    public grupo_especializado?:GrupoEspecializado;
+    public area_conhecimento?: AreaConhecimento;
    
-    public historicoFuncao: HistoricoFuncaoCurriculum [] = [];
-    public historicoLotacao: HistoricoLotacaoCurriculum [] = [];// Unidades de lotação em toda carreira
-    public historicoAtividadeExterna: HistoricoAtividadeExternaCurriculum [] = [];//Atividades desempenhadas externamente que podem contribuir para intituição
-    public historicoAtividadeInterna: HistoricoAtividadeInternaCurriculum [] = [];//Atividades desempenhadas internamente que podem contribuir para intituição
-    public historicoDocenciaExterna: HistoricoDocenciaExternaCurriculum [] = [];// Já foi docente fora da instituição
-    public historicoDocenciaInterna: HistoricoDocenciaInternaCurriculum [] = [];// Já foi docente na instituição
-    public historicoCursoExterno: HistoricoCursoExternoCurriculum [] = [];//Quais cursos você já fez e quais pretende fazer fora da Instituição
-    public historicoCursoInterno: HistoricoCursoInternoCurriculum [] = [];//Quais os principais cursos que você já fez e pretende fazer na Instituição
+    public historico_funcao: HistoricoFuncaoCurriculum[] = [];
+    public historico_lotacao: HistoricoLotacaoCurriculum[] = [];// Unidades de lotação em toda carreira
+    public historico_atividade_externa: HistoricoAtividadeExternaCurriculum[] = [];//Atividades desempenhadas externamente que podem contribuir para intituição
+    public historico_atividade_interna: HistoricoAtividadeInternaCurriculum[] = [];//Atividades desempenhadas internamente que podem contribuir para intituição
+    public historico_docencia_externa: HistoricoDocenciaExternaCurriculum[] = [];// Já foi docente fora da instituição
+    public historico_docencia_interna: HistoricoDocenciaInternaCurriculum[] = [];// Já foi docente fora da instituição
+    public historico_curso_externo: HistoricoCursoExternoCurriculum[] = [];//Quais cursos você já fez e quais pretende fazer fora da Instituição
+    public historico_curso_interno: HistoricoCursoInternoCurriculum[] = [];//Quais os principais cursos que você já fez e pretende fazer na Instituição
    
     public ano_ingresso: number = 0; //Ano de ingresso na instituição
     public lotacao_atual: string = "";//Lotação atual do servidor
-    public especifique_habilidades: [] = [];//Atividades desempenhadas internamente que podem contribuir para intituição
+    public especifique_habilidades: LookupItem[] = [];//Atividades desempenhadas internamente que podem contribuir para intituição
     public viagem_nacional : number = 0;//Já fez viagem nacional a trabalho
     public viagem_internacional: number = 0; //Já fez viagem internacional a trabalho
     public interesse_bnt: number = 0; //Você tem interesse na participação do Banco Nacional de Talentos -PRF

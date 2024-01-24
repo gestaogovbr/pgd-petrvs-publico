@@ -17,7 +17,7 @@
         </column>
         <column [title]="'Entrega\nDemandante/Destinatário'" [template]="columnEntregaCliente" [editTemplate]="columnEntregaCliente">
             <ng-template let-row="row" #columnEntregaCliente>
-                <badge *ngIf="row.descricao" color="light" icon="bi bi-textarea-t" [label]="row.descricao"></badge><br>
+                <h6>{{row.descricao}}</h6>
                 <span class="d-block">
                     <badge *ngIf="row.unidade" color="light" [icon]="entityService.getIcon('Unidade')" [label]="row.unidade.sigla"></badge>
                     <badge *ngIf="row.destinatario?.length" color="light" icon="bi bi-mailbox" [label]="row.destinatario"></badge>

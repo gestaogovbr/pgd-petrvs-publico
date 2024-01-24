@@ -35,7 +35,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ProgramaFormComponent: () => (/* binding */ ProgramaFormComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_dao_programa_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/programa-dao.service */ 92214);
 /* harmony import */ var src_app_dao_template_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/template-dao.service */ 99230);
@@ -307,7 +307,7 @@ class ProgramaFormComponent extends src_app_modules_base_page_form_base__WEBPACK
   }
   loadData(entity, form) {
     var _this = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = Object.assign({}, form.value);
       yield Promise.all([_this.unidade.loadSearch(entity.unidade || entity.unidade_id)]);
       entity.plano_trabalho_criterios_avaliacao = entity.plano_trabalho_criterios_avaliacao || [];
@@ -687,7 +687,7 @@ class ProgramaListComponent extends src_app_modules_base_page_list_base__WEBPACK
     this.addOption(this.OPTION_EXCLUIR, "MOD_PRGT_EXCL");
     this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
     // Testa se o usuário possui permissão para visualizar os participantes do programa de gestão
-    if (this.auth.hasPermissionTo("MOD_PRGT_PART")) {
+    if (this.auth.hasPermissionTo("MOD_PART")) {
       this.options.push({
         icon: "bi bi-people",
         label: "Participantes",
@@ -700,7 +700,7 @@ class ProgramaListComponent extends src_app_modules_base_page_list_base__WEBPACK
         })
       });
     }
-    /*     if (this.auth.hasPermissionTo("MOD_PRGT_PART")) {
+    /*     if (this.auth.hasPermissionTo("MOD_PART")) {
           this.options.push({
             icon: "bi bi-folder",
             label: "Desdobramentos",
@@ -804,7 +804,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ProgramaParticipantesComponent: () => (/* binding */ ProgramaParticipantesComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/grid/grid.component */ 73150);
 /* harmony import */ var src_app_dao_programa_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/programa-dao.service */ 92214);
 /* harmony import */ var src_app_dao_programa_participante_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/programa-participante-dao.service */ 91042);
@@ -1016,7 +1016,7 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
     this.usuarioDao = injector.get(src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_5__.UsuarioDaoService);
     this.programaDao = injector.get(src_app_dao_programa_dao_service__WEBPACK_IMPORTED_MODULE_2__.ProgramaDaoService);
     /* Inicializações */
-    this.code = "MOD_PRGT_PART";
+    this.code = "MOD_PART";
     this.filter = this.fh.FormBuilder({
       programa_id: {
         default: this.programa?.id
@@ -1039,13 +1039,13 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
         default: true
       }
     }, this.cdRef, this.validate);
-    if (this.auth.hasPermissionTo('MOD_PRGT_PART_HAB')) this.multiselectMenu.push({
+    if (this.auth.hasPermissionTo('MOD_PART_HAB')) this.multiselectMenu.push({
       icon: "bi bi-person-check-fill",
       label: "Habilitar",
       color: "btn-outline-success",
       onClick: this.habilitarParticipantes.bind(this)
     });
-    if (this.auth.hasPermissionTo('MOD_PRGT_PART_DESAB')) this.multiselectMenu.push({
+    if (this.auth.hasPermissionTo('MOD_PART_DESAB')) this.multiselectMenu.push({
       icon: "bi bi-person-x-fill",
       label: "Desabilitar",
       color: "btn-outline-danger",
@@ -1055,14 +1055,14 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
   }
   dynamicButtons(row) {
     let result = [];
-    if (this.auth.hasPermissionTo('MOD_PRGT_PART_HAB') && !row.habilitado) result.push(this.BOTAO_HABILITAR);
-    if (this.auth.hasPermissionTo('MOD_PRGT_PART_DESAB') && row.habilitado) result.push(this.BOTAO_DESABILITAR);
+    if (this.auth.hasPermissionTo('MOD_PART_HAB') && !row.habilitado) result.push(this.BOTAO_HABILITAR);
+    if (this.auth.hasPermissionTo('MOD_PART_DESAB') && row.habilitado) result.push(this.BOTAO_DESABILITAR);
     return result;
   }
   ngAfterViewInit() {
     var _this = this;
     super.ngAfterViewInit();
-    (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this.loading = true;
       try {
         _this.programa = _this.metadata?.programa;
@@ -1095,7 +1095,7 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
   // unidade_id = alguma unidade => retorna todos os usuários vinculados ao programa selecionado, habilitados ou desabilitados, e mais os usuários lotados na unidade selecionada e não habilitados
   addParticipante() {
     var _this2 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       return new src_app_models_programa_participante_model__WEBPACK_IMPORTED_MODULE_6__.ProgramaParticipante({
         id: _this2.dao.generateUuid(),
         usuario_id: "",
@@ -1105,7 +1105,7 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
   }
   loadParticipante(form, row) {
     var _this3 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       const selected = row;
       _this3.form.patchValue({
         usuario_id: selected?.usuario_id,
@@ -1116,7 +1116,7 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
   }
   habilitaParticipante(row) {
     var _this4 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       yield _this4.dao.habilitar([row.usuario.id], _this4.programa.id, 1, false).then(resposta => {
         (_this4.grid?.query || _this4.query).refreshId(row.id);
         _this4.cdRef.detectChanges();
@@ -1126,7 +1126,7 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
   }
   desabilitaParticipante(row) {
     var _this5 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let desabilitar = yield _this5.dialog.confirm("Desabilitar ?", "Deseja DESABILITAR " + _this5.lex.translate("o servidor") + " - " + row.usuario.nome.toUpperCase() + " - " + _this5.lex.translate("do programa") + " - " + (_this5.programa?.nome).toUpperCase() + " ?");
       if (desabilitar) {
         let plano_trabalho_ativo = !!row.usuario.planos_trabalho.length;
@@ -1145,7 +1145,7 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
   }
   habilitarParticipantes() {
     var _this6 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (!_this6.grid.multiselectedCount) {
         _this6.dialog.alert("Selecione", "Nenhum participante selecionado para a habilitação");
       } else {
@@ -1167,7 +1167,7 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
   }
   desabilitarParticipantes() {
     var _this7 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let desabilitar = yield _this7.dialog.confirm("Desabilitar ?", "Deseja DESABILITAR, " + _this7.lex.translate("do programa") + " - " + (_this7.programa?.nome).toUpperCase() + " - todos " + _this7.lex.translate("os usuários") + " selecionados ?");
       let idsProgramasParticipantes = Object.keys(_this7.grid.multiselected);
       if (desabilitar) {
@@ -1188,7 +1188,7 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
   }
   saveParticipante(form, item) {
     var _this8 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let result = undefined;
       _this8.form.markAllAsTouched();
       if (_this8.form.valid) {
@@ -1288,7 +1288,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdef
       const _r14 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](26);
       const _r16 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](29);
       const _r18 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](32);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("dao", ctx.dao)("form", ctx.form)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("add", ctx.addParticipante.bind(ctx))("load", ctx.loadParticipante.bind(ctx))("save", ctx.saveParticipante.bind(ctx))("selectable", ctx.selectable)("multiselectAllFields", _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction0"](55, _c2))("hasAdd", ctx.auth.hasPermissionTo("MOD_PRGT_PART_INCL"))("hasEdit", false)("hasDelete", false)("multiselectMenu", ctx.multiselectMenu);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("dao", ctx.dao)("form", ctx.form)("title", ctx.isModal ? "" : ctx.title)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("add", ctx.addParticipante.bind(ctx))("load", ctx.loadParticipante.bind(ctx))("save", ctx.saveParticipante.bind(ctx))("selectable", ctx.selectable)("multiselectAllFields", _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵpureFunction0"](55, _c2))("hasAdd", ctx.auth.hasPermissionTo("MOD_PART_INCL"))("hasEdit", false)("hasDelete", false)("multiselectMenu", ctx.multiselectMenu);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", !ctx.selectable);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);

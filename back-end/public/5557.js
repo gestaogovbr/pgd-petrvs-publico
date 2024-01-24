@@ -161,179 +161,6 @@ class AtividadeListBase extends src_app_modules_base_page_list_base__WEBPACK_IMP
       }, this.calendarEfemerides, []);
     }
   }
-  /*   public temposAtividade(row: Atividade): BadgeButton[] {
-      // Atualiza somente a cada mudança de minuto da unidade atual
-      if (row.metadados && row.metadados.extra?.lastUpdate != this.auth.unidadeHora) {
-        let planoTrabalho = this.extra?.planos_trabalho[row.plano_trabalho_id!];
-        let tempos: BadgeButton[] = [
-          { color: "light", hint: this.lex.translate("Data de distribuição"), icon: "bi bi-file-earmark-plus", label: this.dao!.getDateTimeFormatted(row.data_distribuicao) },
-          { color: "light", hint: this.lex.translate("Prazo de entrega"), icon: "bi bi-calendar-check", label: this.dao!.getDateTimeFormatted(row.data_estipulada_entrega) }
-        ];
-        if (planoTrabalho?.tipo_modalidade?.atividade_esforco) tempos.push({ color: "light", hint: this.lex.translate("Esforço"), icon: "bi bi-stopwatch", label: (row.esforco ? this.util.decimalToTimerFormated(row.esforco, true) + " " + this.lex.translate("esforço") : "Sem " + this.lex.translate("esforço"))});
-        if (row.metadados.concluido) tempos.push({ color: "light", hint: "Data de entrega realizada", icon: "bi bi-check-circle", label: this.dao!.getDateTimeFormatted(row.data_entrega) });
-        if (row.metadados.iniciado && !!planoTrabalho?.tipo_modalidade?.atividade_tempo_despendido) {
-          const cargaHoraria = planoTrabalho?.carga_horaria || 0;
-          const afastamentos = this.extra?.afastamentos[row.usuario_id!] || [];
-          const despendido = row.metadados.concluido ? (row.tempo_despendido || 0) : this.calendar.horasUteis(row.data_inicio!, this.auth.hora, cargaHoraria, row.unidade!, "ENTREGA", row.pausas, afastamentos);
-          tempos.push({ color: (despendido > row.esforco ? "warning" : "light"), hint: "Tempo despendido", icon: "bi bi-hourglass-split", label: this.util.decimalToTimerFormated(despendido, true) + " despendido", click: !row.metadados.concluido ? this.onDespendidoClick.bind(this) : undefined, data: row });
-        }
-        if (!row.metadados.concluido && row.data_estipulada_entrega.getTime() < this.auth.hora.getTime()) {
-          const atrasado = this.calendar.horasAtraso(row.data_estipulada_entrega, row.unidade!);
-          tempos.push({ color: "danger", hint: "Tempo de atraso", icon: "bi bi-alarm", label: this.util.decimalToTimerFormated(atrasado, true) + " atrasado" });
-        }
-        row.metadados.extra = row.metadados.extra || {};
-        row.metadados.extra.lastUpdate = this.auth.unidadeHora;
-        row.metadados.extra.tempos = tempos;
-      }
-      return row.metadados?.extra?.tempos || [];
-    }
-  
-    public desarquivar(atividade: Atividade) {
-      this.dao!.arquivar(atividade.id, false).then(() => {
-        this.grid!.query!.refreshId(atividade.id);
-      }).catch(error => this.dialog.alert("Erro", "Erro ao cancelar inicio: " + error?.message ? error?.message : error));
-    }
-  
-    public arquivar(atividade: Atividade) {
-      this.dialog.confirm("Arquivar?", "Deseja realmente arquivar a atividade?").then(confirm => {
-        if (confirm) {
-          this.dao!.arquivar(atividade.id, true).then(() => {
-            if (this.filter?.controls.arquivadas?.value) {
-              this.grid!.query!.refreshId(atividade.id);
-            } else {
-              (this.grid?.query || this.query!).removeId(atividade.id);
-            }
-          }).catch(error => this.dialog.alert("Erro", "Erro ao cancelar inicio: " + error?.message ? error?.message : error));
-        }
-      });
-    }*/
-  /*public dynamicOptions(row: any): ToolbarButton[] {
-    let result: ToolbarButton[] = [];
-    let atividade: Atividade = row as Atividade;
-    const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || this.auth.usuario?.id == atividade.unidade?.gestor_substituto?.id;
-    const isDemandante = this.auth.usuario?.id == atividade.demandante_id;
-    const isResponsavel = this.auth.usuario?.id == atividade.usuario_id;
-    const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'consult'] }, { modal: true }) };
-    const BOTAO_COMENTARIOS = { label: "Comentários", icon: "bi bi-chat-left-quote", onClick: (atividade: Atividade) => this.go.navigate({ route: ['uteis', 'comentarios', 'ATIVIDADE', atividade.id, 'new'] }, this.modalRefreshId(atividade)) };
-    const BOTAO_CLONAR = { label: "Clonar", icon: "bi bi-stickies", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'clonar'] }, this.modalRefresh()) };
-    const BOTAO_ALTERAR = { label: "Alterar atividade", icon: "bi bi-pencil-square", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'edit'] }, this.modalRefreshId(atividade)) };
-    const BOTAO_EXCLUIR = { label: "Excluir atividade", icon: "bi bi-trash", onClick: this.delete.bind(this) };
-    const BOTAO_PRORROGAR_PRAZO = { label: "Prorrogar prazo", icon: "bi bi-skip-end-circle", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'prorrogar'] }, this.modalRefreshId(atividade))};
-    const BOTAO_INICIAR = { label: "Iniciar", id: "INICIADO", icon: "bi bi-play-circle", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'iniciar'] }, this.modalRefreshId(atividade)) };
-    const BOTAO_CANCELAR_INICIO = { label: "Cancelar inicio", id: "NAOINICIADO", icon: "bi bi-backspace", onClick: this.cancelarInicio.bind(this) };
-    const BOTAO_ALTERAR_INICIO = { label: "Alterar inicio", icon: "bi bi-play-circle", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'iniciar'] }, this.modalRefreshId(atividade)) };
-    const BOTAO_PAUSAR = { label: "Pausar", id: "PAUSADO", icon: "bi bi-pause-circle", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'pausar'] }, this.modalRefreshId(atividade)) };
-    const BOTAO_REINICIAR = { label: "Reiniciar", id: "INICIADO", icon: "bi bi-play-circle", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'pausar'], params: { reiniciar: true } }, this.modalRefreshId(atividade)) };
-    const BOTAO_CONCLUIR = { label: "Concluir", id: "CONCLUIDO", icon: "bi bi-check-circle", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'concluir'] }, this.modalRefreshId(atividade)) };
-    const BOTAO_ALTERAR_CONCLUSAO = { label: "Alterar conclusão", icon: "bi bi-check-circle", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'concluir'] }, this.modalRefreshId(atividade)) };
-    const BOTAO_CANCELAR_CONCLUSAO = { label: "Cancelar conclusão", id: "INICIADO", icon: "bi bi-backspace", onClick: this.cancelarConclusao.bind(this) };
-    const BOTAO_ARQUIVAR = { label: "Arquivar", icon: "bi bi-inboxes", onClick: this.arquivar.bind(this) };
-    const BOTAO_DESARQUIVAR = { label: "Desarquivar", icon: "bi bi-reply", onClick: this.desarquivar.bind(this) };
-       result.push(BOTAO_INFORMACOES);
-    if (isResponsavel || isGestor || isDemandante) result.push(BOTAO_COMENTARIOS);
-    result.push(BOTAO_CLONAR);
-    if (atividade.metadados?.arquivado) { /* Arquivado * /
-      if (isGestor || isResponsavel) result.push(BOTAO_DESARQUIVAR);
-    } else if (!atividade.metadados?.iniciado) {
-      if (isResponsavel || (atividade.usuario_id == null) || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) { /* Não iniciado * /
-        result.push(BOTAO_INICIAR);
-      }
-      if (isGestor || isDemandante || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT')) {
-        result.push(BOTAO_ALTERAR);
-      }
-      if (isGestor || isDemandante || this.auth.hasPermissionTo('MOD_DMD_USERS_EXCL') || this.auth.hasPermissionTo('MOD_DMD_NI_EXCL')) {
-        if (result.length) result.push({ divider: true });
-        result.push(BOTAO_EXCLUIR);
-      }
-    } else if (atividade.metadados?.concluido) { /* Concluído -> Gestor ou substituto pode avaliar * /
-      if (isGestor || isResponsavel) result.push(BOTAO_ARQUIVAR);
-      if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT_CONCL')) {
-        result.push(BOTAO_ALTERAR_CONCLUSAO);
-      }
-      if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CANC_CONCL') ) {
-        if (result.length) result.push({ divider: true });
-        result.push(BOTAO_CANCELAR_CONCLUSAO);
-      }
-    } else if (atividade.metadados?.iniciado) { /* Iniciado * /
-      if (atividade.metadados?.pausado) {
-        if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) { /* Iniciada e Pausada * /
-          result.push(BOTAO_REINICIAR);
-        }
-      } else { /* Iniciada e não Suspensa * /
-        if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CONCL')) result.push(BOTAO_CONCLUIR);
-        if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_PAUSA')) result.push(BOTAO_PAUSAR);
-        if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CANC_INICIAR')) result.push(BOTAO_CANCELAR_INICIO);
-        if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) result.push(BOTAO_ALTERAR_INICIO);
-      }
-      if (isGestor || isDemandante || this.auth.hasPermissionTo('MOD_DMD_USERS_PPRZO')) {
-        result.push(BOTAO_PRORROGAR_PRAZO);
-      }
-    }
-    return result;
-  }*/
-  /*public cancelarInicio(atividade: Atividade) {
-    const self = this;
-    this.dialog.confirm("Cancelar inicio ?", "Deseja realmente cancelar a inicialização?").then(confirm => {
-      if (confirm) {
-        this.dao!.cancelarInicio(atividade.id).then(function () {
-          (self.grid?.query || self.query!).refreshId(atividade.id);
-          self.dialog.alert("Sucesso", "Cancelado com sucesso!");
-        }).catch(function (error) {
-          self.dialog.alert("Erro", "Erro ao cancelar inicio: " + error?.message ? error?.message : error);
-        });
-      }
-    });
-  }
-     public cancelarConclusao(atividade: Atividade) {
-    const self = this;
-    this.dialog.confirm("Cancelar conclusão ?", "Deseja realmente cancelar a conclusão?").then(confirm => {
-      if (confirm) {
-        this.dao!.cancelarConclusao(atividade.id).then(function () {
-          (self.grid?.query || self.query!).refreshId(atividade.id);
-          self.dialog.alert("Sucesso", "Cancelado com sucesso!");
-        }).catch(function (error) {
-          self.dialog.alert("Erro", "Erro ao cancelar conclusão: " + error?.message ? error?.message : error);
-        });
-      }
-    });
-  }*/
-  /*public dynamicButtons(row: any): ToolbarButton[] {
-    let result: ToolbarButton[] = [];
-    let atividade: Atividade = row as Atividade;
-    const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || this.auth.usuario?.id == atividade.unidade?.gestor_substituto?.id;
-    const isResponsavel = this.auth.usuario?.id == atividade.usuario_id;
-    const BOTAO_ALTERAR_AVALIACAO = { hint: "Alterar avaliação", icon: "bi bi-check-all", color: "btn-outline-danger", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'avaliar'] }, this.modalRefreshId(atividade)) };
-    const BOTAO_INFORMACOES = { label: "Informações", icon: "bi bi-info-circle", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'consult'] }, { modal: true }) };
-    const BOTAO_INICIAR = { hint: "Iniciar", icon: "bi bi-play-circle", color: "btn-outline-secondary", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'iniciar'] }, this.modalRefreshId(atividade)) };
-    const BOTAO_REINICIAR = { hint: "Reiniciar", icon: "bi bi-play-circle", color: "btn-outline-secondary", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'pausar'], params: { reiniciar: true } }, this.modalRefreshId(atividade)) };
-    const BOTAO_CONCLUIR = { hint: "Concluir", icon: "bi bi-check", color: "btn-outline-success", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'concluir'] }, this.modalRefreshId(atividade)) };
-    const BOTAO_ARQUIVAR = { hint: "Arquivar", icon: "bi bi-inboxes", onClick: this.arquivar.bind(this) };
-    const BOTAO_DESARQUIVAR = { hint: "Desarquivar", icon: "bi bi-reply", onClick: this.desarquivar.bind(this) };
-    const BOTAO_ALTERAR_CONCLUSAO = { hint: "Alterar conclusão", icon: "bi bi-check-circle", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'concluir'] }, this.modalRefreshId(atividade)) };
-       if (!atividade.metadados?.iniciado) { /* Não iniciado * /
-      if (isResponsavel || (atividade.usuario_id == null) || this.auth.hasPermissionTo('MOD_DMD_USERS_INICIAR')) { /* Usuário da atividade é o mesmo logado * /
-        result.push(BOTAO_INICIAR);
-      }
-    } else if (atividade.metadados?.concluido) { /* Concluído * /
-      if (isGestor || isResponsavel) {
-        result.push(atividade.metadados?.arquivado ? BOTAO_DESARQUIVAR : BOTAO_ARQUIVAR);
-      } else if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_ALT_CONCL')) {
-        result.push(BOTAO_ALTERAR_CONCLUSAO);
-      }
-    } else if (atividade.metadados?.avaliado) { /* Avaliado * /
-      if (isGestor) { /* Usuário logado é gestor da Unidade ou substituto * /
-        result.push(BOTAO_ALTERAR_AVALIACAO);
-      }
-    } else if (atividade.metadados?.iniciado) { /* Iniciado * /
-      if (atividade.metadados?.pausado && isResponsavel) { /* Iniciada e Pausada * /
-        result.push(BOTAO_REINICIAR);
-      } else if (isResponsavel || this.auth.hasPermissionTo('MOD_DMD_USERS_CONCL')) { /* Iniciada e não Suspensa * /
-        result.push(BOTAO_CONCLUIR);
-      }
-    }
-    if(!result.length) result.push(BOTAO_INFORMACOES);
-    return result;
-  }*/
   onEtiquetaConfigClick() {
     this.go.navigate({
       route: ["configuracoes", "preferencia", "usuario", this.auth.usuario.id],
@@ -376,7 +203,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AtividadeListGridComponent: () => (/* binding */ AtividadeListGridComponent)
 /* harmony export */ });
-/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/components/grid/grid.component */ 73150);
 /* harmony import */ var _atividade_list_base__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../atividade-list-base */ 94180);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ 51197);
@@ -1120,7 +947,7 @@ class AtividadeListGridComponent extends _atividade_list_base__WEBPACK_IMPORTED_
   }
   onColumnProgressoEtiquetasChecklistEdit(row) {
     var _this = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this.formEdit.controls.progresso.setValue(row.progresso);
       //this.formEdit.controls.etiquetas.setValue(row.etiquetas);
       //this.formEdit.controls.etiqueta.setValue(null);
@@ -1131,7 +958,7 @@ class AtividadeListGridComponent extends _atividade_list_base__WEBPACK_IMPORTED_
   }
   onColumnProgressoEtiquetasChecklistSave(row) {
     var _this2 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       try {
         const saved = yield _this2.dao.update(row.id, {
           progresso: _this2.formEdit.controls.progresso.value,
@@ -1185,7 +1012,7 @@ class AtividadeListGridComponent extends _atividade_list_base__WEBPACK_IMPORTED_
   }
   onColumnEtiquetasEdit(row) {
     var _this3 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this3.formEdit.controls.etiquetas.setValue(row.etiquetas);
       _this3.formEdit.controls.etiqueta.setValue(null);
       _this3.etiquetas = _this3.util.merge(row.tipo_atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key);
@@ -1194,7 +1021,7 @@ class AtividadeListGridComponent extends _atividade_list_base__WEBPACK_IMPORTED_
   }
   onColumnEtiquetasSave(row) {
     var _this4 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       try {
         const saved = yield _this4.dao.update(row.id, {
           etiquetas: _this4.formEdit.controls.etiquetas.value
@@ -1222,7 +1049,7 @@ class AtividadeListGridComponent extends _atividade_list_base__WEBPACK_IMPORTED_
   }
   onUnidadeChange(event) {
     var _this5 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let unidade_selecionada = yield _this5.unidadeDao.getById(_this5.filter?.controls.unidade_id.value, ['planos_entrega']);
       _this5.planosEntregas = unidade_selecionada?.planos_entrega?.map(x => Object.assign({
         key: x.id,
@@ -1232,7 +1059,7 @@ class AtividadeListGridComponent extends _atividade_list_base__WEBPACK_IMPORTED_
   }
   onPlanoEntregaChange(event) {
     var _this6 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let plano_entrega_selecionado = [];
       let unidade_selecionada = yield _this6.unidadeDao.getById(_this6.filter?.controls.unidade_id.value, ['planos_entrega.entregas']);
       unidade_selecionada?.planos_entrega?.forEach(element => {
@@ -1246,7 +1073,7 @@ class AtividadeListGridComponent extends _atividade_list_base__WEBPACK_IMPORTED_
   }
   onColumnAtividadeDescricaoEdit(row) {
     var _this7 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this7.formEdit.controls.descricao.setValue(row.descricao);
       _this7.formEdit.controls.tipo_atividade_id.setValue(row.tipo_atividade_id);
       _this7.formEdit.controls.comentarios.setValue(row.comentarios);
@@ -1254,7 +1081,7 @@ class AtividadeListGridComponent extends _atividade_list_base__WEBPACK_IMPORTED_
   }
   onColumnAtividadeDescricaoSave(row) {
     var _this8 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       try {
         _this8.atividadeService.comentarioAtividade(_this8.tipoAtividade?.selectedEntity, _this8.formEdit.controls.comentarios);
         const saved = yield _this8.dao.update(row.id, {
