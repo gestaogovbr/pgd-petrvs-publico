@@ -293,7 +293,10 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
     Route::post('retirar-homologacao', [PlanoEntregaController::class, 'retirarHomologacao']);
     Route::post('suspender', [PlanoEntregaController::class, 'suspender']);
 });
-Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntrega')->group(function () { defaultRoutes(PlanoEntregaEntregaController::class); });
+Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntrega')->group(function () { 
+    defaultRoutes(PlanoEntregaEntregaController::class); 
+    Route::post('hierarquia', [PlanoEntregaEntregaController::class, 'hierarquia']);
+});
 
 Route::middleware(['auth:sanctum'])->prefix('Projeto')->group(function () { defaultRoutes(ProjetoController::class); });
 
