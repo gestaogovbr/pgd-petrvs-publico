@@ -532,7 +532,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   PlanoEntregaFormAdesaoComponent: () => (/* binding */ PlanoEntregaFormAdesaoComponent)
 /* harmony export */ });
-/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/components/grid/grid.component */ 73150);
 /* harmony import */ var src_app_components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../components/input/input-search/input-search.component */ 32802);
@@ -660,7 +660,7 @@ class PlanoEntregaFormAdesaoComponent extends src_app_modules_base_page_form_bas
   }
   loadData(entity, form) {
     var _this = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = Object.assign({}, form.value);
       form.patchValue(_this.util.fillForm(formValue, entity));
       _this.cdRef.detectChanges();
@@ -668,13 +668,13 @@ class PlanoEntregaFormAdesaoComponent extends src_app_modules_base_page_form_bas
   }
   initializeData(form) {
     var _this2 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.loadData(_this2.entity, _this2.form);
     })();
   }
   saveData(form) {
     var _this3 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       return new Promise((resolve, reject) => {
         let planoEntrega = _this3.util.fill(new src_app_models_plano_entrega_model__WEBPACK_IMPORTED_MODULE_9__.PlanoEntrega(), _this3.entity);
         planoEntrega = _this3.util.fillForm(planoEntrega, _this3.form.value);
@@ -790,7 +790,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   PlanoEntregaFormEntregaComponent: () => (/* binding */ PlanoEntregaFormEntregaComponent)
 /* harmony export */ });
-/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_dao_cadeia_valor_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/cadeia-valor-dao.service */ 19520);
 /* harmony import */ var src_app_dao_planejamento_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/planejamento-dao.service */ 5458);
@@ -1076,7 +1076,7 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
         result = "Inválido";
       } else if (['planejamento_objetivo_id'].indexOf(controlName) >= 0) {
         if (!control.value?.length) result = "O objetivo do planejamento é obrigatório";
-        if (control.value?.length && this.gridObjetivos?.items.map(x => x.planejamento_objetivo_id).includes(this.formObjetivos.controls.planejamento_objetivo_id.value)) result = "Este objetivo está em duplicidade!";
+        if (control.value?.length && this.gridObjetivos?.items.filter(x => x._status == "ADD").map(x => x.planejamento_objetivo_id).includes(this.formObjetivos.controls.planejamento_objetivo_id.value)) result = "Este objetivo está em duplicidade!";
       } else if (['cadeia_processo_id'].indexOf(controlName) >= 0) {
         if (!control.value?.length) result = "O processo da cadeia de valor é obrigatório";
         if (control.value?.length && this.gridProcessos?.items.map(x => x.cadeia_processo_id).includes(this.formProcessos.controls.cadeia_processo_id.value)) result = "Este processo está em duplicidade!";
@@ -1221,12 +1221,12 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
     this.planejamentoId = this.metadata?.planejamento_id;
     this.cadeiaValorId = this.metadata?.cadeia_valor_id;
     this.unidadeId = this.metadata?.unidade_id;
-    this.dataFim = this.metadata?.data_fim;
+    if (this.metadata?.data_fim) this.dataFim = this.metadata?.data_fim;
     this.entity = this.metadata?.entrega;
   }
   loadData(entity, form) {
     var _this = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = Object.assign({}, form.value);
       _this.onEntregaChange(form.value);
       let {
@@ -1245,12 +1245,12 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
       form.controls.realizado.setValue(_this.planoEntregaService.getValor(entity.realizado));
       form.controls.objetivos.setValue(entity.objetivos);
       form.controls.processos.setValue(entity.processos);
-      form.controls.data_fim.setValue(_this.dataFim);
+      if (_this.dataFim) form.controls.data_fim.setValue(_this.dataFim);
     })();
   }
   initializeData(form) {
     var _this2 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.entity.unidade_id = _this2.auth.unidade.id;
       _this2.entity.unidade = _this2.auth.unidade;
       yield _this2.loadData(_this2.entity, form);
@@ -1310,7 +1310,7 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
   }
   addObjetivo() {
     var _this3 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       return {
         id: _this3.dao.generateUuid(),
         _status: "ADD"
@@ -1319,7 +1319,7 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
   }
   removeObjetivo(row) {
     var _this4 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let confirm = yield _this4.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
       if (confirm) row._status = "DELETE";
       return false;
@@ -1327,7 +1327,7 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
   }
   saveObjetivo(form, row) {
     var _this5 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let consolidado = row;
       if (form.controls.planejamento_objetivo_id.value.length && _this5.inputObjetivo.selectedItem) {
         consolidado.planejamento_objetivo_id = form.controls.planejamento_objetivo_id.value;
@@ -1339,7 +1339,7 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
   }
   addProcesso() {
     var _this6 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       return {
         id: _this6.dao.generateUuid(),
         _status: "ADD"
@@ -1348,7 +1348,7 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
   }
   removeProcesso(row) {
     var _this7 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let confirm = yield _this7.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
       if (confirm) row._status = "DELETE";
       return false;
@@ -1356,7 +1356,7 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
   }
   saveProcesso(form, row) {
     var _this8 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let consolidado = row;
       if (form.controls.cadeia_processo_id.value.length && _this8.inputProcesso.selectedItem) {
         consolidado.cadeia_processo_id = form.controls.cadeia_processo_id.value;
@@ -1368,7 +1368,7 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
   }
   onEntregaChange(row) {
     var _this9 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (_this9.entrega && _this9.entrega.selectedItem) {
         const entregaItem = _this9.entrega?.selectedEntity;
         const tipoIndicador = entregaItem.tipo_indicador;
@@ -1595,7 +1595,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   PlanoEntregaFormProgressoComponent: () => (/* binding */ PlanoEntregaFormProgressoComponent)
 /* harmony export */ });
-/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_dao_plano_entrega_entrega_progresso_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/plano-entrega-entrega-progresso-dao.service */ 89048);
 /* harmony import */ var src_app_models_plano_entrega_entrega_progresso_model__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/models/plano-entrega-entrega-progresso.model */ 54052);
@@ -1678,7 +1678,7 @@ class PlanoEntregaFormProgressoComponent extends src_app_modules_base_page_form_
   }
   loadData(entity, form) {
     var _this = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = Object.assign({}, form.value);
       let {
         meta,
@@ -1692,7 +1692,7 @@ class PlanoEntregaFormProgressoComponent extends src_app_modules_base_page_form_
   }
   initializeData(form) {
     var _this2 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.entity = new src_app_models_plano_entrega_entrega_progresso_model__WEBPACK_IMPORTED_MODULE_3__.PlanoEntregaEntregaProgresso();
       _this2.planoEntregaEntrega = _this2.planoEntregaEntregaId ? yield _this2.planoEntregaEntregaDao.getById(_this2.planoEntregaEntregaId, ['entrega']) : undefined;
       _this2.entity.usuario_id = _this2.auth.usuario.id;
@@ -1794,7 +1794,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   PlanoEntregaFormComponent: () => (/* binding */ PlanoEntregaFormComponent)
 /* harmony export */ });
-/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/components/grid/grid.component */ 73150);
 /* harmony import */ var src_app_dao_cadeia_valor_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/cadeia-valor-dao.service */ 19520);
@@ -1911,7 +1911,7 @@ class PlanoEntregaFormComponent extends src_app_modules_base_page_form_base__WEB
   }
   loadData(entity, form) {
     var _this = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = Object.assign({}, form.value);
       form.patchValue(_this.util.fillForm(formValue, entity));
       _this.cdRef.detectChanges();
@@ -1919,7 +1919,7 @@ class PlanoEntregaFormComponent extends src_app_modules_base_page_form_base__WEB
   }
   initializeData(form) {
     var _this2 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.entity = new src_app_models_plano_entrega_model__WEBPACK_IMPORTED_MODULE_8__.PlanoEntrega();
       _this2.entity.unidade_id = _this2.auth.unidade?.id || "";
       _this2.entity.unidade = _this2.auth.unidade;
@@ -1931,7 +1931,7 @@ class PlanoEntregaFormComponent extends src_app_modules_base_page_form_base__WEB
   }
   saveData(form) {
     var _this3 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       return new Promise((resolve, reject) => {
         let planoEntrega = _this3.util.fill(new src_app_models_plano_entrega_model__WEBPACK_IMPORTED_MODULE_8__.PlanoEntrega(), _this3.entity);
         planoEntrega = _this3.util.fillForm(planoEntrega, _this3.form.value);
@@ -2371,7 +2371,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   PlanoEntregaListEntregaComponent: () => (/* binding */ PlanoEntregaListEntregaComponent)
 /* harmony export */ });
-/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! @angular/core */ 51197);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../components/grid/grid.component */ 73150);
@@ -2774,7 +2774,7 @@ function PlanoEntregaListEntregaComponent_ng_template_27_separator_0_Template(rf
     const ctx_r68 = _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("title", ctx_r68.lex.translate("Objetivos"))("collapsed", true);
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("ngForOf", row_r67.objetivos);
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("ngForOf", ctx_r68.getObjetivos(row_r67));
   }
 }
 function PlanoEntregaListEntregaComponent_ng_template_27_separator_1_div_1_Template(rf, ctx) {
@@ -3006,7 +3006,7 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
   }
   add() {
     var _this = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let entrega = new src_app_models_plano_entrega_entrega_model__WEBPACK_IMPORTED_MODULE_4__.PlanoEntregaEntrega({
         _status: "ADD",
         id: _this.dao.generateUuid(),
@@ -3024,7 +3024,7 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
           entrega: entrega
         },
         modalClose: function () {
-          var _ref = (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (modalResult) {
+          var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (modalResult) {
             if (modalResult) {
               try {
                 _this.isNoPersist ? _this.items.push(modalResult) : _this.items.push(yield _this.dao.save(modalResult, _this.join));
@@ -3060,8 +3060,7 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
   }
   edit(entrega) {
     var _this2 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      //console.log(this.form?.controls.progresso_realizado.value);
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (_this2.execucao) {
         _this2.grid.edit(entrega);
       } else {
@@ -3078,7 +3077,7 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
             entrega: entrega
           },
           modalClose: function () {
-            var _ref2 = (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (modalResult) {
+            var _ref2 = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (modalResult) {
               if (modalResult) {
                 if (!_this2.isNoPersist) yield _this2.dao?.save(modalResult);
                 _this2.items[index] = modalResult;
@@ -3095,7 +3094,7 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
   }
   load(form, row) {
     var _this3 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this3.form.patchValue(row);
       _this3.form.controls.meta.setValue(_this3.planoEntregaService.getValor(row.meta));
       _this3.form.controls.realizado.setValue(_this3.planoEntregaService.getValor(row.realizado));
@@ -3104,7 +3103,7 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
   }
   save(form, row) {
     var _this4 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let result = undefined;
       _this4.form.markAllAsTouched();
       if (form.valid) {
@@ -3123,7 +3122,7 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
   }
   delete(entrega) {
     var _this5 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let confirm = yield _this5.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
       if (confirm) {
         let index = _this5.items.indexOf(entrega);
@@ -3146,7 +3145,7 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
   }
   consult(entrega) {
     var _this6 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this6.go.navigate({
         route: ['gestao', 'plano-entrega', 'entrega', entrega.id, "consult"]
       }, {
@@ -3162,7 +3161,7 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
   }
   showLogs(entrega) {
     var _this7 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this7.go.navigate({
         route: ['logs', 'change', entrega.id, 'consult']
       });
@@ -3170,7 +3169,7 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
   }
   showPlanejamento(objetivo_id) {
     var _this8 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this8.go.navigate({
         route: ['gestao', 'plano-entrega', 'entrega', 'objetivos', objetivo_id]
       }, {
@@ -3180,7 +3179,7 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
   }
   showCadeiaValor(processo_id) {
     var _this9 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this9.go.navigate({
         route: ['gestao', 'plano-entrega', 'entrega', 'processos', processo_id]
       }, {
@@ -3190,7 +3189,7 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
   }
   showProgresso(entrega) {
     var _this10 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this10.go.navigate({
         route: ['gestao', 'plano-entrega', 'entrega', 'progresso', entrega.id]
       }, {
@@ -3233,7 +3232,7 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
   }
   onColumnEtiquetasEdit(row) {
     var _this11 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this11.formEdit.controls.etiquetas.setValue(row.etiquetas);
       _this11.formEdit.controls.etiqueta.setValue(null);
       _this11.etiquetas = _this11.util.merge(row.tipo_atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key);
@@ -3242,7 +3241,7 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
   }
   onColumnEtiquetasSave(row) {
     var _this12 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       try {
         const saved = yield _this12.dao.update(row.id, {
           etiquetas: _this12.formEdit.controls.etiquetas.value
@@ -3270,14 +3269,14 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
   }
   onColumnChecklistEdit(row) {
     var _this13 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this13.formEdit.controls.progresso_realizado.setValue(row.progresso_realizado);
       _this13.checklist = _this13.util.clone(row.checklist);
     })();
   }
   onColumnChecklistSave(row) {
     var _this14 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let realizado = Math.round(parseInt(_this14.planoEntregaService.getValorMeta(row)) * _this14.formEdit.controls.progresso_realizado.value / 100);
       try {
         const saved = yield _this14.dao.update(row.id, {
@@ -3300,6 +3299,9 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
         return false;
       }
     })();
+  }
+  getObjetivos(row) {
+    return row.objetivos.filter(x => x._status != 'DELETE');
   }
 }
 _class = PlanoEntregaListEntregaComponent;
@@ -3397,9 +3399,9 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](5);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("ngIf", ctx.execucao);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("title", "  Objetivos/Processos")("width", 200)("template", _r19)("editTemplate", _r19)("icon", "bi bi-info-circle")("hint", "Objetivos do Planejamento Institucional vinculado ao Plano de Entregas e Processos da Cadeia de Valor vinculada ao Plano de Entregas");
+      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("title", "Objetivos/Processos")("width", 200)("template", _r19)("editTemplate", _r19)("icon", "bi bi-info-circle")("hint", "Objetivos do Planejamento Institucional vinculado ao Plano de Entregas e Processos da Cadeia de Valor vinculada ao Plano de Entregas");
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("title", "Modelo de Entrega\nComent\u00E1rios")("template", _r21)("editTemplate", _r21);
+      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("title", ctx.lex.translate("Modelo de Entrega") + "\nComent\u00E1rios")("template", _r21)("editTemplate", _r21);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("onEdit", ctx.edit.bind(ctx))("dynamicButtons", ctx.dynamicButtons.bind(ctx))("dynamicOptions", ctx.dynamicOptions.bind(ctx));
     }
@@ -3971,7 +3973,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   PlanoEntregaListComponent: () => (/* binding */ PlanoEntregaListComponent)
 /* harmony export */ });
-/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/grid/grid.component */ 73150);
 /* harmony import */ var src_app_dao_cadeia_valor_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/cadeia-valor-dao.service */ 19520);
 /* harmony import */ var src_app_dao_planejamento_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/planejamento-dao.service */ 5458);
@@ -4993,7 +4995,7 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
 
   cancelarAvaliacao(planoEntrega) {
     var _this = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       /*this.go.navigate(this.routeStatus, {
         metadata: { tipo: "PlanoEntrega", entity: planoEntrega, novoStatus: "CONCLUIDO", onClick: this.dao!.cancelarAvaliacao.bind(this.dao) },
         title: "Cancelar Avaliação",

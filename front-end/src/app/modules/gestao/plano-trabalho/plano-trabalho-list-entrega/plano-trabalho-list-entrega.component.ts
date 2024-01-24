@@ -247,7 +247,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     } else if(value == 'SEM_ENTREGA') {
       this.form?.controls.orgao.setValue(null);
       this.form?.controls.plano_entrega_entrega_id.setValue(null);
-    } if (value == 'PROPRIA_UNIDADE' || value == 'OUTRA_UNIDADE') {
+    } if (value == 'OUTRA_UNIDADE') { //if (value == 'PROPRIA_UNIDADE' || value == 'OUTRA_UNIDADE')
       this.form?.controls.orgao.setValue(null);
       this.loading = true;
       this.planoEntrega?.onSelectClick(new Event("SELECT"));
