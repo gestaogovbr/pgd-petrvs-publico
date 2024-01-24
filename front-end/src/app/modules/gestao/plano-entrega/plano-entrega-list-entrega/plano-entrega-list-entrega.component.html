@@ -84,10 +84,10 @@
                 </table>
             </ng-template>
         </column>
-        <column [title]="'  Objetivos/Processos'" [width]="200" [template]="columnObjProc" [editTemplate]="columnObjProc" [icon]="'bi bi-info-circle'"[hint]="'Objetivos do Planejamento Institucional vinculado ao Plano de Entregas e Processos da Cadeia de Valor vinculada ao Plano de Entregas'" >
+        <column [title]="'Objetivos/Processos'" [width]="200" [template]="columnObjProc" [editTemplate]="columnObjProc" [icon]="'bi bi-info-circle'" [hint]="'Objetivos do Planejamento Institucional vinculado ao Plano de Entregas e Processos da Cadeia de Valor vinculada ao Plano de Entregas'" >
             <ng-template let-row="row" #columnObjProc>
                 <separator [title]="lex.translate('Objetivos')" *ngIf="row.objetivos?.length" collapse [collapsed]="true">
-                    <div *ngFor="let pObjetivo of row.objetivos" class="objetivo d-flex align-items-center">
+                    <div *ngFor="let pObjetivo of getObjetivos(row)" class="objetivo d-flex align-items-center">
                         <button class="btn btn-sm btn-outline-info me-2" (click)="showPlanejamento(pObjetivo.objetivo.id)"><i class="bi bi-eye"></i></button>
                         <small>{{pObjetivo.objetivo?.nome}}</small>
                     </div>
@@ -100,7 +100,7 @@
                 </separator>
             </ng-template>
         </column>
-        <column [title]="'Modelo de Entrega\nComentários'" [template]="columnEntregaCometario" [editTemplate]="columnEntregaCometario">
+        <column [title]="lex.translate('Modelo de Entrega') + '\nComentários'" [template]="columnEntregaCometario" [editTemplate]="columnEntregaCometario">
             <ng-template let-row="row" #columnEntregaCometario>
                 <badge *ngIf="row.entrega" color="light" icon="bi bi-list-check" [label]="row.entrega?.nome"></badge>
                 <comentarios-widget [entity]="row" [selectable]="!execucao || !!grid?.editing" origem="PLANO_ENTREGA_ENTREGA" [grid]="grid" [save]="refreshComentarios.bind(this)"></comentarios-widget>
