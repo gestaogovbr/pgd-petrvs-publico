@@ -705,6 +705,7 @@ class ProgramaListComponent extends src_app_modules_base_page_list_base__WEBPACK
           });
         } */
   }
+
   ngOnInit() {
     super.ngOnInit();
     this.vigentesUnidadeExecutora = this.metadata?.vigentesUnidadeExecutora;
@@ -1073,6 +1074,7 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
       //this.programaSearch?.loadSearch(this.programa);
     })();
   }
+
   filterClear(filter) {
     filter.controls.unidade_id.setValue(undefined);
     filter.controls.nome_usuario.setValue('');

@@ -85,6 +85,8 @@ use App\Http\Controllers\QuestionarioPerguntaController;
 use App\Http\Controllers\QuestionarioRespostaController;
 use App\Http\Controllers\QuestionarioRespostaPerguntaController;
 use App\Http\Controllers\PgdController;
+use App\Http\Controllers\JobAgendadoController;
+use App\Http\Controllers\SeederController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -116,6 +118,11 @@ Route::get('/teste', function (Request $request) { return ["OK"]; });
 /* PGD */
 Route::get('/exportar/dados', [PgdController::class, 'exportarDados']);
 Route::get('/exportar/dados/job', [PgdController::class, 'exportarDadosJob']);
+
+/* Jobs Agendados */
+Route::get('/jobs-agendados', [JobAgendadoController::class, 'listar']);
+Route::post('/job-agendado/{id}', [JobAgendadoController::class, 'update']);
+
 
 /* Rotinas diárias */
 Route::get('/rotinas-diarias', [RotinaDiariaController::class, 'run']);
@@ -286,7 +293,10 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
     Route::post('retirar-homologacao', [PlanoEntregaController::class, 'retirarHomologacao']);
     Route::post('suspender', [PlanoEntregaController::class, 'suspender']);
 });
-Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntrega')->group(function () { defaultRoutes(PlanoEntregaEntregaController::class); });
+Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntrega')->group(function () { 
+    defaultRoutes(PlanoEntregaEntregaController::class); 
+    Route::post('hierarquia', [PlanoEntregaEntregaController::class, 'hierarquia']);
+});
 
 Route::middleware(['auth:sanctum'])->prefix('Projeto')->group(function () { defaultRoutes(ProjetoController::class); });
 

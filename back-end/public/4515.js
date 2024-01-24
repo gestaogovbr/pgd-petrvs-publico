@@ -725,6 +725,7 @@ class CurriculumAtributosbig5FormComponent extends _base_page_form_base__WEBPACK
     console.log(range)
     //range.addEventListener('input', setValue);*/
   }
+
   loadData(entity, form) {
     var _this = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
@@ -764,6 +765,7 @@ class CurriculumAtributosbig5FormComponent extends _base_page_form_base__WEBPACK
       });
     })();
   }
+
   ngOnInit() {}
   /*this.form = this.fh.FormBuilder({
     nome: { default: "" },
@@ -1409,6 +1411,7 @@ class CurriculumFormComponent extends src_app_modules_base_page_form_base__WEBPA
     this.selecionaMunicipios(estados);
     //this.municipioV?.disabled;
   }
+
   selecionaMunicipios(uf) {
     //console.log(uf)
     this.cidadeDao?.query({
@@ -2455,6 +2458,7 @@ class CurriculumProfissionalFormComponent extends src_app_modules_base_page_form
       //});
     })();
   }
+
   loadData(entity, form) {
     var _this2 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
@@ -2535,6 +2539,7 @@ class CurriculumProfissionalFormComponent extends src_app_modules_base_page_form
       });
     })();
   }
+
   /*public onAreaConhecimentoChange() {
     this.cursoDao?.query({ where: [['area_id', '==', this.formCursoInterno!.controls.areaCursoInterno.value]] }).getAll().then((cursos2) => {
       this.disciplinasItens = cursos2.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);

@@ -625,5 +625,4 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   public async showCadeiaValor(cadeia_valor_id_id: string){
     this.go.navigate({ route: ['gestao', 'cadeia-valor', cadeia_valor_id_id, 'consult'] }, {modal: true})
   }
-
 }
