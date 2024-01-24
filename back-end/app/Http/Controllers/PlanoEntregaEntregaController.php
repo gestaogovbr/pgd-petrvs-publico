@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
+use Illuminate\Http\Request;
 
 
 class PlanoEntregaEntregaController extends ControllerBase {
@@ -24,6 +25,21 @@ class PlanoEntregaEntregaController extends ControllerBase {
             case 'QUERY':
                 if (!$usuario->hasPermissionTo('MOD_PENT')) throw new ServerException("CapacidadeStore", "Consulta não realizada");
                 break;
+        }
+    }
+
+    public function hierarquia(Request $request)
+    {
+        try {
+            $data = $request->validate([
+                'entrega_id' => ['required'],
+            ]);
+            return response()->json([
+                'success' => true,
+                'hierarquia' => $this->service->hierarquia($data)
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
         }
     }
 
