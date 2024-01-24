@@ -6,13 +6,18 @@ import { Questionario } from 'src/app/models/questionario.model';
 import { QuestionarioDaoService } from 'src/app/dao/questionario-dao.service';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { IIndexable } from 'src/app/models/base.model';
+import { QuestionarioPerguntaDaoService } from 'src/app/dao/questionario-pergunta-dao.service';
+import { QuestionarioResposta } from 'src/app/models/questionario-resposta.model';
+import { QuestionarioRespostaPergunta } from 'src/app/models/questionario-resposta-pergunta.model';
+import { QuestionarioRespostaPerguntaDaoService } from 'src/app/dao/questionario-resposta-pergunta-dao.service';
+import { QuestionarioRespostaDaoService } from 'src/app/dao/questionario-resposta-dao.service';
 
 @Component({
   selector: 'curriculum-atributosbig5-form',
   templateUrl: './curriculum-atributosbig5-form.component.html',
   styleUrls: ['./curriculum-atributosbig5-form.component.scss']
 })
-export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questionario, QuestionarioDaoService>{
+export class CurriculumAtributosbig5FormComponent extends PageFormBase<QuestionarioResposta, QuestionarioRespostaDaoService>{
 
 
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
@@ -36,10 +41,32 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
   bigicoIMG! :string;
   bigicoAmareloIMG! :string;
 
+  public questionarioDao : QuestionarioDaoService;
+  public questionarioPerguntasDao : QuestionarioPerguntaDaoService;
+  public questionarioRespostasPerguntas : QuestionarioRespostaPerguntaDaoService ;
+  public questionarioID : string = "";
+  
+  public resposta = { 
+  
+      comunica: 0,
+      lideranca: 0,
+      resolucao: 0,
+      pretensao: 0,
+      criatividade: 0,
+      pensamento: 0,
+      habilidade: 0,
+      adaptabilidade: 0,
+      etica: 0,
+
+  };  
+
 
   constructor(public injector: Injector) {
-    super(injector, Questionario, QuestionarioDaoService);
-
+    super(injector, QuestionarioResposta, QuestionarioRespostaDaoService);
+    this.questionarioDao = injector.get<QuestionarioDaoService>(QuestionarioDaoService);
+    this.questionarioPerguntasDao = injector.get<QuestionarioPerguntaDaoService>(QuestionarioPerguntaDaoService);
+    this.questionarioRespostasPerguntas = injector.get<QuestionarioRespostaPerguntaDaoService>(QuestionarioRespostaPerguntaDaoService);
+   
     this.comunicaIMG="/assets/icons/iconeComunicacao.png";//"../assets/icons/Comunica.jpg";
     this.liderancaIMG="/assets/icons/iconeLideranca.png";
     this.resolucaoIMG="/assets/icons/iconeResolucao.png";
@@ -89,29 +116,45 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
     return result;
   }
 
-  public async loadData(entity: Questionario, form: FormGroup) {
-    
+  public async loadData(entity: QuestionarioResposta, form: FormGroup) {
+
+    const questionario = await this.questionarioDao?.query({ where: [['codigo', '==', "SOFTSKILLS"]]}).asPromise() // .then((x) => {
+      //console.log('X QUESTIONARIO ATRIBUTOS',x[0].id)//x.rows[0].id)
+      if(questionario?.length){
+          this.questionarioID = questionario[0].id;
+          console.log('X QUESTIONARIO ATRIBUTOS',this.questionarioID)//x.rows[0].id)
+      }else{
+        this.dialog.alert("Teste Soft-Skills não localizado","Teste não localizado");
+      }
   }
 
   public async initializeData(form: FormGroup) {
     return await this.loadData(this.entity!, form);
   }
 
-  public async saveData(form: IIndexable): Promise<Questionario> {
-    return new Promise<Questionario>((resolve, reject) => {
-      // this.entity!.usuario_id=this.auth.usuario!.id;
-      let questionario = this.util.fill(new Questionario(), this.entity!);
-      //curriculum.usuario_id=this.auth.usuario?.id;
-      questionario = this.util.fillForm(questionario, this.form!.value);
+  public async saveData(form: IIndexable): Promise<QuestionarioResposta> {
+    return new Promise<QuestionarioResposta>((resolve, reject) => {
+      
+      let questionarioResposta = this.util.fill(new QuestionarioResposta(), this.entity!);
+      questionarioResposta.usuario_id=this.auth.usuario?.id;
+      questionarioResposta.data_respostas = Date();
+      questionarioResposta.editavel = 1;
+      questionarioResposta.versao = 1;
+      questionarioResposta.questionario_id = this.questionarioID;
+      //questionarioResposta = this.util.fillForm(questionarioResposta, this.form!.value);
+      questionarioResposta.questionarioRespostaPergunta = this.resposta;
      
    
       //(this.form?.controls.idiomasM.value as Array<LookupItem>).forEach(element => questionario.idiomas.push(element.data));
-      resolve(questionario);  
+      resolve(questionarioResposta);  
       //resolve(this.util.fillForm(curriculum, this.form!.value));
     });
   }
 
   ngOnInit(): void {
+
+   
+
   }
 
   /*this.form = this.fh.FormBuilder({

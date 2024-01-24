@@ -17,6 +17,7 @@ import { PlanoTrabalhoService } from '../plano-trabalho.service';
 import { DocumentoService } from 'src/app/modules/uteis/documentos/documento.service';
 import { UtilService } from 'src/app/services/util.service';
 import { QueryOptions } from 'src/app/dao/query-options';
+import { UnidadeService } from 'src/app/services/unidade.service';
 
 @Component({
   selector: 'plano-trabalho-list',
@@ -30,6 +31,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
   public documentoDao: DocumentoDaoService;
   public documentoService: DocumentoService;
   public utilService: UtilService;
+  public unidadeService: UnidadeService;
   public programaDao: ProgramaDaoService;
   public usuarioDao: UsuarioDaoService;
   public planoTrabalhoService: PlanoTrabalhoService;
@@ -65,6 +67,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.documentoDao = injector.get<DocumentoDaoService>(DocumentoDaoService);
     this.documentoService = injector.get<DocumentoService>(DocumentoService);
+    this.unidadeService = injector.get<UnidadeService>(UnidadeService);
     this.utilService = injector.get<UtilService>(UtilService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.planoTrabalhoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
@@ -263,7 +266,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     ];
     let assinaturasFaltantes = this.planoTrabalhoService.assinaturasFaltantes(planoTrabalho.assinaturasExigidas, planoTrabalho.jaAssinaramTCR);
     let haAssinaturasFaltantes = !!assinaturasFaltantes.participante.length || !!assinaturasFaltantes.gestores_unidade_executora.length || !!assinaturasFaltantes.gestores_unidade_lotacao.length || !!assinaturasFaltantes.gestores_entidade.length;
-    let usuarioEhGestorUnidadeExecutora: boolean = this.auth.isGestorUnidade(planoTrabalho.unidade_id);
+    let usuarioEhGestorUnidadeExecutora: boolean = this.unidadeService.isGestorUnidade(planoTrabalho.unidade_id);
     let usuarioJaAssinouTCR: boolean = !!planoTrabalho.jaAssinaramTCR?.todas?.includes(this.auth.usuario?.id!);
     let assinaturaUsuarioEhExigida: boolean = !!todasAssinaturasExigidas?.includes(this.auth.usuario?.id!);
     let planoIncluido = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'INCLUIDO';

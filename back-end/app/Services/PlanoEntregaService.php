@@ -40,7 +40,9 @@ class PlanoEntregaService extends ServiceBase
           // não se aplica à Unidade Instituidora, ou seja, alterações realizadas em planos de entregas de unidades instituidoras não precisam ser notificadas à sua Unidade-pai;
           $unidadePai = $planoEntrega->unidade->unidadePai;
           if (!empty($unidadePai->id) && !$planoEntrega->unidade->instituidora) {
-            $destinatarios = array_filter([$unidadePai->gestor ? $unidadePai->gestor->usuario : null, $unidadePai->gestorSubstituto ? $unidadePai->gestorSubstituto->usuario : null, $unidadePai->gestorDelegado ? $unidadePai->gestorDelegado->usuario : null]);
+            $destinatarios = array_map(fn($x) => $x->usuario, $unidadePai->gestoresSubstitutos ?? []);
+            if(!empty($unidadePai->gestor)) $destinatarios[] = $unidadePai->gestor->usuario;
+            array_merge($destinatarios, array_map(fn($x) => $x->usuario, $unidadePai->gestoresDelegados ?? []));
             $usuarioHomologou = StatusJustificativa::where('codigo', 'ATIVO')
               ->where('plano_entrega_id', $planoEntrega->id)
               ->where('justificativa', 'like', '%homologado nesta data%')

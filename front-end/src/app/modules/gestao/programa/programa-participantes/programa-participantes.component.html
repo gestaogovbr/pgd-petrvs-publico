@@ -1,7 +1,7 @@
 <grid multiselect [dao]="dao" [form]="form!" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy"
     [join]="join" editable [add]="addParticipante.bind(this)" [load]="loadParticipante.bind(this)"
     [save]="saveParticipante.bind(this)" [selectable]="selectable" [multiselectAllFields]="['usuario_id']"
-    (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_PRGT_PART_INCL')" [hasEdit]="false" [hasDelete]="false" [multiselectMenu]="multiselectMenu">
+    (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_PART_INCL')" [hasEdit]="false" [hasDelete]="false" [multiselectMenu]="multiselectMenu">
     <toolbar *ngIf="!selectable">
         <input-switch [size]="3" labelPosition="left" label="Todos" controlName="todos" [labelInfo]="'Se OFF, retorna apenas ' + lex.translate('os usuários') + ' habilitados ' + lex.translate('no programa') + '. Se ON, inclui também os desabilitados.'"
             [control]="filter!.controls.todos" (change)="grid!.reloadFilter()"></input-switch>

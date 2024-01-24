@@ -13,6 +13,7 @@ import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service'
 import { Avaliacao } from 'src/app/models/avaliacao.model';
 import { Programa } from 'src/app/models/programa.model';
 import { AvaliacaoDaoService } from 'src/app/dao/avaliacao-dao.service';
+import { UnidadeService } from 'src/app/services/unidade.service';
 
 @Component({
   selector: 'plano-trabalho-consolidacao-list',
@@ -31,6 +32,7 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
   public avaliacaoDao: AvaliacaoDaoService;
   public planoTrabalhoDao?: PlanoTrabalhoDaoService;
   public planoTrabalhoService: PlanoTrabalhoService;
+  public unidadeService: UnidadeService;
 
   constructor(public injector: Injector) {
     super(injector);
@@ -38,6 +40,7 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
     this.dao = injector.get<PlanoTrabalhoConsolidacaoDaoService>(PlanoTrabalhoConsolidacaoDaoService);
     this.avaliacaoDao = injector.get<AvaliacaoDaoService>(AvaliacaoDaoService);
     this.planoTrabalhoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
+    this.unidadeService = injector.get<UnidadeService>(UnidadeService);
     this.planoTrabalhoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
     this.title = this.lex.translate("Consolidações");
     this.code = "MOD_PTR_CSLD";
@@ -167,7 +170,7 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
     const unidadeId = this.entity!.unidade_id;
     const anterior = this.anterior(row as PlanoTrabalhoConsolidacao);
     const proximo = this.proximo(row as PlanoTrabalhoConsolidacao);
-    const isAvaliador = this.auth.hasPermissionTo("MOD_PTR_CSLD_AVAL") && (this.auth.isGestorUnidade(unidadeId) || this.auth.isIntegrante('AVALIADOR_PLANO_TRABALHO', unidadeId));
+    const isAvaliador = this.auth.hasPermissionTo("MOD_PTR_CSLD_AVAL") && (this.unidadeService.isGestorUnidade(unidadeId) || this.auth.isIntegrante('AVALIADOR_PLANO_TRABALHO', unidadeId));
     const isUsuarioDoPlano = this.auth.usuario!.id == usuarioId;
     const BOTAO_CONCLUIR = { hint: "Concluir", icon: "bi bi-check-circle", color: "btn-outline-success", onClick: this.concluir.bind(this) };
     const BOTAO_CANCELAR_CONCLUSAO = { hint: "Cancelar conclusão", icon: "bi bi-backspace", color: "btn-outline-danger", onClick: this.cancelarConclusao.bind(this) };
