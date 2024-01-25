@@ -31,6 +31,6 @@ class CreateLogsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('console_errors');
+        Schema::dropIfExists('logs');
     }
 }
