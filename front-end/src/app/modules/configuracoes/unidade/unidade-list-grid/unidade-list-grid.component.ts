@@ -30,7 +30,6 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
     this.join = ["cidade", "unidade_pai:id,sigla", "entidade:id,sigla", "gestor.usuario:id", "gestores_substitutos.usuario:id"];
     this.cidadeDao = injector.get<CidadeDaoService>(CidadeDaoService);
     this.entidadeDao = injector.get<EntidadeDaoService>(EntidadeDaoService);
-
     /* Inicializações */
     this.code = "MOD_CFG_UND";
     this.filter = this.fh.FormBuilder({
