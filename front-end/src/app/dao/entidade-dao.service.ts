@@ -25,7 +25,7 @@ export class EntidadeDaoService extends DaoBaseService<Entidade> {
       { field: "sigla", label: "Sigla" },
       { field: "nome", label: "Nome" },
       { field: "gestor", label: "Gestor", fields: this.usuarioDao.dataset([]) },
-      { field: "gestor_substituto", label: "Gestor substituto", fields: this.usuarioDao.dataset([]) },
+      { field: "gestores_substitutos", label: "Gestor substituto", fields: this.usuarioDao.dataset([]), type: "ARRAY" },
       { field: "cidade", label: "Cidade", dao: this.cidadeDao }
     ], deeps);
   }

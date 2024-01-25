@@ -25,6 +25,7 @@ export class FilterComponent extends ComponentBase implements OnInit {
   @ViewChild(FormGroupDirective) formDirective?: FormGroupDirective;
   @Output() filterClear = new EventEmitter<void>();
   @Input() form?: FormGroup;
+  @Input() filter?: (filter: FormGroup) => void;
   @Input() submit?: (filter: FormGroup) => QueryOptions | undefined | void;
   @Input() clear?: (filter: FormGroup) => void;
   @Input() where?: (filter: FormGroup) => any[];
@@ -81,10 +82,14 @@ export class FilterComponent extends ComponentBase implements OnInit {
   }
 
   public onButtonFilterClick() {
-    let queryOptions = this.submit ? this.submit(this.form!) : undefined;
-    queryOptions = queryOptions || this.grid?.queryOptions || this.queryOptions || {};
-    //if(this.deletedControl.value) queryOptions.deleted = true;
-    queryOptions.deleted = this.deletedControl.value ? true : false;
-    (this.grid?.query || this.query!).reload(queryOptions);
+    if(this.filter) {
+      this.filter(this.form!);
+    } else {
+      let queryOptions = this.submit ? this.submit(this.form!) : undefined;
+      queryOptions = queryOptions || this.grid?.queryOptions || this.queryOptions || {};
+      //if(this.deletedControl.value) queryOptions.deleted = true;
+      queryOptions.deleted = this.deletedControl.value ? true : false;
+      (this.grid?.query || this.query!).reload(queryOptions);
+    }
   }
 }

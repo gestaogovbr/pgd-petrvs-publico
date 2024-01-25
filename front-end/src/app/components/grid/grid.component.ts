@@ -293,7 +293,6 @@ export class GridComponent extends ComponentBase implements OnInit {
       }
     ]
   };
-
   public BUTTON_REPORTS: ToolbarButton = {
     label: "Relatórios",
     icon: "bi bi-file-earmark-ruled",
@@ -311,8 +310,6 @@ export class GridComponent extends ComponentBase implements OnInit {
       }
     ]
   };
-
-
   public panelButtons: ToolbarButton[] = [
     {
       id: "concluir_valid",
@@ -338,7 +335,6 @@ export class GridComponent extends ComponentBase implements OnInit {
       onClick: this.onCancelItem.bind(this)
     }
   ];
-  
 
   constructor(public injector: Injector) {
     super(injector);
@@ -521,7 +517,6 @@ export class GridComponent extends ComponentBase implements OnInit {
       }) 
     }
   }
-
 
   public expand(id: string) {
     this.expandedIds[id] = true;

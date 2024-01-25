@@ -139,6 +139,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
           resolve(true);
         } catch (error: any) {
           if (this.editableForm) this.editableForm.error = error;
+          this.submitting = false;
         }
       }
     });

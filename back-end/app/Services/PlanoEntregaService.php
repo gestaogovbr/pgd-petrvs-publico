@@ -40,7 +40,9 @@ class PlanoEntregaService extends ServiceBase
           // não se aplica à Unidade Instituidora, ou seja, alterações realizadas em planos de entregas de unidades instituidoras não precisam ser notificadas à sua Unidade-pai;
           $unidadePai = $planoEntrega->unidade->unidadePai;
           if (!empty($unidadePai->id) && !$planoEntrega->unidade->instituidora) {
-            $destinatarios = array_filter([$unidadePai->gestor ? $unidadePai->gestor->usuario : null, $unidadePai->gestorSubstituto ? $unidadePai->gestorSubstituto->usuario : null, $unidadePai->gestorDelegado ? $unidadePai->gestorDelegado->usuario : null]);
+            $destinatarios = array_map(fn($x) => $x->usuario, $unidadePai->gestoresSubstitutos ?? []);
+            if(!empty($unidadePai->gestor)) $destinatarios[] = $unidadePai->gestor->usuario;
+            array_merge($destinatarios, array_map(fn($x) => $x->usuario, $unidadePai->gestoresDelegados ?? []));
             $usuarioHomologou = StatusJustificativa::where('codigo', 'ATIVO')
               ->where('plano_entrega_id', $planoEntrega->id)
               ->where('justificativa', 'like', '%homologado nesta data%')
@@ -442,7 +444,9 @@ class PlanoEntregaService extends ServiceBase
       "1. ser um dos gestores da unidade do plano ou da sua unidade-pai;\n" .
       "2. ser homologador de plano de entrega da unidade-pai do plano e possuir a capacidade MOD_PENT_EDT_FLH;\n" .
       "3. possuir a capacidade MOD_PENT_QQR_UND.\n[ver RN_PENT_Z]");
-    if (!$this->verificaDuracaoPlano($dataOrEntity) || !$this->verificaDatasEntregas($dataOrEntity)) throw new ServerException("ValidatePlanoEntrega", "O prazo das datas não satisfaz a duração estipulada no programa.");
+    if (!$usuario->hasPermissionTo('MOD_PENT_ENTR_EXTRPL')) {
+      if (!$this->verificaDuracaoPlano($dataOrEntity) || !$this->verificaDatasEntregas($dataOrEntity)) throw new ServerException("ValidatePlanoEntrega", "O prazo das datas não satisfaz a duração estipulada no programa.");
+    }    
     if ($action == ServiceBase::ACTION_EDIT) {
       /*  
         (RN_PENT_L) Para ALTERAR um plano de entregas:

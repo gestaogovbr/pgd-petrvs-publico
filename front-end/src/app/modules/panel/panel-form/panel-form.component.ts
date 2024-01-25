@@ -9,6 +9,8 @@ import { IIndexable } from 'src/app/models/base.model';
 import { Tenant } from 'src/app/models/tenant.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
+import { SeederDaoService } from 'src/app/dao/seeder-dao.service';
+
 
 @Component({
   selector: 'app-panel-form',
@@ -21,12 +23,16 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
   @ViewChild(TabsComponent, { static: false }) public tabs?: TabsComponent;
 
   public formLogin: FormGroup;
+  public seeders: string[] = [];
+  public selectedSeeder: string = '';
+
+  public seederDao: SeederDaoService;
 
   public encryption: LookupItem[] = [
     { key: "SSL", value: "SSL" },
     { key: "TLS", value: "TLS" }
   ];
-
+  
   tiposLogin = [
     { Tipo: 'Usuário/Senha', Web: '', API: '', Habilitado: true },
     { Tipo: 'Firebase', Web: '', API: '', Habilitado: true },
@@ -38,6 +44,7 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
 
   constructor(public injector: Injector) {
     super(injector, Tenant, TenantDaoService);
+    this.seederDao = injector.get<SeederDaoService>(SeederDaoService);
     this.form = this.fh.FormBuilder({
       id: { default: "" },
       tenancy_db_name: { default: "" },
@@ -107,6 +114,8 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       integracao_wso2_token_acesso: { default: "" },
       integracao_wso2_token_user: { default: "" },
       integracao_wso2_token_password: { default: "" },
+      integracao_siape_usuario_comum: { default: "Participante" },
+      integracao_siape_usuario_chefe: { default: "Chefia de Unidade Executora" },
       // SEI
       modulo_sei_habilitado: { default: false },
       modulo_sei_private_key: { default: "" },
@@ -119,6 +128,49 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       API: { default: "" },
       Habilitado: { default: false }
     });
+  }
+
+  ngOnInit() {
+    super.ngOnInit();
+    this.loadSeeders();
+  }
+
+  private async loadSeeders() {
+    const result = await this.seederDao.getAllSeeder()
+    if(result){
+      this.seeders = result
+    }
+  }
+  onSeederChange(event: any) {
+    this.selectedSeeder = event.target.value;
+  }
+
+  executeSeeder(seeder: string) {
+    if (!this.selectedSeeder) {
+      alert('Por favor, selecione um seeder para executar.');
+      return;
+    }
+
+    this.seederDao.executeSeeder(this.selectedSeeder).then(
+        response => {
+          // Verificar se response é um objeto e tem a propriedade 'message'
+          if (response && typeof response === 'object' && 'message' in response) {
+            this.dialog.alert('Sucesso',String(response?.message));
+            console.log('Seeder executado com sucesso:', response);
+          } else {
+            console.error('Resposta inválida ou sem propriedade "message":', response);
+          }
+        },
+        error => {
+          console.error('Erro ao executar seeder:', error);
+          let errorMessage = error.error && error.error.message ? error.error.message : 'Erro desconhecido';
+          alert(errorMessage);
+        }
+    );
+
+
+
+
   }
 
   public validate = (control: AbstractControl, controlName: string) => {

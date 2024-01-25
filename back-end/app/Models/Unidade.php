@@ -51,6 +51,7 @@ class Unidade extends ModelBase
         'entidade_id', /* char(36); NOT NULL; */
         'cidade_id', /* char(36); */
         //'deleted_at', /* timestamp; */
+        'data_modificacao',
     ];
 
     public $fillable_relations = [];
@@ -95,8 +96,8 @@ class Unidade extends ModelBase
 
     // Others relationships
     public function gestor() { return $this->hasOne(UnidadeIntegrante::class)->has('gestor'); }
-    public function gestorSubstituto() { return $this->hasOne(UnidadeIntegrante::class)->has('gestorSubstituto'); }
-    public function gestorDelegado() { return $this->hasOne(UnidadeIntegrante::class)->has('gestorDelegado'); }
+    public function gestoresSubstitutos() { return $this->hasMany(UnidadeIntegrante::class)->has('gestorSubstituto'); }
+    public function gestoresDelegados() { return $this->hasMany(UnidadeIntegrante::class)->has('gestorDelegado'); }
     public function lotados() { return $this->hasMany(UnidadeIntegrante::class)->has('lotado'); }
     public function colaboradores() { return $this->hasMany(UnidadeIntegrante::class)->has('colaborador'); } // aqueles que possuem TCR
     public function homologadoresPlanoEntrega() { return $this->hasMany(UnidadeIntegrante::class)->has('homologadorPlanoEntrega'); }
