@@ -2428,8 +2428,10 @@ class PlanoEntregaFormComponent extends src_app_modules_base_page_form_base__WEB
   onProgramaChange() {
     const dias = this.programa?.selectedEntity?.prazo_max_plano_entrega;
     const data = this.somaDia(this.entity.data_inicio, dias);
-    this.form.controls.data_fim.setValue(new Date(data));
-    this.dataFim?.change.emit();
+    if (!this.entity?.data_fim) {
+      this.form.controls.data_fim.setValue(new Date(data));
+      this.dataFim?.change.emit();
+    }
   }
   static #_ = this.ɵfac = function PlanoEntregaFormComponent_Factory(t) {
     return new (t || PlanoEntregaFormComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_15__.Injector));
