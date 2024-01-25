@@ -783,11 +783,11 @@ class IntegracaoService extends ServiceBase {
                     $vinculos_isr = DB::select($query);
 
                     $usuario_comum=$this->integracao_config["perfilComum"];
-                    $perfil_participante = Perfil::where('nome', $usuario_comum)->first()->id;
+                    $perfil_participante_id = Perfil::where('nome', $usuario_comum)->first()->id;
 
                     foreach($vinculos_isr as $v_isr){
                         $v_isr = $this->UtilService->object2array($v_isr);
-                        $perfil = $perfil_participante;
+                        $perfil_id = $perfil_participante_id;
                         $registro = new Usuario([
                             'id' => Uuid::uuid4(),
                             'email' => $this->UtilService->valueOrDefault($v_isr['emailfuncional']),
@@ -799,7 +799,7 @@ class IntegracaoService extends ServiceBase {
                             'data_nascimento' => $this->UtilService->valueOrDefault($v_isr['data_nascimento'], null),
                             'sexo' => $this->UtilService->valueOrDefault($v_isr['sexo']),
                             'situacao_funcional' => $this->UtilService->valueOrDefault($v_isr['situacao_funcional'], "DESCONHECIDO"),
-                            'perfil_id' => $perfil,
+                            'perfil_id' => $perfil_id,
                             'exercicio' => $this->UtilService->valueOrDefault($v_isr['exercicio']),
                             'uf' => $this->UtilService->valueOrDefault($v_isr['uf'], null),
                             'data_modificacao' => $this->UtilService->valueOrDefault($v_isr['data_modificacao']),
@@ -818,6 +818,30 @@ class IntegracaoService extends ServiceBase {
                         if(is_null($unidade_exercicio)){
                             $unidade_exercicio = Unidade::where("codigo", "1")->first();
                         }
+
+                        // Procurar na tabela de usuário se já existe e se tem mais outras atribuições.
+
+                        /*
+                        Unidade Velha
+                        Lotado, Substituto, Homologador
+
+                        Unidade Nova
+                        Lotado, Delegado
+                        */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                         $vinculo = array([
                             'usuario_id' => $id_user,
@@ -924,6 +948,17 @@ class IntegracaoService extends ServiceBase {
                     */
                     if($unidade_exercicio){
                         if($chefia['tipo_funcao'] == '1'){
+
+                            /* Verificar se existe mais atribuições */
+                            // Após consultar todas as atribuições já existentes e montar o array para gravar, verificar se
+                            // é substituto e/ou delegado ao mesmo tempo. Se sim, remover do array (substituto e delegado).
+
+
+
+
+
+
+
                             $vinculo = array([
                                 'usuario_id' => $chefia['id_usuario'],
                                 'unidade_id' => $unidade_exercicio[0]->id,
@@ -948,7 +983,17 @@ class IntegracaoService extends ServiceBase {
                               'atribuicoes' => ["GESTOR_SUBSTITUTO"],
                               ]);
 
-                              $this->unidadeIntegrantsaveIntegrantee->saveIntegrante($vinculo, false);
+                            /* Verificar se existe mais atribuições */
+                            // Após consultar todas as atribuições já existentes e montar o array para gravar, verificar se
+                            // é substituto e/ou delegado ao mesmo tempo. Se sim, remover do array (substituto e delegado).
+
+
+
+
+
+
+
+                              $this->unidadeIntegrantesaveIntegrante->saveIntegrante($vinculo, false);
                                                           // Atualiza nível de acesso.
                               $values = [
                                   ':perfil_id' => $perfil_chefia,

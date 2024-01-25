@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
                TipoCapacidadeSeeder::class,
                CargoSeeder::class,
                FuncaoSeeder::class,
+               IN24_2023CapacidadeSeeder::class,
            ]);
        } else {
            $this->call([
@@ -44,6 +45,7 @@ class DatabaseSeeder extends Seeder
                AreaAtividadeExternaSeeder::class,
                CapacidadeTecnicaSeeder::class,
                IN24_2023Seeder::class,
+               IN24_2023CapacidadeSeeder::class,
                TemplateSeeder::class,
 
                /*
