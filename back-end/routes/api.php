@@ -45,5 +45,5 @@ Route::prefix('Seeder')->group(function () {
 });
 
 Route::prefix('Logs')->group(function () {
-    Route::get('list', [\App\Http\Controllers\LogsController::class, 'index']);
+    Route::post('list', [\App\Http\Controllers\LogsController::class, 'index']);
 });
