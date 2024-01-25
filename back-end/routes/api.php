@@ -43,3 +43,7 @@ Route::prefix('Seeder')->group(function () {
     Route::get('getAll', [SeederController::class, 'index']);
     Route::post('execute', [SeederController::class, 'execute']);
 });
+
+Route::prefix('Logs')->group(function () {
+    Route::get('list', [\App\Http\Controllers\LogsController::class, 'index']);
+});
