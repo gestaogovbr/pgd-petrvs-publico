@@ -7,13 +7,15 @@ import { PreferenciaFormUsuarioComponent } from './preferencia-form-usuario/pref
 import { ComponentsModule } from 'src/app/components/components.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UteisModule } from '../../uteis/uteis.module';
+import { PreferenciaFormUnidadeComponent } from './preferencia-form-unidade/preferencia-form-unidade.component';
 
 
 @NgModule({
   declarations: [
     PreferenciaFormComponent,
     PreferenciaFormPetrvsComponent,
-    PreferenciaFormUsuarioComponent
+    PreferenciaFormUsuarioComponent,
+    PreferenciaFormUnidadeComponent
   ],
   imports: [
     CommonModule,
