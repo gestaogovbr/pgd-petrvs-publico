@@ -67,4 +67,44 @@ class PlanoEntregaEntregaService extends ServiceBase
         return $entrega;
     }
 
+    public function hierarquia($data){
+        $entregaRaiz = PlanoEntregaEntrega::find($data['entrega_id']);
+        $hierarquia = $this->construirHierarquia($entregaRaiz, true);    
+        return $hierarquia;
+
+    }
+
+    protected function construirHierarquia($entrega, $incluirPai = false) {
+        $result = [
+            'id' => $entrega->id,
+            'descricao' => $entrega->descricao,
+            'descricao_entrega' => $entrega->descricao_entrega,
+            'destinatario' => $entrega->destinatario,
+            'descricao_meta' => $entrega->descricao_meta,
+            'etiquetas' => $entrega->etiquetas,
+            'meta' => $entrega->meta,
+            'objetivos' => $entrega->objetivos,
+            'processos' => $entrega->processos,
+            'data_inicio' => $entrega->data_inicio,
+            'data_fim' => $entrega->data_fim,
+            'unidade' => $entrega->unidade,
+            'filhos' => [],
+        ];
+    
+        if ($incluirPai) {
+            $result['pai'] = PlanoEntregaEntrega::with('unidade')->find($entrega->entrega_pai_id);
+
+        }
+    
+        $filhos = PlanoEntregaEntrega::where('entrega_pai_id', $entrega->id)->get();
+    
+        if ($filhos->isNotEmpty()) {
+            $result['filhos'] = $filhos->map(function ($filho) {
+                return $this->construirHierarquia($filho, false);
+            })->all();
+        }
+    
+        return $result;
+    }
+
 }

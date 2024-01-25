@@ -122,7 +122,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const _c0 = function () {
-  return ["gestao/atividade"];
+  return ["gestao/plano-trabalho"];
 };
 const _c1 = function (a0) {
   return {
@@ -131,7 +131,7 @@ const _c1 = function (a0) {
 };
 const _c2 = function () {
   return {
-    atribuidas_para_mim: true
+    minha_unidade: true
   };
 };
 const _c3 = function (a0) {
@@ -140,10 +140,10 @@ const _c3 = function (a0) {
   };
 };
 const _c4 = function () {
-  return ["gestao/plano-trabalho/consolidacao"];
+  return ["execucao/plano-entrega"];
 };
 const _c5 = function () {
-  return ["execucao/plano-entrega"];
+  return ["gestao/plano-trabalho/consolidacao"];
 };
 class HomeExecucaoComponent {
   constructor(injector) {
@@ -179,13 +179,13 @@ class HomeExecucaoComponent {
       }
       if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("title", ctx.lex.translate("Atividades"))("imgIcon", ctx.gb.getResourcePath("assets/icons/home/todo-list.svg"))("route", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](14, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](13, _c0)))("metadata", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](17, _c3, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](16, _c2)));
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("title", "Planos de trabalho")("imgIcon", ctx.gb.getResourcePath("assets/icons/home/negociate.svg"))("route", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](14, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](13, _c0)))("metadata", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](17, _c3, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](16, _c2)));
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("title", ctx.lex.translate("Consolida\u00E7\u00F5es"))("imgIcon", ctx.gb.getResourcePath("assets/icons/home/consolidation.svg"))("route", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](20, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](19, _c4)));
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("title", "Planos de entregas")("imgIcon", ctx.gb.getResourcePath("assets/icons/home/service.svg"))("route", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](20, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](19, _c4)));
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("title", "Avalia\u00E7\u00F5es")("imgIcon", ctx.gb.getResourcePath("assets/icons/home/podio.svg"))("route", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](23, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](22, _c4)));
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("title", ctx.lex.translate("Consolida\u00E7\u00F5es"))("imgIcon", ctx.gb.getResourcePath("assets/icons/home/team.svg"))("route", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](23, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](22, _c5)));
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("title", "Planos de Entrega")("imgIcon", ctx.gb.getResourcePath("assets/icons/home/monitoring.svg"))("route", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](26, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](25, _c5)));
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("title", "Avalia\u00E7\u00F5es de " + ctx.lex.translate("consolida\u00E7\u00F5es"))("imgIcon", ctx.gb.getResourcePath("assets/icons/home/ranking.svg"))("route", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](26, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](25, _c5)));
       }
     },
     dependencies: [_components_button_dashboard_button_dashboard_component__WEBPACK_IMPORTED_MODULE_2__.ButtonDashboardComponent],
@@ -222,22 +222,12 @@ const _c1 = function (a0) {
   };
 };
 const _c2 = function () {
-  return {
-    minha_unidade: true
-  };
-};
-const _c3 = function (a0) {
-  return {
-    metadata: a0
-  };
-};
-const _c4 = function () {
   return ["execucao/plano-entrega"];
 };
-const _c5 = function () {
+const _c3 = function () {
   return ["gestao/plano-trabalho/consolidacao"];
 };
-const _c6 = function () {
+const _c4 = function () {
   return ["avaliacao/plano-trabalho/consolidacao/avaliacao"];
 };
 class HomeGestaoComponent {
@@ -252,8 +242,8 @@ class HomeGestaoComponent {
     type: HomeGestaoComponent,
     selectors: [["app-home-gestao"]],
     decls: 11,
-    vars: 28,
-    consts: [[1, "text-secondary"], [1, "row", "mt-5"], [1, "col-6", "col-sm-3", "mb-3"], ["textColor", "#1369f0", "borderColor", "#1369f0", 3, "title", "imgIcon", "route", "metadata"], ["textColor", "#1369f0", "borderColor", "#1369f0", 3, "title", "imgIcon", "route"]],
+    vars: 24,
+    consts: [[1, "text-secondary"], [1, "row", "mt-5"], [1, "col-6", "col-sm-3", "mb-3"], ["textColor", "#1369f0", "borderColor", "#1369f0", 3, "title", "imgIcon", "route"]],
     template: function HomeGestaoComponent_Template(rf, ctx) {
       if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "p", 0);
@@ -263,24 +253,24 @@ class HomeGestaoComponent {
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](4, "app-button-dashboard", 3);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](5, "div", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](6, "app-button-dashboard", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](6, "app-button-dashboard", 3);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](7, "div", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](8, "app-button-dashboard", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](8, "app-button-dashboard", 3);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](9, "div", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](10, "app-button-dashboard", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](10, "app-button-dashboard", 3);
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()();
       }
       if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("title", "Planos de trabalho")("imgIcon", ctx.gb.getResourcePath("assets/icons/home/negociate.svg"))("route", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](14, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](13, _c0)))("metadata", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](17, _c3, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](16, _c2)));
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("title", "Planos de trabalho")("imgIcon", ctx.gb.getResourcePath("assets/icons/home/negociate.svg"))("route", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](13, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](12, _c0)));
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("title", "Planos de entregas")("imgIcon", ctx.gb.getResourcePath("assets/icons/home/service.svg"))("route", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](20, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](19, _c4)));
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("title", "Planos de entregas")("imgIcon", ctx.gb.getResourcePath("assets/icons/home/service.svg"))("route", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](16, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](15, _c2)));
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("title", ctx.lex.translate("Consolida\u00E7\u00F5es"))("imgIcon", ctx.gb.getResourcePath("assets/icons/home/team.svg"))("route", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](23, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](22, _c5)));
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("title", ctx.lex.translate("Consolida\u00E7\u00F5es"))("imgIcon", ctx.gb.getResourcePath("assets/icons/home/team.svg"))("route", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](19, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](18, _c3)));
         _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("title", "Avalia\u00E7\u00F5es de " + ctx.lex.translate("consolida\u00E7\u00F5es"))("imgIcon", ctx.gb.getResourcePath("assets/icons/home/ranking.svg"))("route", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](26, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](25, _c6)));
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("title", "Avalia\u00E7\u00F5es de " + ctx.lex.translate("consolida\u00E7\u00F5es"))("imgIcon", ctx.gb.getResourcePath("assets/icons/home/ranking.svg"))("route", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](22, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](21, _c4)));
       }
     },
     dependencies: [_components_button_dashboard_button_dashboard_component__WEBPACK_IMPORTED_MODULE_2__.ButtonDashboardComponent],
