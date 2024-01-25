@@ -161,9 +161,9 @@ class PlanoTrabalhoController extends ControllerBase {
                 */               
                 break;
             case 'STORE':           //incluir ou alterar um Plano de Trabalho
-                $data = $request->validate(['entity' => ['required'],'with' => ['array']]);
+                $data = $request->validate(['entity' => ['required'], 'with' => ['array']]);
                 $planoTrabalho = $data['entity'];
-                $acao = UtilService::emptyEntry($planoTrabalho, "id") ? 'INSERT' : 'EDIT';
+                $acao = UtilService::emptyEntry($planoTrabalho, "id") ? "INSERT" : "EDIT";
                 switch ($acao) {
                     case 'INSERT':  // inclusão de um novo Plano de Trabalho
                         if(!$usuario->hasPermissionTo('MOD_PTR_INCL')) throw new ServerException("CapacidadeStore", "Usuário não possui a capacidade de inserir planos de trabalho (MOD_PTR_INCL).\n[ver RN_PTR_V]");

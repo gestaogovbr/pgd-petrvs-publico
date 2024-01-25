@@ -3694,6 +3694,11 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
         _this3.entity = new src_app_models_plano_trabalho_model__WEBPACK_IMPORTED_MODULE_8__.PlanoTrabalho();
         _this3.entity.carga_horaria = _this3.auth.entidade?.carga_horaria_padrao || 8;
         _this3.entity.forma_contagem_carga_horaria = _this3.auth.entidade?.forma_contagem_carga_horaria || "DIA";
+        _this3.entity.unidade_id = _this3.auth.unidade.id;
+        _this3.buscaGestoresUnidadeExecutora(_this3.auth.unidade);
+        if (!_this3.gestoresUnidadeExecutora.includes(_this3.auth.unidade.id)) {
+          _this3.entity.usuario_id = _this3.auth.usuario.id;
+        }
       }
       yield _this3.loadData(_this3.entity, _this3.form);
     })();
@@ -3793,9 +3798,7 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
     return this.form.controls.documento_id.value == documento.id;
   }
   buscaGestoresUnidadeExecutora(unidade) {
-    if (unidade) [unidade.gestor?.usuario_id, unidade.gestor_substituto?.usuario_id, unidade.gestor_delegado?.usuario_id].forEach(gestor => {
-      if (gestor) this.gestoresUnidadeExecutora.push(gestor);
-    });
+    this.gestoresUnidadeExecutora = [unidade?.gestor?.usuario_id, unidade?.gestor_substituto?.usuario_id, unidade?.gestor_delegado?.usuario_id].filter(gestor => gestor?.length);
     return this.gestoresUnidadeExecutora;
   }
 }

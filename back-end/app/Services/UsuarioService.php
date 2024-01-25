@@ -126,12 +126,25 @@ class UsuarioService extends ServiceBase
         return Unidade::where("id", $id)->whereRaw($this->areasTrabalhoWhere($subordinadas, $usuario, ""))->count() > 0;
     }
 
+
+    /**
+     * Informa quais atribuições de gestor o usuário logado possui na unidade recebida como parâmetro.
+     * @param string $unidade_id 
+     */
+    public function atribuicoesGestor(string $unidade_id, ?string $usuario_id = null) {
+        return [
+            "gestor" => $this->isIntegrante('GESTOR', $unidade_id, $usuario_id),
+            "gestorSubstituto" => $this->isIntegrante('GESTOR_SUBSTITUTO', $unidade_id, $usuario_id),
+            "gestorDelegado" => $this->isIntegrante('GESTOR_DELEGADO', $unidade_id, $usuario_id)
+        ];
+    }
+
     /**
      * Informa se o usuário logado é gestor(titular ou substituto) da unidade recebida como parâmetro.
      * @param string $unidade_id 
      */
     public function isGestorUnidade(string $unidade_id): bool {
-        return $this->isIntegrante('GESTOR',$unidade_id) || $this->isIntegrante('GESTOR_SUBSTITUTO',$unidade_id) || $this->isIntegrante('GESTOR_DELEGADO',$unidade_id);
+        return $this->isIntegrante('GESTOR', $unidade_id) || $this->isIntegrante('GESTOR_SUBSTITUTO', $unidade_id) || $this->isIntegrante('GESTOR_DELEGADO', $unidade_id);
     }
 
     /**
@@ -143,16 +156,16 @@ class UsuarioService extends ServiceBase
     }
 
     /**
-     * Recebe os IDs de um usuário e de um PGD, e informa se o usuário é participante habilitado do Programa.
+     * Recebe os IDs de um usuário e de um programa, e informa se o usuário é participante habilitado do Programa.
      * Se o usuário não for informado, será utilizado o usuário logado.
      * @param string $usuario_id 
      * @param string $pgd_id 
      * @return bool
      */
-    public function isParticipantePgdHabilitado(string | null $usuario_id = null, string $pgd_id): bool {
+    public function isParticipanteHabilitado(string | null $usuario_id = null, string $programa_id): bool {
         $usuario_id = $usuario_id ?? parent::loggedUser()->id;
-        $programa = Programa::find($pgd_id);
-        $participante = $programa->participantes->where("usuario_id",$usuario_id)->first();
+        $programa = Programa::find($programa_id);
+        $participante = $programa->participantes->where("usuario_id", $usuario_id)->first();
         return $participante ? $participante->habilitado : false;
     }
 

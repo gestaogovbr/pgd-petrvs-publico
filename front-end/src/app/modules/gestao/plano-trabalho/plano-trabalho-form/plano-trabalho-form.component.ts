@@ -301,6 +301,11 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       this.entity = new PlanoTrabalho();
       this.entity.carga_horaria = this.auth.entidade?.carga_horaria_padrao || 8;
       this.entity.forma_contagem_carga_horaria = this.auth.entidade?.forma_contagem_carga_horaria || "DIA";
+      this.entity.unidade_id = this.auth.unidade!.id;
+      this.buscaGestoresUnidadeExecutora(this.auth.unidade!);
+      if(!this.gestoresUnidadeExecutora.includes(this.auth.unidade!.id)) {
+        this.entity.usuario_id = this.auth.usuario!.id;
+      }
     }
     await this.loadData(this.entity, this.form!);
   }
@@ -391,10 +396,12 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     return this.form!.controls.documento_id.value == documento.id;
   }
 
-  public buscaGestoresUnidadeExecutora(unidade: Unidade | null){
-    if (unidade) [unidade.gestor?.usuario_id, unidade.gestor_substituto?.usuario_id, unidade!.gestor_delegado?.usuario_id].forEach(gestor => {
-      if (gestor) this.gestoresUnidadeExecutora.push(gestor);
-    });
+  public buscaGestoresUnidadeExecutora(unidade: Unidade | null | undefined){
+    this.gestoresUnidadeExecutora = [
+      unidade?.gestor?.usuario_id, 
+      unidade?.gestor_substituto?.usuario_id, 
+      unidade?.gestor_delegado?.usuario_id
+    ].filter(gestor => gestor?.length) as string[];
     return this.gestoresUnidadeExecutora;
   }
 

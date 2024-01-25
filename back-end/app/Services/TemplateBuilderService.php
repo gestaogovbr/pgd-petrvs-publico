@@ -16,20 +16,20 @@ As classes e funções abaixo processam a linguagem de templates utilizando a se
 <FOR>        ::= for:<IDENTIFIER>"["(<INDEX>..<IDENTIFIER>(..<IDENTIFIER>)? | <IDENTIFIER>)"]"(;<PARAM>)*
 <END-FOR>    ::= end-for
 <EXPRESSION> ::= (<LITERAL>|<VAR>)(=|==|\>|\>=|\<|\<=|\<\>|\!=)(<LITERAL>|<VAR>)
-<PARAM>     ::= <IDENTIFIER>=<LITERAL>
+<PARAM>      ::= <IDENTIFIER>=<LITERAL>
 
 Gramática Lexica:
-<TEXT>         ::= .*?({{|$)
-<INDEX>        ::= [0-9]+
-<IDENTIFIER>   ::= [a-zA-Z_](a-zA-Z0-9_)*
-<LITERAL>      ::= true|false|[0-9]+(\.[0-9]*)?|".*"|'.*'
-<TAG>          ::= {{ | }}
-<BRACKET>      ::= []
-<IF>           ::= if:
-<END-IF>       ::= end-if
-<FOR>          ::= for:
-<END-FOR>      ::= end-for
-<OPERATOR>     ::= =|==|\>|\>=|\<|\<=|\<\>|\!=
+<TEXT>       ::= .*?({{|$)
+<INDEX>      ::= [0-9]+
+<IDENTIFIER> ::= [a-zA-Z_](a-zA-Z0-9_)*
+<LITERAL>    ::= true|false|[0-9]+(\.[0-9]*)?|".*"|'.*'
+<TAG>        ::= {{ | }}
+<BRACKET>    ::= []
+<IF>         ::= if:
+<END-IF>     ::= end-if
+<FOR>        ::= for:
+<END-FOR>    ::= end-for
+<OPERATOR>   ::= =|==|\>|\>=|\<|\<=|\<\>|\!=
 
 */
 

@@ -404,7 +404,19 @@ class UnidadeService extends ServiceBase
         }])->whereHas('planosEntrega')->get()->map(fn($u) => $u->id)->toArray();
     }
 
+    /**
+     * Retorna os gestores da unidade superior a unidade informada
+     */
+    public function gestoresUnidadeSuperior($unidadeId) {
+        $unidadeSup = Unidade::find($unidadeId)?->unidadePai;
+        return [
+            "gestor" => $unidadeSup?->gestor,
+            "gestoresSubstitutos" => $unidadeSup?->gestoresSubstitutos ?? [],
+            "gestoresDelegados" => $unidadeSup?->gestoresDelegados ?? []
+        ];
+    } 
 
+    //
     /*
     (*) vide no front end, unidade-list-grid.component.ts
     unidades-list-grid
