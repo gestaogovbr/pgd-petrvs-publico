@@ -258,7 +258,6 @@ class CargoListComponent extends src_app_modules_base_page_list_base__WEBPACK_IM
         result.push(["ativo", "==", 1]);
         //result.push(["ativo", "like", "%" + form.titulo + "%"]);
       }
-
       result.push(["efetivo", "==", form.efetivo ? 1 : 0]);
       return result;
     };

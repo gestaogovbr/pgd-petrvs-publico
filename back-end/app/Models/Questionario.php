@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Casts\AsJson;
 use App\Models\QuestionarioPergunta;
+use App\Models\QuestionarioResposta;
 
 class Questionario extends ModelBase
 {
@@ -24,6 +25,7 @@ class Questionario extends ModelBase
 
     //Has
     public function perguntas() { return $this->hasMany(QuestionarioPergunta::class); }
+    public function questionarioResposta() { return $this->hasMany(QuestionarioResposta::class); }
 
     // Belongs
 

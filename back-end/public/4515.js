@@ -233,38 +233,6 @@ class QuestionarioRespostaDaoService extends _dao_base_service__WEBPACK_IMPORTED
 
 /***/ }),
 
-/***/ 5430:
-/*!*******************************************************************!*\
-  !*** ./src/app/dao/questionario-resposta-pergunta-dao.service.ts ***!
-  \*******************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   QuestionarioRespostaPerguntaDaoService: () => (/* binding */ QuestionarioRespostaPerguntaDaoService)
-/* harmony export */ });
-/* harmony import */ var _dao_base_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./dao-base.service */ 29995);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 51197);
-
-
-class QuestionarioRespostaPerguntaDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0__.DaoBaseService {
-  constructor(injector) {
-    super("QuestionarioRespostaPergunta", injector);
-    this.injector = injector;
-    this.inputSearchConfig.searchFields = ["resposta"];
-  }
-  static #_ = this.ɵfac = function QuestionarioRespostaPerguntaDaoService_Factory(t) {
-    return new (t || QuestionarioRespostaPerguntaDaoService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__.Injector));
-  };
-  static #_2 = this.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({
-    token: QuestionarioRespostaPerguntaDaoService,
-    factory: QuestionarioRespostaPerguntaDaoService.ɵfac,
-    providedIn: 'root'
-  });
-}
-
-/***/ }),
-
 /***/ 10470:
 /*!***************************************************!*\
   !*** ./src/app/models/curriculum-idioma.model.ts ***!
@@ -580,6 +548,30 @@ class HistoricoLotacaoCurriculum extends _base_model__WEBPACK_IMPORTED_MODULE_0_
 
 /***/ }),
 
+/***/ 56260:
+/*!****************************************************************!*\
+  !*** ./src/app/models/questionario-resposta-pergunta.model.ts ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   QuestionarioRespostaPergunta: () => (/* binding */ QuestionarioRespostaPergunta)
+/* harmony export */ });
+/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
+
+class QuestionarioRespostaPergunta extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
+  constructor(data) {
+    super();
+    this.resposta = undefined;
+    this.questionario_pergunta_id = "";
+    this.questionario_resposta_id = "";
+    this.initialization(data);
+  }
+}
+
+/***/ }),
+
 /***/ 86920:
 /*!*******************************************************!*\
   !*** ./src/app/models/questionario-resposta.model.ts ***!
@@ -595,7 +587,10 @@ __webpack_require__.r(__webpack_exports__);
 class QuestionarioResposta extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
   constructor(data) {
     super();
-    this.questionarioRespostaPergunta = [];
+    this.questionario_resposta_pergunta = [];
+    this.data_respostas = new Date(); // data em que o usuario respondeu
+    this.editavel = 1; //se é possivel editar a resposta
+    this.versao = 0; //versao do questionario respondido
     this.usuario_id = "";
     this.questionario_id = "";
     this.initialization(data);
@@ -620,9 +615,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_dao_questionario_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/questionario-dao.service */ 10535);
 /* harmony import */ var src_app_dao_questionario_pergunta_dao_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/dao/questionario-pergunta-dao.service */ 8305);
 /* harmony import */ var src_app_models_questionario_resposta_model__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/models/questionario-resposta.model */ 86920);
-/* harmony import */ var src_app_dao_questionario_resposta_pergunta_dao_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/dao/questionario-resposta-pergunta-dao.service */ 5430);
+/* harmony import */ var src_app_models_questionario_resposta_pergunta_model__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/models/questionario-resposta-pergunta.model */ 56260);
 /* harmony import */ var src_app_dao_questionario_resposta_dao_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! src/app/dao/questionario-resposta-dao.service */ 54771);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/common */ 89650);
 /* harmony import */ var _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../components/tabs/tabs.component */ 66384);
 /* harmony import */ var _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../components/tabs/tab/tab.component */ 74978);
 /* harmony import */ var _components_input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../components/input/input-number/input-number.component */ 9224);
@@ -639,38 +635,172 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const _c0 = ["comunica"];
-const _c1 = ["lideranca"];
-const _c2 = ["resolucao"];
-const _c3 = ["pensamento"];
-const _c4 = ["criatividade"];
-const _c5 = ["habilidade"];
-const _c6 = ["adaptabilidade"];
-const _c7 = ["etica"];
+
+function CurriculumAtributosbig5FormComponent_div_4_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "div");
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](1, " Formul\u00E1rio de SoftSkill n\u00E3o encontrado no banco de dados. Contete suporte! ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
+  }
+}
+function CurriculumAtributosbig5FormComponent_ng_template_5_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r12 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "h4", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](1, "Compet\u00EAncias Gerenciais, distribua 20 pontos entre as habilidades abaixo: ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](2, "div", 7)(3, "div", 8)(4, "div", 9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](5, "img", 10);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](6, "div", 11)(7, "h5", 12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](8, "Comunica\u00E7\u00E3o");
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](9, "div", 13)(10, "div", 14)(11, "p", 15)(12, "input-number", 16, 17);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_ng_template_5_Template_input_number_change_12_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵrestoreView"](_r12);
+      const ctx_r11 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵresetView"](ctx_r11.valorSoftChange(ctx_r11.form.controls.comunica));
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()()()()()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](14, "div", 8)(15, "div", 9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](16, "img", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](17, "div", 11)(18, "h5", 12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](19, "Lideran\u00E7a");
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](20, "div", 13)(21, "div", 14)(22, "p", 15)(23, "input-number", 19, 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_ng_template_5_Template_input_number_change_23_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵrestoreView"](_r12);
+      const ctx_r13 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵresetView"](ctx_r13.valorSoftChange(ctx_r13.form.controls.lideranca));
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()()()()()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](25, "div", 8)(26, "div", 9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](27, "img", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](28, "div", 11)(29, "h5", 12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](30, "Resolu\u00E7\u00E3o de Problemas");
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](31, "div", 13)(32, "div", 22)(33, "p", 15)(34, "input-number", 23, 24);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_ng_template_5_Template_input_number_change_34_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵrestoreView"](_r12);
+      const ctx_r14 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵresetView"](ctx_r14.valorSoftChange(ctx_r14.form.controls.resolucao));
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()()()()()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](36, "div", 8)(37, "div", 9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](38, "img", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](39, "div", 11)(40, "h5", 12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](41, "Criatividade e Curiosidade");
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](42, "div", 13)(43, "div", 22)(44, "p", 15)(45, "input-number", 26, 27);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_ng_template_5_Template_input_number_change_45_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵrestoreView"](_r12);
+      const ctx_r15 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵresetView"](ctx_r15.valorSoftChange(ctx_r15.form.controls.criatividade));
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()()()()()()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](47, "div", 28)(48, "div", 8)(49, "div", 9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](50, "img", 29);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](51, "div", 11)(52, "h5", 12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](53, "Pensamento Cr\u00EDtico");
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](54, "div", 13)(55, "div", 22)(56, "p", 15)(57, "input-number", 30, 31);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_ng_template_5_Template_input_number_change_57_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵrestoreView"](_r12);
+      const ctx_r16 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵresetView"](ctx_r16.valorSoftChange(ctx_r16.form.controls.pensamento));
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()()()()()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](59, "div", 8)(60, "div", 9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](61, "img", 32);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](62, "div", 11)(63, "h5", 12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](64, "Habilidade com Pessoas e Equipes");
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](65, "div", 13)(66, "div", 22)(67, "p", 15)(68, "input-number", 33, 34);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_ng_template_5_Template_input_number_change_68_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵrestoreView"](_r12);
+      const ctx_r17 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵresetView"](ctx_r17.valorSoftChange(ctx_r17.form.controls.habilidade));
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()()()()()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](70, "div", 8)(71, "div", 9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](72, "img", 35);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](73, "div", 11)(74, "h5", 12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](75, "Adaptabilidade e Resili\u00EAncia");
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](76, "div", 13)(77, "div", 22)(78, "p", 15)(79, "input-number", 36, 37);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_ng_template_5_Template_input_number_change_79_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵrestoreView"](_r12);
+      const ctx_r18 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵresetView"](ctx_r18.valorSoftChange(ctx_r18.form.controls.adaptabilidade));
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()()()()()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](81, "div", 8)(82, "div", 9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](83, "img", 38);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](84, "div", 11)(85, "h5", 12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](86, "\u00C9tica");
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](87, "div", 13)(88, "div", 14)(89, "p", 15)(90, "input-number", 39, 40);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_ng_template_5_Template_input_number_change_90_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵrestoreView"](_r12);
+      const ctx_r19 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵresetView"](ctx_r19.valorSoftChange(ctx_r19.form.controls.etica));
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()()()()()()()();
+  }
+  if (rf & 2) {
+    const ctx_r2 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("control", ctx_r2.form.controls.comunica)("minValue", 0)("maxValue", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("min", 0);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("src", ctx_r2.liderancaIMG, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵsanitizeUrl"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 12)("control", ctx_r2.form.controls.lideranca)("minValue", 0)("maxValue", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("min", 0);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("src", ctx_r2.resolucaoIMG, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵsanitizeUrl"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 12)("control", ctx_r2.form.controls.resolucao)("minValue", 0)("maxValue", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("min", 0);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("src", ctx_r2.criatividadeIMG, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵsanitizeUrl"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 12)("control", ctx_r2.form.controls.criatividade)("minValue", 0)("maxValue", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("min", 0);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("src", ctx_r2.pensamentoIMG, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵsanitizeUrl"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 12)("control", ctx_r2.form.controls.pensamento)("minValue", 0)("maxValue", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("min", 0);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("src", ctx_r2.habilidadeIMG, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵsanitizeUrl"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 12)("control", ctx_r2.form.controls.habilidade)("minValue", 0)("maxValue", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("min", 0);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("src", ctx_r2.adaptabilidadeIMG, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵsanitizeUrl"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 12)("control", ctx_r2.form.controls.adaptabilidade)("minValue", 0)("maxValue", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("min", 0);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("src", ctx_r2.eticaIMG, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵsanitizeUrl"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("control", ctx_r2.form.controls.etica)("minValue", 0)("maxValue", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("min", 0);
+  }
+}
 class CurriculumAtributosbig5FormComponent extends _base_page_form_base__WEBPACK_IMPORTED_MODULE_1__.PageFormBase {
   constructor(injector) {
     super(injector, src_app_models_questionario_resposta_model__WEBPACK_IMPORTED_MODULE_5__.QuestionarioResposta, src_app_dao_questionario_resposta_dao_service__WEBPACK_IMPORTED_MODULE_7__.QuestionarioRespostaDaoService);
     this.injector = injector;
-    this.questionarioID = "";
-    this.resposta = {
-      comunica: 0,
-      lideranca: 0,
-      resolucao: 0,
-      pretensao: 0,
-      criatividade: 0,
-      pensamento: 0,
-      habilidade: 0,
-      adaptabilidade: 0,
-      etica: 0
-    };
+    this.respostas = [];
     this.validate = (control, controlName) => {
       let result = null;
       return result;
     };
+    this.join = ['questionario_resposta_pergunta'];
     this.questionarioDao = injector.get(src_app_dao_questionario_dao_service__WEBPACK_IMPORTED_MODULE_3__.QuestionarioDaoService);
     this.questionarioPerguntasDao = injector.get(src_app_dao_questionario_pergunta_dao_service__WEBPACK_IMPORTED_MODULE_4__.QuestionarioPerguntaDaoService);
-    this.questionarioRespostasPerguntas = injector.get(src_app_dao_questionario_resposta_pergunta_dao_service__WEBPACK_IMPORTED_MODULE_6__.QuestionarioRespostaPerguntaDaoService);
-    this.comunicaIMG = "/assets/icons/iconeComunicacao.png"; //"../assets/icons/Comunica.jpg";
+    this.comunicaIMG = "";
     this.liderancaIMG = "/assets/icons/iconeLideranca.png";
     this.resolucaoIMG = "/assets/icons/iconeResolucao.png";
     this.pensamentoIMG = "/assets/icons/iconePensamento.png";
@@ -690,9 +820,6 @@ class CurriculumAtributosbig5FormComponent extends _base_page_form_base__WEBPACK
       resolucao: {
         default: 0
       },
-      pretensao: {
-        default: 0
-      },
       criatividade: {
         default: 0
       },
@@ -709,90 +836,83 @@ class CurriculumAtributosbig5FormComponent extends _base_page_form_base__WEBPACK
         default: 0
       }
     }, this.cdRef, this.validate);
-    /*const range = document.getElementById('range') as HTMLInputElement;
-    console.log('RANGE-->',range)
-     const rangeV = document.getElementById('rangeV');
-          
-       const setValue = ()=>{
-            console.log(range)
-            const
-              newValue = Number( (parseInt(range.value))  - (parseInt(range.min)) * 100 / (parseInt(range.max) - parseInt(range.min) )),
-              newPosition = 10 - (newValue * 0.2);
-            rangeV!.innerHTML = `<span>${range}</span>`;
-            rangeV!.style.left = `calc(${newValue}% + (${newPosition}px))`;
-          };
-    document.addEventListener('DOMContentLoaded', setValue);
-    console.log(range)
-    //range.addEventListener('input', setValue);*/
   }
-
   loadData(entity, form) {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {})();
+  }
+  initializeData(form) {
     var _this = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       const questionario = yield _this.questionarioDao?.query({
-        where: [['codigo', '==', "SOFTSKILLS"]]
-      }).asPromise(); // .then((x) => {
-      //console.log('X QUESTIONARIO ATRIBUTOS',x[0].id)//x.rows[0].id)
+        where: [['codigo', '==', 'SOFTSKILLS']],
+        join: ['perguntas']
+      }).asPromise();
       if (questionario?.length) {
-        _this.questionarioID = questionario[0].id;
-        console.log('X QUESTIONARIO ATRIBUTOS', _this.questionarioID); //x.rows[0].id)
+        questionario[0].perguntas = questionario[0].perguntas.sort((a, b) => a.sequencia < b.sequencia ? -1 : 1);
+        _this.questionario = questionario[0];
+        const questionarioResposta = yield _this.dao?.query({
+          where: [['questionario_id', '==', _this.questionario.id], ['usuario_id', '==', _this.auth.usuario?.id]],
+          join: ['questionario_resposta_pergunta']
+        }).asPromise();
+        _this.entity = questionarioResposta?.length ? questionarioResposta[0] : undefined;
+        let respostas = [];
+        if (_this.entity) {
+          _this.questionario.perguntas.forEach((pergunta, index) => {
+            _this.entity.questionario_resposta_pergunta.forEach((resposta, index) => {
+              if (pergunta.id == resposta.questionario_pergunta_id) respostas.push(resposta.resposta);
+            });
+          });
+          _this.form.controls.comunica.setValue(respostas[0]);
+          _this.form.controls.lideranca.setValue(respostas[1]);
+          _this.form.controls.resolucao.setValue(respostas[2]);
+          _this.form.controls.criatividade.setValue(respostas[3]);
+          _this.form.controls.pensamento.setValue(respostas[4]);
+          _this.form.controls.habilidade.setValue(respostas[5]);
+          _this.form.controls.adaptabilidade.setValue(respostas[6]);
+          _this.form.controls.etica.setValue(respostas[7]);
+        }
       } else {
         _this.dialog.alert("Teste Soft-Skills não localizado", "Teste não localizado");
       }
-    })();
-  }
-  initializeData(form) {
-    var _this2 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      return yield _this2.loadData(_this2.entity, form);
+      yield _this.loadData(_this.entity, form);
     })();
   }
   saveData(form) {
-    var _this3 = this;
+    var _this2 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      return new Promise((resolve, reject) => {
-        let questionarioResposta = _this3.util.fill(new src_app_models_questionario_resposta_model__WEBPACK_IMPORTED_MODULE_5__.QuestionarioResposta(), _this3.entity);
-        questionarioResposta.usuario_id = _this3.auth.usuario?.id;
-        questionarioResposta.data_respostas = Date();
-        questionarioResposta.editavel = 1;
-        questionarioResposta.versao = 1;
-        questionarioResposta.questionario_id = _this3.questionarioID;
-        //questionarioResposta = this.util.fillForm(questionarioResposta, this.form!.value);
-        questionarioResposta.questionarioRespostaPergunta = _this3.resposta;
-        //(this.form?.controls.idiomasM.value as Array<LookupItem>).forEach(element => questionario.idiomas.push(element.data));
-        resolve(questionarioResposta);
-        //resolve(this.util.fillForm(curriculum, this.form!.value));
+      if (!_this2.questionario) return false;
+      let questionarioResposta = _this2.util.fill(new src_app_models_questionario_resposta_model__WEBPACK_IMPORTED_MODULE_5__.QuestionarioResposta(), _this2.entity || {});
+      questionarioResposta.usuario_id = _this2.auth.usuario?.id;
+      questionarioResposta.editavel = 1;
+      questionarioResposta.questionario_id = _this2.questionario.id;
+      //questionarioResposta.data_resposta = new Date();;
+      const valores = [_this2.form.controls.comunica.value, _this2.form.controls.lideranca.value, _this2.form.controls.resolucao.value, _this2.form.controls.criatividade.value, _this2.form.controls.pensamento.value, _this2.form.controls.habilidade.value, _this2.form.controls.adaptabilidade.value, _this2.form.controls.etica.value];
+      let respostas = _this2.entity?.questionario_resposta_pergunta || valores.map((x, i) => new src_app_models_questionario_resposta_pergunta_model__WEBPACK_IMPORTED_MODULE_6__.QuestionarioRespostaPergunta({
+        questionario_pergunta_id: _this2.questionario.perguntas[i].id,
+        resposta: parseInt(x),
+        _status: "ADD"
+      }));
+      respostas.forEach((x, i) => {
+        if (x._status != "ADD" && x.resposta != parseInt(valores[i])) {
+          x.resposta = parseInt(valores[i]);
+          x._status = "EDIT";
+        }
       });
+      questionarioResposta.questionario_resposta_pergunta = respostas;
+      return questionarioResposta;
     })();
   }
-
-  ngOnInit() {}
-  /*this.form = this.fh.FormBuilder({
-    nome: { default: "" },
-    perguntas: { default: [] },
-    codigo: { default: "" },
-    tipoQuestionario: { default: "" },
-    switchExemplo: { default: false },
-  }, this.cdRef, this.validate);
-     public validate = (control: AbstractControl, controlName: string) => {
-    let result = null;
-    if (['nome'].indexOf(controlName) >= 0 && !control.value?.length) {
-      result = "Obrigatório";
-    }
-    return result;
-  }*/
   valorSoftChange(control) {
     control.value == '' ? control.setValue(0) : '';
     const comunica = this.form?.controls.comunica.value;
     const lideranca = this.form?.controls.lideranca.value;
     const resolucao = this.form?.controls.resolucao.value;
-    const pretensao = this.form?.controls.pretensao.value;
     const criatividade = this.form?.controls.criatividade.value;
     const pensamento = this.form?.controls.pensamento.value;
     const habilidade = this.form?.controls.habilidade.value;
     const adaptabilidade = this.form?.controls.adaptabilidade.value;
     const etica = this.form?.controls.etica.value;
-    const array = [comunica, lideranca, resolucao, pretensao, criatividade, pensamento, habilidade, adaptabilidade, etica];
+    const array = [comunica, lideranca, resolucao, criatividade, pensamento, habilidade, adaptabilidade, etica];
     let soma = 0;
     for (const val of array) {
       //console.log('SUM SEQUENCIA', sum)
@@ -813,32 +933,16 @@ class CurriculumAtributosbig5FormComponent extends _base_page_form_base__WEBPACK
     viewQuery: function CurriculumAtributosbig5FormComponent_Query(rf, ctx) {
       if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_2__.EditableFormComponent, 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵviewQuery"](_c0, 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵviewQuery"](_c1, 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵviewQuery"](_c2, 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵviewQuery"](_c3, 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵviewQuery"](_c4, 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵviewQuery"](_c5, 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵviewQuery"](_c6, 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵviewQuery"](_c7, 5);
       }
       if (rf & 2) {
         let _t;
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵloadQuery"]()) && (ctx.comunicaV = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵloadQuery"]()) && (ctx.liderancaV = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵloadQuery"]()) && (ctx.resolucaoV = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵloadQuery"]()) && (ctx.pensamentoV = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵloadQuery"]()) && (ctx.criatividadeV = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵloadQuery"]()) && (ctx.habilidadeV = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵloadQuery"]()) && (ctx.adaptabilidadeV = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵloadQuery"]()) && (ctx.eticaV = _t.first);
       }
     },
     features: [_angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵInheritDefinitionFeature"]],
-    decls: 96,
-    vars: 49,
-    consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "BIG5", "label", "Big-Five", 1, "fw-bold"], ["key", "SOFTSKILLS", "label", "Soft-Skills", 1, "fw-bold"], [1, "my-5"], [1, "row", "justify-content-between", "g-4"], [1, "col-lg-3"], [1, "card", "h-100"], ["id", "imgComunica", "alt", "...", 1, "card-img-top", 3, "src"], [1, "card-body"], [1, "card-title", "text-center"], [1, "row", "justify-content-center"], [1, "col-md-12"], [1, "card-text"], ["controlName", "comunica", 3, "control", "minValue", "maxValue", "change"], ["comunicaV", ""], ["id", "imgLideranca", "alt", "...", 1, "card-img-top", 3, "src"], ["controlName", "lideranca", 3, "size", "control", "minValue", "maxValue", "change"], ["liderancaV", ""], ["id", "imgResolucao", "alt", "...", 1, "card-img-top", 3, "src"], [1, "col-md-8"], ["controlName", "resolucao", 3, "size", "control", "minValue", "maxValue", "change"], ["resolucaoV", ""], ["id", "imgCriatividade", "alt", "...", 1, "card-img-top", 3, "src"], ["controlName", "criatividade", 3, "size", "control", "minValue", "maxValue", "change"], ["criatividadeV", ""], [1, "row", "justify-content-between", "g-4", "mt-3"], ["id", "imgPensamento", "alt", "...", 1, "card-img-top", 3, "src"], ["controlName", "pensamento", 3, "size", "control", "minValue", "maxValue", "change"], ["pensamentoV", ""], ["id", "imgHabilidade", "alt", "...", 1, "card-img-top", 3, "src"], ["controlName", "habilidade", 3, "size", "control", "minValue", "maxValue", "change"], ["habilidadeV", ""], ["id", "imgAdaptabilidade", "alt", "...", 1, "card-img-top", 3, "src"], ["controlName", "adaptabilidade", 3, "size", "control", "minValue", "maxValue", "change"], ["adaptabilidadeV", ""], ["id", "imgEtica", "alt", "...", 1, "card-img-top", 3, "src"], ["controlName", "etica", 3, "control", "minValue", "maxValue", "change"], ["eticaV", ""]],
+    decls: 7,
+    vars: 5,
+    consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "BIG5", "label", "Big-Five", 1, "fw-bold"], ["key", "SOFTSKILLS", "label", "Soft-Skills", 1, "fw-bold"], [4, "ngIf", "ngIfElse"], ["softskills", ""], [1, "my-5"], [1, "row", "justify-content-between", "g-4"], [1, "col-lg-3"], [1, "card", "h-100"], ["src", "/assets/icons/iconeComunicacao.png", "id", "imgComunica", "alt", "...", 1, "card-img-top"], [1, "card-body"], [1, "card-title", "text-center"], [1, "row", "justify-content-center"], [1, "col-md-12"], [1, "card-text"], ["controlName", "comunica", 3, "control", "minValue", "maxValue", "change"], ["comunicaV", ""], ["id", "imgLideranca", "alt", "...", 1, "card-img-top", 3, "src"], ["controlName", "lideranca", 3, "size", "control", "minValue", "maxValue", "change"], ["liderancaV", ""], ["id", "imgResolucao", "alt", "...", 1, "card-img-top", 3, "src"], [1, "col-md-8"], ["controlName", "resolucao", 3, "size", "control", "minValue", "maxValue", "change"], ["resolucaoV", ""], ["id", "imgCriatividade", "alt", "...", 1, "card-img-top", 3, "src"], ["controlName", "criatividade", 3, "size", "control", "minValue", "maxValue", "change"], ["criatividadeV", ""], [1, "row", "justify-content-between", "g-4", "mt-3"], ["id", "imgPensamento", "alt", "...", 1, "card-img-top", 3, "src"], ["controlName", "pensamento", 3, "size", "control", "minValue", "maxValue", "change"], ["pensamentoV", ""], ["id", "imgHabilidade", "alt", "...", 1, "card-img-top", 3, "src"], ["controlName", "habilidade", 3, "size", "control", "minValue", "maxValue", "change"], ["habilidadeV", ""], ["id", "imgAdaptabilidade", "alt", "...", 1, "card-img-top", 3, "src"], ["controlName", "adaptabilidade", 3, "size", "control", "minValue", "maxValue", "change"], ["adaptabilidadeV", ""], ["id", "imgEtica", "alt", "...", 1, "card-img-top", 3, "src"], ["controlName", "etica", 3, "control", "minValue", "maxValue", "change"], ["eticaV", ""]],
     template: function CurriculumAtributosbig5FormComponent_Template(rf, ctx) {
       if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](0, "editable-form", 0);
@@ -849,135 +953,19 @@ class CurriculumAtributosbig5FormComponent extends _base_page_form_base__WEBPACK
         });
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](1, "tabs", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](2, "tab", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](3, "tab", 3)(4, "h4", 4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](5, "Compet\u00EAncias Gerenciais, distribua 20 pontos entre as habilidades abaixo: ");
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](6, "div", 5)(7, "div", 6)(8, "div", 7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](9, "img", 8);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](10, "div", 9)(11, "h5", 10);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](12, "Comunica\u00E7\u00E3o");
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](13, "div", 11)(14, "div", 12)(15, "p", 13)(16, "input-number", 14, 15);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_Template_input_number_change_16_listener() {
-          return ctx.valorSoftChange(ctx.form.controls.comunica);
-        });
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()()()()()()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](18, "div", 6)(19, "div", 7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](20, "img", 16);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](21, "div", 9)(22, "h5", 10);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](23, "Lideran\u00E7a");
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](24, "div", 11)(25, "div", 12)(26, "p", 13)(27, "input-number", 17, 18);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_Template_input_number_change_27_listener() {
-          return ctx.valorSoftChange(ctx.form.controls.lideranca);
-        });
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()()()()()()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](29, "div", 6)(30, "div", 7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](31, "img", 19);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](32, "div", 9)(33, "h5", 10);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](34, "Resolu\u00E7\u00E3o de Problemas");
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](35, "div", 11)(36, "div", 20)(37, "p", 13)(38, "input-number", 21, 22);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_Template_input_number_change_38_listener() {
-          return ctx.valorSoftChange(ctx.form.controls.resolucao);
-        });
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()()()()()()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](40, "div", 6)(41, "div", 7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](42, "img", 23);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](43, "div", 9)(44, "h5", 10);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](45, "Criatividade e Curiosidade");
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](46, "div", 11)(47, "div", 20)(48, "p", 13)(49, "input-number", 24, 25);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_Template_input_number_change_49_listener() {
-          return ctx.valorSoftChange(ctx.form.controls.criatividade);
-        });
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()()()()()()()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](51, "div", 26)(52, "div", 6)(53, "div", 7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](54, "img", 27);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](55, "div", 9)(56, "h5", 10);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](57, "Pensamento Cr\u00EDtico");
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](58, "div", 11)(59, "div", 20)(60, "p", 13)(61, "input-number", 28, 29);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_Template_input_number_change_61_listener() {
-          return ctx.valorSoftChange(ctx.form.controls.pensamento);
-        });
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()()()()()()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](63, "div", 6)(64, "div", 7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](65, "img", 30);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](66, "div", 9)(67, "h5", 10);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](68, "Habilidade com Pessoas e Equipes");
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](69, "div", 11)(70, "div", 20)(71, "p", 13)(72, "input-number", 31, 32);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_Template_input_number_change_72_listener() {
-          return ctx.valorSoftChange(ctx.form.controls.habilidade);
-        });
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()()()()()()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](74, "div", 6)(75, "div", 7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](76, "img", 33);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](77, "div", 9)(78, "h5", 10);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](79, "Adaptabilidade e Resili\u00EAncia");
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](80, "div", 11)(81, "div", 20)(82, "p", 13)(83, "input-number", 34, 35);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_Template_input_number_change_83_listener() {
-          return ctx.valorSoftChange(ctx.form.controls.adaptabilidade);
-        });
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()()()()()()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](85, "div", 6)(86, "div", 7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelement"](87, "img", 36);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](88, "div", 9)(89, "h5", 10);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](90, "\u00C9tica");
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](91, "div", 11)(92, "div", 12)(93, "p", 13)(94, "input-number", 37, 38);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_Template_input_number_change_94_listener() {
-          return ctx.valorSoftChange(ctx.form.controls.etica);
-        });
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()()()()()()()()()()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](3, "tab", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](4, CurriculumAtributosbig5FormComponent_div_4_Template, 2, 0, "div", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplate"](5, CurriculumAtributosbig5FormComponent_ng_template_5_Template, 92, 45, "ng-template", null, 5, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()()();
       }
       if (rf & 2) {
+        const _r1 = _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵreference"](6);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](9);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("src", ctx.comunicaIMG, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵsanitizeUrl"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("control", ctx.form.controls.comunica)("minValue", 0)("maxValue", 20);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("min", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("src", ctx.liderancaIMG, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵsanitizeUrl"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 12)("control", ctx.form.controls.lideranca)("minValue", 0)("maxValue", 20);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("min", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("src", ctx.resolucaoIMG, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵsanitizeUrl"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 12)("control", ctx.form.controls.resolucao)("minValue", 0)("maxValue", 20);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("min", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("src", ctx.criatividadeIMG, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵsanitizeUrl"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 12)("control", ctx.form.controls.criatividade)("minValue", 0)("maxValue", 20);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("min", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("src", ctx.pensamentoIMG, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵsanitizeUrl"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 12)("control", ctx.form.controls.pensamento)("minValue", 0)("maxValue", 20);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("min", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("src", ctx.habilidadeIMG, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵsanitizeUrl"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 12)("control", ctx.form.controls.habilidade)("minValue", 0)("maxValue", 20);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("min", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("src", ctx.adaptabilidadeIMG, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵsanitizeUrl"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("size", 12)("control", ctx.form.controls.adaptabilidade)("minValue", 0)("maxValue", 20);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("min", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("src", ctx.eticaIMG, _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵsanitizeUrl"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵadvance"](7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("control", ctx.form.controls.etica)("minValue", 0)("maxValue", 20);
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵattribute"]("min", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵproperty"]("ngIf", !ctx.questionario)("ngIfElse", _r1);
       }
     },
-    dependencies: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_2__.EditableFormComponent, _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_8__.TabsComponent, _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_9__.TabComponent, _components_input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_10__.InputNumberComponent],
+    dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_12__.NgIf, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_2__.EditableFormComponent, _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_8__.TabsComponent, _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_9__.TabComponent, _components_input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_10__.InputNumberComponent],
     styles: ["@import url(https://fonts.cdnfonts.com/css/neutra-text-alt);input[type=range][_ngcontent-%COMP%] {\n  -webkit-appearance: none;\n  margin: 20px 0;\n  width: 100%;\n}\n\ninput[type=range][_ngcontent-%COMP%]:focus {\n  outline: none;\n}\n\ninput[type=range][_ngcontent-%COMP%]::-webkit-slider-runnable-track {\n  width: 100%;\n  height: 4px;\n  cursor: pointer;\n  animate: 0.2s;\n  background: grey;\n  border-radius: 25px;\n}\n\ninput[type=range][_ngcontent-%COMP%]::-webkit-slider-thumb {\n  height: 20px;\n  width: 20px;\n  border-radius: 50%;\n  background: #fff;\n  box-shadow: 0 0 4px 0 rgb(0, 0, 0);\n  cursor: pointer;\n  -webkit-appearance: none;\n  margin-top: -8px;\n}\n\ninput[type=range][_ngcontent-%COMP%]:focus::-webkit-slider-runnable-track {\n  background: grey;\n}\n\n.range-wrap[_ngcontent-%COMP%] {\n  width: 500px;\n  position: relative;\n}\n\n.range-value[_ngcontent-%COMP%] {\n  position: absolute;\n  top: -50%;\n}\n\n.range-value[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  width: 30px;\n  height: 24px;\n  line-height: 24px;\n  text-align: center;\n  background: grey;\n  color: #fff;\n  font-size: 12px;\n  display: block;\n  position: absolute;\n  left: 50%;\n  transform: translate(-50%, 0);\n  border-radius: 6px;\n}\n\n.range-value[_ngcontent-%COMP%]   span[_ngcontent-%COMP%]:before {\n  content: \"\";\n  position: absolute;\n  width: 0;\n  height: 0;\n  border-top: 10px solid grey;\n  border-left: 5px solid transparent;\n  border-right: 5px solid transparent;\n  top: 100%;\n  left: 50%;\n  margin-left: -5px;\n  margin-top: -1px;\n}\n\n#lblPerma[_ngcontent-%COMP%] {\n  float: right;\n  font-size: 200%;\n  text-align: center;\n  padding-left: 1em;\n}\n\n.divSlidePerma[_ngcontent-%COMP%] {\n  display: flex;\n  flex-flow: row-reverse;\n  align-items: center;\n  justify-content: flex-end;\n  height: auto;\n}\n\n.card-body-perma[_ngcontent-%COMP%] {\n  height: 100%;\n  background: #223;\n  display: grid;\n}\n\n.box[_ngcontent-%COMP%] {\n  --border-size: 3px;\n  --border-angle: 0turn;\n  width: 60vmin;\n  height: 10vmin;\n  background-image: conic-gradient(from var(--border-angle), #223, #223 50%, #223), conic-gradient(from var(--border-angle), transparent 20%, white, #fec901);\n  background-size: calc(100% - var(--border-size) * 2) calc(100% - var(--border-size) * 2), cover;\n  background-position: center center;\n  background-repeat: no-repeat;\n  animation: _ngcontent-%COMP%_bg-spin 3s linear infinite;\n  border-color: #223;\n}\n@keyframes _ngcontent-%COMP%_bg-spin {\n  to {\n    --border-angle: 1turn;\n  }\n}\n.box[_ngcontent-%COMP%]:hover {\n  animation-play-state: paused;\n}\n\n@property --border-angle {\n  syntax: \"<angle>\";\n  inherits: true;\n  initial-value: 0turn;\n}\n#lblPerma[_ngcontent-%COMP%] {\n  color: white;\n}\n\n.hb51[_ngcontent-%COMP%] {\n  background-color: #223;\n  color: #fec901;\n}\n\n.bb51[_ngcontent-%COMP%] {\n  background-color: #223;\n}\n\n.fb51[_ngcontent-%COMP%] {\n  background-color: #223;\n}\n\n#btnvb5[_ngcontent-%COMP%], #btneb5[_ngcontent-%COMP%] {\n  color: #fec901;\n  outline-color: #fec901;\n}\n\n.lblRadio[_ngcontent-%COMP%] {\n  background-color: #fec901;\n  color: #223;\n  outline: #223;\n}\n\n.lblRadio[_ngcontent-%COMP%]:hover {\n  background-color: #223;\n  color: #fec901;\n  border-color: #fec901;\n}\n\n.lblpergB5[_ngcontent-%COMP%] {\n  color: #fec901;\n}\n\n#imgBigIco[_ngcontent-%COMP%], #imgBigIcoAmarelo[_ngcontent-%COMP%] {\n  max-width: 30px;\n}\n\n.hperma[_ngcontent-%COMP%], .fperma[_ngcontent-%COMP%] {\n  background-color: #223;\n  color: #fff;\n}\n\n.btnpermav[_ngcontent-%COMP%], .btnpermap[_ngcontent-%COMP%] {\n  background-color: #fff;\n  color: #213;\n  border-color: #213;\n}\n\ninput[type=radio][_ngcontent-%COMP%]:checked    + .lblRadio[_ngcontent-%COMP%] {\n  background-color: #fff;\n}\n\n#imgBigIco[_ngcontent-%COMP%], #imgBigIcoAmarelo[_ngcontent-%COMP%] {\n  max-width: 30px;\n}\n\n.h4[_ngcontent-%COMP%], .card-title[_ngcontent-%COMP%] {\n  font-family: neutra text;\n  font-weight: bold;\n}\n\n.card-img-top[_ngcontent-%COMP%] {\n  height: auto;\n  max-width: 90px;\n}\n\n.card[_ngcontent-%COMP%] {\n  align-items: center;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvbW9kdWxlcy9jdXJyaWN1bHVtL2N1cnJpY3VsdW0tYXRyaWJ1dG9zYmlnNS1mb3JtL2N1cnJpY3VsdW0tYXRyaWJ1dG9zYmlnNS1mb3JtLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUVBO0VBQ0ksd0JBQUE7RUFDQSxjQUFBO0VBQ0EsV0FBQTtBQUFKOztBQUVFO0VBQ0UsYUFBQTtBQUNKOztBQUNFO0VBQ0UsV0FBQTtFQUNBLFdBQUE7RUFDQSxlQUFBO0VBQ0EsYUFBQTtFQUNBLGdCQUFBO0VBQ0EsbUJBQUE7QUFFSjs7QUFBRTtFQUNFLFlBQUE7RUFDQSxXQUFBO0VBQ0Esa0JBQUE7RUFDQSxnQkFBQTtFQUNBLGtDQUFBO0VBQ0EsZUFBQTtFQUNBLHdCQUFBO0VBQ0EsZ0JBQUE7QUFHSjs7QUFERTtFQUNFLGdCQUFBO0FBSUo7O0FBRkU7RUFDRSxZQUFBO0VBQ0Esa0JBQUE7QUFLSjs7QUFIRTtFQUNFLGtCQUFBO0VBQ0EsU0FBQTtBQU1KOztBQUpFO0VBQ0UsV0FBQTtFQUNBLFlBQUE7RUFDQSxpQkFBQTtFQUNBLGtCQUFBO0VBQ0EsZ0JBQUE7RUFDQSxXQUFBO0VBQ0EsZUFBQTtFQUNBLGNBQUE7RUFDQSxrQkFBQTtFQUNBLFNBQUE7RUFDQSw2QkFBQTtFQUNBLGtCQUFBO0FBT0o7O0FBTEU7RUFDRSxXQUFBO0VBQ0Esa0JBQUE7RUFDQSxRQUFBO0VBQ0EsU0FBQTtFQUNBLDJCQUFBO0VBQ0Esa0NBQUE7RUFDQSxtQ0FBQTtFQUNBLFNBQUE7RUFDQSxTQUFBO0VBQ0EsaUJBQUE7RUFDQSxnQkFBQTtBQVFKOztBQUxBO0VBQ0ksWUFBQTtFQUNBLGVBQUE7RUFDQSxrQkFBQTtFQUNBLGlCQUFBO0FBUUo7O0FBTEE7RUFDRSxhQUFBO0VBQ0Esc0JBQUE7RUFDQSxtQkFBQTtFQUNBLHlCQUFBO0VBQ0EsWUFBQTtBQVFGOztBQUpBO0VBQ0UsWUFBQTtFQUNBLGdCQUFBO0VBQ0EsYUFBQTtBQU9GOztBQUZBO0VBQ0Usa0JBQUE7RUFDQSxxQkFBQTtFQUNBLGFBQUE7RUFDQSxjQUFBO0VBQ0EsMkpBQUE7RUFDQSwrRkFBQTtFQUNBLGtDQUFBO0VBQ0EsNEJBQUE7RUFFQSxxQ0FBQTtFQUNBLGtCQUFBO0FBS0Y7QUFJQTtFQUNFO0lBQ0kscUJBQUE7RUFJSjtBQUNGO0FBREE7RUFFRSw0QkFBQTtBQUdGOztBQUFBO0VBQ0UsaUJBQUE7RUFDQSxjQUFBO0VBQ0Esb0JBQUE7QUFHRjtBQUFBO0VBQ0UsWUFBQTtBQUVGOztBQUNBO0VBQ0Usc0JBQUE7RUFDQSxjQUFBO0FBRUY7O0FBQ0E7RUFDRSxzQkFBQTtBQUVGOztBQUNBO0VBQ0Usc0JBQUE7QUFFRjs7QUFDQTtFQUNFLGNBQUE7RUFDQSxzQkFBQTtBQUVGOztBQUNBO0VBQ0UseUJBQUE7RUFDQSxXQUFBO0VBQ0EsYUFBQTtBQUVGOztBQUNBO0VBQ0Usc0JBQUE7RUFDQSxjQUFBO0VBQ0EscUJBQUE7QUFFRjs7QUFFQTtFQUVFLGNBQUE7QUFBRjs7QUFLQTtFQUNFLGVBQUE7QUFGRjs7QUFNQTtFQUNFLHNCQUFBO0VBQ0EsV0FBQTtBQUhGOztBQU9BO0VBRUUsc0JBQUE7RUFDQSxXQUFBO0VBQ0Esa0JBQUE7QUFMRjs7QUFVQTtFQUNFLHNCQUFBO0FBUEY7O0FBVUE7RUFDRSxlQUFBO0FBUEY7O0FBV0E7RUFDRSx3QkFBQTtFQUNBLGlCQUFBO0FBUkY7O0FBV0E7RUFDRSxZQUFBO0VBQ0EsZUFBQTtBQVJGOztBQVlBO0VBQ0UsbUJBQUE7QUFURiIsInNvdXJjZXNDb250ZW50IjpbIkBpbXBvcnQgdXJsKCdodHRwczovL2ZvbnRzLmNkbmZvbnRzLmNvbS9jc3MvbmV1dHJhLXRleHQtYWx0Jyk7XHJcblxyXG5pbnB1dFt0eXBlPXJhbmdlXSB7XHJcbiAgICAtd2Via2l0LWFwcGVhcmFuY2U6IG5vbmU7XHJcbiAgICBtYXJnaW46IDIwcHggMDtcclxuICAgIHdpZHRoOiAxMDAlO1xyXG4gIH1cclxuICBpbnB1dFt0eXBlPXJhbmdlXTpmb2N1cyB7XHJcbiAgICBvdXRsaW5lOiBub25lO1xyXG4gIH1cclxuICBpbnB1dFt0eXBlPXJhbmdlXTo6LXdlYmtpdC1zbGlkZXItcnVubmFibGUtdHJhY2sge1xyXG4gICAgd2lkdGg6IDEwMCU7XHJcbiAgICBoZWlnaHQ6IDRweDtcclxuICAgIGN1cnNvcjogcG9pbnRlcjtcclxuICAgIGFuaW1hdGU6IDAuMnM7XHJcbiAgICBiYWNrZ3JvdW5kOiBncmV5Oy8vIzAzYTlmNDtcclxuICAgIGJvcmRlci1yYWRpdXM6IDI1cHg7XHJcbiAgfVxyXG4gIGlucHV0W3R5cGU9cmFuZ2VdOjotd2Via2l0LXNsaWRlci10aHVtYiB7XHJcbiAgICBoZWlnaHQ6IDIwcHg7XHJcbiAgICB3aWR0aDogMjBweDtcclxuICAgIGJvcmRlci1yYWRpdXM6IDUwJTtcclxuICAgIGJhY2tncm91bmQ6ICNmZmY7XHJcbiAgICBib3gtc2hhZG93OiAwIDAgNHB4IDAgcmdiYSgwLDAsMCwgMSk7XHJcbiAgICBjdXJzb3I6IHBvaW50ZXI7XHJcbiAgICAtd2Via2l0LWFwcGVhcmFuY2U6IG5vbmU7XHJcbiAgICBtYXJnaW4tdG9wOiAtOHB4O1xyXG4gIH1cclxuICBpbnB1dFt0eXBlPXJhbmdlXTpmb2N1czo6LXdlYmtpdC1zbGlkZXItcnVubmFibGUtdHJhY2sge1xyXG4gICAgYmFja2dyb3VuZDogZ3JleTsgLy8jMDNhOWY0O1xyXG4gIH1cclxuICAucmFuZ2Utd3JhcHtcclxuICAgIHdpZHRoOiA1MDBweDtcclxuICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcclxuICB9XHJcbiAgLnJhbmdlLXZhbHVle1xyXG4gICAgcG9zaXRpb246IGFic29sdXRlO1xyXG4gICAgdG9wOiAtNTAlO1xyXG4gIH1cclxuICAucmFuZ2UtdmFsdWUgc3BhbntcclxuICAgIHdpZHRoOiAzMHB4O1xyXG4gICAgaGVpZ2h0OiAyNHB4O1xyXG4gICAgbGluZS1oZWlnaHQ6IDI0cHg7XHJcbiAgICB0ZXh0LWFsaWduOiBjZW50ZXI7XHJcbiAgICBiYWNrZ3JvdW5kOiBncmV5Oy8vICMwM2E5ZjQ7XHJcbiAgICBjb2xvcjogI2ZmZjtcclxuICAgIGZvbnQtc2l6ZTogMTJweDtcclxuICAgIGRpc3BsYXk6IGJsb2NrO1xyXG4gICAgcG9zaXRpb246IGFic29sdXRlO1xyXG4gICAgbGVmdDogNTAlO1xyXG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUoLTUwJSwgMCk7XHJcbiAgICBib3JkZXItcmFkaXVzOiA2cHg7XHJcbiAgfVxyXG4gIC5yYW5nZS12YWx1ZSBzcGFuOmJlZm9yZXtcclxuICAgIGNvbnRlbnQ6IFwiXCI7XHJcbiAgICBwb3NpdGlvbjogYWJzb2x1dGU7XHJcbiAgICB3aWR0aDogMDtcclxuICAgIGhlaWdodDogMDtcclxuICAgIGJvcmRlci10b3A6IDEwcHggc29saWQgZ3JleTsgLy8jMDNhOWY0O1xyXG4gICAgYm9yZGVyLWxlZnQ6IDVweCBzb2xpZCB0cmFuc3BhcmVudDtcclxuICAgIGJvcmRlci1yaWdodDogNXB4IHNvbGlkIHRyYW5zcGFyZW50O1xyXG4gICAgdG9wOiAxMDAlO1xyXG4gICAgbGVmdDogNTAlO1xyXG4gICAgbWFyZ2luLWxlZnQ6IC01cHg7XHJcbiAgICBtYXJnaW4tdG9wOiAtMXB4O1xyXG4gIH1cclxuXHJcbiNsYmxQZXJtYXtcclxuICAgIGZsb2F0OnJpZ2h0O1xyXG4gICAgZm9udC1zaXplOiAyMDAlO1xyXG4gICAgdGV4dC1hbGlnbjogY2VudGVyO1xyXG4gICAgcGFkZGluZy1sZWZ0OiAxZW07XHJcbn1cclxuXHJcbi5kaXZTbGlkZVBlcm1hIHtcclxuICBkaXNwbGF5OiBmbGV4O1xyXG4gIGZsZXgtZmxvdzogcm93LXJldmVyc2U7XHJcbiAgYWxpZ24taXRlbXM6IGNlbnRlcjtcclxuICBqdXN0aWZ5LWNvbnRlbnQ6IGZsZXgtZW5kO1xyXG4gIGhlaWdodDogYXV0bztcclxuIFxyXG59XHJcblxyXG4uY2FyZC1ib2R5LXBlcm1he1xyXG4gIGhlaWdodDogMTAwJTtcclxuICBiYWNrZ3JvdW5kOiAjMjIzO1xyXG4gIGRpc3BsYXk6IGdyaWQ7XHJcbiAgLy9wbGFjZS1pdGVtczogY2VudGVyO1xyXG5cclxufVxyXG5cclxuLmJveCB7XHJcbiAgLS1ib3JkZXItc2l6ZTogM3B4O1xyXG4gIC0tYm9yZGVyLWFuZ2xlOiAwdHVybjtcclxuICB3aWR0aDogNjB2bWluO1xyXG4gIGhlaWdodDogMTB2bWluO1xyXG4gIGJhY2tncm91bmQtaW1hZ2U6IGNvbmljLWdyYWRpZW50KGZyb20gdmFyKC0tYm9yZGVyLWFuZ2xlKSwgIzIyMywgIzIyMyA1MCUsICMyMjMpLCBjb25pYy1ncmFkaWVudChmcm9tIHZhcigtLWJvcmRlci1hbmdsZSksIHRyYW5zcGFyZW50IDIwJSwgd2hpdGUsICNmZWM5MDEpO1xyXG4gIGJhY2tncm91bmQtc2l6ZTogY2FsYygxMDAlIC0gKHZhcigtLWJvcmRlci1zaXplKSAqIDIpKSBjYWxjKDEwMCUgLSAodmFyKC0tYm9yZGVyLXNpemUpICogMikpLCBjb3ZlcjtcclxuICBiYWNrZ3JvdW5kLXBvc2l0aW9uOiBjZW50ZXIgY2VudGVyO1xyXG4gIGJhY2tncm91bmQtcmVwZWF0OiBuby1yZXBlYXQ7XHJcbiAgLXdlYmtpdC1hbmltYXRpb246IGJnLXNwaW4gM3MgbGluZWFyIGluZmluaXRlO1xyXG4gIGFuaW1hdGlvbjogYmctc3BpbiAzcyBsaW5lYXIgaW5maW5pdGU7XHJcbiAgYm9yZGVyLWNvbG9yOiMyMjM7XHJcbn1cclxuXHJcbkAtd2Via2l0LWtleWZyYW1lcyBiZy1zcGluIHtcclxuICB0byB7XHJcbiAgICAgIC0tYm9yZGVyLWFuZ2xlOiAxdHVybjtcclxuICB9XHJcbn1cclxuXHJcbkBrZXlmcmFtZXMgYmctc3BpbiB7XHJcbiAgdG8ge1xyXG4gICAgICAtLWJvcmRlci1hbmdsZTogMXR1cm47XHJcbiAgfVxyXG59XHJcblxyXG4uYm94OmhvdmVyIHtcclxuICAtd2Via2l0LWFuaW1hdGlvbi1wbGF5LXN0YXRlOiBwYXVzZWQ7XHJcbiAgYW5pbWF0aW9uLXBsYXktc3RhdGU6IHBhdXNlZDtcclxufVxyXG5cclxuQHByb3BlcnR5IC0tYm9yZGVyLWFuZ2xlIHtcclxuICBzeW50YXg6IFwiPGFuZ2xlPlwiO1xyXG4gIGluaGVyaXRzOiB0cnVlO1xyXG4gIGluaXRpYWwtdmFsdWU6IDB0dXJuO1xyXG59XHJcblxyXG4jbGJsUGVybWF7XHJcbiAgY29sb3I6d2hpdGU7XHJcbn1cclxuXHJcbi5oYjUxe1xyXG4gIGJhY2tncm91bmQtY29sb3I6ICMyMjM7XHJcbiAgY29sb3I6ICNmZWM5MDE7XHJcbn1cclxuXHJcbi5iYjUxe1xyXG4gIGJhY2tncm91bmQtY29sb3I6IzIyMztcclxufVxyXG5cclxuLmZiNTF7XHJcbiAgYmFja2dyb3VuZC1jb2xvcjojMjIzO1xyXG59XHJcblxyXG4jYnRudmI1LCAjYnRuZWI1e1xyXG4gIGNvbG9yOiNmZWM5MDE7XHJcbiAgb3V0bGluZS1jb2xvcjojZmVjOTAxO1xyXG59XHJcblxyXG4ubGJsUmFkaW97XHJcbiAgYmFja2dyb3VuZC1jb2xvcjogI2ZlYzkwMTsvL2ZlYzkwMVxyXG4gIGNvbG9yOiMyMjM7Ly8yMjNcclxuICBvdXRsaW5lOiAjMjIzO1xyXG59XHJcblxyXG4ubGJsUmFkaW86aG92ZXJ7XHJcbiAgYmFja2dyb3VuZC1jb2xvcjojMjIzO1xyXG4gIGNvbG9yOiAjZmVjOTAxO1xyXG4gIGJvcmRlci1jb2xvcjogI2ZlYzkwMTtcclxuXHJcbn1cclxuXHJcbi5sYmxwZXJnQjV7XHJcbiAgXHJcbiAgY29sb3I6ICNmZWM5MDE7XHJcblxyXG59XHJcblxyXG5cclxuI2ltZ0JpZ0ljbywjaW1nQmlnSWNvQW1hcmVsb3tcclxuICBtYXgtd2lkdGg6IDMwcHg7XHJcbiAgXHJcbn1cclxuXHJcbi5ocGVybWEsIC5mcGVybWEge1xyXG4gIGJhY2tncm91bmQtY29sb3I6ICMyMjM7XHJcbiAgY29sb3I6ICNmZmY7XHJcbiAgLy9mb250LWZhbWlseTonVHJlYnVjaGV0IE1TJywgJ0x1Y2lkYSBTYW5zIFVuaWNvZGUnLCAnTHVjaWRhIEdyYW5kZScsICdMdWNpZGEgU2FucycsIEFyaWFsLCBzYW5zLXNlcmlmO1xyXG59XHJcblxyXG4uYnRucGVybWF2LCAuYnRucGVybWFwe1xyXG5cclxuICBiYWNrZ3JvdW5kLWNvbG9yOiAjZmZmO1xyXG4gIGNvbG9yOiAjMjEzO1xyXG4gIGJvcmRlci1jb2xvcjogIzIxMztcclxuXHJcbn1cclxuXHJcblxyXG5pbnB1dFt0eXBlPVwicmFkaW9cIl06Y2hlY2tlZCsgLmxibFJhZGlveyAgXHJcbiAgYmFja2dyb3VuZC1jb2xvcjogI2ZmZjsgXHJcbn1cclxuXHJcbiNpbWdCaWdJY28sI2ltZ0JpZ0ljb0FtYXJlbG97XHJcbiAgbWF4LXdpZHRoOiAzMHB4O1xyXG5cclxufVxyXG5cclxuLmg0LCAuY2FyZC10aXRsZXtcclxuICBmb250LWZhbWlseTogbmV1dHJhIHRleHQ7XHJcbiAgZm9udC13ZWlnaHQ6IGJvbGQ7XHJcbn1cclxuXHJcbi5jYXJkLWltZy10b3B7XHJcbiAgaGVpZ2h0OiBhdXRvO1xyXG4gIG1heC13aWR0aDogOTBweDtcclxuIC8vIGJhY2tncm91bmQtY29sb3I6ICNmNWY3ZmE7XHJcbn1cclxuXHJcbi5jYXJke1xyXG4gIGFsaWduLWl0ZW1zOiBjZW50ZXI7XHJcbn0iXSwic291cmNlUm9vdCI6IiJ9 */"]
   });
 }
@@ -1411,7 +1399,6 @@ class CurriculumFormComponent extends src_app_modules_base_page_form_base__WEBPA
     this.selecionaMunicipios(estados);
     //this.municipioV?.disabled;
   }
-
   selecionaMunicipios(uf) {
     //console.log(uf)
     this.cidadeDao?.query({
@@ -1435,6 +1422,7 @@ class CurriculumFormComponent extends src_app_modules_base_page_form_base__WEBPA
    * @param form
    * @param row
    * @returns
+  
    */
   addIdiomas() {
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
@@ -2458,7 +2446,6 @@ class CurriculumProfissionalFormComponent extends src_app_modules_base_page_form
       //});
     })();
   }
-
   loadData(entity, form) {
     var _this2 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
@@ -2539,7 +2526,6 @@ class CurriculumProfissionalFormComponent extends src_app_modules_base_page_form
       });
     })();
   }
-
   /*public onAreaConhecimentoChange() {
     this.cursoDao?.query({ where: [['area_id', '==', this.formCursoInterno!.controls.areaCursoInterno.value]] }).getAll().then((cursos2) => {
       this.disciplinasItens = cursos2.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
