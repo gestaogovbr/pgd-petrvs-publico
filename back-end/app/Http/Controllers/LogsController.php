@@ -12,15 +12,15 @@ class LogsController extends Controller {
     {
 
         $query = Logs::query();
-
+    
         // Filtrar por data de criação, se fornecida
         if ($request->has('created_at')) {
-            $query->createdAt($request->input('created_at'));
+            $query->createdAt($request->created_at);
         }
-
+        
         // Filtrar por tenant_id, se fornecido
-        if ($request->has('tenant_id')) {
-            $query->tenantId($request->input('tenant_id'));
+        if ($request->has('tenant_id') && !empty($request->tenant_id) ) {
+            $query->tenantId($request->tenant_id);
         }
 
         $consoleErrors = $query->get();
