@@ -37,7 +37,7 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single','daily','tenant'],
+            'channels' => ['db'],
             'ignore_exceptions' => false,
         ],
 
@@ -106,6 +106,10 @@ return [
 
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
+        ],
+        'db' => [
+            'driver' => 'custom',
+            'via' => App\Logging\DatabaseLogger::class
         ],
     ],
 
