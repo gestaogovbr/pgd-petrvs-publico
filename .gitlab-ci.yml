@@ -4,7 +4,7 @@ variables:
   SSH_USER: root
   SSH_HOST: 200.152.38.137
   SSH_PORT: 7222
-  SSH_PASSWORD: Petrvs3125734@#
+  SSH_PASSWORD: Petrvs610315@#
   DEPLOY_PATH: ./
   DOCKER_HUB_USERNAME: segescginf
   DOCKER_HUB_PASSWORD: dckr_pat_1JrKXQ3MUfthx_nZri5gq_wgjqo
