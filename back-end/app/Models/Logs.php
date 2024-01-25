@@ -12,7 +12,7 @@ class Logs extends Model
         parent::__construct($attributes);
 
         // Define a conexão do modelo com base na configuração 'database.default'
-        $this->connection = config('database.default');
+        $this->connection = env('DB_CONNECTION','mysql');
     }
     protected $table = 'logs';
     protected $fillable = ['tenant_id', 'level', 'message', 'context'];
