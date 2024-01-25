@@ -100,12 +100,12 @@ class UnidadeIntegranteService extends ServiceBase
                     };
                     
                     $definirGerenciaSubstituta = function ($integranteNovoOuExistente) use (&$atribuicoesFinais) {
-                        UnidadeIntegranteAtribuicao::create(["atribuicao" => "GESTOR_SUBSTITUTO", "unidade_integrante_id" => $integranteNovoOuExistente->id])->save();
+                        UnidadeIntegranteAtribuicao::firstOrCreate(["atribuicao" => "GESTOR_SUBSTITUTO", "unidade_integrante_id" => $integranteNovoOuExistente->id])->save();
                         array_push($atribuicoesFinais, "GESTOR_SUBSTITUTO");
                     };
 
                     $definirGerenciaDelegada = function ($integranteNovoOuExistente) use (&$atribuicoesFinais) {
-                        UnidadeIntegranteAtribuicao::create(["atribuicao" => "GESTOR_DELEGADO", "unidade_integrante_id" => $integranteNovoOuExistente->id])->save();
+                        UnidadeIntegranteAtribuicao::firstOrCreate(["atribuicao" => "GESTOR_DELEGADO", "unidade_integrante_id" => $integranteNovoOuExistente->id])->save();
                         array_push($atribuicoesFinais, "GESTOR_DELEGADO");
                     };
 
