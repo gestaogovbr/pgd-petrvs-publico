@@ -15,6 +15,7 @@ use App\Models\Reacao;
 class PlanoEntregaEntrega extends ModelBase
 {
     protected $table = 'planos_entregas_entregas';
+    protected $filhos;
 
     protected $with = [];
 

@@ -18,6 +18,9 @@ import { PlanoEntregaEntregasPlanoTrabalhoComponent } from './plano-entrega-entr
 import { PlanoTrabalhoEntregaAtividadesComponent } from './plano-trabalho-entrega-atividades/plano-trabalho-entrega-atividades.component';
 import { PlanoEntregaListProgressoComponent } from './plano-entrega-list-progresso/plano-entrega-list-progresso.component';
 import { PlanoEntregaFormProgressoComponent } from './plano-entrega-form-progresso/plano-entrega-form-progresso.component';
+import { PlanoEntregaEntregasVinculadasComponent } from './plano-entrega-entregas-vinculadas/plano-entrega-entregas-vinculadas.component';
+import { PlanoEntregaEntregaDetalhesComponent } from './plano-entrega-entrega-detalhes/plano-entrega-entrega-detalhes.component';
+import { OrganizationChartModule } from 'primeng/organizationchart';
 
 
 @NgModule({
@@ -35,7 +38,9 @@ import { PlanoEntregaFormProgressoComponent } from './plano-entrega-form-progres
     PlanoEntregaEntregasPlanoTrabalhoComponent,
     PlanoTrabalhoEntregaAtividadesComponent,
     PlanoEntregaListProgressoComponent,
-    PlanoEntregaFormProgressoComponent
+    PlanoEntregaFormProgressoComponent,
+    PlanoEntregaEntregasVinculadasComponent,
+    PlanoEntregaEntregaDetalhesComponent
   ],
   imports: [
     CommonModule,
@@ -43,6 +48,7 @@ import { PlanoEntregaFormProgressoComponent } from './plano-entrega-form-progres
     PlanoEntregaRoutingModule,
     PlanejamentoModule,
     CadeiaValorModule,
+    OrganizationChartModule,
     UteisModule
   ]
 })

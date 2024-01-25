@@ -24,11 +24,10 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
 
   public items: IntegranteConsolidado[] = [];
-  //public _items?: any[];
   public integranteService: IntegranteService;
   public integranteDao: UnidadeIntegranteDaoService;
   public usuarioDao: UsuarioDaoService;
-  public unidade?: Unidade;
+  //public unidade?: Unidade;
   public tiposAtribuicao: LookupItem[] = [];
 
   constructor(public injector: Injector) {
@@ -45,14 +44,15 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
 
   ngOnInit() {
     super.ngOnInit();
-    this.entity_id = this.metadata?.entity_id || this.entity?.id;
-    this.unidade = this.metadata?.unidade;
-    this.tiposAtribuicao = this.lookup.UNIDADE_INTEGRANTE_TIPO; //this.isNoPersist ? this.lookup.UNIDADE_INTEGRANTE_TIPO.filter((atribuicao) => !["GESTOR","GESTOR_SUBSTITUTO"].includes(atribuicao.key)) : this.lookup.UNIDADE_INTEGRANTE_TIPO;
+    //this.entity_id = this.metadata?.entity_id || this.entity?.id;
+    //this.unidade = this.metadata?.unidade;
+    this.entity = this.metadata?.unidade;
+    this.tiposAtribuicao = this.lookup.UNIDADE_INTEGRANTE_TIPO;
   }
 
   ngAfterViewInit() {
     (async () => {
-      await this.loadData({ id: this.entity_id }, this.form);
+      await this.loadData(this.entity!, this.form);
     })();
   }
 
@@ -69,6 +69,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
         await this.integranteDao!.loadIntegrantes(entity.id, "").then(resposta => integrantes = resposta.integrantes.filter(x => x.atribuicoes?.length > 0)); 
       } finally {
         this.loading = false;
+        this.items = [];
         integrantes.forEach(i => this.items?.push(this.integranteService.completarIntegrante(i, entity.id, i.id, i.atribuicoes)));
         this.items = this.integranteService.ordenar(this.items);
         this.cdRef.detectChanges();
@@ -189,7 +190,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     if (!error) {
       let confirm = true;
       let n = this.integranteService.alterandoGestor(form, row.atribuicoes || []);
-      if (n.length) confirm = await this.dialog.confirm("Confirma a Alteração de Gestor ?", n.length == 1 ? "O " + n[0] + " será alterado." : "Serão alterados: " + n.join(', ') + ".");
+      if (n.length) confirm = await this.dialog.confirm("Confirma a Alteração do Gestor Titular ?", "O Gestor Titular será alterado para " + row.usuario_nome);
       if (form!.controls.atribuicoes.value.length && confirm) {
         this.loading = true;
         try {
@@ -225,10 +226,12 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
       { id: row.id, usuario_apelido: this.usuario?.selectedItem?.entity.apelido, usuario_nome: this.usuario?.selectedItem?.entity.nome },
       this.entity!.id, this.form!.controls.usuario_id.value, atribuicoes
     );
-    let atribuicoesChefia = atribuicoes.filter(x => ["GESTOR", "GESTOR_SUBSTITUTO", "GESTOR_DELEGADO"].includes(x));
-    if(atribuicoesChefia.length) {
+    // Garante que não haverá na unidade mais de um integrante com as atribuições que exigem exclusividade
+    //let atribuicoesExclusivas = atribuicoes.filter(x => ["GESTOR", "GESTOR_SUBSTITUTO", "GESTOR_DELEGADO"].includes(x));
+    let atribuicoesExclusivas = atribuicoes.filter(x => ["GESTOR"].includes(x));
+    if(atribuicoesExclusivas.length) {
       this.items!.forEach(x => {
-        let intersection = atribuicoesChefia.filter(y => x["atribuicoes"].includes(y));
+        let intersection = atribuicoesExclusivas.filter(y => x["atribuicoes"].includes(y));
         if(x["id"] != row["id"] && intersection.length) x["atribuicoes"] = x["atribuicoes"].filter(y => !intersection.includes(y));
       });
     }

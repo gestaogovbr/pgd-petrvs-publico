@@ -7,6 +7,6 @@ if (!function_exists('logInfo')) {
             $output = Artisan::output();
         }
         Log::info($output);
-        Log::channel('daily')->info($output);
+        //Log::channel('daily')->info($output);
     }
 }

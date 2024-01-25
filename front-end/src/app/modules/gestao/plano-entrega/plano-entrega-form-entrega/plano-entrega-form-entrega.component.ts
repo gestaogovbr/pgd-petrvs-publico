@@ -131,7 +131,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.planejamentoId = this.metadata?.planejamento_id;
     this.cadeiaValorId = this.metadata?.cadeia_valor_id;
     this.unidadeId = this.metadata?.unidade_id;
-    this.dataFim = this.metadata?.data_fim;
+    if (this.metadata?.data_fim) this.dataFim = this.metadata?.data_fim;
     this.entity = this.metadata?.entrega as PlanoEntregaEntrega; 
   }
 
@@ -157,7 +157,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       result = "Inválido";
     } else if (['planejamento_objetivo_id'].indexOf(controlName) >= 0) {
       if(!control.value?.length) result = "O objetivo do planejamento é obrigatório";
-      if(control.value?.length && this.gridObjetivos?.items.map(x => x.planejamento_objetivo_id).includes(this.formObjetivos.controls.planejamento_objetivo_id.value)) result = "Este objetivo está em duplicidade!";
+      if(control.value?.length && this.gridObjetivos?.items.filter(x => x._status == "ADD").map(x => x.planejamento_objetivo_id).includes(this.formObjetivos.controls.planejamento_objetivo_id.value)) result = "Este objetivo está em duplicidade!";
     } else if (['cadeia_processo_id'].indexOf(controlName) >= 0) {
       if(!control.value?.length) result = "O processo da cadeia de valor é obrigatório";
       if(control.value?.length && this.gridProcessos?.items.map(x => x.cadeia_processo_id).includes(this.formProcessos.controls.cadeia_processo_id.value)) result = "Este processo está em duplicidade!";
@@ -205,7 +205,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     form.controls.realizado.setValue(this.planoEntregaService.getValor(entity.realizado));
     form.controls.objetivos.setValue(entity.objetivos);
     form.controls.processos.setValue(entity.processos);
-    form.controls.data_fim.setValue(this.dataFim);
+    if (this.dataFim) form.controls.data_fim.setValue(this.dataFim);
   }
 
   public async initializeData(form: FormGroup) {
@@ -335,7 +335,8 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
         default:
           break;
       }
-      if (entregaItem.etiquetas) this.loadEtiquetas();
+      //if (entregaItem.etiquetas) this.loadEtiquetas();
+      this.loadEtiquetas();
       if (entregaItem.checklist) this.loadChecklist();
       this.calculaRealizado();
     }
@@ -343,6 +344,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
 
   public loadEtiquetas() {
     this.etiquetas = this.util.merge(this.entrega?.selectedEntity.etiquetas, this.unidade?.selectedEntity.etiquetas, (a, b) => a.key == b.key);
+    this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);
   }
 
   public loadChecklist() {

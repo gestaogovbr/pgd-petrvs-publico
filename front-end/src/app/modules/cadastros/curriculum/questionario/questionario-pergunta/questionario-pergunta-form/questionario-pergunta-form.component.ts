@@ -114,34 +114,6 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
   }
 
   /**
-* Método chamado para inserir um integrante no grid, seja este componente persistente ou não.
-/** @returns 
- 
-  public async add() {
-   return {
-     id: this.dao!.generateUuid(),
-     perguntaB: "",
-     listaTipoRespostaB:"",
-     tipoRespostaB:"",
-     multiOpcaoRespostaB:[],
-     inputOpcoesRespostaB:"",
-     inputValorRespostaB:"",
-     opcoesResposta:{'opcao':'','valor':''},
-   } as IIndexable;
- }
- 
- /**
-  * Método chamado na edição de um integrante da Unidade.
-  * @param form 
-  * @param row 
-  */
-  public async load(form: FormGroup, row: any) {
-    ///form.controls.usuario_id.setValue(this.grid?.adding ? row.usuario_id : row.id);
-    ///form.controls.atribuicoes.setValue(this.unidadeIntegranteService.converterAtribuicoes(row.atribuicoes));
-    ///form.controls.atribuicao.setValue("");
-  }
-
-  /**
    * Método chamado para a exclusão de um integrante do grid, seja este componente persistente ou não. 
    * @param row 
    * @returns 

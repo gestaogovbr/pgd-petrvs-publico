@@ -179,11 +179,11 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     const btns = [];
     if(this.isDisabled) btns.push(Object.assign({ onClick: this.consult.bind(this) }, this.OPTION_INFORMACOES));
     if(this.execucao) btns.push({ label: "Histórico de execução", icon: "bi bi-activity", color: 'btn-outline-info', onClick: this.showProgresso.bind(this) });   
+    btns.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhes.bind(this) });   
     return btns;
   }
 
   public async edit(entrega: PlanoEntregaEntrega) {
-    //console.log(this.form?.controls.progresso_realizado.value);
     if(this.execucao) {
       this.grid!.edit(entrega);
     } else {
@@ -272,9 +272,9 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   }
 
   public async showCadeiaValor(processo_id: string){
-    this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', 'processos', processo_id]}, {modal: true});
-  
+    this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', 'processos', processo_id]}, {modal: true});  
   }
+
   public async showProgresso(entrega: PlanoEntregaEntrega){
     this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', 'progresso', entrega.id]}, {
       modal: true, 
@@ -282,6 +282,18 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
         this.parent?.refresh(this.entity?.id);
       }
     });
+  }
+
+  public async showDetalhes(entrega: PlanoEntregaEntrega){
+    this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', entrega.id, "detalhes"]}, {
+      metadata: {
+        plano_entrega: this.entity!,
+        planejamento_id: this.planejamentoId,
+        cadeia_valor_id: this.cadeiaValorId,
+        unidade_id: this.unidadeId,
+        entrega: entrega
+      }
+    });    
   }
 
   public refreshComentarios(modalResult: any) {
@@ -371,5 +383,9 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     } catch (error) {
       return false;
     }
-  }  
+  }
+  
+  public getObjetivos(row: any){
+    return row.objetivos.filter((x: any) => x._status != 'DELETE');
+  }
 }

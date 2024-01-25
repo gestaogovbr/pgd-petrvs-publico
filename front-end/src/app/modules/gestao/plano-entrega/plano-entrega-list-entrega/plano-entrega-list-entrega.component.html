@@ -7,6 +7,7 @@
         </span>
     </ng-template>
     <columns>
+        <!--
         <column type="expand" icon="bi bi-list-check" [align]="'center'" [hint]="lex.translate('Entrega')" [template]="columnEntregas" [expandTemplate]="columnExpandedEntregas">
             <ng-template let-row="row" #columnEntregas>
                 <span *ngIf="row.entregas?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-list-check"></i> {{row.entregas?.length}}</span>
@@ -15,9 +16,10 @@
                 <plano-entrega-entregas-plano-trabalho [entregaId]="row.id"></plano-entrega-entregas-plano-trabalho>
             </ng-template>
         </column>
+        -->
         <column [title]="'Entrega\nDemandante/Destinatário'" [template]="columnEntregaCliente" [editTemplate]="columnEntregaCliente">
             <ng-template let-row="row" #columnEntregaCliente>
-                <badge *ngIf="row.descricao" color="light" icon="bi bi-textarea-t" [label]="row.descricao"></badge><br>
+                <h6>{{row.descricao}}</h6>
                 <span class="d-block">
                     <badge *ngIf="row.unidade" color="light" [icon]="entityService.getIcon('Unidade')" [label]="row.unidade.sigla"></badge>
                     <badge *ngIf="row.destinatario?.length" color="light" icon="bi bi-mailbox" [label]="row.destinatario"></badge>
@@ -84,10 +86,11 @@
                 </table>
             </ng-template>
         </column>
+        <!--
         <column [title]="'  Objetivos/Processos'" [width]="200" [template]="columnObjProc" [editTemplate]="columnObjProc" [icon]="'bi bi-info-circle'"[hint]="'Objetivos do Planejamento Institucional vinculado ao Plano de Entregas e Processos da Cadeia de Valor vinculada ao Plano de Entregas'" >
             <ng-template let-row="row" #columnObjProc>
                 <separator [title]="lex.translate('Objetivos')" *ngIf="row.objetivos?.length" collapse [collapsed]="true">
-                    <div *ngFor="let pObjetivo of row.objetivos" class="objetivo d-flex align-items-center">
+                    <div *ngFor="let pObjetivo of getObjetivos(row)" class="objetivo d-flex align-items-center">
                         <button class="btn btn-sm btn-outline-info me-2" (click)="showPlanejamento(pObjetivo.objetivo.id)"><i class="bi bi-eye"></i></button>
                         <small>{{pObjetivo.objetivo?.nome}}</small>
                     </div>
@@ -99,8 +102,8 @@
                     </div>
                 </separator>
             </ng-template>
-        </column>
-        <column [title]="'Modelo de Entrega\nComentários'" [template]="columnEntregaCometario" [editTemplate]="columnEntregaCometario">
+        </column> -->
+        <column [title]="lex.translate('Modelo de Entrega') + '\nComentários'" [template]="columnEntregaCometario" [editTemplate]="columnEntregaCometario">
             <ng-template let-row="row" #columnEntregaCometario>
                 <badge *ngIf="row.entrega" color="light" icon="bi bi-list-check" [label]="row.entrega?.nome"></badge>
                 <comentarios-widget [entity]="row" [selectable]="!execucao || !!grid?.editing" origem="PLANO_ENTREGA_ENTREGA" [grid]="grid" [save]="refreshComentarios.bind(this)"></comentarios-widget>

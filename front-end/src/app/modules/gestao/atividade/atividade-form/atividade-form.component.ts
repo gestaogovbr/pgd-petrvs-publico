@@ -26,6 +26,7 @@ import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service'
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { AtividadeService } from '../atividade.service';
 import { DocumentosLinkComponent } from 'src/app/modules/uteis/documentos/documentos-link/documentos-link.component';
+import { UnidadeService } from 'src/app/services/unidade.service';
 
 @Component({
   selector: 'app-atividade-form',
@@ -48,6 +49,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
   public planoTrabalhoDao: PlanoTrabalhoDaoService;
   public tipoAtividadeDao: TipoAtividadeDaoService;
   public atividadeService: AtividadeService;
+  public unidadeService: UnidadeService;
   public unidadeDao: UnidadeDaoService;
   public usuarioDao: UsuarioDaoService;
   public calendar: CalendarService;
@@ -68,6 +70,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.planoTrabalhoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
     this.atividadeService = injector.get<AtividadeService>(AtividadeService);
+    this.unidadeService = injector.get<UnidadeService>(UnidadeService);
     this.calendar = injector.get<CalendarService>(CalendarService);
     this.comentario = injector.get<ComentarioService>(ComentarioService);
     this.title = this.lex.translate('Inclusão de Atividade');
@@ -282,7 +285,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
   }
 
   public getPlanosTrabalhos(usuario: Usuario, data_distribuicao: Date, plano_trabalho_id: string | null): LookupItem[] {
-    return usuario.planos_trabalho?.filter(x => x.id == plano_trabalho_id || (this.util.between(data_distribuicao, {start: x.data_inicio, end: x.data_fim}))).map(x => Object.assign({
+    return usuario.planos_trabalho?.filter(x => x.id == plano_trabalho_id || (this.util.between(data_distribuicao, {start: x.data_inicio, end: x.data_fim}) && x.status == "ATIVO")).map(x => Object.assign({
       key: x.id, 
       value: (x.tipo_modalidade?.nome || "") + " - " + this.usuarioDao.getDateFormatted(x.data_inicio)+ " a " + this.usuarioDao.getDateFormatted(x.data_fim), data: x
     })) || [];
@@ -447,7 +450,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
         produtividade: 0,
         consolidacoes: []
       };
-      if(!this.auth.isGestorUnidade(this.entity.unidade_id)) {
+      if(!this.unidadeService.isGestorUnidade(this.entity.unidade_id)) {
         let usuario = await this.usuarioDao.getById(this.auth.usuario!.id, this.usuarioJoin);
         this.entity.usuario_id = usuario?.id || null;
         this.entity.usuario = usuario || undefined;
