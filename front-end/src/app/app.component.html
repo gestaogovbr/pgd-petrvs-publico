@@ -180,6 +180,12 @@
                                         Preferências
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link px-3" role="button" (click)="go.navigate({route: ['configuracoes','preferencia','unidade',auth.usuario!.id]},{ root: true, modal: true })">
+                                        <i class="bi bi-gear"></i>
+                                        Unidade
+                                    </a>
+                                </li>
                             </ul>
                             <div class="card-footer p-0 border-top">
                                 <div class="px-3 py-2">
