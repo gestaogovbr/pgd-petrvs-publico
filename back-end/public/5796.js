@@ -660,8 +660,10 @@ class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends src_app_modules_base_p
     /* Inicializações */
     this.join = ["avaliacao", "plano_trabalho:id" // "planoTrabalho.unidade:id,sigla,nome", "planoTrabalho.unidade.gestor:id,unidade_id,usuario_id", "planoTrabalho.unidade.gestorSubstituto:id,unidade_id,usuario_id", "planoTrabalho.tipoModalidade:id,nome", "planoTrabalho.usuario:id,nome,apelido,url_foto"
     ];
+
     this.extraJoin = ["avaliacao.tipoAvaliacao.notas", "planoTrabalho.unidade:id,sigla,nome", "planoTrabalho.unidade.gestor:id,unidade_id,usuario_id", "planoTrabalho.unidade.gestoresSubstitutos:id,unidade_id,usuario_id", "planoTrabalho.tipoModalidade:id,nome", "planoTrabalho.usuario:id,nome,apelido,foto_perfil,url_foto" //id,nome,apelido,url_foto,foto_perfil
     ];
+
     this.groupBy = [{
       field: "plano_trabalho.unidade.sigla",
       label: this.lex.translate("Unidade")
@@ -3152,6 +3154,7 @@ class PlanoTrabalhoFormTermoComponent extends src_app_modules_base_page_form_bas
       }*/
     });
   }
+
   get formaContagemCargaHoraria() {
     const forma = this.form?.controls.forma_contagem_carga_horaria?.value || "DIA";
     return forma == "DIA" ? "day" : forma == "SEMANA" ? "week" : "mouth";
@@ -4616,6 +4619,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
         if (['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(this.form?.controls.origem.value) && !control.value) result = "Obrigatório!";
         if (!!this.entity?.entregas?.filter(e => !!e.plano_entrega_entrega_id && e.id != this.grid?.editing?.id).find(x => x.plano_entrega_entrega_id == control.value)) result = "Esta entrega está em duplicidade!"; /* (*2) */
       }
+
       return result;
     };
     this.dao = injector.get(src_app_dao_plano_trabalho_entrega_dao_service__WEBPACK_IMPORTED_MODULE_6__.PlanoTrabalhoEntregaDaoService);
@@ -4863,6 +4867,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
       }*/
     })();
   }
+
   onPlanoEntregaChange(event) {
     let planoEntrega = this.planoEntrega?.selectedEntity;
     this.carregarEntregas(planoEntrega);

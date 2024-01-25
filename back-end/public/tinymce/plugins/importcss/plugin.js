@@ -1,5 +1,5 @@
 /**
- * TinyMCE version 6.8.2 (2023-12-11)
+ * TinyMCE version 6.7.2 (2023-10-25)
  */
 
 (function () {
@@ -177,7 +177,7 @@
         } catch (e) {
         }
         global.each(rules, cssRule => {
-          if (isCssImportRule(cssRule) && cssRule.styleSheet) {
+          if (isCssImportRule(cssRule)) {
             append(cssRule.styleSheet, true);
           } else if (isCssPageRule(cssRule)) {
             global.each(cssRule.selectorText.split(','), selector => {

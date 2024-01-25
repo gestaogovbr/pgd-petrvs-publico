@@ -163,8 +163,18 @@ export class AuthService {
       this.unidade = this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade;
       if (this.unidade) this.calendar.loadFeriadosCadastrados(this.unidade.id);
       if (token?.length) localStorage.setItem("petrvs_api_token", token);
-      this.gb.contexto = this.app?.menuContexto.find(c => c.key === this.usuario?.config.menu_contexto);
-      this.gb.setContexto(this.usuario.config.menu_contexto || this.app!.menuContexto[0].key);
+     
+        let usuarioContextos = [];        
+        if(this.hasPermissionTo("CTXT_GEST")) usuarioContextos.push("GESTAO");
+        if(this.hasPermissionTo("CTXT_EXEC")) usuarioContextos.push("EXECUCAO");
+        if(this.hasPermissionTo("CTXT_DEV")) usuarioContextos.push("DEV");
+        if(this.hasPermissionTo("CTXT_ADM")) usuarioContextos.push("ADMINISTRADOR");
+        if(this.hasPermissionTo("CTXT_RX")) usuarioContextos.push("RAIOX");
+        if(!usuarioContextos.includes(this.usuario?.config.menu_contexto))
+        this.gb.contexto = this.app?.menuContexto.find(c => c.key === this.usuario?.config.menu_contexto);
+
+        this.gb.setContexto(usuarioContextos[0]);
+      
       this.notificacao.updateNaoLidas();
     } else {
       this.usuario = undefined;
