@@ -1,4 +1,3 @@
-import { AreaConhecimento } from './area-conhecimento.model';
 import { Base } from './base.model';
 import { Curriculum } from './currriculum.model';
 import { Curso } from './curso.model'
@@ -15,3 +14,4 @@ export class CurriculumGraduacao extends Base {
     public constructor(data?: any) { super(); this.initialization(data); }
 
 }
+

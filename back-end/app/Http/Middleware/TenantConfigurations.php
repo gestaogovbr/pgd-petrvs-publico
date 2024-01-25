@@ -48,7 +48,8 @@ class TenantConfigurations
                 $settings['dominio_url'],
                 $settings['dominio_url'].":443"
             ]]);
-
+            #Petrvs
+            config(['petrvs.entidade'=> $settings['id']]);
             # LOGIN UNICO - GOVBR
             config(['services.govbr.client_secret'          => $settings['login_login_unico_secret']                ??env('LOGIN_UNICO_CLIENT_SECRET')]);
             config(['services.govbr.client_id'              => $settings['login_login_unico_client_id']             ??env('LOGIN_UNICO_CLIENT_ID')]);
