@@ -271,7 +271,7 @@ export class AppComponent {
     }];
 
     this.menuExecucao = [
-      this.menuSchema.PLANOS_TRABALHOS,
+      Object.assign({}, this.menuSchema.PLANOS_TRABALHOS, { metadata: { minha_unidade: true } }),
       this.menuSchema.ATIVIDADES,
       Object.assign({}, this.menuSchema.CONSOLIDACOES, { params: { tab: "UNIDADE" } }),
       //this.menuSchema.AFASTAMENTOS,
