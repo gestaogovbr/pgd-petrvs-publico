@@ -81,7 +81,7 @@
             </div>
         </div>
         <ul class="navbar-nav navbar-nav-icons flex-row align-items-center justify-content-end ">
-            <li class="nav-item dropdown">
+            <li class="nav-item dropdown" *ngIf="gb.auth.hasPermissionTo('CTXT_ADM') ||  gb.auth.hasPermissionTo('CTXT_DEV')">
                 <a class="nav-link" id="petrvs-context" href="#" role="button" [attr.data-bs-toggle]="'dropdown'" aria-haspopup="true" aria-expanded="false" data-bs-auto-close="outside" title="Módulo">
                     <span class="d-none d-md-block">
                         {{ gb.contexto?.name || "Selecione..." }}

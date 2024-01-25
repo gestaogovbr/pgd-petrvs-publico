@@ -214,6 +214,7 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
       //await this.usuariosIntegrantes?.loadData(entity);
     })();
   }
+
   initializeData(form) {
     this.entity = new src_app_models_unidade_model__WEBPACK_IMPORTED_MODULE_8__.Unidade({
       entidade_id: this.auth.unidade?.entidade_id,
@@ -716,6 +717,7 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
           //return msg ? false : true;
         }
       }
+
       return false;
     })();
   }
