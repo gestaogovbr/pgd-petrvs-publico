@@ -3,43 +3,44 @@
 <div class="row mt-5">
   <div class="col-6 col-sm-3 mb-3">
     <app-button-dashboard
-      [title]="lex.translate('Atividades')"
-      [imgIcon]="gb.getResourcePath('assets/icons/home/todo-list.svg')"
+      [title]="'Planos de trabalho'"
+      [imgIcon]="gb.getResourcePath('assets/icons/home/negociate.svg')"
       textColor="#1369f0"
       borderColor="#1369f0"
-      [route]="{route: ['gestao/atividade']}"
-      [metadata]="{ metadata: {atribuidas_para_mim: true}}"
+      [route]="{route: ['gestao/plano-trabalho']}"
+      [metadata]="{ metadata: {minha_unidade: true}}"
     ></app-button-dashboard>
   </div>
 
   <div class="col-6 col-sm-3 mb-3">
     <app-button-dashboard
-      [title]="lex.translate('Consolidações')"
-      [imgIcon]="gb.getResourcePath('assets/icons/home/consolidation.svg')"
-      textColor="#1369f0"
-      borderColor="#1369f0"
-      [route]="{route: ['gestao/plano-trabalho/consolidacao']}"
-    ></app-button-dashboard>
-  </div>
-
-  <div class="col-6 col-sm-3 mb-3">
-    <app-button-dashboard
-      [title]="'Avaliações'"
-      [imgIcon]="gb.getResourcePath('assets/icons/home/podio.svg')"
-      textColor="#1369f0"
-      borderColor="#1369f0"
-      [route]="{route: ['gestao/plano-trabalho/consolidacao']}"
-    ></app-button-dashboard>
-  </div>
-
-  <div class="col-6 col-sm-3 mb-3">
-    <app-button-dashboard
-      [title]="'Planos de Entrega'"
-      [imgIcon]="gb.getResourcePath('assets/icons/home/monitoring.svg')"
+      [title]="'Planos de entregas'"
+      [imgIcon]="gb.getResourcePath('assets/icons/home/service.svg')"
       textColor="#1369f0"
       borderColor="#1369f0"
       [route]="{route: ['execucao/plano-entrega']}"
     ></app-button-dashboard>
   </div>
 
+  <div class="col-6 col-sm-3 mb-3">
+    <app-button-dashboard
+      [title]="lex.translate('Consolidações')"
+      [imgIcon]="gb.getResourcePath('assets/icons/home/team.svg')"
+      textColor="#1369f0"
+      borderColor="#1369f0"
+      [route]="{route: ['gestao/plano-trabalho/consolidacao']}"
+    ></app-button-dashboard>
+  </div>
+
+  <div class="col-6 col-sm-3 mb-3">
+    <app-button-dashboard
+      [title]="'Avaliações de ' + lex.translate('consolidações')"
+      [imgIcon]="gb.getResourcePath('assets/icons/home/ranking.svg')"
+      textColor="#1369f0"
+      borderColor="#1369f0"
+      [route]="{route: ['gestao/plano-trabalho/consolidacao']}"
+    ></app-button-dashboard>
+  </div>
+
 </div>
+

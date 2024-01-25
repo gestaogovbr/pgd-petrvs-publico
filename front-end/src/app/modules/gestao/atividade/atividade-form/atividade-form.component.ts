@@ -285,7 +285,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
   }
 
   public getPlanosTrabalhos(usuario: Usuario, data_distribuicao: Date, plano_trabalho_id: string | null): LookupItem[] {
-    return usuario.planos_trabalho?.filter(x => x.id == plano_trabalho_id || (this.util.between(data_distribuicao, {start: x.data_inicio, end: x.data_fim}))).map(x => Object.assign({
+    return usuario.planos_trabalho?.filter(x => x.id == plano_trabalho_id || (this.util.between(data_distribuicao, {start: x.data_inicio, end: x.data_fim}) && x.status == "ATIVO")).map(x => Object.assign({
       key: x.id, 
       value: (x.tipo_modalidade?.nome || "") + " - " + this.usuarioDao.getDateFormatted(x.data_inicio)+ " a " + this.usuarioDao.getDateFormatted(x.data_fim), data: x
     })) || [];
