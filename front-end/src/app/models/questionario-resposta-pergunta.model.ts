@@ -15,6 +15,6 @@ export class QuestionarioRespostaPergunta extends Base {
 
     public questionario_pergunta_id : string = "";
     public questionario_resposta_id : string = "";
-  
+
     public constructor(data?: any) { super(); this.initialization(data); }
 }

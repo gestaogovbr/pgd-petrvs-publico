@@ -188,7 +188,11 @@ export class AppComponent {
       CURRICULUM_HOME: { name: "Home RX", permition: 'RX', route: ['raiox', 'home'], icon: "bi bi-toggle-off" },
       CURRICULUM_CADASTRO_PESSOAL: { name: this.lex.translate("Dados Pessoais"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'pessoal'], icon: "bi bi-file-person" },
       CURRICULUM_CADASTRO_PROFISSIONAL: { name: this.lex.translate("Dados Profissionais"), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'profissional'], icon: "fa fa-briefcase" },
-      CURRICULUM_CADASTRO_ATRIBUTOS: { name: this.lex.translate("Atributos Comportamentais"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
+      CURRICULUM_CADASTRO_ATRIBUTOS: { name: this.lex.translate("Atributos Comportamentais"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'atributos'], icon: "fa fa-brain" },
+      CURRICULUM_CADASTRO_ATRIBUTOS_SOFTSKILLS: { name: this.lex.translate("Soft Skills"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'teste'], icon: "fa fa-brain" },
+      CURRICULUM_CADASTRO_ATRIBUTOS_B5: { name: this.lex.translate("Big Five - B5"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
+      CURRICULUM_CADASTRO_ATRIBUTOS_DASS: { name: this.lex.translate("DASS"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
+      CURRICULUM_CADASTRO_ATRIBUTOS_SRQ20: { name: this.lex.translate("SRQ-20"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
       CURRICULUM_VISUALIZA_OPORTUNIDADES: { name: this.lex.translate("Pesquisa Oportunidades"), permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pessoal'], icon: "bi bi-lightbulb-fill" },
       CURRICULUM_CADASTRO_OPORTUNIDADES: { name: this.lex.translate("Oportunidades"), permition: 'MOD_RX_EDT_OPO', route: ['raiox', 'pessoal'], icon: "bi bi-lightbulb-fill" },
       CURRICULUM_CADASTRO_CURSOS: { name: this.lex.translate("Cursos"), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'cadastros', 'curso'], icon: "bi bi-mortarboard-fill" },
@@ -371,7 +375,18 @@ export class AppComponent {
         this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS
         //this.menuSchema.RXCADASTRO_OPORTUNIDADES
       ]
-    }, {
+    },{
+      name: this.lex.translate("Atributos Comportamentais"),
+      permition: "MOD_RX_VIS_DPE",
+      id: "navbarDropdownRXCadastros",
+      menu: [
+        this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS_SOFTSKILLS,
+        this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS_B5,
+        this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS_DASS,
+        this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS_SRQ20,
+        
+      ]
+    },{
       name: this.lex.translate("Oportunidades"),
       permition: "MOD_RX_VIS_DPE",
       id: "navbarDropdownRXOportunidades",
