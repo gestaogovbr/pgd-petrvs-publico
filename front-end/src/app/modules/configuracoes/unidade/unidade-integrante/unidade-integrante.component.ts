@@ -189,8 +189,8 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     let error = this.formValidation(form);
     if (!error) {
       let confirm = true;
-      let n = this.integranteService.alterandoGestor(form, row.atribuicoes || []);
-      if (n.length) confirm = await this.dialog.confirm("Confirma a Alteração do Gestor Titular ?", "O Gestor Titular será alterado para " + row.usuario_nome);
+      //let haveraAlteracaoGestor = this.integranteService.alterandoGestor(form, row.atribuicoes || []);
+      if (haveraAlteracaoGestor) confirm = await this.dialog.confirm("CONFIRMA A ALTERAÇÃO DA CHEFIA ?", "O Chefe será alterado para " + row.usuario_nome?.toUpperCase());
       if (form!.controls.atribuicoes.value.length && confirm) {
         this.loading = true;
         try {

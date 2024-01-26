@@ -5,6 +5,7 @@ import { IntegranteConsolidado } from '../models/unidade-integrante.model';
 import { IntegranteAtribuicao } from '../models/base.model';
 import { UtilService } from './util.service';
 import { DialogService } from './dialog.service';
+import { LexicalService } from './lexical.service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,12 +13,14 @@ import { DialogService } from './dialog.service';
 export class IntegranteService {
 
   public lookup: LookupService;
+  public lex: LexicalService;
   public util: UtilService;
   public dialog: DialogService;
 
   constructor(public injector: Injector){
     /* Injections */
     this.lookup = this.injector.get<LookupService>(LookupService);
+    this.lex = this.injector.get<LexicalService>(LexicalService);
     this.dialog = this.injector.get<DialogService>(DialogService);
     this.util = this.injector.get<UtilService>(UtilService);
   }
@@ -31,14 +34,35 @@ export class IntegranteService {
     }))
   }
 
-  public alterandoGestor(form: FormGroup, items: IntegranteAtribuicao[]): string[] {
-    let result: string[] = [];
-    let novasAtribuicoes: string[] = form!.controls.atribuicoes.value.map((a: { key: string; }) => a.key);
-    //['GESTOR', 'GESTOR_DELEGADO', 'GESTOR_SUBSTITUTO'].forEach(g => {
-    ['GESTOR'].forEach(g => {
-      if (this.util.array_diff_simm(novasAtribuicoes, items).includes(g)) result.push(this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, g)); 
-    });
-    return result;
+  /**
+   * Verifica qual das seguintes possíveis alterações ocorrerá na atribuição de GESTOR TITULAR do usuário: nenhuma, perda, ganho ou troca. Retorna um array com as seguintes informações, 
+   * nessa ordem: [tipo de alteração, índice do grid relativo à antiga gerência, mensagem para o usuário, booleano indicando se haverá alteração também na sua lotação]
+   * @param form  Formulário de edição preenchido pelo usuário
+   * @param row   
+   */
+  public alteracaoGestor(novasAtribuicoes: IntegranteAtribuicao[], row: IntegranteConsolidado, itensGrid: IntegranteConsolidado[], nomeUsuario: string): [string, number, string, boolean] {
+    //************************ TODO: alterar no back-und o método SAVEINTEGRANTE para se comportar corretamente independentemente da ordem de execução LOTADO/GESTOR ou GESTOR/LOTADO
+    //************************ TODO: no front-end, ao editar um integrante, bloquear o input-search de unidade
+    let msg = "";
+    let perda = this.util.array_diff(row.atribuicoes, novasAtribuicoes).includes('GESTOR'); 
+    let ganho = this.util.array_diff(novasAtribuicoes, row.atribuicoes).includes('GESTOR'); 
+    if(!perda && !ganho) return ['nenhuma', -1, "", false];
+    if(perda) {
+      msg = nomeUsuario.toUpperCase() + " deixará de ser " + this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, "GESTOR") + this.lex.translate("da Unidade") + " - " + row.unidade_sigla?.toUpperCase() + ".";
+      return ['perda', -1, msg, false];
+    }
+    let ehLotadoNaNovaGerencia = row.atribuicoes.includes("LOTADO");
+    let meio = this.lookup.getValue(this.lookup.UNIDADE_INTEGRANTE_TIPO, "GESTOR") + this.lex.translate("da Unidade") + " - ";
+    msg = nomeUsuario.toUpperCase() + " passará a ser " + meio + row.unidade_sigla?.toUpperCase();
+    let itemAntigaGerencia = itensGrid.find(i => i.atribuicoes.includes('GESTOR'));
+    msg = itemAntigaGerencia?.id.length ? msg + " e deixará de ser " + meio + ". " : msg + ". ";
+    if(!ehLotadoNaNovaGerencia) msg+= "Por consequência, sua lotação também será alterada para " + this.lex.translate("a Unidade") + " - " + row.unidade_sigla?.toUpperCase() + ".";
+    return itemAntigaGerencia?.id.length ? ['troca', itensGrid.findIndex(x => x.id == itemAntigaGerencia?.id), msg, true] : ['ganho', -1, msg, !ehLotadoNaNovaGerencia]; 
+  }
+
+  public insereAtribuicao(atribuicoes: LookupItem[], atribuicao: IntegranteAtribuicao ): LookupItem[] {
+    atribuicoes.push({ key: 'LOTADO', value: 'Lotado'});
+    return this.lookup.uniqueLookupItem(atribuicoes);
   }
 
   public ordenar(items: IntegranteConsolidado[]): IntegranteConsolidado[] {
