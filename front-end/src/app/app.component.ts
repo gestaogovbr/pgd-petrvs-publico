@@ -432,8 +432,6 @@ export class AppComponent {
       ]
     }];
 
-    let gestaoPGD = this.auth.hasPermissionTo("CTXT_GEST");
-    let execucaoPGD = this.auth.hasPermissionTo("CTXT_EXEC");
     this.menuContexto = [
       { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.menuGestao},
       { key: "EXECUCAO", permition: "CTXT_EXEC", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.menuExecucao},
@@ -444,11 +442,7 @@ export class AppComponent {
       { key: "RAIOX", permition: "CTXT_RX", icon: "bi bi-camera", name: this.lex.translate("Raio X"), menu: this.menuRaioX }
     ]
     
-    if(gestaoPGD){
-      this.menuContexto = this.menuContexto.filter(item => item.key !== "EXECUCAO");
-    } else if(execucaoPGD && !gestaoPGD){
-      this.menuContexto = this.menuContexto.filter(item => item.key !== "GESTAO");
-    }
+    
     
   }
 
@@ -486,6 +480,15 @@ export class AppComponent {
     this.dialog.container = this.dialogs;
     this.dialog.cdRef = this.cdRef;
     this.gb.refresh();
+    
+    let gestaoPGD = this.auth.hasPermissionTo("CTXT_GEST");
+    let execucaoPGD = this.auth.hasPermissionTo("CTXT_EXEC");
+    
+    if(gestaoPGD){
+      this.menuContexto = this.menuContexto.filter(item => item.key !== "EXECUCAO");
+    } else if(execucaoPGD && !gestaoPGD){
+      this.menuContexto = this.menuContexto.filter(item => item.key !== "GESTAO");
+    }
   }
 
   public toolbarLogin() {

@@ -1731,7 +1731,7 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
     return usuario.planos_trabalho?.filter(x => x.id == plano_trabalho_id || this.util.between(data_distribuicao, {
       start: x.data_inicio,
       end: x.data_fim
-    })).map(x => Object.assign({
+    }) && x.status == "ATIVO").map(x => Object.assign({
       key: x.id,
       value: (x.tipo_modalidade?.nome || "") + " - " + this.usuarioDao.getDateFormatted(x.data_inicio) + " a " + this.usuarioDao.getDateFormatted(x.data_fim),
       data: x

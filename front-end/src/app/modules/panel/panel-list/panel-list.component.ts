@@ -16,13 +16,22 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 
   public toolbarButtons: ToolbarButton[] = [
     {
-      icon: "bi bi-building",
+      icon: "bi bi-eye-fill",
+      label: "Ver Logs",
+      onClick: () => this.go.navigate({route: ["panel",  "logs2"]})
+    },
+    {
+      icon: "bi bi-database-add",
       label: "Executar Migrations",
-
+ 
       onClick: this.executaMigrations.bind(this)
     },
     {
-      icon: "bi bi-building",
+      icon: "bi bi-database-fill-up",
+      label: "Executar Seeders"
+    },
+    {
+      icon: "bi bi-database-x",
       label: "Resetar DB",
       disabled: this.gb.ENV==='production',
       onClick: this.resetDB.bind(this)
@@ -54,7 +63,7 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
     this.options.push({
       icon: "bi bi-trash",
       label: "Ver Logs",
-      onClick: (tenant: Tenant) => this.go.navigate({route: ["panel","panel-list", tenant.id, "logs"]})
+      onClick: (tenant: Tenant) => this.go.navigate({route: ["panel", tenant.id, "logs"]})
     });
 
   }

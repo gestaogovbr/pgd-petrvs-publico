@@ -123,6 +123,208 @@ class PreferenciaFormPetrvsComponent extends src_app_modules_base_page_form_base
 
 /***/ }),
 
+/***/ 69722:
+/*!******************************************************************************************************************!*\
+  !*** ./src/app/modules/configuracoes/preferencia/preferencia-form-unidade/preferencia-form-unidade.component.ts ***!
+  \******************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PreferenciaFormUnidadeComponent: () => (/* binding */ PreferenciaFormUnidadeComponent)
+/* harmony export */ });
+/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
+/* harmony import */ var src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/unidade-dao.service */ 81214);
+/* harmony import */ var src_app_models_unidade_model__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/models/unidade.model */ 53937);
+/* harmony import */ var src_app_models_usuario_model__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/models/usuario.model */ 26898);
+/* harmony import */ var src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/modules/base/page-form-base */ 1184);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/common */ 89650);
+/* harmony import */ var _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../../components/toolbar/toolbar.component */ 45512);
+/* harmony import */ var _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../components/tabs/tabs.component */ 66384);
+/* harmony import */ var _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../components/tabs/tab/tab.component */ 74978);
+
+
+
+
+
+
+
+
+
+
+
+
+function PreferenciaFormUnidadeComponent_div_0_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div", 6)(1, "div", 7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](2, "span", 8);
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()();
+  }
+}
+class PreferenciaFormUnidadeComponent extends src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_5__.PageFormBase {
+  constructor(injector) {
+    super(injector, src_app_models_unidade_model__WEBPACK_IMPORTED_MODULE_3__.Unidade, src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_2__.UnidadeDaoService);
+    this.injector = injector;
+    this.etiquetas = false;
+    this.carregando = false;
+    this.toolbarButtons = [{
+      label: "Resetar",
+      icon: "bi bi-backspace",
+      onClick: () => {
+        this.loading = true;
+        this.dao.update(this.usuarioId, {
+          config: new src_app_models_usuario_model__WEBPACK_IMPORTED_MODULE_4__.UsuarioConfig()
+        }).then(usuario => {
+          this.initializeData(this.form);
+        }).finally(() => {
+          this.loading = false;
+        });
+      }
+    }];
+    this.validate = (control, controlName) => {
+      let result = null;
+      return result;
+    };
+    this.form = this.fh.FormBuilder({
+      etiquetas: {
+        default: []
+      },
+      etiqueta_texto: {
+        default: ""
+      },
+      etiqueta_icone: {
+        default: null
+      },
+      etiqueta_cor: {
+        default: null
+      },
+      theme: {
+        default: null
+      },
+      ocultar_menu_sei: {
+        default: true
+      },
+      ocultar_container_petrvs: {
+        default: false
+      }
+    }, this.cdRef, this.validate);
+  }
+  get isPanel() {
+    return this.panel != undefined;
+  }
+  ngOnInit() {
+    super.ngOnInit();
+    if (this.urlParams.get("id")) {
+      this.usuarioId = this.urlParams.get("id");
+    }
+    this.etiquetas = !!this.queryParams.etiquetas;
+  }
+  loadData(entity, form) {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      let formValue = Object.assign({}, form.value);
+      //formValue = this.util.fillForm(formValue, entity.config || {});
+      //formValue = this.util.fillForm(formValue, entity.notificacoes || {});
+      form.patchValue(formValue);
+    })();
+  }
+  initializeData(form) {
+    var _this = this;
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      _this.carregando = true;
+      try {
+        _this.entity = yield _this.dao.getById(_this.usuarioId);
+        yield _this.loadData(_this.entity, form);
+      } finally {
+        _this.carregando = false;
+      }
+    })();
+  }
+  saveData(form) {
+    return new Promise((resolve, reject) => {
+      let config = this.util.fill(new src_app_models_usuario_model__WEBPACK_IMPORTED_MODULE_4__.UsuarioConfig(), this.form.value);
+      Promise.all([this.auth.updateUsuarioConfig(this.usuarioId, config), this.auth.updateUsuarioNotificacoes(this.usuarioId, this.entity.notificacoes)]).then(results => {
+        if (this.usuarioId == this.auth.usuario.id) {
+          this.auth.authSession().then(result => resolve(!this.isPanel)).catch(reject);
+        } else {
+          resolve(!this.isPanel);
+        }
+      }).catch(reject);
+    });
+  }
+  addItemHandleEtiquetas() {
+    let result = undefined;
+    const value = this.form.controls.etiqueta_texto.value;
+    const key = this.util.textHash(value);
+    if (value?.length && this.util.validateLookupItem(this.form.controls.etiquetas.value, key)) {
+      result = {
+        key: key,
+        value: this.form.controls.etiqueta_texto.value,
+        color: this.form.controls.etiqueta_cor.value,
+        icon: this.form.controls.etiqueta_icone.value
+      };
+      this.form.controls.etiqueta_texto.setValue("");
+      this.form.controls.etiqueta_icone.setValue(null);
+      this.form.controls.etiqueta_cor.setValue(null);
+    }
+    return result;
+  }
+  static #_ = this.ɵfac = function PreferenciaFormUnidadeComponent_Factory(t) {
+    return new (t || PreferenciaFormUnidadeComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_9__.Injector));
+  };
+  static #_2 = this.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefineComponent"]({
+    type: PreferenciaFormUnidadeComponent,
+    selectors: [["app-preferencia-form-unidade"]],
+    viewQuery: function PreferenciaFormUnidadeComponent_Query(rf, ctx) {
+      if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, 5);
+      }
+      if (rf & 2) {
+        let _t;
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
+      }
+    },
+    inputs: {
+      panel: "panel",
+      usuarioId: "usuarioId"
+    },
+    features: [_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵInheritDefinitionFeature"]],
+    decls: 7,
+    vars: 7,
+    consts: [["class", "d-flex justify-content-center", 4, "ngIf"], [3, "buttons"], [3, "title", "form", "disabled", "submit", "cancel"], ["display", "", "right", ""], ["key", "ETIQUETAS", "label", "Etiquetas"], ["key", "ATRIBUICOES", "label", "Atribui\u00E7\u00F5es"], [1, "d-flex", "justify-content-center"], ["role", "status", 1, "spinner-border"], [1, "visually-hidden"]],
+    template: function PreferenciaFormUnidadeComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](0, PreferenciaFormUnidadeComponent_div_0_Template, 3, 0, "div", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](1, "div");
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](2, "toolbar", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](3, "editable-form", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("submit", function PreferenciaFormUnidadeComponent_Template_editable_form_submit_3_listener() {
+          return ctx.onSaveData();
+        })("cancel", function PreferenciaFormUnidadeComponent_Template_editable_form_cancel_3_listener() {
+          return ctx.onCancel();
+        });
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](4, "tabs", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](5, "tab", 4)(6, "tab", 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()()();
+      }
+      if (rf & 2) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("ngIf", ctx.carregando);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵclassProp"]("d-none", ctx.carregando);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("buttons", ctx.toolbarButtons);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("title", ctx.isModal ? "" : ctx.title)("form", ctx.form)("disabled", ctx.formDisabled);
+      }
+    },
+    dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_10__.NgIf, _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_6__.ToolbarComponent, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_7__.TabsComponent, _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_8__.TabComponent],
+    styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
+  });
+}
+
+/***/ }),
+
 /***/ 79259:
 /*!******************************************************************************************************************!*\
   !*** ./src/app/modules/configuracoes/preferencia/preferencia-form-usuario/preferencia-form-usuario.component.ts ***!
@@ -560,12 +762,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   PreferenciaRoutingModule: () => (/* binding */ PreferenciaRoutingModule)
 /* harmony export */ });
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/router */ 82454);
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/router */ 82454);
 /* harmony import */ var src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/guards/auth.guard */ 1391);
 /* harmony import */ var src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/resolvies/config.resolver */ 2314);
 /* harmony import */ var _preferencia_form_usuario_preferencia_form_usuario_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./preferencia-form-usuario/preferencia-form-usuario.component */ 79259);
 /* harmony import */ var _preferencia_form_preferencia_form_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./preferencia-form/preferencia-form.component */ 22051);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _preferencia_form_unidade_preferencia_form_unidade_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./preferencia-form-unidade/preferencia-form-unidade.component */ 69722);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/core */ 51197);
+
 
 
 
@@ -595,22 +799,33 @@ const routes = [{
   data: {
     title: "Preferências do Usuário"
   }
+}, {
+  path: 'unidade/:id',
+  component: _preferencia_form_unidade_preferencia_form_unidade_component__WEBPACK_IMPORTED_MODULE_4__.PreferenciaFormUnidadeComponent,
+  canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_0__.AuthGuard],
+  resolve: {
+    config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_1__.ConfigResolver
+  },
+  runGuardsAndResolvers: 'always',
+  data: {
+    title: "Preferências da Unidade"
+  }
 }];
 class PreferenciaRoutingModule {
   static #_ = this.ɵfac = function PreferenciaRoutingModule_Factory(t) {
     return new (t || PreferenciaRoutingModule)();
   };
-  static #_2 = this.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineNgModule"]({
+  static #_2 = this.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineNgModule"]({
     type: PreferenciaRoutingModule
   });
-  static #_3 = this.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineInjector"]({
-    imports: [_angular_router__WEBPACK_IMPORTED_MODULE_5__.RouterModule.forChild(routes), _angular_router__WEBPACK_IMPORTED_MODULE_5__.RouterModule]
+  static #_3 = this.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineInjector"]({
+    imports: [_angular_router__WEBPACK_IMPORTED_MODULE_6__.RouterModule.forChild(routes), _angular_router__WEBPACK_IMPORTED_MODULE_6__.RouterModule]
   });
 }
 (function () {
-  (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵsetNgModuleScope"](PreferenciaRoutingModule, {
-    imports: [_angular_router__WEBPACK_IMPORTED_MODULE_5__.RouterModule],
-    exports: [_angular_router__WEBPACK_IMPORTED_MODULE_5__.RouterModule]
+  (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵsetNgModuleScope"](PreferenciaRoutingModule, {
+    imports: [_angular_router__WEBPACK_IMPORTED_MODULE_6__.RouterModule],
+    exports: [_angular_router__WEBPACK_IMPORTED_MODULE_6__.RouterModule]
   });
 })();
 
@@ -626,15 +841,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   PreferenciaModule: () => (/* binding */ PreferenciaModule)
 /* harmony export */ });
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common */ 89650);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/common */ 89650);
 /* harmony import */ var _preferencia_routing_module__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./preferencia-routing.module */ 62092);
 /* harmony import */ var _preferencia_form_preferencia_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./preferencia-form/preferencia-form.component */ 22051);
 /* harmony import */ var _preferencia_form_petrvs_preferencia_form_petrvs_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./preferencia-form-petrvs/preferencia-form-petrvs.component */ 609);
 /* harmony import */ var _preferencia_form_usuario_preferencia_form_usuario_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./preferencia-form-usuario/preferencia-form-usuario.component */ 79259);
 /* harmony import */ var src_app_components_components_module__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/components/components.module */ 10822);
-/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/forms */ 70997);
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/forms */ 70997);
 /* harmony import */ var _uteis_uteis_module__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../uteis/uteis.module */ 82509);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _preferencia_form_unidade_preferencia_form_unidade_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./preferencia-form-unidade/preferencia-form-unidade.component */ 69722);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/core */ 51197);
+
 
 
 
@@ -648,17 +865,17 @@ class PreferenciaModule {
   static #_ = this.ɵfac = function PreferenciaModule_Factory(t) {
     return new (t || PreferenciaModule)();
   };
-  static #_2 = this.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineNgModule"]({
+  static #_2 = this.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdefineNgModule"]({
     type: PreferenciaModule
   });
-  static #_3 = this.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineInjector"]({
-    imports: [_angular_common__WEBPACK_IMPORTED_MODULE_7__.CommonModule, src_app_components_components_module__WEBPACK_IMPORTED_MODULE_4__.ComponentsModule, _angular_forms__WEBPACK_IMPORTED_MODULE_8__.ReactiveFormsModule, _preferencia_routing_module__WEBPACK_IMPORTED_MODULE_0__.PreferenciaRoutingModule, _uteis_uteis_module__WEBPACK_IMPORTED_MODULE_5__.UteisModule]
+  static #_3 = this.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdefineInjector"]({
+    imports: [_angular_common__WEBPACK_IMPORTED_MODULE_8__.CommonModule, src_app_components_components_module__WEBPACK_IMPORTED_MODULE_4__.ComponentsModule, _angular_forms__WEBPACK_IMPORTED_MODULE_9__.ReactiveFormsModule, _preferencia_routing_module__WEBPACK_IMPORTED_MODULE_0__.PreferenciaRoutingModule, _uteis_uteis_module__WEBPACK_IMPORTED_MODULE_5__.UteisModule]
   });
 }
 (function () {
-  (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵsetNgModuleScope"](PreferenciaModule, {
-    declarations: [_preferencia_form_preferencia_form_component__WEBPACK_IMPORTED_MODULE_1__.PreferenciaFormComponent, _preferencia_form_petrvs_preferencia_form_petrvs_component__WEBPACK_IMPORTED_MODULE_2__.PreferenciaFormPetrvsComponent, _preferencia_form_usuario_preferencia_form_usuario_component__WEBPACK_IMPORTED_MODULE_3__.PreferenciaFormUsuarioComponent],
-    imports: [_angular_common__WEBPACK_IMPORTED_MODULE_7__.CommonModule, src_app_components_components_module__WEBPACK_IMPORTED_MODULE_4__.ComponentsModule, _angular_forms__WEBPACK_IMPORTED_MODULE_8__.ReactiveFormsModule, _preferencia_routing_module__WEBPACK_IMPORTED_MODULE_0__.PreferenciaRoutingModule, _uteis_uteis_module__WEBPACK_IMPORTED_MODULE_5__.UteisModule]
+  (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵsetNgModuleScope"](PreferenciaModule, {
+    declarations: [_preferencia_form_preferencia_form_component__WEBPACK_IMPORTED_MODULE_1__.PreferenciaFormComponent, _preferencia_form_petrvs_preferencia_form_petrvs_component__WEBPACK_IMPORTED_MODULE_2__.PreferenciaFormPetrvsComponent, _preferencia_form_usuario_preferencia_form_usuario_component__WEBPACK_IMPORTED_MODULE_3__.PreferenciaFormUsuarioComponent, _preferencia_form_unidade_preferencia_form_unidade_component__WEBPACK_IMPORTED_MODULE_6__.PreferenciaFormUnidadeComponent],
+    imports: [_angular_common__WEBPACK_IMPORTED_MODULE_8__.CommonModule, src_app_components_components_module__WEBPACK_IMPORTED_MODULE_4__.ComponentsModule, _angular_forms__WEBPACK_IMPORTED_MODULE_9__.ReactiveFormsModule, _preferencia_routing_module__WEBPACK_IMPORTED_MODULE_0__.PreferenciaRoutingModule, _uteis_uteis_module__WEBPACK_IMPORTED_MODULE_5__.UteisModule]
   });
 })();
 
