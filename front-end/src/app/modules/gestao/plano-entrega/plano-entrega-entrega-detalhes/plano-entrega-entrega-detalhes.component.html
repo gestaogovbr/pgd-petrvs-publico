@@ -1,6 +1,6 @@
 <tabs #detalhesEntrega right [title]="isModal ? '' : title">
   <tab key="INFOS" icon="bi bi-info-lg" label="Informações"></tab>
-  <!--<tab key="VINCULOS" icon="bi bi-arrow-down-up" label="Vínculos"></tab>-->
+  <tab key="VINCULOS" icon="bi bi-arrow-down-up" label="Vínculos"></tab>
   <tab key="PARTICIPANTES" icon="bi bi-people" label="Participantes"></tab>
 </tabs>
 
@@ -69,11 +69,10 @@
 
 </div>
 
-<!--
 <div *ngIf="detalhesEntrega.active == 'VINCULOS' && entrega" style="min-height: 400px;">
   <plano-entrega-entregas-vinculadas [entregaId]="entrega.id"></plano-entrega-entregas-vinculadas>  
 </div>
--->
+
 <div *ngIf="detalhesEntrega.active == 'PARTICIPANTES' && entrega" class="row" style="min-height: 400px;">
   <plano-entrega-entregas-plano-trabalho [entregaId]="entrega.id"></plano-entrega-entregas-plano-trabalho>
 </div>
