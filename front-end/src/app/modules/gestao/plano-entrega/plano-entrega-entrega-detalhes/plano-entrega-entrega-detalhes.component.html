@@ -1,0 +1,79 @@
+<tabs #detalhesEntrega right [title]="isModal ? '' : title">
+  <tab key="INFOS" icon="bi bi-info-lg" label="Informações"></tab>
+  <!--<tab key="VINCULOS" icon="bi bi-arrow-down-up" label="Vínculos"></tab>-->
+  <tab key="PARTICIPANTES" icon="bi bi-people" label="Participantes"></tab>
+</tabs>
+
+
+
+<div *ngIf="detalhesEntrega.active == 'INFOS'" class="" style="min-height: 400px;">
+  <div class="mb-2">
+    <badge *ngFor="let etiqueta of entrega?.etiquetas" [lookup]="etiqueta"></badge>
+  </div>
+  <h5>{{entrega?.descricao}}</h5>
+  <small>{{entrega?.descricao_entrega}}</small>
+  <hr>
+  
+  <p>Período: <small>{{planoEntregaEntregaDao!.getDateFormatted(entrega?.data_inicio)}} até {{planoEntregaEntregaDao!.getDateFormatted(entrega?.data_fim)}}</small></p>
+  <div class="d-flex">
+    <p class="me-2">Demandante: <badge *ngIf="entrega?.unidade" color="light" [icon]="entityService.getIcon('Unidade')" [label]="entrega?.unidade?.sigla"></badge></p>
+    <p>Destinatário: <badge *ngIf="entrega?.destinatario?.length" color="light" icon="bi bi-mailbox" [label]="entrega?.destinatario"></badge></p>
+  </div>
+
+  <h5 class="text-center">{{lex.translate('Metas')}}</h5>
+  <small class="d-block text-center mb-2">{{entrega?.descricao_meta}}</small>
+  <div class="d-flex justify-content-center" *ngIf="entrega">
+    <div>
+      <b>Planejada</b><br>
+      <badge icon="bi bi-graph-up-arrow" [textValue]="planoEntregaService.getValorMeta(entrega)" color="light" hint="Planejada"></badge>
+    </div>
+    
+    <div class="vr mx-5"></div>
+
+    <div>
+      <b>Executada</b><br>
+      <badge icon="bi bi-check-lg" [textValue]="planoEntregaService.getValorRealizado(entrega)" color="light" hint="Realizada"></badge>
+    </div>
+  </div>
+
+  <div class="mt-3" *ngIf="entrega?.objetivos?.length">
+    <h5 class="text-center mb-2">{{lex.translate('Objetivos')}}</h5>
+    <div class="card">
+      <ul class="list-group list-group-flush">
+        <li *ngFor="let pObjetivo of entrega?.objetivos" class="list-group-item">
+            <div class="d-flex justify-content-between align-items-center" *ngIf="pObjetivo.objetivo">
+              <small>{{pObjetivo.objetivo.nome}}</small>
+              <button class="btn btn-sm btn-outline-info me-2" (click)="showPlanejamento(pObjetivo.objetivo.id)"><i class="bi bi-eye"></i></button>
+            </div>
+          </li>
+      </ul>
+    </div>
+  </div>
+
+
+  <div class="mt-3" *ngIf="entrega?.processos?.length">
+    <h5 class="text-center mb-2">{{lex.translate('Processos')}}</h5>
+    <div class="card">
+      <ul class="list-group list-group-flush">
+        <li *ngFor="let pProcesso of entrega?.processos" class="list-group-item">
+            <div class="d-flex justify-content-between align-items-center" *ngIf="pProcesso.processo">
+              <small>{{pProcesso.processo.nome}}</small>
+              <button class="btn btn-sm btn-outline-info me-2" (click)="showCadeiaValor(pProcesso.processo.id)"><i class="bi bi-eye"></i></button>
+            </div>
+          </li>
+      </ul>
+    </div>
+  </div>
+
+    
+
+</div>
+
+<!--
+<div *ngIf="detalhesEntrega.active == 'VINCULOS' && entrega" style="min-height: 400px;">
+  <plano-entrega-entregas-vinculadas [entregaId]="entrega.id"></plano-entrega-entregas-vinculadas>  
+</div>
+-->
+<div *ngIf="detalhesEntrega.active == 'PARTICIPANTES' && entrega" class="row" style="min-height: 400px;">
+  <plano-entrega-entregas-plano-trabalho [entregaId]="entrega.id"></plano-entrega-entregas-plano-trabalho>
+</div>

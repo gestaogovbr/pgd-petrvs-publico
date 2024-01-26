@@ -1,6 +1,38 @@
 "use strict";
 (self["webpackChunkpetrvs"] = self["webpackChunkpetrvs"] || []).push([[8934],{
 
+/***/ 5430:
+/*!*******************************************************************!*\
+  !*** ./src/app/dao/questionario-resposta-pergunta-dao.service.ts ***!
+  \*******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   QuestionarioRespostaPerguntaDaoService: () => (/* binding */ QuestionarioRespostaPerguntaDaoService)
+/* harmony export */ });
+/* harmony import */ var _dao_base_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./dao-base.service */ 29995);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 51197);
+
+
+class QuestionarioRespostaPerguntaDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0__.DaoBaseService {
+  constructor(injector) {
+    super("QuestionarioRespostaPergunta", injector);
+    this.injector = injector;
+    this.inputSearchConfig.searchFields = ["resposta"];
+  }
+  static #_ = this.ɵfac = function QuestionarioRespostaPerguntaDaoService_Factory(t) {
+    return new (t || QuestionarioRespostaPerguntaDaoService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__.Injector));
+  };
+  static #_2 = this.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({
+    token: QuestionarioRespostaPerguntaDaoService,
+    factory: QuestionarioRespostaPerguntaDaoService.ɵfac,
+    providedIn: 'root'
+  });
+}
+
+/***/ }),
+
 /***/ 46482:
 /*!*******************************************************!*\
   !*** ./src/app/models/questionario-pergunta.model.ts ***!

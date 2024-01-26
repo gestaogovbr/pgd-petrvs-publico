@@ -1,5 +1,3 @@
-
-
 import { Component, Injector, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { AbstractControl, FormGroup } from '@angular/forms';
@@ -182,6 +180,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
  * @param form 
  * @param row 
  * @returns 
+
  */
 
 public async addIdiomas() {

@@ -221,6 +221,20 @@ class TenantLogsDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODULE_0_
     this.injector = injector;
     this.PREFIX_URL = "config";
   }
+  getAllLogs(tenant_id) {
+    return new Promise((resolve, reject) => {
+      this.server.post('api/Logs/list', {
+        tenant_id: tenant_id ? tenant_id : ''
+      }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          console.log(response.data);
+          resolve(response.data);
+        }
+      }, error => reject(error));
+    });
+  }
   static #_ = this.ɵfac = function TenantLogsDaoService_Factory(t) {
     return new (t || TenantLogsDaoService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_1__.Injector));
   };
@@ -250,8 +264,8 @@ class TenantLogs extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
     super();
     this.id = ""; //Nome da funcao
     this.tenant_id = ""; //Nome da funcao
-    this.log_type = ""; //Nível da funcao
-    this.output = ""; //Descrição da funcao
+    this.level = ""; //Nível da funcao
+    this.message = ""; //Descrição da funcao
     this.initialization(data);
   }
 }
@@ -805,6 +819,7 @@ class PanelFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IM
     });
   }
   ngOnInit() {
+    super.ngOnInit();
     this.loadSeeders();
   }
   loadSeeders() {
@@ -903,8 +918,8 @@ class PanelFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IM
     },
     features: [_angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵInheritDefinitionFeature"]],
     decls: 111,
-    vars: 96,
-    consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["right", "", 3, "title", "select"], ["key", "PRINCIPAL", "label", "Principal"], ["title", "Entidade"], [1, "row"], ["label", "SIGLA", "controlName", "id", 3, "size", "disabled"], ["label", "Nome", "controlName", "nome_entidade", 3, "size"], ["label", "Abrang\u00EAncia", "controlName", "abrangencia", 3, "size", "items"], ["label", "Cod. IBGE", "icon", "bi bi-clock", 3, "size", "control"], ["label", "Dom\u00EDnio", "controlName", "dominio_url", 3, "size", "disabled"], ["title", "Super Usu\u00E1rio"], ["label", "Email", "controlName", "email", 3, "size"], ["label", "Nome", "controlName", "nome_usuario", 3, "size"], ["label", "CPF", "controlName", "cpf", 3, "size"], ["label", "Apelido", "controlName", "apelido", 3, "size"], ["title", "Notifica\u00E7\u00F5es", "hidden", "true"], ["hidden", "true", 1, "row"], [1, "col-md-6"], ["scale", "small", "labelPosition", "right", "label", "Petrvs (Dentro do sistema)", "controlName", "notification_petrvs", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "E-mail", "controlName", "notification_mail", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "WhatsApp", "controlName", "notification_whatsapp", 3, "size"], ["title", "WhatsApp"], ["label", "URL", "controlName", "notification_whatsapp_url", 3, "size"], ["label", "Token", "controlName", "notification_whatsapp_token", 3, "size"], ["title", "E-mail"], ["label", "Imagem assinatura", "controlName", "notification_mail_signature", 3, "size"], ["label", "Host", "controlName", "notification_mail_host", 3, "size"], ["label", "Porta", "controlName", "notification_mail_port", 3, "size"], ["label", "Protocolo", "controlName", "notification_mail_encryption", 3, "size", "items"], ["label", "Usu\u00E1rio", "controlName", "notification_mail_username", 3, "size"], ["password", "", "label", "Senha", "controlName", "notification_mail_password", 3, "size"], ["key", "BANCO", "label", "Banco de dados"], ["title", "Banco de dados da aplica\u00E7\u00E3o"], ["label", "Host", "controlName", "tenancy_db_host", 3, "size"], ["label", "Banco de dados", "controlName", "tenancy_db_name", 3, "size"], ["label", "Porta", "controlName", "tenancy_db_port", 3, "size"], ["label", "Usu\u00E1rio", "controlName", "tenancy_db_username", 3, "size"], ["password", "", "label", "Senha", "controlName", "tenancy_db_password", 3, "size"], ["title", "Logs"], [1, "col-md-8"], ["label", "Host", "controlName", "log_host", 3, "size"], ["label", "Banco de dados", "controlName", "log_database", 3, "size"], ["label", "Porta", "controlName", "log_port", 3, "size"], ["label", "Usu\u00E1rio", "controlName", "log_username", 3, "size"], ["password", "", "label", "Senha", "controlName", "log_password", 3, "size"], [1, "col-md-4"], ["title", "Op\u00E7\u00F5es de log"], ["scale", "small", "labelPosition", "right", "label", "Tr\u00E1fego (traffic)", "controlName", "log_traffic", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "Auditoria (changes)", "controlName", "log_changes", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "Erros (errors)", "controlName", "log_errors", 3, "size"], ["key", "LOGIN", "label", "Login"], ["title", "Google"], ["label", "Google Client ID", "controlName", "login_google_client_id", 3, "size"], ["label", "Firebase Project ID", "controlName", "login_firebase_client_id", 3, "size"], ["scale", "large", "labelPosition", "right", "label", "", "controlName", "login_google", 3, "size"], ["title", "Microsoft"], ["label", "Azure Client ID", "controlName", "login_azure_client_id", 3, "size"], ["label", "Azure Client Secret", "controlName", "login_azure_secret", 3, "size"], ["label", "Azure Redirect URI", "controlName", "login_azure_redirect_uri", 3, "size"], ["scale", "large", "labelPosition", "right", "label", "", "controlName", "login_azure", 3, "size"], ["title", "Login GOVBr"], ["label", "Client ID", "controlName", "login_login_unico_client_id", 3, "size"], ["label", "Secret", "controlName", "login_login_unico_secret", 3, "size"], ["scale", "large", "labelPosition", "right", "label", "", "controlName", "login_login_unico", 3, "size"], ["key", "INTEGRACAO", "label", "Integra\u00E7\u00E3o"], ["label", "Tipo da Integra\u00E7\u00E3o", "controlName", "tipo_integracao", 3, "size", "items"], ["labelPosition", "top", "label", "Auto-incluir", "controlName", "integracao_auto_incluir", 3, "size"], ["label", "Codigo unidade raiz", "controlName", "integracao_cod_unidade_raiz", 3, "size"], ["class", "row", 4, "ngIf"], ["key", "SEI", "label", "M\u00F3dulo SEI"], ["labelPosition", "top", "label", "Habilitado", "controlName", "modulo_sei_habilitado", 3, "size"], ["label", "Url do sei", "controlName", "modulo_sei_url", "labelInfo", "Url completa do SEI incluindo o https://, sem a barra no final", 3, "size"], ["title", "Certificado digital (Comunica\u00E7\u00E3o B2B)"], ["label", "Chave privada", "controlName", "modulo_sei_private_key", 3, "rows", "size"], ["label", "Chave p\u00FAblica", "controlName", "modulo_sei_public_key", 3, "rows", "size"], [1, "col-md-2", "one-per-line"], ["label", "Op\u00E7\u00F5es", "labelInfo", "Utilize os bot\u00F5es abaixo caso deseje gerar o certificado diretamente pelo sistema"], ["fullWidth", "", "label", "Gerar", 3, "onClick"], ["fullWidth", "", "label", "Copiar", 3, "onClick"], ["key", "SEEDERS", "label", "Seeders"], ["label", "Seeders"], ["controlName", "selectedSeeder", 1, "form-control", 3, "change"], [3, "value", 4, "ngFor", "ngForOf"], ["label", "Op\u00E7\u00F5es"], ["fullWidth", "", "label", "Executar", 3, "onClick"], ["title", "Siape-WS", "labeInfo", "As informa\u00E7\u00F5es dessa tela s\u00E3o referentes \u00E0s inseridas no cadastro do SIAPE"], ["label", "URL", "controlName", "integracao_siape_url", 3, "size"], ["label", "Upag", "controlName", "integracao_siape_upag", 3, "size"], ["label", "Sigla do Sistema", "controlName", "integracao_siape_sigla", 3, "size"], ["label", "Nome do Sistema", "controlName", "integracao_siape_nome", 3, "size"], ["label", "CPF", "controlName", "integracao_siape_cpf", 3, "size"], ["label", "Senha", "controlName", "integracao_siape_senha", 3, "size"], ["label", "Codigo do \u00D3rg\u00E3o", "controlName", "integracao_siape_codorgao", 3, "size"], ["label", "Codigo UORG", "controlName", "integracao_siape_uorg", 3, "size"], ["label", "Existe Pagador", "controlName", "integracao_siape_existepag", 3, "size", "items"], ["label", "Tipo de V\u00EDnculo", "controlName", "integracao_siape_tipovinculo", 3, "size", "items"], ["label", "Perfil Usu\u00E1rio Comum", "controlName", "integracao_siape_usuario_comum", 3, "size"], ["label", "Perfil Usu\u00E1rio Chefe", "controlName", "integracao_siape_usuario_chefe", 3, "size"], ["title", "Siape-PRF"], ["label", "URL", "controlName", "integracao_wso2_url", 3, "size"], ["label", "URL Unidades", "controlName", "integracao_wso2_unidades", 3, "size"], ["label", "URL Pessoas", "controlName", "integracao_wso2_pessoas", 3, "size"], ["label", "Token URL", "controlName", "integracao_wso2_token_url", 3, "size"], ["label", "Token AUTHORIZATION", "controlName", "integracao_wso2_token_authorization", 3, "size"], ["label", "Token Acesso", "controlName", "integracao_wso2_token_acesso", 3, "size"], ["label", "Token USER", "controlName", "integracao_wso2_token_user", 3, "size"], ["label", "Token Password", "controlName", "integracao_wso2_token_password", 3, "size"], [3, "value"]],
+    vars: 95,
+    consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["right", "", 3, "title", "select"], ["key", "PRINCIPAL", "label", "Principal"], ["title", "Entidade"], [1, "row"], ["label", "SIGLA", "controlName", "id", 3, "size", "disabled"], ["label", "Nome", "controlName", "nome_entidade", 3, "size"], ["label", "Abrang\u00EAncia", "controlName", "abrangencia", 3, "size", "items"], ["label", "Cod. IBGE", "icon", "bi bi-clock", 3, "size", "control"], ["label", "Dom\u00EDnio", "controlName", "dominio_url", 3, "size"], ["title", "Super Usu\u00E1rio"], ["label", "Email", "controlName", "email", 3, "size"], ["label", "Nome", "controlName", "nome_usuario", 3, "size"], ["label", "CPF", "controlName", "cpf", 3, "size"], ["label", "Apelido", "controlName", "apelido", 3, "size"], ["title", "Notifica\u00E7\u00F5es", "hidden", "true"], ["hidden", "true", 1, "row"], [1, "col-md-6"], ["scale", "small", "labelPosition", "right", "label", "Petrvs (Dentro do sistema)", "controlName", "notification_petrvs", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "E-mail", "controlName", "notification_mail", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "WhatsApp", "controlName", "notification_whatsapp", 3, "size"], ["title", "WhatsApp"], ["label", "URL", "controlName", "notification_whatsapp_url", 3, "size"], ["label", "Token", "controlName", "notification_whatsapp_token", 3, "size"], ["title", "E-mail"], ["label", "Imagem assinatura", "controlName", "notification_mail_signature", 3, "size"], ["label", "Host", "controlName", "notification_mail_host", 3, "size"], ["label", "Porta", "controlName", "notification_mail_port", 3, "size"], ["label", "Protocolo", "controlName", "notification_mail_encryption", 3, "size", "items"], ["label", "Usu\u00E1rio", "controlName", "notification_mail_username", 3, "size"], ["password", "", "label", "Senha", "controlName", "notification_mail_password", 3, "size"], ["key", "BANCO", "label", "Banco de dados"], ["title", "Banco de dados da aplica\u00E7\u00E3o"], ["label", "Host", "controlName", "tenancy_db_host", 3, "size"], ["label", "Banco de dados", "controlName", "tenancy_db_name", 3, "size"], ["label", "Porta", "controlName", "tenancy_db_port", 3, "size"], ["label", "Usu\u00E1rio", "controlName", "tenancy_db_username", 3, "size"], ["password", "", "label", "Senha", "controlName", "tenancy_db_password", 3, "size"], ["title", "Logs"], [1, "col-md-8"], ["label", "Host", "controlName", "log_host", 3, "size"], ["label", "Banco de dados", "controlName", "log_database", 3, "size"], ["label", "Porta", "controlName", "log_port", 3, "size"], ["label", "Usu\u00E1rio", "controlName", "log_username", 3, "size"], ["password", "", "label", "Senha", "controlName", "log_password", 3, "size"], [1, "col-md-4"], ["title", "Op\u00E7\u00F5es de log"], ["scale", "small", "labelPosition", "right", "label", "Tr\u00E1fego (traffic)", "controlName", "log_traffic", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "Auditoria (changes)", "controlName", "log_changes", 3, "size"], ["scale", "small", "labelPosition", "right", "label", "Erros (errors)", "controlName", "log_errors", 3, "size"], ["key", "LOGIN", "label", "Login"], ["title", "Google"], ["label", "Google Client ID", "controlName", "login_google_client_id", 3, "size"], ["label", "Firebase Project ID", "controlName", "login_firebase_client_id", 3, "size"], ["scale", "large", "labelPosition", "right", "label", "", "controlName", "login_google", 3, "size"], ["title", "Microsoft"], ["label", "Azure Client ID", "controlName", "login_azure_client_id", 3, "size"], ["label", "Azure Client Secret", "controlName", "login_azure_secret", 3, "size"], ["label", "Azure Redirect URI", "controlName", "login_azure_redirect_uri", 3, "size"], ["scale", "large", "labelPosition", "right", "label", "", "controlName", "login_azure", 3, "size"], ["title", "Login GOVBr"], ["label", "Client ID", "controlName", "login_login_unico_client_id", 3, "size"], ["label", "Secret", "controlName", "login_login_unico_secret", 3, "size"], ["scale", "large", "labelPosition", "right", "label", "", "controlName", "login_login_unico", 3, "size"], ["key", "INTEGRACAO", "label", "Integra\u00E7\u00E3o"], ["label", "Tipo da Integra\u00E7\u00E3o", "controlName", "tipo_integracao", 3, "size", "items"], ["labelPosition", "top", "label", "Auto-incluir", "controlName", "integracao_auto_incluir", 3, "size"], ["label", "Codigo unidade raiz", "controlName", "integracao_cod_unidade_raiz", 3, "size"], ["class", "row", 4, "ngIf"], ["key", "SEI", "label", "M\u00F3dulo SEI"], ["labelPosition", "top", "label", "Habilitado", "controlName", "modulo_sei_habilitado", 3, "size"], ["label", "Url do sei", "controlName", "modulo_sei_url", "labelInfo", "Url completa do SEI incluindo o https://, sem a barra no final", 3, "size"], ["title", "Certificado digital (Comunica\u00E7\u00E3o B2B)"], ["label", "Chave privada", "controlName", "modulo_sei_private_key", 3, "rows", "size"], ["label", "Chave p\u00FAblica", "controlName", "modulo_sei_public_key", 3, "rows", "size"], [1, "col-md-2", "one-per-line"], ["label", "Op\u00E7\u00F5es", "labelInfo", "Utilize os bot\u00F5es abaixo caso deseje gerar o certificado diretamente pelo sistema"], ["fullWidth", "", "label", "Gerar", 3, "onClick"], ["fullWidth", "", "label", "Copiar", 3, "onClick"], ["key", "SEEDERS", "label", "Seeders"], ["label", "Seeders"], ["controlName", "selectedSeeder", 1, "form-control", 3, "change"], [3, "value", 4, "ngFor", "ngForOf"], ["label", "Op\u00E7\u00F5es"], ["fullWidth", "", "label", "Executar", 3, "onClick"], ["title", "Siape-WS", "labeInfo", "As informa\u00E7\u00F5es dessa tela s\u00E3o referentes \u00E0s inseridas no cadastro do SIAPE"], ["label", "URL", "controlName", "integracao_siape_url", 3, "size"], ["label", "Upag", "controlName", "integracao_siape_upag", 3, "size"], ["label", "Sigla do Sistema", "controlName", "integracao_siape_sigla", 3, "size"], ["label", "Nome do Sistema", "controlName", "integracao_siape_nome", 3, "size"], ["label", "CPF", "controlName", "integracao_siape_cpf", 3, "size"], ["label", "Senha", "controlName", "integracao_siape_senha", 3, "size"], ["label", "Codigo do \u00D3rg\u00E3o", "controlName", "integracao_siape_codorgao", 3, "size"], ["label", "Codigo UORG", "controlName", "integracao_siape_uorg", 3, "size"], ["label", "Existe Pagador", "controlName", "integracao_siape_existepag", 3, "size", "items"], ["label", "Tipo de V\u00EDnculo", "controlName", "integracao_siape_tipovinculo", 3, "size", "items"], ["label", "Perfil Usu\u00E1rio Comum", "controlName", "integracao_siape_usuario_comum", 3, "size"], ["label", "Perfil Usu\u00E1rio Chefe", "controlName", "integracao_siape_usuario_chefe", 3, "size"], ["title", "Siape-PRF"], ["label", "URL", "controlName", "integracao_wso2_url", 3, "size"], ["label", "URL Unidades", "controlName", "integracao_wso2_unidades", 3, "size"], ["label", "URL Pessoas", "controlName", "integracao_wso2_pessoas", 3, "size"], ["label", "Token URL", "controlName", "integracao_wso2_token_url", 3, "size"], ["label", "Token AUTHORIZATION", "controlName", "integracao_wso2_token_authorization", 3, "size"], ["label", "Token Acesso", "controlName", "integracao_wso2_token_acesso", 3, "size"], ["label", "Token USER", "controlName", "integracao_wso2_token_user", 3, "size"], ["label", "Token Password", "controlName", "integracao_wso2_token_password", 3, "size"], [3, "value"]],
     template: function PanelFormComponent_Template(rf, ctx) {
       if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementStart"](0, "editable-form", 0);
@@ -1022,7 +1037,7 @@ class PanelFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IM
         _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("size", 3)("control", ctx.form.controls.codigo_cidade);
         _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("size", 12)("disabled", ctx.action == "new" ? undefined : "true");
+        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("size", 12);
         _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵattribute"]("maxlength", 250);
         _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("size", 6);
@@ -1169,15 +1184,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   PanelListLogsComponent: () => (/* binding */ PanelListLogsComponent)
 /* harmony export */ });
-/* harmony import */ var src_app_dao_tenant_logs_dao_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/dao/tenant-logs-dao.service */ 58036);
-/* harmony import */ var src_app_models_tenant_logs_model__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/models/tenant-logs.model */ 57975);
-/* harmony import */ var _base_page_list_base__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../base/page-list-base */ 78509);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ 51197);
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common */ 89650);
-/* harmony import */ var _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../components/grid/grid.component */ 73150);
-/* harmony import */ var _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../components/grid/columns/columns.component */ 57224);
-/* harmony import */ var _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../components/grid/column/column.component */ 83351);
-
+/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var src_app_dao_tenant_logs_dao_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/dao/tenant-logs-dao.service */ 58036);
+/* harmony import */ var src_app_models_tenant_logs_model__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/models/tenant-logs.model */ 57975);
+/* harmony import */ var _base_page_list_base__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../base/page-list-base */ 78509);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../components/grid/grid.component */ 73150);
+/* harmony import */ var _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../components/grid/columns/columns.component */ 57224);
+/* harmony import */ var _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../components/grid/column/column.component */ 83351);
 
 
 
@@ -1188,96 +1202,102 @@ __webpack_require__.r(__webpack_exports__);
 
 function PanelListLogsComponent_ng_template_3_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "span");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "span");
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
-    const row_r7 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate"](row_r7.log_type);
+    const row_r6 = ctx.row;
+    const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](ctx_r1.dao.getDateFormatted(row_r6.created_at));
   }
 }
 function PanelListLogsComponent_ng_template_6_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "span");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "span");
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
-    const row_r8 = ctx.row;
-    const ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate"](ctx_r3.dao.getDateFormatted(row_r8.created_at));
+    const row_r7 = ctx.row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](row_r7.message);
   }
 }
 function PanelListLogsComponent_ng_template_9_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "span");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "span");
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
-    const row_r9 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtextInterpolate"](row_r9.output);
+    const row_r8 = ctx.row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](row_r8.level);
   }
 }
-function PanelListLogsComponent_column_11_Template(rf, ctx) {
-  if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](0, "column", 8);
-  }
-  if (rf & 2) {
-    const ctx_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("onEdit", ctx_r6.edit)("options", ctx_r6.options);
-  }
-}
-class PanelListLogsComponent extends _base_page_list_base__WEBPACK_IMPORTED_MODULE_2__.PageListBase {
-  constructor(injector, dao) {
-    super(injector, src_app_models_tenant_logs_model__WEBPACK_IMPORTED_MODULE_1__.TenantLogs, src_app_dao_tenant_logs_dao_service__WEBPACK_IMPORTED_MODULE_0__.TenantLogsDaoService);
+class PanelListLogsComponent extends _base_page_list_base__WEBPACK_IMPORTED_MODULE_3__.PageListBase {
+  constructor(injector) {
+    super(injector, src_app_models_tenant_logs_model__WEBPACK_IMPORTED_MODULE_2__.TenantLogs, src_app_dao_tenant_logs_dao_service__WEBPACK_IMPORTED_MODULE_1__.TenantLogsDaoService);
     this.injector = injector;
+    this.items = [];
+    this.tenantLogsDaoService = injector.get(src_app_dao_tenant_logs_dao_service__WEBPACK_IMPORTED_MODULE_1__.TenantLogsDaoService);
     /* Inicializações */
     this.title = "Painel de Logs Petrvs";
     this.code = "PANEL_LOGS";
     this.filter = this.fh.FormBuilder({});
   }
+  ngOnInit() {
+    super.ngOnInit();
+    this.loadData();
+  }
+  loadData() {
+    var _this = this;
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      let tenat_id = _this.urlParams.get("id");
+      const result = yield _this.tenantLogsDaoService.getAllLogs(tenat_id);
+      if (result) {
+        _this.items = result;
+      }
+    })();
+  }
   static #_ = this.ɵfac = function PanelListLogsComponent_Factory(t) {
-    return new (t || PanelListLogsComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_6__.Injector), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdirectiveInject"](src_app_dao_tenant_logs_dao_service__WEBPACK_IMPORTED_MODULE_0__.TenantLogsDaoService));
+    return new (t || PanelListLogsComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_7__.Injector));
   };
-  static #_2 = this.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineComponent"]({
+  static #_2 = this.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdefineComponent"]({
     type: PanelListLogsComponent,
     selectors: [["panel-list-logs"]],
-    features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵInheritDefinitionFeature"]],
-    decls: 12,
-    vars: 10,
-    consts: [["title", "Painel de entidades (SaaS)", 3, "dao", "add", "orderBy", "groupBy", "join", "hasAdd", "hasEdit"], ["title", "Tipo", 3, "template"], ["columnTipo", ""], ["title", "Data", 3, "template"], ["columnData", ""], ["title", "Mensagem", "field", "columnMensagem"], ["columnMensagem", ""], ["type", "options", 3, "onEdit", "options", 4, "ngIf"], ["type", "options", 3, "onEdit", "options"]],
+    features: [_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵInheritDefinitionFeature"]],
+    decls: 11,
+    vars: 4,
+    consts: [["title", "Painel de entidades (SaaS)", 3, "items"], ["title", "Criado em", 3, "template"], ["columnData", ""], ["title", "Mensagem", 3, "template"], ["columnMensagem", ""], ["title", "Tipo", 3, "template"], ["columnTipo", ""]],
     template: function PanelListLogsComponent_Template(rf, ctx) {
       if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "grid", 0)(1, "columns")(2, "column", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](3, PanelListLogsComponent_ng_template_3_Template, 2, 1, "ng-template", null, 2, _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplateRefExtractor"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](5, "column", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](6, PanelListLogsComponent_ng_template_6_Template, 2, 1, "ng-template", null, 4, _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplateRefExtractor"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](8, "column", 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](9, PanelListLogsComponent_ng_template_9_Template, 2, 1, "ng-template", null, 6, _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplateRefExtractor"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](11, PanelListLogsComponent_column_11_Template, 1, 2, "column", 7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "grid", 0)(1, "columns")(2, "column", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](3, PanelListLogsComponent_ng_template_3_Template, 2, 1, "ng-template", null, 2, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](5, "column", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](6, PanelListLogsComponent_ng_template_6_Template, 2, 1, "ng-template", null, 4, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](8, "column", 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](9, PanelListLogsComponent_ng_template_9_Template, 2, 1, "ng-template", null, 6, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]()()();
       }
       if (rf & 2) {
-        const _r0 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵreference"](4);
-        const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵreference"](7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("dao", ctx.dao)("add", ctx.add)("orderBy", ctx.orderBy)("groupBy", ctx.groupBy)("join", ctx.join)("hasAdd", true)("hasEdit", true);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("template", _r0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("template", _r2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngIf", !ctx.selectable);
+        const _r0 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵreference"](4);
+        const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵreference"](7);
+        const _r4 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵreference"](10);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("items", ctx.items);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("template", _r0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("template", _r2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("template", _r4);
       }
     },
-    dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_7__.NgIf, _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_3__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_4__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_5__.ColumnComponent],
+    dependencies: [_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_4__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_5__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_6__.ColumnComponent],
     styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
   });
 }
@@ -1415,11 +1435,20 @@ class PanelListComponent extends src_app_modules_base_page_list_base__WEBPACK_IM
     super(injector, src_app_models_tenant_model__WEBPACK_IMPORTED_MODULE_2__.Tenant, src_app_dao_tenant_dao_service__WEBPACK_IMPORTED_MODULE_1__.TenantDaoService);
     this.injector = injector;
     this.toolbarButtons = [{
-      icon: "bi bi-building",
+      icon: "bi bi-eye-fill",
+      label: "Ver Logs",
+      onClick: () => this.go.navigate({
+        route: ["panel", "logs2"]
+      })
+    }, {
+      icon: "bi bi-database-add",
       label: "Executar Migrations",
       onClick: this.executaMigrations.bind(this)
     }, {
-      icon: "bi bi-building",
+      icon: "bi bi-database-fill-up",
+      label: "Executar Seeders"
+    }, {
+      icon: "bi bi-database-x",
       label: "Resetar DB",
       disabled: this.gb.ENV === 'production',
       onClick: this.resetDB.bind(this)
@@ -1451,7 +1480,7 @@ class PanelListComponent extends src_app_modules_base_page_list_base__WEBPACK_IM
       icon: "bi bi-trash",
       label: "Ver Logs",
       onClick: tenant => this.go.navigate({
-        route: ["panel", "panel-list", tenant.id, "logs"]
+        route: ["panel", tenant.id, "logs"]
       })
     });
   }
@@ -1706,6 +1735,17 @@ const routes = [{
   }
 }, {
   path: ':id/logs',
+  component: _panel_list_logs_panel_list_logs_component__WEBPACK_IMPORTED_MODULE_3__.PanelListLogsComponent,
+  resolve: {
+    config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_0__.ConfigResolver
+  },
+  runGuardsAndResolvers: 'always',
+  data: {
+    title: "Consulta a Logs",
+    modal: true
+  }
+}, {
+  path: 'logs2',
   component: _panel_list_logs_panel_list_logs_component__WEBPACK_IMPORTED_MODULE_3__.PanelListLogsComponent,
   resolve: {
     config: src_app_resolvies_config_resolver__WEBPACK_IMPORTED_MODULE_0__.ConfigResolver

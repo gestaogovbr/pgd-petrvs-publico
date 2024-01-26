@@ -33,6 +33,34 @@ class ComparecimentoDaoService extends _dao_base_service__WEBPACK_IMPORTED_MODUL
 
 /***/ }),
 
+/***/ 61210:
+/*!*************************************************************!*\
+  !*** ./src/app/models/plano-trabalho-consolidacao.model.ts ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PlanoTrabalhoConsolidacao: () => (/* binding */ PlanoTrabalhoConsolidacao)
+/* harmony export */ });
+/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
+
+class PlanoTrabalhoConsolidacao extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
+  constructor(data) {
+    super();
+    this.data_inicio = new Date();
+    this.data_fim = new Date();
+    this.status = "INCLUIDO"; // Status atual da consolidação
+    this.avaliacoes = [];
+    this.status_historico = [];
+    this.plano_trabalho_id = "";
+    this.avaliacao_id = null;
+    this.initialization(data);
+  }
+}
+
+/***/ }),
+
 /***/ 65862:
 /*!****************************************************************************************************************************************!*\
   !*** ./src/app/modules/gestao/plano-trabalho/plano-trabalho-consolidacao-avaliacao/plano-trabalho-consolidacao-avaliacao.component.ts ***!
@@ -1283,11 +1311,17 @@ function PlanoTrabalhoConsolidacaoFormComponent_ng_template_10_Template(rf, ctx)
 function PlanoTrabalhoConsolidacaoFormComponent_ng_template_13_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtext"](0);
-    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelement"](1, "reaction", 86);
+    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelement"](1, "br");
+    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementStart"](2, "small");
+    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtext"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelement"](4, "reaction", 86);
   }
   if (rf & 2) {
     const row_r81 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtextInterpolate1"](" ", row_r81.badge.descricao || row_r81.entrega.descricao, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtextInterpolate1"](" ", row_r81.badge.descricao || row_r81.entrega.descricao, "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtextInterpolate"](row_r81.entrega.descricao);
     _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("entity", row_r81.entrega);
   }
@@ -2143,7 +2177,7 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
         _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtemplate"](10, PlanoTrabalhoConsolidacaoFormComponent_ng_template_10_Template, 1, 2, "ng-template", null, 7, _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementStart"](12, "column", 8);
-        _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtemplate"](13, PlanoTrabalhoConsolidacaoFormComponent_ng_template_13_Template, 2, 2, "ng-template", null, 9, _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtemplate"](13, PlanoTrabalhoConsolidacaoFormComponent_ng_template_13_Template, 5, 3, "ng-template", null, 9, _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵelementStart"](15, "column", 10);
         _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtemplate"](16, PlanoTrabalhoConsolidacaoFormComponent_ng_template_16_Template, 1, 1, "ng-template", null, 11, _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵtemplateRefExtractor"]);
@@ -4805,7 +4839,8 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
         _this7.form?.controls.orgao.setValue(null);
         _this7.form?.controls.plano_entrega_entrega_id.setValue(null);
       }
-      if (value == 'PROPRIA_UNIDADE' || value == 'OUTRA_UNIDADE') {
+      if (value == 'OUTRA_UNIDADE') {
+        //if (value == 'PROPRIA_UNIDADE' || value == 'OUTRA_UNIDADE')
         _this7.form?.controls.orgao.setValue(null);
         _this7.loading = true;
         _this7.planoEntrega?.onSelectClick(new Event("SELECT"));
