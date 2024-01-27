@@ -20,9 +20,9 @@ class DatabaseSeeder extends Seeder
                FeriadoSeeder::class,
                PerfilSeeder::class,
                TipoCapacidadeSeeder::class,
+               CapacidadeSeeder::class,
                CargoSeeder::class,
                FuncaoSeeder::class,
-               IN24_2023CapacidadeSeeder::class,
            ]);
        } else {
            $this->call([
@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
                FeriadoSeeder::class,
                PerfilSeeder::class,
                TipoCapacidadeSeeder::class,
+               CapacidadeSeeder::class,
                EntidadeSeeder::class,
                UnidadeSeeder::class,
                UsuarioSeeder::class,
@@ -44,8 +45,7 @@ class DatabaseSeeder extends Seeder
                AreaTematicaSeeder::class,
                AreaAtividadeExternaSeeder::class,
                CapacidadeTecnicaSeeder::class,
-               IN24_2023Seeder::class,
-               IN24_2023CapacidadeSeeder::class,
+               In24_2023Seeder::class,
                TemplateSeeder::class,
 
                /*

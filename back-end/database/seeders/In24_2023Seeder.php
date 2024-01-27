@@ -23,7 +23,7 @@ use App\Models\Planejamento;
 use App\Models\PlanejamentoObjetivo;
 use App\Services\UtilService;
 
-class IN24_2023Seeder extends Seeder
+class In24_2023Seeder extends Seeder
 {
     /**
      * Run the database seeds.

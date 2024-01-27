@@ -26,7 +26,7 @@ use App\Models\CadeiaValorProcesso;
 use App\Models\Capacidade;
 use App\Services\UtilService;
 
-class IN24_2023SeederHomologacao extends Seeder
+class In24_2023SeederHomologacao extends Seeder
 {
     /**
      * Run the database seeds.

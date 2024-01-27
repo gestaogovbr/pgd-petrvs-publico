@@ -7,9 +7,11 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\BulkSeeeder;
 
 use App\Models\Capacidade;
+use App\Models\Perfil;
+use App\Models\TipoCapacidade;
 use App\Services\UtilService;
 
-class IN24_2023CapacidadeSeeder extends Seeder
+class CapacidadeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -121,7 +123,6 @@ class IN24_2023CapacidadeSeeder extends Seeder
             ["codigo" => "MOD_AFT"],
             ["codigo" => "MOD_OCOR_EXCL"],
             ["codigo" => "MOD_FER"],
-            ["codigo" => "MOD_PTR_ENTR_INCL"],
             ["codigo" => "MOD_PTR_CSLD_AVAL"],
             ["codigo" => "MOD_ENTRG_EXCL"],
             ["codigo" => "MOD_PENT_EDT_ATV_HOMOL"],
@@ -322,17 +323,37 @@ class IN24_2023CapacidadeSeeder extends Seeder
         ];
 
         // Inserção de dados
+        $capacidadesInseridas = [];
+        $capacidadesRestauradas = [];
+        $tipoCapacidadesInexistentes = [];
+        $capacidadesRepetidas = [];
+
         foreach($capacidades_participante as $c){
-            $capacidade = array(
+            $capacidade = [
                 "id" => $this->utilService->uuid("Participante" . $c['codigo']),
                 "created_at" => $this->timenow,
                 "updated_at" => $this->timenow,
                 "deleted_at" => NULL,
                 "perfil_id" => $this->utilService->uuid("Participante"),
                 "tipo_capacidade_id" => $this->utilService->uuid($c['codigo']),
-            );
-            $result = Capacidade::insertOrIgnore($capacidade);
-            if (!$result) echo("Capacidade  já existe: (" . $c['codigo'] . ") Participante.\n");
+            ];
+
+            $queryCapacidade = Capacidade::onlyTrashed()->find($capacidade['id']);
+            $queryTipoCapacidade = TipoCapacidade::find($capacidade['tipo_capacidade_id']);
+
+            if($queryTipoCapacidade){
+                if (!empty($queryCapacidade)){
+                    $queryCapacidade->restore();
+                    array_push($capacidadesRestauradas, $capacidade['id']);
+                } else {
+                    $result = Capacidade::insertOrIgnore($capacidade);
+                    //if (!$result) echo("Capacidade já existe: (" . $c['codigo'] . ") Participante.\n");
+                }
+                !in_array($capacidade['id'], $capacidadesInseridas) ? array_push($capacidadesInseridas, $capacidade['id']) : array_push($capacidadesRepetidas, [$c['codigo'], $capacidade['id']]);
+            } else {
+                // echo("Erro: TipoCapacidade inexistente(" . "código: " . $c['codigo'] . " - ID: " . $capacidade['tipo_capacidade_id']. ")");
+                array_push($tipoCapacidadesInexistentes, [$c['codigo'], $capacidade['tipo_capacidade_id']]);
+            }
         }
 
         foreach($capacidades_chefia_de_unidade_executora as $c){
@@ -344,8 +365,23 @@ class IN24_2023CapacidadeSeeder extends Seeder
                 "perfil_id" => $this->utilService->uuid("Chefia de Unidade Executora"),
                 "tipo_capacidade_id" => $this->utilService->uuid($c['codigo']),
             ];
-            $result = Capacidade::insertOrIgnore($capacidade);
-            if (!$result) echo("Capacidade  já existe: (" . $c['codigo'] . ") Chefia de Unidade Executora.\n");
+
+            $queryCapacidade = Capacidade::onlyTrashed()->find($capacidade['id']);
+            $queryTipoCapacidade = TipoCapacidade::find($capacidade['tipo_capacidade_id']);
+
+            if($queryTipoCapacidade){
+                if (!empty($queryCapacidade)){
+                    $queryCapacidade->restore();
+                    array_push($capacidadesRestauradas, $capacidade['id']);
+                } else {
+                    $result = Capacidade::insertOrIgnore($capacidade);
+                    //if (!$result) echo("Capacidade já existe: (" . $c['codigo'] . ") Chefia de Unidade Executora.\n");
+                }
+                !in_array($capacidade['id'], $capacidadesInseridas) ? array_push($capacidadesInseridas, $capacidade['id']) : array_push($capacidadesRepetidas, [$c['codigo'], $capacidade['id']]);
+            } else {
+                //echo("Erro: TipoCapacidade inexistente(" . "código: " . $c['codigo'] . " - ID: " . $capacidade['tipo_capacidade_id']. ")");
+                array_push($tipoCapacidadesInexistentes, [$c['codigo'], $capacidade['tipo_capacidade_id']]);
+            }
         }
 
         foreach($capacidades_administrador_negocial as $c){
@@ -357,8 +393,40 @@ class IN24_2023CapacidadeSeeder extends Seeder
                 "perfil_id" => $this->utilService->uuid("Administrador Negocial"),
                 "tipo_capacidade_id" => $this->utilService->uuid($c['codigo']),
             ];
-            $result = Capacidade::insertOrIgnore($capacidade);
-            if (!$result) echo("Erro na inserção de capacidade: (" . $c['codigo'] . ") Administrador Negocial.\n");
+
+            $queryCapacidade = Capacidade::onlyTrashed()->find($capacidade['id']);
+            $queryTipoCapacidade = TipoCapacidade::find($capacidade['tipo_capacidade_id']);
+
+            if($queryTipoCapacidade){
+                if (!empty($queryCapacidade)){
+                    $queryCapacidade->restore();
+                    array_push($capacidadesRestauradas, $capacidade['id']);
+                } else {
+                    $result = Capacidade::insertOrIgnore($capacidade);
+                    //if (!$result) echo("Capacidade já existe: (" . $c['codigo'] . ") Administrador Negocial.\n");
+                }
+                !in_array($capacidade['id'], $capacidadesInseridas) ? array_push($capacidadesInseridas, $capacidade['id']) : array_push($capacidadesRepetidas, [$c['codigo'], $capacidade['id']]);
+            } else {
+                // echo("Erro: TipoCapacidade inexistente(" . "código: " . $c['codigo'] . " - ID: " . $capacidade['tipo_capacidade_id']. ")");
+                array_push($tipoCapacidadesInexistentes, [$c['codigo'], $capacidade['tipo_capacidade_id']]);
+            }
         }
+
+        $perfilDesenvolvedorId = Perfil::where([['nome', 'Desenvolvedor']])->first()->id;
+
+        $capacidadesRemovidas = Capacidade::whereNotIn('id', $capacidadesInseridas)->whereNotIn('perfil_id', [$perfilDesenvolvedorId])->get()->toArray();
+        $qtdCapacidadesRemovidas = Capacidade::whereNotIn('id', $capacidadesInseridas)->whereNotIn('perfil_id', [$perfilDesenvolvedorId])->delete();
+        $qtdCapacidades = Capacidade::count();
+        $qtdCapacidadesRestauradas = count($capacidadesRestauradas);
+        $qtdTiposCapacidadesInexistentes = count($tipoCapacidadesInexistentes);
+        $qtdCapacidadesRepetidas = count($capacidadesRepetidas);
+
+        echo("*** CapacidadeSeeder ***" . ".\n");
+        echo("Quantidade total de capacidades: ". $qtdCapacidades . ".\n");
+        echo("Quantidade de capacidades removidas: " . $qtdCapacidadesRemovidas . ".\n");
+        echo("Quantidade de capacidades restauradas: ". $qtdCapacidadesRestauradas . ".\n");
+        echo("Quantidade de capacidades usadas que não existem na tabela tipos_capacidades: ". $qtdTiposCapacidadesInexistentes . ".\n");
+        echo("Quantidade de capacidades repetidas no mesmo perfil e não registradas na tabela capacidades: ". $qtdCapacidadesRepetidas . ".\n");
+        echo("*********************************" . ".\n");
     }
 }
