@@ -53,19 +53,18 @@ class CreateDatabaseCommand extends Command
                 $this->info("Database $dbname already exists for $connection connection");
             }
 
-            $dbNameLog = env("LOG_DATABASE");
-            $connectionLog = env("LOG_CONNECTION");
-            /* Remove informação de database da conexão com o banco, pois o Laravel verifica toda vez */
-            Config::set("database.connections." . $connectionLog . ".database", null);
-            DB::purge('log');
-            $hasDb = DB::connection($connectionLog)->select("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = "."'".$dbNameLog."'");
-            if(empty($hasDb)) {
-                DB::connection($connectionLog)->select('CREATE DATABASE '. $dbNameLog);
-                $this->info("Database '$dbNameLog' created for '$connectionLog' connection");
-            } else {
-                $this->info("Database $dbNameLog already exists for $connectionLog connection");
-            }
-
+            // $dbNameLog = env("LOG_DATABASE");
+            // $connectionLog = env("LOG_CONNECTION");
+            // /* Remove informação de database da conexão com o banco, pois o Laravel verifica toda vez */
+            // Config::set("database.connections." . $connectionLog . ".database", null);
+            // DB::purge('log');
+            // $hasDb = DB::connection($connectionLog)->select("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = "."'".$dbNameLog."'");
+            // if(empty($hasDb)) {
+            //     DB::connection($connectionLog)->select('CREATE DATABASE '. $dbNameLog);
+            //     $this->info("Database '$dbNameLog' created for '$connectionLog' connection");
+            // } else {
+            //     $this->info("Database $dbNameLog already exists for $connectionLog connection");
+            // }
         }
         catch (\Exception $e){
             $this->error($e->getMessage());
