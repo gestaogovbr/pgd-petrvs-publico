@@ -313,6 +313,7 @@ class QuestionarioListPerguntaComponent extends src_app_modules_base_page_frame_
     this.cdRef = injector.get(_angular_core__WEBPACK_IMPORTED_MODULE_8__.ChangeDetectorRef);
     //this.orderBy = [['sequencia','asc']];
   }
+
   loadPerguntas() {
     this.dao.query({
       where: [["questionario_id", "==", this.questionarioId]],
