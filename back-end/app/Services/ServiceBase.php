@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Entidade;
 use App\Models\Tenant;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -18,6 +19,7 @@ use ReflectionObject;
 use Throwable;
 use Exception;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Session;
 
 class RawWhere {
     public $expression;
@@ -881,6 +883,34 @@ class ServiceBase extends DynamicMethods
      */
     public static function loggedUser(): ?Usuario {
         return Auth::user();
+    }
+
+
+    /**
+     * Retorna a entidade atual do usuário logado
+     *
+     * @return App\Models\Entidade | null
+     */
+    public static function entidade(): Entidade {
+        return Entidade::find(Session::get('entidade_id'));
+    }
+
+    /**
+     * Retorna a unidade atual do usuário logado (Área de trabalho selecionada)
+     *
+     * @return App\Models\Unidade | null
+     */
+    public function unidade() {
+        return Entidade::find(Session::get('unidade_id'));
+    }
+
+    /**
+     * Retorna a data e hora em formato ISO8601 da unidade atual do usuário logado (Área de trabalho selecionada)
+     *
+     * @return string
+     */
+    public function dataHora() {
+        return $this->unidadeService->hora(Session::get('unidade_id'));
     }
 
     /**

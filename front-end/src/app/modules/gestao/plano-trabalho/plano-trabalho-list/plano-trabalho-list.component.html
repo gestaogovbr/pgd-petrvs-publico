@@ -1,8 +1,16 @@
+<!--- 
+(RN_PTR_V) Condições para que um Plano de Trabalho possa ser criado:
+  - o usuário logado precisa possuir a capacidade "MOD_PTR_INCL", e:
+  ... As outras regras serão validadas ao gravar pois necessitam da definição da unidade e do período
+(RN_PTR_AB) Um Plano de Trabalho não pode ser excluído;  
+//-->
 <grid multiselect [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
-    [selectable]="selectable" (select)="onSelect($event)" [relatorios]="relatorios"
-    [hasAdd]="canAdd()" [hasEdit]="false" [dynamicMultiselectMenu]="dynamicMultiselectMenu.bind(this)" [multiselectAllFields]="multiselectAllFields">
+    [selectable]="selectable" (select)="onSelect($event)" [relatorios]="relatorios" [hasDelete]="false"
+    [hasAdd]="auth.hasPermissionTo('MOD_PTR_INCL')" [hasEdit]="false" [dynamicMultiselectMenu]="dynamicMultiselectMenu.bind(this)" [multiselectAllFields]="multiselectAllFields">
     <toolbar *ngIf="!selectable">
-      <input-switch [size]="4" labelPosition="left" label="Agrupar por Un." controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
+        <!-- (RN_PTR_I) Quando a Unidade Executora não for a unidade de lotação do servidor, seu gestor imediato e seus substitutos devem ter acesso ao seu Plano de Trabalho (e à sua execução); -->
+        <input-switch *ngIf="temAtribuicaoChefia" [size]="4" labelPosition="left" label="Lotados em minha Un." controlName="lotados_minha_unidade" [control]="filter!.controls.lotados_minha_unidade" (change)="onLotadosMinhaUnidadeChange($event)"></input-switch>
+        <input-switch [size]="4" labelPosition="left" label="Agrupar por Un." controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
     </toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
         <div class="row">

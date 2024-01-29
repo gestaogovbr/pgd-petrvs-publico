@@ -257,7 +257,7 @@ Route::middleware(['auth:sanctum'])->prefix('Avaliacao')->group(function () {
 Route::middleware(['auth:sanctum'])->prefix('Planejamento')->group(function () { defaultRoutes(PlanejamentoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalho')->group(function () {
     defaultRoutes(PlanoTrabalhoController::class);
-    Route::post('avaliar', [PlanoTrabalhoController::class, 'avaliar']);
+    //Route::post('avaliar', [PlanoTrabalhoController::class, 'avaliar']);
     Route::post('cancelar-plano', [PlanoTrabalhoController::class, 'cancelarPlano']);
     Route::post('cancelar-assinatura', [PlanoTrabalhoController::class, 'cancelarAssinatura']);
     Route::post('cancelar-avaliacao', [PlanoTrabalhoController::class, 'cancelarAvaliacao']);
@@ -280,7 +280,7 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoConsolidacao')->group(
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
     defaultRoutes(PlanoEntregaController::class);
     Route::post('arquivar', [PlanoEntregaController::class, 'arquivar']);
-    Route::post('avaliar', [PlanoEntregaController::class, 'avaliar']);
+    //Route::post('avaliar', [PlanoEntregaController::class, 'avaliar']);
     Route::post('cancelar-avaliacao', [PlanoEntregaController::class, 'cancelarAvaliacao']);
     Route::post('cancelar-conclusao', [PlanoEntregaController::class, 'cancelarConclusao']);
     Route::post('cancelar-homologacao', [PlanoEntregaController::class, 'cancelarHomologacao']);
@@ -292,6 +292,7 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
     Route::post('reativar', [PlanoEntregaController::class, 'reativar']);
     Route::post('retirar-homologacao', [PlanoEntregaController::class, 'retirarHomologacao']);
     Route::post('suspender', [PlanoEntregaController::class, 'suspender']);
+    Route::post('planos-impactados-por-alteracao-entrega', [PlanoEntregaController::class, 'planosImpactadosPorAlteracaoEntrega']);
 });
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntrega')->group(function () { 
     defaultRoutes(PlanoEntregaEntregaController::class); 

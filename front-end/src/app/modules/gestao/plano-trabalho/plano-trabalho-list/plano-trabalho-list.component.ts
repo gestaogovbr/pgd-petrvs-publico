@@ -35,6 +35,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
   public programaDao: ProgramaDaoService;
   public usuarioDao: UsuarioDaoService;
   public planoTrabalhoService: PlanoTrabalhoService;
+  public temAtribuicaoChefia: boolean = false;
   public routeStatus: FullRoute = { route: ["uteis", "status"] };
   public tipoModalidadeDao: TipoModalidadeDaoService;
   public multiselectAllFields: string[] = ["tipo_modalidade_id", "usuario_id", "unidade_id", "documento_id"];
@@ -77,6 +78,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     this.code = "MOD_PTR";
     this.filter = this.fh.FormBuilder({
       agrupar: { default: true },
+      lotados_minha_unidade: { default: false },
       usuario: { default: "" },
       status: { default: "" },
       unidade_id: { default: null },
@@ -99,6 +101,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
       "entregas.entrega",
       "entregas.reacoes.usuario:id,nome,apelido"
     ];
+    this.temAtribuicaoChefia = this.auth.isGestorAlgumaAreaTrabalho(false);
     this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }];
     this.BOTAO_ALTERAR = { label: "Alterar", icon: "bi bi-pencil-square", color: "btn-outline-info", onClick: this.edit.bind(this) };
     this.BOTAO_ARQUIVAR = { label: "Arquivar", icon: "bi bi-inboxes", onClick: this.arquivar.bind(this) };
@@ -233,6 +236,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     if (form.usuario?.length) result.push(["usuario.nome", "like", "%" + form.usuario.trim().replace(" ", "%") + "%"]);
     if (form.unidade_id?.length) result.push(["unidade_id", "==", form.unidade_id]);
     if (form.status) result.push(["status", "==", form.status]);
+    if (form.lotados_minha_unidade) result.push(["lotados_minha_unidade", "==", true]);
     //  (RI_PTR_C) Por padrão, os planos de trabalho retornados na listagem do grid são os que não foram arquivados.
     result.push(["incluir_arquivados", "==", this.filter!.controls.arquivados.value]);
     return result;
@@ -246,6 +250,10 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     }
   }
 
+  public onLotadosMinhaUnidadeChange(event: Event) {
+    this.grid!.reloadFilter();
+  }
+
   public dynamicMultiselectMenu = (multiselected: IIndexable): ToolbarButton[] => {
     let assinar = !!Object.keys(multiselected).length;
     let menu = [];
@@ -257,17 +265,17 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
   }
 
   public botaoAtendeCondicoes(botao: ToolbarButton, planoTrabalho: PlanoTrabalho): boolean {
-    let assinaturasExigidas = planoTrabalho.assinaturasExigidas;
+    let assinaturasExigidas = planoTrabalho._metadata?.assinaturasExigidas;
     let todasAssinaturasExigidas = [
       ...assinaturasExigidas.gestores_entidade,
       ...assinaturasExigidas.gestores_unidade_executora,
       ...assinaturasExigidas.gestores_unidade_lotacao,
       ...assinaturasExigidas.participante
     ];
-    let assinaturasFaltantes = this.planoTrabalhoService.assinaturasFaltantes(planoTrabalho.assinaturasExigidas, planoTrabalho.jaAssinaramTCR);
+    let assinaturasFaltantes = this.planoTrabalhoService.assinaturasFaltantes(planoTrabalho._metadata?.assinaturasExigidas, planoTrabalho._metadata?.jaAssinaramTCR);
     let haAssinaturasFaltantes = !!assinaturasFaltantes.participante.length || !!assinaturasFaltantes.gestores_unidade_executora.length || !!assinaturasFaltantes.gestores_unidade_lotacao.length || !!assinaturasFaltantes.gestores_entidade.length;
     let usuarioEhGestorUnidadeExecutora: boolean = this.unidadeService.isGestorUnidade(planoTrabalho.unidade_id);
-    let usuarioJaAssinouTCR: boolean = !!planoTrabalho.jaAssinaramTCR?.todas?.includes(this.auth.usuario?.id!);
+    let usuarioJaAssinouTCR: boolean = !!planoTrabalho._metadata?.jaAssinaramTCR?.todas?.includes(this.auth.usuario?.id!);
     let assinaturaUsuarioEhExigida: boolean = !!todasAssinaturasExigidas?.includes(this.auth.usuario?.id!);
     let planoIncluido = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'INCLUIDO';
     let usuarioEhParticipante = this.auth.usuario?.id == planoTrabalho.usuario_id;
@@ -281,71 +289,96 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     let planoPossuiEntrega = planoTrabalho.entregas.length > 0;
     if(botao == this.BOTAO_INFORMACOES && this.auth.hasPermissionTo("MOD_PTR")) {
       /*
-          (RN_PTR_S) CONSULTAR
-          Todos os participantes podem visualizar todos os planos de trabalho, desde que possuam a capacidade "MOD_PTR";
+      (RN_PTR_S) CONSULTAR
+      Todos os participantes podem visualizar todos os planos de trabalho, desde que possuam a capacidade "MOD_PTR";
       */
       return true;
     } else {
-      if(planoDeletado) return false; else {
+      if(planoDeletado) {
+        return false; 
+      } else {
+        let validoTabela1 = false;
+        let gestorUnidadeSuperior = planoTrabalho._metadata?.atribuicoesLogadoUnidadeSuperior.gestor || planoTrabalho._metadata?.atribuicoesLogadoUnidadeSuperior.gestorSubstituto;
+        let gestorLogado = planoTrabalho._metadata?.atribuicoesLogado.gestor || planoTrabalho._metadata?.atribuicoesLogado.gestorSubstituto;
         switch (botao) {
           case this.BOTAO_ALTERAR:
             /*
-              (RN_PTR_M) Condições para que um Plano de Trabalho possa ser alterado:
-              O usuário logado precisa possuir a capacidade "MOD_PTR_EDT", o Plano de Trabalho precisa ser válido (ou seja, nem deletado, nem arquivado, nem estar no status CANCELADO), e:
-                  - estando com o status 'INCLUIDO', o usuário logado precisa ser o participante do plano ou o gestor da Unidade Executora;
-                  - estando com o status 'AGUARDANDO_ASSINATURA', o usuário logado precisa ser um dos que já assinaram o TCR e todas as assinaturas tornam-se sem efeito;
-                  - estando com o status 'ATIVO', o usuário precisa ser gestor da Unidade Executora e possuir a capacidade MOD_PTR_EDT_ATV. Após alterado, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
+            (RN_PTR_M) Condições para que um Plano de Trabalho possa ser alterado:
+              - o usuário logado precisa possuir a capacidade "MOD_PTR_EDT", o Plano de Trabalho precisa ser válido (ou seja, nem deletado, nem arquivado, nem estar no status CANCELADO), e:
+                - estando com o status 'INCLUIDO' ou 'AGUARDANDO_ASSINATURA', o usuário logado precisa atender os critérios da ação Alterar da TABELA_1;
+                - estando com o status 'ATIVO', o usuário precisa possuir a capacidade MOD_PTR_EDT_ATV e atender os critérios da ação Alterar da TABELA_1;
+              - Após alterado, e no caso se exija assinaturas no TCR, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
+              - A alteração não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA (RN_PTR_AA)
             */
+            if (planoTrabalho._metadata?.atribuicoesParticipante.gestor) { 
+              validoTabela1 = gestorUnidadeSuperior;
+            } else if (planoTrabalho._metadata?.atribuicoesParticipante.gestorSubstituto) { 
+              validoTabela1 = gestorUnidadeSuperior || planoTrabalho._metadata?.atribuicoesLogado.gestor;
+            } else if (planoTrabalho._metadata?.atribuicoesParticipante.gestorDelegado) { 
+              validoTabela1 = gestorLogado;
+            } else if (usuarioEhParticipante) { 
+              validoTabela1 = planoTrabalho._metadata?.usuarioEhParticipanteHabilitado;
+            }
             let condition1 = this.auth.hasPermissionTo("MOD_PTR_EDT");
             let condition2 = this.planoTrabalhoService.isValido(planoTrabalho);
-            let condition3 = planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora);
-            let condition4 = planoAguardandoAssinatura && usuarioJaAssinouTCR;
-            let condition5 = planoAtivo && usuarioEhGestorUnidadeExecutora && this.auth.hasPermissionTo("MOD_PTR_EDT_ATV");
-            return condition1 && condition2 && (condition3 || condition4 || condition5);
+            let condition3 = (planoIncluido || planoAguardandoAssinatura) && validoTabela1;
+            let condition4 = planoAtivo && validoTabela1 && this.auth.hasPermissionTo("MOD_PTR_EDT_ATV");
+            return condition1 && condition2 && (condition3 || condition4);
           case this.BOTAO_ARQUIVAR:
             /*
-              (RN_PTR_N) ARQUIVAR
-              O plano precisa estar com o status CONCLUIDO ou CANCELADO, não ter sido arquivado, e:
-                - o usuário logado precisa ser o participante ou o gestor da Unidade Executora;
+            (RN_PTR_N) Condições para que um Plano de Trabalho possa ser arquivado:
+              - o plano precisa estar com o status CONCLUIDO ou CANCELADO, não ter sido arquivado, e:
+              - o usuário logado precisa ser o participante ou o gestor da Unidade Executora;
             */
             return (planoConcluido || planoCancelado) && !planoArquivado && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora);
           case this.BOTAO_ASSINAR:
             /*
-              (RN_PTR_O) ASSINAR
-                - o plano precisa possuir ao menos uma entrega, e:
-                - o plano precisa estar com o status INCLUIDO, e:
-                  - o usuário logado precisa ser o participante do plano ou o gestor da sua Unidade Executora, e
-                  - a assinatura do usuário logado precisa ser uma das exigidas pelo Programa de Gestão, e ele não ter ainda assinado;
-                - ou o plano precisa estar com o status AGUARDANDO_ASSINATURA, e:
-                  - a assinatura do usuário logado precisa ser uma das exigidas pelo Programa de Gestão, e ele não ter ainda assinado;
+            (RN_PTR_O) Condições para que um Plano de Trabalho possa ser assinado:
+              - estar no status INCLUIDO ou AGUARDANDO_ASSINATURA, e
+                - o plano precisa possuir ao menos uma entrega, e
+                - o usuário logado precisa atender os critérios da ação Assinar da TABELA_1, e
+                - a assinatura do usuário logado precisa ser uma das exigidas pelo Programa de Gestão, respeitando a TABELA_3, e ele não ter ainda assinado;
+              - Enquanto faltar assinatura no TCR, o plano vai para o (ou permanece no) status de 'AGUARDANDO_ASSINATURA'. Quando o último assinar o TCR, o plano vai para o status 'ATIVO';                  
             */
-            let condicao1 = usuarioEhParticipante || usuarioEhGestorUnidadeExecutora;
-            let condicao2 = assinaturaUsuarioEhExigida && !usuarioJaAssinouTCR;
-            return planoPossuiEntrega && ((planoIncluido && condicao1 && condicao2) || (planoAguardandoAssinatura && condicao2));
+            let condicao1 = (planoIncluido || planoAguardandoAssinatura);
+            let condicao2 = planoPossuiEntrega;
+            let condicao3 = assinaturaUsuarioEhExigida && !usuarioJaAssinouTCR;
+            return condicao1 && condicao2 && condicao3;
           case this.BOTAO_ATIVAR:
             /*
-              (RN_PTR_P) ATIVAR
-              O plano precisa estar no status 'INCLUIDO', e
-                  - o usuário logado precisa ser o participante do plano ou gestor da Unidade Executora, e
-                  - nenhuma assinatura no TCR deve ser exigida pelo programa, e
-                  - o plano de trabalho precisa ter ao menos uma entrega;        
+            (RN_PTR_P) Condições para que um Plano de Trabalho possa ser ativado:
+              - o plano precisa estar no status 'INCLUIDO', e
+                - o usuário logado precisa respeitar a ação Ativar da TABELA_1, e
+                - nenhuma assinatura no TCR ser exigida pelo programa, e
+                - o plano de trabalho precisa ter ao menos uma entrega;
             */
-            return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && !assinaturasExigidas?.todas?.length && planoPossuiEntrega;
+            if (planoTrabalho._metadata?.atribuicoesParticipante.gestor) { 
+              validoTabela1 = gestorUnidadeSuperior || planoTrabalho._metadata?.usuarioEhParticipanteHabilitado;
+            } else if (planoTrabalho._metadata?.atribuicoesParticipante.gestorSubstituto) { 
+              validoTabela1 = planoTrabalho._metadata?.atribuicoesLogado.gestor || (usuarioEhParticipante && planoTrabalho._metadata?.usuarioEhParticipanteHabilitado) || (!usuarioEhParticipante && planoTrabalho._metadata?.atribuicoesLogado.gestorSubstituto);
+            } else if (planoTrabalho._metadata?.atribuicoesParticipante.gestorDelegado) { 
+              validoTabela1 = planoTrabalho._metadata?.atribuicoesLogado.gestor || planoTrabalho._metadata?.atribuicoesLogado.gestorSubstituto || (usuarioEhParticipante && planoTrabalho._metadata?.usuarioEhParticipanteHabilitado);
+            } else if (usuarioEhParticipante) { 
+              validoTabela1 = gestorLogado || planoTrabalho._metadata?.usuarioEhParticipanteHabilitado;
+            }
+            return planoIncluido && validoTabela1 && !assinaturasExigidas?.todas?.length && planoPossuiEntrega;
           case this.BOTAO_CANCELAR_ASSINATURA:
             /*
-              (RN_PTR_Q) CANCELAR ASSINATURA
-              O plano precisa estar no status 'AGUARDANDO_ASSINATURA'; e
+            (RN_PTR_Q) Condições para que um Plano de Trabalho possa ter uma assinatura cancelada:
+              - o plano precisa estar no status 'AGUARDANDO_ASSINATURA'; e
                 - o usuário logado precisa já ter assinado o TCR;
+              - Após o cancelamento da assinatura do usuário logado, se existir assinatura(s) de outro(s) usuário(s), o plano permanece no status 'AGUARDANDO_ASSINATURA'. Caso contrário, retrocessará para o status 'INCLUIDO';
             */
             return planoAguardandoAssinatura && usuarioJaAssinouTCR;
           case this.BOTAO_CANCELAR_PLANO:
             /*
-              (RN_PTR_R) CANCELAR 
-              O usuário logado precisa possuir a capacidade "MOD_PTR_CNC", e
-                - o plano não pode ter sido deletado e precisa estar em um dos seguintes status: INCLUIDO, AGUARDANDO_ASSINATURA, ATIVO ou CONCLUIDO; e
+            (RN_PTR_R) Condições para que um Plano de Trabalho possa ser cancelado:
+              - o usuário logado precisa possuir a capacidade "MOD_PTR_CNC", e
+                - o plano precisa estar em um dos seguintes status: INCLUIDO, AGUARDANDO_ASSINATURA, ATIVO; e
+                - não possuir nenhuma atividade lançada e não possuir nenhuma consolidação CONCLUIDO/AVALIADO; [RN_PTR_K]
                 - o usuário logado precisa ser gestor da Unidade Executora;
             */
-            return this.auth.hasPermissionTo("MOD_PTR_CNC") && ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO', 'CONCLUIDO'].includes(planoTrabalho.status);
+            return !!planoTrabalho._metadata?.podeCancelar;
           case this.BOTAO_DESARQUIVAR:
             /*
               (RN_PTR_T) DESARQUIVAR
@@ -355,14 +388,14 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
             return planoArquivado && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora);
           case this.BOTAO_ENVIAR_ASSINATURA:
             /*
-              (RN_PTR_U) ENVIAR PARA ASSINATURA
-              O plano precisa estar com o status INCLUIDO; e
-                - o usuário logado precisa ser o participante do plano ou gestor da sua Unidade Executora; e
-                - se a assinatura do usuário logado for exigida, ele já deve ter assinado o TCR; e
+            (RN_PTR_U) Condições para que um Plano de Trabalho possa ser enviado para assinatura:
+              - o plano precisa estar com o status INCLUIDO; e
+                - o usuário logado precisa atender os critérios da ação Assinar da TABELA_1, e
+                - a assinatura do usuário logado não ser exigida, e caso seja, então ele já deve ter assinado o TCR (salvaguarda); e
                 - devem existir assinaturas exigíveis ainda pendentes; e
-                - o plano precisa possuir ao menos uma entrega;
+                - o plano precisa possuir ao menos uma entrega.
             */
-            return planoIncluido && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora) && (!assinaturaUsuarioEhExigida || usuarioJaAssinouTCR) && haAssinaturasFaltantes && planoPossuiEntrega;
+            return planoIncluido && (!assinaturaUsuarioEhExigida || usuarioJaAssinouTCR) && haAssinaturasFaltantes && planoPossuiEntrega;
           case this.BOTAO_REATIVAR:
             /*
               (RN_PTR_W) REATIVAR
@@ -507,19 +540,6 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
         };
       }
     });
-  }
-
-  public canAdd() {
-    return this.auth.hasPermissionTo('MOD_PTR_INCL');
-    //IMPLEMENTAR AS DEMAIS CONDIÇÕES NA VALIDAÇÃO DO FORM *******************
-    /*
-    (RN_PTR_V) INCLUIR/INSERIR
-    O usuário logado precisa possuir a capacidade "MOD_PTR_INCL", e:
-        - o usuário logado precisa ser um participante do PGD, habilitado, ou ser gestor da Unidade Executora do plano; (RN_PTR_B); e
-        - o participante do plano precisa estar lotado em uma das áreas de trabalho do usuário logado, ou este deve possuir a capacidade MOD_PTR_USERS_INCL; e
-        - o participante do plano precisa estar lotado na Unidade Executora, ou o usuário logado possuir a capacidade MOD_PTR_INCL_SEM_LOT; e
-        - o novo Plano de Trabalho não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA
-    */
   }
 
 }
