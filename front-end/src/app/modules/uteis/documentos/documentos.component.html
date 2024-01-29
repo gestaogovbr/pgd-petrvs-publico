@@ -1,4 +1,4 @@
-<grid [items]="items" [form]="form!" #gridDocumentos [editable]="disabled ? undefined : 'true'" [selectable]="true" [add]="addDocumento.bind(this)" [load]="loadDocumento.bind(this)" [remove]="removeDocumento.bind(this)" [save]="saveDocumento.bind(this)" [editEnd]="editEndDocumento.bind(this)" [hasAdd]="!disabled" [hasEdit]="!disabled" [hasDelete]="false">
+<grid [items]="items" [form]="form!" #gridDocumentos [editable]="disabled ? undefined : 'true'" [selectable]="true" [add]="addDocumento.bind(this)" [load]="loadDocumento.bind(this)" [remove]="removeDocumento.bind(this)" [save]="saveDocumento.bind(this)" [editEnd]="editEndDocumento.bind(this)" [hasAdd]="!disabled" [hasEdit]="canEdit" [hasDelete]="false">
     <side-panel [size]="8" fullSizeOnEdit [noToolbar]="editingId ? 'true' : undefined" [template]="panelDocumento" [editTemplate]="panelDocumentoEdit">
         <ng-template let-row="row" #panelDocumento>
             <h5>{{row?.titulo || "Preview do template"}}</h5>
@@ -39,6 +39,6 @@
                 </div>
             </ng-template>
         </column>
-        <column type="options" [dynamicButtons]="documentoDynamicButtons.bind(this)"></column>
+        <column type="options" always [dynamicButtons]="documentoDynamicButtons.bind(this)"></column>
     </columns>
 </grid>

@@ -124,7 +124,7 @@ class AtividadeService extends ServiceBase
         $status = $metadados["pausado"] ? "PAUSADO" : 
             ($metadados["concluido"] ? "CONCLUIDO" : 
             ($metadados["iniciado"] ? "INICIADO" : "INCLUIDO"));
-        $this->status->atualizaStatus($entity, $status);
+        $this->statusService->atualizaStatus($entity, $status);
     }
 
     public function afterStore($entity, $action) {
@@ -432,7 +432,7 @@ class AtividadeService extends ServiceBase
             }*/
             $this->validateIniciar($data);
             $this->update($data, $unidade, false);
-            $this->status->atualizaStatus($atividade, "INICIADO", "Iniciada nessa data manualmente");
+            $this->statusService->atualizaStatus($atividade, "INICIADO", "Iniciada nessa data manualmente");
             if($suspender) {
                 $unidadeService = new UnidadeService();
                 $dataHora = $unidadeService->hora($unidade->id);
@@ -466,7 +466,7 @@ class AtividadeService extends ServiceBase
                 "data_arquivamento" => null,
                 "data_inicio" => null
             ], $unidade, false);
-            $this->status->atualizaStatus($atividade, "INCLUIDO", "Cancelado o inínio nessa data");
+            $this->statusService->atualizaStatus($atividade, "INCLUIDO", "Cancelado o inínio nessa data");
             DB::commit();
         } catch (Throwable $e) {
             DB::rollback();
@@ -492,7 +492,7 @@ class AtividadeService extends ServiceBase
             }
             $conclusao["data_arquivamento"] = $arquivar ? Carbon::now() : null;
             $this->update($conclusao, $unidade, false);
-            $this->status->atualizaStatus($atividade, "CONCLUIDO", "Concluído nessa data");
+            $this->statusService->atualizaStatus($atividade, "CONCLUIDO", "Concluído nessa data");
             $comentarioTecnico = Comentario::where("atividade_id", $conclusao["id"])->where("tipo", "TECNICO")->first();
             if(!empty($comentarioTecnico)) {
                 $comentarioService->destroy($comentarioTecnico->id);
@@ -531,7 +531,7 @@ class AtividadeService extends ServiceBase
                 "tempo_despendido" => null,
                 "documento_entrega_id" => null
             ], $unidade, false);
-            $this->status->atualizaStatus($atividade, "INICIADO", "Cancelado conclusão nessa data");
+            $this->statusService->atualizaStatus($atividade, "INICIADO", "Cancelado conclusão nessa data");
             $comentarioTecnico = Comentario::where("atividade_id", $atividade->id)->where("tipo", "TECNICO")->first();
             if(!empty($comentarioTecnico)) {
                 $comentarioService->destroy($comentarioTecnico->id);
@@ -577,7 +577,7 @@ class AtividadeService extends ServiceBase
                 throw new ServerException("ValidateAtividade", "Demanda já pausada!");
             }
             /* Atualiza o status da atividade */
-            $this->status->atualizaStatus($atividade, "PAUSADO", "Pausado nessa data");
+            $this->statusService->atualizaStatus($atividade, "PAUSADO", "Pausado nessa data");
             DB::commit();
         } catch (Throwable $e) {
             DB::rollback();
@@ -611,7 +611,7 @@ class AtividadeService extends ServiceBase
                     "data_fim" => $pausa["data"]
                 ], $unidade, false);
                 /* Atualiza o status da atividade */
-                $this->status->atualizaStatus($atividade, "INICIADO", "Reiniciado nessa data");
+                $this->statusService->atualizaStatus($atividade, "INICIADO", "Reiniciado nessa data");
             } else {
                 throw new ServerException("ValidateAtividade", "Não há pausa para reiniciar");
             }

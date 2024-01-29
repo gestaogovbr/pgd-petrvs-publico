@@ -26,15 +26,9 @@ class AvaliacaoService extends ServiceBase {
     {
       /* (RN_AVL_5) [PT] Ao realizar qualquer avaliação o status da consolidação deverá ir para AVALIADO; */
       if(!empty($avaliacao->plano_trabalho_consolidacao_id)) {
-        $consolidacao = $avaliacao->planoTrabalhoConsolidacao;
-        $consolidacao->avaliacao_id = $avaliacao->id;
-        $consolidacao->save();
-        $this->status->atualizaStatus($consolidacao, 'AVALIADO');
+        $this->planoTrabalhoConsolidacaoService->avaliar($avaliacao);
       } else if(!empty($avaliacao->plano_entrega_id)) {
-        $planoEntrega = $avaliacao->planoEntrega;
-        $planoEntrega->avaliacao_id = $avaliacao->id;
-        $planoEntrega->save();
-        $this->status->atualizaStatus($planoEntrega, 'AVALIADO');
+        $this->planoEntregaService->avaliar($avaliacao);
       }
     }    
 
@@ -54,11 +48,11 @@ class AvaliacaoService extends ServiceBase {
             if(!empty($consolidacao)) {
                 $consolidacao->avaliacao_id = null;
                 $consolidacao->save();
-                $this->status->atualizaStatus($consolidacao, 'CONCLUIDO');
+                $this->statusService->atualizaStatus($consolidacao, 'CONCLUIDO');
             } else if(!empty($planoEntrega)) {
                 $planoEntrega->avaliacao_id = null;
                 $planoEntrega->save();
-                $this->status->atualizaStatus($planoEntrega, 'CONCLUIDO');
+                $this->statusService->atualizaStatus($planoEntrega, 'CONCLUIDO');
             }
             DB::commit();
         } catch (Throwable $e) {
