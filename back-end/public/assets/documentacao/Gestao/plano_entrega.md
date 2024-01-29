@@ -41,6 +41,23 @@ Campos obrigatórios:
     criacao_usuario_id
 ~~~
 
+## RESPONSABILIDADES
+
+```
++  => Unidade superior
+CF => Chefe
+CS => Chefe Sub.
+DL => Delegado
+LC => Lotado/Colaborador
+
+                Unidade Executora
+--------------+----------------------
+Inclusão        CF,CS,DL,CF+,CS+,DL+
+Edição          CF,CS,DL,CF+,CS+,DL+
+Avaliação       CF+,CS+
+ 
+```
+
 ## REGRAS DE NEGÓCIO
 
 Consideremos a seguinte hierarquia:
