@@ -248,7 +248,7 @@ class PlanoTrabalhoService extends ServiceBase
     }
     if ($action == ServiceBase::ACTION_INSERT) {
       /* (RN_PTR_AC) Quando um participante tiver um plano de trabalho criado, ele se tornará automaticamente um COLABORADOR da sua unidade executora; */
-      if (!$this->usuarioService->isIntegrante("COLABORADOR", $plano->usuario_id, $plano->unidade_id)) {
+      if (!$this->usuarioService->isIntegrante("COLABORADOR", $plano->unidade_id, $plano->usuario_id)) {
         $this->unidadeIntegranteAtribuicaoService->store([
           'unidade_integrante_id' => UnidadeIntegrante::firstOrCreate(['unidade_id' => $plano->unidade_id, 'usuario_id' => $plano->usuario_id])->id,
           'atribuicao' => 'COLABORADOR'
@@ -651,7 +651,7 @@ class PlanoTrabalhoService extends ServiceBase
     /* (RN_PTR_K) O Plano de Trabalho somente poderá ser cancelado se não houver nenhuma atividade e nenhum periodo consolidado. Os afastamentos e ocorrências continuam válidas no sistema, somente removendo o vinculo com a consolidação; */
     $planoTrabalho = PlanoTrabalho::find($planoId);
     foreach ($planoTrabalho->entregas as $entrega) {
-        $atividades = $entrega->atividades->map(fn($x) => "#" . $x->numero);
+        $atividades = $entrega->atividades->map(fn($x) => "#" . $x->numero)->toArray();
         if (count($atividades) > 0) return "Somente é possível cancelar plano de trabalho que não tenha atividade lançada. Atividade(s): " . implode(", ", $atividades);
     } 
     foreach ($planoTrabalho->consolidacoes as $consolidacao) {
@@ -670,7 +670,7 @@ class PlanoTrabalhoService extends ServiceBase
         'podeCancelar' => empty($this->validateCancelamento($row->id)),
         'atribuicoesParticipante' => $this->usuarioService->atribuicoesGestor($row->unidade_id, $row->usuario_id),
         'atribuicoesLogado' => $this->usuarioService->atribuicoesGestor($row->unidade_id),
-        'atribuicoesLogadoUnidadeSuperior' => empty($unidade->unidade_pai_id) ? ["gestor" => false, "gestorSubstituto" => false, "gestorDelegado" => false] : $this->usuarioService->atribuicoesGestor($row->unidade_id, $unidade->unidade_pai_id),
+        'atribuicoesLogadoUnidadeSuperior' => empty($unidade->unidade_pai_id) ? ["gestor" => false, "gestorSubstituto" => false, "gestorDelegado" => false] : $this->usuarioService->atribuicoesGestor($unidade->unidade_pai_id),
         'usuarioEhParticipanteHabilitado' => $this->usuario->isParticipanteHabilitado(null, $row->programa_id)
       ];
     }
@@ -703,7 +703,7 @@ class PlanoTrabalhoService extends ServiceBase
     $result["gestorUnidadeSuperior"] = $result["gestoresUnidadeSuperior"]["gestor"]?->id == $logado->id || count(array_filter($result["gestoresUnidadeSuperior"]["gestoresSubstitutos"], fn ($value) => $value->id == $logado->id)) > 0;
     $result["nrEntregas"] = empty($planoTrabalho['entregas']) ? 0 : count($planoTrabalho['entregas']);
     $result["participanteLotadoAreaTrabalho"] = parent::loggedUser()->areasTrabalho->find(fn ($at) => $this->usuarioService->isLotacao($planoTrabalho["usuario_id"], $at->unidade->id)) != null;
-    $result["participanteColaboradorUnidadeExecutora"] = $this->usuarioService->isIntegrante("COLABORADOR", $planoTrabalho["usuario_id"], $planoTrabalho["unidade_id"]);
+    $result["participanteColaboradorUnidadeExecutora"] = $this->usuarioService->isIntegrante("COLABORADOR", $planoTrabalho["unidade_id"], $planoTrabalho["usuario_id"]);
     $result["participanteLotadoUnidadeExecutora"] = $this->usuarioService->isLotacao($planoTrabalho["usuario_id"], $planoTrabalho["unidade_id"]);
     $result["planoAguardandoAssinatura"] = $this->isPlano("AGUARDANDO_ASSINATURA", $planoTrabalho);
     $result["planoArquivado"] = empty($planoTrabalho['id']) ? false : PlanoTrabalho::withTrashed()->find($planoTrabalho['id'])->data_arquivamento != null;
@@ -911,18 +911,18 @@ class PlanoTrabalhoService extends ServiceBase
       if ($programa->plano_trabalho_assinatura_gestor_entidade && isset($entidade)) $ids["gestores_entidade"] = array_values(array_filter([$entidade->gestor_id, $entidade->gestor_substituto_id]));
       if ($programa->plano_trabalho_assinatura_gestor_unidade && isset($unidade)) {
         $atribuicoesUnidadeExecutora = $this->usuarioService->atribuicoesGestor($planoTrabalho['unidade_id'], $planoTrabalho['usuario_id']);
-        $gestores = $atribuicoesUnidadeExecutora["gestor"] ? array_merge([$unidade->unidadePai?->gestor?->usuario_id], $unidade->unidadePai?->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray()) :
-          ($atribuicoesUnidadeExecutora["gestorSubstituto"] ? array_merge([$unidade->gestor?->usuario_id], $unidade->gestoresSubstitutos?->filter(fn($x) => $x->usuario_id != $participante->id)->map(fn($x) => $x->usuario_id)->toArray()) :
-          ($atribuicoesUnidadeExecutora["gestorDelegado"] ? array_merge([$unidade->gestor?->usuario_id], $unidade->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray()) :
-          array_merge([$unidade->gestor?->usuario_id], $unidade->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray())));
+        $gestores = $atribuicoesUnidadeExecutora["gestor"] ? array_merge([$unidade->unidadePai?->gestor?->usuario_id], $unidade->unidadePai?->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
+          ($atribuicoesUnidadeExecutora["gestorSubstituto"] ? array_merge([$unidade->gestor?->usuario_id], $unidade->gestoresSubstitutos?->filter(fn($x) => $x->usuario_id != $participante->id)->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
+          ($atribuicoesUnidadeExecutora["gestorDelegado"] ? array_merge([$unidade->gestor?->usuario_id], $unidade->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
+          array_merge([$unidade->gestor?->usuario_id], $unidade->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? [])));
         $ids["gestores_unidade_executora"] = array_values(array_filter($gestores));
       }
       if ($programa->plano_trabalho_assinatura_gestor_lotacao && isset($lotacao)) {
         $atribuicoesUnidadeLotacao = $this->usuarioService->atribuicoesGestor($lotacao->id, $planoTrabalho['usuario_id']);
-        $gestores = $atribuicoesUnidadeLotacao["gestor"] ? array_merge([$lotacao->unidadePai?->gestor?->usuario_id], $lotacao->unidadePai?->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray()) :
-          ($atribuicoesUnidadeLotacao["gestorSubstituto"] ? array_merge([$lotacao->gestor?->usuario_id], $lotacao->gestoresSubstitutos?->filter(fn($x) => $x->usuario_id != $participante->id)->map(fn($x) => $x->usuario_id)->toArray()) :
-          ($atribuicoesUnidadeLotacao["gestorDelegado"] ? array_merge([$lotacao->gestor?->usuario_id], $lotacao->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray()) :
-          array_merge([$lotacao->gestor?->usuario_id], $lotacao->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray())));
+        $gestores = $atribuicoesUnidadeLotacao["gestor"] ? array_merge([$lotacao->unidadePai?->gestor?->usuario_id], $lotacao->unidadePai?->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
+          ($atribuicoesUnidadeLotacao["gestorSubstituto"] ? array_merge([$lotacao->gestor?->usuario_id], $lotacao->gestoresSubstitutos?->filter(fn($x) => $x->usuario_id != $participante->id)->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
+          ($atribuicoesUnidadeLotacao["gestorDelegado"] ? array_merge([$lotacao->gestor?->usuario_id], $lotacao->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
+          array_merge([$lotacao->gestor?->usuario_id], $lotacao->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? [])));
         $ids["gestores_unidade_lotacao"] = array_values(array_filter($gestores));
       }
     } else {
