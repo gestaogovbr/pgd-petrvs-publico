@@ -843,6 +843,8 @@ class IntegracaoService extends ServiceBase {
 
 
 
+
+
                         $vinculo = array([
                             'usuario_id' => $id_user,
                             'unidade_id' => $unidade_exercicio->id,
