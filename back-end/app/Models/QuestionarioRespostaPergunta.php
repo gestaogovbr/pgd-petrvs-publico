@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Models\ModelBase;
+use App\Models\QuestionarioPergunta;
+use App\Models\QuestionarioResposta;
 use App\Casts\AsJson;
 
 

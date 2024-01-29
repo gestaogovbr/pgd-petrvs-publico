@@ -15,6 +15,7 @@ import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { PlanoTrabalhoService } from '../plano-trabalho.service';
 import { Programa } from 'src/app/models/programa.model';
 import { LookupItem } from 'src/app/services/lookup.service';
+import { UnidadeService } from 'src/app/services/unidade.service';
 
 @Component({
   selector: 'app-plano-trabalho-consolidacao-avaliacao',
@@ -28,6 +29,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
   public unidadeDao: UnidadeDaoService;
   public avaliacaoDao: AvaliacaoDaoService;
   public planoTrabalhoService: PlanoTrabalhoService;
+  public unidadeService: UnidadeService;
   public extraJoin: string[];
   public extra: any;
 
@@ -38,6 +40,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
 
   constructor(public injector: Injector) {
     super(injector, PlanoTrabalhoConsolidacao, PlanoTrabalhoConsolidacaoDaoService);
+    this.unidadeService = injector.get<UnidadeService>(UnidadeService);
     /* Inicializações */
     this.join = [
       "avaliacao", // "avaliacao.tipoAvaliacao.notas"
@@ -47,7 +50,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
       "avaliacao.tipoAvaliacao.notas",
       "planoTrabalho.unidade:id,sigla,nome", 
       "planoTrabalho.unidade.gestor:id,unidade_id,usuario_id", 
-      "planoTrabalho.unidade.gestorSubstituto:id,unidade_id,usuario_id", 
+      "planoTrabalho.unidade.gestoresSubstitutos:id,unidade_id,usuario_id", 
       "planoTrabalho.tipoModalidade:id,nome", 
       "planoTrabalho.usuario:id,nome,apelido,foto_perfil,url_foto"//id,nome,apelido,url_foto,foto_perfil
     ];
@@ -91,7 +94,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
   }
 
   public get canFilterSubordinadas(): string | undefined {
-    return this.auth.isGestorUnidade(this.filter!.controls.unidade_id.value) ? undefined : 'true';
+    return this.unidadeService.isGestorUnidade(this.filter!.controls.unidade_id.value) ? undefined : 'true';
   }
 
   public usuarioSeparator(separator: GridGroupSeparator) {
@@ -109,7 +112,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
   }
 
   public onUnidadeChange(event: Event) {
-    if(!this.auth.isGestorUnidade(this.filter!.controls.unidade_id.value)) this.filter!.controls.unidades_subordinadas.setValue(false);
+    if(!this.unidadeService.isGestorUnidade(this.filter!.controls.unidade_id.value)) this.filter!.controls.unidades_subordinadas.setValue(false);
   }
 
   public onGridLoad(rows?: Base[]) {
@@ -149,7 +152,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
     const unidadeId = consolidacao.plano_trabalho!.unidade_id;
     const anterior = this.anterior(row as PlanoTrabalhoConsolidacao);
     const proximo = this.proximo(row as PlanoTrabalhoConsolidacao);
-    const isAvaliador = this.auth.hasPermissionTo("MOD_PTR_CSLD_AVAL") && (this.auth.isGestorUnidade(unidadeId) || this.auth.isIntegrante('AVALIADOR_PLANO_TRABALHO', unidadeId));
+    const isAvaliador = this.auth.hasPermissionTo("MOD_PTR_CSLD_AVAL") && (this.unidadeService.isGestorUnidade(unidadeId) || this.auth.isIntegrante('AVALIADOR_PLANO_TRABALHO', unidadeId));
     const isUsuarioDoPlano = this.auth.usuario!.id == usuarioId;
     const BOTAO_AVALIAR = { hint: "Avaliar", icon: "bi bi-star", color: "btn-outline-warning", onClick: (row: PlanoTrabalhoConsolidacao) => this.planoTrabalhoService.avaliar(row, programa, this.refreshConsolidacao.bind(this)) };
     const BOTAO_REAVALIAR = { hint: "Reavaliar", icon: "bi bi-star-half", color: "btn-outline-warning", onClick: (row: PlanoTrabalhoConsolidacao) => this.planoTrabalhoService.avaliar(row, programa, this.refreshConsolidacao.bind(this)) };

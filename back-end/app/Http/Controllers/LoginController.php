@@ -46,7 +46,7 @@ class LoginController extends Controller
             $entidadeId = $request->session()->has("entidade_id") ? $request->session()->get("entidade_id") : null;
             $usuario = Usuario::where("id", $usuario->id)->with([
                 "areasTrabalho" => function ($query) use ($entidadeId) {
-                    $query->with(["unidade.gestor.usuario", "unidade.gestorSubstituto.usuario", "unidade.gestorDelegado.usuario", "unidade.cidade", "unidade.planosEntrega", "unidade.unidadePai.planosEntrega", "atribuicoes"])->whereHas('unidade', function ($query) use ($entidadeId) {
+                    $query->with(["unidade.gestor.usuario", "unidade.gestoresSubstitutos.usuario", "unidade.gestoresDelegados.usuario", "unidade.cidade", "unidade.planosEntrega", "unidade.unidadePai.planosEntrega", "atribuicoes"])->whereHas('unidade', function ($query) use ($entidadeId) {
                         return  $query->where('entidade_id', '=', $entidadeId);
                     });
                 },
@@ -608,46 +608,6 @@ class LoginController extends Controller
         }
         return LogError::newError('As credenciais fornecidas são inválidas.');
     }
-
-    /**
-     * Handle an authentication attempt.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-
-    /*
-    public function authenticateApiLoginUnico(Request $request, LoginUnicoService $auth)
-    {
-        $credentials = $request->validate([
-            'code' => ['required'],
-            'state' => ['required']
-        ]);
-        $tokenData = $auth->getAccessToken($credentials['code']);
-        if(!isset($tokenData['error'])) {
-            $response = $auth->getUserToken($tokenData['access_token']);
-            $state=json_decode(base64_decode($credentials['state']),0);
-            $with = ["feriados", "gestor", "gestorSubstituto"];
-            $entidade = Entidade::with($with)->where("sigla", $state->entidade)->first();
-            $request->session()->put("entidade_id", $entidade->id);
-            $usuario = $this->registrarUsuario($request, Usuario::where('cpf',strtolower( $response['sub']))->first());
-            if (($usuario)) {
-                Auth::loginUsingId($usuario->id);
-                $request->session()->regenerate();
-                $request->session()->put("kind", "LOGINUNICO");
-                return response()->json([
-                    'success' => true,
-                    "entidade" => $entidade,
-                    "usuario" => $usuario,
-                    "horario_servidor" => CalendarioService::horarioServidor()
-                ]);
-            } else {
-                return LogError::newError('As credenciais fornecidas são inválidas.');
-            }
-        }
-        return LogError::newError('As credenciais fornecidas são inválidas.');
-    }
-    */
 
     /**
      * Verify an firebase token

@@ -237,6 +237,7 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_PENT_ENTR_EDT", "Permite editar entregas de um plano de entregas"],
                 ["MOD_PENT_ENTR_EXCL", "Permite excluir entregas de um plano de entregas"],
                 ["MOD_PENT_ENTR_INCL", "Permite incluir entregas de um plano de entregas"],
+                ["MOD_PENT_ENTR_EXTRPL", "Permite incluir entregas que extrapolem o plano de entregas"],
 
                 /* Capacidades do módulo PLANO DE ENTREGAS - ENTREGAS - PROGRESSOS*/
                 ["MOD_PENT_ENTR_PRO_INCL", "Permite incluir o progresso da entrega de um plano de entregas"],
@@ -251,10 +252,15 @@ class TipoCapacidadeService extends ServiceBase {
                 ["MOD_PRGT_EDT", "Permite editar programas de gestão"],
                 ["MOD_PRGT_EXCL", "Permite excluir programas de gestão"],
                 ["MOD_PRGT_INCL", "Permite incluir programas de gestão"],
-                ["MOD_PRGT_PART", "Participantes do programa"],
-                ["MOD_PRGT_PART_HAB", "Permite habilitar participantes do programa"],
-                ["MOD_PRGT_PART_INCL", "Permite incluir participantes do programa"],
-                ["MOD_PRGT_PART_DESAB", "Permite desabilitar participantes do programa"],
+            ]
+        ], [
+            "codigo"=> "MOD_PART",
+            "descricao"=> "Módulo de Participantes do Programa de Gestão",
+            "capacidades"=> [
+                /* Capacidades do módulo PARTICIPANTES DO PROGRAMA DE GESTÃO */
+                ["MOD_PART_HAB", "Permite habilitar participantes do programa"],
+                ["MOD_PART_INCL", "Permite incluir participantes do programa"],
+                ["MOD_PART_DESAB", "Permite desabilitar participantes do programa"],
             ]
         ], [
             "codigo"=> "MOD_PROJ", //ok

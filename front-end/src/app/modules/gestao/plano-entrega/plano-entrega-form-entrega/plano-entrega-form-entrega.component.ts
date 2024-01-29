@@ -29,6 +29,8 @@ import { Unidade } from 'src/app/models/unidade.model';
 import { QueryOrderBy } from 'src/app/dao/dao-base.service';
 import { Checklist } from 'src/app/models/atividade.model';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
+import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
+import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 
 @Component({
   selector: 'plano-entrega-form-entrega',
@@ -62,6 +64,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   public itensQualitativo: LookupItem[] = [];
   public planejamentoInstitucionalDao: PlanejamentoDaoService;
   public planoEntregaEntregaDao: PlanoEntregaEntregaDaoService;
+  public planoEntregaDao: PlanoEntregaDaoService;
   public cadeiaValorDao: CadeiaValorDaoService;
   public cadeiaValorProcessoDao: CadeiaValorProcessoDaoService;
   public planejamentoObjetivoDao: PlanejamentoObjetivoDaoService;
@@ -70,12 +73,14 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   public checklist: Checklist[] = [];
   public formChecklist: FormGroup;
   public etiquetas: LookupItem[] = [];
+  public dataFim?: Date;
 
   constructor(public injector: Injector) {
     super(injector, PlanoEntregaEntrega, PlanoEntregaEntregaDaoService);
     this.planejamentoDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.entregaDao = injector.get<EntregaDaoService>(EntregaDaoService);
+    this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
     this.planejamentoInstitucionalDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.planoEntregaEntregaDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
@@ -86,9 +91,11 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.join = ["entrega", "objetivos.objetivo", "processos.processo"];
     this.form = this.fh.FormBuilder({
       descricao: { default: "" },
+      descricao_entrega: { default: "" },
       data_inicio: { default: new Date() },
       data_fim: { default: new Date() },
       meta: { default: 100 },
+      descricao_meta: { default: "" },
       realizado: { default: null },
       plano_entrega_id: { default: "" },
       entrega_pai_id: { default: null },
@@ -128,6 +135,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.planejamentoId = this.metadata?.planejamento_id;
     this.cadeiaValorId = this.metadata?.cadeia_valor_id;
     this.unidadeId = this.metadata?.unidade_id;
+    if (this.metadata?.data_fim) this.dataFim = this.metadata?.data_fim;
     this.entity = this.metadata?.entrega as PlanoEntregaEntrega; 
   }
 
@@ -153,7 +161,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       result = "Inválido";
     } else if (['planejamento_objetivo_id'].indexOf(controlName) >= 0) {
       if(!control.value?.length) result = "O objetivo do planejamento é obrigatório";
-      if(control.value?.length && this.gridObjetivos?.items.map(x => x.planejamento_objetivo_id).includes(this.formObjetivos.controls.planejamento_objetivo_id.value)) result = "Este objetivo está em duplicidade!";
+      if(control.value?.length && this.gridObjetivos?.items.filter(x => x._status == "ADD").map(x => x.planejamento_objetivo_id).includes(this.formObjetivos.controls.planejamento_objetivo_id.value)) result = "Este objetivo está em duplicidade!";
     } else if (['cadeia_processo_id'].indexOf(controlName) >= 0) {
       if(!control.value?.length) result = "O processo da cadeia de valor é obrigatório";
       if(control.value?.length && this.gridProcessos?.items.map(x => x.cadeia_processo_id).includes(this.formProcessos.controls.cadeia_processo_id.value)) result = "Este processo está em duplicidade!";
@@ -178,10 +186,10 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       return "Data de fim inválida";
     } else if(inicio > fim) {
       return "A data do fim não pode ser anterior à data do início!";
-    } else if(this.planoEntrega && inicio < this.planoEntrega.data_inicio) {
-      return "Data de inicio menor que a data de inicio" + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(this.planoEntrega.data_inicio);
-    } else if(this.planoEntrega && this.planoEntrega.data_fim && fim > this.planoEntrega.data_fim) {
-      return "Data de fim maior que a data de fim" + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(this.planoEntrega.data_fim);
+    } else if(!this.auth.hasPermissionTo("MOD_PENT_ENTR_EXTRPL") && this.planoEntrega && inicio < this.planoEntrega.data_inicio) {
+      return "Data de inicio menor que a data de inicio " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(this.planoEntrega.data_inicio);
+    } else if(!this.auth.hasPermissionTo("MOD_PENT_ENTR_EXTRPL") && this.planoEntrega && this.planoEntrega.data_fim && fim > this.planoEntrega.data_fim) {
+      return "Data de fim maior que a data de fim " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(this.planoEntrega.data_fim);
     }
     return undefined;
   }
@@ -201,12 +209,46 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     form.controls.realizado.setValue(this.planoEntregaService.getValor(entity.realizado));
     form.controls.objetivos.setValue(entity.objetivos);
     form.controls.processos.setValue(entity.processos);
+    if (this.dataFim) form.controls.data_fim.setValue(this.dataFim);
   }
 
   public async initializeData(form: FormGroup) {
     this.entity!.unidade_id = this.auth.unidade!.id;
     this.entity!.unidade = this.auth.unidade;
     await this.loadData(this.entity!, form);
+  }
+
+  public async onSaveEntrega() {
+    let error: any = undefined;
+    let save: boolean = true;
+    if(this.formValidation) {
+      try {
+        error = await this.formValidation(this.form!);
+      } catch (e: any) {
+        error = e; 
+      }
+    }
+    if(this.form!.valid && !error){
+      if(this.action == "edit") {
+        let entity = (await this.saveData(this.form!.value)).modalResult as PlanoEntregaEntrega;
+        let planosImpactados: PlanoTrabalho[] = [];
+        entity._status = "EDIT";
+        this.loading = true;
+        try {
+          planosImpactados = await this.planoEntregaDao.planosImpactadosPorAlteracaoEntrega(entity);
+        } finally {
+          this.loading = false;
+        }
+        if(planosImpactados.length) {
+          let planos = planosImpactados.map(x => this.util.getDateFormatted(x.data_inicio) + " - " + this.util.getDateFormatted(x.data_fim) + " - " + x.unidade?.sigla + ": " + x.usuario?.nome + "\n");
+          save = await this.dialog.confirm("Altera assim mesmo?", "Caso prossiga com essa modificação os seguintes planos de trabalho serão repactuados automaticamente:\n\n" + planos + "\n" + "Deseja prosseguir?");
+        }
+    }
+      if(save) await this.onSaveData();
+    } else {
+      this.form!.markAllAsTouched();
+      if(error) this.error(error);
+    }
   }
 
   public saveData(form: IIndexable): Promise<NavigateResult> {
@@ -330,7 +372,8 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
         default:
           break;
       }
-      if (entregaItem.etiquetas) this.loadEtiquetas();
+      //if (entregaItem.etiquetas) this.loadEtiquetas();
+      this.loadEtiquetas();
       if (entregaItem.checklist) this.loadChecklist();
       this.calculaRealizado();
     }
@@ -338,6 +381,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
 
   public loadEtiquetas() {
     this.etiquetas = this.util.merge(this.entrega?.selectedEntity.etiquetas, this.unidade?.selectedEntity.etiquetas, (a, b) => a.key == b.key);
+    this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);
   }
 
   public loadChecklist() {

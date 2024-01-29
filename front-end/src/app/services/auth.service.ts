@@ -17,6 +17,7 @@ import { Entidade } from '../models/entidade.model';
 import { UnidadeDaoService } from '../dao/unidade-dao.service';
 import { NotificacaoService } from '../modules/uteis/notificacoes/notificacao.service';
 import { AppComponent } from '../app.component';
+import { UnidadeService } from './unidade.service';
 
 export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "DPRFSEGURANCA" | "SESSION" | "SEI" | "LOGINUNICO";
 export type Permission = string | (string | string[])[];
@@ -83,6 +84,8 @@ export class AuthService {
   public get unidadeDao(): UnidadeDaoService { this._unidadeDao = this._unidadeDao || this.injector.get<UnidadeDaoService>(UnidadeDaoService); return this._unidadeDao };
   private _notificacao?: NotificacaoService;
   public get notificacao(): NotificacaoService { this._notificacao = this._notificacao || this.injector.get<NotificacaoService>(NotificacaoService); return this._notificacao };
+  private _unidade?: UnidadeService;
+  public get unidadeService(): UnidadeService { this._unidade = this._unidade || this.injector.get<UnidadeService>(UnidadeService); return this._unidade };
 
   public set usuarioConfig(value: IIndexable) {
     this.updateUsuarioConfig(this.usuario!.id, value);
@@ -160,8 +163,18 @@ export class AuthService {
       this.unidade = this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade;
       if (this.unidade) this.calendar.loadFeriadosCadastrados(this.unidade.id);
       if (token?.length) localStorage.setItem("petrvs_api_token", token);
-      this.gb.contexto = this.app?.menuContexto.find(c => c.key === this.usuario?.config.menu_contexto);
-      this.gb.setContexto(this.usuario.config.menu_contexto || this.app!.menuContexto[0].key);
+     
+        let usuarioContextos = [];        
+        if(this.hasPermissionTo("CTXT_GEST")) usuarioContextos.push("GESTAO");
+        if(this.hasPermissionTo("CTXT_EXEC")) usuarioContextos.push("EXECUCAO");
+        if(this.hasPermissionTo("CTXT_DEV")) usuarioContextos.push("DEV");
+        if(this.hasPermissionTo("CTXT_ADM")) usuarioContextos.push("ADMINISTRADOR");
+        if(this.hasPermissionTo("CTXT_RX")) usuarioContextos.push("RAIOX");
+        if(!usuarioContextos.includes(this.usuario?.config.menu_contexto))
+        this.gb.contexto = this.app?.menuContexto.find(c => c.key === this.usuario?.config.menu_contexto);
+
+        this.gb.setContexto(usuarioContextos[0]);
+      
       this.notificacao.updateNaoLidas();
     } else {
       this.usuario = undefined;
@@ -338,23 +351,11 @@ export class AuthService {
   }
 
   /**
-   * Informa se o usuário logado é gestor(titular, substituto ou delegado) da unidade recebida como parâmetro. Se nenhuma unidade for repassada,
-   * será adotada a unidade selecionada pelo servidor na homepage.
-   * @param pUnidade
-   * @returns
-   */
-  public isGestorUnidade(pUnidade: Unidade | string | null = null): boolean {
-    let unidade = pUnidade == null ? this.unidade! : typeof pUnidade == "string" ? [this.usuario!.gerencia_titular?.unidade, ...(this.usuario!.gerencias_substitutas!.map(x => x.unidade)), ...(this.usuario!.gerencias_delegadas!.map(x => x.unidade))].find(x => x && x.id == pUnidade) : pUnidade;
-    let areaTrabalho = this.unidades?.find(x => x.id == unidade?.id);
-    return !!unidade && [areaTrabalho?.gestor_substituto?.usuario_id, areaTrabalho?.gestor?.usuario_id, areaTrabalho?.gestor_delegado?.usuario_id].includes(this.usuario!.id);
-  }
-
-  /**
    * Informa se o usuário logado é gestor de alguma das suas áreas de trabalho.
    * @returns
    */
-  public isGestorAlgumaAreaTrabalho(): boolean {
-    return !!this.unidades?.filter(x => this.isGestorUnidade(x)).length;
+  public isGestorAlgumaAreaTrabalho(incluiDelegado: boolean = true): boolean {
+    return !!this.unidades?.filter(x => this.unidadeService.isGestorUnidade(x, incluiDelegado)).length;
   }
 
   /**
@@ -362,7 +363,7 @@ export class AuthService {
    * @returns
    */
   public unidadeGestor(): Unidade | undefined {
-    return this.unidades?.find(x => this.isGestorUnidade(x));
+    return this.unidades?.find(x => this.unidadeService.isGestorUnidade(x));
   }
 
   /**
@@ -374,14 +375,15 @@ export class AuthService {
   }
 
   /**
-   * Retorna a unidade onde o usuário é gestor
+   * Retorna um array com os usuários que são gestores da unidade de lotação do usuário logado
    * @returns
    */
   public get gestoresLotacao(): Usuario[] {
     let lotacao = this.lotacao;
     let result: Usuario[] = [];
     if(lotacao?.gestor?.usuario) result.push(lotacao?.gestor?.usuario);
-    if(lotacao?.gestor_substituto?.usuario) result.push(lotacao?.gestor_substituto?.usuario);
+   // if(lotacao?.gestor_substituto?.usuario) result.push(lotacao?.gestor_substituto?.usuario);
+    if(lotacao?.gestores_substitutos.length) (lotacao?.gestores_substitutos.map(x => x.usuario!)).forEach(x => result.push(x));
     return result;
   }
 

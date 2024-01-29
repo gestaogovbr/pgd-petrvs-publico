@@ -228,8 +228,7 @@ class IntegracaoService extends ServiceBase {
         $dados['usar_arquivos_locais'] = $this->useLocalFiles;              // atualiza esse parâmetro para que seja salvo no banco corretamente
         $dados['gravar_arquivos_locais'] = $this->storeLocalFiles;          // atualiza esse parâmetro para que seja salvo no banco corretamente
         $this->sincronizacao($inputs);
-        $unidadeLogin = Auth::user()->areasTrabalho[0]->unidade;
-        return $this->store(array_merge($dados, ['usuario_id' => $usuario_id,'data_execucao' => $this->unidadeService->hora($unidadeLogin->id),'resultado' => json_encode($this->result)]), null);
+        return $this->store(array_merge($dados, ['usuario_id' => $usuario_id,'data_execucao' => $this->dataHora(),'resultado' => json_encode($this->result)]), null);
     }
 
     /**
@@ -782,7 +781,8 @@ class IntegracaoService extends ServiceBase {
 
                     $vinculos_isr = DB::select($query);
 
-                    $perfil_participante = Perfil::where('nome', 'Participante')->first()->id;
+                    $usuario_comum=$this->integracao_config["perfilComum"];
+                    $perfil_participante = Perfil::where('nome', $usuario_comum)->first()->id;
 
                     foreach($vinculos_isr as $v_isr){
                         $v_isr = $this->UtilService->object2array($v_isr);
@@ -903,7 +903,9 @@ class IntegracaoService extends ServiceBase {
                 if($this->echo) $this->imprimeNoTerminal("Concluída a fase de montagem do array de chefias!.....");
 
                 // Localiza ID do perfil Chefia de Unidade Executora para posterior atualização do usuário
-                $perfil_chefia = Perfil::where('nome', 'Chefia de Unidade Executora')->first()->id;
+                $usuario_chefe=$this->integracao_config["perfilChefe"];
+
+                $perfil_chefia = Perfil::where('nome', $usuario_chefe)->first()->id;
                 foreach($chefias as $chefia){
                     // Descobre o ID da Unidade
                     $query_selecionar_unidade = "SELECT u.id " .

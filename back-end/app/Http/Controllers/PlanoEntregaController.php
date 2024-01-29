@@ -8,6 +8,7 @@ use App\Services\UtilService;
 use App\Services\UsuarioService;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
+use App\Models\PlanoTrabalho;
 use Throwable;
 
 class PlanoEntregaController extends ControllerBase
@@ -505,4 +506,20 @@ class PlanoEntregaController extends ControllerBase
             return response()->json(['error' => $e->getMessage()]);
         }
     }
+
+    public function planosImpactadosPorAlteracaoEntrega(Request $request)
+    {
+        try {
+            $data = $request->validate([
+                'entrega' => ['required']
+            ]);
+            return response()->json([
+                'success' => true,
+                'planos_trabalhos' => PlanoTrabalho::with(["usuario:id,nome", "unidade:id,sigla"])->whereIn('id', $this->service->planosImpactadosPorAlteracaoEntrega($data))
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
 }

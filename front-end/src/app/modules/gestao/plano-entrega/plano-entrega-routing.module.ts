@@ -12,6 +12,7 @@ import { PlanoEntregaListEntregaListComponent } from './plano-entrega-list-entre
 import { AvaliarComponent } from '../../uteis/avaliar/avaliar.component';
 import { PlanoEntregaListProgressoComponent } from './plano-entrega-list-progresso/plano-entrega-list-progresso.component';
 import { PlanoEntregaFormProgressoComponent } from './plano-entrega-form-progresso/plano-entrega-form-progresso.component';
+import { PlanoEntregaEntregaDetalhesComponent } from './plano-entrega-entrega-detalhes/plano-entrega-entrega-detalhes.component';
 
 const routes: Routes = [
   { path: '', component: PlanoEntregaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Plano de Entregas" } },
@@ -22,14 +23,14 @@ const routes: Routes = [
   { path: ':planoEntregaId/avaliar', component: AvaliarComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Avaliar Plano de Entrega" } },
   { path: 'entrega', component: PlanoEntregaFormEntregaComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Entregas do Plano de Entregas", modal:true }},
   { path: 'entrega/:id/consult', component: PlanoEntregaFormEntregaComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta entrega do Plano de Entregas", modal:true }},
+  { path: 'entrega/:id/detalhes', component: PlanoEntregaEntregaDetalhesComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Detalhes da entrega do Plano de Entregas", modal:true }},
   { path: 'entregaList', component: PlanoEntregaListEntregaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Entregas do Plano de Entregas", modal:true }},
   { path: 'entrega/objetivos/:objetivo_id', component: PlanoEntregaMapaEntregasComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Entregas do Plano de Entregas", modal: true } },
   { path: 'entrega/processos/:processo_id', component: PlanoEntregaMapaEntregasComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Entregas do Plano de Entregas", modal: true } },
   { path: 'adesao', component: PlanoEntregaFormAdesaoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Adesão a Plano de Entregas", modal: true } },
   { path: 'entrega/progresso/:entrega_id', component: PlanoEntregaListProgressoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Progressos da entrega do Plano de Entregas", modal: true } },
   { path: 'entrega/progresso/:entrega_id/new', component: PlanoEntregaFormProgressoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Progresso entrega do Plano de Entregas", modal: true } },
-  { path: 'entrega/progresso/:entrega_id/:id/edit', component: PlanoEntregaFormProgressoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Progresso entrega do Plano de Entregas", modal: true } },
-
+  { path: 'entrega/progresso/:entrega_id/:id/edit', component: PlanoEntregaFormProgressoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Progresso entrega do Plano de Entregas", modal: true } }
 ];
 
 @NgModule({

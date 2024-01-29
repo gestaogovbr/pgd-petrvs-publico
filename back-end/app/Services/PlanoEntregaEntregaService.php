@@ -9,6 +9,38 @@ use Illuminate\Support\Carbon;
 
 class PlanoEntregaEntregaService extends ServiceBase
 {
+
+    public function proxyStore(&$planoEntregaEntrega, $unidade, $action)
+    {
+      if ($action == ServiceBase::ACTION_EDIT) {
+        /* (RN_PTR_E) O Plano de Trabalho precisará ser repactuado (retornar ao status de AGUARDANDO_ASSINATURA) quando houver quaisquer alterações no plano de entrega que impacte as entregas do plano de trabalho; (alterada a entrega ou cancelada); */
+        $planoEntregaEntrega["_status"] = "EDIT";
+        $this->buffer = ["planosTrabalhosImpactados" => $this->planoEntregaService->planosImpactadosPorAlteracaoEntrega($planoEntregaEntrega)];
+      }
+      return $planoEntregaEntrega;
+    }
+
+    public function afterStore($planoEntregaEntrega, $action)
+    {
+        if($action == ServiceBase::ACTION_EDIT) {
+            /* (RN_PTR_E) O Plano de Trabalho precisará ser repactuado (retornar ao status de AGUARDANDO_ASSINATURA) quando houver quaisquer alterações no plano de entrega que impacte as entregas do plano de trabalho; (alterada a entrega ou cancelada); */
+            if(!empty($this->buffer["planosTrabalhosImpactados"])) {
+                foreach ($this->buffer["planosTrabalhosImpactados"] as $planoTrabalhoId) {
+                    $this->planoTrabalhoService->repactuar($planoTrabalhoId, true);
+                }
+            }
+        }
+    }
+
+    public function extraDestroy($planoEntregaEntrega) {
+        $entrega = $planoEntregaEntrega->toArray();
+        $entrega["_status"] = "DELETE";
+        $planosTrabalhosImpactados = $this->planoEntregaService->planosImpactadosPorAlteracaoEntrega($entrega);
+        foreach ($planosTrabalhosImpactados as $planoTrabalhoId) {
+            $this->planoTrabalhoService->repactuar($planoTrabalhoId, true);
+        }
+    }
+  
     public function proxyQuery($query, &$data) {
         $where = [];
         foreach($data["where"] as $condition) {
@@ -65,6 +97,46 @@ class PlanoEntregaEntregaService extends ServiceBase
         $progresso = new PlanoEntregaEntregaProgresso($dadosProgresso);
         $progresso->save();    
         return $entrega;
+    }
+
+    public function hierarquia($data){
+        $entregaRaiz = PlanoEntregaEntrega::find($data['entrega_id']);
+        $hierarquia = $this->construirHierarquia($entregaRaiz, true);    
+        return $hierarquia;
+
+    }
+
+    protected function construirHierarquia($entrega, $incluirPai = false) {
+        $result = [
+            'id' => $entrega->id,
+            'descricao' => $entrega->descricao,
+            'descricao_entrega' => $entrega->descricao_entrega,
+            'destinatario' => $entrega->destinatario,
+            'descricao_meta' => $entrega->descricao_meta,
+            'etiquetas' => $entrega->etiquetas,
+            'meta' => $entrega->meta,
+            'objetivos' => $entrega->objetivos,
+            'processos' => $entrega->processos,
+            'data_inicio' => $entrega->data_inicio,
+            'data_fim' => $entrega->data_fim,
+            'unidade' => $entrega->unidade,
+            'filhos' => [],
+        ];
+    
+        if ($incluirPai) {
+            $result['pai'] = PlanoEntregaEntrega::with('unidade')->find($entrega->entrega_pai_id);
+
+        }
+    
+        $filhos = PlanoEntregaEntrega::where('entrega_pai_id', $entrega->id)->get();
+    
+        if ($filhos->isNotEmpty()) {
+            $result['filhos'] = $filhos->map(function ($filho) {
+                return $this->construirHierarquia($filho, false);
+            })->all();
+        }
+    
+        return $result;
     }
 
 }

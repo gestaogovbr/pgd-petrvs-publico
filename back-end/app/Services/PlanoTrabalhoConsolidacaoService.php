@@ -54,7 +54,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       $planosTrabalhos = PlanoTrabalho::with([
         "unidade:id,sigla,nome",
         "unidade.gestor:id,unidade_id,usuario_id",
-        "unidade.gestorSubstituto:id,unidade_id,usuario_id",
+        "unidade.gestoresSubstitutos:id,unidade_id,usuario_id",
         "tipoModalidade:id,nome",
         "usuario:id,nome,apelido,url_foto,foto_perfil"
       ])->whereIn("id", $planosTrabalhosIds)->get()->all();
@@ -81,7 +81,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       'avaliacoes',
       'planoTrabalho.programa',
       'planoTrabalho.unidade.gestor:id,usuario_id',
-      'planoTrabalho.unidade.gestorSubstituto:id,usuario_id',
+      'planoTrabalho.unidade.gestoresSubstitutos:id,usuario_id',
       'planoTrabalho.entregas.entrega', 
       'planoTrabalho.entregas.reacoes', 
       'planoTrabalho.entregas.planoEntregaEntrega:id,descricao,plano_entrega_id,entrega_id,meta,realizado,progresso_realizado', 
@@ -305,7 +305,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
         $consolidacaoOcorrencia->save();
       }
       /* Atualiza o status */
-      $this->status->atualizaStatus($consolidacao, 'CONCLUIDO', 'A consolidação foi concluída nesta data.');
+      $this->statusService->atualizaStatus($consolidacao, 'CONCLUIDO', 'A consolidação foi concluída nesta data.');
       DB::commit();
       return $this->consolidacaoDados($id);
     } catch (Throwable $e) {
@@ -335,7 +335,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       PlanoTrabalhoConsolidacaoAtividade::where("plano_trabalho_consolidacao_id", $id)->delete();
       PlanoTrabalhoConsolidacaoAfastamento::where("plano_trabalho_consolidacao_id", $id)->delete();
       PlanoTrabalhoConsolidacaoOcorrencia::where("plano_trabalho_consolidacao_id", $id)->delete();
-      $this->status->atualizaStatus($consolidacao, 'INCLUIDO', 'Cancelado a conclusão nesta data.');
+      $this->statusService->atualizaStatus($consolidacao, 'INCLUIDO', 'Cancelado a conclusão nesta data.');
       DB::commit();
       return $this->consolidacaoDados($id);
     } catch (Throwable $e) {
@@ -366,6 +366,23 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     $consolidacao = PlanoTrabalhoConsolidacao::find($consolidacaoId);
     return PlanoTrabalhoConsolidacao::where("plano_trabalho_id", $consolidacao->plano_trabalho_id)->
       where("data_fim", ">", $consolidacao->data_fim)->orderBy("data_fim", "ASC")->first();
+  }
+
+  /** 
+   * Completa o processo de avaliação para a consolidação
+   * 
+   * @param   Avanliacao  $avaliacao Avaliacao
+   * @return  void
+   */
+  public function avaliar($avaliacao) {
+    $consolidacao = $avaliacao->planoTrabalhoConsolidacao;
+    $consolidacao->avaliacao_id = $avaliacao->id;
+    $consolidacao->save();
+    $this->statusService->atualizaStatus($consolidacao, 'AVALIADO');
+    /* (RN_PTR_L) Um Plano de Trabalho adquire o status 'CONCLUIDO' quando a sua última consolidação for avaliada; */
+    if(PlanoTrabalhoConsolidacao::where("plano_trabalho_id", $consolidacao->plano_trabalho_id)->orderByDesc("data_fim")->first()->id == $consolidacao->id) {
+      $this->statusService->atualizaStatus($consolidacao->planoTrabalho, 'CONCLUIDO');
+    }
   }
 
 }

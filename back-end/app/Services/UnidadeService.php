@@ -287,11 +287,6 @@ class UnidadeService extends ServiceBase
         $this->UnidadeIntegranteService->saveIntegrante($this->buffer["integrantes"]);
     }
 
-/*  let salvarGestor = !!this.formGestor!.controls.gestor_id?.value && (this.entity?.gestor?.usuario?.id != this.formGestor!.controls.gestor_id?.value);
-    let salvarGestorSubstituto = !!this.formGestor!.controls.gestor_substituto_id?.value && (this.entity?.gestor_substituto?.usuario?.id != this.formGestor!.controls.gestor_substituto_id?.value);
-    let apagarGestor = !this.formGestor!.controls.gestor_id?.value && !!this.entity?.gestor?.id.length;
-    let apagarGestorSubstituto = !this.formGestor!.controls.gestor_substituto_id?.value && !!this.entity?.gestor_substituto?.id.length; */
-
     /** 
      * Retorna um array com os IDs de todas as suas unidades-filhas, ou seja,
      * de todas as Unidades que estão hierarquicamente organizadas abaixo da Unidade-mãe.
@@ -410,11 +405,28 @@ class UnidadeService extends ServiceBase
     public function gestoresUnidadeSuperior($unidadeId) {
         $unidadeSup = Unidade::find($unidadeId)?->unidadePai;
         return [
-            "gestor" => $unidadeSup?->gestor,
-            "gestoresSubstitutos" => $unidadeSup?->gestoresSubstitutos ?? [],
-            "gestoresDelegados" => $unidadeSup?->gestoresDelegados ?? []
+            "gestor" => $unidadeSup?->gestor?->usuario,
+            "gestoresSubstitutos" => $unidadeSup?->gestoresSubstitutos->map(fn($x) => $x->usuario)->toArray() ?? [],
+            "gestoresDelegados" => $unidadeSup?->gestoresDelegados->map(fn($x) => $x->usuario)->toArray() ?? []
         ];
     } 
+
+    /**
+     * Retorna um array com os usuários que são gestores (titular, substitutos e delegados) da unidade recebida como parâmetro.
+     * @param string $unidade_id
+     * @return array
+     */
+    public function gestoresUnidade($unidade_id): array {
+        $result = [];
+        if(!empty($unidade_id)) $unidade = Unidade::find($unidade_id);
+        if(!empty($unidade)) {
+            //$result = array_map(fn($x) => $x->usuario, ($unidade->gestoresSubstitutos ?? [])->toArray());
+            $result = $unidade->gestoresSubstitutos->map(fn($x) => $x->usuario)->toArray();
+            if($unidade->gestor) $result[] = $unidade->gestor->usuario;
+            array_merge($result, $unidade->gestoresDelegados->map(fn($x) => $x->usuario)->toArray());
+        }
+        return $result;
+    }
 
     //
     /*

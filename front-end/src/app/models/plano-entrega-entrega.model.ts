@@ -30,6 +30,8 @@ export class PlanoEntregaEntrega extends Base implements HasAvaliacao, HasMetaRe
   public data_inicio: Date = new Date();
   public data_fim: Date | null = null;
   public descricao: string = "";
+  public descricao_meta: string = "";
+  public descricao_entrega: string = "";
   public homologado: boolean = false;
   public meta: EntregaValor = {};
   public realizado: EntregaValor = {};

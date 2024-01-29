@@ -15,7 +15,7 @@
             </ng-template>
             <ng-template let-row="row" #editOrigem>
                 <input-select #origem controlName="origem" controlName="origem" [control]="form!.controls.origem" [items]="lookup.ORIGENS_ENTREGAS_PLANO_TRABALHO" (change)="onOrigemChange(row)"></input-select>
-                <!-- <input-search *ngIf="['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(origem?.value)" label #planoEntrega [placeholder]="'Selecione o ' + lex.translate('Plano de entrega')" [join]="['entregas.entrega:id,nome', 'unidade']" [where]="origem?.value == 'PROPRIA_UNIDADE' ? [['unidade_id', '==', entity?.unidade_id]] : undefined" [selectParams]="origem?.value == 'PROPRIA_UNIDADE' ? {filter: {unidade_id: entity?.unidade_id}} : undefined" controlName="plano_entrega_id" [dao]="planoEntregaDao" (change)="onPlanoEntregaChange($event)"></input-search> -->
+                <!-- (RN_PTR_G) Na criação/alteração de um Plano de Trabalho só podem ser criadas/alteradas entregas se vinculadas a entregas de planos de entregas não canceladas; //-->
                 <input-search *ngIf="['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(origem?.value)" label #planoEntrega [placeholder]="'Selecione o ' + lex.translate('Plano de entrega')" [join]="['entregas.entrega:id,nome', 'unidade']" [where]="origem?.value == 'PROPRIA_UNIDADE' ? [['unidade_id', '==', entity?.unidade_id], ['status', '==', 'ATIVO']] : [['status', '==', 'ATIVO']]" [selectParams]="origem?.value == 'PROPRIA_UNIDADE' ? {filter: {unidade_id: entity?.unidade_id, status: 'ATIVO'}} : {filter: {status: 'ATIVO'}}" controlName="plano_entrega_id" [dao]="planoEntregaDao" (change)="onPlanoEntregaChange($event)"></input-search>
                 <input-text *ngIf="origem?.value == 'OUTRO_ORGAO'" #orgao controlName="orgao" placeholder="Órgão" [attr.maxlength]=250></input-text>
             </ng-template>
@@ -55,7 +55,7 @@
             <ng-template let-row="row" #editForcaTrabalho><input-text number sufix="%" controlName="forca_trabalho" [control]="form!.controls.forca_trabalho" (change)="onForcaTrabalhoChange(row)" [attr.maxlength]=250></input-text></ng-template>
         </column>
         <column [maxWidth]="250" [titleTemplate]="titleDescricao" [template]="columnDescricao" [editTemplate]="editDescricao" [verticalAlign]="'middle'" [align]="'center'">
-            <ng-template let-header="header" #titleDescricao><div class="text-center"><span><strong>Detalhamento/Descrição dos Trabalhos</strong></span></div></ng-template>
+            <ng-template let-header="header" #titleDescricao><div class="text-center"><span><strong>Descrição dos Trabalhos</strong></span></div></ng-template>
             <ng-template let-row="row" #columnDescricao>
                 <div *ngIf="row.descricao != planoTrabalhoService.tipoEntrega(row, entity).descricao; else solicitarDescricao"><small>{{ row.descricao }}</small></div>
             </ng-template>

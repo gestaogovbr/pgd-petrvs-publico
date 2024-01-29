@@ -1,19 +1,33 @@
-<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="entrega_id" (submit)="onSaveData()" (cancel)="onCancel()">
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="descricao" (submit)="onSaveEntrega()" (cancel)="onCancel()">
     <tabs #tabs display right [title]="!isModal ? title : ''">
         <tab key="ENTREGAS" label="Entregas">
             <div class="row">
-                <separator title="Vínculos da Entrega" collapse [collapsed]="false">
+                <separator [title]="'Informações gerais da ' + lex.translate('entrega')" collapse [collapsed]="false">
                     <div class="row">
-                        <input-search #entrega [size]="12" [label]="lex.translate('Tipo de Meta')" controlName="entrega_id" [dao]="entregaDao" (change)="onEntregaChange($event)" placeholder="Selecione ou cadastre uma entrega do catálogo usando a lupa" required></input-search>
+                        <input-text [size]="12" label="Título" controlName="descricao" [placeholder]="'Título da ' + lex.translate('entrega')" [attr.maxlength]=250 required></input-text>
                     </div>
                     <div class="row">
-                        <input-text [size]="12" label="Título" controlName="descricao" placeholder="Descreva a entrega" [attr.maxlength]=250 required></input-text>
+                        <input-textarea [size]="12" [label]="'Descrição da ' + lex.translate('entrega')" controlName="descricao_entrega" [placeholder]="'Descreva a ' + lex.translate('entrega')"></input-textarea>
                     </div>
                     <div class="row">
                         <input-search [size]="12" [label]="'Vínculo com ' + lex.translate('entrega') + ' de ' + lex.translate('plano de entrega') + ' superior'" controlName="entrega_pai_id" [dao]="planoEntregaEntregaDao" [where]="['plano_entrega.unidade_id', 'in', idsUnidadesAscendentes]" [selectRoute]="{route: ['gestao', 'plano-entrega', 'entregaList']}" [metadata]="{'idsUnidadesAscendentes': idsUnidadesAscendentes}"></input-search>
                     </div>
+                    <separator [title]="'Etapas da ' + lex.translate('entrega')" collapse [collapsed]="true">
+                        <div class="row mt-4">
+                            <!--div class="col-md-6"-->
+                                <h5>Etapas</h5>
+                                <grid [control]="form!.controls.checklist" [form]="formChecklist" [hasAdd]="true" [hasDelete]="true" editable>
+                                    <columns>
+                                        <!--<column type="switch" title="Check" field="checked"></column>-->
+                                        <column type="text" title="Texto" field="texto"></column>
+                                        <column type="options"></column>
+                                    </columns>
+                                </grid>
+                            <!--/div-->
+                        </div>
+                    </separator>
                 </separator>
-                <separator title="Especificações da Entrega" collapse [collapsed]="false">
+                <separator [title]="'Especificações da ' + lex.translate('entrega')" collapse [collapsed]="false">
                     <div class="row">
                         <input-datetime date [size]="6" label="Início" controlName="data_inicio" [labelInfo]="'Início ' + lex.translate('Plano de Entregas')" required></input-datetime>
                         <input-datetime date [size]="6" label="Fim" controlName="data_fim" [labelInfo]="'Fim ' + lex.translate('Plano de Entregas') + '(Estimativa Inicial)'" required></input-datetime>
@@ -24,29 +38,25 @@
                     </div>
                 </separator>
                 <separator title="Planejamento"></separator>
-                <div *ngIf="this.entrega?.selectedEntity" class="row">
-                    <plano-entrega-valor-meta-input icon="bi bi-graph-up-arrow" [entrega]="entrega?.selectedEntity" [size]="6" [control]="form!.controls.meta" label="Meta"></plano-entrega-valor-meta-input>
-                    <plano-entrega-valor-meta-input icon="bi bi-check-lg" [entrega]="entrega?.selectedEntity" [size]="6" [control]="form!.controls.realizado" label="Valor Inicial" [change]="onRealizadoChange.bind(this)" labelInfo="Valor da meta verificado no início do plano de entrega"></plano-entrega-valor-meta-input>
-                </div>
-                <div class="row">
-                    <input-number [size]="6" label="Progresso Esperado" controlName="progresso_esperado" sufix="%"></input-number>
-                    <input-number [size]="6" label="Progresso Realizado" [stepValue]="0.01" controlName="progresso_realizado" sufix="%" disabled></input-number>
-                </div>
-                <separator title="Caracterização da Entrega" collapse [collapsed]="true">
                     <div class="row">
-                        <input-multiselect label="Etiquetas" controlName="etiquetas" [size]="6" [control]="form!.controls.etiquetas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
+                        <input-search #entrega [size]="12" [label]="lex.translate('Tipo de Meta')" controlName="entrega_id" [dao]="entregaDao" (change)="onEntregaChange($event)" placeholder="Selecione ou cadastre uma meta do catálogo usando a lupa" required></input-search>
+                    </div>
+                    <div class="row">
+                        <input-textarea [size]="12" label="Descrição da meta" controlName="descricao_meta" placeholder="Descreva a meta"></input-textarea>
+                    </div>
+                    <div *ngIf="this.entrega?.selectedEntity" class="row">
+                        <plano-entrega-valor-meta-input icon="bi bi-graph-up-arrow" [entrega]="entrega?.selectedEntity" [size]="6" [control]="form!.controls.meta" label="Meta"></plano-entrega-valor-meta-input>
+                        <plano-entrega-valor-meta-input icon="bi bi-check-lg" [entrega]="entrega?.selectedEntity" [size]="6" [control]="form!.controls.realizado" label="Valor Inicial" [change]="onRealizadoChange.bind(this)" labelInfo="Valor da meta verificado no início do plano de entrega"></plano-entrega-valor-meta-input>
+                    </div>
+                    <div class="row">
+                        <input-number [size]="6" label="Progresso Esperado" controlName="progresso_esperado" sufix="%"></input-number>
+                        <input-number [size]="6" label="Progresso Realizado" [stepValue]="0.01" controlName="progresso_realizado" sufix="%" disabled></input-number>
+                    </div>
+                <separator [title]="'Caracterização da ' +  lex.translate('entrega')" collapse [collapsed]="false">
+                    <div class="row">
+                        <input-multiselect label="Etiquetas" controlName="etiquetas" [size]="12" [control]="form!.controls.etiquetas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
                             <input-select [size]="12" #etiqueta controlName="etiqueta" [control]="form!.controls.etiqueta" [items]="etiquetas"></input-select>
                         </input-multiselect>
-                        <div class="col-md-6">
-                            <br><h5>Requisitos</h5>
-                            <grid [control]="form!.controls.checklist" [form]="formChecklist" [hasAdd]="true" [hasDelete]="true" editable>
-                                <columns>
-                                    <!--<column type="switch" title="Check" field="checked"></column>-->
-                                    <column type="text" title="Texto" field="texto"></column>
-                                    <column type="options"></column>
-                                </columns>
-                            </grid>
-                        </div>
                     </div>
                 </separator>
             </div>

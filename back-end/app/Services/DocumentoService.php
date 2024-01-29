@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use App\Exceptions\ServerException;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\App;
+use App\Services\UtilService;
 
 
 use Throwable;
@@ -70,9 +71,8 @@ class DocumentoService extends ServiceBase {
     }
 
     public function registrarAssinatura($documento, $usuario_id,$request){
-        $unidadeLogin = Auth::user()->areasTrabalho[0]->unidade;
         $assinatura = new DocumentoAssinatura();
-        $assinatura->data_assinatura = $this->unidadeService->hora($unidadeLogin->id);
+        $assinatura->data_assinatura = $this->dataHora();
         $assinatura->documento_id = $documento->id;
         $assinatura->usuario_id = $usuario_id;
         //$assinatura->assinatura = hash('md5', $assinatura->data_assinatura->toDateTimeString() . $usuario_id . $documento->conteudo);
@@ -81,10 +81,19 @@ class DocumentoService extends ServiceBase {
     }
 
     public function gerarPDF($data){
+        $utilservice = New UtilService();
         $documento = Documento::find($data["documento_id"]);
         if(empty($documento)) throw new ServerException("ValidateDocumento", "Documento não encontrado");        
         $head = '<head><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1" /><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">';
-        $pdf = Pdf::loadHTML($head . $documento->conteudo);        
+        $assinaturas = '';
+        if($documento->assinaturas) {
+            $assinaturas .= "<div style='display:block; '><br><hr><h5>Assinatura(s):</h5>";
+            foreach ($documento->assinaturas as $assinatura) {
+                $assinaturas .= "<div style='margin-bottom:5px;'><p style='margin:0; padding:0;'>{$assinatura->usuario->nome}</p><small>Assinado em: {$utilservice->getDateTimeFormatted($assinatura->data_assinatura)} <br>{$assinatura->assinatura}</small></div>";
+            }
+            $assinaturas .= '</div>';
+        }
+        $pdf = Pdf::loadHTML($head . $documento->conteudo . $assinaturas);        
         $pdf->render();
         return $pdf->output();
     }

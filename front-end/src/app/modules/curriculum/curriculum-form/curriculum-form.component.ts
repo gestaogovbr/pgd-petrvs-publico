@@ -1,5 +1,3 @@
-
-
 import { Component, Injector, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { AbstractControl, FormGroup } from '@angular/forms';
@@ -16,13 +14,10 @@ import { Curriculum } from 'src/app/models/currriculum.model';
 import { trigger,state,style,animate,transition } from '@angular/animations';
 import { InputMultiselectComponent } from 'src/app/components/input/input-multiselect/input-multiselect.component';
 import { CurriculumGraduacaoDaoService } from 'src/app/dao/curriculum-graduacao.service';
-import { data } from 'jquery';
 import { CurriculumGraduacao } from 'src/app/models/currriculum-graduacao.model';
-import { UNKNOWN_ERROR_CODE } from '@angular/compiler-cli';
 import { CurriculumIdioma } from 'src/app/models/curriculum-idioma.model';
-import { forEachChild } from 'typescript';
-import { TreeDragDropService } from 'primeng/api';
 import { Indexable } from 'chartjs-plugin-datalabels/types/options';
+import { InputNumberComponent } from 'src/app/components/input/input-number/input-number.component';
 
 @Component({
   selector: 'curriculum-pessoal-form',
@@ -41,7 +36,7 @@ import { Indexable } from 'chartjs-plugin-datalabels/types/options';
 })
 export class CurriculumFormComponent extends PageFormBase<Curriculum, CurriculumDaoService>{
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  //@ViewChild(InputSearchComponent, { static: false }) public area?: InputSearchComponent;
+  @ViewChild("quantidade_filhos", { static: false }) public quantidade_filhos?: InputNumberComponent;
   @ViewChild("area", { static: false }) public area?: InputSearchComponent;
   @ViewChild("estados", { static: false }) public estadosV?: InputSelectComponent;
   //@ViewChild(InputSelectComponent, { static: false }) public titulo?: InputSelectComponent;
@@ -64,8 +59,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   public formGraduacao?: FormGroup;
   public formIdiomaGrid?: FormGroup;
   public cursoWhere: any[] = [["id", "==", null]];
-  public dataTableIdioma : {entender: string, falar: string, idioma:string, escrever:string}[] = [];
-  public show : string =  'true';
+  public show : boolean =  true;
 
   constructor(public injector: Injector) {
     super(injector, Curriculum, CurriculumDaoService);
@@ -77,6 +71,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     this.curriculumGraduacaoDAO = injector.get<CurriculumGraduacaoDaoService>(CurriculumGraduacaoDaoService)
      
     this.form = this.fh.FormBuilder({
+        id : { default: "" },
         cidade_id: { default: "" },
         apresentacao: { default: "" },
         estados: { default: "" },
@@ -122,6 +117,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   public async initializeData(form: FormGroup) {
     const curriculuns = await this.dao?.query({ where: ['usuario_id', '==', this.auth.usuario?.id], join: this.join }).asPromise();
     let entity = curriculuns?.length ? curriculuns[0] : new Curriculum();//this.entity
+    curriculuns?.length ? (this.id = curriculuns[0].id) : (this.id = "");
     const cidade = entity.cidade_id != '' ? await this.cidadeDao?.getById(entity.cidade_id) : null;
     console.log('CIDADE',cidade)
     //this.form?.controls.estados.setValue(this.lookup.UF.find(x => x.key == 'AM'));//cidade.uf));
@@ -141,11 +137,13 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
       
       let curriculum = this.util.fill(new Curriculum(), this.entity!);
       //curriculum.usuario_id=this.auth.usuario?.id;
-      curriculum = this.util.fillForm(curriculum, this.form!.value);
+      curriculum.id = this.id!;
+     // curriculum.quantidade_filhos == "" ? (curriculum.quantidade_filhos = 0) : (curriculum.quantidade_filhos = 2);
+          curriculum = this.util.fillForm(curriculum, this.form!.value);
       curriculum.usuario_id = this.auth.usuario?.id;
       curriculum.cidade_id = "86297f92-d919-e12f-476d-6aff99c46809";
       //curriculum.graduacoes = this.formGraduacao!.controls.graduacoes.value.map((x: any) => Object.assign({},{curso_id:x.data.curso , pretensao:x.data.pretensao}));
-      curriculum.graduacoes = this.form!.controls.graduacoes.value;//.filter((x: CurriculumGraduacao) => x._status?.length);
+      curriculum.graduacoes = this.form!.controls.graduacoes.value.filter((x: CurriculumGraduacao) => x._status?.length);
       
       resolve(curriculum);
 
@@ -155,7 +153,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   public onEstadosChange() {
     //console.log('onEstadosChange', this.form?.controls.estados)
     //const estados = this.estadosV!.value;
-    this.show = 'false';
+    this.show = false;
     const estados = this.form!.controls.estados.value;
     this.selecionaMunicipios(estados);
     //this.municipioV?.disabled;
@@ -166,7 +164,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     this.cidadeDao?.query({ where: [['uf', '==', uf]], orderBy: [['nome', 'asc']] }).getAll().then((municipios) => {
       this.municipios = municipios.map(x => Object.assign({}, { key: x.id, value: x.nome }) as LookupItem);
     });
-    this.show = 'true';
+    this.show = true;
   }
 
 
@@ -182,6 +180,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
  * @param form 
  * @param row 
  * @returns 
+
  */
 
 public async addIdiomas() {
@@ -196,7 +195,7 @@ public async loadIdiomas(form: FormGroup, row: CurriculumIdioma) {
 }
 
 public async removeIdiomas(row: any) {
-  if(await this.dialog.confirm("Excluir ?", "Deseja realmente excluir esta pergunta?")) {
+  if(await this.dialog.confirm("Excluir ?", "Deseja realmente excluir este registro?")) {
     return true;
   }
   return undefined;
@@ -216,7 +215,9 @@ public async saveIdiomas(form: FormGroup, row: any) {
 }
 
 public async addGraduacao() { 
-  return new CurriculumGraduacao({}) as IIndexable;
+  return new CurriculumGraduacao({
+    _status: "ADD"
+  }) as IIndexable;
 }
 
 public saveGraduacao(form: FormGroup, row: any){ 
@@ -226,6 +227,7 @@ public saveGraduacao(form: FormGroup, row: any){
     row.pretensao = values.pretensao;
     row.curso_id = values.curso_id;
     row.curso = this.curso?.selectedItem?.data;
+    row._status = row._status == "ADD" ? "ADD" : "EDIT";
     return row;
   }
   return undefined;
@@ -244,14 +246,20 @@ public async loadGraduacao(form: FormGroup, row: CurriculumGraduacao){
 
 public async removeGraduacao(row: any){ 
   if(await this.dialog.confirm("Excluir ?", "Deseja realmente excluir este registro?")) {
-    row._status = "DEL";
+    row._status = "DELETE";
+    
   }
   return undefined;
 }
 
+public qtdeFilhosOnChange(){
+   if(this.form!.controls.quantidade_filhos?.value == ""){
+      this.form!.controls.quantidade_filhos.setValue(0);
+      this.form?.controls.filhos.setValue(false);
+   }
+}
 
 
-  
 
   /*ngOnInit(): void {
     super.ngOnInit();

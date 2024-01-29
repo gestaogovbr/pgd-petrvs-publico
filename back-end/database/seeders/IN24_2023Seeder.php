@@ -2901,7 +2901,7 @@ class IN24_2023Seeder extends Seeder
                 "updated_at" => $this->timenow,
                 "deleted_at" => NULL,
                 "perfil_id" => $this->utilService->uuid("Participante"),
-                "tipo_capacidade_id" => $this->utilService->uuid("MOD_PRGT_PART"),
+                "tipo_capacidade_id" => $this->utilService->uuid("MOD_PART"),
             ),
             array(
                 "id" => "06f9fd56-7da5-4596-829c-3ec21dab9552",
@@ -4093,10 +4093,10 @@ class IN24_2023Seeder extends Seeder
                 "codigo" => "MOD_PRGT_INCL",
             ),
             array(
-                "codigo" => "MOD_PRGT_PART",
+                "codigo" => "MOD_PART",
             ),
             array(
-                "codigo" => "MOD_PRGT_PART_INCL",
+                "codigo" => "MOD_PART_INCL",
             ),
             array(
                 "codigo" => "MOD_PTR",

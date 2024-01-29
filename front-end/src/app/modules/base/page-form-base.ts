@@ -6,6 +6,8 @@ import { PageBase } from './page-base';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { NavigateResult } from 'src/app/services/navigate.service';
 
+export type PageFormAction = "edit" | "consult" | "new" | string;
+
 //@Component({ template: '' })
 @Injectable()
 export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> extends PageBase implements OnInit {
@@ -15,7 +17,7 @@ export abstract class PageFormBase<M extends Base, D extends DaoBaseService<M>> 
   public entity?: M;
   public dao?: D;
   public id?: string;
-  public action: string = "";
+  public action: PageFormAction = "";
   public formValidation?: (form?: FormGroup) => string | undefined | null | Promise<string | undefined | null>;
   public titleEdit?: (entity: M) => string;
 

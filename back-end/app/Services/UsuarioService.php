@@ -126,7 +126,6 @@ class UsuarioService extends ServiceBase
         return Unidade::where("id", $id)->whereRaw($this->areasTrabalhoWhere($subordinadas, $usuario, ""))->count() > 0;
     }
 
-
     /**
      * Informa quais atribuições de gestor o usuário logado possui na unidade recebida como parâmetro.
      * @param string $unidade_id 
@@ -338,38 +337,3 @@ class UsuarioService extends ServiceBase
         }
     }
 }
-/*
-ANALISE DO ERRO: usuário está conseguindo inserir plano de trabalho, sendo participante do plano, e o plano está entrando em execução mesmo sem a assinatura dos gestores
-
-participante
-FARIAS - 5e695cfe-a27f-42f3-a6b0-2fb41477aaec
-
-unidade_executora_plano_trabalho
-DEL01 - 9dc59ac4-89c4-4310-9b7c-9b0ae3388014
-
-gestores da DEL01
-gestor - 455eaa64-9f2b-4a4e-8959-b0c518be81ff (Susana)
-gestorSubstituto - 3381144b-2753-416a-a66d-1f87060cf4b3 (Alex)
-gestorDelegado - 2c2ee28a-e6d3-4ab5-9911-f37c42bc25b0 (Carol)
-
-lotação do participante
-UOP01/Del01-PI - 07546ab7-0e14-4ed9-a6ad-ab1d6edf7a55
-
-gestores da UOP01/Del01-PI
-gestor - 26d7b204-27f0-4e8b-8ee1-f9f64b1d3b9c (Karina)
-gestorSubstituto - c2155987-538c-47a1-8634-9df9a35f0147 (Guilherme)
-gestorDelegado - 5f6878d3-025b-4ea6-8fe8-0d4177e4d302 (Marian)
-
-entidade
-PRF - 52d78c7d-e0c1-422b-b094-2ca5958d5ac1
-
-gestores da entidade
-gestor - af8aa254-a04f-4650-98d8-d2cc6e942e01 (Paiva)
-gestorSubstituto - 7b0797fe-19b4-4a5c-a325-c39186645ade (Genisson)
-
-
-
-ERROS ENCONTRADOS
-1 - Quando o servidor está apagado, seu nome e matricula  não aparece no form de atribuições
-2 - Quando o servidor é reativado, a linha do grid é atualizada, mas não vem a mensagem de sucesso nem aparece o botão para editar
-*/
