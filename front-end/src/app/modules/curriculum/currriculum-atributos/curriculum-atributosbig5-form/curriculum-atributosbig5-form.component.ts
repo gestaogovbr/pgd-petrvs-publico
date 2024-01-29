@@ -47,6 +47,11 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
   public valorEscolhido: string = '';
   public respostasB5 : number[] =[] ;
   public arrayLabel: string = '';
+  public extroversao : number = 0;
+  public agradabilidade : number = 0;
+  public conscienciosidade: number = 0;
+  public estabilidade : number = 0;
+  public abertura : number = 0;
    
 
   constructor(public injector: Injector) {
@@ -239,28 +244,25 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
         let cM=14+(resp[2])+(resp[12])+(resp[22])+(resp[32])+(resp[42])+(resp[47]);
         let nM=38+(resp[8])+(resp[18]);
         let oM=8+(resp[4])+(resp[14])+(resp[24])+(resp[34])+(resp[39])+(resp[44])+(resp[49]);
-        
-        console.log('eM ',eM,' - aM ',aM, ' - cM', cM, ' - nM', nM ,' - oM', oM )
-        
-        
-        let eD=(resp[5])+(resp[15])+(resp[25])+(resp[35])+(resp[45]);
-        let aD=(resp[1])+(resp[11])+(resp[21])+(resp[31]);
-        let cD=(resp[7])+(resp[17])+(resp[27])+(resp[37]);
-        let nD=(resp[3])+(resp[13])+(resp[23])+(resp[28])+(resp[33])+(resp[38])+(resp[43])+(resp[48]);
-        let oD=(resp[9])+(resp[19])+(resp[29]);
+                
+        let extroversao=(resp[5])+(resp[15])+(resp[25])+(resp[35])+(resp[45]);
+        let agradabilidade=(resp[1])+(resp[11])+(resp[21])+(resp[31]);
+        let concienciosidade=(resp[7])+(resp[17])+(resp[27])+(resp[37]);
+        let estabilidade=(resp[3])+(resp[13])+(resp[23])+(resp[28])+(resp[33])+(resp[38])+(resp[43])+(resp[48]);
+        let abertura=(resp[9])+(resp[19])+(resp[29]);
         
         //console.log(nD)
       //console.log(oD)
       
         let e,a,c,n,o=0;
           
-        e=eM-eD
-        a=aM-aD
-        c=cM-cD
-        n=nM-nD
-        o=oM-oD
+        this.extroversao = eM-extroversao;
+        this.agradabilidade = aM-agradabilidade;
+        this.conscienciosidade = cM - concienciosidade;
+        this.estabilidade = nM - estabilidade;
+        this.abertura = oM - abertura;
 
-        console.log('e ',e,' - a ',a, ' - c ', c, ' - n ', n ,' - o ', o )
+        console.log('e ',this.extroversao,' - a ',this.agradabilidade, ' - c ',this.conscienciosidade, ' - n ',this.estabilidade ,' - o ', this.abertura )
 
   }       
 
