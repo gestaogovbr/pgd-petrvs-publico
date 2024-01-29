@@ -17,6 +17,12 @@ export type PlanoMetadados = { concluido: boolean }
 
 export type PlanoTrabalhoStatus = 'INCLUIDO' | 'AGUARDANDO_ASSINATURA' | 'ATIVO' | 'CONCLUIDO' | 'AVALIADO' | 'SUSPENSO' | 'CANCELADO';
 
+export type PlanoTrabalhoMetadata = {
+    assinaturasExigidas: AssinaturaList;
+    jaAssinaramTCR: AssinaturaList;
+    criterios_avaliacao: LookupItem[];
+};
+
 export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
     public tipo_modalidade?: TipoModalidade;
     public unidade?: Unidade;
@@ -43,6 +49,12 @@ export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
     public jaAssinaramTCR: AssinaturaList = { "participante": [], "gestores_unidade_executora": [],  "gestores_unidade_lotacao": [], "gestores_entidade": [] };
     public criterios_avaliacao: LookupItem[] = []; /* Critérios de avaliação do plano de trabalho */
     
+    /*public _metadata: PlanoTrabalhoMetadata = {
+        assinaturasExigidas: { "participante": [], "gestores_unidade_executora": [],  "gestores_unidade_lotacao": [], "gestores_entidade": [] },
+        jaAssinaramTCR: { "participante": [], "gestores_unidade_executora": [],  "gestores_unidade_lotacao": [], "gestores_entidade": [] },
+        criterios_avaliacao: []
+    };*/
+
     public programa_id: string = "";
     public usuario_id: string = "";
     public unidade_id: string = "";

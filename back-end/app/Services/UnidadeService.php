@@ -400,6 +400,18 @@ class UnidadeService extends ServiceBase
     }
 
     /**
+     * Retorna os gestores da unidade superior a unidade informada
+     */
+    public function gestoresUnidadeSuperior($unidadeId) {
+        $unidadeSup = Unidade::find($unidadeId)?->unidadePai;
+        return [
+            "gestor" => $unidadeSup?->gestor?->usuario,
+            "gestoresSubstitutos" => $unidadeSup?->gestoresSubstitutos->map(fn($x) => $x->usuario)->toArray() ?? [],
+            "gestoresDelegados" => $unidadeSup?->gestoresDelegados->map(fn($x) => $x->usuario)->toArray() ?? []
+        ];
+    } 
+
+    /**
      * Retorna um array com os usuários que são gestores (titular, substitutos e delegados) da unidade recebida como parâmetro.
      * @param string $unidade_id
      * @return array
@@ -416,6 +428,7 @@ class UnidadeService extends ServiceBase
         return $result;
     }
 
+    //
     /*
     (*) vide no front end, unidade-list-grid.component.ts
     unidades-list-grid

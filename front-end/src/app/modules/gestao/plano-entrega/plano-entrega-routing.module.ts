@@ -30,8 +30,7 @@ const routes: Routes = [
   { path: 'adesao', component: PlanoEntregaFormAdesaoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Adesão a Plano de Entregas", modal: true } },
   { path: 'entrega/progresso/:entrega_id', component: PlanoEntregaListProgressoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Progressos da entrega do Plano de Entregas", modal: true } },
   { path: 'entrega/progresso/:entrega_id/new', component: PlanoEntregaFormProgressoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Progresso entrega do Plano de Entregas", modal: true } },
-  { path: 'entrega/progresso/:entrega_id/:id/edit', component: PlanoEntregaFormProgressoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Progresso entrega do Plano de Entregas", modal: true } },
-
+  { path: 'entrega/progresso/:entrega_id/:id/edit', component: PlanoEntregaFormProgressoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Progresso entrega do Plano de Entregas", modal: true } }
 ];
 
 @NgModule({
