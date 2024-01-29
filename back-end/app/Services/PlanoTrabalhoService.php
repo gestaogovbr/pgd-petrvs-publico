@@ -154,7 +154,7 @@ class PlanoTrabalhoService extends ServiceBase
       /*  
       (RN_PTR_V) Condições para que um Plano de Trabalho possa ser criado:
         - o usuário logado precisa possuir a capacidade "MOD_PTR_INCL", e:
-          - o usuário logado precisa ser um participante do PGD, habilitado, ou atender aos critérios da TABELA_1; (RN_PTR_B); e
+          - o usuário logado precisa ser um participante do PGD, habilitado, ou atender aos critérios da TABELA_1; [RN_PTR_B]; e
           - o participante do plano precisa ser LOTADO/COLABORADOR na unidade do plano, ou este deve possuir a capacidade MOD_PTR_USERS_INCL (RN_PTR_Y); e
           - o novo Plano de Trabalho não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA (RN_PTR_AA)
       */
