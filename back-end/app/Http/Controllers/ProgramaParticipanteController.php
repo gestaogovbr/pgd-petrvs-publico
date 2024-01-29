@@ -13,13 +13,13 @@ class ProgramaParticipanteController extends ControllerBase {
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
             case 'STORE':
-                if (!$usuario->hasPermissionTo('MOD_PRGT_PART_INCL')) throw new ServerException("CapacidadeStore", "Inserção não realizada");
+                if (!$usuario->hasPermissionTo('MOD_PART_INCL')) throw new ServerException("CapacidadeStore", "Inserção não realizada");
                 break;
             case 'HABILITAR':
-                if (!$usuario->hasPermissionTo('MOD_PRGT_PART_HAB')) throw new ServerException("ValidateUsuario", "Usuário não tem permissão para habilitar participantes.");
+                if (!$usuario->hasPermissionTo('MOD_PART_HAB')) throw new ServerException("ValidateUsuario", "Usuário não tem permissão para habilitar participantes.");
                 break;
             case 'DESABILITAR':
-                if (!$usuario->hasPermissionTo('MOD_PRGT_PART_DESAB')) throw new ServerException("ValidateUsuario", "Usuário não tem permissão para desabilitar participantes.");
+                if (!$usuario->hasPermissionTo('MOD_PART_DESAB')) throw new ServerException("ValidateUsuario", "Usuário não tem permissão para desabilitar participantes.");
                 break;
         }
     }

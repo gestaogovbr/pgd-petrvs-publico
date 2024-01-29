@@ -139,7 +139,7 @@ export class AppComponent {
       EIXOS_TEMATICOS: { name: this.lex.translate("Eixos Temáticos"), permition: 'MOD_EXTM', route: ['cadastros', 'eixo-tematico'], icon: this.entity.getIcon('EixoTematico') },
       ENTREGAS: { name: this.lex.translate("Modelos de Entregas"), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: this.entity.getIcon('Entrega') },
       FERIADOS: { name: this.lex.translate("Feriados"), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: this.entity.getIcon('Feriado') },
-      HABILITACOES_PROGRAMA: { name: this.lex.translate("Habilitações"), permition: 'MOD_PRGT_PART', route: ["gestao", "programa", "participantes"], icon: this.entity.getIcon('Programa') },
+      HABILITACOES_PROGRAMA: { name: this.lex.translate("Habilitações"), permition: 'MOD_PART', route: ["gestao", "programa", "participantes"], icon: this.entity.getIcon('Programa') },
       MATERIAIS_SERVICOS: { name: this.lex.translate("Materiais e Serviços"), permition: '', route: ['cadastros', 'material-servico'], icon: this.entity.getIcon('MaterialServico') },
       TEMPLATES: { name: this.lex.translate("Templates"), permition: 'MOD_TEMP', route: ['cadastros', 'templates'], icon: this.entity.getIcon('Template'), params: { modo: "listagem" } },
       TIPOS_TAREFAS: { name: this.lex.translate("Tipos de Tarefas"), permition: 'MOD_TIPO_TRF', route: ['cadastros', 'tipo-tarefa'], icon: this.entity.getIcon('TipoTarefa') },
@@ -188,7 +188,11 @@ export class AppComponent {
       CURRICULUM_HOME: { name: "Home RX", permition: 'RX', route: ['raiox', 'home'], icon: "bi bi-toggle-off" },
       CURRICULUM_CADASTRO_PESSOAL: { name: this.lex.translate("Dados Pessoais"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'pessoal'], icon: "bi bi-file-person" },
       CURRICULUM_CADASTRO_PROFISSIONAL: { name: this.lex.translate("Dados Profissionais"), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'profissional'], icon: "fa fa-briefcase" },
-      CURRICULUM_CADASTRO_ATRIBUTOS: { name: this.lex.translate("Atributos Comportamentais"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
+      CURRICULUM_CADASTRO_ATRIBUTOS: { name: this.lex.translate("Atributos Comportamentais"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'atributos'], icon: "fa fa-brain" },
+      CURRICULUM_CADASTRO_ATRIBUTOS_SOFTSKILLS: { name: this.lex.translate("Soft Skills"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'teste'], icon: "fa fa-brain" },
+      CURRICULUM_CADASTRO_ATRIBUTOS_B5: { name: this.lex.translate("Big Five - B5"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
+      CURRICULUM_CADASTRO_ATRIBUTOS_DASS: { name: this.lex.translate("DASS"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
+      CURRICULUM_CADASTRO_ATRIBUTOS_SRQ20: { name: this.lex.translate("SRQ-20"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
       CURRICULUM_VISUALIZA_OPORTUNIDADES: { name: this.lex.translate("Pesquisa Oportunidades"), permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pessoal'], icon: "bi bi-lightbulb-fill" },
       CURRICULUM_CADASTRO_OPORTUNIDADES: { name: this.lex.translate("Oportunidades"), permition: 'MOD_RX_EDT_OPO', route: ['raiox', 'pessoal'], icon: "bi bi-lightbulb-fill" },
       CURRICULUM_CADASTRO_CURSOS: { name: this.lex.translate("Cursos"), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'cadastros', 'curso'], icon: "bi bi-mortarboard-fill" },
@@ -271,7 +275,7 @@ export class AppComponent {
     }];
 
     this.menuExecucao = [
-      this.menuSchema.PLANOS_TRABALHOS,
+      Object.assign({}, this.menuSchema.PLANOS_TRABALHOS, { metadata: { minha_unidade: true } }),
       this.menuSchema.ATIVIDADES,
       Object.assign({}, this.menuSchema.CONSOLIDACOES, { params: { tab: "UNIDADE" } }),
       //this.menuSchema.AFASTAMENTOS,
@@ -371,7 +375,18 @@ export class AppComponent {
         this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS
         //this.menuSchema.RXCADASTRO_OPORTUNIDADES
       ]
-    }, {
+    },{
+      name: this.lex.translate("Atributos Comportamentais"),
+      permition: "MOD_RX_VIS_DPE",
+      id: "navbarDropdownRXCadastros",
+      menu: [
+        this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS_SOFTSKILLS,
+        this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS_B5,
+        this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS_DASS,
+        this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS_SRQ20,
+        
+      ]
+    },{
       name: this.lex.translate("Oportunidades"),
       permition: "MOD_RX_VIS_DPE",
       id: "navbarDropdownRXOportunidades",
@@ -417,8 +432,6 @@ export class AppComponent {
       ]
     }];
 
-    let gestaoPGD = this.auth.hasPermissionTo("CTXT_GEST");
-    let execucaoPGD = this.auth.hasPermissionTo("CTXT_EXEC");
     this.menuContexto = [
       { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.menuGestao},
       { key: "EXECUCAO", permition: "CTXT_EXEC", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.menuExecucao},
@@ -429,11 +442,7 @@ export class AppComponent {
       { key: "RAIOX", permition: "CTXT_RX", icon: "bi bi-camera", name: this.lex.translate("Raio X"), menu: this.menuRaioX }
     ]
     
-    if(gestaoPGD){
-      this.menuContexto = this.menuContexto.filter(item => item.key !== "EXECUCAO");
-    } else if(execucaoPGD && !gestaoPGD){
-      this.menuContexto = this.menuContexto.filter(item => item.key !== "GESTAO");
-    }
+    
     
   }
 
@@ -471,6 +480,15 @@ export class AppComponent {
     this.dialog.container = this.dialogs;
     this.dialog.cdRef = this.cdRef;
     this.gb.refresh();
+    
+    let gestaoPGD = this.auth.hasPermissionTo("CTXT_GEST");
+    let execucaoPGD = this.auth.hasPermissionTo("CTXT_EXEC");
+    
+    if(gestaoPGD){
+      this.menuContexto = this.menuContexto.filter(item => item.key !== "EXECUCAO");
+    } else if(execucaoPGD && !gestaoPGD){
+      this.menuContexto = this.menuContexto.filter(item => item.key !== "GESTAO");
+    }
   }
 
   public toolbarLogin() {

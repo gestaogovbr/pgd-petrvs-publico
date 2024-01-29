@@ -6,8 +6,10 @@ import { ConfigResolver } from 'src/app/resolvies/config.resolver';
 import { RaioxhomeComponent } from 'src/app/modules/curriculum/curriculum-home/raioxhome.component';
 import { CurriculumFormComponent } from 'src/app/modules/curriculum/curriculum-form/curriculum-form.component';
 import { CurriculumProfissionalFormComponent } from 'src/app/modules/curriculum/curriculum-profissional-form/curriculum-profissional-form.component'
-import { CurriculumAtributosbig5FormComponent } from './curriculum-atributosbig5-form/curriculum-atributosbig5-form.component';
+import { CurriculumAtributosbig5FormComponent } from './currriculum-atributos/curriculum-atributosbig5-form/curriculum-atributosbig5-form.component';
 import { HomeComponent } from '../home/home.component';
+import { CurrriculumAtributosComponent } from './currriculum-atributos/currriculum-atributos.component';
+import { CurriculumAtributossoftFormComponent } from './currriculum-atributos/curriculum-atributossoft-form/curriculum-atributossoft-form.component';
 
 const routes: Routes = [
   //{ path: '', component: RaioxhomeComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Home Raio-X" } },
@@ -16,7 +18,9 @@ const routes: Routes = [
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Home Raio-X" } },
   { path: 'pessoal', component: CurriculumFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "" } },
   { path: 'profissional', component: CurriculumProfissionalFormComponent, canActivate: [AuthGuard], data: { title: "Dados Profissionais" } },
-  { path: 'big5', component: CurriculumAtributosbig5FormComponent, canActivate: [AuthGuard], data: { title: "Teste BIG 5" } },
+  { path: 'big5', component: CurriculumAtributosbig5FormComponent, canActivate: [AuthGuard], data: { title: "" } },
+  { path: 'soft', component: CurriculumAtributossoftFormComponent, canActivate: [AuthGuard], data: { title: "" } },
+  { path: 'atributos', component: CurrriculumAtributosComponent, canActivate: [AuthGuard], data: { title: "" } },
   { path: 'cadastros',loadChildren: () => import('../cadastros/curriculum/curriculum-cadastros.module').then(m => m.CurriculumCadastrosModule), canActivate: [AuthGuard] },
 ];
 

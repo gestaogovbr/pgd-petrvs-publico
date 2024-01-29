@@ -72,7 +72,7 @@ export class AtividadeListGridComponent extends AtividadeListBase {
       etiquetas: { default: [] },
       etiqueta: { default: null }
     });
-    this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }, { field: "plano_trabalho_entrega.plano_entrega_entrega.descricao", label: "Entrega" }];
+    this.groupBy = [{ field: "unidade.sigla", label: "Unidade" }, { field: "plano_trabalho_entrega.plano_entrega_entrega.descricao", label: "Entrega" }, { field: "plano_trabalho_entrega.descricao", label: "Descrição dos trabalhos" }];
     this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
   }
 
@@ -90,12 +90,10 @@ export class AtividadeListGridComponent extends AtividadeListBase {
 
   ngAfterViewInit() {
     super.ngAfterViewInit();
-
     if(this.metadata?.atribuidas_para_mim){
       this.filter?.controls.atribuidas_para_mim.setValue(true);
       this.filter?.controls.usuario_id.setValue(this.auth.usuario?.id);
     }
-
     if (this.fixedFilter) {
       const status = this.fixedFilter.find(x => x[0] == "status");
       if (status) this.filter?.controls.status.setValue(status[2]);
@@ -106,7 +104,6 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     const agrupar = this.filter!.controls.agrupar.value;
     const agrupar_entrega = this.filter!.controls.agrupar_entrega.value;
     const groupByOptions: GroupBy[] = [];
-
     if (agrupar) groupByOptions.push({ field: "unidade.sigla", label: "Unidade" });  
     if (agrupar_entrega) groupByOptions.push({ field: "plano_trabalho_entrega.plano_entrega_entrega.descricao", label: "Entrega" });  
     this.groupBy = groupByOptions;

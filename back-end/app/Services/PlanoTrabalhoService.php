@@ -361,7 +361,7 @@ class PlanoTrabalhoService extends ServiceBase
     $query = PlanoTrabalho::with([
       "unidade:id,sigla,nome",
       "unidade.gestor:id,unidade_id,usuario_id",
-      "unidade.gestorSubstituto:id,unidade_id,usuario_id",
+      "unidade.gestoresSubstitutos:id,unidade_id,usuario_id",
       "tipoModalidade:id,nome",
       "consolidacoes.avaliacao.tipoAvaliacao.notas",
       "usuario:id,nome,apelido,url_foto"
@@ -756,8 +756,8 @@ class PlanoTrabalhoService extends ServiceBase
       $lotacao = Unidade::find($participante->unidade_id);
       $entidade = $unidade->entidade;
       if ($programa->plano_trabalho_assinatura_participante && isset($participante)) $ids["participante"][] = $participante->id;
-      if ($programa->plano_trabalho_assinatura_gestor_unidade && isset($unidade)) $ids["gestores_unidade_executora"] = array_values(array_filter([$unidade->gestor ? $unidade->gestor->usuario_id : null, $unidade->gestorSubstituto ? $unidade->gestorSubstituto->usuario_id : null, $unidade->gestorDelegado ? $unidade->gestorDelegado->usuario_id : null]));
-      if ($programa->plano_trabalho_assinatura_gestor_lotacao && isset($lotacao)) $ids["gestores_unidade_lotacao"] = array_values(array_filter([$lotacao->gestor ? $lotacao->gestor->usuario_id : null, $lotacao->gestorSubstituto ? $lotacao->gestorSubstituto->usuario_id : null, $lotacao->gestorDelegado ? $lotacao->gestorDelegado->usuario_id : null]));
+      if ($programa->plano_trabalho_assinatura_gestor_unidade && isset($unidade)) $ids["gestores_unidade_executora"] = $this->unidadeService->gestoresUnidade($unidade->id);
+      if ($programa->plano_trabalho_assinatura_gestor_lotacao && isset($lotacao)) $ids["gestores_unidade_lotacao"] = $this->unidadeService->gestoresUnidade($lotacao->id);
       if ($programa->plano_trabalho_assinatura_gestor_entidade && isset($entidade)) $ids["gestores_entidade"] = array_values(array_filter([$entidade->gestor_id, $entidade->gestor_substituto_id]));
     } else {
       throw new ServerException("ValidatePlanoTrabalho", "Plano de Trabalho inconsistente (programa/usuário/unidade)!");

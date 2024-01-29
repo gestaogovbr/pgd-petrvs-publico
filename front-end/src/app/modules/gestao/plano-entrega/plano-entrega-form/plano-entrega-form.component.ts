@@ -49,7 +49,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     this.modalWidth = 1200;
     this.form = this.fh.FormBuilder({
       nome: { default: "" },
-      data_inicio: { default: new Date() },
+      data_inicio: { default: new Date()},
       data_fim: { default: new Date() },
       unidade_id: { default: "" },
       plano_entrega_id: { default: null },  // até o momento, um plano de entrega não poderá estar vinculado a outro (adesão de Plano de Entrega)
@@ -89,8 +89,8 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     } else {
       const entregas = this.form!.controls.entregas.value || [];
       for (let entrega of entregas) {
-        if (entrega.data_inicio < inicio) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data inicial anterior à " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(inicio);
-        if (entrega.data_fim > fim) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data fim posterior à " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(fim);
+        if (!this.auth.hasPermissionTo("MOD_PENT_ENTR_EXTRPL") && entrega.data_inicio < inicio) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data inicial anterior à " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(inicio);
+        if (!this.auth.hasPermissionTo("MOD_PENT_ENTR_EXTRPL") && entrega.data_fim > fim) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data fim posterior à " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(fim);
       }
     }
     return undefined;
@@ -152,8 +152,10 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   public onProgramaChange(){
     const dias=(this.programa?.selectedEntity as Programa)?.prazo_max_plano_entrega;
     const data=this.somaDia(this.entity!.data_inicio,dias);
-    this.form!.controls.data_fim.setValue(new Date(data));
-    this.dataFim?.change.emit();
+    if (!this.entity?.data_fim) {
+      this.form!.controls.data_fim.setValue(new Date(data));
+      this.dataFim?.change.emit();
+    }
   }
 
 }

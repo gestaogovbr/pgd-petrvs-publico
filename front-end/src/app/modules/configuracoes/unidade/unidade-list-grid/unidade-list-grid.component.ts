@@ -27,10 +27,9 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
 
   constructor(public injector: Injector) {
     super(injector, Unidade, UnidadeDaoService);
-    this.join = ["cidade", "unidade_pai:id,sigla", "entidade:id,sigla", "gestor.usuario:id", "gestor_substituto.usuario:id"];
+    this.join = ["cidade", "unidade_pai:id,sigla", "entidade:id,sigla", "gestor.usuario:id", "gestores_substitutos.usuario:id"];
     this.cidadeDao = injector.get<CidadeDaoService>(CidadeDaoService);
     this.entidadeDao = injector.get<EntidadeDaoService>(EntidadeDaoService);
-
     /* Inicializações */
     this.code = "MOD_CFG_UND";
     this.filter = this.fh.FormBuilder({
@@ -59,7 +58,7 @@ export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoSe
     // Testa se o usuário logado possui permissão de inativar a unidade do grid
     if (this.auth.hasPermissionTo("MOD_UND_INATV")) result.push({icon: unidade.data_inativacao ? "bi bi-check-circle" : "bi bi-x-circle", label: unidade.data_inativacao ? 'Reativar' : 'Inativar', onClick: async (unidade: Unidade) => await this.inativo(unidade, !unidade.data_inativacao)});
     // Testa se o usuário logado possui permissão para gerenciar integrantes da unidade do grid
-    if (this.auth.hasPermissionTo("MOD_UND_INTG")) result.push({ label: "Integrantes", icon: "bi bi-people", onClick: (unidade: Unidade) => this.go.navigate({ route: ['configuracoes', 'unidade', '', unidade.id, 'integrante'] }, { metadata: { entity_id: row.id, unidade: row } })});
+    if (this.auth.hasPermissionTo("MOD_UND_INTG")) result.push({ label: "Integrantes", icon: "bi bi-people", onClick: (unidade: Unidade) => this.go.navigate({ route: ['configuracoes', 'unidade', '', unidade.id, 'integrante'] }, { metadata: { unidade: row } })});
     return result;
   }
 

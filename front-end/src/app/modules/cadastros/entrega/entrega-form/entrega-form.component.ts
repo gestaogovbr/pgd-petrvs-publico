@@ -29,6 +29,7 @@ export class EntregaFormComponent extends PageFormBase<Entrega, EntregaDaoServic
     super(injector, Entrega, EntregaDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.modalWidth = 900;
+    this.title = "Inclusão de " + this.lex.translate('Entregas');
     this.join = ["unidade"];
     this.form = this.fh.FormBuilder({
       nome: {default: ""},

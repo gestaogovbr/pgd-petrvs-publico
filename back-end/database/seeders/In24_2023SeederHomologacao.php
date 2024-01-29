@@ -26,7 +26,7 @@ use App\Models\CadeiaValorProcesso;
 use App\Models\Capacidade;
 use App\Services\UtilService;
 
-class IN24_2023SeederHomologacao extends Seeder
+class In24_2023SeederHomologacao extends Seeder
 {
     /**
      * Run the database seeds.
@@ -1856,7 +1856,7 @@ class IN24_2023SeederHomologacao extends Seeder
                 "updated_at" => $this->timenow,
                 "deleted_at" => NULL,
                 "perfil_id" => $this->utilService->uuid("Participante"),
-                "tipo_capacidade_id" => $this->utilService->uuid("MOD_PRGT_PART"),
+                "tipo_capacidade_id" => $this->utilService->uuid("MOD_PART"),
             ),
             array(
                 "id" => "06f9fd56-7da5-4596-829c-3ec21dab9552",

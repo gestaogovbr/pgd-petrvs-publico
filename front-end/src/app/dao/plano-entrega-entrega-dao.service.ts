@@ -2,6 +2,8 @@ import { Injectable, Injector } from '@angular/core';
 import { PlanoEntregaEntrega } from '../models/plano-entrega-entrega.model';
 import { DaoBaseService } from './dao-base.service';
 import { TemplateDataset } from '../modules/uteis/templates/template.service';
+import { TreeNode } from 'primeng/api';
+
 
 @Injectable({
   providedIn: 'root'
@@ -24,5 +26,42 @@ export class PlanoEntregaEntregaDaoService extends DaoBaseService<PlanoEntregaEn
       { field: "destinatario", label: "Destinatário da entrega" }
     ], deeps);
   }
+
+  public hierarquia(PlanoEntregaEntregaId: string): Promise<TreeNode[]>{
+    return new Promise<any>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/hierarquia', {
+        entrega_id: PlanoEntregaEntregaId
+      }).subscribe(response => {
+        resolve(this.loadHierarquiaDados(response.hierarquia, PlanoEntregaEntregaId));
+      }, error => {
+        console.log("Erro ao montar a hierarquia da entrega!", error);
+        resolve([]);
+      });
+    });
+  }
+
+  private loadHierarquiaDados(data: any, entrega_id: string): TreeNode[] {
+    const entregaAtual: TreeNode = this.mapHierarquia(data, entrega_id);
+    const children = data.filhos ? data.filhos.flatMap((filho: any) => this.loadHierarquiaDados(filho, entrega_id)) : [];
+  
+    if (data.pai) {
+      const pai: TreeNode = this.mapHierarquia(data.pai, entrega_id);
+      return [ { ...pai, children: [ { ...entregaAtual, children } ] } ];
+    } 
+  
+    return [ { ...entregaAtual, children } ];
+  }
+  
+  private mapHierarquia(data: any, entrega_id: string): TreeNode {
+    return {
+      label: data.descricao,
+      key: data.id,
+      data: data,
+      expanded: true,
+      styleClass: entrega_id == data.id ? 'bg-primary text-white' : '',
+      children: [],
+    };
+  }
+
 }
 

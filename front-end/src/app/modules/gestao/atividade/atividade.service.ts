@@ -59,10 +59,13 @@ export class AtividadeService {
   public getStatus(row: any, consolidacao?: PlanoTrabalhoConsolidacao): BadgeButton[] {
     const atividade: Atividade = row as Atividade;
     const status = this.lookup.ATIVIDADE_STATUS.find(x => x.key == atividade.status) || { key: "DESCONHECIDO", value: "Desconhecido", icon: "bi bi-question-circle", color: "light" };
+    const consolidacaoDataInicio = this.util.setTime(consolidacao?.data_inicio || new Date(), 0, 0, 0); 
+    const consolidacaoDataFim = this.util.setTime(consolidacao?.data_fim || new Date(), 23, 59, 59);
     let result: BadgeButton[] = [{ data: {status: status.key, filter: true}, label: status.value, icon: status.icon!, color: status.color! }];
     if (atividade.metadados?.atrasado) result.push({ data: {status: "ATRASADO", filter: false}, label: "Atrasado", icon: "bi bi-alarm", color: "danger" });
-    if (consolidacao && ((atividade.data_inicio && this.util.asTimestamp(atividade.data_inicio) < this.util.asTimestamp(consolidacao.data_inicio)) ||
-      (atividade.data_entrega && this.util.asTimestamp(atividade.data_entrega) > this.util.asTimestamp(consolidacao!.data_fim)))) {
+    if (consolidacao && ((atividade.data_inicio && this.util.asTimestamp(atividade.data_inicio) < this.util.asTimestamp(consolidacaoDataInicio)) ||
+      (atividade.data_entrega && this.util.asTimestamp(atividade.data_entrega) > this.util.asTimestamp(consolidacaoDataFim)))) {
+      console.log(atividade.data_inicio, consolidacao.data_inicio, atividade.data_entrega, consolidacao!.data_fim);
       result.push({ data: {status: "EXTRAPOLADO", filter: false}, label: "Extrapolado", icon: "bi bi-arrow-left-right", color: "danger", hint: "Data de início ou conclusão " + this.lex.translate("da Atividade") + " extrapola os da consolidação" });
     }
     if (atividade.metadados?.arquivado) result.push({ data: {status: "ARQUIVADO", filter: false}, label: "Arquivado", icon: "bi bi-inboxes", color: "danger" });
@@ -215,7 +218,7 @@ export class AtividadeService {
   public dynamicOptions = (row: any, metadata?: any): ToolbarButton[] => {
     let result: ToolbarButton[] = [];
     let atividade: Atividade = row as Atividade;
-    const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || this.auth.usuario?.id == atividade.unidade?.gestor_substituto?.id;
+    const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || atividade.unidade?.gestores_substitutos?.map(x => x.id).includes(this.auth.usuario?.id || "");
     const isDemandante = this.auth.usuario?.id == atividade.demandante_id;
     const isResponsavel = this.auth.usuario?.id == atividade.usuario_id;
     const lastConsolidacao = this.lastConsolidacao(row.metadados?.consolidacoes);
@@ -288,7 +291,7 @@ export class AtividadeService {
   public dynamicButtons = (row: any, metadata?: any): ToolbarButton[] => {
     let result: ToolbarButton[] = [];
     let atividade: Atividade = row as Atividade;
-    const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || this.auth.usuario?.id == atividade.unidade?.gestor_substituto?.id;
+    const isGestor = this.auth.usuario?.id == atividade.unidade?.gestor?.id || atividade.unidade?.gestores_substitutos?.map(x => x.usuario_id).includes(this.auth.usuario?.id || "");
     const isResponsavel = this.auth.usuario?.id == atividade.usuario_id;
     const lastConsolidacao = this.lastConsolidacao(row.metadados?.consolidacoes);
     const BOTAO_ALTERAR_AVALIACAO = { hint: "Alterar avaliação", icon: "bi bi-check-all", color: "btn-outline-danger", onClick: (atividade: Atividade) => this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'avaliar'] }, this.modalRefreshId(metadata, atividade)) };
