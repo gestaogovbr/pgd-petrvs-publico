@@ -3116,8 +3116,8 @@ class CurriculumAtributosbig5FormComponent extends _base_page_form_base__WEBPACK
     this.join = ['questionario_resposta_pergunta'];
     this.questionarioDao = injector.get(src_app_dao_questionario_dao_service__WEBPACK_IMPORTED_MODULE_3__.QuestionarioDaoService);
     this.questionarioPerguntasDao = injector.get(src_app_dao_questionario_pergunta_dao_service__WEBPACK_IMPORTED_MODULE_4__.QuestionarioPerguntaDaoService);
-    this.bigicoAmareloIMG = "/assets/images/iconBigAmarelo.png";
-    this.bigicoIMG = "/assets/images/iconBig.png";
+    this.bigicoAmareloIMG = "/assets/images/icon_big_amarelo.png";
+    this.bigicoIMG = "/assets/images/icon_big.png";
     this.form = this.fh.FormBuilder({
       radiob5: {
         default: false
@@ -3418,8 +3418,8 @@ class CurriculumAtributosdiscFormComponent extends _base_page_form_base__WEBPACK
     this.join = ['questionario_resposta_pergunta'];
     this.questionarioDao = injector.get(src_app_dao_questionario_dao_service__WEBPACK_IMPORTED_MODULE_3__.QuestionarioDaoService);
     this.questionarioPerguntasDao = injector.get(src_app_dao_questionario_pergunta_dao_service__WEBPACK_IMPORTED_MODULE_4__.QuestionarioPerguntaDaoService);
-    this.bigicoAmareloIMG = "/assets/images/iconBigAmarelo.png";
-    this.bigicoIMG = "/assets/images/iconBig.png";
+    this.bigicoAmareloIMG = "/assets/images/icon_big_amarelo.png";
+    this.bigicoIMG = "/assets/images/icon_big.png";
     this.form = this.fh.FormBuilder({
       comunica: {
         default: 0
@@ -3745,8 +3745,8 @@ class CurriculumAtributossoftFormComponent extends _base_page_form_base__WEBPACK
     this.join = ['questionario_resposta_pergunta'];
     this.questionarioDao = injector.get(src_app_dao_questionario_dao_service__WEBPACK_IMPORTED_MODULE_3__.QuestionarioDaoService);
     this.questionarioPerguntasDao = injector.get(src_app_dao_questionario_pergunta_dao_service__WEBPACK_IMPORTED_MODULE_4__.QuestionarioPerguntaDaoService);
-    this.bigicoAmareloIMG = "/assets/images/iconBigAmarelo.png";
-    this.bigicoIMG = "/assets/images/iconBig.png";
+    this.bigicoAmareloIMG = "/assets/images/icon_big_amarelo.png";
+    this.bigicoIMG = "/assets/images/icon_big.png";
     this.form = this.fh.FormBuilder({
       comunica: {
         default: 0
@@ -3896,7 +3896,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefi
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵInheritDefinitionFeature"]],
   decls: 4,
   vars: 5,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [4, "ngIf", "ngIfElse"], ["softskills", ""], [1, "my-5"], [1, "row", "justify-content-between", "g-4"], [1, "col-lg-3"], [1, "card", "h-100"], ["src", "/assets/icons/iconeComunicacao.png", "id", "imgComunica", "alt", "...", 1, "card-img-top"], [1, "card-body"], [1, "card-title", "text-center"], [1, "row", "justify-content-center"], [1, "col-md-12"], [1, "card-text"], ["controlName", "comunica", 3, "control", "minValue", "maxValue", "change"], ["comunicaV", ""], ["src", "/assets/icons/iconeLideranca.png", "id", "imgLideranca", "alt", "...", 1, "card-img-top"], ["controlName", "lideranca", 3, "size", "control", "minValue", "maxValue", "change"], ["liderancaV", ""], ["src", "/assets/icons/iconeResolucao.png", "id", "imgResolucao", "alt", "...", 1, "card-img-top"], [1, "col-md-8"], ["controlName", "resolucao", 3, "size", "control", "minValue", "maxValue", "change"], ["resolucaoV", ""], ["src", "/assets/icons/iconeCriatividade.png", "id", "imgCriatividade", "alt", "...", 1, "card-img-top"], ["controlName", "criatividade", 3, "size", "control", "minValue", "maxValue", "change"], ["criatividadeV", ""], [1, "row", "justify-content-between", "g-4", "mt-3"], ["src", "/assets/icons/iconePensamento.png", "id", "imgPensamento", "alt", "...", 1, "card-img-top"], ["controlName", "pensamento", 3, "size", "control", "minValue", "maxValue", "change"], ["pensamentoV", ""], ["src", "/assets/icons/iconeHabilidades.png", "id", "imgHabilidade", "alt", "...", 1, "card-img-top"], ["controlName", "habilidade", 3, "size", "control", "minValue", "maxValue", "change"], ["habilidadeV", ""], ["src", "/assets/icons/iconeAdaptabilidade.png", "id", "imgAdaptabilidade", "alt", "...", 1, "card-img-top"], ["controlName", "adaptabilidade", 3, "size", "control", "minValue", "maxValue", "change"], ["adaptabilidadeV", ""], ["src", "/assets/icons/iconeEtica.png", "id", "imgEtica", "alt", "...", 1, "card-img-top"], ["controlName", "etica", 3, "control", "minValue", "maxValue", "change"], ["eticaV", ""]],
+  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [4, "ngIf", "ngIfElse"], ["softskills", ""], [1, "my-5"], [1, "row", "justify-content-between", "g-4"], [1, "col-lg-3"], [1, "card", "h-100"], ["src", "/assets/icons/icone_comunicacao.png", "id", "imgComunica", "alt", "...", 1, "card-img-top"], [1, "card-body"], [1, "card-title", "text-center"], [1, "row", "justify-content-center"], [1, "col-md-12"], [1, "card-text"], ["controlName", "comunica", 3, "control", "minValue", "maxValue", "change"], ["comunicaV", ""], ["src", "/assets/icons/icone_lideranca.png", "id", "imgLideranca", "alt", "...", 1, "card-img-top"], ["controlName", "lideranca", 3, "size", "control", "minValue", "maxValue", "change"], ["liderancaV", ""], ["src", "/assets/icons/icone_resolucao.png", "id", "imgResolucao", "alt", "...", 1, "card-img-top"], [1, "col-md-8"], ["controlName", "resolucao", 3, "size", "control", "minValue", "maxValue", "change"], ["resolucaoV", ""], ["src", "/assets/icons/icone_criatividade.png", "id", "imgCriatividade", "alt", "...", 1, "card-img-top"], ["controlName", "criatividade", 3, "size", "control", "minValue", "maxValue", "change"], ["criatividadeV", ""], [1, "row", "justify-content-between", "g-4", "mt-3"], ["src", "/assets/icons/icone_pensamento.png", "id", "imgPensamento", "alt", "...", 1, "card-img-top"], ["controlName", "pensamento", 3, "size", "control", "minValue", "maxValue", "change"], ["pensamentoV", ""], ["src", "/assets/icons/icone_habilidades.png", "id", "imgHabilidade", "alt", "...", 1, "card-img-top"], ["controlName", "habilidade", 3, "size", "control", "minValue", "maxValue", "change"], ["habilidadeV", ""], ["src", "/assets/icons/icone_adaptabilidade.png", "id", "imgAdaptabilidade", "alt", "...", 1, "card-img-top"], ["controlName", "adaptabilidade", 3, "size", "control", "minValue", "maxValue", "change"], ["adaptabilidadeV", ""], ["src", "/assets/icons/icone_etica.png", "id", "imgEtica", "alt", "...", 1, "card-img-top"], ["controlName", "etica", 3, "control", "minValue", "maxValue", "change"], ["eticaV", ""]],
   template: function CurriculumAtributossoftFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "editable-form", 0);

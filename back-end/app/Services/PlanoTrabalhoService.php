@@ -897,33 +897,39 @@ class PlanoTrabalhoService extends ServiceBase
       "gestores_entidade" => [], 
       "erros" => []
     ];
+    $keys = [$planoTrabalho["programa_id"], $planoTrabalho["usuario_id"], $planoTrabalho["unidade_id"]];
     if (!empty($planoTrabalho) && !empty($planoTrabalho["programa_id"]) && !empty($planoTrabalho["usuario_id"]) && !empty($planoTrabalho["unidade_id"])) {
-      $programa = Programa::find($planoTrabalho["programa_id"]);
-      $participante = Usuario::with("lotacao")->find($planoTrabalho["usuario_id"]);
-      $unidade = Unidade::find($planoTrabalho["unidade_id"]);
-      if(empty($programa) || empty($participante) || empty($unidade)) {
-        $ids["erros"] = ["programa_id" => $planoTrabalho["programa_id"], "programa" => $programa, "usuario_id" => $planoTrabalho["usuario_id"], "participante" => $participante, "unidade_id" => $planoTrabalho["unidade_id"], "unidade" => $unidade];
-        return $ids;
-      }
-      $lotacao = $participante->lotacao?->unidade;
-      $entidade = $unidade->entidade;
-      if ($programa->plano_trabalho_assinatura_participante && isset($participante)) $ids["participante"][] = $participante->id;
-      if ($programa->plano_trabalho_assinatura_gestor_entidade && isset($entidade)) $ids["gestores_entidade"] = array_values(array_filter([$entidade->gestor_id, $entidade->gestor_substituto_id]));
-      if ($programa->plano_trabalho_assinatura_gestor_unidade && isset($unidade)) {
-        $atribuicoesUnidadeExecutora = $this->usuarioService->atribuicoesGestor($planoTrabalho['unidade_id'], $planoTrabalho['usuario_id']);
-        $gestores = $atribuicoesUnidadeExecutora["gestor"] ? array_merge([$unidade->unidadePai?->gestor?->usuario_id], $unidade->unidadePai?->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
-          ($atribuicoesUnidadeExecutora["gestorSubstituto"] ? array_merge([$unidade->gestor?->usuario_id], $unidade->gestoresSubstitutos?->filter(fn($x) => $x->usuario_id != $participante->id)->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
-          ($atribuicoesUnidadeExecutora["gestorDelegado"] ? array_merge([$unidade->gestor?->usuario_id], $unidade->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
-          array_merge([$unidade->gestor?->usuario_id], $unidade->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? [])));
-        $ids["gestores_unidade_executora"] = array_values(array_filter($gestores));
-      }
-      if ($programa->plano_trabalho_assinatura_gestor_lotacao && isset($lotacao)) {
-        $atribuicoesUnidadeLotacao = $this->usuarioService->atribuicoesGestor($lotacao->id, $planoTrabalho['usuario_id']);
-        $gestores = $atribuicoesUnidadeLotacao["gestor"] ? array_merge([$lotacao->unidadePai?->gestor?->usuario_id], $lotacao->unidadePai?->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
-          ($atribuicoesUnidadeLotacao["gestorSubstituto"] ? array_merge([$lotacao->gestor?->usuario_id], $lotacao->gestoresSubstitutos?->filter(fn($x) => $x->usuario_id != $participante->id)->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
-          ($atribuicoesUnidadeLotacao["gestorDelegado"] ? array_merge([$lotacao->gestor?->usuario_id], $lotacao->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
-          array_merge([$lotacao->gestor?->usuario_id], $lotacao->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? [])));
-        $ids["gestores_unidade_lotacao"] = array_values(array_filter($gestores));
+      if($this->hasBuffer("assinaturasExigidas", $keys)) {
+        $ids = $this->getBuffer("assinaturasExigidas", $keys);
+      } else {
+        $programa = Programa::find($planoTrabalho["programa_id"]);
+        $participante = Usuario::with("lotacao")->find($planoTrabalho["usuario_id"]);
+        $unidade = Unidade::find($planoTrabalho["unidade_id"]);
+        if(empty($programa) || empty($participante) || empty($unidade)) {
+          $ids["erros"] = ["programa_id" => $planoTrabalho["programa_id"], "programa" => $programa, "usuario_id" => $planoTrabalho["usuario_id"], "participante" => $participante, "unidade_id" => $planoTrabalho["unidade_id"], "unidade" => $unidade];
+          return $ids;
+        }
+        $lotacao = $participante->lotacao?->unidade;
+        $entidade = $unidade->entidade;
+        if ($programa->plano_trabalho_assinatura_participante && isset($participante)) $ids["participante"][] = $participante->id;
+        if ($programa->plano_trabalho_assinatura_gestor_entidade && isset($entidade)) $ids["gestores_entidade"] = array_values(array_filter([$entidade->gestor_id, $entidade->gestor_substituto_id]));
+        if ($programa->plano_trabalho_assinatura_gestor_unidade && isset($unidade)) {
+          $atribuicoesUnidadeExecutora = $this->usuarioService->atribuicoesGestor($planoTrabalho['unidade_id'], $planoTrabalho['usuario_id']);
+          $gestores = $atribuicoesUnidadeExecutora["gestor"] ? array_merge([$unidade->unidadePai?->gestor?->usuario_id], $unidade->unidadePai?->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
+            ($atribuicoesUnidadeExecutora["gestorSubstituto"] ? array_merge([$unidade->gestor?->usuario_id], $unidade->gestoresSubstitutos?->filter(fn($x) => $x->usuario_id != $participante->id)->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
+            ($atribuicoesUnidadeExecutora["gestorDelegado"] ? array_merge([$unidade->gestor?->usuario_id], $unidade->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
+            array_merge([$unidade->gestor?->usuario_id], $unidade->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? [])));
+          $ids["gestores_unidade_executora"] = array_values(array_filter($gestores));
+        }
+        if ($programa->plano_trabalho_assinatura_gestor_lotacao && isset($lotacao)) {
+          $atribuicoesUnidadeLotacao = $this->usuarioService->atribuicoesGestor($lotacao->id, $planoTrabalho['usuario_id']);
+          $gestores = $atribuicoesUnidadeLotacao["gestor"] ? array_merge([$lotacao->unidadePai?->gestor?->usuario_id], $lotacao->unidadePai?->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
+            ($atribuicoesUnidadeLotacao["gestorSubstituto"] ? array_merge([$lotacao->gestor?->usuario_id], $lotacao->gestoresSubstitutos?->filter(fn($x) => $x->usuario_id != $participante->id)->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
+            ($atribuicoesUnidadeLotacao["gestorDelegado"] ? array_merge([$lotacao->gestor?->usuario_id], $lotacao->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
+            array_merge([$lotacao->gestor?->usuario_id], $lotacao->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? [])));
+          $ids["gestores_unidade_lotacao"] = array_values(array_filter($gestores));
+        }
+        $this->setBuffer("assinaturasExigidas", $keys, $ids);
       }
     } else {
       throw new ServerException("ValidatePlanoTrabalho", "Plano de Trabalho inconsistente (programa/usuário/unidade)!");
@@ -1014,14 +1020,19 @@ class PlanoTrabalhoService extends ServiceBase
   public function jaAssinaramTCR(string $plano_trabalho_id): array
   {
     $result = ["participante" => [], "gestores_unidade_executora" => [], "gestores_unidade_lotacao" => [], "gestores_entidade" => []];
-    $planoTrabalho = PlanoTrabalho::withTrashed()->find($plano_trabalho_id);
-    $assinaturasExigidas = $this->assinaturasExigidas($planoTrabalho);
-    if ($planoTrabalho && $planoTrabalho->documento_id) {
-      $ids_assinaturas = $planoTrabalho->documento->assinaturas->map(fn ($a) => $a->usuario_id)->toArray();
-      $result["participante"] = UtilService::intersecao($assinaturasExigidas["participante"], $ids_assinaturas);
-      $result["gestores_unidade_executora"] = array_values(UtilService::intersecao($assinaturasExigidas["gestores_unidade_executora"], $ids_assinaturas));
-      $result["gestores_unidade_lotacao"] = array_values(UtilService::intersecao($assinaturasExigidas["gestores_unidade_lotacao"], $ids_assinaturas));
-      $result["gestores_entidade"] = array_values(UtilService::intersecao($assinaturasExigidas["gestores_entidade"], $ids_assinaturas));
+    if($this->hasBuffer("jaAssinaramTCR", $plano_trabalho_id)) {
+      $result = $this->getBuffer("jaAssinaramTCR", $plano_trabalho_id);
+    } else {
+      $planoTrabalho = PlanoTrabalho::withTrashed()->find($plano_trabalho_id);
+      $assinaturasExigidas = $this->assinaturasExigidas($planoTrabalho);
+      if ($planoTrabalho && $planoTrabalho->documento_id) {
+        $ids_assinaturas = $planoTrabalho->documento->assinaturas->map(fn ($a) => $a->usuario_id)->toArray();
+        $result["participante"] = UtilService::intersecao($assinaturasExigidas["participante"], $ids_assinaturas);
+        $result["gestores_unidade_executora"] = array_values(UtilService::intersecao($assinaturasExigidas["gestores_unidade_executora"], $ids_assinaturas));
+        $result["gestores_unidade_lotacao"] = array_values(UtilService::intersecao($assinaturasExigidas["gestores_unidade_lotacao"], $ids_assinaturas));
+        $result["gestores_entidade"] = array_values(UtilService::intersecao($assinaturasExigidas["gestores_entidade"], $ids_assinaturas));
+      }
+      $this->setBuffer("jaAssinaramTCR", $plano_trabalho_id, $result);
     }
     return $result;
   }

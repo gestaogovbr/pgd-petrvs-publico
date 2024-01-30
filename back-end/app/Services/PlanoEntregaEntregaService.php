@@ -15,7 +15,7 @@ class PlanoEntregaEntregaService extends ServiceBase
       if ($action == ServiceBase::ACTION_EDIT) {
         /* (RN_PTR_E) O Plano de Trabalho precisará ser repactuado (retornar ao status de AGUARDANDO_ASSINATURA) quando houver quaisquer alterações no plano de entrega que impacte as entregas do plano de trabalho; (alterada a entrega ou cancelada); */
         $planoEntregaEntrega["_status"] = "EDIT";
-        $this->buffer = ["planosTrabalhosImpactados" => $this->planoEntregaService->planosImpactadosPorAlteracaoEntrega($planoEntregaEntrega)];
+        $this->buffer["planosTrabalhosImpactados"] = $this->planoEntregaService->planosImpactadosPorAlteracaoEntrega($planoEntregaEntrega);
       }
       return $planoEntregaEntrega;
     }
