@@ -639,7 +639,7 @@ class IntegracaoService extends ServiceBase {
 
                                     // Contabiliza servidores com e-mail funcional vazio no cadastro SIAPE.
                                     str_contains($servidor['emailfuncional'], '@petrvs.gov.br') ?
-                                        array_push($cpfs_emails_funcionais_vazios, [$servidor['cpf'],$servidor['emailfuncional']]) : true;
+                                        array_push($cpfs_emails_funcionais_vazios, "CPF: ". $servidor['cpf'] . " (". $servidor['situacao_funcional'] . ") - ". $servidor['emailfuncional']) : true;
 
                                     // Variável utilizada para fazer batimento no final (soft delete). Ainda em construção...
                                     if($registro) array_push($this->servidores_registrados_is, $servidor['cpf']);
@@ -658,8 +658,8 @@ class IntegracaoService extends ServiceBase {
                                       array_push($emails_integracao_na_memoria, $email);
 
                                       // Contabiliza servidores com e-mail funcional vazio no cadastro SIAPE.
-                                      str_contains($servidor['emailfuncional'], '@petrvs.gov.br') ?
-                                          array_push($cpfs_emails_funcionais_vazios, [$servidor_update['cpf'], $servidor_update['emailfuncional']]) : true;
+                                      str_contains($servidor_update['emailfuncional'], '@petrvs.gov.br') ?
+                                          array_push($cpfs_emails_funcionais_vazios, "CPF: ". $servidor_update['cpf'] . " (". $servidor_update['situacao_funcional'] . ") - ". $servidor_update['emailfuncional']) : true;
 
                                       // Variável utilizada para fazer batimento no final (softdelete). Ainda em construção...
                                       if($registro) array_push($this->servidores_registrados_is, $servidor_update['cpf']);
@@ -676,13 +676,13 @@ class IntegracaoService extends ServiceBase {
 
                                     // Contabiliza servidores com e-mail funcional vazio no cadastro SIAPE.
                                     str_contains($servidor['emailfuncional'], '@petrvs.gov.br') ?
-                                        array_push($cpfs_emails_funcionais_vazios, [$servidor['cpf'],$servidor['emailfuncional']]) : true;
+                                        array_push($cpfs_emails_funcionais_vazios, "CPF: ". $servidor['cpf'] . " (". $servidor['situacao_funcional'] . ") - ". $servidor['emailfuncional']) : true;
 
                                     // Variável utilizada para fazer batimento no final (soft delete). Ainda em construção...
                                     if($registro) array_push($this->servidores_registrados_is, $servidor['cpf']);
 
                                 } else { // Caso e-mail esteja duplicado, segue registro para rotina de avisos no final.
-                                    array_push($emails_funcionais_duplicados, [$servidor['cpf'],$servidor['emailfuncional']]);
+                                    array_push($emails_funcionais_duplicados, "CPF: " . $servidor['cpf'] . " - " . $servidor['emailfuncional']);
                                     }
                                 }
                             }
@@ -702,15 +702,15 @@ class IntegracaoService extends ServiceBase {
                 array_push($this->result['servidores']['Observações'], 'Os dados dos Servidores foram obtidos ' . ($this->useLocalFiles ? 'através de arquivo XML armazenado localmente!' : 'através de consulta à API do SIAPE!'));
 
                 if($n_emails_funcionais_vazios){
-                    $cpfs_emails_funcionais_vazios = json_encode($cpfs_emails_funcionais_vazios);
+                    $cpfs_emails_funcionais_vazios = $cpfs_emails_funcionais_vazios; #json_encode($cpfs_emails_funcionais_vazios);
                     array_push($this->result['servidores']['Observações'], 'Total de servidores com email funcional vazio no SIAPE: ' . $n_emails_funcionais_vazios . ' (apenas ATIVOS).');
-                    array_push($this->result['servidores']['Observações'], 'Lista de servidores com email funcional vazio no SIAPE: ' . $cpfs_emails_funcionais_vazios . '.');
+                    array_push($this->result['servidores']['Observações'], 'Lista de servidores com email funcional vazio no SIAPE: ' . implode(', ', $cpfs_emails_funcionais_vazios) . '.');
                 }
 
                 if($n_emails_funcionais_duplicados){
-                    $emails_funcionais_duplicados = json_encode($emails_funcionais_duplicados);
+                    $emails_funcionais_duplicados =  $emails_funcionais_duplicados; #json_encode($emails_funcionais_duplicados);
                     array_push($this->result['servidores']['Observações'], 'Total de emails funcionais duplicados no SIAPE: ' . $n_emails_funcionais_duplicados . ' (apenas ATIVOS).');
-                    array_push($this->result['servidores']['Observações'], 'Lista de servidores com email funcional duplicado no SIAPE: ' . $emails_funcionais_duplicados . '.');
+                    array_push($this->result['servidores']['Observações'], 'Lista de servidores com email funcional duplicado no SIAPE: ' . implode(', ', $emails_funcionais_duplicados) . '.');
                 }
 
                 array_push($this->result['servidores']['Observações'], 'Total de servidores importados do SIAPE: ' . $n . ' (apenas ATIVOS).');

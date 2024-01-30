@@ -238,7 +238,6 @@ class IntegracaoSiapeService extends ServiceBase {
         $cpfsPorUorgsWsdl = [];
         $PessoasPetrvs = [ 'Pessoas' => []];
         $uorgs = DB::select("SELECT codigo_siape from integracao_unidades WHERE deleted_at is NULL");
-        #uorgs = DB::select("SELECT codigo_siape from integracao_unidades WHERE codupag=2690 and deleted_at is NULL");
         $uorgs = $this->UtilService->object2array($uorgs);
 
         if(!empty($this->siape) and !empty($uorgs)){
