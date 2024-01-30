@@ -130,20 +130,31 @@ class UsuarioService extends ServiceBase
      * Informa quais atribuições de gestor o usuário logado possui na unidade recebida como parâmetro.
      * @param string $unidade_id 
      */
-    public function atribuicoesGestor(string $unidade_id, ?string $usuario_id = null) {
-        return [
-            "gestor" => $this->isIntegrante('GESTOR', $unidade_id, $usuario_id),
-            "gestorSubstituto" => $this->isIntegrante('GESTOR_SUBSTITUTO', $unidade_id, $usuario_id),
-            "gestorDelegado" => $this->isIntegrante('GESTOR_DELEGADO', $unidade_id, $usuario_id)
-        ];
+    public function atribuicoesGestor(string $unidadeId, ?string $usuarioId = null) {
+        $result = ["gestor" => false, "gestorSubstituto" => false, "gestorDelegado" => false];
+        $key = [$unidadeId, $usuarioId];
+        if($this->hasBuffer("atribuicoesGestor", $key)) {
+            $result = $this->getBuffer("atribuicoesGestor", $key);
+        } else {
+            $result = $this->setBuffer("atribuicoesGestor", $key, [
+                "gestor" => $this->isIntegrante('GESTOR', $unidadeId, $usuarioId),
+                "gestorSubstituto" => $this->isIntegrante('GESTOR_SUBSTITUTO', $unidadeId, $usuarioId),
+                "gestorDelegado" => $this->isIntegrante('GESTOR_DELEGADO', $unidadeId, $usuarioId)
+            ]);
+        }
+        return $result;
     }
 
     /**
      * Informa se o usuário logado é gestor(titular ou substituto) da unidade recebida como parâmetro.
      * @param string $unidade_id 
      */
-    public function isGestorUnidade(string $unidade_id): bool {
-        return $this->isIntegrante('GESTOR', $unidade_id) || $this->isIntegrante('GESTOR_SUBSTITUTO', $unidade_id) || $this->isIntegrante('GESTOR_DELEGADO', $unidade_id);
+    public function isGestorUnidade(string $unidadeId): bool {
+        if($this->hasBuffer("isGestorUnidade", $unidadeId)) {
+            return $this->getBuffer("isGestorUnidade", $unidadeId);
+        } else {
+            return $this->setBuffer("isGestorUnidade", $unidadeId, $this->isIntegrante('GESTOR', $unidadeId) || $this->isIntegrante('GESTOR_SUBSTITUTO', $unidadeId) || $this->isIntegrante('GESTOR_DELEGADO', $unidadeId));
+        }
     }
 
     /**
@@ -161,11 +172,16 @@ class UsuarioService extends ServiceBase
      * @param string $pgd_id 
      * @return bool
      */
-    public function isParticipanteHabilitado(string | null $usuario_id = null, string $programa_id): bool {
-        $usuario_id = $usuario_id ?? parent::loggedUser()->id;
-        $programa = Programa::find($programa_id);
-        $participante = $programa->participantes->where("usuario_id", $usuario_id)->first();
-        return $participante ? $participante->habilitado : false;
+    public function isParticipanteHabilitado(string | null $usuarioId = null, string $programaId): bool {
+        $key = [$usuarioId, $programaId];
+        if($this->hasBuffer("isParticipanteHabilitado", $key)) {
+            return $this->getBuffer("isParticipanteHabilitado", $key);
+        } else {
+            $usuarioId = $usuarioId ?? parent::loggedUser()->id;
+            $programa = Programa::find($programaId);
+            $participante = $programa->participantes->where("usuario_id", $usuarioId)->first();
+            return $this->setBuffer("isParticipanteHabilitado", $key, $participante ? $participante->habilitado : false);
+        }
     }
 
     /**
@@ -175,11 +191,18 @@ class UsuarioService extends ServiceBase
      * @param string $unidade_id 
      * @param string $usuario_id
      */
-    public static function isIntegrante(string $atribuicao, string $unidade_id, string | null $usuario_id = null): bool {
-        $unidade = Unidade::find($unidade_id) ?? null;
-        $usuario = isset($usuario_id) ? Usuario::find($usuario_id) : parent::loggedUser();
-        $atribuicoes = array_key_exists($usuario->id, $unidade->integrantesAtribuicoes) ? $unidade->integrantesAtribuicoes[$usuario->id] : null;
-        return empty($atribuicoes) ? false : in_array($atribuicao, $atribuicoes); 
+    public function isIntegrante(string $atribuicao, string $unidadeId, string | null $usuarioId = null): bool {
+        $result = false;
+        $key = [$atribuicao, $unidadeId, $usuarioId];
+        if($this->hasBuffer("isIntegrante", $key)) {
+            $result = $this->getBuffer("isIntegrante", $key);
+        } else {
+            $unidade = Unidade::find($unidadeId) ?? null;
+            $usuario = isset($usuario_id) ? Usuario::find($usuarioId) : parent::loggedUser();
+            $atribuicoes = array_key_exists($usuario->id, $unidade->integrantesAtribuicoes) ? $unidade->integrantesAtribuicoes[$usuario->id] : null;
+            $result = $this->setBuffer("isIntegrante", $key, empty($atribuicoes) ? false : in_array($atribuicao, $atribuicoes)); 
+        }
+        return $result;
     }
 
     /**
@@ -198,13 +221,18 @@ class UsuarioService extends ServiceBase
      * @param string $unidade_id 
      * @returns 
      */
-    public function isLotadoNaLinhaAscendente(string | null $unidade_id): bool {
+    public function isLotadoNaLinhaAscendente(string | null $unidadeId): bool {
         $result = false;
-        if($unidade_id == null) return $result;
-        $linhaAscendente = $this->unidadeService->linhaAscendente($unidade_id);
-        foreach($linhaAscendente as $unidade_id) {
-            if($this->isIntegrante('LOTADO',$unidade_id)) $result = true;
-        };
+        if($unidadeId == null) return $result;
+        if($this->hasBuffer("isLotadoNaLinhaAscendente", $unidadeId)) {
+            $result = $this->getBuffer("isLotadoNaLinhaAscendente", $unidadeId);
+        } else {
+            $linhaAscendente = $this->unidadeService->linhaAscendente($unidadeId);
+            foreach($linhaAscendente as $unidadeId) {
+                if($this->isIntegrante('LOTADO', $unidadeId)) $result = true;
+            };
+            $this->setBuffer("isLotadoNaLinhaAscendente", $unidadeId, $result);
+        }
         return $result;
     }
 
