@@ -51,45 +51,6 @@ Outros        | CF,CS,DL       | CF,CS,DL             | CF,CS,DL         | CF,CS
 
 ~~~
 
-## RESPONSABILIDADES
-
-~~~text
-(PTR:TABELA_1) - Tabela de responsabilidades do plano de trabalho
-
-+   => Unidade superior
--   => Exceto o próprio participante
-?   => Habilitado no programa?
-^   => Entidade (Orgão)
-º   => Lotação (do usuário do plano)
-CF  => Chefe
-CS  => Chefe Sub.
-DL  => Delegado
-LC  => Lotado/Colaborador
-
-Considerando sempre a unidade executora, caso possua cargo de chefia mas o plano seja pra outra
-unidade executora, então será considerado como um participante (Lotado/Colaborador);
-O ator sempre é referente ao "Usuário do Plano de Trabalho", e as responsabilidades são referentes
-ao usuário que está logado (CF, CS, DL, LC).
-
---------------+----------------+----------------------+------------------+-------------------------
-Ação \ Ator   | PT do Chefe    | PT do Chefe Sub.     | PT do Delegado   | PT do Lotado/Colaborador   
---------------+----------------+----------------------+------------------+-------------------------
-Assinar       | CF+,CS+,CF     | CF,CS,CF^,CS^        | CF,CS,DL,CF^,CS^ | CF,CS,LC,CF^,CS^
-(TABELA_2)    | CF^,CS^        | CFº,CSº,CFº+,CSº+    | CFº,CSº,CFº+,CSº+| CFº,CSº,CFº+,CSº+ 
---------------+----------------+----------------------+------------------+-------------------------
-Ativar        | CF?,CF+,CS+    | CF,CS-,CS?           | CF,CS,DL?        | CF,CS,LC?
---------------+----------------+----------------------+------------------+-------------------------
-Avaliar       | CF+,CS+        | CF,CF+,CS+           | CF,CS            | CF,CS
---------------+----------------+----------------------+------------------+-------------------------
-Alterar       | CF?,CF+,CS+    | CF,CS?,CF+,CS+       | CF,CS,DL?        | CF,CS,DL,LC?
---------------+----------------+----------------------+------------------+-------------------------
-Incluir       | CF?,CF+,CS+    | CF,CS?,CF+,CS+       | CF,CS,DL?        | CF,CS,DL,LC?
---------------+----------------+----------------------+------------------+-------------------------
-Outros        | CF,CS,DL       | CF,CS,DL             | CF,CS,DL         | CF,CS,DL
---------------+----------------+----------------------+------------------+-------------------------
-
-~~~
-
 ## REGRAS DE NEGÓCIO
 
 - (RN_PTR_A) Quando um Plano de Trabalho é criado adquire automaticamente o status INCLUIDO;
@@ -125,7 +86,7 @@ Outros        | CF,CS,DL       | CF,CS,DL             | CF,CS,DL         | CF,CS
 
 ## FLUXOS (STATUS & AÇÕES)
 
-![Fig. 1 - Fluxos do Plano de Trabalho](../Imagens/Fluxos_Planos_Trabalhos.jpeg)
+![Fig. 1 - Fluxos do Plano de Trabalho](../imagens/fluxos_planos_trabalhos.jpeg)
 
 ~~~text
 (PTR:TABELA_2) - Fluxos do plano para ir ao status de ATIVO
