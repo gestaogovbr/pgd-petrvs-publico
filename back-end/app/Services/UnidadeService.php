@@ -172,9 +172,13 @@ class UnidadeService extends ServiceBase
      * @param string $unidade_id    O ID de uma Unidade.
      * @return array    
     */
-    public function lotados($unidade_id): array {
+    public function lotados($unidadeId): array {
         // TODO: fazer validacao
-        return Unidade::find($unidade_id)?->lotados->map(fn($integrante) => $integrante->usuario)->all() ?? [];
+        if($this->hasBuffer("lotados", $unidadeId)) {
+            return $this->getBuffer("lotados", $unidadeId);
+        } else {
+            return $this->setBuffer("lotados", $unidadeId, Unidade::find($unidadeId)?->lotados->map(fn($integrante) => $integrante->usuario)->all() ?? []);
+        }
     }
 
     /** 
@@ -276,7 +280,7 @@ class UnidadeService extends ServiceBase
                 ->update(['path' => DB::raw(sprintf("CONCAT('%s', SUBSTR(path, %d))", $newPath, strlen($newPath)))]);
         }
         /* Armazena as informações que serão necessárias no extraStore */
-        $this->buffer = [ "integrantes" => $this->UtilService->getNested($data, "integrantes") ];
+        $this->buffer["integrantes"] = $this->UtilService->getNested($data, "integrantes");
         return $data;
     }
 
@@ -403,12 +407,16 @@ class UnidadeService extends ServiceBase
      * Retorna os gestores da unidade superior a unidade informada
      */
     public function gestoresUnidadeSuperior($unidadeId) {
-        $unidadeSup = Unidade::find($unidadeId)?->unidadePai;
-        return [
-            "gestor" => $unidadeSup?->gestor?->usuario,
-            "gestoresSubstitutos" => $unidadeSup?->gestoresSubstitutos->map(fn($x) => $x->usuario)->toArray() ?? [],
-            "gestoresDelegados" => $unidadeSup?->gestoresDelegados->map(fn($x) => $x->usuario)->toArray() ?? []
-        ];
+        if($this->hasBuffer("gestoresUnidadeSuperior", $unidadeId)) {
+            return $this->getBuffer("gestoresUnidadeSuperior", $unidadeId);
+        } else {
+            $unidadeSup = Unidade::find($unidadeId)?->unidadePai;
+            return $this->setBuffer("gestoresUnidadeSuperior", $unidadeId, [
+                "gestor" => $unidadeSup?->gestor?->usuario,
+                "gestoresSubstitutos" => $unidadeSup?->gestoresSubstitutos->map(fn($x) => $x->usuario)->toArray() ?? [],
+                "gestoresDelegados" => $unidadeSup?->gestoresDelegados->map(fn($x) => $x->usuario)->toArray() ?? []
+            ]);
+        }
     } 
 
     /**
@@ -416,14 +424,18 @@ class UnidadeService extends ServiceBase
      * @param string $unidade_id
      * @return array
      */
-    public function gestoresUnidade($unidade_id): array {
+    public function gestoresUnidade($unidadeId): array {
         $result = [];
-        if(!empty($unidade_id)) $unidade = Unidade::find($unidade_id);
-        if(!empty($unidade)) {
-            //$result = array_map(fn($x) => $x->usuario, ($unidade->gestoresSubstitutos ?? [])->toArray());
-            $result = $unidade->gestoresSubstitutos->map(fn($x) => $x->usuario)->toArray();
-            if($unidade->gestor) $result[] = $unidade->gestor->usuario;
-            array_merge($result, $unidade->gestoresDelegados->map(fn($x) => $x->usuario)->toArray());
+        if($this->hasBuffer("gestoresUnidade", $unidadeId)) {
+            $result = $this->getBuffer("gestoresUnidade", $unidadeId);
+        } else {
+            if(!empty($unidadeId)) $unidade = Unidade::find($unidadeId);
+            if(!empty($unidade)) {
+                $result = $unidade->gestoresSubstitutos->map(fn($x) => $x->usuario)->toArray();
+                if($unidade->gestor) $result[] = $unidade->gestor->usuario;
+                array_merge($result, $unidade->gestoresDelegados->map(fn($x) => $x->usuario)->toArray());
+            }
+            $this->setBuffer("gestoresUnidade", $unidadeId, $result);
         }
         return $result;
     }

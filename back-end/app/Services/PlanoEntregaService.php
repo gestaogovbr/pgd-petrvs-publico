@@ -44,7 +44,7 @@ class PlanoEntregaService extends ServiceBase
       $planoEntrega["criacao_usuario_id"] = parent::loggedUser()->id;
     } else { // ServiceBase::ACTION_EDIT
       /* (RN_PTR_E) O Plano de Trabalho precisará ser repactuado (retornar ao status de AGUARDANDO_ASSINATURA) quando houver quaisquer alterações no plano de entrega que impacte as entregas do plano de trabalho; (alterada a entrega ou cancelada); */
-      $this->buffer = ["planosTrabalhosImpactados" => []];
+      $this->buffer["planosTrabalhosImpactados"] = [];
       foreach ($planoEntrega["entregas"] as $entrega) {
         array_merge($this->buffer["planosTrabalhosImpactados"], $this->planosImpactadosPorAlteracaoEntrega($entrega));
       }
@@ -468,7 +468,7 @@ class PlanoEntregaService extends ServiceBase
     $dataOrEntity['unidade'] = Unidade::find($dataOrEntity['unidade_id'])->toArray();
     $condicoes = $this->buscaCondicoes($dataOrEntity);
     $condition1 = $condicoes['gestorUnidadePlano'] || $condicoes['gestorUnidadePaiUnidadePlano'];
-    $condition2 = !empty($dataOrEntity['unidade']['unidade_pai_id']) && UsuarioService::isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $dataOrEntity['unidade']['unidade_pai_id']) && $usuario->hasPermissionTo('MOD_PENT_EDT_FLH');
+    $condition2 = !empty($dataOrEntity['unidade']['unidade_pai_id']) && $this->usuarioService->isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $dataOrEntity['unidade']['unidade_pai_id']) && $usuario->hasPermissionTo('MOD_PENT_EDT_FLH');
     $condition3 = $usuario->hasPermissionTo('MOD_PENT_QQR_UND');
     if (!$condition3 && !($condition1 || $condition2)) throw new ServerException("ValidateUsuario", "O usuário logado precisa atender a pelo menos uma das seguintes condições:\n" .
       "1. ser um dos gestores da unidade do plano ou da sua unidade-pai;\n" .
@@ -490,7 +490,7 @@ class PlanoEntregaService extends ServiceBase
       if (!$condicoes['planoValido']) throw new ServerException("ValidatePlanoEntrega", "O plano de entregas não é válido, ou seja, foi apagado, cancelado ou arquivado.\n[ver RN_PENT_L]");
       $condition1 = ($condicoes['planoIncluido'] || $condicoes['planoHomologando']) && ($condicoes['gestorUnidadePlano'] || $condicoes['unidadePlanoEhLotacao']);
       $condition2 = $usuario->hasPermissionTo("MOD_PENT_EDT_FLH") && $condicoes['gestorUnidadePaiUnidadePlano'];
-      $condition3 = !empty($data['entity']['unidade']['unidade_pai_id']) && UsuarioService::isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $data['entity']['unidade']['unidade_pai_id']);
+      $condition3 = !empty($data['entity']['unidade']['unidade_pai_id']) && $this->usuarioService->isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $data['entity']['unidade']['unidade_pai_id']);
       $condition4 = $condicoes['planoAtivo'] && $condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo(['MOD_PENT_EDT_ATV_HOMOL', 'MOD_PENT_EDT_ATV_ATV']);
       $condition5 = $usuario->hasPermissionTo('MOD_PENT_QQR_UND');
       if (!$condition5 && !($condition1 || $condition2 || $condition3 || $condition4)) throw new ServerException("ValidatePlanoEntrega", "Ao menos uma das seguintes condições precisa ser atendida:\n" .
