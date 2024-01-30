@@ -6,10 +6,10 @@
     "preloadFiles": [
         "environment-config",
         "functions.js",
-        "app-proxy.js"
+        "app_proxy.js"
     ],
     "extraFiles": [
-        "all-pages.js"
+        "all_pages.js"
     ],
     "angularFiles": [
         "scripts.js",

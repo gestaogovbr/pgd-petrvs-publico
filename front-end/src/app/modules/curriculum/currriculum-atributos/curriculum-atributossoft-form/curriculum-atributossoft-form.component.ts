@@ -36,8 +36,8 @@ export class CurriculumAtributossoftFormComponent extends PageFormBase<Questiona
     this.questionarioDao = injector.get<QuestionarioDaoService>(QuestionarioDaoService);
     this.questionarioPerguntasDao = injector.get<QuestionarioPerguntaDaoService>(QuestionarioPerguntaDaoService);
 
-    this.bigicoAmareloIMG = "/assets/images/iconBigAmarelo.png";
-    this.bigicoIMG = "/assets/images/iconBig.png";
+    this.bigicoAmareloIMG = "/assets/images/icon_big_amarelo.png";
+    this.bigicoIMG = "/assets/images/icon_big.png";
 
     this.form = this.fh.FormBuilder({
       comunica: { default: 0 },

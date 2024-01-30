@@ -5,12 +5,12 @@
   <title>Petrvs</title>
   <base href="{{ $host }}">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple_touch_icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon_32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon_16x16.png">
   <link rel="manifest" href="assets/site.webmanifest">
-  <link href="assets/css/bootstrap-load-fonts.css" rel="stylesheet" type="text/css"> 
-  <link href="assets/css/fontawesome-load-fonts.css" rel="stylesheet" type="text/css"> 
+  <link href="assets/css/bootstrap_load_fonts.css" rel="stylesheet" type="text/css"> 
+  <link href="assets/css/fontawesome_load_fonts.css" rel="stylesheet" type="text/css"> 
   <link rel="stylesheet" type="text/css" href="blue.css" id="primeng-thme">
   <link rel="preconnect" href="https://fonts.cdnfonts.com">
   <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin="">
@@ -29,7 +29,7 @@
     }     
   </script>
   <script src="environment-config"></script>
-  <script src="assets/js/bootstrap-angular.js"></script>
+  <script src="assets/js/bootstrap_angular.js"></script>
 <link rel="stylesheet" href="styles.css"></head>
 <body>
   <app-root></app-root>
