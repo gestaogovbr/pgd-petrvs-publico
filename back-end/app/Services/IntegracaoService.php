@@ -32,7 +32,7 @@ class IntegracaoService extends ServiceBase {
     public $logged_user_id;
     public $echo = false;
     public $integracao_config = "";
-    public $unidadeRaiz = null;
+    public $unidadeRaiz = "";
     public $validaCertificado = "";     // eventual alteração deve ser feita no arquivo .env
     public $useLocalFiles = "";         // eventual alteração deve ser feita no arquivo .env
     public $storeLocalFiles = "";       // eventual alteração deve ser feita no arquivo .env
@@ -50,6 +50,7 @@ class IntegracaoService extends ServiceBase {
         $this->storeLocalFiles = $this->integracao_config['storeLocalFiles'];
         $this->localUnidades = $this->integracao_config['localUnidades']; // "unidades.xml";
         $this->localServidores = $this->integracao_config['localServidores']; // "servidores.xml";
+        $this->unidadeRaiz = $this->integracao_config['codigoUnidadeRaiz'] ?: "1";
     }
 
     /** Preenche os campos de uma lotação para o novo Usuário, se sua lotação já vier definida pelo SIAPE */
@@ -556,7 +557,7 @@ class IntegracaoService extends ServiceBase {
 
                                 // Trata $ativo['funcoes'] para registro na integracao_servidores
                                 // e posteriores consultas aos códigos de função/unidade.
-                                if(is_array($ativo['funcoes']) && !empty($ativo['funcoes'])){
+                                if(!empty($ativo['funcoes'] && is_array($ativo['funcoes']))){
                                     foreach($ativo['funcoes'] as &$at){
                                         if (array_key_exists('uorg_funcao', $at)){
                                             $at['uorg_funcao'] = strval(intval($at['uorg_funcao']));
@@ -644,7 +645,7 @@ class IntegracaoService extends ServiceBase {
                                     if($registro) array_push($this->servidores_registrados_is, $servidor['cpf']);
 
                                     // Se não já não foi informado pelo processo atual de integração (registro na memória) e
-                                    // pertence a tabela integracao_servidores,  atualiza registro na integracao_servidores
+                                    // pertence a tabela integracao_servidores, atualiza registro na integracao_servidores
                                     // para posterior registro, dentro dos critérios necessários, na tabela usuários.
                                 } elseif (!in_array($servidor['emailfuncional'], $emails_integracao_na_memoria) &&
                                       !is_null($query_is->value('emailfuncional'))){
@@ -663,8 +664,25 @@ class IntegracaoService extends ServiceBase {
                                       // Variável utilizada para fazer batimento no final (softdelete). Ainda em construção...
                                       if($registro) array_push($this->servidores_registrados_is, $servidor_update['cpf']);
 
+                                      // Se não estiver na memória e não estiver no integracao_servidores, efetuar registro.
+                                } elseif (!in_array($servidor['emailfuncional'], $emails_integracao_na_memoria) &&
+                                    is_null($query_is->value('emailfuncional'))){
+
+                                    $registro = new IntegracaoServidor($servidor);
+                                    $registro->save();
+
+                                    // Adiciona na memória para verificar próximos e evitar duplicidade.
+                                    array_push($emails_integracao_na_memoria, $email);
+
+                                    // Contabiliza servidores com e-mail funcional vazio no cadastro SIAPE.
+                                    str_contains($servidor['emailfuncional'], '@petrvs.gov.br') ?
+                                        array_push($cpfs_emails_funcionais_vazios, [$servidor['cpf'],$servidor['emailfuncional']]) : true;
+
+                                    // Variável utilizada para fazer batimento no final (soft delete). Ainda em construção...
+                                    if($registro) array_push($this->servidores_registrados_is, $servidor['cpf']);
+
                                 } else { // Caso e-mail esteja duplicado, segue registro para rotina de avisos no final.
-                                        array_push($emails_funcionais_duplicados, [$servidor['cpf'],$servidor['emailfuncional']]);
+                                    array_push($emails_funcionais_duplicados, [$servidor['cpf'],$servidor['emailfuncional']]);
                                     }
                                 }
                             }
@@ -704,7 +722,8 @@ class IntegracaoService extends ServiceBase {
                     "isr.nomeguerra AS nome_guerra, u.email AS email_anterior, ".
                     "isr.emailfuncional, u.matricula AS matricula_anterior, ".
                     "isr.matriculasiape, u.telefone AS telefone_anterior, isr.telefone, ".
-                    "isr.data_modificacao as data_modificacao, u.data_modificacao as data_modificacao_anterior ".
+                    "isr.data_modificacao as data_modificacao, u.data_modificacao as data_modificacao_anterior, ".
+                    "isr.data_nascimento as data_nascimento ".
                     "FROM integracao_servidores isr LEFT JOIN usuarios u ON (isr.cpf = u.cpf) ".
                     "WHERE isr.nome != u.nome OR isr.emailfuncional != u.email OR ".
                     "isr.matriculasiape != u.matricula OR isr.nomeguerra != u.apelido OR ".
@@ -715,6 +734,7 @@ class IntegracaoService extends ServiceBase {
                     "nome = :nome, apelido = :nomeguerra, ".
                     "email = :email, matricula = :matricula, ".
                     "telefone = :telefone, ".
+                    "data_nascimento = :data_nascimento, ".
                     "data_modificacao = :data_modificacao WHERE id = :id";
 
                 DB::transaction(function () use (&$atualizacoes, &$sql_update) {
@@ -731,6 +751,7 @@ class IntegracaoService extends ServiceBase {
                                 'telefone'      => $linha->telefone,
                                 'id'            => $linha->id,
                                 'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao),
+                                'data_nascimento' => $linha->data_nascimento,
 
                             ]);
                             $this->atualizaLogs($this->logged_user_id, 'usuarios', $linha->id, 'EDIT', [
@@ -745,6 +766,7 @@ class IntegracaoService extends ServiceBase {
                                     'telefone'      => $linha->telefone_anterior,
                                     'id'            => $linha->id,
                                     'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao_anterior),
+                                    'data_nascimento' => $linha->data_nascimento,
                                 ],
                                 'Valores atuais' => [
                                     'nome'          => $linha->nome_servidor,
@@ -754,6 +776,7 @@ class IntegracaoService extends ServiceBase {
                                     'telefone'      => $linha->telefone,
                                     'id'            => $linha->id,
                                     'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao),
+                                    'data_nascimento' => $linha->data_nascimento,
                                 ]
                             ]);
                         }
@@ -791,12 +814,13 @@ class IntegracaoService extends ServiceBase {
 
                     $vinculos_isr = DB::select($query);
 
-                    $usuario_comum=$this->integracao_config["perfilComum"];
-                    $perfil_participante_id = Perfil::where('nome', $usuario_comum)->first()->id;
+                    $usuarioComum=$this->integracao_config["perfilComum"];
+                    $perfilParticipanteId = Perfil::where('nome', $usuarioComum)->first()->id;
+
+                    if (empty($perfilParticipanteId)) throw new ServerException("IntegracaoService", "Perfil usuário comum (". $usuarioComum .") não encontrado no banco de dados. Verificar configuração no painel SaaS.\n[ver XXX_XXX]");
 
                     foreach($vinculos_isr as $v_isr){
                         $v_isr = $this->UtilService->object2array($v_isr);
-                        $perfil_id = $perfil_participante_id;
                         $registro = new Usuario([
                             'id' => Uuid::uuid4(),
                             'email' => $this->UtilService->valueOrDefault($v_isr['emailfuncional']),
@@ -808,7 +832,7 @@ class IntegracaoService extends ServiceBase {
                             'data_nascimento' => $this->UtilService->valueOrDefault($v_isr['data_nascimento'], null),
                             'sexo' => $this->UtilService->valueOrDefault($v_isr['sexo']),
                             'situacao_funcional' => $this->UtilService->valueOrDefault($v_isr['situacao_funcional'], "DESCONHECIDO"),
-                            'perfil_id' => $perfil_id,
+                            'perfil_id' => $perfilParticipanteId,
                             'exercicio' => $this->UtilService->valueOrDefault($v_isr['exercicio']),
                             'uf' => $this->UtilService->valueOrDefault($v_isr['uf'], null),
                             'data_modificacao' => $this->UtilService->valueOrDefault($v_isr['data_modificacao']),
@@ -816,47 +840,34 @@ class IntegracaoService extends ServiceBase {
                         $registro->save();
 
                         // Registrar exercício...
-                        $id_user = $registro->id;
-                        $unidade_exercicio = Unidade::where("codigo", $v_isr["exercicio"])->first();
+                        $usuarioId = $registro->id;
+                        $unidadeExercicioId = Unidade::where("codigo", $v_isr["exercicio"])->first()->id;
 
                         // Alguns servidores possuem unidades de exercícios não válidas (provavelmente aposentados).
                         // Dessa forma, como resolução, alocar eles na unidade instituidora para ciência dos
                         // administradores do sistema e posterior remanejamento.
 
-                        if(is_null($unidade_exercicio)){
-                            $unidade_exercicio = Unidade::where("codigo", "1")->first();
+                        if(is_null($unidadeExercicioId)){
+                            $unidadeExercicioId = Unidade::where("codigo", $this->unidadeRaiz)->first()->id;
+                        }
+
+                        $queryAtribuicoes = $registro->getUnidadesAtribuicoesAttribute();
+                        $atribuicoes = [];
+
+                        if(!empty($queryAtribuicoes) && is_array($queryAtribuicoes) && array_key_exists($unidadeExercicioId, $queryAtribuicoes) && $queryAtribuicoes[$unidadeExercicioId]){
+                            $atribuicoes = $atribuicoes[$unidadeExercicioId];
+                            if(!in_array("LOTADO", $chefeAtribuicoes)) array_push($atribuicoes, "LOTADO");
+                            $atribuicoes = array_values(array_unique($atribuicoes));
+                        } else {
+                            $atribuicoes = ["LOTADO"];
                         }
 
                         // Procurar na tabela de usuário se já existe e se tem mais outras atribuições.
 
-                        /*
-                        Unidade Velha
-                        Lotado, Substituto, Homologador
-
-                        Unidade Nova
-                        Lotado, Delegado
-                        */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                         $vinculo = array([
-                            'usuario_id' => $id_user,
-                            'unidade_id' => $unidade_exercicio->id,
-                            'atribuicoes' => ["LOTADO"],
+                            'usuario_id' => $usuarioId,
+                            'unidade_id' => $unidadeExercicioId,
+                            'atribuicoes' => $atribuicoes,
                         ]);
 
                         /* QueryMan, Farias, criou rotina para gerar exercícios (lotação)
@@ -937,98 +948,116 @@ class IntegracaoService extends ServiceBase {
 
                 if($this->echo) $this->imprimeNoTerminal("Concluída a fase de montagem do array de chefias!.....");
 
-                // Localiza ID do perfil Chefia de Unidade Executora para posterior atualização do usuário
-                $usuario_chefe=$this->integracao_config["perfilChefe"];
+                $usuarioChefe=$this->integracao_config["perfilChefe"];
+                $perfilChefeId = Perfil::where('nome', $usuarioChefe)->first()->id;
+                $perfilDesenvolvedorId = Perfil::where('nome', 'Desenvolvedor')->first()->id;
 
-                $perfil_chefia = Perfil::where('nome', $usuario_chefe)->first()->id;
                 foreach($chefias as $chefia){
-                    // Descobre o ID da Unidade
-                    $query_selecionar_unidade = "SELECT u.id " .
+                    $querySelecionarUnidade = "SELECT u.id " .
                         "FROM integracao_unidades as iu " .
                         "JOIN unidades as u " .
                         "ON iu.id_servo = u.codigo " .
                         "WHERE iu.codigo_siape = :codigo_siape";
 
-                    $unidade_exercicio = DB::select($query_selecionar_unidade,
+                    $unidadeExercicio = DB::select($querySelecionarUnidade,
                         [':codigo_siape' => $chefia['codigo_siape']]);
 
                     /*
                     Monta a consulta de acordo com o tipo de função e efetua
                     o registro na tabela unidade_integrante_atribucoes.
                     */
-                    if($unidade_exercicio){
-                        if($chefia['tipo_funcao'] == '1'){
+                    if($unidadeExercicio){
+                        $unidadeExercicioId = $unidadeExercicio[0]->id;
+                        $perfilUsuario = '';
 
+                        if($chefia['tipo_funcao'] == '1'){
                             /* Verificar se existe mais atribuições */
                             // Após consultar todas as atribuições já existentes e montar o array para gravar, verificar se
                             // é substituto e/ou delegado ao mesmo tempo. Se sim, remover do array (substituto e delegado).
+                            $queryChefe = Usuario::find($chefia['id_usuario']);
+                            $queryChefeAtribuicoes = $queryChefe->getUnidadesAtribuicoesAttribute();
+                            $chefeAtribuicoes = [];
 
-
-
-
-
-
-
-                            $vinculo = array([
-                                'usuario_id' => $chefia['id_usuario'],
-                                'unidade_id' => $unidade_exercicio[0]->id,
-                                'atribuicoes' => ["LOTADO", "GESTOR"],
-                            ]);
+                            if(!empty($queryChefeAtribuicoes) &&
+                                is_array($queryChefeAtribuicoes) &&
+                                array_key_exists($unidadeExercicioId, $queryChefeAtribuicoes) &&
+                                $queryChefeAtribuicoes[$unidadeExercicioId]){
+                                    $chefeAtribuicoes = array_diff($queryChefeAtribuicoes[$unidadeExercicioId], ["DELEGADO", "SUBSTITUTO"]);
+                                    if(!in_array("GESTOR", $chefeAtribuicoes)) array_push($chefeAtribuicoes, "GESTOR");
+                                    $chefeAtribuicoes = array_values(array_unique($chefeAtribuicoes));
+                            } else {
+                                $chefeAtribuicoes = ["LOTADO", "GESTOR"];
+                            }
 
                             // Registra atribuições.
+                            $vinculo = array([
+                                'usuario_id' => $chefia['id_usuario'],
+                                'unidade_id' => $unidadeExercicioId,
+                                'atribuicoes' => $chefeAtribuicoes,
+                            ]);
                             $this->unidadeIntegrante->saveIntegrante($vinculo, false);
 
-                            // Atualiza nível de acesso.
-                            $values = [
-                                ':perfil_id' => $perfil_chefia,
-                                ':id' => $chefia['id_usuario']
-                            ];
-                            $sql_perfil_update = "UPDATE usuarios SET perfil_id = :perfil_id WHERE id = :id";
-                            DB::update($sql_perfil_update, $values);
-
-                        } else if($chefia['tipo_funcao'] == '2'){
-                              $vinculo = array([
-                              'usuario_id' => $chefia['id_usuario'],
-                              'unidade_id' => $unidade_exercicio[0]->id,
-                              'atribuicoes' => ["GESTOR_SUBSTITUTO"],
-                              ]);
-
+                            // Atualiza nível nível de acesso para chefe caso servidor não seja Desenvolvedor
+                            if($perfilDesenvolvedorId != $queryChefe->perfil->id){
+                                $values = [
+                                  ':perfil_id' => $perfilChefeId,
+                                  ':id' => $chefia['id_usuario']
+                              ];
+                                $sqlPerfilUpdate = "UPDATE usuarios SET perfil_id = :perfil_id WHERE id = :id";
+                                DB::update($sqlPerfilUpdate, $values);
+                            } else {
+                                LogError::newWarn("IntegracaoService: durante atualização de gestores, o usuário não teve seu perfil atualizado para ". $usuarioChefe .
+                                " uma vez que é Desenvolvedor.", [$queryChefe->nome, $queryChefe->email]);
+                            }
                             /* Verificar se existe mais atribuições */
                             // Após consultar todas as atribuições já existentes e montar o array para gravar, verificar se
                             // é substituto e/ou delegado ao mesmo tempo. Se sim, remover do array (substituto e delegado).
+                        } else if($chefia['tipo_funcao'] == '2'){
+                            $queryChefe = Usuario::find($chefia['id_usuario']);
+                            $queryChefeAtribuicoes = $queryChefe->getUnidadesAtribuicoesAttribute();
+                            $chefeAtribuicoes = [];
 
+                            if(!empty($queryChefeAtribuicoes) &&
+                                is_array($queryChefeAtribuicoes) &&
+                                array_key_exists($unidadeExercicioId, $queryChefeAtribuicoes) &&
+                                $queryChefeAtribuicoes[$unidadeExercicioId]){
+                                    $chefeAtribuicoes = array_diff($queryChefeAtribuicoes[$unidadeExercicioId], ["GESTOR"]);
+                                    if(!in_array("GESTOR_SUBSTITUTO", $chefeAtribuicoes)) array_push($chefeAtribuicoes, "GESTOR_SUBSTITUTO");
+                                    $chefeAtribuicoes = array_values(array_unique($chefeAtribuicoes));
+                            } else {
+                                $chefeAtribuicoes = ["LOTADO", "GESTOR_SUBSTITUTO"];
+                            }
 
+                            // Registra atribuições.
+                            $vinculo = array([
+                                'usuario_id' => $chefia['id_usuario'],
+                                'unidade_id' => $unidadeExercicioId,
+                                'atribuicoes' => $chefeAtribuicoes,
+                            ]);
+                            $this->unidadeIntegrantesaveIntegrante->saveIntegrante($vinculo, false);
 
-
-
-
-
-                              $this->unidadeIntegrantesaveIntegrante->saveIntegrante($vinculo, false);
-                                                          // Atualiza nível de acesso.
+                            // Atualiza nível nível de acesso para chefe caso servidor não seja Desenvolvedor
+                            if($perfilDesenvolvedorId != $queryChefe->perfil->id){
                               $values = [
-                                  ':perfil_id' => $perfil_chefia,
-                                  ':id' => $chefia['id_usuario']
-                              ];
-                              $sql_perfil_update = "UPDATE usuarios SET perfil_id = :perfil_id WHERE id = :id";
-                              DB::update($sql_perfil_update, $values);
+                                ':perfil_id' => $perfilChefeId,
+                                ':id' => $chefia['id_usuario']
+                            ];
+                              $sqlPerfilUpdate = "UPDATE usuarios SET perfil_id = :perfil_id WHERE id = :id";
+                              DB::update($sqlPerfilUpdate, $values);
+                          } else {
+                                LogError::newWarn("IntegracaoService: durante atualização de gestores, o usuário não teve seu perfil atualizado para ". $usuarioChefe .
+                                " uma vez que é Desenvolvedor.", [$queryChefe->nome, $queryChefe->email]);
+                            }
                         } else{
                             throw new Exception("Falha no array de funções do servidor");
                         }
-                        /*
-                        $this->atualizaLogs($this->logged_user_id, 'unidades', $unidade_exercicio[0]->id, 'EDIT', [
-                                    'Rotina' => 'Integração',
-                                    'Observação' => 'Atualização do ' . ($chefia['tipo_funcao'] == '1' ? 'Gestor' : 'Gestor substituto') . ' da Unidade',
-                                    'Valores anteriores' => ['gestor_id' => $unidade_exercicio[0]->gestor_id, 'gestor_substituto_id' => $unidade_exercicio[0]->gestor_substituto_id],
-                                    'Valores atuais' => ['gestor_id' => $chefia['tipo_funcao'] == '1' ? $chefia['id_usuario'] : null, 'gestor_substituto_id' => $chefia['tipo_funcao'] == '2' ? $chefia['id_usuario'] : null]
-                                ]);
-                        */
                     } else{
                         $nomeUsuario = Usuario::where('id',$chefia['id_usuario'])->first()->nome;
                         $unidade = array_filter($uos, function($o) use ($chefia){
                             if($o['id_servo'] == $chefia['codigo_siape']) return $o['nomeuorg'];
                         });
                         array_push($this->result['gestores']["Falhas"], 'Impossível lançar a chefia do servidor ' . strtoupper($nomeUsuario) . ' porque a Unidade de código SIAPE ' .
-                                    $chefia['codigo_siape'] . '(' . $unidade[0] ?? 'nome não localizado!' . ')' . ' não está cadastrada/ativa!');
+                            $chefia['codigo_siape'] . '(' . $unidade[0] ?? 'nome não localizado!' . ')' . ' não está cadastrada/ativa!');
                     }
                 }
                 DB::commit();

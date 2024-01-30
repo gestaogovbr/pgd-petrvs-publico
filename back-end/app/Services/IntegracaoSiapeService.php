@@ -238,7 +238,7 @@ class IntegracaoSiapeService extends ServiceBase {
         $cpfsPorUorgsWsdl = [];
         $PessoasPetrvs = [ 'Pessoas' => []];
         $uorgs = DB::select("SELECT codigo_siape from integracao_unidades WHERE deleted_at is NULL");
-        #$uorgs = DB::select("SELECT codigo_siape from integracao_unidades WHERE codupag=2690 and deleted_at is NULL");
+        #uorgs = DB::select("SELECT codigo_siape from integracao_unidades WHERE codupag=2690 and deleted_at is NULL");
         $uorgs = $this->UtilService->object2array($uorgs);
 
         if(!empty($this->siape) and !empty($uorgs)){
@@ -307,6 +307,8 @@ class IntegracaoSiapeService extends ServiceBase {
 
                 } else {
                     $pessoa_is = $this->UtilService->object2array($pessoa_is);
+                    $funcao = null;
+                    if(!is_null($pessoa_is['funcoes'])) $funcao = json_decode($pessoa_is['funcoes'], true);
 
                     $Pessoa = [
                         'cpf_ativo' => true,
@@ -332,8 +334,9 @@ class IntegracaoSiapeService extends ServiceBase {
                             'codsitfuncional' => $this->UtilService->valueOrDefault($pessoa_is['codigo_situacao_funcional'], null),
                             'codupag' => $pessoa_is['codupag'],
                             'dataexercicionoorgao' => $pessoa_is['dataexercicionoorgao'],
-                            'funcoes' => $pessoa_is['funcoes']]
+                            'funcoes' => $funcao,
                             ]
+                        ]
                     ];
                     array_push($PessoasPetrvs['Pessoas'], $Pessoa);
                 }
