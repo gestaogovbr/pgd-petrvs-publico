@@ -95,7 +95,7 @@ class IntegracaoSiapeService extends ServiceBase {
                     'sexo' => $this->UtilService->valueOrDefault($dadosPessoais['nomeSexo']),
                     'municipio' => $this->UtilService->valueOrDefault($dadosPessoais['nomeMunicipNasc']),
                     'uf' => $this->UtilService->valueOrDefault($dadosPessoais['ufNascimento'], null),
-                    'datanascimento' => $this->UtilService->valueOrDefault($dadosPessoais['dataNascimento']),
+                    'data_nascimento' => $this->UtilService->valueOrDefault($dadosPessoais['dataNascimento'], null),
                     'telefone' =>  '', // Web Service Siape não fornece (23/09/2022) informação.
                     'cpf_chefia_imediata' => $this->UtilService->valueOrDefault($dadosFuncionais['cpfChefiaImediata'], null),
                     'email_chefia_imediata' => $this->UtilService->valueOrDefault($dadosFuncionais['emailChefiaImediata'], null),
@@ -319,7 +319,7 @@ class IntegracaoSiapeService extends ServiceBase {
                         'sexo' => $pessoa_is['sexo'],
                         'municipio' => $pessoa_is['municipio'],
                         'uf' => $pessoa_is['uf'],
-                        'datanascimento' => $pessoa_is['data_nascimento'],
+                        'data_nascimento' => $pessoa_is['data_nascimento'],
                         'telefone' =>  null, // Informação não fornecida (23/09/2022).
                         'cpf_chefia_imediata' => $pessoa_is['cpf_chefia_imediata'],
                         'email_chefia_imediata' => $pessoa_is['email_chefia_imediata'],

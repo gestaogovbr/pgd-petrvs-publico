@@ -595,7 +595,7 @@ class IntegracaoService extends ServiceBase {
                                     'sexo' => $self->UtilService->valueOrDefault($servidor['sexo'], null),
                                     'municipio' => $self->UtilService->valueOrDefault($servidor['municipio'], null),
                                     'uf' => $self->UtilService->valueOrDefault($servidor['uf'], null),
-                                    'data_nascimento' => $self->UtilService->valueOrDefault($servidor['datanascimento'], null),
+                                    'data_nascimento' => $self->UtilService->valueOrDefault($servidor['data_nascimento'], null),
                                     'telefone' => $self->UtilService->valueOrDefault($servidor['telefone'], null),
                                     'vinculo_ativo' => $self->UtilService->valueOrDefault($ativo['vinculo_ativo'], null),
                                     'matriculasiape' => $self->UtilService->valueOrDefault($ativo['matriculasiape'], null),
