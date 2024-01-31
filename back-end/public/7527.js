@@ -381,7 +381,7 @@ class HomeRaioxComponent {
   constructor(router, auth) {
     this.router = router;
     this.auth = auth;
-    this.logoInicial = "../../../../assets/images/logo-raio-x-1.png";
+    this.logoInicial = "../../../../assets/images/logo_raiox_1.png";
   }
 }
 _class = HomeRaioxComponent;

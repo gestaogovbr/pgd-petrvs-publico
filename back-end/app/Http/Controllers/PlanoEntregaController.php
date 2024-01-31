@@ -119,6 +119,7 @@ class PlanoEntregaController extends ControllerBase
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario)
     {
+        $usuarioService = new UsuarioService();
         switch ($action) {
             case 'QUERY':
                 if (!$usuario->hasPermissionTo('MOD_PENT')) throw new ServerException("CapacidadeSearchText", "O usuário logado não tem permissão para consultar planos de entregas (MOD_PENT).\n[ver RN_PENT_V]");
@@ -194,7 +195,7 @@ class PlanoEntregaController extends ControllerBase
                 $unidadePlano = PlanoEntrega::find($data["id"])->unidade;
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
                 $condition1 = $condicoes['gestorUnidadePaiUnidadePlano'];
-                $condition2 = !empty($unidadePlano->id) && UsuarioService::isIntegrante('AVALIADOR_PLANO_ENTREGA', $unidadePlano->id);
+                $condition2 = !empty($unidadePlano->id) && $usuarioService->isIntegrante('AVALIADOR_PLANO_ENTREGA', $unidadePlano->id);
                 $condition3 = $condicoes["unidadePaiUnidadePlanoEhLotacao"] && $usuario->hasPermissionTo("MOD_PENT_AVAL");
                 $condition4 = $condicoes['gestorLinhaAscendenteUnidadePlano'] && $usuario->hasPermissionTo("MOD_PENT_AVAL_SUBORD");
                 if (!$condicoes['planoConcluido']) throw new ServerException("ValidatePlanoEntrega", "O plano de entregas não pode ser avaliado porque não se encontra no status CONCLUIDO.\n[ver RN_PENT_O]");
@@ -235,7 +236,7 @@ class PlanoEntregaController extends ControllerBase
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
                 $condition1 = $condicoes['gestorUnidadePaiUnidadePlano'];
                 $condition2 = $condicoes['unidadePaiUnidadePlanoEhLotacao'] && $usuario->hasPermissionTo("MOD_PENT_CANC_AVAL");
-                $condition3 = !empty($unidadePlano->id) && UsuarioService::isIntegrante('AVALIADOR_PLANO_ENTREGA', $unidadePlano->id);
+                $condition3 = !empty($unidadePlano->id) && $usuarioService->isIntegrante('AVALIADOR_PLANO_ENTREGA', $unidadePlano->id);
                 if (!$condicoes['planoAvaliado']) throw new ServerException("ValidatePlanoEntrega", "Não é possível cancelar avaliação de um plano de entregas que não se encontra avaliado.\n[ver RN_PENT_R]");
                 if (!($condition1 || $condition2 || $condition3)) throw new ServerException("ValidateUsuario", "Não é possível cancelar a avaliação do plano de entregas porque nenhuma das condições abaixo é atendida:\n" .
                     "1. o usuário logado precisa ser um dos gestores da unidade-pai da unidade executora do plano, ou\n" .
@@ -273,7 +274,7 @@ class PlanoEntregaController extends ControllerBase
                 $condition1 = $condicoes['planoAtivo'];
                 $condition2 = $condicoes['gestorUnidadePaiUnidadePlano'];
                 $condition3 = $condicoes['unidadePaiUnidadePlanoEhLotacao'] && $usuario->hasPermissionTo("MOD_PENT_CANC_HOMOL");
-                $condition4 = !empty($unidadePlano->unidade_pai_id) && UsuarioService::isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $unidadePlano->unidade_pai_id);
+                $condition4 = !empty($unidadePlano->unidade_pai_id) && $usuarioService->isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $unidadePlano->unidade_pai_id);
                 if (!$condition1) throw new ServerException("ValidatePlanoEntrega", "A homologação do plano de entregas não pode ser cancelada porque o plano não se encontra no status ATIVO.\n[ver RN_PENT_T]");
                 if (!($condition2 || $condition3 || $condition4)) throw new ServerException("ValidateUsuario", "Não é possível cancelar a homologação do plano de entregas porque nenhuma das condições abaixo é atendida:\n" .
                     "1. o usuário logado precisa ser um dos gestores da unidade-pai da unidade executora do plano, ou\n" .
@@ -311,7 +312,7 @@ class PlanoEntregaController extends ControllerBase
                 $condition1 = $condicoes['planoHomologando'];
                 $condition2 = $condicoes['gestorUnidadePaiUnidadePlano'];
                 $condition3 = $condicoes['unidadePaiUnidadePlanoEhLotacao'] && $usuario->hasPermissionTo("MOD_PENT_HOMOL");
-                $condition4 = !empty($unidadePlano->unidade_pai_id) && UsuarioService::isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $unidadePlano->unidade_pai_id);
+                $condition4 = !empty($unidadePlano->unidade_pai_id) && $usuarioService->isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $unidadePlano->unidade_pai_id);
                 $condition5 = !!$unidadePlano->instituidora;
                 if (!$condition1) throw new ServerException("ValidatePlanoEntrega", "O plano de entregas não pode ser homologado porque não se encontra no status AGUARDANDO HOMOLOGAÇÃO.\n[ver RN_PENT_Y]");
                 if ($condition5) throw new ServerException("ValidatePlanoEntrega", "O plano de entregas não precisa ser homologado porque pertence a uma unidade instituidora.\n[ver RN_PENT_Y]");

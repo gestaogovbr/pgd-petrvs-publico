@@ -67,7 +67,7 @@ class ServiceBase extends DynamicMethods
     public string $collection = "";
     public string $developerId = "";
 
-    public $buffer; /* Utilizado para passar informações entre os Proxys */
+    public $buffer = []; /* Utilizado para passar informações entre os Proxys */
 
     /* instancia automaticamente os serviços */
     private $_services = [];
@@ -154,6 +154,34 @@ class ServiceBase extends DynamicMethods
         } else {
             $objArray->$key = $value;
         }
+    }
+
+    public function getStringKey($key) {
+        if(in_array(gettype($key), ["array", "object"])) {
+            $key = (array) $key;
+            ksort($key);
+            $key = md5(json_encode($key));
+        }
+        return $key;
+    }
+
+    public function setBuffer($section, $key, $value) {
+        $key = $this->getStringKey($key);
+        if (!array_key_exists($section, $this->buffer)) $this->buffer[$section] = [];
+        $this->buffer[$section][$key] = $value;
+        return $value;
+    }
+
+    public function getBuffer($section, $key) {
+        $key = $this->getStringKey($key);
+        if (!array_key_exists($section, $this->buffer)) $this->buffer[$section] = [];
+        return array_key_exists($key, $this->buffer[$section]) ? $this->buffer[$section][$key] : null;
+    }
+
+    public function hasBuffer($section, $key) {
+        $key = $this->getStringKey($key);
+        if (!array_key_exists($section, $this->buffer)) $this->buffer[$section] = [];
+        return array_key_exists($key, $this->buffer[$section]);
     }
 
     public function arrayDelta(&$from, &$to) {
@@ -910,6 +938,8 @@ class ServiceBase extends DynamicMethods
      * @return string
      */
     public function dataHora() {
+        $unidadeId = Session::get('unidade_id') ?? $this->loggedUser()->lotacao?->unidade_id;
+        if (empty($unidadeId)) $unidadeId = Unidade::whereNull("unidade_pai_id")->fisrt()?->id; 
         return $this->unidadeService->hora(Session::get('unidade_id'));
     }
 

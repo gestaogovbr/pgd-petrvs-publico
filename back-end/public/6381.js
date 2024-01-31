@@ -4247,7 +4247,7 @@ function ProjetoPlanejamentoComponent_div_16_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("projeto", ctx_r9.entity)("change", ctx_r9.onCalendarioFilterChange.bind(ctx_r9));
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("src", ctx_r9.gb.getResourcePath("assets/images/burndown-example.png"), _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵsanitizeUrl"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("src", ctx_r9.gb.getResourcePath("assets/images/burndown_example.png"), _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵsanitizeUrl"]);
   }
 }
 function ProjetoPlanejamentoComponent_div_17_Template(rf, ctx) {
