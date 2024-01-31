@@ -148,7 +148,7 @@ export class DocumentosComponent extends PageFrameBase {
   }*/
 
   public get canEdit(): boolean {
-    const selected: Documento | undefined = this.grid!.selected as Documento;
+    const selected: Documento | undefined = this.grid?.selected as Documento;
     return this.canEditTemplate && !selected?.assinaturas?.length && selected?.tipo != "LINK";
   }
 

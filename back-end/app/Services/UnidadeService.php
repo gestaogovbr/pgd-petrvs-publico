@@ -54,7 +54,7 @@ class UnidadeService extends ServiceBase
 
     public function hora($idOrUnidade) {
         $unidade = gettype($idOrUnidade) == "string" ? Unidade::find($idOrUnidade) : $idOrUnidade;
-        $timeZone = $unidade->cidade->timezone;
+        $timeZone = $unidade->cidade?->timezone ?? -3;
         $timezone_abbr = timezone_name_from_abbr("", -3600*abs($timeZone), 0);
         $dateTime = new DateTime('now', new DateTimeZone($timezone_abbr));
         $dateTime->setTimestamp($dateTime->getTimestamp());
