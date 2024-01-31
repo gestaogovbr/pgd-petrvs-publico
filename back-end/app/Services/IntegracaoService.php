@@ -226,7 +226,7 @@ class IntegracaoService extends ServiceBase
   /**
    * Método usado quando a rotina de Integração é chamada direto na linha de comando:
    * curl -G 'http://localhost/api/integracao' -d servidores=true -d unidades=true -d entidade=? -H 'X-ENTIDADE: SIGLA(ID) da Unidade (tabela tenant)'
-  */
+   */
   public function sincronizar($inputs)
   {
     $inputs['entidade_id'] = $inputs['entidade'];
@@ -421,7 +421,7 @@ class IntegracaoService extends ServiceBase
          * OBS.: Essa rotina de integração vai rodar nos diversos servidores onde estarão instaladas a aplicação... então ela tem que atualizar
          * todas as Unidades do SIAPE, de todas as agências que usarão o sistema. O ideal é essa consulta_sql utilizar um parâmetro de
          * identificação da entidade, presente no arquivo de configuração.
-        */
+         */
         $this->unidadesSelecionadas = [];
         $consulta_sql = "" .
           "SELECT iu.id_servo, u.codigo as codigo_antigo, " .
@@ -521,7 +521,6 @@ class IntegracaoService extends ServiceBase
         ) {
 
           foreach ($servidores as $servidor) {
-
             if (
               isset($servidor['matriculas']) && isset($servidor['matriculas']['dados']) &&
               isset($servidor['cpf_ativo']) && $servidor['cpf_ativo'] == 'true'
@@ -700,7 +699,7 @@ class IntegracaoService extends ServiceBase
         array_push($this->result['servidores']['Observações'], 'Total de servidores importados do SIAPE: ' . $n . ' (apenas ATIVOS).');
 
         // Seleciona todos os servidores que sofreram alteração nos seus dados pessoais ou atingiu critério quanto data_modificação.
-        $atualizacoes = DB::select(
+        $atualizacoesDados = DB::select(
           "SELECT u.id, isr.cpf AS cpf_servidor, u.nome AS nome_anterior, " .
             "isr.nome AS nome_servidor, u.apelido AS apelido_anterior, " .
             "isr.nomeguerra AS nome_guerra, u.email AS email_anterior, " .
@@ -714,22 +713,45 @@ class IntegracaoService extends ServiceBase
             "isr.telefone != u.telefone OR " .
             "isr.data_modificacao > u.data_modificacao"
         );
-
-        $sql_update = "UPDATE usuarios SET " .
+        $sqlUpdateDados = "UPDATE usuarios SET " .
           "nome = :nome, apelido = :nomeguerra, " .
           "email = :email, matricula = :matricula, " .
           "telefone = :telefone, " .
           "data_nascimento = :data_nascimento, " .
           "data_modificacao = :data_modificacao WHERE id = :id";
 
-        DB::transaction(function () use (&$atualizacoes, &$sql_update) {
+        // Adicionar algoritmo para trocar lotação.
+        // Se não conseguir mudar, avisar no log uma vez que virá mensagem do saveintegrante.
+
+        $atualizacoesLotacoes = DB::select(
+          "SELECT usuario.id AS usuario_id, isr.nome AS nome, ".
+          "  u.codigo AS exercicio_antigo, ".
+          "  isr.codigo_servo_exercicio AS exercicio_atual, ".
+          "  u.id AS exercicio_antigo_id, ".
+
+          "(SELECT u2.id ".
+          "FROM unidades AS u2 ".
+          "WHERE isr.codigo_servo_exercicio = u2.codigo) AS exercicio_atual_id, ".
+
+          " uia.atribuicao AS atribuicao ".
+
+          "FROM unidades_integrantes_atribuicoes AS uia ".
+          "JOIN unidades_integrantes AS ui ON ui.id = uia.unidade_integrante_id ".
+          "JOIN unidades AS u ON ui.unidade_id = u.id ".
+          "JOIN usuarios AS usuario ON ui.usuario_id = usuario.id ".
+          "JOIN integracao_servidores AS isr ON isr.cpf = usuario.cpf ".
+          "WHERE uia.atribuicao = 'LOTADO' AND u.codigo <> isr.codigo_servo_exercicio ".
+          "ORDER BY exercicio_antigo ASC");
+        $atualizacoesLotacoesResult = [];
+
+        DB::transaction(function () use (&$atualizacoesDados, &$sqlUpdateDados, &$atualizacoesLotacoes, &$atualizacoesLotacoesResult) {
           /**
            * Atualiza os dados pessoais de todos os servidores ATIVOS presentes na tabela USUARIOS.
            * ESTA ROTINA NÃO DEVE INSERIR NOVOS SERVIDORES.
-          */
-          if (!empty($atualizacoes)) {
-            foreach ($atualizacoes as $linha) {
-              DB::update($sql_update, [
+           */
+          if (!empty($atualizacoesDados)) {
+            foreach ($atualizacoesDados as $linha) {
+              DB::update($sqlUpdateDados, [
                 'nome'          => $linha->nome_servidor,
                 'nomeguerra'    => $linha->nome_guerra,
                 'email'         => $linha->emailfuncional,
@@ -768,9 +790,30 @@ class IntegracaoService extends ServiceBase
             }
           };
 
+          if (!empty($atualizacoesLotacoes)) {
+            foreach ($atualizacoesLotacoes as $linha) {
+              $usuarioId = $linha->usuario_id;
+              $unidadeExercicioId = $linha->exercicio_atual_id;
+              $vinculo = array([
+                'usuario_id' => $usuarioId,
+                'unidade_id' => $unidadeExercicioId,
+                'atribuicoes' => ["LOTADO"],
+              ]);
+              $dbResult = $this->unidadeIntegrante->saveIntegrante($vinculo, false);
+              if(!$dbResult){
+                LogError::newWarn("IntegracaoService: Durante integração não foi possível alterar lotação!", [$dbResult, $vinculo]);
+              } else{
+                  array_push($atualizacoesLotacoesResult, $dbResult);
+              }
+            }
+          }
+
           if ($this->echo) $this->imprimeNoTerminal('Concluída a fase de atualização de servidores que apresentaram alteração nos seus dados pessoais!.....');
-          $n = count($atualizacoes);
+          $n = count($atualizacoesDados);
+          $nLotacoes = count($atualizacoesLotacoes);
+
           if ($n > 0) array_push($this->result['servidores']["Observações"], $n . ($n == 1 ? ' servidor foi atualizado porque sofreu alteração em seus dados pessoais!' : ' servidores foram atualizados porque sofreram alteração em seus dados pessoais!'));
+          if ($nLotacoes > 0) array_push($this->result['servidores']["Observações"], $n . ($n == 1 ? ' servidor foi atualizado porque sofreu alteração na sua lotação!' : ' servidores foram atualizados porque sofreram alterações nas lotações!'));
 
           /**
            * Incluir todos servidores da tabela integracao_servidores que não estejam na tabela usuarios.
@@ -827,13 +870,16 @@ class IntegracaoService extends ServiceBase
 
             if (is_null($unidadeExercicioId)) {
               $unidadeExercicioId = Unidade::where("codigo", $this->unidadeRaiz)->first()->id;
+              LogError::newWarn("IntegracaoService: Durante integração, foi definido o exercício na unidadeRaiz(" .
+                $this->unidadeRaiz . ") para o CPF(" .
+                $registro['cpf'] . ") uma vez que informação não foi encontrada.", [$usuarioId, $registro['cpf']]);
             }
 
             $queryAtribuicoes = $registro->getUnidadesAtribuicoesAttribute();
             $atribuicoes = [];
 
             if (!empty($queryAtribuicoes) && is_array($queryAtribuicoes) && array_key_exists($unidadeExercicioId, $queryAtribuicoes) && $queryAtribuicoes[$unidadeExercicioId]) {
-              $atribuicoes = $atribuicoes[$unidadeExercicioId];
+              $atribuicoes = $queryAtribuicoes[$unidadeExercicioId];
               if (!in_array("LOTADO", $atribuicoes)) array_push($atribuicoes, "LOTADO");
               $atribuicoes = array_values(array_unique($atribuicoes));
             } else {
@@ -866,7 +912,7 @@ class IntegracaoService extends ServiceBase
     /**
      * Atualização dos Gestores.
      * Os gestores só são atualizadas quando as Unidades e os Servidores são atualizados e AMBOS com sucesso.
-    */
+     */
 
     if (!empty($inputs["gestores"]) && !$inputs["gestores"]) {
       $this->result["gestores"]['Resultado'] = 'Os gestores não foram atualizados, conforme solicitado!';
@@ -1071,7 +1117,7 @@ class IntegracaoService extends ServiceBase
   /**
    * Cria uma lotação para o Usuário, se seus dados já existirem na tabela integracao_servidores,
    * e se ela já constar na tabela Unidades. Salva o novo usuário, independentemente da lotação
-  */
+   */
   public function salvarUsuarioLotacao(&$usuario, &$lotacao)
   {
     if ($this->fillUsuarioWithSiape($usuario, $lotacao)) { //se quem está logado existe na tabela integracao_servidores
@@ -1128,7 +1174,7 @@ class IntegracaoService extends ServiceBase
    * Devolve um array de objetos do tipo {'key' => 'value'}, onde 'value' é o nome do usuário que executou alguma vez
    * a rotina de integração e 'key' é o seu ID. No caso de a rotina de integração ter sido executada por um processo/alguém "por fora" do Petrvs,
    * o seu ID será nulo e o nome será setado para "Usuário não logado".
-  */
+   */
   public function showResponsaveis()
   {
     $a = array_map(fn ($u) => ['key' => $u['id'], 'value' => $u['nome']], Usuario::select(['id', 'nome'])->has('integracoes')->get()->toArray());

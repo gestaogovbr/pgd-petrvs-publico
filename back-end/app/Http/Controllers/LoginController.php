@@ -20,6 +20,7 @@ use App\Services\CalendarioService;
 use App\Services\UsuarioService;
 use Laravel\Socialite\Facades\Socialite;
 use \SocialiteProviders\Manager\Config;
+use Illuminate\Support\Facades\Http;
 use DateTime;
 
 class LoginController extends Controller
@@ -769,9 +770,8 @@ class LoginController extends Controller
         ];
         $login_govbr_select_tenancy = $this->getConfigGovBr($url_dinamica_callback, $dados);
 
-        // $user = $this->azureProvider($config = $azure_select_tenancy)->stateless()->user();
-        $user = $this->govBrProvider($config = $login_govbr_select_tenancy)->stateless()
-            ->user();
+        $this->stimulusRouteGovBr();
+        $user = $this->govBrProvider($config = $login_govbr_select_tenancy)->stateless()->user();
 
         if (!empty($user)) {
             $token = $user->token;
@@ -794,5 +794,13 @@ class LoginController extends Controller
                 ->scopes(['openid', 'email', 'profile'])
                 ->redirect();
         }
+    }
+
+    private function stimulusRouteGovBr(){
+      $response = Http::get('sso.acesso.gov.br/token');
+      if ($response->unauthorized() != 401) {
+        return LogError::newWarn('Falha de conexão ao GovBR.');
+      }
+      return $response;
     }
 }
