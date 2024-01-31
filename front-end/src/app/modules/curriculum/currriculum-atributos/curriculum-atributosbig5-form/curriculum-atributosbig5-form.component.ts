@@ -9,12 +9,11 @@ import { QuestionarioPerguntaDaoService } from 'src/app/dao/questionario-pergunt
 import { QuestionarioResposta } from 'src/app/models/questionario-resposta.model';
 import { QuestionarioRespostaPergunta } from 'src/app/models/questionario-resposta-pergunta.model';
 import { QuestionarioRespostaDaoService } from 'src/app/dao/questionario-resposta-dao.service';
-import { CurriculumAtributossoftFormComponent } from '../curriculum-atributossoft-form/curriculum-atributossoft-form.component';
 import { v4 as uuid } from 'uuid';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { QuestionarioPergunta } from 'src/app/models/questionario-pergunta.model';
-import { Button } from 'bootstrap';
 import { InputRadioComponent } from 'src/app/components/input/input-radio/input-radio.component';
+import { Chart,registerables } from 'chart.js';
 
 @Component({
   selector: 'curriculum-atributosbig5-form',
@@ -24,6 +23,8 @@ import { InputRadioComponent } from 'src/app/components/input/input-radio/input-
 export class CurriculumAtributosbig5FormComponent extends PageFormBase<QuestionarioResposta, QuestionarioRespostaDaoService>{
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('divb5', { static: false }) public divb5?: HTMLDivElement;
+  @ViewChild('divextroversao', { static: false }) public divextroversao?: HTMLDivElement;
+  @ViewChild('lblextroversao', { static: false }) public lblextroversao?: HTMLLabelElement;
   @ViewChild('btnv', { static: false }) public btnv?: HTMLButtonElement;
   @ViewChild('btne', { static: false }) public btne?: HTMLButtonElement;
   @ViewChild('radio', { static: false }) public radio?: InputRadioComponent;
@@ -52,6 +53,7 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
   public conscienciosidade: number = 0;
   public estabilidade : number = 0;
   public abertura : number = 0;
+  public chart: any;
    
 
   constructor(public injector: Injector) {
@@ -66,6 +68,8 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
     this.form = this.fh.FormBuilder({
 
       radiob5 : {default : false },
+      lbl_extroversao : {default : '' },
+      divextroversao : {default : '' },
     
 
     }, this.cdRef, this.validate);
@@ -176,7 +180,7 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
         this.total = this.total - this.respostasB5[this.controle]
         this.respostasB5.splice(this.controle,1)
         this.arrayLabel = this.respostasB5.toString();
-        btnVoltar?.removeAttribute('disabled');
+        btnEnviar?.removeAttribute('disabled');
         
      }
        
@@ -218,16 +222,21 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
         if(this.controle <= 49 ){
           this.numeroPergunta++;
           this.showPergunta = this.perguntas[this.controle].pergunta;
+          (document.querySelector('.cardb5')?.hasAttribute('hidden')) ? document.querySelector('.cardb5')?.removeAttribute('hidden') : '';
+
         }
         
         console.log(this.respostasB5,' - ',this.total, ' - ', this.controle);
       }
 
       if(this.controle >= 50){
-        this.controle >= 50 ? btnEnviar?.setAttribute('disabled',"") : btnEnviar?.removeAttribute('disabled');
-        btnEnviar?.setAttribute('value','Enviar')
+        btnEnviar?.setAttribute('disabled',"");
+        btnEnviar?.setAttribute('value','Enviar');
         radio?.setAttribute('disabled','');
         this.controle =50;
+        this.resposta(this.respostasB5);
+      }else{
+        btnEnviar?.removeAttribute('disabled');
       }  
   }
 
@@ -263,7 +272,48 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
         this.abertura = oM - abertura;
 
         console.log('e ',this.extroversao,' - a ',this.agradabilidade, ' - c ',this.conscienciosidade, ' - n ',this.estabilidade ,' - o ', this.abertura )
+        this.chartb5([this.extroversao,this.agradabilidade,this.conscienciosidade,this.estabilidade, this.abertura])
 
-  }       
+  }
 
+  public chartb5(dados : number[] = []){
+
+    (document.querySelector('.divgraficob5')?.hasAttribute('hidden')) ? document.querySelector('.divgraficob5')?.removeAttribute('hidden') : '';
+    document.querySelector('.cardb5')?.setAttribute('hidden','');
+
+    this.chart ? this.chart.destroy() : '';
+
+    this.chart = new Chart("MyChart", {
+          type: 'pie', //this denotes tha type of chart
+
+          data: {// values on X-Axis
+            labels: ['Extroversão', 'Agradabilidade','Conscienciosidade','Estabilidade','Abertura'],
+            datasets: [{
+        label: 'Pontuação',
+        data: dados,
+        backgroundColor: [
+          'red',
+          'blue',
+          'green',
+          'yellow',
+          'orange',
+        ],
+        hoverOffset: 4
+      }],
+          },
+          options: {
+            aspectRatio:2.5,
+            responsive:true,
+          }
+
+        });
+  }
+
+  public onClickDivB5(div:string, lbl:string){
+
+    (document.querySelector('.' + div)?.hasAttribute('hidden')) ? document.querySelector('.' + div)?.removeAttribute('hidden') : document.querySelector('.' + div)?.setAttribute('hidden','');
+    (document.querySelector('.' + lbl)?.hasAttribute('hidden')) ? document.querySelector('.' + lbl)?.removeAttribute('hidden') : document.querySelector('.' + lbl)?.setAttribute('hidden','');
+  
+  }
+  
 }

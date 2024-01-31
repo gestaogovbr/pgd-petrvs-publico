@@ -1,7 +1,7 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
     
     <div *ngIf="!questionario; else softskills">
-        Formulário de SoftSkill não encontrado no banco de dados. Contete suporte!
+        Formulário de SoftSkill não encontrado no banco de dados. Contate o suporte!
     </div>
     <ng-template #softskills>
         <h4 class="my-5">Competências Gerenciais, distribua 20 pontos entre as habilidades abaixo: </h4>
