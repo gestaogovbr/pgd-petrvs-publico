@@ -86,7 +86,7 @@ Outros        | CF,CS,DL       | CF,CS,DL             | CF,CS,DL         | CF,CS
 
 ## FLUXOS (STATUS & AÇÕES)
 
-![Fig. 1 - Fluxos do Plano de Trabalho](../imagens/fluxos_planos_trabalhos.jpeg)
+![Fig. 1 - Fluxos do Plano de Trabalho](../Imagens/Fluxos_Planos_Trabalhos.jpeg)
 
 ~~~text
 (PTR:TABELA_2) - Fluxos do plano para ir ao status de ATIVO

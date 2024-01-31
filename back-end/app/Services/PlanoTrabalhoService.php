@@ -686,45 +686,49 @@ class PlanoTrabalhoService extends ServiceBase
    */
   public function buscaCondicoes(array $entity): array
   {
-    $planoTrabalho = !empty($entity['id']) ? PlanoTrabalho::withTrashed()->with('entregas')->find($entity['id'])->toArray() : $entity;
-    $planoTrabalho['unidade'] = !empty($planoTrabalho['unidade_id']) ? Unidade::find($planoTrabalho['unidade_id'])->toArray() : null;
-    $logado = parent::loggedUser();
-    $result = [];
-    $result["assinaturasExigidas"] = $this->assinaturasExigidas($planoTrabalho);
-    $result["haAssinaturasExigidas"] = $this->haAssinaturasExigidas($planoTrabalho);
-    $result["assinaturasFaltantes"] = $this->assinaturasFaltantes($planoTrabalho);
-    $result["haAssinaturasFaltantes"] = $this->haAssinaturasFaltantes($planoTrabalho);
-    $result["usuarioFaltaAssinar"] = $this->usuarioFaltaAssinar(null, $planoTrabalho);
-    $result["assinaturaUsuarioExigida"] = $this->assinaturaUsuarioExigida(null, $planoTrabalho);
-    $result["atribuicoesGestorUsuarioLogado"] = $this->usuarioService->atribuicoesGestor($planoTrabalho['unidade_id']);
-    $result["atribuicoesGestorUsuario"] = $this->usuarioService->atribuicoesGestor($planoTrabalho['unidade_id'], $planoTrabalho['usuario_id']);
-    $result["gestorUnidadeExecutora"] = $this->usuarioService->isGestorUnidade($planoTrabalho['unidade_id']);
-    $result["gestoresUnidadeSuperior"] = $this->unidadeService->gestoresUnidadeSuperior($planoTrabalho['unidade_id']);
-    $result["gestorUnidadeSuperior"] = $result["gestoresUnidadeSuperior"]["gestor"]?->id == $logado->id || count(array_filter($result["gestoresUnidadeSuperior"]["gestoresSubstitutos"], fn ($value) => $value->id == $logado->id)) > 0;
-    $result["nrEntregas"] = empty($planoTrabalho['entregas']) ? 0 : count($planoTrabalho['entregas']);
-    $result["participanteLotadoAreaTrabalho"] = parent::loggedUser()->areasTrabalho->find(fn ($at) => $this->usuarioService->isLotacao($planoTrabalho["usuario_id"], $at->unidade->id)) != null;
-    $result["participanteColaboradorUnidadeExecutora"] = $this->usuarioService->isIntegrante("COLABORADOR", $planoTrabalho["unidade_id"], $planoTrabalho["usuario_id"]);
-    $result["participanteLotadoUnidadeExecutora"] = $this->usuarioService->isLotacao($planoTrabalho["usuario_id"], $planoTrabalho["unidade_id"]);
-    $result["planoAguardandoAssinatura"] = $this->isPlano("AGUARDANDO_ASSINATURA", $planoTrabalho);
-    $result["planoArquivado"] = empty($planoTrabalho['id']) ? false : PlanoTrabalho::withTrashed()->find($planoTrabalho['id'])->data_arquivamento != null;
-    $result["planoAtivo"] = $this->isPlano("ATIVO", $planoTrabalho);
-    $result["planoConcluido"] = $this->isPlano("CONCLUIDO", $planoTrabalho);
-    $result["planoCancelado"] = $planoTrabalho['status'] == "CANCELADO";
-    $result["planoDeletado"] = !empty($planoTrabalho['deleted_at']);
-    $result["planoIncluido"] = $this->isPlano("INCLUIDO", $planoTrabalho);
-    $result["planoStatus"] = empty($planoTrabalho['id']) ? null : PlanoTrabalho::withTrashed()->find($planoTrabalho['id'])->status;
-    $result["planoSuspenso"] = $this->isPlano("SUSPENSO", $planoTrabalho);
-    $result["planoValido"] = $this->isPlanoTrabalhoValido($planoTrabalho);
-    $result["naoPossuiPeriodoConflitanteOutroPlano"] = count(PlanoTrabalho::withTrashed()->where("unidade_id", $planoTrabalho['unidade_id'])->where("usuario_id", $planoTrabalho['usuario_id'])->where("id", "!=", $planoTrabalho["id"])->get()
-      ->filter(fn ($p) => $this->util->intersection([
-        ['start' => UtilService::asDateTime($p->data_inicio), 'end' => UtilService::asDateTime($p->data_fim)],
-        ['start' => UtilService::asDateTime($planoTrabalho["data_inicio"]), 'end' => UtilService::asDateTime($planoTrabalho["data_fim"])]
-      ]) != null)) == 0;
-    $result["unidadePlanoEhLotacao"] = $this->usuario->isLotacao(null, $planoTrabalho['unidade_id']);
-    $result["usuarioEhParticipanteHabilitado"] = $this->usuario->isParticipanteHabilitado(null, $planoTrabalho["programa_id"]);
-    $result["usuarioEhParticipantePlano"] = parent::loggedUser()->id == $planoTrabalho["usuario_id"];
-    $result["usuarioJaAssinouTCR"] = !$this->usuarioFaltaAssinar(null, $planoTrabalho);
-    return $result;
+    if($this->hasBuffer("buscaCondicoes", $entity["id"])) {
+      return $this->getBuffer("buscaCondicoes", $entity["id"]);
+    } else {
+      $planoTrabalho = !empty($entity['id']) ? PlanoTrabalho::withTrashed()->with('entregas')->find($entity['id'])->toArray() : $entity;
+      $planoTrabalho['unidade'] = !empty($planoTrabalho['unidade_id']) ? Unidade::find($planoTrabalho['unidade_id'])->toArray() : null;
+      $logado = parent::loggedUser();
+      $result = [];
+      $result["assinaturasExigidas"] = $this->assinaturasExigidas($planoTrabalho);
+      $result["haAssinaturasExigidas"] = $this->haAssinaturasExigidas($planoTrabalho);
+      $result["assinaturasFaltantes"] = $this->assinaturasFaltantes($planoTrabalho);
+      $result["haAssinaturasFaltantes"] = $this->haAssinaturasFaltantes($planoTrabalho);
+      $result["usuarioFaltaAssinar"] = $this->usuarioFaltaAssinar(null, $planoTrabalho);
+      $result["assinaturaUsuarioExigida"] = $this->assinaturaUsuarioExigida(null, $planoTrabalho);
+      $result["atribuicoesGestorUsuarioLogado"] = $this->usuarioService->atribuicoesGestor($planoTrabalho['unidade_id']);
+      $result["atribuicoesGestorUsuario"] = $this->usuarioService->atribuicoesGestor($planoTrabalho['unidade_id'], $planoTrabalho['usuario_id']);
+      $result["gestorUnidadeExecutora"] = $this->usuarioService->isGestorUnidade($planoTrabalho['unidade_id']);
+      $result["gestoresUnidadeSuperior"] = $this->unidadeService->gestoresUnidadeSuperior($planoTrabalho['unidade_id']);
+      $result["gestorUnidadeSuperior"] = $result["gestoresUnidadeSuperior"]["gestor"]?->id == $logado->id || count(array_filter($result["gestoresUnidadeSuperior"]["gestoresSubstitutos"], fn ($value) => $value["id"] == $logado->id)) > 0;
+      $result["nrEntregas"] = empty($planoTrabalho['entregas']) ? 0 : count($planoTrabalho['entregas']);
+      $result["participanteLotadoAreaTrabalho"] = parent::loggedUser()->areasTrabalho->find(fn ($at) => $this->usuarioService->isLotacao($planoTrabalho["usuario_id"], $at->unidade->id)) != null;
+      $result["participanteColaboradorUnidadeExecutora"] = $this->usuarioService->isIntegrante("COLABORADOR", $planoTrabalho["unidade_id"], $planoTrabalho["usuario_id"]);
+      $result["participanteLotadoUnidadeExecutora"] = $this->usuarioService->isLotacao($planoTrabalho["usuario_id"], $planoTrabalho["unidade_id"]);
+      $result["planoAguardandoAssinatura"] = $this->isPlano("AGUARDANDO_ASSINATURA", $planoTrabalho);
+      $result["planoArquivado"] = empty($planoTrabalho['id']) ? false : PlanoTrabalho::withTrashed()->find($planoTrabalho['id'])->data_arquivamento != null;
+      $result["planoAtivo"] = $this->isPlano("ATIVO", $planoTrabalho);
+      $result["planoConcluido"] = $this->isPlano("CONCLUIDO", $planoTrabalho);
+      $result["planoCancelado"] = $planoTrabalho['status'] == "CANCELADO";
+      $result["planoDeletado"] = !empty($planoTrabalho['deleted_at']);
+      $result["planoIncluido"] = $this->isPlano("INCLUIDO", $planoTrabalho);
+      $result["planoStatus"] = empty($planoTrabalho['id']) ? null : PlanoTrabalho::withTrashed()->find($planoTrabalho['id'])->status;
+      $result["planoSuspenso"] = $this->isPlano("SUSPENSO", $planoTrabalho);
+      $result["planoValido"] = $this->isPlanoTrabalhoValido($planoTrabalho);
+      $result["naoPossuiPeriodoConflitanteOutroPlano"] = count(PlanoTrabalho::withTrashed()->where("unidade_id", $planoTrabalho['unidade_id'])->where("usuario_id", $planoTrabalho['usuario_id'])->where("id", "!=", $planoTrabalho["id"])->get()
+        ->filter(fn ($p) => $this->util->intersection([
+          ['start' => UtilService::asDateTime($p->data_inicio), 'end' => UtilService::asDateTime($p->data_fim)],
+          ['start' => UtilService::asDateTime($planoTrabalho["data_inicio"]), 'end' => UtilService::asDateTime($planoTrabalho["data_fim"])]
+        ]) != null)) == 0;
+      $result["unidadePlanoEhLotacao"] = $this->usuario->isLotacao(null, $planoTrabalho['unidade_id']);
+      $result["usuarioEhParticipanteHabilitado"] = $this->usuario->isParticipanteHabilitado(null, $planoTrabalho["programa_id"]);
+      $result["usuarioEhParticipantePlano"] = parent::loggedUser()->id == $planoTrabalho["usuario_id"];
+      $result["usuarioJaAssinouTCR"] = !$this->usuarioFaltaAssinar(null, $planoTrabalho);
+      return $this->setBuffer("buscaCondicoes", $entity["id"], $result);
+    }
   }
 
   /**
@@ -881,14 +885,14 @@ class PlanoTrabalhoService extends ServiceBase
   {
     /*
     Resumo [PTR:TABELA_3]
-                     +---------------------------------------------------+---------------------------------------------------+---------------
-                                       Unidade Executora                 |                 Unidade de Lotação                |  Participante
-                     +---------------+------------------+----------------+---------------+------------------+----------------+      Sem
-                       Chefe titular | Chefe substituto | Chefe delagado | Chefe titular | Chefe substituto | Chefe delagado |     Chefia
-    -----------------+---------------+------------------+----------------+---------------+------------------+----------------+---------------
-    gestor executora | CF+, CS+      | CF,CS-           | CF,CS          |               |                  |                | CF,CS
-    -----------------+---------------+------------------+----------------+---------------+------------------+----------------+---------------
-    gestor imediato  |               |                  |                | CFº+,CSº+     | CFº,CSº-         | CFº,CSº        | CFº,CSº
+                     +---------------------------------------------------+-----------------------------------------------------+---------------
+                                       Unidade Executora                 |                 Unidade de Lotação                  |  Participante
+                     +---------------+------------------+----------------+---------------+--------------------+----------------+      Sem
+                       Chefe titular | Chefe substituto | Chefe delagado | Chefe titular | Chefe substituto   | Chefe delagado |     Chefia
+    -----------------+---------------+------------------+----------------+---------------+--------------------+----------------+---------------
+    gestor executora | CF+,CS+       | CF+,CS+,CF,CS-   | CF,CS          |               |                    |                | CF,CS
+    -----------------+---------------+------------------+----------------+---------------+--------------------+----------------+---------------
+    gestor imediato  |               |                  |                | CFº+,CSº+     | CFº+,CSº+,CFº,CSº- | CFº,CSº        | CFº,CSº
     */
     $ids = [
       "participante" => [], 
@@ -916,7 +920,7 @@ class PlanoTrabalhoService extends ServiceBase
         if ($programa->plano_trabalho_assinatura_gestor_unidade && isset($unidade)) {
           $atribuicoesUnidadeExecutora = $this->usuarioService->atribuicoesGestor($planoTrabalho['unidade_id'], $planoTrabalho['usuario_id']);
           $gestores = $atribuicoesUnidadeExecutora["gestor"] ? array_merge([$unidade->unidadePai?->gestor?->usuario_id], $unidade->unidadePai?->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
-            ($atribuicoesUnidadeExecutora["gestorSubstituto"] ? array_merge([$unidade->gestor?->usuario_id], $unidade->gestoresSubstitutos?->filter(fn($x) => $x->usuario_id != $participante->id)->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
+            ($atribuicoesUnidadeExecutora["gestorSubstituto"] ? array_merge([$unidade->gestor?->usuario_id, $unidade->unidadePai?->gestor?->usuario_id], $unidade->unidadePai?->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? [], $unidade->gestoresSubstitutos?->filter(fn($x) => $x->usuario_id != $participante->id)->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
             ($atribuicoesUnidadeExecutora["gestorDelegado"] ? array_merge([$unidade->gestor?->usuario_id], $unidade->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
             array_merge([$unidade->gestor?->usuario_id], $unidade->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? [])));
           $ids["gestores_unidade_executora"] = array_values(array_filter($gestores));
@@ -924,7 +928,7 @@ class PlanoTrabalhoService extends ServiceBase
         if ($programa->plano_trabalho_assinatura_gestor_lotacao && isset($lotacao)) {
           $atribuicoesUnidadeLotacao = $this->usuarioService->atribuicoesGestor($lotacao->id, $planoTrabalho['usuario_id']);
           $gestores = $atribuicoesUnidadeLotacao["gestor"] ? array_merge([$lotacao->unidadePai?->gestor?->usuario_id], $lotacao->unidadePai?->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
-            ($atribuicoesUnidadeLotacao["gestorSubstituto"] ? array_merge([$lotacao->gestor?->usuario_id], $lotacao->gestoresSubstitutos?->filter(fn($x) => $x->usuario_id != $participante->id)->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
+            ($atribuicoesUnidadeLotacao["gestorSubstituto"] ? array_merge([$lotacao->gestor?->usuario_id, $lotacao->unidadePai?->gestor?->usuario_id], $lotacao->unidadePai?->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? [], $lotacao->gestoresSubstitutos?->filter(fn($x) => $x->usuario_id != $participante->id)->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
             ($atribuicoesUnidadeLotacao["gestorDelegado"] ? array_merge([$lotacao->gestor?->usuario_id], $lotacao->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? []) :
             array_merge([$lotacao->gestor?->usuario_id], $lotacao->gestoresSubstitutos?->map(fn($x) => $x->usuario_id)->toArray() ?? [])));
           $ids["gestores_unidade_lotacao"] = array_values(array_filter($gestores));
