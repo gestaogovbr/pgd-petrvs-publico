@@ -1936,8 +1936,26 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
     })();
   }
   loadEtiquetas() {
-    this.etiquetas = this.util.merge(this.entrega?.selectedEntity.etiquetas, this.unidade?.selectedEntity.etiquetas, (a, b) => a.key == b.key);
-    this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario.config?.etiquetas, (a, b) => a.key == b.key);
+    var _this11 = this;
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      _this11.etiquetas = _this11.util.merge(_this11.entrega?.selectedEntity.etiquetas, _this11.unidade?.selectedEntity.etiquetas, (a, b) => a.key == b.key);
+      _this11.etiquetas = _this11.util.merge(_this11.etiquetas, _this11.auth.usuario.config?.etiquetas, (a, b) => a.key == b.key);
+      _this11.etiquetas = _this11.util.merge(_this11.etiquetas, yield _this11.carregaEtiquetasUnidadesAscendentes(_this11.unidade?.selectedEntity), (a, b) => a.key == b.key);
+    })();
+  }
+  carregaEtiquetasUnidadesAscendentes(unidadeAtual) {
+    var _this12 = this;
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      let etiquetasUnidades = [];
+      let path = unidadeAtual.path.split("/");
+      let unidades = yield _this12.unidadeDao.query({
+        where: ["id", "in", path]
+      }).asPromise();
+      unidades.forEach(un => {
+        etiquetasUnidades = _this12.util.merge(etiquetasUnidades, un.etiquetas, (a, b) => a.key == b.key);
+      });
+      return etiquetasUnidades;
+    })();
   }
   loadChecklist() {
     const modeloEntrega = this.entrega?.selectedEntity;
