@@ -99,7 +99,7 @@ status possíveis = ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO', 'CONCLUIDO', 
 obrigatoriedade     | inclusão realizada  |  status     |  evento que                |  status      |  evento que       |  status
 da assinatura       | pelo                |  inicial    |  faz avançar               |  seguinte    |  faz avançar      |  seguinte
 --------------------+--------------------------------------------------------------------------------------------------------------
-  participante      | participante        |  INCLUIDO   |  participante              |  AGUARDANDO  |  gestores assinam |  ATIVO
+  participante      | participante        |  INCLUIDO   |  participante              |  AGUARDANDO  |  gestores assinam |  ATIVO*
   gestor executora  |                     |             |  assina o TCR              |  ASSINATURA  |  o TCR            |  
   gestor imediato   +--------------------------------------------------------------------------------------------------------------
   gestor entidade   | gestor              |  INCLUIDO   |  gestor assina             |  AGUARDANDO  |  particip/gestor  |  ATIVO
@@ -136,15 +136,16 @@ da assinatura       | pelo                |  inicial    |  faz avançar         
 CF  => Chefe
 CS  => Chefe Sub.
 
-                 +---------------------------------------------------+-----------------------------------------------------+---------------
-                                   Unidade Executora                 |                 Unidade de Lotação                  |  Participante
-                 +---------------+------------------+----------------+---------------+--------------------+----------------+      Sem
-                   Chefe titular | Chefe substituto | Chefe delagado | Chefe titular | Chefe substituto   | Chefe delagado |     Chefia
------------------+---------------+------------------+----------------+---------------+--------------------+----------------+---------------
-gestor executora | CF+,CS+       | CF+,CS+,CF,CS-   | CF,CS          |               |                    |                | CF,CS
------------------+---------------+------------------+----------------+---------------+--------------------+----------------+---------------
-gestor imediato  |               |                  |                | CFº+,CSº+     | CFº+,CSº+,CFº,CSº- | CFº,CSº        | CFº,CSº
------------------+---------------+------------------+----------------+---------------+--------------------+----------------+---------------
+                 +---------------------------------------------------+---------------------------------------------------+---------------
+                                   Unidade Executora                 |                 Unidade de Lotação                |  Participante
+                 +---------------+------------------+----------------+---------------+------------------+----------------+      Sem
+                   Chefe titular | Chefe substituto | Chefe delagado | Chefe titular | Chefe substituto | Chefe delagado |     Chefia
+-----------------+---------------+------------------+----------------+---------------+------------------+----------------+---------------
+gestor executora | CF+, CS+      | CF,CS-           | CF,CS          |               |                  |                | CF,CS
+-----------------+---------------+------------------+----------------+---------------+------------------+----------------+---------------
+gestor imediato  |               |                  |                | CFº+,CSº+     | CFº,CSº-         | CFº,CSº        | CFº,CSº
+-----------------+---------------+------------------+----------------+---------------+------------------+----------------+---------------
+
 ~~~
 
 Ação: ALTERAR -> não muda o status do plano se ele estiver com o status 'INCLUIDO' ou 'AGUARDANDO_ASSINATURA', mas retorna ao status 'AGUARDANDO_ASSINATURA' se ele estiver no status 'ATIVO';

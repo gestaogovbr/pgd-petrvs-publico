@@ -745,7 +745,8 @@ export class LookupService implements IIndexable {
 
   public QUESTIONARIO_TIPO: LookupItem[] = [
     { key: 'INTERNO', value: 'Interno' },
-    { key: 'PERSONALIZADO', value: 'Personalizado' }
+    { key: 'PERSONALIZADO', value: 'Personalizado' },
+    { key: 'ANONIMO', value: 'Anônimo' }
   ];
 
   public QUESTIONARIO_PERGUNTA_TIPO: LookupItem[] = [
