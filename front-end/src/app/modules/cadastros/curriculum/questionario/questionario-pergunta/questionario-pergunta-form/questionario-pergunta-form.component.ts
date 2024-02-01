@@ -119,9 +119,9 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
    * @param row 
    * @returns 
    */
-  public async remove(row: any) {
+ /* public async remove(row: any) {
     return await this.dialog.confirm("Exclui ?", "Deseja realmente excluir todas as atribuições do servidor?");
-  }
+  }*/
 
   /**
    * Método chamado no salvamento de um integrante da unidade, seja este componente persistente ou não.
@@ -166,6 +166,7 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
   public async removePergunta(row: any) {
     if(await this.dialog.confirm("Excluir ?", "Deseja realmente excluir esta pergunta?")) {
       row._status = "DEL";
+      return true;
     }
     return undefined;
   }

@@ -107,9 +107,9 @@
 
             <div class="row mb-4">
                 <div class="col-md-12">
-                    <separator (click)="onClickDivB5('divgraficob5', 'lblgrafico')">
+                    <separator (click)="onClickDivB5('divgraficob5', 'lblgrafico','igrafico')">
                         <h4>Gráfico dos Resultados<i class="fa-solid fa-square-plus" id="icodivgraf5"></i></h4>
-                        <label class="lblgrafico"></label>
+                        <label class="lblgrafico"></label><i id="igrafico"></i>
                     </separator>
                 </div>
             </div>
@@ -122,10 +122,10 @@
             </div>
 
 
-            <separator class="mb-4" icon="fas fa-arrow-down" (click)="onClickDivB5('divextroversao', 'lblextroversao')">
+            <separator class="mb-4" icon="fas fa-arrow-down" (click)="onClickDivB5('divextroversao', 'lblextroversao','iextroversao')">
                 <div class="row d-flex justify-content-between">
                     <div class="col">
-                        <h4>Extroversão</h4>
+                        <h5><i class="fas fa-arrow-down" id="iextroversao"></i> Extroversão</h5>
                     </div>
                     <div class="col">
                         <h4><label #lblextroversao class="lblextroversao fw-bolder" id="lbl_extroversao" controlName="lbl_extroversao">{{this.extroversao}}</label></h4>
@@ -156,10 +156,10 @@
                     </div>
                 </div>
             </div>
-            <separator class="mb-4" (click)="onClickDivB5('divagradabilidade', 'lblagradabilidade')">
+            <separator class="mb-4" (click)="onClickDivB5('divagradabilidade', 'lblagradabilidade','iagradabilidade')">
                 <div class="row d-flex justify-content-between">
                     <div class="col">
-                        <h4>Agradabilidade<i class="fa-solid fa-square-plus" id="icon_agradabilidade"></i></h4>
+                        <h5><i class="fas fa-arrow-down" id="iagradabilidade"></i> Agradabilidade<i class="fa-solid fa-square-plus" id="icon_agradabilidade"></i></h5>
                     </div>
                     <div class="col">
                         <h4><label #lblagradabilidade class="lblagradabilidade fw-bolder" id="lbl_agradabilidade">{{this.agradabilidade}}</label></h4>
@@ -194,10 +194,10 @@
                 </div>
             </div>
 
-            <separator class="mb-4" (click)="onClickDivB5('divconscienciosidade', 'lblconscienciosidade')">
+            <separator class="mb-4" (click)="onClickDivB5('divconscienciosidade', 'lblconscienciosidade','iconscienciosidade')">
                 <div class="row d-flex justify-content-between">
                     <div class="col">
-                        <h4>Conscienciosidade<i class="fa-solid fa-square-plus" id="icon_conscienciosidade"></i></h4>
+                        <h5><i class="fas fa-arrow-down" id="iconscienciosidade"></i> Conscienciosidade<i class="fa-solid fa-square-plus" id="icon_conscienciosidade"></i></h5>
                     </div>
                     <div class="col">
                         <h4><label #lblconscienciosidade class="lblconscienciosidade fw-bolder" id="lbl_conscienciosidade">{{this.conscienciosidade}}</label></h4>
@@ -230,10 +230,10 @@
                 </div>
 
             </div>
-            <separator class="mb-4" (click)="onClickDivB5('divestabilidade', 'lblestabilidade')">
+            <separator class="mb-4" (click)="onClickDivB5('divestabilidade', 'lblestabilidade','iestabilidade')">
                 <div class="row d-flex justify-content-between">
                     <div class="col">
-                        <h4>Estabilidade Emocional<i class="fa-solid fa-square-plus" id="icon_estabilidade"></i></h4>
+                        <h5><i class="fas fa-arrow-down" id="iestabilidade"></i> Estabilidade Emocional<i class="fa-solid fa-square-plus" id="icon_estabilidade"></i></h5>
                     </div>
                     <div class="col">
                         <h4><label #lblestabilidade class="lblestabilidade fw-bolder" id="lbl_estabilidade">{{this.estabilidade}}</label></h4>
@@ -270,10 +270,10 @@
                 </div>
             </div>
 
-            <separator class="mb-4" (click)="onClickDivB5('divabertura', 'lblabertura')">
+            <separator class="mb-4" (click)="onClickDivB5('divabertura', 'lblabertura','iabertura')">
                 <div class="row d-flex justify-content-between">
                     <div class="col">
-                        <h4>Abertura<i class="fa-solid fa-square-plus" id="icon_abertura"></i></h4>
+                        <h5><i class="fas fa-arrow-down" id="iabertura"></i> Abertura<i class="fa-solid fa-square-plus" id="icon_abertura"></i></h5>
                     </div>
                     <div class="col">
                         <h4><label #lblabertura class="lblabertura fw-bolder" id="lbl_abertura">{{this.abertura}}</label></h4>
