@@ -29,6 +29,8 @@ import { Unidade } from 'src/app/models/unidade.model';
 import { QueryOrderBy } from 'src/app/dao/dao-base.service';
 import { Checklist } from 'src/app/models/atividade.model';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
+import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
+import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 
 @Component({
   selector: 'plano-entrega-form-entrega',
@@ -62,6 +64,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   public itensQualitativo: LookupItem[] = [];
   public planejamentoInstitucionalDao: PlanejamentoDaoService;
   public planoEntregaEntregaDao: PlanoEntregaEntregaDaoService;
+  public planoEntregaDao: PlanoEntregaDaoService;
   public cadeiaValorDao: CadeiaValorDaoService;
   public cadeiaValorProcessoDao: CadeiaValorProcessoDaoService;
   public planejamentoObjetivoDao: PlanejamentoObjetivoDaoService;
@@ -77,6 +80,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.planejamentoDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.entregaDao = injector.get<EntregaDaoService>(EntregaDaoService);
+    this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
     this.planejamentoInstitucionalDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.planoEntregaEntregaDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
@@ -212,6 +216,39 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.entity!.unidade_id = this.auth.unidade!.id;
     this.entity!.unidade = this.auth.unidade;
     await this.loadData(this.entity!, form);
+  }
+
+  public async onSaveEntrega() {
+    let error: any = undefined;
+    let save: boolean = true;
+    if(this.formValidation) {
+      try {
+        error = await this.formValidation(this.form!);
+      } catch (e: any) {
+        error = e; 
+      }
+    }
+    if(this.form!.valid && !error){
+      if(this.action == "edit") {
+        let entity = (await this.saveData(this.form!.value)).modalResult as PlanoEntregaEntrega;
+        let planosImpactados: PlanoTrabalho[] = [];
+        entity._status = "EDIT";
+        this.loading = true;
+        try {
+          planosImpactados = await this.planoEntregaDao.planosImpactadosPorAlteracaoEntrega(entity);
+        } finally {
+          this.loading = false;
+        }
+        if(planosImpactados.length) {
+          let planos = planosImpactados.map(x => this.util.getDateFormatted(x.data_inicio) + " - " + this.util.getDateFormatted(x.data_fim) + " - " + x.unidade?.sigla + ": " + x.usuario?.nome + "\n");
+          save = await this.dialog.confirm("Altera assim mesmo?", "Caso prossiga com essa modificação os seguintes planos de trabalho serão repactuados automaticamente:\n\n" + planos + "\n" + "Deseja prosseguir?");
+        }
+    }
+      if(save) await this.onSaveData();
+    } else {
+      this.form!.markAllAsTouched();
+      if(error) this.error(error);
+    }
   }
 
   public saveData(form: IIndexable): Promise<NavigateResult> {

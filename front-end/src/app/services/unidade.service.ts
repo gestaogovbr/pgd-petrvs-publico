@@ -25,14 +25,17 @@ export class UnidadeService {
   }
 
   /**
-   * Informa se o usuário logado é gestor(titular, substituto ou delegado) da unidade recebida como parâmetro. Se nenhuma unidade for repassada,
+   * Informa se o usuário logado é gestor(titular, substituto ou delegado, se incluiDelegado) da unidade recebida como parâmetro. Se nenhuma unidade for repassada,
    * será adotada a unidade selecionada pelo servidor na homepage.
    * @param pUnidade
+   * @param incluiDelegado 
    * @returns
   */
-  public isGestorUnidade(pUnidade: Unidade | string | null = null): boolean {
-    let id_unidade = pUnidade == null ? this.auth.unidade?.id || null : (typeof pUnidade == "string" ? pUnidade : pUnidade.id);
+  public isGestorUnidade(pUnidade: Unidade | string | null = null, incluiDelegado: boolean = true): boolean {
+    let id_unidade = pUnidade == null ? this.auth.unidade!.id || null : (typeof pUnidade == "string" ? pUnidade : pUnidade.id);
     let areaTrabalho = this.auth.unidades?.find(x => x.id == id_unidade);
-    return !!id_unidade && !!areaTrabalho && [areaTrabalho.gestor?.usuario_id, ...(areaTrabalho.gestores_substitutos?.map(x => x.usuario_id)), ...(areaTrabalho.gestores_delegados?.map(x => x.usuario_id))].includes(this.auth.usuario!.id);
+    let gestores = [areaTrabalho?.gestor?.usuario_id, ...(areaTrabalho?.gestores_substitutos?.map(x => x.usuario_id) || [])];
+    if (incluiDelegado) gestores.push(...(areaTrabalho?.gestores_delegados?.map(x => x.usuario_id) || []));
+    return !!id_unidade && !!areaTrabalho && gestores.includes(this.auth.usuario!.id);
   }
 }

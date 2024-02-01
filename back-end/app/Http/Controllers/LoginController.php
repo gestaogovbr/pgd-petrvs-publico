@@ -53,7 +53,8 @@ class LoginController extends Controller
                 "participacoesProgramas" => function ($query) {
                     $query->where("habilitado", 1);
                 },
-                "perfil.capacidades.tipoCapacidade",
+                "perfil.capacidades:id,perfil_id,tipo_capacidade_id",
+                "perfil.capacidades.tipoCapacidade:id,codigo",
                 "gerenciaTitular.atribuicoes",
                 "gerenciaTitular.unidade",
                 "gerenciasSubstitutas.atribuicoes",

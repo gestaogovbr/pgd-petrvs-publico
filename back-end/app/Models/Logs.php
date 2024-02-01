@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,11 +13,19 @@ class Logs extends Model
         parent::__construct($attributes);
 
         // Define a conexão do modelo com base na configuração 'database.default'
-        $this->connection = config('database.default');
+        $this->connection = env('DB_CONNECTION','mysql');
     }
     protected $table = 'logs';
     protected $fillable = ['tenant_id', 'level', 'message', 'context'];
+    protected static function boot()
+    {
+        parent::boot();
 
+        // Adiciona um global scope para ordenar os logs
+        static::addGlobalScope('order', function (Builder $builder) {
+            $builder->orderBy('created_at', 'desc');
+        });
+    }
     // Relação com o tenant, se aplicável
     public function tenant()
     {

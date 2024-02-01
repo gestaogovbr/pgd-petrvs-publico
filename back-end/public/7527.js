@@ -149,6 +149,9 @@ const _c4 = function () {
 const _c5 = function () {
   return ["gestao/plano-trabalho/consolidacao"];
 };
+const _c6 = function () {
+  return ["avaliacao/plano-trabalho/consolidacao/avaliacao"];
+};
 class HomeExecucaoComponent {
   constructor(injector) {
     this.lex = injector.get(src_app_services_lexical_service__WEBPACK_IMPORTED_MODULE_1__.LexicalService);
@@ -191,7 +194,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefi
       _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("title", ctx.lex.translate("Consolida\u00E7\u00F5es"))("imgIcon", ctx.gb.getResourcePath("assets/icons/home/team.svg"))("route", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](23, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](22, _c5)));
       _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("title", "Avalia\u00E7\u00F5es de " + ctx.lex.translate("consolida\u00E7\u00F5es"))("imgIcon", ctx.gb.getResourcePath("assets/icons/home/ranking.svg"))("route", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](26, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](25, _c5)));
+      _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("title", "Avalia\u00E7\u00F5es de " + ctx.lex.translate("consolida\u00E7\u00F5es"))("imgIcon", ctx.gb.getResourcePath("assets/icons/home/ranking.svg"))("route", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction1"](26, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpureFunction0"](25, _c6)));
     }
   },
   dependencies: [_components_button_dashboard_button_dashboard_component__WEBPACK_IMPORTED_MODULE_2__.ButtonDashboardComponent],
@@ -378,7 +381,7 @@ class HomeRaioxComponent {
   constructor(router, auth) {
     this.router = router;
     this.auth = auth;
-    this.logoInicial = "../../../../assets/images/logo-raio-x-1.png";
+    this.logoInicial = "../../../../assets/images/logo_raiox_1.png";
   }
 }
 _class = HomeRaioxComponent;

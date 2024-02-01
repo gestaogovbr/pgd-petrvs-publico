@@ -11,6 +11,6 @@ export class HomeRaioxComponent {
   logoInicial:string;
 
   constructor(private router:Router, private auth:AuthService) { 
-    this.logoInicial="../../../../assets/images/logo-raio-x-1.png";
+    this.logoInicial="../../../../assets/images/logo_raiox_1.png";
   } 
 }

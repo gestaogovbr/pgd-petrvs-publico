@@ -158,7 +158,9 @@ class UtilService
      * Se o formato recebido for inválido, retorna -1.
      */
     public static function asTimestamp($date): int | null {
-        $result = gettype($date) == "integer" ? $date : ($date instanceof DateTime ? $date->getTimestamp() : (gettype($date) == "string" ? (strtotime($date) ? strtotime($date) : null) : null));
+        $result = gettype($date) == "integer" ? $date : 
+            ($date instanceof DateTime ? $date->getTimestamp() : 
+            (gettype($date) == "string" ? (strtotime($date) ? strtotime($date) : null) : null));
         return $result;
     }
 

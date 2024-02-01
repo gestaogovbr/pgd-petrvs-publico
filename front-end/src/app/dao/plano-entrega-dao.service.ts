@@ -1,6 +1,8 @@
 import { Injectable, Injector } from '@angular/core';
 import { PlanoEntrega } from '../models/plano-entrega.model';
 import { DaoBaseService } from './dao-base.service';
+import { PlanoEntregaEntrega } from '../models/plano-entrega-entrega.model';
+import { PlanoTrabalho } from '../models/plano-trabalho.model';
 
 @Injectable({
   providedIn: 'root'
@@ -155,6 +157,19 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
       }, error => reject(error));
     });
   }
+
+  public planosImpactadosPorAlteracaoEntrega(planoEntregaEntrega: PlanoEntregaEntrega): Promise<PlanoTrabalho[]> {
+    return new Promise<PlanoTrabalho[]>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/planos-impactados-por-alteracao-entrega', { entrega: planoEntregaEntrega }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(response?.planos_trabalhos || []);
+        }
+      }, error => reject(error));
+    });
+  }
+
 
 }
 

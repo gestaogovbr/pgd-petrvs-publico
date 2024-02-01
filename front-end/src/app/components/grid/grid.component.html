@@ -29,8 +29,8 @@
                                 </tr>
                                 <tr *ngIf="error?.length && editing?.id == row.id" class="grid-no-hover">
                                     <td class="grid-no-hover px-0 border-0" [attr.colspan]="columns.length">
-                                        <div *ngIf="error?.length" class="alert alert-danger mt-2" role="alert">
-                                            {{error}}
+                                        <div *ngIf="error?.length" class="alert alert-danger mt-2 mb-5" role="alert">
+                                            <span><u><strong>{{ (error || '').split('&')[0] }}</strong></u></span><br>{{ (error || '').split('&')[1] }}
                                         </div>
                                     </td>
                                 </tr>

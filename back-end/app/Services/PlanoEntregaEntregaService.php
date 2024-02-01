@@ -9,6 +9,38 @@ use Illuminate\Support\Carbon;
 
 class PlanoEntregaEntregaService extends ServiceBase
 {
+
+    public function proxyStore(&$planoEntregaEntrega, $unidade, $action)
+    {
+      if ($action == ServiceBase::ACTION_EDIT) {
+        /* (RN_PTR_E) O Plano de Trabalho precisará ser repactuado (retornar ao status de AGUARDANDO_ASSINATURA) quando houver quaisquer alterações no plano de entrega que impacte as entregas do plano de trabalho; (alterada a entrega ou cancelada); */
+        $planoEntregaEntrega["_status"] = "EDIT";
+        $this->buffer["planosTrabalhosImpactados"] = $this->planoEntregaService->planosImpactadosPorAlteracaoEntrega($planoEntregaEntrega);
+      }
+      return $planoEntregaEntrega;
+    }
+
+    public function afterStore($planoEntregaEntrega, $action)
+    {
+        if($action == ServiceBase::ACTION_EDIT) {
+            /* (RN_PTR_E) O Plano de Trabalho precisará ser repactuado (retornar ao status de AGUARDANDO_ASSINATURA) quando houver quaisquer alterações no plano de entrega que impacte as entregas do plano de trabalho; (alterada a entrega ou cancelada); */
+            if(!empty($this->buffer["planosTrabalhosImpactados"])) {
+                foreach ($this->buffer["planosTrabalhosImpactados"] as $planoTrabalhoId) {
+                    $this->planoTrabalhoService->repactuar($planoTrabalhoId, true);
+                }
+            }
+        }
+    }
+
+    public function extraDestroy($planoEntregaEntrega) {
+        $entrega = $planoEntregaEntrega->toArray();
+        $entrega["_status"] = "DELETE";
+        $planosTrabalhosImpactados = $this->planoEntregaService->planosImpactadosPorAlteracaoEntrega($entrega);
+        foreach ($planosTrabalhosImpactados as $planoTrabalhoId) {
+            $this->planoTrabalhoService->repactuar($planoTrabalhoId, true);
+        }
+    }
+  
     public function proxyQuery($query, &$data) {
         $where = [];
         foreach($data["where"] as $condition) {
