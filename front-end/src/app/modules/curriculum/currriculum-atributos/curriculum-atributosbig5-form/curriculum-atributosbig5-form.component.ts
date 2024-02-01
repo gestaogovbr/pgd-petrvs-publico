@@ -3,7 +3,7 @@ import { PageFormBase } from '../../../base/page-form-base';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { Questionario } from 'src/app/models/questionario.model';
 import { QuestionarioDaoService } from 'src/app/dao/questionario-dao.service';
-import { AbstractControl, FormGroup } from '@angular/forms';
+import { AbstractControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { IIndexable } from 'src/app/models/base.model';
 import { QuestionarioPerguntaDaoService } from 'src/app/dao/questionario-pergunta-dao.service';
 import { QuestionarioResposta } from 'src/app/models/questionario-resposta.model';
@@ -54,6 +54,7 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
   public estabilidade : number = 0;
   public abertura : number = 0;
   public chart: any;
+  public respondido: boolean = false;
    
 
   constructor(public injector: Injector) {
@@ -94,13 +95,15 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
       this.questionario = questionario[0];
       const questionarioResposta = await this.dao?.query({ where: [['questionario_id', '==', this.questionario.id], ['usuario_id', '==', this.auth.usuario?.id]], join: ['questionario_resposta_pergunta'] }).asPromise();
       this.entity = questionarioResposta?.length ? questionarioResposta[0] : undefined;
-      let respostas: any = [];
+      let respostas: number[] = [];
       if (this.entity) {
         this.questionario.perguntas.forEach((pergunta, index) => {
           this.entity!.questionario_resposta_pergunta.forEach((resposta, index) => {
             if (pergunta.id == resposta.questionario_pergunta_id) respostas.push(resposta.resposta);
           });
         });
+        this.respondido = true;
+        this.resposta(respostas);
        
       }
     } else {
@@ -111,24 +114,32 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
 
   public async saveData(form: IIndexable): Promise<QuestionarioResposta | boolean> {
     if (!this.questionario) return false;
+    if(this.respondido){
+      this.dialog.alert("Gravação não efetuada", "Teste já respondido");
+      return false;
+    }
+    if(this.respostasB5.length < 50){
+        this.dialog.alert("Gravação não efetuada", "Para gravação o teste deve ser respondido por completo");
+        return false;
+    }
+   
     let questionarioResposta = this.util.fill(new QuestionarioResposta(), this.entity || {});
     questionarioResposta.usuario_id = this.auth.usuario?.id;
-    questionarioResposta.editavel = 1;
+    questionarioResposta.editavel = 0;
     questionarioResposta.questionario_id = this.questionario!.id;
-    //questionarioResposta.data_resposta = new Date();;
-  /*
-    let respostas = this.entity?.questionario_resposta_pergunta || valores.map((x, i) => new QuestionarioRespostaPergunta({
+  
+    let respostas = this.entity?.questionario_resposta_pergunta || this.respostasB5.map((x, i) => new QuestionarioRespostaPergunta({
       questionario_pergunta_id: this.questionario!.perguntas[i].id,
-      resposta: parseInt(x),
+      resposta: x,
       _status: "ADD"
     }));
     respostas.forEach((x, i) => {
-      if (x._status != "ADD" && x.resposta != parseInt(valores[i])){
-        x.resposta = parseInt(valores[i]);
+      if (x._status != "ADD" && x.resposta != this.respostasB5[i]){
+        x.resposta = this.respostasB5[i];
         x._status = "EDIT";
       }
     });
-    questionarioResposta.questionario_resposta_pergunta = respostas;*/
+    questionarioResposta.questionario_resposta_pergunta = respostas;
     return questionarioResposta;
   }
 
@@ -180,7 +191,10 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
         this.total = this.total - this.respostasB5[this.controle]
         this.respostasB5.splice(this.controle,1)
         this.arrayLabel = this.respostasB5.toString();
-        btnEnviar?.removeAttribute('disabled');
+        btnEnviar?.setAttribute('disabled','');
+        radio?.setAttribute('disabled','');
+        $('input[name="radiob5"]').prop('disabled', false);
+        //$('input[name="radioB"]').prop('disabled', false);
         
      }
        
@@ -198,6 +212,8 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
     }else{
       btnVoltar?.setAttribute('disabled','');
     }
+    $('input[name="radiob5"]').prop('checked', false);
+    //$('input[name="radioB"]').prop('checked', false);
   }
    
  
@@ -230,15 +246,23 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
       }
 
       if(this.controle >= 50){
-        btnEnviar?.setAttribute('disabled',"");
-        btnEnviar?.setAttribute('value','Enviar');
-        radio?.setAttribute('disabled','');
-        this.controle =50;
-        this.resposta(this.respostasB5);
-      }else{
+        //btnEnviar?.setAttribute('disabled',"");
+        //btnEnviar?.setAttribute('value','Enviar');
         btnEnviar?.removeAttribute('disabled');
-      }  
-  }
+        radio?.setAttribute('disabled','');
+        $('input[name="radiob5"]').prop('disabled', true);
+       // $('input[name="radioB"]').prop('disabled', true);
+        this.controle =50;
+        //this.resposta(this.respostasB5);
+      }/*else{
+        btnEnviar?.removeAttribute('disabled');
+      } 
+    /* let radio1 = document.getElementsByName('flexRadioDefault');
+     radio1?.forEach(x =>{ x.removeAttribute('checked')})*/
+     $('input[name="radiob5"]').prop('checked', false);
+    // $('input[name="radioB"]').prop('checked', false);
+     
+    }
 
   public enviar(){
     this.resposta(this.respostasB5)
@@ -279,8 +303,10 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
   public chartb5(dados : number[] = []){
 
     (document.querySelector('.divgraficob5')?.hasAttribute('hidden')) ? document.querySelector('.divgraficob5')?.removeAttribute('hidden') : '';
+    (document.querySelector('.resultado')?.hasAttribute('hidden')) ? document.querySelector('.resultado')?.removeAttribute('hidden') : '';
     document.querySelector('.cardb5')?.setAttribute('hidden','');
-
+    document.querySelector('.cardb52')?.setAttribute('hidden','');
+    
     this.chart ? this.chart.destroy() : '';
 
     this.chart = new Chart("MyChart", {

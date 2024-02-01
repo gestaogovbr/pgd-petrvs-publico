@@ -3,7 +3,7 @@ import { LookupItem } from '../services/lookup.service';
 import { Base } from './base.model';
 import { QuestionarioPergunta } from './questionario-pergunta.model';
 
-export type QuestionarioTipo = "INTERNO" | "PERSONALIZADO";
+export type QuestionarioTipo = "INTERNO" | "PERSONALIZADO" | "ANONIMO";
 
 export class Questionario extends Base {
     public tipo: QuestionarioTipo = "INTERNO"; //Tipo interno | personalizado

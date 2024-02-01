@@ -1,4 +1,4 @@
-<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title">
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
     <div *ngIf="!questionario; else bigfive">
         Formulário de Big Five não encontrado no banco de dados. Contate o suporte!
     </div>
@@ -17,7 +17,7 @@
                 <div class="row my-2">
                     <div class="col-md-12" id="divradiob5" (change)="onRadioChange($event)">
 
-                        <input-radio #radio controlName="radiob5" [control]="form!.controls.radiob5" class="radio" id="radio" [items]="opcoesEscolha"></input-radio>
+                        <input-radio #radio controlName="radiob5" [control]="form!.controls.radiob5" class="radio" id="radio" [items]="opcoesEscolha" name="radiob5"></input-radio>
 
                     </div>
                 </div>
@@ -30,7 +30,7 @@
 
                     </div>
                     <div class="col-md-3">
-                        <button type="button" class="btn btn-primary btnenviar" id="btne" name="btne" (click)="proximo($event)">Proximo</button>
+                        <button type="button" class="btn btn-primary btnenviar" id="btne" name="btne" (click)="enviar()" disabled>Enviar</button>
                     </div>
                     <!--  <div class="col-md-3">
                         <button type="button" class="btn btn-primary" id="btnp" onclick="proxb5()">Próxima</button>
@@ -42,10 +42,58 @@
             </div>
         </div>
 
-        <label class="text-center fw-bold my-5">{{this.total}}</label><br>
-        <label class="text-center fw-bold">{{this.respostasB5.toString()}}</label>
+        <div class="card cardb52 my-3" id="cardpergb5">
+            <div class="card-header">
+                Para prosseguir é necessário responder a pergunta
+            </div>
+            <div class="card-body text-wrap">
+                <div #divb5 class="row tex-center divb5">
+                    <label class="text-center fw-bold">{{numeroPergunta}}. {{this.showPergunta}}</label>
+                </div>
+                <div class="row my-2">
+                    <div class="col-md-12" id="divradiob5" (change)="onRadioChange($event)">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="radioB" id="radiob51" value=1>
+                            <label class="form-check-label" for="radiob51">Muito Inadequado</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="radioB" id="radiob52" value=2>
+                            <label class="form-check-label" for="radiob52">Relativamente Inadequado</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="radioB" id="radiob53" value=3>
+                            <label class="form-check-label" for="radiob53">Nem Adequado, Nem Inadequado</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="radioB" id="radiob54" value=4>
+                            <label class="form-check-label" for="radiob54">Relativamente Adequado</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="radioB" id="radiob55" value=5>
+                            <label class="form-check-label" for="radiob55">Muito Adequado</label>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="resultado">
+            </div>
+            <div class="card-footer">
+                <div class="row d-flex justify-content-between">
+                    <div class="col-md-3">
+                        <button #btnv type="button" class="btn btn-primary btnvoltar" id="btnv" name="btnv2" (click)="voltar($event)" disabled>Voltar</button>
+
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-primary btnenviar" id="btne" name="btne2" (click)="proximo($event)" disabled>Enviar</button>
+                    </div>
+                  
+                </div>
+            </div>
+        </div>
+
+        <!--<label class="text-center fw-bold my-5">{{this.total}}</label><br>
+        <label class="text-center fw-bold">{{this.respostasB5.toString()}}</label>-->
+
+        <div class="resultado" hidden>
 
             <div class="row mb-4">
                 <div class="col-md-12">
