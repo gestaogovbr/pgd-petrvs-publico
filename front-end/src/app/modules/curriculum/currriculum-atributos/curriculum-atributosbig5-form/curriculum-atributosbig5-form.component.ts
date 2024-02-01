@@ -306,7 +306,7 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
     (document.querySelector('.resultado')?.hasAttribute('hidden')) ? document.querySelector('.resultado')?.removeAttribute('hidden') : '';
     document.querySelector('.cardb5')?.setAttribute('hidden','');
     document.querySelector('.cardb52')?.setAttribute('hidden','');
-    
+
     this.chart ? this.chart.destroy() : '';
 
     this.chart = new Chart("MyChart", {
@@ -335,11 +335,17 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
         });
   }
 
-  public onClickDivB5(div:string, lbl:string){
+  public onClickDivB5(div:string, lbl:string, icon:string){
 
     (document.querySelector('.' + div)?.hasAttribute('hidden')) ? document.querySelector('.' + div)?.removeAttribute('hidden') : document.querySelector('.' + div)?.setAttribute('hidden','');
     (document.querySelector('.' + lbl)?.hasAttribute('hidden')) ? document.querySelector('.' + lbl)?.removeAttribute('hidden') : document.querySelector('.' + lbl)?.setAttribute('hidden','');
-  
+    if(document.getElementById(icon)?.classList.contains('fa-arrow-down')){
+      document.getElementById(icon)?.classList.remove('fa-arrow-down');
+      document.getElementById(icon)?.classList.add('fa-arrow-up');
+    }else{
+      document.getElementById(icon)?.classList.remove('fa-arrow-up');
+      document.getElementById(icon)?.classList.add('fa-arrow-down');
+    }
   }
   
 }
