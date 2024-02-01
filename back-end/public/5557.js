@@ -1017,16 +1017,31 @@ class AtividadeListGridComponent extends _atividade_list_base__WEBPACK_IMPORTED_
       _this3.formEdit.controls.etiqueta.setValue(null);
       _this3.etiquetas = _this3.util.merge(row.tipo_atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key);
       _this3.etiquetas = _this3.util.merge(_this3.etiquetas, _this3.auth.usuario.config?.etiquetas, (a, b) => a.key == b.key);
+      _this3.etiquetas = _this3.util.merge(_this3.etiquetas, yield _this3.carregaEtiquetasUnidadesAscendentes(row.unidade), (a, b) => a.key == b.key);
+    })();
+  }
+  carregaEtiquetasUnidadesAscendentes(unidadeAtual) {
+    var _this4 = this;
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      let etiquetasUnidades = [];
+      let path = unidadeAtual.path.split("/");
+      let unidades = yield _this4.unidadeDao.query({
+        where: ["id", "in", path]
+      }).asPromise();
+      unidades.forEach(un => {
+        etiquetasUnidades = _this4.util.merge(etiquetasUnidades, un.etiquetas, (a, b) => a.key == b.key);
+      });
+      return etiquetasUnidades;
     })();
   }
   onColumnEtiquetasSave(row) {
-    var _this4 = this;
+    var _this5 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       try {
-        const saved = yield _this4.dao.update(row.id, {
-          etiquetas: _this4.formEdit.controls.etiquetas.value
+        const saved = yield _this5.dao.update(row.id, {
+          etiquetas: _this5.formEdit.controls.etiquetas.value
         });
-        row.etiquetas = _this4.formEdit.controls.etiquetas.value;
+        row.etiquetas = _this5.formEdit.controls.etiquetas.value;
         return !!saved;
       } catch (error) {
         return false;
@@ -1048,51 +1063,51 @@ class AtividadeListGridComponent extends _atividade_list_base__WEBPACK_IMPORTED_
     });
   }
   onUnidadeChange(event) {
-    var _this5 = this;
+    var _this6 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      let unidade_selecionada = yield _this5.unidadeDao.getById(_this5.filter?.controls.unidade_id.value, ['planos_entrega']);
-      _this5.planosEntregas = unidade_selecionada?.planos_entrega?.map(x => Object.assign({
+      let unidade_selecionada = yield _this6.unidadeDao.getById(_this6.filter?.controls.unidade_id.value, ['planos_entrega']);
+      _this6.planosEntregas = unidade_selecionada?.planos_entrega?.map(x => Object.assign({
         key: x.id,
         value: x.nome
       })) || [];
     })();
   }
   onPlanoEntregaChange(event) {
-    var _this6 = this;
+    var _this7 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let plano_entrega_selecionado = [];
-      let unidade_selecionada = yield _this6.unidadeDao.getById(_this6.filter?.controls.unidade_id.value, ['planos_entrega.entregas']);
+      let unidade_selecionada = yield _this7.unidadeDao.getById(_this7.filter?.controls.unidade_id.value, ['planos_entrega.entregas']);
       unidade_selecionada?.planos_entrega?.forEach(element => {
-        if (element.id == _this6.filter.controls.plano_entrega_id.value) plano_entrega_selecionado.push(element.entregas);
+        if (element.id == _this7.filter.controls.plano_entrega_id.value) plano_entrega_selecionado.push(element.entregas);
       });
-      _this6.planosEntregasEntregas = plano_entrega_selecionado[0].map(x => Object.assign({
+      _this7.planosEntregasEntregas = plano_entrega_selecionado[0].map(x => Object.assign({
         key: x.id,
         value: x.descricao
       })) || [];
     })();
   }
   onColumnAtividadeDescricaoEdit(row) {
-    var _this7 = this;
+    var _this8 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      _this7.formEdit.controls.descricao.setValue(row.descricao);
-      _this7.formEdit.controls.tipo_atividade_id.setValue(row.tipo_atividade_id);
-      _this7.formEdit.controls.comentarios.setValue(row.comentarios);
+      _this8.formEdit.controls.descricao.setValue(row.descricao);
+      _this8.formEdit.controls.tipo_atividade_id.setValue(row.tipo_atividade_id);
+      _this8.formEdit.controls.comentarios.setValue(row.comentarios);
     })();
   }
   onColumnAtividadeDescricaoSave(row) {
-    var _this8 = this;
+    var _this9 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       try {
-        _this8.atividadeService.comentarioAtividade(_this8.tipoAtividade?.selectedEntity, _this8.formEdit.controls.comentarios);
-        const saved = yield _this8.dao.update(row.id, {
-          descricao: _this8.formEdit.controls.descricao.value,
-          tipo_atividade_id: _this8.formEdit.controls.tipo_atividade_id.value,
-          comentarios: (_this8.formEdit.controls.comentarios.value || []).filter(x => ["ADD", "EDIT", "DELETE"].includes(x._status || ""))
+        _this9.atividadeService.comentarioAtividade(_this9.tipoAtividade?.selectedEntity, _this9.formEdit.controls.comentarios);
+        const saved = yield _this9.dao.update(row.id, {
+          descricao: _this9.formEdit.controls.descricao.value,
+          tipo_atividade_id: _this9.formEdit.controls.tipo_atividade_id.value,
+          comentarios: (_this9.formEdit.controls.comentarios.value || []).filter(x => ["ADD", "EDIT", "DELETE"].includes(x._status || ""))
         });
-        row.descricao = _this8.formEdit.controls.descricao.value;
-        row.tipo_atividade_id = _this8.formEdit.controls.tipo_atividade_id.value;
-        row.tipo_atividade = _this8.tipoAtividade?.selectedEntity || null;
-        row.comentarios = _this8.formEdit.controls.comentarios.value;
+        row.descricao = _this9.formEdit.controls.descricao.value;
+        row.tipo_atividade_id = _this9.formEdit.controls.tipo_atividade_id.value;
+        row.tipo_atividade = _this9.tipoAtividade?.selectedEntity || null;
+        row.comentarios = _this9.formEdit.controls.comentarios.value;
         return !!saved;
       } catch (error) {
         return false;

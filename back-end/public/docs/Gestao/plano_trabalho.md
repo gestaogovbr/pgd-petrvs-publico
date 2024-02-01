@@ -12,29 +12,8 @@
     MOD_PTR_INTSC_DATA - Permite incluir plano de trabalho que possua período conflitante com outro já existente na mesma unidade/servidor
 ~~~
 
-## BANCO DE DADOS
-
-~~~text
-Tabela: planos_trabalhos
-
-Campos obrigatórios:
-    carga_horaria
-    tempo_total
-    tempo_proporcional
-    numero
-    data_inicio
-    data_fim
-    forma_contagem_carga_horaria
-    status
-    programa_id
-    usuario_id
-    unidade_id
-    tipo_modalidade_id
-    criacao_usuario_id+
-~~~
-
 ## RESPONSABILIDADES
-
+ 
 ~~~text
 (PTR:TABELA_1) - Tabela de responsabilidades do plano de trabalho
 

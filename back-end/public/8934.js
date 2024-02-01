@@ -447,104 +447,104 @@ var _class;
 const _c0 = ["listaExemplo"];
 const _c1 = ["listaTipoResposta"];
 const _c2 = ["listaTipoRespostaB"];
-function QuestionarioPerguntaFormComponent_ng_template_22_Template(rf, ctx) {
+function QuestionarioPerguntaFormComponent_ng_template_24_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtext"](0);
   }
   if (rf & 2) {
-    const row_r13 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtextInterpolate1"](" ", row_r13.pergunta, " ");
+    const row_r14 = ctx.row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtextInterpolate1"](" ", row_r14.pergunta, " ");
   }
 }
-function QuestionarioPerguntaFormComponent_ng_template_24_Template(rf, ctx) {
+function QuestionarioPerguntaFormComponent_ng_template_26_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](0, "input-text", 27, 28);
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](0, "input-text", 29, 30);
   }
   if (rf & 2) {
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 12);
   }
 }
-function QuestionarioPerguntaFormComponent_ng_template_27_Template(rf, ctx) {
+function QuestionarioPerguntaFormComponent_ng_template_29_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtext"](0);
   }
   if (rf & 2) {
-    const row_r16 = ctx.row;
-    const ctx_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtextInterpolate1"](" ", ctx_r6.lookup.getValue(ctx_r6.lookup.QUESTIONARIO_PERGUNTA_TIPO, row_r16.tipo), " ");
+    const row_r17 = ctx.row;
+    const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtextInterpolate1"](" ", ctx_r7.lookup.getValue(ctx_r7.lookup.QUESTIONARIO_PERGUNTA_TIPO, row_r17.tipo), " ");
   }
 }
-function QuestionarioPerguntaFormComponent_ng_template_29_Template(rf, ctx) {
+function QuestionarioPerguntaFormComponent_ng_template_31_Template(rf, ctx) {
   if (rf & 1) {
-    const _r19 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](0, "input-select", 29);
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵlistener"]("change", function QuestionarioPerguntaFormComponent_ng_template_29_Template_input_select_change_0_listener() {
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵrestoreView"](_r19);
-      const ctx_r18 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵresetView"](ctx_r18.onTipoPerguntaChange());
+    const _r20 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](0, "input-select", 31);
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵlistener"]("change", function QuestionarioPerguntaFormComponent_ng_template_31_Template_input_select_change_0_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵrestoreView"](_r20);
+      const ctx_r19 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵresetView"](ctx_r19.onTipoPerguntaChange());
     });
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
-    const ctx_r8 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 12)("items", ctx_r8.lookup.QUESTIONARIO_PERGUNTA_TIPO);
+    const ctx_r9 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 12)("items", ctx_r9.lookup.QUESTIONARIO_PERGUNTA_TIPO);
   }
 }
-function QuestionarioPerguntaFormComponent_ng_template_32_div_0_badge_1_Template(rf, ctx) {
+function QuestionarioPerguntaFormComponent_ng_template_34_div_0_badge_1_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](0, "badge", 34);
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](0, "badge", 36);
   }
   if (rf & 2) {
-    const resposta_r24 = ctx.$implicit;
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("label", resposta_r24.value);
+    const resposta_r25 = ctx.$implicit;
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("label", resposta_r25.value);
   }
 }
-function QuestionarioPerguntaFormComponent_ng_template_32_div_0_Template(rf, ctx) {
+function QuestionarioPerguntaFormComponent_ng_template_34_div_0_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](0, "div", 32);
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](1, QuestionarioPerguntaFormComponent_ng_template_32_div_0_badge_1_Template, 1, 1, "badge", 33);
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](0, "div", 34);
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](1, QuestionarioPerguntaFormComponent_ng_template_34_div_0_badge_1_Template, 1, 1, "badge", 35);
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
-    const row_r20 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵnextContext"]().row;
+    const row_r21 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵnextContext"]().row;
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngForOf", row_r20.respostas);
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngForOf", row_r21.respostas);
   }
 }
-function QuestionarioPerguntaFormComponent_ng_template_32_div_1_Template(rf, ctx) {
+function QuestionarioPerguntaFormComponent_ng_template_34_div_1_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](0, "div");
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
-    const row_r20 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵnextContext"]().row;
+    const row_r21 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵnextContext"]().row;
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtextInterpolate2"](" de ", row_r20.respostas.min, " at\u00E9 ", row_r20.respostas.max, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtextInterpolate2"](" de ", row_r21.respostas.min, " at\u00E9 ", row_r21.respostas.max, " ");
   }
 }
-function QuestionarioPerguntaFormComponent_ng_template_32_Template(rf, ctx) {
+function QuestionarioPerguntaFormComponent_ng_template_34_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](0, QuestionarioPerguntaFormComponent_ng_template_32_div_0_Template, 2, 1, "div", 30);
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](1, QuestionarioPerguntaFormComponent_ng_template_32_div_1_Template, 2, 2, "div", 31);
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](0, QuestionarioPerguntaFormComponent_ng_template_34_div_0_Template, 2, 1, "div", 32);
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](1, QuestionarioPerguntaFormComponent_ng_template_34_div_1_Template, 2, 2, "div", 33);
   }
   if (rf & 2) {
-    const ctx_r10 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", ctx_r10.isList(ctx_r10.formPergunta.controls.tipo.value));
+    const ctx_r11 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", ctx_r11.isList(ctx_r11.formPergunta.controls.tipo.value));
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", ctx_r10.isRange(ctx_r10.formPergunta.controls.tipo.value));
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", ctx_r11.isRange(ctx_r11.formPergunta.controls.tipo.value));
   }
 }
-function QuestionarioPerguntaFormComponent_ng_template_34_div_0_Template(rf, ctx) {
+function QuestionarioPerguntaFormComponent_ng_template_36_div_0_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](0, "div", 6)(1, "input-multiselect", 36);
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](2, "input-text", 37, 38)(4, "input-text", 39, 40);
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](0, "div", 8)(1, "input-multiselect", 38);
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](2, "input-text", 39, 40)(4, "input-text", 41, 42);
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]()();
   }
   if (rf & 2) {
-    const ctx_r28 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵnextContext"](2);
+    const ctx_r29 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵnextContext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 12)("addItemHandle", ctx_r28.addMultiRespostas.bind(ctx_r28));
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 12)("addItemHandle", ctx_r29.addMultiRespostas.bind(ctx_r29));
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 6);
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵattribute"]("maxlength", 250);
@@ -553,10 +553,10 @@ function QuestionarioPerguntaFormComponent_ng_template_34_div_0_Template(rf, ctx
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵattribute"]("maxlength", 250);
   }
 }
-function QuestionarioPerguntaFormComponent_ng_template_34_div_1_Template(rf, ctx) {
+function QuestionarioPerguntaFormComponent_ng_template_36_div_1_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](0, "div", 6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](1, "input-number", 41)(2, "input-number", 42);
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](0, "div", 8);
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](1, "input-number", 43)(2, "input-number", 44);
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
@@ -566,16 +566,16 @@ function QuestionarioPerguntaFormComponent_ng_template_34_div_1_Template(rf, ctx
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 6);
   }
 }
-function QuestionarioPerguntaFormComponent_ng_template_34_Template(rf, ctx) {
+function QuestionarioPerguntaFormComponent_ng_template_36_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](0, QuestionarioPerguntaFormComponent_ng_template_34_div_0_Template, 6, 6, "div", 35);
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](1, QuestionarioPerguntaFormComponent_ng_template_34_div_1_Template, 3, 2, "div", 35);
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](0, QuestionarioPerguntaFormComponent_ng_template_36_div_0_Template, 6, 6, "div", 37);
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](1, QuestionarioPerguntaFormComponent_ng_template_36_div_1_Template, 3, 2, "div", 37);
   }
   if (rf & 2) {
-    const ctx_r12 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", ctx_r12.isList(ctx_r12.formPergunta.controls.tipo.value));
+    const ctx_r13 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", ctx_r13.isList(ctx_r13.formPergunta.controls.tipo.value));
     _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", ctx_r12.isRange(ctx_r12.formPergunta.controls.tipo.value));
+    _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("ngIf", ctx_r13.isRange(ctx_r13.formPergunta.controls.tipo.value));
   }
 }
 class QuestionarioPerguntaFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_7__.PageFormBase {
@@ -636,6 +636,9 @@ class QuestionarioPerguntaFormComponent extends src_app_modules_base_page_form_b
         default: ""
       },
       switchExemplo: {
+        default: false
+      },
+      switchAnonimo: {
         default: false
       }
     }, this.cdRef, this.validate);
@@ -710,12 +713,9 @@ class QuestionarioPerguntaFormComponent extends src_app_modules_base_page_form_b
    * @param row
    * @returns
    */
-  remove(row) {
-    var _this3 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      return yield _this3.dialog.confirm("Exclui ?", "Deseja realmente excluir todas as atribuições do servidor?");
-    })();
-  }
+  /* public async remove(row: any) {
+     return await this.dialog.confirm("Exclui ?", "Deseja realmente excluir todas as atribuições do servidor?");
+   }*/
   /**
    * Método chamado no salvamento de um integrante da unidade, seja este componente persistente ou não.
    * @param form
@@ -742,9 +742,9 @@ class QuestionarioPerguntaFormComponent extends src_app_modules_base_page_form_b
     return ['RATE', 'NUMBER'].includes(tipo);
   }
   addPergunta() {
-    var _this4 = this;
+    var _this3 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      const maxSequencia = Math.max(0, ...(_this4.form.controls.perguntas.value || []).map(x => x.sequencia));
+      const maxSequencia = Math.max(0, ...(_this3.form.controls.perguntas.value || []).map(x => x.sequencia));
       return new src_app_models_questionario_pergunta_model__WEBPACK_IMPORTED_MODULE_5__.QuestionarioPergunta({
         sequencia: maxSequencia + 1,
         _status: "ADD"
@@ -752,26 +752,27 @@ class QuestionarioPerguntaFormComponent extends src_app_modules_base_page_form_b
     })();
   }
   loadPergunta(form, row) {
-    var _this5 = this;
+    var _this4 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      _this5.formPergunta.controls.pergunta.setValue(row.pergunta);
-      _this5.formPergunta.controls.tipo.setValue(row.tipo);
-      _this5.formPergunta.controls.respostas.setValue(_this5.isList(row.tipo) ? row.respostas || [] : []);
-      _this5.formPergunta.controls.inputMinimo.setValue(_this5.isRange(row.tipo) ? row.respostas.min : 0);
-      _this5.formPergunta.controls.inputMaximo.setValue(_this5.isRange(row.tipo) ? row.respostas.max : 10);
+      _this4.formPergunta.controls.pergunta.setValue(row.pergunta);
+      _this4.formPergunta.controls.tipo.setValue(row.tipo);
+      _this4.formPergunta.controls.respostas.setValue(_this4.isList(row.tipo) ? row.respostas || [] : []);
+      _this4.formPergunta.controls.inputMinimo.setValue(_this4.isRange(row.tipo) ? row.respostas.min : 0);
+      _this4.formPergunta.controls.inputMaximo.setValue(_this4.isRange(row.tipo) ? row.respostas.max : 10);
     })();
   }
   removePergunta(row) {
-    var _this6 = this;
+    var _this5 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      if (yield _this6.dialog.confirm("Excluir ?", "Deseja realmente excluir esta pergunta?")) {
+      if (yield _this5.dialog.confirm("Excluir ?", "Deseja realmente excluir esta pergunta?")) {
         row._status = "DEL";
+        return true;
       }
       return undefined;
     })();
   }
   savePergunta(form, row) {
-    var _this7 = this;
+    var _this6 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       form?.markAllAsTouched();
       if (form?.valid) {
@@ -779,7 +780,7 @@ class QuestionarioPerguntaFormComponent extends src_app_modules_base_page_form_b
         row.pergunta = values.pergunta;
         row.tipo = values.tipo;
         row._status = row._status == "ADD" ? "ADD" : "EDIT";
-        row.respostas = _this7.isList(values.tipo) ? values.respostas : _this7.isRange(values.tipo) ? {
+        row.respostas = _this6.isList(values.tipo) ? values.respostas : _this6.isRange(values.tipo) ? {
           min: values.inputMinimo,
           max: values.inputMaximo
         } : null;
@@ -827,9 +828,9 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdef
     }
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵInheritDefinitionFeature"]],
-  decls: 37,
-  vars: 32,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row", "mt-3"], ["label", "C\u00F3digo", "icon", "bi bi-pen", "controlName", "codigo", 3, "size", "control"], ["label", "Nome", "icon", "bi bi-pen", "controlName", "nome", 3, "size", "control"], ["label", "Tipo", "icon", "bi bi-pen", "controlName", "tipoQuestionario", 3, "size", "control", "items"], ["title", "Exemplo dos tipos de respostas para as perguntas"], [1, "row"], [1, "col-md-3"], ["title", "Lista"], ["label", "Op\u00E7\u00F5es", "icon", "bi bi-pen", "controlName", "listaExemplo", 3, "size", "items"], ["title", "\u00DAnica escolha"], ["title", "M\u00FAltipla escolha"], ["title", "Sim ou N\u00E3o"], ["icon", "fas fa-chalkboard", "controllName", "switchExemplo", 3, "size", "label", "control"], ["switchExemplo", ""], ["title", "Perguntas"], ["editable", "", 3, "control", "minHeight", "form", "hasDelete", "add", "load", "remove", "save"], [3, "title", "template", "editTemplate"], ["columnPergunta", ""], ["editPergunta", ""], ["title", "Tipo de Resposta", "titleHint", "Escolha o tipo de op\u00E7\u00E3o de resposta", 3, "template", "editTemplate"], ["columnTipoResposta", ""], ["editTipoResposta", ""], ["title", "Op\u00E7\u00F5es para a Resposta", "titleHint", "Informe as escolhas de respostas da pergunta", 3, "template", "editTemplate"], ["columnResposta", ""], ["editResposta", ""], ["type", "options"], ["label", "", "icon", "", "controlName", "pergunta", 3, "size"], ["pergunta", ""], ["label", "", "icon", "", "controlName", "tipo", 3, "size", "items", "change"], ["class", "text-wrap width-min-content", 4, "ngIf"], [4, "ngIf"], [1, "text-wrap", "width-min-content"], [3, "label", 4, "ngFor", "ngForOf"], [3, "label"], ["class", "row", 4, "ngIf"], ["label", "", "controlName", "respostas", "noBox", "", 3, "size", "addItemHandle"], ["label", "Op\u00E7\u00F5es da resposta", "icon", "bi bi-pencil-fill", "controlName", "inputOpcoesResposta", 3, "size"], ["opcoesResposta", ""], ["label", "Valor da resposta", "icon", "bi bi-pencil-fill", "controlName", "inputValorResposta", 3, "size"], ["valorResposta", ""], ["label", "M\u00EDnimo", "controlName", "inputMinimo", 3, "size"], ["label", "M\u00E1ximo", "controlName", "inputMaximo", 3, "size"]],
+  decls: 39,
+  vars: 34,
+  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [1, "row", "mt-3"], ["label", "C\u00F3digo", "icon", "bi bi-pen", "controlName", "codigo", 3, "size", "control"], ["label", "Nome", "icon", "bi bi-pen", "controlName", "nome", 3, "size", "control"], ["label", "Tipo", "icon", "bi bi-pen", "controlName", "tipoQuestionario", 3, "size", "control", "items"], ["label", "An\u00F4nimo", "icon", "fas fa-chalkboard", "controllName", "switchAnonimo", 3, "size", "control"], ["switchAnonimo", ""], ["title", "Exemplo dos tipos de respostas para as perguntas"], [1, "row"], [1, "col-md-3"], ["title", "Lista"], ["label", "Op\u00E7\u00F5es", "icon", "bi bi-pen", "controlName", "listaExemplo", 3, "size", "items"], ["title", "\u00DAnica escolha"], ["title", "M\u00FAltipla escolha"], ["title", "Sim ou N\u00E3o"], ["icon", "fas fa-chalkboard", "controllName", "switchExemplo", 3, "size", "label", "control"], ["switchExemplo", ""], ["title", "Perguntas"], ["editable", "", 3, "control", "minHeight", "form", "hasDelete", "add", "load", "remove", "save"], [3, "title", "template", "editTemplate"], ["columnPergunta", ""], ["editPergunta", ""], ["title", "Tipo de Resposta", "titleHint", "Escolha o tipo de op\u00E7\u00E3o de resposta", 3, "template", "editTemplate"], ["columnTipoResposta", ""], ["editTipoResposta", ""], ["title", "Op\u00E7\u00F5es para a Resposta", "titleHint", "Informe as escolhas de respostas da pergunta", 3, "template", "editTemplate"], ["columnResposta", ""], ["editResposta", ""], ["type", "options"], ["label", "", "icon", "", "controlName", "pergunta", 3, "size"], ["pergunta", ""], ["label", "", "icon", "", "controlName", "tipo", 3, "size", "items", "change"], ["class", "text-wrap width-min-content", 4, "ngIf"], [4, "ngIf"], [1, "text-wrap", "width-min-content"], [3, "label", 4, "ngFor", "ngForOf"], [3, "label"], ["class", "row", 4, "ngIf"], ["label", "", "controlName", "respostas", "noBox", "", 3, "size", "addItemHandle"], ["label", "Op\u00E7\u00F5es da resposta", "icon", "bi bi-pencil-fill", "controlName", "inputOpcoesResposta", 3, "size"], ["opcoesResposta", ""], ["label", "Valor da resposta", "icon", "bi bi-pencil-fill", "controlName", "inputValorResposta", 3, "size"], ["valorResposta", ""], ["label", "M\u00EDnimo", "controlName", "inputMinimo", 3, "size"], ["label", "M\u00E1ximo", "controlName", "inputMaximo", 3, "size"]],
   template: function QuestionarioPerguntaFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](0, "editable-form", 0);
@@ -839,64 +840,66 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵdef
         return ctx.onCancel();
       });
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](1, "div", 1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](2, "input-text", 2)(3, "input-text", 3)(4, "input-select", 4);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](2, "input-text", 2)(3, "input-text", 3)(4, "input-select", 4)(5, "input-switch", 5, 6);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](5, "separator", 5)(6, "div", 6)(7, "div", 7)(8, "separator", 8);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](9, "input-select", 9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](7, "separator", 7)(8, "div", 8)(9, "div", 9)(10, "separator", 10);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](11, "input-select", 11);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](10, "div", 7);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](11, "separator", 10);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](12, "div", 9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](13, "separator", 12);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](12, "div", 7);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](13, "separator", 11);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](14, "div", 9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](15, "separator", 13);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](14, "div", 7)(15, "separator", 12);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](16, "input-switch", 13, 14);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](16, "div", 9)(17, "separator", 14);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](18, "input-switch", 15, 16);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]()()()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](18, "separator", 15)(19, "grid", 16)(20, "columns")(21, "column", 17);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](22, QuestionarioPerguntaFormComponent_ng_template_22_Template, 1, 1, "ng-template", null, 18, _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplateRefExtractor"]);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](24, QuestionarioPerguntaFormComponent_ng_template_24_Template, 2, 1, "ng-template", null, 19, _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](20, "separator", 17)(21, "grid", 18)(22, "columns")(23, "column", 19);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](24, QuestionarioPerguntaFormComponent_ng_template_24_Template, 1, 1, "ng-template", null, 20, _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](26, QuestionarioPerguntaFormComponent_ng_template_26_Template, 2, 1, "ng-template", null, 21, _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](26, "column", 20);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](27, QuestionarioPerguntaFormComponent_ng_template_27_Template, 1, 1, "ng-template", null, 21, _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplateRefExtractor"]);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](29, QuestionarioPerguntaFormComponent_ng_template_29_Template, 1, 2, "ng-template", null, 22, _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](28, "column", 22);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](29, QuestionarioPerguntaFormComponent_ng_template_29_Template, 1, 1, "ng-template", null, 23, _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](31, QuestionarioPerguntaFormComponent_ng_template_31_Template, 1, 2, "ng-template", null, 24, _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](31, "column", 23);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](32, QuestionarioPerguntaFormComponent_ng_template_32_Template, 2, 2, "ng-template", null, 24, _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplateRefExtractor"]);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](34, QuestionarioPerguntaFormComponent_ng_template_34_Template, 2, 2, "ng-template", null, 25, _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementStart"](33, "column", 25);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](34, QuestionarioPerguntaFormComponent_ng_template_34_Template, 2, 2, "ng-template", null, 26, _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplate"](36, QuestionarioPerguntaFormComponent_ng_template_36_Template, 2, 2, "ng-template", null, 27, _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](36, "column", 26);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelement"](38, "column", 28);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵelementEnd"]()()()();
     }
     if (rf & 2) {
-      const _r0 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](17);
-      const _r1 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](23);
-      const _r3 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](25);
-      const _r5 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](28);
-      const _r7 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](30);
-      const _r9 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](33);
-      const _r11 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](35);
+      const _r1 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](19);
+      const _r2 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](25);
+      const _r4 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](27);
+      const _r6 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](30);
+      const _r8 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](32);
+      const _r10 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](35);
+      const _r12 = _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵreference"](37);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 2)("control", ctx.form.controls.codigo);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.nome);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 5)("control", ctx.form.controls.nome);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵattribute"]("maxlength", 250);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.tipoQuestionario)("items", ctx.lookup.QUESTIONARIO_TIPO);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 3)("control", ctx.form.controls.tipoQuestionario)("items", ctx.lookup.QUESTIONARIO_TIPO);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 2)("control", ctx.form.controls.switchAnonimo);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](6);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 4)("items", ctx.exemploLista);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](7);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 2)("label", _r0.value ? "Sim" : "N\u00E3o")("control", ctx.form.controls.switchExemplo);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("size", 2)("label", _r1.value ? "Sim" : "N\u00E3o")("control", ctx.form.controls.switchExemplo);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("control", ctx.form.controls.perguntas)("minHeight", 500)("form", ctx.formPergunta)("hasDelete", true)("add", ctx.addPergunta.bind(ctx))("load", ctx.loadPergunta.bind(ctx))("remove", ctx.removePergunta.bind(ctx))("save", ctx.savePergunta.bind(ctx));
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("title", ctx.lex.translate("Pergunta"))("template", _r1)("editTemplate", _r3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("title", ctx.lex.translate("Pergunta"))("template", _r2)("editTemplate", _r4);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("template", _r5)("editTemplate", _r7);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("template", _r6)("editTemplate", _r8);
       _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵadvance"](5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("template", _r9)("editTemplate", _r11);
+      _angular_core__WEBPACK_IMPORTED_MODULE_18__["ɵɵproperty"]("template", _r10)("editTemplate", _r12);
     }
   },
   dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_19__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_19__.NgIf, _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_8__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_9__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_10__.ColumnComponent, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_11__.InputSwitchComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_12__.InputTextComponent, _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_13__.InputSelectComponent, _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_14__.InputMultiselectComponent, _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_15__.SeparatorComponent, _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_16__.BadgeComponent, _components_input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_17__.InputNumberComponent],
