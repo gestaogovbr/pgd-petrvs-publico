@@ -1,69 +1,77 @@
-<grid [items]="items" [form]="form!" noMargin #gridEntregas editable [selectable]="false" [minHeight]="items.length > 2 ? 0 : 300" [join]="join" [groupBy]="groupBy"
-    [add]="addEntrega.bind(this)" [remove]="removeEntrega.bind(this)" [save]="saveEntrega.bind(this)" [load]="loadEntrega.bind(this)" [saveEnd]="saveEndEntrega.bind(this)"
-    [hasDelete]="!disabled" [hasEdit]="!disabled" [hasAdd]="!disabled">
-    <columns>
-        <column [titleTemplate]="titleOrigem" [template]="columnOrigem" [editTemplate]="editOrigem" [verticalAlign]="'middle'" [width]="300" [align]="'center'">
-            <ng-template let-header="header" #titleOrigem><div class="text-center"><span><strong>Origem</strong></span></div></ng-template>
-            <ng-template let-row="row" #columnOrigem>
-                <div class="w-100 d-flex justify-content-center">
-                    <div class="one-per-line">
-                        <badge [label]="planoTrabalhoService.tipoEntrega(row, entity).titulo" [color]="planoTrabalhoService.tipoEntrega(row, entity).cor"></badge>
-                        <badge *ngIf="row.plano_entrega_entrega_id?.length" [label]="row.plano_entrega_entrega?.plano_entrega?.unidade?.sigla || 'DESCONHECIDO'" [icon]="entityService.getIcon('Unidade')" color="primary"></badge>
-                        <badge *ngIf="row.orgao?.length" [label]="row.orgao" icon="bi bi-box-arrow-down-left" color="warning"></badge>
-                    </div>
-                </div>
-            </ng-template>
-            <ng-template let-row="row" #editOrigem>
-                <input-select #origem controlName="origem" controlName="origem" [control]="form!.controls.origem" [items]="lookup.ORIGENS_ENTREGAS_PLANO_TRABALHO" (change)="onOrigemChange(row)"></input-select>
-                <!-- <input-search *ngIf="['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(origem?.value)" label #planoEntrega [placeholder]="'Selecione o ' + lex.translate('Plano de entrega')" [join]="['entregas.entrega:id,nome', 'unidade']" [where]="origem?.value == 'PROPRIA_UNIDADE' ? [['unidade_id', '==', entity?.unidade_id]] : undefined" [selectParams]="origem?.value == 'PROPRIA_UNIDADE' ? {filter: {unidade_id: entity?.unidade_id}} : undefined" controlName="plano_entrega_id" [dao]="planoEntregaDao" (change)="onPlanoEntregaChange($event)"></input-search> -->
-                <input-search *ngIf="['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(origem?.value)" label #planoEntrega [placeholder]="'Selecione o ' + lex.translate('Plano de entrega')" [join]="['entregas.entrega:id,nome', 'unidade']" [where]="origem?.value == 'PROPRIA_UNIDADE' ? [['unidade_id', '==', entity?.unidade_id], ['status', '==', 'ATIVO']] : [['status', '==', 'ATIVO']]" [selectParams]="origem?.value == 'PROPRIA_UNIDADE' ? {filter: {unidade_id: entity?.unidade_id, status: 'ATIVO'}} : {filter: {status: 'ATIVO'}}" controlName="plano_entrega_id" [dao]="planoEntregaDao" (change)="onPlanoEntregaChange($event)"></input-search>
-                <input-text *ngIf="origem?.value == 'OUTRO_ORGAO'" #orgao controlName="orgao" placeholder="Órgão" [attr.maxlength]=250></input-text>
-            </ng-template>
-        </column>
-        <column [maxWidth]="350" [titleTemplate]="titleEntrega" [template]="columnEntrega" [editTemplate]="editEntrega" [verticalAlign]="'middle'">
-            <ng-template let-header="header" #titleEntrega><span><strong>Entrega</strong></span></ng-template>
-            <ng-template let-row="row" #columnEntrega>
-                <small>{{ planoTrabalhoService.tipoEntrega(row, entity).descricao }}</small>
-                <div *ngIf="['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(planoTrabalhoService.tipoEntrega(row, entity).tipo)" class="w-100">
-                    <badge color="light" icon="bi bi-box-arrow-in-right" [label]="util.getDateFormatted(row.plano_entrega_entrega?.data_inicio)" hint="Data de início"></badge>
-                    <badge color="light" icon="bi bi-box-arrow-right" [label]="util.getDateFormatted(row.plano_entrega_entrega?.data_fim)" hint="Data de término"></badge>
-                </div>
-                <reaction [entity]="row" origem="PLANO_TRABALHO_ENTREGA"></reaction>
-            </ng-template>
-            <ng-template let-row="row" #editEntrega>
-                <input-select *ngIf="['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(origem?.value)" #entrega nullable itemNull="- Selecione -" controlName="plano_entrega_entrega_id" [control]="form!.controls.plano_entrega_entrega_id" [items]="entregas" (change)="onEntregaChange($event)"></input-select>
-                <div *ngIf="entrega?.selectedItem" class="w-100">
-                    <badge color="light" icon="bi bi-box-arrow-in-right" [label]="util.getDateFormatted(entrega!.selectedItem!.data!.data_inicio)" hint="Data de início"></badge>
-                    <badge color="light" icon="bi bi-box-arrow-right" [label]="util.getDateFormatted(entrega!.selectedItem!.data!.data_fim)" hint="Data de término"></badge>
-                </div>
-            </ng-template>
-        </column>
-        <column [titleTemplate]="titleForcaTrabalho" [title]="'% CHD'" [template]="columnForcaTrabalho" [editTemplate]="editForcaTrabalho" [width]="125" [align]="'center'" [titleHint]="'% Carga Horária Disponível'">
-            <ng-template let-header="header" #titleForcaTrabalho>
-                <div class="text-center">
-                    <!--<small><strong>% CHD</strong></small><br>-->
-                    <div *ngIf="totalForcaTrabalho > 100; else umCHD">
-                        <small><badge icon="bi bi-calculator" [color]="'warning'" [label]="totalForcaTrabalho + '%'"></badge></small>
-                        <small><badge icon="bi bi-intersect" [color]="'secondary'" [label]="totalForcaTrabalho - 100 + '%'"></badge></small><!--[hint]="'Sobreposição de CHD entre Entregas'"-->
-                    </div>
-                    <ng-template #umCHD>
-                        <small><badge icon="bi bi-calculator" [color]="totalForcaTrabalho == 100 ? 'success' : 'warning'" [label]="totalForcaTrabalho + '%'"></badge></small>
-                    </ng-template>    
-                </div>
-            </ng-template>
-            <ng-template let-row="row" #columnForcaTrabalho><small>{{  row.forca_trabalho + '%' }}</small></ng-template>
-            <ng-template let-row="row" #editForcaTrabalho><input-text number sufix="%" controlName="forca_trabalho" [control]="form!.controls.forca_trabalho" (change)="onForcaTrabalhoChange(row)" [attr.maxlength]=250></input-text></ng-template>
-        </column>
-        <column [maxWidth]="250" [titleTemplate]="titleDescricao" [template]="columnDescricao" [editTemplate]="editDescricao" [verticalAlign]="'middle'" [align]="'center'">
-            <ng-template let-header="header" #titleDescricao><div class="text-center"><span><strong>Descrição dos Trabalhos</strong></span></div></ng-template>
-            <ng-template let-row="row" #columnDescricao>
-                <div *ngIf="row.descricao != planoTrabalhoService.tipoEntrega(row, entity).descricao; else solicitarDescricao"><small>{{ row.descricao }}</small></div>
-            </ng-template>
-            <ng-template #solicitarDescricao><small>Detalhe/Descreva os trabalhos</small></ng-template>
-            <ng-template let-row="row" #editDescricao>
-                <input-textarea [rows]="2" controlName="descricao" [control]="form!.controls.descricao"></input-textarea>
-            </ng-template>
-        </column>
-        <column type="options"></column>
-    </columns>
+<grid [items]="items" [form]="form!" noMargin #gridEntregas editable [selectable]="false" [minHeight]="items.length > 2 ? 0 : 300" [join]="join" [groupBy]="groupBy" [add]="addEntrega.bind(this)" [remove]="removeEntrega.bind(this)" [save]="saveEntrega.bind(this)" [load]="loadEntrega.bind(this)" [saveEnd]="saveEndEntrega.bind(this)" [hasDelete]="!disabled" [hasEdit]="!disabled" [hasAdd]="!disabled">
+  <columns>
+    <column [titleTemplate]="titleOrigem" [template]="columnOrigem" [editTemplate]="editOrigem" [verticalAlign]="'middle'" [width]="300" [align]="'center'">
+      <ng-template let-header="header" #titleOrigem>
+        <div class="text-center"><span><strong>Origem</strong></span></div>
+      </ng-template>
+      <ng-template let-row="row" #columnOrigem>
+        <div class="w-100 d-flex justify-content-center">
+          <div class="one-per-line">
+            <badge [label]="planoTrabalhoService.tipoEntrega(row, entity).titulo" [color]="planoTrabalhoService.tipoEntrega(row, entity).cor"></badge>
+            <badge *ngIf="row.plano_entrega_entrega_id?.length" [label]="row.plano_entrega_entrega?.plano_entrega?.unidade?.sigla || 'DESCONHECIDO'" [icon]="entityService.getIcon('Unidade')" color="primary"></badge>
+            <badge *ngIf="row.orgao?.length" [label]="row.orgao" icon="bi bi-box-arrow-down-left" color="warning"></badge>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template let-row="row" #editOrigem>
+        <input-select #origem controlName="origem" controlName="origem" [control]="form!.controls.origem" [items]="lookup.ORIGENS_ENTREGAS_PLANO_TRABALHO" (change)="onOrigemChange(row)"></input-select>
+        <!-- <input-search *ngIf="['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(origem?.value)" label #planoEntrega [placeholder]="'Selecione o ' + lex.translate('Plano de entrega')" [join]="['entregas.entrega:id,nome', 'unidade']" [where]="origem?.value == 'PROPRIA_UNIDADE' ? [['unidade_id', '==', entity?.unidade_id]] : undefined" [selectParams]="origem?.value == 'PROPRIA_UNIDADE' ? {filter: {unidade_id: entity?.unidade_id}} : undefined" controlName="plano_entrega_id" [dao]="planoEntregaDao" (change)="onPlanoEntregaChange($event)"></input-search> -->
+        <input-search *ngIf="['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(origem?.value)" label #planoEntrega [placeholder]="'Selecione o ' + lex.translate('Plano de entrega')" [join]="['entregas.entrega:id,nome', 'unidade']" [where]="origem?.value == 'PROPRIA_UNIDADE' ? [['unidade_id', '==', entity?.unidade_id], ['status', '==', 'ATIVO']] : [['status', '==', 'ATIVO']]" [selectParams]="origem?.value == 'PROPRIA_UNIDADE' ? {filter: {unidade_id: entity?.unidade_id, status: 'ATIVO'}} : {filter: {status: 'ATIVO'}}" controlName="plano_entrega_id" [dao]="planoEntregaDao" (change)="onPlanoEntregaChange($event)"></input-search>
+        <input-text *ngIf="origem?.value == 'OUTRO_ORGAO'" #orgao controlName="orgao" placeholder="Órgão" [attr.maxlength]=250></input-text>
+      </ng-template>
+    </column>
+    <column [maxWidth]="350" [titleTemplate]="titleEntrega" [template]="columnEntrega" [editTemplate]="editEntrega" [verticalAlign]="'middle'">
+      <ng-template let-header="header" #titleEntrega><span><strong>Entrega</strong></span></ng-template>
+      <ng-template let-row="row" #columnEntrega>
+        <small>{{ planoTrabalhoService.tipoEntrega(row, entity).descricao }}</small>
+        <div *ngIf="['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(planoTrabalhoService.tipoEntrega(row, entity).tipo)" class="w-100">
+          <badge color="light" icon="bi bi-box-arrow-in-right" [label]="util.getDateFormatted(row.plano_entrega_entrega?.data_inicio)" hint="Data de início"></badge>
+          <badge color="light" icon="bi bi-box-arrow-right" [label]="util.getDateFormatted(row.plano_entrega_entrega?.data_fim)" hint="Data de término"></badge>
+        </div>
+        <reaction [entity]="row" origem="PLANO_TRABALHO_ENTREGA"></reaction>
+      </ng-template>
+      <ng-template let-row="row" #editEntrega>
+        <input-select *ngIf="['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(origem?.value)" #entrega nullable itemNull="- Selecione -" controlName="plano_entrega_entrega_id" [control]="form!.controls.plano_entrega_entrega_id" [items]="entregas" (change)="onEntregaChange($event)"></input-select>
+        <div *ngIf="entrega?.selectedItem" class="w-100">
+          <badge color="light" icon="bi bi-box-arrow-in-right" [label]="util.getDateFormatted(entrega!.selectedItem!.data!.data_inicio)" hint="Data de início"></badge>
+          <badge color="light" icon="bi bi-box-arrow-right" [label]="util.getDateFormatted(entrega!.selectedItem!.data!.data_fim)" hint="Data de término"></badge>
+        </div>
+      </ng-template>
+    </column>
+    <column [titleTemplate]="titleForcaTrabalho" [title]="'% CHD'" [template]="columnForcaTrabalho" [editTemplate]="editForcaTrabalho" [width]="125" [align]="'center'" [titleHint]="'% Carga Horária Disponível'">
+      <ng-template let-header="header" #titleForcaTrabalho>
+        <div class="text-center">
+          <!--<small><strong>% CHD</strong></small><br>-->
+          <div *ngIf="totalForcaTrabalho > 100; else umCHD">
+            <small>
+              <badge icon="bi bi-calculator" [color]="'warning'" [label]="totalForcaTrabalho + '%'"></badge>
+            </small>
+            <small>
+              <badge icon="bi bi-intersect" [color]="'secondary'" [label]="totalForcaTrabalho - 100 + '%'"></badge>
+            </small><!--[hint]="'Sobreposição de CHD entre Entregas'"-->
+          </div>
+          <ng-template #umCHD>
+            <small>
+              <badge icon="bi bi-calculator" [color]="totalForcaTrabalho == 100 ? 'success' : 'warning'" [label]="totalForcaTrabalho + '%'"></badge>
+            </small>
+          </ng-template>
+        </div>
+      </ng-template>
+      <ng-template let-row="row" #columnForcaTrabalho><small>{{ row.forca_trabalho + '%' }}</small></ng-template>
+      <ng-template let-row="row" #editForcaTrabalho><input-text number sufix="%" controlName="forca_trabalho" [control]="form!.controls.forca_trabalho" (change)="onForcaTrabalhoChange(row)" [attr.maxlength]=250></input-text></ng-template>
+    </column>
+    <column [maxWidth]="250" [titleTemplate]="titleDescricao" [template]="columnDescricao" [editTemplate]="editDescricao" [verticalAlign]="'middle'" [align]="'center'">
+      <ng-template let-header="header" #titleDescricao>
+        <div class="text-center"><span><strong>Descrição dos Trabalhos</strong></span></div>
+      </ng-template>
+      <ng-template let-row="row" #columnDescricao>
+        <div *ngIf="row.descricao != planoTrabalhoService.tipoEntrega(row, entity).descricao; else solicitarDescricao"><small>{{ row.descricao }}</small></div>
+      </ng-template>
+      <ng-template #solicitarDescricao><small>Detalhe/Descreva os trabalhos</small></ng-template>
+      <ng-template let-row="row" #editDescricao>
+        <input-textarea [rows]="2" controlName="descricao" [control]="form!.controls.descricao"></input-textarea>
+      </ng-template>
+    </column>
+    <column type="options"></column>
+  </columns>
 </grid>

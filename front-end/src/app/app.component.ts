@@ -549,6 +549,5 @@ export class AppComponent {
   public get isConfig(): boolean {
     return this.router.url.indexOf("/extension/options") >= 0;
   }
-
 }
 
