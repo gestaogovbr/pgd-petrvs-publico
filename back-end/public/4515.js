@@ -2860,7 +2860,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵdef
     }
   },
   dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_41__.NgIf, _components_grid_grid_component__WEBPACK_IMPORTED_MODULE_28__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_29__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_30__.ColumnComponent, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_31__.InputSwitchComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_32__.InputSearchComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_33__.InputTextComponent, _components_input_input_radio_input_radio_component__WEBPACK_IMPORTED_MODULE_34__.InputRadioComponent, _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_35__.InputSelectComponent, _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_36__.InputMultiselectComponent, _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_37__.TabsComponent, _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_38__.TabComponent, _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_39__.SeparatorComponent],
-  styles: ["@import url(https://fonts.cdnfonts.com/css/neutra-text-alt);#imgBigIco[_ngcontent-%COMP%], #imgBigIcoAmarelo[_ngcontent-%COMP%] {\n  max-width: 30px;\n}\n\n.h4[_ngcontent-%COMP%], .card-title[_ngcontent-%COMP%] {\n  font-family: neutra text;\n  font-weight: bold;\n}\n\n.card-img-top[_ngcontent-%COMP%] {\n  height: auto;\n  max-width: 90px;\n}\n\n.card[_ngcontent-%COMP%] {\n  align-items: center;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvbW9kdWxlcy9jdXJyaWN1bHVtL2N1cnJpY3VsdW0tcHJvZmlzc2lvbmFsLWZvcm0vY3VycmljdWx1bS1wcm9maXNzaW9uYWwtZm9ybS5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFHQTtFQUNFLGVBQUE7QUFERjs7QUFLQTtFQUNFLHdCQUFBO0VBQ0EsaUJBQUE7QUFGRjs7QUFLQTtFQUNFLFlBQUE7RUFDQSxlQUFBO0FBRkY7O0FBTUE7RUFDRSxtQkFBQTtBQUhGIiwic291cmNlc0NvbnRlbnQiOlsiQGltcG9ydCB1cmwoJ2h0dHBzOi8vZm9udHMuY2RuZm9udHMuY29tL2Nzcy9uZXV0cmEtdGV4dC1hbHQnKTtcclxuXHJcblxyXG4jaW1nQmlnSWNvLCNpbWdCaWdJY29BbWFyZWxve1xyXG4gIG1heC13aWR0aDogMzBweDtcclxuXHJcbn1cclxuXHJcbi5oNCwgLmNhcmQtdGl0bGV7XHJcbiAgZm9udC1mYW1pbHk6IG5ldXRyYSB0ZXh0O1xyXG4gIGZvbnQtd2VpZ2h0OiBib2xkO1xyXG59XHJcblxyXG4uY2FyZC1pbWctdG9we1xyXG4gIGhlaWdodDogYXV0bztcclxuICBtYXgtd2lkdGg6IDkwcHg7XHJcbiAvLyBiYWNrZ3JvdW5kLWNvbG9yOiAjZjVmN2ZhO1xyXG59XHJcblxyXG4uY2FyZHtcclxuICBhbGlnbi1pdGVtczogY2VudGVyO1xyXG59Il0sInNvdXJjZVJvb3QiOiIifQ== */"]
+  styles: ["@import url(https://fonts.cdnfonts.com/css/neutra-text-alt);#imgBigIco[_ngcontent-%COMP%], #imgBigIcoAmarelo[_ngcontent-%COMP%] {\n  max-width: 30px;\n}\n\n.h4[_ngcontent-%COMP%], .card-title[_ngcontent-%COMP%] {\n  font-family: neutra text;\n  font-weight: bold;\n}\n\n.card-img-top[_ngcontent-%COMP%] {\n  height: auto;\n  max-width: 90px;\n}\n\n.card[_ngcontent-%COMP%] {\n  align-items: center;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvbW9kdWxlcy9jdXJyaWN1bHVtL2N1cnJpY3VsdW0tcHJvZmlzc2lvbmFsLWZvcm0vY3VycmljdWx1bS1wcm9maXNzaW9uYWwtZm9ybS5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFHQTtFQUNFLGVBQUE7QUFERjs7QUFLQTtFQUNFLHdCQUFBO0VBQ0EsaUJBQUE7QUFGRjs7QUFLQTtFQUNFLFlBQUE7RUFDQSxlQUFBO0FBRkY7O0FBTUE7RUFDRSxtQkFBQTtBQUhGIiwic291cmNlc0NvbnRlbnQiOlsiQGltcG9ydCB1cmwoJ2h0dHBzOi8vZm9udHMuY2RuZm9udHMuY29tL2Nzcy9uZXV0cmEtdGV4dC1hbHQnKTtcblxuXG4jaW1nQmlnSWNvLCNpbWdCaWdJY29BbWFyZWxve1xuICBtYXgtd2lkdGg6IDMwcHg7XG5cbn1cblxuLmg0LCAuY2FyZC10aXRsZXtcbiAgZm9udC1mYW1pbHk6IG5ldXRyYSB0ZXh0O1xuICBmb250LXdlaWdodDogYm9sZDtcbn1cblxuLmNhcmQtaW1nLXRvcHtcbiAgaGVpZ2h0OiBhdXRvO1xuICBtYXgtd2lkdGg6IDkwcHg7XG4gLy8gYmFja2dyb3VuZC1jb2xvcjogI2Y1ZjdmYTtcbn1cblxuLmNhcmR7XG4gIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG59Il0sInNvdXJjZVJvb3QiOiIifQ== */"]
 });
 
 /***/ }),
@@ -3058,10 +3058,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_dao_questionario_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/questionario-dao.service */ 10535);
 /* harmony import */ var src_app_dao_questionario_pergunta_dao_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/dao/questionario-pergunta-dao.service */ 8305);
 /* harmony import */ var src_app_models_questionario_resposta_model__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/app/models/questionario-resposta.model */ 86920);
-/* harmony import */ var src_app_dao_questionario_resposta_dao_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/dao/questionario-resposta-dao.service */ 54771);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/core */ 51197);
-/* harmony import */ var _components_input_input_radio_input_radio_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../../components/input/input-radio/input-radio.component */ 48877);
-/* harmony import */ var _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../components/separator/separator.component */ 25560);
+/* harmony import */ var src_app_models_questionario_resposta_pergunta_model__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/app/models/questionario-resposta-pergunta.model */ 56260);
+/* harmony import */ var src_app_dao_questionario_resposta_dao_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! src/app/dao/questionario-resposta-dao.service */ 54771);
+/* harmony import */ var chart_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! chart.js */ 99516);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/common */ 89650);
+/* harmony import */ var _components_input_input_radio_input_radio_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../components/input/input-radio/input-radio.component */ 48877);
+/* harmony import */ var _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../components/separator/separator.component */ 25560);
 
 var _class;
 
@@ -3074,13 +3077,297 @@ var _class;
 
 
 
+
+
+
 const _c0 = ["divb5"];
-const _c1 = ["btnv"];
-const _c2 = ["btne"];
-const _c3 = ["radio"];
+const _c1 = ["divextroversao"];
+const _c2 = ["lblextroversao"];
+const _c3 = ["btnv"];
+const _c4 = ["btne"];
+const _c5 = ["radio"];
+function CurriculumAtributosbig5FormComponent_div_1_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "div");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](1, " Formul\u00E1rio de Big Five n\u00E3o encontrado no banco de dados. Contate o suporte! ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
+  }
+}
+function CurriculumAtributosbig5FormComponent_ng_template_2_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r19 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](0, "separator", 3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](1, "div", 4)(2, "div", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](3, " Para prosseguir \u00E9 necess\u00E1rio responder a pergunta ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](4, "div", 6)(5, "div", 7, 8)(7, "label", 9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](8);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](9, "div", 10)(10, "div", 11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_ng_template_2_Template_div_change_10_listener($event) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵrestoreView"](_r19);
+      const ctx_r18 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵresetView"](ctx_r18.onRadioChange($event));
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](11, "input-radio", 12, 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](13, "div", 14)(14, "div", 15)(15, "div", 16)(16, "button", 17, 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("click", function CurriculumAtributosbig5FormComponent_ng_template_2_Template_button_click_16_listener($event) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵrestoreView"](_r19);
+      const ctx_r20 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵresetView"](ctx_r20.voltar($event));
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](18, "Voltar");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](19, "div", 16)(20, "button", 19);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("click", function CurriculumAtributosbig5FormComponent_ng_template_2_Template_button_click_20_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵrestoreView"](_r19);
+      const ctx_r21 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵresetView"](ctx_r21.enviar());
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](21, "Enviar");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](22, "div", 20)(23, "div", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](24, " Para prosseguir \u00E9 necess\u00E1rio responder a pergunta ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](25, "div", 6)(26, "div", 7, 8)(28, "label", 9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](29);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](30, "div", 10)(31, "div", 11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_ng_template_2_Template_div_change_31_listener($event) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵrestoreView"](_r19);
+      const ctx_r22 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵresetView"](ctx_r22.onRadioChange($event));
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](32, "div", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](33, "input", 22);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](34, "label", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](35, "Muito Inadequado");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](36, "div", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](37, "input", 24);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](38, "label", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](39, "Relativamente Inadequado");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](40, "div", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](41, "input", 26);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](42, "label", 27);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](43, "Nem Adequado, Nem Inadequado");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](44, "div", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](45, "input", 28);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](46, "label", 29);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](47, "Relativamente Adequado");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](48, "div", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](49, "input", 30);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](50, "label", 31);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](51, "Muito Adequado");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](52, "div", 14)(53, "div", 15)(54, "div", 16)(55, "button", 32, 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("click", function CurriculumAtributosbig5FormComponent_ng_template_2_Template_button_click_55_listener($event) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵrestoreView"](_r19);
+      const ctx_r23 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵresetView"](ctx_r23.voltar($event));
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](57, "Voltar");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](58, "div", 16)(59, "button", 33);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("click", function CurriculumAtributosbig5FormComponent_ng_template_2_Template_button_click_59_listener($event) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵrestoreView"](_r19);
+      const ctx_r24 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵresetView"](ctx_r24.proximo($event));
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](60, "Enviar");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](61, "div", 34)(62, "div", 35)(63, "div", 36)(64, "separator")(65, "h4");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](66, "Pontua\u00E7\u00E3o");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](67, "label", 37);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](68, "A pontua\u00E7\u00E3o calculada dever\u00E1 ficar entre ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](69, "b");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](70, "0 e 40");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](71, " pontos.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](72, "div", 35)(73, "div", 36)(74, "separator", 38);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("click", function CurriculumAtributosbig5FormComponent_ng_template_2_Template_separator_click_74_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵrestoreView"](_r19);
+      const ctx_r25 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵresetView"](ctx_r25.onClickDivB5("divgraficob5", "lblgrafico", "igrafico"));
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](75, "h4");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](76, "Gr\u00E1fico dos Resultados");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](77, "i", 39);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](78, "label", 40)(79, "i", 41);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](80, "div", 42)(81, "div", 43)(82, "canvas", 44);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](83);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](84, "separator", 45);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("click", function CurriculumAtributosbig5FormComponent_ng_template_2_Template_separator_click_84_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵrestoreView"](_r19);
+      const ctx_r26 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵresetView"](ctx_r26.onClickDivB5("divextroversao", "lblextroversao", "iextroversao"));
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](85, "div", 15)(86, "div", 46)(87, "h5");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](88, "i", 47);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](89, " Extrovers\u00E3o");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](90, "div", 46)(91, "h4")(92, "label", 48, 49);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](94);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](95, "div", 50, 51)(97, "div", 52)(98, "div", 36)(99, "p", 53);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](100, " \u00C9 o tra\u00E7o pessoal caracterizado por emo\u00E7\u00F5es positivas e pela tend\u00EAncia para procurar est\u00EDmulos. Al\u00E9m disso, \u00E9 marcado pela busca da companhia das outras pessoas e pelo profundo envolvimento com o mundo exterior. Individuos com pontua\u00E7\u00E3o alta tendem a ser muito sociais, enquanto com pontua\u00E7\u00F5es mais baixas tendem a trabalhar sozinhas em seus projetos. ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](101, "div", 54)(102, "div", 55)(103, "label", 56)(104, "h4");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](105, "Seus pontos");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](106, "div", 57)(107, "h4")(108, "label", 58);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](109);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](110, "separator", 59);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("click", function CurriculumAtributosbig5FormComponent_ng_template_2_Template_separator_click_110_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵrestoreView"](_r19);
+      const ctx_r27 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵresetView"](ctx_r27.onClickDivB5("divagradabilidade", "lblagradabilidade", "iagradabilidade"));
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](111, "div", 15)(112, "div", 46)(113, "h5");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](114, "i", 60);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](115, " Agradabilidade");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](116, "i", 61);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](117, "div", 46)(118, "h4")(119, "label", 62, 63);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](121);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](122, "div", 64, 65)(124, "div", 66)(125, "div", 36)(126, "p", 67);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](127, " A agradabilidade \u00E9 um tra\u00E7o de personalidade que se manifesta em caracter\u00EDsticas comportamentais individuais que s\u00E3o percebidas como am\u00E1veis, simp\u00E1ticas, cooperativas, calorosas e atenciosas.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](128, "br");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](129, " Pessoas com pontua\u00E7\u00E3o alta nesta dimens\u00E3o s\u00E3o emp\u00E1ticas e altru\u00EDstas, enquanto uma pontua\u00E7\u00E3o baixa de afabilidade est\u00E1 relacionada a comportamento ego\u00EDsta e falta de empatia.Aqueles com pontua\u00E7\u00E3o muito baixa em agradabilidade mostram sinais de comportamento da tr\u00EDade obscura, como manipula\u00E7\u00E3o e competi\u00E7\u00E3o com os outros em vez de coopera\u00E7\u00E3o. A agradabilidade \u00E9 considerada um tra\u00E7o superordenado, o que significa que \u00E9 um agrupamento de sub-tra\u00E7os de personalidade que se agrupam estatisticamente. Os tra\u00E7os ou facetas de n\u00EDvel inferior agrupados sob a agradabilidade s\u00E3o: confian\u00E7a, franqueza, altru\u00EDsmo, submiss\u00E3o, mod\u00E9stia e ternura. ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](130, "div", 68)(131, "div", 55)(132, "label", 56)(133, "h4");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](134, "Seus pontos");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](135, "div", 57)(136, "h4")(137, "label", 69);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](138);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](139, "separator", 59);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("click", function CurriculumAtributosbig5FormComponent_ng_template_2_Template_separator_click_139_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵrestoreView"](_r19);
+      const ctx_r28 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵresetView"](ctx_r28.onClickDivB5("divconscienciosidade", "lblconscienciosidade", "iconscienciosidade"));
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](140, "div", 15)(141, "div", 46)(142, "h5");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](143, "i", 70);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](144, " Conscienciosidade");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](145, "i", 71);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](146, "div", 46)(147, "h4")(148, "label", 72, 73);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](150);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](151, "div", 74, 75)(153, "div", 66)(154, "p", 76);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](155, " Conscienciosidade \u00E9 o tra\u00E7o de personalidade de ser cuidadoso ou diligente. A conscienciosidade implica o desejo de executar bem uma tarefa e levar a s\u00E9rio as obriga\u00E7\u00F5es para com os outros. Pessoas com pontua\u00E7\u00E3o alta tendem a ser eficientes e organizadas, pontua\u00E7\u00F5es baixas tendem a ser descontra\u00EDdas e desordenadas. Eles exibem uma tend\u00EAncia a mostrar autodisciplina, agir obedientemente e almejar a conquista; eles exibem comportamento planejado, e n\u00E3o espont\u00E2neo; e eles geralmente s\u00E3o confi\u00E1veis. Ela se manifesta em comportamentos caracter\u00EDsticos, como ser elegante e sistem\u00E1tico; incluindo tamb\u00E9m elementos como cuidado, rigor e delibera\u00E7\u00E3o (a tend\u00EAncia de pensar cuidadosamente antes de agir) ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](156, "div", 77)(157, "div", 55)(158, "label", 56)(159, "h4");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](160, "Seus pontos");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](161, "div", 57)(162, "label", 78);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](163);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](164, "separator", 59);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("click", function CurriculumAtributosbig5FormComponent_ng_template_2_Template_separator_click_164_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵrestoreView"](_r19);
+      const ctx_r29 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵresetView"](ctx_r29.onClickDivB5("divestabilidade", "lblestabilidade", "iestabilidade"));
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](165, "div", 15)(166, "div", 46)(167, "h5");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](168, "i", 79);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](169, " Estabilidade Emocional");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](170, "i", 80);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](171, "div", 46)(172, "h4")(173, "label", 81, 82);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](175);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](176, "div", 83, 84)(178, "div", 85)(179, "p", 86);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](180, " \u00C9 a tend\u00EAncia para experienciar emo\u00E7\u00F5es negativas, como raiva, ansiedade ou depress\u00E3o, as quais tendem a persistir por per\u00EDodos longos. Por vezes, a Estabilidade Emocional tamb\u00E9m \u00E9 chamada de neuroticismo.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](181, "br");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](182, " Pessoas com pontua\u00E7\u00F5es altas s\u00E3o mais dif\u00EDceis de serem perturbados e s\u00E3o menos reativos emocionalmente. Eles tendem a ser calmos, emocionalmente est\u00E1veis e livres de sentimentos negativos persistentes.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](183, "br");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](184, " Pessoas com pontua\u00E7\u00E3o baixa s\u00E3o emocionalmente reativos e vulner\u00E1veis ao estresse. S\u00E3o predispostos a interpretar situa\u00E7\u00F5es normais como sendo amea\u00E7adoras e pequenas frustra\u00E7\u00F5es como dificuldades sem esperan\u00E7a.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](185, "br");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](186, " Por esses motivos, essas pessoas podem apresentar uma capacidade reduzida para pensar claramente, tomar decis\u00F5es ou lidar de forma apropriada com o estresse. ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](187, "div", 87)(188, "div", 55)(189, "label", 56)(190, "h4");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](191, "Seus pontos");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](192, "div", 57)(193, "label", 88);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](194);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](195, "separator", 59);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("click", function CurriculumAtributosbig5FormComponent_ng_template_2_Template_separator_click_195_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵrestoreView"](_r19);
+      const ctx_r30 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵresetView"](ctx_r30.onClickDivB5("divabertura", "lblabertura", "iabertura"));
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](196, "div", 15)(197, "div", 46)(198, "h5");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](199, "i", 89);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](200, " Abertura");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](201, "i", 90);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](202, "div", 46)(203, "h4")(204, "label", 91, 92);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](206);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](207, "div", 93, 94)(209, "div", 95)(210, "p", 96);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](211, " \u00C9 o tra\u00E7o da personalidade marcado pelo interesse por novas experi\u00EAncias emocionais, pela aventura, por ideias incomuns, pela arte, pelo amplo uso da imagina\u00E7\u00E3o e alto grau de curiosidade.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](212, "br");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](213, " Pessoas com pontua\u00E7\u00F5es altas s\u00E3o imaginativas, criativas, curiosas, apreciadoras da arte e sens\u00EDveis \u00E0 beleza. Essas pessoas tendem a levar em conta os seus sentimentos e a terem opini\u00F5es n\u00E3o convencionais.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](214, "br");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](215, " Pessoas com pontua\u00E7\u00E3o baixa t\u00EAm uma menor abertura para experi\u00EAncias costumam ter interesses mais convencionais e tradicionais. Eles preferem o simples, claro e \u00F3bvio ao complexo, amb\u00EDguo e sutil. Al\u00E9m disso, podem ver as artes e as ci\u00EAncias com suspeitas, ach\u00E1-las \u201Cdesinteressantes\u201D e n\u00E3o gostarem de correr riscos ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](216, "div", 97)(217, "div", 55)(218, "label", 56)(219, "h4");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](220, "Seus pontos");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](221, "div", 57)(222, "h4")(223, "label", 98);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](224);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()()()()();
+  }
+  if (rf & 2) {
+    const ctx_r2 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("bold", false);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](8);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate2"]("", ctx_r2.numeroPergunta, ". ", ctx_r2.showPergunta, "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("control", ctx_r2.form.controls.radiob5)("items", ctx_r2.opcoesEscolha);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate2"]("", ctx_r2.numeroPergunta, ". ", ctx_r2.showPergunta, "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](54);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate"](ctx_r2.chart);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate"](ctx_r2.extroversao);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](15);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate"](ctx_r2.extroversao);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate"](ctx_r2.agradabilidade);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](17);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate"](ctx_r2.agradabilidade);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate"](ctx_r2.conscienciosidade);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate"](ctx_r2.conscienciosidade);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate"](ctx_r2.estabilidade);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](19);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate"](ctx_r2.estabilidade);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate"](ctx_r2.abertura);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate"](ctx_r2.abertura);
+  }
+}
 class CurriculumAtributosbig5FormComponent extends _base_page_form_base__WEBPACK_IMPORTED_MODULE_1__.PageFormBase {
   constructor(injector) {
-    super(injector, src_app_models_questionario_resposta_model__WEBPACK_IMPORTED_MODULE_5__.QuestionarioResposta, src_app_dao_questionario_resposta_dao_service__WEBPACK_IMPORTED_MODULE_6__.QuestionarioRespostaDaoService);
+    super(injector, src_app_models_questionario_resposta_model__WEBPACK_IMPORTED_MODULE_5__.QuestionarioResposta, src_app_dao_questionario_resposta_dao_service__WEBPACK_IMPORTED_MODULE_7__.QuestionarioRespostaDaoService);
     this.injector = injector;
     this.perguntas = [];
     this.respostas = [];
@@ -3109,6 +3396,12 @@ class CurriculumAtributosbig5FormComponent extends _base_page_form_base__WEBPACK
     this.valorEscolhido = '';
     this.respostasB5 = [];
     this.arrayLabel = '';
+    this.extroversao = 0;
+    this.agradabilidade = 0;
+    this.conscienciosidade = 0;
+    this.estabilidade = 0;
+    this.abertura = 0;
+    this.respondido = false;
     this.validate = (control, controlName) => {
       let result = null;
       return result;
@@ -3121,6 +3414,12 @@ class CurriculumAtributosbig5FormComponent extends _base_page_form_base__WEBPACK
     this.form = this.fh.FormBuilder({
       radiob5: {
         default: false
+      },
+      lbl_extroversao: {
+        default: ''
+      },
+      divextroversao: {
+        default: ''
       }
     }, this.cdRef, this.validate);
   }
@@ -3151,6 +3450,8 @@ class CurriculumAtributosbig5FormComponent extends _base_page_form_base__WEBPACK
               if (pergunta.id == resposta.questionario_pergunta_id) respostas.push(resposta.resposta);
             });
           });
+          _this.respondido = true;
+          _this.resposta(respostas);
         }
       } else {
         _this.dialog.alert("Teste Soft-Skills não localizado", "Teste não localizado");
@@ -3162,24 +3463,30 @@ class CurriculumAtributosbig5FormComponent extends _base_page_form_base__WEBPACK
     var _this2 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (!_this2.questionario) return false;
+      if (_this2.respondido) {
+        _this2.dialog.alert("Gravação não efetuada", "Teste já respondido");
+        return false;
+      }
+      if (_this2.respostasB5.length < 50) {
+        _this2.dialog.alert("Gravação não efetuada", "Para gravação o teste deve ser respondido por completo");
+        return false;
+      }
       let questionarioResposta = _this2.util.fill(new src_app_models_questionario_resposta_model__WEBPACK_IMPORTED_MODULE_5__.QuestionarioResposta(), _this2.entity || {});
       questionarioResposta.usuario_id = _this2.auth.usuario?.id;
-      questionarioResposta.editavel = 1;
+      questionarioResposta.editavel = 0;
       questionarioResposta.questionario_id = _this2.questionario.id;
-      //questionarioResposta.data_resposta = new Date();;
-      /*
-        let respostas = this.entity?.questionario_resposta_pergunta || valores.map((x, i) => new QuestionarioRespostaPergunta({
-          questionario_pergunta_id: this.questionario!.perguntas[i].id,
-          resposta: parseInt(x),
-          _status: "ADD"
-        }));
-        respostas.forEach((x, i) => {
-          if (x._status != "ADD" && x.resposta != parseInt(valores[i])){
-            x.resposta = parseInt(valores[i]);
-            x._status = "EDIT";
-          }
-        });
-        questionarioResposta.questionario_resposta_pergunta = respostas;*/
+      let respostas = _this2.entity?.questionario_resposta_pergunta || _this2.respostasB5.map((x, i) => new src_app_models_questionario_resposta_pergunta_model__WEBPACK_IMPORTED_MODULE_6__.QuestionarioRespostaPergunta({
+        questionario_pergunta_id: _this2.questionario.perguntas[i].id,
+        resposta: x,
+        _status: "ADD"
+      }));
+      respostas.forEach((x, i) => {
+        if (x._status != "ADD" && x.resposta != _this2.respostasB5[i]) {
+          x.resposta = _this2.respostasB5[i];
+          x._status = "EDIT";
+        }
+      });
+      questionarioResposta.questionario_resposta_pergunta = respostas;
       return questionarioResposta;
     })();
   }
@@ -3222,8 +3529,12 @@ class CurriculumAtributosbig5FormComponent extends _base_page_form_base__WEBPACK
       this.total = this.total - this.respostasB5[this.controle];
       this.respostasB5.splice(this.controle, 1);
       this.arrayLabel = this.respostasB5.toString();
-      btnVoltar?.removeAttribute('disabled');
+      btnEnviar?.setAttribute('disabled', '');
+      radio?.setAttribute('disabled', '');
+      $('input[name="radiob5"]').prop('disabled', false);
+      //$('input[name="radioB"]').prop('disabled', false);
     }
+
     if (this.controle > 0) {
       this.controle--;
       this.controle == 0 ? btnVoltar?.setAttribute('disabled', '') : btnVoltar?.removeAttribute('disabled');
@@ -3238,7 +3549,10 @@ class CurriculumAtributosbig5FormComponent extends _base_page_form_base__WEBPACK
     } else {
       btnVoltar?.setAttribute('disabled', '');
     }
+    $('input[name="radiob5"]').prop('checked', false);
+    //$('input[name="radioB"]').prop('checked', false);
   }
+
   proximo(event) {
     const btnEnviar = document.querySelector('.btnenviar');
     const btnVoltar = document.querySelector('.btnvoltar');
@@ -3253,16 +3567,28 @@ class CurriculumAtributosbig5FormComponent extends _base_page_form_base__WEBPACK
       if (this.controle <= 49) {
         this.numeroPergunta++;
         this.showPergunta = this.perguntas[this.controle].pergunta;
+        document.querySelector('.cardb5')?.hasAttribute('hidden') ? document.querySelector('.cardb5')?.removeAttribute('hidden') : '';
       }
       console.log(this.respostasB5, ' - ', this.total, ' - ', this.controle);
     }
     if (this.controle >= 50) {
-      this.controle >= 50 ? btnEnviar?.setAttribute('disabled', "") : btnEnviar?.removeAttribute('disabled');
-      btnEnviar?.setAttribute('value', 'Enviar');
+      //btnEnviar?.setAttribute('disabled',"");
+      //btnEnviar?.setAttribute('value','Enviar');
+      btnEnviar?.removeAttribute('disabled');
       radio?.setAttribute('disabled', '');
+      $('input[name="radiob5"]').prop('disabled', true);
+      // $('input[name="radioB"]').prop('disabled', true);
       this.controle = 50;
-    }
+      //this.resposta(this.respostasB5);
+    } /*else{
+      btnEnviar?.removeAttribute('disabled');
+      }
+      /* let radio1 = document.getElementsByName('flexRadioDefault');
+      radio1?.forEach(x =>{ x.removeAttribute('checked')})*/
+    $('input[name="radiob5"]').prop('checked', false);
+    // $('input[name="radioB"]').prop('checked', false);
   }
+
   enviar() {
     this.resposta(this.respostasB5);
   }
@@ -3273,12 +3599,11 @@ class CurriculumAtributosbig5FormComponent extends _base_page_form_base__WEBPACK
     let cM = 14 + resp[2] + resp[12] + resp[22] + resp[32] + resp[42] + resp[47];
     let nM = 38 + resp[8] + resp[18];
     let oM = 8 + resp[4] + resp[14] + resp[24] + resp[34] + resp[39] + resp[44] + resp[49];
-    console.log('eM ', eM, ' - aM ', aM, ' - cM', cM, ' - nM', nM, ' - oM', oM);
-    let eD = resp[5] + resp[15] + resp[25] + resp[35] + resp[45];
-    let aD = resp[1] + resp[11] + resp[21] + resp[31];
-    let cD = resp[7] + resp[17] + resp[27] + resp[37];
-    let nD = resp[3] + resp[13] + resp[23] + resp[28] + resp[33] + resp[38] + resp[43] + resp[48];
-    let oD = resp[9] + resp[19] + resp[29];
+    let extroversao = resp[5] + resp[15] + resp[25] + resp[35] + resp[45];
+    let agradabilidade = resp[1] + resp[11] + resp[21] + resp[31];
+    let concienciosidade = resp[7] + resp[17] + resp[27] + resp[37];
+    let estabilidade = resp[3] + resp[13] + resp[23] + resp[28] + resp[33] + resp[38] + resp[43] + resp[48];
+    let abertura = resp[9] + resp[19] + resp[29];
     //console.log(nD)
     //console.log(oD)
     let e,
@@ -3286,94 +3611,102 @@ class CurriculumAtributosbig5FormComponent extends _base_page_form_base__WEBPACK
       c,
       n,
       o = 0;
-    e = eM - eD;
-    a = aM - aD;
-    c = cM - cD;
-    n = nM - nD;
-    o = oM - oD;
-    console.log('e ', e, ' - a ', a, ' - c ', c, ' - n ', n, ' - o ', o);
+    this.extroversao = eM - extroversao;
+    this.agradabilidade = aM - agradabilidade;
+    this.conscienciosidade = cM - concienciosidade;
+    this.estabilidade = nM - estabilidade;
+    this.abertura = oM - abertura;
+    console.log('e ', this.extroversao, ' - a ', this.agradabilidade, ' - c ', this.conscienciosidade, ' - n ', this.estabilidade, ' - o ', this.abertura);
+    this.chartb5([this.extroversao, this.agradabilidade, this.conscienciosidade, this.estabilidade, this.abertura]);
+  }
+  chartb5(dados = []) {
+    document.querySelector('.divgraficob5')?.hasAttribute('hidden') ? document.querySelector('.divgraficob5')?.removeAttribute('hidden') : '';
+    document.querySelector('.resultado')?.hasAttribute('hidden') ? document.querySelector('.resultado')?.removeAttribute('hidden') : '';
+    document.querySelector('.cardb5')?.setAttribute('hidden', '');
+    document.querySelector('.cardb52')?.setAttribute('hidden', '');
+    this.chart ? this.chart.destroy() : '';
+    this.chart = new chart_js__WEBPACK_IMPORTED_MODULE_11__.Chart("MyChart", {
+      type: 'pie',
+      data: {
+        labels: ['Extroversão', 'Agradabilidade', 'Conscienciosidade', 'Estabilidade', 'Abertura'],
+        datasets: [{
+          label: 'Pontuação',
+          data: dados,
+          backgroundColor: ['red', 'blue', 'green', 'yellow', 'orange'],
+          hoverOffset: 4
+        }]
+      },
+      options: {
+        aspectRatio: 2.5,
+        responsive: true
+      }
+    });
+  }
+  onClickDivB5(div, lbl, icon) {
+    document.querySelector('.' + div)?.hasAttribute('hidden') ? document.querySelector('.' + div)?.removeAttribute('hidden') : document.querySelector('.' + div)?.setAttribute('hidden', '');
+    document.querySelector('.' + lbl)?.hasAttribute('hidden') ? document.querySelector('.' + lbl)?.removeAttribute('hidden') : document.querySelector('.' + lbl)?.setAttribute('hidden', '');
+    if (document.getElementById(icon)?.classList.contains('fa-arrow-down')) {
+      document.getElementById(icon)?.classList.remove('fa-arrow-down');
+      document.getElementById(icon)?.classList.add('fa-arrow-up');
+    } else {
+      document.getElementById(icon)?.classList.remove('fa-arrow-up');
+      document.getElementById(icon)?.classList.add('fa-arrow-down');
+    }
   }
 }
 _class = CurriculumAtributosbig5FormComponent;
 _class.ɵfac = function CurriculumAtributosbig5FormComponent_Factory(t) {
-  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_9__.Injector));
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_10__.Injector));
 };
-_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefineComponent"]({
+_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdefineComponent"]({
   type: _class,
   selectors: [["curriculum-atributosbig5-form"]],
   viewQuery: function CurriculumAtributosbig5FormComponent_Query(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_2__.EditableFormComponent, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵviewQuery"](_c0, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵviewQuery"](_c1, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵviewQuery"](_c2, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵviewQuery"](_c3, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_2__.EditableFormComponent, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵviewQuery"](_c0, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵviewQuery"](_c1, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵviewQuery"](_c2, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵviewQuery"](_c3, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵviewQuery"](_c4, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵviewQuery"](_c5, 5);
     }
     if (rf & 2) {
       let _t;
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵloadQuery"]()) && (ctx.divb5 = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵloadQuery"]()) && (ctx.btnv = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵloadQuery"]()) && (ctx.btne = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵloadQuery"]()) && (ctx.radio = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵloadQuery"]()) && (ctx.divb5 = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵloadQuery"]()) && (ctx.divextroversao = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵloadQuery"]()) && (ctx.lblextroversao = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵloadQuery"]()) && (ctx.btnv = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵloadQuery"]()) && (ctx.btne = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵloadQuery"]()) && (ctx.radio = _t.first);
     }
   },
-  features: [_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵInheritDefinitionFeature"]],
-  decls: 28,
-  vars: 10,
-  consts: [[3, "form", "disabled", "title"], ["title", "Voc\u00EA quer se conhecer melhor? Este teste de personalidade ir\u00E1 ajud\u00E1-lo a compreender as formas de seu comportamento e os motivos de suas a\u00E7\u00F5es. Ao final do teste voc\u00EA poder\u00E1 optar se deseja torn\u00E1-lo p\u00FAblico ou n\u00E3o.", 1, "my-5", 3, "bold"], ["id", "cardpergb5", 1, "card", "mb-3"], [1, "card-header"], [1, "card-body", "text-wrap"], [1, "row", "tex-center", "divb5"], ["divb5", ""], [1, "text-center", "fw-bold"], [1, "row", "my-2"], ["id", "divradiob5", 1, "col-md-12", 3, "change"], ["controlName", "radiob5", "id", "radio", 1, "radio", 3, "control", "items"], ["radio", ""], [1, "card-footer"], [1, "row", "d-flex", "justify-content-between"], [1, "col-md-3"], ["type", "button", "id", "btnv", "name", "btnv", "disabled", "", 1, "btn", "btn-primary", "btnvoltar", 3, "click"], ["btnv", ""], ["type", "button", "id", "btne", "name", "btne", 1, "btn", "btn-primary", "btnenviar", 3, "click"], [1, "text-center", "fw-bold", "my-5"]],
+  features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵInheritDefinitionFeature"]],
+  decls: 4,
+  vars: 5,
+  consts: [[3, "form", "disabled", "title", "submit", "cancel"], [4, "ngIf", "ngIfElse"], ["bigfive", ""], ["title", "Voc\u00EA quer se conhecer melhor? Este teste de personalidade ir\u00E1 ajud\u00E1-lo a compreender as formas de seu comportamento e os motivos de suas a\u00E7\u00F5es.", 1, "my-5", 3, "bold"], ["id", "cardpergb5", 1, "card", "cardb5", "my-3"], [1, "card-header"], [1, "card-body", "text-wrap"], [1, "row", "tex-center", "divb5"], ["divb5", ""], [1, "text-center", "fw-bold"], [1, "row", "my-2"], ["id", "divradiob5", 1, "col-md-12", 3, "change"], ["controlName", "radiob5", "id", "radio", "name", "radiob5", 1, "radio", 3, "control", "items"], ["radio", ""], [1, "card-footer"], [1, "row", "d-flex", "justify-content-between"], [1, "col-md-3"], ["type", "button", "id", "btnv", "name", "btnv", "disabled", "", 1, "btn", "btn-primary", "btnvoltar", 3, "click"], ["btnv", ""], ["type", "button", "id", "btne", "name", "btne", "disabled", "", 1, "btn", "btn-primary", "btnenviar", 3, "click"], ["id", "cardpergb5", 1, "card", "cardb52", "my-3"], [1, "form-check"], ["type", "radio", "name", "radioB", "id", "radiob51", "value", "1", 1, "form-check-input"], ["for", "radiob51", 1, "form-check-label"], ["type", "radio", "name", "radioB", "id", "radiob52", "value", "2", 1, "form-check-input"], ["for", "radiob52", 1, "form-check-label"], ["type", "radio", "name", "radioB", "id", "radiob53", "value", "3", 1, "form-check-input"], ["for", "radiob53", 1, "form-check-label"], ["type", "radio", "name", "radioB", "id", "radiob54", "value", "4", 1, "form-check-input"], ["for", "radiob54", 1, "form-check-label"], ["type", "radio", "name", "radioB", "id", "radiob55", "value", "5", 1, "form-check-input"], ["for", "radiob55", 1, "form-check-label"], ["type", "button", "id", "btnv", "name", "btnv2", "disabled", "", 1, "btn", "btn-primary", "btnvoltar", 3, "click"], ["type", "button", "id", "btne", "name", "btne2", "disabled", "", 1, "btn", "btn-primary", "btnenviar", 3, "click"], ["hidden", "", 1, "resultado"], [1, "row", "mb-4"], [1, "col-md-12"], ["id", "lblexppt"], [3, "click"], ["id", "icodivgraf5", 1, "fa-solid", "fa-square-plus"], [1, "lblgrafico"], ["id", "igrafico"], ["hidden", "", 1, "divgraficob5", "mb-5"], [1, "chart-container"], ["id", "MyChart"], ["icon", "fas fa-arrow-down", 1, "mb-4", 3, "click"], [1, "col"], ["id", "iextroversao", 1, "fas", "fa-arrow-down"], ["id", "lbl_extroversao", "controlName", "lbl_extroversao", 1, "lblextroversao", "fw-bolder"], ["lblextroversao", ""], ["controlName", "divextroversao", "hidden", "", 1, "divextroversao"], ["divextroversao", ""], [1, "row", "mt-5", "mb-3"], ["id", "p_extroversao", 1, "text-justify"], ["id", "div_pontos_extroversao", 1, "row", "my-1"], [1, "col-md-6", "d-flex", "justify-content-start"], [1, ""], [1, "col-md-4", "d-flex", "justify-content-start"], ["id", "lblextroversao ", 1, ""], [1, "mb-4", 3, "click"], ["id", "iagradabilidade", 1, "fas", "fa-arrow-down"], ["id", "icon_agradabilidade", 1, "fa-solid", "fa-square-plus"], ["id", "lbl_agradabilidade", 1, "lblagradabilidade", "fw-bolder"], ["lblagradabilidade", ""], ["hidden", "", 1, "divagradabilidade"], ["divagradabilidade", ""], [1, "row"], ["id", "p_agradabilidade", 1, "text-justify"], ["id", "div_pontos_agradabilidade", 1, "row", "my-1"], ["id", "lblagradabilidade", 1, ""], ["id", "iconscienciosidade", 1, "fas", "fa-arrow-down"], ["id", "icon_conscienciosidade", 1, "fa-solid", "fa-square-plus"], ["id", "lbl_conscienciosidade", 1, "lblconscienciosidade", "fw-bolder"], ["lblconscienciosidade", ""], ["hidden", "", 1, "divconscienciosidade"], ["divconscienciosidade", ""], ["id", "p_conscienciosidade", 1, "text-justify"], ["id", "div_conscienciosidade", 1, "row", "my-1"], ["id", "lblconscienciosidade", 1, "valor"], ["id", "iestabilidade", 1, "fas", "fa-arrow-down"], ["id", "icon_estabilidade", 1, "fa-solid", "fa-square-plus"], ["id", "lbl_estabilidade", 1, "lblestabilidade", "fw-bolder"], ["lblestabilidade", ""], ["hidden", "", 1, "divestabilidade"], ["divestabilidade", ""], ["id", "div_estabilidade", 1, "mt-3"], ["id", "p_estabilidade", 1, "text-justify"], ["id", "div_pontos_estabilidade", 1, "row", "my-1"], ["id", "lblestabilidade", 1, ""], ["id", "iabertura", 1, "fas", "fa-arrow-down"], ["id", "icon_abertura", 1, "fa-solid", "fa-square-plus"], ["id", "lbl_abertura", 1, "lblabertura", "fw-bolder"], ["lblabertura", ""], ["hidden", "", 1, "divabertura"], ["divabertura", ""], ["id", "div_abertura", 1, "mt-3"], ["id", "p_abertura", 1, "text-justify"], ["id", "div_pontos_abertura", 1, "row", "my-1"], ["id", "lblabertura", 1, ""]],
   template: function CurriculumAtributosbig5FormComponent_Template(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "editable-form", 0);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](1, "separator", 1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](2, "div", 2)(3, "div", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](4, " Para prosseguir \u00E9 necess\u00E1rio responder a pergunta ");
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](5, "div", 4)(6, "div", 5, 6)(8, "label", 7);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](9);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](10, "div", 8)(11, "div", 9);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("change", function CurriculumAtributosbig5FormComponent_Template_div_change_11_listener($event) {
-        return ctx.onRadioChange($event);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "editable-form", 0);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("submit", function CurriculumAtributosbig5FormComponent_Template_editable_form_submit_0_listener() {
+        return ctx.onSaveData();
+      })("cancel", function CurriculumAtributosbig5FormComponent_Template_editable_form_cancel_0_listener() {
+        return ctx.onCancel();
       });
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](12, "input-radio", 10, 11);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](14, "div", 12)(15, "div", 13)(16, "div", 14)(17, "button", 15, 16);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("click", function CurriculumAtributosbig5FormComponent_Template_button_click_17_listener($event) {
-        return ctx.voltar($event);
-      });
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](19, "Voltar");
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](20, "div", 14)(21, "button", 17);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("click", function CurriculumAtributosbig5FormComponent_Template_button_click_21_listener($event) {
-        return ctx.proximo($event);
-      });
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](22, "Proximo");
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()()()()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](23, "label", 18);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](24);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](25, "br");
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](26, "label", 7);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](27);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](1, CurriculumAtributosbig5FormComponent_div_1_Template, 2, 0, "div", 1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](2, CurriculumAtributosbig5FormComponent_ng_template_2_Template, 225, 18, "ng-template", null, 2, _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
     }
     if (rf & 2) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("bold", false);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](8);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtextInterpolate2"]("", ctx.numeroPergunta, ". ", ctx.showPergunta, "");
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("control", ctx.form.controls.radiob5)("items", ctx.opcoesEscolha);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](12);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtextInterpolate"](ctx.total);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtextInterpolate"](ctx.respostasB5.toString());
+      const _r1 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵreference"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("ngIf", !ctx.questionario)("ngIfElse", _r1);
     }
   },
-  dependencies: [src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_2__.EditableFormComponent, _components_input_input_radio_input_radio_component__WEBPACK_IMPORTED_MODULE_7__.InputRadioComponent, _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_8__.SeparatorComponent],
-  styles: [".h4[_ngcontent-%COMP%], .card-title[_ngcontent-%COMP%] {\n  font-family: neutra text;\n  font-weight: bold;\n}\n\n.card[_ngcontent-%COMP%] {\n  align-items: center;\n}\n\n.card-footer[_ngcontent-%COMP%] {\n  align-items: center;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvbW9kdWxlcy9jdXJyaWN1bHVtL2N1cnJyaWN1bHVtLWF0cmlidXRvcy9jdXJyaWN1bHVtLWF0cmlidXRvc2JpZzUtZm9ybS9jdXJyaWN1bHVtLWF0cmlidXRvc2JpZzUtZm9ybS5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNJLHdCQUFBO0VBQ0EsaUJBQUE7QUFDSjs7QUFHQTtFQUNJLG1CQUFBO0FBQUo7O0FBR0E7RUFDSSxtQkFBQTtBQUFKIiwic291cmNlc0NvbnRlbnQiOlsiLmg0LCAuY2FyZC10aXRsZXtcclxuICAgIGZvbnQtZmFtaWx5OiBuZXV0cmEgdGV4dDtcclxuICAgIGZvbnQtd2VpZ2h0OiBib2xkO1xyXG4gIH1cclxuICBcclxuICAgIFxyXG4uY2FyZHtcclxuICAgIGFsaWduLWl0ZW1zOiBjZW50ZXI7XHJcbiAgfVxyXG5cclxuLmNhcmQtZm9vdGVye1xyXG4gICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcclxuICB9Il0sInNvdXJjZVJvb3QiOiIifQ== */"]
+  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_12__.NgIf, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_2__.EditableFormComponent, _components_input_input_radio_input_radio_component__WEBPACK_IMPORTED_MODULE_8__.InputRadioComponent, _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_9__.SeparatorComponent],
+  styles: [".h4[_ngcontent-%COMP%], .card-title[_ngcontent-%COMP%] {\n  font-family: neutra text;\n  font-weight: bold;\n}\n\n.card[_ngcontent-%COMP%] {\n  align-items: center;\n}\n\n.card-footer[_ngcontent-%COMP%] {\n  align-items: center;\n}\n\n.chart-container[_ngcontent-%COMP%], .divgraficob5[_ngcontent-%COMP%] {\n  position: relative;\n  height: 40vh;\n  width: 80vw;\n}\n\n.fas[_ngcontent-%COMP%] {\n  width: 20px !important;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvbW9kdWxlcy9jdXJyaWN1bHVtL2N1cnJyaWN1bHVtLWF0cmlidXRvcy9jdXJyaWN1bHVtLWF0cmlidXRvc2JpZzUtZm9ybS9jdXJyaWN1bHVtLWF0cmlidXRvc2JpZzUtZm9ybS5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNJLHdCQUFBO0VBQ0EsaUJBQUE7QUFDSjs7QUFFQTtFQUNJLG1CQUFBO0FBQ0o7O0FBRUE7RUFDSSxtQkFBQTtBQUNKOztBQUVBO0VBQ0csa0JBQUE7RUFDQSxZQUFBO0VBQ0EsV0FBQTtBQUNIOztBQUVFO0VBQ0Usc0JBQUE7QUFDSiIsInNvdXJjZXNDb250ZW50IjpbIi5oNCwgLmNhcmQtdGl0bGV7XG4gICAgZm9udC1mYW1pbHk6IG5ldXRyYSB0ZXh0O1xuICAgIGZvbnQtd2VpZ2h0OiBib2xkO1xuICB9XG4gIFxuLmNhcmR7XG4gICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgfVxuXG4uY2FyZC1mb290ZXJ7XG4gICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgfVxuXG4uY2hhcnQtY29udGFpbmVyLCAuZGl2Z3JhZmljb2I1e1xuICAgcG9zaXRpb246IHJlbGF0aXZlOyBcbiAgIGhlaWdodDo0MHZoOyBcbiAgIHdpZHRoOjgwdndcbiAgfVxuXG4gIC5mYXN7XG4gICAgd2lkdGg6IDIwcHggIWltcG9ydGFudDtcbiAgfSJdLCJzb3VyY2VSb290IjoiIn0= */"]
 });
 
 /***/ }),
@@ -3597,7 +3930,7 @@ var _class;
 function CurriculumAtributossoftFormComponent_div_1_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](1, " Formul\u00E1rio de SoftSkill n\u00E3o encontrado no banco de dados. Contete suporte! ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](1, " Formul\u00E1rio de SoftSkill n\u00E3o encontrado no banco de dados. Contate o suporte! ");
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
   }
 }
@@ -3917,7 +4250,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefi
     }
   },
   dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_10__.NgIf, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_2__.EditableFormComponent, _components_input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_8__.InputNumberComponent],
-  styles: ["@import url(https://fonts.cdnfonts.com/css/neutra-text-alt);.h4[_ngcontent-%COMP%], .card-title[_ngcontent-%COMP%] {\n  font-family: neutra text;\n  font-weight: bold;\n}\n\n.card-img-top[_ngcontent-%COMP%] {\n  height: auto;\n  max-width: 90px;\n}\n\n.card[_ngcontent-%COMP%] {\n  align-items: center;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvbW9kdWxlcy9jdXJyaWN1bHVtL2N1cnJyaWN1bHVtLWF0cmlidXRvcy9jdXJyaWN1bHVtLWF0cmlidXRvc3NvZnQtZm9ybS9jdXJyaWN1bHVtLWF0cmlidXRvc3NvZnQtZm9ybS5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFFQTtFQUNFLHdCQUFBO0VBQ0EsaUJBQUE7QUFBRjs7QUFHQTtFQUNFLFlBQUE7RUFDQSxlQUFBO0FBQUY7O0FBSUE7RUFDRSxtQkFBQTtBQURGIiwic291cmNlc0NvbnRlbnQiOlsiQGltcG9ydCB1cmwoJ2h0dHBzOi8vZm9udHMuY2RuZm9udHMuY29tL2Nzcy9uZXV0cmEtdGV4dC1hbHQnKTtcclxuXHJcbi5oNCwgLmNhcmQtdGl0bGV7XHJcbiAgZm9udC1mYW1pbHk6IG5ldXRyYSB0ZXh0O1xyXG4gIGZvbnQtd2VpZ2h0OiBib2xkO1xyXG59XHJcblxyXG4uY2FyZC1pbWctdG9we1xyXG4gIGhlaWdodDogYXV0bztcclxuICBtYXgtd2lkdGg6IDkwcHg7XHJcbiAvLyBiYWNrZ3JvdW5kLWNvbG9yOiAjZjVmN2ZhO1xyXG59XHJcblxyXG4uY2FyZHtcclxuICBhbGlnbi1pdGVtczogY2VudGVyO1xyXG59Il0sInNvdXJjZVJvb3QiOiIifQ== */"]
+  styles: ["@import url(https://fonts.cdnfonts.com/css/neutra-text-alt);.h4[_ngcontent-%COMP%], .card-title[_ngcontent-%COMP%] {\n  font-family: neutra text;\n  font-weight: bold;\n}\n\n.card-img-top[_ngcontent-%COMP%] {\n  height: auto;\n  max-width: 90px;\n}\n\n.card[_ngcontent-%COMP%] {\n  align-items: center;\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvbW9kdWxlcy9jdXJyaWN1bHVtL2N1cnJyaWN1bHVtLWF0cmlidXRvcy9jdXJyaWN1bHVtLWF0cmlidXRvc3NvZnQtZm9ybS9jdXJyaWN1bHVtLWF0cmlidXRvc3NvZnQtZm9ybS5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFFQTtFQUNFLHdCQUFBO0VBQ0EsaUJBQUE7QUFBRjs7QUFHQTtFQUNFLFlBQUE7RUFDQSxlQUFBO0FBQUY7O0FBSUE7RUFDRSxtQkFBQTtBQURGIiwic291cmNlc0NvbnRlbnQiOlsiQGltcG9ydCB1cmwoJ2h0dHBzOi8vZm9udHMuY2RuZm9udHMuY29tL2Nzcy9uZXV0cmEtdGV4dC1hbHQnKTtcblxuLmg0LCAuY2FyZC10aXRsZXtcbiAgZm9udC1mYW1pbHk6IG5ldXRyYSB0ZXh0O1xuICBmb250LXdlaWdodDogYm9sZDtcbn1cblxuLmNhcmQtaW1nLXRvcHtcbiAgaGVpZ2h0OiBhdXRvO1xuICBtYXgtd2lkdGg6IDkwcHg7XG4gLy8gYmFja2dyb3VuZC1jb2xvcjogI2Y1ZjdmYTtcbn1cblxuLmNhcmR7XG4gIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG59Il0sInNvdXJjZVJvb3QiOiIifQ== */"]
 });
 
 /***/ }),

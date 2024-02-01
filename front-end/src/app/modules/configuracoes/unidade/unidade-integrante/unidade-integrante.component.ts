@@ -46,7 +46,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     super.ngOnInit();
     //this.entity_id = this.metadata?.entity_id || this.entity?.id;
     //this.unidade = this.metadata?.unidade;
-    this.entity = this.metadata?.unidade;
+    this.entity = this.metadata ? this.metadata?.unidade : this.entity;
     this.tiposAtribuicao = this.lookup.UNIDADE_INTEGRANTE_TIPO;
   }
 
@@ -201,10 +201,10 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
               if (msg = resposta?.find(v => v._metadata.msg?.length)?._metadata.msg) { if (this.grid) this.grid.error = msg; };
             });
             await this.loadData({ id: this.entity!.id }, this.form);
-            //if (this.grid) this.grid!.error = "";
+            //if (this.grid) this.grid!.error = "";//
           } else {                // se não persistente
             this.substituirItem(row, novasAtribuicoes);
-//            await this.loadData({ id: this.entity!.id }, this.form);
+            //await this.loadData({ id: this.entity!.id }, this.form);//
           }
         } catch (error: any) {
           if (this.grid) this.grid.error = error;
