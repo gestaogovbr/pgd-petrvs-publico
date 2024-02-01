@@ -40,6 +40,7 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
       codigo: { default: "" },
       tipoQuestionario: { default: "" },
       switchExemplo: { default: false },
+      switchAnonimo: { default: false },
     }, this.cdRef, this.validate);
     this.formPergunta = this.fh.FormBuilder({
       pergunta: { default: "" },

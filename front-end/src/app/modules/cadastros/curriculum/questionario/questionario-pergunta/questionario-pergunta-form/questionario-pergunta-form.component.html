@@ -1,8 +1,9 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
     <div class="row mt-3">
         <input-text [size]="2" label="Código" icon="bi bi-pen" controlName="codigo" [control]="form!.controls.codigo" [attr.maxlength]=250></input-text>
-        <input-text [size]="6" label="Nome" icon="bi bi-pen" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250></input-text>
-        <input-select [size]="4" label="Tipo" icon="bi bi-pen" controlName="tipoQuestionario" [control]="form!.controls.tipoQuestionario" [items]="lookup.QUESTIONARIO_TIPO"></input-select>
+        <input-text [size]="5" label="Nome" icon="bi bi-pen" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250></input-text>
+        <input-select [size]="3" label="Tipo" icon="bi bi-pen" controlName="tipoQuestionario" [control]="form!.controls.tipoQuestionario" [items]="lookup.QUESTIONARIO_TIPO"></input-select>
+        <input-switch #switchAnonimo [size]="2" label="Anônimo" icon="fas fa-chalkboard" controllName="switchAnonimo" [control]="form!.controls.switchAnonimo"></input-switch>
     </div>
     <separator title="Exemplo dos tipos de respostas para as perguntas">
         <div class="row">
