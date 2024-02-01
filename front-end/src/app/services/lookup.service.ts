@@ -49,6 +49,12 @@ export class LookupService implements IIndexable {
     // Carregar os lookups diretamente na instancia do LookupService (IIndexable)
   }
 
+  
+  public EDICOES: LookupItem[] = [
+    { key: "PRF", value: "PRF" },
+    { key: "MGI", value: "MGI" }
+  ];
+
   public SIMNAO: LookupItem[] = [
     { key: 1, value: "Sim" },
     { key: 0, value: "Não" }
