@@ -29,7 +29,7 @@ import { IntegranteConsolidado, UnidadeIntegrante } from 'src/app/models/unidade
 
 export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  @ViewChild(UnidadeIntegranteComponent, { static: false }) public usuariosIntegrantes?: UnidadeIntegranteComponent;
+  //@ViewChild(UnidadeIntegranteComponent, { static: false }) public usuariosIntegrantes?: UnidadeIntegranteComponent;
   @ViewChild('unidade_pai', { static: false }) public unidadePai?: InputSearchComponent;
   @ViewChild('cidade', { static: false }) public cidade?: InputSearchComponent;
   @ViewChild('gestor', { static: false }) public gestor?: InputSearchComponent;
@@ -108,7 +108,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     this.unidade_raiz = this.action == 'edit' && !entity.unidade_pai_id;
     this.form!.controls.usar_expediente_unidade.setValue(entity.expediente ? true : false);
     this.fh.revalidate(this.form!);
-    await this.usuariosIntegrantes?.loadData(entity);
+    //await this.usuariosIntegrantes?.loadData(entity);
   }
 
   public initializeData(form: FormGroup): void {
@@ -133,10 +133,10 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
 
   public formValidation = (form?: FormGroup) => {
     const erros_integrantes = [];
-    this.usuariosIntegrantes?.grid?.items.forEach((usuarioIntegrante) => {
+    /*this.usuariosIntegrantes?.grid?.items.forEach((usuarioIntegrante) => {
       if (usuarioIntegrante.usuario_id == '') erros_integrantes.push({ integrante: usuarioIntegrante, erro: 'Falta o usuario' })
     });
-    if (erros_integrantes.length) return "Na aba 'Integrantes' há usuário não salvo. Salve-o antes de salvar a unidade!"
+    if (erros_integrantes.length) return "Na aba 'Integrantes' há usuário não salvo. Salve-o antes de salvar a unidade!"*/
     return undefined;
   }
 
@@ -161,18 +161,18 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
   public saveData(form: IIndexable): Promise<Unidade> {
     return new Promise<Unidade>(async (resolve, reject) => {
       this.notificacoes!.saveData();
-      this.usuariosIntegrantes!.grid!.confirm();
+      //this.usuariosIntegrantes!.grid!.confirm();
       let unidade: Unidade = this.util.fill(new Unidade(), this.entity!);
       unidade = this.util.fillForm(unidade, this.form!.value);
       unidade.notificacoes = this.entity!.notificacoes;
       unidade.notificacoes_templates = this.entity!.notificacoes_templates;
       if (!this.form!.controls.usar_expediente_unidade) unidade.expediente = null;
-      let integrantesConsolidados: IntegranteConsolidado[] = this.usuariosIntegrantes?.items || [];
+      /*let integrantesConsolidados: IntegranteConsolidado[] = this.usuariosIntegrantes?.items || [];
       unidade.integrantes = integrantesConsolidados.map(x => new UnidadeIntegrante({
         usuario_id: x.usuario_id,
         unidade_id: x.unidade_id,
         atribuicoes: x.atribuicoes
-      }));
+      }));*/
       resolve(unidade);
     });
   }

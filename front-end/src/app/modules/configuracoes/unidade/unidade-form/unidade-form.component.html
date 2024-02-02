@@ -42,8 +42,8 @@
     <tab *ngIf="entity" key="NOTIFICACOES" label="Notificações">
       <notificacoes-config #notificacoes [unidadeId]="entity.id.length ? entity!.id : 'ADD'" [entity]="entity!" [disabled]="formDisabled"></notificacoes-config>
     </tab>
-    <tab *ngIf="entity && this.auth.hasPermissionTo('MOD_UND_INTG')" key="INTEGRANTES" [label]="lex.translate('Integrantes')">
+    <!--tab *ngIf="entity && this.auth.hasPermissionTo('MOD_UND_INTG')" key="INTEGRANTES" [label]="lex.translate('Integrantes')">
       <unidade-integrante #usuariosIntegrantes noPersist [entity]="this.entity"></unidade-integrante>
-    </tab>
+    </tab-->
   </tabs>
 </editable-form>

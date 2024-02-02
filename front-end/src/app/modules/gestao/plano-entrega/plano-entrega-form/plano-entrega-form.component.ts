@@ -135,12 +135,12 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   public onUnidadeChange(){ this.sugereNome(); }
 
   public sugereNome() {
-    if(this.action == 'new') {
+    //if(this.action == 'new') {
       const sigla = this.unidade?.selectedItem ? this.unidade?.selectedItem?.entity.sigla : this.auth.unidade?.sigla;
       const di = new Date(this.form!.controls.data_inicio.value).toLocaleDateString();
       const df = this.form!.controls.data_fim.value ? " - " + new Date(this.form!.controls.data_fim.value).toLocaleDateString() : '';
       this.form!.controls.nome.setValue(sigla + " - " + di + df);
-    }
+    //}
   }
 
   public somaDia(date: Date, days: number){

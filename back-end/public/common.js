@@ -23,40 +23,6 @@ class TipoJustificativa extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
 
 /***/ }),
 
-/***/ 83337:
-/*!****************************************************!*\
-  !*** ./src/app/models/unidade-integrante.model.ts ***!
-  \****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   IntegranteConsolidado: () => (/* binding */ IntegranteConsolidado),
-/* harmony export */   UnidadeIntegrante: () => (/* binding */ UnidadeIntegrante)
-/* harmony export */ });
-/* harmony import */ var _base_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./base.model */ 64368);
-
-class IntegranteConsolidado extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
-  constructor(data) {
-    super();
-    this.id = ""; /* Utilizado somente para garantir o funcionamento do grid */
-    this.atribuicoes = [];
-    this.initialization(data);
-  }
-}
-;
-class UnidadeIntegrante extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
-  constructor(data) {
-    super();
-    this.atribuicoes = [];
-    this.usuario_id = ""; /* Usuário vinculado */
-    this.unidade_id = ""; /* Unidade Vinculada */
-    this.initialization(data);
-  }
-}
-
-/***/ }),
-
 /***/ 34269:
 /*!************************************************!*\
   !*** ./src/app/modules/home/home.component.ts ***!
