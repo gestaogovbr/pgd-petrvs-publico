@@ -55,7 +55,9 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
   public abertura : number = 0;
   public chart: any;
   public respondido: boolean = false;
-   
+  public min : string = '';
+  public max : string = '';
+  public valueTrack : string = '';
 
   constructor(public injector: Injector) {
     super(injector, QuestionarioResposta, QuestionarioRespostaDaoService);
@@ -301,7 +303,7 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
   }
 
   public chartb5(dados : number[] = []){
-
+/*
     (document.querySelector('.divgraficob5')?.hasAttribute('hidden')) ? document.querySelector('.divgraficob5')?.removeAttribute('hidden') : '';
     (document.querySelector('.resultado')?.hasAttribute('hidden')) ? document.querySelector('.resultado')?.removeAttribute('hidden') : '';
     document.querySelector('.cardb5')?.setAttribute('hidden','');
@@ -310,6 +312,57 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
     this.chart ? this.chart.destroy() : '';
 
     this.chart = new Chart("MyChart", {
+      type: "bar",
+      data: {
+        labels: ["Extroversão", "Agradabilidade", "Conciensciosidade", "Estabilidade", "Abertura"],
+        datasets: [
+          {
+            label: "Pontuação",
+            data: dados, 
+            backgroundColor: [
+              "rgba(255, 99, 132, 0.2)",
+              "rgba(54, 162, 235, 0.2)",
+              "rgba(255, 206, 86, 0.2)",
+              "rgba(75, 192, 192, 0.2)",
+              "rgba(153, 102, 255, 0.2)",
+              
+            ],
+            borderColor: [
+              "rgba(255, 99, 132, 1)",
+              "rgba(54, 162, 235, 1)",
+              "rgba(255, 206, 86, 1)",
+              "rgba(75, 192, 192, 1)",
+              "rgba(153, 102, 255, 1)",
+             
+            ],
+            borderWidth: 1
+          }
+        ]
+      },
+      options : {
+        scales: {
+          
+          },
+      },
+    });
+*/
+    const sliders = document.querySelectorAll(".slider-ui");
+
+      sliders.forEach((slider,index) => {
+        console.log(index)
+        this.min = '0';
+        this.max = '40';
+        const trackId = slider.querySelector(".value")!.id;
+        let track = document.getElementById(trackId);
+        track!.style.left= ((dados[index] / 40) * 100) +'%';
+        track!.textContent = dados[index].toString();
+        
+
+      });
+  
+  }
+
+    /*this.chart = new Chart("MyChart", {
           type: 'pie', //this denotes tha type of chart
 
           data: {// values on X-Axis
@@ -333,7 +386,7 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
           }
 
         });
-  }
+  }*/
 
   public onClickDivB5(div:string, lbl:string, icon:string){
 

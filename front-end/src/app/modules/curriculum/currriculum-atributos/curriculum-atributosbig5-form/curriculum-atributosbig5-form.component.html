@@ -6,7 +6,7 @@
 
         <separator class="my-5" title="Você quer se conhecer melhor? Este teste de personalidade irá ajudá-lo a compreender as formas de seu comportamento e os motivos de suas ações." [bold]="false"></separator>
 
-        <div class="card cardb5 my-3" id="cardpergb5">
+        <!--<div class="card cardb5 my-3" id="cardpergb5">
             <div class="card-header">
                 Para prosseguir é necessário responder a pergunta
             </div>
@@ -23,7 +23,7 @@
                 </div>
 
             </div>
-            <div class="card-footer"><!-- text-center-->
+            <div class="card-footer">
                 <div class="row d-flex justify-content-between">
                     <div class="col-md-3">
                         <button #btnv type="button" class="btn btn-primary btnvoltar" id="btnv" name="btnv" (click)="voltar($event)" disabled>Voltar</button>
@@ -32,44 +32,41 @@
                     <div class="col-md-3">
                         <button type="button" class="btn btn-primary btnenviar" id="btne" name="btne" (click)="enviar()" disabled>Enviar</button>
                     </div>
-                    <!--  <div class="col-md-3">
-                        <button type="button" class="btn btn-primary" id="btnp" onclick="proxb5()">Próxima</button>
-                    </div>-->
-                    <!--  <div class="col-md-3">
-                       <button type="button" class="btn btn-primary" id="btnteste" onclick="resposta()">Resposta</button>
-                   </div>-->
                 </div>
             </div>
-        </div>
+        </div>-->
 
         <div class="card cardb52 my-3" id="cardpergb5">
             <div class="card-header">
-                Para prosseguir é necessário responder a pergunta
+                <div #divb5 class="row tex-center divb5">
+                    <label class="text-center fw-bold">
+                        <h5>{{numeroPergunta}}. {{this.showPergunta}}</h5>
+                    </label>
+                </div>
+                <!--Para prosseguir é necessário responder a pergunta-->
             </div>
             <div class="card-body text-wrap">
-                <div #divb5 class="row tex-center divb5">
-                    <label class="text-center fw-bold">{{numeroPergunta}}. {{this.showPergunta}}</label>
-                </div>
+
                 <div class="row my-2">
                     <div class="col-md-12" id="divradiob5" (change)="onRadioChange($event)">
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="radioB" id="radiob51" value=1>
+                            <input class="form-check-input" type="radio" name="radiob5" id="radiob51" value=1>
                             <label class="form-check-label" for="radiob51">Muito Inadequado</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="radioB" id="radiob52" value=2>
+                            <input class="form-check-input" type="radio" name="radiob5" id="radiob52" value=2>
                             <label class="form-check-label" for="radiob52">Relativamente Inadequado</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="radioB" id="radiob53" value=3>
+                            <input class="form-check-input" type="radio" name="radiob5" id="radiob53" value=3>
                             <label class="form-check-label" for="radiob53">Nem Adequado, Nem Inadequado</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="radioB" id="radiob54" value=4>
+                            <input class="form-check-input" type="radio" name="radiob5" id="radiob54" value=4>
                             <label class="form-check-label" for="radiob54">Relativamente Adequado</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="radioB" id="radiob55" value=5>
+                            <input class="form-check-input" type="radio" name="radiob5" id="radiob55" value=5>
                             <label class="form-check-label" for="radiob55">Muito Adequado</label>
                         </div>
                     </div>
@@ -83,9 +80,9 @@
 
                     </div>
                     <div class="col-md-3">
-                        <button type="button" class="btn btn-primary btnenviar" id="btne" name="btne2" (click)="proximo($event)" disabled>Enviar</button>
+                        <button type="button" class="btn btn-primary btnenviar" id="btne" name="btne2" (click)="enviar()" disabled>Enviar</button>
                     </div>
-                  
+
                 </div>
             </div>
         </div>
@@ -118,6 +115,77 @@
             <div class="divgraficob5 mb-5" hidden>
                 <div class="chart-container">
                     <canvas id="MyChart">{{ chart }}</canvas>
+                </div>
+            </div>
+
+
+            <div class="slider-container">
+                <div class="slider-ui color1">
+                    <input type="range" min="0" max="40" step="1">
+                    <div class="bar">
+                        <span class="min">{{this.min}}</span>
+                        <span class="max">{{this.max}}</span>
+                        <span class="sp1">Introversão</span>
+                        <span class="sp2">Extroversao</span>
+                    </div>
+                    <div class="track">
+                        <div class="value" id="track1">{{this.valueTrack}}</div>
+                    </div>
+                </div>
+
+
+
+                <div class="slider-ui color2">
+                    <input type="range" min="0" max="40" step="1">
+                    <div class="bar">
+                        <span class="min">{{this.min}}</span>
+                        <span class="max">{{this.max}}</span>
+                        <span class="sp1">Desconfiança</span>
+                        <span class="sp2">Agradabilidade</span>
+                    </div>
+                    <div class="track">
+                        <div class="value" id="track2">{{this.valueTrack}}</div>
+                    </div>
+                </div>
+
+
+                <div class="slider-ui color3">
+                    <input type="range" min="0" max="40" step="1">
+                    <div class="bar">
+                        <span class="min">{{this.min}}</span>
+                        <span class="max">{{this.max}}</span>
+                        <span class="sp1">Comportamento Espôntaneo</span>
+                        <span class="sp2">Comportamento Planejado</span>
+                    </div>
+                    <div class="track">
+                        <div class="value" id="track3">{{this.valueTrack}}</div>
+                    </div>
+                </div>
+
+                <div class="slider-ui color4">
+                    <input type="range" min="0" max="40" step="1">
+                    <div class="bar">
+                        <span class="min">{{this.min}}</span>
+                        <span class="max">{{this.max}}</span>
+                        <span class="sp1">Calmos</span>
+                        <span class="sp2">Reativos</span>
+                    </div>
+                    <div class="track">
+                        <div class="value" id="track4">{{this.valueTrack}}</div>
+                    </div>
+                </div>
+
+                <div class="slider-ui color5">
+                    <input type="range" min="0" max="40" step="1">
+                    <div class="bar">
+                        <span class="min">{{this.min}}</span>
+                        <span class="max">{{this.max}}</span>
+                        <span class="sp1">Conservadorismo</span>
+                        <span class="sp2">Novas Experiências</span>
+                    </div>
+                    <div class="track">
+                        <div class="value" id="track5">{{this.valueTrack}}</div>
+                    </div>
                 </div>
             </div>
 
