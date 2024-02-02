@@ -2501,13 +2501,14 @@ class PlanoEntregaFormComponent extends src_app_modules_base_page_form_base__WEB
     this.sugereNome();
   }
   sugereNome() {
-    if (this.action == 'new') {
-      const sigla = this.unidade?.selectedItem ? this.unidade?.selectedItem?.entity.sigla : this.auth.unidade?.sigla;
-      const di = new Date(this.form.controls.data_inicio.value).toLocaleDateString();
-      const df = this.form.controls.data_fim.value ? " - " + new Date(this.form.controls.data_fim.value).toLocaleDateString() : '';
-      this.form.controls.nome.setValue(sigla + " - " + di + df);
-    }
+    //if(this.action == 'new') {
+    const sigla = this.unidade?.selectedItem ? this.unidade?.selectedItem?.entity.sigla : this.auth.unidade?.sigla;
+    const di = new Date(this.form.controls.data_inicio.value).toLocaleDateString();
+    const df = this.form.controls.data_fim.value ? " - " + new Date(this.form.controls.data_fim.value).toLocaleDateString() : '';
+    this.form.controls.nome.setValue(sigla + " - " + di + df);
+    //}
   }
+
   somaDia(date, days) {
     let result = new Date(date);
     result.setDate(result.getDate() + days);
