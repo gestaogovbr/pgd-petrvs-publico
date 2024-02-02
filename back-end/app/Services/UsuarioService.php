@@ -38,7 +38,7 @@ class UsuarioService extends ServiceBase
         }
     }
 
-    public function dashboard($data_inicial, $data_final, $usuario_id) {
+/*     public function dashboard($data_inicial, $data_final, $usuario_id) {
         $result = [];
         $planosTrabalhoAtivos = $this->planoTrabalhoService->planosAtivosPorData($data_inicial, $data_final, $usuario_id);
         $planos_ids = $planosTrabalhoAtivos->map(function($plano){return $plano->id;});
@@ -66,7 +66,7 @@ class UsuarioService extends ServiceBase
         ];
         $result['horas_afastamentos'] = 0;
         return $result;
-    }
+    } */
 
     /**
      * dashboard
@@ -76,7 +76,7 @@ class UsuarioService extends ServiceBase
      * @param  mixed $usuario_id: ID do usuário do qual se deseja as informações para o dashboard
      * @return array: array contendo todas as informações para o front-end do usuário
      */
-    public function dashboard_gestor($data_inicial, $data_final, $unidade_ids) {
+/*     public function dashboardGestor($data_inicial, $data_final, $unidade_ids) {
         $result = [];
         $usuarios = [];
         foreach(Unidade::whereIn('id',$unidade_ids)->get() as $u) { array_push($usuarios, ...$u->integrantes); }
@@ -100,7 +100,7 @@ class UsuarioService extends ServiceBase
             ];
         }
         return $result;
-    }
+    } */
 
     public function downloadImgProfile($url, $path) {
         if(!Storage::exists($path)) {
@@ -119,6 +119,10 @@ class UsuarioService extends ServiceBase
     }
 
     public function extraStore($entity, $unidade, $action) {
+        foreach($this->buffer["integrantes"] as $integrante) {
+            $integrante["usuario_id"] = $entity->id;
+        }        
+        $this->UnidadeIntegranteService->salvarIntegrantes($this->buffer["integrantes"]);
         if($action != ServiceBase::ACTION_INSERT) $this->unidadeIntegranteAtribuicaoService->checkLotacoes($entity->id);
     }
 
@@ -216,7 +220,7 @@ class UsuarioService extends ServiceBase
      * @param  mixed $unidade_ids: Unidades que o usuário gerencia
      * @return array: array contendo todas as informações dos planos de trabalho de cada usuário da unidade (front-end do gestor)
      */
-    public function planosTrabalhoPorPeriodo($usuario_id, $inicioPeriodo = null, $fimPeriodo = null){
+/*     public function planosTrabalhoPorPeriodo($usuario_id, $inicioPeriodo = null, $fimPeriodo = null){
         $result = [];
         $planos = PlanoTrabalho::where("usuario_id", $usuario_id)->with(['atividades', 'unidade', 'tipoModalidade'])->get();
         if ($inicioPeriodo == null || $fimPeriodo == null) {
@@ -227,7 +231,7 @@ class UsuarioService extends ServiceBase
             }
         }
         return $result;
-    }
+    } */
 
     public function proxyQuery($query, &$data) {   
         $usuario = parent::loggedUser();
@@ -260,6 +264,8 @@ class UsuarioService extends ServiceBase
     public function proxyStore(&$data, $unidade, $action) {
         $data['cpf'] = $this->UtilService->onlyNumbers($data['cpf']);
         if(!empty($data['telefone'])) $data['telefone'] = $this->UtilService->onlyNumbers($data['telefone']);
+        /* Armazena as informações que serão necessárias no extraStore */
+        $this->buffer = [ "integrantes" => $this->UtilService->getNested($data, "integrantes") ];
         return $data;
     }
 
@@ -289,7 +295,7 @@ class UsuarioService extends ServiceBase
             $alreadyHas = $query1->first() ?? $query2->first();
             if(!empty($alreadyHas)) {
                 if($alreadyHas->deleted_at) { // Caso o usuário exista, mas esteja excluído, reabilita o usuário deletando todos os seus vínculos anteriores e recuperando seus dados sensíveis (cpf, e-mail funcional, matricula, nome, apelido, data_nascimento)
-                    // sugestão: refatorar esse código deixando para o usuário logado decidir se deseja reativar e, em caso positivo, decidir se atualiza os dados ou não
+                    // TODO: Sugestão - refatorar esse código deixando para o usuário logado decidir se deseja reativar e, em caso positivo, decidir se atualiza os dados ou não
                     $this->removerVinculosUsuario($alreadyHas);
                     $data["id"] = $alreadyHas->id;
                     $data["cpf"] = $alreadyHas->cpf;
@@ -303,15 +309,6 @@ class UsuarioService extends ServiceBase
                 } else {
                     throw new Exception("Já existe um usuário com mesmo e-mail ou CPF no sistema");
                 }
-                /*
-                        if($alreadyHas->trashed()) { // Caso o usuário exista, mas esteja excluído, reabilita o usuário deletando todos os seus vínculos anteriores
-                        $this->removerVinculosUsuario($alreadyHas);
-                        $alreadyHas->restore();
-                        return $alreadyHas;
-                    } else {
-                        throw new Exception("Já existe um usuário com mesmo e-mail ou CPF no sistema");
-                    } 
-                */
             }
             if($data["perfil_id"] == $this->developerId && !$this->isLoggedUserADeveloper()) throw new Exception("Tentativa de inserir um usuário com o perfil de Desenvolvedor");
             //$query->toSql();    $query->getBindings();
@@ -320,7 +317,7 @@ class UsuarioService extends ServiceBase
 
     public function removerVinculosUsuario(&$usuario) {
         if(!empty($usuario)) {
-            foreach($usuario->unidadesIntegrante as $vinculo){ $vinculo->deleteCascade(); }
+            foreach($usuario->unidadesIntegrantes as $vinculo){ $vinculo->deleteCascade(); }
             $usuario->fresh();
         }
     }

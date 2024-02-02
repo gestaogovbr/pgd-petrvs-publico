@@ -303,8 +303,8 @@ Route::middleware(['auth:sanctum'])->prefix('Projeto')->group(function () { defa
 /* Modulos: Configurações */
 Route::middleware(['auth:sanctum'])->prefix('Usuario')->group(function () {
     defaultRoutes(UsuarioController::class);
-    Route::post('dashboard', [UsuarioController::class, 'dashboard']);
-    Route::post('dashboard_gestor', [UsuarioController::class, 'dashboard_gestor']);
+    //Route::post('dashboard', [UsuarioController::class, 'dashboard']);
+    //Route::post('dashboard-gestor', [UsuarioController::class, 'dashboardGestor']);
     //Route::post('ja-assinou-tcr', [UsuarioController::class, 'jaAssinouTCR']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Perfil')->group(function () { defaultRoutes(PerfilController::class); });
@@ -325,8 +325,8 @@ Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
     Route::post('lookup-todas-unidades', [UnidadeController::class, 'lookupTodasUnidades']);//Carlos para Curriculum Profissional
 });
 Route::middleware(['auth:sanctum'])->prefix('UnidadeIntegrante')->group(function () {
-    Route::post('load-integrantes', [UnidadeIntegranteController::class, 'loadIntegrantes']);
-    Route::post('save-integrante', [UnidadeIntegranteController::class, 'saveIntegrante']);
+    Route::post('carregar-integrantes', [UnidadeIntegranteController::class, 'carregarIntegrantes']);
+    Route::post('salvar-integrantes', [UnidadeIntegranteController::class, 'salvarIntegrantes']);
 });
 Route::middleware(['auth:sanctum'])->prefix('UnidadeIntegranteAtribuicao')->group(function () {
     Route::post('destroy', [UnidadeIntegranteAtribuicaoController::class, 'destroy']);

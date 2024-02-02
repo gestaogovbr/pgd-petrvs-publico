@@ -839,4 +839,8 @@ export class LookupService implements IIndexable {
     array.forEach(elem => { if(!novoArray.find(x => x.key == elem.key)) novoArray.push(elem); });
     return novoArray;
   }
+
+  public ordenarLookupItem(array: LookupItem[]): LookupItem[] {
+    return array.sort((a, b) => (a.value < b.value) ? -1 : 1);
+  }
 }

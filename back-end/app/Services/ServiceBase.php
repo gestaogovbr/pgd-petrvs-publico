@@ -717,18 +717,6 @@ class ServiceBase extends DynamicMethods
         $file = strpos($file, ';base64') ? explode(',', $file)[1] : $file;
         $path = Storage::putFileAs($path, base64_decode($file), $name);
         return $path;
-        /*$base64 = $data->file;
-        //obtem a extensão
-        $extension = explode('/', $base64);
-        $extension = explode(';', $extension[1]);
-        $extension = '.'.$extension[0];
-        //gera o nome
-        $name = time().$extension;
-        //obtem o arquivo
-        $separatorFile = explode(',', $base64);
-        $file = $separatorFile[1];
-        $path = 'public/base64-files/';*/
-        //Storage::put($path.$name, base64_decode($file));*/
     }
 
 

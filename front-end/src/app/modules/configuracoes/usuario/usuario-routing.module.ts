@@ -11,7 +11,7 @@ const routes: Routes = [
   { path: 'new', component: UsuarioFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Usuário", modal: true } },
   { path: ':id/edit', component: UsuarioFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de Usuário", modal: true } },
   { path: ':id/consult', component: UsuarioFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Usuário", modal: true } },
-  { path: ':id/:idUsuario/integrante', component: UsuarioIntegranteComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Atribuições do Usuário", modal: true } },
+  { path: ':id/integrante', component: UsuarioIntegranteComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Atribuições do Usuário", modal: true } },
 ];
 
 @NgModule({

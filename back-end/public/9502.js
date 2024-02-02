@@ -90,14 +90,30 @@ const _c8 = function (a0) {
   return [a0];
 };
 class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_9__.PageFormBase {
+  get informalIsDisabled() {
+    //return this.action != 'new' ? 'true' : undefined;
+    return 'true';
+  }
+  get instituidoraIsDisabled() {
+    return this.informal ? 'true' : undefined;
+  }
+  get codigoIsDisabled() {
+    return !this.informal && this.action == 'new' ? undefined : 'true';
+  }
+  get unidadePaiIsDisabled() {
+    return this.unidadeRaiz || !this.informal && this.action == 'edit' ? 'true' : undefined;
+  }
+  get isDisabled() {
+    return !this.informal && this.action == 'edit' ? 'true' : undefined;
+  }
   constructor(injector) {
     super(injector, src_app_models_unidade_model__WEBPACK_IMPORTED_MODULE_8__.Unidade, src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_5__.UnidadeDaoService);
     this.injector = injector;
-    this.unidade_raiz = false;
+    this.unidadeRaiz = false;
     this.informal = true;
     this.validate = (control, controlName) => {
       let result = null;
-      if (controlName == 'unidade_pai_id' && !control.value?.length && !this.unidade_raiz) {
+      if (controlName == 'unidade_pai_id' && !control.value?.length && !this.unidadeRaiz) {
         result = "Obrigatório";
       }
       if (controlName == 'codigo' && !this.form?.controls.informal.value && !parseInt(control.value)) {
@@ -112,8 +128,6 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
     this.cidadeDao = injector.get(src_app_dao_cidade_dao_service__WEBPACK_IMPORTED_MODULE_2__.CidadeDaoService);
     this.usuarioDao = injector.get(src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_6__.UsuarioDaoService);
     this.planoTrabalhoDao = injector.get(src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_4__.PlanoTrabalhoDaoService);
-    //this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
-    //this.integranteAtribuicaoDao = injector.get<UnidadeIntegranteAtribuicaoDaoService>(UnidadeIntegranteAtribuicaoDaoService);
     this.notificacao = injector.get(src_app_modules_uteis_notificacoes_notificacao_service__WEBPACK_IMPORTED_MODULE_10__.NotificacaoService);
     this.modalWidth = 1200;
     this.planoDataset = this.planoTrabalhoDao.dataset();
@@ -185,17 +199,6 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
         default: ""
       }
     }, this.cdRef, this.validate);
-    this.formGestor = this.fh.FormBuilder({
-      gestor_id: {
-        default: null
-      },
-      gestor_substituto_id: {
-        default: null
-      },
-      gestor_delegado_id: {
-        default: null
-      }
-    }, this.cdRef);
     this.join = ["cidade", "entidade", "unidade_pai", "gestor.usuario:id,nome", "gestores_substitutos.usuario:id,nome", "gestores_delegados.usuario:id,nome", "notificacoes_templates", "gestor.gestor:id", "gestores_substitutos.gestor_substituto:id", "gestores_delegados.gestor_delegado:id"];
   }
   loadData(entity, form) {
@@ -208,10 +211,9 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
       yield Promise.all([_this.unidadePai.loadSearch(entity.unidade_pai || entity.unidade_pai_id), _this.cidade.loadSearch(entity.cidade || entity.cidade_id), _this.entidade.loadSearch(entity.entidade || entity.entidade_id)]);
       entity.etiquetas = entity.etiquetas || [];
       _this.form.controls.informal.setValue(entity.informal);
-      _this.unidade_raiz = _this.action == 'edit' && !entity.unidade_pai_id;
+      _this.unidadeRaiz = _this.action == 'edit' && !entity.unidade_pai_id;
       _this.form.controls.usar_expediente_unidade.setValue(entity.expediente ? true : false);
       _this.fh.revalidate(_this.form);
-      //await this.usuariosIntegrantes?.loadData(entity);
     })();
   }
   initializeData(form) {
@@ -222,14 +224,6 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
     });
     this.loadData(this.entity, form);
   }
-  /*   public formValidation = (form?: FormGroup) => {
-      const erros_integrantes = [];
-      this.usuariosIntegrantes?.grid?.items.forEach((usuarioIntegrante) => {
-        if (usuarioIntegrante.usuario_id == '') erros_integrantes.push({ integrante: usuarioIntegrante, erro: 'Falta o usuario' })
-      });
-      if (erros_integrantes.length) return "Na aba 'Integrantes' há usuário não salvo. Salve-o antes de salvar a unidade!"
-      return undefined;
-    } */
   addItemHandle() {
     let result = undefined;
     const value = this.form.controls.etiqueta_texto.value;
@@ -252,18 +246,11 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
     return new Promise( /*#__PURE__*/function () {
       var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (resolve, reject) {
         _this2.notificacoes.saveData();
-        //this.usuariosIntegrantes!.grid!.confirm();
         let unidade = _this2.util.fill(new src_app_models_unidade_model__WEBPACK_IMPORTED_MODULE_8__.Unidade(), _this2.entity);
         unidade = _this2.util.fillForm(unidade, _this2.form.value);
         unidade.notificacoes = _this2.entity.notificacoes;
         unidade.notificacoes_templates = _this2.entity.notificacoes_templates;
         if (!_this2.form.controls.usar_expediente_unidade) unidade.expediente = null;
-        /*       let integrantesConsolidados: IntegranteConsolidado[] = this.usuariosIntegrantes?.items || [];
-              unidade.integrantes = integrantesConsolidados.map(x => new UnidadeIntegrante({
-                usuario_id: x.usuario_id,
-                unidade_id: x.unidade_id,
-                atribuicoes: x.atribuicoes
-              })); */
         resolve(unidade);
       });
       return function (_x, _x2) {
@@ -279,22 +266,6 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
   }
   onUsarExpedienteEntidadeChange() {
     this.form.controls.expediente.setValue(this.form.controls.usar_expediente_unidade.value ? this.form.controls.expediente.value || new src_app_models_expediente_model__WEBPACK_IMPORTED_MODULE_7__.Expediente() : null);
-  }
-  get informalIsDisabled() {
-    //return this.action != 'new' ? 'true' : undefined;
-    return 'true';
-  }
-  get instituidoraIsDisabled() {
-    return this.informal ? 'true' : undefined;
-  }
-  get codigoIsDisabled() {
-    return !this.informal && this.action == 'new' ? undefined : 'true';
-  }
-  get unidadePaiIsDisabled() {
-    return this.unidade_raiz || !this.informal && this.action == 'edit' ? 'true' : undefined;
-  }
-  get isDisabled() {
-    return !this.informal && this.action == 'edit' ? 'true' : undefined;
   }
   static #_ = this.ɵfac = function UnidadeFormComponent_Factory(t) {
     return new (t || UnidadeFormComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_24__.Injector));
@@ -502,7 +473,8 @@ function UnidadeIntegranteComponent_ng_template_7_Template(rf, ctx) {
   }
   if (rf & 2) {
     const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("size", 12)("dao", ctx_r5.usuarioDao);
+    const _r0 = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵreference"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("disabled", (_r0 == null ? null : _r0.adding) ? undefined : "true")("size", 12)("dao", ctx_r5.usuarioDao);
   }
 }
 function UnidadeIntegranteComponent_ng_template_10_div_0_Template(rf, ctx) {
@@ -563,7 +535,6 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
     super(injector);
     this.injector = injector;
     this.items = [];
-    //public unidade?: Unidade;
     this.tiposAtribuicao = [];
     this.validate = (control, controlName) => {
       let result = null;
@@ -573,7 +544,7 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
     };
     this.formValidation = form => {
       let atribuicoes = form.controls.atribuicoes.value;
-      //if() result = ""; CONSTRUIR A CONDIÇÃO PARA CHECAR SE HÁ A ATRIBUIÇÃO DE MAIS DE UM GESTOR PARA O MESMO SERVIDOR NA MESMA UNIDADE
+      // TODO: if() result = ""; CONSTRUIR A CONDIÇÃO PARA CHECAR SE HÁ A ATRIBUIÇÃO DE MAIS DE UM GESTOR PARA O MESMO SERVIDOR NA MESMA UNIDADE
       return undefined;
     };
     this.integranteService = injector.get(src_app_services_integrante_service__WEBPACK_IMPORTED_MODULE_5__.IntegranteService);
@@ -593,8 +564,6 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
   }
   ngOnInit() {
     super.ngOnInit();
-    //this.entity_id = this.metadata?.entity_id || this.entity?.id;
-    //this.unidade = this.metadata?.unidade;
     this.entity = this.metadata?.unidade;
     this.tiposAtribuicao = this.lookup.UNIDADE_INTEGRANTE_TIPO;
   }
@@ -616,31 +585,16 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
         let integrantes = [];
         _this2.loading = true;
         try {
-          yield _this2.integranteDao.loadIntegrantes(entity.id, "").then(resposta => integrantes = resposta.integrantes.filter(x => x.atribuicoes?.length > 0));
+          yield _this2.integranteDao.carregarIntegrantes(entity.id, "").then(resposta => integrantes = resposta.integrantes.filter(x => x.atribuicoes?.length > 0));
         } finally {
           _this2.loading = false;
           _this2.items = [];
           integrantes.forEach(i => _this2.items?.push(_this2.integranteService.completarIntegrante(i, entity.id, i.id, i.atribuicoes)));
-          _this2.items = _this2.integranteService.ordenar(_this2.items);
+          _this2.items = _this2.integranteService.ordenarIntegrantes(_this2.items);
           _this2.cdRef.detectChanges();
           _this2.grid.loading = false;
         }
       }
-    })();
-  }
-  /**
-   * Método chamado para inserir um integrante no grid, seja este componente persistente ou não.
-   * @returns
-   */
-  addIntegrante() {
-    var _this3 = this;
-    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      let novo = {
-        id: _this3.integranteDao.generateUuid(),
-        usuario_id: "",
-        atribuicoes: []
-      };
-      return novo;
     })();
   }
   addItemHandle() {
@@ -661,16 +615,40 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
     return result;
   }
   /**
+   * Garante que não será possível excluir atribuições que possam gerar inconsistências
+   * @param row Atribuição do servidor na unidade
+   * @returns
+   */
+  deleteItemHandle(row) {
+    return this.integranteService.ehPermitidoApagar(row.key);
+  }
+  /**
    * Método chamado na edição de um integrante da Unidade.
    * @param form
    * @param row
    */
-  loadIntegrante(form, row) {
+  carregarIntegrante(form, row) {
+    var _this3 = this;
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      form.controls.usuario_id.setValue(_this3.grid?.adding ? row.usuario_id : row.id);
+      form.controls.atribuicoes.setValue(_this3.integranteService.converterAtribuicoes(row.atribuicoes));
+      form.controls.atribuicao.setValue("");
+    })();
+  }
+  /**
+  * Método chamado para inserir uma atribuição no grid, seja este componente persistente ou não.
+  * @returns
+  */
+  adicionarIntegrante() {
     var _this4 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      form.controls.usuario_id.setValue(_this4.grid?.adding ? row.usuario_id : row.id);
-      form.controls.atribuicoes.setValue(_this4.integranteService.converterAtribuicoes(row.atribuicoes));
-      form.controls.atribuicao.setValue("");
+      if (_this4.grid) _this4.grid.error = '';
+      let novo = {
+        id: _this4.integranteDao.generateUuid(),
+        usuario_id: "",
+        atribuicoes: []
+      };
+      return novo;
     })();
   }
   /**
@@ -678,22 +656,20 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
    * @param row
    * @returns
    */
-  removeIntegrante(row) {
+  removerIntegrante(row) {
     var _this5 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      let nomeServidor = row.usuario_nome;
-      let nomeUnidade = _this5.entity.nome;
-      if (_this5.isNoPersist && row.atribuicoes.length == 1 && row.atribuicoes[0] == "LOTADO") {
-        yield _this5.dialog.alert("IMPOSSÍVEL EXCLUIR !", "Um vínculo não pode ser excluído quando sua única atribuição é a lotação do servidor. Se quiser alterar sua lotação, defina-a em outra Unidade.");
+      if (row.atribuicoes[0].includes("LOTADO")) {
+        yield _this5.dialog.alert("IMPOSSÍVEL EXCLUIR !", "O vínculo que inclui " + _this5.lex.translate('a lotação') + " " + _this5.lex.translate('do servidor') + " não pode ser excluído. Se desejar excluir as demais atribuições, edite o vínculo. Se deseja alterar " + _this5.lex.translate('a lotação') + ", lote-o em outra " + _this5.lex.translate('Unidade') + ".");
       } else {
-        let confirm = yield _this5.dialog.confirm("Exclui ?", "Deseja realmente excluir todas as atribuições do servidor '" + nomeServidor + "' na unidade '" + nomeUnidade + "' ?");
+        let confirm = yield _this5.dialog.confirm("Exclui ?", "Deseja realmente excluir todas as atribuições " + _this5.lex.translate('do servidor') + row.usuario_nome?.toUpperCase() + " " + _this5.lex.translate('na unidade') + " " + _this5.entity.sigla.toUpperCase() + " ?");
         if (confirm) {
           let msg;
           try {
             if (!_this5.isNoPersist) {
               // se persistente
               _this5.loading = true;
-              yield _this5.integranteDao.saveIntegrante([_this5.integranteService.completarIntegrante(row, _this5.entity.id, row.id, [])]).then(resposta => {
+              yield _this5.integranteDao.salvarIntegrantes([_this5.integranteService.completarIntegrante(row, _this5.entity.id, row.id, [])]).then(resposta => {
                 if (msg = resposta.find(v => v._metadata.msg?.length)?._metadata.msg) {
                   if (_this5.grid) _this5.grid.error = msg;
                 }
@@ -713,19 +689,10 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
           } finally {
             _this5.loading = false;
           }
-          //return msg ? false : true;
         }
       }
       return false;
     })();
-  }
-  /**
-   * Garante que não será possível excluir atribuições que possam gerar inconsistências
-   * @param row Atribuição do servidor na unidade
-   * @returns
-   */
-  deleteItemHandle(row) {
-    return this.integranteService.permitidoApagar(row.key, this.isNoPersist);
   }
   /**
    * Método chamado no salvamento de um usuário-integrante (new/edit), seja este componente persistente ou não.
@@ -733,72 +700,72 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
    * @param row
    * @returns
    */
-  saveIntegrante(form, row) {
+  salvarIntegrante(form, row) {
     var _this6 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      form.controls.atribuicoes.setValue(_this6.lookup.uniqueLookupItem(form.controls.atribuicoes.value));
+      let novasAtribuicoes = _this6.lookup.uniqueLookupItem(form.controls.atribuicoes.value);
+      form.controls.atribuicoes.setValue(novasAtribuicoes);
       if (_this6.grid) _this6.grid.error = "";
       _this6.cdRef.detectChanges();
       let error = _this6.formValidation(form);
       if (!error) {
         let confirm = true;
-        let n = _this6.integranteService.alterandoGestor(form, row.atribuicoes || []);
-        if (n.length) confirm = yield _this6.dialog.confirm("Confirma a Alteração do Gestor Titular ?", "O Gestor Titular será alterado para " + row.usuario_nome);
-        if (form.controls.atribuicoes.value.length && confirm) {
-          _this6.loading = true;
-          try {
-            let novasAtribuicoes = form.controls.atribuicoes.value.map(x => x.key);
-            if (!_this6.isNoPersist) {
-              // se persistente
-              yield _this6.integranteDao.saveIntegrante([_this6.integranteService.completarIntegrante(row, _this6.entity.id, form.controls.usuario_id.value, novasAtribuicoes)]).then(resposta => {
-                let msg;
-                if (msg = resposta?.find(v => v._metadata.msg?.length)?._metadata.msg) {
-                  if (_this6.grid) _this6.grid.error = msg;
-                }
-                ;
-              });
-              yield _this6.loadData({
-                id: _this6.entity.id
-              }, _this6.form);
-              //if (this.grid) this.grid!.error = "";
-            } else {
-              // se não persistente
-              _this6.substituirItem(row, novasAtribuicoes);
-              //            await this.loadData({ id: this.entity!.id }, this.form);
+        let alteracaoGestor = _this6.integranteService.haAlteracaoGerencia(novasAtribuicoes.map(x => x.key), Object.assign(row, {
+          usuario_nome: _this6.usuario?.selectedEntity.nome
+        }), _this6.grid?.items || [], _this6.entity?.sigla || "");
+        if (alteracaoGestor[0] != 'nenhuma') {
+          confirm = yield _this6.dialog.confirm("CONFIRMA A ALTERAÇÃO DA CHEFIA ?", alteracaoGestor[2]);
+          if (confirm) {
+            switch (alteracaoGestor[0]) {
+              case 'troca':
+                // Garante que o outro usuário, ex-chefe da unidade, perderá a atribuição de GESTOR
+                _this6.grid.items[alteracaoGestor[1]].atribuicoes = _this6.grid.items[alteracaoGestor[1]].atribuicoes.filter(x => !['GESTOR'].includes(x));
+                break;
             }
-          } catch (error) {
-            if (_this6.grid) _this6.grid.error = error;
+            // Insere a atribuição de LOTADO para o novo Gerente, apenas para fins de atualização da tela, pois o back-end já fará isso automaticamente.
+            novasAtribuicoes = _this6.integranteService.inserirAtribuicao(novasAtribuicoes, 'LOTADO');
+            form.controls.atribuicoes.setValue(novasAtribuicoes);
+            _this6.loading = true;
+          } else return undefined;
+        }
+        try {
+          if (!_this6.isNoPersist) {
+            // se persistente
+            yield _this6.integranteDao.salvarIntegrantes([_this6.integranteService.completarIntegrante(row, _this6.entity.id, form.controls.usuario_id.value, novasAtribuicoes.map(x => x.key))]).then(resposta => {
+              let msg;
+              if (msg = resposta?.find(v => v._metadata.msg?.length)?._metadata.msg) {
+                if (_this6.grid) _this6.grid.error = msg;
+              }
+              ;
+            });
+            // TODO: se retornar uma mensagem de erro, ela será exibida?
             yield _this6.loadData({
               id: _this6.entity.id
             }, _this6.form);
-          } finally {
-            _this6.loading = false;
+            if (_this6.grid) _this6.grid.error = "";
+          } else {
+            // se não persistente
+            _this6.grid.items = _this6.integranteService.substituirItem({
+              id: row.id,
+              itens: _this6.grid?.items || [],
+              usuario_apelido: _this6.usuario?.selectedItem?.entity.apelido,
+              usuario_nome: _this6.usuario?.selectedItem?.entity.nome
+            }, novasAtribuicoes.map(x => x.key), _this6.entity);
           }
+          _this6.cdRef.detectChanges();
+        } catch (error) {
+          if (_this6.grid) _this6.grid.error = error;
+          yield _this6.loadData({
+            id: _this6.entity.id
+          }, _this6.form);
+        } finally {
+          _this6.loading = false;
         }
       } else {
-        if (_this6.grid) _this6.grid.error = "ATENÇÃO" + "&" + error;
-        _this6.substituirItem(row, form.controls.atribuicoes.value.map(x => x.key));
+        yield _this6.dialog.alert("IMPOSSÍVEL SALVAR O VÍNCULO PORQUE HÁ ERRO DE VALIDAÇÃO !", error);
       }
       return undefined;
     })();
-  }
-  substituirItem(row, atribuicoes) {
-    let index = this.items.findIndex(x => x["id"] == row["id"]);
-    this.items[index] = this.integranteService.completarIntegrante({
-      id: row.id,
-      usuario_apelido: this.usuario?.selectedItem?.entity.apelido,
-      usuario_nome: this.usuario?.selectedItem?.entity.nome
-    }, this.entity.id, this.form.controls.usuario_id.value, atribuicoes);
-    // Garante que não haverá na unidade mais de um integrante com as atribuições que exigem exclusividade
-    //let atribuicoesExclusivas = atribuicoes.filter(x => ["GESTOR", "GESTOR_SUBSTITUTO", "GESTOR_DELEGADO"].includes(x));
-    let atribuicoesExclusivas = atribuicoes.filter(x => ["GESTOR"].includes(x));
-    if (atribuicoesExclusivas.length) {
-      this.items.forEach(x => {
-        let intersection = atribuicoesExclusivas.filter(y => x["atribuicoes"].includes(y));
-        if (x["id"] != row["id"] && intersection.length) x["atribuicoes"] = x["atribuicoes"].filter(y => !intersection.includes(y));
-      });
-    }
-    this.cdRef.detectChanges();
   }
   static #_ = this.ɵfac = function UnidadeIntegranteComponent_Factory(t) {
     return new (t || UnidadeIntegranteComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_13__.Injector));
@@ -825,14 +792,14 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
     features: [_angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵInheritDefinitionFeature"]],
     decls: 15,
     vars: 15,
-    consts: [["editable", "", 3, "items", "minHeight", "form", "hasDelete", "add", "load", "remove", "save"], ["grid", ""], [4, "ngIf"], [3, "title", "template", "editTemplate"], ["columnUsuario", ""], ["editUsuario", ""], ["columnAtribuicoes", ""], ["editAtribuicoes", ""], ["type", "options"], [1, "d-flex"], [1, "ms-3"], [3, "url", "size", "hint"], [1, "flex-fill", "ms-3"], ["label", "", "icon", "", "controlName", "usuario_id", 3, "size", "dao"], ["usuario", ""], [4, "ngFor", "ngForOf"], [3, "color", "icon", "label"], ["controlName", "atribuicoes", 3, "size", "addItemHandle", "deleteItemHandle"], ["label", "", "icon", "fas fa-sign-out-alt", "controlName", "atribuicao", 3, "size", "items"]],
+    consts: [["editable", "", 3, "items", "minHeight", "form", "hasDelete", "add", "load", "remove", "save"], ["grid", ""], [4, "ngIf"], [3, "title", "template", "editTemplate"], ["columnUsuario", ""], ["editUsuario", ""], ["columnAtribuicoes", ""], ["editAtribuicoes", ""], ["type", "options"], [1, "d-flex"], [1, "ms-3"], [3, "url", "size", "hint"], [1, "flex-fill", "ms-3"], ["label", "", "icon", "", "controlName", "usuario_id", 3, "disabled", "size", "dao"], ["usuario", ""], [4, "ngFor", "ngForOf"], [3, "color", "icon", "label"], ["controlName", "atribuicoes", 3, "size", "addItemHandle", "deleteItemHandle"], ["label", "", "icon", "fas fa-sign-out-alt", "controlName", "atribuicao", 3, "size", "items"]],
     template: function UnidadeIntegranteComponent_Template(rf, ctx) {
       if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](0, "grid", 0, 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](2, UnidadeIntegranteComponent_span_2_Template, 3, 1, "span", 2);
         _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](3, "columns")(4, "column", 3);
         _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](5, UnidadeIntegranteComponent_ng_template_5_Template, 9, 5, "ng-template", null, 4, _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplateRefExtractor"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](7, UnidadeIntegranteComponent_ng_template_7_Template, 2, 2, "ng-template", null, 5, _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](7, UnidadeIntegranteComponent_ng_template_7_Template, 2, 3, "ng-template", null, 5, _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵelementStart"](9, "column", 3);
         _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplate"](10, UnidadeIntegranteComponent_ng_template_10_Template, 1, 1, "ng-template", null, 6, _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵtemplateRefExtractor"]);
@@ -846,7 +813,7 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
         const _r4 = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵreference"](8);
         const _r6 = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵreference"](11);
         const _r8 = _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵreference"](13);
-        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("items", ctx.items)("minHeight", 500)("form", ctx.form)("hasDelete", true)("add", ctx.addIntegrante.bind(ctx))("load", ctx.loadIntegrante.bind(ctx))("remove", ctx.removeIntegrante.bind(ctx))("save", ctx.saveIntegrante.bind(ctx));
+        _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("items", ctx.items)("minHeight", 500)("form", ctx.form)("hasDelete", true)("add", ctx.adicionarIntegrante.bind(ctx))("load", ctx.carregarIntegrante.bind(ctx))("remove", ctx.removerIntegrante.bind(ctx))("save", ctx.salvarIntegrante.bind(ctx));
         _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵproperty"]("ngIf", !ctx.isNoPersist);
         _angular_core__WEBPACK_IMPORTED_MODULE_13__["ɵɵadvance"](2);
