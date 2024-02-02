@@ -47,6 +47,7 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
     this.seederDao = injector.get<SeederDaoService>(SeederDaoService);
     this.form = this.fh.FormBuilder({
       id: { default: "" },
+      edition: { default: "MGI" },
       tenancy_db_name: { default: "" },
       tenancy_db_host: { default: null },
       tenancy_db_port: { default: 3306 },
@@ -150,7 +151,6 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       alert('Por favor, selecione um seeder para executar.');
       return;
     }
-
     this.seederDao.executeSeeder(this.selectedSeeder).then(
         response => {
           // Verificar se response é um objeto e tem a propriedade 'message'
@@ -167,10 +167,6 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
           alert(errorMessage);
         }
     );
-
-
-
-
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -203,7 +199,6 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
   public async initializeData(form: FormGroup) {
     this.entity = (await this.dao!.getById(this.urlParams!.get("id")!, this.join))!;
     await this.loadData(this.entity, form);
-
   }
 
   public async saveData(form: IIndexable): Promise<Tenant> {
