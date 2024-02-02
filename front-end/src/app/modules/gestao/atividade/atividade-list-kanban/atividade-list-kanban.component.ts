@@ -368,7 +368,7 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
     const index = list.findIndex(x => x.id == atividade.id);
     const card = {
       id: atividade.id,
-      title: atividade.tipo_atividade?.nome || "(Atividade não atribuída)",
+      title: atividade.tipo_atividade?.nome || "(" + this.lex.translate('Atividade') + " não atribuída)",
       subTitle: atividade.descricao || "",
       data: atividade,
       version: this.cardsVersion,

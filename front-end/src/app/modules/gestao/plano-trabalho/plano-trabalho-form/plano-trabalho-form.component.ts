@@ -308,6 +308,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       }
     }
     await this.loadData(this.entity, this.form!);
+    let nowDate = new Date(); 
+    nowDate.setHours(0,0,0,0)
+    this.form?.controls.data_inicio.setValue(nowDate);
     this.form?.controls.data_fim.setValue("");
   }
 

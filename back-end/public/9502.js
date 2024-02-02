@@ -22,28 +22,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_models_unidade_model__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! src/app/models/unidade.model */ 53937);
 /* harmony import */ var src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! src/app/modules/base/page-form-base */ 1184);
 /* harmony import */ var src_app_modules_uteis_notificacoes_notificacao_service__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! src/app/modules/uteis/notificacoes/notificacao.service */ 22067);
-/* harmony import */ var _unidade_integrante_unidade_integrante_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../unidade-integrante/unidade-integrante.component */ 62498);
-/* harmony import */ var src_app_models_unidade_integrante_model__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! src/app/models/unidade-integrante.model */ 83337);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! @angular/core */ 51197);
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! @angular/common */ 89650);
-/* harmony import */ var _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../../../components/input/input-switch/input-switch.component */ 88820);
-/* harmony import */ var _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../../../components/input/input-search/input-search.component */ 32802);
-/* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ 92392);
-/* harmony import */ var _components_input_input_radio_input_radio_component__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../../../components/input/input-radio/input-radio.component */ 48877);
-/* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../../../components/input/input-select/input-select.component */ 64603);
-/* harmony import */ var _components_input_input_color_input_color_component__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../../../components/input/input-color/input-color.component */ 66848);
-/* harmony import */ var _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../../../../components/input/input-multiselect/input-multiselect.component */ 17819);
-/* harmony import */ var _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../../../../components/tabs/tabs.component */ 66384);
-/* harmony import */ var _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ../../../../components/tabs/tab/tab.component */ 74978);
-/* harmony import */ var _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ../../../../components/separator/separator.component */ 25560);
-/* harmony import */ var _components_input_input_editor_input_editor_component__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ../../../../components/input/input-editor/input-editor.component */ 55795);
-/* harmony import */ var _uteis_calendar_expediente_calendar_expediente_component__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ../../../uteis/calendar-expediente/calendar-expediente.component */ 75007);
-/* harmony import */ var _uteis_notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ../../../uteis/notificacoes/notificacoes-config/notificacoes-config.component */ 92739);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! @angular/common */ 89650);
+/* harmony import */ var _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../../components/input/input-switch/input-switch.component */ 88820);
+/* harmony import */ var _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../../../components/input/input-search/input-search.component */ 32802);
+/* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ 92392);
+/* harmony import */ var _components_input_input_radio_input_radio_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../../../components/input/input-radio/input-radio.component */ 48877);
+/* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../../components/input/input-select/input-select.component */ 64603);
+/* harmony import */ var _components_input_input_color_input_color_component__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../../../components/input/input-color/input-color.component */ 66848);
+/* harmony import */ var _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../../../components/input/input-multiselect/input-multiselect.component */ 17819);
+/* harmony import */ var _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../../../components/tabs/tabs.component */ 66384);
+/* harmony import */ var _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../../../../components/tabs/tab/tab.component */ 74978);
+/* harmony import */ var _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../../../../components/separator/separator.component */ 25560);
+/* harmony import */ var _components_input_input_editor_input_editor_component__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ../../../../components/input/input-editor/input-editor.component */ 55795);
+/* harmony import */ var _uteis_calendar_expediente_calendar_expediente_component__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ../../../uteis/calendar-expediente/calendar-expediente.component */ 75007);
+/* harmony import */ var _uteis_notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ../../../uteis/notificacoes/notificacoes-config/notificacoes-config.component */ 92739);
 
 var _class;
-
-
-
 
 
 
@@ -79,27 +74,14 @@ const _c5 = ["entidade"];
 const _c6 = ["notificacoes"];
 function UnidadeFormComponent_tab_36_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](0, "tab", 32);
-    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](1, "notificacoes-config", 33, 34);
-    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](0, "tab", 31);
+    _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](1, "notificacoes-config", 32, 33);
+    _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
-    const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("unidadeId", ctx_r5.entity.id.length ? ctx_r5.entity.id : "ADD")("entity", ctx_r5.entity)("disabled", ctx_r5.formDisabled);
-  }
-}
-function UnidadeFormComponent_tab_37_Template(rf, ctx) {
-  if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](0, "tab", 35);
-    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](1, "unidade-integrante", 36, 37);
-    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]();
-  }
-  if (rf & 2) {
-    const ctx_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("label", ctx_r6.lex.translate("Integrantes"));
-    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("entity", ctx_r6.entity);
+    const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("unidadeId", ctx_r5.entity.id.length ? ctx_r5.entity.id : "ADD")("entity", ctx_r5.entity)("disabled", ctx_r5.formDisabled);
   }
 }
 const _c7 = function (a2) {
@@ -126,13 +108,10 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
     };
     this.formValidation = form => {
       const erros_integrantes = [];
-      this.usuariosIntegrantes?.grid?.items.forEach(usuarioIntegrante => {
-        if (usuarioIntegrante.usuario_id == '') erros_integrantes.push({
-          integrante: usuarioIntegrante,
-          erro: 'Falta o usuario'
-        });
+      /*this.usuariosIntegrantes?.grid?.items.forEach((usuarioIntegrante) => {
+        if (usuarioIntegrante.usuario_id == '') erros_integrantes.push({ integrante: usuarioIntegrante, erro: 'Falta o usuario' })
       });
-      if (erros_integrantes.length) return "Na aba 'Integrantes' há usuário não salvo. Salve-o antes de salvar a unidade!";
+      if (erros_integrantes.length) return "Na aba 'Integrantes' há usuário não salvo. Salve-o antes de salvar a unidade!"*/
       return undefined;
     };
     this.titleEdit = entity => {
@@ -241,9 +220,10 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
       _this.unidade_raiz = _this.action == 'edit' && !entity.unidade_pai_id;
       _this.form.controls.usar_expediente_unidade.setValue(entity.expediente ? true : false);
       _this.fh.revalidate(_this.form);
-      yield _this.usuariosIntegrantes?.loadData(entity);
+      //await this.usuariosIntegrantes?.loadData(entity);
     })();
   }
+
   initializeData(form) {
     this.entity = new src_app_models_unidade_model__WEBPACK_IMPORTED_MODULE_8__.Unidade({
       entidade_id: this.auth.unidade?.entidade_id,
@@ -274,18 +254,18 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
     return new Promise( /*#__PURE__*/function () {
       var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (resolve, reject) {
         _this2.notificacoes.saveData();
-        _this2.usuariosIntegrantes.grid.confirm();
+        //this.usuariosIntegrantes!.grid!.confirm();
         let unidade = _this2.util.fill(new src_app_models_unidade_model__WEBPACK_IMPORTED_MODULE_8__.Unidade(), _this2.entity);
         unidade = _this2.util.fillForm(unidade, _this2.form.value);
         unidade.notificacoes = _this2.entity.notificacoes;
         unidade.notificacoes_templates = _this2.entity.notificacoes_templates;
         if (!_this2.form.controls.usar_expediente_unidade) unidade.expediente = null;
-        let integrantesConsolidados = _this2.usuariosIntegrantes?.items || [];
-        unidade.integrantes = integrantesConsolidados.map(x => new src_app_models_unidade_integrante_model__WEBPACK_IMPORTED_MODULE_12__.UnidadeIntegrante({
+        /*let integrantesConsolidados: IntegranteConsolidado[] = this.usuariosIntegrantes?.items || [];
+        unidade.integrantes = integrantesConsolidados.map(x => new UnidadeIntegrante({
           usuario_id: x.usuario_id,
           unidade_id: x.unidade_id,
           atribuicoes: x.atribuicoes
-        }));
+        }));*/
         resolve(unidade);
       });
       return function (_x, _x2) {
@@ -321,127 +301,122 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
 }
 _class = UnidadeFormComponent;
 _class.ɵfac = function UnidadeFormComponent_Factory(t) {
-  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_26__.Injector));
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_24__.Injector));
 };
-_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵdefineComponent"]({
+_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵdefineComponent"]({
   type: _class,
   selectors: [["app-unidade-form"]],
   viewQuery: function UnidadeFormComponent_Query(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵviewQuery"](_unidade_integrante_unidade_integrante_component__WEBPACK_IMPORTED_MODULE_11__.UnidadeIntegranteComponent, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵviewQuery"](_c0, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵviewQuery"](_c1, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵviewQuery"](_c2, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵviewQuery"](_c3, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵviewQuery"](_c4, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵviewQuery"](_c5, 5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵviewQuery"](_c6, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c0, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c1, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c2, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c3, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c4, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c5, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c6, 5);
     }
     if (rf & 2) {
       let _t;
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵloadQuery"]()) && (ctx.usuariosIntegrantes = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵloadQuery"]()) && (ctx.unidadePai = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵloadQuery"]()) && (ctx.cidade = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵloadQuery"]()) && (ctx.gestor = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵloadQuery"]()) && (ctx.gestorSubstituto = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵloadQuery"]()) && (ctx.gestorDelegado = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵloadQuery"]()) && (ctx.entidade = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵloadQuery"]()) && (ctx.notificacoes = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.unidadePai = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.cidade = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.gestor = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.gestorSubstituto = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.gestorDelegado = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.entidade = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.notificacoes = _t.first);
     }
   },
-  features: [_angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵInheritDefinitionFeature"]],
-  decls: 38,
-  vars: 55,
-  consts: [["initialFocus", "sigla", 3, "title", "form", "disabled", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], ["label", "Informal", "labelClass", "text-nowrap", "controlName", "informal", 3, "disabled", "size", "labelInfo", "change"], ["label", "Instit.", "labelClass", "text-nowrap", "controlName", "instituidora", 3, "disabled", "size", "labelInfo"], ["label", "C\u00F3digo", "controlName", "codigo", 3, "disabled", "size"], ["label", "Sigla", "controlName", "sigla", "required", "", 3, "disabled", "size"], ["label", "Nome", "controlName", "nome", "required", "", 3, "disabled", "size"], ["controlName", "cidade_id", "required", "", 3, "disabled", "size", "dao"], ["cidade", ""], ["controlName", "unidade_pai_id", 3, "disabled", "size", "label", "where", "dao"], ["unidade_pai", ""], ["disabled", "", "controlName", "entidade_id", "required", "", 3, "size", "dao"], ["entidade", ""], ["key", "CONFIGURACOES", "label", "Configura\u00E7\u00F5es"], ["controlName", "distribuicao_forma_contagem_prazos", "labelInfo", "A forma da contagem dos prazos para a distribui\u00E7\u00E3o (lan\u00E7amento da demanda).", 3, "size", "label", "items"], ["controlName", "entrega_forma_contagem_prazos", "labelInfo", "A forma da contagem dos prazos na entrega da demanda (data da entrega e tempo despendido)", 3, "size", "label", "items"], ["label", "Arquivamento autom\u00E1tico", "controlName", "atividades_arquivamento_automatico", "labelInfo", "Se ap\u00F3s a avalia\u00E7\u00E3o, arquivar\u00E1 automaticamente a atividade.", 3, "size", "items"], ["clss", "row"], ["label", "Etiquetas", "multiselectStyle", "inline", "controlName", "etiquetas", 3, "maxItemWidth", "size", "addItemHandle"], ["label", "Texto", "controlName", "etiqueta_texto", 3, "size"], ["label", "\u00CDcone", "controlName", "etiqueta_icone", 3, "size", "items"], ["label", "Cor", "controlName", "etiqueta_cor", 3, "size"], ["controlName", "texto_complementar_plano", 3, "label", "dataset"], ["key", "EXPEDIENTE", "label", "Expediente"], ["label", "Usar calend\u00E1rio pr\u00F3prio", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "usar_expediente_unidade", 3, "size", "labelInfo", "change"], ["usarExpedienteEntidade", ""], [3, "disabled", "expedienteDisabled", "control"], ["expediente", ""], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es", 4, "ngIf"], ["key", "INTEGRANTES", 3, "label", 4, "ngIf"], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es"], [3, "unidadeId", "entity", "disabled"], ["notificacoes", ""], ["key", "INTEGRANTES", 3, "label"], ["noPersist", "", 3, "entity"], ["usuariosIntegrantes", ""]],
+  features: [_angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵInheritDefinitionFeature"]],
+  decls: 37,
+  vars: 54,
+  consts: [["initialFocus", "sigla", 3, "title", "form", "disabled", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], ["label", "Informal", "labelClass", "text-nowrap", "controlName", "informal", 3, "disabled", "size", "labelInfo", "change"], ["label", "Instit.", "labelClass", "text-nowrap", "controlName", "instituidora", 3, "disabled", "size", "labelInfo"], ["label", "C\u00F3digo", "controlName", "codigo", 3, "disabled", "size"], ["label", "Sigla", "controlName", "sigla", "required", "", 3, "disabled", "size"], ["label", "Nome", "controlName", "nome", "required", "", 3, "disabled", "size"], ["controlName", "cidade_id", "required", "", 3, "disabled", "size", "dao"], ["cidade", ""], ["controlName", "unidade_pai_id", 3, "disabled", "size", "label", "where", "dao"], ["unidade_pai", ""], ["disabled", "", "controlName", "entidade_id", "required", "", 3, "size", "dao"], ["entidade", ""], ["key", "CONFIGURACOES", "label", "Configura\u00E7\u00F5es"], ["controlName", "distribuicao_forma_contagem_prazos", "labelInfo", "A forma da contagem dos prazos para a distribui\u00E7\u00E3o (lan\u00E7amento da demanda).", 3, "size", "label", "items"], ["controlName", "entrega_forma_contagem_prazos", "labelInfo", "A forma da contagem dos prazos na entrega da demanda (data da entrega e tempo despendido)", 3, "size", "label", "items"], ["label", "Arquivamento autom\u00E1tico", "controlName", "atividades_arquivamento_automatico", "labelInfo", "Se ap\u00F3s a avalia\u00E7\u00E3o, arquivar\u00E1 automaticamente a atividade.", 3, "size", "items"], ["clss", "row"], ["label", "Etiquetas", "multiselectStyle", "inline", "controlName", "etiquetas", 3, "maxItemWidth", "size", "addItemHandle"], ["label", "Texto", "controlName", "etiqueta_texto", 3, "size"], ["label", "\u00CDcone", "controlName", "etiqueta_icone", 3, "size", "items"], ["label", "Cor", "controlName", "etiqueta_cor", 3, "size"], ["controlName", "texto_complementar_plano", 3, "label", "dataset"], ["key", "EXPEDIENTE", "label", "Expediente"], ["label", "Usar calend\u00E1rio pr\u00F3prio", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "usar_expediente_unidade", 3, "size", "labelInfo", "change"], ["usarExpedienteEntidade", ""], [3, "disabled", "expedienteDisabled", "control"], ["expediente", ""], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es", 4, "ngIf"], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es"], [3, "unidadeId", "entity", "disabled"], ["notificacoes", ""]],
   template: function UnidadeFormComponent_Template(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](0, "editable-form", 0);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵlistener"]("submit", function UnidadeFormComponent_Template_editable_form_submit_0_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](0, "editable-form", 0);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵlistener"]("submit", function UnidadeFormComponent_Template_editable_form_submit_0_listener() {
         return ctx.onSaveData();
       })("cancel", function UnidadeFormComponent_Template_editable_form_cancel_0_listener() {
         return ctx.onCancel();
       });
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](1, "tabs", 1)(2, "tab", 2)(3, "div", 3)(4, "input-switch", 4);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵlistener"]("change", function UnidadeFormComponent_Template_input_switch_change_4_listener($event) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](1, "tabs", 1)(2, "tab", 2)(3, "div", 3)(4, "input-switch", 4);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵlistener"]("change", function UnidadeFormComponent_Template_input_switch_change_4_listener($event) {
         return ctx.onInformalChange($event);
       });
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](5, "input-switch", 5)(6, "input-text", 6)(7, "input-text", 7)(8, "input-text", 8);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](9, "div", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](10, "input-search", 9, 10)(12, "input-search", 11, 12)(14, "input-search", 13, 14);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](16, "tab", 15)(17, "div", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](18, "input-select", 16)(19, "input-select", 17)(20, "input-radio", 18);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](21, "separator");
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](22, "div", 19)(23, "input-multiselect", 20);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](24, "input-text", 21)(25, "input-select", 22)(26, "input-color", 23);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](27, "separator");
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](28, "div", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](29, "input-editor", 24);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](30, "tab", 25)(31, "div", 3)(32, "input-switch", 26, 27);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵlistener"]("change", function UnidadeFormComponent_Template_input_switch_change_32_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](5, "input-switch", 5)(6, "input-text", 6)(7, "input-text", 7)(8, "input-text", 8);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](9, "div", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](10, "input-search", 9, 10)(12, "input-search", 11, 12)(14, "input-search", 13, 14);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](16, "tab", 15)(17, "div", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](18, "input-select", 16)(19, "input-select", 17)(20, "input-radio", 18);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](21, "separator");
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](22, "div", 19)(23, "input-multiselect", 20);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](24, "input-text", 21)(25, "input-select", 22)(26, "input-color", 23);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](27, "separator");
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](28, "div", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](29, "input-editor", 24);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](30, "tab", 25)(31, "div", 3)(32, "input-switch", 26, 27);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵlistener"]("change", function UnidadeFormComponent_Template_input_switch_change_32_listener() {
         return ctx.onUsarExpedienteEntidadeChange();
       });
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]()();
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](34, "calendar-expediente", 28, 29);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵtemplate"](36, UnidadeFormComponent_tab_36_Template, 3, 3, "tab", 30);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵtemplate"](37, UnidadeFormComponent_tab_37_Template, 3, 2, "tab", 31);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](34, "calendar-expediente", 28, 29);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵtemplate"](36, UnidadeFormComponent_tab_36_Template, 3, 3, "tab", 30);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]()();
     }
     if (rf & 2) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("title", ctx.isModal ? "" : ctx.title)("form", ctx.form)("disabled", ctx.formDisabled);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](4);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("disabled", ctx.informalIsDisabled)("size", 1)("labelInfo", "Definir se " + ctx.lex.translate("a unidade") + " \u00E9 informal ou n\u00E3o." + ctx.lex.translate(" Unidades") + " informais s\u00E3o, por exemplo: times volantes, comiss\u00F5es, grupos de trabalho, etc." + ctx.lex.translate(" Unidades") + " informais n\u00E3o podem mudar para formais, ou vice-versa.");
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("disabled", ctx.instituidoraIsDisabled)("size", 1)("labelInfo", "Se a " + ctx.lex.translate("unidade") + " \u00E9 instituidora de Programas. Unidade administrativa prevista no art. 4\u00BA do Decreto n\u00BA 11.072, de 2022.");
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("disabled", ctx.codigoIsDisabled)("size", 2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("disabled", ctx.isDisabled)("size", 2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("disabled", ctx.isDisabled)("size", 6);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("disabled", ctx.isDisabled)("size", 4)("dao", ctx.cidadeDao);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("disabled", ctx.unidadePaiIsDisabled)("size", 4)("label", ctx.lex.translate("Unidade") + " pai")("where", _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵpureFunction1"](53, _c8, _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵpureFunction1"](51, _c7, ctx.form.controls.entidade_id.value)))("dao", ctx.dao);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 4)("dao", ctx.entidadeDao);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](4);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 4)("label", "Contagem " + ctx.lex.translate("Prazo de Distribui\u00E7\u00E3o"))("items", ctx.lookup.DIA_HORA_CORRIDOS_OU_UTEIS);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 4)("label", "Contagem " + ctx.lex.translate("Prazo de Entrega"))("items", ctx.lookup.HORAS_CORRIDAS_OU_UTEIS);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 4)("items", ctx.lookup.SIMNAO);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("maxItemWidth", 250)("size", 12)("addItemHandle", ctx.addItemHandle.bind(ctx));
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 6);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵattribute"]("maxlength", 250);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 3)("items", ctx.lookup.ICONES);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("label", "Texto complementar " + ctx.lex.translate("Plano de Trabalho"))("dataset", ctx.planoDataset);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵpropertyInterpolate2"]("labelInfo", "Se o expediente da ", ctx.lex.translate("unidade"), " n\u00E3o for definido usaremos o da ", ctx.lex.translate("entidade"), "");
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 12);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("disabled", ctx.form.controls.usar_expediente_unidade.value ? undefined : "true")("expedienteDisabled", ctx.entity == null ? null : ctx.entity.entidade == null ? null : ctx.entity.entidade.expediente)("control", ctx.form.controls.expediente);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("ngIf", ctx.entity);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("ngIf", ctx.entity && ctx.auth.hasPermissionTo("MOD_UND_INTG"));
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("title", ctx.isModal ? "" : ctx.title)("form", ctx.form)("disabled", ctx.formDisabled);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](4);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("disabled", ctx.informalIsDisabled)("size", 1)("labelInfo", "Definir se " + ctx.lex.translate("a unidade") + " \u00E9 informal ou n\u00E3o." + ctx.lex.translate(" Unidades") + " informais s\u00E3o, por exemplo: times volantes, comiss\u00F5es, grupos de trabalho, etc." + ctx.lex.translate(" Unidades") + " informais n\u00E3o podem mudar para formais, ou vice-versa.");
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("disabled", ctx.instituidoraIsDisabled)("size", 1)("labelInfo", "Se a " + ctx.lex.translate("unidade") + " \u00E9 instituidora de Programas. Unidade administrativa prevista no art. 4\u00BA do Decreto n\u00BA 11.072, de 2022.");
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("disabled", ctx.codigoIsDisabled)("size", 2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("disabled", ctx.isDisabled)("size", 2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("disabled", ctx.isDisabled)("size", 6);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("disabled", ctx.isDisabled)("size", 4)("dao", ctx.cidadeDao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("disabled", ctx.unidadePaiIsDisabled)("size", 4)("label", ctx.lex.translate("Unidade") + " pai")("where", _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵpureFunction1"](52, _c8, _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵpureFunction1"](50, _c7, ctx.form.controls.entidade_id.value)))("dao", ctx.dao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 4)("dao", ctx.entidadeDao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](4);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 4)("label", "Contagem " + ctx.lex.translate("Prazo de Distribui\u00E7\u00E3o"))("items", ctx.lookup.DIA_HORA_CORRIDOS_OU_UTEIS);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 4)("label", "Contagem " + ctx.lex.translate("Prazo de Entrega"))("items", ctx.lookup.HORAS_CORRIDAS_OU_UTEIS);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 4)("items", ctx.lookup.SIMNAO);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("maxItemWidth", 250)("size", 12)("addItemHandle", ctx.addItemHandle.bind(ctx));
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 6);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵattribute"]("maxlength", 250);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 3)("items", ctx.lookup.ICONES);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("label", "Texto complementar " + ctx.lex.translate("Plano de Trabalho"))("dataset", ctx.planoDataset);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵpropertyInterpolate2"]("labelInfo", "Se o expediente da ", ctx.lex.translate("unidade"), " n\u00E3o for definido usaremos o da ", ctx.lex.translate("entidade"), "");
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 12);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("disabled", ctx.form.controls.usar_expediente_unidade.value ? undefined : "true")("expedienteDisabled", ctx.entity == null ? null : ctx.entity.entidade == null ? null : ctx.entity.entidade.expediente)("control", ctx.form.controls.expediente);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("ngIf", ctx.entity);
     }
   },
-  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_27__.NgIf, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_13__.InputSwitchComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_14__.InputSearchComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_15__.InputTextComponent, _components_input_input_radio_input_radio_component__WEBPACK_IMPORTED_MODULE_16__.InputRadioComponent, _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_17__.InputSelectComponent, _components_input_input_color_input_color_component__WEBPACK_IMPORTED_MODULE_18__.InputColorComponent, _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_19__.InputMultiselectComponent, _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_20__.TabsComponent, _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_21__.TabComponent, _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_22__.SeparatorComponent, _components_input_input_editor_input_editor_component__WEBPACK_IMPORTED_MODULE_23__.InputEditorComponent, _uteis_calendar_expediente_calendar_expediente_component__WEBPACK_IMPORTED_MODULE_24__.CalendarExpedienteComponent, _uteis_notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_25__.NotificacoesConfigComponent, _unidade_integrante_unidade_integrante_component__WEBPACK_IMPORTED_MODULE_11__.UnidadeIntegranteComponent],
+  dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_25__.NgIf, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_11__.InputSwitchComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_12__.InputSearchComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_13__.InputTextComponent, _components_input_input_radio_input_radio_component__WEBPACK_IMPORTED_MODULE_14__.InputRadioComponent, _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_15__.InputSelectComponent, _components_input_input_color_input_color_component__WEBPACK_IMPORTED_MODULE_16__.InputColorComponent, _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_17__.InputMultiselectComponent, _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_18__.TabsComponent, _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_19__.TabComponent, _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_20__.SeparatorComponent, _components_input_input_editor_input_editor_component__WEBPACK_IMPORTED_MODULE_21__.InputEditorComponent, _uteis_calendar_expediente_calendar_expediente_component__WEBPACK_IMPORTED_MODULE_22__.CalendarExpedienteComponent, _uteis_notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_23__.NotificacoesConfigComponent],
   styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
 });
 

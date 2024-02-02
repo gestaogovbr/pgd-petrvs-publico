@@ -180,10 +180,16 @@
                     Preferências
                   </a>
                 </li>
-                <li class="nav-item" *ngIf="this.unidadeService.isGestorUnidade(this.auth.unidade)">
+                <li class="nav-item" *ngIf="unidadeService.isGestorUnidade(this.auth.unidade, true)">
                   <a class="nav-link px-3" role="button" (click)="go.navigate({route: ['configuracoes','unidade', auth.unidade!.id, 'edit']},{ root: true, modal: true })">
                     <i class="bi bi-gear"></i>
                     Unidade
+                  </a>
+                </li>
+                <li class="nav-item" *ngIf="unidadeService.isGestorUnidade(this.auth.unidade, true)"><!--&& auth.hasPermissionTo('MOD_UND_INTG')-->
+                  <a class="nav-link px-3" role="button" (click)="go.navigate({ route: ['configuracoes', 'unidade', '', auth.unidade!.id, 'integrante'] }, { metadata: { unidade: auth.unidade } })">
+                    <i class="bi bi-gear"></i>
+                    Integrantes
                   </a>
                 </li>
               </ul>

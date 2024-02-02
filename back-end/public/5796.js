@@ -3760,6 +3760,9 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
         }
       }
       yield _this3.loadData(_this3.entity, _this3.form);
+      let nowDate = new Date();
+      nowDate.setHours(0, 0, 0, 0);
+      _this3.form?.controls.data_inicio.setValue(nowDate);
       _this3.form?.controls.data_fim.setValue("");
     })();
   }
@@ -4634,6 +4637,8 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
     if (!this.gridControl.value.entregas) this.gridControl.value.entregas = [];
     return this.gridControl.value.entregas;
   }
+  //Colocar o plano de entrega em execucao quando for propria unidade
+  //quando adiciona um novo e edita o mesmo, salva 2x no banco
   constructor(injector) {
     super(injector);
     this.injector = injector;
