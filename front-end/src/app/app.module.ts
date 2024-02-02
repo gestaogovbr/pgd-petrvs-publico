@@ -18,7 +18,7 @@ import { RotinaModule } from './modules/rotinas/rotina.module';
 import { TesteFormComponent } from './modules/teste/teste-form/teste-form.component';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
-//import { CurrriculumAtributosComponent } from './modules/curriculum/currriculum-atributos/currriculum-atributos.component';
+
 
 @NgModule({
   declarations: [
@@ -29,7 +29,6 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
     SpinnerOverlayComponent,
     TesteComponent,
     TesteFormComponent,
-   // CurrriculumAtributosComponent,
   ],
   imports: [
     BrowserModule,
