@@ -44,32 +44,32 @@ export class DocumentacaoComponent implements OnInit {
           {
             label: 'Avaliação (Planos de entrega e trabalho)',
             icon: 'bi bi-star',
-            target: 'docs/Gestao/avaliacao.md'   
+            target: 'docs/gestao/avaliacao.md'   
           },
           {
             label: 'Planejamento Institucional',
             icon: 'bi bi-journals',
-            target: 'docs/Gestao/planejamento_institucional.md'   
+            target: 'docs/gestao/planejamento_institucional.md'   
           },
           {
             label: 'Planos de entrega',
             icon: 'bi bi-list-columns-reverse',
-            target: 'docs/Gestao/plano_entrega.md',
+            target: 'docs/gestao/plano_entrega.md',
             items: [
               {
                 label: 'Entregas',
-                target: 'docs/Gestao/plano_entrega_entrega.md'   
+                target: 'docs/gestao/plano_entrega_entrega.md'   
               },
             ]
           },
           {
             label: 'Planos de Trabalho',
             icon: 'bi bi-list-stars',
-            target: 'docs/Gestao/plano_trabalho.md',
+            target: 'docs/gestao/plano_trabalho.md',
             items: [
               {
                 label: 'Consolidação',
-                target: 'docs/Gestao/plano_trabalho_consolidacao.md'   
+                target: 'docs/gestao/plano_trabalho_consolidacao.md'   
               },
             ]   
           },          
@@ -80,7 +80,7 @@ export class DocumentacaoComponent implements OnInit {
         items: [
           {
             label: 'Informações Complementares',
-            target: 'docs/Geral/informacoes-complementares.md'
+            target: 'docs/geral/informacoes-complementares.md'
           },
         ],
       },
@@ -90,27 +90,27 @@ export class DocumentacaoComponent implements OnInit {
           {
             label: 'Entidade',
             icon: 'bi bi-bookmark-heart',
-            target: 'docs/Configuracoes/entidade.md' 
+            target: 'docs/configuracoes/entidade.md' 
           },
           {
             label: 'Perfil',
             icon: 'bi bi-fingerprint',
-            target: 'docs/Configuracoes/perfil.md' 
+            target: 'docs/configuracoes/perfil.md' 
           },
           {
             label: 'Preferência',
             icon: 'bi bi-gear',
-            target: 'docs/Configuracoes/preferencia.md' 
+            target: 'docs/configuracoes/preferencia.md' 
           },
           {
             label: 'Unidade',
             icon: 'bi bi-unity',
-            target: 'docs/Configuracoes/unidade.md' 
+            target: 'docs/configuracoes/unidade.md' 
           },
           {
             label: 'Usuário',
             icon: 'bi bi-people',
-            target: 'docs/Configuracoes/usuario.md' 
+            target: 'docs/configuracoes/usuario.md' 
           },
         ],
       },      

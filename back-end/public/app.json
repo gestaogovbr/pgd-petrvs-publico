@@ -1,15 +1,15 @@
 {
-    "version": "2.0.9",
+    "version": "2.0.10",
     "externalLibs": [
         "https://apis.google.com/js/platform.js"
     ],
     "preloadFiles": [
         "environment-config",
         "functions.js",
-        "app-proxy.js"
+        "app_proxy.js"
     ],
     "extraFiles": [
-        "all-pages.js"
+        "all_pages.js"
     ],
     "angularFiles": [
         "scripts.js",

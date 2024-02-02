@@ -16,9 +16,9 @@
 
 ## Módulos
 
-* [Planejamento Institucional](docs/Gestao/planejamento_institucional.md)
-* [Plano de Entrega](docs/Gestao/plano_entrega.md)
-* [Plano de Trabalho](docs/Gestao/plano_trabalho.md)
+* [Planejamento Institucional](docs/gestao/planejamento_institucional.md)
+* [Plano de Entrega](docs/gestao/plano_entrega.md)
+* [Plano de Trabalho](docs/gestao/plano_trabalho.md)
 
 ## Regra geral do sistema
 

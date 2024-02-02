@@ -27,7 +27,7 @@
       <ng-template let-row="row" #formatoTemplate>
         <div class="text-wrap">
           <ng-container *ngFor="let destinatario of row.destinatarios">
-            <badge *ngIf="destinatario.tipo == 'PETRVS'" img="assets/images/logo-24x24.png" hint="PETRVS" [label]="destinatario.data_leitura ? 'Lido' : 'Não lido'"></badge>
+            <badge *ngIf="destinatario.tipo == 'PETRVS'" img="assets/images/logo_24x24.png" hint="PETRVS" [label]="destinatario.data_leitura ? 'Lido' : 'Não lido'"></badge>
             <badge *ngIf="destinatario.tipo == 'EMAIL'" icon="bi bi-envelope-at" hint="E-mail" [label]="destinatario.data_leitura ? 'Lido' : 'Não lido'"></badge>
             <badge *ngIf="destinatario.tipo == 'WHATSAPP'" icon="bi bi-whatsapp" hint="WhatsApp" [label]="destinatario.data_leitura ? 'Lido' : 'Não lido'"></badge>
           </ng-container>

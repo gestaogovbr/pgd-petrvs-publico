@@ -14,6 +14,7 @@ import { EntityService } from './services/entity.service';
 import { NotificacaoService } from './modules/uteis/notificacoes/notificacao.service';
 import { DOCUMENT } from '@angular/common';
 import { SafeUrl } from '@angular/platform-browser';
+import { UnidadeService } from './services/unidade.service';
 
 //export let appInjector: Injector;
 //export type Contexto = "PGD" | "EXECUCAO" | "AVALIACAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
@@ -92,6 +93,7 @@ export class AppComponent {
   public menuExecucao: any;
   public menuAdministrador: any;
   public menuDev: any;
+  public unidadeService: UnidadeService;
   private _menu: any;
   private _menuDetectChanges: any;
 
@@ -112,6 +114,7 @@ export class AppComponent {
     this.lookup = injector.get<LookupService>(LookupService);
     this.entity = injector.get<EntityService>(EntityService);
     this.notificacao = injector.get<NotificacaoService>(NotificacaoService);
+    this.unidadeService = injector.get<UnidadeService>(UnidadeService);
     /* Inicializações */
     this.notificacao.heartbeat();
     this.auth.app = this;
@@ -188,7 +191,11 @@ export class AppComponent {
       CURRICULUM_HOME: { name: "Home RX", permition: 'RX', route: ['raiox', 'home'], icon: "bi bi-toggle-off" },
       CURRICULUM_CADASTRO_PESSOAL: { name: this.lex.translate("Dados Pessoais"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'pessoal'], icon: "bi bi-file-person" },
       CURRICULUM_CADASTRO_PROFISSIONAL: { name: this.lex.translate("Dados Profissionais"), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'profissional'], icon: "fa fa-briefcase" },
-      CURRICULUM_CADASTRO_ATRIBUTOS: { name: this.lex.translate("Atributos Comportamentais"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
+      CURRICULUM_CADASTRO_ATRIBUTOS: { name: this.lex.translate("Atributos Comportamentais"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'atributos'], icon: "fa fa-brain" },
+      CURRICULUM_CADASTRO_ATRIBUTOS_SOFTSKILLS: { name: this.lex.translate("Soft Skills"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'teste'], icon: "fa fa-brain" },
+      CURRICULUM_CADASTRO_ATRIBUTOS_B5: { name: this.lex.translate("Big Five - B5"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
+      CURRICULUM_CADASTRO_ATRIBUTOS_DASS: { name: this.lex.translate("DASS"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
+      CURRICULUM_CADASTRO_ATRIBUTOS_SRQ20: { name: this.lex.translate("SRQ-20"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
       CURRICULUM_VISUALIZA_OPORTUNIDADES: { name: this.lex.translate("Pesquisa Oportunidades"), permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pessoal'], icon: "bi bi-lightbulb-fill" },
       CURRICULUM_CADASTRO_OPORTUNIDADES: { name: this.lex.translate("Oportunidades"), permition: 'MOD_RX_EDT_OPO', route: ['raiox', 'pessoal'], icon: "bi bi-lightbulb-fill" },
       CURRICULUM_CADASTRO_CURSOS: { name: this.lex.translate("Cursos"), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'cadastros', 'curso'], icon: "bi bi-mortarboard-fill" },
@@ -371,7 +378,18 @@ export class AppComponent {
         this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS
         //this.menuSchema.RXCADASTRO_OPORTUNIDADES
       ]
-    }, {
+    },/*{
+      name: this.lex.translate("Atributos Comportamentais"),
+      permition: "MOD_RX_VIS_DPE",
+      id: "navbarDropdownRXCadastros",
+      menu: [
+        this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS_SOFTSKILLS,
+        this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS_B5,
+        this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS_DASS,
+        this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS_SRQ20,
+        
+      ]
+    },*/{
       name: this.lex.translate("Oportunidades"),
       permition: "MOD_RX_VIS_DPE",
       id: "navbarDropdownRXOportunidades",
@@ -549,6 +567,5 @@ export class AppComponent {
   public get isConfig(): boolean {
     return this.router.url.indexOf("/extension/options") >= 0;
   }
-
 }
 

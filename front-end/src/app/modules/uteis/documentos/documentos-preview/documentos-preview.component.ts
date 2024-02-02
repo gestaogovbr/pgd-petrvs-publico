@@ -25,7 +25,7 @@ export class DocumentosPreviewComponent extends PageFrameBase {
     { icon: "bi bi-envelope-at", hint: "Enviar E-mail", color: "btn-outline-warning border-0" },
     { icon: "bi bi-file-earmark-pdf", hint: "Exportar PDF", color: "btn-outline-danger border-0", onClick: () => this.geraPDF() },
     { icon: "bi bi-whatsapp", hint: "Enviar WhatsApp", color: "btn-outline-success border-0" },
-    { img: "assets/images/sei-icon.png", hint: "Enviar SEI", color: "btn-outline-primary border-0" }
+    { img: "assets/images/sei_icon.png", hint: "Enviar SEI", color: "btn-outline-primary border-0" }
   ];
 
   constructor(public injector: Injector) {

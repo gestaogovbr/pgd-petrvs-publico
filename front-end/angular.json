@@ -86,17 +86,17 @@
             ],
             "styles": [
               {
-                "input": "src/bootstrap4-light-blue.scss",
+                "input": "src/assets/scss/bootstrap4_light_blue.scss",
                 "bundleName": "blue",
                 "inject": false
               },
               {
-                "input": "src/bootstrap4-light-blue.scss",
+                "input": "src/assets/scss/bootstrap4_light_blue.scss",
                 "bundleName": "light",
                 "inject": false
               },
               {
-                "input": "src/bootstrap4-dark-blue.scss",
+                "input": "src/assets/scss/bootstrap4_dark_blue.scss",
                 "bundleName": "dark",
                 "inject": false
               },

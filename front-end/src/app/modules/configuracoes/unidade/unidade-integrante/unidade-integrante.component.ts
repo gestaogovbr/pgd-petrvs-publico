@@ -188,6 +188,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     let error = this.formValidation(form);
     if (!error) {
       let confirm = true;
+<<<<<<< HEAD
       let alteracaoGestor = this.integranteService.haAlteracaoGerencia(novasAtribuicoes.map(x => x.key), Object.assign(row, { usuario_nome: this.usuario?.selectedItem?.entity.nome }), (this.grid?.items as IntegranteConsolidado[]) || [], this.entity?.sigla || "");
       if (alteracaoGestor[0] != 'nenhuma') {
         confirm = await this.dialog.confirm("CONFIRMA A ALTERAÇÃO DA CHEFIA ?", alteracaoGestor[2]);
@@ -197,6 +198,24 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
               // Garante que o outro usuário, ex-chefe da unidade, perderá a atribuição de GESTOR
               this.grid!.items[alteracaoGestor[1]].atribuicoes = (this.grid!.items[alteracaoGestor[1]].atribuicoes as string[]).filter(x => !['GESTOR'].includes(x));
               break;
+=======
+      let n = this.integranteService.alterandoGestor(form, row.atribuicoes || []);
+      if (n.length) confirm = await this.dialog.confirm("Confirma a Alteração do Gestor Titular ?", "O Gestor Titular será alterado para " + row.usuario_nome);
+      if (form!.controls.atribuicoes.value.length && confirm) {
+        this.loading = true;
+        try {
+          let novasAtribuicoes: IntegranteAtribuicao[] = form!.controls.atribuicoes.value.map((x: LookupItem) => x.key);
+          if (!this.isNoPersist) { // se persistente
+            await this.integranteDao.saveIntegrante([this.integranteService.completarIntegrante(row, this.entity!.id, form!.controls.usuario_id.value, novasAtribuicoes)]).then(resposta => {
+              let msg: string | undefined;
+              if (msg = resposta?.find(v => v._metadata.msg?.length)?._metadata.msg) { if (this.grid) this.grid.error = msg; };
+            });
+            await this.loadData({ id: this.entity!.id }, this.form);
+            //if (this.grid) this.grid!.error = "";//
+          } else {                // se não persistente
+            this.substituirItem(row, novasAtribuicoes);
+            //await this.loadData({ id: this.entity!.id }, this.form);//
+>>>>>>> remotes/origin/develop
           }
           // Insere a atribuição de LOTADO para o novo Gerente, apenas para fins de atualização da tela, pois o back-end já fará isso automaticamente.
           novasAtribuicoes = this.integranteService.inserirAtribuicao(novasAtribuicoes, 'LOTADO');

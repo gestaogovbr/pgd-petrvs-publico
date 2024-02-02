@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Entidade;
 use App\Models\Tenant;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -18,6 +19,7 @@ use ReflectionObject;
 use Throwable;
 use Exception;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Session;
 
 class RawWhere {
     public $expression;
@@ -65,7 +67,7 @@ class ServiceBase extends DynamicMethods
     public string $collection = "";
     public string $developerId = "";
 
-    public $buffer; /* Utilizado para passar informações entre os Proxys */
+    public $buffer = []; /* Utilizado para passar informações entre os Proxys */
 
     /* instancia automaticamente os serviços */
     private $_services = [];
@@ -152,6 +154,34 @@ class ServiceBase extends DynamicMethods
         } else {
             $objArray->$key = $value;
         }
+    }
+
+    public function getStringKey($key) {
+        if(in_array(gettype($key), ["array", "object"])) {
+            $key = (array) $key;
+            ksort($key);
+            $key = md5(json_encode($key));
+        }
+        return $key;
+    }
+
+    public function setBuffer($section, $key, $value) {
+        $key = $this->getStringKey($key);
+        if (!array_key_exists($section, $this->buffer)) $this->buffer[$section] = [];
+        $this->buffer[$section][$key] = $value;
+        return $value;
+    }
+
+    public function getBuffer($section, $key) {
+        $key = $this->getStringKey($key);
+        if (!array_key_exists($section, $this->buffer)) $this->buffer[$section] = [];
+        return array_key_exists($key, $this->buffer[$section]) ? $this->buffer[$section][$key] : null;
+    }
+
+    public function hasBuffer($section, $key) {
+        $key = $this->getStringKey($key);
+        if (!array_key_exists($section, $this->buffer)) $this->buffer[$section] = [];
+        return array_key_exists($key, $this->buffer[$section]);
     }
 
     public function arrayDelta(&$from, &$to) {
@@ -869,6 +899,36 @@ class ServiceBase extends DynamicMethods
      */
     public static function loggedUser(): ?Usuario {
         return Auth::user();
+    }
+
+
+    /**
+     * Retorna a entidade atual do usuário logado
+     *
+     * @return App\Models\Entidade | null
+     */
+    public static function entidade(): Entidade {
+        return Entidade::find(Session::get('entidade_id'));
+    }
+
+    /**
+     * Retorna a unidade atual do usuário logado (Área de trabalho selecionada)
+     *
+     * @return App\Models\Unidade | null
+     */
+    public function unidade() {
+        return Entidade::find(Session::get('unidade_id'));
+    }
+
+    /**
+     * Retorna a data e hora em formato ISO8601 da unidade atual do usuário logado (Área de trabalho selecionada)
+     *
+     * @return string
+     */
+    public function dataHora() {
+        $unidadeId = Session::get('unidade_id') ?? $this->loggedUser()->lotacao?->unidade_id;
+        if (empty($unidadeId)) $unidadeId = Unidade::whereNull("unidade_pai_id")->fisrt()?->id; 
+        return $this->unidadeService->hora(Session::get('unidade_id'));
     }
 
     /**

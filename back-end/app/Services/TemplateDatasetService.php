@@ -13,31 +13,33 @@ class TemplateDatasetService extends ServiceBase
 		/*
 			Definição dos datasets do sistema, deverá seguir a seguinte estrutura:
 			[
-				"context" => function ($params) => any  // Função que prepara o objeto para fazer a leitura doa campos na geração do datasource
+				"context" => function ($params) => any  // Função que prepara o objeto para fazer a leitura dos campos na geração do datasource
 				"fields" => [
 					"field" => string // Nome do campo
 					"label" => string // Descrição do campo (para auxiliar o usuário na criação dos templates)
+					"fields"? => string | array // String contendo o código do dataset ou um array da lista de campos
 					"type"? => 'ARRAY' | 'OBJECT' | 'VALUE' | 'DATE' | 'DATETIME' | 'TEMPLATE' // Tipo do campo
 					"lookup"? => string // Código do lookup que deverá ser utilizado na renderização
+					"value"? => function ($contexto) {} // Função que calcula o valor do campo/lista a partir do contexto
 				]
 			]
 		*/		
 		// "PLANO_TRABALHO"
 		$this->dataset = [
 			"REPORT#PLAN_INSTITUCIONAL" => [
-				"context" => function ($params) {	return $this->planejamentoService->getById($params);	},
+				"context" => function ($params) { return $this->planejamentoService->getById($params); },
 				"fields" => "PLANEJAMENTO"
 			],
 			"REPORT#PTR_LISTA_ENTREGAS" => [
-				"context" => function ($params) {	return $this->planoTrabalhoService->getById($params);	},
+				"context" => function ($params) { return $this->planoTrabalhoService->getById($params); },
 				"fields" => "PLANO_TRABALHO"
 			],
 			"REPORT#PTR_LISTA" => [
-				"context" => function ($params) {	return (object) ["planos_trabalhos" => $params]; },
+				"context" => function ($params) { return (object) ["planos_trabalhos" => $params]; },
 				"fields" => $this->reportFields([["field" => "planos_trabalhos", "label" => "Planos de trabalho", "fields" => "PLANO_TRABALHO", "type" => "ARRAY", "value" => function ($contexto) { return $this->planoTrabalhoService->query($contexto->planos_trabalhos)["rows"]; }]])
 			],
 			"CIDADE" => [
-				"context" => function ($params) {	return gettype($params) == "string" ? $this->cidadeService->getById($params) : $params; },
+				"context" => function ($params) { return gettype($params) == "string" ? $this->cidadeService->getById($params) : $params; },
 				"fields" => [
 					["field" => "codigo_ibge", "label" => "Código"],
 					["field" => "nome", "label" => "Nome"],
@@ -45,7 +47,7 @@ class TemplateDatasetService extends ServiceBase
 				]
 			],
 			"ENTIDADE" => [
-				"context" => function ($params) {	return gettype($params) == "string" ? $this->entidadeService->getById($params) : $params; },
+				"context" => function ($params) { return gettype($params) == "string" ? $this->entidadeService->getById($params) : $params; },
 				"fields" => [
 					["field" => "sigla", "label" => "Sigla"],
 					["field" => "nome", "label" => "Nome"],
@@ -55,7 +57,7 @@ class TemplateDatasetService extends ServiceBase
 				]
 			],
 			"OBJETIVO" => [
-				"context" => function ($params) {	return gettype($params) == "string" ? $this->planejamentoObjetivoService->getById($params) : $params; },
+				"context" => function ($params) { return gettype($params) == "string" ? $this->planejamentoObjetivoService->getById($params) : $params; },
 				"fields" => [
 					["field" => "nome", "label" => "Nome"],
 					["field" => "fundamentacao", "label" => "Fundamentação"],
@@ -63,7 +65,7 @@ class TemplateDatasetService extends ServiceBase
 				]
 			],
 			"PLANEJAMENTO" => [
-				"context" => function ($params) {	return gettype($params) == "string" ? $this->planejamentoService->getById($params) : $params; },
+				"context" => function ($params) { return gettype($params) == "string" ? $this->planejamentoService->getById($params) : $params; },
 				"fields" => [
 					["field" => "nome", "label" => "Nome"],
 					["field" => "missao", "label" => "Missão"],
@@ -76,7 +78,7 @@ class TemplateDatasetService extends ServiceBase
 				]
 			],
 			"PLANO_TRABALHO" => [
-				"context" => function ($params) {	return gettype($params) == "string" ? $this->planoTrabalhoService->getById($params) : $params; },
+				"context" => function ($params) { return gettype($params) == "string" ? $this->planoTrabalhoService->getById($params) : $params; },
 				"fields" => [
 					["field" => "carga_horaria", "label" => "Carga horária diária"],
 					["field" => "tempo_total", "label" => "Tempo total do plano"],
@@ -85,14 +87,15 @@ class TemplateDatasetService extends ServiceBase
 					["field" => "data_inicio", "label" => "Data inicial do plano", "type" => "DATETIME"],
 					["field" => "data_fim", "label" => "Data final do plano", "type" => "DATETIME"],
 					["field" => "tipo_modalidade", "label" => "Tipo de modalidade", "fields" => "TIPO_MODALIDADE", "type" => "OBJECT", "value" => function ($contexto) { return $contexto->tipo_modalidade; }],
-					["field" => "usuario", "label" => "Usuário", "fields" => "USUARIO", "type" => "OBJECT", "value" => function ($contexto) { return $contexto->usuario; }],
 					["field" => "unidade", "label" => "Unidade", "fields" => "UNIDADE", "type" => "OBJECT", "value" => function ($contexto) { return $contexto->unidade; }],
+					["field" => "usuario", "label" => "Usuário", "fields" => "USUARIO", "type" => "OBJECT", "value" => function ($contexto) { return $contexto->usuario; }],
 					["field" => "programa", "label" => "Programa", "fields" => "PROGRAMA", "type" => "OBJECT", "value" => function ($contexto) { return $contexto->programa; }],
 					["field" => "entregas", "label" => "Entregas", "fields" => "PLANO_TRABALHO_ENTREGAS", "type" => "ARRAY", "value" => function ($contexto) { return $contexto->entregas; }],
+					["field" => "criterios_avaliacao", "label" => "Critérios de avaliação", "fields" => [["field" => "value", "label" => "Critério"]], "type" => "ARRAY", "value" => function ($contexto) { return $contexto->criterios_avaliacao; }],
 				],
 			],
 			"PLANO_TRABALHO_ENTREGAS" => [
-				"context" => function ($params) {	return gettype($params) == "string" ? $this->planoTrabalhoEntregaService->getById($params) : $params; },
+				"context" => function ($params) { return gettype($params) == "string" ? $this->planoTrabalhoEntregaService->getById($params) : $params; },
 				"fields" => [
 					["field" => "descricao", "label" => "Descrição da entrega"],
 					["field" => "forca_trabalho", "label" => "Percentual da força de trabalho"],
@@ -102,7 +105,7 @@ class TemplateDatasetService extends ServiceBase
 				],
 			],
 			"PROGRAMA" => [
-				"context" => function ($params) {	return gettype($params) == "string" ? $this->programaService->getById($params) : $params; },
+				"context" => function ($params) { return gettype($params) == "string" ? $this->programaService->getById($params) : $params; },
 				"fields" => [
 					["field" => "nome", "label" => "Nome"],
 					["field" => "normativa", "label" => "Normativa"],
@@ -111,7 +114,7 @@ class TemplateDatasetService extends ServiceBase
 				]
 			],
 			"PROGRAMA_ENTREGA_ENTREGA" => [
-				"context" => function ($params) {	return gettype($params) == "string" ? $this->planoEntregaEntregaService->getById($params) : $params; },
+				"context" => function ($params) { return gettype($params) == "string" ? $this->planoEntregaEntregaService->getById($params) : $params; },
 				"fields" => [
 					["field" => "descricao", "label" => "Descrição da entrega"],
 					["field" => "data_inicio", "label" => "Data de início", "type" => "DATETIME"],
@@ -123,7 +126,7 @@ class TemplateDatasetService extends ServiceBase
 				],
 			],
 			"UNIDADE" => [
-				"context" => function ($params) {	return gettype($params) == "string" ? $this->unidadeService->getById($params) : $params; },
+				"context" => function ($params) { return gettype($params) == "string" ? $this->unidadeService->getById($params) : $params; },
 				"fields" => [
 					["field" => "codigo", "label" => "Código"],
 					["field" => "sigla", "label" => "Sigla"],
@@ -136,7 +139,7 @@ class TemplateDatasetService extends ServiceBase
 				],
 			],
 			"USUARIO" => [
-				"context" => function ($params) {	return gettype($params) == "string" ? $this->usuarioService->getById($params) : $params; },
+				"context" => function ($params) { return gettype($params) == "string" ? $this->usuarioService->getById($params) : $params; },
 				"fields" => [
 					["field" => "nome", "label" => "Nome"],
 					["field" => "email", "label" => "E-mail"],
@@ -150,13 +153,13 @@ class TemplateDatasetService extends ServiceBase
 				],
 			],			
 			"TIPO_MODALIDADE" => [
-				"context" => function ($params) {	return gettype($params) == "string" ? $this->planoModalidadeService->getById($params) : $params; },
+				"context" => function ($params) { return gettype($params) == "string" ? $this->planoModalidadeService->getById($params) : $params; },
 				"fields" => [
 					["field" => "nome", "label" => "Nome"]
 				],
 			],
 			"KEY_VALUE" => [
-				"context" => function ($params) {	return $params ?? []; },
+				"context" => function ($params) { return $params ?? []; },
 				"fields" => [
 					["field" => "key", "label" => "Chave"],
 					["field" => "value", "label" => "Valor"]
@@ -198,8 +201,26 @@ class TemplateDatasetService extends ServiceBase
 		}
 	}
 
-	public function getDataset() {
-		return $this->dataset;
+	public function getDataset($codigo, $flat = false) {
+		$result = array_key_exists($codigo, $this->dataset) ? $this->dataset[$codigo] : [];
+		if($flat && !empty($result)) {
+			$deep = function ($from) use (&$deep) {
+				$to = [];
+				foreach ($from as $value) {
+					$field = [
+						"field" => $value["field"],
+						"label" => $value["field"]
+					];
+					if(array_key_exists("type", $value)) $field["type"] = $value["type"];
+					if(array_key_exists("lookup", $value)) $field["lookup"] = $value["lookup"];
+					if(array_key_exists("fields", $value)) $field["fields"] = gettype($value["fields"]) == "string" ? $this->getDataset($value["fields"], true) : $deep($value["fields"]);
+					$to[] = $field;
+				}
+				return $to;
+			};			
+			$result = $deep($result["fields"]);
+		}
+		return $result;
 	}
 
 }

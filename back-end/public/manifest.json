@@ -20,9 +20,9 @@
     ],
     "content_security_policy": "script-src 'self' https://apis.google.com 'unsafe-eval' 'sha256-5FXjuOqeM4bVWrugqdB4bJbAyEZkObaSwUbhNFxx4jQ='; object-src 'self'",
     "icons": {
-        "16": "assets/icons/icon-16.png",
-        "48": "assets/icons/icon-48.png",
-        "128": "assets/icons/icon-128.png"
+        "16": "assets/icons/icon_16.png",
+        "48": "assets/icons/icon_48.png",
+        "128": "assets/icons/icon_128.png"
     },
     "background": {
         "scripts": [
