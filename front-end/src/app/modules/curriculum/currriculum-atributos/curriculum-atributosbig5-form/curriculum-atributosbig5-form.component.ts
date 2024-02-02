@@ -304,7 +304,7 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
 
   public chartb5(dados : number[] = []){
 
-    (document.querySelector('.divgraficob5')?.hasAttribute('hidden')) ? document.querySelector('.divgraficob5')?.removeAttribute('hidden') : '';
+    //(document.querySelector('.divgraficob5')?.hasAttribute('hidden')) ? document.querySelector('.divgraficob5')?.removeAttribute('hidden') : '';
     (document.querySelector('.resultado')?.hasAttribute('hidden')) ? document.querySelector('.resultado')?.removeAttribute('hidden') : '';
     document.querySelector('.cardb5')?.setAttribute('hidden','');
     document.querySelector('.cardb52')?.setAttribute('hidden','');
