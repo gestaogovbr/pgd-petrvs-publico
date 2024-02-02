@@ -129,11 +129,11 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
         item._metadata = Object.assign(item._metadata || {}, { level });
         items.push(item);
         //if(item._status != "DELETE") addItens(this.items.filter(x => x.objetivo_pai_id == item.id).sort((a,b) => a.sequencia - b.sequencia), level + 1);
-        if(item._status != "DELETE") addItens(this.items.filter(x => x.objetivo_pai_id == item.id).sort((a,b) => (a.nome > b.nome ? -1 : 1)), level + 1);
+        if(item._status != "DELETE") addItens(this.items.filter(x => x.objetivo_pai_id == item.id).sort((a,b) => (a.nome > b.nome ? 1 : -1)), level + 1);
       }
     }
     //addItens(this.items.filter(x => !x.objetivo_pai_id).sort((a,b) => a.sequencia - b.sequencia), 0);
-    addItens(this.items.filter(x => !x.objetivo_pai_id).sort((a,b) => (a.nome > b.nome ? -1 : 1)), 0);
+    addItens(this.items.filter(x => !x.objetivo_pai_id).sort((a,b) => (a.nome > b.nome ? 1 : -1)), 0);
     this.items.length = 0;
     this.items.push(...items);
     this.cdRef.detectChanges();

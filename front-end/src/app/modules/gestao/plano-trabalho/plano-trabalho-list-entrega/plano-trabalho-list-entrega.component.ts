@@ -49,6 +49,8 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   public entregas: LookupItem[] = [];
 
   private _disabled: boolean = false;
+  //Colocar o plano de entrega em execucao quando for propria unidade
+  //quando adiciona um novo e edita o mesmo, salva 2x no banco
 
   constructor(public injector: Injector) {
     super(injector);
