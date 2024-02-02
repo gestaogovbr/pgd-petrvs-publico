@@ -14,6 +14,7 @@ import { EntityService } from './services/entity.service';
 import { NotificacaoService } from './modules/uteis/notificacoes/notificacao.service';
 import { DOCUMENT } from '@angular/common';
 import { SafeUrl } from '@angular/platform-browser';
+import { UnidadeService } from './services/unidade.service';
 
 //export let appInjector: Injector;
 //export type Contexto = "PGD" | "EXECUCAO" | "AVALIACAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
@@ -92,6 +93,7 @@ export class AppComponent {
   public menuExecucao: any;
   public menuAdministrador: any;
   public menuDev: any;
+  public unidadeService: UnidadeService;
   private _menu: any;
   private _menuDetectChanges: any;
 
@@ -112,6 +114,7 @@ export class AppComponent {
     this.lookup = injector.get<LookupService>(LookupService);
     this.entity = injector.get<EntityService>(EntityService);
     this.notificacao = injector.get<NotificacaoService>(NotificacaoService);
+    this.unidadeService = injector.get<UnidadeService>(UnidadeService);
     /* Inicializações */
     this.notificacao.heartbeat();
     this.auth.app = this;
@@ -564,6 +567,5 @@ export class AppComponent {
   public get isConfig(): boolean {
     return this.router.url.indexOf("/extension/options") >= 0;
   }
-
 }
 

@@ -137,6 +137,8 @@ class PlanoTrabalhoService extends ServiceBase
       $validoTabela1 = $condicoes["atribuicoesGestorUsuarioLogado"]["gestor"] || $condicoes["atribuicoesGestorUsuarioLogado"]["gestorSubstituto"];
     } else if ($condicoes['usuarioEhParticipantePlano']) { /* Plano do próprio usuário logado */
       $validoTabela1 = $condicoes['usuarioEhParticipanteHabilitado'];
+    } else {
+      $validoTabela1 = $condicoes["gestorUnidadeExecutora"];
     }
     /* (RN_PTR_AA) Um Plano de Trabalho não pode ser incluído/alterado se apresentar período conflitante com outro Plano de Trabalho já existente para a mesma unidade/servidor, a menos que o usuário logado possua a capacidade MOD_PTR_INTSC_DATA; */
     $conflito = PlanoTrabalho::

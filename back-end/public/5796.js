@@ -1840,20 +1840,35 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
       _this7.formEdit.controls.etiqueta.setValue(null);
       _this7.etiquetas = _this7.util.merge(row.tipo_atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key);
       _this7.etiquetas = _this7.util.merge(_this7.etiquetas, _this7.auth.usuario.config?.etiquetas, (a, b) => a.key == b.key);
+      _this7.etiquetas = _this7.util.merge(_this7.etiquetas, yield _this7.carregaEtiquetasUnidadesAscendentes(row.unidade), (a, b) => a.key == b.key);
       _this7.checklist = _this7.util.clone(row.checklist);
     })();
   }
-  onColumnProgressoEtiquetasChecklistSave(row) {
+  carregaEtiquetasUnidadesAscendentes(unidadeAtual) {
     var _this8 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      let etiquetasUnidades = [];
+      let path = unidadeAtual.path.split("/");
+      let unidades = yield _this8.unidadeDao.query({
+        where: ["id", "in", path]
+      }).asPromise();
+      unidades.forEach(un => {
+        etiquetasUnidades = _this8.util.merge(etiquetasUnidades, un.etiquetas, (a, b) => a.key == b.key);
+      });
+      return etiquetasUnidades;
+    })();
+  }
+  onColumnProgressoEtiquetasChecklistSave(row) {
+    var _this9 = this;
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       try {
-        const saved = yield _this8.atividadeDao.update(row.id, {
-          progresso: _this8.formEdit.controls.progresso.value,
-          etiquetas: _this8.formEdit.controls.etiquetas.value,
-          checklist: _this8.checklist
+        const saved = yield _this9.atividadeDao.update(row.id, {
+          progresso: _this9.formEdit.controls.progresso.value,
+          etiquetas: _this9.formEdit.controls.etiquetas.value,
+          checklist: _this9.checklist
         });
-        row.progresso = _this8.formEdit.controls.progresso.value;
-        row.checklist = _this8.checklist;
+        row.progresso = _this9.formEdit.controls.progresso.value;
+        row.checklist = _this9.checklist;
         return !!saved;
       } catch (error) {
         return false;
@@ -1909,27 +1924,27 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
     this.cdRef.detectChanges();
   }
   onColumnAtividadeDescricaoEdit(row) {
-    var _this9 = this;
+    var _this10 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      _this9.formEdit.controls.descricao.setValue(row.descricao);
-      _this9.formEdit.controls.tipo_atividade_id.setValue(row.tipo_atividade_id);
-      _this9.formEdit.controls.comentarios.setValue(row.comentarios);
+      _this10.formEdit.controls.descricao.setValue(row.descricao);
+      _this10.formEdit.controls.tipo_atividade_id.setValue(row.tipo_atividade_id);
+      _this10.formEdit.controls.comentarios.setValue(row.comentarios);
     })();
   }
   onColumnAtividadeDescricaoSave(row) {
-    var _this10 = this;
+    var _this11 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       try {
-        _this10.atividadeService.comentarioAtividade(_this10.tipoAtividade?.selectedEntity, _this10.formEdit.controls.comentarios);
-        const saved = yield _this10.atividadeDao.update(row.id, {
-          descricao: _this10.formEdit.controls.descricao.value,
-          tipo_atividade_id: _this10.formEdit.controls.tipo_atividade_id.value,
-          comentarios: (_this10.formEdit.controls.comentarios.value || []).filter(x => ["ADD", "EDIT", "DELETE"].includes(x._status || ""))
+        _this11.atividadeService.comentarioAtividade(_this11.tipoAtividade?.selectedEntity, _this11.formEdit.controls.comentarios);
+        const saved = yield _this11.atividadeDao.update(row.id, {
+          descricao: _this11.formEdit.controls.descricao.value,
+          tipo_atividade_id: _this11.formEdit.controls.tipo_atividade_id.value,
+          comentarios: (_this11.formEdit.controls.comentarios.value || []).filter(x => ["ADD", "EDIT", "DELETE"].includes(x._status || ""))
         });
-        row.descricao = _this10.formEdit.controls.descricao.value;
-        row.tipo_atividade_id = _this10.formEdit.controls.tipo_atividade_id.value;
-        row.tipo_atividade = _this10.tipoAtividade?.selectedEntity || null;
-        row.comentarios = _this10.formEdit.controls.comentarios.value;
+        row.descricao = _this11.formEdit.controls.descricao.value;
+        row.tipo_atividade_id = _this11.formEdit.controls.tipo_atividade_id.value;
+        row.tipo_atividade = _this11.tipoAtividade?.selectedEntity || null;
+        row.comentarios = _this11.formEdit.controls.comentarios.value;
         return !!saved;
       } catch (error) {
         return false;
@@ -1940,20 +1955,20 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
   * Ocorrências
   ****************************************************************************************/
   addOcorrencia() {
-    var _this11 = this;
+    var _this12 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       /*return new PlanoTrabalhoConsolidacaoOcorrencia({
         plano_trabalho_consolidacao_id: this.entity!.id
       });*/
-      _this11.go.navigate({
+      _this12.go.navigate({
         route: ['gestao', 'ocorrencia', 'new']
       }, {
         metadata: {
-          consolidacao: _this11.entity,
-          planoTrabalho: _this11.planoTrabalho
+          consolidacao: _this12.entity,
+          planoTrabalho: _this12.planoTrabalho
         },
         modalClose: modalResult => {
-          if (modalResult) _this11.refresh();
+          if (modalResult) _this12.refresh();
         }
       });
     })();
@@ -1984,28 +1999,28 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
     return result;
   }*/
   editOcorrencia(row) {
-    var _this12 = this;
+    var _this13 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      _this12.go.navigate({
+      _this13.go.navigate({
         route: ["gestao", "ocorrencia", row.id, "edit"]
       }, {
         modalClose: modalResult => {
-          if (modalResult) _this12.refresh();
+          if (modalResult) _this13.refresh();
         }
       });
     })();
   }
   removeOcorrencia(row) {
-    var _this13 = this;
+    var _this14 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      if (yield _this13.dialog.confirm("Exclui ?", "Deseja realmente excluir o item ?")) {
-        _this13.submitting = true;
+      if (yield _this14.dialog.confirm("Exclui ?", "Deseja realmente excluir o item ?")) {
+        _this14.submitting = true;
         try {
           let ocorrencia = row;
-          yield _this13.ocorrenciaDao?.delete(ocorrencia);
-          _this13.itemsOcorrencias.splice(_this13.itemsOcorrencias.findIndex(x => x.id == ocorrencia.id), 1);
+          yield _this14.ocorrenciaDao?.delete(ocorrencia);
+          _this14.itemsOcorrencias.splice(_this14.itemsOcorrencias.findIndex(x => x.id == ocorrencia.id), 1);
         } finally {
-          _this13.submitting = false;
+          _this14.submitting = false;
         }
       }
     })();
@@ -2025,35 +2040,35 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
   * Comparecimento
   ****************************************************************************************/
   addComparecimento() {
-    var _this14 = this;
+    var _this15 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       return new src_app_models_comparecimento_model__WEBPACK_IMPORTED_MODULE_11__.Comparecimento({
-        unidade_id: _this14.unidade?.id,
-        unidade: _this14.unidade,
-        plano_trabalho_consolidacao_id: _this14.entity.id
+        unidade_id: _this15.unidade?.id,
+        unidade: _this15.unidade,
+        plano_trabalho_consolidacao_id: _this15.entity.id
       });
     })();
   }
   loadComparecimento(form, row) {
-    var _this15 = this;
+    var _this16 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      _this15.formComparecimento.patchValue({
+      _this16.formComparecimento.patchValue({
         data_comparecimento: row.data_comparecimento,
         unidade_id: row.unidade_id,
         detalhamento: row.detalhamento
       });
-      _this15.cdRef.detectChanges();
+      _this16.cdRef.detectChanges();
     })();
   }
   removeComparecimento(row) {
-    var _this16 = this;
+    var _this17 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      let confirm = yield _this16.dialog.confirm("Exclui ?", "Deseja realmente excluir o item ?");
+      let confirm = yield _this17.dialog.confirm("Exclui ?", "Deseja realmente excluir o item ?");
       if (confirm) {
         try {
           let comparecimento = row;
-          yield _this16.comparecimentoDao?.delete(comparecimento);
-          _this16.itemsComparecimentos.splice(_this16.itemsComparecimentos.findIndex(x => x.id == comparecimento.id), 1);
+          yield _this17.comparecimentoDao?.delete(comparecimento);
+          _this17.itemsComparecimentos.splice(_this17.itemsComparecimentos.findIndex(x => x.id == comparecimento.id), 1);
           return true;
         } catch {
           return false;
@@ -2064,21 +2079,21 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
     })();
   }
   saveComparecimento(form, row) {
-    var _this17 = this;
+    var _this18 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let result = undefined;
-      _this17.formComparecimento.markAllAsTouched();
-      if (_this17.formComparecimento.valid) {
-        row.id = row.id == "NEW" ? _this17.dao.generateUuid() : row.id;
+      _this18.formComparecimento.markAllAsTouched();
+      if (_this18.formComparecimento.valid) {
+        row.id = row.id == "NEW" ? _this18.dao.generateUuid() : row.id;
         row.data_comparecimento = form.controls.data_comparecimento.value;
         row.detalhamento = form.controls.detalhamento.value;
-        row.plano_trabalho_consolidacao_id = _this17.entity.id;
+        row.plano_trabalho_consolidacao_id = _this18.entity.id;
         row.unidade_id = form.controls.unidade_id.value;
-        _this17.submitting = true;
+        _this18.submitting = true;
         try {
-          result = yield _this17.comparecimentoDao?.save(row);
+          result = yield _this18.comparecimentoDao?.save(row);
         } finally {
-          _this17.submitting = false;
+          _this18.submitting = false;
         }
       }
       return result;
@@ -2093,18 +2108,18 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
   * Afastamentos
   ****************************************************************************************/
   addAfastamento() {
-    var _this18 = this;
+    var _this19 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      _this18.go.navigate({
+      _this19.go.navigate({
         route: ['gestao', 'afastamento', 'new']
       }, {
         metadata: {
-          consolidacao: _this18.entity
+          consolidacao: _this19.entity
         },
         filterSnapshot: undefined,
         querySnapshot: undefined,
         modalClose: modalResult => {
-          if (modalResult) _this18.refresh();
+          if (modalResult) _this19.refresh();
         }
       });
     })();
@@ -2120,9 +2135,9 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
     return result;
   }
   showPlanejamento(planejamento_id) {
-    var _this19 = this;
+    var _this20 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      _this19.go.navigate({
+      _this20.go.navigate({
         route: ['gestao', 'planejamento', planejamento_id, 'consult']
       }, {
         modal: true
@@ -2130,9 +2145,9 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
     })();
   }
   showCadeiaValor(cadeia_valor_id_id) {
-    var _this20 = this;
+    var _this21 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      _this20.go.navigate({
+      _this21.go.navigate({
         route: ['gestao', 'cadeia-valor', cadeia_valor_id_id, 'consult']
       }, {
         modal: true
@@ -3745,6 +3760,9 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
         }
       }
       yield _this3.loadData(_this3.entity, _this3.form);
+      let nowDate = new Date();
+      nowDate.setHours(0, 0, 0, 0);
+      _this3.form?.controls.data_inicio.setValue(nowDate);
       _this3.form?.controls.data_fim.setValue("");
     })();
   }
@@ -4619,6 +4637,8 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
     if (!this.gridControl.value.entregas) this.gridControl.value.entregas = [];
     return this.gridControl.value.entregas;
   }
+  //Colocar o plano de entrega em execucao quando for propria unidade
+  //quando adiciona um novo e edita o mesmo, salva 2x no banco
   constructor(injector) {
     super(injector);
     this.injector = injector;
@@ -4635,7 +4655,8 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
     this.validate = (control, controlName) => {
       let result = null;
       if (['forca_trabalho'].indexOf(controlName) >= 0 && control.value == 1) return result;
-      if (['descricao', 'forca_trabalho'].indexOf(controlName) >= 0 && !control.value?.length) result = "Obrigatório!";
+      if (['forca_trabalho'].indexOf(controlName) >= 0 && !control.value) result = "Obrigatório!";
+      if (['descricao'].indexOf(controlName) >= 0 && !control.value?.length) result = "Obrigatório!";
       if (['forca_trabalho'].indexOf(controlName) >= 0 && (control.value < 1 || control.value > 100)) result = "Deve estar entre 1 e 100";
       if (['plano_entrega_entrega_id'].indexOf(controlName) >= 0) {
         if (['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(this.form?.controls.origem.value) && !control.value) result = "Obrigatório!";
@@ -4737,9 +4758,13 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
       form.controls.descricao.setValue(row.descricao);
       form.controls.forca_trabalho.setValue(row.forca_trabalho);
       form.controls.plano_trabalho_id.setValue(row.plano_trabalho_id);
-      form.controls.plano_entrega_entrega_id.setValue(null);
       form.controls.orgao.setValue(null);
-      if (entrega._status == "ADD") {
+      form.controls.plano_entrega_entrega_id.setValue(null);
+      if (row.plano_entrega_entrega) {
+        form.controls.plano_entrega_id.setValue(row.plano_entrega_entrega.plano_entrega.id);
+        form.controls.plano_entrega_entrega_id.setValue(row.plano_entrega_entrega_id);
+      }
+      if (entrega._status == "ADD" && !form.controls.plano_entrega_id.value) {
         // É uma nova entrega
         form.controls.origem.setValue('PROPRIA_UNIDADE');
       } else if (entrega.plano_entrega_entrega?.plano_entrega?.unidade_id == _this3.entity.unidade_id) {
@@ -4864,13 +4889,14 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
       } else if (value == 'SEM_ENTREGA') {
         _this7.form?.controls.orgao.setValue(null);
         _this7.form?.controls.plano_entrega_entrega_id.setValue(null);
-      }
-      if (value == 'OUTRA_UNIDADE') {
+      } else if (value == 'OUTRA_UNIDADE') {
         //if (value == 'PROPRIA_UNIDADE' || value == 'OUTRA_UNIDADE')
         _this7.form?.controls.orgao.setValue(null);
-        _this7.loading = true;
-        _this7.planoEntrega?.onSelectClick(new Event("SELECT"));
-        _this7.loading = false;
+        if (!_this7.form?.controls.plano_entrega_id.value) {
+          _this7.loading = true;
+          _this7.planoEntrega?.onSelectClick(new Event("SELECT"));
+          _this7.loading = false;
+        }
       }
       /*      try {
          let planosEntregas = await this.planoEntregaDao!.query({where: [["unidade_id", "==", this.entity!.unidade_id], ["status", "==", "ATIVO"], ["data_inicio", "<=", this.entity!.data_fim], ["data_fim", ">=", this.entity!.data_inicio]]}).asPromise();

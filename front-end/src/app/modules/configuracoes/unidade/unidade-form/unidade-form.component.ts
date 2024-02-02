@@ -131,14 +131,14 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
     return result;
   }
 
-/*   public formValidation = (form?: FormGroup) => {
+  public formValidation = (form?: FormGroup) => {
     const erros_integrantes = [];
-    this.usuariosIntegrantes?.grid?.items.forEach((usuarioIntegrante) => {
+    /*this.usuariosIntegrantes?.grid?.items.forEach((usuarioIntegrante) => {
       if (usuarioIntegrante.usuario_id == '') erros_integrantes.push({ integrante: usuarioIntegrante, erro: 'Falta o usuario' })
     });
-    if (erros_integrantes.length) return "Na aba 'Integrantes' há usuário não salvo. Salve-o antes de salvar a unidade!"
+    if (erros_integrantes.length) return "Na aba 'Integrantes' há usuário não salvo. Salve-o antes de salvar a unidade!"*/
     return undefined;
-  } */
+  }
 
   public addItemHandle(): LookupItem | undefined {
     let result = undefined;
@@ -166,14 +166,14 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       unidade = this.util.fillForm(unidade, this.form!.value);
       unidade.notificacoes = this.entity!.notificacoes;
       unidade.notificacoes_templates = this.entity!.notificacoes_templates;
-      if(!this.form!.controls.usar_expediente_unidade) unidade.expediente = null;
-/*       let integrantesConsolidados: IntegranteConsolidado[] = this.usuariosIntegrantes?.items || [];
+      if (!this.form!.controls.usar_expediente_unidade) unidade.expediente = null;
+      /*let integrantesConsolidados: IntegranteConsolidado[] = this.usuariosIntegrantes?.items || [];
       unidade.integrantes = integrantesConsolidados.map(x => new UnidadeIntegrante({
         usuario_id: x.usuario_id,
         unidade_id: x.unidade_id,
         atribuicoes: x.atribuicoes
-      })); */
-        resolve(unidade);
+      }));*/
+      resolve(unidade);
     });
   }
 

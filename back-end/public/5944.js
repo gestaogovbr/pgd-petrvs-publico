@@ -157,7 +157,7 @@ function AtividadeFormConcluirComponent_div_12_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("decimals", 2);
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("label", ctx_r2.lex.translate("Prazo de entrega"))("control", ctx_r2.form.controls.data_estipulada_entrega);
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("label", ctx_r2.lex.translate("Prazo de entrega"))("control", ctx_r2.form.controls.data_estipulada_entrega)("labelInfo", "Data estipulada para entrega da " + ctx_r2.lex.translate("atividade"));
   }
 }
 function AtividadeFormConcluirComponent_ng_template_13_Template(rf, ctx) {
@@ -175,7 +175,7 @@ function AtividadeFormConcluirComponent_ng_template_13_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 3)("decimals", 2);
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 3)("label", ctx_r4.lex.translate("Prazo de entrega"))("control", ctx_r4.form.controls.data_estipulada_entrega);
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 3)("label", ctx_r4.lex.translate("Prazo de entrega"))("control", ctx_r4.form.controls.data_estipulada_entrega)("labelInfo", "Data estipulada para entrega da " + ctx_r4.lex.translate("atividade"));
   }
 }
 function AtividadeFormConcluirComponent_div_16_Template(rf, ctx) {
@@ -196,11 +196,11 @@ function AtividadeFormConcluirComponent_div_16_Template(rf, ctx) {
   if (rf & 2) {
     const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r5.form.controls.data_inicio);
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r5.form.controls.data_inicio)("labelInfo", "Data em que o usu\u00E1rio iniciou a " + ctx_r5.lex.translate("atividade"));
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r5.form.controls.data_entrega);
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r5.form.controls.data_entrega)("labelInfo", "Data da conclus\u00E3o da " + ctx_r5.lex.translate("atividade"));
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r5.form.controls.data_inicio);
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r5.form.controls.data_inicio)("labelInfo", "Data de arquivamento da " + ctx_r5.lex.translate("atividade"));
   }
 }
 function AtividadeFormConcluirComponent_ng_template_17_Template(rf, ctx) {
@@ -221,13 +221,13 @@ function AtividadeFormConcluirComponent_ng_template_17_Template(rf, ctx) {
   if (rf & 2) {
     const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r7.form.controls.data_inicio);
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r7.form.controls.data_inicio)("labelInfo", "Data em que o usu\u00E1rio iniciou a " + ctx_r7.lex.translate("atividade"));
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r7.form.controls.data_entrega);
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r7.form.controls.data_entrega)("labelInfo", "Data da conclus\u00E3o da " + ctx_r7.lex.translate("atividade"));
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r7.form.controls.tempo_despendido);
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r7.form.controls.tempo_despendido)("labelInfo", "Calculado no fim da " + ctx_r7.lex.translate("atividade") + ", sendo o tempo l\u00EDquido (considerando pausas)");
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r7.form.controls.data_inicio);
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r7.form.controls.data_inicio)("labelInfo", "Data de arquivamento da " + ctx_r7.lex.translate("atividade"));
   }
 }
 function AtividadeFormConcluirComponent_separator_20_Template(rf, ctx) {
@@ -258,6 +258,7 @@ class AtividadeFormConcluirComponent extends src_app_modules_base_page_form_base
     this.tipoAtividadeDao = injector.get(src_app_dao_tipo_atividade_dao_service__WEBPACK_IMPORTED_MODULE_7__.TipoAtividadeDaoService);
     this.tipoDocumentoDao = injector.get(src_app_dao_tipo_documento_dao_service__WEBPACK_IMPORTED_MODULE_6__.TipoDocumentoDaoService);
     this.calendar = injector.get(src_app_services_calendar_service__WEBPACK_IMPORTED_MODULE_5__.CalendarService);
+    this.title = 'Conclusão de ' + this.lex.translate('atividade');
     this.form = this.fh.FormBuilder({
       tipo_atividade_id: {
         default: null
@@ -383,7 +384,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵdef
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵInheritDefinitionFeature"]],
   decls: 21,
   vars: 26,
-  consts: [["initialFocus", "tipo_atividade_id", 3, "form", "disabled", "submit", "cancel"], [3, "documento"], [1, "row"], ["controlName", "tipo_atividade_id", 3, "label", "emptyValue", "size", "dao", "select"], ["tipoAtividade", ""], ["controlName", "plano_trabalho_entrega_id", "required", "", 3, "label", "size", "control", "items", "labelInfo"], ["entrega", ""], ["label", "Arquivar", "controlName", "arquivar", "labelInfo", "Arquivar automaticamente ap\u00F3s a conclus\u00E3o (Somente se o plano dispensar avalia\u00E7\u00E3o)", 3, "size", "control"], ["label", "Descri\u00E7\u00E3o t\u00E9cnica", "controlName", "descricao_tecnica", 3, "size", "rows", "control"], ["collapse", "", 3, "title", "collapsed"], ["persist", "", 3, "atividade"], ["class", "row", 4, "ngIf", "ngIfElse"], ["comEsforco", ""], ["title", "Conclus\u00E3o"], ["comTempoDespendido", ""], ["title", "C\u00E1lculos das horas", "collapse", "", 4, "ngIf"], ["noIcon", "", "controlName", "data_distribuicao", "labelInfo", "Data de inclus\u00E3o/distribui\u00E7\u00E3o/lan\u00E7amento", 3, "size", "label", "control"], ["label", "Progresso", "disabled", "", "sufix", "%", "icon", "bi bi-clock", "controlName", "progresso", "labelInfo", "Progresso de execu\u00E7\u00E3o (% Conclu\u00EDdo). Sempre ser\u00E1 100% na conclus\u00E3o!", 3, "size", "decimals"], ["noIcon", "", "controlName", "data_estipulada_entrega", "labelInfo", "Data estipulada para entrega da atividade", 3, "size", "label", "control"], ["noIcon", "", "disabled", "", "controlName", "data_distribuicao", "labelInfo", "Data de inclus\u00E3o/distribui\u00E7\u00E3o/lan\u00E7amento", 3, "size", "label", "control"], ["icon", "bi bi-stopwatch", "onlyHours", "", "controlName", "esforco", "labelInfo", "Tempo estimado de execu\u00E7\u00E3o", 3, "size", "label", "control"], ["noIcon", "", "disabled", "", "controlName", "data_estipulada_entrega", "labelInfo", "Data estipulada para entrega da atividade", 3, "size", "label", "control"], ["noIcon", "", "label", "Inicio", "controlName", "data_inicio", "disabled", "", "labelInfo", "Data em que o usu\u00E1rio iniciou a atividade", 3, "size", "control"], ["noIcon", "", "label", "Conclus\u00E3o", "controlName", "data_entrega", "labelInfo", "Data da conclus\u00E3o da atividade", "required", "", 3, "size", "control", "change"], ["label", "Data de arquivamento", "controlName", "data_arquivamento", "disabled", "", "labelInfo", "Data de arquivamento da atividade", 3, "size", "control"], ["noIcon", "", "label", "Conclus\u00E3o", "controlName", "data_entrega", "labelInfo", "Data da conclus\u00E3o da atividade", 3, "size", "control", "change"], ["label", "Tempo despendido", "icon", "bi bi-hourglass-bottom", "controlName", "tempo_despendido", "disabled", "", "labelInfo", "Calculado no fim da atividade, sendo o tempo l\u00EDquido (considerando pausas)", 3, "size", "control"], ["title", "C\u00E1lculos das horas", "collapse", ""], [3, "efemerides"]],
+  consts: [["initialFocus", "tipo_atividade_id", 3, "form", "disabled", "submit", "cancel"], [3, "documento"], [1, "row"], ["controlName", "tipo_atividade_id", 3, "label", "emptyValue", "size", "dao", "select"], ["tipoAtividade", ""], ["controlName", "plano_trabalho_entrega_id", "required", "", 3, "label", "size", "control", "items", "labelInfo"], ["entrega", ""], ["label", "Arquivar", "controlName", "arquivar", "labelInfo", "Arquivar automaticamente ap\u00F3s a conclus\u00E3o (Somente se o plano dispensar avalia\u00E7\u00E3o)", 3, "size", "control"], ["label", "Descri\u00E7\u00E3o t\u00E9cnica", "controlName", "descricao_tecnica", 3, "size", "rows", "control"], ["collapse", "", 3, "title", "collapsed"], ["persist", "", 3, "atividade"], ["class", "row", 4, "ngIf", "ngIfElse"], ["comEsforco", ""], ["title", "Conclus\u00E3o"], ["comTempoDespendido", ""], ["title", "C\u00E1lculos das horas", "collapse", "", 4, "ngIf"], ["noIcon", "", "controlName", "data_distribuicao", "labelInfo", "Data de inclus\u00E3o/distribui\u00E7\u00E3o/lan\u00E7amento", 3, "size", "label", "control"], ["label", "Progresso", "disabled", "", "sufix", "%", "icon", "bi bi-clock", "controlName", "progresso", "labelInfo", "Progresso de execu\u00E7\u00E3o (% Conclu\u00EDdo). Sempre ser\u00E1 100% na conclus\u00E3o!", 3, "size", "decimals"], ["noIcon", "", "controlName", "data_estipulada_entrega", 3, "size", "label", "control", "labelInfo"], ["noIcon", "", "disabled", "", "controlName", "data_distribuicao", "labelInfo", "Data de inclus\u00E3o/distribui\u00E7\u00E3o/lan\u00E7amento", 3, "size", "label", "control"], ["icon", "bi bi-stopwatch", "onlyHours", "", "controlName", "esforco", "labelInfo", "Tempo estimado de execu\u00E7\u00E3o", 3, "size", "label", "control"], ["noIcon", "", "disabled", "", "controlName", "data_estipulada_entrega", 3, "size", "label", "control", "labelInfo"], ["noIcon", "", "label", "Inicio", "controlName", "data_inicio", "disabled", "", 3, "size", "control", "labelInfo"], ["noIcon", "", "label", "Conclus\u00E3o", "controlName", "data_entrega", "required", "", 3, "size", "control", "labelInfo", "change"], ["label", "Data de arquivamento", "controlName", "data_arquivamento", "disabled", "", 3, "size", "control", "labelInfo"], ["noIcon", "", "label", "Conclus\u00E3o", "controlName", "data_entrega", 3, "size", "control", "labelInfo", "change"], ["label", "Tempo despendido", "icon", "bi bi-hourglass-bottom", "controlName", "tempo_despendido", "disabled", "", 3, "size", "control", "labelInfo"], ["title", "C\u00E1lculos das horas", "collapse", ""], [3, "efemerides"]],
   template: function AtividadeFormConcluirComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelementStart"](0, "editable-form", 0);
@@ -406,11 +407,11 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelementStart"](10, "separator", 9);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelement"](11, "atividade-list-tarefa", 10);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵtemplate"](12, AtividadeFormConcluirComponent_div_12_Template, 4, 8, "div", 11);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵtemplate"](13, AtividadeFormConcluirComponent_ng_template_13_Template, 5, 11, "ng-template", null, 12, _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵtemplate"](12, AtividadeFormConcluirComponent_div_12_Template, 4, 9, "div", 11);
+      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵtemplate"](13, AtividadeFormConcluirComponent_ng_template_13_Template, 5, 12, "ng-template", null, 12, _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelementStart"](15, "separator", 13);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵtemplate"](16, AtividadeFormConcluirComponent_div_16_Template, 4, 6, "div", 11);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵtemplate"](17, AtividadeFormConcluirComponent_ng_template_17_Template, 5, 8, "ng-template", null, 14, _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵtemplate"](16, AtividadeFormConcluirComponent_div_16_Template, 4, 9, "div", 11);
+      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵtemplate"](17, AtividadeFormConcluirComponent_ng_template_17_Template, 5, 12, "ng-template", null, 14, _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵtemplateRefExtractor"]);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelement"](19, "documento-link", 1);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵelementEnd"]();
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵtemplate"](20, AtividadeFormConcluirComponent_separator_20_Template, 2, 1, "separator", 15);
@@ -423,7 +424,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("documento", ctx.form.controls.documento_entrega.value);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("label", ctx.lex.translate("Tipo de Atividade"))("emptyValue", null)("size", 5)("dao", ctx.tipoAtividadeDao);
+      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("label", "Tipo de" + ctx.lex.translate("Atividade"))("emptyValue", null)("size", 5)("dao", ctx.tipoAtividadeDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("label", ctx.lex.translate("Entrega do plano"))("size", 5)("control", ctx.form.controls.plano_trabalho_entrega_id)("items", ctx.entregas)("labelInfo", ctx.lex.translate("Entrega do plano") + " que a " + ctx.lex.translate("atividade") + " \u00E9 referente");
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](2);
@@ -431,7 +432,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 12)("rows", 2)("control", ctx.form.controls.descricao_tecnica);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("title", ctx.lex.translate("Tarefa da atividade"))("collapsed", false);
+      _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("title", "Tarefa da " + ctx.lex.translate("atividade"))("collapsed", false);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("atividade", ctx.entity);
       _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
@@ -1534,7 +1535,7 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
     this.unidadeService = injector.get(src_app_services_unidade_service__WEBPACK_IMPORTED_MODULE_14__.UnidadeService);
     this.calendar = injector.get(src_app_services_calendar_service__WEBPACK_IMPORTED_MODULE_7__.CalendarService);
     this.comentario = injector.get(src_app_services_comentario_service__WEBPACK_IMPORTED_MODULE_9__.ComentarioService);
-    this.title = this.lex.translate('Inclusão de Atividade');
+    this.title = "Inclusão de " + this.lex.translate('Atividade');
     this.form = this.fh.FormBuilder({
       numero: {
         default: 0
@@ -2035,7 +2036,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("label", ctx.lex.translate("Unidade"))("size", ctx.hasUsuarioActionNew ? 5 : 6)("dao", ctx.unidadeDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](2);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("label", ctx.lex.translate("Tipo de atividade"))("emptyValue", null)("size", ctx.hasUsuarioActionNew ? 5 : 6)("dao", ctx.tipoAtividadeDao)("labelInfo", ctx.lex.translate("Tipo de atividade") + " utilizado para classificar a atividade")("required", !ctx.auth.hasPermissionTo("MOD_ATV_TIPO_ATV_VAZIO") ? "true" : undefined);
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("label", "Tipo de " + ctx.lex.translate("atividade"))("emptyValue", null)("size", ctx.hasUsuarioActionNew ? 5 : 6)("dao", ctx.tipoAtividadeDao)("labelInfo", ctx.lex.translate("Tipo de atividade") + " utilizado para classificar a atividade")("required", !ctx.auth.hasPermissionTo("MOD_ATV_TIPO_ATV_VAZIO") ? "true" : undefined);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("ngIf", ctx.hasUsuarioActionNew);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](1);
@@ -3015,7 +3016,7 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
     const index = list.findIndex(x => x.id == atividade.id);
     const card = {
       id: atividade.id,
-      title: atividade.tipo_atividade?.nome || "(Atividade não atribuída)",
+      title: atividade.tipo_atividade?.nome || "(" + this.lex.translate('Atividade') + " não atribuída)",
       subTitle: atividade.descricao || "",
       data: atividade,
       version: this.cardsVersion,

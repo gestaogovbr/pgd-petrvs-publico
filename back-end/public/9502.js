@@ -106,6 +106,14 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
       }
       return result;
     };
+    this.formValidation = form => {
+      const erros_integrantes = [];
+      /*this.usuariosIntegrantes?.grid?.items.forEach((usuarioIntegrante) => {
+        if (usuarioIntegrante.usuario_id == '') erros_integrantes.push({ integrante: usuarioIntegrante, erro: 'Falta o usuario' })
+      });
+      if (erros_integrantes.length) return "Na aba 'Integrantes' há usuário não salvo. Salve-o antes de salvar a unidade!"*/
+      return undefined;
+    };
     this.titleEdit = entity => {
       return "Editando " + this.lex.translate("Unidade") + ': ' + (entity?.sigla || "");
     };
@@ -224,14 +232,6 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
     });
     this.loadData(this.entity, form);
   }
-  /*   public formValidation = (form?: FormGroup) => {
-      const erros_integrantes = [];
-      this.usuariosIntegrantes?.grid?.items.forEach((usuarioIntegrante) => {
-        if (usuarioIntegrante.usuario_id == '') erros_integrantes.push({ integrante: usuarioIntegrante, erro: 'Falta o usuario' })
-      });
-      if (erros_integrantes.length) return "Na aba 'Integrantes' há usuário não salvo. Salve-o antes de salvar a unidade!"
-      return undefined;
-    } */
   addItemHandle() {
     let result = undefined;
     const value = this.form.controls.etiqueta_texto.value;
@@ -260,12 +260,12 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
         unidade.notificacoes = _this2.entity.notificacoes;
         unidade.notificacoes_templates = _this2.entity.notificacoes_templates;
         if (!_this2.form.controls.usar_expediente_unidade) unidade.expediente = null;
-        /*       let integrantesConsolidados: IntegranteConsolidado[] = this.usuariosIntegrantes?.items || [];
-              unidade.integrantes = integrantesConsolidados.map(x => new UnidadeIntegrante({
-                usuario_id: x.usuario_id,
-                unidade_id: x.unidade_id,
-                atribuicoes: x.atribuicoes
-              })); */
+        /*let integrantesConsolidados: IntegranteConsolidado[] = this.usuariosIntegrantes?.items || [];
+        unidade.integrantes = integrantesConsolidados.map(x => new UnidadeIntegrante({
+          usuario_id: x.usuario_id,
+          unidade_id: x.unidade_id,
+          atribuicoes: x.atribuicoes
+        }));*/
         resolve(unidade);
       });
       return function (_x, _x2) {
@@ -599,7 +599,7 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
     super.ngOnInit();
     //this.entity_id = this.metadata?.entity_id || this.entity?.id;
     //this.unidade = this.metadata?.unidade;
-    this.entity = this.metadata?.unidade;
+    this.entity = this.metadata ? this.metadata?.unidade : this.entity;
     this.tiposAtribuicao = this.lookup.UNIDADE_INTEGRANTE_TIPO;
   }
   ngAfterViewInit() {
@@ -765,11 +765,11 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
               yield _this6.loadData({
                 id: _this6.entity.id
               }, _this6.form);
-              //if (this.grid) this.grid!.error = "";
+              //if (this.grid) this.grid!.error = "";//
             } else {
               // se não persistente
               _this6.substituirItem(row, novasAtribuicoes);
-              //            await this.loadData({ id: this.entity!.id }, this.form);
+              //await this.loadData({ id: this.entity!.id }, this.form);//
             }
           } catch (error) {
             if (_this6.grid) _this6.grid.error = error;
