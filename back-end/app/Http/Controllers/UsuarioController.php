@@ -26,7 +26,7 @@ class UsuarioController extends ControllerBase
         }
     }
 
-    public function dashboard(Request $request) {
+/*     public function dashboard(Request $request) {
         try {
             $data = $request->validate([
                 'data_inicial' => ['required'],
@@ -40,9 +40,9 @@ class UsuarioController extends ControllerBase
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
-    }
+    } */
 
-    public function dashboard_gestor(Request $request) {
+/*     public function dashboardGestor(Request $request) {
         try {
             $data = $request->validate([
                 'data_inicial' => ['required'],
@@ -51,15 +51,15 @@ class UsuarioController extends ControllerBase
             ]);
             $result = response()->json([
                 'success' => true,
-                'data' => $this->service->dashboard_gestor($data['data_inicial'], $data['data_final'], $data['unidades'])
+                'data' => $this->service->dashboardGestor($data['data_inicial'], $data['data_final'], $data['unidades'])
             ]);
             return $result;
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
-    }
+    } */
 
-    public function planosTrabalhoPorPeriodo(Request $request) {
+/*     public function planosTrabalhoPorPeriodo(Request $request) {
         try {
             $data = $request->validate([
                 'usuario_id' => ['required'],
@@ -73,7 +73,7 @@ class UsuarioController extends ControllerBase
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
-    }
+    } */
 
     public function calculaDataTempoUnidade(Request $request){
         try {

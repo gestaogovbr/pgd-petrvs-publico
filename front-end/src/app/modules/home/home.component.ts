@@ -1,7 +1,7 @@
 
 import { Component, Injector, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
-import { GestorDashboard, UsuarioDaoService, UsuarioDashboard } from 'src/app/dao/usuario-dao.service';
+import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { LexicalService } from 'src/app/services/lexical.service';
 import { NavigateService } from 'src/app/services/navigate.service';
@@ -31,24 +31,16 @@ export class HomeComponent implements OnInit {
     public go: NavigateService,
     public gb: GlobalsService,
     public allPages: ListenerAllPagesService
-  ) {
-   
-    
-  }
+  ) {}
 
   ngOnInit(): void {
     if (this.gb.isEmbedded) {
       this.allPages.visibilidadeMenuSei(!this.auth.usuario!.config.ocultar_menu_sei);
     }
-   
-
   }
 
   async ngAfterViewInit() {
-   
   }
-
-  
 
   public mensagemSaudacao() {
     const hora = parseInt(this.auth.unidadeHora.replace(":", ""));
@@ -62,9 +54,6 @@ export class HomeComponent implements OnInit {
     return mail;
   }
 
- 
-
-
   public tokenGAPI() {
     this.auth.googleApi.getAccessToken().then(res => {
       const sei = res || ''
@@ -74,8 +63,6 @@ export class HomeComponent implements OnInit {
   getLastDayOfMonth(year: number, month: number) {
     return new Date(year, month + 1, 0);
   }
-
- 
 
 }
 

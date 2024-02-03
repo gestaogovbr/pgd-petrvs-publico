@@ -378,7 +378,7 @@ export class AppComponent {
         this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS
         //this.menuSchema.RXCADASTRO_OPORTUNIDADES
       ]
-    },{
+    },/*{
       name: this.lex.translate("Atributos Comportamentais"),
       permition: "MOD_RX_VIS_DPE",
       id: "navbarDropdownRXCadastros",
@@ -389,7 +389,7 @@ export class AppComponent {
         this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS_SRQ20,
         
       ]
-    },{
+    },*/{
       name: this.lex.translate("Oportunidades"),
       permition: "MOD_RX_VIS_DPE",
       id: "navbarDropdownRXOportunidades",

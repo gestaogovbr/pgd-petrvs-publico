@@ -288,7 +288,7 @@ class UnidadeService extends ServiceBase
         foreach($this->buffer["integrantes"] as $integrante) {
             $integrante["unidade_id"] = $entity->id;
         }        
-        $this->UnidadeIntegranteService->saveIntegrante($this->buffer["integrantes"]);
+        $this->UnidadeIntegranteService->salvarIntegrantes($this->buffer["integrantes"]);
     }
 
     /** 

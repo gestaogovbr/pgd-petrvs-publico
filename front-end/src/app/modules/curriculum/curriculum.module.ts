@@ -12,6 +12,7 @@ import { CurriculumAtributosbig5FormComponent } from './currriculum-atributos/cu
 import { CurrriculumAtributosComponent } from './currriculum-atributos/currriculum-atributos.component';
 import { CurriculumAtributossoftFormComponent } from './currriculum-atributos/curriculum-atributossoft-form/curriculum-atributossoft-form.component';
 import { CurriculumAtributosdiscFormComponent } from './currriculum-atributos/curriculum-atributosdisc-form/curriculum-atributosdisc-form.component';
+import { CurriculumAtributosDassFormComponent } from './currriculum-atributos/curriculum-atributos-dass-form/curriculum-atributos-dass-form.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { CurriculumAtributosdiscFormComponent } from './currriculum-atributos/cu
     CurriculumProfissionalFormComponent,
     CurriculumAtributosbig5FormComponent,
     CurriculumAtributossoftFormComponent,
-    CurriculumAtributosdiscFormComponent
+    CurriculumAtributosdiscFormComponent,
+    CurriculumAtributosDassFormComponent,
   ],
   imports: [
     CommonModule,

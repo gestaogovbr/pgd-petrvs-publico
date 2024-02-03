@@ -13,16 +13,12 @@
                         <input-datetime date [size]="3" label="Nascimento" noIcon controlName="data_nascimento" [labelInfo]="'Data de nascimento'"></input-datetime>
                     </div>
                     <div class="row">
-                        <input-text [size]="8" label="Nome" controlName="nome" [attr.maxlength]=250 required></input-text>
-                        <input-text [size]="4" label="Apelido" controlName="apelido" [attr.maxlength]=250 required></input-text>
-                    </div>
-                    <div class="row">
-                        <input-select [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_PERFIL') ? 'true' : undefined" [size]="4" label="Perfil" controlName="perfil_id" [dao]="perfilDao" required></input-select>
-                        <input-search #lotacao label="Lotação" [size]="8" [emptyValue]="null" [control]="formLotacao!.controls.unidade_lotacao_id" controlName="unidade_lotacao_id" [dao]="unidadeDao" labelInfo="Unidade de lotação do Usuário" required></input-search>
+                        <input-text [size]="5" label="Nome" controlName="nome" [attr.maxlength]=250 required></input-text>
+                        <input-text [size]="3" label="Apelido" controlName="apelido" [attr.maxlength]=250 required></input-text>
+                        <input-radio [size]="3" label="Sexo" controlName="sexo" [items]="lookup.SEXO"></input-radio>
                     </div>
                     <div class="row">
                         <input-select [size]="4" label="UF" icon="bi bi-flag" controlName="uf" [items]="lookup.UF"></input-select>
-                        <input-radio [size]="4" label="Sexo" controlName="sexo" [items]="lookup.SEXO"></input-radio>
                         <input-text [size]="4" label="Telefone" controlName="telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'" [attr.maxlength]=250></input-text>
                     </div>
                 </div>
@@ -34,7 +30,13 @@
             </div>
         </tab>
         <tab key="ATRIBUICOES" [label]="lex.translate('Atribuições')">
-            <top-alert type="alert" [message]="'A alteração ' + lex.translate('de lotação') + ' só pode ser realizada através da abra Principal!'"></top-alert>
+            <top-alert type="alert" [message]="'É impossível excluir ' + lex.translate('a lotação') + ' ' + lex.translate('do servidor') + '. Para alterá-la, lote-o em outra ' + lex.translate('unidade') + '!'"></top-alert>
+            <div class="row">
+                <input-select [size]="4" [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_PERFIL') ? 'true' : undefined" [size]="4" [label]="lex.translate('Perfil')" controlName="perfil_id" [dao]="perfilDao" required></input-select>
+                <div class="col">
+                    <top-alert type="warning" [message]="'Ao conceder a ' + lex.translate('um usuário') + ' a atribuição de ' + lookup.getValue(lookup.UNIDADE_INTEGRANTE_TIPO, 'GESTOR') + ', ' + lookup.getValue(lookup.UNIDADE_INTEGRANTE_TIPO, 'GESTOR_SUBSTITUTO') + ' ou de ' + lookup.getValue(lookup.UNIDADE_INTEGRANTE_TIPO, 'GESTOR_DELEGADO') + ' em ' + lex.translate('uma unidade') + ', deve lhe ser concedido também ' + lex.translate('o nível de acesso') + ' correspondente.'"></top-alert>
+                </div>
+            </div>
             <usuario-integrante #unidadesIntegrantes noPersist [entity]="entity"></usuario-integrante>
         </tab>
     </tabs>
