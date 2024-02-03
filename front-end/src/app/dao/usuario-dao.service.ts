@@ -10,53 +10,6 @@ import { PlanoTrabalho } from '../models/plano-trabalho.model';
 import { TemplateDataset } from '../modules/uteis/templates/template.service';
 import { PlanoTrabalhoEntrega } from '../models/plano-trabalho-entrega.model';
 
-export type UsuarioDashboard = {
-  planos: [
-    {
-      data_inicio: Date,
-      data_fim: Date,
-      horas_alocadas: number,
-      horas_consolidadas: number,
-      progresso: number,
-      total_horas: number
-    }
-  ],
-  atividades: {
-    atrasadas: number,
-    avaliadas: number,
-    concluidas: number,
-    media_avaliacoes: number,
-    nao_concluidas: number,
-    nao_iniciadas: number,
-    total_atividades: number,
-    horas_atrasadas: number,
-    horas_avaliadas: number,
-    horas_concluidas: number,
-    horas_nao_concluidas: number,
-    horas_nao_iniciadas: number,
-  },
-  horas_afastamentos: number
-};
-
-export type GestorDashboard = {
-  usuarios: [
-    {
-      nome: string,
-      foto: string,
-      planos: [
-        {
-          data_inicio: Date,
-          data_fim: Date,
-          horas_alocadas: number,
-          horas_consolidadas: number,
-          progresso: number,
-          total_horas: number
-        }
-      ]
-    }
-  ]
-}
-
 @Injectable({
   providedIn: 'root'
 })
@@ -82,55 +35,6 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
       { field: "situacao_funcional", label: "Situação Funcional", lookup: this.lookup.USUARIO_SITUACAO_FUNCIONAL },
       { field: "texto_complementar_plano", label: "Mensagem do Plano de trabalho", type: "TEMPLATE"}
     ], deeps);
-  }
-
-  public dashboard(data_inicial: Date, data_final: Date, usuario_id: string): Promise<UsuarioDashboard | null> {
-    return new Promise<UsuarioDashboard | null>((resolve, reject) => {
-      if (usuario_id?.length) {
-        this.server.post('api/' + this.collection + '/dashboard', { data_inicial, data_final, usuario_id }).subscribe(response => {
-          resolve(response.data);
-        }, error => {
-          console.log("Erro ao buscar o dashboard do Usuário!", error);
-          resolve(null);
-        });
-      } else {
-        console.log("ID de usuário em branco!");
-        resolve(null);
-      }
-    });
-  }
-
-  public dashboard_gestor(data_inicial: Date, data_final: Date, unidades: string[]): Promise<GestorDashboard | null> {
-    return new Promise<GestorDashboard | null>((resolve, reject) => {
-      if (unidades.length) {
-        this.server.post('api/' + this.collection + '/dashboard_gestor', { data_inicial, data_final, unidades }).subscribe(response => {
-          resolve(response.data);
-        }, error => {
-          console.log("Erro ao buscar o dashboard do Gestor!", error);
-          resolve(null);
-        });
-      } else {
-        console.log("Unidades em branco!");
-        resolve(null);
-      }
-    });
-  }
-
-  public planosPorPeriodo(usuario_id: string, inicioPeriodo: string | null, fimPeriodo: string | null): Promise<PlanoTrabalho[] | null> {
-    return new Promise<PlanoTrabalho[] | null>((resolve, reject) => {
-      if (usuario_id?.length) {
-        this.server.post('api/Relatorio/planosPorPeriodo', { usuario_id: usuario_id, inicioPeriodo: inicioPeriodo != null ? this.util.getTimeFormattedUSA(inicioPeriodo) : null, fimPeriodo: fimPeriodo != null ? this.util.getTimeFormattedUSA(fimPeriodo) : null })
-          .subscribe(response => {
-            resolve(response.data as PlanoTrabalho[]);
-          }, error => {
-            console.log("Erro nas datas de início/fim do período, ou ao buscar no servidor os planos do usuário!", error);
-            resolve(null);
-          });
-      } else {
-        console.log("ID de usuário em branco!");
-        resolve(null);
-      }
-    });
   }
   
   public calculaDataTempoUnidade(inicio: string, fimOuTempo: string | number, cargaHoraria: number, unidade_id: string, tipo: TipoContagem, pausas?: AtividadePausa[], afastamentos?: Afastamento[]): Promise<Efemerides | undefined> {
