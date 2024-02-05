@@ -392,7 +392,7 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo Unidades",
             "capacidades"=> [
                 /* Capacidades do módulo UNIDADES*/
-                ["MOD_UND", "Permite consultar unidade"],
+               // ["MOD_UND", "Permite consultar unidade"],
                 ["MOD_UND_EDT", "Permite editar unidade"],
                 ["MOD_UND_EDT_FRM", "Permite editar unidades formais (SIAPE ou não)"],  // a ser implementado
                 ["MOD_UND_EXCL", "Permite excluir unidade"],
