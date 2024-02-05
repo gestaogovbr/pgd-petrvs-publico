@@ -362,7 +362,7 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
   
   }
 
-    /*this.chart = new Chart("MyChart", {
+    /**this.chart = new Chart("MyChart", {
           type: 'pie', //this denotes tha type of chart
 
           data: {// values on X-Axis

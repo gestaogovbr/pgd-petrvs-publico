@@ -240,6 +240,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     let planoEntrega = typeof idPlanoOuPlano == 'string' ? await this.planoEntregaDao!.getById(idPlanoOuPlano, ["entregas.entrega:id,nome", "unidade"]) : idPlanoOuPlano;
     let planoEntregaComUnidade = { id: planoEntrega?.id, unidade_id: planoEntrega?.unidade_id, unidade: planoEntrega?.unidade };
     this.entregas = planoEntrega?.entregas.map(epe => Object.assign({}, { key: epe.id, value: epe.descricao || epe.entrega?.nome || "Desconhecido", data: Object.assign(epe, { plano_entrega: planoEntregaComUnidade }) })) || [];
+    this.entregas.sort((a,b) => (a.value > b.value ? 1 : -1));
     if (!this.entregas.find(x => x.key == this.form!.controls.plano_entrega_entrega_id.value)) this.form!.controls.plano_entrega_entrega_id.setValue(null);
   }
 
