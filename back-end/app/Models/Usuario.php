@@ -85,7 +85,7 @@ class Usuario extends Authenticatable
         $this->fill($dataOrEntity);
         if($action == 'INSERT'){
             $this->save();
-            $vinculoLotacao = $this->unidadesIntegrante()->save(new UnidadeIntegrante(['unidade_id' => $dataOrEntity['lotacao_id']]));
+            $vinculoLotacao = $this->unidadesIntegrantes()->save(new UnidadeIntegrante(['unidade_id' => $dataOrEntity['lotacao_id']]));
             $lotacao = $vinculoLotacao->atribuicoes()->save(new UnidadeIntegranteAtribuicao(['atribuicao' => 'LOTADO']));
             if(!$vinculoLotacao || !$lotacao) throw new ServerException("ValidateLotacao", "Erro com a definição da lotação. Usuário não cadastrado!");
         }
@@ -116,7 +116,7 @@ class Usuario extends Authenticatable
         'notificacoes' => AsJson::class
     ];
 
-    public $delete_cascade = ['favoritos', 'unidadesIntegrante'];
+    public $delete_cascade = ['favoritos', 'unidadesIntegrantes'];
 
     // hasOne
     public function gerenciaEntidade() { return $this->hasOne(Entidade::class, 'gestor_id'); }
@@ -144,7 +144,7 @@ class Usuario extends Authenticatable
     public function integracoes() { return $this->hasMany(Integracao::class); }
     public function planosEntregaCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }
     public function planosTrabalhoCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }
-    public function unidadesIntegrante() { return $this->hasMany(UnidadeIntegrante::class); }
+    public function unidadesIntegrantes() { return $this->hasMany(UnidadeIntegrante::class); }
     public function statusHistorico() { return $this->hasMany(StatusJustificativa::class, "usuario_id"); }
     public function documentos() { return $this->hasMany(Documento::class); }
     // belongsTo
@@ -197,7 +197,7 @@ class Usuario extends Authenticatable
     public function getUnidadesAtribuicoesAttribute()
     {
         $result = [];
-        foreach($this->unidadesIntegrante as $vinculo){
+        foreach($this->unidadesIntegrantes as $vinculo){
             $atribuicoes = $vinculo->atribuicoes->toArray();
             if(count($atribuicoes) > 0) $result[$vinculo->unidade_id] = array_map(fn($a) => $a["atribuicao"], $atribuicoes);
         }

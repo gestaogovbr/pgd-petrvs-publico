@@ -29,7 +29,6 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   public integranteDao: UnidadeIntegranteDaoService;
   public unidadeDao: UnidadeDaoService;
   public usuarioDao: UsuarioDaoService;
-  public tiposAtribuicao: LookupItem[] = [];
 
   constructor(public injector: Injector) {
     super(injector);
@@ -46,8 +45,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
 
   ngOnInit() {
     super.ngOnInit();
-    this.entity_id = this.metadata?.entity_id || this.entity?.id;
-    this.tiposAtribuicao = this.isNoPersist ? this.lookup.UNIDADE_INTEGRANTE_TIPO.filter((atribuicao) => atribuicao.key != "LOTADO") : this.lookup.UNIDADE_INTEGRANTE_TIPO;
+    this.entity = this.entity ?? this.metadata?.entity;
   }
 
   ngAfterViewInit() {
@@ -56,25 +54,21 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     })();
   }
 
-  /**
-   * Método chamado na inicialização do componente para carregar todas as unidades-integrantes do usuário.
-   * @param entity 
-   * @param form 
-   */
   public async loadData(entity: IIndexable, form?: FormGroup | undefined) {
     if (entity.id) {
       let integrantes: IntegranteConsolidado[] = [];
       try {
-        let result = await Promise.all([
-          this.usuarioDao.getById(entity.id),
-          this.integranteDao!.loadIntegrantes("", entity.id)
+        await this.integranteDao!.carregarIntegrantes("", entity.id).then( resposta => integrantes = resposta.integrantes.filter(x => x.atribuicoes?.length > 0));
+/*        let result = await Promise.all([
+           //this.usuarioDao.getById(entity.id),
+          this.integranteDao!.carregarIntegrantes("", entity.id)
         ]);
-        this.entity = result[0]!;
-        integrantes = result[1].integrantes.filter(x => x.atribuicoes?.length > 0);
+       // this.entity = result[0]!;
+        integrantes = result[0].integrantes.filter(x => x.atribuicoes?.length > 0); */
       } finally {
         this.items = [];
         integrantes.forEach(i => this.items?.push(this.integranteService.completarIntegrante(i, i.id, entity.id, i.atribuicoes)));
-        this.items = this.integranteService.ordenar(this.items);
+        this.items = this.integranteService.ordenarIntegrantes(this.items);
         this.cdRef.detectChanges();
         this.grid!.loading = false;
       }
@@ -91,23 +85,9 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   public formValidation = (form?: FormGroup) => {
     let atribuicoes: LookupItem[] = form!.controls.atribuicoes.value;
     if (this.util.array_diff(['GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO'], atribuicoes.map(na => na.key) || []).length < 2) {
-      return "A um mesmo servidor só pode ser atribuída uma função de gestor, para uma mesma Unidade!";
+      return "A um mesmo servidor só pode ser atribuída uma função de gestor (titular, substituto ou delegado), para uma mesma Unidade!";
     }
     return undefined;
-  }
-
-  /**
-   * Método chamado para inserir uma atribuição no grid, seja este componente persistente ou não.
-   * @returns 
-   */
-  public async addIntegrante() {
-    if (this.grid) this.grid.error = '';
-    let novo = {
-      id: this.integranteDao!.generateUuid(),
-      unidade_id: "",
-      atribuicoes: []
-    } as IIndexable;
-    return novo;
   }
 
   public addItemHandle(): LookupItem | undefined {
@@ -128,15 +108,33 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     return result;
   };
 
+  public deleteItemHandle(row: LookupItem): boolean | undefined | void {
+    return row.key != "LOTADO";
+  };
+
   /**
    * Método chamado na edição de uma atribuição do usuário
    * @param form 
    * @param row 
    */
-  public async loadIntegrante(form: FormGroup, row: any) {
+  public async carregarIntegrante(form: FormGroup, row: any) {
     form.controls.unidade_id.setValue(this.grid?.adding ? row.unidade_id : row.id);
     form.controls.atribuicoes.setValue(this.integranteService.converterAtribuicoes(row.atribuicoes));
     form.controls.atribuicao.setValue("");
+  }
+
+  /**
+ * Método chamado para inserir uma atribuição no grid, seja este componente persistente ou não.
+ * @returns 
+ */
+  public async adicionarIntegrante() {
+    if (this.grid) this.grid.error = '';
+    let novo = {
+      id: this.integranteDao!.generateUuid(),
+      unidade_id: "",
+      atribuicoes: []
+    } as IIndexable;
+    return novo;
   }
 
   /**
@@ -144,19 +142,17 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
    * @param row 
    * @returns 
    */
-  public async removeIntegrante(row: IntegranteConsolidado) {
-    let nomeServidor = this.entity!.nome;
-    let nomeUnidade = row.unidade_nome;
-    if (row.atribuicoes.length == 1 && row.atribuicoes[0] == "LOTADO") {
-      await this.dialog.alert("IMPOSSÍVEL EXCLUIR !", "Um vínculo não pode ser excluído quando sua única atribuição é " + this.lex.translate('a lotação') + " " + this.lex.translate('do servidor') + ". Se quiser alterar " + this.lex.translate('a lotação') + ", " + (this.isNoPersist ? "use a aba Principal." : "utilize a aba Principal na edição do cadastro " + this.lex.translate('do usuário') + "."));
+  public async removerIntegrante(row: IntegranteConsolidado) {
+    if (row.atribuicoes.includes("LOTADO")) {
+      await this.dialog.alert("IMPOSSÍVEL EXCLUIR !", "O vínculo que inclui " + this.lex.translate('a lotação') + " " + this.lex.translate('do servidor') + " não pode ser excluído. Se deseja excluir as demais atribuições, edite o vínculo. Se deseja alterar " + this.lex.translate('a lotação') + ", lote-o em outra " + this.lex.translate('Unidade') + ".");
     } else {
-      let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir todas as atribuições do servidor '" + nomeServidor + "' na unidade '" + nomeUnidade + "' ?");
+      let confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir todas as atribuições de " + this.entity!.nome.toUpperCase() + " " + this.lex.translate('na unidade') + " " + row.unidade_sigla?.toUpperCase() + " ?");
       if (confirm) {
         let msg: string | undefined;
         try {
           if (!this.isNoPersist) {    // se persistente
             this.loading = true;
-            await this.integranteDao.saveIntegrante([this.integranteService.completarIntegrante(row, row.id, this.entity!.id, [])]).then(resposta => {
+            await this.integranteDao.salvarIntegrantes([this.integranteService.completarIntegrante(row, row.id, this.entity!.id, [])]).then(resposta => {
               if (msg = resposta.find(v => v._metadata.msg?.length)?._metadata.msg) { if (this.grid) this.grid.error = msg; };
             });
             await this.loadData({ id: this.entity!.id }, this.form);
@@ -164,25 +160,13 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
             Object.assign(row, { '_status': "DELETE", 'atribuicoes': [] });
             return false;
           }
-        } catch (e: any) {
-          this.loading = false;
         } finally {
           this.loading = false;
         }
-        //return msg ? false : true;
       }
     }
     return false;
   }
-
-  /**
-   * Garante que não será possível excluir a lotação de um servidor por este caminho
-   * @param row Atribuição do servidor na unidade
-   * @returns 
-   */
-  public deleteItemHandle(row: LookupItem): boolean | undefined | void {
-    return row.key != "LOTADO";
-  };
 
   /**
    * Método chamado no salvamento de uma unidade-integrante (new/edit), seja este componente persistente ou não.
@@ -190,52 +174,115 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
    * @param row 
    * @returns 
    */
-  public async saveIntegrante(form: FormGroup, row: IntegranteConsolidado) {
-    form.controls.atribuicoes.setValue(this.lookup.uniqueLookupItem(form!.controls.atribuicoes.value));
-/*     if (this.grid) this.grid!.error = "";
-    this.cdRef.detectChanges(); */
-    let error: any = undefined;
-    //error = this.formValidation(form);
+  public async salvarIntegrante(form: FormGroup, row: IntegranteConsolidado) {
+    let novasAtribuicoes = this.lookup.uniqueLookupItem(form!.controls.atribuicoes.value);
+    form.controls.atribuicoes.setValue(novasAtribuicoes);
+    if (this.grid) this.grid.error = "";
+    this.cdRef.detectChanges();
+    let error = this.formValidation(form);
     if (!error) {
+      let itensGrid = this.grid?.items as IntegranteConsolidado[] || [];
       let confirm = true;
-      let n = this.integranteService.alterandoGestor(form, row.atribuicoes || []);
-      if (n.length) confirm = await this.dialog.confirm("Confirma a Alteração de Gestor ?", n.length == 1 ? "O " + n[0] + " será alterado." : "Serão alterados: " + n.join(', ') + ".");
-      if (form!.controls.atribuicoes.value.length && confirm) {
-        this.loading = true;
-        try {
-          let novasAtribuicoes: IntegranteAtribuicao[] = form!.controls.atribuicoes.value.map((x: LookupItem) => x.key);
-          if (!this.isNoPersist) { // se persistente
-            await this.integranteDao.saveIntegrante([this.integranteService.completarIntegrante(row, form!.controls.unidade_id.value, this.entity!.id, novasAtribuicoes)]).then(resposta => {
-              let msg: string | undefined;
-              if (msg = resposta?.find(v => v._metadata.msg?.length)?._metadata.msg) { if (this.grid) this.grid!.error = msg; };
-            });
-            await this.loadData({ id: this.entity!.id }, this.form);
-            if (this.grid) this.grid!.error = "";
-          } else {                // se não persistente
-            this.substituirItem(row, novasAtribuicoes);
+      let alteracaoGestor = this.integranteService.haAlteracaoGestor(novasAtribuicoes.map(x => x.key), Object.assign(row, { unidade_sigla: this.unidade?.selectedItem?.entity.sigla }), itensGrid, this.entity?.nome || "");
+      if (alteracaoGestor[0] != 'nenhuma') {
+        confirm = await this.dialog.confirm("CONFIRMA A ALTERAÇÃO DA CHEFIA ?", alteracaoGestor[2]);
+        if (confirm) {
+          switch (alteracaoGestor[0]) {
+            case 'ganho':
+              // Se for o caso, elimina a atribuição de LOTADO da antiga lotação
+              if (alteracaoGestor[3]) {
+                let indiceAntigaLotacao = this.grid?.items.findIndex(x => x.atribuicoes.includes('LOTADO'));
+                if (indiceAntigaLotacao) this.grid!.items[indiceAntigaLotacao].atribuicoes = (this.grid!.items[indiceAntigaLotacao].atribuicoes as string[]).filter(x => x != 'LOTADO');
+              }
+              break;
+            case 'troca':
+              // Garante que a unidade da antiga gerência perderá as atribuições de GESTOR e LOTADO
+              this.grid!.items[alteracaoGestor[1]].atribuicoes = (this.grid!.items[alteracaoGestor[1]].atribuicoes as string[]).filter(x => !['GESTOR', 'LOTADO'].includes(x));
+              break;
           }
-        } catch (error: any) {
-          if (this.grid) this.grid.error = error;
-          await this.loadData({ id: this.entity!.id }, this.form);
-        } finally {
-          this.loading = false;
+          // Insere a atribuição de LOTADO na nova gerência, apenas para fins de atualização da tela do usuário, pois o back-end já faria isso automaticamente.
+          novasAtribuicoes = this.integranteService.inserirAtribuicao(novasAtribuicoes, 'LOTADO');
+          form.controls.atribuicoes.setValue(novasAtribuicoes);
+          this.loading = true;
+        } else return undefined;
+      } else {
+        let alteracaoLotacao = this.integranteService.haAlteracaoLotacao(form, Object.assign(row, { unidade_sigla: this.unidade?.selectedItem?.entity.sigla }), itensGrid, this.entity?.nome || "");
+        if (alteracaoLotacao[0]) {
+          if (this.grid?.items[alteracaoLotacao[1]].atribuicoes.includes('GESTOR')) {
+            await this.dialog.alert("IMPOSSÍVEL ALTERAR A LOTAÇÃO !", alteracaoLotacao[3]);
+            return undefined;
+          } else {
+            confirm = await this.dialog.confirm("CONFIRMA A ALTERAÇÃO DA LOTAÇÃO ?", alteracaoLotacao[2]);
+            if (confirm) this.grid!.items[alteracaoLotacao[1]].atribuicoes = (this.grid!.items[alteracaoLotacao[1]].atribuicoes as string[]).filter(x => x != 'LOTADO'); else return undefined;
+          }
         }
       }
+      try {
+        if (!this.isNoPersist) { // se persistente
+          await this.integranteDao.salvarIntegrantes([this.integranteService.completarIntegrante(row, form!.controls.unidade_id.value, this.entity!.id, novasAtribuicoes.map(x => x.key))]).then(resposta => {
+            let msg: string | undefined;
+            if (msg = resposta?.find(v => v._metadata.msg?.length)?._metadata.msg) { if (this.grid) this.grid!.error = msg; };
+          });
+          //TODO: se retornar uma mensagem de erro, ela será exibida?
+          await this.loadData({ id: this.entity!.id }, this.form);
+          if (this.grid) this.grid!.error = "";
+        } else {                // se não persistente
+          row.id = this.unidade?.selectedEntity.id,
+          this.grid!.items = this.integranteService.substituirItem({
+            id: row.id, 
+            itens: this.grid?.items || [], 
+            apelidoOuSigla: this.unidade?.selectedItem?.entity.sigla, 
+            nome: this.unidade?.selectedItem?.entity.nome, 
+            codigo: this.unidade?.selectedItem?.entity.codigo 
+          }, novasAtribuicoes.map((x: LookupItem) => x.key), new Usuario(this.entity!));
+          this.cdRef.detectChanges();
+        }
+      } catch (error: any) {
+        if (this.grid) this.grid.error = error;
+        await this.loadData({ id: this.entity!.id }, this.form);
+      } finally {
+        this.loading = false;
+      }
     } else {
-      if (this.grid) this.grid.error = "ATENÇÃO" + "&" + error;
-      this.substituirItem(row, form.controls.atribuicoes.value.map((x: LookupItem) => x.key));
+      await this.dialog.alert("IMPOSSÍVEL INCLUIR/ALTERAR A UNIDADE !", error);
     }
     return undefined;
   }
 
-  public substituirItem(row: IntegranteConsolidado, atribuicoes: IntegranteAtribuicao[]){
-    let index = this.items!.findIndex(x => x["id"] == row["id"]);
-    this.items![index!] = this.integranteService.completarIntegrante(
-      { id: row.id, unidade_sigla: this.unidade?.selectedItem?.entity.sigla, unidade_nome: this.unidade?.selectedItem?.entity.nome, unidade_codigo: this.unidade?.selectedItem?.entity.codigo },
-      this.form!.controls.unidade_id.value, this.entity!.id, atribuicoes
-    );
-    this.cdRef.detectChanges();
-  }
+  /* 
+  
+  TESTES MÍNIMOS RECOMENDADOS PARA A VALIDAÇÃO DO COMPONENTE - USUARIO-INTEGRANTE
 
+  CENÁRIO: CAMINHO FELIZ
+  Formulário completo do usuário - aba 'Atribuições'
+  1. Perder a gerência
+  2. Assumir a gerência da unidade em que já está lotado
+  3. Assumir a gerência de uma unidade em que não está lotado (unidade já existente do grid)
+  4. Assumir a gerência de uma unidade em que não está lotado (unidade ainda não existente do grid)
+  5. Trocar de gerência, assumindo a de uma unidade que já existe no grid
+  6. Trocar de gerência, assumindo a de uma unidade que ainda não existe no grid
+  7. Alterar atribuições (exceto gerência e lotação) em uma unidade que já existe no grid
+  8. Alterar atribuições (exceto gerência e lotação) em uma unidade que ainda não existe no grid
+  9. Alterar a lotação de um usuário para uma unidade que já está no grid
+  10. Alterar a lotação de um usuário para uma unidade que ainda não está no grid
+  11. Realizar várias das ações acima ao mesmo tempo (ações que sejam coerentes e não conflitantes), antes de salvar o formulário
+  12. Excluir o vínculo completo do usuário com uma unidade em que ele não é lotado
+
+  CENÁRIO: CAMINHO FELIZ
+  Formulário de Atribuições do usuário - grupo de botões opcionais (...)
+  1. Perder a gerência
+  2. Assumir a gerência da unidade em que já está lotado
+  3. Assumir a gerência de uma unidade em que não está lotado (unidade já existente do grid)
+  4. Assumir a gerência de uma unidade em que não está lotado (unidade ainda não existente do grid)
+  5. Trocar de gerência, assumindo a de uma unidade que já existe no grid
+  6. Trocar de gerência, assumindo a de uma unidade que ainda não existe no grid
+  7. Alterar atribuições (exceto gerência e lotação) em uma unidade que já existe no grid
+  8. Alterar atribuições (exceto gerência e lotação) em uma unidade que ainda não existe no grid
+  9. Alterar a lotação de um usuário para uma unidade que já está no grid
+  10. Alterar a lotação de um usuário para uma unidade que ainda não está no grid
+  11. Excluir o vínculo completo do usuário com uma unidade em que ele não é lotado
+
+  
+  */
 
 }

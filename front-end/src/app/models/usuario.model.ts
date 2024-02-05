@@ -124,7 +124,7 @@ export class Usuario extends Base implements HasNotificacao {
     public tarefas_atividade?: AtividadeTarefa[];
     public tarefas_projeto?: ProjetoTarefa[];
     public unidades?: Unidade[];
-    public unidades_integrante?: UnidadeIntegrante[];
+    public unidades_integrantes?: UnidadeIntegrante[];
 
     public nome: string = ""; /* Nome do Usuário */
     public email: string = ""; /* Email do Usuário */

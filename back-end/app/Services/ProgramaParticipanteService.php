@@ -36,7 +36,7 @@ class ProgramaParticipanteService extends ServiceBase {
     public function proxyExtra(&$rows, $data, &$count){
         $extra = [];
         if($this->todos && !empty($this->lotacao_id)) {
-            $extra = Usuario::with(['lotacao.unidade','planosTrabalho'])->whereHas("unidadesIntegrante", function (Builder $query) {
+            $extra = Usuario::with(['lotacao.unidade','planosTrabalho'])->whereHas("unidadesIntegrantes", function (Builder $query) {
                 $query->where('unidade_id', $this->lotacao_id)->whereHas('atribuicoes', function (Builder $query) {
                     $query->where('atribuicao', 'LOTADO');
                 });
