@@ -3,97 +3,89 @@
 namespace App\Services;
 
 use App\Services\ServiceBase;
-use App\Models\Usuario;
 use ReflectionClass;
+use App\Models\Usuario;
+use App\Models\Change;
 use ReflectionMethod;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
+class ChangeService extends ServiceBase
+{
 
-class ChangeService extends ServiceBase {
-
-    // public function getInstanceModel($tableName){
-    //     $models = array_map(fn($file) => str_replace(base_path() . '/app/Models/', "", $file), array_filter(glob(base_path() . '/app/Models/*.php'), 'is_file'));
-    //     foreach($models as $file) {
-    //         $model = file_get_contents(base_path() . '/app/Models/' . $file);
-    //         $match = [];
-    //         if (preg_match('/protected \$table = [\'"]([\w_\d]+?)[\'"]/', $model, $match)) {
-    //             if ($match[1] === $tableName) {
-    //                 // Se a tabela correspondente for encontrada, retorne o nome do modelo
-    //                 return str_replace('.php', '', $file);
-    //             }
-    //         }
-    //     }
-    //     return null; 
-    // }
-    
-    // public function showRelations($targetModelClass, $id){
-    //     $targetModel = app($targetModelClass);
-    //     $record = $targetModel::withTrashed()->find($id);
-    //     if ($record) {
-    //         $class = get_class($record);
-    //         $reflector = new ReflectionClass($class);
-    //         $methods = [];
-    
-    //         foreach ($reflector->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-    //             if ($method->class === $class) {
-    //                 $methods[] = $method->name;
-    //             }
-    //         }
-    
-    //         $relations = [];
-    
-    //         foreach ($methods as $method) {
-    //             $relationResult = $record->$method();
-    
-    //             if (is_a($relationResult, 'Illuminate\Database\Eloquent\Relations\Relation')) {
-    //                 $relations[] = $method;
-    //             }
-    //         }
-    
-    //         foreach ($relations as $relationName) {
-    //             $record->load($relationName);
-    //         }
-    
-    //         return $record;
-    //     }
-           
-    // }
-
-    public function proxyRows($rows){
-        if (empty($rows) || !isset($rows[0]['table_name'])) {
-            return [];
-        }
+    public function proxyRows($rows)
+    {
         
-        // $model = $this->getInstanceModel($rows[0]['table_name']);
-        // $relations = $this->showRelations("App\Models\\" . $model, $rows[0]['row_id']);
-
-        foreach($rows as $row){
-            try {
-
-                $row['responsavel'] = $row['user_id'] == null ? 'Usuário não logado' : Usuario::where('id',$row['user_id'])->first()->nome ?? 'Não encontrado - ID: ' . $row['user_id'];
-           
-                foreach ($row['delta'] as $column => $value) {
-                    if (preg_match('/_id$/', $column)) {
-                        $tableName = substr($column, 0, -3);            
-                        $className = Str::studly($tableName);            
-                        if (class_exists("App\\Models\\$className")) {
-                            $relatedRecord = call_user_func("App\\Models\\$className::find", $value);            
-                            $row['delta']->$column = $relatedRecord;
-                        }
-                    }
-                }
-
-                
-            } catch (\Throwable $e) {
-                return response()->json(['error' => $e->getMessage()]);
+        try {
+            if (empty($rows) || !isset($rows[0]['table_name'])) {
+                return [];
             }
+
+            $model = Str::singular($rows[0]['table_name']);
+            $modelClass = "App\\Models\\" . Str::studly($model);
+
+            if (class_exists($modelClass)) {
+                $relacoes = $this->getModelRelations($modelClass);
+            }
+
+            foreach ($rows as $row) {
+                $row['_metadata'] = array(
+                    'relacoes' => $relacoes,
+                    'responsavel' => (DB::table(config('petrvs.schemas.tenant_aplicacao').'.usuarios')->where('id', $row['user_id'])->first())->nome
+                );
+            }
+            return $rows;
+        } catch (\Throwable $th) {
+            throw $th;
         }
-        return $rows;
     }
 
-    public function showResponsaveis($usuario_ids) {
-        $usuarios = Usuario::whereIn('id', $usuario_ids)->get();
+    public function showResponsaveis($usuario_ids)
+    {
+        $usuario_ids_flat = array_reduce($usuario_ids, 'array_merge', []);
+        $usuarios = Usuario::whereIn('id', $usuario_ids_flat)->select('id', 'nome')->get();
         return $usuarios;
     }
 
+    function verificarRelacionamento($modelName, $relationshipMethod)
+    {
+        try {
+            $modelInstance = new $modelName;
+            $method = new ReflectionMethod($modelName, $relationshipMethod);
+            $ignoreMethods = ['touch', 'push', 'getDateFormat', 'updateTimestamps', 'freshTimestampString', 'restore'];
+
+            if ($method->getNumberOfParameters() === 0 && !in_array($relationshipMethod, $ignoreMethods)) {
+                $relation = $modelInstance->$relationshipMethod();
+                if (!is_null($relation) && $relation instanceof Relation) {
+                    return true;
+                }
+            }
+
+            return false;
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+
+    }
+
+    public function getModelRelations($modelName)
+    {
+        try {
+
+            $reflection = new ReflectionClass($modelName);
+            $relationNames = [];
+            foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+                $methodName = $this->verificarRelacionamento($modelName, $method->getName());
+                if ($methodName) {
+                    $relationNames[] = $method->getName();
+                }
+            }
+            return $relationNames;
+
+        } catch (\Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
 }
