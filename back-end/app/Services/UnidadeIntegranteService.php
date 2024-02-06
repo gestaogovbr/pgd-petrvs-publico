@@ -20,7 +20,7 @@ class UnidadeIntegranteService extends ServiceBase
         $usuario = empty($usuarioId) ? null : Usuario::find($usuarioId);
         if (!empty($unidadeId) && empty($unidade)) throw new ServerException("ValidateIntegrante", "Unidade não encontrada no banco");
         if (!empty($usuarioId) && empty($usuario)) throw new ServerException("ValidateIntegrante", "Usuário não encontrado no banco");
-        foreach (($unidade ? $unidade->integrantes : $usuario->unidadesIntegrantes) as $vinculo) {
+        foreach (($unidade ? $unidade->integrantes ?? [] : $usuario->unidadesIntegrantes ?? []) as $vinculo) {
             $result[$unidade ? $vinculo->usuario->id : $vinculo->unidade->id] = [
                 "id" => $unidade ? $vinculo->usuario->id : $vinculo->unidade->id,
                 "usuario_nome" => $unidade ? $vinculo->usuario->nome : null,

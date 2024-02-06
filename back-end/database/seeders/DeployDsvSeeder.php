@@ -16,7 +16,7 @@ class DeployDSVSeeder extends Seeder
     {
         $this->call([
             TipoCapacidadeSeeder::class,
-            CapacidadeSeeder::class,
+            // CapacidadeSeeder::class,
         ]);
     }
 }
