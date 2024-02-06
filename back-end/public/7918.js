@@ -19,7 +19,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _models_usuario_model__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../models/usuario.model */ 26898);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ 51197);
 
-var _class;
 
 
 
@@ -204,16 +203,15 @@ class IntegranteService {
     dados.itens[index] = this.completarIntegrante(base, entityUsuario ? dados.id : entity.id, entityUsuario ? entity.id : dados.id, atribuicoes);
     return dados.itens;
   }
+  static #_ = this.ɵfac = function IntegranteService_Factory(t) {
+    return new (t || IntegranteService)(_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_6__.Injector));
+  };
+  static #_2 = this.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineInjectable"]({
+    token: IntegranteService,
+    factory: IntegranteService.ɵfac,
+    providedIn: 'root'
+  });
 }
-_class = IntegranteService;
-_class.ɵfac = function IntegranteService_Factory(t) {
-  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_6__.Injector));
-};
-_class.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineInjectable"]({
-  token: _class,
-  factory: _class.ɵfac,
-  providedIn: 'root'
-});
 
 /***/ })
 
