@@ -239,9 +239,9 @@ class ServiceBase extends DynamicMethods
     }
 
     public function applyDelta(&$from, &$delta) {
-        // TODO: Fazer a função que aplica o $delta no objeto $from
+        
     }
-
+    
     public static function toIso8601($fromData){
         return Carbon::instance($fromData)->format(ServiceBase::ISO8601_FORMAT);
     }

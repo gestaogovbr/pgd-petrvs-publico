@@ -313,6 +313,7 @@ class QuestionarioListPerguntaComponent extends src_app_modules_base_page_frame_
     this.cdRef = injector.get(_angular_core__WEBPACK_IMPORTED_MODULE_8__.ChangeDetectorRef);
     //this.orderBy = [['sequencia','asc']];
   }
+
   loadPerguntas() {
     this.dao.query({
       where: [["questionario_id", "==", this.questionarioId]],
@@ -602,10 +603,7 @@ class QuestionarioPerguntaFormComponent extends src_app_modules_base_page_form_b
     };
     this.validate = (control, controlName) => {
       let result = null;
-      if (['codigo'].indexOf(controlName) >= 0 && !control.value?.length) {
-        result = "Obrigatório";
-      }
-      if (['nome'].indexOf(controlName) >= 0 && !control.value?.length) {
+      if (['codigo', 'nome'].indexOf(controlName) >= 0 && !control.value?.length) {
         result = "Obrigatório";
       }
       return result;

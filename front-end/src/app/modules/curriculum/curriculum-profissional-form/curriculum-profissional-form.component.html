@@ -3,7 +3,6 @@
         <tab key="FUNCIONAIS" class="fw-bold" label="Funcionais">
             <div class="row my-4">
                 <input-select [size]="4" label="Ingresso na Instituição" icon="bi bi-calendar-check-fill" controlName="ano_ingresso" [control]="form!.controls.ano_ingresso" [items]="anos"></input-select>
-                <!--<input-select #centroTreinamento [size]="4" label="Centro de Treinamento" icon="bi bi-building-fill" controlName="centro_treinamento_id" [control]="form!.controls.centro_treinamento_id" [items]="centroTreinamentoItems"></input-select>-->
                 <input-select #centroTreinamento [size]="4" label="Centro de Treinamento" icon="bi bi-building-fill" controlName="centro_treinamento_id" [control]="form!.controls.centro_treinamento_id" fullEntity liveSearch [dao]="centroTreinamentoDao"  [addRoute]="{route: ['raiox','cadastros','centrotreinamento','new']}"></input-select>
                 <input-search #cargos [size]="4" label="Cargo" controlName="cargo_id" [control]="form!.controls.cargo_id" [dao]="cargoDao"></input-search>
             </div>
@@ -25,7 +24,6 @@
                 
                                 </ng-template>
                                 <ng-template let-row="row" #editFuncao>
-                                    <!--<input-select #funcao [size]="12" label icon controlName="funcao_id" [items]="funcoesItems"></input-select>-->
                                     <input-select #funcao [size]="12" label icon controlName="funcao_id" fullEntity liveSearch [dao]="funcaoDao"  [addRoute]="{route: ['raiox','cadastros','funcao','new']}"></input-select>
                                 </ng-template>
                             </column>

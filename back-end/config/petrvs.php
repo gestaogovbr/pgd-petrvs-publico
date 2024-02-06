@@ -44,5 +44,10 @@ return [
     'panel' => [
         'username' => env('PETRVS_PANEL_USERNAME', 'petrvs'),
         'password' => env('PETRVS_PANEL_PASSWORD', 'petrvs@123'),
+    ],
+    'schemas' => [
+        'base'=> env('DB_DATABASE', 'petrvs'),
+        'tenant_aplicacao'=> '',
+        'tenant_log'=> '',
     ]
 ];

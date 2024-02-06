@@ -280,7 +280,7 @@ class UnidadeService extends ServiceBase
                 ->update(['path' => DB::raw(sprintf("CONCAT('%s', SUBSTR(path, %d))", $newPath, strlen($newPath)))]);
         }
         /* Armazena as informações que serão necessárias no extraStore */
-        $this->buffer["integrantes"] = $this->UtilService->getNested($data, "integrantes");
+        $this->buffer["integrantes"] = $this->UtilService->getNested($data, "integrantes") ?? [];
         return $data;
     }
 
