@@ -721,7 +721,7 @@ class IntegracaoService extends ServiceBase
           "data_modificacao = :data_modificacao WHERE id = :id";
 
         // Adicionar algoritmo para trocar lotação.
-        // Se não conseguir mudar, avisar no log uma vez que virá mensagem do saveintegrante.
+        // Se não conseguir mudar, avisar no log uma vez que virá mensagem do salvarIntegrantes.
 
         $atualizacoesLotacoes = DB::select(
           "SELECT usuario.id AS usuario_id, isr.nome AS nome, ".
@@ -799,7 +799,7 @@ class IntegracaoService extends ServiceBase
                 'unidade_id' => $unidadeExercicioId,
                 'atribuicoes' => ["LOTADO"],
               ]);
-              $dbResult = $this->unidadeIntegrante->saveIntegrante($vinculo, false);
+              $dbResult = $this->unidadeIntegrante->salvarIntegrante($vinculo, false);
               if(!$dbResult){
                 LogError::newWarn("IntegracaoService: Durante integração não foi possível alterar lotação!", [$dbResult, $vinculo]);
               } else{
@@ -895,7 +895,7 @@ class IntegracaoService extends ServiceBase
             /* QueryMan, Farias, criou rotina para gerar exercícios (lotação)
             de forma simplificada. Aqui é criado o exercício vinculando
             o usuário a unidade. Em caso de dúvida, olhar rotina. */
-            $this->unidadeIntegrante->saveIntegrante($vinculo, false);
+            $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
           }
           if ($this->echo) $this->imprimeNoTerminal('Concluída a fase de atualização das lotações dos servidores!.....');
         });
@@ -1013,7 +1013,7 @@ class IntegracaoService extends ServiceBase
                 'unidade_id' => $unidadeExercicioId,
                 'atribuicoes' => $chefeAtribuicoes,
               ]);
-              $this->unidadeIntegrante->saveIntegrante($vinculo, false);
+              $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
 
               // Atualiza nível nível de acesso para chefe caso servidor não seja Desenvolvedor.
               if ($perfilDesenvolvedorId != $queryChefe->perfil->id) {
@@ -1053,7 +1053,7 @@ class IntegracaoService extends ServiceBase
                 'unidade_id' => $unidadeExercicioId,
                 'atribuicoes' => $chefeAtribuicoes,
               ]);
-              $this->unidadeIntegrantesaveIntegrante->saveIntegrante($vinculo, false);
+              $this->unidadeIntegrantesalvarIntegrantes->salvarIntegrantes($vinculo, false);
 
               // Atualiza nível nível de acesso para chefe caso servidor não seja Desenvolvedor.
               if ($perfilDesenvolvedorId != $queryChefe->perfil->id) {
