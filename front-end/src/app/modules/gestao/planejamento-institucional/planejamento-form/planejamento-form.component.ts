@@ -158,6 +158,7 @@ export class PlanejamentoFormComponent extends PageFormBase<Planejamento, Planej
     if (unidadeId?.length) {
       let pls = await this.dao?.query({ where: [['unidade_id', '==', unidadeId], ['manut_planej_unidades_executoras', '==', true]], join: this.joinPlanejamentoSuperior }).asPromise();
       this.planejamentosSuperiores = (pls || []).map(x => Object.assign({}, { key: x.id, value: x.nome, data: x }) as LookupItem);
+      this.planejamentosSuperiores.sort((a,b) => (a.value > b.value ? 1 : -1));
       this.planejamentosSuperiores.unshift({ key: null, value: 'Escolha um Planejamento superior...' });
       this.objetivos!.loadData(this.entity!, this.form!);
       this.cdRef.detectChanges();

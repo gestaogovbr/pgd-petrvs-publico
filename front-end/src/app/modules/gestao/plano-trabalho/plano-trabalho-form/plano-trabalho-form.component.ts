@@ -165,9 +165,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       result = "Menor que programa";
     } else if (this.programa && controlName == 'data_fim' && (control.value as Date).getTime() > this.programa!.selectedEntity?.data_fim.getTime()) {
       result = "Maior que programa";
-    } else if (controlName == 'criterios_avaliacao' && control.value.length < 1) {
+    } /*else if (controlName == 'criterios_avaliacao' && control.value.length < 1) {
       result = "Insira ao menos um critério de avaliação";
-    }
+    }*/
     return result;
   }
 
@@ -368,7 +368,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     return result;
   }
 
-  public addItemHandleCriteriosAvaliacao(): LookupItem | undefined {
+  //Não apagar
+  /*public addItemHandleCriteriosAvaliacao(): LookupItem | undefined {
     let result = undefined;
     const value = this.form!.controls.criterio_avaliacao.value;
     const key = this.util.textHash(value);
@@ -380,7 +381,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       this.form!.controls.criterio_avaliacao.setValue("");
     }
     return result;
-  };
+  };*/
 
   public async signDocumento(documento: Documento) {
     await this.documentoService.sign([documento]);
