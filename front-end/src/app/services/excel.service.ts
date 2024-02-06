@@ -14,4 +14,11 @@ export class ExcelService {
     XLSX.utils.book_append_sheet(wb, ws, sheet);  
     XLSX.writeFile(wb, nome + '.xlsx');  
   }
+
+  public exportJSON(nome: string, json: any) {
+    const worksheet = XLSX.utils.json_to_sheet(json);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Dates");
+    XLSX.writeFile(workbook, nome + '.xlsx', { compression: true });
+  }
 }

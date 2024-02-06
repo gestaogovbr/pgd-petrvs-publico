@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Change;
 use DateTime;
 use App\Services\UtilService;
+use App\Services\ServiceBase;
+use stdClass;
 
 trait LogChanges
 {
@@ -14,7 +16,7 @@ trait LogChanges
     public static function bootLogChanges()
     {
         static::saved(function (Model $model) {
-            if(static::$x == 1){   //Só entra se for a primeira vez que está executando.
+            if (static::$x == 1) {   //Só entra se for a primeira vez que está executando.
                 static::$x++;
                 if ($model->wasRecentlyCreated) {
                     static::logChange($model, 'ADD');
@@ -30,15 +32,34 @@ trait LogChanges
             static::logChange($model, 'DELETE');
         });
     }
-
+    
     public static function logChange(Model $model, string $action)
     {
         $util = new UtilService();
         $config = config("log");
-        if(!empty($config["changes"])) {
-            $delta = $action == "ADD" ? $model->getAttributes() : ($action == "EDIT" ? $model->getAttributes() : ($action == "DELETE" || $action == "SOFT_DELETE" ? $model->getAttributes() : $util->differentAttributes($model->getAttributes(),$model->getOriginal())));
+
+        $delta = [];
+        if ($action == "EDIT" && !empty($config["changes"])) {
+            $oldAttributes = $model->getOriginal();
+            $newAttributes = $model->getAttributes();
+
+            $delta = $util->differentAttributes($newAttributes, $oldAttributes);
+
+        } elseif (($action == "ADD" || $action == "DELETE" || $action == "SOFT_DELETE") && !empty($config["changes"])) {
+            $delta = $model->getAttributes();
+        }
+
+        if (!empty($delta)) {
+            if ($action == "EDIT") {
+                $delta = array_map(function ($item) {
+                    return [$item[0], $item[2]]; 
+                }, $delta);
+
+                $delta = self::converteToJSON($delta);
+            }
+
             Change::create([
-                'date_time' => new DateTime(),
+                'date_time' => now(),
                 'user_id' => Auth::check() ? Auth::user()->id : null,
                 'table_name' => $model->getTable(),
                 'row_id' => $model->attributesToArray()["id"],
@@ -48,9 +69,37 @@ trait LogChanges
         }
     }
 
-    public static function customLogChange($table, $id, $action, $delta) {
+    public static function converteToJSON(array $jsonArray)
+    {
+        $obj = new stdClass();
+        foreach ($jsonArray as $item) {
+            $key = $item[0];
+            $value = $item[1];
+            if (strpos($key, '*') !== false) {
+                // Se a chave contiver '*', precisamos dividir e criar objetos aninhados
+                $parts = explode('*', $key);
+                $current = &$obj;
+                foreach ($parts as $part) {
+                    if (!isset($current->$part)) {
+                        $current->$part = new stdClass();
+                    }
+                    $current = &$current->$part;
+                }
+                $current = $value;
+            } else {
+                $obj->$key = $value;
+            }
+        }
+
+        return $obj;
+    }
+
+
+
+    public static function customLogChange($table, $id, $action, $delta)
+    {
         $config = config("log");
-        if(!empty($config["changes"])) {
+        if (!empty($config["changes"])) {
             Change::create([
                 'user_id' => Auth::check() ? Auth::user()->id : null,
                 'table_name' => $table,
