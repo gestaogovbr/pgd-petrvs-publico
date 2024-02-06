@@ -61,7 +61,7 @@ class AtributoComportamentalDISCSeeder extends Seeder
             ]);
             $perguntaNovo->save();
             $sequencia++;
-        }
-    }*/
+        }*/
+    }
 }
 

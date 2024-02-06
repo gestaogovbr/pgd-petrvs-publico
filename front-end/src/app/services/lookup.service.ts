@@ -75,6 +75,7 @@ export class LookupService implements IIndexable {
     { key: "MASCULINO", value: "Masculino" },
     { key: "FEMININO", value: "Feminino" }
   ];
+
   public TIPO_INDICADOR: LookupItem[] = [
     { key: "QUANTIDADE", value: "Quantidade" },
     { key: "VALOR", value: "Valor" },
@@ -708,7 +709,27 @@ export class LookupService implements IIndexable {
     { key: 'DIVORCIADO', value: 'Divorciado' },
     { key: 'SOLTEIRO', value: 'Solteiro' },
     { key: 'SEPARADO', value: 'Separado' },
-    { key: 'VIUVO', value: 'Viúvo' }
+    { key: 'VIUVO', value: 'Viúvo' },
+    { key: 'UNIAO', value: 'União Estável' },
+    { key: 'OUTRO', value: 'Outro' },
+  ];
+
+  public COR_RACA: LookupItem[] = [
+    { key: "BRANCA", value: "Branca" },
+    { key: "PRETA", value: "Preta" },
+    { key: "PARDA", value: "Parda" },
+    { key: "INDIGENA", value: "Indigena" },
+    { key: "AMARELA", value: "Amarela" },
+  ];
+
+  public ESCOLARIDADE: LookupItem[] = [
+    { key: 'ESCOLA_FUDAMENTAL', value: 'Ensino Fundamental' },
+    { key: 'ESCOLA_MEDIO', value: 'Ensino Médio' },
+    { key: 'ESCOLA_SUPERIOR', value: 'Ensino Superior' },
+    { key: 'ESCOLA_ESPECIAL', value: 'Especialização' },
+    { key: 'ESCOLA_MESTRADO', value: 'Mestrado' },
+    { key: 'ESCOLA_DOUTORADO', value: 'Doutorado' },
+    { key: 'ESCOLA_POS_DOUTORADO', value: 'Pós Doutorado' }
   ];
 
   public TITULOS_CURSOS: LookupItem[] = [
@@ -735,6 +756,13 @@ export class LookupService implements IIndexable {
   public CARGOS_PRF: LookupItem[] = [
     { key: 'PRF', value: 'PRF' },
     { key: 'ADM', value: 'Agente Administrativo' }
+  ];
+
+  public SITUACAO_FUNCIONAL: LookupItem[] = [
+    { key: 'CONCURSADO_E', value: 'Concursado Efetivo' },
+    { key: 'CONCURSADO_T', value: 'Consursado Temporário' },
+    { key: 'TERCEIRIZADO', value: 'Colaborador de empresa terceirizada' },
+    { key: 'ESTAGIARIO', value: 'Estagiário' },
   ];
 
   public PG_PRF: LookupItem[] = [

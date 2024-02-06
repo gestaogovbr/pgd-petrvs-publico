@@ -264,6 +264,9 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
 
+    if(['centro_treinamento_id', 'cargo_id', 'grupo_especializado_id','ano_ingresso'].indexOf(controlName) >= 0 && !control.value?.length) {
+      result = "Obrigatório";
+    } 
     return result;
   }
 
