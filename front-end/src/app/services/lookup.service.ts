@@ -49,6 +49,12 @@ export class LookupService implements IIndexable {
     // Carregar os lookups diretamente na instancia do LookupService (IIndexable)
   }
 
+  
+  public EDICOES: LookupItem[] = [
+    { key: "PRF", value: "PRF" },
+    { key: "MGI", value: "MGI" }
+  ];
+
   public SIMNAO: LookupItem[] = [
     { key: 1, value: "Sim" },
     { key: 0, value: "Não" }
@@ -739,7 +745,8 @@ export class LookupService implements IIndexable {
 
   public QUESTIONARIO_TIPO: LookupItem[] = [
     { key: 'INTERNO', value: 'Interno' },
-    { key: 'PERSONALIZADO', value: 'Personalizado' }
+    { key: 'PERSONALIZADO', value: 'Personalizado' },
+    { key: 'ANONIMO', value: 'Anônimo' }
   ];
 
   public QUESTIONARIO_PERGUNTA_TIPO: LookupItem[] = [
@@ -838,5 +845,9 @@ export class LookupService implements IIndexable {
     let novoArray: LookupItem[] = [];
     array.forEach(elem => { if(!novoArray.find(x => x.key == elem.key)) novoArray.push(elem); });
     return novoArray;
+  }
+
+  public ordenarLookupItem(array: LookupItem[]): LookupItem[] {
+    return array.sort((a, b) => (a.value < b.value) ? -1 : 1);
   }
 }

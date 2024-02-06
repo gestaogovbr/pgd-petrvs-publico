@@ -61,8 +61,8 @@ export class AtividadeListGridComponent extends AtividadeListBase {
       data_filtro: { default: null },
       data_inicio: { default: null },
       data_fim: { default: null },
-      plano_entrega_id: { default: null},
-      plano_entrega_entrega_id: { default: null},
+      plano_entrega_id: { default: null },
+      plano_entrega_entrega_id: { default: null },
     });
     this.formEdit = this.fh.FormBuilder({
       descricao: { default: "" },
@@ -90,7 +90,7 @@ export class AtividadeListGridComponent extends AtividadeListBase {
 
   ngAfterViewInit() {
     super.ngAfterViewInit();
-    if(this.metadata?.atribuidas_para_mim){
+    if (this.metadata?.atribuidas_para_mim) {
       this.filter?.controls.atribuidas_para_mim.setValue(true);
       this.filter?.controls.usuario_id.setValue(this.auth.usuario?.id);
     }
@@ -104,10 +104,10 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     const agrupar = this.filter!.controls.agrupar.value;
     const agrupar_entrega = this.filter!.controls.agrupar_entrega.value;
     const groupByOptions: GroupBy[] = [];
-    if (agrupar) groupByOptions.push({ field: "unidade.sigla", label: "Unidade" });  
-    if (agrupar_entrega) groupByOptions.push({ field: "plano_trabalho_entrega.plano_entrega_entrega.descricao", label: "Entrega" });  
+    if (agrupar) groupByOptions.push({ field: "unidade.sigla", label: "Unidade" });
+    if (agrupar_entrega) groupByOptions.push({ field: "plano_trabalho_entrega.plano_entrega_entrega.descricao", label: "Entrega" });
     this.groupBy = groupByOptions;
-    this.grid!.reloadFilter();   
+    this.grid!.reloadFilter();
   }
 
   public onStatusClick(status: BadgeButton) {
@@ -124,8 +124,8 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     this.grid!.reloadFilter();
   }
 
-  public onEntregaClick(atividade: Atividade){
-    this.go.navigate({route: ['gestao', 'atividade', atividade.id, 'hierarquia']}, {metadata: {atividade: atividade}})
+  public onEntregaClick(atividade: Atividade) {
+    this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'hierarquia'] }, { metadata: { atividade: atividade } })
   }
 
   public async onColumnProgressoEtiquetasChecklistEdit(row: any) {
@@ -263,6 +263,17 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     this.formEdit.controls.etiqueta.setValue(null);
     this.etiquetas = this.util.merge(row.tipo_atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key);
     this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);
+    this.etiquetas = this.util.merge(this.etiquetas, await this.carregaEtiquetasUnidadesAscendentes(row.unidade), (a, b) => a.key == b.key);
+  }
+
+  public async carregaEtiquetasUnidadesAscendentes(unidadeAtual: Unidade) {
+    let etiquetasUnidades: LookupItem[] = [];
+    let path = unidadeAtual.path.split("/");
+    let unidades = await this.unidadeDao.query({ where: ["id", "in", path] }).asPromise();
+    unidades.forEach(un => {
+      etiquetasUnidades = this.util.merge(etiquetasUnidades, un.etiquetas, (a, b) => a.key == b.key);
+    });
+    return etiquetasUnidades;
   }
 
   public async onColumnEtiquetasSave(row: any) {

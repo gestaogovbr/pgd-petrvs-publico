@@ -275,7 +275,7 @@ class TemplateService extends ServiceBase
 
     public function gerarRelatorio($data) {
         $template = Template::where("entidade_id", $data['entidade'])->where("codigo", $data['codigo'])->first();
-        $datasource = $this->getDatasource($data['entidade'], "REPORT#" . $data['codigo'], $data['params']);
+        $datasource = $this->getDatasource("REPORT#" . $data['codigo'], $data['params']);
         if($datasource != null && $template != null) {
 
             $documento = new Documento([
@@ -297,17 +297,17 @@ class TemplateService extends ServiceBase
     }
     
     public function getFields($fields) {
-        return gettype($fields) == "string" ? $this->getFields($this->templateDatasetService->getDataset()[$fields]["fields"]) : $fields;
+        return gettype($fields) == "string" ? $this->getFields($this->templateDatasetService->getDataset($fields)["fields"]) : $fields;
     }
     
-    public function getDatasource($entidade, $codigo, $params) {
-        $context = $this->templateDatasetService->getDataset()[$codigo]["context"]($params);
+    public function getDatasource($codigo, $params) {
+        $context = $this->templateDatasetService->getDataset($codigo)["context"]($params);
         $result = null;
         if(is_array($context) || ($context instanceof Collection)) {
             $result = [];
-            foreach($context as $row) $result[] = $this->buildFields($row, $this->getFields($this->templateDatasetService->getDataset()[$codigo]["fields"]));
+            foreach($context as $row) $result[] = $this->buildFields($row, $this->getFields($this->templateDatasetService->getDataset($codigo)["fields"]));
         } else if ($context != null) {
-            $result = $this->buildFields($context, $this->getFields($this->templateDatasetService->getDataset()[$codigo]["fields"]));
+            $result = $this->buildFields($context, $this->getFields($this->templateDatasetService->getDataset($codigo)["fields"]));
         }
         return $result;
     }
@@ -350,14 +350,6 @@ class TemplateService extends ServiceBase
     public function formataLookup($valor, $lookup){
         $lookups = $this->lookupService::LOOKUPS[$lookup];
         return $this->lookupService::getValue($lookups, $valor);
-    }
-
-    
-
-    public function teste() {
-        $documento = Documento::find("4c1142ca-c48c-4881-955e-5a779af415e1");
-        $result = $this->renderTemplate($documento->template, $documento->datasource);
-        return $result;
-    }
+    }    
 
 }

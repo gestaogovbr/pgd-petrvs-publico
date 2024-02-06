@@ -301,8 +301,16 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       this.entity = new PlanoTrabalho();
       this.entity.carga_horaria = this.auth.entidade?.carga_horaria_padrao || 8;
       this.entity.forma_contagem_carga_horaria = this.auth.entidade?.forma_contagem_carga_horaria || "DIA";
+      this.entity.unidade_id = this.auth.unidade!.id;
+      this.buscaGestoresUnidadeExecutora(this.auth.unidade!);
+      if(!this.gestoresUnidadeExecutora.includes(this.auth.unidade!.id)) {
+        this.entity.usuario_id = this.auth.usuario!.id;
+      }
     }
     await this.loadData(this.entity, this.form!);
+    let nowDate = new Date(); 
+    nowDate.setHours(0,0,0,0)
+    this.form?.controls.data_inicio.setValue(nowDate);
     this.form?.controls.data_fim.setValue("");
   }
 

@@ -2411,14 +2411,6 @@ class In24_2023SeederHomologacao extends Seeder
                 "tipo_capacidade_id" => $this->utilService->uuid("MOD_PROJ_REG_EDT"),
             ),
             array(
-                "id" => "e137fb3d-3207-4038-a057-50757b86cc59",
-                "created_at" => $this->timenow,
-                "updated_at" => $this->timenow,
-                "deleted_at" => NULL,
-                "perfil_id" => $this->utilService->uuid("Chefe de Unidade Executora"),
-                "tipo_capacidade_id" => $this->utilService->uuid("MOD_PTR_INCL_SEM_LOT"),
-            ),
-            array(
                 "id" => "e4f345f6-3f47-456f-afea-18353df98ec3",
                 "created_at" => $this->timenow,
                 "updated_at" => $this->timenow,

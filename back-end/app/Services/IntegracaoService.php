@@ -262,6 +262,24 @@ class IntegracaoService extends ServiceBase
     ], null)->resultado;
   }
 
+  /**
+  * Método usado quando a rotina de Integração é chamada de dentro do Petrvs, pelo grid de Integrações
+  */
+  public function sincronizarPetrvs($data,$usuario_id,$request) {
+    $dados = $data['entity'];
+    $this->logged_user_id = Auth::user() ? Auth::user()->id : null;
+    $this->useLocalFiles = config('app')['env'] == 'local' ? $dados['usar_arquivos_locais'] : false;
+    $this->storeLocalFiles = config('app')['env'] == 'local' ? $dados['gravar_arquivos_locais'] : false;
+    $inputs['entidade'] = $dados['entidade_id'];
+    $inputs['unidades'] = $dados['atualizar_unidades'];
+    $inputs['servidores'] = $dados['atualizar_servidores'];
+    $inputs['gestores'] = $dados['atualizar_gestores'];
+    $dados['usar_arquivos_locais'] = $this->useLocalFiles;              // atualiza esse parâmetro para que seja salvo no banco corretamente
+    $dados['gravar_arquivos_locais'] = $this->storeLocalFiles;          // atualiza esse parâmetro para que seja salvo no banco corretamente
+    $this->sincronizacao($inputs);
+    return $this->store(array_merge($dados, ['usuario_id' => $usuario_id,'data_execucao' => $this->dataHora(),'resultado' => json_encode($this->result)]), null);
+  }
+
   public function sincronizacao($inputs)
   {
     ob_start(); // Inicia o buffer de saída.
@@ -672,9 +690,151 @@ class IntegracaoService extends ServiceBase
           }
         });
 
-        /**
-         * Posteriormente, será decidido o que fazer com as diferenças entre tabela usuários e integração_servidores.
-         */
+
+                array_push($this->result['servidores']['Observações'], 'Total de servidores importados do SIAPE: ' . $n . ' (apenas ATIVOS).');
+
+                // Seleciona todos os servidores que sofreram alteração nos seus dados pessoais ou atingiu critério quanto data_modificação.
+                $atualizacoes = DB::select(
+                    "SELECT u.id, isr.cpf AS cpf_servidor, u.nome AS nome_anterior, ".
+                    "isr.nome AS nome_servidor, u.apelido AS apelido_anterior, ".
+                    "isr.nomeguerra AS nome_guerra, u.email AS email_anterior, ".
+                    "isr.emailfuncional, u.matricula AS matricula_anterior, ".
+                    "isr.matriculasiape, u.telefone AS telefone_anterior, isr.telefone, ".
+                    "isr.data_modificacao as data_modificacao, u.data_modificacao as data_modificacao_anterior ".
+                    "FROM integracao_servidores isr LEFT JOIN usuarios u ON (isr.cpf = u.cpf) ".
+                    "WHERE isr.nome != u.nome OR isr.emailfuncional != u.email OR ".
+                    "isr.matriculasiape != u.matricula OR isr.nomeguerra != u.apelido OR ".
+                    "isr.telefone != u.telefone OR ".
+                    "isr.data_modificacao > u.data_modificacao");
+
+                $sql_update = "UPDATE usuarios SET ".
+                    "nome = :nome, apelido = :nomeguerra, ".
+                    "email = :email, matricula = :matricula, ".
+                    "telefone = :telefone, ".
+                    "data_modificacao = :data_modificacao WHERE id = :id";
+
+                DB::transaction(function () use (&$atualizacoes, &$sql_update) {
+                    /* Atualiza os dados pessoais de todos os servidores ATIVOS
+                    presentes na tabela USUARIOS.
+                    *** ESTA ROTINA NÃO DEVE INSERIR NOVOS SERVIDORES *** */
+                    if (!empty($atualizacoes)) {
+                        foreach($atualizacoes as $linha) {
+                            DB::update($sql_update, [
+                                'nome'          => $linha->nome_servidor,
+                                'nomeguerra'    => $linha->nome_guerra,
+                                'email'         => $linha->emailfuncional,
+                                'matricula'     => $linha->matriculasiape,
+                                'telefone'      => $linha->telefone,
+                                'id'            => $linha->id,
+                                'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao),
+
+                            ]);
+                            $this->atualizaLogs($this->logged_user_id, 'usuarios', $linha->id, 'EDIT', [
+                                'Rotina' => 'Integração',
+                                'Observação' => 'Servidor ATIVO que foi atualizado porque apresentou '.
+                                'alteração em seus dados pessoais!',
+                                'Valores anteriores' => [
+                                    'nome'          => $linha->nome_anterior,
+                                    'nomeguerra'    => $linha->apelido_anterior,
+                                    'email'         => $linha->email_anterior,
+                                    'matricula'     => $linha->matricula_anterior,
+                                    'telefone'      => $linha->telefone_anterior,
+                                    'id'            => $linha->id,
+                                    'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao_anterior),
+                                ],
+                                'Valores atuais' => [
+                                    'nome'          => $linha->nome_servidor,
+                                    'nomeguerra'    => $linha->nome_guerra,
+                                    'email'         => $linha->emailfuncional,
+                                    'matricula'     => $linha->matriculasiape,
+                                    'telefone'      => $linha->telefone,
+                                    'id'            => $linha->id,
+                                    'data_modificacao' => $this->UtilService->asDateTime($linha->data_modificacao),
+                                ]
+                            ]);
+                        }
+                    };
+
+                    if($this->echo) $this->imprimeNoTerminal('Concluída a fase de atualização de servidores que apresentaram alteração nos seus dados pessoais!.....');
+                    $n = count($atualizacoes);
+                    if($n > 0) array_push($this->result['servidores']["Observações"], $n . ($n == 1 ? ' servidor foi atualizado porque sofreu alteração em seus dados pessoais!' : ' servidores foram atualizados porque sofreram alteração em seus dados pessoais!'));
+
+                    /* Incluir todos servidores da tabela integracao_servidores
+                    que não estejam na tabela usuarios.
+                    Foi modificado a ideia original onde era uma opção o autoincluir.
+                    Obs.:: Inserção de novos servidores automaticamente.
+                    */
+
+                    /* Query Builder */
+                    $query = "SELECT " .
+                        "isr.matriculasiape as matricula, " .
+                        "isr.nome as nome, isr.cpf as cpf, " .
+                        "isr.emailfuncional as emailfuncional, " .
+                        "isr.sexo as sexo, " .
+                        "isr.uf as uf, " .
+                        "isr.data_nascimento as data_nascimento, " .
+                        "isr.telefone as telefone, " .
+                        "isr.nomeguerra as apelido, " .
+                        "isr.codigo_servo_exercicio as exercicio, " .
+                        "isr.situacao_funcional as situacao_funcional, " .
+                        "isr.data_modificacao as data_modificacao, " .
+                        "isr.funcoes as gestor " .
+                        "FROM integracao_servidores as isr LEFT JOIN usuarios as u " .
+                        "ON isr.cpf = u.cpf " .
+                        "WHERE u.cpf is NULL";
+
+                    $vinculos_isr = DB::select($query);
+
+                    $usuario_comum=$this->integracao_config["perfilComum"];
+                    $perfil_participante = Perfil::where('nome', $usuario_comum)->first()->id;
+
+                    foreach($vinculos_isr as $v_isr){
+                        $v_isr = $this->UtilService->object2array($v_isr);
+                        $perfil = $perfil_participante;
+                        $registro = new Usuario([
+                            'id' => Uuid::uuid4(),
+                            'email' => $this->UtilService->valueOrDefault($v_isr['emailfuncional']),
+                            'nome' => $this->UtilService->valueOrDefault($v_isr['nome']),
+                            'cpf' => $this->UtilService->valueOrDefault($v_isr['cpf']),
+                            'matricula' => $this->UtilService->valueOrDefault($v_isr['matricula']),
+                            'apelido' => $this->UtilService->valueOrDefault($v_isr['apelido']),
+                            'telefone' => $this->UtilService->valueOrDefault($v_isr['telefone'], null),
+                            'data_nascimento' => $this->UtilService->valueOrDefault($v_isr['data_nascimento'], null),
+                            'sexo' => $this->UtilService->valueOrDefault($v_isr['sexo']),
+                            'situacao_funcional' => $this->UtilService->valueOrDefault($v_isr['situacao_funcional'], "DESCONHECIDO"),
+                            'perfil_id' => $perfil,
+                            'exercicio' => $this->UtilService->valueOrDefault($v_isr['exercicio']),
+                            'uf' => $this->UtilService->valueOrDefault($v_isr['uf'], null),
+                            'data_modificacao' => $this->UtilService->valueOrDefault($v_isr['data_modificacao']),
+                        ]);
+                        $registro->save();
+
+                        // Registrar exercício...
+
+                        $id_user = $registro->id;
+                        $unidade_exercicio = Unidade::where("codigo", $v_isr["exercicio"])->first();
+
+                        // Alguns servidores possuem unidades de exercícios não válidas (provavelmente aposentados).
+                        // Dessa forma, como resolução, alocar eles na unidade instituidora para ciência dos
+                        // administradores do sistema e posterior remanejamento.
+
+                        if(is_null($unidade_exercicio)){
+                            $unidade_exercicio = Unidade::where("codigo", "1")->first();
+                        }
+
+                        $vinculo = array([
+                            'usuario_id' => $id_user,
+                            'unidade_id' => $unidade_exercicio->id,
+                            'atribuicoes' => ["LOTADO"],
+                        ]);
+
+                        /* QueryMan, Farias, criou rotina para gerar exercícios (antiga lotação)
+                        de forma simplificada. Aqui é criado o exercício vinculando
+                        o usuário a unidade. Em caso de dúvida, olhar rotina para entender melhor. */
+                        $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
+                    }
+                    if($this->echo) $this->imprimeNoTerminal('Concluída a fase de atualização das lotações dos servidores!.....');
+                });
 
         if ($this->echo) $this->imprimeNoTerminal("Concluída a fase de reconstrução da tabela integração_servidores.....");
         $n = IntegracaoServidor::count();
@@ -873,6 +1033,82 @@ class IntegracaoService extends ServiceBase
               LogError::newWarn("IntegracaoService: Durante integração, foi definido o exercício na unidadeRaiz(" .
                 $this->unidadeRaiz . ") para o CPF(" .
                 $registro['cpf'] . ") uma vez que informação não foi encontrada.", [$usuarioId, $registro['cpf']]);
+                if($this->echo) $this->imprimeNoTerminal("Concluída a fase de montagem do array de chefias!.....");
+
+                // Localiza ID do perfil Chefia de Unidade Executora para posterior atualização do usuário
+                $usuario_chefe=$this->integracao_config["perfilChefe"];
+
+                $perfil_chefia = Perfil::where('nome', $usuario_chefe)->first()->id;
+                foreach($chefias as $chefia){
+                    // Descobre o ID da Unidade
+                    $query_selecionar_unidade = "SELECT u.id " .
+                        "FROM integracao_unidades as iu " .
+                        "JOIN unidades as u " .
+                        "ON iu.id_servo = u.codigo " .
+                        "WHERE iu.codigo_siape = :codigo_siape";
+
+                    $unidade_exercicio = DB::select($query_selecionar_unidade,
+                        [':codigo_siape' => $chefia['codigo_siape']]);
+
+                    /*
+                    Monta a consulta de acordo com o tipo de função e efetua
+                    o registro na tabela unidade_integrante_atribucoes.
+                    */
+                    if($unidade_exercicio){
+                        if($chefia['tipo_funcao'] == '1'){
+                            $vinculo = array([
+                                'usuario_id' => $chefia['id_usuario'],
+                                'unidade_id' => $unidade_exercicio[0]->id,
+                                'atribuicoes' => ["LOTADO", "GESTOR"],
+                            ]);
+
+                            // Registra atribuições.
+                            $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
+
+                            // Atualiza nível de acesso.
+                            $values = [
+                                ':perfil_id' => $perfil_chefia,
+                                ':id' => $chefia['id_usuario']
+                            ];
+                            $sql_perfil_update = "UPDATE usuarios SET perfil_id = :perfil_id WHERE id = :id";
+                            DB::update($sql_perfil_update, $values);
+
+                        } else if($chefia['tipo_funcao'] == '2'){
+                              $vinculo = array([
+                              'usuario_id' => $chefia['id_usuario'],
+                              'unidade_id' => $unidade_exercicio[0]->id,
+                              'atribuicoes' => ["GESTOR_SUBSTITUTO"],
+                              ]);
+
+                              $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
+                                // Atualiza nível de acesso.
+                              $values = [
+                                  ':perfil_id' => $perfil_chefia,
+                                  ':id' => $chefia['id_usuario']
+                              ];
+                              $sql_perfil_update = "UPDATE usuarios SET perfil_id = :perfil_id WHERE id = :id";
+                              DB::update($sql_perfil_update, $values);
+                        } else{
+                            throw new Exception("Falha no array de funções do servidor");
+                        }
+                    } else{
+                        $nomeUsuario = Usuario::where('id',$chefia['id_usuario'])->first()->nome;
+                        $unidade = array_filter($uos, function($o) use ($chefia){
+                            if($o['id_servo'] == $chefia['codigo_siape']) return $o['nomeuorg'];
+                        });
+                        array_push($this->result['gestores']["Falhas"], 'Impossível lançar a chefia do servidor ' . strtoupper($nomeUsuario) . ' porque a Unidade de código SIAPE ' .
+                                    $chefia['codigo_siape'] . '(' . $unidade[0] ?? 'nome não localizado!' . ')' . ' não está cadastrada/ativa!');
+                    }
+                }
+                DB::commit();
+                $this->result["gestores"]['Resultado'] = 'Sucesso';
+                $this->result["gestores"]['Observações'] = [...$this->result["gestores"]['Observações'], ...array_filter([
+                    count($chefes) . (count($chefes) == 1 ? ' gestor atualizado, ' : ' gestores atualizados, ') . count($chefias) . (count($chefias) == 1 ? ' chefia atualizada!' : ' chefias atualizadas!')
+                    ], fn($o) => intval(substr($o,0,strpos($o, 'gestor')-1)) > 0)];
+            } catch (Throwable $e) {
+                DB::rollback();
+                LogError::newError("Erro ao atualizar os gestores (titulares/substitutos)", $e);
+                $this->result["gestores"]['Resultado'] = 'ERRO: '. $e->getMessage();
             }
 
             $queryAtribuicoes = $registro->getUnidadesAtribuicoesAttribute();

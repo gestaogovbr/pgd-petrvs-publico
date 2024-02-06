@@ -14,6 +14,7 @@ import { EntityService } from './services/entity.service';
 import { NotificacaoService } from './modules/uteis/notificacoes/notificacao.service';
 import { DOCUMENT } from '@angular/common';
 import { SafeUrl } from '@angular/platform-browser';
+import { UnidadeService } from './services/unidade.service';
 
 //export let appInjector: Injector;
 //export type Contexto = "PGD" | "EXECUCAO" | "AVALIACAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
@@ -92,6 +93,7 @@ export class AppComponent {
   public menuExecucao: any;
   public menuAdministrador: any;
   public menuDev: any;
+  public unidadeService: UnidadeService;
   private _menu: any;
   private _menuDetectChanges: any;
 
@@ -112,6 +114,7 @@ export class AppComponent {
     this.lookup = injector.get<LookupService>(LookupService);
     this.entity = injector.get<EntityService>(EntityService);
     this.notificacao = injector.get<NotificacaoService>(NotificacaoService);
+    this.unidadeService = injector.get<UnidadeService>(UnidadeService);
     /* Inicializações */
     this.notificacao.heartbeat();
     this.auth.app = this;
@@ -176,7 +179,7 @@ export class AppComponent {
       UNIDADES: { name: this.lex.translate("Unidades"), permition: 'MOD_CFG_UND', route: ['configuracoes', 'unidade'], icon: this.entity.getIcon('Unidade') },
       USUARIOS: { name: this.lex.translate("Usuários"), permition: 'MOD_CFG_USER', route: ['configuracoes', 'usuario'], icon: this.entity.getIcon('Usuario') },
       PERFIS: { name: this.lex.translate("Perfis"), permition: 'MOD_CFG_PERFS', route: ['configuracoes', 'perfil'], icon: this.entity.getIcon('Perfil') },
-      SOBRE: { name:this.lex.translate("Sobre"), permition: '', route: ['configuracoes', 'sobre'], icon: "" },
+      SOBRE: { name: this.lex.translate("Sobre"), permition: '', route: ['configuracoes', 'sobre'], icon: "" },
       /* LOGS */
       ROTINAS_INTEGRACAO: { name: "Rotina de Integração", permition: '', route: ['rotinas', 'integracao'], icon: this.entity.getIcon('Integracao') },
       LOGS_ALTERACOES: { name: "Log das Alterações", permition: '', route: ['logs', 'change'], icon: this.entity.getIcon('Change') },
@@ -234,11 +237,11 @@ export class AppComponent {
       permition: "MENU_GESTAO_ACESSO",
       id: "navbarDropdownGestaoExecucao",
       menu: [
-        this.menuSchema.ATIVIDADES,
-        this.menuSchema.AFASTAMENTOS,
-        this.menuSchema.OCORRENCIAS,
         this.menuSchema.EXECUCAO_PLANOS_ENTREGAS,
-        Object.assign({}, this.menuSchema.CONSOLIDACOES, { params: { tab: "USUARIO" } })
+        Object.assign({}, this.menuSchema.CONSOLIDACOES, { params: { tab: "USUARIO" } }),
+        this.menuSchema.OCORRENCIAS,
+        this.menuSchema.AFASTAMENTOS,
+        this.menuSchema.ATIVIDADES
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Avaliação"),
@@ -259,7 +262,7 @@ export class AppComponent {
         this.menuSchema.PERFIS
       ].sort(this.orderMenu)
     }, {
-      name:this.lex.translate("Cadastros"),
+      name: this.lex.translate("Cadastros"),
       permition: "MENU_CAD_ACESSO",
       id: "navbarDropdownGestaoCadastros",
       menu: [
@@ -375,7 +378,7 @@ export class AppComponent {
         this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS
         //this.menuSchema.RXCADASTRO_OPORTUNIDADES
       ]
-    },{
+    },/*{
       name: this.lex.translate("Atributos Comportamentais"),
       permition: "MOD_RX_VIS_DPE",
       id: "navbarDropdownRXCadastros",
@@ -384,9 +387,9 @@ export class AppComponent {
         this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS_B5,
         this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS_DASS,
         this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS_SRQ20,
-        
+
       ]
-    },{
+    },*/{
       name: this.lex.translate("Oportunidades"),
       permition: "MOD_RX_VIS_DPE",
       id: "navbarDropdownRXOportunidades",
@@ -433,17 +436,17 @@ export class AppComponent {
     }];
 
     this.menuContexto = [
-      { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.menuGestao},
-      { key: "EXECUCAO", permition: "CTXT_EXEC", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.menuExecucao},
+      { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.menuGestao },
+      { key: "EXECUCAO", permition: "CTXT_EXEC", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.menuExecucao },
       { key: "ADMINISTRADOR", permition: "CTXT_ADM", icon: "bi bi-emoji-sunglasses", name: this.lex.translate("Administrador"), menu: this.menuAdministrador },
       { key: "DEV", permition: "CTXT_DEV", icon: "bi bi-braces", name: this.lex.translate("Desenvolvedor"), menu: this.menuDev },
       { key: "PONTO", permition: "CTXT_PNT", icon: "bi bi-stopwatch", name: this.lex.translate("Ponto Eletrônico"), menu: this.menuPonto },
       { key: "PROJETO", permition: "CTXT_PROJ", icon: "bi bi-graph-up-arrow", name: this.lex.translate("Projetos"), menu: this.menuProjeto },
       { key: "RAIOX", permition: "CTXT_RX", icon: "bi bi-camera", name: this.lex.translate("Raio X"), menu: this.menuRaioX }
     ]
-    
-    
-    
+
+
+
   }
 
   /*public onContextoSelect(item: any) {
@@ -480,13 +483,13 @@ export class AppComponent {
     this.dialog.container = this.dialogs;
     this.dialog.cdRef = this.cdRef;
     this.gb.refresh();
-    
+
     let gestaoPGD = this.auth.hasPermissionTo("CTXT_GEST");
     let execucaoPGD = this.auth.hasPermissionTo("CTXT_EXEC");
-    
-    if(gestaoPGD){
+
+    if (gestaoPGD) {
       this.menuContexto = this.menuContexto.filter(item => item.key !== "EXECUCAO");
-    } else if(execucaoPGD && !gestaoPGD){
+    } else if (execucaoPGD && !gestaoPGD) {
       this.menuContexto = this.menuContexto.filter(item => item.key !== "GESTAO");
     }
   }
@@ -564,6 +567,5 @@ export class AppComponent {
   public get isConfig(): boolean {
     return this.router.url.indexOf("/extension/options") >= 0;
   }
-
 }
 

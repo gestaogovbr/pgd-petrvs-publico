@@ -17,11 +17,11 @@ export class RaioxhomeComponent implements OnInit {
   imgOportunidades:string;
 
   constructor(private router:Router, private auth:AuthService) { 
-    this.logoInicial="../../../../assets/images/logo-raio-x-1.png";
-    this.imgDadosPessoais="../../../../assets/images/Dados_pessoais.png";
-    this.imgDadosProfissionais="../../../../assets/images/Dados_profissionais.png";
-    this.imgAtributos="../../../../assets/images/Atributos_comportamentais.png";
-    this.imgOportunidades="../../../../assets/images/Oportunidade.png";
+    this.logoInicial="../../../../assets/images/logo_raiox_1.png";
+    this.imgDadosPessoais="../../../../assets/images/dados_pessoais.png";
+    this.imgDadosProfissionais="../../../../assets/images/dados_profissionais.png";
+    this.imgAtributos="../../../../assets/images/atributos_comportamentais.png";
+    this.imgOportunidades="../../../../assets/images/oportunidade.png";
   }
 
   ngOnInit(): void {

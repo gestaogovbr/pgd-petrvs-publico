@@ -66,7 +66,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     { key: "INICIAM", value: "Iniciam" },
     { key: "FINALIZAM", value: "Finalizam" }
   ];
-  
+
 
   constructor(public injector: Injector) {
     super(injector, PlanoEntrega, PlanoEntregaDaoService);
@@ -132,8 +132,8 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.BOTAO_RETIRAR_HOMOLOGACAO = { label: "Retirar de homologação", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "INCLUIDO"), onClick: this.retirarHomologacao.bind(this) };
     this.BOTAO_SUSPENDER = { label: "Suspender", id: "PAUSADO", icon: this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, "SUSPENSO"), color: this.lookup.getColor(this.lookup.PLANO_ENTREGA_STATUS, "SUSPENSO"), onClick: this.suspender.bind(this) };
     this.botoes = [this.BOTAO_ALTERAR, this.BOTAO_ARQUIVAR, this.BOTAO_AVALIAR, this.BOTAO_CANCELAR_PLANO, this.BOTAO_CANCELAR_AVALIACAO, this.BOTAO_CANCELAR_CONCLUSAO,
-      this.BOTAO_CANCELAR_HOMOLOGACAO, this.BOTAO_CONCLUIR, this.BOTAO_CONSULTAR, this.BOTAO_DESARQUIVAR, this.BOTAO_EXCLUIR, this.BOTAO_HOMOLOGAR, this.BOTAO_LIBERAR_HOMOLOGACAO,
-      this.BOTAO_LOGS, this.BOTAO_REATIVAR, this.BOTAO_RETIRAR_HOMOLOGACAO, this.BOTAO_SUSPENDER];
+    this.BOTAO_CANCELAR_HOMOLOGACAO, this.BOTAO_CONCLUIR, this.BOTAO_CONSULTAR, this.BOTAO_DESARQUIVAR, this.BOTAO_EXCLUIR, this.BOTAO_HOMOLOGAR, this.BOTAO_LIBERAR_HOMOLOGACAO,
+    this.BOTAO_LOGS, this.BOTAO_REATIVAR, this.BOTAO_RETIRAR_HOMOLOGACAO, this.BOTAO_SUSPENDER];
     //this.BOTAO_ADERIR_OPTION, this.BOTAO_ADERIR_TOOLBAR,
   }
 
@@ -184,7 +184,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     }
     rows?.forEach(v => {
       let planoEntrega = v as PlanoEntrega;
-      if(planoEntrega.avaliacao) planoEntrega.avaliacao.tipo_avaliacao = extra?.tipos_avaliacoes?.find((x: TipoAvaliacao) => x.id == planoEntrega.avaliacao!.tipo_avaliacao_id);
+      if (planoEntrega.avaliacao) planoEntrega.avaliacao.tipo_avaliacao = extra?.tipos_avaliacoes?.find((x: TipoAvaliacao) => x.id == planoEntrega.avaliacao!.tipo_avaliacao_id);
     });
   }
 
@@ -281,7 +281,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
       result.push(["status", "==", "ATIVO"]);
     } else if (form.status || this.avaliacao) {
       result.push(["status", "in", form.status ? [form.status] : ['CONCLUIDO', 'AVALIADO']]);
-    } 
+    }
     if (form.unidades_filhas) result.push(["unidades_filhas", "==", true]);
     //  (RI_PENT_C) Por padrão, os planos de entregas retornados na listagem do grid são os que não foram arquivados.
     result.push(["incluir_arquivados", "==", this.filter!.controls.arquivadas.value]);
@@ -519,7 +519,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public arquivar(planoEntrega: PlanoEntrega) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoEntrega", entity: Object.assign({}, planoEntrega, {arquivar: true}), novoStatus: planoEntrega.status, onClick: this.dao!.arquivar.bind(this.dao) },
+      metadata: { tipo: "PlanoEntrega", entity: Object.assign({}, planoEntrega, { arquivar: true }), novoStatus: planoEntrega.status, onClick: this.dao!.arquivar.bind(this.dao) },
       title: "Arquivar Plano de Entregas",
       modalClose: (modalResult) => {
         if (modalResult) {
@@ -532,11 +532,11 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   }
 
   public avaliar(planoEntrega: PlanoEntrega) {
-    this.go.navigate({route: ['gestao', 'plano-entrega', planoEntrega.id, 'avaliar']}, {
-      modal: true, 
+    this.go.navigate({ route: ['gestao', 'plano-entrega', planoEntrega.id, 'avaliar'] }, {
+      modal: true,
       metadata: { planoEntrega: planoEntrega },
       modalClose: (modalResult?: Avaliacao) => {
-        if(modalResult) {
+        if (modalResult) {
           (this.grid?.query || this.query!).refreshId(planoEntrega.id, ["avaliacao.tipo_avaliacao.notas"]).then(() => {
             this.checaBotaoAderirToolbar();
           });
@@ -564,7 +564,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     this.submitting = true;
     try {
       let response = await this.avaliacaoDao!.cancelarAvaliacao(planoEntrega.avaliacao!.id);
-      if(response) {
+      if (response) {
         (this.grid?.query || this.query!).refreshId(planoEntrega.id).then(() => {
           this.checaBotaoAderirToolbar();
         });
@@ -610,7 +610,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public cancelarPlano(planoEntrega: PlanoEntrega) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoEntrega", entity: Object.assign({}, planoEntrega, {arquivar: true}), novoStatus: "CANCELADO", onClick: this.dao!.cancelarPlano.bind(this.dao) },
+      metadata: { tipo: "PlanoEntrega", entity: Object.assign({}, planoEntrega, { arquivar: true }), novoStatus: "CANCELADO", onClick: this.dao!.cancelarPlano.bind(this.dao) },
       title: "Cancelar Plano de Entregas",
       modalClose: (modalResult) => {
         if (modalResult) {
@@ -638,7 +638,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
 
   public desarquivar(planoEntrega: PlanoEntrega) {
     this.go.navigate(this.routeStatus, {
-      metadata: { tipo: "PlanoEntrega", entity: Object.assign({},planoEntrega, {arquivar: false}), novoStatus: planoEntrega.status, onClick: this.dao!.arquivar.bind(this.dao) },
+      metadata: { tipo: "PlanoEntrega", entity: Object.assign({}, planoEntrega, { arquivar: false }), novoStatus: planoEntrega.status, onClick: this.dao!.arquivar.bind(this.dao) },
       title: "Desarquivar Plano de Entregas",
       modalClose: (modalResult) => {
         if (modalResult) {

@@ -354,8 +354,8 @@ export class AuthService {
    * Informa se o usuário logado é gestor de alguma das suas áreas de trabalho.
    * @returns
    */
-  public isGestorAlgumaAreaTrabalho(): boolean {
-    return !!this.unidades?.filter(x => this.unidadeService.isGestorUnidade(x)).length;
+  public isGestorAlgumaAreaTrabalho(incluiDelegado: boolean = true): boolean {
+    return !!this.unidades?.filter(x => this.unidadeService.isGestorUnidade(x, incluiDelegado)).length;
   }
 
   /**
@@ -405,7 +405,7 @@ export class AuthService {
    * @param unidade_id
    */
   public isIntegrante(atribuicao: IntegranteAtribuicao, unidade_id: string): boolean {
-    let $vinculo = this.usuario?.unidades_integrante?.find(x => x.unidade_id == unidade_id);
+    let $vinculo = this.usuario?.unidades_integrantes?.find(x => x.unidade_id == unidade_id);
     return !!$vinculo && $vinculo.atribuicoes.map(a => a.atribuicao).includes(atribuicao);
   }
 

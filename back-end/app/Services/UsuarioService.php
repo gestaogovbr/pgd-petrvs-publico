@@ -7,6 +7,8 @@ use App\Models\Unidade;
 use App\Models\Programa;
 use App\Models\Atividade;
 use App\Models\PlanoTrabalho;
+use App\Models\UnidadeIntegrante;
+use App\Models\UnidadeIntegranteAtribuicao;
 use App\Services\ServiceBase;
 use App\Services\RawWhere;
 use Illuminate\Support\Facades\Storage;
@@ -38,7 +40,7 @@ class UsuarioService extends ServiceBase
         }
     }
 
-    public function dashboard($data_inicial, $data_final, $usuario_id) {
+/*     public function dashboard($data_inicial, $data_final, $usuario_id) {
         $result = [];
         $planosTrabalhoAtivos = $this->planoTrabalhoService->planosAtivosPorData($data_inicial, $data_final, $usuario_id);
         $planos_ids = $planosTrabalhoAtivos->map(function($plano){return $plano->id;});
@@ -66,7 +68,7 @@ class UsuarioService extends ServiceBase
         ];
         $result['horas_afastamentos'] = 0;
         return $result;
-    }
+    } */
 
     /**
      * dashboard
@@ -76,7 +78,7 @@ class UsuarioService extends ServiceBase
      * @param  mixed $usuario_id: ID do usuário do qual se deseja as informações para o dashboard
      * @return array: array contendo todas as informações para o front-end do usuário
      */
-    public function dashboard_gestor($data_inicial, $data_final, $unidade_ids) {
+/*     public function dashboardGestor($data_inicial, $data_final, $unidade_ids) {
         $result = [];
         $usuarios = [];
         foreach(Unidade::whereIn('id',$unidade_ids)->get() as $u) { array_push($usuarios, ...$u->integrantes); }
@@ -100,7 +102,7 @@ class UsuarioService extends ServiceBase
             ];
         }
         return $result;
-    }
+    } */
 
     public function downloadImgProfile($url, $path) {
         if(!Storage::exists($path)) {
@@ -119,6 +121,10 @@ class UsuarioService extends ServiceBase
     }
 
     public function extraStore($entity, $unidade, $action) {
+        foreach($this->buffer["integrantes"] as $integrante) {
+            $integrante["usuario_id"] = $entity->id;
+        }        
+        $this->UnidadeIntegranteService->salvarIntegrantes($this->buffer["integrantes"]);
         if($action != ServiceBase::ACTION_INSERT) $this->unidadeIntegranteAtribuicaoService->checkLotacoes($entity->id);
     }
 
@@ -127,11 +133,34 @@ class UsuarioService extends ServiceBase
     }
 
     /**
+     * Informa quais atribuições de gestor o usuário logado possui na unidade recebida como parâmetro.
+     * @param string $unidade_id 
+     */
+    public function atribuicoesGestor(string $unidadeId, ?string $usuarioId = null) {
+        $result = ["gestor" => false, "gestorSubstituto" => false, "gestorDelegado" => false];
+        $key = [$unidadeId, $usuarioId];
+        if($this->hasBuffer("atribuicoesGestor", $key)) {
+            $result = $this->getBuffer("atribuicoesGestor", $key);
+        } else {
+            $result = $this->setBuffer("atribuicoesGestor", $key, [
+                "gestor" => $this->isIntegrante('GESTOR', $unidadeId, $usuarioId),
+                "gestorSubstituto" => $this->isIntegrante('GESTOR_SUBSTITUTO', $unidadeId, $usuarioId),
+                "gestorDelegado" => $this->isIntegrante('GESTOR_DELEGADO', $unidadeId, $usuarioId)
+            ]);
+        }
+        return $result;
+    }
+
+    /**
      * Informa se o usuário logado é gestor(titular ou substituto) da unidade recebida como parâmetro.
      * @param string $unidade_id 
      */
-    public function isGestorUnidade(string $unidade_id): bool {
-        return $this->isIntegrante('GESTOR',$unidade_id) || $this->isIntegrante('GESTOR_SUBSTITUTO',$unidade_id) || $this->isIntegrante('GESTOR_DELEGADO',$unidade_id);
+    public function isGestorUnidade(string $unidadeId): bool {
+        if($this->hasBuffer("isGestorUnidade", $unidadeId)) {
+            return $this->getBuffer("isGestorUnidade", $unidadeId);
+        } else {
+            return $this->setBuffer("isGestorUnidade", $unidadeId, $this->isIntegrante('GESTOR', $unidadeId) || $this->isIntegrante('GESTOR_SUBSTITUTO', $unidadeId) || $this->isIntegrante('GESTOR_DELEGADO', $unidadeId));
+        }
     }
 
     /**
@@ -143,17 +172,22 @@ class UsuarioService extends ServiceBase
     }
 
     /**
-     * Recebe os IDs de um usuário e de um PGD, e informa se o usuário é participante habilitado do Programa.
+     * Recebe os IDs de um usuário e de um programa, e informa se o usuário é participante habilitado do Programa.
      * Se o usuário não for informado, será utilizado o usuário logado.
      * @param string $usuario_id 
      * @param string $pgd_id 
      * @return bool
      */
-    public function isParticipantePgdHabilitado(string | null $usuario_id = null, string $pgd_id): bool {
-        $usuario_id = $usuario_id ?? parent::loggedUser()->id;
-        $programa = Programa::find($pgd_id);
-        $participante = $programa->participantes->where("usuario_id",$usuario_id)->first();
-        return $participante ? $participante->habilitado : false;
+    public function isParticipanteHabilitado(string | null $usuarioId = null, string $programaId): bool {
+        $key = [$usuarioId, $programaId];
+        if($this->hasBuffer("isParticipanteHabilitado", $key)) {
+            return $this->getBuffer("isParticipanteHabilitado", $key);
+        } else {
+            $usuarioId = $usuarioId ?? parent::loggedUser()->id;
+            $programa = Programa::find($programaId);
+            $participante = $programa->participantes->where("usuario_id", $usuarioId)->first();
+            return $this->setBuffer("isParticipanteHabilitado", $key, $participante ? $participante->habilitado : false);
+        }
     }
 
     /**
@@ -163,11 +197,20 @@ class UsuarioService extends ServiceBase
      * @param string $unidade_id 
      * @param string $usuario_id
      */
-    public static function isIntegrante(string $atribuicao, string $unidade_id, string | null $usuario_id = null): bool {
-        $unidade = Unidade::find($unidade_id) ?? null;
-        $usuario = isset($usuario_id) ? Usuario::find($usuario_id) : parent::loggedUser();
-        $atribuicoes = array_key_exists($usuario->id, $unidade->integrantesAtribuicoes) ? $unidade->integrantesAtribuicoes[$usuario->id] : null;
-        return empty($atribuicoes) ? false : in_array($atribuicao, $atribuicoes); 
+    public function isIntegrante(string $atribuicao, string $unidadeId, string | null $usuarioId = null): bool {
+        $result = false;
+        $key = [$atribuicao, $unidadeId, $usuarioId];
+        if($this->hasBuffer("isIntegrante", $key)) {
+            $result = $this->getBuffer("isIntegrante", $key);
+        } else {
+            $unidadesIntegrantesIds = UnidadeIntegrante::select('id')->where("unidade_id", $unidadeId)->where("usuario_id", isset($usuarioId) ? $usuarioId : parent::loggedUser()->id)->get()->map(fn($x) => $x->id);
+            $result = $this->setBuffer("isIntegrante", $key, count($unidadesIntegrantesIds) > 0 && UnidadeIntegranteAtribuicao::where("atribuicao", $atribuicao)->whereIn("unidade_integrante_id", $unidadesIntegrantesIds)->exists()); 
+            /*$unidade = Unidade::find($unidadeId) ?? null;
+            $usuario = isset($usuarioId) ? Usuario::find($usuarioId) : parent::loggedUser();
+            $atribuicoes = array_key_exists($usuario->id, $unidade->integrantesAtribuicoes) ? $unidade->integrantesAtribuicoes[$usuario->id] : null;
+            $result = $this->setBuffer("isIntegrante", $key, empty($atribuicoes) ? false : in_array($atribuicao, $atribuicoes)); */
+        }
+        return $result;
     }
 
     /**
@@ -186,13 +229,18 @@ class UsuarioService extends ServiceBase
      * @param string $unidade_id 
      * @returns 
      */
-    public function isLotadoNaLinhaAscendente(string | null $unidade_id): bool {
+    public function isLotadoNaLinhaAscendente(string | null $unidadeId): bool {
         $result = false;
-        if($unidade_id == null) return $result;
-        $linhaAscendente = $this->unidadeService->linhaAscendente($unidade_id);
-        foreach($linhaAscendente as $unidade_id) {
-            if($this->isIntegrante('LOTADO',$unidade_id)) $result = true;
-        };
+        if($unidadeId == null) return $result;
+        if($this->hasBuffer("isLotadoNaLinhaAscendente", $unidadeId)) {
+            $result = $this->getBuffer("isLotadoNaLinhaAscendente", $unidadeId);
+        } else {
+            $linhaAscendente = $this->unidadeService->linhaAscendente($unidadeId);
+            foreach($linhaAscendente as $unidadeId) {
+                if($this->isIntegrante('LOTADO', $unidadeId)) $result = true;
+            };
+            $this->setBuffer("isLotadoNaLinhaAscendente", $unidadeId, $result);
+        }
         return $result;
     }
 
@@ -216,7 +264,7 @@ class UsuarioService extends ServiceBase
      * @param  mixed $unidade_ids: Unidades que o usuário gerencia
      * @return array: array contendo todas as informações dos planos de trabalho de cada usuário da unidade (front-end do gestor)
      */
-    public function planosTrabalhoPorPeriodo($usuario_id, $inicioPeriodo = null, $fimPeriodo = null){
+/*     public function planosTrabalhoPorPeriodo($usuario_id, $inicioPeriodo = null, $fimPeriodo = null){
         $result = [];
         $planos = PlanoTrabalho::where("usuario_id", $usuario_id)->with(['atividades', 'unidade', 'tipoModalidade'])->get();
         if ($inicioPeriodo == null || $fimPeriodo == null) {
@@ -227,7 +275,7 @@ class UsuarioService extends ServiceBase
             }
         }
         return $result;
-    }
+    } */
 
     public function proxyQuery($query, &$data) {   
         $usuario = parent::loggedUser();
@@ -260,6 +308,8 @@ class UsuarioService extends ServiceBase
     public function proxyStore(&$data, $unidade, $action) {
         $data['cpf'] = $this->UtilService->onlyNumbers($data['cpf']);
         if(!empty($data['telefone'])) $data['telefone'] = $this->UtilService->onlyNumbers($data['telefone']);
+        /* Armazena as informações que serão necessárias no extraStore */
+        $this->buffer = [ "integrantes" => $this->UtilService->getNested($data, "integrantes") ];
         return $data;
     }
 
@@ -289,7 +339,7 @@ class UsuarioService extends ServiceBase
             $alreadyHas = $query1->first() ?? $query2->first();
             if(!empty($alreadyHas)) {
                 if($alreadyHas->deleted_at) { // Caso o usuário exista, mas esteja excluído, reabilita o usuário deletando todos os seus vínculos anteriores e recuperando seus dados sensíveis (cpf, e-mail funcional, matricula, nome, apelido, data_nascimento)
-                    // sugestão: refatorar esse código deixando para o usuário logado decidir se deseja reativar e, em caso positivo, decidir se atualiza os dados ou não
+                    // TODO: Sugestão - refatorar esse código deixando para o usuário logado decidir se deseja reativar e, em caso positivo, decidir se atualiza os dados ou não
                     $this->removerVinculosUsuario($alreadyHas);
                     $data["id"] = $alreadyHas->id;
                     $data["cpf"] = $alreadyHas->cpf;
@@ -303,15 +353,6 @@ class UsuarioService extends ServiceBase
                 } else {
                     throw new Exception("Já existe um usuário com mesmo e-mail ou CPF no sistema");
                 }
-                /*
-                        if($alreadyHas->trashed()) { // Caso o usuário exista, mas esteja excluído, reabilita o usuário deletando todos os seus vínculos anteriores
-                        $this->removerVinculosUsuario($alreadyHas);
-                        $alreadyHas->restore();
-                        return $alreadyHas;
-                    } else {
-                        throw new Exception("Já existe um usuário com mesmo e-mail ou CPF no sistema");
-                    } 
-                */
             }
             if($data["perfil_id"] == $this->developerId && !$this->isLoggedUserADeveloper()) throw new Exception("Tentativa de inserir um usuário com o perfil de Desenvolvedor");
             //$query->toSql();    $query->getBindings();
@@ -320,7 +361,7 @@ class UsuarioService extends ServiceBase
 
     public function removerVinculosUsuario(&$usuario) {
         if(!empty($usuario)) {
-            foreach($usuario->unidadesIntegrante as $vinculo){ $vinculo->deleteCascade(); }
+            foreach($usuario->unidadesIntegrantes as $vinculo){ $vinculo->deleteCascade(); }
             $usuario->fresh();
         }
     }

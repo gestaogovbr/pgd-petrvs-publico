@@ -38,6 +38,7 @@ export class AtividadeFormConcluirComponent extends PageFormBase<Atividade, Ativ
     this.tipoAtividadeDao = injector.get<TipoAtividadeDaoService>(TipoAtividadeDaoService);
     this.tipoDocumentoDao = injector.get<TipoDocumentoDaoService>(TipoDocumentoDaoService);
     this.calendar = injector.get<CalendarService>(CalendarService);
+    this.title = 'Conclusão de ' + this.lex.translate('atividade');
     this.form = this.fh.FormBuilder({
       tipo_atividade_id: {default: null},
       data_distribuicao: {default: null},

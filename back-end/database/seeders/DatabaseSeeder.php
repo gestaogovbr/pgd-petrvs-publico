@@ -46,6 +46,9 @@ class DatabaseSeeder extends Seeder
                AreaAtividadeExternaSeeder::class,
                CapacidadeTecnicaSeeder::class,
                In24_2023Seeder::class,
+               AtributoComportamentalB5Seeder::class,
+               AtributoComportamentalDASSSeeder::class,
+               AtributoComportamentalSRQ20Seeder::class,
                TemplateSeeder::class,
 
                /*

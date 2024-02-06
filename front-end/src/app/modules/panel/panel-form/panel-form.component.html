@@ -4,13 +4,14 @@
         <tab key="PRINCIPAL" label="Principal">
             <separator title="Entidade"></separator>
             <div class="row">
-                <input-text [size]="2" label="SIGLA" controlName="id" [disabled]="action == 'new' ? undefined : 'true'" [attr.maxlength]=250></input-text>
-                <input-text [size]="4" label="Nome" controlName="nome_entidade" [attr.maxlength]=250></input-text>
-                <input-select [size]="3" label="Abrangência" controlName="abrangencia" [items]="lookup.ABRANGENCIA"></input-select>
-                <input-number [size]="3" label="Cod. IBGE" icon="bi bi-clock" [control]="form!.controls.codigo_cidade"></input-number>
+                <input-select [size]="3" label="Edição" controlName="edition" [items]="lookup.EDICOES"></input-select>
+                <input-text [size]="3" label="SIGLA" controlName="id" [disabled]="action == 'new' ? undefined : 'true'" [attr.maxlength]=250></input-text>
+                <input-text [size]="6" label="Nome" controlName="nome_entidade" [attr.maxlength]=250></input-text>
             </div>
             <div class="row">
-                <input-text [size]="12" label="Domínio" controlName="dominio_url" [attr.maxlength]=250></input-text>
+                <input-select [size]="3" label="Abrangência" controlName="abrangencia" [items]="lookup.ABRANGENCIA"></input-select>
+                <input-number [size]="3" label="Cod. IBGE" icon="bi bi-clock" [control]="form!.controls.codigo_cidade"></input-number>
+                <input-text [size]="6" label="Domínio" controlName="dominio_url" [attr.maxlength]=250></input-text>
             </div>
             <separator title="Super Usuário"></separator>
             <div class="row">

@@ -10,6 +10,8 @@ import { CurriculumAtributosbig5FormComponent } from './currriculum-atributos/cu
 import { HomeComponent } from '../home/home.component';
 import { CurrriculumAtributosComponent } from './currriculum-atributos/currriculum-atributos.component';
 import { CurriculumAtributossoftFormComponent } from './currriculum-atributos/curriculum-atributossoft-form/curriculum-atributossoft-form.component';
+import { CurriculumAtributosdiscFormComponent } from './currriculum-atributos/curriculum-atributosdisc-form/curriculum-atributosdisc-form.component';
+import { CurriculumAtributosDassFormComponent } from './currriculum-atributos/curriculum-atributos-dass-form/curriculum-atributos-dass-form.component';
 
 const routes: Routes = [
   //{ path: '', component: RaioxhomeComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Home Raio-X" } },
@@ -21,6 +23,8 @@ const routes: Routes = [
   { path: 'big5', component: CurriculumAtributosbig5FormComponent, canActivate: [AuthGuard], data: { title: "" } },
   { path: 'soft', component: CurriculumAtributossoftFormComponent, canActivate: [AuthGuard], data: { title: "" } },
   { path: 'atributos', component: CurrriculumAtributosComponent, canActivate: [AuthGuard], data: { title: "" } },
+  { path: 'disc', component: CurriculumAtributosdiscFormComponent, canActivate: [AuthGuard], data: { title: "" } },
+  { path: 'dass', component: CurriculumAtributosDassFormComponent, canActivate: [AuthGuard], data: { title: "" } },
   { path: 'cadastros',loadChildren: () => import('../cadastros/curriculum/curriculum-cadastros.module').then(m => m.CurriculumCadastrosModule), canActivate: [AuthGuard] },
 ];
 
