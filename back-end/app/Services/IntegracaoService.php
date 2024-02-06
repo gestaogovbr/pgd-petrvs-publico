@@ -827,7 +827,7 @@ class IntegracaoService extends ServiceBase {
                         /* QueryMan, Farias, criou rotina para gerar exercícios (antiga lotação)
                         de forma simplificada. Aqui é criado o exercício vinculando
                         o usuário a unidade. Em caso de dúvida, olhar rotina para entender melhor. */
-                        $this->unidadeIntegrante->saveIntegrante($vinculo, false);
+                        $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
                     }
                     if($this->echo) $this->imprimeNoTerminal('Concluída a fase de atualização das lotações dos servidores!.....');
                 });
@@ -930,7 +930,7 @@ class IntegracaoService extends ServiceBase {
                             ]);
 
                             // Registra atribuições.
-                            $this->unidadeIntegrante->saveIntegrante($vinculo, false);
+                            $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
 
                             // Atualiza nível de acesso.
                             $values = [
@@ -947,8 +947,8 @@ class IntegracaoService extends ServiceBase {
                               'atribuicoes' => ["GESTOR_SUBSTITUTO"],
                               ]);
 
-                              $this->unidadeIntegrantsaveIntegrantee->saveIntegrante($vinculo, false);
-                                                          // Atualiza nível de acesso.
+                              $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
+                                // Atualiza nível de acesso.
                               $values = [
                                   ':perfil_id' => $perfil_chefia,
                                   ':id' => $chefia['id_usuario']
@@ -1070,125 +1070,3 @@ class IntegracaoService extends ServiceBase {
         return $b;
     }
 }
-/**
- *      Unidade                                                  SIAPE        cod_siape       ativa       id_servo
- *                                                               PETRVS                                   (codigo)
- *      Delegacia 01 em Nossa Senhora do Socorro/SE                             4111          sim         3414
- *      Divisão de Gestão Documental Eletrônica - DIGEDE                        4773          sim         4111
- *      Divisão de Gestão Documental Eletrônica - DIGEDE                        3954          não         3156
- *      8ª CIA PMRV/BPMRV/CPRV EM GOVERNADOR VALADARES/MG                       -             não         1213
- *      Coordenação de Inovação e Liderança                                     1213          sim         1514
- *      Núcleo de Articulação e Governança/RS                                   4574          sim         3636
- *
- *      Servidores                                          coduorgexercicio*  coduorglotacao   cod_servo_exercicio    funcao        vinc. ativo
- *                                                          (cod_siape)        (cod_siape)      (id_servo)*            (cod_siape)
- *      Caroline Freire                                     4773               4773             4111                   4773, 1213    sim
- *      Carlos Marian                                       4574               4574             3636                   4574          sim
- *      Ricardo Farias                                      4385               4385             3582                   -             sim
- *  */
-
-/*
-tabela: integracao_servidores               tabela: usuarios    tabela: lotacoes                    tabela: unidades       tabela: integracao_unidades
-                                            id                  id_usuario  id_unidade              id
-
-cpf*                                        cpf*                                                                                                                                                      codigo_siape
-coduorgexercicio* (cod.siape)                                                                                              codigo_siape
-coduorglotacao  (cod.siape)
-cod_servo_exercicio (id_servo)                                                                      codigo*                id_servo*
-
-
-Descobrir           Eu tenho            Como Fazer
-id_usuario          cpf_servidor        select id from usuarios where cpf = cpf_servidor
-id_unidade          coduorgexercicio    select u.id from unidades u left join integracao_unidades iu
-                                                    on u.codigo = iu.id_servo
-                                                    where iu.codigo_siape = :codurgexercicio
-
-usuarios u LEFT JOIN integracao_servidores s ON (u.cpf = s.cpf) ".
-    "LEFT JOIN unidades d ON (s.codigo_servo_exercicio = d.codigo) "
-
-(usuarios us LEFT JOIN integracao_servidores se ON us.cpf = se.cpf) LEFT JOIN
-    (unidades un left join integracao_unidades iu ON un.codigo = iu.id_servo)
-    ()
-
-"LEFT JOIN lotacoes l ON (d.id = l.unidade_id AND u.id = l.usuario_id AND l.principal = 1 AND l.data_fim is null) ".
-
---------------------------------------------------------------
-
-
-        U1 - A (01/01)
-        U1 - A (20/01)
-
-
-                    PETRVS
-            SIAPE   CHEFE
-        U1 - A      - A     - 02/01
-        U1 - A      - B     - 05/01
-        U1 - A      - B
-        U1 - A      - B
-        U1 - A != C - C     - 08/01
-        U1 - C      - C
-        U1 - C      - C
-        U1 - C      - B     - 10/01
-        U1 - C != D - D
-        U1 - D      - D
-
-        -------------------------
-        U1 - A
-
-        integracao_unidade -> chefe antes e chefe atual
-        integracao_chefias ->
-        integracao_servidores
-
-        INTEGRACOES_CHEFIAS
-        GESTOR_SIAPE: string (usuario->id)
-        GESTOR_PETRVS: string (usuario->id)
-        GESTOR_SUBSTITUTO_SIAPE: string (usuario->id)
-        GESTOR_SUBSTITUTO_PETRVS: string (usuario->id)
-
-        registro->delete();  deleted_at com a data
-
-
-        //  PARA CADA REGISTRO NO ARRAY DE CHEFIAS(codigo_siape,id_usuario,tipo_funcao)
-        //      OBTER O id_unidade ATRAVÉS DO codigo_siape
-        //      VERIFICAR SE HÁ CONSISTÊNCIA ENTRE AS SEGUINTES INFORMAÇÕES: 'UNIDADE DE GERENCIA' x 'UNIDADE DE LOTAÇÃO' (id_unidade x usuario->lotacao->unidade_id)
-        //      SE FOREM AS MESMAS
-        //          OBTER O id_unidade ATRAVÉS DO codigo_siape
-        //          SE A UNIDADE FOR LOCALIZADA
-        //              VERIFICAR SE JÁ EXISTE NA TABELA INTEGRACAO_CHEFIAS UM REGISTRO COM codigo_siape,id_usuario,tipo_funcao
-        //              SE AINDA NÃO EXISTIR O REGISTRO
-        //                  CRIA UM REGISTRO INFORMANDO GESTOR/SUBSTITUTO_SIAPE E GESTOR/GESTOR SUBSTITUTO_PETRVS COM O id_usuario
-        //                  CHAMA O MÉTODO saveIntegrante(id_unidade,id_usuario,['gestor/gestor_substituto' => 'ADD']) PARA ATUALIZAR O GESTOR/SUBSTITUTO NO PETRVS
-        //              SE JÁ EXISTIR O REGISTRO
-        //                  VERIFICAR SE O ID_USUARIO DO GESTOR/SUBSTITUTO_SIAPE É IGUAL AO id_usuario
-        //                  SE FOR IGUAL, NÃO FAZER NADA
-        //                  SE FOR DIFERENTE, ATUALIZAR GESTOR/SUBSTITUTO_SIAPE E GESTOR/SUBSTITUTO_PETRVS COM o id_usuario
-        //          SE A UNIDADE NÃO FOR LOCALIZADA, GERAR MENSAGEM DE ERRO
-        //      SE FOREM DIFERENTES, GERAR MENSAGEM DE ERRO.
-
-        // Ler integracaochefia (verifica gestores do siape)
-        // 0 -
-        // 1 - Se chefe_siape na integracaoservidores é igual a chefe_siape na integracaochefia (não faz nada). Permanece chefe_petrvs sem alteração.
-        // 2 - Se chefe_siape mudou na integracaoservidores então chefe_siape na integraochefia é atualizado e chefe_petrvs também é atualizado.
-        // 3 -
-                CASOS POSSÍVEIS
-                                         SIAPE                        PETRVS
-                SERVIDOR         LOTACAO       CHEFIA        LOTACAO         CHEFIA
-                   S1               A            A              A               A                   10/01
-                   S1               A            A              B               B                   11/01
-                   S1                            =              NADA           NADA                 12/02 INTEGRACAO
-
-    CENARIO 1      S1               B            B                                                  13/01 DESIGNACAO NO SIAPE (FOI DESIGNADO S1)
-                   S1                            !=             B               B                   14/01 INTEGRAÇÃO
-
-    CENARIO 2      S2               B            B                                                  15/01 DESIGNACAO NO SIAPE (FOI DESIGNADA OUTRA PESSOA - S2)
-CASO 1: S1/S2      S1
-CASO 2: S2/S1
-
-
-
-OK CENARIO 1: A NOMEAÇÃO DE S1 PARA A UNIDADE B FOI EFETIVADA.
-CENÁRIO 2: NO LUGAR DE S1, FOI NOMEADO S2 PARA A UNIDADE B.
-CENÁRIO 3: S2, QUE HAVIA SIDO DESIGNADO CHEFE DA UNIDADE, TEVE SUA DESIGNAÇÃO CANCELADA.
-CENÁRIO 4: O CHEFE DA UNIDADE B FOI DISPENSADO, MAS NINGUÉM FOI DESIGNADO.
-
-*/

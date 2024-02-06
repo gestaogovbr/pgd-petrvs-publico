@@ -67,7 +67,7 @@ class PetrvsController extends ControllerBase
         $config = json_encode([
             "api_url" => $protocol . "://" . $tenant["dominio_url"],
             "app_env" => config("app.env"),
-            "edicao" => $tenant["edition"],
+            "edicao" => $tenant["edition"] ?? 'MGI',
             "entidade" => $tenant["id"],
             "suporte_url" => $tenant["dominio_url"],
             "logo_url" => null,
