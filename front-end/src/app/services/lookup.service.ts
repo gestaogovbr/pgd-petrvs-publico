@@ -783,7 +783,7 @@ export class LookupService implements IIndexable {
     { key: 'TEXT', value: 'Livre' },
     { key: 'RATE', value: 'Classificação' },
     { key: 'SWITCH', value: 'Sim/Não' },
-    //{ key: 'INTENSIDADE', value: 'Intensidade' },
+    { key: 'RADIO', value: 'Única Escolha' },
     { key: 'NUMBER', value: 'Numérica' }
   ];
  // "EMOJI" | "SELECT" | "MULTI_SELECT" | "TEXT" | "TEXT_AREA" | "TIMER" | "DATE_TIME" | "SWICTH" | "NUMBER" | "RATE" | "RADIO" | "CHECK";
