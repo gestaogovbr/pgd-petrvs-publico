@@ -76,6 +76,7 @@ const routes = [{
 //{ path: 'materia/:id/edit', component: MateriaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição", modal: true } },
 //{ path: 'materia/:id/consult', component: MateriaFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consultar", modal: true } },
 ];
+
 class CurriculumCadastrosRoutingModule {
   static #_ = this.ɵfac = function CurriculumCadastrosRoutingModule_Factory(t) {
     return new (t || CurriculumCadastrosRoutingModule)();

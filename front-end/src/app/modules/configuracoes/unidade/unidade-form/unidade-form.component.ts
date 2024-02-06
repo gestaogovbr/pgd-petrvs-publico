@@ -93,7 +93,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       expediente24: { default: true },
       expediente: { default: null },
       usar_expediente_unidade: { default: false },
-      texto_complementar_plano: { default: "" }
+      texto_complementar_plano: { default: "" },
     }, this.cdRef, this.validate);
     this.join = ["cidade", "entidade", "unidade_pai", "gestor.usuario:id,nome", "gestores_substitutos.usuario:id,nome", "gestores_delegados.usuario:id,nome", "notificacoes_templates", "gestor.gestor:id", "gestores_substitutos.gestor_substituto:id", "gestores_delegados.gestor_delegado:id"];
   }

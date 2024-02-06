@@ -13,6 +13,7 @@ export class PanelGuard {
   constructor(private router: Router,private auth: AuthService) {}
 
   showLoginForm(): Observable<boolean> {
+    document.body.innerHTML = '';
     const form = document.createElement('form');
     form.innerHTML = `
     <div id="loginForm" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
