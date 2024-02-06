@@ -204,7 +204,8 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     return result;
   }
 
-  /*public validateOcorrencia = (control: AbstractControl, controlName: string) => {
+  //Não apagar
+  /*public validateOcorrencia = (control: AbstractControl, controlName: string) => { 
     let result = null;
     if (['descricao'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
