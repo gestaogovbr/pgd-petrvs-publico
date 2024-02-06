@@ -199,9 +199,12 @@ class Usuario extends Authenticatable
     public function getUnidadesAtribuicoesAttribute()
     {
         $result = [];
-        foreach($this->unidadesIntegrantes as $vinculo){
-            $atribuicoes = $vinculo->atribuicoes->toArray();
-            if(count($atribuicoes) > 0) $result[$vinculo->unidade_id] = array_map(fn($a) => $a["atribuicao"], $atribuicoes);
+        $unidadesIntegrantes = $this->unidadesIntegrantes;
+        if(!empty($unidadesIntegrantes)){
+            foreach($unidadesIntegrantes as $vinculo){
+                $atribuicoes = $vinculo->atribuicoes->toArray();
+                if(count($atribuicoes) > 0) $result[$vinculo->unidade_id] = array_map(fn($a) => $a["atribuicao"], $atribuicoes);
+            }
         }
         return $result;
     }
