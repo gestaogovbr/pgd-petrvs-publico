@@ -799,7 +799,7 @@ class IntegracaoService extends ServiceBase
                 'unidade_id' => $unidadeExercicioId,
                 'atribuicoes' => ["LOTADO"],
               ]);
-              $dbResult = $this->unidadeIntegrante->salvarIntegrante($vinculo, false);
+              $dbResult = $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
               if(!$dbResult){
                 LogError::newWarn("IntegracaoService: Durante integração não foi possível alterar lotação!", [$dbResult, $vinculo]);
               } else{
@@ -1053,7 +1053,7 @@ class IntegracaoService extends ServiceBase
                 'unidade_id' => $unidadeExercicioId,
                 'atribuicoes' => $chefeAtribuicoes,
               ]);
-              $this->unidadeIntegrantesalvarIntegrantes->salvarIntegrantes($vinculo, false);
+              $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
 
               // Atualiza nível nível de acesso para chefe caso servidor não seja Desenvolvedor.
               if ($perfilDesenvolvedorId != $queryChefe->perfil->id) {
