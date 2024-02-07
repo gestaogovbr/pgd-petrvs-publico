@@ -62,13 +62,10 @@ export class QuestionarioPerguntaFormComponent extends PageFormBase<Questionario
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if (['codigo'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if (['codigo', 'nome'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     }
-    if (['nome'].indexOf(controlName) >= 0 && !control.value?.length) {
-      result = "Obrigatório";
-    }
-    
+        
     return result;
   }
 

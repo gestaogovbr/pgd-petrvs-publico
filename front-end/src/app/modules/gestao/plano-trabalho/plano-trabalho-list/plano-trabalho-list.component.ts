@@ -162,6 +162,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
         */
         break;
       case 'ATIVO':
+        // result.push(this.BOTAO_ASSINAR)
         /**
           - botões-padrão:
             - 'Consultar'. Condições para ser exibido: vide RN_PTR_S;

@@ -119,7 +119,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       data_estipulada_entrega: { default: new Date() },
       data_inicio: { default: new Date() },
       data_entrega: { default: new Date() },
-      tipo_atividade_id: { default: null }
+      //tipo_atividade_id: { default: null }
     }, this.cdRef, this.validateAtividade);
     /*this.formOcorrencia = this.fh.FormBuilder({
       data_inicio: { default: new Date() },
@@ -133,7 +133,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     }, this.cdRef, this.validateComparecimento);
     this.formEdit = this.fh.FormBuilder({
       descricao: { default: "" },
-      tipo_atividade_id: { default: null },
+      //tipo_atividade_id: { default: null },
       comentarios: { default: [] },
       progresso: { default: 0 },
       etiquetas: { default: [] },
@@ -190,11 +190,11 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     let result = null;
     if (['descricao'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    } else if (['data_distribuicao', 'data_estipulada_entrega', 'data_inicio', 'data_entrega'].includes(controlName) && !this.util.isDataValid(control.value)) {
+    } else if (['data_inicio', 'data_entrega'].includes(controlName) && !this.util.isDataValid(control.value)) {//'data_distribuicao', 'data_estipulada_entrega',
       result = "Inválido";
-    } else if (controlName == 'data_estipulada_entrega' && control.value.getTime() < this.formAtividade?.controls.data_distribuicao.value.getTime()) {
+    } /*else if (controlName == 'data_estipulada_entrega' && control.value.getTime() < this.formAtividade?.controls.data_distribuicao.value.getTime()) {
       result = "Menor que distribuição";
-    } else if (controlName == 'data_inicio' && control.value.getTime() < this.formAtividade?.controls.data_distribuicao.value.getTime()) {
+    }*/ else if (controlName == 'data_inicio' && control.value.getTime() < this.formAtividade?.controls.data_distribuicao.value.getTime()) {
       result = "Menor que distribuição";
     } else if (controlName == 'data_entrega' && control.value.getTime() < this.formAtividade?.controls.data_distribuicao.value.getTime()) {
       result = "Menor que distribuição";
@@ -204,7 +204,8 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     return result;
   }
 
-  /*public validateOcorrencia = (control: AbstractControl, controlName: string) => {
+  //Não apagar
+  /*public validateOcorrencia = (control: AbstractControl, controlName: string) => { 
     let result = null;
     if (['descricao'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
@@ -451,7 +452,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
 
   public async onColumnAtividadeDescricaoEdit(row: any) {
     this.formEdit.controls.descricao.setValue(row.descricao);
-    this.formEdit.controls.tipo_atividade_id.setValue(row.tipo_atividade_id);
+    //this.formEdit.controls.tipo_atividade_id.setValue(row.tipo_atividade_id);
     this.formEdit.controls.comentarios.setValue(row.comentarios);
   }
 
@@ -460,11 +461,11 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       this.atividadeService.comentarioAtividade(this.tipoAtividade?.selectedEntity, this.formEdit!.controls.comentarios);
       const saved = await this.atividadeDao!.update(row.id, {
         descricao: this.formEdit.controls.descricao.value,
-        tipo_atividade_id: this.formEdit.controls.tipo_atividade_id.value,
+        //tipo_atividade_id: this.formEdit.controls.tipo_atividade_id.value,
         comentarios: (this.formEdit.controls.comentarios.value || []).filter((x: Comentario) => ["ADD", "EDIT", "DELETE"].includes(x._status || ""))
       });
       row.descricao = this.formEdit.controls.descricao.value;
-      row.tipo_atividade_id = this.formEdit.controls.tipo_atividade_id.value;
+      //row.tipo_atividade_id = this.formEdit.controls.tipo_atividade_id.value;
       row.tipo_atividade = this.tipoAtividade?.selectedEntity || null;
       row.comentarios = this.formEdit.controls.comentarios.value;
       return !!saved;

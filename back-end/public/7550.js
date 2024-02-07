@@ -92,7 +92,7 @@ const _c1 = ["tipoAvaliacao"];
 function ProgramaFormComponent_div_14_Template(rf, ctx) {
   if (rf & 1) {
     const _r12 = _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementStart"](0, "div", 46)(1, "div", 47)(2, "action-button", 48);
+    _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementStart"](0, "div", 42)(1, "div", 43)(2, "action-button", 44);
     _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵlistener"]("click", function ProgramaFormComponent_div_14_Template_action_button_click_2_listener() {
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵrestoreView"](_r12);
       const ctx_r11 = _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵnextContext"]();
@@ -103,7 +103,7 @@ function ProgramaFormComponent_div_14_Template(rf, ctx) {
 }
 function ProgramaFormComponent_input_select_35_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelement"](0, "input-select", 49);
+    _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelement"](0, "input-select", 45);
   }
   if (rf & 2) {
     const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵnextContext"]();
@@ -112,7 +112,7 @@ function ProgramaFormComponent_input_select_35_Template(rf, ctx) {
 }
 function ProgramaFormComponent_input_number_36_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelement"](0, "input-number", 50);
+    _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelement"](0, "input-number", 46);
   }
   if (rf & 2) {
     const ctx_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵnextContext"]();
@@ -121,7 +121,7 @@ function ProgramaFormComponent_input_number_36_Template(rf, ctx) {
 }
 function ProgramaFormComponent_input_number_37_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelement"](0, "input-number", 51);
+    _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelement"](0, "input-number", 47);
   }
   if (rf & 2) {
     const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵnextContext"]();
@@ -130,7 +130,7 @@ function ProgramaFormComponent_input_number_37_Template(rf, ctx) {
 }
 function ProgramaFormComponent_input_number_46_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelement"](0, "input-number", 52);
+    _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelement"](0, "input-number", 48);
   }
   if (rf & 2) {
     const ctx_r8 = _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵnextContext"]();
@@ -139,7 +139,7 @@ function ProgramaFormComponent_input_number_46_Template(rf, ctx) {
 }
 function ProgramaFormComponent_input_select_47_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelement"](0, "input-select", 53);
+    _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelement"](0, "input-select", 49);
   }
   if (rf & 2) {
     const ctx_r9 = _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵnextContext"]();
@@ -338,32 +338,32 @@ class ProgramaFormComponent extends src_app_modules_base_page_form_base__WEBPACK
     if (JSON.stringify(items) != JSON.stringify(this._tipoAvaliacaoQualitativo)) this._tipoAvaliacaoQualitativo = items;
     return this._tipoAvaliacaoQualitativo;
   }
-  addItemHandlePlanoTrabalhoCriteriosAvaliacao() {
+  /*public addItemHandlePlanoTrabalhoCriteriosAvaliacao(): LookupItem | undefined {
     let result = undefined;
-    const value = this.form.controls.plano_trabalho_criterio_avaliacao.value;
+    const value = this.form!.controls.plano_trabalho_criterio_avaliacao.value;
     const key = this.util.textHash(value);
-    if (value?.length && this.util.validateLookupItem(this.form.controls.plano_trabalho_criterios_avaliacao.value, key)) {
+    if (value?.length && this.util.validateLookupItem(this.form!.controls.plano_trabalho_criterios_avaliacao.value, key)) {
       result = {
         key: key,
-        value: this.form.controls.plano_trabalho_criterio_avaliacao.value
+        value: this.form!.controls.plano_trabalho_criterio_avaliacao.value
       };
-      this.form.controls.plano_trabalho_criterio_avaliacao.setValue("");
+      this.form!.controls.plano_trabalho_criterio_avaliacao.setValue("");
     }
     return result;
-  }
-  addItemHandlePlanoTrabalhoChecklist() {
+  };
+     public addItemHandlePlanoTrabalhoChecklist(): LookupItem | undefined {
     let result = undefined;
-    const value = this.form.controls.checklist_plano_trabalho_texto.value;
+    const value = this.form!.controls.checklist_plano_trabalho_texto.value;
     const key = this.util.textHash(value);
-    if (value?.length && this.util.validateLookupItem(this.form.controls.checklist_avaliacao_entregas_plano_trabalho.value, key)) {
+    if(value?.length && this.util.validateLookupItem(this.form!.controls.checklist_avaliacao_entregas_plano_trabalho.value, key)) {
       result = {
         key: key,
-        value: this.form.controls.checklist_plano_trabalho_texto.value
+        value: this.form!.controls.checklist_plano_trabalho_texto.value
       };
-      this.form.controls.checklist_plano_trabalho_texto.setValue("");
+      this.form!.controls.checklist_plano_trabalho_texto.setValue("");
     }
     return result;
-  }
+  };*/
   addItemHandlePlanoEntregaChecklist() {
     let result = undefined;
     const value = this.form.controls.checklist_plano_entrega_texto.value;
@@ -402,9 +402,9 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵdef
     }
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵInheritDefinitionFeature"]],
-  decls: 55,
-  vars: 91,
-  consts: [["initialFocus", "unidade_id", 3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "GERAL", "label", "Geral"], [1, "row"], ["label", "Unidade Instituidora", "controlName", "unidade_id", "required", "", 3, "size", "dao", "selectParams"], ["unidade", ""], ["date", "", "label", "Data de In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio", "labelInfo", "Data de in\u00EDcio da vig\u00EAncia do programa de gest\u00E3o na unidade instituidora", 3, "size", "control"], ["date", "", "label", "Data de Fim", "icon", "bi bi-calendar-date", "controlName", "data_fim", "labelInfo", "Data de fim da vig\u00EAncia do programa de gest\u00E3o na unidade instituidora", 3, "size", "control"], ["label", "Dura\u00E7\u00E3o M\u00E1x P.E.", "icon", "bi bi-blockquote-left", "controlName", "prazo_max_plano_entrega", "labelInfo", "Limite m\u00E1ximo de dias corridos para a dura\u00E7\u00E3o do plano de entregas a partir da sua data de cria\u00E7\u00E3o (Zero para n\u00E3o limitar)", 3, "size", "control"], ["label", "T\u00EDtulo", "icon", "bi bi-textarea-t", "controlName", "nome", "required", "", 3, "size", "control"], ["label", "Normativa", "icon", "bi bi-blockquote-left", "controlName", "normativa", "labelInfo", "Normativa que regula o Programa", 3, "size", "control"], ["label", "Link Normativa", "icon", "bi bi-link-45deg", "controlName", "link_normativa", "labelInfo", "Link web da instru\u00E7\u00E3o normativa", 3, "size", "control"], ["class", "row justify-content-end my-2", 4, "ngIf"], ["key", "PLANO_ENTREGA", 3, "label"], ["controlName", "tipo_avaliacao_plano_entrega_id", "required", "", 3, "label", "size", "dao", "labelInfo"], ["tipoAvaliacaoEntrega", ""], [3, "title"], ["label", "Checklists das entregas", "controlName", "checklist_avaliacao_entregas_plano_entrega", 3, "size", "addItemHandle"], ["controlName", "checklist_plano_entrega_texto", 3, "size"], ["key", "PLANO_TRABALHO", 3, "label"], ["scale", "small", "labelPosition", "right", "controlName", "termo_obrigatorio", "label", "Se o termo \u00E9 obrigat\u00F3rio", 3, "size"], ["scale", "small", "labelPosition", "right", "controlName", "plano_trabalho_assinatura_participante", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "plano_trabalho_assinatura_gestor_lotacao", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "plano_trabalho_assinatura_gestor_unidade", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "plano_trabalho_assinatura_gestor_entidade", 3, "size", "label"], ["detailsButton", "", "labelInfo", "Template do termo utilizado no plano de trabalho", "controlName", "template_tcr_id", "required", "", 3, "label", "size", "dao", "where", "selectRoute", "details"], ["controlName", "tipo_documento_tcr_id", "labelInfo", "Tipo de documento utilizado para exportar o termo para o SEI/SUPER", 3, "label", "size", "dao"], ["tipoDocumento", ""], ["controlName", "tipo_avaliacao_plano_trabalho_id", "required", "", 3, "label", "size", "dao", "labelInfo"], ["tipoAvaliacao", ""], ["label", "Periodicidade", "controlName", "periodicidade_consolidacao", "labelInfo", "Per\u00EDodo para avalia\u00E7\u00E3o do plano de trabalho", 3, "size", "control", "items"], ["label", "Dia da semana", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", "items", 4, "ngIf"], ["label", "Dia do m\u00EAs", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", 4, "ngIf"], ["label", "Qtd. de Dias", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", 4, "ngIf"], ["label", "Toler\u00E2ncia", "controlName", "dias_tolerancia_consolidacao", "labelInfo", "Dias de toler\u00E2ncia para o lan\u00E7amento do registro das atividades na consolida\u00E7\u00E3o, ap\u00F3s esses dias ser\u00E1 liberado automaticamente para avalia\u00E7\u00E3o", 3, "size", "control"], ["type", "warning", 3, "message"], ["label", "Toler\u00E2ncia p/ avalia\u00E7\u00E3o", "controlName", "dias_tolerancia_avaliacao", "labelInfo", "Dias de toler\u00E2ncia para realizar a avalia\u00E7\u00E3o, considerando a toler\u00E2ncia da consolida\u00E7\u00E3o. Caso seja zero n\u00E3o far\u00E1 nada, caso contr\u00E1rio ap\u00F3s esse prazo a consolida\u00E7\u00E3o ser\u00E1 automaticamente avaliada com a nota padr\u00E3o", 3, "size", "control"], ["label", "Toler\u00E2ncia p/ recurso", "controlName", "dias_tolerancia_recurso_avaliacao", "labelInfo", "Dias de toler\u00E2ncia para recorrer da avalia\u00E7\u00E3o", 3, "size", "control"], ["label", "Nota", "labelInfo", "Nota que ser\u00E1 atribu\u00EDdo automaticamente caso a toler\u00E2ncia seja alcan\u00E7ada", 3, "size", "control", 4, "ngIf"], ["label", "Conceito", "labelInfo", "Nota que ser\u00E1 atribu\u00EDdo automaticamente caso a toler\u00E2ncia seja alcan\u00E7ada", 3, "size", "control", "items", 4, "ngIf"], ["controlName", "tipo_justificativa_id", "labelInfo", "Tipo de justificativa, para quando o gestor n\u00E3o realizar a avalia\u00E7\u00E3o dentro do prazo", 3, "label", "size", "emptyValue", "dao"], ["tipoJustificativa", ""], ["label", "Checklists das entregas", "controlName", "checklist_avaliacao_entregas_plano_trabalho", 3, "size", "addItemHandle"], ["controlName", "checklist_plano_trabalho_texto", 3, "size"], ["label", "Crit\u00E9rios de avalia\u00E7\u00E3o", "controlName", "plano_trabalho_criterios_avaliacao", 3, "size", "addItemHandle"], ["controlName", "plano_trabalho_criterio_avaliacao", 3, "size"], [1, "row", "justify-content-end", "my-2"], [1, "col-4"], ["label", "Acessar Instr. Normativa", "icon", "bi bi-box-arrow-up-right", 3, "click"], ["label", "Dia da semana", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", "items"], ["label", "Dia do m\u00EAs", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control"], ["label", "Qtd. de Dias", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control"], ["label", "Nota", "labelInfo", "Nota que ser\u00E1 atribu\u00EDdo automaticamente caso a toler\u00E2ncia seja alcan\u00E7ada", 3, "size", "control"], ["label", "Conceito", "labelInfo", "Nota que ser\u00E1 atribu\u00EDdo automaticamente caso a toler\u00E2ncia seja alcan\u00E7ada", 3, "size", "control", "items"]],
+  decls: 50,
+  vars: 83,
+  consts: [["initialFocus", "unidade_id", 3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "right", ""], ["key", "GERAL", "label", "Geral"], [1, "row"], ["label", "Unidade Instituidora", "controlName", "unidade_id", "required", "", 3, "size", "dao", "selectParams"], ["unidade", ""], ["date", "", "label", "Data de In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio", "labelInfo", "Data de in\u00EDcio da vig\u00EAncia do programa de gest\u00E3o na unidade instituidora", 3, "size", "control"], ["date", "", "label", "Data de Fim", "icon", "bi bi-calendar-date", "controlName", "data_fim", "labelInfo", "Data de fim da vig\u00EAncia do programa de gest\u00E3o na unidade instituidora", 3, "size", "control"], ["label", "Dura\u00E7\u00E3o M\u00E1x P.E.", "icon", "bi bi-blockquote-left", "controlName", "prazo_max_plano_entrega", "labelInfo", "Limite m\u00E1ximo de dias corridos para a dura\u00E7\u00E3o do plano de entregas a partir da sua data de cria\u00E7\u00E3o (Zero para n\u00E3o limitar)", 3, "size", "control"], ["label", "T\u00EDtulo", "icon", "bi bi-textarea-t", "controlName", "nome", "required", "", 3, "size", "control"], ["label", "Normativa", "icon", "bi bi-blockquote-left", "controlName", "normativa", "labelInfo", "Normativa que regula o Programa", 3, "size", "control"], ["label", "Link Normativa", "icon", "bi bi-link-45deg", "controlName", "link_normativa", "labelInfo", "Link web da instru\u00E7\u00E3o normativa", 3, "size", "control"], ["class", "row justify-content-end my-2", 4, "ngIf"], ["key", "PLANO_ENTREGA", 3, "label"], ["controlName", "tipo_avaliacao_plano_entrega_id", "required", "", 3, "label", "size", "dao", "labelInfo"], ["tipoAvaliacaoEntrega", ""], [3, "title"], ["label", "Checklists das entregas", "controlName", "checklist_avaliacao_entregas_plano_entrega", 3, "size", "addItemHandle"], ["controlName", "checklist_plano_entrega_texto", 3, "size"], ["key", "PLANO_TRABALHO", 3, "label"], ["scale", "small", "labelPosition", "right", "controlName", "termo_obrigatorio", "label", "Se o termo \u00E9 obrigat\u00F3rio", 3, "size"], ["scale", "small", "labelPosition", "right", "controlName", "plano_trabalho_assinatura_participante", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "plano_trabalho_assinatura_gestor_lotacao", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "plano_trabalho_assinatura_gestor_unidade", 3, "size", "label"], ["scale", "small", "labelPosition", "right", "controlName", "plano_trabalho_assinatura_gestor_entidade", 3, "size", "label"], ["detailsButton", "", "labelInfo", "Template do termo utilizado no plano de trabalho", "controlName", "template_tcr_id", "required", "", 3, "label", "size", "dao", "where", "selectRoute", "details"], ["controlName", "tipo_documento_tcr_id", "labelInfo", "Tipo de documento utilizado para exportar o termo para o SEI/SUPER", 3, "label", "size", "dao"], ["tipoDocumento", ""], ["controlName", "tipo_avaliacao_plano_trabalho_id", "required", "", 3, "label", "size", "dao", "labelInfo"], ["tipoAvaliacao", ""], ["label", "Periodicidade", "controlName", "periodicidade_consolidacao", "labelInfo", "Per\u00EDodo para avalia\u00E7\u00E3o do plano de trabalho", 3, "size", "control", "items"], ["label", "Dia da semana", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", "items", 4, "ngIf"], ["label", "Dia do m\u00EAs", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", 4, "ngIf"], ["label", "Qtd. de Dias", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", 4, "ngIf"], ["label", "Toler\u00E2ncia", "controlName", "dias_tolerancia_consolidacao", "labelInfo", "Dias de toler\u00E2ncia para o lan\u00E7amento do registro das atividades na consolida\u00E7\u00E3o, ap\u00F3s esses dias ser\u00E1 liberado automaticamente para avalia\u00E7\u00E3o", 3, "size", "control"], ["type", "warning", 3, "message"], ["label", "Toler\u00E2ncia p/ avalia\u00E7\u00E3o", "controlName", "dias_tolerancia_avaliacao", "labelInfo", "Dias de toler\u00E2ncia para realizar a avalia\u00E7\u00E3o, considerando a toler\u00E2ncia da consolida\u00E7\u00E3o. Caso seja zero n\u00E3o far\u00E1 nada, caso contr\u00E1rio ap\u00F3s esse prazo a consolida\u00E7\u00E3o ser\u00E1 automaticamente avaliada com a nota padr\u00E3o", 3, "size", "control"], ["label", "Toler\u00E2ncia p/ recurso", "controlName", "dias_tolerancia_recurso_avaliacao", "labelInfo", "Dias de toler\u00E2ncia para recorrer da avalia\u00E7\u00E3o", 3, "size", "control"], ["label", "Nota", "labelInfo", "Nota que ser\u00E1 atribu\u00EDdo automaticamente caso a toler\u00E2ncia seja alcan\u00E7ada", 3, "size", "control", 4, "ngIf"], ["label", "Conceito", "labelInfo", "Nota que ser\u00E1 atribu\u00EDdo automaticamente caso a toler\u00E2ncia seja alcan\u00E7ada", 3, "size", "control", "items", 4, "ngIf"], ["controlName", "tipo_justificativa_id", "labelInfo", "Tipo de justificativa, para quando o gestor n\u00E3o realizar a avalia\u00E7\u00E3o dentro do prazo", 3, "label", "size", "emptyValue", "dao"], ["tipoJustificativa", ""], [1, "row", "justify-content-end", "my-2"], [1, "col-4"], ["label", "Acessar Instr. Normativa", "icon", "bi bi-box-arrow-up-right", 3, "click"], ["label", "Dia da semana", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control", "items"], ["label", "Dia do m\u00EAs", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control"], ["label", "Qtd. de Dias", "controlName", "periodicidade_valor", "labelInfo", "Representa quantidade de dias para DIAS; dia da semana para SEMANAL e QUINZENAL; e dia do m\u00EAs para o restante", 3, "size", "control"], ["label", "Nota", "labelInfo", "Nota que ser\u00E1 atribu\u00EDdo automaticamente caso a toler\u00E2ncia seja alcan\u00E7ada", 3, "size", "control"], ["label", "Conceito", "labelInfo", "Nota que ser\u00E1 atribu\u00EDdo automaticamente caso a toler\u00E2ncia seja alcan\u00E7ada", 3, "size", "control", "items"]],
   template: function ProgramaFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementStart"](0, "editable-form", 0);
@@ -454,18 +454,12 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵtemplate"](46, ProgramaFormComponent_input_number_46_Template, 1, 2, "input-number", 38);
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵtemplate"](47, ProgramaFormComponent_input_select_47_Template, 1, 3, "input-select", 39);
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelement"](48, "input-search", 40, 41);
-      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementStart"](50, "div", 3)(51, "input-multiselect", 42);
-      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelement"](52, "input-text", 43);
-      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementEnd"]();
-      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementStart"](53, "input-multiselect", 44);
-      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelement"](54, "input-text", 45);
-      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementEnd"]()()()()()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementEnd"]()()()()();
     }
     if (rf & 2) {
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled)("title", ctx.isModal ? "" : ctx.title);
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](4);
-      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("size", 12)("dao", ctx.unidadeDao)("selectParams", _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵpureFunction1"](83, _c3, _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵpureFunction0"](82, _c2)));
+      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("size", 12)("dao", ctx.unidadeDao)("selectParams", _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵpureFunction1"](75, _c3, _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵpureFunction0"](74, _c2)));
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](3);
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("size", 4)("control", ctx.form.controls.data_inicio);
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](1);
@@ -506,7 +500,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("size", 12)("label", "Exige assinatura do gestor " + ctx.lex.translate("da entidade"));
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("label", "Template " + ctx.lex.translate("termo") + " (TCR)")("size", 12)("dao", ctx.templateDao)("where", _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵpureFunction1"](86, _c5, _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵpureFunction0"](85, _c4)))("selectRoute", ctx.templateService.selectRoute("TCR", ctx.form == null ? null : ctx.form.controls == null ? null : ctx.form.controls.template_tcr_id == null ? null : ctx.form.controls.template_tcr_id.value));
+      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("label", "Template " + ctx.lex.translate("termo") + " (TCR)")("size", 12)("dao", ctx.templateDao)("where", _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵpureFunction1"](78, _c5, _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵpureFunction0"](77, _c4)))("selectRoute", ctx.templateService.selectRoute("TCR", ctx.form == null ? null : ctx.form.controls == null ? null : ctx.form.controls.template_tcr_id == null ? null : ctx.form.controls.template_tcr_id.value));
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("label", "Tipo de documento " + ctx.lex.translate("termo"))("size", 12)("dao", ctx.tipoDocumentoDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](2);
@@ -516,11 +510,11 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("size", 6)("control", ctx.form.controls.periodicidade_consolidacao)("items", ctx.lookup.PERIODICIDADE_CONSOLIDACAO);
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵpureFunction0"](88, _c6).includes(ctx.form.controls.periodicidade_consolidacao.value));
+      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵpureFunction0"](80, _c6).includes(ctx.form.controls.periodicidade_consolidacao.value));
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵpureFunction0"](89, _c7).includes(ctx.form.controls.periodicidade_consolidacao.value));
+      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵpureFunction0"](81, _c7).includes(ctx.form.controls.periodicidade_consolidacao.value));
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵpureFunction0"](90, _c8).includes(ctx.form.controls.periodicidade_consolidacao.value));
+      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("ngIf", _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵpureFunction0"](82, _c8).includes(ctx.form.controls.periodicidade_consolidacao.value));
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("size", 3)("control", ctx.form.controls.dias_tolerancia_consolidacao);
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](1);
@@ -537,16 +531,6 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("ngIf", ctx.isTipoAvaliacao("QUALITATIVO"));
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("label", ctx.lex.translate("Tipo de justificativa"))("size", 8)("emptyValue", null)("dao", ctx.tipoJustificativaDao);
-      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("size", 6)("addItemHandle", ctx.addItemHandlePlanoTrabalhoChecklist.bind(ctx));
-      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("size", 12);
-      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵattribute"]("maxlength", 250);
-      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("size", 6)("addItemHandle", ctx.addItemHandlePlanoTrabalhoCriteriosAvaliacao.bind(ctx));
-      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](1);
-      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("size", 12);
-      _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵattribute"]("maxlength", 250);
     }
   },
   dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_24__.NgIf, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_11__.InputSwitchComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_12__.InputSearchComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_13__.InputTextComponent, _components_input_input_datetime_input_datetime_component__WEBPACK_IMPORTED_MODULE_14__.InputDatetimeComponent, _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_15__.InputSelectComponent, _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_16__.InputMultiselectComponent, _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_17__.TabsComponent, _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_18__.TabComponent, _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_19__.SeparatorComponent, _components_top_alert_top_alert_component__WEBPACK_IMPORTED_MODULE_20__.TopAlertComponent, _components_input_input_number_input_number_component__WEBPACK_IMPORTED_MODULE_21__.InputNumberComponent, _components_action_button_action_button_component__WEBPACK_IMPORTED_MODULE_22__.ActionButtonComponent],

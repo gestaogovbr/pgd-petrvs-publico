@@ -41,25 +41,10 @@ class ModelBase extends Model
                     foreach ($children as $chield) {
                         if(method_exists($chield, 'deleteCascade')) $chield->deleteCascade();
                     }
-                }
-                /*BelongsTo
-                HasOne
-                HasMany
-                $relation = $this->{Str::camel($relationName)}();
-                $relatedKeyName = $relatedModel->getKeyName();
-                $parentKey = $relation->getParentKey();
-                $foreignKeyName = $relation->getForeignKeyName();
-                $related = ($relatedModel::find($relatedId) ?? new $relatedModel())->fill($related);
-                $relatedModel->whereIn($relatedModel->getKeyName(), $deleteKeys)->delete();*/
-        
+                }  
             }            
         }
-        /*if(property_exists($this, 'has_data_fim')) {
-            $this->data_fim = date("Y-m-d H:i:s");
-            $this->save();
-        } else {*/
         $this->delete();
-        //}
     }
 
     // Escopos

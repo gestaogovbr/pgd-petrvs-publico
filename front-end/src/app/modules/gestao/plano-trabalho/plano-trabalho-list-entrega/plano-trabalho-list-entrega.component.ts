@@ -49,7 +49,6 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   public entregas: LookupItem[] = [];
 
   private _disabled: boolean = false;
-  //Colocar o plano de entrega em execucao quando for propria unidade
   //quando adiciona um novo e edita o mesmo, salva 2x no banco
 
   constructor(public injector: Injector) {
@@ -150,6 +149,8 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     }
     if (entrega._status == "ADD" && !form.controls.plano_entrega_id.value) { // É uma nova entrega
       form.controls.origem.setValue('PROPRIA_UNIDADE');
+      let planosEntregas = await this.planoEntregaDao!.query({ where: [["unidade_id", "==", this.entity!.unidade_id], ["status", "==", "ATIVO"]] }).asPromise();//["data_inicio", "<=", this.entity!.data_fim], ["data_fim", ">=", this.entity!.data_inicio]
+      form.controls.plano_entrega_id.setValue(planosEntregas[0].id);
     } else if (entrega.plano_entrega_entrega?.plano_entrega?.unidade_id == this.entity!.unidade_id) {
       form.controls.origem.setValue('PROPRIA_UNIDADE');
       await this.carregarEntregas(entrega.plano_entrega_entrega.plano_entrega_id!);
@@ -240,6 +241,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     let planoEntrega = typeof idPlanoOuPlano == 'string' ? await this.planoEntregaDao!.getById(idPlanoOuPlano, ["entregas.entrega:id,nome", "unidade"]) : idPlanoOuPlano;
     let planoEntregaComUnidade = { id: planoEntrega?.id, unidade_id: planoEntrega?.unidade_id, unidade: planoEntrega?.unidade };
     this.entregas = planoEntrega?.entregas.map(epe => Object.assign({}, { key: epe.id, value: epe.descricao || epe.entrega?.nome || "Desconhecido", data: Object.assign(epe, { plano_entrega: planoEntregaComUnidade }) })) || [];
+    this.entregas.sort((a, b) => (a.value > b.value ? 1 : -1));
     if (!this.entregas.find(x => x.key == this.form!.controls.plano_entrega_entrega_id.value)) this.form!.controls.plano_entrega_entrega_id.setValue(null);
   }
 

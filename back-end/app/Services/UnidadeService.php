@@ -280,7 +280,7 @@ class UnidadeService extends ServiceBase
                 ->update(['path' => DB::raw(sprintf("CONCAT('%s', SUBSTR(path, %d))", $newPath, strlen($newPath)))]);
         }
         /* Armazena as informações que serão necessárias no extraStore */
-        $this->buffer["integrantes"] = $this->UtilService->getNested($data, "integrantes");
+        $this->buffer["integrantes"] = $this->UtilService->getNested($data, "integrantes") ?? [];
         return $data;
     }
 
@@ -288,7 +288,7 @@ class UnidadeService extends ServiceBase
         foreach($this->buffer["integrantes"] as $integrante) {
             $integrante["unidade_id"] = $entity->id;
         }        
-        $this->UnidadeIntegranteService->saveIntegrante($this->buffer["integrantes"]);
+        $this->UnidadeIntegranteService->salvarIntegrantes($this->buffer["integrantes"]);
     }
 
     /** 
