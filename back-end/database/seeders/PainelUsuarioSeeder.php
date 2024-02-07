@@ -93,5 +93,25 @@ class PainelUsuarioSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
+        PainelUsuario::create([
+            'email' => 'thiago.crispim@gestao.gov.br',
+            'nome' => 'thiago crispim',
+            'password' => md5('petrvs@123'),
+            'cpf' => '00623555685',
+            'email_verified_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        PainelUsuario::create([
+            'email' => 'diego.braga@firstbps.com.br',
+            'nome' => 'Diego Braga',
+            'password' => md5('petrvs@123'),
+            'cpf' => '00623555685',
+            'email_verified_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
     }
 }
