@@ -1,4 +1,4 @@
-<grid [items]="items" [form]="form!" noMargin #gridEntregas editable [selectable]="false" [minHeight]="items.length > 2 ? 0 : 300" [join]="join" [groupBy]="groupBy" [add]="addEntrega.bind(this)" [remove]="removeEntrega.bind(this)" [save]="saveEntrega.bind(this)" [load]="loadEntrega.bind(this)" [saveEnd]="saveEndEntrega.bind(this)" [hasDelete]="!disabled" [hasEdit]="!disabled" [hasAdd]="!disabled">
+<grid [items]="items" [form]="form!" noMargin #gridEntregas editable [selectable]="false" [minHeight]="items.length > 2 ? 0 : 300" [join]="join" [groupBy]="groupBy" [add]="addEntrega.bind(this)" [remove]="removeEntrega.bind(this)" [save]="saveEntrega.bind(this)" [load]="loadEntrega.bind(this)" [saveEnd]="saveEndEntrega.bind(this)" [hasDelete]="!disabled && planoTrabalhoEditavel" [hasEdit]="!disabled && planoTrabalhoEditavel" [hasAdd]="!disabled && planoTrabalhoEditavel">
   <columns>
     <column [titleTemplate]="titleOrigem" [template]="columnOrigem" [editTemplate]="editOrigem" [verticalAlign]="'middle'" [width]="300" [align]="'center'">
       <ng-template let-header="header" #titleOrigem>

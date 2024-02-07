@@ -292,10 +292,10 @@ class PlanoTrabalhoService extends ServiceBase
     $condition3 = $condicoes["assinaturaUsuarioExigida"];
     $condition4 = $condicoes["usuarioFaltaAssinar"];
     $condition5 = $condicoes["nrEntregas"] > 0;
-    if(!$condition1 && !$condition2) throw new ServerException("ValidadePlanoTrabalho", "O TCR não pode ser assinado porque o plano de trabalho não está no status INCLUIDO nem AGUARDANDO ASSINATURA. [ver RN_PTR_O]");
-    if(!$condition3) throw new ServerException("ValidadePlanoTrabalho", "O TCR não pode ser assinado porque a assinatura do usuário logado não é exigida pelo programa, ou o usuários não atende aos critérios das [PTR:TABELA_1] e [PTR:TABELA_3]. [ver RN_PTR_O]");
-    if(!$condition4) throw new ServerException("ValidadePlanoTrabalho", "O TCR não pode ser assinado porque a assinatura do usuário logado não é exigida pelo programa ou ele já assinou o Termo. [ver RN_PTR_O]");
-    if(!$condition5) throw new ServerException("ValidadePlanoTrabalho", "O TCR não pode ser assinado porque o plano precisa possuir ao menos uma entrega. [ver RN_PTR_O]");
+    if(!$condition1 && !$condition2) throw new ServerException("ValidatePlanoTrabalho", "O TCR não pode ser assinado porque o plano de trabalho não está no status INCLUIDO nem AGUARDANDO ASSINATURA. [ver RN_PTR_O]");
+    if(!$condition3) throw new ServerException("ValidatePlanoTrabalho", "O TCR não pode ser assinado porque a assinatura do usuário logado não é exigida pelo programa, ou o usuários não atende aos critérios das [PTR:TABELA_1] e [PTR:TABELA_3]. [ver RN_PTR_O]");
+    if(!$condition4) throw new ServerException("ValidatePlanoTrabalho", "O TCR não pode ser assinado porque a assinatura do usuário logado não é exigida pelo programa ou ele já assinou o Termo. [ver RN_PTR_O]");
+    if(!$condition5) throw new ServerException("ValidatePlanoTrabalho", "O TCR não pode ser assinado porque o plano precisa possuir ao menos uma entrega. [ver RN_PTR_O]");
   }
 
   /* Será a data_inicio, ou a data_fim do último período CONCLUIDO ou AVALIADO. O que for maior. */
