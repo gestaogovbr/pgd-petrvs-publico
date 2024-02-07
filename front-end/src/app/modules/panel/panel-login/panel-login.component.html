@@ -1,0 +1,16 @@
+<div class="login-container">
+    <div class="login-content">
+        <h2>Panel - Login</h2>
+        <form  [formGroup]="login">
+            <div class="form-group">
+                <input-text controlName="email"   placeholder="Email" [attr.maxlength]=250></input-text>
+            </div>
+            <div class="form-group form-primary mb-2">
+                <input-text password="password" controlName="password" placeholder="Senha" [attr.maxlength]=250></input-text>
+            </div>
+            <button class="btn-login" (click)="loginPanel()">
+                Logar
+            </button>
+        </form>
+    </div>
+</div>
