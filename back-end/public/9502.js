@@ -22,22 +22,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_models_unidade_model__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! src/app/models/unidade.model */ 53937);
 /* harmony import */ var src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! src/app/modules/base/page-form-base */ 1184);
 /* harmony import */ var src_app_modules_uteis_notificacoes_notificacao_service__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! src/app/modules/uteis/notificacoes/notificacao.service */ 22067);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! @angular/core */ 51197);
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! @angular/common */ 89650);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! @angular/common */ 89650);
 /* harmony import */ var _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../../components/input/input-switch/input-switch.component */ 88820);
 /* harmony import */ var _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../../../components/input/input-search/input-search.component */ 32802);
 /* harmony import */ var _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../../../components/input/input-text/input-text.component */ 92392);
-/* harmony import */ var _components_input_input_radio_input_radio_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../../../components/input/input-radio/input-radio.component */ 48877);
-/* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../../components/input/input-select/input-select.component */ 64603);
-/* harmony import */ var _components_input_input_color_input_color_component__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../../../components/input/input-color/input-color.component */ 66848);
-/* harmony import */ var _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../../../components/input/input-multiselect/input-multiselect.component */ 17819);
-/* harmony import */ var _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../../../components/tabs/tabs.component */ 66384);
-/* harmony import */ var _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../../../../components/tabs/tab/tab.component */ 74978);
-/* harmony import */ var _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../../../../components/separator/separator.component */ 25560);
-/* harmony import */ var _components_input_input_editor_input_editor_component__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ../../../../components/input/input-editor/input-editor.component */ 55795);
-/* harmony import */ var _uteis_calendar_expediente_calendar_expediente_component__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ../../../uteis/calendar-expediente/calendar-expediente.component */ 75007);
-/* harmony import */ var _uteis_notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ../../../uteis/notificacoes/notificacoes-config/notificacoes-config.component */ 92739);
-
+/* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../../../components/input/input-select/input-select.component */ 64603);
+/* harmony import */ var _components_input_input_color_input_color_component__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../../components/input/input-color/input-color.component */ 66848);
+/* harmony import */ var _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../../../components/input/input-multiselect/input-multiselect.component */ 17819);
+/* harmony import */ var _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../../../components/tabs/tabs.component */ 66384);
+/* harmony import */ var _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../../../components/tabs/tab/tab.component */ 74978);
+/* harmony import */ var _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../../../../components/separator/separator.component */ 25560);
+/* harmony import */ var _components_input_input_editor_input_editor_component__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../../../../components/input/input-editor/input-editor.component */ 55795);
+/* harmony import */ var _uteis_calendar_expediente_calendar_expediente_component__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ../../../uteis/calendar-expediente/calendar-expediente.component */ 75007);
+/* harmony import */ var _uteis_notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ../../../uteis/notificacoes/notificacoes-config/notificacoes-config.component */ 92739);
 
 
 
@@ -71,16 +69,16 @@ const _c3 = ["gestorSubstituto"];
 const _c4 = ["gestorDelegado"];
 const _c5 = ["entidade"];
 const _c6 = ["notificacoes"];
-function UnidadeFormComponent_tab_36_Template(rf, ctx) {
+function UnidadeFormComponent_tab_32_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](0, "tab", 31);
-    _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](1, "notificacoes-config", 32, 33);
-    _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementStart"](0, "tab", 28);
+    _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelement"](1, "notificacoes-config", 29, 30);
+    _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
-    const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("unidadeId", ctx_r5.entity.id.length ? ctx_r5.entity.id : "ADD")("entity", ctx_r5.entity)("disabled", ctx_r5.formDisabled);
+    const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("unidadeId", ctx_r5.entity.id.length ? ctx_r5.entity.id : "ADD")("entity", ctx_r5.entity)("disabled", ctx_r5.formDisabled);
   }
 }
 const _c7 = function (a2) {
@@ -268,122 +266,114 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
     this.form.controls.expediente.setValue(this.form.controls.usar_expediente_unidade.value ? this.form.controls.expediente.value || new src_app_models_expediente_model__WEBPACK_IMPORTED_MODULE_7__.Expediente() : null);
   }
   static #_ = this.ɵfac = function UnidadeFormComponent_Factory(t) {
-    return new (t || UnidadeFormComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_24__.Injector));
+    return new (t || UnidadeFormComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_23__.Injector));
   };
-  static #_2 = this.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵdefineComponent"]({
+  static #_2 = this.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵdefineComponent"]({
     type: UnidadeFormComponent,
     selectors: [["app-unidade-form"]],
     viewQuery: function UnidadeFormComponent_Query(rf, ctx) {
       if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c0, 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c1, 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c2, 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c3, 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c4, 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c5, 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵviewQuery"](_c6, 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵviewQuery"](src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵviewQuery"](_c0, 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵviewQuery"](_c1, 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵviewQuery"](_c2, 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵviewQuery"](_c3, 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵviewQuery"](_c4, 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵviewQuery"](_c5, 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵviewQuery"](_c6, 5);
       }
       if (rf & 2) {
         let _t;
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.unidadePai = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.cidade = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.gestor = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.gestorSubstituto = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.gestorDelegado = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.entidade = _t.first);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵloadQuery"]()) && (ctx.notificacoes = _t.first);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵloadQuery"]()) && (ctx.editableForm = _t.first);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵloadQuery"]()) && (ctx.unidadePai = _t.first);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵloadQuery"]()) && (ctx.cidade = _t.first);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵloadQuery"]()) && (ctx.gestor = _t.first);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵloadQuery"]()) && (ctx.gestorSubstituto = _t.first);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵloadQuery"]()) && (ctx.gestorDelegado = _t.first);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵloadQuery"]()) && (ctx.entidade = _t.first);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵloadQuery"]()) && (ctx.notificacoes = _t.first);
       }
     },
-    features: [_angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵInheritDefinitionFeature"]],
-    decls: 37,
-    vars: 54,
-    consts: [["initialFocus", "sigla", 3, "title", "form", "disabled", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], ["label", "Informal", "labelClass", "text-nowrap", "controlName", "informal", 3, "disabled", "size", "labelInfo", "change"], ["label", "Instit.", "labelClass", "text-nowrap", "controlName", "instituidora", 3, "disabled", "size", "labelInfo"], ["label", "C\u00F3digo", "controlName", "codigo", 3, "disabled", "size"], ["label", "Sigla", "controlName", "sigla", "required", "", 3, "disabled", "size"], ["label", "Nome", "controlName", "nome", "required", "", 3, "disabled", "size"], ["controlName", "cidade_id", "required", "", 3, "disabled", "size", "dao"], ["cidade", ""], ["controlName", "unidade_pai_id", 3, "disabled", "size", "label", "where", "dao"], ["unidade_pai", ""], ["disabled", "", "controlName", "entidade_id", "required", "", 3, "size", "dao"], ["entidade", ""], ["key", "CONFIGURACOES", "label", "Configura\u00E7\u00F5es"], ["controlName", "distribuicao_forma_contagem_prazos", "labelInfo", "A forma da contagem dos prazos para a distribui\u00E7\u00E3o (lan\u00E7amento da demanda).", 3, "size", "label", "items"], ["controlName", "entrega_forma_contagem_prazos", "labelInfo", "A forma da contagem dos prazos na entrega da demanda (data da entrega e tempo despendido)", 3, "size", "label", "items"], ["label", "Arquivamento autom\u00E1tico", "controlName", "atividades_arquivamento_automatico", "labelInfo", "Se ap\u00F3s a avalia\u00E7\u00E3o, arquivar\u00E1 automaticamente a atividade.", 3, "size", "items"], ["clss", "row"], ["label", "Etiquetas", "multiselectStyle", "inline", "controlName", "etiquetas", 3, "maxItemWidth", "size", "addItemHandle"], ["label", "Texto", "controlName", "etiqueta_texto", 3, "size"], ["label", "\u00CDcone", "controlName", "etiqueta_icone", 3, "size", "items"], ["label", "Cor", "controlName", "etiqueta_cor", 3, "size"], ["controlName", "texto_complementar_plano", 3, "label", "dataset"], ["key", "EXPEDIENTE", "label", "Expediente"], ["label", "Usar calend\u00E1rio pr\u00F3prio", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "usar_expediente_unidade", 3, "size", "labelInfo", "change"], ["usarExpedienteEntidade", ""], [3, "disabled", "expedienteDisabled", "control"], ["expediente", ""], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es", 4, "ngIf"], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es"], [3, "unidadeId", "entity", "disabled"], ["notificacoes", ""]],
+    features: [_angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵInheritDefinitionFeature"]],
+    decls: 33,
+    vars: 46,
+    consts: [["initialFocus", "sigla", 3, "title", "form", "disabled", "submit", "cancel"], ["display", "", "right", ""], ["key", "PRINCIPAL", "label", "Principal"], [1, "row"], ["label", "Informal", "labelClass", "text-nowrap", "controlName", "informal", 3, "disabled", "size", "labelInfo", "change"], ["label", "Instit.", "labelClass", "text-nowrap", "controlName", "instituidora", 3, "disabled", "size", "labelInfo"], ["label", "C\u00F3digo", "controlName", "codigo", 3, "disabled", "size"], ["label", "Sigla", "controlName", "sigla", "required", "", 3, "disabled", "size"], ["label", "Nome", "controlName", "nome", "required", "", 3, "disabled", "size"], ["controlName", "cidade_id", "required", "", 3, "disabled", "size", "dao"], ["cidade", ""], ["controlName", "unidade_pai_id", 3, "disabled", "size", "label", "where", "dao"], ["unidade_pai", ""], ["disabled", "", "controlName", "entidade_id", "required", "", 3, "size", "dao"], ["entidade", ""], ["key", "CONFIGURACOES", "label", "Configura\u00E7\u00F5es"], ["clss", "row"], ["label", "Etiquetas", "multiselectStyle", "inline", "controlName", "etiquetas", 3, "maxItemWidth", "size", "addItemHandle"], ["label", "Texto", "controlName", "etiqueta_texto", 3, "size"], ["label", "\u00CDcone", "controlName", "etiqueta_icone", 3, "size", "items"], ["label", "Cor", "controlName", "etiqueta_cor", 3, "size"], ["controlName", "texto_complementar_plano", 3, "label", "dataset"], ["key", "EXPEDIENTE", "label", "Expediente"], ["label", "Usar calend\u00E1rio pr\u00F3prio", "labelPosition", "right", "icon", "bi bi-check2", "controlName", "usar_expediente_unidade", 3, "size", "labelInfo", "change"], ["usarExpedienteEntidade", ""], [3, "disabled", "expedienteDisabled", "control"], ["expediente", ""], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es", 4, "ngIf"], ["key", "NOTIFICACOES", "label", "Notifica\u00E7\u00F5es"], [3, "unidadeId", "entity", "disabled"], ["notificacoes", ""]],
     template: function UnidadeFormComponent_Template(rf, ctx) {
       if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](0, "editable-form", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵlistener"]("submit", function UnidadeFormComponent_Template_editable_form_submit_0_listener() {
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementStart"](0, "editable-form", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵlistener"]("submit", function UnidadeFormComponent_Template_editable_form_submit_0_listener() {
           return ctx.onSaveData();
         })("cancel", function UnidadeFormComponent_Template_editable_form_cancel_0_listener() {
           return ctx.onCancel();
         });
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](1, "tabs", 1)(2, "tab", 2)(3, "div", 3)(4, "input-switch", 4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵlistener"]("change", function UnidadeFormComponent_Template_input_switch_change_4_listener($event) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementStart"](1, "tabs", 1)(2, "tab", 2)(3, "div", 3)(4, "input-switch", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵlistener"]("change", function UnidadeFormComponent_Template_input_switch_change_4_listener($event) {
           return ctx.onInformalChange($event);
         });
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](5, "input-switch", 5)(6, "input-text", 6)(7, "input-text", 7)(8, "input-text", 8);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](9, "div", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](10, "input-search", 9, 10)(12, "input-search", 11, 12)(14, "input-search", 13, 14);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](16, "tab", 15)(17, "div", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](18, "input-select", 16)(19, "input-select", 17)(20, "input-radio", 18);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](21, "separator");
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](22, "div", 19)(23, "input-multiselect", 20);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](24, "input-text", 21)(25, "input-select", 22)(26, "input-color", 23);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](27, "separator");
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](28, "div", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](29, "input-editor", 24);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementStart"](30, "tab", 25)(31, "div", 3)(32, "input-switch", 26, 27);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵlistener"]("change", function UnidadeFormComponent_Template_input_switch_change_32_listener() {
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelement"](5, "input-switch", 5)(6, "input-text", 6)(7, "input-text", 7)(8, "input-text", 8);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementStart"](9, "div", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelement"](10, "input-search", 9, 10)(12, "input-search", 11, 12)(14, "input-search", 13, 14);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementStart"](16, "tab", 15);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelement"](17, "separator");
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementStart"](18, "div", 16)(19, "input-multiselect", 17);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelement"](20, "input-text", 18)(21, "input-select", 19)(22, "input-color", 20);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelement"](23, "separator");
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementStart"](24, "div", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelement"](25, "input-editor", 21);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementStart"](26, "tab", 22)(27, "div", 3)(28, "input-switch", 23, 24);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵlistener"]("change", function UnidadeFormComponent_Template_input_switch_change_28_listener() {
           return ctx.onUsarExpedienteEntidadeChange();
         });
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelement"](34, "calendar-expediente", 28, 29);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵtemplate"](36, UnidadeFormComponent_tab_36_Template, 3, 3, "tab", 30);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelement"](30, "calendar-expediente", 25, 26);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵtemplate"](32, UnidadeFormComponent_tab_32_Template, 3, 3, "tab", 27);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵelementEnd"]()();
       }
       if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("title", ctx.isModal ? "" : ctx.title)("form", ctx.form)("disabled", ctx.formDisabled);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("disabled", ctx.informalIsDisabled)("size", 1)("labelInfo", "Definir se " + ctx.lex.translate("a unidade") + " \u00E9 informal ou n\u00E3o." + ctx.lex.translate(" Unidades") + " informais s\u00E3o, por exemplo: times volantes, comiss\u00F5es, grupos de trabalho, etc." + ctx.lex.translate(" Unidades") + " informais n\u00E3o podem mudar para formais, ou vice-versa.");
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("disabled", ctx.instituidoraIsDisabled)("size", 1)("labelInfo", "Se a " + ctx.lex.translate("unidade") + " \u00E9 instituidora de Programas. Unidade administrativa prevista no art. 4\u00BA do Decreto n\u00BA 11.072, de 2022.");
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("disabled", ctx.codigoIsDisabled)("size", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("disabled", ctx.isDisabled)("size", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("disabled", ctx.isDisabled)("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("disabled", ctx.isDisabled)("size", 4)("dao", ctx.cidadeDao);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("disabled", ctx.unidadePaiIsDisabled)("size", 4)("label", ctx.lex.translate("Unidade") + " pai")("where", _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵpureFunction1"](52, _c8, _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵpureFunction1"](50, _c7, ctx.form.controls.entidade_id.value)))("dao", ctx.dao);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 4)("dao", ctx.entidadeDao);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 4)("label", "Contagem " + ctx.lex.translate("Prazo de Distribui\u00E7\u00E3o"))("items", ctx.lookup.DIA_HORA_CORRIDOS_OU_UTEIS);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 4)("label", "Contagem " + ctx.lex.translate("Prazo de Entrega"))("items", ctx.lookup.HORAS_CORRIDAS_OU_UTEIS);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 4)("items", ctx.lookup.SIMNAO);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("maxItemWidth", 250)("size", 12)("addItemHandle", ctx.addItemHandle.bind(ctx));
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵattribute"]("maxlength", 250);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 3)("items", ctx.lookup.ICONES);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("label", "Texto complementar " + ctx.lex.translate("Plano de Trabalho"))("dataset", ctx.planoDataset);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵpropertyInterpolate2"]("labelInfo", "Se o expediente da ", ctx.lex.translate("unidade"), " n\u00E3o for definido usaremos o da ", ctx.lex.translate("entidade"), "");
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("size", 12);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("disabled", ctx.form.controls.usar_expediente_unidade.value ? undefined : "true")("expedienteDisabled", ctx.entity == null ? null : ctx.entity.entidade == null ? null : ctx.entity.entidade.expediente)("control", ctx.form.controls.expediente);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_24__["ɵɵproperty"]("ngIf", ctx.entity);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("title", ctx.isModal ? "" : ctx.title)("form", ctx.form)("disabled", ctx.formDisabled);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("disabled", ctx.informalIsDisabled)("size", 1)("labelInfo", "Definir se " + ctx.lex.translate("a unidade") + " \u00E9 informal ou n\u00E3o." + ctx.lex.translate(" Unidades") + " informais s\u00E3o, por exemplo: times volantes, comiss\u00F5es, grupos de trabalho, etc." + ctx.lex.translate(" Unidades") + " informais n\u00E3o podem mudar para formais, ou vice-versa.");
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("disabled", ctx.instituidoraIsDisabled)("size", 1)("labelInfo", "Se a " + ctx.lex.translate("unidade") + " \u00E9 instituidora de Programas. Unidade administrativa prevista no art. 4\u00BA do Decreto n\u00BA 11.072, de 2022.");
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("disabled", ctx.codigoIsDisabled)("size", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("disabled", ctx.isDisabled)("size", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("disabled", ctx.isDisabled)("size", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("disabled", ctx.isDisabled)("size", 4)("dao", ctx.cidadeDao);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("disabled", ctx.unidadePaiIsDisabled)("size", 4)("label", ctx.lex.translate("Unidade") + " pai")("where", _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵpureFunction1"](44, _c8, _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵpureFunction1"](42, _c7, ctx.form.controls.entidade_id.value)))("dao", ctx.dao);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("size", 4)("dao", ctx.entidadeDao);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("maxItemWidth", 250)("size", 12)("addItemHandle", ctx.addItemHandle.bind(ctx));
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("size", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵattribute"]("maxlength", 250);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("size", 3)("items", ctx.lookup.ICONES);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("size", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("label", "Texto complementar " + ctx.lex.translate("Plano de Trabalho"))("dataset", ctx.planoDataset);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵpropertyInterpolate2"]("labelInfo", "Se o expediente da ", ctx.lex.translate("unidade"), " n\u00E3o for definido usaremos o da ", ctx.lex.translate("entidade"), "");
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("size", 12);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("disabled", ctx.form.controls.usar_expediente_unidade.value ? undefined : "true")("expedienteDisabled", ctx.entity == null ? null : ctx.entity.entidade == null ? null : ctx.entity.entidade.expediente)("control", ctx.form.controls.expediente);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_23__["ɵɵproperty"]("ngIf", ctx.entity);
       }
     },
-    dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_25__.NgIf, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_11__.InputSwitchComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_12__.InputSearchComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_13__.InputTextComponent, _components_input_input_radio_input_radio_component__WEBPACK_IMPORTED_MODULE_14__.InputRadioComponent, _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_15__.InputSelectComponent, _components_input_input_color_input_color_component__WEBPACK_IMPORTED_MODULE_16__.InputColorComponent, _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_17__.InputMultiselectComponent, _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_18__.TabsComponent, _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_19__.TabComponent, _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_20__.SeparatorComponent, _components_input_input_editor_input_editor_component__WEBPACK_IMPORTED_MODULE_21__.InputEditorComponent, _uteis_calendar_expediente_calendar_expediente_component__WEBPACK_IMPORTED_MODULE_22__.CalendarExpedienteComponent, _uteis_notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_23__.NotificacoesConfigComponent],
+    dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_24__.NgIf, src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__.EditableFormComponent, _components_input_input_switch_input_switch_component__WEBPACK_IMPORTED_MODULE_11__.InputSwitchComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_12__.InputSearchComponent, _components_input_input_text_input_text_component__WEBPACK_IMPORTED_MODULE_13__.InputTextComponent, _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_14__.InputSelectComponent, _components_input_input_color_input_color_component__WEBPACK_IMPORTED_MODULE_15__.InputColorComponent, _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_16__.InputMultiselectComponent, _components_tabs_tabs_component__WEBPACK_IMPORTED_MODULE_17__.TabsComponent, _components_tabs_tab_tab_component__WEBPACK_IMPORTED_MODULE_18__.TabComponent, _components_separator_separator_component__WEBPACK_IMPORTED_MODULE_19__.SeparatorComponent, _components_input_input_editor_input_editor_component__WEBPACK_IMPORTED_MODULE_20__.InputEditorComponent, _uteis_calendar_expediente_calendar_expediente_component__WEBPACK_IMPORTED_MODULE_21__.CalendarExpedienteComponent, _uteis_notificacoes_notificacoes_config_notificacoes_config_component__WEBPACK_IMPORTED_MODULE_22__.NotificacoesConfigComponent],
     styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
   });
 }

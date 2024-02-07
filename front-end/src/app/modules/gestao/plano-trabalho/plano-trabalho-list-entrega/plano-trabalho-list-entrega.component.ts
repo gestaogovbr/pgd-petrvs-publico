@@ -17,6 +17,7 @@ import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { PlanoTrabalhoService } from '../plano-trabalho.service';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
+import { UnidadeService } from 'src/app/services/unidade.service';
 
 @Component({
   selector: 'plano-trabalho-list-entrega',
@@ -34,6 +35,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   @Input() set disabled(value: boolean) { if (this._disabled != value) this._disabled = value; } get disabled(): boolean { return this._disabled; }
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
   @Input() cdRef: ChangeDetectorRef;
+  @Input() planoTrabalhoEditavel: boolean = true;
 
   public get items(): PlanoTrabalhoEntrega[] {
     if (!this.gridControl.value) this.gridControl.setValue(new PlanoTrabalho());
@@ -45,6 +47,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   public planoEntregaDao?: PlanoEntregaDaoService;
   public peeDao?: PlanoEntregaEntregaDaoService;
   public planoTrabalhoService: PlanoTrabalhoService;
+  public unidadeService: UnidadeService;
   public totalForcaTrabalho: number = 0;
   public entregas: LookupItem[] = [];
 
@@ -59,6 +62,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
     this.planoTrabalhoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
     this.peeDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
+    this.unidadeService = injector.get<UnidadeService>(UnidadeService);
     this.join = ["entrega", "plano_entrega_entrega.entrega", "plano_entrega_entrega.plano_entrega:id,unidade_id", "plano_entrega_entrega.plano_entrega.unidade:id,sigla"];
     this.form = this.fh.FormBuilder({
       origem: { default: null },

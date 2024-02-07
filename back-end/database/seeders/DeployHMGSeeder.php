@@ -19,6 +19,7 @@ class DeployHMGSeeder extends Seeder
             //FeriadoSeeder::class,
            // PerfilSeeder::class,
             TipoCapacidadeSeeder::class,
+            PainelUsuarioSeeder::class,
 //            EntidadeSeeder::class,
 //            UnidadeSeeder::class,
 //            UsuarioSeeder::class,

@@ -257,6 +257,11 @@ export class PlanoTrabalhoService {
     }
   }
 
+  public usuarioAssinou(assinaram: AssinaturaList, usuarioId?: string): boolean {
+    usuarioId = usuarioId || this.auth.usuario!.id;
+    return Object.values(assinaram).some(arrayAssinaturas => (arrayAssinaturas || []).includes(usuarioId!));
+  }
+
   public assinaturasFaltantes(exigidas: AssinaturaList, assinaram: AssinaturaList): AssinaturaList {
     return {
       "participante": exigidas.participante.filter(x => !assinaram.participante.includes(x)),
