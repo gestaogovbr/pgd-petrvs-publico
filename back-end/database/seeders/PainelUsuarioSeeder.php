@@ -104,7 +104,7 @@ class PainelUsuarioSeeder extends Seeder
         ]);
 
         PainelUsuario::create([
-            'email' => 'diego.braga@firstbps.com.br',
+            'email' => 'diegobraga7@gmail.com',
             'nome' => 'Diego Braga',
             'password' => md5('petrvs@123'),
             'cpf' => '00623555685',
