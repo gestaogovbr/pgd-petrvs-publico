@@ -94,7 +94,7 @@ class PainelUsuarioSeeder extends Seeder
         ]);
 
         PainelUsuario::create([
-            'email' => 'thiago.crispim@gestao.gov.br',
+            'email' => 'tcrispim.digital@gmail.com',
             'nome' => 'thiago crispim',
             'password' => md5('petrvs@123'),
             'cpf' => '00623555685',
