@@ -725,8 +725,8 @@ class PlanoTrabalhoService extends ServiceBase
           ['start' => UtilService::asDateTime($p->data_inicio), 'end' => UtilService::asDateTime($p->data_fim)],
           ['start' => UtilService::asDateTime($planoTrabalho["data_inicio"]), 'end' => UtilService::asDateTime($planoTrabalho["data_fim"])]
         ]) != null)) == 0;
-      $result["unidadePlanoEhLotacao"] = $this->usuario->isLotacao(null, $planoTrabalho['unidade_id']);
-      $result["usuarioEhParticipanteHabilitado"] = $this->usuario->isParticipanteHabilitado(null, $planoTrabalho["programa_id"]);
+      $result["unidadePlanoEhLotacao"] = $this->usuarioService->isLotacao(null, $planoTrabalho['unidade_id']);
+      $result["usuarioEhParticipanteHabilitado"] = $this->usuarioService->isParticipanteHabilitado(null, $planoTrabalho["programa_id"]);
       $result["usuarioEhParticipantePlano"] = parent::loggedUser()->id == $planoTrabalho["usuario_id"];
       $result["usuarioJaAssinouTCR"] = !$this->usuarioFaltaAssinar(null, $planoTrabalho);
       return $this->setBuffer("buscaCondicoes", $entity["id"], $result);

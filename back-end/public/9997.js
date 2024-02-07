@@ -587,6 +587,7 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
         */
         break;
       case 'ATIVO':
+        // result.push(this.BOTAO_ASSINAR)
         /**
           - botões-padrão:
             - 'Consultar'. Condições para ser exibido: vide RN_PTR_S;
@@ -697,6 +698,8 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
               validoTabela1 = gestorLogado;
             } else if (usuarioEhParticipante) {
               validoTabela1 = planoTrabalho._metadata?.usuarioEhParticipanteHabilitado;
+            } else {
+              validoTabela1 = gestorLogado || planoTrabalho._metadata?.atribuicoesLogado.gestorDelegado;
             }
             let condition1 = this.auth.hasPermissionTo("MOD_PTR_EDT");
             let condition2 = this.planoTrabalhoService.isValido(planoTrabalho);
@@ -739,6 +742,8 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
               validoTabela1 = planoTrabalho._metadata?.atribuicoesLogado.gestor || planoTrabalho._metadata?.atribuicoesLogado.gestorSubstituto || usuarioEhParticipante && planoTrabalho._metadata?.usuarioEhParticipanteHabilitado;
             } else if (usuarioEhParticipante) {
               validoTabela1 = gestorLogado || planoTrabalho._metadata?.usuarioEhParticipanteHabilitado;
+            } else {
+              validoTabela1 = gestorLogado;
             }
             return planoIncluido && validoTabela1 && !assinaturasExigidas?.todas?.length && planoPossuiEntrega;
           case this.BOTAO_CANCELAR_ASSINATURA:
