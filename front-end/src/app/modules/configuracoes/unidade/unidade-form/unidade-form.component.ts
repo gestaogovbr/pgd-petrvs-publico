@@ -80,7 +80,7 @@ export class UnidadeFormComponent extends PageFormBase<Unidade, UnidadeDaoServic
       uf: { default: "" },
       instituidora: { default: false },
       informal: { default: true },
-      atividades_arquivamento_automatico: { default: 1 },
+      atividades_arquivamento_automatico: { default: 0 },
       distribuicao_forma_contagem_prazos: { default: "DIAS_UTEIS" },
       entrega_forma_contagem_prazos: { default: "HORAS_UTEIS" },
       notificacoes: { default: {} },
