@@ -41,6 +41,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
   public multiselectAllFields: string[] = ["tipo_modalidade_id", "usuario_id", "unidade_id", "documento_id"];
   public relatorios: LookupItem[] = [{ key: "PTR_LISTA", value: "Lista Planos de Trabalhos" }];
   public botoes: ToolbarButton[] = [];
+  public planoTrabalhoEditavel: boolean = false;
   public BOTAO_ALTERAR: ToolbarButton;
   public BOTAO_ARQUIVAR: ToolbarButton;
   public BOTAO_ASSINAR: ToolbarButton;
@@ -161,8 +162,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
             - 'Consultar'. Condições para ser exibido: vide RN_PTR_S;
         */
         break;
-      case 'ATIVO':
-        // result.push(this.BOTAO_ASSINAR)
+      case 'ATIVO':         
         /**
           - botões-padrão:
             - 'Consultar'. Condições para ser exibido: vide RN_PTR_S;
@@ -275,9 +275,9 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
     ];
     let assinaturasFaltantes = this.planoTrabalhoService.assinaturasFaltantes(planoTrabalho._metadata?.assinaturasExigidas, planoTrabalho._metadata?.jaAssinaramTCR);
     let haAssinaturasFaltantes = !!assinaturasFaltantes.participante.length || !!assinaturasFaltantes.gestores_unidade_executora.length || !!assinaturasFaltantes.gestores_unidade_lotacao.length || !!assinaturasFaltantes.gestores_entidade.length;
-    let usuarioEhGestorUnidadeExecutora: boolean = this.unidadeService.isGestorUnidade(planoTrabalho.unidade_id);
-    let usuarioJaAssinouTCR: boolean = !!planoTrabalho._metadata?.jaAssinaramTCR?.todas?.includes(this.auth.usuario?.id!);
-    let assinaturaUsuarioEhExigida: boolean = !!todasAssinaturasExigidas?.includes(this.auth.usuario?.id!);
+    let usuarioEhGestorUnidadeExecutora = this.unidadeService.isGestorUnidade(planoTrabalho.unidade_id);
+    let usuarioJaAssinouTCR = this.planoTrabalhoService.usuarioAssinou(planoTrabalho._metadata?.jaAssinaramTCR);
+    let assinaturaUsuarioEhExigida = !!todasAssinaturasExigidas?.includes(this.auth.usuario?.id!);
     let planoIncluido = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'INCLUIDO';
     let usuarioEhParticipante = this.auth.usuario?.id == planoTrabalho.usuario_id;
     let planoAguardandoAssinatura = this.planoTrabalhoService.situacaoPlano(planoTrabalho) == 'AGUARDANDO_ASSINATURA';
@@ -319,12 +319,15 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
               validoTabela1 = gestorLogado;
             } else if (usuarioEhParticipante) { 
               validoTabela1 = planoTrabalho._metadata?.usuarioEhParticipanteHabilitado;
+            } else {
+              validoTabela1 = gestorLogado || planoTrabalho._metadata?.atribuicoesLogado.gestorDelegado;
             }
             let condition1 = this.auth.hasPermissionTo("MOD_PTR_EDT");
             let condition2 = this.planoTrabalhoService.isValido(planoTrabalho);
             let condition3 = (planoIncluido || planoAguardandoAssinatura) && validoTabela1;
             let condition4 = planoAtivo && validoTabela1 && this.auth.hasPermissionTo("MOD_PTR_EDT_ATV");
-            return condition1 && condition2 && (condition3 || condition4);
+            this.planoTrabalhoEditavel = condition1 && condition2 && (condition3 || condition4);
+            return this.planoTrabalhoEditavel;
           case this.BOTAO_ARQUIVAR:
             /*
             (RN_PTR_N) Condições para que um Plano de Trabalho possa ser arquivado:
@@ -340,7 +343,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
                 - o usuário logado precisa atender os critérios da ação Assinar da TABELA_1, e
                 - a assinatura do usuário logado precisa ser uma das exigidas pelo Programa de Gestão, respeitando a TABELA_3, e ele não ter ainda assinado;
               - Enquanto faltar assinatura no TCR, o plano vai para o (ou permanece no) status de 'AGUARDANDO_ASSINATURA'. Quando o último assinar o TCR, o plano vai para o status 'ATIVO';                  
-            */
+            */           
             let condicao1 = (planoIncluido || planoAguardandoAssinatura);
             let condicao2 = planoPossuiEntrega;
             let condicao3 = assinaturaUsuarioEhExigida && !usuarioJaAssinouTCR;
@@ -361,6 +364,8 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
               validoTabela1 = planoTrabalho._metadata?.atribuicoesLogado.gestor || planoTrabalho._metadata?.atribuicoesLogado.gestorSubstituto || (usuarioEhParticipante && planoTrabalho._metadata?.usuarioEhParticipanteHabilitado);
             } else if (usuarioEhParticipante) { 
               validoTabela1 = gestorLogado || planoTrabalho._metadata?.usuarioEhParticipanteHabilitado;
+            } else {
+              validoTabela1 = gestorLogado;
             }
             return planoIncluido && validoTabela1 && !assinaturasExigidas?.todas?.length && planoPossuiEntrega;
           case this.BOTAO_CANCELAR_ASSINATURA:
@@ -396,7 +401,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
                 - devem existir assinaturas exigíveis ainda pendentes; e
                 - o plano precisa possuir ao menos uma entrega.
             */
-            return planoIncluido && (!assinaturaUsuarioEhExigida || usuarioJaAssinouTCR) && haAssinaturasFaltantes && planoPossuiEntrega;
+            return planoIncluido && (!assinaturaUsuarioEhExigida || usuarioJaAssinouTCR) && haAssinaturasFaltantes && planoPossuiEntrega && (usuarioEhParticipante || usuarioEhGestorUnidadeExecutora);
           case this.BOTAO_REATIVAR:
             /*
               (RN_PTR_W) REATIVAR

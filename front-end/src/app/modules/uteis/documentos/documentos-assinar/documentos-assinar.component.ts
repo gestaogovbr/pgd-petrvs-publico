@@ -25,6 +25,9 @@ export class DocumentosAssinarComponent extends PageFrameBase {
     {key: "DIGITAL", value: "Assinatura Digital"}
   ];
 
+  isProcessandoClique = false;
+
+
   constructor(public injector: Injector) {
     super(injector);
     this.documentoDao = injector.get<DocumentoDaoService>(DocumentoDaoService);
@@ -52,6 +55,8 @@ export class DocumentosAssinarComponent extends PageFrameBase {
   }
 
   public async onAssinarClick() {
+    if (this.isProcessandoClique) return;
+    this.isProcessandoClique = true;
     this.dialog.showSppinerOverlay("Assinando . . .");
     try {
       let response = await this.documentoDao.assinar(this.documentos.map(x => x.id));
@@ -60,11 +65,12 @@ export class DocumentosAssinarComponent extends PageFrameBase {
         if(documento) documento.assinaturas = atualizado.assinaturas;
       });
       this.go.setModalResult(this.modalRoute?.queryParams?.idroute, response);
-      this.close();
+      this.close();      
     } catch (error: any) {
-      this.error(error?.message || error || "Erro desconhecido");
+      this.error(error?.error.message || error?.message || error || "Erro desconhecido");
     } finally {
       this.dialog.closeSppinerOverlay();
+      this.isProcessandoClique = false;
     }
   }
 

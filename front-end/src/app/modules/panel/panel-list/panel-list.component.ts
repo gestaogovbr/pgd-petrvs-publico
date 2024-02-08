@@ -5,6 +5,7 @@ import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 import { TenantDaoService } from 'src/app/dao/tenant-dao.service';
 import { Tenant } from 'src/app/models/tenant.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
+import {AuthPanelService} from "../../../services/auth-panel.service";
 
 @Component({
   selector: 'app-panel-list',
@@ -38,10 +39,10 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
     }
   ];
 
-  constructor(public injector: Injector, dao: TenantDaoService) {
+  constructor(public injector: Injector, dao: TenantDaoService,private authService: AuthPanelService) {
     super(injector, Tenant, TenantDaoService);
     /* Inicializações */
-    this.title = "Ambiente "+this.gb.ENV;
+    this.setTitleUser();
     this.code = "PANEL";
     this.filter = this.fh.FormBuilder({});
     this.options.push({
@@ -189,6 +190,12 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
         });
       }
     });
+  }
+  private setTitleUser(){
+    this.authService.detailUser()
+        .then((user) => {
+          this.title = "Bem vindo "+user.nome+" - Voce está em Ambiente "+this.gb.ENV;
+        })
   }
 }
 

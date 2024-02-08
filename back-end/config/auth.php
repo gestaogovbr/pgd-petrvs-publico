@@ -46,6 +46,10 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
+        'painel' => [
+            'driver' => 'session',
+            'provider' => 'painel_users',
+        ]
     ],
 
     /*
@@ -70,11 +74,10 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\Usuario::class,
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'painel_users' => [
+            'driver' => 'painel',
+            'model' => App\Models\PainelUsuario::class,
+        ],
     ],
 
     /*
