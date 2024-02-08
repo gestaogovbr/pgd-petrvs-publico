@@ -33,13 +33,12 @@ export class PanelLoginComponent {
                     // Navegar para a rota desejada após o login bem-sucedido
                     this.router.navigate(['/panel']); // Substitua '/panel' pela rota desejada
                 } else {
-                    // Exibir um alerta para o usuário sobre o erro de login
                     alert('Credenciais inválidas. Por favor, tente novamente.');
                 }
             })
             .catch(error => {
-                // Tratar outros erros de login aqui, por exemplo, exibindo uma mensagem de erro
-                console.error('Erro durante o login:', error);
+                alert('Erro durante o login:'+error.error.error);
+                console.error('Erro durante o login:', error.error.error);
             });
     }
 
