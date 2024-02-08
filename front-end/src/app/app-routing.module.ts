@@ -10,8 +10,10 @@ import { TesteComponent } from './modules/teste/teste.component';
 import { ConfigResolver } from './resolvies/config.resolver';
 import { LoginUnicoComponent } from "./modules/login/login-unico/login-unico.component";
 import {PanelGuard} from "./guards/panel.guard";
+import {PanelLoginComponent} from "./modules/panel/panel-login/panel-login.component";
 
 const routes: Routes = [
+  { path: 'panel-login', component: PanelLoginComponent},
   { path: 'panel', loadChildren: () => import('./modules/panel/panel.module').then(m => m.PanelModule),canActivate: [PanelGuard] },
   { path: 'teste', component: TesteComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Teste" } },
   { path: 'teste/calcula-tempo', component: TesteFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Teste - CalculaTempo" } },

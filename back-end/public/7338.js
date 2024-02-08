@@ -397,7 +397,7 @@ class AtividadeService {
       color: "danger"
     });
     if (consolidacao && (atividade.data_inicio && this.util.asTimestamp(atividade.data_inicio) < this.util.asTimestamp(consolidacaoDataInicio) || atividade.data_entrega && this.util.asTimestamp(atividade.data_entrega) > this.util.asTimestamp(consolidacaoDataFim))) {
-      console.log(atividade.data_inicio, consolidacao.data_inicio, atividade.data_entrega, consolidacao.data_fim);
+      //console.log(atividade.data_inicio, consolidacao.data_inicio, atividade.data_entrega, consolidacao!.data_fim);
       result.push({
         data: {
           status: "EXTRAPOLADO",
