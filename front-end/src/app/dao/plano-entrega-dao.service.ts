@@ -170,6 +170,19 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
     });
   }
 
+  public permissaoIncluir(unidade_id: string,): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/permissao-incluir', { 
+        unidade_id: unidade_id
+      }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }
+      }, error => reject(error));
+    });
+  }
 
 }
 

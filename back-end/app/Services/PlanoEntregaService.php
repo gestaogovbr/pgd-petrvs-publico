@@ -450,6 +450,37 @@ class PlanoEntregaService extends ServiceBase
     return true;
   }
 
+  public function validaPermissaoIncluir($dataOrEntity)
+  
+  {
+    /*  (RN_PENT_Z) INCLUIR/INSERIR
+        - o usuário logado precisa possuir a capacidade "MOD_PENT_INCL", e:
+        - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou gestor da sua Unidade-pai (Unidade A)(RN_PENT_B); ou
+        - o usuário precisa possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a Unidade-pai (Unidade A) da Unidade do plano (Unidade B) e possuir a capacidade "MOD_PENT_EDT_FLH"; ou
+        - o usuário precisa possuir também a capacidade "MOD_PENT_QQR_UND" (independente de qualquer outra condição);
+    */
+
+      $usuario = Usuario::find(parent::loggedUser()->id);
+      $dataOrEntity['unidade'] = Unidade::find($dataOrEntity['unidade_id'])->toArray();
+      
+      $condition1 =  $this->usuario->isGestorUnidade($dataOrEntity['unidade_id']) || 
+          !empty($dataOrEntity['unidade']['unidade_pai_id']) && $this->usuario->isGestorUnidade($planoEntrega['unidade']['unidade_pai_id']);
+      $condition2 = !empty($dataOrEntity['unidade']['unidade_pai_id']) && 
+          UsuarioService::isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $dataOrEntity['unidade']['unidade_pai_id']) &&
+          $usuario->hasPermissionTo('MOD_PENT_EDT_FLH');
+      $condition3 = $usuario->hasPermissionTo('MOD_PENT_QQR_UND');
+      
+      if (!$condition3 && !($condition1 || $condition2)) {
+          throw new ServerException("ValidateUsuario", "O usuário logado precisa atender a pelo menos uma das seguintes condições:\n" .
+              "1. ser um dos gestores da unidade do plano ou da sua unidade-pai;\n" .
+              "2. ser homologador de plano de entrega da unidade-pai do plano e possuir a capacidade MOD_PENT_EDT_FLH;\n" .
+              "3. possuir a capacidade MOD_PENT_QQR_UND.\n[ver RN_PENT_Z]");
+      }else{
+        return true;
+      }
+
+  }
+
   /**
    *  Verifica se algumas condições estão atendidas, antes de realizar a inserção/alteração do Plano de Entregas: 
    *  - as datas do Plano de Entregas devem se encaixar na duração do Programa de Gestão;
@@ -458,22 +489,10 @@ class PlanoEntregaService extends ServiceBase
    */
   public function validateStore($dataOrEntity, $unidade, $action)
   {
-    /*  (RN_PENT_Z) INCLUIR/INSERIR
-        - o usuário logado precisa possuir a capacidade "MOD_PENT_INCL", e:
-            - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou gestor da sua Unidade-pai (Unidade A)(RN_PENT_B); ou
-            - o usuário precisa possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a Unidade-pai (Unidade A) da Unidade do plano (Unidade B) e possuir a capacidade "MOD_PENT_EDT_FLH"; ou
-            - o usuário precisa possuir também a capacidade "MOD_PENT_QQR_UND" (independente de qualquer outra condição);
-    */
+    $this->validaPermissaoIncluir($dataOrEntity);
+
     $usuario = Usuario::find(parent::loggedUser()->id);
-    $dataOrEntity['unidade'] = Unidade::find($dataOrEntity['unidade_id'])->toArray();
-    $condicoes = $this->buscaCondicoes($dataOrEntity);
-    $condition1 = $condicoes['gestorUnidadePlano'] || $condicoes['gestorUnidadePaiUnidadePlano'];
-    $condition2 = !empty($dataOrEntity['unidade']['unidade_pai_id']) && $this->usuarioService->isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $dataOrEntity['unidade']['unidade_pai_id']) && $usuario->hasPermissionTo('MOD_PENT_EDT_FLH');
-    $condition3 = $usuario->hasPermissionTo('MOD_PENT_QQR_UND');
-    if (!$condition3 && !($condition1 || $condition2)) throw new ServerException("ValidateUsuario", "O usuário logado precisa atender a pelo menos uma das seguintes condições:\n" .
-      "1. ser um dos gestores da unidade do plano ou da sua unidade-pai;\n" .
-      "2. ser homologador de plano de entrega da unidade-pai do plano e possuir a capacidade MOD_PENT_EDT_FLH;\n" .
-      "3. possuir a capacidade MOD_PENT_QQR_UND.\n[ver RN_PENT_Z]");
+
     if (!$usuario->hasPermissionTo('MOD_PENT_ENTR_EXTRPL')) {
       if (!$this->verificaDuracaoPlano($dataOrEntity) || !$this->verificaDatasEntregas($dataOrEntity)) throw new ServerException("ValidatePlanoEntrega", "O prazo das datas não satisfaz a duração estipulada no programa.");
     }    
