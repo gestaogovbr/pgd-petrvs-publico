@@ -610,7 +610,6 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
         try {
           yield _this2.integranteDao.carregarIntegrantes(entity.id, "").then(resposta => integrantes = resposta.integrantes.filter(x => x.atribuicoes?.length > 0));
           integrantes.forEach(integrante => usuarioIds.push(integrante.id));
-          console.log(usuarioIds, "IDS");
           perfis = yield _this2.usuarioDao.query({
             where: ["id", "in", usuarioIds]
           }).asPromise();

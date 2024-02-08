@@ -1011,7 +1011,7 @@ function PlanoTrabalhoConsolidacaoFormComponent_ng_template_7_ng_template_6_Temp
   }
   if (rf & 2) {
     const ctx_r32 = _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵnextContext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("size", 12)("rows", 2)("control", ctx_r32.formEdit.controls.descricao);
+    _angular_core__WEBPACK_IMPORTED_MODULE_31__["ɵɵproperty"]("size", 12)("rows", 2)("control", ctx_r32.formAtividade.controls.descricao);
   }
 }
 function PlanoTrabalhoConsolidacaoFormComponent_ng_template_7_ng_template_9_badge_1_Template(rf, ctx) {
@@ -1757,6 +1757,7 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
     var _this6 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let result = undefined;
+      console.log("AQIO");
       _this6.gridAtividades.error = "";
       _this6.formAtividade.markAllAsTouched();
       if (_this6.formAtividade.valid) {
@@ -1882,25 +1883,25 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
   onColumnAtividadeDescricaoEdit(row) {
     var _this10 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      _this10.formEdit.controls.descricao.setValue(row.descricao);
+      _this10.formAtividade.controls.descricao.setValue(row.descricao);
       //this.formEdit.controls.tipo_atividade_id.setValue(row.tipo_atividade_id);
-      _this10.formEdit.controls.comentarios.setValue(row.comentarios);
+      _this10.formAtividade.controls.comentarios.setValue(row.comentarios);
     })();
   }
   onColumnAtividadeDescricaoSave(row) {
     var _this11 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       try {
-        _this11.atividadeService.comentarioAtividade(_this11.tipoAtividade?.selectedEntity, _this11.formEdit.controls.comentarios);
+        _this11.atividadeService.comentarioAtividade(_this11.tipoAtividade?.selectedEntity, _this11.formAtividade.controls.comentarios);
         const saved = yield _this11.atividadeDao.update(row.id, {
-          descricao: _this11.formEdit.controls.descricao.value,
+          descricao: _this11.formAtividade.controls.descricao.value,
           //tipo_atividade_id: this.formEdit.controls.tipo_atividade_id.value,
-          comentarios: (_this11.formEdit.controls.comentarios.value || []).filter(x => ["ADD", "EDIT", "DELETE"].includes(x._status || ""))
+          comentarios: (_this11.formAtividade.controls.comentarios.value || []).filter(x => ["ADD", "EDIT", "DELETE"].includes(x._status || ""))
         });
-        row.descricao = _this11.formEdit.controls.descricao.value;
+        row.descricao = _this11.formAtividade.controls.descricao.value;
         //row.tipo_atividade_id = this.formEdit.controls.tipo_atividade_id.value;
         row.tipo_atividade = _this11.tipoAtividade?.selectedEntity || null;
-        row.comentarios = _this11.formEdit.controls.comentarios.value;
+        row.comentarios = _this11.formAtividade.controls.comentarios.value;
         return !!saved;
       } catch (error) {
         return false;

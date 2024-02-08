@@ -335,6 +335,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
 
   public async saveAtividade(form: FormGroup, row: any) {
     let result = undefined;
+    console.log("AQIO");
     this.gridAtividades!.error = "";
     this.formAtividade.markAllAsTouched();
     if (this.formAtividade!.valid) {
@@ -451,23 +452,23 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   }
 
   public async onColumnAtividadeDescricaoEdit(row: any) {
-    this.formEdit.controls.descricao.setValue(row.descricao);
+    this.formAtividade.controls.descricao.setValue(row.descricao);
     //this.formEdit.controls.tipo_atividade_id.setValue(row.tipo_atividade_id);
-    this.formEdit.controls.comentarios.setValue(row.comentarios);
+    this.formAtividade.controls.comentarios.setValue(row.comentarios);
   }
 
   public async onColumnAtividadeDescricaoSave(row: any) {
     try {
-      this.atividadeService.comentarioAtividade(this.tipoAtividade?.selectedEntity, this.formEdit!.controls.comentarios);
+      this.atividadeService.comentarioAtividade(this.tipoAtividade?.selectedEntity, this.formAtividade!.controls.comentarios);
       const saved = await this.atividadeDao!.update(row.id, {
-        descricao: this.formEdit.controls.descricao.value,
+        descricao: this.formAtividade.controls.descricao.value,
         //tipo_atividade_id: this.formEdit.controls.tipo_atividade_id.value,
-        comentarios: (this.formEdit.controls.comentarios.value || []).filter((x: Comentario) => ["ADD", "EDIT", "DELETE"].includes(x._status || ""))
+        comentarios: (this.formAtividade.controls.comentarios.value || []).filter((x: Comentario) => ["ADD", "EDIT", "DELETE"].includes(x._status || ""))
       });
-      row.descricao = this.formEdit.controls.descricao.value;
+      row.descricao = this.formAtividade.controls.descricao.value;
       //row.tipo_atividade_id = this.formEdit.controls.tipo_atividade_id.value;
       row.tipo_atividade = this.tipoAtividade?.selectedEntity || null;
-      row.comentarios = this.formEdit.controls.comentarios.value;
+      row.comentarios = this.formAtividade.controls.comentarios.value;
       return !!saved;
     } catch (error) {
       return false;
