@@ -96,7 +96,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AtividadeFormConcluirComponent: () => (/* binding */ AtividadeFormConcluirComponent)
 /* harmony export */ });
-/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/modules/base/page-form-base */ 1184);
 /* harmony import */ var src_app_dao_atividade_dao_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/dao/atividade-dao.service */ 84971);
@@ -221,13 +221,13 @@ function AtividadeFormConcluirComponent_ng_template_17_Template(rf, ctx) {
   if (rf & 2) {
     const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r7.form.controls.data_inicio)("labelInfo", "Data em que o usu\u00E1rio iniciou a " + ctx_r7.lex.translate("atividade"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 3)("control", ctx_r7.form.controls.data_inicio)("labelInfo", "Data em que o usu\u00E1rio iniciou a " + ctx_r7.lex.translate("atividade"));
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r7.form.controls.data_entrega)("labelInfo", "Data da conclus\u00E3o da " + ctx_r7.lex.translate("atividade"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 3)("control", ctx_r7.form.controls.data_entrega)("labelInfo", "Data da conclus\u00E3o da " + ctx_r7.lex.translate("atividade"));
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r7.form.controls.tempo_despendido)("labelInfo", "Calculado no fim da " + ctx_r7.lex.translate("atividade") + ", sendo o tempo l\u00EDquido (considerando pausas)");
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 3)("control", ctx_r7.form.controls.tempo_despendido)("labelInfo", "Calculado no fim da " + ctx_r7.lex.translate("atividade") + ", sendo o tempo l\u00EDquido (considerando pausas)");
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r7.form.controls.data_inicio)("labelInfo", "Data de arquivamento da " + ctx_r7.lex.translate("atividade"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 3)("control", ctx_r7.form.controls.data_inicio)("labelInfo", "Data de arquivamento da " + ctx_r7.lex.translate("atividade"));
   }
 }
 function AtividadeFormConcluirComponent_separator_20_Template(rf, ctx) {
@@ -285,7 +285,7 @@ class AtividadeFormConcluirComponent extends src_app_modules_base_page_form_base
         default: null
       },
       arquivar: {
-        default: true
+        default: false
       },
       descricao_tecnica: {
         default: ""
@@ -304,7 +304,7 @@ class AtividadeFormConcluirComponent extends src_app_modules_base_page_form_base
   }
   loadData(entity, form) {
     var _this = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = Object.assign({}, form.value);
       formValue = _this.util.fillForm(formValue, entity);
       formValue.data_entrega = _this.auth.hora;
@@ -318,14 +318,14 @@ class AtividadeFormConcluirComponent extends src_app_modules_base_page_form_base
         value: x.descricao + (x.plano_entrega_entrega ? " (" + x.plano_entrega_entrega?.descricao + ")" : ""),
         data: x
       })) || [];
-      formValue.arquivar = true;
+      formValue.arquivar = false;
       form.patchValue(formValue);
       _this.onDataEntregaChange();
     })();
   }
   initializeData(form) {
     var _this2 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.entity = yield _this2.dao.getAtividade(_this2.urlParams.get("id"));
       yield _this2.loadData(_this2.entity, form);
     })();
@@ -461,7 +461,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AtividadeFormIniciarComponent: () => (/* binding */ AtividadeFormIniciarComponent)
 /* harmony export */ });
-/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_dao_atividade_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/atividade-dao.service */ 84971);
 /* harmony import */ var src_app_models_atividade_model__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/models/atividade.model */ 73101);
@@ -594,7 +594,7 @@ class AtividadeFormIniciarComponent extends src_app_modules_base_page_form_base_
   }
   onPlanoChange(event) {
     var _this = this;
-    (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (_this.entity && _this.planoTrabalho?.selectedItem?.data) {
         const planoTrabalho = _this.planoTrabalho?.selectedItem?.data;
         if (_this.planoTrabalhoSelecionado?.id != planoTrabalho.id) {
@@ -619,7 +619,7 @@ class AtividadeFormIniciarComponent extends src_app_modules_base_page_form_base_
   }
   loadData(entity, form) {
     var _this2 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = Object.assign({}, form.value);
       formValue = _this2.util.fillForm(formValue, entity);
       if (!formValue.usuario_id?.length) {
@@ -637,7 +637,7 @@ class AtividadeFormIniciarComponent extends src_app_modules_base_page_form_base_
   }
   initializeData(form) {
     var _this3 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this3.entity = yield _this3.dao.getById(_this3.urlParams.get("id"), _this3.join);
       yield _this3.loadData(_this3.entity, form);
     })();
@@ -741,7 +741,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AtividadeFormPausarComponent: () => (/* binding */ AtividadeFormPausarComponent)
 /* harmony export */ });
-/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_dao_atividade_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/atividade-dao.service */ 84971);
 /* harmony import */ var src_app_models_atividade_model__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/models/atividade.model */ 73101);
@@ -814,7 +814,7 @@ class AtividadeFormPausarComponent extends src_app_modules_base_page_form_base__
   }
   loadData(entity, form) {
     var _this = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       //this.reiniciar = !!this.queryParams?.reiniciar;
       let pausado = _this.entity?.pausas?.find(x => !x.data_fim);
       if (_this.reiniciar && !pausado) {
@@ -832,7 +832,7 @@ class AtividadeFormPausarComponent extends src_app_modules_base_page_form_base__
   }
   initializeData(form) {
     var _this2 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.entity = yield _this2.dao.getAtividade(_this2.urlParams.get("id"));
       yield _this2.loadData(_this2.entity, form);
     })();
@@ -911,7 +911,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AtividadeFormProrrogarComponent: () => (/* binding */ AtividadeFormProrrogarComponent)
 /* harmony export */ });
-/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_dao_atividade_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/atividade-dao.service */ 84971);
 /* harmony import */ var src_app_models_atividade_model__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/models/atividade.model */ 73101);
@@ -954,7 +954,7 @@ class AtividadeFormProrrogarComponent extends src_app_modules_base_page_form_bas
   }
   loadData(entity, form) {
     var _this = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = {
         data_distribuicao: entity.data_distribuicao,
         data_estipulada_entrega: entity.data_estipulada_entrega
@@ -967,7 +967,7 @@ class AtividadeFormProrrogarComponent extends src_app_modules_base_page_form_bas
   }
   initializeData(form) {
     var _this2 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.entity = yield _this2.dao.getAtividade(_this2.urlParams.get("id"));
       yield _this2.loadData(_this2.entity, form);
     })();
@@ -1041,7 +1041,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AtividadeFormTarefaComponent: () => (/* binding */ AtividadeFormTarefaComponent)
 /* harmony export */ });
-/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_modules_base_page_form_base__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/modules/base/page-form-base */ 1184);
 /* harmony import */ var src_app_listeners_listener_all_pages_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/listeners/listener-all-pages.service */ 79084);
@@ -1123,7 +1123,7 @@ class AtividadeFormTarefaComponent extends src_app_modules_base_page_form_base__
         default: 0
       },
       concluido: {
-        default: false
+        default: true
       },
       id_processo: {
         default: 0
@@ -1146,18 +1146,18 @@ class AtividadeFormTarefaComponent extends src_app_modules_base_page_form_base__
   }
   loadData(entity, form) {
     var _this = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = Object.assign({}, form.value);
       formValue = _this.util.fillForm(formValue, entity);
       yield _this.tipoTarefa?.loadSearch(entity.tipo_tarefa || formValue.tipo_tarefa_id);
-      formValue.concluido = !!entity.data_conclusao;
+      //formValue.concluido = !!entity.data_conclusao;
       formValue.comentarios = _this.comentario.orderComentarios(formValue.comentarios || []);
       form.patchValue(formValue);
     })();
   }
   initializeData(form) {
     var _this2 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.entity = _this2.metadata.tarefa;
       _this2.atividade = _this2.metadata.atividade;
       _this2.sei = _this2.metadata.sei;
@@ -1166,7 +1166,7 @@ class AtividadeFormTarefaComponent extends src_app_modules_base_page_form_base__
   }
   saveData(form) {
     var _this3 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this3.comentarios?.confirm();
       _this3.util.fillForm(_this3.entity, _this3.form.value);
       _this3.entity.tipo_tarefa = _this3.tipoTarefa?.selectedEntity;
@@ -1263,7 +1263,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AtividadeFormComponent: () => (/* binding */ AtividadeFormComponent)
 /* harmony export */ });
-/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_components_editable_form_editable_form_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/editable-form/editable-form.component */ 74040);
 /* harmony import */ var src_app_dao_atividade_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/atividade-dao.service */ 84971);
 /* harmony import */ var src_app_models_atividade_model__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/models/atividade.model */ 73101);
@@ -1685,7 +1685,7 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
   }
   onPlanoTrabalhoChange(event) {
     var _this = this;
-    (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (_this.entity) {
         const planoTrabalho = _this.usuario?.selectedEntity?.planos_trabalho?.find(x => x.id == _this.form.controls.plano_trabalho_id.value);
         if (planoTrabalho) {
@@ -1825,7 +1825,7 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
   }
   loadData(entity, form) {
     var _this2 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let formValue = Object.assign({}, form.value);
       formValue = _this2.util.fillForm(formValue, entity);
       _this2.planoTrabalhoSelecionado = entity.plano_trabalho;
@@ -1844,7 +1844,7 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
   }
   initializeData(form) {
     var _this3 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (_this3.isClonar) {
         const source = yield _this3.dao.getAtividade(_this3.urlParams.get("id"));
         _this3.entity = new src_app_models_atividade_model__WEBPACK_IMPORTED_MODULE_3__.Atividade();
@@ -2047,7 +2047,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("label", ctx.lex.translate("Plano de trabalho"))("size", 6)("control", ctx.form.controls.plano_trabalho_id)("items", ctx.planosTrabalhos)("labelInfo", ctx.lex.translate("Plano de trabalho"));
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("label", ctx.lex.translate("Entrega"))("size", 12)("control", ctx.form.controls.plano_trabalho_entrega_id)("items", ctx.entregas)("labelInfo", ctx.lex.translate("Entrega") + ctx.lex.translate(" plano de trabalho") + " que a " + ctx.lex.translate("atividade") + " \u00E9 referente");
+      _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("label", ctx.lex.translate("Entrega") + " (Descri\u00E7\u00E3o dos trabalhos)")("size", 12)("control", ctx.form.controls.plano_trabalho_entrega_id)("items", ctx.entregas)("labelInfo", ctx.lex.translate("Entrega") + ctx.lex.translate(" plano de trabalho") + " que a " + ctx.lex.translate("atividade") + " \u00E9 referente");
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("ngIf", !(_r6 == null ? null : _r6.selectedItem == null ? null : _r6.selectedItem.data == null ? null : _r6.selectedItem.data.tipo_modalidade == null ? null : _r6.selectedItem.data.tipo_modalidade.atividade_esforco))("ngIfElse", _r9);
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](3);
@@ -2070,7 +2070,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AtividadeHierarquiaComponent: () => (/* binding */ AtividadeHierarquiaComponent)
 /* harmony export */ });
-/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_dao_atividade_dao_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/dao/atividade-dao.service */ 84971);
 /* harmony import */ var src_app_modules_base_page_base__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/modules/base/page-base */ 17112);
 /* harmony import */ var _plano_entrega_plano_entrega_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../plano-entrega/plano-entrega.service */ 77447);
@@ -2315,7 +2315,7 @@ class AtividadeHierarquiaComponent extends src_app_modules_base_page_base__WEBPA
   }
   loadAtividade(atividade_id) {
     var _this = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       const result = yield _this.atividadeDao.getHierarquia(atividade_id);
       if (result) {
         _this.atividade = result;
@@ -2358,7 +2358,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AtividadeListKanbanComponent: () => (/* binding */ AtividadeListKanbanComponent)
 /* harmony export */ });
-/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var _atividade_list_base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../atividade-list-base */ 94180);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ 51197);
 
@@ -2641,7 +2641,7 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
       color: "btn-outline-success",
       label: "Incluir",
       onClick: function () {
-        var _ref = (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+        var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
           return yield _this.add();
         });
         return function onClick() {
@@ -2666,7 +2666,7 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
       color: "btn-outline-primary",
       hint: "Incluir",
       onClick: function () {
-        var _ref2 = (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+        var _ref2 = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
           return yield _this.add();
         });
         return function onClick() {
@@ -2867,7 +2867,7 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
   }
   editEtiquetas(docker) {
     var _this2 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       const label = _this2.labels[docker.key];
       const allUsed = _this2.labels.reduce((a, v, i) => {
         if (v.labels.length && i != docker.key) a.push(v.labels[0].key);
@@ -2901,7 +2901,7 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
   }
   saveEtiquetas(docker) {
     var _this3 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       const key = _this3.formEdit.controls.etiqueta.value;
       if (key?.length) {
         const label = _this3.labels[docker.key];
@@ -2916,7 +2916,7 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
   }
   cancelEtiquetas(docker) {
     var _this4 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       const label = _this4.labels[docker.key];
       if (!label.labels?.length) {
         _this4.labels.splice(docker.key, 1);
@@ -2926,7 +2926,7 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
   }
   deleteEtiquetas(docker) {
     var _this5 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this5.labels.splice(docker.key, 1);
       _this5.kanbanEtiquetas?.refreshDoubleScrollbar();
       if (_this5.query) _this5.onQueryLoad(_this5.query.rows);
@@ -3149,7 +3149,7 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
   }
   onUnidadeChange(event) {
     var _this6 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let unidade_selecionada = yield _this6.unidadeDao.getById(_this6.filter?.controls.unidade_id.value, ['planos_entrega']);
       _this6.planosEntregas = unidade_selecionada?.planos_entrega?.map(x => Object.assign({
         key: x.id,
@@ -3159,7 +3159,7 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
   }
   onPlanoEntregaChange(event) {
     var _this7 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let plano_entrega_selecionado = [];
       let unidade_selecionada = yield _this7.unidadeDao.getById(_this7.filter?.controls.unidade_id.value, ['planos_entrega.entregas']);
       unidade_selecionada?.planos_entrega?.forEach(element => {
@@ -3304,7 +3304,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AtividadeListTarefaComponent: () => (/* binding */ AtividadeListTarefaComponent)
 /* harmony export */ });
-/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @angular/forms */ 70997);
 /* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../components/grid/grid.component */ 73150);
 /* harmony import */ var src_app_dao_atividade_tarefa_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/atividade-tarefa-dao.service */ 949);
@@ -3441,7 +3441,7 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
       hint: "Incluir comentário"
     };
     this.editTarefa = /*#__PURE__*/function () {
-      var _ref = (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (row) {
+      var _ref = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (row) {
         _this.go.navigate({
           route: ['gestao', 'atividade', 'tarefa']
         }, {
@@ -3451,7 +3451,7 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
           },
           modalClose: modalResult => {
             if (modalResult) {
-              (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+              (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
                 const tarefas = _this.control.value;
                 const index = tarefas.findIndex(x => x.id == row.id);
                 if (index >= 0) {
@@ -3522,7 +3522,7 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
   }
   addTarefa() {
     var _this2 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       const tarefa = new src_app_models_atividade_tarefa_model__WEBPACK_IMPORTED_MODULE_4__.AtividadeTarefa();
       tarefa.id = _this2.dao.generateUuid();
       tarefa.usuario = _this2.auth.usuario;
@@ -3539,7 +3539,7 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
         },
         modalClose: modalResult => {
           if (modalResult) {
-            (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+            (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
               const tarefas = _this2.control.value || [];
               if (_this2.isPersist && _this2.atividade?.tarefas) {
                 _this2.grid.error = undefined;
@@ -3567,7 +3567,7 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
   }
   deleteTarefa(row) {
     var _this3 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       const confirm = yield _this3.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
       _this3.grid.error = undefined;
       if (confirm) {
@@ -3600,13 +3600,13 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
   }*/
   onColumnConcluidoEdit(row) {
     var _this4 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this4.formEdit.controls.concluido.setValue(!!row.data_conclusao);
     })();
   }
   onColumnConcluidoSave(row) {
     var _this5 = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       try {
         const data_conclusao = _this5.formEdit.controls.concluido.value && !!row.data_conclusao ? _this5.auth.hora : row.data_conclusao;
         const saved = yield _this5.dao.update(row.id, {
@@ -3754,7 +3754,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AtividadeListComponent: () => (/* binding */ AtividadeListComponent)
 /* harmony export */ });
-/* harmony import */ var _home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
+/* harmony import */ var _usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 19369);
 /* harmony import */ var src_app_modules_base_page_base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/modules/base/page-base */ 17112);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ 51197);
 
@@ -3814,7 +3814,7 @@ class AtividadeListComponent extends src_app_modules_base_page_base__WEBPACK_IMP
   }
   onSelectTab(tab) {
     var _this = this;
-    return (0,_home_marcocoelho_projetos_petrvs_front_end_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this.activeTab = tab.key;
       if (_this.viewInit) _this.saveUsuarioConfig({
         active_tab: _this.activeTab
