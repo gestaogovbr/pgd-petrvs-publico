@@ -326,8 +326,8 @@ export class PlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, Plan
             let condition2 = this.planoTrabalhoService.isValido(planoTrabalho);
             let condition3 = (planoIncluido || planoAguardandoAssinatura) && validoTabela1;
             let condition4 = planoAtivo && validoTabela1 && this.auth.hasPermissionTo("MOD_PTR_EDT_ATV");
-            this.planoTrabalhoEditavel = condition1 && condition2 && (condition3 || condition4);
-            return this.planoTrabalhoEditavel;
+            planoTrabalho._metadata = { ...planoTrabalho._metadata, editavel: condition1 && condition2 && (condition3 || condition4)};
+            return condition1 && condition2 && (condition3 || condition4);
           case this.BOTAO_ARQUIVAR:
             /*
             (RN_PTR_N) Condições para que um Plano de Trabalho possa ser arquivado:

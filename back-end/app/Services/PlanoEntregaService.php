@@ -52,7 +52,7 @@ class PlanoEntregaService extends ServiceBase
     return $planoEntrega;
   }
 
-  public function afterStore($planoEntrega, $action)
+  public function extraStore($planoEntrega, $unidade, $action)
   {
     $usuario = parent::loggedUser();
     switch ($action) {
@@ -509,7 +509,7 @@ class PlanoEntregaService extends ServiceBase
       if (!$condicoes['planoValido']) throw new ServerException("ValidatePlanoEntrega", "O plano de entregas não é válido, ou seja, foi apagado, cancelado ou arquivado.\n[ver RN_PENT_L]");
       $condition1 = ($condicoes['planoIncluido'] || $condicoes['planoHomologando']) && ($condicoes['gestorUnidadePlano'] || $condicoes['unidadePlanoEhLotacao']);
       $condition2 = $usuario->hasPermissionTo("MOD_PENT_EDT_FLH") && $condicoes['gestorUnidadePaiUnidadePlano'];
-      $condition3 = !empty($data['entity']['unidade']['unidade_pai_id']) && $this->usuarioService->isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $data['entity']['unidade']['unidade_pai_id']);
+      $condition3 = !empty($dataOrEntity['unidade']['unidade_pai_id']) && $this->usuarioService->isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $dataOrEntity['unidade']['unidade_pai_id']);
       $condition4 = $condicoes['planoAtivo'] && $condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo(['MOD_PENT_EDT_ATV_HOMOL', 'MOD_PENT_EDT_ATV_ATV']);
       $condition5 = $usuario->hasPermissionTo('MOD_PENT_QQR_UND');
       if (!$condition5 && !($condition1 || $condition2 || $condition3 || $condition4)) throw new ServerException("ValidatePlanoEntrega", "Ao menos uma das seguintes condições precisa ser atendida:\n" .
