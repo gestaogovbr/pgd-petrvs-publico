@@ -747,7 +747,7 @@ class PlanoEntregaEntregasPlanoTrabalhoComponent extends src_app_modules_base_pa
     this.cdRef.detectChanges();
     try {
       this.PlanoTrabalhoEntregaDao.query({
-        where: [["plano_entrega_entrega_id", "==", this._entregaId]],
+        where: [["plano_entrega_entrega_id", "==", this._entregaId], ['planoTrabalho.status', 'in', ['ATIVO', 'CONCLUIDO', 'AVALIADO']]],
         join: this.join
       }).asPromise().then(response => {
         response.forEach(item => {

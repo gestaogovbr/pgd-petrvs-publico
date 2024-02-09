@@ -450,7 +450,7 @@ class PlanoEntregaService extends ServiceBase
     return true;
   }
 
-  public function validaPermissaoIncluir($dataOrEntity)
+  public function validaPermissaoIncluir($dataOrEntity, $usuario)
 
   {
     /*  (RN_PENT_Z) INCLUIR/INSERIR
@@ -459,8 +459,6 @@ class PlanoEntregaService extends ServiceBase
         - o usuário precisa possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a Unidade-pai (Unidade A) da Unidade do plano (Unidade B) e possuir a capacidade "MOD_PENT_EDT_FLH"; ou
         - o usuário precisa possuir também a capacidade "MOD_PENT_QQR_UND" (independente de qualquer outra condição);
     */
-
-      $usuario = Usuario::find(parent::loggedUser()->id);
       $dataOrEntity['unidade'] = Unidade::find($dataOrEntity['unidade_id'])->toArray();
 
       $condition1 =  $this->usuario->isGestorUnidade($dataOrEntity['unidade_id']) ||
@@ -489,9 +487,12 @@ class PlanoEntregaService extends ServiceBase
    */
   public function validateStore($dataOrEntity, $unidade, $action)
   {
-    $this->validaPermissaoIncluir($dataOrEntity);
 
     $usuario = Usuario::find(parent::loggedUser()->id);
+
+    $this->validaPermissaoIncluir($dataOrEntity, $usuario);
+
+   
 
     if (!$usuario->hasPermissionTo('MOD_PENT_ENTR_EXTRPL')) {
       if (!$this->verificaDuracaoPlano($dataOrEntity) || !$this->verificaDatasEntregas($dataOrEntity)) throw new ServerException("ValidatePlanoEntrega", "O prazo das datas não satisfaz a duração estipulada no programa.");
