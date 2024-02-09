@@ -26,7 +26,7 @@ class UnidadeController extends ControllerBase
                 break;
         }
     }
-
+ 
     public function hierarquia(Request $request)
     {
         try {

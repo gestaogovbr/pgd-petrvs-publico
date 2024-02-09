@@ -43,9 +43,9 @@ export class UnidadeIntegranteDaoService extends DaoBaseService<UnidadeIntegrant
    * @param integrantesConsolidados 
    * @returns 
    */
-  public salvarIntegrantes(integrantesConsolidados: IntegranteConsolidado[]): Promise<IntegranteConsolidado[]> {
+  public salvarIntegrantes(integrantesConsolidados: IntegranteConsolidado[], metadata?: any): Promise<IntegranteConsolidado[]> {
     return new Promise<IntegranteConsolidado[]>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/salvar-integrantes', {integrantesConsolidados}).subscribe(response => {
+      this.server.post('api/' + this.collection + '/salvar-integrantes', {integrantesConsolidados, metadata}).subscribe(response => {
         if(response?.error) reject(response.error); else resolve(response?.data || null);
       }, 
       error => reject(error));
