@@ -3,8 +3,8 @@
     [save]="saveParticipante.bind(this)" [selectable]="selectable" [multiselectAllFields]="['usuario_id']"
     (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_PART_INCL')" [hasEdit]="false" [hasDelete]="false" [multiselectMenu]="multiselectMenu">
     <toolbar *ngIf="!selectable">
-        <input-switch [size]="3" labelPosition="left" label="Todos" controlName="todos" [labelInfo]="'Se OFF, retorna apenas ' + lex.translate('os usuários') + ' habilitados ' + lex.translate('no programa') + '. Se ON, inclui também os desabilitados.'"
-            [control]="filter!.controls.todos" (change)="grid!.reloadFilter()"></input-switch>
+        <input-switch [size]="3" labelPosition="left" label="Habilitados" controlName="habilitados" [labelInfo]="'Se ON, retorna apenas ' + lex.translate('os usuários') + ' habilitados ' + lex.translate('no programa') + '. Se OFF, retorna apenas os desabilitados.'"
+            [control]="filter!.controls.habilitados" (change)="grid!.reloadFilter()"></input-switch>
     </toolbar>
     <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [clear]="filterClear.bind(this)"
         [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)"
