@@ -564,7 +564,6 @@ class TemplateModule {
     ]
   });
 }
-
 (function () {
   (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵsetNgModuleScope"](TemplateModule, {
     declarations: [_template_form_template_form_component__WEBPACK_IMPORTED_MODULE_1__.TemplateFormComponent, _template_list_template_list_component__WEBPACK_IMPORTED_MODULE_2__.TemplateListComponent],
