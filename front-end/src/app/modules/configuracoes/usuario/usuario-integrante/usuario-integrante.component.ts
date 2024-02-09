@@ -32,6 +32,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   public unidadeDao: UnidadeDaoService;
   public usuarioDao: UsuarioDaoService;
   public perfilDao: PerfilDaoService;
+  public perfilUsuario: string = "";
 
   constructor(public injector: Injector) {
     super(injector);
@@ -65,9 +66,10 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     if (entity.id) {
       let integrantes: IntegranteConsolidado[] = [];
       try {
-        await this.integranteDao!.carregarIntegrantes("", entity.id).then( resposta => integrantes = resposta.integrantes.filter(x => x.atribuicoes?.length > 0));
+        await this.integranteDao!.carregarIntegrantes("", entity.id).then(resposta => integrantes = resposta.integrantes.filter(x => x.atribuicoes?.length > 0));
       } finally {
-        this.formPerfil.controls.perfil_id.setValue(entity.perfil_id);
+        this.perfilUsuario = entity.perfil_id;
+        this.formPerfil.controls.perfil_id.setValue(this.perfilUsuario);
         this.items = [];
         integrantes.forEach(i => this.items?.push(this.integranteService.completarIntegrante(i, i.id, entity.id, i.atribuicoes)));
         this.items = this.integranteService.ordenarIntegrantes(this.items);
@@ -77,11 +79,11 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     }
   }
 
-  public saveData(formPerfil: IIndexable): Promise<boolean> {
-    return new Promise<boolean>(async (resolve, reject) => {
-      let usuario: any = this.entity!; 
-      usuario.perfil_id = this.formPerfil.controls.perfil_id.value;
-        resolve(usuario);
+  public async salvarPerfil() {
+    this.submitting = true;
+    this.usuarioDao?.update(this.entity!.id, { perfil_id: this.formPerfil.controls.perfil_id.value }, []).then(usuario => {
+      this.perfilUsuario = usuario.perfil_id;
+      this.submitting = false;
     });
   }
 
@@ -238,13 +240,13 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
           if (this.grid) this.grid!.error = "";
         } else {                // se não persistente
           row.id = this.unidade?.selectedEntity.id,
-          this.grid!.items = this.integranteService.substituirItem({
-            id: row.id, 
-            itens: this.grid?.items || [], 
-            apelidoOuSigla: this.unidade?.selectedItem?.entity.sigla, 
-            nome: this.unidade?.selectedItem?.entity.nome, 
-            codigo: this.unidade?.selectedItem?.entity.codigo 
-          }, novasAtribuicoes.map((x: LookupItem) => x.key), new Usuario(this.entity!));
+            this.grid!.items = this.integranteService.substituirItem({
+              id: row.id,
+              itens: this.grid?.items || [],
+              apelidoOuSigla: this.unidade?.selectedItem?.entity.sigla,
+              nome: this.unidade?.selectedItem?.entity.nome,
+              codigo: this.unidade?.selectedItem?.entity.codigo
+            }, novasAtribuicoes.map((x: LookupItem) => x.key), new Usuario(this.entity!));
           this.cdRef.detectChanges();
         }
       } catch (error: any) {
@@ -257,6 +259,10 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
       await this.dialog.alert("IMPOSSÍVEL INCLUIR/ALTERAR A UNIDADE !", error);
     }
     return undefined;
+  }
+
+  public isNoButtons() {
+    return this.isNoPersist ? 'true' : (this.formPerfil.controls.perfil_id.value == this.perfilUsuario ? 'true' : undefined)
   }
 
   /* 
