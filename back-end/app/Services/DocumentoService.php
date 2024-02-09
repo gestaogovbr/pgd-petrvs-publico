@@ -30,7 +30,7 @@ class DocumentoService extends ServiceBase {
         return $data;
     }
 
-    public function afterStore($entity, $action) {
+    public function extraStore($entity, $unidade, $action) {
         $documento = $entity;
         if($documento->especie == "TCR" && $action == ServiceBase::ACTION_INSERT) {
             if(!empty($documento->plano_trabalho_id) && $documento->status == "GERADO") {

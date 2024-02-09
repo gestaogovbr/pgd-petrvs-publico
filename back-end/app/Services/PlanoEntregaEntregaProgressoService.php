@@ -8,14 +8,14 @@ use Illuminate\Database\Eloquent\Builder;
 
 class PlanoEntregaEntregaProgressoService extends ServiceBase
 {
-  public function afterStore($data, $action)
+  public function extraStore($entity, $unidade, $action)
   {
-    $this->updateEntrega($data);
+    $this->updateEntrega($entity);
   }
 
-  public function afterUpdate($data, $action)
+  public function extraUpdate($entity, $unidade)
   {    
-    $this->updateEntrega($data);
+    $this->updateEntrega($entity);
   }
 
   public function extraDestroy($data){
@@ -33,7 +33,7 @@ class PlanoEntregaEntregaProgressoService extends ServiceBase
         'data_inicio' =>  $ultimoProgresso->data_inicio,
         'data_fim' =>  $ultimoProgresso->data_fim,
         'meta' =>  $ultimoProgresso->meta,
-        'realizado' =>  $ultimoProgresso->realizado,
+        'realizado' =>  $ultimoProgresso->realizado
       ]);
     }
   }
