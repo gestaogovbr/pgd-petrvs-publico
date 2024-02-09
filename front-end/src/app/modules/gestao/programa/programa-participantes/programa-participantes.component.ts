@@ -42,7 +42,7 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
       programa_id: { default: this.programa?.id },
       unidade_id: { default: undefined },
       nome_usuario: { default: "" },
-      todos: { default: false },
+      habilitados: { default: true },
     }, this.cdRef, this.validate);
     this.form = this.fh.FormBuilder({
       usuario_id: { default: undefined },
@@ -92,36 +92,25 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
       } finally {
         this.loading = false;
       }
-      //this.programaSearch?.loadSearch(this.programa);
     })();
   }
 
   public filterClear(filter: FormGroup<any>): void {
     filter.controls.unidade_id.setValue(undefined);
     filter.controls.nome_usuario.setValue('');
-    filter.controls.todos.setValue(false);
+    filter.controls.habilitados.setValue(true);
   }
 
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
-    result.push(["todos", '==', this.filter?.controls.todos.value]);
+    result.push(["habilitado", '==', this.filter?.controls.habilitados.value]);
     result.push(["programa_id", "==", this.programa?.id]);
     if (form.nome_usuario?.length) result.push(["usuario.nome", "like", "%" + form.nome_usuario.trim().replace(" ", "%") + "%"]);
     if (form.unidade_id?.length) result.push(["usuario.lotacao.unidade.id", "==", form.unidade_id]);
     return result;
   }
-  // todos = true => retorna todos os usuários vinculados ao programa selecionado, habilitados ou desabilitados.
-  // todos = false => retorna apenas os usuários habilitados no programa selecionado
-
-  // SE TODOS = FALSE
-  // unidade_id = null => retorna os usuários vinculados ao programa selecionado, independentemente da sua unidade de lotação, e de acordo com a opção TODOS (só os habilitados, ou também os desabilitados)
-  // unidade_id = alguma unidade => retorna apenas os usuários vinculados ao programa selecionado, lotados na unidade selecionada, e de acordo com a opção TODOS (só os habilitados, ou também os desabilitados)
-
-  // SE TODOS = TRUE
-  // unidade_id = null => retorna todos os usuários vinculados ao programa selecionado, habilitados ou desabilitados.
-  // unidade_id = alguma unidade => retorna todos os usuários vinculados ao programa selecionado, habilitados ou desabilitados, e mais os usuários lotados na unidade selecionada e não habilitados
-
+  
   public async addParticipante() {
     return new ProgramaParticipante({
       id: this.dao!.generateUuid(),
@@ -208,7 +197,7 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
     this.form!.markAllAsTouched();
     if (this.form!.valid) {
       item.usuario_id = form.controls.usuario_id.value;
-      item.habilitado = !!form.controls.habilitado.value;
+      item.habilitado = form.controls.habilitado.value;
       item.usuario = this.usuario?.selectedEntity as Usuario;
       item.programa_id = this.programa!.id;
       this.submitting = true;
@@ -230,5 +219,10 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
     this.programa = this.programaSearch?.selectedItem?.entity;
     if(this.programa) this.grid?.reloadFilter();
   }
+
+  public titleEdit = (entity: ProgramaParticipante): string => {
+    return this.lex.translate("Habilitações");
+  }
+
 }
 

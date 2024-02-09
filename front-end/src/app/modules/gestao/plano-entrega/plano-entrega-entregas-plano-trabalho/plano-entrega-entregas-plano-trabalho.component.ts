@@ -54,7 +54,7 @@ export class PlanoEntregaEntregasPlanoTrabalhoComponent extends PageFrameBase {
     this.loader = true;
     this.cdRef.detectChanges();
     try {
-      this.PlanoTrabalhoEntregaDao.query({where: [["plano_entrega_entrega_id", "==", this._entregaId]], join: this.join}).asPromise().then(response => {
+      this.PlanoTrabalhoEntregaDao.query({where: [["plano_entrega_entrega_id", "==", this._entregaId], ['planoTrabalho.status', 'in', ['ATIVO', 'CONCLUIDO', 'AVALIADO']]], join: this.join}).asPromise().then(response => {
 
         response.forEach((item) => {
           const usuario: Usuario = item.plano_trabalho!.usuario!;
