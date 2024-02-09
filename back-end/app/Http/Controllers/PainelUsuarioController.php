@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\CalendarioService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,7 +14,7 @@ class PainelUsuarioController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::guard('painel')->attempt($credentials)) {
-            // Autenticação bem-sucedida
+            $request->session()->regenerate();
             return true;
         } else {
             // Autenticação falhou

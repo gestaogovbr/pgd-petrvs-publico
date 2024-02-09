@@ -18,8 +18,9 @@ class Panel
      */
     public function handle(Request $request, Closure $next)
     {
-        // Configure a guarda apropriada para o contexto
-        Auth::shouldUse('painel');
-        return $next($request);
+        if (Auth::guard('painel')->check()) {
+            return $next($request);
+        }
+        return response()->json(['error' => 'Não autorizado'], Response::HTTP_UNAUTHORIZED);
     }
 }

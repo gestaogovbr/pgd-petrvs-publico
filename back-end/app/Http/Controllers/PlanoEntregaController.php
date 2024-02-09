@@ -123,7 +123,7 @@ class PlanoEntregaController extends ControllerBase
             $data = $request->validate(['unidade_id'=> ['required']]);
       
             return response()->json([
-                'success' => $this->service->validaPermissaoIncluir($data)
+                'success' => $this->service->validaPermissaoIncluir($data, $this->getUsuario($request))
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);
