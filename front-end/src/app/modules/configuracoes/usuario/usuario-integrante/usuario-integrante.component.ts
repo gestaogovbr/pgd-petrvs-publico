@@ -11,6 +11,7 @@ import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { IntegranteService } from 'src/app/services/integrante.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
+import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
 
 @Component({
   selector: 'usuario-integrante',
@@ -24,11 +25,13 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   @Input() set entity(value: Usuario | undefined) { super.entity = value; } get entity(): Usuario | undefined { return super.entity; }
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
 
+  public formPerfil: FormGroup;
   public items: IntegranteConsolidado[] = [];
   public integranteService: IntegranteService;
   public integranteDao: UnidadeIntegranteDaoService;
   public unidadeDao: UnidadeDaoService;
   public usuarioDao: UsuarioDaoService;
+  public perfilDao: PerfilDaoService;
 
   constructor(public injector: Injector) {
     super(injector);
@@ -36,10 +39,14 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
+    this.perfilDao = injector.get<PerfilDaoService>(PerfilDaoService);
     this.form = this.fh.FormBuilder({
       unidade_id: { default: "" },
       atribuicoes: { default: undefined },
       atribuicao: { default: "" },
+    }, this.cdRef, this.validate);
+    this.formPerfil = this.fh.FormBuilder({
+      perfil_id: { default: "" }
     }, this.cdRef, this.validate);
   }
 
@@ -50,7 +57,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
 
   ngAfterViewInit() {
     (async () => {
-      await this.loadData({ id: this.entity_id }, this.form);
+      await this.loadData(this.entity || {}, this.form);
     })();
   }
 
@@ -59,13 +66,8 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
       let integrantes: IntegranteConsolidado[] = [];
       try {
         await this.integranteDao!.carregarIntegrantes("", entity.id).then( resposta => integrantes = resposta.integrantes.filter(x => x.atribuicoes?.length > 0));
-/*        let result = await Promise.all([
-           //this.usuarioDao.getById(entity.id),
-          this.integranteDao!.carregarIntegrantes("", entity.id)
-        ]);
-       // this.entity = result[0]!;
-        integrantes = result[0].integrantes.filter(x => x.atribuicoes?.length > 0); */
       } finally {
+        this.formPerfil.controls.perfil_id.setValue(entity.perfil_id);
         this.items = [];
         integrantes.forEach(i => this.items?.push(this.integranteService.completarIntegrante(i, i.id, entity.id, i.atribuicoes)));
         this.items = this.integranteService.ordenarIntegrantes(this.items);
@@ -73,6 +75,14 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
         this.grid!.loading = false;
       }
     }
+  }
+
+  public saveData(formPerfil: IIndexable): Promise<boolean> {
+    return new Promise<boolean>(async (resolve, reject) => {
+      let usuario: any = this.entity!; 
+      usuario.perfil_id = this.formPerfil.controls.perfil_id.value;
+        resolve(usuario);
+    });
   }
 
   public validate = (control: AbstractControl, controlName: string) => {

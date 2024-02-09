@@ -219,5 +219,10 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
     this.programa = this.programaSearch?.selectedItem?.entity;
     if(this.programa) this.grid?.reloadFilter();
   }
+
+  public titleEdit = (entity: ProgramaParticipante): string => {
+    return this.lex.translate("Habilitações");
+  }
+
 }
 
