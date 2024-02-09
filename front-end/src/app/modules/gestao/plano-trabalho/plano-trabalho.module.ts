@@ -13,6 +13,8 @@ import { PlanoTrabalhoConsolidacaoListComponent } from './plano-trabalho-consoli
 import { PlanoTrabalhoListAccordeonComponent } from './plano-trabalho-list-accordeon/plano-trabalho-list-accordeon.component';
 import { PlanoTrabalhoConsolidacaoFormComponent } from './plano-trabalho-consolidacao-form/plano-trabalho-consolidacao-form.component';
 import { PlanoTrabalhoConsolidacaoAvaliacaoComponent } from './plano-trabalho-consolidacao-avaliacao/plano-trabalho-consolidacao-avaliacao.component';
+import { AtividadeModule } from '../atividade/atividade.module';
+import { AtividadeListTarefaComponent } from '../atividade/atividade-list-tarefa/atividade-list-tarefa.component';
 
 
 @NgModule({
@@ -32,7 +34,8 @@ import { PlanoTrabalhoConsolidacaoAvaliacaoComponent } from './plano-trabalho-co
     ComponentsModule,
     ReactiveFormsModule,
     PlanoTrabalhoRoutingModule,
-    UteisModule
+    UteisModule,
+    AtividadeModule,
   ]
 })
 export class PlanoTrabalhoModule { }

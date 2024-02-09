@@ -23,6 +23,7 @@ export class AtividadeListTarefaComponent extends PageBase {
   @Input() editable: boolean = true;
   @Input() selectable: boolean = false;
   @Input() id_processo: number = 0;
+  @Input() consolidacao: boolean = true;//
   @Input() set atividade(value: Atividade | undefined) {
     if(this._atividade != value) {
       this._atividade = value;

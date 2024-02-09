@@ -1,4 +1,4 @@
-<grid [control]="control" [add]="addTarefa.bind(this)" [disabled]="disabled ? 'true' : undefined" [minHeight]="300" [hasEdit]="false" [hasDelete]="false" [editable]="editable ? 'true' : undefined">
+<grid [control]="control" [add]="addTarefa.bind(this)" [disabled]="disabled ? 'true' : undefined" [minHeight]="50" [hasEdit]="false" [hasDelete]="false" [editable]="editable ? 'true' : undefined">
     <columns>
         <column [title]="lex.translate('Tipo de Tarefa') + ' e Descrição'" [template]="tipoTarefaDescricao">
             <ng-template let-row="row" #tipoTarefaDescricao>
@@ -7,7 +7,7 @@
             </ng-template>
         </column>
         <!--<column type="timer" title="Tempo estimado" onlyHours field="tempo_estimado"></column>-->
-        <column title="Documento" [template]="documento">
+        <column *ngIf="consolidacao" title="Documento" [template]="documento">
             <ng-template let-row="row" #documento>
                 <documentos-badge [documento]="row.documento"></documentos-badge>
                 <!--span class="badge bg-light text-dark" [attr.role]="row.numero_processo?.length ? 'button' : undefined" data-bs-toggle="tooltip" data-bs-placement="top" (click)="documentoService.onProcessoClick(row)" [title]="allPages.getButtonTitle(row.numero_processo, row.numero_documento)">
@@ -17,7 +17,7 @@
                 </span/-->
             </ng-template>
         </column>
-        <column title="Concluído" [align]="'center'" [template]="concluido" [columnEditTemplate]="editConcluido" [canEdit]="canConcluidoEdit.bind(this)" [edit]="editable ? onColumnConcluidoEdit.bind(this) : undefined" [save]="editable ? onColumnConcluidoSave.bind(this) : undefined">
+        <column *ngIf="consolidacao" title="Concluído" [align]="'center'" [template]="concluido" [columnEditTemplate]="editConcluido" [canEdit]="canConcluidoEdit.bind(this)" [edit]="editable ? onColumnConcluidoEdit.bind(this) : undefined" [save]="editable ? onColumnConcluidoSave.bind(this) : undefined">
             <ng-template let-row="row" #concluido>
                 <div class="text-center"><i *ngIf="row.data_conclusao" class="bi bi-check-circle"></i></div>
             </ng-template>
