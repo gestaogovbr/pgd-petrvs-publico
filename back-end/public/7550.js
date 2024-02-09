@@ -689,6 +689,7 @@ class ProgramaListComponent extends src_app_modules_base_page_list_base__WEBPACK
           });
         } */
   }
+
   ngOnInit() {
     super.ngOnInit();
     this.vigentesUnidadeExecutora = this.metadata?.vigentesUnidadeExecutora;
