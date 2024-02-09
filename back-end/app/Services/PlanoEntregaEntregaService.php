@@ -20,7 +20,7 @@ class PlanoEntregaEntregaService extends ServiceBase
       return $planoEntregaEntrega;
     }
 
-    public function afterStore($planoEntregaEntrega, $action)
+    public function extraStore($entity, $unidade, $action)
     {
         if($action == ServiceBase::ACTION_EDIT) {
             /* (RN_PTR_E) O Plano de Trabalho precisará ser repactuado (retornar ao status de AGUARDANDO_ASSINATURA) quando houver quaisquer alterações no plano de entrega que impacte as entregas do plano de trabalho; (alterada a entrega ou cancelada); */

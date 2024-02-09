@@ -255,6 +255,10 @@ class PlanoTrabalhoService {
       }
     })();
   }
+  usuarioAssinou(assinaram, usuarioId) {
+    usuarioId = usuarioId || this.auth.usuario.id;
+    return Object.values(assinaram).some(arrayAssinaturas => (arrayAssinaturas || []).includes(usuarioId));
+  }
   assinaturasFaltantes(exigidas, assinaram) {
     return {
       "participante": exigidas.participante.filter(x => !assinaram.participante.includes(x)),

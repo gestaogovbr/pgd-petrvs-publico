@@ -218,13 +218,13 @@ function AtividadeFormConcluirComponent_ng_template_17_Template(rf, ctx) {
   if (rf & 2) {
     const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r7.form.controls.data_inicio)("labelInfo", "Data em que o usu\u00E1rio iniciou a " + ctx_r7.lex.translate("atividade"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 3)("control", ctx_r7.form.controls.data_inicio)("labelInfo", "Data em que o usu\u00E1rio iniciou a " + ctx_r7.lex.translate("atividade"));
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r7.form.controls.data_entrega)("labelInfo", "Data da conclus\u00E3o da " + ctx_r7.lex.translate("atividade"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 3)("control", ctx_r7.form.controls.data_entrega)("labelInfo", "Data da conclus\u00E3o da " + ctx_r7.lex.translate("atividade"));
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r7.form.controls.tempo_despendido)("labelInfo", "Calculado no fim da " + ctx_r7.lex.translate("atividade") + ", sendo o tempo l\u00EDquido (considerando pausas)");
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 3)("control", ctx_r7.form.controls.tempo_despendido)("labelInfo", "Calculado no fim da " + ctx_r7.lex.translate("atividade") + ", sendo o tempo l\u00EDquido (considerando pausas)");
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r7.form.controls.data_inicio)("labelInfo", "Data de arquivamento da " + ctx_r7.lex.translate("atividade"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 3)("control", ctx_r7.form.controls.data_inicio)("labelInfo", "Data de arquivamento da " + ctx_r7.lex.translate("atividade"));
   }
 }
 function AtividadeFormConcluirComponent_separator_20_Template(rf, ctx) {
@@ -282,7 +282,7 @@ class AtividadeFormConcluirComponent extends src_app_modules_base_page_form_base
         default: null
       },
       arquivar: {
-        default: true
+        default: false
       },
       descricao_tecnica: {
         default: ""
@@ -315,7 +315,7 @@ class AtividadeFormConcluirComponent extends src_app_modules_base_page_form_base
         value: x.descricao + (x.plano_entrega_entrega ? " (" + x.plano_entrega_entrega?.descricao + ")" : ""),
         data: x
       })) || [];
-      formValue.arquivar = true;
+      formValue.arquivar = false;
       form.patchValue(formValue);
       _this.onDataEntregaChange();
     })();
@@ -1112,7 +1112,7 @@ class AtividadeFormTarefaComponent extends src_app_modules_base_page_form_base__
         default: 0
       },
       concluido: {
-        default: false
+        default: true
       },
       id_processo: {
         default: 0
@@ -1139,7 +1139,7 @@ class AtividadeFormTarefaComponent extends src_app_modules_base_page_form_base__
       let formValue = Object.assign({}, form.value);
       formValue = _this.util.fillForm(formValue, entity);
       yield _this.tipoTarefa?.loadSearch(entity.tipo_tarefa || formValue.tipo_tarefa_id);
-      formValue.concluido = !!entity.data_conclusao;
+      //formValue.concluido = !!entity.data_conclusao;
       formValue.comentarios = _this.comentario.orderComentarios(formValue.comentarios || []);
       form.patchValue(formValue);
     })();
@@ -1339,11 +1339,11 @@ function AtividadeFormComponent_input_switch_13_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 1);
   }
 }
-function AtividadeFormComponent_div_21_Template(rf, ctx) {
+function AtividadeFormComponent_div_22_Template(rf, ctx) {
   if (rf & 1) {
     const _r15 = _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](0, "div", 5)(1, "input-datetime", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵlistener"]("change", function AtividadeFormComponent_div_21_Template_input_datetime_change_1_listener($event) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵlistener"]("change", function AtividadeFormComponent_div_22_Template_input_datetime_change_1_listener($event) {
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵrestoreView"](_r15);
       const ctx_r14 = _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵnextContext"]();
       return _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵresetView"](ctx_r14.onDataDistribuicaoChange($event));
@@ -1351,7 +1351,7 @@ function AtividadeFormComponent_div_21_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](2, "input-number", 25);
     _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](3, "input-datetime", 26);
-    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵlistener"]("change", function AtividadeFormComponent_div_21_Template_input_datetime_change_3_listener($event) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵlistener"]("change", function AtividadeFormComponent_div_22_Template_input_datetime_change_3_listener($event) {
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵrestoreView"](_r15);
       const ctx_r16 = _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵnextContext"]();
       return _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵresetView"](ctx_r16.onPrazoEntregaChange($event));
@@ -1368,11 +1368,11 @@ function AtividadeFormComponent_div_21_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 4)("label", ctx_r8.lex.translate("Prazo de entrega"))("control", ctx_r8.form.controls.data_estipulada_entrega);
   }
 }
-function AtividadeFormComponent_ng_template_22_Template(rf, ctx) {
+function AtividadeFormComponent_ng_template_23_Template(rf, ctx) {
   if (rf & 1) {
     const _r18 = _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](0, "div", 5)(1, "input-datetime", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵlistener"]("change", function AtividadeFormComponent_ng_template_22_Template_input_datetime_change_1_listener($event) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵlistener"]("change", function AtividadeFormComponent_ng_template_23_Template_input_datetime_change_1_listener($event) {
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵrestoreView"](_r18);
       const ctx_r17 = _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵnextContext"]();
       return _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵresetView"](ctx_r17.onDataDistribuicaoChange($event));
@@ -1380,7 +1380,7 @@ function AtividadeFormComponent_ng_template_22_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](2, "input-timer", 27)(3, "input-number", 25);
     _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](4, "input-datetime", 26);
-    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵlistener"]("change", function AtividadeFormComponent_ng_template_22_Template_input_datetime_change_4_listener($event) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵlistener"]("change", function AtividadeFormComponent_ng_template_23_Template_input_datetime_change_4_listener($event) {
       _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵrestoreView"](_r18);
       const ctx_r19 = _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵnextContext"]();
       return _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵresetView"](ctx_r19.onPrazoEntregaChange($event));
@@ -1399,7 +1399,7 @@ function AtividadeFormComponent_ng_template_22_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 3)("label", ctx_r10.lex.translate("Prazo de entrega"))("control", ctx_r10.form.controls.data_estipulada_entrega);
   }
 }
-function AtividadeFormComponent_separator_24_div_1_Template(rf, ctx) {
+function AtividadeFormComponent_separator_25_div_1_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](0, "div", 5);
     _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](1, "input-datetime", 31)(2, "input-datetime", 32)(3, "input-datetime", 33);
@@ -1415,7 +1415,7 @@ function AtividadeFormComponent_separator_24_div_1_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 4)("control", ctx_r20.form.controls.data_inicio);
   }
 }
-function AtividadeFormComponent_separator_24_ng_template_2_Template(rf, ctx) {
+function AtividadeFormComponent_separator_25_ng_template_2_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](0, "div", 5);
     _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](1, "input-datetime", 31)(2, "input-datetime", 32)(3, "input-timer", 34)(4, "input-datetime", 33);
@@ -1433,11 +1433,11 @@ function AtividadeFormComponent_separator_24_ng_template_2_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("size", 4)("control", ctx_r22.form.controls.data_inicio);
   }
 }
-function AtividadeFormComponent_separator_24_Template(rf, ctx) {
+function AtividadeFormComponent_separator_25_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](0, "separator", 28);
-    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵtemplate"](1, AtividadeFormComponent_separator_24_div_1_Template, 4, 6, "div", 19);
-    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵtemplate"](2, AtividadeFormComponent_separator_24_ng_template_2_Template, 5, 8, "ng-template", null, 29, _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵtemplateRefExtractor"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵtemplate"](1, AtividadeFormComponent_separator_25_div_1_Template, 4, 6, "div", 19);
+    _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵtemplate"](2, AtividadeFormComponent_separator_25_ng_template_2_Template, 5, 8, "ng-template", null, 29, _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵtemplateRefExtractor"]);
     _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](4, "documento-link", 30);
     _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]();
   }
@@ -1500,6 +1500,7 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
         let checkAtividade = this.tipoAtividade?.selectedEntity.checklist;
         if (checkAtividade && this.form.controls.checklist.value.length == checkAtividade.length) this.loadChecklist(); // this.loadChecklist();
       }
+
       const etiquetasKeys = this.etiquetas.map(x => x.key);
       const checklistKeys = this.checklist.map(x => x.id); //const checklistKeys = this.checklist.map(x => x.key);
       const etiqueta = (this.form.controls.etiquetas.value || []).find(x => !etiquetasKeys.includes(x.key));
@@ -1955,7 +1956,7 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
       }
     },
     features: [_angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵInheritDefinitionFeature"]],
-    decls: 25,
+    decls: 26,
     vars: 38,
     consts: [["initialFocus", "descricao", 3, "form", "disabled", "submit", "cancel"], ["display", "", "right", "", 3, "title"], ["key", "ATIVIDADE", 3, "label"], [3, "sei", "documento"], ["requisicao", ""], [1, "row"], ["label", "Descri\u00E7\u00E3o", "controlName", "descricao", "required", "", 3, "size", "rows", "control"], ["controlName", "unidade_id", "required", "", 3, "label", "size", "dao", "change"], ["unidade", ""], ["controlName", "tipo_atividade_id", 3, "label", "emptyValue", "size", "dao", "labelInfo", "required", "select", "change"], ["tipoAtividade", ""], ["label", "Iniciado", "controlName", "iniciado", 3, "size", "disabled", 4, "ngIf"], ["label", "Conclu\u00EDdo", "controlName", "concluido", 3, "size", "change", 4, "ngIf"], ["controlName", "usuario_id", "labelInfo", "Participante respons\u00E1vel pela execu\u00E7\u00E3o", 3, "label", "size", "emptyValue", "dao", "join", "select", "change"], ["usuario", ""], ["controlName", "plano_trabalho_id", 3, "label", "size", "control", "items", "labelInfo", "change"], ["planoTrabalho", ""], ["controlName", "plano_trabalho_entrega_id", 3, "label", "size", "control", "items", "labelInfo"], ["entrega", ""], ["class", "row", 4, "ngIf", "ngIfElse"], ["comEsforco", ""], ["title", "Conclus\u00E3o", 4, "ngIf"], ["label", "Iniciado", "controlName", "iniciado", 3, "size", "disabled"], ["label", "Conclu\u00EDdo", "controlName", "concluido", 3, "size", "change"], ["noIcon", "", "controlName", "data_distribuicao", "labelInfo", "Data de inclus\u00E3o/distribui\u00E7\u00E3o/lan\u00E7amento", 3, "size", "label", "control", "change"], ["label", "Progresso", "disabled", "", "sufix", "%", "icon", "bi bi-clock", "controlName", "progresso", "labelInfo", "Progresso de execu\u00E7\u00E3o (% Conclu\u00EDdo)", 3, "size", "decimals"], ["noIcon", "", "controlName", "data_estipulada_entrega", "labelInfo", "Data estipulada para entrega da atividade", 3, "size", "label", "control", "change"], ["icon", "bi bi-stopwatch", "onlyHours", "", "controlName", "esforco", "labelInfo", "Tempo estimado de execu\u00E7\u00E3o", 3, "size", "label", "control"], ["title", "Conclus\u00E3o"], ["comTempoDespendido", ""], [3, "documento"], ["noIcon", "", "label", "Inicio", "controlName", "data_inicio", "disabled", "", "labelInfo", "Data em que o usu\u00E1rio iniciou a atividade", 3, "size", "control"], ["noIcon", "", "label", "Conclus\u00E3o", "controlName", "data_entrega", "disabled", "", "labelInfo", "Data da conclus\u00E3o da atividade", 3, "size", "control"], ["label", "Data de arquivamento", "controlName", "data_arquivamento", "disabled", "", "labelInfo", "Data de arquivamento da atividade", 3, "size", "control"], ["label", "Tempo despendido", "icon", "bi bi-hourglass-bottom", "controlName", "tempo_despendido", "disabled", "", "labelInfo", "Calculado no fim da atividade, sendo o tempo l\u00EDquido (considerando pausas)", 3, "size", "control"]],
     template: function AtividadeFormComponent_Template(rf, ctx) {
@@ -1997,17 +1998,18 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
         _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵlistener"]("change", function AtividadeFormComponent_Template_input_select_change_17_listener($event) {
           return ctx.onPlanoTrabalhoChange($event);
         });
+        _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementStart"](19, "div", 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](20, "input-select", 17, 18);
         _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelement"](19, "input-select", 17, 18);
-        _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵtemplate"](21, AtividadeFormComponent_div_21_Template, 4, 8, "div", 19);
-        _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵtemplate"](22, AtividadeFormComponent_ng_template_22_Template, 5, 11, "ng-template", null, 20, _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵtemplateRefExtractor"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵtemplate"](24, AtividadeFormComponent_separator_24_Template, 5, 3, "separator", 21);
+        _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵtemplate"](22, AtividadeFormComponent_div_22_Template, 4, 8, "div", 19);
+        _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵtemplate"](23, AtividadeFormComponent_ng_template_23_Template, 5, 11, "ng-template", null, 20, _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵtemplate"](25, AtividadeFormComponent_separator_25_Template, 5, 3, "separator", 21);
         _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵelementEnd"]()()();
       }
       if (rf & 2) {
         const _r6 = _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵreference"](18);
-        const _r9 = _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵreference"](23);
+        const _r9 = _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵreference"](24);
         _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("form", ctx.form)("disabled", ctx.formDisabled);
         _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("title", ctx.titleAtividade);
@@ -2026,11 +2028,11 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
         _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("ngIf", ctx.hasUsuarioActionNew);
         _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("label", ctx.lex.translate("Respons\u00E1vel"))("size", 4)("emptyValue", null)("dao", ctx.usuarioDao)("join", ctx.usuarioJoin);
+        _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("label", ctx.lex.translate("Respons\u00E1vel"))("size", 6)("emptyValue", null)("dao", ctx.usuarioDao)("join", ctx.usuarioJoin);
         _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("label", ctx.lex.translate("Plano de trabalho"))("size", 4)("control", ctx.form.controls.plano_trabalho_id)("items", ctx.planosTrabalhos)("labelInfo", ctx.lex.translate("Plano de trabalho"));
-        _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("label", ctx.lex.translate("Entrega"))("size", 4)("control", ctx.form.controls.plano_trabalho_entrega_id)("items", ctx.entregas)("labelInfo", ctx.lex.translate("Entrega") + ctx.lex.translate("plano de trabalho") + " que a " + ctx.lex.translate("atividade") + " \u00E9 referente");
+        _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("label", ctx.lex.translate("Plano de trabalho"))("size", 6)("control", ctx.form.controls.plano_trabalho_id)("items", ctx.planosTrabalhos)("labelInfo", ctx.lex.translate("Plano de trabalho"));
+        _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("label", ctx.lex.translate("Entrega") + " (Descri\u00E7\u00E3o dos trabalhos)")("size", 12)("control", ctx.form.controls.plano_trabalho_entrega_id)("items", ctx.entregas)("labelInfo", ctx.lex.translate("Entrega") + ctx.lex.translate(" plano de trabalho") + " que a " + ctx.lex.translate("atividade") + " \u00E9 referente");
         _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("ngIf", !(_r6 == null ? null : _r6.selectedItem == null ? null : _r6.selectedItem.data == null ? null : _r6.selectedItem.data.tipo_modalidade == null ? null : _r6.selectedItem.data.tipo_modalidade.atividade_esforco))("ngIfElse", _r9);
         _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](3);
@@ -2793,6 +2795,7 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
       }
     });*/
   }
+
   get isEtiquetas() {
     return !!this.filter?.controls?.usarEtiquetas?.value;
   }
@@ -2990,6 +2993,7 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
         if(!this.labels.find(y => y.labels.find(z => z.key == x.key))) this.labels[0].labels.push(x)
       });*/
     }
+
     this.cdRef.detectChanges();
   }
   putCard(list, atividade) {

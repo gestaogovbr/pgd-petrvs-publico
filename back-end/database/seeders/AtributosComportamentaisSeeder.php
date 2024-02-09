@@ -18,6 +18,8 @@ class AtributosComportamentaisSeeder extends Seeder
                AtributoComportamentalB5Seeder::class,
                AtributoComportamentalDASSSeeder::class,
                AtributoComportamentalSRQ20Seeder::class,
+               AtributoComportamentalSoftSkillSeeder::class,
+               AtributoComportamentalQVTSeeder::class
            ]);
     }
 }

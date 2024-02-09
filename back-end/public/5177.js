@@ -2411,6 +2411,7 @@ class PlanoEntregaFormComponent extends src_app_modules_base_page_form_base__WEB
     this.unidadeDao = injector.get(src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_7__.UnidadeDaoService);
     this.programaDao = injector.get(src_app_dao_programa_dao_service__WEBPACK_IMPORTED_MODULE_6__.ProgramaDaoService);
     this.cadeiaValorDao = injector.get(src_app_dao_cadeia_valor_dao_service__WEBPACK_IMPORTED_MODULE_3__.CadeiaValorDaoService);
+    this.planoEntregaDao = injector.get(src_app_dao_plano_entrega_dao_service__WEBPACK_IMPORTED_MODULE_5__.PlanoEntregaDaoService);
     this.planejamentoInstitucionalDao = injector.get(src_app_dao_planejamento_dao_service__WEBPACK_IMPORTED_MODULE_4__.PlanejamentoDaoService);
     this.join = ["entregas.entrega", "entregas.objetivos.objetivo", "entregas.processos.processo", "entregas.unidade", "unidade", 'entregas.reacoes.usuario:id,nome,apelido'];
     this.modalWidth = 1200;
@@ -2483,7 +2484,19 @@ class PlanoEntregaFormComponent extends src_app_modules_base_page_form_base__WEB
     this.sugereNome();
   }
   onUnidadeChange() {
-    this.sugereNome();
+    var _this4 = this;
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      const unidadeIdValue = _this4.form.controls['unidade_id'].value;
+      let unidade_id = unidadeIdValue ? unidadeIdValue : _this4.auth.unidade?.id;
+      if (unidade_id) {
+        try {
+          const permissaoIncluir = yield _this4.planoEntregaDao.permissaoIncluir(unidade_id);
+        } catch (error) {
+          _this4.error(error);
+        }
+      }
+      _this4.sugereNome();
+    })();
   }
   sugereNome() {
     //if(this.action == 'new') {
@@ -2493,6 +2506,7 @@ class PlanoEntregaFormComponent extends src_app_modules_base_page_form_base__WEB
     this.form.controls.nome.setValue(sigla + " - " + di + df);
     //}
   }
+
   somaDia(date, days) {
     let result = new Date(date);
     result.setDate(result.getDate() + days);
@@ -3289,6 +3303,7 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
       // será remvido somente da lista de itens (em memória), independente de persistente ou não, MAS NO BACKEND HAVERÀ ESSA VALIDAÇÂO!
     }
   }
+
   get planejamentoId() {
     return this._planejamentoId;
   }
@@ -3299,6 +3314,7 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
       // será removido somente da lista de itens (em memória), independente de persistente ou não, MAS NO BACKEND HAVERÀ ESSA VALIDAÇÂO!
     }
   }
+
   get cadeiaValorId() {
     return this._cadeiaValorId;
   }
@@ -3309,6 +3325,7 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
       // será remvido somente da lista de itens (em memória), independente de persistente ou não, MAS NO BACKEND HAVERÀ ESSA VALIDAÇÂO!
     }
   }
+
   get unidadeId() {
     return this._unidadeId;
   }
@@ -4030,6 +4047,7 @@ class PlanoEntregaListLogsComponent extends src_app_modules_base_page_list_base_
     //   this.selectResponsaveis!.loading = false;
     // });
   }
+
   filterClear(filter) {
     filter.controls.responsavel_id.setValue("");
     filter.controls.data_inicio.setValue("");
@@ -5058,6 +5076,7 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
     this.botoes = [this.BOTAO_ALTERAR, this.BOTAO_ARQUIVAR, this.BOTAO_AVALIAR, this.BOTAO_CANCELAR_PLANO, this.BOTAO_CANCELAR_AVALIACAO, this.BOTAO_CANCELAR_CONCLUSAO, this.BOTAO_CANCELAR_HOMOLOGACAO, this.BOTAO_CONCLUIR, this.BOTAO_CONSULTAR, this.BOTAO_DESARQUIVAR, this.BOTAO_EXCLUIR, this.BOTAO_HOMOLOGAR, this.BOTAO_LIBERAR_HOMOLOGACAO, this.BOTAO_LOGS, this.BOTAO_REATIVAR, this.BOTAO_RETIRAR_HOMOLOGACAO, this.BOTAO_SUSPENDER];
     //this.BOTAO_ADERIR_OPTION, this.BOTAO_ADERIR_TOOLBAR,
   }
+
   ngOnInit() {
     super.ngOnInit();
     this.execucao = !!this.queryParams?.execucao;
@@ -5078,6 +5097,7 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
     this.checaBotaoAderirToolbar();
     //this.toolbarButtons.push(this.BOTAO_ADERIR_TOOLBAR);  // Adesão de plano suspensa, por enquanto
   }
+
   ngAfterContentChecked() {
     if (this.auth.unidade != this.unidadeSelecionada) {
       this.unidadeSelecionada = this.auth.unidade;
@@ -5404,6 +5424,7 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
       }
     });
   }
+
   cancelarAvaliacao(planoEntrega) {
     var _this = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {

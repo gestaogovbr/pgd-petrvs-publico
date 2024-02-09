@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Injector, Input, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Injector, Input, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
@@ -17,6 +17,7 @@ import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { PlanoTrabalhoService } from '../plano-trabalho.service';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
+import { UnidadeService } from 'src/app/services/unidade.service';
 
 @Component({
   selector: 'plano-trabalho-list-entrega',
@@ -34,6 +35,8 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   @Input() set disabled(value: boolean) { if (this._disabled != value) this._disabled = value; } get disabled(): boolean { return this._disabled; }
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
   @Input() cdRef: ChangeDetectorRef;
+  @Input() set planoTrabalhoEditavel(value: boolean ) { if (this._planoTrabalhoEditavel != value) this._planoTrabalhoEditavel = value} get planoTrabalhoEditavel(): boolean {return this._planoTrabalhoEditavel }
+  @Output() atualizaPlanoTrabalhoEvent = new EventEmitter<string>();
 
   public get items(): PlanoTrabalhoEntrega[] {
     if (!this.gridControl.value) this.gridControl.setValue(new PlanoTrabalho());
@@ -45,11 +48,12 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   public planoEntregaDao?: PlanoEntregaDaoService;
   public peeDao?: PlanoEntregaEntregaDaoService;
   public planoTrabalhoService: PlanoTrabalhoService;
+  public unidadeService: UnidadeService;
   public totalForcaTrabalho: number = 0;
   public entregas: LookupItem[] = [];
 
   private _disabled: boolean = false;
-  //Colocar o plano de entrega em execucao quando for propria unidade
+  private _planoTrabalhoEditavel: boolean = true;
   //quando adiciona um novo e edita o mesmo, salva 2x no banco
 
   constructor(public injector: Injector) {
@@ -60,6 +64,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
     this.planoTrabalhoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
     this.peeDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
+    this.unidadeService = injector.get<UnidadeService>(UnidadeService);
     this.join = ["entrega", "plano_entrega_entrega.entrega", "plano_entrega_entrega.plano_entrega:id,unidade_id", "plano_entrega_entrega.plano_entrega.unidade:id,sigla"];
     this.form = this.fh.FormBuilder({
       origem: { default: null },
@@ -117,7 +122,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     this.entity = this.metadata?.entity || this.entity;
     this.totalForcaTrabalho = Math.round(this.somaForcaTrabalho(this.entity?.entregas) * 100) / 100;
     this.entity!._metadata = this.entity!._metadata || {};
-    this.entity!._metadata.novaEntrega = undefined;
+    this.entity!._metadata.novaEntrega = undefined;    
   }
 
   /**
@@ -150,6 +155,8 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     }
     if (entrega._status == "ADD" && !form.controls.plano_entrega_id.value) { // É uma nova entrega
       form.controls.origem.setValue('PROPRIA_UNIDADE');
+      let planosEntregas = await this.planoEntregaDao!.query({ where: [["unidade_id", "==", this.entity!.unidade_id], ["status", "==", "ATIVO"]] }).asPromise();//["data_inicio", "<=", this.entity!.data_fim], ["data_fim", ">=", this.entity!.data_inicio]
+      form.controls.plano_entrega_id.setValue(planosEntregas[0].id);
     } else if (entrega.plano_entrega_entrega?.plano_entrega?.unidade_id == this.entity!.unidade_id) {
       form.controls.origem.setValue('PROPRIA_UNIDADE');
       await this.carregarEntregas(entrega.plano_entrega_entrega.plano_entrega_id!);
@@ -179,6 +186,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
         this.isNoPersist ? Object.assign(row, { _status: "DELETE" }) : await this.dao?.delete(row.id);
       } finally {
         this.loading = false;
+        this.atualizaPlanoTrabalhoEvent.emit(this.entity!.id);
       }
       this.totalForcaTrabalho = Math.round((this.totalForcaTrabalho - ((row as PlanoTrabalhoEntrega).forca_trabalho * 1)) * 100) / 100;
       return this.isNoPersist ? false : true; // (*3)
@@ -202,7 +210,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     this.entity!._metadata.novaEntrega.forca_trabalho = this.form?.controls.forca_trabalho.value;
     this.loading = true;
     try {
-      if (!this.isNoPersist) /* persistente */ { (this.dao as PlanoTrabalhoEntregaDaoService).save(this.entity!._metadata.novaEntrega, this.join); }
+      if (!this.isNoPersist) /* persistente */ { await (this.dao as PlanoTrabalhoEntregaDaoService).save(this.entity!._metadata.novaEntrega, this.join); }
     } catch (e: any) {
       this.error(e.message ? e.message : e.toString() || e);
     } finally {
@@ -221,6 +229,8 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
    */
   public saveEndEntrega(row: any) {
     this.entity!._metadata = null;
+          
+    this.atualizaPlanoTrabalhoEvent.emit(this.entity!.id);
   }
 
   /**
@@ -240,6 +250,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     let planoEntrega = typeof idPlanoOuPlano == 'string' ? await this.planoEntregaDao!.getById(idPlanoOuPlano, ["entregas.entrega:id,nome", "unidade"]) : idPlanoOuPlano;
     let planoEntregaComUnidade = { id: planoEntrega?.id, unidade_id: planoEntrega?.unidade_id, unidade: planoEntrega?.unidade };
     this.entregas = planoEntrega?.entregas.map(epe => Object.assign({}, { key: epe.id, value: epe.descricao || epe.entrega?.nome || "Desconhecido", data: Object.assign(epe, { plano_entrega: planoEntregaComUnidade }) })) || [];
+    this.entregas.sort((a, b) => (a.value > b.value ? 1 : -1));
     if (!this.entregas.find(x => x.key == this.form!.controls.plano_entrega_entrega_id.value)) this.form!.controls.plano_entrega_entrega_id.setValue(null);
   }
 

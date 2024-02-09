@@ -468,6 +468,7 @@ class PlanejamentoFormComponent extends src_app_modules_base_page_form_base__WEB
           value: x.nome,
           data: x
         }));
+        _this5.planejamentosSuperiores.sort((a, b) => a.value > b.value ? 1 : -1);
         _this5.planejamentosSuperiores.unshift({
           key: null,
           value: 'Escolha um Planejamento superior...'
