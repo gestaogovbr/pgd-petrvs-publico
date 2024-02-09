@@ -61,6 +61,7 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
       onClick: this.desabilitarParticipantes.bind(this)
     });
     this.join = ["usuario.lotacao.unidade:id,sigla","usuario.planos_trabalho:id,status"];
+    this.title = this.lex.translate("Habilitações");
   }
 
   public dynamicButtons(row: any): ToolbarButton[] {
@@ -218,10 +219,6 @@ export class ProgramaParticipantesComponent extends PageListBase<ProgramaPartici
   public onProgramaChange(){
     this.programa = this.programaSearch?.selectedItem?.entity;
     if(this.programa) this.grid?.reloadFilter();
-  }
-
-  public titleEdit = (entity: ProgramaParticipante): string => {
-    return this.lex.translate("Habilitações");
   }
 
 }

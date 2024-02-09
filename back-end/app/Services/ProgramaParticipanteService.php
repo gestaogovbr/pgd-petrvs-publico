@@ -8,7 +8,6 @@ use App\Models\PlanoTrabalho;
 use App\Models\ProgramaParticipante;
 use App\Models\Usuario;
 use App\Services\ServiceBase;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
