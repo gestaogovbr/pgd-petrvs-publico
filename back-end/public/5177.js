@@ -2411,6 +2411,7 @@ class PlanoEntregaFormComponent extends src_app_modules_base_page_form_base__WEB
     this.unidadeDao = injector.get(src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_7__.UnidadeDaoService);
     this.programaDao = injector.get(src_app_dao_programa_dao_service__WEBPACK_IMPORTED_MODULE_6__.ProgramaDaoService);
     this.cadeiaValorDao = injector.get(src_app_dao_cadeia_valor_dao_service__WEBPACK_IMPORTED_MODULE_3__.CadeiaValorDaoService);
+    this.planoEntregaDao = injector.get(src_app_dao_plano_entrega_dao_service__WEBPACK_IMPORTED_MODULE_5__.PlanoEntregaDaoService);
     this.planejamentoInstitucionalDao = injector.get(src_app_dao_planejamento_dao_service__WEBPACK_IMPORTED_MODULE_4__.PlanejamentoDaoService);
     this.join = ["entregas.entrega", "entregas.objetivos.objetivo", "entregas.processos.processo", "entregas.unidade", "unidade", 'entregas.reacoes.usuario:id,nome,apelido'];
     this.modalWidth = 1200;
@@ -2483,7 +2484,19 @@ class PlanoEntregaFormComponent extends src_app_modules_base_page_form_base__WEB
     this.sugereNome();
   }
   onUnidadeChange() {
-    this.sugereNome();
+    var _this4 = this;
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      const unidadeIdValue = _this4.form.controls['unidade_id'].value;
+      let unidade_id = unidadeIdValue ? unidadeIdValue : _this4.auth.unidade?.id;
+      if (unidade_id) {
+        try {
+          const permissaoIncluir = yield _this4.planoEntregaDao.permissaoIncluir(unidade_id);
+        } catch (error) {
+          _this4.error(error);
+        }
+      }
+      _this4.sugereNome();
+    })();
   }
   sugereNome() {
     //if(this.action == 'new') {

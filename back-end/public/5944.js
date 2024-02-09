@@ -218,13 +218,13 @@ function AtividadeFormConcluirComponent_ng_template_17_Template(rf, ctx) {
   if (rf & 2) {
     const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r7.form.controls.data_inicio)("labelInfo", "Data em que o usu\u00E1rio iniciou a " + ctx_r7.lex.translate("atividade"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 3)("control", ctx_r7.form.controls.data_inicio)("labelInfo", "Data em que o usu\u00E1rio iniciou a " + ctx_r7.lex.translate("atividade"));
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r7.form.controls.data_entrega)("labelInfo", "Data da conclus\u00E3o da " + ctx_r7.lex.translate("atividade"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 3)("control", ctx_r7.form.controls.data_entrega)("labelInfo", "Data da conclus\u00E3o da " + ctx_r7.lex.translate("atividade"));
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r7.form.controls.tempo_despendido)("labelInfo", "Calculado no fim da " + ctx_r7.lex.translate("atividade") + ", sendo o tempo l\u00EDquido (considerando pausas)");
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 3)("control", ctx_r7.form.controls.tempo_despendido)("labelInfo", "Calculado no fim da " + ctx_r7.lex.translate("atividade") + ", sendo o tempo l\u00EDquido (considerando pausas)");
     _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 4)("control", ctx_r7.form.controls.data_inicio)("labelInfo", "Data de arquivamento da " + ctx_r7.lex.translate("atividade"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_20__["ɵɵproperty"]("size", 3)("control", ctx_r7.form.controls.data_inicio)("labelInfo", "Data de arquivamento da " + ctx_r7.lex.translate("atividade"));
   }
 }
 function AtividadeFormConcluirComponent_separator_20_Template(rf, ctx) {
@@ -282,7 +282,7 @@ class AtividadeFormConcluirComponent extends src_app_modules_base_page_form_base
         default: null
       },
       arquivar: {
-        default: true
+        default: false
       },
       descricao_tecnica: {
         default: ""
@@ -315,7 +315,7 @@ class AtividadeFormConcluirComponent extends src_app_modules_base_page_form_base
         value: x.descricao + (x.plano_entrega_entrega ? " (" + x.plano_entrega_entrega?.descricao + ")" : ""),
         data: x
       })) || [];
-      formValue.arquivar = true;
+      formValue.arquivar = false;
       form.patchValue(formValue);
       _this.onDataEntregaChange();
     })();
@@ -1112,7 +1112,7 @@ class AtividadeFormTarefaComponent extends src_app_modules_base_page_form_base__
         default: 0
       },
       concluido: {
-        default: false
+        default: true
       },
       id_processo: {
         default: 0
@@ -1139,7 +1139,7 @@ class AtividadeFormTarefaComponent extends src_app_modules_base_page_form_base__
       let formValue = Object.assign({}, form.value);
       formValue = _this.util.fillForm(formValue, entity);
       yield _this.tipoTarefa?.loadSearch(entity.tipo_tarefa || formValue.tipo_tarefa_id);
-      formValue.concluido = !!entity.data_conclusao;
+      //formValue.concluido = !!entity.data_conclusao;
       formValue.comentarios = _this.comentario.orderComentarios(formValue.comentarios || []);
       form.patchValue(formValue);
     })();
@@ -2032,7 +2032,7 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
         _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("label", ctx.lex.translate("Plano de trabalho"))("size", 6)("control", ctx.form.controls.plano_trabalho_id)("items", ctx.planosTrabalhos)("labelInfo", ctx.lex.translate("Plano de trabalho"));
         _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("label", ctx.lex.translate("Entrega"))("size", 12)("control", ctx.form.controls.plano_trabalho_entrega_id)("items", ctx.entregas)("labelInfo", ctx.lex.translate("Entrega") + ctx.lex.translate(" plano de trabalho") + " que a " + ctx.lex.translate("atividade") + " \u00E9 referente");
+        _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("label", ctx.lex.translate("Entrega") + " (Descri\u00E7\u00E3o dos trabalhos)")("size", 12)("control", ctx.form.controls.plano_trabalho_entrega_id)("items", ctx.entregas)("labelInfo", ctx.lex.translate("Entrega") + ctx.lex.translate(" plano de trabalho") + " que a " + ctx.lex.translate("atividade") + " \u00E9 referente");
         _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵproperty"]("ngIf", !(_r6 == null ? null : _r6.selectedItem == null ? null : _r6.selectedItem.data == null ? null : _r6.selectedItem.data.tipo_modalidade == null ? null : _r6.selectedItem.data.tipo_modalidade.atividade_esforco))("ngIfElse", _r9);
         _angular_core__WEBPACK_IMPORTED_MODULE_26__["ɵɵadvance"](3);
