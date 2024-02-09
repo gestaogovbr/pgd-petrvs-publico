@@ -19,9 +19,7 @@ class UnidadeIntegranteController extends ControllerBase {
             $result = $this->service->carregarIntegrantes($data["unidade_id"],$data["usuario_id"]);
             return response()->json([
                 'success' => true,
-                'rows' => $result['rows'],
-/*                 'unidade' => $result['unidade'],
-                'usuario' => $result['usuario'], */
+                'rows' => $result['rows']
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);

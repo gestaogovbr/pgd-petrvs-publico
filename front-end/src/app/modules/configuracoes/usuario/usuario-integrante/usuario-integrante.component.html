@@ -2,7 +2,7 @@
 
 <div class="row">
     <div class="col-4">
-        <editable-form [form]="formPerfil!" [noButtons]="isNoPersist ? 'true' : undefined" [disabled]="formDisabled" title="" (submit)="saveData.bind(this)">
+        <editable-form [form]="formPerfil!" [noButtons]="isNoButtons()" [disabled]="formDisabled" title="" (submit)="salvarPerfil()">
             <div class="row">
                 <input-select [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_PERFIL') ? 'true' : undefined" [label]="lex.translate('Perfil')" controlName="perfil_id" [dao]="perfilDao" required></input-select>
             </div>

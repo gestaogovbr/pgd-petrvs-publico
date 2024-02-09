@@ -143,7 +143,8 @@ export class Usuario extends Base implements HasNotificacao {
     public situacao_funcional: UsuarioSituacaoFuncional = "ATIVO_PERMANENTE";
     public texto_complementar_plano: string | null = ""; // Mensagem adicional para o plano de trabalho
 
-    public perfil_id: number = 0; /* ID do perfil - Setar o primeiro do list*/
+    //public perfil_id: number = 0; /* ID do perfil - Setar o primeiro do list*/
+    public perfil_id: string = ""; /* ID do perfil - Setar o primeiro do list*/
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }
