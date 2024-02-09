@@ -723,13 +723,13 @@ export class LookupService implements IIndexable {
   ];
 
   public ESCOLARIDADE: LookupItem[] = [
-    { key: 'ESCOLA_FUDAMENTAL', value: 'Ensino Fundamental' },
-    { key: 'ESCOLA_MEDIO', value: 'Ensino Médio' },
-    { key: 'ESCOLA_SUPERIOR', value: 'Ensino Superior' },
-    { key: 'ESCOLA_ESPECIAL', value: 'Especialização' },
-    { key: 'ESCOLA_MESTRADO', value: 'Mestrado' },
-    { key: 'ESCOLA_DOUTORADO', value: 'Doutorado' },
-    { key: 'ESCOLA_POS_DOUTORADO', value: 'Pós Doutorado' }
+    { key: 'ESCOLARIDADE_FUNDAMENTAL', value: 'Ensino Fundamental' },
+    { key: 'ESCOLARIDADE_MEDIO', value: 'Ensino Médio' },
+    { key: 'ESCOLARIDADE_SUPERIOR', value: 'Ensino Superior' },
+    { key: 'ESCOLARIDADE_ESPECIAL', value: 'Especialização' },
+    { key: 'ESCOLARIDADE_MESTRADO', value: 'Mestrado' },
+    { key: 'ESCOLARIDADE_DOUTORADO', value: 'Doutorado' },
+    { key: 'ESCOLARIDADE_POS_DOUTORADO', value: 'Pós Doutorado' }
   ];
 
   public TITULOS_CURSOS: LookupItem[] = [

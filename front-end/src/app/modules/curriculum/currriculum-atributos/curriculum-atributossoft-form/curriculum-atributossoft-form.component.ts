@@ -59,7 +59,7 @@ export class CurriculumAtributossoftFormComponent extends PageFormBase<Questiona
   public async loadData(entity: QuestionarioResposta, form: FormGroup) {}
 
   public async initializeData(form: FormGroup) {
-    const questionario = await this.questionarioDao?.query({ where: [['codigo', '==', 'SOFTSKILLS']], join: ['perguntas'] }).asPromise();
+    const questionario = await this.questionarioDao?.query({ where: [['codigo', '==', 'SOFTSKILL']], join: ['perguntas'] }).asPromise();
     if (questionario?.length) {
       questionario[0].perguntas = questionario[0].perguntas.sort((a, b) => a.sequencia! < b.sequencia! ? -1 : 1);
       this.questionario = questionario[0];
@@ -105,25 +105,6 @@ export class CurriculumAtributossoftFormComponent extends PageFormBase<Questiona
       this.form!.controls.etica.value
     ];
 
-    
-    /*let array : any=[];
-    let respostas = this.entity?.questionario_resposta_pergunta;
-    respostas?.forEach((x,i)=>{
-      let arrayQRP = new QuestionarioRespostaPergunta();
-      arrayQRP.questionario_pergunta_id = x.questionario_pergunta_id;
-      arrayQRP.resposta = x.resposta;
-      arrayQRP._status = "ADD";
-      array.push(arrayQRP)
-    })
-
-    array?.forEach((x : any,i: number)=>{
-      if ((x._status != "ADD") && (parseInt(x.resposta) != parseInt(valores[i]))){
-        x.resposta = parseInt(valores[i]);
-        x._status = "EDIT";
-      }
-    })*/
-
-    
     let respostas = this.entity?.questionario_resposta_pergunta || valores.map((x, i) => new QuestionarioRespostaPergunta({
       questionario_pergunta_id: this.questionario!.perguntas[i].id,
       resposta: parseInt(x),

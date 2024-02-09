@@ -31,6 +31,8 @@ export class InputRadioComponent extends InputBase implements OnInit {
   @Input() source?: any;
   @Input() path?: string;
   @Input() required?: string;
+  @Input() circle?: string;
+  @Input() inline?: string;
   @Input() change?: (value: any) => void;
   @Input() set value(value: any) {
     if(value != this._value) {
@@ -75,6 +77,14 @@ export class InputRadioComponent extends InputBase implements OnInit {
 
   public isChecked(item: LookupItem): string | undefined {
     return this.value == item.key ? "" : undefined
+  }
+
+  public isCircle(): boolean {
+    return this.circle != undefined;
+  }
+
+  public isInline(): boolean {
+    return this.inline != undefined;
   }
 
   ngAfterViewInit() {

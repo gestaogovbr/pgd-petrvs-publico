@@ -30,7 +30,7 @@ class AtributoComportamentalQVTSeeder extends Seeder
             
         $sequencia = 1;
 
-        $perguntas = ['sequencia' => $sequencia,'pergunta' => 'Você concorda em participar desta pesquisa, de forma anônima, cujos dados são coletados sem identificação dos respondentes, e serão analisados para subsidiar a formulação de ações de melhoria da Qualidade de Vida no Trabalho na PRF, e estudos da SEGES/MGI sobre o tema?','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid];
+        $perguntas = ['sequencia' => $sequencia,'pergunta' => 'Você concorda em participar desta pesquisa, de forma anônima, cujos dados são coletados sem identificação dos respondentes, e serão analisados para subsidiar a formulação de ações de melhoria da Qualidade de Vida no Trabalho na Instituição, e estudos da SEGES/MGI sobre o tema?','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid];
 
         $perguntaNovo = new QuestionarioPergunta();
         $perguntaNovo->fill([
@@ -225,7 +225,7 @@ class AtributoComportamentalQVTSeeder extends Seeder
         $perguntaNovo->save();
         $sequencia++;
 
-        $perguntas = ['sequencia' => $sequencia,'pergunta' => 'Você atua nesta instituição a quantos anos?','tipo' => 'NUMBER','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid];
+        $perguntas = ['sequencia' => $sequencia,'pergunta' => 'Informe o número de crianças e/ou adolescentes que estão sob seus cuidados.','tipo' => 'NUMBER','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid];
 
         $perguntaNovo = new QuestionarioPergunta();
         $perguntaNovo->fill([
@@ -279,7 +279,7 @@ class AtributoComportamentalQVTSeeder extends Seeder
             ['sequencia' => $sequencia,'pergunta' => 'Estou satisfeito(a) com o tempo que o trabalho ocupa nas minhas preocupações diárias.','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid], 
             ['sequencia' => $sequencia,'pergunta' => 'Estou satisfeito(a) com a influência do trabalho na minha rotina familiar.','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid], 
             ['sequencia' => $sequencia,'pergunta' => 'Estou satisfeito(a) com a influência do trabalho nas minhas oportunidades de lazer e socialização fora do trabalho.','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid], 
-            ['sequencia' => $sequencia,'pergunta' => 'Estou satisfeito(a) com os serviços prestados e com os produtos entregues pela PRF aos seus clientes/parceiros externos (outras instituições e a sociedade em geral).','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid], 
+            ['sequencia' => $sequencia,'pergunta' => 'Estou satisfeito(a) com os serviços prestados e com os produtos entregues pela Intituição aos seus clientes/parceiros externos (outras instituições e a sociedade em geral).','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid], 
             ['sequencia' => $sequencia,'pergunta' => 'Na instituição, existem oportunidades para o(a) colaborador(a) discutir e influir no desenho dos processos de trabalho em que está envolvido(a).','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid], 
             ['sequencia' => $sequencia,'pergunta' => 'Eu sinto orgulho e satisfação em relação à imagem da instituição perante a sociedade.','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid], 
         ];
@@ -310,7 +310,7 @@ class AtributoComportamentalQVTSeeder extends Seeder
         $perguntas =   
             [
                 ['sequencia' => $sequencia,'pergunta' => 'O etarismo é o preconceito contra pessoas por causa de sua idade. Esse preconceito afeta pessoas jovens, mas é muito mais comum ocorrer contra pessoas idosas, se manifestando de diversas maneiras, como por exemplo, na forma como desconsideramos a opinião ou duvidamos da capacidade de uma pessoa apenas por ela ser idosa. Você se sentiu vítima de etarismo?','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid],
-                ['sequencia' => $sequencia,'pergunta' => 'Nas organizações, assim como na sociedade em geral, os indivíduos podem se organizar em grupos. Nas organizações é comum a organização em carreiras. Os profissionais, em cada carreira, compartilham um sentimento de pertencimento e possuem estratégias comuns quanto a gestão da carreira, e ao seu posicionamento diante dos profissionais que não pertencem a mesma. Na PRF, você percebe a existência de alguma forma de discriminação entre as diversas carreiras e/ou discriminação em função da atividade que o(a) colaborador(a) exerce?','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid],
+                ['sequencia' => $sequencia,'pergunta' => 'Nas organizações, assim como na sociedade em geral, os indivíduos podem se organizar em grupos. Nas organizações é comum a organização em carreiras. Os profissionais, em cada carreira, compartilham um sentimento de pertencimento e possuem estratégias comuns quanto a gestão da carreira, e ao seu posicionamento diante dos profissionais que não pertencem a mesma. Na Instituição, você percebe a existência de alguma forma de discriminação entre as diversas carreiras e/ou discriminação em função da atividade que o(a) colaborador(a) exerce?','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid],
                 ['sequencia' => $sequencia,'pergunta' => 'Você já sofreu assédio moral ou assédio sexual no ambiente de trabalho? Assédio moral é a conduta praticada no exercício profissional ou em razão dele, por meio da repetição deliberada de gestos, palavras faladas ou escritas ou comportamentos que exponham o  profissional que esteja prestando seus serviços a situações humilhantes e constrangedoras, capazes de lhes causar ofensa à personalidade, à dignidade e à integridade psíquica ou física, com o objetivo de excluí-los das suas funções ou de desestabilizá-los emocionalmente, deteriorando o ambiente profissional; (Lei nº 14.224, de 3 de julho de 2023).O assédio sexual é o ato de “constranger alguém, com o intuito de obter vantagem ou favorecimento sexual, prevalecendo-se o agente da sua condição de superior hierárquico ou ascendência inerentes ao exercício de emprego, cargo ou função - Lei nº 10.224, de 15 de maio de 2001','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid],
                 ['sequencia' => $sequencia,'pergunta' => 'Você percebe alguma forma de discriminação (social, racial, religiosa, sexual, etc.) no seu ambiente de trabalho?','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid],
             ];

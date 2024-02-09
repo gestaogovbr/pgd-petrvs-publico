@@ -4,7 +4,7 @@ import { Base } from './base.model';
 import { constructorParametersDownlevelTransform } from '@angular/compiler-cli';
 
 
-export type QuestionarioPerguntaTipo = "EMOJI" | "SELECT" | "MULTI_SELECT" | "TEXT" | "TEXT_AREA" | "TIMER" | "DATE_TIME" | "SWICTH" | "NUMBER" | "RATE" | "RADIO" | "CHECK";
+export type QuestionarioPerguntaTipo = "EMOJI" | "SELECT" | "MULTI_SELECT" | "TEXT" | "TEXT_AREA" | "TIMER" | "DATE_TIME" | "SWICTH" | "NUMBER" | "RATE" | "RADIO" | "RADIO_BUTTON" | "RADIO_INLINE" | "CHECK";
 export type QuestionarioPerguntaRespostaTimer = "DAYS_HOURS" | "DAYS" | "HOURS";
 export type QuestionarioPerguntaRespostaDateTime = "DATE_TIME" | "DATE" | "TIME";
 export type QuestionarioPerguntaRespostaRange = {min: number, max: number};

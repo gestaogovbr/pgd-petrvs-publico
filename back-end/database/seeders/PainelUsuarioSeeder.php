@@ -113,5 +113,16 @@ class PainelUsuarioSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
+        PainelUsuario::create([
+            'email' => 'henrique.alves@prf.gov.br',
+            'nome' => 'Carlos Henrique Alves Lopes',
+            'password' => md5('petrvs@123'),
+            'cpf' => '26751043880',
+            'email_verified_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+
     }
 }

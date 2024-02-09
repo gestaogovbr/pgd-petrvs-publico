@@ -1,0 +1,33 @@
+<input-container [labelPosition]="labelPosition" [labelClass]="labelClass" [controlName]="controlName" [required]="required" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold" [isRadio]="true">
+    <div *ngIf="!isCircle, else inputCircle" class="btn-group full-container-button-group" role="group">
+        <ng-container *ngFor="let item of items">
+            <input *ngIf="viewInit" type="radio" class="btn-check" [id]="generatedId(controlName) + '_' + item.key" [attr.name]="controlName" autocomplete="off" [attr.value]="item.key.toString()" (change)="onRadioChange($event)" [attr.checked]="isChecked(item)" [disabled]="disabled">
+            <label class="btn petrvs btn-outline-primary" [attr.for]="generatedId(controlName) + '_' + item.key" [class.label-input-invalid]="isInvalid()" [class.disabled]="isDisabled" [attr.data-bs-toggle]="item.hint ? 'tooltip' : undefined" [attr.data-bs-placement]="item.hint ? 'top' : undefined" [title]="item.hint">
+                <i *ngIf="item.icon?.length" [class]="item.icon"></i>
+                {{item.value}}
+            </label>
+        </ng-container>
+    </div>
+    <ng-template #inputCircle>
+        <div (change)="onRadioChange($event)">
+            <ng-container *ngFor="let item of items; index as i">
+                <div class="form-check" [class.form-check-inline]="isInline">
+                    <input class="form-check-input" type="radio" [attr.name]="controlName" [id]="generatedId(controlName) + '_' + item.key" [attr.value]="item.key.toString()" [attr.checked]="isChecked(item)" [disabled]="disabled">
+                    <label class="form-check-label" [attr.for]="generatedId(controlName) + '_' + item.key">{{item.value}}</label>
+                </div>
+            </ng-container>
+        </div>
+    </ng-template>
+</input-container>
+
+
+<!-- div class="col-lg-12" (change)="onChange($event)">
+    <ng-container *ngFor="let opcao of opcoesDass">
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="radioDass{{i+1}}" id="radioDassop{{opcao.key}}{{i}}" value={{opcao.key}}>
+        <label class="form-check-label" for=radioDassop{{opcao.key}}{{i}}>{{opcao.value}}</label>
+      </div>
+    </ng-container>
+</div //-->
+
+
