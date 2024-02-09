@@ -464,7 +464,7 @@ class PlanoEntregaService extends ServiceBase
       $dataOrEntity['unidade'] = Unidade::find($dataOrEntity['unidade_id'])->toArray();
       
       $condition1 =  $this->usuario->isGestorUnidade($dataOrEntity['unidade_id']) || 
-          !empty($dataOrEntity['unidade']['unidade_pai_id']) && $this->usuario->isGestorUnidade($planoEntrega['unidade']['unidade_pai_id']);
+          !empty($dataOrEntity['unidade']['unidade_pai_id']) && $this->usuario->isGestorUnidade($dataOrEntity['unidade']['unidade_pai_id']);
       $condition2 = !empty($dataOrEntity['unidade']['unidade_pai_id']) && 
           UsuarioService::isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $dataOrEntity['unidade']['unidade_pai_id']) &&
           $usuario->hasPermissionTo('MOD_PENT_EDT_FLH');
