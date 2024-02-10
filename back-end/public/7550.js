@@ -1058,7 +1058,6 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
       }
     })();
   }
-
   filterClear(filter) {
     filter.controls.unidade_id.setValue(undefined);
     filter.controls.nome_usuario.setValue('');
