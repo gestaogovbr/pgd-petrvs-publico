@@ -30,297 +30,857 @@ class CapacidadeSeeder extends Seeder
     public function run(){
 
         // Lista com capacidades por perfil
-        $capacidades_participante = [
-            ["codigo" => "MOD_PTR_ENTR_EDT"],
-            ["codigo" => "MOD_PTR_INCL"],
-            ["codigo" => "MOD_OCOR"],
-            ["codigo" => "MOD_AFT"],
-            ["codigo" => "MOD_ATV_TRF_EDT"],
-            ["codigo" => "MOD_ATV_TRF_INCL"],
-            ["codigo" => "MOD_PART"],
-            ["codigo" => "MOD_ATV_TRF_EXCL"],
-            ["codigo" => "MOD_ATV"],
-            ["codigo" => "MOD_ATV_INCL"],
-            ["codigo" => "MOD_ATV_CLONAR"],
-            ["codigo" => "MOD_ATV_RESP_INICIAR"],
-            ["codigo" => "MOD_ATV_TIPO_ATV_VAZIO"],
-            ["codigo" => "MOD_TRF"],
-            ["codigo" => "MOD_PTR_EDT"],
-            ["codigo" => "MOD_ATV_INICIO"],
-            ["codigo" => "MOD_ATV_TRF_CONS"],
-            ["codigo" => "MOD_OCOR_INCL"],
-            ["codigo" => "MOD_PTR_ENTR_INCL"],
-            ["codigo" => "MOD_PRGT"],
-            ["codigo" => "MOD_ATV_EXCL"],
-            ["codigo" => "MOD_PTR"],
-            ["codigo" => "MOD_AFT_INCL"],
-            ["codigo" => "MOD_PTR_ENTR"],
-            ["codigo" => "MOD_PTR_CSLD_REC_AVAL"],
-            ["codigo" => "MOD_PTR_CSLD"],
-            ["codigo" => "MOD_OCOR_EDT"],
-            ["codigo" => "MOD_AFT_EDT"],
-            ["codigo" => "MOD_ATV_EDT"],
-            ["codigo" => "CTXT_EXEC"],
-            ["codigo" => "MOD_CTXT"],
-        ];
+        $capacidades_participante = array(
+            array(
+                "codigo" => "CTXT_EXEC",
+            ),
+            array(
+                "codigo" => "MOD_ACESSO",
+            ),
+            array(
+                "codigo" => "MOD_AFT",
+            ),
+            array(
+                "codigo" => "MOD_AFT_EDT",
+            ),
+            array(
+                "codigo" => "MOD_AFT_INCL",
+            ),
+            array(
+                "codigo" => "MOD_ATV",
+            ),
+            array(
+                "codigo" => "MOD_ATV_CLONAR",
+            ),
+            array(
+                "codigo" => "MOD_ATV_EDT",
+            ),
+            array(
+                "codigo" => "MOD_ATV_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_ATV_INCL",
+            ),
+            array(
+                "codigo" => "MOD_ATV_INICIO",
+            ),
+            array(
+                "codigo" => "MOD_ATV_RESP_INICIAR",
+            ),
+            array(
+                "codigo" => "MOD_ATV_TIPO_ATV_VAZIO",
+            ),
+            array(
+                "codigo" => "MOD_ATV_TRF_CONS",
+            ),
+            array(
+                "codigo" => "MOD_ATV_TRF_EDT",
+            ),
+            array(
+                "codigo" => "MOD_ATV_TRF_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_ATV_TRF_INCL",
+            ),
+            array(
+                "codigo" => "MOD_CTXT",
+            ),
+            array(
+                "codigo" => "MOD_OCOR",
+            ),
+            array(
+                "codigo" => "MOD_OCOR_EDT",
+            ),
+            array(
+                "codigo" => "MOD_OCOR_INCL",
+            ),
+            array(
+                "codigo" => "MOD_PENT",
+            ),
+            array(
+                "codigo" => "MOD_PRGT",
+            ),
+            array(
+                "codigo" => "MOD_PTR",
+            ),
+            array(
+                "codigo" => "MOD_PTR_CNC",
+            ),
+            array(
+                "codigo" => "MOD_PTR_CSLD",
+            ),
+            array(
+                "codigo" => "MOD_PTR_CSLD_REC_AVAL",
+            ),
+            array(
+                "codigo" => "MOD_PTR_EDT",
+            ),
+            array(
+                "codigo" => "MOD_PTR_EDT_ATV",
+            ),
+            array(
+                "codigo" => "MOD_PTR_ENTR",
+            ),
+            array(
+                "codigo" => "MOD_PTR_ENTR_EDT",
+            ),
+            array(
+                "codigo" => "MOD_PTR_ENTR_INCL",
+            ),
+            array(
+                "codigo" => "MOD_PTR_INCL",
+            ),
+            array(
+                "codigo" => "MOD_PTR_USERS_INCL",
+            ),
+            array(
+                "codigo" => "MOD_TRF",
+            ),
+            array(
+                "codigo" => "MOD_USER",
+            ),
+            array(
+                "codigo" => "MOD_USER_TUDO",
+            ),
+        );
 
-        $capacidades_chefia_de_unidade_executora = [
-            ["codigo" => "MOD_UND_TUDO"],
-            ["codigo" => "MOD_PENT_ENTR_EDT"],
-            ["codigo" => "MOD_USER_TUDO"],
-            ["codigo" => "MOD_PENT_INCL"],
-            ["codigo" => "MOD_TRF"],
-            ["codigo" => "MOD_AFT_EXCL"],
-            ["codigo" => "MOD_PTR_USERS_INCL"],
-            ["codigo" => "MOD_OCOR_INCL"],
-            ["codigo" => "MOD_ENTRG_INCL"],
-            ["codigo" => "MOD_RX_VIS_ATR"],
-            ["codigo" => "MOD_TIPO_TRF"],
-            ["codigo" => "MOD_TIPO_TRF_INCL"],
-            ["codigo" => "MOD_ATV_TRF_CONS"],
-            ["codigo" => "MOD_PENT_CANC_AVAL"],
-            ["codigo" => "MOD_PENT_AVAL"],
-            ["codigo" => "MOD_PTR_CSLD_REC_AVAL"],
-            ["codigo" => "MOD_TRF_INCL"],
-            ["codigo" => "MOD_PENT"],
-            ["codigo" => "MOD_PENT_RET_HOMOL"],
-            ["codigo" => "MOD_ATV_TIPO_ATV_VAZIO"],
-            ["codigo" => "MENU_GESTAO_ACESSO"],
-            ["codigo" => "MOD_TRF_EXCL"],
-            ["codigo" => "MOD_ATV_TRF_EDT"],
-            ["codigo" => "MOD_RX"],
-            ["codigo" => "MOD_PENT_EDT_FLH"],
-            ["codigo" => "MOD_PLAN_INST"],
-            ["codigo" => "MOD_ATV"],
-            ["codigo" => "MOD_ATV_RESP_INICIAR"],
-            ["codigo" => "MOD_ATV_INICIO"],
-            ["codigo" => "MOD_UND"],
-            ["codigo" => "MOD_PENT_ARQ"],
-            ["codigo" => "MOD_RX_EDT_OPO"],
-            ["codigo" => "MOD_PTR_CSLD"],
-            ["codigo" => "MOD_PTR_ENTR_INCL"],
-            ["codigo" => "MOD_PENT_EDT"],
-            ["codigo" => "MOD_RX_VIS_DPR"],
-            ["codigo" => "MOD_PTR_EDT_ATV"],
-            ["codigo" => "MOD_PTR_EDT"],
-            ["codigo" => "MOD_ATV_TRF_EXCL"],
-            ["codigo" => "MOD_ATV_TRF_INCL"],
-            ["codigo" => "MOD_RX_VIS_OPO"],
-            ["codigo" => "MOD_TIPO_TRF_EDT"],
-            ["codigo" => "MOD_OCOR"],
-            ["codigo" => "MOD_TRF_EDT"],
-            ["codigo" => "MOD_PROJ_REC_INCL"],
-            ["codigo" => "MOD_ENTRG_EDT"],
-            ["codigo" => "MOD_PROJ_REG_EDT"],
-            ["codigo" => "MOD_PTR_INCL_SEM_LOT"],
-            ["codigo" => "MOD_PROJ_EDT"],
-            ["codigo" => "MOD_PENT_ENTR_INCL"],
-            ["codigo" => "MOD_AFT_EDT"],
-            ["codigo" => "MOD_AFT_INCL"],
-            ["codigo" => "MOD_PENT_CONC"],
-            ["codigo" => "MOD_PENT_EXCL"],
-            ["codigo" => "MOD_PROJ_INCL"],
-            ["codigo" => "MOD_AFT"],
-            ["codigo" => "MOD_OCOR_EXCL"],
-            ["codigo" => "MOD_FER"],
-            ["codigo" => "MOD_PTR_CSLD_AVAL"],
-            ["codigo" => "MOD_ENTRG_EXCL"],
-            ["codigo" => "MOD_PENT_EDT_ATV_HOMOL"],
-            ["codigo" => "MOD_PENT_AVAL_SUBORD"],
-            ["codigo" => "MOD_PROJ"],
-            ["codigo" => "MOD_PTR_ENTR_EDT"],
-            ["codigo" => "MOD_PROJ_REG_INCL"],
-            ["codigo" => "MOD_RX_VIS_DPE"],
-            ["codigo" => "MOD_PTR_ENTR"],
-            ["codigo" => "MOD_ATV_CLONAR"],
-            ["codigo" => "MOD_PTR"],
-            ["codigo" => "MOD_PENT_LIB_HOMOL"],
-            ["codigo" => "MENU_REL_ACESSO"],
-            ["codigo" => "MOD_TIPO_MTV_AFT"],
-            ["codigo" => "MOD_PENT_CANC_HOMOL"],
-            ["codigo" => "MOD_PENT_HOMOL"],
-            ["codigo" => "MOD_PTR_ENTR_EXCL"],
-            ["codigo" => "MOD_ENTRG"],
-            ["codigo" => "MOD_PENT_EDT_ATV_ATV"],
-            ["codigo" => "MOD_PTR_INCL"],
-            ["codigo" => "MOD_OCOR_EDT"],
-            ["codigo" => "MOD_USER"],
-            ["codigo" => "MOD_ACESSO"],
-            ["codigo" => "MOD_ATV_INCL"],
-            ["codigo" => "MOD_ATV_EDT"],
-            ["codigo" => "MOD_ATV_USU_EXT"],
-            ["codigo" => "CTXT_GEST"],
-            ["codigo" => "MOD_CTXT"],
-            ["codigo" => "CTXT_PROJ"],
-            ["codigo" => "CTXT_EXEC"],
-            ["codigo" => "CTXT_RX"],
-        ];
+        $capacidades_chefia_de_unidade_executora = array(
+            array(
+                "codigo" => "CTXT_GEST",
+            ),
+            array(
+                "codigo" => "MENU_GESTAO_ACESSO",
+            ),
+            array(
+                "codigo" => "MENU_REL_ACESSO",
+            ),
+            array(
+                "codigo" => "MOD_ACESSO",
+            ),
+            array(
+                "codigo" => "MOD_AFT",
+            ),
+            array(
+                "codigo" => "MOD_AFT_EDT",
+            ),
+            array(
+                "codigo" => "MOD_AFT_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_AFT_INCL",
+            ),
+            array(
+                "codigo" => "MOD_ATV",
+            ),
+            array(
+                "codigo" => "MOD_ATV_CLONAR",
+            ),
+            array(
+                "codigo" => "MOD_ATV_EDT",
+            ),
+            array(
+                "codigo" => "MOD_ATV_INCL",
+            ),
+            array(
+                "codigo" => "MOD_ATV_INICIO",
+            ),
+            array(
+                "codigo" => "MOD_ATV_RESP_INICIAR",
+            ),
+            array(
+                "codigo" => "MOD_ATV_TIPO_ATV_VAZIO",
+            ),
+            array(
+                "codigo" => "MOD_ATV_TRF_CONS",
+            ),
+            array(
+                "codigo" => "MOD_ATV_TRF_EDT",
+            ),
+            array(
+                "codigo" => "MOD_ATV_TRF_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_ATV_TRF_INCL",
+            ),
+            array(
+                "codigo" => "MOD_ATV_USU_EXT",
+            ),
+            array(
+                "codigo" => "MOD_CTXT",
+            ),
+            array(
+                "codigo" => "MOD_OCOR",
+            ),
+            array(
+                "codigo" => "MOD_OCOR_EDT",
+            ),
+            array(
+                "codigo" => "MOD_OCOR_INCL",
+            ),
+            array(
+                "codigo" => "MOD_PART",
+            ),
+            array(
+                "codigo" => "MOD_PENT",
+            ),
+            array(
+                "codigo" => "MOD_PENT_ARQ",
+            ),
+            array(
+                "codigo" => "MOD_PENT_AVAL",
+            ),
+            array(
+                "codigo" => "MOD_PENT_AVAL_SUBORD",
+            ),
+            array(
+                "codigo" => "MOD_PENT_CANC_AVAL",
+            ),
+            array(
+                "codigo" => "MOD_PENT_CANC_HOMOL",
+            ),
+            array(
+                "codigo" => "MOD_PENT_CONC",
+            ),
+            array(
+                "codigo" => "MOD_PENT_EDT",
+            ),
+            array(
+                "codigo" => "MOD_PENT_EDT_ATV_ATV",
+            ),
+            array(
+                "codigo" => "MOD_PENT_EDT_ATV_HOMOL",
+            ),
+            array(
+                "codigo" => "MOD_PENT_EDT_FLH",
+            ),
+            array(
+                "codigo" => "MOD_PENT_ENTR_EDT",
+            ),
+            array(
+                "codigo" => "MOD_PENT_ENTR_EXTRPL",
+            ),
+            array(
+                "codigo" => "MOD_PENT_ENTR_INCL",
+            ),
+            array(
+                "codigo" => "MOD_PENT_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_PENT_HOMOL",
+            ),
+            array(
+                "codigo" => "MOD_PENT_INCL",
+            ),
+            array(
+                "codigo" => "MOD_PENT_LIB_HOMOL",
+            ),
+            array(
+                "codigo" => "MOD_PENT_RET_HOMOL",
+            ),
+            array(
+                "codigo" => "MOD_PLAN_INST",
+            ),
+            array(
+                "codigo" => "MOD_PRGT",
+            ),
+            array(
+                "codigo" => "MOD_PTR",
+            ),
+            array(
+                "codigo" => "MOD_PTR_CNC",
+            ),
+            array(
+                "codigo" => "MOD_PTR_CSLD",
+            ),
+            array(
+                "codigo" => "MOD_PTR_CSLD_AVAL",
+            ),
+            array(
+                "codigo" => "MOD_PTR_CSLD_REC_AVAL",
+            ),
+            array(
+                "codigo" => "MOD_PTR_EDT",
+            ),
+            array(
+                "codigo" => "MOD_PTR_EDT_ATV",
+            ),
+            array(
+                "codigo" => "MOD_PTR_ENTR",
+            ),
+            array(
+                "codigo" => "MOD_PTR_ENTR_EDT",
+            ),
+            array(
+                "codigo" => "MOD_PTR_ENTR_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_PTR_ENTR_INCL",
+            ),
+            array(
+                "codigo" => "MOD_PTR_ENTR_INCL",
+            ),
+            array(
+                "codigo" => "MOD_PTR_INCL",
+            ),
+            array(
+                "codigo" => "MOD_PTR_USERS_INCL",
+            ),
+            array(
+                "codigo" => "MOD_RX",
+            ),
+            array(
+                "codigo" => "MOD_RX_EDT_OPO",
+            ),
+            array(
+                "codigo" => "MOD_RX_VIS_ATR",
+            ),
+            array(
+                "codigo" => "MOD_RX_VIS_DPE",
+            ),
+            array(
+                "codigo" => "MOD_RX_VIS_DPR",
+            ),
+            array(
+                "codigo" => "MOD_RX_VIS_OPO",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_ATV",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_ATV_EDT_UND",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_ATV_INCL",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_MTV_AFT",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_TRF",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_TRF_EDT",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_TRF_INCL",
+            ),
+            array(
+                "codigo" => "MOD_TRF",
+            ),
+            array(
+                "codigo" => "MOD_TRF_EDT",
+            ),
+            array(
+                "codigo" => "MOD_TRF_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_TRF_INCL",
+            ),
+            array(
+                "codigo" => "MOD_UND",
+            ),
+            array(
+                "codigo" => "MOD_UND_EDT",
+            ),
+            array(
+                "codigo" => "MOD_UND_EDT_FRM",
+            ),
+            array(
+                "codigo" => "MOD_UND_INCL",
+            ),
+            array(
+                "codigo" => "MOD_UND_TUDO",
+            ),
+            array(
+                "codigo" => "MOD_USER",
+            ),
+            array(
+                "codigo" => "MOD_USER_TUDO",
+            ),
+        );
 
-        $capacidades_administrador_negocial = [
-            ["codigo" => "CTXT_ADM"],
-            ["codigo" => "CTXT_EXEC"],
-            ["codigo" => "CTXT_GEST"],
-            ["codigo" => "DASH_PRG"],
-            ["codigo" => "MENU_CAD_ACESSO"],
-            ["codigo" => "MENU_CONFIG_ACESSO"],
-            ["codigo" => "MENU_GESTAO_ACESSO"],
-            ["codigo" => "MENU_REL_ACESSO"],
-            ["codigo" => "MOD_ACESSO"],
-            ["codigo" => "MOD_AFT"],
-            ["codigo" => "MOD_AFT_EDT"],
-            ["codigo" => "MOD_AFT_EXCL"],
-            ["codigo" => "MOD_AFT_INCL"],
-            ["codigo" => "MOD_ATV"],
-            ["codigo" => "MOD_ATV_CLONAR"],
-            ["codigo" => "MOD_ATV_EDT"],
-            ["codigo" => "MOD_ATV_EXCL"],
-            ["codigo" => "MOD_ATV_INCL"],
-            ["codigo" => "MOD_ATV_INICIO"],
-            ["codigo" => "MOD_ATV_RESP_INICIAR"],
-            ["codigo" => "MOD_ATV_TIPO_ATV_VAZIO"],
-            ["codigo" => "MOD_ATV_TRF_CONS"],
-            ["codigo" => "MOD_ATV_TRF_EDT"],
-            ["codigo" => "MOD_ATV_TRF_EXCL"],
-            ["codigo" => "MOD_ATV_TRF_INCL"],
-            ["codigo" => "MOD_ATV_USU_EXT"],
-            ["codigo" => "MOD_CADV"],
-            ["codigo" => "MOD_CADV_EDT"],
-            ["codigo" => "MOD_CADV_EXCL"],
-            ["codigo" => "MOD_CADV_INCL"],
-            ["codigo" => "MOD_CFG"],
-            ["codigo" => "MOD_CFG_PERFS"],
-            ["codigo" => "MOD_CFG_UND"],
-            ["codigo" => "MOD_CFG_USER"],
-            ["codigo" => "MOD_CFG_USER_CPF"],
-            ["codigo" => "MOD_CFG_USER_MAT"],
-            ["codigo" => "MOD_CFG_USER_PERFIL"],
-            ["codigo" => "MOD_CID"],
-            ["codigo" => "MOD_CTXT"],
-            ["codigo" => "MOD_ENTD"],
-            ["codigo" => "MOD_ENTD_EDT"],
-            ["codigo" => "MOD_ENTRG"],
-            ["codigo" => "MOD_ENTRG_EDT"],
-            ["codigo" => "MOD_ENTRG_EXCL"],
-            ["codigo" => "MOD_ENTRG_INCL"],
-            ["codigo" => "MOD_EXTM"],
-            ["codigo" => "MOD_EXTM_EDT"],
-            ["codigo" => "MOD_EXTM_EXCL"],
-            ["codigo" => "MOD_EXTM_INCL"],
-            ["codigo" => "MOD_FER"],
-            ["codigo" => "MOD_FER_EDT"],
-            ["codigo" => "MOD_FER_EXCL"],
-            ["codigo" => "MOD_FER_INCL"],
-            ["codigo" => "MOD_PENT"],
-            ["codigo" => "MOD_PENT_ARQ"],
-            ["codigo" => "MOD_PENT_AVAL"],
-            ["codigo" => "MOD_PENT_AVAL_SUBORD"],
-            ["codigo" => "MOD_PENT_CANC_AVAL"],
-            ["codigo" => "MOD_PENT_CANC_CONCL"],
-            ["codigo" => "MOD_PENT_CANC_HOMOL"],
-            ["codigo" => "MOD_PENT_CNC"],
-            ["codigo" => "MOD_PENT_CONC"],
-            ["codigo" => "MOD_PENT_EDT"],
-            ["codigo" => "MOD_PENT_EDT_ATV_ATV"],
-            ["codigo" => "MOD_PENT_EDT_ATV_HOMOL"],
-            ["codigo" => "MOD_PENT_EDT_FLH"],
-            ["codigo" => "MOD_PENT_ENTR_EDT"],
-            ["codigo" => "MOD_PENT_ENTR_EXCL"],
-            ["codigo" => "MOD_PENT_ENTR_INCL"],
-            ["codigo" => "MOD_PENT_ENTR_PRO_EDT"],
-            ["codigo" => "MOD_PENT_ENTR_PRO_EXCL"],
-            ["codigo" => "MOD_PENT_ENTR_PRO_INCL"],
-            ["codigo" => "MOD_PENT_EXCL"],
-            ["codigo" => "MOD_PENT_HOMOL"],
-            ["codigo" => "MOD_PENT_INCL"],
-            ["codigo" => "MOD_PENT_LIB_HOMOL"],
-            ["codigo" => "MOD_PENT_QQR_UND"],
-            ["codigo" => "MOD_PENT_RET_HOMOL"],
-            ["codigo" => "MOD_PENT_RTV"],
-            ["codigo" => "MOD_PENT_SUSP"],
-            ["codigo" => "MOD_PERF_EDT"],
-            ["codigo" => "MOD_PLAN_INST"],
-            ["codigo" => "MOD_PLAN_INST_EDT"],
-            ["codigo" => "MOD_PLAN_INST_EXCL"],
-            ["codigo" => "MOD_PLAN_INST_INCL"],
-            ["codigo" => "MOD_PLAN_INST_INCL_UNEX_LOTPRI"],
-            ["codigo" => "MOD_PLAN_INST_INCL_UNEX_QQLOT"],
-            ["codigo" => "MOD_PLAN_INST_INCL_UNEX_QUALQUER"],
-            ["codigo" => "MOD_PLAN_INST_INCL_UNEX_SUBORD"],
-            ["codigo" => "MOD_PLAN_INST_INCL_UNID_INST"],
-            ["codigo" => "MOD_PRGT"],
-            ["codigo" => "MOD_PRGT_EDT"],
-            ["codigo" => "MOD_PRGT_EXCL"],
-            ["codigo" => "MOD_PRGT_INCL"],
-            ["codigo" => "MOD_PART"],
-            ["codigo" => "MOD_PART_INCL"],
-            ["codigo" => "MOD_PTR"],
-            ["codigo" => "MOD_PTR_CNC"],
-            ["codigo" => "MOD_PTR_CSLD"],
-            ["codigo" => "MOD_PTR_CSLD_AVAL"],
-            ["codigo" => "MOD_PTR_CSLD_CANC_AVAL"],
-            ["codigo" => "MOD_PTR_CSLD_CONCL"],
-            ["codigo" => "MOD_PTR_CSLD_DES_CONCL"],
-            ["codigo" => "MOD_PTR_CSLD_EDT"],
-            ["codigo" => "MOD_PTR_CSLD_EXCL"],
-            ["codigo" => "MOD_PTR_CSLD_INCL"],
-            ["codigo" => "MOD_OCOR"],
-            ["codigo" => "MOD_OCOR_EDT"],
-            ["codigo" => "MOD_OCOR_EXCL"],
-            ["codigo" => "MOD_OCOR_INCL"],
-            ["codigo" => "MOD_PTR_CSLD_REC_AVAL"],
-            ["codigo" => "MOD_PTR_EDT"],
-            ["codigo" => "MOD_PTR_EDT_ATV"],
-            ["codigo" => "MOD_PTR_ENTR"],
-            ["codigo" => "MOD_PTR_ENTR_EDT"],
-            ["codigo" => "MOD_PTR_ENTR_EXCL"],
-            ["codigo" => "MOD_PTR_ENTR_INCL"],
-            ["codigo" => "MOD_PTR_INCL"],
-            ["codigo" => "MOD_PTR_INCL_SEM_LOT"],
-            ["codigo" => "MOD_PTR_INTSC_DATA"],
-            ["codigo" => "MOD_PTR_USERS_INCL"],
-            ["codigo" => "MOD_TEMP"],
-            ["codigo" => "MOD_TIPO_AVAL"],
-            ["codigo" => "MOD_TIPO_AVAL_EDT"],
-            ["codigo" => "MOD_TIPO_AVAL_EXCL"],
-            ["codigo" => "MOD_TIPO_AVAL_INCL"],
-            ["codigo" => "MOD_TIPO_CAP"],
-            ["codigo" => "MOD_TIPO_CAP_EDT"],
-            ["codigo" => "MOD_TIPO_CAP_EXCL"],
-            ["codigo" => "MOD_TIPO_CAP_INCL"],
-            ["codigo" => "MOD_TIPO_DOC"],
-            ["codigo" => "MOD_TIPO_DOC_EDT"],
-            ["codigo" => "MOD_TIPO_DOC_EXCL"],
-            ["codigo" => "MOD_TIPO_DOC_INCL"],
-            ["codigo" => "MOD_TIPO_JUST"],
-            ["codigo" => "MOD_TIPO_JUST_EDT"],
-            ["codigo" => "MOD_TIPO_JUST_EXCL"],
-            ["codigo" => "MOD_TIPO_JUST_INCL"],
-            ["codigo" => "MOD_TIPO_MDL"],
-            ["codigo" => "MOD_TIPO_MDL_EDT"],
-            ["codigo" => "MOD_TIPO_MDL_EXCL"],
-            ["codigo" => "MOD_TIPO_MDL_INCL"],
-            ["codigo" => "MOD_TIPO_MTV_AFT"],
-            ["codigo" => "MOD_TIPO_MTV_AFT_EDT"],
-            ["codigo" => "MOD_TIPO_MTV_AFT_EXCL"],
-            ["codigo" => "MOD_TIPO_MTV_AFT_INCL"],
-            ["codigo" => "MOD_TIPO_PROC"],
-            ["codigo" => "MOD_TIPO_PROC_EDT"],
-            ["codigo" => "MOD_TIPO_PROC_EXCL"],
-            ["codigo" => "MOD_TIPO_PROC_INCL"],
-            ["codigo" => "MOD_TIPO_TRF"],
-            ["codigo" => "MOD_TIPO_TRF_EDT"],
-            ["codigo" => "MOD_TIPO_TRF_EXCL"],
-            ["codigo" => "MOD_TIPO_TRF_INCL"],
-            ["codigo" => "MOD_TPMAF_INCL"],
-            ["codigo" => "MOD_TRF"],
-            ["codigo" => "MOD_TRF_EDT"],
-            ["codigo" => "MOD_TRF_EXCL"],
-            ["codigo" => "MOD_TRF_INCL"],
-            ["codigo" => "MOD_USER"],
-            ["codigo" => "MOD_USER_ATRIB"],
-            ["codigo" => "MOD_USER_EDT"],
-            ["codigo" => "MOD_USER_TUDO"],
-        ];
+        $capacidades_administrador_negocial = array(
+            array(
+                "codigo" => "CTXT_EXEC",
+            ),
+            array(
+                "codigo" => "CTXT_GEST",
+            ),
+            array(
+                "codigo" => "DASH_PRG",
+            ),
+            array(
+                "codigo" => "MENU_CAD_ACESSO",
+            ),
+            array(
+                "codigo" => "MENU_CONFIG_ACESSO",
+            ),
+            array(
+                "codigo" => "MENU_GESTAO_ACESSO",
+            ),
+            array(
+                "codigo" => "MENU_REL_ACESSO",
+            ),
+            array(
+                "codigo" => "MOD_ACESSO",
+            ),
+            array(
+                "codigo" => "MOD_AFT",
+            ),
+            array(
+                "codigo" => "MOD_AFT_EDT",
+            ),
+            array(
+                "codigo" => "MOD_AFT_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_AFT_INCL",
+            ),
+            array(
+                "codigo" => "MOD_ATV",
+            ),
+            array(
+                "codigo" => "MOD_ATV_CLONAR",
+            ),
+            array(
+                "codigo" => "MOD_ATV_EDT",
+            ),
+            array(
+                "codigo" => "MOD_ATV_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_ATV_INCL",
+            ),
+            array(
+                "codigo" => "MOD_ATV_INICIO",
+            ),
+            array(
+                "codigo" => "MOD_ATV_RESP_INICIAR",
+            ),
+            array(
+                "codigo" => "MOD_ATV_TIPO_ATV_VAZIO",
+            ),
+            array(
+                "codigo" => "MOD_ATV_TRF_CONS",
+            ),
+            array(
+                "codigo" => "MOD_ATV_TRF_EDT",
+            ),
+            array(
+                "codigo" => "MOD_ATV_TRF_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_ATV_TRF_INCL",
+            ),
+            array(
+                "codigo" => "MOD_ATV_USU_EXT",
+            ),
+            array(
+                "codigo" => "MOD_CADV",
+            ),
+            array(
+                "codigo" => "MOD_CADV_EDT",
+            ),
+            array(
+                "codigo" => "MOD_CADV_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_CADV_INCL",
+            ),
+            array(
+                "codigo" => "MOD_CFG",
+            ),
+            array(
+                "codigo" => "MOD_CFG_PERFS",
+            ),
+            array(
+                "codigo" => "MOD_CFG_UND",
+            ),
+            array(
+                "codigo" => "MOD_CFG_USER",
+            ),
+            array(
+                "codigo" => "MOD_CFG_USER_CPF",
+            ),
+            array(
+                "codigo" => "MOD_CFG_USER_MAT",
+            ),
+            array(
+                "codigo" => "MOD_CFG_USER_PERFIL",
+            ),
+            array(
+                "codigo" => "MOD_CID",
+            ),
+            array(
+                "codigo" => "MOD_CTXT",
+            ),
+            array(
+                "codigo" => "MOD_ENTD",
+            ),
+            array(
+                "codigo" => "MOD_ENTD_EDT",
+            ),
+            array(
+                "codigo" => "MOD_ENTRG",
+            ),
+            array(
+                "codigo" => "MOD_ENTRG_EDT",
+            ),
+            array(
+                "codigo" => "MOD_ENTRG_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_ENTRG_INCL",
+            ),
+            array(
+                "codigo" => "MOD_EXTM",
+            ),
+            array(
+                "codigo" => "MOD_EXTM_EDT",
+            ),
+            array(
+                "codigo" => "MOD_EXTM_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_EXTM_INCL",
+            ),
+            array(
+                "codigo" => "MOD_FER",
+            ),
+            array(
+                "codigo" => "MOD_FER_EDT",
+            ),
+            array(
+                "codigo" => "MOD_FER_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_FER_INCL",
+            ),
+            array(
+                "codigo" => "MOD_PENT",
+            ),
+            array(
+                "codigo" => "MOD_PENT_ARQ",
+            ),
+            array(
+                "codigo" => "MOD_PENT_AVAL",
+            ),
+            array(
+                "codigo" => "MOD_PENT_AVAL_SUBORD",
+            ),
+            array(
+                "codigo" => "MOD_PENT_CANC_AVAL",
+            ),
+            array(
+                "codigo" => "MOD_PENT_CANC_CONCL",
+            ),
+            array(
+                "codigo" => "MOD_PENT_CANC_HOMOL",
+            ),
+            array(
+                "codigo" => "MOD_PENT_CNC",
+            ),
+            array(
+                "codigo" => "MOD_PENT_CONC",
+            ),
+            array(
+                "codigo" => "MOD_PENT_EDT",
+            ),
+            array(
+                "codigo" => "MOD_PENT_EDT_ATV_ATV",
+            ),
+            array(
+                "codigo" => "MOD_PENT_EDT_ATV_HOMOL",
+            ),
+            array(
+                "codigo" => "MOD_PENT_EDT_FLH",
+            ),
+            array(
+                "codigo" => "MOD_PENT_ENTR_EDT",
+            ),
+            array(
+                "codigo" => "MOD_PENT_ENTR_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_PENT_ENTR_INCL",
+            ),
+            array(
+                "codigo" => "MOD_PENT_ENTR_PRO_EDT",
+            ),
+            array(
+                "codigo" => "MOD_PENT_ENTR_PRO_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_PENT_ENTR_PRO_INCL",
+            ),
+            array(
+                "codigo" => "MOD_PENT_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_PENT_HOMOL",
+            ),
+            array(
+                "codigo" => "MOD_PENT_INCL",
+            ),
+            array(
+                "codigo" => "MOD_PENT_LIB_HOMOL",
+            ),
+            array(
+                "codigo" => "MOD_PENT_QQR_UND",
+            ),
+            array(
+                "codigo" => "MOD_PENT_RET_HOMOL",
+            ),
+            array(
+                "codigo" => "MOD_PENT_RTV",
+            ),
+            array(
+                "codigo" => "MOD_PENT_SUSP",
+            ),
+            array(
+                "codigo" => "MOD_PERF_EDT",
+            ),
+            array(
+                "codigo" => "MOD_PLAN_INST",
+            ),
+            array(
+                "codigo" => "MOD_PLAN_INST_EDT",
+            ),
+            array(
+                "codigo" => "MOD_PLAN_INST_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_PLAN_INST_INCL",
+            ),
+            array(
+                "codigo" => "MOD_PLAN_INST_INCL_UNEX_LOTPRI",
+            ),
+            array(
+                "codigo" => "MOD_PLAN_INST_INCL_UNEX_QQLOT",
+            ),
+            array(
+                "codigo" => "MOD_PLAN_INST_INCL_UNEX_QUALQUER",
+            ),
+            array(
+                "codigo" => "MOD_PLAN_INST_INCL_UNEX_SUBORD",
+            ),
+            array(
+                "codigo" => "MOD_PLAN_INST_INCL_UNID_INST",
+            ),
+            array(
+                "codigo" => "MOD_PRGT",
+            ),
+            array(
+                "codigo" => "MOD_PRGT_EDT",
+            ),
+            array(
+                "codigo" => "MOD_PRGT_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_PRGT_INCL",
+            ),
+            array(
+                "codigo" => "MOD_PTR",
+            ),
+            array(
+                "codigo" => "MOD_PTR_CNC",
+            ),
+            array(
+                "codigo" => "MOD_PTR_CSLD",
+            ),
+            array(
+                "codigo" => "MOD_PTR_CSLD_AVAL",
+            ),
+            array(
+                "codigo" => "MOD_PTR_CSLD_CANC_AVAL",
+            ),
+            array(
+                "codigo" => "MOD_PTR_CSLD_CONCL",
+            ),
+            array(
+                "codigo" => "MOD_PTR_CSLD_DES_CONCL",
+            ),
+            array(
+                "codigo" => "MOD_PTR_CSLD_EDT",
+            ),
+            array(
+                "codigo" => "MOD_PTR_CSLD_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_PTR_CSLD_INCL",
+            ),
+            array(
+                "codigo" => "MOD_PTR_CSLD_REC_AVAL",
+            ),
+            array(
+                "codigo" => "MOD_PTR_EDT",
+            ),
+            array(
+                "codigo" => "MOD_PTR_EDT_ATV",
+            ),
+            array(
+                "codigo" => "MOD_PTR_ENTR",
+            ),
+            array(
+                "codigo" => "MOD_PTR_ENTR_EDT",
+            ),
+            array(
+                "codigo" => "MOD_PTR_ENTR_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_PTR_ENTR_INCL",
+            ),
+            array(
+                "codigo" => "MOD_PTR_INCL",
+            ),
+            array(
+                "codigo" => "MOD_PTR_INTSC_DATA",
+            ),
+            array(
+                "codigo" => "MOD_PTR_USERS_INCL",
+            ),
+            array(
+                "codigo" => "MOD_TEMP",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_AVAL",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_AVAL_EDT",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_AVAL_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_AVAL_INCL",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_CAP",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_CAP_EDT",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_CAP_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_CAP_INCL",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_DOC",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_DOC_EDT",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_DOC_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_DOC_INCL",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_JUST",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_JUST_EDT",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_JUST_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_JUST_INCL",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_MDL",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_MDL_EDT",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_MDL_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_MDL_INCL",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_MTV_AFT",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_MTV_AFT_EDT",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_MTV_AFT_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_MTV_AFT_INCL",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_PROC",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_PROC_EDT",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_PROC_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_PROC_INCL",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_TRF",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_TRF_EDT",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_TRF_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_TIPO_TRF_INCL",
+            ),
+            array(
+                "codigo" => "MOD_TPMAF_INCL",
+            ),
+            array(
+                "codigo" => "MOD_TRF",
+            ),
+            array(
+                "codigo" => "MOD_TRF_EDT",
+            ),
+            array(
+                "codigo" => "MOD_TRF_EXCL",
+            ),
+            array(
+                "codigo" => "MOD_TRF_INCL",
+            ),
+            array(
+                "codigo" => "MOD_UND",
+            ),
+            array(
+                "codigo" => "MOD_UND_INTG",
+            ),
+            array(
+                "codigo" => "MOD_UND_INTG_EDT",
+            ),
+            array(
+                "codigo" => "MOD_UND_INTG_GST",
+            ),
+            array(
+                "codigo" => "MOD_UND_TUDO",
+            ),
+            array(
+                "codigo" => "MOD_USER",
+            ),
+            array(
+                "codigo" => "MOD_USER_ATRIB",
+            ),
+            array(
+                "codigo" => "MOD_USER_EDT",
+            ),
+            array(
+                "codigo" => "MOD_USER_TUDO",
+            ),
+        );
 
         // Inserção de dados
         $capacidadesInseridas = [];
