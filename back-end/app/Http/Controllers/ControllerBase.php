@@ -346,7 +346,6 @@ abstract class ControllerBase extends Controller
                 'data' => ['required'],
                 'with' => ['array']
             ]);
-            //foreach (array_keys($request->all()) as $key) {
             foreach (array_keys($data["data"]) as $key) {
                 if($key != "id" && !in_array($key, $this->updatable)) {
                     return response()->json(['error' => "Não é possível atualizar"]);
@@ -361,7 +360,7 @@ abstract class ControllerBase extends Controller
             ]);
             return response()->json([
                 'success' => true,
-                'rows' => [$result] //$this->service->update($request->all(), $unidade)
+                'rows' => [$result] 
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);

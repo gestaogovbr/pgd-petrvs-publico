@@ -182,13 +182,13 @@
                 </li>
                 <li class="nav-item" *ngIf="unidadeService.isGestorUnidade(this.auth.unidade, true)">
                   <a class="nav-link px-3" role="button" (click)="go.navigate({route: ['configuracoes','unidade', auth.unidade!.id, 'edit']},{ root: true, modal: true })">
-                    <i class="bi bi-gear"></i>
+                    <i class="fa-unity fab"></i>
                     Unidade
                   </a>
                 </li>
                 <li class="nav-item" *ngIf="unidadeService.isGestorUnidade(this.auth.unidade, true)"><!--&& auth.hasPermissionTo('MOD_UND_INTG')-->
                   <a class="nav-link px-3" role="button" (click)="go.navigate({ route: ['configuracoes', 'unidade', '', auth.unidade!.id, 'integrante'] }, { metadata: { unidade: auth.unidade } })">
-                    <i class="bi bi-gear"></i>
+                    <i class="bi bi-people"></i>
                     Integrantes
                   </a>
                 </li>
@@ -227,7 +227,7 @@
 <footer class="footer mt-auto" *ngIf="auth.usuario && !gb.isEmbedded">
   <div class="d-flex justify-content-between">
     <div>
-      <p><small class="text-primary">Versão: {{gb.VERSAO_SYS}}</small></p>
+      <p><small class="text-primary">Versão: {{gb.VERSAO_SYS}}  <badge [color]="'gray'" [label]="gb.ENV"></badge></small></p>
     </div>
     <div class="logos">
       <img [src]="gb.getResourcePath('assets/images/logo_pgd_' + (gb.theme != 'light' ? 'light' : 'normal') + '.png')">

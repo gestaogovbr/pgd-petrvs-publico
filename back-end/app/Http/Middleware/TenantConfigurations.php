@@ -49,7 +49,11 @@ class TenantConfigurations
                 $settings['dominio_url'].":443"
             ]]);
             #Petrvs
-            config(['petrvs.entidade'=> $settings['id']]);
+            config(['petrvs.schemas.base'=> $settings['id']]);
+            config(['petrvs.schemas.tenant_aplicacao'=> $settings['tenancy_db_name']]);
+            config(['petrvs.schemas.tenant_log'=> $settings['log_database']]);
+
+
             # LOGIN UNICO - GOVBR
             config(['services.govbr.client_secret'          => $settings['login_login_unico_secret']                ??env('LOGIN_UNICO_CLIENT_SECRET')]);
             config(['services.govbr.client_id'              => $settings['login_login_unico_client_id']             ??env('LOGIN_UNICO_CLIENT_ID')]);

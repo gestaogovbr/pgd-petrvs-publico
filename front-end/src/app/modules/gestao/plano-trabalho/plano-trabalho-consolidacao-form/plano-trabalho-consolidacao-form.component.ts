@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, Injector, Input, ViewChild } from '@angul
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton, ToolbarComponent } from 'src/app/components/toolbar/toolbar.component';
 import { ConsolidacaoDados, PlanoTrabalhoConsolidacaoDaoService } from 'src/app/dao/plano-trabalho-consolidacao-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { PlanoTrabalhoConsolidacao } from 'src/app/models/plano-trabalho-consolidacao.model';
@@ -26,11 +26,15 @@ import { Programa } from 'src/app/models/programa.model';
 import { Comparecimento } from 'src/app/models/comparecimento.model';
 import { ComparecimentoDaoService } from 'src/app/dao/comparecimento-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
-import { SeparatorComponent } from 'src/app/components/separator/separator.component';
 import { OcorrenciaDaoService } from 'src/app/dao/ocorrencia-dao.service';
 import { Ocorrencia } from 'src/app/models/ocorrencia.model';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { Comentario } from 'src/app/models/comentario';
+import { BadgeButton } from 'src/app/components/badge/badge.component';
+import { AtividadeListTarefaComponent } from '../../atividade/atividade-list-tarefa/atividade-list-tarefa.component';
+import { AtividadeModule } from '../../atividade/atividade.module';
+import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
+import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
 
 export type ConsolidacaoEntrega = {
   id: string,
@@ -50,6 +54,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   @ViewChild('gridAtividades', { static: false }) public gridAtividades?: GridComponent;
   @ViewChild('etiqueta', { static: false }) public etiqueta?: InputSelectComponent;
   @ViewChild('tipoAtividade', { static: false }) public tipoAtividade?: InputSearchComponent;
+  @ViewChild('listTarefas', { static: false }) public listTarefas?: AtividadeListTarefaComponent;
   @Input() cdRef: ChangeDetectorRef;
   @Input() planoTrabalho?: PlanoTrabalho;
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
@@ -91,6 +96,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   public itemsAfastamentos: Afastamento[] = [];
   public atividadeOptionsMetadata: AtividadeOptionsMetadata;
   public programa?: Programa;
+  public pEEDao: PlanoEntregaEntregaDaoService;
 
   private _disabled: boolean = true;
 
@@ -108,6 +114,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     this.tipoAtividadeDao = injector.get<TipoAtividadeDaoService>(TipoAtividadeDaoService);
     this.planoTrabalhoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
     this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
+    this.pEEDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
     this.formAtividade = this.fh.FormBuilder({
       descricao: { default: "" },
       etiquetas: { default: [] },
@@ -204,7 +211,8 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     return result;
   }
 
-  /*public validateOcorrencia = (control: AbstractControl, controlName: string) => {
+  //Não apagar
+  /*public validateOcorrencia = (control: AbstractControl, controlName: string) => { 
     let result = null;
     if (['descricao'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
@@ -334,6 +342,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
 
   public async saveAtividade(form: FormGroup, row: any) {
     let result = undefined;
+    console.log("AQIO");
     this.gridAtividades!.error = "";
     this.formAtividade.markAllAsTouched();
     if (this.formAtividade!.valid) {
@@ -450,28 +459,58 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   }
 
   public async onColumnAtividadeDescricaoEdit(row: any) {
-    this.formEdit.controls.descricao.setValue(row.descricao);
+    this.formAtividade.controls.descricao.setValue(row.descricao);
     //this.formEdit.controls.tipo_atividade_id.setValue(row.tipo_atividade_id);
-    this.formEdit.controls.comentarios.setValue(row.comentarios);
+    this.formAtividade.controls.comentarios.setValue(row.comentarios);
   }
 
   public async onColumnAtividadeDescricaoSave(row: any) {
     try {
-      this.atividadeService.comentarioAtividade(this.tipoAtividade?.selectedEntity, this.formEdit!.controls.comentarios);
+      this.atividadeService.comentarioAtividade(this.tipoAtividade?.selectedEntity, this.formAtividade!.controls.comentarios);
       const saved = await this.atividadeDao!.update(row.id, {
-        descricao: this.formEdit.controls.descricao.value,
+        descricao: this.formAtividade.controls.descricao.value,
         //tipo_atividade_id: this.formEdit.controls.tipo_atividade_id.value,
-        comentarios: (this.formEdit.controls.comentarios.value || []).filter((x: Comentario) => ["ADD", "EDIT", "DELETE"].includes(x._status || ""))
+        comentarios: (this.formAtividade.controls.comentarios.value || []).filter((x: Comentario) => ["ADD", "EDIT", "DELETE"].includes(x._status || ""))
       });
-      row.descricao = this.formEdit.controls.descricao.value;
+      row.descricao = this.formAtividade.controls.descricao.value;
       //row.tipo_atividade_id = this.formEdit.controls.tipo_atividade_id.value;
       row.tipo_atividade = this.tipoAtividade?.selectedEntity || null;
-      row.comentarios = this.formEdit.controls.comentarios.value;
+      row.comentarios = this.formAtividade.controls.comentarios.value;
       return !!saved;
     } catch (error) {
       return false;
     }
   }
+
+  public tempoAtividade(row: any) {
+    let badge: BadgeButton[] = [
+      { color: "light", hint: "Início", icon: "bi bi-file-earmark-play", label: this.dao.getDateTimeFormatted(row.data_inicio) },
+    ];
+    let badgeTratar = this.atividadeService.temposAtividade(row);
+    badgeTratar = badgeTratar.filter(bad => bad.icon != "bi bi-file-earmark-plus" && bad.icon != "bi bi-calendar-check")
+    badge.push(...badgeTratar);
+    return badge;
+  }
+
+  public dynamicButtons(row: any): ToolbarButton[] {
+    let result: ToolbarButton[] = [];
+    result.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhes.bind(this) });
+    return result;
+  }
+
+  public async showDetalhes(elemento: any) {
+    let entrega = await this.pEEDao.getById(elemento.entrega.plano_entrega_entrega.id, ['entrega', 'objetivos.objetivo']);
+    this.go.navigate({ route: ['gestao', 'plano-entrega', 'entrega', elemento.entrega.plano_entrega_entrega.id, "detalhes"] }, {
+      metadata: {
+        plano_entrega: elemento.entrega.plano_entrega_entrega.plano_entrega,
+        planejamento_id: elemento.entrega.plano_entrega_entrega.plano_entrega.planejamento_id,
+        cadeia_valor_id: elemento.entrega.plano_entrega_entrega.plano_entrega.cadeia_valor_id,
+        unidade_id: elemento.entrega.plano_entrega_entrega.plano_entrega.unidade_id,
+        entrega: entrega
+      }
+    });
+  }
+
 
   /***************************************************************************************
   * Ocorrências 

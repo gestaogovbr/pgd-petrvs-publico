@@ -22,7 +22,7 @@ class PlanoEntregaService extends ServiceBase
 
   public function alteracaoEntregaImpactaPlanoTrabalho($entregaAlterada) {
     $entregaAnterior = PlanoEntregaEntrega::find($entregaAlterada["id"]);
-    return $entregaAnterior->descricao != $entregaAlterada["descricao"] || 
+    return $entregaAnterior->descricao != $entregaAlterada["descricao"] ||
       $this->utilService->asTimestamp($entregaAnterior->data_inicio) != $this->utilService->asTimestamp($entregaAlterada["data_inicio"]) ||
       $this->utilService->asTimestamp($entregaAnterior->data_fim) != $this->utilService->asTimestamp($entregaAlterada["data_fim"]);
   }
@@ -52,7 +52,7 @@ class PlanoEntregaService extends ServiceBase
     return $planoEntrega;
   }
 
-  public function afterStore($planoEntrega, $action)
+  public function extraStore($planoEntrega, $unidade, $action)
   {
     $usuario = parent::loggedUser();
     switch ($action) {
@@ -75,8 +75,8 @@ class PlanoEntregaService extends ServiceBase
           } else if ($usuario->hasPermissionTo('MOD_PENT_EDT_ATV_HOMOL')) {
             $this->statusService->atualizaStatus($planoEntrega, 'HOMOLOGANDO', 'O plano foi alterado nesta data e retornou ao status AGUARDANDO HOMOLOGAÇÃO porque o usuário logado possui a capacidade MOD_PENT_EDT_ATV_HOMOL.');
           }
-          // (RN_PENT_M) Qualquer alteração, depois de o Plano de Entregas ser homologado, precisa ser notificada 
-          // ao gestor da Unidade-pai (Unidade A) ou à pessoa que homologou. Essa comunicação sobre eventuais ajustes, 
+          // (RN_PENT_M) Qualquer alteração, depois de o Plano de Entregas ser homologado, precisa ser notificada
+          // ao gestor da Unidade-pai (Unidade A) ou à pessoa que homologou. Essa comunicação sobre eventuais ajustes,
           // não se aplica à Unidade Instituidora, ou seja, alterações realizadas em planos de entregas de unidades instituidoras não precisam ser notificadas à sua Unidade-pai;
           $unidadePai = $planoEntrega->unidade->unidadePai;
           if (!empty($unidadePai->id) && !$planoEntrega->unidade->instituidora) {
@@ -140,7 +140,7 @@ class PlanoEntregaService extends ServiceBase
   /**
    * Retorna um array com várias informações sobre o plano repassado como parâmetro que serão auxiliares na definição das permissões para as diversas operações possíveis com um Plano de Entregas.
    * Se o plano recebido como parâmetro possuir ID, as informações devolvidas serão baseadas nos dados armazenados no banco. Caso contrário, as informações devolvidas serão baseadas nos dados
-   * recebidos na chamada do método. 
+   * recebidos na chamada do método.
    * @param array $entity     Um array com os dados de um plano já existente ou que esteja sendo criado.
    * @return array
    */
@@ -260,7 +260,7 @@ class PlanoEntregaService extends ServiceBase
   /**
    * Informa se o plano de entregas repassado como parâmetro está em curso.
    * Um Plano de Entregas está EM CURSO quando é um plano VÁLIDO e possui status ATIVO;
-   * @param PlanoEntrega $planoEntrega  
+   * @param PlanoEntrega $planoEntrega
    */
   public function emCurso(PlanoEntrega $plano): bool
   {
@@ -288,7 +288,7 @@ class PlanoEntregaService extends ServiceBase
    * Informa o status do plano de entregas repassado como parâmetro.
    * O Plano de Entregas precisa ser VÁLIDO.
    * @param string $status
-   * @param array $planoEntrega  
+   * @param array $planoEntrega
    */
   public function isPlano($status, $plano): bool
   {
@@ -299,7 +299,7 @@ class PlanoEntregaService extends ServiceBase
   /**
    * Informa se o plano de entregas repassado como parâmetro é um plano válido.
    * Um Plano de Entregas é válido se não foi deletado, nem arquivado e não está no status de cancelado.
-   * @param array $planoEntrega  
+   * @param array $planoEntrega
    */
   public function isPlanoEntregaValido($plano): bool
   {
@@ -344,7 +344,7 @@ class PlanoEntregaService extends ServiceBase
   public function proxyQuery($query, &$data)
   {
     $where = [];
-    //  (RI_PENT_C) Garante que, se não houver um interesse específico na data de arquivamento, só retornarão os planos de entrega não arquivados. 
+    //  (RI_PENT_C) Garante que, se não houver um interesse específico na data de arquivamento, só retornarão os planos de entrega não arquivados.
     $arquivados = $this->extractWhere($data, "incluir_arquivados");
     if (empty($arquivados) || !$arquivados[2]) $data["where"][] = ["data_arquivamento", "==", null];
     // (RI_PENT_D) Na visualização de Avaliação, deverá trazer a unidade ao qual o usuário é gestor e todas as suas subordinadas imediatas.
@@ -450,35 +450,55 @@ class PlanoEntregaService extends ServiceBase
     return true;
   }
 
+  public function validaPermissaoIncluir($dataOrEntity, $usuario)
+
+  {
+    /*  (RN_PENT_Z) INCLUIR/INSERIR
+        - o usuário logado precisa possuir a capacidade "MOD_PENT_INCL", e:
+        - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou gestor da sua Unidade-pai (Unidade A)(RN_PENT_B); ou
+        - o usuário precisa possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a Unidade-pai (Unidade A) da Unidade do plano (Unidade B) e possuir a capacidade "MOD_PENT_EDT_FLH"; ou
+        - o usuário precisa possuir também a capacidade "MOD_PENT_QQR_UND" (independente de qualquer outra condição);
+    */
+      $dataOrEntity['unidade'] = Unidade::find($dataOrEntity['unidade_id'])->toArray();
+
+      $condition1 =  $this->usuario->isGestorUnidade($dataOrEntity['unidade_id']) ||
+          !empty($dataOrEntity['unidade']['unidade_pai_id']) && $this->usuario->isGestorUnidade($dataOrEntity['unidade']['unidade_pai_id']);
+      $condition2 = !empty($dataOrEntity['unidade']['unidade_pai_id']) &&
+          UsuarioService::isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $dataOrEntity['unidade']['unidade_pai_id']) &&
+          $usuario->hasPermissionTo('MOD_PENT_EDT_FLH');
+      $condition3 = $usuario->hasPermissionTo('MOD_PENT_QQR_UND');
+
+      if (!$condition3 && !($condition1 || $condition2)) {
+          throw new ServerException("ValidateUsuario", "O usuário logado precisa atender a pelo menos uma das seguintes condições:\n" .
+              "1. ser um dos gestores da unidade do plano ou da sua unidade-pai;\n" .
+              "2. ser homologador de plano de entrega da unidade-pai do plano e possuir a capacidade MOD_PENT_EDT_FLH;\n" .
+              "3. possuir a capacidade MOD_PENT_QQR_UND.\n[ver RN_PENT_Z]");
+      }else{
+        return true;
+      }
+
+  }
+
   /**
-   *  Verifica se algumas condições estão atendidas, antes de realizar a inserção/alteração do Plano de Entregas: 
+   *  Verifica se algumas condições estão atendidas, antes de realizar a inserção/alteração do Plano de Entregas:
    *  - as datas do Plano de Entregas devem se encaixar na duração do Programa de Gestão;
    *  - as datas das entregas do Plano de Entregas devem se encaixar na duração do Programa de Gestão;
    *  - após criado um Plano de Entregas, os seguintes campos não poderão mais ser alterados: unidade_id, programa_id; (RN_PENT_K)
    */
   public function validateStore($dataOrEntity, $unidade, $action)
   {
-    /*  (RN_PENT_Z) INCLUIR/INSERIR
-        - o usuário logado precisa possuir a capacidade "MOD_PENT_INCL", e:
-            - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou gestor da sua Unidade-pai (Unidade A)(RN_PENT_B); ou
-            - o usuário precisa possuir a atribuição de HOMOLOGADOR DE PLANO DE ENTREGA para a Unidade-pai (Unidade A) da Unidade do plano (Unidade B) e possuir a capacidade "MOD_PENT_EDT_FLH"; ou
-            - o usuário precisa possuir também a capacidade "MOD_PENT_QQR_UND" (independente de qualquer outra condição);
-    */
+
     $usuario = Usuario::find(parent::loggedUser()->id);
-    $dataOrEntity['unidade'] = Unidade::find($dataOrEntity['unidade_id'])->toArray();
-    $condicoes = $this->buscaCondicoes($dataOrEntity);
-    $condition1 = $condicoes['gestorUnidadePlano'] || $condicoes['gestorUnidadePaiUnidadePlano'];
-    $condition2 = !empty($dataOrEntity['unidade']['unidade_pai_id']) && $this->usuarioService->isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $dataOrEntity['unidade']['unidade_pai_id']) && $usuario->hasPermissionTo('MOD_PENT_EDT_FLH');
-    $condition3 = $usuario->hasPermissionTo('MOD_PENT_QQR_UND');
-    if (!$condition3 && !($condition1 || $condition2)) throw new ServerException("ValidateUsuario", "O usuário logado precisa atender a pelo menos uma das seguintes condições:\n" .
-      "1. ser um dos gestores da unidade do plano ou da sua unidade-pai;\n" .
-      "2. ser homologador de plano de entrega da unidade-pai do plano e possuir a capacidade MOD_PENT_EDT_FLH;\n" .
-      "3. possuir a capacidade MOD_PENT_QQR_UND.\n[ver RN_PENT_Z]");
+
+    $this->validaPermissaoIncluir($dataOrEntity, $usuario);
+
+   
+
     if (!$usuario->hasPermissionTo('MOD_PENT_ENTR_EXTRPL')) {
       if (!$this->verificaDuracaoPlano($dataOrEntity) || !$this->verificaDatasEntregas($dataOrEntity)) throw new ServerException("ValidatePlanoEntrega", "O prazo das datas não satisfaz a duração estipulada no programa.");
-    }    
+    }
     if ($action == ServiceBase::ACTION_EDIT) {
-      /*  
+      /*
         (RN_PENT_L) Para ALTERAR um plano de entregas:
         - O usuário logado precisa possuir a capacidade "MOD_PENT_EDT", o plano de entregas precisa ser válido (ou seja, nem deletado, nem arquivado e com status diferente de 'CANCELADO'), e:
             - estar com o status INCLUIDO ou HOMOLOGANDO, e o usuário logado precisa ser gestor da Unidade do plano, ou esta ser sua Unidade de lotação; ou
@@ -490,7 +510,7 @@ class PlanoEntregaService extends ServiceBase
       if (!$condicoes['planoValido']) throw new ServerException("ValidatePlanoEntrega", "O plano de entregas não é válido, ou seja, foi apagado, cancelado ou arquivado.\n[ver RN_PENT_L]");
       $condition1 = ($condicoes['planoIncluido'] || $condicoes['planoHomologando']) && ($condicoes['gestorUnidadePlano'] || $condicoes['unidadePlanoEhLotacao']);
       $condition2 = $usuario->hasPermissionTo("MOD_PENT_EDT_FLH") && $condicoes['gestorUnidadePaiUnidadePlano'];
-      $condition3 = !empty($data['entity']['unidade']['unidade_pai_id']) && $this->usuarioService->isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $data['entity']['unidade']['unidade_pai_id']);
+      $condition3 = !empty($dataOrEntity['unidade']['unidade_pai_id']) && $this->usuarioService->isIntegrante('HOMOLOGADOR_PLANO_ENTREGA', $dataOrEntity['unidade']['unidade_pai_id']);
       $condition4 = $condicoes['planoAtivo'] && $condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo(['MOD_PENT_EDT_ATV_HOMOL', 'MOD_PENT_EDT_ATV_ATV']);
       $condition5 = $usuario->hasPermissionTo('MOD_PENT_QQR_UND');
       if (!$condition5 && !($condition1 || $condition2 || $condition3 || $condition4)) throw new ServerException("ValidatePlanoEntrega", "Ao menos uma das seguintes condições precisa ser atendida:\n" .
@@ -559,17 +579,17 @@ class PlanoEntregaService extends ServiceBase
         $planoEntrega->id != $plano->id
       ) {
         throw new ServerException("ValidatePlanoEntrega", "Não é possível realizar " . $msg . " do Plano de Entregas porque este assumiria o status de " .
-          ($status == 'HOMOLOGANDO' ? "AGUARDANDO HOMOLOGAÇÃO" : "ATIVO") . ", e seu período de vigência (De " . UtilService::getDateFormatted($planoEntrega->data_inicio) . " a " . 
-          UtilService::getDateFormatted($planoEntrega->data_fim) . ") entraria em conflito com a vigência do Plano de Entregas #" . $plano->numero . 
+          ($status == 'HOMOLOGANDO' ? "AGUARDANDO HOMOLOGAÇÃO" : "ATIVO") . ", e seu período de vigência (De " . UtilService::getDateFormatted($planoEntrega->data_inicio) . " a " .
+          UtilService::getDateFormatted($planoEntrega->data_fim) . ") entraria em conflito com a vigência do Plano de Entregas #" . $plano->numero .
           " (De " . UtilService::getDateFormatted($plano->data_inicio) . " a " . UtilService::getDateFormatted($plano->data_fim) . "), que se encontra com o mesmo " .
           " status e pertence à mesma Unidade (" . $plano->unidade->sigla . ").\n[vide RN_PENT_J].");
       }
     }
   }
 
-  /** 
+  /**
    * Completa o processo de avaliação para o plano de entrega
-   * 
+   *
    * @param   Avanliacao  $avaliacao Avaliacao
    * @return  void
    */
@@ -586,7 +606,7 @@ class PlanoEntregaService extends ServiceBase
 
 /**
    *                  MAPA DE COBERTURA DAS REGRAS DE NEGÓCIO - PLANO DE ENTREGAS
-   *                  
+   *
    *   REGRAS NÃO     REGRAS TOTALMENTE        OUTRAS REGRAS       OUTRAS REGRAS
    *   IMPLEMENTADAS  IMPLEMENTADAS            100% COBERTAS       PARCIALMENTE COBERTAS
    *                  ----------------------------------------------------------------------
@@ -626,7 +646,7 @@ class PlanoEntregaService extends ServiceBase
    *   RI_PENT_A
    *                  RI_PENT_B
    *                  RI_PENT_C
-   * 
+   *
    * Regras relativas a adesão de planos de entregas, assunto
    * adiado para discussão futura
    *   RN_PENT_2_1
@@ -639,5 +659,5 @@ class PlanoEntregaService extends ServiceBase
    *   RN_PENT_3_1
    *                  RN_PENT_3_3
    *                  RN_PENT_4_1
-   *  
+   *
    */

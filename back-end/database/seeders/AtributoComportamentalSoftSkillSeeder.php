@@ -7,7 +7,7 @@ use App\Models\Questionario;
 use App\Models\QuestionarioPergunta;
 use Ramsey\Uuid\Uuid;
 
-class SoftSkillSeeder extends Seeder
+class AtributoComportamentalSoftSkillSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -16,8 +16,7 @@ class SoftSkillSeeder extends Seeder
      */
     public function run()
     {
-        /*
-        //$uuid = Uuid::uuid4();
+        $uuid = Uuid::uuid4();
         $questionario = new Questionario();
         $questionario->fill([
             'nome'=> 'Soft Skill',
@@ -33,32 +32,30 @@ class SoftSkillSeeder extends Seeder
         $perguntas =
             [
                 ['sequencia' => $sequencia,'pergunta' => 'Comunicacao','tipo' => 'NUMBER','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid],
-                /*['sequencia' => $sequencia,'pergunta' => 'Lideranca','tipo' => 'NUMBER','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid],
+                ['sequencia' => $sequencia,'pergunta' => 'Lideranca','tipo' => 'NUMBER','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid],
                 ['sequencia' => $sequencia,'pergunta' => 'Resolucao de problemas','tipo' => 'NUMBER','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid],
                 ['sequencia' => $sequencia,'pergunta' => 'Criatividade e curiosidade','tipo' => 'NUMBER','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid],
                 ['sequencia' => $sequencia,'pergunta' => 'Pensamento critico','tipo' => 'NUMBER','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid],
                 ['sequencia' => $sequencia,'pergunta' => 'Habilidades com pessoas e equipes','tipo' => 'NUMBER','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid],
                 ['sequencia' => $sequencia,'pergunta' => 'Adaptabilidade e resiliencia','tipo' => 'NUMBER','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid],
                 ['sequencia' => $sequencia,'pergunta' => 'Etica','tipo' => 'NUMBER','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid],
-               */
-
-        //    ];
+            ];
             //{"max": 100, "min": 1}
-        // $resposta = [{min: 0 , max: 20}];
+        $resposta = ['min' => 0 , 'max' => 20];
 
-        // foreach($perguntas as $pergunta){
-        //     $perguntaNovo = new QuestionarioPergunta();
-        //     $perguntaNovo->fill([
-        //         'sequencia'=> $sequencia,
-        //         'pergunta'=> $pergunta['pergunta'],
-        //         'tipo'=> $pergunta['tipo'],
-        //         'criado_versao'=> $pergunta['criado_versao'],
-        //         'deletado_versao'=> $pergunta['deletado_versao'],
-        //         'respostas' => $resposta,
-        //         'questionario_id'=> $uuid
-        //     ]);
-        //     $perguntaNovo->save();
-        //     $sequencia++;
-        // }
+        foreach($perguntas as $pergunta){
+            $perguntaNovo = new QuestionarioPergunta();
+            $perguntaNovo->fill([
+                'sequencia'=> $sequencia,
+                'pergunta'=> $pergunta['pergunta'],
+                'tipo'=> $pergunta['tipo'],
+                'criado_versao'=> $pergunta['criado_versao'],
+                'deletado_versao'=> $pergunta['deletado_versao'],
+                'respostas' => $resposta,
+                'questionario_id'=> $uuid
+            ]);
+            $perguntaNovo->save();
+            $sequencia++;
+        }
     }
 }

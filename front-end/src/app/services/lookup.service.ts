@@ -75,6 +75,7 @@ export class LookupService implements IIndexable {
     { key: "MASCULINO", value: "Masculino" },
     { key: "FEMININO", value: "Feminino" }
   ];
+
   public TIPO_INDICADOR: LookupItem[] = [
     { key: "QUANTIDADE", value: "Quantidade" },
     { key: "VALOR", value: "Valor" },
@@ -214,13 +215,13 @@ export class LookupService implements IIndexable {
   ];
 
   public UNIDADE_INTEGRANTE_TIPO: LookupItem[] = [
-    { key: 'AVALIADOR_PLANO_ENTREGA', value: "Avaliador (Planos de Entrega)", icon: "bi bi-check-all", color: "warning" },
-    { key: 'AVALIADOR_PLANO_TRABALHO', value: "Avaliador (Planos de Trabalho)", icon: "bi bi-check-circle", color: "info" },
+    //{ key: 'AVALIADOR_PLANO_ENTREGA', value: "Avaliador (Planos de Entrega)", icon: "bi bi-check-all", color: "warning" },
+    //{ key: 'AVALIADOR_PLANO_TRABALHO', value: "Avaliador (Planos de Trabalho)", icon: "bi bi-check-circle", color: "info" },
     { key: 'COLABORADOR', value: "Servidor Vinculado", icon: "bi bi-person-add", color: "secondary" },
     { key: 'GESTOR', value: "Chefe", icon: "bi bi-star-fill", color: "primary" },
     { key: 'GESTOR_DELEGADO', value: "Servidor Delegado", icon: "bi bi-star-fill", color: "danger" },
     { key: 'GESTOR_SUBSTITUTO', value: "Chefe Substituto", icon: "bi bi-star-half", color: "primary" },
-    { key: 'HOMOLOGADOR_PLANO_ENTREGA', value: "Homologador (Planos de Entrega)", icon: "bi bi-check2-square", color: "success" },
+    //{ key: 'HOMOLOGADOR_PLANO_ENTREGA', value: "Homologador (Planos de Entrega)", icon: "bi bi-check2-square", color: "success" },
     { key: 'LOTADO', value: "Lotado", icon: "bi bi-file-person", color: "dark" }
   ];
 
@@ -708,7 +709,27 @@ export class LookupService implements IIndexable {
     { key: 'DIVORCIADO', value: 'Divorciado' },
     { key: 'SOLTEIRO', value: 'Solteiro' },
     { key: 'SEPARADO', value: 'Separado' },
-    { key: 'VIUVO', value: 'Viúvo' }
+    { key: 'VIUVO', value: 'Viúvo' },
+    { key: 'UNIAO', value: 'União Estável' },
+    { key: 'OUTRO', value: 'Outro' },
+  ];
+
+  public COR_RACA: LookupItem[] = [
+    { key: "BRANCA", value: "Branca" },
+    { key: "PRETA", value: "Preta" },
+    { key: "PARDA", value: "Parda" },
+    { key: "INDIGENA", value: "Indigena" },
+    { key: "AMARELA", value: "Amarela" },
+  ];
+
+  public ESCOLARIDADE: LookupItem[] = [
+    { key: 'ESCOLA_FUDAMENTAL', value: 'Ensino Fundamental' },
+    { key: 'ESCOLA_MEDIO', value: 'Ensino Médio' },
+    { key: 'ESCOLA_SUPERIOR', value: 'Ensino Superior' },
+    { key: 'ESCOLA_ESPECIAL', value: 'Especialização' },
+    { key: 'ESCOLA_MESTRADO', value: 'Mestrado' },
+    { key: 'ESCOLA_DOUTORADO', value: 'Doutorado' },
+    { key: 'ESCOLA_POS_DOUTORADO', value: 'Pós Doutorado' }
   ];
 
   public TITULOS_CURSOS: LookupItem[] = [
@@ -737,6 +758,13 @@ export class LookupService implements IIndexable {
     { key: 'ADM', value: 'Agente Administrativo' }
   ];
 
+  public SITUACAO_FUNCIONAL: LookupItem[] = [
+    { key: 'CONCURSADO_E', value: 'Concursado Efetivo' },
+    { key: 'CONCURSADO_T', value: 'Consursado Temporário' },
+    { key: 'TERCEIRIZADO', value: 'Colaborador de empresa terceirizada' },
+    { key: 'ESTAGIARIO', value: 'Estagiário' },
+  ];
+
   public PG_PRF: LookupItem[] = [
     { key: 'PRESENCIAL', value: 'Presencial' },
     { key: 'REMOTO', value: 'Remoto' },
@@ -755,7 +783,7 @@ export class LookupService implements IIndexable {
     { key: 'TEXT', value: 'Livre' },
     { key: 'RATE', value: 'Classificação' },
     { key: 'SWITCH', value: 'Sim/Não' },
-    //{ key: 'INTENSIDADE', value: 'Intensidade' },
+    { key: 'RADIO', value: 'Única Escolha' },
     { key: 'NUMBER', value: 'Numérica' }
   ];
  // "EMOJI" | "SELECT" | "MULTI_SELECT" | "TEXT" | "TEXT_AREA" | "TIMER" | "DATE_TIME" | "SWICTH" | "NUMBER" | "RATE" | "RADIO" | "CHECK";

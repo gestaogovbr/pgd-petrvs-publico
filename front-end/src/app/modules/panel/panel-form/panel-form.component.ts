@@ -55,7 +55,7 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       tenancy_db_password: { default: null },
       log_traffic: { default: false },
       log_changes: { default: false },
-      log_errors: { default: false },
+      log_errors: { default: true },
       log_host: { default: null },
       log_database: { default: null },
       log_port: { default: 3306 },

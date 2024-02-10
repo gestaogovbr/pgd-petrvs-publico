@@ -81,7 +81,7 @@ class Usuario extends Authenticatable
         'data_modificacao',
     ];
 
-    public function proxyFill(&$dataOrEntity, $unidade, $action) {
+    public function proxyFill($dataOrEntity, $unidade, $action) {
         $this->fill($dataOrEntity);
         if($action == 'INSERT'){
             $this->save();
@@ -89,7 +89,7 @@ class Usuario extends Authenticatable
             $lotacao = $vinculoLotacao->atribuicoes()->save(new UnidadeIntegranteAtribuicao(['atribuicao' => 'LOTADO']));
             if(!$vinculoLotacao || !$lotacao) throw new ServerException("ValidateLotacao", "Erro com a definição da lotação. Usuário não cadastrado!");
         }
-        return $this;
+        return $dataOrEntity;
     }
 
     protected $keyType = 'string';

@@ -293,6 +293,7 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
     Route::post('retirar-homologacao', [PlanoEntregaController::class, 'retirarHomologacao']);
     Route::post('suspender', [PlanoEntregaController::class, 'suspender']);
     Route::post('planos-impactados-por-alteracao-entrega', [PlanoEntregaController::class, 'planosImpactadosPorAlteracaoEntrega']);
+    Route::post('permissao-incluir', [PlanoEntregaController::class, 'permissaoIncluir']);
 });
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntrega')->group(function () { 
     defaultRoutes(PlanoEntregaEntregaController::class); 

@@ -35,6 +35,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
   public unidadeDao: UnidadeDaoService;
   public programaDao: ProgramaDaoService;
   public cadeiaValorDao: CadeiaValorDaoService;
+  public planoEntregaDao: PlanoEntregaDaoService;
   public planejamentoInstitucionalDao: PlanejamentoDaoService;
   public form: FormGroup;
   public maxPE: Number | undefined;
@@ -44,6 +45,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
+    this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
     this.planejamentoInstitucionalDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.join = ["entregas.entrega", "entregas.objetivos.objetivo", "entregas.processos.processo", "entregas.unidade", "unidade", 'entregas.reacoes.usuario:id,nome,apelido'];
     this.modalWidth = 1200;
@@ -132,7 +134,20 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
 
   public onDataChange(){ this.sugereNome(); }
 
-  public onUnidadeChange(){ this.sugereNome(); }
+  public async onUnidadeChange(){
+   
+    const unidadeIdValue = this.form.controls['unidade_id'].value;
+    let unidade_id = unidadeIdValue? unidadeIdValue :  this.auth.unidade?.id ;
+    if(unidade_id){
+      try {
+        const permissaoIncluir = await this.planoEntregaDao.permissaoIncluir( unidade_id );
+      } catch (error: any) {
+        this.error(error);
+      }
+
+    }
+    this.sugereNome();
+}
 
   public sugereNome() {
     //if(this.action == 'new') {

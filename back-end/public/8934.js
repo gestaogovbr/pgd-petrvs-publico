@@ -603,10 +603,7 @@ class QuestionarioPerguntaFormComponent extends src_app_modules_base_page_form_b
     };
     this.validate = (control, controlName) => {
       let result = null;
-      if (['codigo'].indexOf(controlName) >= 0 && !control.value?.length) {
-        result = "Obrigatório";
-      }
-      if (['nome'].indexOf(controlName) >= 0 && !control.value?.length) {
+      if (['codigo', 'nome'].indexOf(controlName) >= 0 && !control.value?.length) {
         result = "Obrigatório";
       }
       return result;
