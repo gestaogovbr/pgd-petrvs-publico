@@ -145,6 +145,8 @@ class Usuario extends Authenticatable
     public function planosEntregaCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }
     public function planosTrabalhoCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }
     public function unidadesIntegrantes() { return $this->hasMany(UnidadeIntegrante::class); }
+    public function unidadeIntegranteAtribuicoes($unidadeId) { return $this->hasManyThrough(UnidadeIntegranteAtribuicao::class, UnidadeIntegrante::class)->where('unidade_id', $unidadeId)->get(); }
+    public function unidadesIntegranteAtribuicoes() { return $this->hasManyThrough(UnidadeIntegranteAtribuicao::class, UnidadeIntegrante::class); }
     public function statusHistorico() { return $this->hasMany(StatusJustificativa::class, "usuario_id"); }
     public function documentos() { return $this->hasMany(Documento::class); }
     // belongsTo
@@ -197,9 +199,12 @@ class Usuario extends Authenticatable
     public function getUnidadesAtribuicoesAttribute()
     {
         $result = [];
-        foreach($this->unidadesIntegrantes as $vinculo){
-            $atribuicoes = $vinculo->atribuicoes->toArray();
-            if(count($atribuicoes) > 0) $result[$vinculo->unidade_id] = array_map(fn($a) => $a["atribuicao"], $atribuicoes);
+        $unidadesIntegrantes = $this->unidadesIntegrantes;
+        if(!empty($unidadesIntegrantes)){
+            foreach($unidadesIntegrantes as $vinculo){
+                $atribuicoes = $vinculo->atribuicoes->toArray();
+                if(count($atribuicoes) > 0) $result[$vinculo->unidade_id] = array_map(fn($a) => $a["atribuicao"], $atribuicoes);
+            }
         }
         return $result;
     }

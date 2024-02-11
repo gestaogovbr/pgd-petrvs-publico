@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Services\RawWhere;
 use App\Services\ServiceBase;
+use App\Models\TipoCapacidade;
+use App\Models\Perfil;
 
 class PerfilService extends ServiceBase {
 
@@ -51,6 +53,19 @@ class PerfilService extends ServiceBase {
     public function proxySearch($query, &$data, &$text) {
         $data["where"][] = RawWhere::raw("(deleted_at is null or deleted_at > NOW()) and nivel >= " . parent::loggedUser()->Perfil->nivel);
         $data["orderBy"][] = ["nivel", "asc"];
+    }
+
+    public function proxyStore(&$data, $unidade, $action){
+        if($action == self::ACTION_EDIT && !empty($data['capacidades'])){
+            foreach($data['capacidades'] as &$c){
+                if (empty($c['id'])){
+                    $capacidadeCodigo = TipoCapacidade::find($c['tipo_capacidade_id'])->codigo;
+                    $perfilNome = Perfil::find($c['perfil_id'])->nome;
+                    $c['id'] = $this->utilService->uuid($perfilNome . $capacidadeCodigo);
+                }
+            }
+        };
+        return $data;
     }
 
     public function differentDev(&$data) {
