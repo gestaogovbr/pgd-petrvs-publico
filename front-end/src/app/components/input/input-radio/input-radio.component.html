@@ -9,13 +9,11 @@
         </ng-container>
     </div>
     <ng-template #inputCircle>
-        <div (change)="onRadioChange($event)">
-            <ng-container *ngFor="let item of items; index as i">
-                <div class="form-check" [class.form-check-inline]="isInline">
-                    <input class="form-check-input" type="radio" [attr.name]="controlName" [id]="generatedId(controlName) + '_' + item.key" [attr.value]="item.key.toString()" [attr.checked]="isChecked(item)" [disabled]="disabled">
-                    <label class="form-check-label" [attr.for]="generatedId(controlName) + '_' + item.key">{{item.value}}</label>
-                </div>
-            </ng-container>
-        </div>
+        <ng-container *ngFor="let item of items">
+            <div class="form-check" [class.form-check-inline]="isInline">
+                <input class="form-check-input" type="radio" [attr.name]="controlName" [id]="generatedId(controlName) + '_' + item.key" [attr.value]="item.key.toString()" [attr.checked]="isChecked(item)" (change)="onRadioChange($event)" [disabled]="disabled">
+                <label class="form-check-label" [attr.for]="generatedId(controlName) + '_' + item.key">{{item.value}}</label>
+            </div>
+        </ng-container>
     </ng-template>
 </input-container>

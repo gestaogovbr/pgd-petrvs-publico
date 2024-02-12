@@ -2,40 +2,46 @@
   <div class="card-header">
     <div class="row">
       <label name="lblIdade" id="lblIdade" class="fw-bold">
-        {{indice}}. {{pergunta.pergunta}}
+        {{!indice ? "" : indice + ". "}}{{pergunta?.pergunta || titulo || ""}}
       </label>
     </div>
   </div>
   <div class="card-body text-wrap">
     <div class="col-lg-1">
+      <ng-container *ngIf="!pergunta">
+        <ng-content></ng-content>
+      </ng-container>
       <ng-container *ngIf="pergunta.tipo == 'EMOJI'"></ng-container>
       <ng-container *ngIf="pergunta.tipo == 'SELECT'">
-        <input-select [size]="2" [control]="control" [items]="pergunta.respostas"></input-select>
+        <input-select [size]="size || 6" [control]="control" [items]="pergunta.respostas"></input-select>
       </ng-container>
-      <ng-container *ngIf="pergunta.tipo == 'MULTI_SELECT'"></ng-container>
+      <ng-container *ngIf="pergunta.tipo == 'MULTI_SELECT'">
+        <input-multiselect [size]="size || 12" [control]="control" [items]="pergunta.respostas"></input-multiselect>
+      </ng-container>
       <ng-container *ngIf="pergunta.tipo == 'TEXT'"></ng-container>
+        <input-text [size]="size || 12" [control]="control"></input-text>
       <ng-container *ngIf="pergunta.tipo == 'TEXT_AREA'"></ng-container>
+        <input-textarea [size]="size || 12" [rows]="2" [control]="control"></input-textarea>
       <ng-container *ngIf="pergunta.tipo == 'TIMER'"></ng-container>
       <ng-container *ngIf="pergunta.tipo == 'DATE_TIME'"></ng-container>
       <ng-container *ngIf="pergunta.tipo == 'SWICTH'">
-        <input-switch [size]="2" labelPosition="right" [control]="control" (change)="onChange($event)"></input-switch>
+        <input-switch [size]="size || 6" labelPosition="right" [control]="control" (change)="onChange($event)"></input-switch>
       </ng-container>
       <ng-container *ngIf="pergunta.tipo == 'NUMBER'">
-        <input-number [size]="2" [control]="control" (change)="onChange($event)"></input-number>]
+        <input-number [size]="size || 4" [control]="control" (change)="onChange($event)"></input-number>]
       </ng-container>
-      <ng-container *ngIf="pergunta.tipo == 'RATE'">
-      </ng-container>
+      <ng-container *ngIf="pergunta.tipo == 'RATE'"></ng-container>
       <ng-container *ngIf="pergunta.tipo == 'RADIO'">
-        <input-radio [size]="2" circle [control]="control" [items]="pergunta.respostas" (change)="onChange($event)"></input-radio>        
+        <input-radio [size]="size || 4" circle [control]="control" [items]="pergunta.respostas" (change)="onChange($event)"></input-radio>        
       </ng-container>
       <ng-container *ngIf="pergunta.tipo == 'RADIO_INLINE'">
-        <input-radio [size]="2" circle inline [control]="control" [items]="pergunta.respostas" (change)="onChange($event)"></input-radio>        
+        <input-radio [size]="size || 12" circle inline [control]="control" [items]="pergunta.respostas" (change)="onChange($event)"></input-radio>        
       </ng-container>
       <ng-container *ngIf="pergunta.tipo == 'RADIO_BUTTON'">
-        <input-radio [size]="2" [control]="control" [items]="pergunta.respostas" (change)="onChange($event)"></input-radio>        
+        <input-radio [size]="size || 12" [control]="control" [items]="pergunta.respostas" (change)="onChange($event)"></input-radio>        
       </ng-container>
       <ng-container *ngIf="pergunta.tipo == 'CHECK'">
-
+        <input-check [size]="size || 4" [control]="control" [items]="pergunta.respostas" (change)="onChange($event)"></input-check>
       </ng-container>
     </div>
   </div>

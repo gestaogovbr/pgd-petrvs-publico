@@ -5,12 +5,13 @@ import { constructorParametersDownlevelTransform } from '@angular/compiler-cli';
 
 
 export type QuestionarioPerguntaTipo = "EMOJI" | "SELECT" | "MULTI_SELECT" | "TEXT" | "TEXT_AREA" | "TIMER" | "DATE_TIME" | "SWICTH" | "NUMBER" | "RATE" | "RADIO" | "RADIO_BUTTON" | "RADIO_INLINE" | "CHECK";
-export type QuestionarioPerguntaRespostaTimer = "DAYS_HOURS" | "DAYS" | "HOURS";
-export type QuestionarioPerguntaRespostaDateTime = "DATE_TIME" | "DATE" | "TIME";
+export type QuestionarioPerguntaRespostaTimer = { tipo: "DAYS_HOURS" | "DAYS" | "HOURS" };
+export type QuestionarioPerguntaRespostaDateTime = { tipo: "DATE_TIME" | "DATE" | "TIME" };
 export type QuestionarioPerguntaRespostaRange = {min: number, max: number};
-export type QuestionarioPerguntaResposta = null | LookupItem[] | QuestionarioPerguntaRespostaRange | {tipo: QuestionarioPerguntaRespostaTimer | QuestionarioPerguntaRespostaDateTime};
+export type QuestionarioPerguntaResposta = null | LookupItem[] | QuestionarioPerguntaRespostaRange | QuestionarioPerguntaRespostaTimer | QuestionarioPerguntaRespostaDateTime;
 
 export class QuestionarioPergunta extends Base {
+    public codigo: string | null = null; //codigo da pergunta
     public sequencia: number = 0; //sequencia da pergunta
     public pergunta: string = ""; //pergunta
     public tipo:  QuestionarioPerguntaTipo = "SELECT"; // tipo da resposta para esta pergunta

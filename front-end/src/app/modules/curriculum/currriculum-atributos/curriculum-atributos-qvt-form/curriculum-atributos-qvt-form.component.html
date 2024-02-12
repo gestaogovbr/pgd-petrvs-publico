@@ -3,17 +3,16 @@
     Formulário de Big Five não encontrado no banco de dados. Contate o suporte!
   </div>
   <ng-template #qvt>
-
     <h3 class="mb-3 fw-bold">Pesquisa de Qualidade de Vida no Trabalho - QVT</h3>
     <p class="text-justify mb-3" id="p_abertura">
       Bem-vindo(a),<br><br>
       Esta pesquisa é 100% anônima. E sua participação é fundamental para que seja possível uma análise representativa, em termos quantitativos e qualitativos, da situação existente na Instituição. Valorizamos a sua opinião e agradecemos pela disponibilidade em responder a pesquisa.<br><br>
       Desta forma, por não podermos identificar , solicitamos que seja gravado apenas uma vez.
     </p>
+    <div class="mt-3"></div>
+    <curriculum-pergunta-card *ngFor="let pergunta of perguntas; index as idx" [indice]="idx + 1" [pergunta]="pergunta" [control]="pergunta._metadata.control"></curriculum-pergunta-card>
 
-    <separator></separator>
-    <separator></separator>
-    <div class="card mb-3 mt-3 cardConcordancia" id="cardConcordancia">
+    <!--div class="card mb-3 mt-3 cardConcordancia" id="cardConcordancia">
       <div class="card-header">
         <div class="row">
           <label name="lblConcordancia" id="lblConcordancia" class="fw-bold">
@@ -23,7 +22,6 @@
       </div>
       <div class="card-body text-wrap">
         <input-switch #chaveConcordancia class="mt-3 ml-0" [size]="2" [labelPosition]="'right'" [label]="chaveConcordancia.value ? 'Sim' : 'Não'" name="chaveConcordancia" controlName="chaveConcordancia" [control]="form!.controls.chaveConcordancia" (change)="onChange($event)"></input-switch>
-       
       </div>
     </div>
     
@@ -40,7 +38,8 @@
           <input-number class="mt-3" [size]="2" name="idade" controlName="idade" [control]="form!.controls.idade" (change)="onChange($event)"></input-number>
         </div>
       </div>
-    </div>
+    </div> 
+
     <div class="card my-3 cardSexo" id="cardSexo">
       <div class="card-header">
         <label name="lblSexo" id="lblSexo" class="fw-bold">
@@ -55,6 +54,7 @@
         </div>
       </div>
     </div>
+
     <div class="card mb-3 mt-3 cardChaveSexo" id="cardChaveSexo">
       <div class="card-header">
         <div class="row">
@@ -67,6 +67,7 @@
         <input-switch #chaveSexo class="mt-3 ml-0" [size]="2" [labelPosition]="'right'" [label]="chaveSexo.value ? 'Sim' : 'Não'" name="chaveSexo" controlName="chaveSexo" [control]="form!.controls.chaveSexo" (change)="onChange($event)"></input-switch>
       </div>
     </div>
+
     <div class="card my-3 cardRaca" id="cardRaca">
       <div class="card-header">
         <div class="row">
@@ -86,6 +87,7 @@
         </div>
       </div>
     </div>
+
     <div class="card my-3 cardCivil" id="cardCivil">
       <div class="card-header">
         <div class="row">
@@ -105,6 +107,7 @@
         </div>
       </div>
     </div>
+
     <div class="card my-3 cardEscolaridade" id="cardEscolaridade">
       <div class="card-header">
         <div class="row">
@@ -124,6 +127,7 @@
         </div>
       </div>
     </div>
+
     <div class="card my-3 cardUF" id="cardUF">
       <div class="card-header">
         <div class="row">
@@ -138,6 +142,7 @@
         </div>
       </div>
     </div>
+
     <div class="card my-3 cardFuncional" id="cardFuncional">
       <div class="card-header">
         <div class="row">
@@ -157,6 +162,7 @@
         </div>
       </div>
     </div>
+
     <div class="card my-3 cardAnosInstituicao" id="cardAnosInstituicao">
       <div class="card-header">
         <div class="row">
@@ -171,6 +177,7 @@
         </div>
       </div>
     </div>
+
     <div class="card my-3 cardLotacao" id="cardLotacao">
       <div class="card-header">
         <div class="row">
@@ -198,6 +205,7 @@
         <input-switch #chaveAtencao class="mt-3 ml-0" [size]="2" [labelPosition]="'right'" [label]="chaveAtencao.value ? 'Sim' : 'Não'" name="chaveAtencao" controlName="chaveAtencao" [control]="form!.controls.chaveAtencao" (change)="onChange($event)"></input-switch>
       </div>
     </div>
+
     <div class="card mb-3 mt-3 cardChaveCrianca" id="cardChaveCrianca">
       <div class="card-header">
         <div class="row">
@@ -210,6 +218,7 @@
         <input-switch #chaveCrianca class="mt-3 ml-0" [size]="2" [labelPosition]="'right'" [label]="chaveCrianca.value ? 'Sim' : 'Não'" name="chaveCrianca" controlName="chaveCrianca" [control]="form!.controls.chaveCrianca" (change)="onChange($event)"></input-switch>
       </div>
     </div>
+
     <div class="card my-3 cardnumeroCrianca" id="cardnumeroCrianca">
       <div class="card-header">
         <div class="row">
@@ -224,6 +233,7 @@
         </div>
       </div>
     </div>
+
     <div class="card mb-3 mt-3 cardchaveDeficiencia" id="cardchaveDeficiencia">
       <div class="card-header">
         <div class="row">
@@ -236,9 +246,11 @@
         <input-switch #chaveDeficiencia class="mt-3 ml-0" [size]="2" [labelPosition]="'right'" [label]="chaveDeficiencia.value ? 'Sim' : 'Não'" name="chaveDeficiencia" controlName="chaveDeficiencia" [control]="form!.controls.chaveDeficiencia" (change)="onChange($event)"></input-switch>
       </div>
     </div>
+
     <separator></separator>
        <h5 class="mb-3 fw-bold">Qualidade de Vida no Trabalho, segundo Richard Walton (1973)</h5>
     <separator class="mb-3 mt-3"></separator>
+
     <ng-container *ngFor="let e of [].constructor(25); index as i">
       <div class="card my-3 cardFuncional" id="cardFuncional">
         <div class="card-header">
@@ -260,8 +272,10 @@
         </div>
       </div>
     </ng-container>
+
     <separator></separator>
     <separator></separator>
+
     <div class="card mb-3 mt-3 cardchaveEtarismo" id="cardchaveEtarismo">
       <div class="card-header">
         <div class="row">
@@ -274,6 +288,7 @@
         <input-switch #chaveEtarismo class="mt-3 ml-0" [size]="2" [labelPosition]="'right'" [label]="chaveEtarismo.value ? 'Sim' : 'Não'" name="chaveEtarismo" controlName="chaveEtarismo" [control]="form!.controls.chaveEtarismo" (change)="onChange($event)"></input-switch>
       </div>
     </div>
+
     <div class="card mb-3 mt-3 cardchaveDiscriminacao" id="cardchaveDiscriminacao">
       <div class="card-header">
         <div class="row">
@@ -286,6 +301,7 @@
         <input-switch #chaveDiscriminacao class="mt-3 ml-0" [size]="2" [labelPosition]="'right'" [label]="chaveDiscriminacao.value ? 'Sim' : 'Não'" name="chaveDiscriminacao" controlName="chaveDiscriminacao" [control]="form!.controls.chaveDiscriminacao" (change)="onChange($event)"></input-switch>
       </div>
     </div>
+
     <div class="card mb-3 mt-3 cardchaveAssedio" id="cardchaveAssedio">
       <div class="card-header">
         <div class="row">
@@ -298,6 +314,7 @@
         <input-switch #chaveAssedio class="mt-3 ml-0" [size]="2" [labelPosition]="'right'" [label]="chaveAssedio.value ? 'Sim' : 'Não'" name="chaveAssedio" controlName="chaveAssedio" [control]="form!.controls.chaveAssedio" (change)="onChange($event)"></input-switch>
       </div>
     </div>
+
     <div class="card mb-3 mt-3 cardchaveDiscriminacaoTrabalho" id="cardchaveDiscriminacaoTrabalho">
       <div class="card-header">
         <div class="row">
@@ -310,6 +327,7 @@
         <input-switch #chaveDiscriminacaoTrabalho class="mt-3 ml-0" [size]="2" [labelPosition]="'right'" [label]="chaveDiscriminacaoTrabalho.value ? 'Sim' : 'Não'" name="chaveDiscriminacaoTrabalho" controlName="chaveDiscriminacaoTrabalho" [control]="form!.controls.chaveDiscriminacaoTrabalho" (change)="onChange($event)"></input-switch>
       </div>
     </div>
+
     <div class="card my-3 cardFormaDicriminacao" id="cardFormaDicriminacao">
       <div class="card-header">
         <label name="lblFormaDicriminacao" id="lblFormaDicriminacao" class="fw-bold">
@@ -327,6 +345,7 @@
         </div>
       </div>
     </div>
+
     <div class="card my-3 cardDiscriminacaoPercepcao" id="cardDiscriminacaoPercepcao">
       <div class="card-header">
         <div class="row">
@@ -346,14 +365,18 @@
         </div>
       </div>
     </div>
+
     <separator></separator>
+
     <h5 class="mb-3 fw-bold">Dass-21</h5><br>
+
     <p class="text-justify mb-3">
       Essa pesquisa é anônima, portanto, as informações coletadas servirão apenas para medir como esses estados emocionais estão presentes na amostra em estudo. Essa seção não se presta a realizar qualquer tipo de diagnóstico clínico dos indivíduos pesquisados.<br><br>
       (1) Lovibond, S.H. & Lovibond, P.F. (1995). Manual for the Depression Anxiety & Stress Scales. (2nd Ed.)Sydney: Psychology Foundation.<br><br>
       (2) Henry, J. D., & Crawford, J. R. (2005). The short-form version of the Depression Anxiety Stress Scales (DASS-21): Construct validity and normative data in a large non-clinical sample. British Journal of Clinical Psychology, 44(2), 227-239.<br><br>
     </p>
     <separator class="mb-3 mt-3"></separator>
+
     <ng-container *ngFor="let e of [].constructor(21); index as i">
       <div class="card my-3 cardDass" id="cardDass">
         <div class="card-header">
@@ -375,10 +398,12 @@
         </div>
       </div>
     </ng-container>
+
     <separator></separator>
        <h5 class="mb-3 fw-bold">PGD</h5><br>
        <p>Assinale uma das opções abaixo, em relação ao Programa de Gestão e Desempenho - PGD.</p>
     <separator class="mb-3 mt-3"></separator>
+
     <div class="card my-3 cardParticipaPGD" id="cardParticipaPGD">
       <div class="card-header">
         <div class="row">
@@ -398,20 +423,7 @@
           </ng-container>
         </div>
       </div>
-    </div>
-
-
-
-
-
-
-
-   
-  
-
-
-
-
+    </div//-->
   </ng-template>
 </editable-form>
 

@@ -31,13 +31,10 @@ export class InputCheckComponent extends InputBase implements OnInit {
   @Input() source?: any;
   @Input() path?: string;
   @Input() required?: string;
-  @Input() circle?: string;
-  @Input() inline?: string;
   @Input() change?: (value: any) => void;
   @Input() set value(value: any) {
     if(value != this._value) {
       this._value = value;
-      this.detectChanges();
       this.updateValue();
     }
   }
@@ -68,6 +65,7 @@ export class InputCheckComponent extends InputBase implements OnInit {
   }
 
   public updateValue() {
+    this.detectChanges();
     for (let item of this.items) {
       const element: any = document.getElementById(this.controlName + item.key);
       if(element) element.checked = (this.value || []).includes(item.key);
@@ -78,22 +76,18 @@ export class InputCheckComponent extends InputBase implements OnInit {
     const target = event.target as HTMLInputElement;
     const selected = this.items.find(x => x.key.toString() == target.value);
     let list = this.control?.value || [];
-
-    this.control?.setValue(selected?.key);
+    if(target.checked && !list.includes(target.value) && selected) {
+      list.push(selected.key);
+    } else if(!target.checked) {
+      const index = list.findIndex((x: any) => x.toString() == target.value);
+      if(index >= 0) list.splice(index, 1);
+    }
+    this.control?.setValue(list);
     if(this.change) this.change(selected?.key);
-
   }
 
   public isChecked(item: LookupItem): string | undefined {
     return (this.value || []).includes(item.key) ? "" : undefined
-  }
-
-  public isCircle(): boolean {
-    return this.circle != undefined;
-  }
-
-  public isInline(): boolean {
-    return this.inline != undefined;
   }
 
   ngAfterViewInit() {
