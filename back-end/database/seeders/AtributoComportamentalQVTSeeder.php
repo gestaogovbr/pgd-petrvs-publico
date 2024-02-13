@@ -34,6 +34,7 @@ class AtributoComportamentalQVTSeeder extends Seeder
 
         $perguntaNovo = new QuestionarioPergunta();
         $perguntaNovo->fill([
+                    'codigo' => 'chaveConcordancia',
                     'sequencia'=> $sequencia,
                     'pergunta'=> $perguntas['pergunta'],
                     'tipo'=> $perguntas['tipo'],
@@ -49,6 +50,7 @@ class AtributoComportamentalQVTSeeder extends Seeder
 
         $perguntaNovo = new QuestionarioPergunta();
         $perguntaNovo->fill([
+                    'codigo' => 'idade',
                     'sequencia'=> $sequencia,
                     'pergunta'=> $perguntas['pergunta'],
                     'tipo'=> $perguntas['tipo'],
@@ -64,6 +66,7 @@ class AtributoComportamentalQVTSeeder extends Seeder
 
         $perguntaNovo = new QuestionarioPergunta();
         $perguntaNovo->fill([
+                    'codigo' => 'radioSexo',
                     'sequencia'=> $sequencia,
                     'pergunta'=> $perguntas['pergunta'],
                     'tipo'=> $perguntas['tipo'],
@@ -79,6 +82,7 @@ class AtributoComportamentalQVTSeeder extends Seeder
 
         $perguntaNovo = new QuestionarioPergunta();
         $perguntaNovo->fill([
+                    'codigo' => 'chaveSexo',
                     'sequencia'=> $sequencia,
                     'pergunta'=> $perguntas['pergunta'],
                     'tipo'=> $perguntas['tipo'],
@@ -94,6 +98,7 @@ class AtributoComportamentalQVTSeeder extends Seeder
 
         $perguntaNovo = new QuestionarioPergunta();
         $perguntaNovo->fill([
+                    'codigo' => 'radioRaca',
                     'sequencia'=> $sequencia,
                     'pergunta'=> $perguntas['pergunta'],
                     'tipo'=> $perguntas['tipo'],
@@ -109,6 +114,7 @@ class AtributoComportamentalQVTSeeder extends Seeder
 
         $perguntaNovo = new QuestionarioPergunta();
         $perguntaNovo->fill([
+                    'codigo' => 'radioCivil',
                     'sequencia'=> $sequencia,
                     'pergunta'=> $perguntas['pergunta'],
                     'tipo'=> $perguntas['tipo'],
@@ -124,6 +130,7 @@ class AtributoComportamentalQVTSeeder extends Seeder
 
         $perguntaNovo = new QuestionarioPergunta();
         $perguntaNovo->fill([
+                    'codigo' => 'radioEscolaridade',
                     'sequencia'=> $sequencia,
                     'pergunta'=> $perguntas['pergunta'],
                     'tipo'=> $perguntas['tipo'],
@@ -139,6 +146,7 @@ class AtributoComportamentalQVTSeeder extends Seeder
 
         $perguntaNovo = new QuestionarioPergunta();
         $perguntaNovo->fill([
+                    'codigo' => 'selectUF',
                     'sequencia'=> $sequencia,
                     'pergunta'=> $perguntas['pergunta'],
                     'tipo'=> $perguntas['tipo'],
@@ -154,6 +162,7 @@ class AtributoComportamentalQVTSeeder extends Seeder
 
         $perguntaNovo = new QuestionarioPergunta();
         $perguntaNovo->fill([
+                    'codigo' => 'radioFuncional',
                     'sequencia'=> $sequencia,
                     'pergunta'=> $perguntas['pergunta'],
                     'tipo'=> $perguntas['tipo'],
@@ -169,6 +178,7 @@ class AtributoComportamentalQVTSeeder extends Seeder
 
         $perguntaNovo = new QuestionarioPergunta();
         $perguntaNovo->fill([
+                    'codigo' => 'anosInstituicao',
                     'sequencia'=> $sequencia,
                     'pergunta'=> $perguntas['pergunta'],
                     'tipo'=> $perguntas['tipo'],
@@ -184,6 +194,7 @@ class AtributoComportamentalQVTSeeder extends Seeder
 
         $perguntaNovo = new QuestionarioPergunta();
         $perguntaNovo->fill([
+                    'codigo' => 'unidade_id',
                     'sequencia'=> $sequencia,
                     'pergunta'=> $perguntas['pergunta'],
                     'tipo'=> $perguntas['tipo'],
@@ -285,7 +296,7 @@ class AtributoComportamentalQVTSeeder extends Seeder
         ];
     
         $respostas =[
-                    ["key" => "Concordo Totalmente","data" => ["_status" => "ADD","opcaoResposta" => "Concordo Totalmente","valorResposta" => "1"],"value" => "Concordo Totalmente - 1"], 
+                    ["key" => md5("Concordo Totalmente"),"data" => ["_status" => "ADD","opcaoResposta" => "Concordo Totalmente","valorResposta" => "1"],"value" => "Concordo Totalmente - 1"], 
                     ["key" => "Concordo","data" => ["_status" => "ADD","opcaoResposta" => "Concordo","valorResposta" => "2"],"value" => "Concordo - 2"], 
                     ["key" => "Neutro","data" => ["_status" => "ADD","opcaoResposta" => "Neutro","valorResposta" => "3"],"value" => "Neutro - 3"], 
                     ["key" => "Discordo","data" => ["_status" => "ADD","opcaoResposta" => "Discordo","valorResposta" => "4"],"value" => "Discordo - 4"], 
@@ -409,7 +420,6 @@ class AtributoComportamentalQVTSeeder extends Seeder
         ['sequencia' => $sequencia,'pergunta' => 'Sabia que meu coração estava alterado mesmo não tendo feito nenhum esforço físico (Ex. Aumento da frequência cardíaca, disritmia cardíaca).','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid], 
         ['sequencia' => $sequencia,'pergunta' => 'Senti medo sem motivo.','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid], 
         ['sequencia' => $sequencia,'pergunta' => 'Senti que a vida não tinha sentido.','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid],   
-        
     ];
 
     $respostas =[

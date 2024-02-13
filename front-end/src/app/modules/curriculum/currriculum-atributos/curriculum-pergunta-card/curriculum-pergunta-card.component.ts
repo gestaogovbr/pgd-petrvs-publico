@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { QuestionarioPergunta } from 'src/app/models/questionario-pergunta.model';
+import { QuestionarioPergunta, QuestionarioPerguntaResposta } from 'src/app/models/questionario-pergunta.model';
+import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
   selector: 'curriculum-pergunta-card',
@@ -22,6 +23,10 @@ export class CurriculumPerguntaCardComponent implements OnInit {
 
   public onChange(event: Event) {
     this.change.emit(event);
+  }
+
+  public asLookupItem(items: QuestionarioPerguntaResposta | undefined): LookupItem[] {
+    return (items as LookupItem[]) || [];
   }
 
 }

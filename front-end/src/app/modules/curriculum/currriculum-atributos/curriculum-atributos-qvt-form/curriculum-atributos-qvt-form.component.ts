@@ -42,6 +42,7 @@ export class CurriculumAtributosQvtFormComponent extends PageFormBase<Questionar
   public unidadeDao: UnidadeDaoService;
   public questionario?: Questionario;
   public perguntas: QuestionarioPergunta[] = [];
+  public indice0a9: number[] = Array.from(new Array(10), (x, i) => i + 0);
 
   /*public questionario?: Questionario;
   public respostas: QuestionarioRespostaPergunta[] = [];

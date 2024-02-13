@@ -11,37 +11,37 @@
       <ng-container *ngIf="!pergunta">
         <ng-content></ng-content>
       </ng-container>
-      <ng-container *ngIf="pergunta.tipo == 'EMOJI'"></ng-container>
-      <ng-container *ngIf="pergunta.tipo == 'SELECT'">
-        <input-select [size]="size || 6" [control]="control" [items]="pergunta.respostas"></input-select>
+      <ng-container *ngIf="pergunta?.tipo == 'EMOJI'"></ng-container>
+      <ng-container *ngIf="pergunta?.tipo == 'SELECT'">
+        <input-select [size]="size || 6" [control]="control" [items]="asLookupItem(pergunta?.respostas)"></input-select>
       </ng-container>
-      <ng-container *ngIf="pergunta.tipo == 'MULTI_SELECT'">
-        <input-multiselect [size]="size || 12" [control]="control" [items]="pergunta.respostas"></input-multiselect>
+      <ng-container *ngIf="pergunta?.tipo == 'MULTI_SELECT'">
+        <input-multiselect [size]="size || 12" [control]="control" [items]="asLookupItem(pergunta?.respostas)"></input-multiselect>
       </ng-container>
-      <ng-container *ngIf="pergunta.tipo == 'TEXT'"></ng-container>
+      <ng-container *ngIf="pergunta?.tipo == 'TEXT'"></ng-container>
         <input-text [size]="size || 12" [control]="control"></input-text>
-      <ng-container *ngIf="pergunta.tipo == 'TEXT_AREA'"></ng-container>
+      <ng-container *ngIf="pergunta?.tipo == 'TEXT_AREA'"></ng-container>
         <input-textarea [size]="size || 12" [rows]="2" [control]="control"></input-textarea>
-      <ng-container *ngIf="pergunta.tipo == 'TIMER'"></ng-container>
-      <ng-container *ngIf="pergunta.tipo == 'DATE_TIME'"></ng-container>
-      <ng-container *ngIf="pergunta.tipo == 'SWICTH'">
+      <ng-container *ngIf="pergunta?.tipo == 'TIMER'"></ng-container>
+      <ng-container *ngIf="pergunta?.tipo == 'DATE_TIME'"></ng-container>
+      <ng-container *ngIf="pergunta?.tipo == 'SWICTH'">
         <input-switch [size]="size || 6" labelPosition="right" [control]="control" (change)="onChange($event)"></input-switch>
       </ng-container>
-      <ng-container *ngIf="pergunta.tipo == 'NUMBER'">
+      <ng-container *ngIf="pergunta?.tipo == 'NUMBER'">
         <input-number [size]="size || 4" [control]="control" (change)="onChange($event)"></input-number>]
       </ng-container>
-      <ng-container *ngIf="pergunta.tipo == 'RATE'"></ng-container>
-      <ng-container *ngIf="pergunta.tipo == 'RADIO'">
-        <input-radio [size]="size || 4" circle [control]="control" [items]="pergunta.respostas" (change)="onChange($event)"></input-radio>        
+      <ng-container *ngIf="pergunta?.tipo == 'RATE'"></ng-container>
+      <ng-container *ngIf="pergunta?.tipo == 'RADIO'">
+        <input-radio [size]="size || 4" circle [control]="control" [items]="asLookupItem(pergunta?.respostas)" (change)="onChange($event)"></input-radio>        
       </ng-container>
-      <ng-container *ngIf="pergunta.tipo == 'RADIO_INLINE'">
-        <input-radio [size]="size || 12" circle inline [control]="control" [items]="pergunta.respostas" (change)="onChange($event)"></input-radio>        
+      <ng-container *ngIf="pergunta?.tipo == 'RADIO_INLINE'">
+        <input-radio [size]="size || 12" circle inline [control]="control" [items]="asLookupItem(pergunta?.respostas)" (change)="onChange($event)"></input-radio>        
       </ng-container>
-      <ng-container *ngIf="pergunta.tipo == 'RADIO_BUTTON'">
-        <input-radio [size]="size || 12" [control]="control" [items]="pergunta.respostas" (change)="onChange($event)"></input-radio>        
+      <ng-container *ngIf="pergunta?.tipo == 'RADIO_BUTTON'">
+        <input-radio [size]="size || 12" [control]="control" [items]="asLookupItem(pergunta?.respostas)" (change)="onChange($event)"></input-radio>        
       </ng-container>
-      <ng-container *ngIf="pergunta.tipo == 'CHECK'">
-        <input-check [size]="size || 4" [control]="control" [items]="pergunta.respostas" (change)="onChange($event)"></input-check>
+      <ng-container *ngIf="pergunta?.tipo == 'CHECK'">
+        <input-check [size]="size || 4" [control]="control" [items]="asLookupItem(pergunta?.respostas)" (change)="onChange($event)"></input-check>
       </ng-container>
     </div>
   </div>

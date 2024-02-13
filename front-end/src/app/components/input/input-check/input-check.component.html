@@ -1,7 +1,7 @@
 <input-container [labelPosition]="labelPosition" [labelClass]="labelClass" [controlName]="controlName" [required]="required" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold" [isRadio]="true">
     <ng-container *ngFor="let item of items">
         <div class="form-check">
-            <input class="form-check-input" type="checkbox" [attr.name]="controlName" [id]="generatedId(controlName) + '_' + item.key" [attr.value]="item.key.toString()" [attr.checked]="isChecked(item)" [disabled]="disabled" (change)="onRadioChange($event)">
+            <input class="form-check-input" type="checkbox" [attr.name]="controlName" [id]="generatedId(controlName) + '_' + item.key" [attr.value]="item.key.toString()" [attr.checked]="isChecked(item)" [disabled]="disabled" (change)="onCheckChange($event)">
             <label class="form-check-label" [attr.for]="generatedId(controlName) + '_' + item.key">{{item.value}}</label>
         </div>
     </ng-container>
