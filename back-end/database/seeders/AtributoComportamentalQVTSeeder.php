@@ -27,10 +27,60 @@ class AtributoComportamentalQVTSeeder extends Seeder
         $questionario->save();
             
         $uuid = Questionario::where('codigo','QVT')->first()?->id;
-            
+
+        
+
+
+        $respostasSimNao = [
+            ["key" => "SIM", "value" => "Sim"], 
+            ["key" => "NAO", "value" => "Não"]
+        ]
+
+        $respostasRichard = [
+            ["key" => 1, "value" => "Concordo Totalmente"], 
+            ["key" => 2, "value" => "Concordo"], 
+            ["key" => 3, "value" => "Neutro"], 
+            ["key" => 4, "value" => "Discordo"], 
+            ["key" => 5, "value" => "Discordo Totalmente"]
+        ];
+
+        $respostasDiscriminacao =[
+            ["key" => "Social","data" => ["_status" => "ADD","opcaoResposta" => "Social","valorResposta" => "1"],"value" => "Social - 1"], 
+            ["key" => "Racial","data" => ["_status" => "ADD","opcaoResposta" => "Racial","valorResposta" => "2"],"value" => "Racial - 2"], 
+            ["key" => "Religiosa","data" => ["_status" => "ADD","opcaoResposta" => "Religiosa","valorResposta" => "3"],"value" => "Religiosa - 3"], 
+            ["key" => "Sexual","data" => ["_status" => "ADD","opcaoResposta" => "Sexual","valorResposta" => "4"],"value" => "Sexual - 4"], 
+            ["key" => "Política","data" => ["_status" => "ADD","opcaoResposta" => "Política","valorResposta" => "5"],"value" => "Política - 5"]
+        ];
+
+        $perguntas = [
+            ['sequencia' => $sequencia,'pergunta' => 'Você concorda em participar desta pesquisa, de forma anônima, cujos dados são coletados sem identificação dos respondentes, e serão analisados para subsidiar a formulação de ações de melhoria da Qualidade de Vida no Trabalho na Instituição, e estudos da SEGES/MGI sobre o tema?','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respotas' => $respotaX];
+            ['sequencia' => $sequencia,'pergunta' => 'Você concorda em participar desta pesquisa, de forma anônima, cujos dados são coletados sem identificação dos respondentes, e serão analisados para subsidiar a formulação de ações de melhoria da Qualidade de Vida no Trabalho na Instituição, e estudos da SEGES/MGI sobre o tema?','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid];
+            ['sequencia' => $sequencia,'pergunta' => 'Você concorda em participar desta pesquisa, de forma anônima, cujos dados são coletados sem identificação dos respondentes, e serão analisados para subsidiar a formulação de ações de melhoria da Qualidade de Vida no Trabalho na Instituição, e estudos da SEGES/MGI sobre o tema?','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid];
+            ['sequencia' => $sequencia,'pergunta' => 'Você concorda em participar desta pesquisa, de forma anônima, cujos dados são coletados sem identificação dos respondentes, e serão analisados para subsidiar a formulação de ações de melhoria da Qualidade de Vida no Trabalho na Instituição, e estudos da SEGES/MGI sobre o tema?','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid];
+            ['sequencia' => $sequencia,'pergunta' => 'Você concorda em participar desta pesquisa, de forma anônima, cujos dados são coletados sem identificação dos respondentes, e serão analisados para subsidiar a formulação de ações de melhoria da Qualidade de Vida no Trabalho na Instituição, e estudos da SEGES/MGI sobre o tema?','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid];
+            ['sequencia' => $sequencia,'pergunta' => 'Você concorda em participar desta pesquisa, de forma anônima, cujos dados são coletados sem identificação dos respondentes, e serão analisados para subsidiar a formulação de ações de melhoria da Qualidade de Vida no Trabalho na Instituição, e estudos da SEGES/MGI sobre o tema?','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid];
+            ['sequencia' => $sequencia,'pergunta' => 'Você concorda em participar desta pesquisa, de forma anônima, cujos dados são coletados sem identificação dos respondentes, e serão analisados para subsidiar a formulação de ações de melhoria da Qualidade de Vida no Trabalho na Instituição, e estudos da SEGES/MGI sobre o tema?','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid];
+
+        ];
+
+for
+$perguntaNovo->fill([
+    'codigo' => 'chaveConcordancia',
+    'sequencia'=> $sequencia,
+    'pergunta'=> $perguntas['pergunta'],
+    'tipo'=> $perguntas['tipo'],
+    'criado_versao'=> $perguntas['criado_versao'],
+    'deletado_versao'=> $perguntas['deletado_versao'],
+    'respostas' => 'Sim',
+    'questionario_id'=> $uuid
+]);
+
+
+
         $sequencia = 1;
 
         $perguntas = ['sequencia' => $sequencia,'pergunta' => 'Você concorda em participar desta pesquisa, de forma anônima, cujos dados são coletados sem identificação dos respondentes, e serão analisados para subsidiar a formulação de ações de melhoria da Qualidade de Vida no Trabalho na Instituição, e estudos da SEGES/MGI sobre o tema?','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid];
+
 
         $perguntaNovo = new QuestionarioPergunta();
         $perguntaNovo->fill([
@@ -40,7 +90,7 @@ class AtributoComportamentalQVTSeeder extends Seeder
                     'tipo'=> $perguntas['tipo'],
                     'criado_versao'=> $perguntas['criado_versao'],
                     'deletado_versao'=> $perguntas['deletado_versao'],
-                    'respostas' => '',
+                    'respostas' => 'Sim',
                     'questionario_id'=> $uuid
             ]);
         $perguntaNovo->save();
@@ -295,14 +345,7 @@ class AtributoComportamentalQVTSeeder extends Seeder
             ['sequencia' => $sequencia,'pergunta' => 'Eu sinto orgulho e satisfação em relação à imagem da instituição perante a sociedade.','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid], 
         ];
     
-        $respostas =[
-                    ["key" => md5("Concordo Totalmente"),"data" => ["_status" => "ADD","opcaoResposta" => "Concordo Totalmente","valorResposta" => "1"],"value" => "Concordo Totalmente - 1"], 
-                    ["key" => "Concordo","data" => ["_status" => "ADD","opcaoResposta" => "Concordo","valorResposta" => "2"],"value" => "Concordo - 2"], 
-                    ["key" => "Neutro","data" => ["_status" => "ADD","opcaoResposta" => "Neutro","valorResposta" => "3"],"value" => "Neutro - 3"], 
-                    ["key" => "Discordo","data" => ["_status" => "ADD","opcaoResposta" => "Discordo","valorResposta" => "4"],"value" => "Discordo - 4"], 
-                    ["key" => "Discordo Totalmente","data" => ["_status" => "ADD","opcaoResposta" => "Discordo Totalmente","valorResposta" => "5"],"value" => "Discordo Totalmente - 5"]
-                ];
-    
+// $respotasRichard     
         foreach($perguntas as $pergunta){
             $perguntaNovo = new QuestionarioPergunta();
             $perguntaNovo->fill([
@@ -346,13 +389,7 @@ class AtributoComportamentalQVTSeeder extends Seeder
                 ['sequencia' => $sequencia,'pergunta' => 'Qual forma(s) de discriminação você percebe? Você pode assinalar mais de uma opção.','tipo' => 'CHECK','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid],
             ];
 
-        $respostas =[
-                ["key" => "Social","data" => ["_status" => "ADD","opcaoResposta" => "Social","valorResposta" => "1"],"value" => "Social - 1"], 
-                ["key" => "Racial","data" => ["_status" => "ADD","opcaoResposta" => "Racial","valorResposta" => "2"],"value" => "Racial - 2"], 
-                ["key" => "Religiosa","data" => ["_status" => "ADD","opcaoResposta" => "Religiosa","valorResposta" => "3"],"value" => "Religiosa - 3"], 
-                ["key" => "Sexual","data" => ["_status" => "ADD","opcaoResposta" => "Sexual","valorResposta" => "4"],"value" => "Sexual - 4"], 
-                ["key" => "Política","data" => ["_status" => "ADD","opcaoResposta" => "Política","valorResposta" => "5"],"value" => "Política - 5"]
-            ];
+// $respostasDiscriminacao
 
         foreach($perguntas as $pergunta){
                 $perguntaNovo = new QuestionarioPergunta();
