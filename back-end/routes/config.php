@@ -1,12 +1,14 @@
 <?php
 
+use App\Http\Controllers\SeederController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TenantController;
 use App\Http\Controllers\TenantsLogsController;
+use App\Http\Middleware\Panel;
 
 /* Painel de controle */
-Route::middleware(['panel'])->prefix('Tenant')->group(function () {
+Route::middleware(['api', 'panel'])->prefix('Tenant')->group(function () {
     Route::post('store', [TenantController::class, 'store']);
     Route::post('destroy', [TenantController::class, 'destroy']);
     Route::post('get-by-id', [TenantController::class, 'getById']);
@@ -21,7 +23,7 @@ Route::middleware(['panel'])->prefix('Tenant')->group(function () {
     Route::post('seeders', [TenantController::class, 'seeders']);
     Route::get('resetdb', [TenantController::class, 'resetdb']);
 });
-Route::middleware(['panel'])->prefix('TenantLogs')->group(function () {
+Route::middleware(['api', 'panel'])->prefix('TenantLogs')->group(function () {
     Route::post('store', [TenantsLogsController::class, 'store']);
     Route::post('destroy', [TenantsLogsController::class, 'destroy']);
     Route::post('get-by-id', [TenantsLogsController::class, 'getById']);

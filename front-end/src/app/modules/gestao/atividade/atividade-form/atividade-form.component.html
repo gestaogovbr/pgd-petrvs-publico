@@ -16,7 +16,7 @@
         <input-select [label]="lex.translate('Plano de trabalho')" [size]="6" controlName="plano_trabalho_id" #planoTrabalho [control]="form!.controls.plano_trabalho_id" [items]="planosTrabalhos" (change)="onPlanoTrabalhoChange($event)" [labelInfo]="lex.translate('Plano de trabalho')"></input-select>
       </div>
       <div class="row">
-        <input-select [label]="lex.translate('Entrega')" [size]="12" controlName="plano_trabalho_entrega_id" #entrega [control]="form!.controls.plano_trabalho_entrega_id" [items]="entregas" [labelInfo]="lex.translate('Entrega') + lex.translate(' plano de trabalho') + ' que a ' + lex.translate('atividade') + ' é referente'"></input-select>
+        <input-select [label]="lex.translate('Entrega') + ' (Descrição dos trabalhos)'" [size]="12" controlName="plano_trabalho_entrega_id" #entrega [control]="form!.controls.plano_trabalho_entrega_id" [items]="entregas" [labelInfo]="lex.translate('Entrega') + lex.translate(' plano de trabalho') + ' que a ' + lex.translate('atividade') + ' é referente'"></input-select>
       </div>
       <div *ngIf="!planoTrabalho?.selectedItem?.data?.tipo_modalidade?.atividade_esforco; else comEsforco" class="row">
         <input-datetime noIcon [size]="4" [label]="lex.translate('Data de distribuição')" controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" (change)="onDataDistribuicaoChange($event)" labelInfo="Data de inclusão/distribuição/lançamento"></input-datetime>

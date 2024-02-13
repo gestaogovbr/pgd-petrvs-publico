@@ -116,6 +116,19 @@ class PlanoEntregaController extends ControllerBase
             return response()->json(['error' => $e->getMessage()]);
         }
     }
+    
+    public function permissaoIncluir(Request $request)
+    {
+        try {
+            $data = $request->validate(['unidade_id'=> ['required']]);
+      
+            return response()->json([
+                'success' => $this->service->validaPermissaoIncluir($data, $this->getUsuario($request))
+            ]);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario)
     {

@@ -26,11 +26,12 @@ class IntegracaoServidor extends ModelBase
         'telefone', /* varchar(50); */
         'vinculo_ativo', /* varchar(50); */
         'matriculasiape', /* varchar(50); */
-        'cargo', /* varchar(50); */
+        'codigo_cargo', /* varchar(50); */
         'coduorgexercicio', /* varchar(50); */
         'coduorglotacao', /* varchar(50); */
         'codigo_servo_exercicio', /* varchar(50); */
         'nomeguerra', /* varchar(100); */
+        'codigo_situacao_funcional',
         'situacao_funcional', /* varchar(50); */
         'codupag', /* varchar(50); */
         'dataexercicionoorgao', /* varchar(50); */

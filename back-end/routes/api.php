@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PainelUsuarioController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
@@ -30,20 +31,15 @@ Route::middleware([InitializeTenancyByPath::class])
 
 
 /* Login Panel */
-Route::post('/panel-login', function (Request $request) {
-    $return=false;
-    if($request->user==config('petrvs')['panel']['username'] && $request->password==config('petrvs')['panel']['password']) {
-        $return=true;
-    }
-    return response()->json($return);
-});
+Route::post('/panel-login', [PainelUsuarioController::class, 'login']);
+Route::get('/panel-login-check', [PainelUsuarioController::class, 'checkAuthentication']);
+Route::get('/panel-login-detail', [PainelUsuarioController::class, 'detail']);
 
-/* Seeders */
-Route::prefix('Seeder')->group(function () {
+Route::middleware(['panel'])->prefix('Seeder')->group(function () {
     Route::get('getAll', [SeederController::class, 'index']);
     Route::post('execute', [SeederController::class, 'execute']);
 });
 
-Route::prefix('Logs')->group(function () {
+Route::middleware(['panel'])->prefix('Logs')->group(function () {
     Route::post('list', [\App\Http\Controllers\LogsController::class, 'index']);
 });
