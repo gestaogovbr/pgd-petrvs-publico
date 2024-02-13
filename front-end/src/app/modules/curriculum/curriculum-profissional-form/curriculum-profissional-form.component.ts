@@ -290,7 +290,6 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   }
 
   public async initializeData(form: FormGroup) {
-    
     const curriculunsProfissional = await this.dao?.query({ where: ['curriculum_id', '==', this.curriculumID], join: this.join }).asPromise();
     let entity = curriculunsProfissional?.length ? curriculunsProfissional[0] : new CurriculumProfissional();//this.entity
     curriculunsProfissional?.length ? (this.id = curriculunsProfissional[0].id) : (this.id = "");

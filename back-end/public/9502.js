@@ -155,7 +155,7 @@ class UnidadeFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
         default: true
       },
       atividades_arquivamento_automatico: {
-        default: 1
+        default: 0
       },
       distribuicao_forma_contagem_prazos: {
         default: "DIAS_UTEIS"

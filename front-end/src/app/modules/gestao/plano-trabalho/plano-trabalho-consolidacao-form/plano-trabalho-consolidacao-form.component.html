@@ -1,14 +1,22 @@
 <separator collapse [collapsed]="false" [title]="lex.translate('Atividades')" [icon]="entityService.getIcon('Atividade')">
-  <grid [items]="itemsEntregas" #gridEntregas [minHeight]="0">
+  <grid [items]="itemsEntregas" #gridEntregas [minHeight]="0" [hasEdit]="false">
     <columns>
-      <column type="expand" [icon]="entityService.getIcon('PlanoTrabalhoConsolidacao')" [align]="'center'" [hint]="lex.translate('Consolidação')" [template]="columnConsolidacao" [expandTemplate]="columnExpandedConsolidacao">
+      <column type="expand" [width]="50" [icon]="entityService.getIcon('PlanoTrabalhoConsolidacao')" [align]="'center'" [hint]="lex.translate('Consolidação')" [template]="columnConsolidacao" [expandTemplate]="columnExpandedConsolidacao">
         <ng-template let-row="row" #columnConsolidacao>
-          <!--span *ngIf="row?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row?.length}}</span//-->
+          <span *ngIf="row.atividades?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row.atividades?.length}}</span>
         </ng-template>
         <ng-template let-row="row" #columnExpandedConsolidacao>
           <grid [items]="row.atividades" [minHeight]="0" #gridAtividades [form]="formAtividade" [hasAdd]="!disabled" [hasDelete]="false" [hasEdit]="false" [add]="addAtividade.bind(this, row.entrega)" [load]="loadAtividade.bind(this)" [remove]="removeAtividade.bind(this, row.atividades)" [save]="saveAtividade.bind(this)" editable>
             <columns>
-              <column [title]="'#ID/Descrição'" [width]="400" [template]="columnAtividadeDescricao" [editTemplate]="editAtividadeDescricao" [columnEditTemplate]="atividadeOptionsMetadata.disabled ? undefined : editAtividadeDescricao" [edit]="atividadeOptionsMetadata.disabled ? undefined : onColumnAtividadeDescricaoEdit.bind(this)" [save]="atividadeOptionsMetadata.disabled ? undefined : onColumnAtividadeDescricaoSave.bind(this)"><!--[title]="'#ID/' + lex.translate('Tipo de Atividade') + '\nDescrição'"-->
+              <column type="expand" [width]="50" icon="bi bi-boxes" [align]="'center'" [hint]="'Tarefas da ' + lex.translate('atividade')" [template]="columnTarefas" [expandTemplate]="columnExpandedTarefas">
+                <ng-template let-row="row" #columnTarefas>
+                  <span *ngIf="row.tarefas?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row.tarefas?.length}}</span>
+                </ng-template>
+                <ng-template let-row="row" #columnExpandedTarefas>
+                  <atividade-list-tarefa persist #listTarefas [atividade]="row" [consolidacao]="false"></atividade-list-tarefa>
+                </ng-template>
+              </column>
+              <column [title]="'#ID/Trabalho executado'" [width]="400" [template]="columnAtividadeDescricao" [editTemplate]="editAtividadeDescricao" [columnEditTemplate]="atividadeOptionsMetadata.disabled ? undefined : editAtividadeDescricao" [edit]="atividadeOptionsMetadata.disabled ? undefined : onColumnAtividadeDescricaoEdit.bind(this)" [save]="atividadeOptionsMetadata.disabled ? undefined : onColumnAtividadeDescricaoSave.bind(this)"><!--[title]="'#ID/' + lex.translate('Tipo de Atividade') + '\nDescrição'"-->
                 <ng-template let-row="row" #columnAtividadeDescricao>
                   <span class="text-nowrap d-block">
                     <badge icon="bi bi-hash" [label]="row.numero" color="light" [data]="row.numero" [click]="atividadeService.onIdClick.bind(this)"></badge>
@@ -22,16 +30,16 @@
                   <!--input-search [label]="lex.translate('Tipo de atividade')" #tipoAtividade [size]="12" [emptyValue]="null" controlName="tipo_atividade_id" [control]="formAtividade!.controls.tipo_atividade_id" [dao]="tipoAtividadeDao" (select)="onTipoAtividadeSelect($event)" [labelInfo]="lex.translate('Tipo de atividade') + ' utilizado para classificar a atividade'" [required]="!auth.hasPermissionTo('MOD_ATV_TIPO_ATV_VAZIO') ? 'true' : undefined"></input-search-->
                 </ng-template>
               </column>
-              <column [title]="'Tempos'" [width]="250" [template]="columnTempos" [editTemplate]="editTempos">
+              <column [title]="'Início e Conclusão'" [width]="250" [template]="columnTempos" [editTemplate]="editTempos">
                 <ng-template let-row="row" #columnTempos>
                   <div class="one-per-line">
-                    <badge *ngFor="let tempo of atividadeService.temposAtividade(row)" [badge]="tempo"></badge>
+                    <badge *ngFor="let tempo of tempoAtividade(row)" [badge]="tempo"></badge>
                   </div>
                 </ng-template>
                 <ng-template let-row="row" #editTempos>
                   <!--input-datetime icon="bi bi-file-earmark-plus" [label]="lex.translate('Data de distribuição')" controlName="data_distribuicao" [control]="formAtividade!.controls.data_distribuicao" (change)="onDataDistribuicaoChange($event)" labelInfo="Data de inclusão/distribuição/lançamento"></input-datetime-->
                   <!--input-datetime icon="bi bi-calendar-check" [label]="lex.translate('Prazo de entrega')" controlName="data_estipulada_entrega" [control]="formAtividade!.controls.data_estipulada_entrega" (change)="onDataEstipuladaEntregaChange($event)" labelInfo="Data estipulada para entrega da atividade"></input-datetime-->
-                  <separator title="Início e Conclusão" collapse [collapsed]="false">
+                  <separator title="Início e Conclusão" collapse [collapsed]="true">
                     <input-datetime icon="bi bi-play-circle" label="Início" controlName="data_inicio" [control]="formAtividade!.controls.data_inicio" labelInfo="Data de inicialização da atividade"></input-datetime>
                     <input-datetime icon="bi bi-check-circle" label="Conclusão" controlName="data_entrega" [control]="formAtividade!.controls.data_entrega" labelInfo="Data da conclusão da atividade"></input-datetime>
                   </separator>
@@ -105,7 +113,7 @@
           <progress-bar [value]="row.progresso_realizado" color="success"></progress-bar>
         </ng-template>
       </column>
-      <column [title]="'Objetivos/Processos'" [template]="columnObjProc" [editTemplate]="columnObjProc" [width]="200">
+      <!--column [title]="'Objetivos/Processos'" [template]="columnObjProc" [editTemplate]="columnObjProc" [width]="200">
         <ng-template let-row="row" #columnObjProc>
           <separator [title]="lex.translate('Objetivos')" *ngIf="row.objetivos?.length" collapse [collapsed]="true">
             <div *ngFor="let pObjetivo of row.objetivos" class="objetivo d-flex align-items-center">
@@ -120,7 +128,8 @@
             </div>
           </separator>
         </ng-template>
-      </column>
+      </column-->
+      <column type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>
     </columns>
   </grid>
 </separator>

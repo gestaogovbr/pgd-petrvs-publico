@@ -42,7 +42,8 @@ import { OrganizationChartModule } from 'primeng/organizationchart';
     OrganizationChartModule
   ],
   exports: [
-    AtividadeListGridComponent
+    AtividadeListGridComponent,
+    AtividadeListTarefaComponent
   ]
 })
 export class AtividadeModule { }

@@ -33,6 +33,6 @@ deploy_dsv:
   before_script:
     - apt-get update -y && apt-get install -y sshpass
   script:
-    - sshpass -p $SSH_PASSWORD ssh -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST "sh install-pgd.sh"
+    - sshpass -p $SSH_PASSWORD ssh -T -o StrictHostKeyChecking=no -p $SSH_PORT $SSH_USER@$SSH_HOST "sh install-pgd.sh < /dev/null"
   only:
     - dataprev_dsv

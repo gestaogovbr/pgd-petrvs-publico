@@ -112,12 +112,6 @@ class PlanoTrabalhoService extends ServiceBase
     return $plano;
   }
 
-  public function afterStore($planoTrabalho, $action)
-  {
-    // (RN_PTR_A) Quando um Plano de Trabalho é criado adquire automaticamente o status INCLUIDO;
-    if ($action == ServiceBase::ACTION_INSERT) $this->statusService->atualizaStatus($planoTrabalho, 'INCLUIDO', 'O Plano de Trabalho foi criado nesta data.');
-  }
-
   public function validateStore($data, $unidade, $action)
   {
     $usuario = Usuario::with("areasTrabalho")->find($data["usuario_id"]);
@@ -205,18 +199,25 @@ class PlanoTrabalhoService extends ServiceBase
 
   public function repactuar($planoId, $forcarGeracaoTcr = false) {
     $plano = PlanoTrabalho::find($planoId);
-    if ($plano->status == "ATIVO" && $this->haAssinaturasExigidas($plano->toArray())) {
-      $this->statusService->atualizaStatus($plano, 'AGUARDANDO_ASSINATURA', 'Plano de Trabalho repactuado');
+    if($plano->programa->termo_obrigatorio) {
       $haAssinaturas = DocumentoAssinatura::where("documento_id", $plano->documento_id)->count() > 0;
-      if($forcarGeracaoTcr || $haAssinaturas) {
-        $template = $plano->programa->template_tcr?->conteudo || "";
-        $dataset = $this->templateDatasetService->getDataset("PLANO_TRABALHO", true);
-        $datasource = $this->templateDatasetService->getDataset("PLANO_TRABALHO")["context"]($plano);
+      $template = $plano->programa->templateTcr->conteudo ?? "";
+      $dataset = $this->templateDatasetService->getDataset("PLANO_TRABALHO", true);
+      $datasource = $this->templateService->getDatasource("PLANO_TRABALHO", $plano);
+      if(!empty($plano->documento_id) && !$haAssinaturas) {
+        $documento = Documento::find($plano->documento_id);
+        $documento->conteudo = $this->templateService->renderTemplate($template, $datasource);
+        $documento->template = $template;
+        $documento->dataset = $dataset;
+        $documento->datasource = $datasource;
+        $documento->save();
+      } else if (empty($plano->documento_id) || $forcarGeracaoTcr || $haAssinaturas || ($plano->status == "ATIVO" && $this->haAssinaturasExigidas($plano->toArray()))) {
+        $this->statusService->atualizaStatus($plano, 'AGUARDANDO_ASSINATURA', 'Plano de Trabalho repactuado');
         $documento = new Documento([
           "tipo" => "HTML",
           "especie" => "TCR",
           "titulo" => "Termo de Ciência e Responsabilidade",
-          "conteudo" => $this->renderTemplate($template, $datasource),
+          "conteudo" => $this->templateService->renderTemplate($template, $datasource),
           "status" => "GERADO",
           "template" => $template,
           "dataset" => $dataset,
@@ -234,6 +235,8 @@ class PlanoTrabalhoService extends ServiceBase
 
   public function extraStore($plano, $unidade, $action)
   {
+    // (RN_PTR_A) Quando um Plano de Trabalho é criado adquire automaticamente o status INCLUIDO;
+    if ($action == ServiceBase::ACTION_INSERT) $this->statusService->atualizaStatus($plano, 'INCLUIDO', 'O Plano de Trabalho foi criado nesta data.');
     /* (RN_CSLD_1) Inclui ou atualiza as consolidações com base no período do plano de trabalho */
     $this->atualizaConsolidacoes($plano);
     /* Restaura o documento_id */

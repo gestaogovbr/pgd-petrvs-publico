@@ -24,7 +24,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
   @ViewChild(UsuarioIntegranteComponent, { static: false }) public unidadesIntegrantes?: UsuarioIntegranteComponent;
   @ViewChild('lotacao', { static: false }) public lotacao?: InputSearchComponent;
 
-  public perfilDao: PerfilDaoService;
+  //public perfilDao: PerfilDaoService;
   public unidadeDao: UnidadeDaoService;
   public integranteDao: UnidadeIntegranteDaoService;
   public planoTrabalhoDao: PlanoTrabalhoDaoService;
@@ -32,7 +32,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
 
   constructor(public injector: Injector) {
     super(injector, Usuario, UsuarioDaoService);
-    this.perfilDao = injector.get<PerfilDaoService>(PerfilDaoService);
+    //this.perfilDao = injector.get<PerfilDaoService>(PerfilDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
     this.planoTrabalhoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
@@ -47,7 +47,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
       sexo: { default: null },
       url_foto: { default: "" },
       texto_complementar_plano: { default: "" },
-      perfil_id: { default: null },
+      //perfil_id: { default: null },
       data_nascimento: { default: null },
     }, this.cdRef, this.validate);
     this.planoDataset = this.planoTrabalhoDao.dataset();
@@ -88,6 +88,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
       this.unidadesIntegrantes!.grid!.confirm();
       let usuario = this.util.fill(new Usuario(), this.entity!);
       usuario = this.util.fillForm(usuario, this.form!.value);
+      usuario.perfil_id = this.unidadesIntegrantes?.formPerfil.controls.perfil_id.value;
       let integrantesConsolidados: IntegranteConsolidado[] = this.unidadesIntegrantes?.items || [];
       let indiceVinculoLotacao = integrantesConsolidados.findIndex(ic => ic.atribuicoes.includes("LOTADO"));
       integrantesConsolidados.forEach((item, index, array) => { if(index != indiceVinculoLotacao && item._status == 'DELETE') item.atribuicoes = []; });
