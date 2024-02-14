@@ -15,9 +15,7 @@ class AlterCurriculumsProfissionaisTableChangeAnoInt extends Migration
     {
         //DB::statement('ALTER TABLE curriculums_profissionais CHANGE ano_ingresso integer null;');
         Schema::table('curriculums_profissionais', function (Blueprint $table) {
-
             $table->integer('ano_ingresso')->default(0)->comment("Ano de ingresso")->change();  
-         
         });
     }
 
@@ -29,9 +27,7 @@ class AlterCurriculumsProfissionaisTableChangeAnoInt extends Migration
     public function down()
     {
         Schema::table('curriculums_profissionais', function (Blueprint $table) {
-
             $table->tinyInteger('ano_ingresso')->default(0)->comment("Ano de ingresso")->change();
-         
         });
     }
    
