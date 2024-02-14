@@ -49,7 +49,7 @@ trait MergeRelations
         }, ARRAY_FILTER_USE_KEY);
     }
 
-    public function 
+    public function
     fillableRelations()
     {
         $fillable = [];
@@ -151,8 +151,9 @@ trait MergeRelations
                     $save = false;
                 } else {
                     $related[$foreignKeyName] = $parentKey;
-                    $related = ($relatedModel::find($relatedId) ?? new $relatedModel())->fill($related);
+                    $related = ($relatedModel::withTrashed()->find($relatedId) ?? new $relatedModel())->fill($related);
                     $related->id = $relatedId;
+                    if($related->trashed()) $related->restore();
                 }
             }
             if($save) {
@@ -166,9 +167,9 @@ trait MergeRelations
 
 
 /**********************************************************************************
- * 
+ *
  * Implementar os métodos abaixo para funcionar como merge
- * 
+ *
  *********************************************************************************/
 
 

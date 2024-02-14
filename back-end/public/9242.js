@@ -878,6 +878,7 @@ class UsuarioListComponent extends src_app_modules_base_page_list_base__WEBPACK_
     this.addOption(this.OPTION_INFORMACOES, "MOD_USER");
     //this.addOption(this.OPTION_EXCLUIR, "MOD_USER_EXCL");       // Tratar de forma diferenciada a exclusão de usuário
   }
+
   dynamicOptions(row) {
     let result = [];
     // Testa se o usuário logado possui permissão para gerenciar as atribuições do usuário do grid

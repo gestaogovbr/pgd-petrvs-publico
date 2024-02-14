@@ -79,8 +79,8 @@ class TenantConfigurations
             config(['integracao.siape.parmExistPag'         => $settings['integracao_siape_existepag']              ??env('INTEGRACAO_SIAPE_PARMEXISTPAG')]);
             config(['integracao.siape.parmTipoVinculo'      => $settings['integracao_siape_tipovinculo']            ??env('INTEGRACAO_SIAPE_PARMTIPOVINCULO')]);
 
-            config(['integracao.perfilComum'          => $settings['integracao_siape_tipovinculo']            ??env('INTEGRACAO_SIAPE_PARMTIPOVINCULO')]);
-            config(['integracao.perfilChefe'          => $settings['integracao_siape_tipovinculo']            ??env('INTEGRACAO_SIAPE_PARMTIPOVINCULO')]);
+            config(['integracao.perfilComum'          => $settings['integracao_usuario_comum']            ??env('INTEGRACAO_USUARIO_COMUM')]);
+            config(['integracao.perfilChefe'          => $settings['integracao_usuario_chefe']            ??env('INTEGRACAO_USUARIO_CHEFE')]);
 
 
         }
