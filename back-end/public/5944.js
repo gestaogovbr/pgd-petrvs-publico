@@ -3634,11 +3634,12 @@ class AtividadeListTarefaComponent extends src_app_modules_base_page_base__WEBPA
     var _this5 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       try {
-        const data_conclusao = _this5.formEdit.controls.concluido.value && !!row.data_conclusao ? _this5.auth.hora : row.data_conclusao;
+        const data_conclusao = _this5.formEdit.controls.concluido.value ? _this5.auth.hora : null; //&& !!row.data_conclusao 
         const saved = yield _this5.dao.update(row.id, {
-          data_conclusao
+          data_conclusao: data_conclusao
         });
         row.concluido = _this5.formEdit.controls.concluido.value;
+        row.data_conclusao = row.concluido ? data_conclusao : null;
         return !!saved;
       } catch (error) {
         return false;
