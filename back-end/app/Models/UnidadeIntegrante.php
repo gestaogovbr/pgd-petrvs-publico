@@ -26,7 +26,6 @@ class UnidadeIntegrante extends ModelBase //Pivot //ModelBase
     public function gestorSubstituto() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'GESTOR_SUBSTITUTO'); } 
     public function gestorDelegado() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'GESTOR_DELEGADO'); } 
     public function colaborador() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'COLABORADOR'); } // aquele que possui TCR
-    public function homologadorPlanoEntrega() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'HOMOLOGADOR_PLANO_ENTREGA'); } 
     public function avaliadorPlanoEntrega() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'AVALIADOR_PLANO_ENTREGA'); } 
     public function avaliadorPlanoTrabalho() { return $this->hasOne(UnidadeIntegranteAtribuicao::class)->where('atribuicao', 'AVALIADOR_PLANO_TRABALHO'); } 
     // hasMany

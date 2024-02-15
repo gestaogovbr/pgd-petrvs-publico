@@ -200,10 +200,12 @@ class PlanoTrabalhoService extends ServiceBase
   public function repactuar($planoId, $forcarGeracaoTcr = false) {
     $plano = PlanoTrabalho::find($planoId);
     if($plano->programa->termo_obrigatorio) {
+      $exigeAssinaturas = $plano->programa->plano_trabalho_assinatura_participante || $plano->programa->plano_trabalho_assinatura_gestor_unidade || $plano->programa->plano_trabalho_assinatura_gestor_lotacao || $plano->programa->plano_trabalho_assinatura_gestor_entidade;
       $haAssinaturas = DocumentoAssinatura::where("documento_id", $plano->documento_id)->count() > 0;
       $template = $plano->programa->templateTcr->conteudo ?? "";
       $dataset = $this->templateDatasetService->getDataset("PLANO_TRABALHO", true);
       $datasource = $this->templateService->getDatasource("PLANO_TRABALHO", $plano);
+      if($exigeAssinaturas) $this->statusService->atualizaStatus($plano, 'AGUARDANDO_ASSINATURA', 'Plano de Trabalho repactuado');
       if(!empty($plano->documento_id) && !$haAssinaturas) {
         $documento = Documento::find($plano->documento_id);
         $documento->conteudo = $this->templateService->renderTemplate($template, $datasource);
@@ -212,7 +214,6 @@ class PlanoTrabalhoService extends ServiceBase
         $documento->datasource = $datasource;
         $documento->save();
       } else if (empty($plano->documento_id) || $forcarGeracaoTcr || $haAssinaturas || ($plano->status == "ATIVO" && $this->haAssinaturasExigidas($plano->toArray()))) {
-        $this->statusService->atualizaStatus($plano, 'AGUARDANDO_ASSINATURA', 'Plano de Trabalho repactuado');
         $documento = new Documento([
           "tipo" => "HTML",
           "especie" => "TCR",

@@ -155,11 +155,11 @@ class UsuarioService extends ServiceBase
      * Informa se o usuário logado é gestor(titular ou substituto) da unidade recebida como parâmetro.
      * @param string $unidade_id 
      */
-    public function isGestorUnidade(string $unidadeId): bool {
+    public function isGestorUnidade(string $unidadeId, $incluiDelegado = true): bool {
         if($this->hasBuffer("isGestorUnidade", $unidadeId)) {
             return $this->getBuffer("isGestorUnidade", $unidadeId);
         } else {
-            return $this->setBuffer("isGestorUnidade", $unidadeId, $this->isIntegrante('GESTOR', $unidadeId) || $this->isIntegrante('GESTOR_SUBSTITUTO', $unidadeId) || $this->isIntegrante('GESTOR_DELEGADO', $unidadeId));
+            return $this->setBuffer("isGestorUnidade", $unidadeId, $this->isIntegrante('GESTOR', $unidadeId) || $this->isIntegrante('GESTOR_SUBSTITUTO', $unidadeId) || ($incluiDelegado && $this->isIntegrante('GESTOR_DELEGADO', $unidadeId)));
         }
     }
 
