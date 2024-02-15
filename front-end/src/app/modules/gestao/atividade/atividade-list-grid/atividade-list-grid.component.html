@@ -70,7 +70,7 @@
         <input-search [label]="'Tipo de ' + lex.translate('atividade')" relativeId="columnTipoAtividade" #tipoAtividade [size]="12" [emptyValue]="null" controlName="tipo_atividade_id" [control]="formEdit!.controls.tipo_atividade_id" [dao]="tipoAtividadeDao" [labelInfo]="'Tipo de ' + lex.translate('atividade') + ' utilizado para classificar a ' + lex.translate('atividade')" [required]="!auth.hasPermissionTo('MOD_ATV_TIPO_ATV_VAZIO') ? 'true' : undefined"></input-search>
       </ng-template>
     </column>
-    <column [title]="'Etiquetas'" [maxWidth]="100" [template]="columnEtiquetas" [editTemplate]="columnEtiquetas" [columnEditTemplate]="selectable ? undefined : columnEtiquetasEdit" [edit]="selectable ? undefined : onColumnEtiquetasEdit.bind(this)" [save]="selectable ? undefined : onColumnEtiquetasSave.bind(this)">
+    <column [title]="'Etiquetas'" [maxWidth]="300" [width]="100" [template]="columnEtiquetas" [editTemplate]="columnEtiquetas" [columnEditTemplate]="selectable ? undefined : columnEtiquetasEdit" [edit]="selectable ? undefined : onColumnEtiquetasEdit.bind(this)" [save]="selectable ? undefined : onColumnEtiquetasSave.bind(this)">
       <ng-template let-row="row" #columnEtiquetas>
         <badge *ngFor="let etiqueta of row.etiquetas" [lookup]="etiqueta" [click]="onEtiquetaClick.bind(this)"></badge>
       </ng-template>
