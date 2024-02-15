@@ -4,13 +4,14 @@
         <tab key="PRINCIPAL" label="Principal">
             <separator title="Entidade"></separator>
             <div class="row">
-                <input-text [size]="2" label="SIGLA" controlName="id" [disabled]="action == 'new' ? undefined : 'true'" [attr.maxlength]=250></input-text>
-                <input-text [size]="4" label="Nome" controlName="nome_entidade" [attr.maxlength]=250></input-text>
-                <input-select [size]="3" label="Abrangência" controlName="abrangencia" [items]="lookup.ABRANGENCIA"></input-select>
-                <input-number [size]="3" label="Cod. IBGE" icon="bi bi-clock" [control]="form!.controls.codigo_cidade"></input-number>
+                <input-select [size]="3" label="Edição" controlName="edition" [items]="lookup.EDICOES"></input-select>
+                <input-text [size]="3" label="SIGLA" controlName="id" [disabled]="action == 'new' ? undefined : 'true'" [attr.maxlength]=250></input-text>
+                <input-text [size]="6" label="Nome" controlName="nome_entidade" [attr.maxlength]=250></input-text>
             </div>
             <div class="row">
-                <input-text [size]="12" label="Domínio" controlName="dominio_url" [attr.maxlength]=250></input-text>
+                <input-select [size]="3" label="Abrangência" controlName="abrangencia" [items]="lookup.ABRANGENCIA"></input-select>
+                <input-number [size]="3" label="Cod. IBGE" icon="bi bi-clock" [control]="form!.controls.codigo_cidade"></input-number>
+                <input-text [size]="6" label="Domínio" controlName="dominio_url" [attr.maxlength]=250></input-text>
             </div>
             <separator title="Super Usuário"></separator>
             <div class="row">
@@ -83,7 +84,7 @@
                     <div class="row">
                         <input-switch [size]="12" scale="small" labelPosition="right" label="Tráfego (traffic)" controlName="log_traffic"></input-switch>
                         <input-switch [size]="12" scale="small" labelPosition="right" label="Auditoria (changes)" controlName="log_changes"></input-switch>
-                        <input-switch [size]="12" scale="small" labelPosition="right" label="Erros (errors)" controlName="log_errors"></input-switch>
+                        <input-switch [size]="12" scale="small" labelPosition="right" label="Erros (errors)" controlName="log_errors" disabled="true"></input-switch>
                     </div>
                 </div>
             </div>
@@ -135,8 +136,8 @@
                     <input-select [size]="3" label="Tipo de Vínculo" controlName="integracao_siape_tipovinculo" [items]="lookup.TIPO_VINCULO"></input-select>
                 </div>
                 <div class="row">
-                    <input-text [size]="6" label="Perfil Usuário Comum" controlName="integracao_siape_usuario_comum" [attr.maxlength]=250></input-text>
-                    <input-text [size]="6" label="Perfil Usuário Chefe" controlName="integracao_siape_usuario_chefe" [attr.maxlength]=250></input-text>
+                    <input-text [size]="6" label="Perfil Usuário Comum" controlName="integracao_usuario_comum" [attr.maxlength]=250></input-text>
+                    <input-text [size]="6" label="Perfil Usuário Chefe" controlName="integracao_usuario_chefe" [attr.maxlength]=250></input-text>
                 </div>
             </div>
             <div *ngIf="form?.controls?.tipo_integracao?.value == 'WSO2'" class="row">

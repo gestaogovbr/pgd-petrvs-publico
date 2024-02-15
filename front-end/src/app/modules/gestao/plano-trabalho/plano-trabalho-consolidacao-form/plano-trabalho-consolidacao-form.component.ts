@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, Injector, Input, ViewChild } from '@angul
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton, ToolbarComponent } from 'src/app/components/toolbar/toolbar.component';
 import { ConsolidacaoDados, PlanoTrabalhoConsolidacaoDaoService } from 'src/app/dao/plano-trabalho-consolidacao-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { PlanoTrabalhoConsolidacao } from 'src/app/models/plano-trabalho-consolidacao.model';
@@ -26,11 +26,15 @@ import { Programa } from 'src/app/models/programa.model';
 import { Comparecimento } from 'src/app/models/comparecimento.model';
 import { ComparecimentoDaoService } from 'src/app/dao/comparecimento-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
-import { SeparatorComponent } from 'src/app/components/separator/separator.component';
 import { OcorrenciaDaoService } from 'src/app/dao/ocorrencia-dao.service';
 import { Ocorrencia } from 'src/app/models/ocorrencia.model';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { Comentario } from 'src/app/models/comentario';
+import { BadgeButton } from 'src/app/components/badge/badge.component';
+import { AtividadeListTarefaComponent } from '../../atividade/atividade-list-tarefa/atividade-list-tarefa.component';
+import { AtividadeModule } from '../../atividade/atividade.module';
+import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
+import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
 
 export type ConsolidacaoEntrega = {
   id: string,
@@ -50,13 +54,14 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   @ViewChild('gridAtividades', { static: false }) public gridAtividades?: GridComponent;
   @ViewChild('etiqueta', { static: false }) public etiqueta?: InputSelectComponent;
   @ViewChild('tipoAtividade', { static: false }) public tipoAtividade?: InputSearchComponent;
+  @ViewChild('listTarefas', { static: false }) public listTarefas?: AtividadeListTarefaComponent;
   @Input() cdRef: ChangeDetectorRef;
   @Input() planoTrabalho?: PlanoTrabalho;
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: PlanoTrabalhoConsolidacao | undefined) { super.entity = value; this.bindEntity(); } get entity(): PlanoTrabalhoConsolidacao | undefined { return super.entity; }
   @Input() set disabled(value: boolean) {
-    if(this._disabled != value || this.atividadeOptionsMetadata.disabled !== value) {
+    if (this._disabled != value || this.atividadeOptionsMetadata.disabled !== value) {
       this._disabled = value;
       this.atividadeOptionsMetadata.disabled = value;
       this.cdRef.detectChanges();
@@ -91,7 +96,8 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   public itemsAfastamentos: Afastamento[] = [];
   public atividadeOptionsMetadata: AtividadeOptionsMetadata;
   public programa?: Programa;
-  
+  public pEEDao: PlanoEntregaEntregaDaoService;
+
   private _disabled: boolean = true;
 
   constructor(public injector: Injector) {
@@ -108,6 +114,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     this.tipoAtividadeDao = injector.get<TipoAtividadeDaoService>(TipoAtividadeDaoService);
     this.planoTrabalhoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
     this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
+    this.pEEDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
     this.formAtividade = this.fh.FormBuilder({
       descricao: { default: "" },
       etiquetas: { default: [] },
@@ -115,11 +122,11 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       comentarios: { default: [] },
       esforco: { default: 0 },
       tempo_planejado: { default: 0 },
-      data_distribuicao: {default: new Date()},
-      data_estipulada_entrega: {default: new Date()},
-      data_inicio: {default: new Date()},
-      data_entrega: {default: new Date()},
-      tipo_atividade_id: {default: null}
+      data_distribuicao: { default: new Date() },
+      data_estipulada_entrega: { default: new Date() },
+      data_inicio: { default: new Date() },
+      data_entrega: { default: new Date() },
+      //tipo_atividade_id: { default: null }
     }, this.cdRef, this.validateAtividade);
     /*this.formOcorrencia = this.fh.FormBuilder({
       data_inicio: { default: new Date() },
@@ -133,7 +140,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     }, this.cdRef, this.validateComparecimento);
     this.formEdit = this.fh.FormBuilder({
       descricao: { default: "" },
-      tipo_atividade_id: { default: null },
+      //tipo_atividade_id: { default: null },
       comentarios: { default: [] },
       progresso: { default: 0 },
       etiquetas: { default: [] },
@@ -151,7 +158,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   }
 
   public bindEntity() {
-    if(this.entity) {
+    if (this.entity) {
       this.entity._metadata = this.entity._metadata || {};
       this.entity._metadata.planoTrabalhoConsolidacaoFormComponent = this;
     }
@@ -160,11 +167,11 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   public atividadeRefreshId(id: string, atividade?: Atividade) {
     this.itemsEntregas.forEach(entrega => {
       let foundIndex = entrega.atividades.findIndex(x => x.id == id);
-      if(foundIndex >= 0) {
-        if(atividade) {
+      if (foundIndex >= 0) {
+        if (atividade) {
           entrega.atividades[foundIndex] = atividade;
         } else {
-          this.atividadeDao.getById(id, this.joinAtividade).then(atividade => { if(atividade) entrega.atividades[foundIndex] = atividade; });
+          this.atividadeDao.getById(id, this.joinAtividade).then(atividade => { if (atividade) entrega.atividades[foundIndex] = atividade; });
         }
       }
     });
@@ -174,7 +181,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   public atividadeRemoveId(id: string) {
     this.itemsEntregas.forEach(entrega => {
       let foundIndex = entrega.atividades.findIndex(x => x.id == id);
-      if(foundIndex >= 0) entrega.atividades.splice(foundIndex, 1);
+      if (foundIndex >= 0) entrega.atividades.splice(foundIndex, 1);
     });
     this.cdRef.detectChanges();
   }
@@ -190,21 +197,22 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     let result = null;
     if (['descricao'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    } else if(['data_distribuicao', 'data_estipulada_entrega', 'data_inicio', 'data_entrega'].includes(controlName) && !this.util.isDataValid(control.value)) {
+    } else if (['data_inicio', 'data_entrega'].includes(controlName) && !this.util.isDataValid(control.value)) {//'data_distribuicao', 'data_estipulada_entrega',
       result = "Inválido";
-    } else if(controlName == 'data_estipulada_entrega' && control.value.getTime() < this.formAtividade?.controls.data_distribuicao.value.getTime()) {
+    } /*else if (controlName == 'data_estipulada_entrega' && control.value.getTime() < this.formAtividade?.controls.data_distribuicao.value.getTime()) {
       result = "Menor que distribuição";
-    } else if(controlName == 'data_inicio' && control.value.getTime() < this.formAtividade?.controls.data_distribuicao.value.getTime()) {
+    }*/ else if (controlName == 'data_inicio' && control.value.getTime() < this.formAtividade?.controls.data_distribuicao.value.getTime()) {
       result = "Menor que distribuição";
-    } else if(controlName == 'data_entrega' && control.value.getTime() < this.formAtividade?.controls.data_distribuicao.value.getTime()) {
+    } else if (controlName == 'data_entrega' && control.value.getTime() < this.formAtividade?.controls.data_distribuicao.value.getTime()) {
       result = "Menor que distribuição";
-    } else if(controlName == 'data_entrega' && control.value.getTime() < this.formAtividade?.controls.data_inicio.value.getTime()) {
+    } else if (controlName == 'data_entrega' && control.value.getTime() < this.formAtividade?.controls.data_inicio.value.getTime()) {
       result = "Menor que início";
     }
     return result;
   }
 
-  /*public validateOcorrencia = (control: AbstractControl, controlName: string) => {
+  //Não apagar
+  /*public validateOcorrencia = (control: AbstractControl, controlName: string) => { 
     let result = null;
     if (['descricao'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
@@ -220,15 +228,15 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     let result = null;
     if (['detalhamento', 'unidade_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    } else if(controlName == 'data_comparecimento' && this.entity && !this.util.between(control.value, {start: this.entity!.data_inicio, end: this.entity!.data_fim})) {
+    } else if (controlName == 'data_comparecimento' && this.entity && !this.util.between(control.value, { start: this.entity!.data_inicio, end: this.entity!.data_fim })) {
       result = "Inválido";
-    } 
+    }
     return result;
   }
 
   public loadConsolidacao(dados: ConsolidacaoDados) {
     this.itemsEntregas = dados.entregas.map(x => {
-      if(x.plano_entrega_entrega) x.plano_entrega_entrega.plano_entrega = dados.planosEntregas.find(pe => pe.id == x.plano_entrega_entrega?.plano_entrega_id);
+      if (x.plano_entrega_entrega) x.plano_entrega_entrega.plano_entrega = dados.planosEntregas.find(pe => pe.id == x.plano_entrega_entrega?.plano_entrega_id);
       let result = {
         id: x.id,
         entrega: x,
@@ -261,8 +269,8 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
       this.gridEntregas!.loading = false;
       this.cdRef.detectChanges();
     }
-  }  
-  
+  }
+
   /***************************************************************************************
   * Atividades 
   ****************************************************************************************/
@@ -334,6 +342,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
 
   public async saveAtividade(form: FormGroup, row: any) {
     let result = undefined;
+    console.log("AQIO");
     this.gridAtividades!.error = "";
     this.formAtividade.markAllAsTouched();
     if (this.formAtividade!.valid) {
@@ -366,15 +375,26 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     result.push(Object.assign({}, this.gridEntregas!.BUTTON_EDIT, {}));
     result.push(Object.assign({}, this.gridEntregas!.BUTTON_DELETE, {}));
     return result;
-  }  
+  }
 
   public async onColumnProgressoEtiquetasChecklistEdit(row: any) {
     this.formEdit.controls.progresso.setValue(row.progresso);
     this.formEdit.controls.etiquetas.setValue(row.etiquetas);
     this.formEdit.controls.etiqueta.setValue(null);
-    this.etiquetas = this.util.merge(row.tipo_atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key);
+    this.etiquetas = this.util.merge(row.tipo_atividade?.etiquetas, row.plano_trabalho.unidade?.etiquetas, (a, b) => a.key == b.key);
     this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);
+    this.etiquetas = this.util.merge(this.etiquetas, await this.carregaEtiquetasUnidadesAscendentes(row.plano_trabalho.unidade), (a, b) => a.key == b.key);
     this.checklist = this.util.clone(row.checklist);
+  }
+
+  public async carregaEtiquetasUnidadesAscendentes(unidadeAtual: Unidade) {
+    let etiquetasUnidades: LookupItem[] = [];
+    let path = unidadeAtual.path.split("/");
+    let unidades = await this.unidadeDao.query({ where: ["id", "in", path] }).asPromise();
+    unidades.forEach(un => {
+      etiquetasUnidades = this.util.merge(etiquetasUnidades, un.etiquetas, (a, b) => a.key == b.key);
+    });
+    return etiquetasUnidades;
   }
 
   public async onColumnProgressoEtiquetasChecklistSave(row: any) {
@@ -420,7 +440,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   };
 
   public loadTipoAtividade(tipoAtividade: TipoAtividade | undefined) {
-    if(tipoAtividade) {
+    if (tipoAtividade) {
       this.etiquetas = this.atividadeService.buildEtiquetas(this.unidade, tipoAtividade);
       this.atividadeService.buildChecklist(tipoAtividade, this.formAtividade.controls.checklist);
       this.formAtividade.controls.esforco.setValue(tipoAtividade?.esforco || 0);
@@ -439,28 +459,58 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   }
 
   public async onColumnAtividadeDescricaoEdit(row: any) {
-    this.formEdit.controls.descricao.setValue(row.descricao);
-    this.formEdit.controls.tipo_atividade_id.setValue(row.tipo_atividade_id);
-    this.formEdit.controls.comentarios.setValue(row.comentarios);
+    this.formAtividade.controls.descricao.setValue(row.descricao);
+    //this.formEdit.controls.tipo_atividade_id.setValue(row.tipo_atividade_id);
+    this.formAtividade.controls.comentarios.setValue(row.comentarios);
   }
 
   public async onColumnAtividadeDescricaoSave(row: any) {
     try {
-      this.atividadeService.comentarioAtividade(this.tipoAtividade?.selectedEntity, this.formEdit!.controls.comentarios);
+      this.atividadeService.comentarioAtividade(this.tipoAtividade?.selectedEntity, this.formAtividade!.controls.comentarios);
       const saved = await this.atividadeDao!.update(row.id, {
-        descricao: this.formEdit.controls.descricao.value,
-        tipo_atividade_id: this.formEdit.controls.tipo_atividade_id.value,
-        comentarios: (this.formEdit.controls.comentarios.value || []).filter((x: Comentario) => ["ADD", "EDIT", "DELETE"].includes(x._status || ""))
+        descricao: this.formAtividade.controls.descricao.value,
+        //tipo_atividade_id: this.formEdit.controls.tipo_atividade_id.value,
+        comentarios: (this.formAtividade.controls.comentarios.value || []).filter((x: Comentario) => ["ADD", "EDIT", "DELETE"].includes(x._status || ""))
       });
-      row.descricao = this.formEdit.controls.descricao.value;
-      row.tipo_atividade_id = this.formEdit.controls.tipo_atividade_id.value;
+      row.descricao = this.formAtividade.controls.descricao.value;
+      //row.tipo_atividade_id = this.formEdit.controls.tipo_atividade_id.value;
       row.tipo_atividade = this.tipoAtividade?.selectedEntity || null;
-      row.comentarios = this.formEdit.controls.comentarios.value;
+      row.comentarios = this.formAtividade.controls.comentarios.value;
       return !!saved;
     } catch (error) {
       return false;
     }
   }
+
+  public tempoAtividade(row: any) {
+    let badge: BadgeButton[] = [
+      { color: "light", hint: "Início", icon: "bi bi-file-earmark-play", label: this.dao.getDateTimeFormatted(row.data_inicio) },
+    ];
+    let badgeTratar = this.atividadeService.temposAtividade(row);
+    badgeTratar = badgeTratar.filter(bad => bad.icon != "bi bi-file-earmark-plus" && bad.icon != "bi bi-calendar-check")
+    badge.push(...badgeTratar);
+    return badge;
+  }
+
+  public dynamicButtons(row: any): ToolbarButton[] {
+    let result: ToolbarButton[] = [];
+    result.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhes.bind(this) });
+    return result;
+  }
+
+  public async showDetalhes(elemento: any) {
+    let entrega = await this.pEEDao.getById(elemento.entrega.plano_entrega_entrega.id, ['entrega', 'objetivos.objetivo']);
+    this.go.navigate({ route: ['gestao', 'plano-entrega', 'entrega', elemento.entrega.plano_entrega_entrega.id, "detalhes"] }, {
+      metadata: {
+        plano_entrega: elemento.entrega.plano_entrega_entrega.plano_entrega,
+        planejamento_id: elemento.entrega.plano_entrega_entrega.plano_entrega.planejamento_id,
+        cadeia_valor_id: elemento.entrega.plano_entrega_entrega.plano_entrega.cadeia_valor_id,
+        unidade_id: elemento.entrega.plano_entrega_entrega.plano_entrega.unidade_id,
+        entrega: entrega
+      }
+    });
+  }
+
 
   /***************************************************************************************
   * Ocorrências 
@@ -469,13 +519,13 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     /*return new PlanoTrabalhoConsolidacaoOcorrencia({
       plano_trabalho_consolidacao_id: this.entity!.id
     });*/
-    this.go.navigate({route: ['gestao', 'ocorrencia', 'new']}, {
-      metadata: { 
+    this.go.navigate({ route: ['gestao', 'ocorrencia', 'new'] }, {
+      metadata: {
         consolidacao: this.entity,
         planoTrabalho: this.planoTrabalho
       },
       modalClose: (modalResult) => {
-        if(modalResult) this.refresh();
+        if (modalResult) this.refresh();
       }
     });
   }
@@ -508,10 +558,10 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   }*/
 
   public async editOcorrencia(row: any) {
-    this.go.navigate({route: ["gestao", "ocorrencia", row.id, "edit"]}, {
+    this.go.navigate({ route: ["gestao", "ocorrencia", row.id, "edit"] }, {
       modalClose: (modalResult) => {
-        if(modalResult) this.refresh();
-      }      
+        if (modalResult) this.refresh();
+      }
     });
   }
 
@@ -534,7 +584,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     if (!this.disabled && this.auth.hasPermissionTo("MOD_OCOR_EDT")) result.push(Object.assign({}, this.OPTION_ALTERAR, { onClick: this.editOcorrencia.bind(this) }));
     if (!this.disabled && this.auth.hasPermissionTo("MOD_OCOR_EXCL")) result.push(Object.assign({}, this.OPTION_EXCLUIR, { onClick: this.removeOcorrencia.bind(this) }));
     return result;
-  }  
+  }
 
   /***************************************************************************************
   * Comparecimento 
@@ -595,34 +645,34 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     let result: ToolbarButton[] = [];
     //result.push({ hint: "Adicionar filho", icon: "bi bi-plus-circle", onClick: this.addChildProcesso.bind(this) });
     return result;
-  }  
+  }
 
   /***************************************************************************************
   * Afastamentos
   ****************************************************************************************/
   public async addAfastamento() {
-    this.go.navigate({route: ['gestao', 'afastamento', 'new']}, {
+    this.go.navigate({ route: ['gestao', 'afastamento', 'new'] }, {
       metadata: { consolidacao: this.entity },
       filterSnapshot: undefined,
       querySnapshot: undefined,
       modalClose: (modalResult) => {
-        if(modalResult) this.refresh();
+        if (modalResult) this.refresh();
       }
     });
   }
 
   public afastamentoDynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
-    result.push(Object.assign({}, this.OPTION_INFORMACOES, { onClick: (doc: Afastamento) => this.go.navigate({route: ["cadastros", "afastamento", doc.id, "consult"]}) }));
+    result.push(Object.assign({}, this.OPTION_INFORMACOES, { onClick: (doc: Afastamento) => this.go.navigate({ route: ["cadastros", "afastamento", doc.id, "consult"] }) }));
     //result.push({ hint: "Adicionar filho", icon: "bi bi-plus-circle", onClick: this.addChildProcesso.bind(this) });
     return result;
-  }  
-
-  public async showPlanejamento(planejamento_id: string){
-    this.go.navigate({ route: ['gestao', 'planejamento', planejamento_id, 'consult'] }, {modal: true})
   }
 
-  public async showCadeiaValor(cadeia_valor_id_id: string){
-    this.go.navigate({ route: ['gestao', 'cadeia-valor', cadeia_valor_id_id, 'consult'] }, {modal: true})
+  public async showPlanejamento(planejamento_id: string) {
+    this.go.navigate({ route: ['gestao', 'planejamento', planejamento_id, 'consult'] }, { modal: true })
+  }
+
+  public async showCadeiaValor(cadeia_valor_id_id: string) {
+    this.go.navigate({ route: ['gestao', 'cadeia-valor', cadeia_valor_id_id, 'consult'] }, { modal: true })
   }
 }

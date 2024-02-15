@@ -47,6 +47,7 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
     this.seederDao = injector.get<SeederDaoService>(SeederDaoService);
     this.form = this.fh.FormBuilder({
       id: { default: "" },
+      edition: { default: "MGI" },
       tenancy_db_name: { default: "" },
       tenancy_db_host: { default: null },
       tenancy_db_port: { default: 3306 },
@@ -54,7 +55,7 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       tenancy_db_password: { default: null },
       log_traffic: { default: false },
       log_changes: { default: false },
-      log_errors: { default: false },
+      log_errors: { default: true },
       log_host: { default: null },
       log_database: { default: null },
       log_port: { default: 3306 },
@@ -114,8 +115,8 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       integracao_wso2_token_acesso: { default: "" },
       integracao_wso2_token_user: { default: "" },
       integracao_wso2_token_password: { default: "" },
-      integracao_siape_usuario_comum: { default: "Participante" },
-      integracao_siape_usuario_chefe: { default: "Chefia de Unidade Executora" },
+      integracao_usuario_comum: { default: "Participante" },
+      integracao_usuario_chefe: { default: "Chefia de Unidade Executora" },
       // SEI
       modulo_sei_habilitado: { default: false },
       modulo_sei_private_key: { default: "" },
@@ -150,7 +151,6 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       alert('Por favor, selecione um seeder para executar.');
       return;
     }
-
     this.seederDao.executeSeeder(this.selectedSeeder).then(
         response => {
           // Verificar se response é um objeto e tem a propriedade 'message'
@@ -167,10 +167,6 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
           alert(errorMessage);
         }
     );
-
-
-
-
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -203,7 +199,6 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
   public async initializeData(form: FormGroup) {
     this.entity = (await this.dao!.getById(this.urlParams!.get("id")!, this.join))!;
     await this.loadData(this.entity, form);
-
   }
 
   public async saveData(form: IIndexable): Promise<Tenant> {

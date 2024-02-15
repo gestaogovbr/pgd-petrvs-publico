@@ -11,7 +11,7 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { UsuarioIntegranteComponent } from '../usuario-integrante/usuario-integrante.component';
 import { TemplateDataset } from 'src/app/modules/uteis/templates/template.service';
 import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
-import { IntegranteConsolidado, UnidadeIntegrante } from 'src/app/models/unidade-integrante.model';
+import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 
 @Component({
@@ -24,8 +24,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
   @ViewChild(UsuarioIntegranteComponent, { static: false }) public unidadesIntegrantes?: UsuarioIntegranteComponent;
   @ViewChild('lotacao', { static: false }) public lotacao?: InputSearchComponent;
 
-  public formLotacao: FormGroup;
-  public perfilDao: PerfilDaoService;
+  //public perfilDao: PerfilDaoService;
   public unidadeDao: UnidadeDaoService;
   public integranteDao: UnidadeIntegranteDaoService;
   public planoTrabalhoDao: PlanoTrabalhoDaoService;
@@ -33,7 +32,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
 
   constructor(public injector: Injector) {
     super(injector, Usuario, UsuarioDaoService);
-    this.perfilDao = injector.get<PerfilDaoService>(PerfilDaoService);
+    //this.perfilDao = injector.get<PerfilDaoService>(PerfilDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
     this.planoTrabalhoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
@@ -48,20 +47,15 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
       sexo: { default: null },
       url_foto: { default: "" },
       texto_complementar_plano: { default: "" },
-      perfil_id: { default: null },
+      //perfil_id: { default: null },
       data_nascimento: { default: null },
     }, this.cdRef, this.validate);
-    this.formLotacao = this.fh.FormBuilder({
-      unidade_lotacao_id: { default: "" },
-    }, this.cdRef, this.validate);
     this.planoDataset = this.planoTrabalhoDao.dataset();
-    this.join = ["lotacao.unidade:id"];
   }
 
   public async loadData(entity: Usuario, form: FormGroup): Promise<void> {
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
-    this.formLotacao.controls.unidade_lotacao_id.setValue(entity.lotacao?.unidade?.id);
     await this.unidadesIntegrantes?.loadData(entity);
   }
 
@@ -82,14 +76,10 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
   }
 
   public formValidation = (form?: FormGroup) => {
-    if (!this.formLotacao?.controls.unidade_lotacao_id.value?.length) {
-      return "É obrigatória a definição da unidade de lotação do servidor!";
+    if (!this.unidadesIntegrantes?.grid?.items.find((item, index, array) => item.atribuicoes.includes('LOTADO'))) {
+      return "É obrigatória a definição " + this.lex.translate('da unidade') + " " + this.lex.translate('de lotação') + " " + this.lex.translate('do servidor') + "! Defina-a na aba 'Atribuições'.";
     }
-    const erros_atribuicoes = [];
-    this.unidadesIntegrantes?.grid?.items.forEach((unidadeIntegrante) => {
-      if (unidadeIntegrante.unidade_id == '') erros_atribuicoes.push({ integrante: unidadeIntegrante, erro: 'Falta unidade_id' })
-    });
-    if (erros_atribuicoes.length) return "Na aba 'Atribuições' há unidade não salva. Salve-a antes de salvar o usuário!"
+    if (this.unidadesIntegrantes?.grid?.items.find((item, index, array) => !(item.unidade_id.length && item.usuario_id.length))) return "Na aba 'Atribuições' há " + this.lex.translate('unidade') + " com edição não concluída. Conclua-a antes de salvar " + this.lex.translate('o servidor') + "!"
     return undefined;
   }
 
@@ -98,50 +88,12 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
       this.unidadesIntegrantes!.grid!.confirm();
       let usuario = this.util.fill(new Usuario(), this.entity!);
       usuario = this.util.fillForm(usuario, this.form!.value);
-      usuario.lotacao_id = this.formLotacao?.controls.unidade_lotacao_id.value;
+      usuario.perfil_id = this.unidadesIntegrantes?.formPerfil.controls.perfil_id.value;
       let integrantesConsolidados: IntegranteConsolidado[] = this.unidadesIntegrantes?.items || [];
-      let indicesIntegrantesExcluir: number[] = [];
-      integrantesConsolidados.filter(x => x._status == "DELETE").forEach((x,i) => indicesIntegrantesExcluir.push(i));
       let indiceVinculoLotacao = integrantesConsolidados.findIndex(ic => ic.atribuicoes.includes("LOTADO"));
-      let lotacaoAlterada: boolean = indiceVinculoLotacao == -1 || usuario.lotacao_id != integrantesConsolidados[indiceVinculoLotacao].unidade_id;
-      /* Caso não tenha lotação na lista de atribuições adiciona uma
-      if (indiceVinculoLotacao < 0) {
-        const unidadeIntegrante = integrantesConsolidados.find(ic => ic.unidade_id == usuario.lotacao_id) || new IntegranteConsolidado({
-          usuario_id: usuario.id,
-          _status: "ADD"
-        });
-        unidadeIntegrante.atribuicoes.push("LOTADO");
-        if(integrantesConsolidados.indexOf(unidadeIntegrante) < 0) integrantesConsolidados.push(unidadeIntegrante);
-        indiceVinculoLotacao = integrantesConsolidados.findIndex(ic => ic.atribuicoes.includes("LOTADO"));
-      }*/
-      let usuarioEhGestor: boolean = indiceVinculoLotacao != -1 && integrantesConsolidados[indiceVinculoLotacao].atribuicoes.includes("GESTOR");
-      if(lotacaoAlterada && usuarioEhGestor) {
-        this.submitting = false;
-        await this.dialog.alert("PROIBIDO ALTERAR A LOTAÇÃO !", "Não é possível alterar a lotação de um servidor que exerce a função de Gestor Titular da Unidade onde atualmente está lotado.");
-        reject(false);
-      } else {
-        try {
-          await this.dao?.save(Object.assign(usuario, {'lotacao_id': this.formLotacao?.controls.unidade_lotacao_id.value})).then(async usuarioBanco => {
-            if (lotacaoAlterada) {    // garantindo a coerência entre o campo de lotação do usuário e o vínculo de lotado dos integrantes
-              if(indiceVinculoLotacao != -1) integrantesConsolidados[indiceVinculoLotacao].atribuicoes = integrantesConsolidados[indiceVinculoLotacao].atribuicoes.filter(x => x != "LOTADO");
-              let indiceNovaUnidadeLotacao = integrantesConsolidados.findIndex(ic => ic.unidade_id == usuario.lotacao_id);
-              indiceNovaUnidadeLotacao == -1 ? integrantesConsolidados.push(Object.assign(new IntegranteConsolidado (), { unidade_id: usuario.lotacao_id, usuario_id: usuarioBanco.id, atribuicoes: ["LOTADO"] })) : integrantesConsolidados[indiceNovaUnidadeLotacao].atribuicoes.push("LOTADO");
-              indiceVinculoLotacao = integrantesConsolidados.findIndex(ic => ic.atribuicoes.includes("LOTADO"));
-            }
-            // uma vez garantida a coerência entre o campo de lotação do usuário e o vínculo de lotado dos integrantes, vamos tratar do eventual vínculo a ser excluído 
-            indicesIntegrantesExcluir.forEach(i => {
-              //integrantesConsolidados[i].atribuicoes = i != indiceVinculoLotacao ? [] : ["LOTADO"];
-              if(i != indiceVinculoLotacao) integrantesConsolidados[i].atribuicoes = [];
-            });
-            integrantesConsolidados.forEach(ic => ic.usuario_id = usuarioBanco.id);
-            await this.integranteDao.saveIntegrante(integrantesConsolidados as IntegranteConsolidado[]);
-          });
-          resolve(true);
-        } catch (error: any) {
-          if (this.editableForm) this.editableForm.error = error;
-          this.submitting = false;
-        }
-      }
+      integrantesConsolidados.forEach((item, index, array) => { if(index != indiceVinculoLotacao && item._status == 'DELETE') item.atribuicoes = []; });
+      usuario.integrantes = integrantesConsolidados;
+          resolve(usuario);
     });
   }
 
@@ -152,7 +104,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
 }
 
 /*
-TESTES A SEREM REALIZADOS NO FORM USUARIOS
+TESTES MÍNIMOS RECOMENDADOS PARA A VALIDAÇÃO DO COMPONENTE - USUARIO-FORM
 
 - Para verificar Lotação x Atribuições
 

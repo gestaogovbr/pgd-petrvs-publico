@@ -165,9 +165,9 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       result = "Menor que programa";
     } else if (this.programa && controlName == 'data_fim' && (control.value as Date).getTime() > this.programa!.selectedEntity?.data_fim.getTime()) {
       result = "Maior que programa";
-    } else if (controlName == 'criterios_avaliacao' && control.value.length < 1) {
+    } /*else if (controlName == 'criterios_avaliacao' && control.value.length < 1) {
       result = "Insira ao menos um critério de avaliação";
-    }
+    }*/
     return result;
   }
 
@@ -301,8 +301,16 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       this.entity = new PlanoTrabalho();
       this.entity.carga_horaria = this.auth.entidade?.carga_horaria_padrao || 8;
       this.entity.forma_contagem_carga_horaria = this.auth.entidade?.forma_contagem_carga_horaria || "DIA";
+      this.entity.unidade_id = this.auth.unidade!.id;
+      this.buscaGestoresUnidadeExecutora(this.auth.unidade!);
+      if(!this.gestoresUnidadeExecutora.includes(this.auth.unidade!.id)) {
+        this.entity.usuario_id = this.auth.usuario!.id;
+      }
     }
     await this.loadData(this.entity, this.form!);
+    let nowDate = new Date(); 
+    nowDate.setHours(0,0,0,0)
+    this.form?.controls.data_inicio.setValue(nowDate);
     this.form?.controls.data_fim.setValue("");
   }
 
@@ -318,17 +326,16 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public async saveData(form: IIndexable): Promise<PlanoTrabalho | boolean> {
-    //let plano = this.loadEntity();
-    /* Atualiza o documento */
-    this.atualizarTcr();
-    /* Confirma dados do documento */
-    this.documentos?.saveData();
-    this.entity!.documentos = this.entity!.documentos.filter((documento: Documento) => {
-      return ["ADD", "EDIT", "DELETE"].includes(documento._status || "");
-    });
-    /* Salva separadamente as informações do plano */
     this.submitting = true;
     try {
+      /* Atualiza o documento */
+      this.atualizarTcr();
+      /* Confirma dados do documento */
+      this.documentos?.saveData();
+      this.entity!.documentos = this.entity!.documentos.filter((documento: Documento) => {
+        return ["ADD", "EDIT", "DELETE"].includes(documento._status || "");
+      });
+      /* Salva separadamente as informações do plano */
       let requests: Promise<any>[] = [this.dao!.save(this.entity!, this.join)];
       if (this.form!.controls.editar_texto_complementar_unidade.value) requests.push(this.unidadeDao.update(this.entity!.unidade_id, { texto_complementar_plano: this.form!.controls.unidade_texto_complementar.value }));
       if (this.form!.controls.editar_texto_complementar_usuario.value) requests.push(this.usuarioDao.update(this.entity!.usuario_id, { texto_complementar_plano: this.form!.controls.usuario_texto_complementar.value }));
@@ -360,7 +367,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     return result;
   }
 
-  public addItemHandleCriteriosAvaliacao(): LookupItem | undefined {
+  //Não apagar
+  /*public addItemHandleCriteriosAvaliacao(): LookupItem | undefined {
     let result = undefined;
     const value = this.form!.controls.criterio_avaliacao.value;
     const key = this.util.textHash(value);
@@ -372,7 +380,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       this.form!.controls.criterio_avaliacao.setValue("");
     }
     return result;
-  };
+  };*/
 
   public async signDocumento(documento: Documento) {
     await this.documentoService.sign([documento]);

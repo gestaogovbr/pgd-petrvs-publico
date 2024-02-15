@@ -52,7 +52,7 @@ export class AtividadeFormTarefaComponent extends PageFormBase<AtividadeTarefa, 
       descricao: {default: ""},
       tipo_tarefa_id: {default: null},
       tempo_estimado: {default: 0},
-      concluido: {default: false},
+      concluido: {default: true},
       id_processo: {default: 0},
       numero_processo: {default: ""},
       documento: {default: null},
@@ -89,7 +89,7 @@ export class AtividadeFormTarefaComponent extends PageFormBase<AtividadeTarefa, 
     let formValue = Object.assign({}, form.value);
     formValue = this.util.fillForm(formValue, entity);
     await this.tipoTarefa?.loadSearch(entity.tipo_tarefa || formValue.tipo_tarefa_id);
-    formValue.concluido = !!entity.data_conclusao;
+    //formValue.concluido = !!entity.data_conclusao;
     formValue.comentarios = this.comentario.orderComentarios(formValue.comentarios || []);
     form.patchValue(formValue);
   }

@@ -1,6 +1,8 @@
 import { Injectable, Injector } from '@angular/core';
 import { PlanoEntrega } from '../models/plano-entrega.model';
 import { DaoBaseService } from './dao-base.service';
+import { PlanoEntregaEntrega } from '../models/plano-entrega-entrega.model';
+import { PlanoTrabalho } from '../models/plano-trabalho.model';
 
 @Injectable({
   providedIn: 'root'
@@ -147,6 +149,32 @@ export class PlanoEntregaDaoService extends DaoBaseService<PlanoEntrega> {
   public suspender(planoEntrega: PlanoEntrega, justificativa: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/suspender', { id: planoEntrega.id, justificativa: justificativa }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(!!response?.success);
+        }
+      }, error => reject(error));
+    });
+  }
+
+  public planosImpactadosPorAlteracaoEntrega(planoEntregaEntrega: PlanoEntregaEntrega): Promise<PlanoTrabalho[]> {
+    return new Promise<PlanoTrabalho[]>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/planos-impactados-por-alteracao-entrega', { entrega: planoEntregaEntrega }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(response?.planos_trabalhos || []);
+        }
+      }, error => reject(error));
+    });
+  }
+
+  public permissaoIncluir(unidade_id: string,): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      this.server.post('api/' + this.collection + '/permissao-incluir', { 
+        unidade_id: unidade_id
+      }).subscribe(response => {
         if (response.error) {
           reject(response.error);
         } else {

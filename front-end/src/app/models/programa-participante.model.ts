@@ -8,7 +8,7 @@ export class ProgramaParticipante extends Base {
     public programa?: Programa;
     public unidade?: Unidade;
 
-    public habilitado?: boolean = true; /* Se o participante está habilitado */
+    public habilitado?: number = 1; /* Se o participante está habilitado */
 
     public programa_id: string = ""; /* Programa */
     public usuario_id: string = ""; /* Usuario */

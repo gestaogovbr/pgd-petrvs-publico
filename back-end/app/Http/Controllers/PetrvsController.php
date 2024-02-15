@@ -13,9 +13,12 @@ use Throwable;
 
 class PetrvsController extends ControllerBase
 {
-    public function checkPermissions($action, $request, $service, $unidade, $usuario) { }
+    public function checkPermissions($action, $request, $service, $unidade, $usuario)
+    {
+    }
 
-    public function environmentConfig(Request $request) {
+    public function environmentConfig(Request $request)
+    {
 
         //Get URL
         $parsedUrl = parse_url($request->url());
@@ -23,17 +26,18 @@ class PetrvsController extends ControllerBase
         // Obtém o host (domínio) do URL
         $domain = $parsedUrl['host'];
 
-        if($domain=="petrvs_php") $domain="localhost";
+        if ($domain == "petrvs_php") $domain = "localhost";
 
         $tenant = Domain::where('domain', $domain)->with('tenant')->first();
 
-        if(!$tenant){
+        if (!$tenant) {
             $app_config = config("app");
             $petrvs_config = config("petrvs");
             $google_config = config("google");
             $config = json_encode([
                 "api_url" => $app_config["url"],
                 "app_env" => $app_config["env"],
+                "edicao" => "MGI",
                 "entidade" => $petrvs_config["entidade"],
                 "suporte_url" => $petrvs_config["suporte"],
                 "logo_url" => $petrvs_config["logo"],
@@ -52,7 +56,7 @@ class PetrvsController extends ControllerBase
                 ->header('Content-Type', 'application/javascript');
         }
 
-        $tenant=json_decode($tenant['tenant'],true);
+        $tenant = json_decode($tenant['tenant'], true);
 
         // Obtém a URL do aplicativo do arquivo de configuração
         $appUrl = config('app.url');
@@ -61,11 +65,11 @@ class PetrvsController extends ControllerBase
         $protocol = parse_url($appUrl, PHP_URL_SCHEME);
 
         $config = json_encode([
-
-            "api_url" => $protocol."://".$tenant["dominio_url"],
+            "api_url" => $protocol . "://" . $tenant["dominio_url"],
             "app_env" => config("app.env"),
+            "edicao" => $tenant["edition"] ?? 'MGI',
             "entidade" => $tenant["id"],
-            "suporte_url" =>$tenant["dominio_url"],
+            "suporte_url" => $tenant["dominio_url"],
             "logo_url" => null,
             "versao" => $tenant["version"],
             "login" => [
@@ -82,7 +86,8 @@ class PetrvsController extends ControllerBase
             ->header('Content-Type', 'application/javascript');
     }
 
-    public function showTables(Request $request) {
+    public function showTables(Request $request)
+    {
         try {
             return response()->json([
                 'success' => true,
@@ -93,5 +98,3 @@ class PetrvsController extends ControllerBase
         }
     }
 }
-
-

@@ -10,7 +10,7 @@ use Throwable;
 
 class UsuarioController extends ControllerBase
 {
-    public $updatable = ["config", "notificacoes", "texto_complementar_plano"];
+    public $updatable = ["config", "notificacoes", "texto_complementar_plano", "perfil_id"];
 
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
@@ -23,55 +23,6 @@ class UsuarioController extends ControllerBase
             case 'DESTROY':
                 if (!$usuario->hasPermissionTo('MOD_USER_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não realizada");
                 break;
-        }
-    }
-
-    public function dashboard(Request $request) {
-        try {
-            $data = $request->validate([
-                'data_inicial' => ['required'],
-                'data_final' => ['required'],
-                'usuario_id' => ['required'],
-            ]);
-            return response()->json([
-                'success' => true,
-                'data' => $this->service->dashboard($data['data_inicial'], $data['data_final'], $data['usuario_id'])
-            ]);
-        } catch (Throwable $e) {
-            return response()->json(['error' => $e->getMessage()]);
-        }
-    }
-
-    public function dashboard_gestor(Request $request) {
-        try {
-            $data = $request->validate([
-                'data_inicial' => ['required'],
-                'data_final' => ['required'],
-                'unidades' => ['required'],
-            ]);
-            $result = response()->json([
-                'success' => true,
-                'data' => $this->service->dashboard_gestor($data['data_inicial'], $data['data_final'], $data['unidades'])
-            ]);
-            return $result;
-        } catch (Throwable $e) {
-            return response()->json(['error' => $e->getMessage()]);
-        }
-    }
-
-    public function planosTrabalhoPorPeriodo(Request $request) {
-        try {
-            $data = $request->validate([
-                'usuario_id' => ['required'],
-                'inicioPeriodo' => [],
-                'fimPeriodo' => []
-            ]);
-            return response()->json([
-                'success' => true,
-                'data' => $this->service->planosTrabalhoPorPeriodo($data['usuario_id'], $data['inicioPeriodo'], $data['fimPeriodo'])
-            ]);
-        } catch (Throwable $e) {
-            return response()->json(['error' => $e->getMessage()]);
         }
     }
 
@@ -94,6 +45,5 @@ class UsuarioController extends ControllerBase
             return response()->json(['error' => $e->getMessage()]);
         }
     }
-
 } 
 

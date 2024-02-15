@@ -49,7 +49,7 @@ trait MergeRelations
         }, ARRAY_FILTER_USE_KEY);
     }
 
-    public function 
+    public function
     fillableRelations()
     {
         $fillable = [];
@@ -151,8 +151,9 @@ trait MergeRelations
                     $save = false;
                 } else {
                     $related[$foreignKeyName] = $parentKey;
-                    $related = ($relatedModel::find($relatedId) ?? new $relatedModel())->fill($related);
+                    $related = ($relatedModel::withTrashed()->find($relatedId) ?? new $relatedModel())->fill($related);
                     $related->id = $relatedId;
+                    if($related->trashed()) $related->restore();
                 }
             }
             if($save) {
@@ -162,23 +163,13 @@ trait MergeRelations
         }
         $toDelete = empty($parentKey) ? [] : ($isChange ? $relatedModel->whereIn($relatedModel->getKeyName(), $deleteKeys)->get() : $relatedModel->where($foreignKeyName, $parentKey)->whereNotIn($relatedModel->getKeyName(), $keepKeys)->get());
         foreach($toDelete as $entity) if(method_exists($entity, 'deleteCascade')) $entity->deleteCascade(); else $entity->delete();
-        /*if(!$isChange && !empty($parentKey)) {
-            //$relatedModel->where($foreignKeyName, $parentKey)->whereNotIn($relatedModel->getKeyName(), $keepKeys)->delete();
-            $entities = $relatedModel->where($foreignKeyName, $parentKey)->whereNotIn($relatedModel->getKeyName(), $keepKeys)->get();
-            foreach($entities as $entity) if(method_exists($entity, 'deleteCascade')) $entity->deleteCascade(); else $entity->delete();
-        }
-        if($isChange && !empty($deleteKeys)) {
-            //$relatedModel->whereIn($relatedModel->getKeyName(), $deleteKeys)->delete();
-            $entities = $relatedModel->whereIn($relatedModel->getKeyName(), $deleteKeys)->get();
-            foreach($entities as $entity) if(method_exists($entity, 'deleteCascade')) $entity->deleteCascade(); else $entity->delete();
-        }*/
     }
 
 
 /**********************************************************************************
- * 
+ *
  * Implementar os métodos abaixo para funcionar como merge
- * 
+ *
  *********************************************************************************/
 
 

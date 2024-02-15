@@ -63,3 +63,4 @@ services:
     volumes:
       - ../../../front-end:/usr/src/app
       - ../../../back-end:/usr/src/back-end
+      - ../../../resources:/usr/src/resources

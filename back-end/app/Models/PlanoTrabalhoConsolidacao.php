@@ -35,6 +35,7 @@ class PlanoTrabalhoConsolidacao extends ModelBase
     // Has
     public function statusHistorico() { return $this->hasMany(StatusJustificativa::class, "plano_trabalho_consolidacao_id"); }
     public function latestStatus() { return $this->hasOne(StatusJustificativa::class, "plano_trabalho_consolidacao_id")->latestOfMany();}
+    public function afastamentos() { return $this->hasMany(PlanoTrabalhoConsolidacaoAfastamento::class, 'plano_trabalho_consolidacao_id'); } 
     public function ocorrencias() { return $this->hasMany(PlanoTrabalhoConsolidacaoOcorrencia::class, 'plano_trabalho_consolidacao_id'); } 
     public function comparecimentos() { return $this->hasMany(Comparecimento::class, 'plano_trabalho_consolidacao_id'); } 
     public function avaliacoes() { return $this->hasMany(Avaliacao::class, 'plano_trabalho_consolidacao_id'); } 

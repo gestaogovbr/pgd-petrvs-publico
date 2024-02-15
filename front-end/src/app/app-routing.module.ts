@@ -10,8 +10,10 @@ import { TesteComponent } from './modules/teste/teste.component';
 import { ConfigResolver } from './resolvies/config.resolver';
 import { LoginUnicoComponent } from "./modules/login/login-unico/login-unico.component";
 import {PanelGuard} from "./guards/panel.guard";
+import {PanelLoginComponent} from "./modules/panel/panel-login/panel-login.component";
 
 const routes: Routes = [
+  { path: 'panel-login', component: PanelLoginComponent},
   { path: 'panel', loadChildren: () => import('./modules/panel/panel.module').then(m => m.PanelModule),canActivate: [PanelGuard] },
   { path: 'teste', component: TesteComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Teste" } },
   { path: 'teste/calcula-tempo', component: TesteFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Teste - CalculaTempo" } },
@@ -56,7 +58,6 @@ const routes: Routes = [
   { path: 'configuracoes/usuario', loadChildren: () => import('./modules/configuracoes/usuario/usuario.module').then(m => m.UsuarioModule), canActivate: [AuthGuard] },
   { path: 'listeners', loadChildren: () => import('./listeners/listeners.module').then(m => m.ListenersModule), canActivate: [AuthGuard] },
   { path: 'extension', loadChildren: () => import('./modules/extension/extension.module').then(m => m.ExtensionModule) },
-  //{ path: 'relatorios', loadChildren: () => import('./modules/relatorios/relatorio.module').then(m => m.RelatorioModule), canActivate: [AuthGuard] },
   { path: 'logs', loadChildren: () => import('./modules/logs/log.module').then(m => m.LogModule), canActivate: [AuthGuard] },
   { path: 'rotinas', loadChildren: () => import('./modules/rotinas/rotina.module').then(m => m.RotinaModule), canActivate: [AuthGuard] },
   { path: 'raiox', loadChildren: () => import('./modules/curriculum/curriculum.module').then(m => m.CurriculumModule), canActivate: [AuthGuard] },

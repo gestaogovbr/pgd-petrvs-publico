@@ -38,6 +38,7 @@ export class AtividadeFormConcluirComponent extends PageFormBase<Atividade, Ativ
     this.tipoAtividadeDao = injector.get<TipoAtividadeDaoService>(TipoAtividadeDaoService);
     this.tipoDocumentoDao = injector.get<TipoDocumentoDaoService>(TipoDocumentoDaoService);
     this.calendar = injector.get<CalendarService>(CalendarService);
+    this.title = 'Conclusão de ' + this.lex.translate('atividade');
     this.form = this.fh.FormBuilder({
       tipo_atividade_id: {default: null},
       data_distribuicao: {default: null},
@@ -47,7 +48,7 @@ export class AtividadeFormConcluirComponent extends PageFormBase<Atividade, Ativ
       data_inicio: {default: null},
       tempo_despendido: {default: 0},
       data_entrega: {default: null},
-      arquivar: {default: true},
+      arquivar: {default: false},
       descricao_tecnica: {default: ""},
       documento_entrega: {default: new Documento()},
       documento_entrega_id: {default: null},
@@ -81,7 +82,7 @@ export class AtividadeFormConcluirComponent extends PageFormBase<Atividade, Ativ
       value: x.descricao + (x.plano_entrega_entrega ? " (" + x.plano_entrega_entrega?.descricao + ")" : ""),
       data: x
     })) || [];
-    formValue.arquivar = true;  
+    formValue.arquivar = false;  
     form.patchValue(formValue);
     this.onDataEntregaChange();
   }

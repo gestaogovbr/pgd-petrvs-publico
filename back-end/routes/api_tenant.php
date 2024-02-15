@@ -257,7 +257,7 @@ Route::middleware(['auth:sanctum'])->prefix('Avaliacao')->group(function () {
 Route::middleware(['auth:sanctum'])->prefix('Planejamento')->group(function () { defaultRoutes(PlanejamentoController::class); });
 Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalho')->group(function () {
     defaultRoutes(PlanoTrabalhoController::class);
-    Route::post('avaliar', [PlanoTrabalhoController::class, 'avaliar']);
+    //Route::post('avaliar', [PlanoTrabalhoController::class, 'avaliar']);
     Route::post('cancelar-plano', [PlanoTrabalhoController::class, 'cancelarPlano']);
     Route::post('cancelar-assinatura', [PlanoTrabalhoController::class, 'cancelarAssinatura']);
     Route::post('cancelar-avaliacao', [PlanoTrabalhoController::class, 'cancelarAvaliacao']);
@@ -280,7 +280,7 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoTrabalhoConsolidacao')->group(
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
     defaultRoutes(PlanoEntregaController::class);
     Route::post('arquivar', [PlanoEntregaController::class, 'arquivar']);
-    Route::post('avaliar', [PlanoEntregaController::class, 'avaliar']);
+    //Route::post('avaliar', [PlanoEntregaController::class, 'avaliar']);
     Route::post('cancelar-avaliacao', [PlanoEntregaController::class, 'cancelarAvaliacao']);
     Route::post('cancelar-conclusao', [PlanoEntregaController::class, 'cancelarConclusao']);
     Route::post('cancelar-homologacao', [PlanoEntregaController::class, 'cancelarHomologacao']);
@@ -292,6 +292,8 @@ Route::middleware(['auth:sanctum'])->prefix('PlanoEntrega')->group(function () {
     Route::post('reativar', [PlanoEntregaController::class, 'reativar']);
     Route::post('retirar-homologacao', [PlanoEntregaController::class, 'retirarHomologacao']);
     Route::post('suspender', [PlanoEntregaController::class, 'suspender']);
+    Route::post('planos-impactados-por-alteracao-entrega', [PlanoEntregaController::class, 'planosImpactadosPorAlteracaoEntrega']);
+    Route::post('permissao-incluir', [PlanoEntregaController::class, 'permissaoIncluir']);
 });
 Route::middleware(['auth:sanctum'])->prefix('PlanoEntregaEntrega')->group(function () { 
     defaultRoutes(PlanoEntregaEntregaController::class); 
@@ -303,8 +305,8 @@ Route::middleware(['auth:sanctum'])->prefix('Projeto')->group(function () { defa
 /* Modulos: Configurações */
 Route::middleware(['auth:sanctum'])->prefix('Usuario')->group(function () {
     defaultRoutes(UsuarioController::class);
-    Route::post('dashboard', [UsuarioController::class, 'dashboard']);
-    Route::post('dashboard_gestor', [UsuarioController::class, 'dashboard_gestor']);
+    //Route::post('dashboard', [UsuarioController::class, 'dashboard']);
+    //Route::post('dashboard-gestor', [UsuarioController::class, 'dashboardGestor']);
     //Route::post('ja-assinou-tcr', [UsuarioController::class, 'jaAssinouTCR']);
 });
 Route::middleware(['auth:sanctum'])->prefix('Perfil')->group(function () { defaultRoutes(PerfilController::class); });
@@ -325,8 +327,8 @@ Route::middleware(['auth:sanctum'])->prefix('Unidade')->group(function () {
     Route::post('lookup-todas-unidades', [UnidadeController::class, 'lookupTodasUnidades']);//Carlos para Curriculum Profissional
 });
 Route::middleware(['auth:sanctum'])->prefix('UnidadeIntegrante')->group(function () {
-    Route::post('load-integrantes', [UnidadeIntegranteController::class, 'loadIntegrantes']);
-    Route::post('save-integrante', [UnidadeIntegranteController::class, 'saveIntegrante']);
+    Route::post('carregar-integrantes', [UnidadeIntegranteController::class, 'carregarIntegrantes']);
+    Route::post('salvar-integrantes', [UnidadeIntegranteController::class, 'salvarIntegrantes']);
 });
 Route::middleware(['auth:sanctum'])->prefix('UnidadeIntegranteAtribuicao')->group(function () {
     Route::post('destroy', [UnidadeIntegranteAtribuicaoController::class, 'destroy']);

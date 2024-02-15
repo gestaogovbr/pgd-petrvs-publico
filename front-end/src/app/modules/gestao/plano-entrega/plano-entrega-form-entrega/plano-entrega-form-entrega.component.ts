@@ -29,6 +29,8 @@ import { Unidade } from 'src/app/models/unidade.model';
 import { QueryOrderBy } from 'src/app/dao/dao-base.service';
 import { Checklist } from 'src/app/models/atividade.model';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
+import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
+import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 
 @Component({
   selector: 'plano-entrega-form-entrega',
@@ -62,6 +64,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   public itensQualitativo: LookupItem[] = [];
   public planejamentoInstitucionalDao: PlanejamentoDaoService;
   public planoEntregaEntregaDao: PlanoEntregaEntregaDaoService;
+  public planoEntregaDao: PlanoEntregaDaoService;
   public cadeiaValorDao: CadeiaValorDaoService;
   public cadeiaValorProcessoDao: CadeiaValorProcessoDaoService;
   public planejamentoObjetivoDao: PlanejamentoObjetivoDaoService;
@@ -77,6 +80,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.planejamentoDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.entregaDao = injector.get<EntregaDaoService>(EntregaDaoService);
+    this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
     this.planejamentoInstitucionalDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.planoEntregaEntregaDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
     this.cadeiaValorDao = injector.get<CadeiaValorDaoService>(CadeiaValorDaoService);
@@ -107,9 +111,9 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       cadeia_valor_id: { default: null },
       objetivo_id: { default: null },
       objetivo: { default: null },
-      checklist: {default: []},
-      etiquetas: {default: []},
-      etiqueta: {default: ""},
+      checklist: { default: [] },
+      etiquetas: { default: [] },
+      etiqueta: { default: "" },
     }, this.cdRef, this.validate);
     this.formObjetivos = this.fh.FormBuilder({
       planejamento_objetivo_id: { default: null },
@@ -118,9 +122,9 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       cadeia_processo_id: { default: null },
     }, this.cdRef, this.validate);
     this.formChecklist = this.fh.FormBuilder({
-      id: {default: ""},
-      texto: {default: ""},
-      checked: {default: false}
+      id: { default: "" },
+      texto: { default: "" },
+      checked: { default: false }
     }, this.cdRef);
   }
 
@@ -132,15 +136,15 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     this.cadeiaValorId = this.metadata?.cadeia_valor_id;
     this.unidadeId = this.metadata?.unidade_id;
     if (this.metadata?.data_fim) this.dataFim = this.metadata?.data_fim;
-    this.entity = this.metadata?.entrega as PlanoEntregaEntrega; 
+    this.entity = this.metadata?.entrega as PlanoEntregaEntrega;
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if (['descricao','destinatario'].indexOf(controlName) >= 0) {
-      if(!control.value?.length) {
+    if (['descricao', 'destinatario'].indexOf(controlName) >= 0) {
+      if (!control.value?.length) {
         result = "Obrigatório";
-      } else if(this.entrega!.selectedEntity && (this.entrega!.selectedEntity as Entrega).descricao == control.value) {
+      } else if (this.entrega!.selectedEntity && (this.entrega!.selectedEntity as Entrega).descricao == control.value) {
         result = "É necessário incrementar ou modificar a descrição da entrega";
       }
     } else if (['progresso_realizado', 'realizado'].indexOf(controlName) >= 0 && !(control.value >= 0 || control.value?.length > 0)) {
@@ -156,11 +160,11 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     } else if (['data_fim'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
     } else if (['planejamento_objetivo_id'].indexOf(controlName) >= 0) {
-      if(!control.value?.length) result = "O objetivo do planejamento é obrigatório";
-      if(control.value?.length && this.gridObjetivos?.items.filter(x => x._status == "ADD").map(x => x.planejamento_objetivo_id).includes(this.formObjetivos.controls.planejamento_objetivo_id.value)) result = "Este objetivo está em duplicidade!";
+      if (!control.value?.length) result = "O objetivo do planejamento é obrigatório";
+      if (control.value?.length && this.gridObjetivos?.items.filter(x => x._status == "ADD").map(x => x.planejamento_objetivo_id).includes(this.formObjetivos.controls.planejamento_objetivo_id.value)) result = "Este objetivo está em duplicidade!";
     } else if (['cadeia_processo_id'].indexOf(controlName) >= 0) {
-      if(!control.value?.length) result = "O processo da cadeia de valor é obrigatório";
-      if(control.value?.length && this.gridProcessos?.items.map(x => x.cadeia_processo_id).includes(this.formProcessos.controls.cadeia_processo_id.value)) result = "Este processo está em duplicidade!";
+      if (!control.value?.length) result = "O processo da cadeia de valor é obrigatório";
+      if (control.value?.length && this.gridProcessos?.items.map(x => x.cadeia_processo_id).includes(this.formProcessos.controls.cadeia_processo_id.value)) result = "Este processo está em duplicidade!";
     }
     return result;
   }
@@ -168,23 +172,23 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   public formValidation = (form?: FormGroup) => {
     let inicio = this.form?.controls.data_inicio.value;
     let fim = this.form?.controls.data_fim.value;
-    if(this.gridObjetivos?.editing) {
-      this.tabs!.active = "OBJETIVOS" ;
+    if (this.gridObjetivos?.editing) {
+      this.tabs!.active = "OBJETIVOS";
       return "Salve ou cancele o registro atual em edição";
     }
     if (this.gridProcessos?.editing) {
       this.tabs!.active = "PROCESSOS";
       return "Salve ou cancele o registro atual em edição";
     }
-    if(!this.dao?.validDateTime(inicio)) {
+    if (!this.dao?.validDateTime(inicio)) {
       return "Data de início inválida";
-    } else if(!this.dao?.validDateTime(fim)) {
+    } else if (!this.dao?.validDateTime(fim)) {
       return "Data de fim inválida";
-    } else if(inicio > fim) {
+    } else if (inicio > fim) {
       return "A data do fim não pode ser anterior à data do início!";
-    } else if(!this.auth.hasPermissionTo("MOD_PENT_ENTR_EXTRPL") && this.planoEntrega && inicio < this.planoEntrega.data_inicio) {
+    } else if (!this.auth.hasPermissionTo("MOD_PENT_ENTR_EXTRPL") && this.planoEntrega && inicio < this.planoEntrega.data_inicio) {
       return "Data de inicio menor que a data de inicio " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(this.planoEntrega.data_inicio);
-    } else if(!this.auth.hasPermissionTo("MOD_PENT_ENTR_EXTRPL") && this.planoEntrega && this.planoEntrega.data_fim && fim > this.planoEntrega.data_fim) {
+    } else if (!this.auth.hasPermissionTo("MOD_PENT_ENTR_EXTRPL") && this.planoEntrega && this.planoEntrega.data_fim && fim > this.planoEntrega.data_fim) {
       return "Data de fim maior que a data de fim " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(this.planoEntrega.data_fim);
     }
     return undefined;
@@ -193,7 +197,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   public async loadData(entity: PlanoEntregaEntrega, form: FormGroup) {
     let formValue = Object.assign({}, form.value);
     this.onEntregaChange(form.value);
-    let {meta, realizado, ...entityWithout} = entity;
+    let { meta, realizado, ...entityWithout } = entity;
     await this.entrega?.loadSearch(entity.entrega || formValue.entrega_id, false);
     await this.unidade?.loadSearch(this.unidadeId);
     await this.planejamento?.loadSearch(this.planejamentoId);
@@ -214,12 +218,45 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     await this.loadData(this.entity!, form);
   }
 
+  public async onSaveEntrega() {
+    let error: any = undefined;
+    let save: boolean = true;
+    if(this.formValidation) {
+      try {
+        error = await this.formValidation(this.form!);
+      } catch (e: any) {
+        error = e; 
+      }
+    }
+    if(this.form!.valid && !error){
+      if(this.action == "edit") {
+        let entity = (await this.saveData(this.form!.value)).modalResult as PlanoEntregaEntrega;
+        let planosImpactados: PlanoTrabalho[] = [];
+        entity._status = "EDIT";
+        this.loading = true;
+        try {
+          planosImpactados = await this.planoEntregaDao.planosImpactadosPorAlteracaoEntrega(entity);
+        } finally {
+          this.loading = false;
+        }
+        if(planosImpactados.length) {
+          let planos = planosImpactados.map(x => this.util.getDateFormatted(x.data_inicio) + " - " + this.util.getDateFormatted(x.data_fim) + " - " + x.unidade?.sigla + ": " + x.usuario?.nome + "\n");
+          save = await this.dialog.confirm("Altera assim mesmo?", "Caso prossiga com essa modificação os seguintes planos de trabalho serão repactuados automaticamente:\n\n" + planos + "\n" + "Deseja prosseguir?");
+        }
+    }
+      if(save) await this.onSaveData();
+    } else {
+      this.form!.markAllAsTouched();
+      if(error) this.error(error);
+    }
+  }
+
   public saveData(form: IIndexable): Promise<NavigateResult> {
     return new Promise<NavigateResult>((resolve, reject) => {
       let entrega: PlanoEntregaEntrega = this.util.fill(new PlanoEntregaEntrega(), this.entity!);
       this.gridObjetivos?.confirm();
       this.gridProcessos?.confirm();
-      let {meta, realizado, ...valueWithout} = this.form!.value;
+      let { meta, realizado, ...valueWithout } = this.form!.value;
       entrega = this.util.fillForm(entrega, valueWithout);
       entrega.unidade = this.unidade?.selectedEntity;
       entrega.entrega = this.entrega?.selectedEntity;
@@ -340,11 +377,22 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       if (entregaItem.checklist) this.loadChecklist();
       this.calculaRealizado();
     }
-  } 
+  }
 
-  public loadEtiquetas() {
+  public async loadEtiquetas() {
     this.etiquetas = this.util.merge(this.entrega?.selectedEntity.etiquetas, this.unidade?.selectedEntity.etiquetas, (a, b) => a.key == b.key);
     this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);
+    this.etiquetas = this.util.merge(this.etiquetas, await this.carregaEtiquetasUnidadesAscendentes(this.unidade?.selectedEntity), (a, b) => a.key == b.key);
+  }
+
+  public async carregaEtiquetasUnidadesAscendentes(unidadeAtual: Unidade) {
+    let etiquetasUnidades: LookupItem[] = [];
+    let path = unidadeAtual.path.split("/");
+    let unidades = await this.unidadeDao.query({ where: ["id", "in", path] }).asPromise();
+    unidades.forEach(un => {
+      etiquetasUnidades = this.util.merge(etiquetasUnidades, un.etiquetas, (a, b) => a.key == b.key);
+    });
+    return etiquetasUnidades;
   }
 
   public loadChecklist() {
@@ -362,10 +410,10 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
 
   public addItemHandleEtiquetas(): LookupItem | undefined {
     let result = undefined;
-    if(this.etiqueta && this.etiqueta.selectedItem) {
+    if (this.etiqueta && this.etiqueta.selectedItem) {
       const item = this.etiqueta.selectedItem;
       const key = item.key?.length ? item.key : this.util.textHash(item.value);
-      if(this.util.validateLookupItem(this.form!.controls.etiquetas.value, key)) {
+      if (this.util.validateLookupItem(this.form!.controls.etiquetas.value, key)) {
         result = {
           key: key,
           value: item.value,

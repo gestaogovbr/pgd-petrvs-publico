@@ -49,7 +49,11 @@ class TenantConfigurations
                 $settings['dominio_url'].":443"
             ]]);
             #Petrvs
-            config(['petrvs.entidade'=> $settings['id']]);
+            config(['petrvs.schemas.base'=> $settings['id']]);
+            config(['petrvs.schemas.tenant_aplicacao'=> $settings['tenancy_db_name']]);
+            config(['petrvs.schemas.tenant_log'=> $settings['log_database']]);
+
+
             # LOGIN UNICO - GOVBR
             config(['services.govbr.client_secret'          => $settings['login_login_unico_secret']                ??env('LOGIN_UNICO_CLIENT_SECRET')]);
             config(['services.govbr.client_id'              => $settings['login_login_unico_client_id']             ??env('LOGIN_UNICO_CLIENT_ID')]);
@@ -75,8 +79,8 @@ class TenantConfigurations
             config(['integracao.siape.parmExistPag'         => $settings['integracao_siape_existepag']              ??env('INTEGRACAO_SIAPE_PARMEXISTPAG')]);
             config(['integracao.siape.parmTipoVinculo'      => $settings['integracao_siape_tipovinculo']            ??env('INTEGRACAO_SIAPE_PARMTIPOVINCULO')]);
 
-            config(['integracao.perfilComum'          => $settings['integracao_siape_tipovinculo']            ??env('INTEGRACAO_SIAPE_PARMTIPOVINCULO')]);
-            config(['integracao.perfilChefe'          => $settings['integracao_siape_tipovinculo']            ??env('INTEGRACAO_SIAPE_PARMTIPOVINCULO')]);
+            config(['integracao.perfilComum'          => $settings['integracao_usuario_comum']            ??env('INTEGRACAO_USUARIO_COMUM')]);
+            config(['integracao.perfilChefe'          => $settings['integracao_usuario_chefe']            ??env('INTEGRACAO_USUARIO_CHEFE')]);
 
 
         }

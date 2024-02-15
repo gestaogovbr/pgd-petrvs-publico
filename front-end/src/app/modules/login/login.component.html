@@ -1,6 +1,6 @@
 <div class="d-flex vh-100 g-0 bg-gray-100">
     <div class="col-lg-6 position-relative d-none d-lg-block bg-primary-subtle">        
-        <div class="bg-holder" style="background-image: url(../../../assets/images/intro-login.jpg)"></div>
+        <div class="bg-holder" style="background-image: url(../../../assets/images/intro_login.jpg)"></div>
     </div>
 
     <div [class]="modalRoute ? 'col-12 col-lg-6' : 'col-12 col-lg-6'">
@@ -50,7 +50,7 @@
                           <div class="row mt-2">
                             <div class="col-md-12 d-flex justify-content-center">
                               <a *ngIf="!auth.logging" class="btn btn-lg btn-google btn-outline" (click)="signInAzure()">
-                                <img [src]="globals.getResourcePath('assets/images/microsoft-logo.png')"/>
+                                <img [src]="globals.getResourcePath('assets/images/microsoft_logo.png')"/>
                                 Microsoft (Login Institucional)
                               </a>
                               <div *ngIf="auth.logging" class="spinner-border spinner-border-sm" role="status">

@@ -23,10 +23,11 @@ export class AtividadeListTarefaComponent extends PageBase {
   @Input() editable: boolean = true;
   @Input() selectable: boolean = false;
   @Input() id_processo: number = 0;
+  @Input() consolidacao: boolean = true;//
   @Input() set atividade(value: Atividade | undefined) {
-    if(this._atividade != value) {
+    if (this._atividade != value) {
       this._atividade = value;
-      if(this.isPersist && value?.tarefas) {
+      if (this.isPersist && value?.tarefas) {
         this.control.setValue(value?.tarefas);
       }
     }
@@ -53,26 +54,26 @@ export class AtividadeListTarefaComponent extends PageBase {
     this.atividadeService = injector.get<AtividadeService>(AtividadeService);
     this.allPages = injector.get<ListenerAllPagesService>(ListenerAllPagesService);
     this.formEdit = this.fh.FormBuilder({
-      concluido: {default: false}
+      concluido: { default: false }
     });
     this.join = ["tipo_tarefa", "comentarios.usuario"];
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    if(this.queryParams?.id_processo) {
+    if (this.queryParams?.id_processo) {
       this.id_processo = this.queryParams?.id_processo;
     }
-    if(this.isPersist && this.atividade?.tarefas) {
+    if (this.isPersist && this.atividade?.tarefas) {
       this.control.setValue(this.atividade?.tarefas);
     }
   }
 
   ngAfterViewInit(): void {
     super.ngAfterViewInit();
-    if(this.id_processo) {
+    if (this.id_processo) {
       this.loading = true;
-      this.dao!.query({where: [["id_processo", "==", this.id_processo]]}).asPromise().then(tarefas => {
+      this.dao!.query({ where: [["id_processo", "==", this.id_processo]] }).asPromise().then(tarefas => {
         this.control.setValue(tarefas || []);
         this.cdRef.detectChanges();
       }).finally(() => {
@@ -93,42 +94,12 @@ export class AtividadeListTarefaComponent extends PageBase {
     tarefa.atividade_id = this.atividade?.id || "";
     tarefa.comentarios = [];
     tarefa._status = "ADD";
-    this.go.navigate({route: ['gestao', 'atividade', 'tarefa']}, {metadata: {tarefa: tarefa, atividade: this.atividade}, modalClose: (modalResult) => {
-      if(modalResult) {
-        (async () => {
-          const tarefas = (this.control!.value || []) as AtividadeTarefa[];
-          if(this.isPersist && this.atividade?.tarefas) {
-            this.grid!.error = undefined;
-            try {
-              this.dialog.showSppinerOverlay("Salvando dados do formulário");
-              modalResult = await this.dao.save(modalResult, this.join);
-            } catch (error: any) {
-              this.grid!.error = error.message ? error.message : error;
-              modalResult = undefined;
-            } finally {
-              this.dialog.closeSppinerOverlay();
-            }
-          }
-          if(modalResult) {
-            tarefas.push(modalResult);
-            this.control!.setValue(tarefas);
-          }
-          this.cdRef.detectChanges();
-        })();
-      }
-    }});
-    return undefined;
-  }
-
-  public editTarefa = async (row: any) => {
-    this.go.navigate({route: ['gestao', 'atividade', 'tarefa']}, {metadata: {tarefa: row, atividade: this.atividade}, modalClose: (modalResult) => {
-      if(modalResult) {
-        (async () => {
-          const tarefas = this.control!.value as AtividadeTarefa[];
-          const index = tarefas.findIndex(x => x.id == row.id);
-          if(index >= 0) {
-            modalResult._status = modalResult._status == "ADD" ? "ADD" : "EDIT";
-            if(this.isPersist && this.atividade?.tarefas) {
+    this.go.navigate({ route: ['gestao', 'atividade', 'tarefa'] }, {
+      metadata: { tarefa: tarefa, atividade: this.atividade }, modalClose: (modalResult) => {
+        if (modalResult) {
+          (async () => {
+            const tarefas = (this.control!.value || []) as AtividadeTarefa[];
+            if (this.isPersist && this.atividade?.tarefas) {
               this.grid!.error = undefined;
               try {
                 this.dialog.showSppinerOverlay("Salvando dados do formulário");
@@ -140,28 +111,62 @@ export class AtividadeListTarefaComponent extends PageBase {
                 this.dialog.closeSppinerOverlay();
               }
             }
-            if(modalResult) {
-              tarefas[index] = modalResult;
+            if (modalResult) {
+              tarefas.push(modalResult);
               this.control!.setValue(tarefas);
             }
-          }
-          this.cdRef.detectChanges();
-        })();
+            this.cdRef.detectChanges();
+          })();
+        }
       }
-    }});
+    });
+    return undefined;
+  }
+
+  public editTarefa = async (row: any) => {
+    this.go.navigate({ route: ['gestao', 'atividade', 'tarefa'] }, {
+      metadata: { tarefa: row, atividade: this.atividade }, modalClose: (modalResult) => {
+        if (modalResult) {
+          (async () => {
+            const tarefas = this.control!.value as AtividadeTarefa[];
+            const index = tarefas.findIndex(x => x.id == row.id);
+            if (index >= 0) {
+              modalResult._status = modalResult._status == "ADD" ? "ADD" : "EDIT";
+              if (this.isPersist && this.atividade?.tarefas) {
+                this.grid!.error = undefined;
+                try {
+                  this.dialog.showSppinerOverlay("Salvando dados do formulário");
+                  modalResult = await this.dao.save(modalResult, this.join);
+                } catch (error: any) {
+                  this.grid!.error = error.message ? error.message : error;
+                  modalResult = undefined;
+                } finally {
+                  this.dialog.closeSppinerOverlay();
+                }
+              }
+              if (modalResult) {
+                tarefas[index] = modalResult;
+                this.control!.setValue(tarefas);
+              }
+            }
+            this.cdRef.detectChanges();
+          })();
+        }
+      }
+    });
     return undefined;
   }
 
   public async deleteTarefa(row: any) {
     const confirm = await this.dialog.confirm("Exclui ?", "Deseja realmente excluir?");
     this.grid!.error = undefined;
-    if(confirm) {
+    if (confirm) {
       try {
-        if((this.isPersist && this.atividade?.tarefas) || row._status == "ADD") {
+        if ((this.isPersist && this.atividade?.tarefas) || row._status == "ADD") {
           const tarefas = this.control!.value as AtividadeTarefa[];
           const index = tarefas.findIndex(x => x.id == row.id);
-          if(this.isPersist && this.atividade?.tarefas) await this.dao!.delete(row);
-          if(index >= 0) {
+          if (this.isPersist && this.atividade?.tarefas) await this.dao!.delete(row);
+          if (index >= 0) {
             tarefas.splice(index, 1);
             this.control!.setValue(tarefas);
           }
@@ -191,9 +196,12 @@ export class AtividadeListTarefaComponent extends PageBase {
 
   public async onColumnConcluidoSave(row: any) {
     try {
-      const data_conclusao = this.formEdit.controls.concluido.value && !!row.data_conclusao ? this.auth.hora : row.data_conclusao;
-      const saved = await this.dao!.update(row.id, { data_conclusao });
+      const data_conclusao = this.formEdit.controls.concluido.value ? this.auth.hora : null; //&& !!row.data_conclusao 
+      const saved = await this.dao!.update(row.id, {
+        data_conclusao: data_conclusao,
+      });
       row.concluido = this.formEdit.controls.concluido.value;
+      row.data_conclusao = row.concluido ? data_conclusao : null;
       return !!saved;
     } catch (error) {
       return false;
@@ -201,13 +209,13 @@ export class AtividadeListTarefaComponent extends PageBase {
   }
 
   public addComentarioResult(modalResult: AtividadeTarefa) {
-    if(modalResult) {
-      if(this.isPersist) {
+    if (modalResult) {
+      if (this.isPersist) {
         this.dao!.getById(modalResult.id, this.join).then(tarefa => {
           if (tarefa) {
             const tarefas = this.control.value || [];
             const index = tarefas.findIndex((x: AtividadeTarefa) => x.id = tarefa.id);
-            if(index >= 0) {
+            if (index >= 0) {
               tarefas[index] = tarefa;
               this.control.setValue(tarefas);
               this.cdRef.detectChanges();
@@ -227,7 +235,7 @@ export class AtividadeListTarefaComponent extends PageBase {
     let lastConsolidacao = this.atividadeService.lastConsolidacao(this.atividade!.metadados!.consolidacoes);
     /* (RN_CSLD_12) Tarefas concluidas de atividades em consolidação CONCLUIDO ou AVALIADO não poderão mais ser alteradas/excluidas, nem Remover conclusão.
        (RN_CSLD_13) Tarefas de atividades em consolidação CONCLUIDO ou AVALIADO não poderão mais ser alteradas/excluidas, somente a opção de Concluir ficará disponível. */
-    if(!lastConsolidacao || lastConsolidacao.status == "INCLUIDO" || this.util.asTimestamp(lastConsolidacao.data_conclusao) < this.util.asTimestamp(tarefa.created_at)) {
+    if (!lastConsolidacao || lastConsolidacao.status == "INCLUIDO" || this.util.asTimestamp(lastConsolidacao.data_conclusao) < this.util.asTimestamp(tarefa.created_at)) {
       //result.push(Object.assign(this.grid!.BUTTON_EDIT, { onClick: this.editTarefa.bind(this) }));
       //result.push(Object.assign(this.grid!.BUTTON_DELETE, { onClick: this.deleteTarefa.bind(this) }));
       result.push({ label: "Alterar", icon: "bi bi-pencil-square", hint: "Alterar", color: "btn-outline-info", onClick: this.editTarefa.bind(this) });

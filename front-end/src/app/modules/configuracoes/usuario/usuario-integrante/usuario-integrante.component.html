@@ -1,7 +1,20 @@
-<grid #grid [items]="items" [minHeight]="500" [form]="form!" [hasDelete]="true" editable
-    [add]="addIntegrante.bind(this)" [load]="loadIntegrante.bind(this)" [remove]="removeIntegrante.bind(this)" [save]="saveIntegrante.bind(this)">
-    <span *ngIf="!isNoPersist"><strong>{{ 'Servidor: ' + entity?.nome }}</strong></span>
-    <top-alert *ngIf="!isNoPersist" type="alert" [message]="'Para alterar ' + lex.translate('a lotação') + ' é necessário utilizar a abra Principal na edição do cadastro ' + lex.translate('do usuário') + '!'"></top-alert>
+<span *ngIf="!isNoPersist"><strong>{{ 'Servidor: ' + entity?.nome }}</strong></span>
+
+<div class="row">
+    <div class="col-4">
+        <editable-form [form]="formPerfil!" [noButtons]="isNoButtons()" [disabled]="formDisabled" title="" (submit)="salvarPerfil()">
+            <div class="row">
+                <input-select [disabled]="!auth.hasPermissionTo('MOD_CFG_USER_PERFIL') ? 'true' : undefined" [label]="lex.translate('Perfil')" controlName="perfil_id" [dao]="perfilDao" required></input-select>
+            </div>
+        </editable-form>
+    </div>
+    <div class="col">
+        <top-alert type="warning" [message]="'Ao conceder a ' + lex.translate('um usuário') + ' a atribuição de ' + lookup.getValue(lookup.UNIDADE_INTEGRANTE_TIPO, 'GESTOR') + ', ' + lookup.getValue(lookup.UNIDADE_INTEGRANTE_TIPO, 'GESTOR_SUBSTITUTO') + ' ou de ' + lookup.getValue(lookup.UNIDADE_INTEGRANTE_TIPO, 'GESTOR_DELEGADO') + ' em ' + lex.translate('uma unidade') + ', deve lhe ser concedido também ' + lex.translate('o nível de acesso') + ' correspondente.'"></top-alert>
+    </div>
+</div>
+
+<grid #grid [items]="items" [minHeight]="500" [form]="form!" [hasDelete]="true" editable [add]="adicionarIntegrante.bind(this)" [load]="carregarIntegrante.bind(this)" [remove]="removerIntegrante.bind(this)" [save]="salvarIntegrante.bind(this)">
+    <top-alert *ngIf="!isNoPersist" type="alert" [message]="'É impossível excluir ' + lex.translate('a lotação') + ' ' + lex.translate('do servidor') + '. Para alterá-la, lote-o em outra ' + lex.translate('unidade') + '!'"></top-alert>
     <columns>
         <column [title]="lex.translate('Unidades')" [template]="columnUnidade" [editTemplate]="editUnidade">
             <ng-template let-row="row" #columnUnidade>
@@ -9,7 +22,7 @@
                 <span>{{ row.unidade_nome || '' }} </span>
             </ng-template>
             <ng-template let-row="row" #editUnidade>
-                <input-search #unidade [size]="12" label icon controlName="unidade_id" [dao]="unidadeDao"></input-search>
+                <input-search #unidade [disabled]="grid?.adding ? undefined : 'true'" [size]="12" label icon controlName="unidade_id" [dao]="unidadeDao"></input-search>
             </ng-template>
         </column>
         <column [title]="lex.translate('Atribuições')" [template]="columnAtribuicoes" [editTemplate]="editAtribuicoes">
@@ -20,7 +33,7 @@
             </ng-template>
             <ng-template let-row="row" #editAtribuicoes>
                 <input-multiselect controlName="atribuicoes" [size]="8" [addItemHandle]="addItemHandle.bind(this)" [deleteItemHandle]="deleteItemHandle.bind(this)">
-                    <input-select [size]="12" label="" icon="fas fa-sign-out-alt" controlName="atribuicao" [items]="tiposAtribuicao"></input-select>
+                    <input-select [size]="12" label="" icon="fas fa-sign-out-alt" controlName="atribuicao" [items]="lookup.ordenarLookupItem(lookup.UNIDADE_INTEGRANTE_TIPO)"></input-select>
                 </input-multiselect>
             </ng-template>
         </column>

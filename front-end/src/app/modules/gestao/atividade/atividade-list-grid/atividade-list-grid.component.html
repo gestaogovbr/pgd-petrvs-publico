@@ -1,153 +1,151 @@
 <ng-template #calendarEfemerides>
-    <calendar-efemerides [efemerides]="efemerides"></calendar-efemerides>
+  <calendar-efemerides [efemerides]="efemerides"></calendar-efemerides>
 </ng-template>
 <grid [dao]="dao" [add]="add" [form]="formEdit" [hasEdit]="false" [hasDelete]="false" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [loadList]="onGridLoad.bind(this)" [selectable]="selectable" (select)="onSelect($event)" [groupTemplate]="groupAtividades">
-    <ng-template #groupAtividades let-grid='grid' let-separator='separator' let-group='group'>
-        <div class="d-flex ps-3"> 
-            <ng-container *ngFor="let item of group">
-                <label class="me-3">{{item.label}}: <b>{{item.value}}</b></label>
-            </ng-container>
+  <ng-template #groupAtividades let-grid='grid' let-separator='separator' let-group='group'>
+    <div class="d-flex ps-3">
+      <ng-container *ngFor="let item of group">
+        <label class="me-3">{{item.label}}: <b>{{item.value}}</b></label>
+      </ng-container>
+    </div>
+  </ng-template>
+  <toolbar *ngIf="!fixedFilter && !selectable">
+    <input-switch [size]="3" labelPosition="left" label="Agrupar por Entrega" controlName="agrupar_entrega" [control]="filter!.controls.agrupar_entrega" (change)="onAgruparChange($event)"></input-switch>
+    <input-switch [size]="3" labelPosition="left" label="Agrupar por Unidade" controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
+  </toolbar>
+  <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && !queryParams?.filter && filterCollapsed">
+    <div class="row">
+      <input-switch [size]="1" label="Minhas" controlName="atribuidas_para_mim" [control]="filter!.controls.atribuidas_para_mim" (change)="onAtribuidasParaMimChange($event)"></input-switch>
+      <input-search [size]="6" label="Usuário" #usuario [control]="filter!.controls.usuario_id" controlName="usuario_id" [disabled]="filter!.controls.atribuidas_para_mim.value ? 'true' : undefined" [dao]="usuarioDao"></input-search>
+      <input-search [size]="5" label="Plano de trabalho" #planoTrabalho [control]="filter!.controls.plano_trabalho_id" controlName="plano_trabalho_id" [dao]="planoTrabalhoDao"></input-search>
+    </div>
+    <div class="row">
+      <input-switch [size]="1" label="Atual" controlName="somente_unidade_atual" [control]="filter!.controls.somente_unidade_atual" (change)="onSomenteUnidadeAtualChange($event)" [labelInfo]="'Somente as ' + lex.translate('atividades') + ' da unidade selecionada'"></input-switch>
+      <input-search [size]="3" label="Unidade" #unidade [control]="filter!.controls.unidade_id" controlName="unidade_id" [disabled]="filter!.controls.somente_unidade_atual.value ? 'true' : undefined" [dao]="unidadeDao" (change)="onUnidadeChange($event)"></input-search>
+      <input-switch [size]="1" label="Sub." controlName="unidades_subordinadas" [control]="filter!.controls.unidades_subordinadas" labelInfo="Incluir as unidades subordinadas"></input-switch>
+      <input-select [size]="4" [label]="lex.translate('Plano de Entrega')" #planoEntrega itemTodos="- Todos -" [valueTodos]="null" controlName="plano_entrega_id" [control]="filter!.controls.plano_entrega_id" [items]="planosEntregas" (change)="onPlanoEntregaChange($event)"></input-select>
+      <input-select [size]="3" [label]="lex.translate('Entrega do Plano de Entrega')" #planoEntregaEntrega itemTodos="- Todos -" [valueTodos]="null" controlName="plano_entrega_entrega_id" [control]="filter!.controls.plano_entrega_entrega_id" [items]="planosEntregasEntregas"></input-select>
+    </div>
+    <div class="row">
+      <input-text [size]="1" label="#ID" controlName="numero" maskFormat="999999" [control]="filter!.controls.numero" [labelInfo]="'Número ' + lex.translate('atividade')" [attr.maxlength]=250></input-text>
+      <input-text [size]="3" [label]="'Nº '+ lex.translate('Processo') +' (Sei)'" maskFormat="00000.000000/0000-00" controlName="numero_processo" [control]="filter!.controls.numero_processo" labelInfo="Pesquisa no documento de requisição, conclusão e nos documentos das tarefas" [attr.maxlength]=250></input-text>
+      <input-select [size]="3" label="Status" itemTodos="- Todos -" [valueTodos]="null" [disabled]="fixedFilter?.length && fixedFilter![0]![0] == 'status' ? 'true' : undefined" controlName="status" [control]="filter!.controls.status" [items]="lookup.ATIVIDADE_STATUS_COM_ARQUIVADAS"></input-select>
+      <input-multiselect noForm noBox [size]="4" label="Etiquetas" controlName="etiquetas" [control]="filter!.controls.etiquetas"></input-multiselect>
+      <input-switch [size]="1" label="Arq." controlName="arquivadas" [control]="filter!.controls.arquivadas" [labelInfo]="'Listar também ' + lex.translate('atividades') + ' arquivadas'"></input-switch>
+    </div>
+    <div class="row">
+      <input-search [size]="3" [label]="'Tipo de ' + lex.translate('Atividade')" [control]="filter!.controls.tipo_atividade_id" controlName="tipo_atividade_id" [dao]="tipoAtividadeDao"></input-search>
+      <input-search [size]="3" [label]="'Tipo de ' + lex.translate('Processo')" [control]="filter!.controls.tipo_processo_id" controlName="tipo_processo_id" [dao]="tipoProcessoDao"></input-search>
+      <input-select [size]="2" label="Data" itemTodos="- Todos -" [valueTodos]="null" controlName="data_filtro" [control]="filter!.controls.data_filtro" [items]="DATAS_FILTRO"></input-select>
+      <input-datetime [size]="2" noIcon [disabled]="filter!.controls.data_filtro.value == null ? 'true' : undefined" label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" labelInfo="Data início do período"></input-datetime>
+      <input-datetime [size]="2" noIcon [disabled]="filter!.controls.data_filtro.value == null ? 'true' : undefined" label="Fim" controlName="data_fim" [control]="filter!.controls.data_fim" labelInfo="Data fim do período"></input-datetime>
+    </div>
+  </filter>
+  <columns>
+    <column *ngIf="!selectable" type="expand" icon="bi bi-boxes" [align]="'center'" [hint]="'Tarefas da ' + lex.translate('atividade')" [template]="columnTarefas" [expandTemplate]="columnExpandedTarefas">
+      <ng-template let-row="row" #columnTarefas>
+        <span *ngIf="row.tarefas?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row.tarefas?.length}}</span>
+      </ng-template>
+      <ng-template let-row="row" #columnExpandedTarefas>
+        <atividade-list-tarefa persist [selectable]="selectable" [editable]="!row.metadados.concluido" [atividade]="row"></atividade-list-tarefa>
+      </ng-template>
+    </column>
+    <column [titleTemplate]="titleIdAtividadeDescricao" [maxWidth]="250" [template]="columnAtividadeDescricao" [editTemplate]="columnAtividadeDescricao" [columnEditTemplate]="selectable ? undefined : columnAtividadeDescricaoEdit" [edit]="selectable ? undefined : onColumnAtividadeDescricaoEdit.bind(this)" [save]="selectable ? undefined : onColumnAtividadeDescricaoSave.bind(this)">
+      <ng-template let-header="header" #titleIdAtividadeDescricao>
+        <order by="numero" [header]="header">#ID</order>/Tipo de {{lex.translate('Atividade')}}/
+        <order by="plano_trabalho_entrega.descricao" [header]="header">{{lex.translate('Entrega')}}</order><br>
+        Descrição
+      </ng-template>
+      <ng-template let-row="row" #columnAtividadeDescricao>
+        <span class="text-nowrap d-block">
+          <badge icon="bi bi-hash" [label]="row.numero" color="light" [data]="row.numero" [click]="atividadeService.onIdClick.bind(this)"></badge>
+          <badge *ngIf="row.tipo_atividade" [icon]="entityService.getIcon('TipoAtividade')" [label]="row.tipo_atividade.nome" color="light"></badge>
+          <badge *ngIf="row.plano_trabalho_entrega" [icon]="entityService.getIcon('Entrega')" [label]="row.plano_trabalho_entrega.descricao" color="info" (click)="onEntregaClick(row)" role="button"></badge>
+        </span>
+        <span class="micro-text fw-ligh atividade-descricao">{{row.descricao}}</span>
+        <reaction [entity]="row" origem="ATIVIDADE"></reaction>
+      </ng-template>
+      <ng-template let-row="row" #columnAtividadeDescricaoEdit>
+        <input-textarea label="Descrição" [size]="12" [rows]="2" controlName="descricao" [control]="formEdit!.controls.descricao" required></input-textarea>
+        <input-search [label]="'Tipo de ' + lex.translate('atividade')" relativeId="columnTipoAtividade" #tipoAtividade [size]="12" [emptyValue]="null" controlName="tipo_atividade_id" [control]="formEdit!.controls.tipo_atividade_id" [dao]="tipoAtividadeDao" [labelInfo]="'Tipo de ' + lex.translate('atividade') + ' utilizado para classificar a ' + lex.translate('atividade')" [required]="!auth.hasPermissionTo('MOD_ATV_TIPO_ATV_VAZIO') ? 'true' : undefined"></input-search>
+      </ng-template>
+    </column>
+    <column [title]="'Etiquetas'" [maxWidth]="300" [width]="100" [template]="columnEtiquetas" [editTemplate]="columnEtiquetas" [columnEditTemplate]="selectable ? undefined : columnEtiquetasEdit" [edit]="selectable ? undefined : onColumnEtiquetasEdit.bind(this)" [save]="selectable ? undefined : onColumnEtiquetasSave.bind(this)">
+      <ng-template let-row="row" #columnEtiquetas>
+        <badge *ngFor="let etiqueta of row.etiquetas" [lookup]="etiqueta" [click]="onEtiquetaClick.bind(this)"></badge>
+      </ng-template>
+      <ng-template let-row="row" #columnEtiquetasEdit>
+        <input-multiselect controlName="etiquetas" [size]="12" [control]="formEdit.controls.etiquetas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
+          <input-select [size]="12" #etiqueta controlName="etiqueta" nullable itemNull="- Selecione -" detailsButton detailsButtonIcon="bi bi-tools" (details)="onEtiquetaConfigClick()" [control]="formEdit.controls.etiqueta" [items]="etiquetas"></input-select>
+        </input-multiselect>
+      </ng-template>
+    </column>
+    <column [titleTemplate]="titlePlanoTrabalho" [template]="columnPlanoTrabalho">
+      <ng-template let-header="header" #titlePlanoTrabalho>
+        Plano de trabalho
+      </ng-template>
+      <ng-template let-row="row" #columnPlanoTrabalho>
+        <span class="d-block" *ngIf="row.planoTrabalho">{{dao!.getDateFormatted(row.planoTrabalho.data_inicio)}} <br>{{ " até "+dao!.getDateFormatted(row.planoTrabalho.data_fim)}}</span>
+      </ng-template>
+    </column>
+    <column [titleTemplate]="titleUnResponsavelDemandante" [template]="columnPessoas" [maxWidth]="150">
+      <ng-template let-header="header" #titleUnResponsavelDemandante>
+        Un./<order by="usuario.nome" [header]="header">{{lex.translate('Responsável')}}</order><br>
+        <order by="demandante.nome" [header]="header">Demandante</order>
+      </ng-template>
+      <ng-template let-row="row" #columnPessoas>
+        <div class="text-nowrap">
+          <badge icon="bi bi-briefcase" color="light" [label]="row.unidade.sigla"></badge>
+          <badge [icon]="'bi ' + (row.usuario?.nome?.length ? 'bi-person-check' : 'bi-person-x')" color="light" [label]="util.apelidoOuNome(row.usuario, true) || '(Não atribuído)'" [hint]="'Responsável: ' + (row.usuario?.nome || 'Não atribuido a nenhum usuário')"></badge>
         </div>
-    </ng-template>
-    <toolbar *ngIf="!fixedFilter && !selectable">
-        <input-switch [size]="3" labelPosition="left" label="Agrupar por Entrega" controlName="agrupar_entrega" [control]="filter!.controls.agrupar_entrega" (change)="onAgruparChange($event)"></input-switch>
-        <input-switch [size]="3" labelPosition="left" label="Agrupar por Unidade" controlName="agrupar" [control]="filter!.controls.agrupar" (change)="onAgruparChange($event)"></input-switch>
-    </toolbar>
-    <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && !queryParams?.filter && filterCollapsed">
-        <div class="row">
-            <input-switch [size]="1" label="Minhas" controlName="atribuidas_para_mim" [control]="filter!.controls.atribuidas_para_mim" (change)="onAtribuidasParaMimChange($event)"></input-switch>
-            <input-search [size]="6" label="Usuário" #usuario [control]="filter!.controls.usuario_id" controlName="usuario_id"  [disabled]="filter!.controls.atribuidas_para_mim.value ? 'true' : undefined" [dao]="usuarioDao" ></input-search>
-            <input-search [size]="5" label="Plano de trabalho" #planoTrabalho [control]="filter!.controls.plano_trabalho_id" controlName="plano_trabalho_id" [dao]="planoTrabalhoDao" ></input-search>
+        <badge icon="bi bi-cursor" color="light" [label]="util.apelidoOuNome(row.demandante, true) || 'Desconhecido'" [hint]="'Demandante: ' + (row.demandante?.nome || 'Desconhecido')"></badge>
+      </ng-template>
+    </column>
+    <column [titleTemplate]="titleTempos" [template]="columnTempos" [width]="250">
+      <ng-template let-header="header" #titleTempos>
+        Tempos
+        <order by="data_distribuicao" [header]="header">Distribuição</order><br>
+        <order by="data_estipulada_entrega" [header]="header">Prazo</order>
+        <order by="data_entrega" [header]="header">Entrega</order>
+      </ng-template>
+      <ng-template let-row="row" #columnTempos>
+        <div class="one-per-line">
+          <badge *ngFor="let tempo of atividadeService.temposAtividade(row, extra, onDespendidoClick.bind(this))" [badge]="tempo"></badge>
         </div>
-        <div class="row">
-            <input-switch [size]="1" label="Atual" controlName="somente_unidade_atual" [control]="filter!.controls.somente_unidade_atual" (change)="onSomenteUnidadeAtualChange($event)" labelInfo="Somente as atividades da unidade selecionada"></input-switch>
-            <input-search [size]="3" label="Unidade" #unidade [control]="filter!.controls.unidade_id" controlName="unidade_id" [disabled]="filter!.controls.somente_unidade_atual.value ? 'true' : undefined" [dao]="unidadeDao" (change)="onUnidadeChange($event)"></input-search>
-            <input-switch [size]="1" label="Sub." controlName="unidades_subordinadas" [control]="filter!.controls.unidades_subordinadas" labelInfo="Incluir as unidades subordinadas"></input-switch>
-            <input-select [size]="4" [label]="lex.translate('Plano de Entrega')" #planoEntrega itemTodos="- Todos -" [valueTodos]="null" controlName="plano_entrega_id" [control]="filter!.controls.plano_entrega_id" [items]="planosEntregas" (change)="onPlanoEntregaChange($event)"></input-select>
-            <input-select [size]="3" [label]="lex.translate('Entrega do Plano de Entrega')" #planoEntregaEntrega itemTodos="- Todos -" [valueTodos]="null"  controlName="plano_entrega_entrega_id" [control]="filter!.controls.plano_entrega_entrega_id" [items]="planosEntregasEntregas"></input-select>
-        </div>
-        <div class="row">
-            <input-text [size]="1" label="#ID" controlName="numero" maskFormat="999999" [control]="filter!.controls.numero" [labelInfo]="'Número ' + lex.translate('atividade')" [attr.maxlength]=250></input-text>
-            <input-text [size]="3" [label]="'Nº '+ lex.translate('Processo') +' (Sei)'" maskFormat="00000.000000/0000-00" controlName="numero_processo" [control]="filter!.controls.numero_processo" labelInfo="Pesquisa no documento de requisição, conclusão e nos documentos das tarefas" [attr.maxlength]=250></input-text>
-            <input-select [size]="3" label="Status" itemTodos="- Todos -" [valueTodos]="null" [disabled]="fixedFilter?.length && fixedFilter![0]![0] == 'status' ? 'true' : undefined" controlName="status" [control]="filter!.controls.status" [items]="lookup.ATIVIDADE_STATUS_COM_ARQUIVADAS"></input-select>
-            <input-multiselect noForm noBox [size]="4" label="Etiquetas" controlName="etiquetas" [control]="filter!.controls.etiquetas"></input-multiselect>
-            <input-switch [size]="1" label="Arq." controlName="arquivadas" [control]="filter!.controls.arquivadas" labelInfo="Listar também atividades arquivadas"></input-switch>
-        </div>
-        <div class="row">
-            <input-search [size]="3" [label]="lex.translate('Tipo de Atividade')" [control]="filter!.controls.tipo_atividade_id" controlName="tipo_atividade_id" [dao]="tipoAtividadeDao"></input-search>
-            <input-search [size]="3" [label]="lex.translate('Tipo de Processo')" [control]="filter!.controls.tipo_processo_id" controlName="tipo_processo_id" [dao]="tipoProcessoDao" ></input-search>
-            <input-select [size]="2" label="Data" itemTodos="- Todos -" [valueTodos]="null" controlName="data_filtro" [control]="filter!.controls.data_filtro" [items]="DATAS_FILTRO"></input-select>
-            <input-datetime [size]="2" noIcon [disabled]="filter!.controls.data_filtro.value == null ? 'true' : undefined" label="Início" controlName="data_inicio" [control]="filter!.controls.data_inicio" labelInfo="Data início do período"></input-datetime>
-            <input-datetime [size]="2" noIcon [disabled]="filter!.controls.data_filtro.value == null ? 'true' : undefined" label="Fim" controlName="data_fim" [control]="filter!.controls.data_fim" labelInfo="Data fim do período"></input-datetime>
-        </div>
-    </filter>
-    <columns>
-        <column *ngIf="!selectable" type="expand" icon="bi bi-boxes" [align]="'center'" [hint]="lex.translate('Tarefas da atividade')" [template]="columnTarefas" [expandTemplate]="columnExpandedTarefas">
-            <ng-template let-row="row" #columnTarefas>
-                <span *ngIf="row.tarefas?.length" class="badge rounded-pill bg-light text-dark"><i class="bi bi-boxes"></i> {{row.tarefas?.length}}</span>
-            </ng-template>
-            <ng-template let-row="row" #columnExpandedTarefas>
-                <atividade-list-tarefa persist [selectable]="selectable" [editable]="!row.metadados.concluido" [atividade]="row"></atividade-list-tarefa>
-            </ng-template>
-        </column>
-        <column [titleTemplate]="titleIdAtividadeDescricao" [template]="columnAtividadeDescricao" [editTemplate]="columnAtividadeDescricao" [columnEditTemplate]="selectable ? undefined : columnAtividadeDescricaoEdit" [edit]="selectable ? undefined : onColumnAtividadeDescricaoEdit.bind(this)" [save]="selectable ? undefined : onColumnAtividadeDescricaoSave.bind(this)">
-            <ng-template let-header="header" #titleIdAtividadeDescricao>
-                <order by="numero" [header]="header">#ID</order>/{{lex.translate('Tipo de Atividade')}}/
-                <order by="plano_trabalho_entrega.descricao" [header]="header">{{lex.translate('Entrega')}}</order><br>
-                Descrição
-            </ng-template>
-            <ng-template let-row="row" #columnAtividadeDescricao>
-                <span class="text-nowrap d-block">
-                    <badge icon="bi bi-hash" [label]="row.numero" color="light" [data]="row.numero" [click]="atividadeService.onIdClick.bind(this)"></badge>
-                    <badge *ngIf="row.tipo_atividade" [icon]="entityService.getIcon('TipoAtividade')" [label]="row.tipo_atividade.nome" color="light"></badge>
-                    <badge *ngIf="row.plano_trabalho_entrega" [icon]="entityService.getIcon('Entrega')" [label]="row.plano_trabalho_entrega.descricao" color="info" (click)="onEntregaClick(row)" role="button"></badge>
-                </span>
-                <span class="micro-text fw-ligh atividade-descricao">{{row.descricao}}</span>
-                <reaction [entity]="row" origem="ATIVIDADE"></reaction>
-            </ng-template>
-            <ng-template let-row="row" #columnAtividadeDescricaoEdit>
-                <input-textarea label="Descrição" [size]="12" [rows]="2" controlName="descricao" [control]="formEdit!.controls.descricao" required></input-textarea>
-                <input-search [label]="lex.translate('Tipo de atividade')" relativeId="columnTipoAtividade" #tipoAtividade [size]="12" [emptyValue]="null" controlName="tipo_atividade_id" [control]="formEdit!.controls.tipo_atividade_id" [dao]="tipoAtividadeDao" [labelInfo]="lex.translate('Tipo de atividade') + ' utilizado para classificar a atividade'" [required]="!auth.hasPermissionTo('MOD_ATV_TIPO_ATV_VAZIO') ? 'true' : undefined"></input-search>
-            </ng-template>
-        </column>
-        <column [title]="'Etiquetas'" [width]="100" [template]="columnEtiquetas" [editTemplate]="columnEtiquetas" [columnEditTemplate]="selectable ? undefined : columnEtiquetasEdit" [edit]="selectable ? undefined : onColumnEtiquetasEdit.bind(this)" [save]="selectable ? undefined : onColumnEtiquetasSave.bind(this)">
-            <ng-template let-row="row" #columnEtiquetas>
-                <badge *ngFor="let etiqueta of row.etiquetas" [lookup]="etiqueta" [click]="onEtiquetaClick.bind(this)"></badge>
-            </ng-template>
-            <ng-template let-row="row" #columnEtiquetasEdit>
-                <input-multiselect controlName="etiquetas" [size]="12" [control]="formEdit.controls.etiquetas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
-                    <input-select [size]="12" #etiqueta controlName="etiqueta" nullable itemNull="- Selecione -" detailsButton detailsButtonIcon="bi bi-tools" (details)="onEtiquetaConfigClick()" [control]="formEdit.controls.etiqueta" [items]="etiquetas"></input-select>
-                </input-multiselect>
-            </ng-template>
-        </column>
-        <column [titleTemplate]="titlePlanoTrabalho" [template]="columnPlanoTrabalho">
-            <ng-template let-header="header" #titlePlanoTrabalho>
-                Plano de trabalho
-            </ng-template>
-            <ng-template let-row="row" #columnPlanoTrabalho>
-               <span class="d-block" *ngIf="row.planoTrabalho">{{dao!.getDateFormatted(row.planoTrabalho.data_inicio)}} <br>{{ " até "+dao!.getDateFormatted(row.planoTrabalho.data_fim)}}</span>
-            </ng-template>
-        </column>
-
-        <column [titleTemplate]="titleUnResponsavelDemandante" [template]="columnPessoas">
-            <ng-template let-header="header" #titleUnResponsavelDemandante>
-                Un./<order by="usuario.nome" [header]="header">{{lex.translate('Responsável')}}</order><br>
-                <order by="demandante.nome" [header]="header">Demandante</order>
-            </ng-template>
-            <ng-template let-row="row" #columnPessoas>
-                <div class="text-nowrap">
-                    <badge icon="bi bi-briefcase" color="light" [label]="row.unidade.sigla"></badge>
-                    <badge [icon]="'bi ' + (row.usuario?.nome?.length ? 'bi-person-check' : 'bi-person-x')" color="light" [label]="util.apelidoOuNome(row.usuario, true) || '(Não atribuído)'" [hint]="'Responsável: ' + (row.usuario?.nome || 'Não atribuido a nenhum usuário')"></badge>
-                </div>
-                <badge icon="bi bi-cursor" color="light" [label]="util.apelidoOuNome(row.demandante, true) || 'Desconhecido'" [hint]="'Demandante: ' + (row.demandante?.nome || 'Desconhecido')"></badge>
-            </ng-template>
-        </column>
-        <column [titleTemplate]="titleTempos" [template]="columnTempos">
-            <ng-template let-header="header" #titleTempos>
-                Tempos
-                <order by="data_distribuicao" [header]="header">Distribuição</order><br>
-                <order by="data_estipulada_entrega" [header]="header">Prazo</order>
-                <order by="data_entrega" [header]="header">Entrega</order>
-            </ng-template>
-            <ng-template let-row="row" #columnTempos>
-                <div class="one-per-line">
-                    <badge *ngFor="let tempo of atividadeService.temposAtividade(row, extra, onDespendidoClick.bind(this))" [badge]="tempo"></badge>
-                </div>
-            </ng-template>
-        </column>
-        <column [title]="'Progresso\nChecklist'" [width]="200" [columnEditTemplate]="selectable ? undefined : columnProgressoEtiquetasChecklistEdit" [template]="columnProgressoEtiquetasChecklist" [edit]="selectable ? undefined : onColumnProgressoEtiquetasChecklistEdit.bind(this)" [save]="selectable ? undefined : onColumnProgressoEtiquetasChecklistSave.bind(this)">
-            <ng-template let-row="row" #columnProgressoEtiquetasChecklist>
-                <progress-bar [value]="row.progresso" color="success"></progress-bar>
-                <separator *ngIf="row.checklist?.length" small title="Checklist"></separator>
-                <table *ngIf="row.checklist?.length">
-                    <tr *ngFor="let check of row.checklist">
-                        <td><i *ngIf="check.checked" class="bi bi-check-circle"></i></td>
-                        <td class="micro-text fw-ligh">{{check.texto}}</td>
-                    </tr>
-                </table>
-            </ng-template>
-            <ng-template let-row="row" #columnProgressoEtiquetasChecklistEdit>
-                <input-number [size]="12" [decimals]="2" label="Progresso" sufix="%" icon="bi bi-clock" controlName="progresso" [control]="formEdit.controls.progresso" labelInfo="Progresso de execução (% Concluído)"></input-number>
-                <separator *ngIf="row.checklist?.length" small title="Checklist"></separator>
-                <table *ngIf="row.checklist?.length">
-                    <tr *ngFor="let check of checklist; let i = index">
-                        <td><input-switch [size]="12" scale="small" [source]="checklist" [path]="i + '.checked'"></input-switch></td>
-                        <td class="micro-text fw-ligh">{{check.texto}}</td>
-                    </tr>
-                </table>
-            </ng-template>
-        </column>
-        <column [title]="'nº Processo/Status\nComentários'" [width]="250" [template]="columnNumero">
-            <ng-template let-row="row" #columnNumero>
-                <documentos-badge [documento]="row.documento_requisicao"></documentos-badge>
-                <span class="d-block">
-                    <badge *ngFor="let status of atividadeService.getStatus(row)" [data]="status" [color]="status.color" [icon]="status.icon" [label]="status.label" [click]="status.data?.filter ? onStatusClick.bind(this) : undefined"></badge>
-                </span>
-                <comentarios-widget [entity]="row" [selectable]="selectable" origem="ATIVIDADE" [grid]="grid"></comentarios-widget>
-            </ng-template>
-        </column>
-        <column *ngIf="!selectable" type="options" [metadata]="optionsMetadata" [dynamicOptions]="atividadeService.dynamicOptions.bind(this)" [dynamicButtons]="atividadeService.dynamicButtons.bind(this)" [options]="options"></column>
-    </columns>
-    <pagination [rows]="rowsLimit"></pagination>
+      </ng-template>
+    </column>
+    <column [title]="'Progresso\nChecklist'" [maxWidth]="250" [columnEditTemplate]="selectable ? undefined : columnProgressoEtiquetasChecklistEdit" [template]="columnProgressoEtiquetasChecklist" [edit]="selectable ? undefined : onColumnProgressoEtiquetasChecklistEdit.bind(this)" [save]="selectable ? undefined : onColumnProgressoEtiquetasChecklistSave.bind(this)">
+      <ng-template let-row="row" #columnProgressoEtiquetasChecklist>
+        <progress-bar [value]="row.progresso" color="success"></progress-bar>
+        <separator *ngIf="row.checklist?.length" small title="Checklist"></separator>
+        <table *ngIf="row.checklist?.length">
+          <tr *ngFor="let check of row.checklist">
+            <td><i *ngIf="check.checked" class="bi bi-check-circle"></i></td>
+            <td class="micro-text fw-ligh">{{check.texto}}</td>
+          </tr>
+        </table>
+      </ng-template>
+      <ng-template let-row="row" #columnProgressoEtiquetasChecklistEdit>
+        <input-number [size]="12" [decimals]="2" label="Progresso" sufix="%" icon="bi bi-clock" controlName="progresso" [control]="formEdit.controls.progresso" labelInfo="Progresso de execução (% Concluído)"></input-number>
+        <separator *ngIf="row.checklist?.length" small title="Checklist"></separator>
+        <table *ngIf="row.checklist?.length">
+          <tr *ngFor="let check of checklist; let i = index">
+            <td><input-switch [size]="12" scale="small" [source]="checklist" [path]="i + '.checked'"></input-switch></td>
+            <td class="micro-text fw-ligh">{{check.texto}}</td>
+          </tr>
+        </table>
+      </ng-template>
+    </column>
+    <column [title]="'nº Processo/Status\nComentários'" [width]="250" [template]="columnNumero">
+      <ng-template let-row="row" #columnNumero>
+        <documentos-badge [documento]="row.documento_requisicao"></documentos-badge>
+        <span class="d-block">
+          <badge *ngFor="let status of atividadeService.getStatus(row)" [data]="status" [color]="status.color" [icon]="status.icon" [label]="status.label" [click]="status.data?.filter ? onStatusClick.bind(this) : undefined"></badge>
+        </span>
+        <comentarios-widget [entity]="row" [selectable]="selectable" origem="ATIVIDADE" [grid]="grid"></comentarios-widget>
+      </ng-template>
+    </column>
+    <column *ngIf="!selectable" type="options" [metadata]="optionsMetadata" [dynamicOptions]="atividadeService.dynamicOptions.bind(this)" [dynamicButtons]="atividadeService.dynamicButtons.bind(this)" [options]="options"></column>
+  </columns>
+  <pagination [rows]="rowsLimit"></pagination>
 </grid>
-

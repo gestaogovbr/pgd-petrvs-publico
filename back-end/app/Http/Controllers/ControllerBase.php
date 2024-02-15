@@ -53,7 +53,7 @@ abstract class ControllerBase extends Controller
     public function getUnidade(Request $request) {
         $result = null;
         $headers = $this->getPetrvsHeader($request);
-        $unidade_id = !empty($headers) && !empty($headers["unidade_id"]) ? $headers["unidade_id"] : ($request->hasSession() ? $request->session()->get("unidade") : "");
+        $unidade_id = !empty($headers) && !empty($headers["unidade_id"]) ? $headers["unidade_id"] : ($request->hasSession() ? $request->session()->get("unidade_id") : "");
         $lotacao = !empty(self::loggedUser()) ? Usuario::find(self::loggedUser()->id)?->lotacao?->unidade : null;
         if(!empty($unidade_id)) {
             $usuario = Usuario::where("id", self::loggedUser()?->id)->with(["areasTrabalho" => function ($query) use ($unidade_id) {
@@ -346,7 +346,6 @@ abstract class ControllerBase extends Controller
                 'data' => ['required'],
                 'with' => ['array']
             ]);
-            //foreach (array_keys($request->all()) as $key) {
             foreach (array_keys($data["data"]) as $key) {
                 if($key != "id" && !in_array($key, $this->updatable)) {
                     return response()->json(['error' => "Não é possível atualizar"]);
@@ -361,7 +360,7 @@ abstract class ControllerBase extends Controller
             ]);
             return response()->json([
                 'success' => true,
-                'rows' => [$result] //$this->service->update($request->all(), $unidade)
+                'rows' => [$result] 
             ]);
         } catch (Throwable $e) {
             return response()->json(['error' => $e->getMessage()]);

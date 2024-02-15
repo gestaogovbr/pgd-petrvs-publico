@@ -30,7 +30,7 @@ class DocumentoService extends ServiceBase {
         return $data;
     }
 
-    public function afterStore($entity, $action) {
+    public function extraStore($entity, $unidade, $action) {
         $documento = $entity;
         if($documento->especie == "TCR" && $action == ServiceBase::ACTION_INSERT) {
             if(!empty($documento->plano_trabalho_id) && $documento->status == "GERADO") {
@@ -55,15 +55,8 @@ class DocumentoService extends ServiceBase {
             foreach($documentos as $documento) {
                 $especie = $documento->especie;
                 if(count($documento->assinaturas) == 0) { 
-                    $this->registrarAssinatura($documento, $usuario->id,$request); 
-                    if($especie == "TCR") {
-                        /*
-                            (RN_PTR_O)
-                            Enquanto faltar assinatura no TCR, o plano vai para o (ou permanece no) status de 'AGUARDANDO_ASSINATURA'. Quando o último assinar o TCR, o plano vai para o status 'ATIVO' (RN_PTR_D);
-                        */
-                        $status = $this->planoTrabalho->haAssinaturasFaltantes($documento->planoTrabalho) ? 'AGUARDANDO_ASSINATURA' : 'ATIVO';
-                        $this->status->atualizaStatus($documento->planoTrabalho, $status, 'Registrada a assinatura do servidor: ' . $usuario->nome . ' - CPF ' . $usuario->cpf . '.');                        
-                    }
+                    $this->registrarAssinatura($documento, $usuario->id, $request); 
+                    if($especie == "TCR") $this->planoTrabalhoService->assinaturaTcr($documento, $usuario);
                 } else {
                     /* Remove o documento que já foi assinado */
                     $data["documentos_ids"] = array_diff($data["documentos_ids"], [$documento->id]);
@@ -78,9 +71,8 @@ class DocumentoService extends ServiceBase {
     }
 
     public function registrarAssinatura($documento, $usuario_id,$request){
-        $unidadeLogin = Auth::user()->areasTrabalho[0]->unidade;
         $assinatura = new DocumentoAssinatura();
-        $assinatura->data_assinatura = $this->unidadeService->hora($unidadeLogin->id);
+        $assinatura->data_assinatura = $this->dataHora();
         $assinatura->documento_id = $documento->id;
         $assinatura->usuario_id = $usuario_id;
         //$assinatura->assinatura = hash('md5', $assinatura->data_assinatura->toDateTimeString() . $usuario_id . $documento->conteudo);
@@ -101,8 +93,6 @@ class DocumentoService extends ServiceBase {
             }
             $assinaturas .= '</div>';
         }
-        
-
         $pdf = Pdf::loadHTML($head . $documento->conteudo . $assinaturas);        
         $pdf->render();
         return $pdf->output();

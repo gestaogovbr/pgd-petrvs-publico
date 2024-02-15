@@ -31,4 +31,6 @@ class Change extends Model
         'delta' => AsJson::class
     ];
 
+    public function usuario() { return $this->belongsTo(Usuario::class); }
+
 }

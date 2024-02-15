@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Injector, Input, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Injector, Input, Output, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
@@ -17,6 +17,7 @@ import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { PlanoTrabalhoService } from '../plano-trabalho.service';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
+import { UnidadeService } from 'src/app/services/unidade.service';
 
 @Component({
   selector: 'plano-trabalho-list-entrega',
@@ -34,6 +35,8 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   @Input() set disabled(value: boolean) { if (this._disabled != value) this._disabled = value; } get disabled(): boolean { return this._disabled; }
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
   @Input() cdRef: ChangeDetectorRef;
+  @Input() set planoTrabalhoEditavel(value: boolean ) { if (this._planoTrabalhoEditavel != value) this._planoTrabalhoEditavel = value} get planoTrabalhoEditavel(): boolean {return this._planoTrabalhoEditavel }
+  @Output() atualizaPlanoTrabalhoEvent = new EventEmitter<string>();
 
   public get items(): PlanoTrabalhoEntrega[] {
     if (!this.gridControl.value) this.gridControl.setValue(new PlanoTrabalho());
@@ -45,10 +48,13 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   public planoEntregaDao?: PlanoEntregaDaoService;
   public peeDao?: PlanoEntregaEntregaDaoService;
   public planoTrabalhoService: PlanoTrabalhoService;
+  public unidadeService: UnidadeService;
   public totalForcaTrabalho: number = 0;
   public entregas: LookupItem[] = [];
 
   private _disabled: boolean = false;
+  private _planoTrabalhoEditavel: boolean = true;
+  //quando adiciona um novo e edita o mesmo, salva 2x no banco
 
   constructor(public injector: Injector) {
     super(injector);
@@ -58,6 +64,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     this.planoEntregaDao = injector.get<PlanoEntregaDaoService>(PlanoEntregaDaoService);
     this.planoTrabalhoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
     this.peeDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
+    this.unidadeService = injector.get<UnidadeService>(UnidadeService);
     this.join = ["entrega", "plano_entrega_entrega.entrega", "plano_entrega_entrega.plano_entrega:id,unidade_id", "plano_entrega_entrega.plano_entrega.unidade:id,sigla"];
     this.form = this.fh.FormBuilder({
       origem: { default: null },
@@ -79,7 +86,8 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
     if (['forca_trabalho'].indexOf(controlName) >= 0 && control.value == 1) return result;
-    if (['descricao', 'forca_trabalho'].indexOf(controlName) >= 0 && !control.value?.length) result = "Obrigatório!";
+    if (['forca_trabalho'].indexOf(controlName) >= 0 && !control.value) result = "Obrigatório!";
+    if (['descricao'].indexOf(controlName) >= 0 && !control.value?.length) result = "Obrigatório!";
     if (['forca_trabalho'].indexOf(controlName) >= 0 && (control.value < 1 || control.value > 100)) result = "Deve estar entre 1 e 100";
     if (['plano_entrega_entrega_id'].indexOf(controlName) >= 0) {
       if (['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(this.form?.controls.origem.value) && !control.value) result = "Obrigatório!";
@@ -89,15 +97,15 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
   }
 
   public validateEntregas(): string | undefined {
-    let planoInterval = {start: this.entity!.data_inicio, end: this.entity!.data_fim};
-    for(let entrega of this.items) {
+    let planoInterval = { start: this.entity!.data_inicio, end: this.entity!.data_fim };
+    for (let entrega of this.items) {
       let entregaPlano = entrega.plano_entrega_entrega;
       // valida as datas das entregas quando vinculado a uma entrega do plano de entrega
-      if(entregaPlano) {
+      if (entregaPlano) {
         let entregaDataFim = entregaPlano!.data_fim ? entregaPlano!.data_fim : (entregaPlano!.data_inicio.getTime() <= this.entity!.data_fim.getTime() ? this.entity!.data_fim : undefined);
-        let entregaInterval = {start: entregaPlano!.data_inicio, end: entregaPlano!.data_fim || entregaPlano!.data_inicio};
-        if(!entregaDataFim || !this.util.intersection([entregaInterval, planoInterval])) {
-          return this.lex.translate("Entrega") + " " + entregaPlano!.descricao + " possui datas incompatíveis (início " + 
+        let entregaInterval = { start: entregaPlano!.data_inicio, end: entregaPlano!.data_fim || entregaPlano!.data_inicio };
+        if (!entregaDataFim || !this.util.intersection([entregaInterval, planoInterval])) {
+          return this.lex.translate("Entrega") + " " + entregaPlano!.descricao + " possui datas incompatíveis (início " +
             this.util.getDateFormatted(entregaPlano!.data_inicio) + (entregaPlano!.data_fim ? "e fim " + this.util.getDateFormatted(entregaPlano!.data_fim) : "") + ")";
         }
       }
@@ -114,7 +122,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     this.entity = this.metadata?.entity || this.entity;
     this.totalForcaTrabalho = Math.round(this.somaForcaTrabalho(this.entity?.entregas) * 100) / 100;
     this.entity!._metadata = this.entity!._metadata || {};
-    this.entity!._metadata.novaEntrega = undefined;
+    this.entity!._metadata.novaEntrega = undefined;    
   }
 
   /**
@@ -139,10 +147,16 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     form.controls.descricao.setValue(row.descricao);
     form.controls.forca_trabalho.setValue(row.forca_trabalho);
     form.controls.plano_trabalho_id.setValue(row.plano_trabalho_id);
-    form.controls.plano_entrega_entrega_id.setValue(null);
     form.controls.orgao.setValue(null);
-    if (entrega._status == "ADD") { // É uma nova entrega
+    form.controls.plano_entrega_entrega_id.setValue(null);
+    if (row.plano_entrega_entrega) {
+      form.controls.plano_entrega_id.setValue(row.plano_entrega_entrega.plano_entrega.id);
+      form.controls.plano_entrega_entrega_id.setValue(row.plano_entrega_entrega_id);
+    }
+    if (entrega._status == "ADD" && !form.controls.plano_entrega_id.value) { // É uma nova entrega
       form.controls.origem.setValue('PROPRIA_UNIDADE');
+      let planosEntregas = await this.planoEntregaDao!.query({ where: [["unidade_id", "==", this.entity!.unidade_id], ["status", "==", "ATIVO"]] }).asPromise();//["data_inicio", "<=", this.entity!.data_fim], ["data_fim", ">=", this.entity!.data_inicio]
+      form.controls.plano_entrega_id.setValue(planosEntregas[0].id);
     } else if (entrega.plano_entrega_entrega?.plano_entrega?.unidade_id == this.entity!.unidade_id) {
       form.controls.origem.setValue('PROPRIA_UNIDADE');
       await this.carregarEntregas(entrega.plano_entrega_entrega.plano_entrega_id!);
@@ -151,7 +165,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
       form.controls.origem.setValue('OUTRA_UNIDADE');
       await this.carregarEntregas(entrega.plano_entrega_entrega.plano_entrega_id!);
       form.controls.plano_entrega_entrega_id.setValue(entrega.plano_entrega_entrega_id);
-    } else if (!!entrega.orgao?.length) { 
+    } else if (!!entrega.orgao?.length) {
       form.controls.origem.setValue('OUTRO_ORGAO');
       form.controls.orgao.setValue(entrega.orgao);
     } else {
@@ -172,6 +186,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
         this.isNoPersist ? Object.assign(row, { _status: "DELETE" }) : await this.dao?.delete(row.id);
       } finally {
         this.loading = false;
+        this.atualizaPlanoTrabalhoEvent.emit(this.entity!.id);
       }
       this.totalForcaTrabalho = Math.round((this.totalForcaTrabalho - ((row as PlanoTrabalhoEntrega).forca_trabalho * 1)) * 100) / 100;
       return this.isNoPersist ? false : true; // (*3)
@@ -187,7 +202,6 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
    * @returns 
    */
   public async saveEntrega(form: FormGroup, row: any) {
-
     this.entity!._metadata = this.entity!._metadata || {};
     this.entity!._metadata.novaEntrega = row as PlanoTrabalhoEntrega;
     this.entity!._metadata.novaEntrega.plano_entrega_entrega_id = this.form?.controls.plano_entrega_entrega_id.value;
@@ -196,7 +210,7 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     this.entity!._metadata.novaEntrega.forca_trabalho = this.form?.controls.forca_trabalho.value;
     this.loading = true;
     try {
-      if (!this.isNoPersist) /* persistente */ { (this.dao as PlanoTrabalhoEntregaDaoService).save(this.entity!._metadata.novaEntrega, this.join); }
+      if (!this.isNoPersist) /* persistente */ { await (this.dao as PlanoTrabalhoEntregaDaoService).save(this.entity!._metadata.novaEntrega, this.join); }
     } catch (e: any) {
       this.error(e.message ? e.message : e.toString() || e);
     } finally {
@@ -215,6 +229,8 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
    */
   public saveEndEntrega(row: any) {
     this.entity!._metadata = null;
+          
+    this.atualizaPlanoTrabalhoEvent.emit(this.entity!.id);
   }
 
   /**
@@ -232,9 +248,10 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
    */
   public async carregarEntregas(idPlanoOuPlano: string | PlanoEntrega): Promise<void> {
     let planoEntrega = typeof idPlanoOuPlano == 'string' ? await this.planoEntregaDao!.getById(idPlanoOuPlano, ["entregas.entrega:id,nome", "unidade"]) : idPlanoOuPlano;
-    let planoEntregaComUnidade = {id: planoEntrega?.id, unidade_id: planoEntrega?.unidade_id, unidade: planoEntrega?.unidade};
-    this.entregas = planoEntrega?.entregas.map(epe => Object.assign({}, { key: epe.id, value: epe.descricao || epe.entrega?.nome || "Desconhecido", data: Object.assign(epe, {plano_entrega: planoEntregaComUnidade}) })) || [];
-    if(!this.entregas.find(x => x.key == this.form!.controls.plano_entrega_entrega_id.value)) this.form!.controls.plano_entrega_entrega_id.setValue(null);
+    let planoEntregaComUnidade = { id: planoEntrega?.id, unidade_id: planoEntrega?.unidade_id, unidade: planoEntrega?.unidade };
+    this.entregas = planoEntrega?.entregas.map(epe => Object.assign({}, { key: epe.id, value: epe.descricao || epe.entrega?.nome || "Desconhecido", data: Object.assign(epe, { plano_entrega: planoEntregaComUnidade }) })) || [];
+    this.entregas.sort((a, b) => (a.value > b.value ? 1 : -1));
+    if (!this.entregas.find(x => x.key == this.form!.controls.plano_entrega_entrega_id.value)) this.form!.controls.plano_entrega_entrega_id.setValue(null);
   }
 
   /* ---------  TRATAMENTO DOS EVENTOS ----------- */
@@ -244,30 +261,32 @@ export class PlanoTrabalhoListEntregaComponent extends PageFrameBase {
     this.cdRef.detectChanges();
     if (value == 'OUTRO_ORGAO') {
       this.form?.controls.plano_entrega_entrega_id.setValue(null);
-    } else if(value == 'SEM_ENTREGA') {
+    } else if (value == 'SEM_ENTREGA') {
       this.form?.controls.orgao.setValue(null);
       this.form?.controls.plano_entrega_entrega_id.setValue(null);
-    } if (value == 'OUTRA_UNIDADE') { //if (value == 'PROPRIA_UNIDADE' || value == 'OUTRA_UNIDADE')
+    } else if (value == 'OUTRA_UNIDADE') {//if (value == 'PROPRIA_UNIDADE' || value == 'OUTRA_UNIDADE')
       this.form?.controls.orgao.setValue(null);
-      this.loading = true;
-      this.planoEntrega?.onSelectClick(new Event("SELECT"));
-      this.loading = false;
-    }
-      /*      try {
-         let planosEntregas = await this.planoEntregaDao!.query({where: [["unidade_id", "==", this.entity!.unidade_id], ["status", "==", "ATIVO"], ["data_inicio", "<=", this.entity!.data_fim], ["data_fim", ">=", this.entity!.data_inicio]]}).asPromise();
-        if(planosEntregas.length == 1) {
-          this.form?.controls.plano_entrega_id.setValue(planosEntregas[0].id);
-        } else if(this.planoEntrega?.selectedEntity?.unidade_id != this.entity!.unidade_id) {
-          this.planoEntrega?.onSelectClick(new Event("SELECT"));
-        } 
+      if (!this.form?.controls.plano_entrega_id.value) {
+        this.loading = true;
         this.planoEntrega?.onSelectClick(new Event("SELECT"));
-      } finally {
         this.loading = false;
       }
-    } if (value == 'OUTRA_UNIDADE') {
-      this.form?.controls.orgao.setValue(null);
+    }
+    /*      try {
+       let planosEntregas = await this.planoEntregaDao!.query({where: [["unidade_id", "==", this.entity!.unidade_id], ["status", "==", "ATIVO"], ["data_inicio", "<=", this.entity!.data_fim], ["data_fim", ">=", this.entity!.data_inicio]]}).asPromise();
+      if(planosEntregas.length == 1) {
+        this.form?.controls.plano_entrega_id.setValue(planosEntregas[0].id);
+      } else if(this.planoEntrega?.selectedEntity?.unidade_id != this.entity!.unidade_id) {
+        this.planoEntrega?.onSelectClick(new Event("SELECT"));
+      } 
       this.planoEntrega?.onSelectClick(new Event("SELECT"));
-    }*/
+    } finally {
+      this.loading = false;
+    }
+  } if (value == 'OUTRA_UNIDADE') {
+    this.form?.controls.orgao.setValue(null);
+    this.planoEntrega?.onSelectClick(new Event("SELECT"));
+  }*/
   }
 
   public onPlanoEntregaChange(event: Event) {

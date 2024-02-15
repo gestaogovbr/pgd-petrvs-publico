@@ -101,9 +101,9 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
 
-    /*if(['codigo_ibge', 'nome', 'uf'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if(['cidade_id','estados', 'apresentacao','telefone'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
-    }  else if(['timezone'].indexOf(controlName) >= 0 && !control.value) {
+    }  /*else if(['timezone'].indexOf(controlName) >= 0 && !control.value) {
       result = "Valor não pode ser zero.";
     }*/
     return result;
@@ -119,7 +119,7 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
     let entity = curriculuns?.length ? curriculuns[0] : new Curriculum();//this.entity
     curriculuns?.length ? (this.id = curriculuns[0].id) : (this.id = "");
     const cidade = entity.cidade_id != '' ? await this.cidadeDao?.getById(entity.cidade_id) : null;
-    console.log('CIDADE',cidade)
+    //console.log('CIDADE',cidade)
     //this.form?.controls.estados.setValue(this.lookup.UF.find(x => x.key == 'AM'));//cidade.uf));
     let uf = this.lookup.getLookup(this.lookup.UF, cidade?.uf);
     this.form?.controls.estados.setValue(uf?.key);//cidade.uf));
@@ -130,18 +130,15 @@ export class CurriculumFormComponent extends PageFormBase<Curriculum, Curriculum
   }
 
   public saveData(form: IIndexable): Promise<Curriculum> {
-    //console.log('FORMULARIOGRAD', this.formGraduacao!.value)
-    //console.log('FORMULARIO', this.form!.value)
+
     return new Promise<Curriculum>((resolve, reject) => {
-      // this.entity!.usuario_id=this.auth.usuario!.id;
-      
+    
       let curriculum = this.util.fill(new Curriculum(), this.entity!);
-      //curriculum.usuario_id=this.auth.usuario?.id;
       curriculum.id = this.id!;
      // curriculum.quantidade_filhos == "" ? (curriculum.quantidade_filhos = 0) : (curriculum.quantidade_filhos = 2);
-          curriculum = this.util.fillForm(curriculum, this.form!.value);
+      curriculum = this.util.fillForm(curriculum, this.form!.value);
       curriculum.usuario_id = this.auth.usuario?.id;
-      curriculum.cidade_id = "86297f92-d919-e12f-476d-6aff99c46809";
+      //curriculum.cidade_id = "86297f92-d919-e12f-476d-6aff99c46809";
       //curriculum.graduacoes = this.formGraduacao!.controls.graduacoes.value.map((x: any) => Object.assign({},{curso_id:x.data.curso , pretensao:x.data.pretensao}));
       curriculum.graduacoes = this.form!.controls.graduacoes.value.filter((x: CurriculumGraduacao) => x._status?.length);
       

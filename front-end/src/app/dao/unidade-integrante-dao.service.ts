@@ -20,21 +20,32 @@ export class UnidadeIntegranteDaoService extends DaoBaseService<UnidadeIntegrant
     this.inputSearchConfig.searchFields = [];
   }  
 
-  public loadIntegrantes(unidade_id: string, usuario_id: string): Promise<LoadIntegrantesResult> {
+  /**
+   * 
+   * @param unidade_id 
+   * @param usuario_id 
+   * @returns 
+   */
+  public carregarIntegrantes(unidade_id: string, usuario_id: string): Promise<LoadIntegrantesResult> {
     return new Promise<LoadIntegrantesResult>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/load-integrantes', {unidade_id, usuario_id}).subscribe(response => {
+      this.server.post('api/' + this.collection + '/carregar-integrantes', {unidade_id, usuario_id}).subscribe(response => {
         resolve({
           integrantes: response?.rows || [],
-          unidade: response?.unidade,
-          usuario: response?.usuario
+          //unidade: response?.unidade,
+          //usuario: response?.usuario
         });
       }, error => reject(error));
     });
   }
 
-  public saveIntegrante(integrantesConsolidados: IntegranteConsolidado[]): Promise<IntegranteConsolidado[]> {
+  /**
+   * 
+   * @param integrantesConsolidados 
+   * @returns 
+   */
+  public salvarIntegrantes(integrantesConsolidados: IntegranteConsolidado[], metadata?: any): Promise<IntegranteConsolidado[]> {
     return new Promise<IntegranteConsolidado[]>((resolve, reject) => {
-      this.server.post('api/' + this.collection + '/save-integrante', {integrantesConsolidados}).subscribe(response => {
+      this.server.post('api/' + this.collection + '/salvar-integrantes', {integrantesConsolidados, metadata}).subscribe(response => {
         if(response?.error) reject(response.error); else resolve(response?.data || null);
       }, 
       error => reject(error));
