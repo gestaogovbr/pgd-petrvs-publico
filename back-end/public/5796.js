@@ -1777,9 +1777,9 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
       _this7.formEdit.controls.progresso.setValue(row.progresso);
       _this7.formEdit.controls.etiquetas.setValue(row.etiquetas);
       _this7.formEdit.controls.etiqueta.setValue(null);
-      _this7.etiquetas = _this7.util.merge(row.tipo_atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key);
+      _this7.etiquetas = _this7.util.merge(row.tipo_atividade?.etiquetas, row.plano_trabalho.unidade?.etiquetas, (a, b) => a.key == b.key);
       _this7.etiquetas = _this7.util.merge(_this7.etiquetas, _this7.auth.usuario.config?.etiquetas, (a, b) => a.key == b.key);
-      _this7.etiquetas = _this7.util.merge(_this7.etiquetas, yield _this7.carregaEtiquetasUnidadesAscendentes(row.unidade), (a, b) => a.key == b.key);
+      _this7.etiquetas = _this7.util.merge(_this7.etiquetas, yield _this7.carregaEtiquetasUnidadesAscendentes(row.plano_trabalho.unidade), (a, b) => a.key == b.key);
       _this7.checklist = _this7.util.clone(row.checklist);
     })();
   }

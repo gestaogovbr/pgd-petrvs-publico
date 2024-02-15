@@ -20,9 +20,11 @@ class AtividadeTarefaService extends ServiceBase {
 
     public function proxyUpdate($data, $unidade) {
         /* (RN_CSLD_12) e (RN_CSLD_13) */
-        $tarefa = AtividadeTarefa::find($data["id"]); 
-        $lastConsolidacao = $this->atividadeService->lastConsolidacao($data["atividade_id"]);
+        $tarefa = AtividadeTarefa::find($data["id"]);
+        //$lastConsolidacao = $this->atividadeService->lastConsolidacao($data["atividade_id"]);
+        $lastConsolidacao = $this->atividadeService->lastConsolidacao($tarefa->atividade_id);
         if(!empty($lastConsolidacao) && $lastConsolidacao->status != "INCLUIDO" && UtilService::asTimestamp($lastConsolidacao->data_conclusao) > UtilService::asTimestamp($tarefa->data_conclusao)) throw new ServerException("ValidateAtividadeTarefa", "Já existe uma consolidação com esta tarefa como concluída.");
+        return $data;
     }
 
     public function proxyQuery(&$query, &$data) {
