@@ -3753,17 +3753,16 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
   saveData(form) {
     var _this4 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      //let plano = this.loadEntity();
-      /* Atualiza o documento */
-      _this4.atualizarTcr();
-      /* Confirma dados do documento */
-      _this4.documentos?.saveData();
-      _this4.entity.documentos = _this4.entity.documentos.filter(documento => {
-        return ["ADD", "EDIT", "DELETE"].includes(documento._status || "");
-      });
-      /* Salva separadamente as informações do plano */
       _this4.submitting = true;
       try {
+        /* Atualiza o documento */
+        _this4.atualizarTcr();
+        /* Confirma dados do documento */
+        _this4.documentos?.saveData();
+        _this4.entity.documentos = _this4.entity.documentos.filter(documento => {
+          return ["ADD", "EDIT", "DELETE"].includes(documento._status || "");
+        });
+        /* Salva separadamente as informações do plano */
         let requests = [_this4.dao.save(_this4.entity, _this4.join)];
         if (_this4.form.controls.editar_texto_complementar_unidade.value) requests.push(_this4.unidadeDao.update(_this4.entity.unidade_id, {
           texto_complementar_plano: _this4.form.controls.unidade_texto_complementar.value

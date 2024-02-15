@@ -411,6 +411,7 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
     super(injector);
     this.injector = injector;
     this.items = [];
+    this.perfilUsuario = "";
     this.validate = (control, controlName) => {
       let result = null;
       if (["unidade_id", "atribuicoes"].includes(controlName) && !control.value?.length) {
@@ -466,7 +467,8 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
         try {
           yield _this2.integranteDao.carregarIntegrantes("", entity.id).then(resposta => integrantes = resposta.integrantes.filter(x => x.atribuicoes?.length > 0));
         } finally {
-          _this2.formPerfil.controls.perfil_id.setValue(entity.perfil_id);
+          _this2.perfilUsuario = entity.perfil_id;
+          _this2.formPerfil.controls.perfil_id.setValue(_this2.perfilUsuario);
           _this2.items = [];
           integrantes.forEach(i => _this2.items?.push(_this2.integranteService.completarIntegrante(i, i.id, entity.id, i.atribuicoes)));
           _this2.items = _this2.integranteService.ordenarIntegrantes(_this2.items);
@@ -476,18 +478,17 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
       }
     })();
   }
-  saveData(formPerfil) {
+  salvarPerfil() {
     var _this3 = this;
-    return new Promise( /*#__PURE__*/function () {
-      var _ref2 = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (resolve, reject) {
-        let usuario = _this3.entity;
-        usuario.perfil_id = _this3.formPerfil.controls.perfil_id.value;
-        resolve(usuario);
+    return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      _this3.submitting = true;
+      _this3.usuarioDao?.update(_this3.entity.id, {
+        perfil_id: _this3.formPerfil.controls.perfil_id.value
+      }, []).then(usuario => {
+        _this3.perfilUsuario = usuario.perfil_id;
+        _this3.submitting = false;
       });
-      return function (_x, _x2) {
-        return _ref2.apply(this, arguments);
-      };
-    }());
+    })();
   }
   addItemHandle() {
     let result = undefined;
@@ -676,6 +677,9 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
       return undefined;
     })();
   }
+  isNoButtons() {
+    return this.isNoPersist ? 'true' : this.formPerfil.controls.perfil_id.value == this.perfilUsuario ? 'true' : undefined;
+  }
 }
 _class = UsuarioIntegranteComponent;
 _class.ɵfac = function UsuarioIntegranteComponent_Factory(t) {
@@ -709,7 +713,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplate"](0, UsuarioIntegranteComponent_span_0_Template, 3, 1, "span", 0);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementStart"](1, "div", 1)(2, "div", 2)(3, "editable-form", 3);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵlistener"]("submit", function UsuarioIntegranteComponent_Template_editable_form_submit_3_listener() {
-        return ctx.saveData.bind(ctx);
+        return ctx.salvarPerfil();
       });
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementStart"](4, "div", 1);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelement"](5, "input-select", 4);
@@ -737,7 +741,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdef
       const _r9 = _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵreference"](21);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("ngIf", !ctx.isNoPersist);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](3);
-      _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("form", ctx.formPerfil)("noButtons", ctx.isNoPersist ? "true" : undefined)("disabled", ctx.formDisabled);
+      _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("form", ctx.formPerfil)("noButtons", ctx.isNoButtons())("disabled", ctx.formDisabled);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](2);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("disabled", !ctx.auth.hasPermissionTo("MOD_CFG_USER_PERFIL") ? "true" : undefined)("label", ctx.lex.translate("Perfil"))("dao", ctx.perfilDao);
       _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](2);

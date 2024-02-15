@@ -155,11 +155,11 @@ class UsuarioService extends ServiceBase
      * Informa se o usuário logado é gestor(titular ou substituto) da unidade recebida como parâmetro.
      * @param string $unidade_id 
      */
-    public function isGestorUnidade(string $unidadeId): bool {
+    public function isGestorUnidade(string $unidadeId, $incluiDelegado = true): bool {
         if($this->hasBuffer("isGestorUnidade", $unidadeId)) {
             return $this->getBuffer("isGestorUnidade", $unidadeId);
         } else {
-            return $this->setBuffer("isGestorUnidade", $unidadeId, $this->isIntegrante('GESTOR', $unidadeId) || $this->isIntegrante('GESTOR_SUBSTITUTO', $unidadeId) || $this->isIntegrante('GESTOR_DELEGADO', $unidadeId));
+            return $this->setBuffer("isGestorUnidade", $unidadeId, $this->isIntegrante('GESTOR', $unidadeId) || $this->isIntegrante('GESTOR_SUBSTITUTO', $unidadeId) || ($incluiDelegado && $this->isIntegrante('GESTOR_DELEGADO', $unidadeId)));
         }
     }
 
@@ -317,8 +317,10 @@ class UsuarioService extends ServiceBase
      * Este método impede que um usuário, com perfil diferente de Desenvolvedor, tenha seu perfil alterado para este último.
      */
     public function proxyUpdate($data, $unidade){
-        $perfilAtual = $this->getById($data["id"])["perfil_id"];
+        $data["with"] = [];
+        $perfilAtual = $this->getById($data)["perfil_id"];
         if((($perfilAtual == $this->developerId) || ($data["perfil_id"] != $this->developerId)) && (!$this->isLoggedUserADeveloper())) throw new Exception("Tentativa de alterar o perfil de/para um Desenvolvedor");
+        return $data;
     }
 
     /**

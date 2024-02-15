@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
                FeriadoSeeder::class,
                PerfilSeeder::class,
                TipoCapacidadeSeeder::class,
+               CapacidadeSeeder::class,
                CargoSeeder::class,
                FuncaoSeeder::class,
            ]);
@@ -30,6 +31,7 @@ class DatabaseSeeder extends Seeder
                FeriadoSeeder::class,
                PerfilSeeder::class,
                TipoCapacidadeSeeder::class,
+               CapacidadeSeeder::class,
                EntidadeSeeder::class,
                UnidadeSeeder::class,
                UsuarioSeeder::class,
@@ -44,10 +46,10 @@ class DatabaseSeeder extends Seeder
                AreaTematicaSeeder::class,
                AreaAtividadeExternaSeeder::class,
                CapacidadeTecnicaSeeder::class,
+               In24_2023Seeder::class,
                AtributoComportamentalB5Seeder::class,
                AtributoComportamentalDASSSeeder::class,
                AtributoComportamentalSRQ20Seeder::class,
-               IN24_2023Seeder::class,
                TemplateSeeder::class,
 
                /*

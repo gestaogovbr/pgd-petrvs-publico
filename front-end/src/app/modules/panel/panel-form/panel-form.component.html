@@ -136,8 +136,8 @@
                     <input-select [size]="3" label="Tipo de Vínculo" controlName="integracao_siape_tipovinculo" [items]="lookup.TIPO_VINCULO"></input-select>
                 </div>
                 <div class="row">
-                    <input-text [size]="6" label="Perfil Usuário Comum" controlName="integracao_siape_usuario_comum" [attr.maxlength]=250></input-text>
-                    <input-text [size]="6" label="Perfil Usuário Chefe" controlName="integracao_siape_usuario_chefe" [attr.maxlength]=250></input-text>
+                    <input-text [size]="6" label="Perfil Usuário Comum" controlName="integracao_usuario_comum" [attr.maxlength]=250></input-text>
+                    <input-text [size]="6" label="Perfil Usuário Chefe" controlName="integracao_usuario_chefe" [attr.maxlength]=250></input-text>
                 </div>
             </div>
             <div *ngIf="form?.controls?.tipo_integracao?.value == 'WSO2'" class="row">

@@ -996,9 +996,6 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
       if (form.unidade_id?.length) result.push(["usuario.lotacao.unidade.id", "==", form.unidade_id]);
       return result;
     };
-    this.titleEdit = entity => {
-      return this.lex.translate("Habilitações");
-    };
     this.unidadeDao = injector.get(src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_4__.UnidadeDaoService);
     this.usuarioDao = injector.get(src_app_dao_usuario_dao_service__WEBPACK_IMPORTED_MODULE_5__.UsuarioDaoService);
     this.programaDao = injector.get(src_app_dao_programa_dao_service__WEBPACK_IMPORTED_MODULE_2__.ProgramaDaoService);
@@ -1039,6 +1036,7 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
       onClick: this.desabilitarParticipantes.bind(this)
     });
     this.join = ["usuario.lotacao.unidade:id,sigla", "usuario.planos_trabalho:id,status"];
+    this.title = this.lex.translate("Habilitações");
   }
   dynamicButtons(row) {
     let result = [];
