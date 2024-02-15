@@ -722,6 +722,14 @@ export class LookupService implements IIndexable {
     { key: "AMARELA", value: "Amarela" },
   ];
 
+  public TIPO_DISCRIMINACAO: LookupItem[] = [
+    { key: "SOCIAL", value: "Social" },
+    { key: "RACIAL", value: "Racial" },
+    { key: "RELIGIOSA", value: "Religiosa" },
+    { key: "SEXUAL", value: "Sexual" },
+    { key: "POLITICA", value: "Politica" },
+  ];
+  
   public ESCOLARIDADE: LookupItem[] = [
     { key: 'ESCOLARIDADE_FUNDAMENTAL', value: 'Ensino Fundamental' },
     { key: 'ESCOLARIDADE_MEDIO', value: 'Ensino Médio' },

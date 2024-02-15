@@ -1,6 +1,6 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" (submit)="onSaveData()" (cancel)="onCancel()">
   <div *ngIf="!questionario; else qvt">
-    Formulário de Big Five não encontrado no banco de dados. Contate o suporte!
+    Formulário do teste QVT não encontrado no banco de dados. Contate o suporte!
   </div>
   <ng-template #qvt>
     <h3 class="mb-3 fw-bold">Pesquisa de Qualidade de Vida no Trabalho - QVT</h3>
