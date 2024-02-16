@@ -73,6 +73,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   public checklist: Checklist[] = [];
   public formChecklist: FormGroup;
   public etiquetas: LookupItem[] = [];
+  public etiquetasAscendentes: LookupItem[] = [];
   public dataFim?: Date;
 
   constructor(public injector: Injector) {
@@ -380,9 +381,13 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   }
 
   public async loadEtiquetas() {
+    if (!this.etiquetasAscendentes.filter(e => e.data == this.unidade?.selectedEntity.id).length) {
+      let ascendentes =  await this.carregaEtiquetasUnidadesAscendentes(this.unidade?.selectedEntity);
+      this.etiquetasAscendentes.push(...ascendentes);
+    }
     this.etiquetas = this.util.merge(this.entrega?.selectedEntity.etiquetas, this.unidade?.selectedEntity.etiquetas, (a, b) => a.key == b.key);
     this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);
-    this.etiquetas = this.util.merge(this.etiquetas, await this.carregaEtiquetasUnidadesAscendentes(this.unidade?.selectedEntity), (a, b) => a.key == b.key);
+    this.etiquetas = this.util.merge(this.etiquetas, this.etiquetasAscendentes.filter(x => x.data == this.unidade?.selectedEntity.id), (a, b) => a.key == b.key);
   }
 
   public async carregaEtiquetasUnidadesAscendentes(unidadeAtual: Unidade) {
@@ -392,6 +397,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     unidades.forEach(un => {
       etiquetasUnidades = this.util.merge(etiquetasUnidades, un.etiquetas, (a, b) => a.key == b.key);
     });
+    etiquetasUnidades.forEach(e => e.data = unidadeAtual.id);
     return etiquetasUnidades;
   }
 

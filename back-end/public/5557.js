@@ -724,6 +724,7 @@ class AtividadeListGridComponent extends _atividade_list_base__WEBPACK_IMPORTED_
     this.minhas = false;
     this.planosEntregas = [];
     this.planosEntregasEntregas = [];
+    this.etiquetasAscendentes = [];
     this.storeFilter = filter => {
       const form = filter?.value;
       return {
@@ -1013,11 +1014,15 @@ class AtividadeListGridComponent extends _atividade_list_base__WEBPACK_IMPORTED_
   onColumnEtiquetasEdit(row) {
     var _this3 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      if (!_this3.etiquetasAscendentes.filter(e => e.data == row.unidade.id).length) {
+        let ascendentes = yield _this3.carregaEtiquetasUnidadesAscendentes(row.unidade);
+        _this3.etiquetasAscendentes.push(...ascendentes);
+      }
       _this3.formEdit.controls.etiquetas.setValue(row.etiquetas);
       _this3.formEdit.controls.etiqueta.setValue(null);
       _this3.etiquetas = _this3.util.merge(row.tipo_atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key);
       _this3.etiquetas = _this3.util.merge(_this3.etiquetas, _this3.auth.usuario.config?.etiquetas, (a, b) => a.key == b.key);
-      _this3.etiquetas = _this3.util.merge(_this3.etiquetas, yield _this3.carregaEtiquetasUnidadesAscendentes(row.unidade), (a, b) => a.key == b.key);
+      _this3.etiquetas = _this3.util.merge(_this3.etiquetas, _this3.etiquetasAscendentes.filter(x => x.data == row.unidade.id), (a, b) => a.key == b.key);
     })();
   }
   carregaEtiquetasUnidadesAscendentes(unidadeAtual) {
@@ -1031,6 +1036,7 @@ class AtividadeListGridComponent extends _atividade_list_base__WEBPACK_IMPORTED_
       unidades.forEach(un => {
         etiquetasUnidades = _this4.util.merge(etiquetasUnidades, un.etiquetas, (a, b) => a.key == b.key);
       });
+      etiquetasUnidades.forEach(e => e.data = unidadeAtual.id);
       return etiquetasUnidades;
     })();
   }

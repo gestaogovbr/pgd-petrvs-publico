@@ -15,6 +15,8 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { Base } from 'src/app/models/base.model';
 import { DaoBaseService } from 'src/app/dao/dao-base.service';
 import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
+import { Unidade } from 'src/app/models/unidade.model';
+import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 
 @Component({
   selector: 'plano-entrega-list-entrega',
@@ -84,8 +86,10 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   public planoEntregaService: PlanoEntregaService;
   public formEdit: FormGroup;
   public etiquetas: LookupItem[] = [];
+  public etiquetasAscendentes: LookupItem[] = [];
   public checklist?: Checklist[];
   public selectable: boolean = false;
+  public unidadeDao: UnidadeDaoService;
 
   constructor(public injector: Injector) {
     super(injector);
@@ -94,6 +98,7 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
     this.code = "MOD_PENT";
     this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
     this.dao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
+    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
     this.form = this.fh.FormBuilder({
       descricao: { default: "" },
@@ -330,10 +335,26 @@ export class PlanoEntregaListEntregaComponent extends PageFrameBase {
   };
 
   public async onColumnEtiquetasEdit(row: any) {
+    if (!this.etiquetasAscendentes.filter(e => e.data == row.unidade.id).length) {
+      let ascendentes =  await this.carregaEtiquetasUnidadesAscendentes(row.unidade);
+      this.etiquetasAscendentes.push(...ascendentes);
+    }
     this.formEdit.controls.etiquetas.setValue(row.etiquetas);
     this.formEdit.controls.etiqueta.setValue(null);
     this.etiquetas = this.util.merge(row.tipo_atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key);
     this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);
+    this.etiquetas = this.util.merge(this.etiquetas, this.etiquetasAscendentes.filter(x => x.data == row.unidade.id), (a, b) => a.key == b.key);
+  }
+
+  public async carregaEtiquetasUnidadesAscendentes(unidadeAtual: Unidade) {
+    let etiquetasUnidades: LookupItem[] = [];
+    let path = unidadeAtual.path.split("/");
+    let unidades = await this.unidadeDao.query({ where: ["id", "in", path] }).asPromise();
+    unidades.forEach(un => {
+      etiquetasUnidades = this.util.merge(etiquetasUnidades, un.etiquetas, (a, b) => a.key == b.key);
+    });
+    etiquetasUnidades.forEach(e => e.data = unidadeAtual.id);
+    return etiquetasUnidades;
   }
 
   public async onColumnEtiquetasSave(row: any) {
