@@ -23,7 +23,7 @@ export class NotificacaoService {
   ) { }
 
   public updateNaoLidas() {
-    //if(this.auth.usuario) this.notificacaoService.naoLidas().then((naoLidas) => this.naoLidas = naoLidas);
+    if(this.auth.usuario) this.naoLidas = this.auth.usuario.notificacoes_destinatario?.length || 0;
   }
 
   public heartbeat() {
