@@ -1452,6 +1452,7 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
     this.joinAtividade = ['demandante', 'usuario', 'tipo_atividade', 'comentarios.usuario:id,nome,apelido', 'reacoes.usuario:id,nome,apelido'];
     this.itemsEntregas = [];
     this.etiquetas = [];
+    this.etiquetasAscendentes = [];
     this.itemsOcorrencias = [];
     this.itemsComparecimentos = [];
     this.itemsAfastamentos = [];
@@ -1774,12 +1775,16 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
   onColumnProgressoEtiquetasChecklistEdit(row) {
     var _this7 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      if (!_this7.etiquetasAscendentes.filter(e => e.data == row.plano_trabalho.unidade.id).length) {
+        let ascendentes = yield _this7.carregaEtiquetasUnidadesAscendentes(row.plano_trabalho.unidade);
+        _this7.etiquetasAscendentes.push(...ascendentes);
+      }
       _this7.formEdit.controls.progresso.setValue(row.progresso);
       _this7.formEdit.controls.etiquetas.setValue(row.etiquetas);
       _this7.formEdit.controls.etiqueta.setValue(null);
-      _this7.etiquetas = _this7.util.merge(row.tipo_atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key);
+      _this7.etiquetas = _this7.util.merge(row.tipo_atividade?.etiquetas, row.plano_trabalho.unidade?.etiquetas, (a, b) => a.key == b.key);
       _this7.etiquetas = _this7.util.merge(_this7.etiquetas, _this7.auth.usuario.config?.etiquetas, (a, b) => a.key == b.key);
-      _this7.etiquetas = _this7.util.merge(_this7.etiquetas, yield _this7.carregaEtiquetasUnidadesAscendentes(row.unidade), (a, b) => a.key == b.key);
+      _this7.etiquetas = _this7.util.merge(_this7.etiquetas, _this7.etiquetasAscendentes.filter(x => x.data == row.plano_trabalho.unidade.id), (a, b) => a.key == b.key);
       _this7.checklist = _this7.util.clone(row.checklist);
     })();
   }
@@ -1794,6 +1799,7 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
       unidades.forEach(un => {
         etiquetasUnidades = _this8.util.merge(etiquetasUnidades, un.etiquetas, (a, b) => a.key == b.key);
       });
+      etiquetasUnidades.forEach(e => e.data = unidadeAtual.id);
       return etiquetasUnidades;
     })();
   }
