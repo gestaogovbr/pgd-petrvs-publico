@@ -183,6 +183,11 @@ export class PlanoTrabalhoService {
       return !planoTrabalho.deleted_at && planoTrabalho.status != 'CANCELADO' && !planoTrabalho.data_arquivamento;
     }
 
+    public estaVigente(planoTrabalho: PlanoTrabalho): boolean {
+      let hoje = new Date();
+      return planoTrabalho.status == 'ATIVO' && planoTrabalho.data_inicio <= hoje && planoTrabalho.data_fim >= hoje
+    }
+
   /**
    * Calcula a quantidade de dias para concluir a consolidação considerando a tolerância configurada no programa.
    * @param consolidacao  Consolidacao do plano de trabalho
