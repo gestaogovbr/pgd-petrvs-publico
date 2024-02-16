@@ -45,6 +45,7 @@ class UnidadeIntegranteService extends ServiceBase
                 $usuario = Usuario::find($vinculo["usuario_id"]);
                 $unidade = Unidade::find($vinculo["unidade_id"]);
                 if (empty($unidade) || empty($usuario)) throw new ServerException("ValidateIntegrante", "Unidade/Usuário não existe no banco");
+                if (!empty($vinculo['_metadata']['perfil_id'])) $this->usuarioService->update(['id' => $usuario->id, 'perfil_id' => $vinculo['_metadata']['perfil_id']], $unidade);
                 $atribuicoesFinais = [];
                 $integranteNovoOuExistente = UnidadeIntegrante::firstOrCreate(['unidade_id' => $unidade->id, 'usuario_id' => $usuario->id]);
                 if (empty($vinculo["atribuicoes"])) {     // apagar todas as suas atribuições do servidor neste vínculo ...

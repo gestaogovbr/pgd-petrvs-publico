@@ -35,6 +35,7 @@ export class AtividadeListGridComponent extends AtividadeListBase {
   public planosEntregas: LookupItem[] = [];
   public planosEntregasEntregas: LookupItem[] = [];
   public formEdit: FormGroup;
+  public etiquetasAscendentes: LookupItem[] = [];
 
   constructor(public injector: Injector) {
     super(injector);
@@ -259,11 +260,15 @@ export class AtividadeListGridComponent extends AtividadeListBase {
   };
 
   public async onColumnEtiquetasEdit(row: any) {
+    if (!this.etiquetasAscendentes.filter(e => e.data == row.unidade.id).length) {
+      let ascendentes = await this.carregaEtiquetasUnidadesAscendentes(row.unidade);
+      this.etiquetasAscendentes.push(...ascendentes);
+    }
     this.formEdit.controls.etiquetas.setValue(row.etiquetas);
     this.formEdit.controls.etiqueta.setValue(null);
     this.etiquetas = this.util.merge(row.tipo_atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key);
     this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);
-    this.etiquetas = this.util.merge(this.etiquetas, await this.carregaEtiquetasUnidadesAscendentes(row.unidade), (a, b) => a.key == b.key);
+    this.etiquetas = this.util.merge(this.etiquetas, this.etiquetasAscendentes.filter(x => x.data == row.unidade.id), (a, b) => a.key == b.key);
   }
 
   public async carregaEtiquetasUnidadesAscendentes(unidadeAtual: Unidade) {
@@ -273,6 +278,7 @@ export class AtividadeListGridComponent extends AtividadeListBase {
     unidades.forEach(un => {
       etiquetasUnidades = this.util.merge(etiquetasUnidades, un.etiquetas, (a, b) => a.key == b.key);
     });
+    etiquetasUnidades.forEach(e => e.data = unidadeAtual.id);
     return etiquetasUnidades;
   }
 
