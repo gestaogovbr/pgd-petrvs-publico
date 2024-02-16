@@ -90,6 +90,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   public planoEntregaService: PlanoEntregaService;
   public itemsEntregas: ConsolidacaoEntrega[] = [];
   public etiquetas: LookupItem[] = [];
+  public etiquetasAscendentes: LookupItem[] = [];
   public checklist?: Checklist[];
   public itemsOcorrencias: Ocorrencia[] = [];
   public itemsComparecimentos: Comparecimento[] = [];
@@ -378,12 +379,16 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   }
 
   public async onColumnProgressoEtiquetasChecklistEdit(row: any) {
+    if (!this.etiquetasAscendentes.filter(e => e.data == row.plano_trabalho.unidade.id).length) {
+      let ascendentes =  await this.carregaEtiquetasUnidadesAscendentes(row.plano_trabalho.unidade);
+      this.etiquetasAscendentes.push(...ascendentes);
+    }
     this.formEdit.controls.progresso.setValue(row.progresso);
     this.formEdit.controls.etiquetas.setValue(row.etiquetas);
     this.formEdit.controls.etiqueta.setValue(null);
     this.etiquetas = this.util.merge(row.tipo_atividade?.etiquetas, row.plano_trabalho.unidade?.etiquetas, (a, b) => a.key == b.key);
     this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);
-    this.etiquetas = this.util.merge(this.etiquetas, await this.carregaEtiquetasUnidadesAscendentes(row.plano_trabalho.unidade), (a, b) => a.key == b.key);
+    this.etiquetas = this.util.merge(this.etiquetas, this.etiquetasAscendentes.filter(x => x.data == row.plano_trabalho.unidade.id), (a, b) => a.key == b.key);
     this.checklist = this.util.clone(row.checklist);
   }
 
@@ -394,6 +399,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     unidades.forEach(un => {
       etiquetasUnidades = this.util.merge(etiquetasUnidades, un.etiquetas, (a, b) => a.key == b.key);
     });
+    etiquetasUnidades.forEach(e => e.data = unidadeAtual.id);
     return etiquetasUnidades;
   }
 
