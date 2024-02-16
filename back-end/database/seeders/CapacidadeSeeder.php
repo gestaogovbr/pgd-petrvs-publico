@@ -30,6 +30,7 @@ class CapacidadeSeeder extends Seeder
     public function run(){
 
         // Lista com capacidades por perfil
+        # 37
         $capacidades_participante = array(
             array(
                 "codigo" => "CTXT_EXEC",
@@ -144,6 +145,7 @@ class CapacidadeSeeder extends Seeder
             ),
         );
 
+        # 86
         $capacidades_chefia_de_unidade_executora = array(
             array(
                 "codigo" => "CTXT_GEST",
@@ -221,6 +223,15 @@ class CapacidadeSeeder extends Seeder
                 "codigo" => "MOD_PART",
             ),
             array(
+                "codigo" => "MOD_PART_DESAB",
+            ),
+            array(
+                "codigo" => "MOD_PART_HAB",
+            ),
+            array(
+                "codigo" => "MOD_PART_INCL",
+            ),
+            array(
                 "codigo" => "MOD_PENT",
             ),
             array(
@@ -279,9 +290,6 @@ class CapacidadeSeeder extends Seeder
             ),
             array(
                 "codigo" => "MOD_PLAN_INST",
-            ),
-            array(
-                "codigo" => "MOD_PRGT",
             ),
             array(
                 "codigo" => "MOD_PTR",
@@ -399,6 +407,7 @@ class CapacidadeSeeder extends Seeder
             ),
         );
 
+        #160
         $capacidades_administrador_negocial = array(
             array(
                 "codigo" => "CTXT_EXEC",
