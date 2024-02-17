@@ -20,7 +20,7 @@ class UnidadeIntegranteService extends ServiceBase
         $usuario = empty($usuarioId) ? null : Usuario::find($usuarioId);
         if (!empty($unidadeId) && empty($unidade)) throw new ServerException("ValidateIntegrante", "Unidade não encontrada no banco");
         if (!empty($usuarioId) && empty($usuario)) throw new ServerException("ValidateIntegrante", "Usuário não encontrado no banco");
-        foreach (($unidade ? $unidade->integrantes : $usuario->unidadesIntegrantes) as $vinculo) {
+        foreach (($unidade ? $unidade->integrantes ?? [] : $usuario->unidadesIntegrantes ?? []) as $vinculo) {
             $result[$unidade ? $vinculo->usuario->id : $vinculo->unidade->id] = [
                 "id" => $unidade ? $vinculo->usuario->id : $vinculo->unidade->id,
                 "usuario_nome" => $unidade ? $vinculo->usuario->nome : null,
@@ -45,6 +45,7 @@ class UnidadeIntegranteService extends ServiceBase
                 $usuario = Usuario::find($vinculo["usuario_id"]);
                 $unidade = Unidade::find($vinculo["unidade_id"]);
                 if (empty($unidade) || empty($usuario)) throw new ServerException("ValidateIntegrante", "Unidade/Usuário não existe no banco");
+                if (!empty($vinculo['_metadata']['perfil_id'])) $this->usuarioService->update(['id' => $usuario->id, 'perfil_id' => $vinculo['_metadata']['perfil_id']], $unidade);
                 $atribuicoesFinais = [];
                 $integranteNovoOuExistente = UnidadeIntegrante::firstOrCreate(['unidade_id' => $unidade->id, 'usuario_id' => $usuario->id]);
                 if (empty($vinculo["atribuicoes"])) {     // apagar todas as suas atribuições do servidor neste vínculo ...

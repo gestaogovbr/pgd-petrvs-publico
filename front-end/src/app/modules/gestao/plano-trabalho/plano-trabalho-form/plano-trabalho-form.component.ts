@@ -326,17 +326,16 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   public async saveData(form: IIndexable): Promise<PlanoTrabalho | boolean> {
-    //let plano = this.loadEntity();
-    /* Atualiza o documento */
-    this.atualizarTcr();
-    /* Confirma dados do documento */
-    this.documentos?.saveData();
-    this.entity!.documentos = this.entity!.documentos.filter((documento: Documento) => {
-      return ["ADD", "EDIT", "DELETE"].includes(documento._status || "");
-    });
-    /* Salva separadamente as informações do plano */
     this.submitting = true;
     try {
+      /* Atualiza o documento */
+      this.atualizarTcr();
+      /* Confirma dados do documento */
+      this.documentos?.saveData();
+      this.entity!.documentos = this.entity!.documentos.filter((documento: Documento) => {
+        return ["ADD", "EDIT", "DELETE"].includes(documento._status || "");
+      });
+      /* Salva separadamente as informações do plano */
       let requests: Promise<any>[] = [this.dao!.save(this.entity!, this.join)];
       if (this.form!.controls.editar_texto_complementar_unidade.value) requests.push(this.unidadeDao.update(this.entity!.unidade_id, { texto_complementar_plano: this.form!.controls.unidade_texto_complementar.value }));
       if (this.form!.controls.editar_texto_complementar_usuario.value) requests.push(this.usuarioDao.update(this.entity!.usuario_id, { texto_complementar_plano: this.form!.controls.usuario_texto_complementar.value }));

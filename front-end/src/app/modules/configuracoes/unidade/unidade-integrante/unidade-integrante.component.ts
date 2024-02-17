@@ -11,6 +11,7 @@ import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { IntegranteService } from 'src/app/services/integrante.service';
 import { Usuario } from 'src/app/models/usuario.model';
+import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
 
 @Component({
   selector: 'unidade-integrante',
@@ -25,20 +26,24 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
 
   public items: IntegranteConsolidado[] = [];
+  public perfis: Usuario[] = [];//
   public integranteService: IntegranteService;
   public integranteDao: UnidadeIntegranteDaoService;
   public usuarioDao: UsuarioDaoService;
   public tiposAtribuicao: LookupItem[] = [];
+  public perfilDao: PerfilDaoService;
 
   constructor(public injector: Injector) {
     super(injector);
     this.integranteService = injector.get<IntegranteService>(IntegranteService);
     this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
+    this.perfilDao = injector.get<PerfilDaoService>(PerfilDaoService);
     this.form = this.fh.FormBuilder({
       usuario_id: { default: "" },
       atribuicoes: { default: undefined },
-      atribuicao: { default: "" }
+      atribuicao: { default: "" },
+      perfil_id: { default: null }
     }, this.cdRef, this.validate);
   }
 
@@ -62,9 +67,12 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
   public async loadData(entity: IIndexable, form?: FormGroup | undefined) {
     if (entity.id) {
       let integrantes: IntegranteConsolidado[] = [];
+      let usuarioIds: string[] = [];
       this.loading = true;
       try {
         await this.integranteDao!.carregarIntegrantes(entity.id, "").then(resposta => integrantes = resposta.integrantes.filter(x => x.atribuicoes?.length > 0));
+        integrantes.forEach(integrante => usuarioIds.push(integrante.id))
+        this.perfis = await this.usuarioDao.query({ where: ["id", "in", usuarioIds] }).asPromise();
       } finally {
         this.loading = false;
         this.items = [];
@@ -74,6 +82,11 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
         this.grid!.loading = false;
       }
     }
+  }
+
+  public getPerfil(id: string) {
+    let perfil = this.perfis.find(p => p.id == id);
+    return perfil?.perfil?.nome;
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -129,19 +142,19 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     form.controls.atribuicao.setValue("");
   }
 
-    /**
- * Método chamado para inserir uma atribuição no grid, seja este componente persistente ou não.
- * @returns 
- */
-    public async adicionarIntegrante() {
-      if (this.grid) this.grid.error = '';
-      let novo = {
-        id: this.integranteDao!.generateUuid(),
-        usuario_id: "",
-        atribuicoes: []
-      } as IIndexable;
-      return novo;
-    }
+  /**
+* Método chamado para inserir uma atribuição no grid, seja este componente persistente ou não.
+* @returns 
+*/
+  public async adicionarIntegrante() {
+    if (this.grid) this.grid.error = '';
+    let novo = {
+      id: this.integranteDao!.generateUuid(),
+      usuario_id: "",
+      atribuicoes: []
+    } as IIndexable;
+    return novo;
+  }
 
   /**
    * Método chamado para a exclusão de um integrante do grid, seja este componente persistente ou não. 
@@ -206,7 +219,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
       }
       try {
         if (!this.isNoPersist) { // se persistente
-          await this.integranteDao.salvarIntegrantes([this.integranteService.completarIntegrante(row, this.entity!.id, form!.controls.usuario_id.value, novasAtribuicoes.map(x => x.key))]).then(resposta => {
+          await this.integranteDao.salvarIntegrantes([Object.assign({ _metadata: { perfil_id: form!.controls.perfil_id.value } }, this.integranteService.completarIntegrante(row, this.entity!.id, form!.controls.usuario_id.value, novasAtribuicoes.map(x => x.key)))]).then(resposta => {
             let msg: string | undefined;
             if (msg = resposta?.find(v => v._metadata.msg?.length)?._metadata.msg) { if (this.grid) this.grid!.error = msg; };
           });
@@ -215,14 +228,15 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
           if (this.grid) this.grid!.error = "";
         } else {                // se não persistente
           row.id = this.usuario?.selectedEntity.id;
-          this.grid!.items = this.integranteService.substituirItem({ 
+          this.grid!.items = this.integranteService.substituirItem({
             id: row.id,
             itens: this.grid?.items || [],
             apelidoOuSigla: this.usuario?.selectedItem?.entity.apelido,
             nome: this.usuario?.selectedItem?.entity.nome,
             codigo: ""
-          }, novasAtribuicoes.map((x: LookupItem) => x.key), new Unidade(this.entity!)) }
-          this.cdRef.detectChanges();
+          }, novasAtribuicoes.map((x: LookupItem) => x.key), new Unidade(this.entity!))
+        }
+        this.cdRef.detectChanges();
       } catch (error: any) {
         if (this.grid) this.grid.error = error;
         await this.loadData({ id: this.entity!.id }, this.form);
@@ -234,7 +248,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
     }
     return undefined;
   }
-  
+
 
   /* 
   

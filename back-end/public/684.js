@@ -22,6 +22,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_dao_avaliacao_dao_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! src/app/dao/avaliacao-dao.service */ 41095);
 /* harmony import */ var _uteis_templates_template_service__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../uteis/templates/template.service */ 49367);
 
+var _class;
 
 
 
@@ -178,6 +179,10 @@ class PlanoTrabalhoService {
   isValido(planoTrabalho) {
     return !planoTrabalho.deleted_at && planoTrabalho.status != 'CANCELADO' && !planoTrabalho.data_arquivamento;
   }
+  estaVigente(planoTrabalho) {
+    let hoje = new Date();
+    return planoTrabalho.status == 'ATIVO' && planoTrabalho.data_inicio <= hoje && planoTrabalho.data_fim >= hoje;
+  }
   /**
    * Calcula a quantidade de dias para concluir a consolidação considerando a tolerância configurada no programa.
    * @param consolidacao  Consolidacao do plano de trabalho
@@ -267,15 +272,16 @@ class PlanoTrabalhoService {
       "gestores_entidade": !exigidas.gestores_entidade.length ? [] : exigidas.gestores_entidade.filter(x => assinaram.gestores_entidade.includes(x)).length ? [] : exigidas.gestores_entidade
     };
   }
-  static #_ = this.ɵfac = function PlanoTrabalhoService_Factory(t) {
-    return new (t || PlanoTrabalhoService)(_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_2__.AuthService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_3__.UtilService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_services_navigate_service__WEBPACK_IMPORTED_MODULE_4__.NavigateService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_5__.LookupService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_6__.PlanoTrabalhoDaoService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_dao_avaliacao_dao_service__WEBPACK_IMPORTED_MODULE_7__.AvaliacaoDaoService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](_uteis_templates_template_service__WEBPACK_IMPORTED_MODULE_8__.TemplateService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_6__.PlanoTrabalhoDaoService));
-  };
-  static #_2 = this.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefineInjectable"]({
-    token: PlanoTrabalhoService,
-    factory: PlanoTrabalhoService.ɵfac,
-    providedIn: 'root'
-  });
 }
+_class = PlanoTrabalhoService;
+_class.ɵfac = function PlanoTrabalhoService_Factory(t) {
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_2__.AuthService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_services_util_service__WEBPACK_IMPORTED_MODULE_3__.UtilService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_services_navigate_service__WEBPACK_IMPORTED_MODULE_4__.NavigateService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_services_lookup_service__WEBPACK_IMPORTED_MODULE_5__.LookupService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_6__.PlanoTrabalhoDaoService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_dao_avaliacao_dao_service__WEBPACK_IMPORTED_MODULE_7__.AvaliacaoDaoService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](_uteis_templates_template_service__WEBPACK_IMPORTED_MODULE_8__.TemplateService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵinject"](src_app_dao_plano_trabalho_dao_service__WEBPACK_IMPORTED_MODULE_6__.PlanoTrabalhoDaoService));
+};
+_class.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefineInjectable"]({
+  token: _class,
+  factory: _class.ɵfac,
+  providedIn: 'root'
+});
 
 /***/ })
 

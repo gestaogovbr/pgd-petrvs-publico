@@ -238,11 +238,11 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     let result: any[] = [];
     let form: any = filter.value;
     /*
-        (RI_PENT_B) A consulta do grid retornará inicialmente os principais Planos de Entrega do usuário logado (a opção "principais" já vem marcada), que são:
-        - os válidos das unidades onde ele possui algum vínculo (áreas de trabalho) (w1), e
-        - se ele for gestor:
-          - os ativos das unidades-pai de onde ele é gestor (w2), e 
-          - os ativos das unidades imediatamente subordinadas (w3);
+    (RI_PENT_B) A consulta do grid retornará inicialmente os principais Planos de Entrega do usuário logado (a opção "principais" já vem marcada), que são:
+    - os válidos das unidades onde ele possui algum vínculo (áreas de trabalho) (w1), e
+    - se ele for gestor:
+      - os ativos das unidades-pai de onde ele é gestor (w2), e 
+      - os ativos das unidades imediatamente subordinadas (w3);
     */
     if (this.filter?.controls.principais.value) {
       let w1: [string, string, string[]] = ["unidade_id", "in", (this.auth.unidades || []).map(u => u.id)];
@@ -258,15 +258,7 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
     }
     if (this.filter?.controls.meus_planos.value) {
       let w1: [string, string, string[]] = ["unidade_id", "in", (this.auth.unidades || []).map(u => u.id)];
-      if (this.auth.isGestorAlgumaAreaTrabalho()) {
-        let unidadesUsuarioEhGestor = this.auth.unidades?.filter(x => this.unidadeService.isGestorUnidade(x));
-        let w2: string[] | undefined = unidadesUsuarioEhGestor?.map(u => u.unidade_pai?.id || "").filter(x => x.length);
-        if (w2?.length) w1[2].push(...w2);
-        let w3 = ["unidade.unidade_pai_id", "in", unidadesUsuarioEhGestor?.map(u => u.id)];
-        result.push(["or", w1, w3]);
-      } else {
-        result.push(w1)
-      }
+      result.push(w1);
     }
     if (form.nome?.length) result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
     if (form.data_filtro) {
@@ -298,7 +290,12 @@ export class PlanoEntregaListComponent extends PageListBase<PlanoEntrega, PlanoE
   }
 
   public onPrincipaisChange(event: Event) {
-    if (!this.filter!.controls.principais.value) this.filter!.controls.unidade_id.setValue(null);//invertido o default pelo !
+    if (this.filter!.controls.principais.value) {
+      this.filter!.controls.unidade_id.setValue(null);
+      this.filter!.controls.meus_planos.setValue(false);
+    } else {
+      this.filter!.controls.meus_planos.setValue(true);
+    }
     this.grid!.reloadFilter();
   }
 
