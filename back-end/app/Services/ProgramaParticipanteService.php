@@ -9,6 +9,7 @@ use App\Models\ProgramaParticipante;
 use App\Models\Usuario;
 use App\Services\ServiceBase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Builder;
 use Throwable;
 
 class ProgramaParticipanteService extends ServiceBase {
@@ -21,10 +22,9 @@ class ProgramaParticipanteService extends ServiceBase {
                 $registro = ProgramaParticipante::firstOrCreate(['programa_id' => $data['programa_id'], 'usuario_id' => $idp]);
                 $plano_trabalho_ativo = PlanoTrabalho::where('usuario_id',$idp)->where('programa_id',$data['programa_id'])->where('status','ATIVO')->where('data_inicio','<=',now())->where('data_fim','>=',now())->first();
                 if(empty($data['habilitar']) && !empty($plano_trabalho_ativo)) {
-                    if(!$data['suspender_plano_trabalho']) throw new ServerException("","Foi identificado que o usuário - " . Usuario::find($idp)->nome . " - possui Plano de Trabalho ATIVO e não foi repassada autorização para suspendê-lo. Portanto, a operação de desabilitação foi abortada " . count($data['participantes_ids']) > 1 ? "para todos os usuários " : "" . "!");
-                    //PlanoTrabalho::find($plano_trabalho_ativo->id)->update(['status' => 'SUSPENSO']);
-                    $plano_trabalho_ativo->update(['status' => 'SUSPENSO']);
-                    // verificar se depende de mais alguma coisa a mudança do status
+                    if(!$data['suspender_plano_trabalho']) throw new ServerException("ValidatePlanoTrabalho","Foi identificado que o usuário - " . Usuario::find($idp)->nome . " - possui Plano de Trabalho ATIVO e não foi repassada autorização para suspendê-lo. Portanto, a operação de desabilitação foi abortada " . (count($data['participantes_ids']) > 1 ? "para todos os usuários " : "" . "!"));
+                    $plano_trabalho_ativo->status = 'SUSPENSO';
+                    $plano_trabalho_ativo->save();
                 }
                 $registro->habilitado = $data['habilitar'];
                 $registro->save();
@@ -38,9 +38,9 @@ class ProgramaParticipanteService extends ServiceBase {
         return true;
     }
 
-    public function quantidadesPlanosTrabalhosAtivo($programasParticipantesIds)
+    public function quantidadePlanosTrabalhoAtivos($programasParticipantesIds)
     {
-        return ProgramaParticipante::whereIn("id", $programasParticipantesIds)->whereHas('usuario.planosTrabalho', function ($query) {
+        return ProgramaParticipante::whereIn("usuario_id", $programasParticipantesIds)->whereHas('usuario.planosTrabalho', function ($query) {
             return $query->where('status', 'ATIVO')->where('data_inicio', '<=', now())->where('data_fim', '>=', now());
         })->count();
     }
@@ -53,5 +53,6 @@ class ProgramaParticipanteService extends ServiceBase {
                     "programa_participante"  => ProgramaParticipante::find($data['participantes_ids'] )
         ]);
     }
+
 }
 

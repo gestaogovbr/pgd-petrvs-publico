@@ -24,12 +24,12 @@ class ProgramaParticipanteController extends ControllerBase {
         }
     }
 
-    public function quantidadesPlanosTrabalhosAtivo(Request $request) { // ou desabilitar
+    public function quantidadePlanosTrabalhoAtivos(Request $request) { // ou desabilitar
         try {
             $data = $request->validate([
                 'ids' => ['array']
             ]);
-            $qtd = $this->service->quantidadesPlanosTrabalhosAtivo($data['ids']);
+            $qtd = $this->service->quantidadePlanosTrabalhoAtivos($data['ids']);
             return response()->json([
                 'success' => true,
                 'count' => $qtd
