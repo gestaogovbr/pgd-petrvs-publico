@@ -37,6 +37,7 @@ use App\Traits\MergeRelations;
 use App\Traits\LogChanges;
 use App\Traits\HasPermissions;
 use App\Services\UsuarioService;
+use App\Services\UtilService;
 use Throwable;
 use App\Exceptions\ServerException;
 
@@ -84,8 +85,9 @@ class Usuario extends Authenticatable
     public function proxyFill($dataOrEntity, $unidade, $action) {
         $this->fill($dataOrEntity);
         if($action == 'INSERT'){
+            $lotacao_id = array_filter($dataOrEntity["integrantes"], fn($i) => in_array("LOTADO", $i["atribuicoes"]))[0]["unidade_id"];
             $this->save();
-            $vinculoLotacao = $this->unidadesIntegrantes()->save(new UnidadeIntegrante(['unidade_id' => $dataOrEntity['lotacao_id']]));
+            $vinculoLotacao = $this->unidadesIntegrantes()->save(new UnidadeIntegrante(['unidade_id' => $lotacao_id]));
             $lotacao = $vinculoLotacao->atribuicoes()->save(new UnidadeIntegranteAtribuicao(['atribuicao' => 'LOTADO']));
             if(!$vinculoLotacao || !$lotacao) throw new ServerException("ValidateLotacao", "Erro com a definição da lotação. Usuário não cadastrado!");
         }

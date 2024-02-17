@@ -41,6 +41,7 @@ export class LexicalService {
     "data de distribuição": {single: "data de distribuição", plural: "datas de distribuição", female: true},
     "data de homologação": {single: "data de homologação", plural: "datas de homologação", female: true},
     "demanda": {single: "demanda", plural: "demandas", female: true},
+    "desabilitado": {single: "desabilitado", plural: "desabilitados", female: false},
     "desenvolvedor": {single: "desenvolvedor", plural: "desenvolvedores", female: false},
     "documento": {single: "documento", plural: "documentos", female: false},
     "entidade": {single: "entidade", plural: "entidades", female: true},
