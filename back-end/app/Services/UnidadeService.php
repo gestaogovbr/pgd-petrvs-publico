@@ -243,7 +243,7 @@ class UnidadeService extends ServiceBase
         $usuario = parent::loggedUser();
         $where = [];
         $subordinadas = true; 
-        // TODO: acredito que esse controle dataInativação/inativos pode ser melhorado      //  unidades-list-grid
+                                                                                            //  unidades-list-grid
         $dataInativacao = $this->extractWhere($data, "data_inativacao");                    //  	data_inativacao (selectable)
         $inativos = empty($dataInativacao) || $dataInativacao[1] == "!=" ? true : false;    //  		!= null		......................	retornar somente as unidades inativas   => $inativos = true
         foreach($data["where"] as $condition) {                                             //  		== null		......................	retornar somente as unidades ativas     => $inativos = false
