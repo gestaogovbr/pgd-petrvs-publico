@@ -913,13 +913,15 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
     this.multiselectMenu = [];
     this.programa = null;
     this.BOTAO_HABILITAR = {
-      label: "Habilitar",
+      label: this.lex.translate("Habilitar"),
+      hint: this.lex.translate("Habilitar"),
       icon: "bi bi-person-check-fill",
       color: "btn-outline-success",
       onClick: this.habilitarParticipante.bind(this)
     };
     this.BOTAO_DESABILITAR = {
-      label: "Desabilitar",
+      label: this.lex.translate("Desabilitar"),
+      hint: this.lex.translate("Desabilitar"),
       icon: "bi bi-person-x-fill",
       color: "btn-outline-danger",
       onClick: this.desabilitarParticipante.bind(this)
@@ -934,10 +936,10 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
     this.filterWhere = filter => {
       let result = [];
       let form = filter.value;
+      if (form.unidade_id?.length) result.push(["lotacao", "==", form.unidade_id]);
+      if (form.nome_usuario?.length) result.push(["nome", "like", "%" + form.nome_usuario.trim().replace(" ", "%") + "%"]);
       result.push(["habilitado", '==', this.filter?.controls.habilitados.value]);
       result.push(["programa_id", "==", this.programa?.id]);
-      if (form.nome_usuario?.length) result.push(["nome", "like", "%" + form.nome_usuario.trim().replace(" ", "%") + "%"]);
-      if (form.unidade_id?.length) result.push(["lotacao", "==", form.unidade_id]);
       return result;
     };
     this.unidadeDao = injector.get(src_app_dao_unidade_dao_service__WEBPACK_IMPORTED_MODULE_5__.UnidadeDaoService);
@@ -961,13 +963,13 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
     }, this.cdRef, this.validate);
     if (this.auth.hasPermissionTo('MOD_PART_HAB')) this.multiselectMenu.push({
       icon: "bi bi-person-check-fill",
-      label: "Habilitar",
+      label: this.lex.translate("Habilitar"),
       color: "btn-outline-success",
       onClick: this.habilitarParticipantes.bind(this)
     });
     if (this.auth.hasPermissionTo('MOD_PART_DESAB')) this.multiselectMenu.push({
       icon: "bi bi-person-x-fill",
-      label: "Desabilitar",
+      label: this.lex.translate("Desabilitar"),
       color: "btn-outline-danger",
       onClick: this.desabilitarParticipantes.bind(this)
     });
@@ -992,9 +994,8 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
           where: [['vigentesUnidadeExecutora', "==", _this.auth.unidade.id]]
         }).asPromise().then(programas => {
           _this.programa = programas[0];
+          _this.programaSearch?.loadSearch(_this.programa);
         });
-        yield _this.programaSearch?.loadSearch(_this.programa);
-        if (_this.programa) _this.grid.reloadFilter();
       } finally {
         _this.loading = false;
       }

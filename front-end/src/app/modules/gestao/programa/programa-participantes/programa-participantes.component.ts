@@ -26,8 +26,8 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
   public programaDao: ProgramaDaoService;
   public multiselectMenu: ToolbarButton[] = [];
   public programa: Programa | null = null;
-  public BOTAO_HABILITAR: ToolbarButton = { label: "Habilitar", icon: "bi bi-person-check-fill", color: "btn-outline-success", onClick: this.habilitarParticipante.bind(this) };
-  public BOTAO_DESABILITAR: ToolbarButton = { label: "Desabilitar", icon: "bi bi-person-x-fill", color: "btn-outline-danger", onClick: this.desabilitarParticipante.bind(this) };
+  public BOTAO_HABILITAR: ToolbarButton = { label: this.lex.translate("Habilitar"), hint: this.lex.translate("Habilitar"), icon: "bi bi-person-check-fill", color: "btn-outline-success", onClick: this.habilitarParticipante.bind(this) };
+  public BOTAO_DESABILITAR: ToolbarButton = { label: this.lex.translate("Desabilitar"), hint: this.lex.translate("Desabilitar"), icon: "bi bi-person-x-fill", color: "btn-outline-danger", onClick: this.desabilitarParticipante.bind(this) };
 
   constructor(public injector: Injector) {
     super(injector, Usuario, UsuarioDaoService);
@@ -44,13 +44,13 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
     }, this.cdRef, this.validate);
     if (this.auth.hasPermissionTo('MOD_PART_HAB')) this.multiselectMenu.push({
       icon: "bi bi-person-check-fill",
-      label: "Habilitar",
+      label: this.lex.translate("Habilitar"),
       color: "btn-outline-success",
       onClick: this.habilitarParticipantes.bind(this)
     });
     if (this.auth.hasPermissionTo('MOD_PART_DESAB')) this.multiselectMenu.push({
       icon: "bi bi-person-x-fill",
-      label: "Desabilitar",
+      label: this.lex.translate("Desabilitar"),
       color: "btn-outline-danger",
       onClick: this.desabilitarParticipantes.bind(this)
     });
