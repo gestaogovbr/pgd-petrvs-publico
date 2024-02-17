@@ -20,7 +20,6 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 export class ProgramaParticipantesComponent extends PageListBase<Usuario, UsuarioDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @ViewChild("programaSearch", { static: false }) public programaSearch?: InputSearchComponent;
-  //@ViewChild("usuario", { static: false }) public usuario?: InputSearchComponent;
 
   public unidadeDao: UnidadeDaoService;
   public programaParticipanteDao: ProgramaParticipanteDaoService;
@@ -83,9 +82,8 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
         this.programa = this.metadata?.programa;
         if (!this.programa) await this.programaDao.query({ where: [['vigentesUnidadeExecutora', "==", this.auth.unidade!.id]] }).asPromise().then(programas => {
           this.programa = programas[0];
+          this.programaSearch?.loadSearch(this.programa);
         });
-        await this.programaSearch?.loadSearch(this.programa);
-        if (this.programa) this.grid!.reloadFilter();
       } finally {
         this.loading = false;
       }
@@ -101,10 +99,10 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
+    if (form.unidade_id?.length) result.push(["lotacao", "==", form.unidade_id]);
+    if (form.nome_usuario?.length) result.push(["nome", "like", "%" + form.nome_usuario.trim().replace(" ", "%") + "%"]);
     result.push(["habilitado", '==', this.filter?.controls.habilitados.value]);
     result.push(["programa_id", "==", this.programa?.id]);
-    if (form.nome_usuario?.length) result.push(["nome", "like", "%" + form.nome_usuario.trim().replace(" ", "%") + "%"]);
-    if (form.unidade_id?.length) result.push(["lotacao", "==", form.unidade_id]);
     return result;
   }
 
