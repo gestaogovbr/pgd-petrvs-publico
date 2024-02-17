@@ -986,6 +986,9 @@ class ProgramaParticipantesComponent extends src_app_modules_base_page_list_base
   ngAfterViewInit() {
     var _this = this;
     super.ngAfterViewInit();
+    this.grid.BUTTON_MULTISELECT_SELECIONAR = "Marcar";
+    this.grid.BUTTON_MULTISELECT_CANCELAR_SELECAO = "Cancelar Marcação";
+    this.grid.BUTTON_MULTISELECT.label = "Marcar";
     (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this.loading = true;
       try {
