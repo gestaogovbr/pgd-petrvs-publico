@@ -76,6 +76,9 @@ export class ProgramaParticipantesComponent extends PageListBase<Usuario, Usuari
 
   public ngAfterViewInit(): void {
     super.ngAfterViewInit();
+    this.grid!.BUTTON_MULTISELECT_SELECIONAR = "Marcar";
+    this.grid!.BUTTON_MULTISELECT_CANCELAR_SELECAO = "Cancelar Marcação";
+    this.grid!.BUTTON_MULTISELECT.label = "Marcar";
     (async () => {
       this.loading = true;
       try {
