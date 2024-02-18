@@ -202,7 +202,7 @@ Route::middleware(['auth:sanctum'])->prefix('Programa')->group(function () {
  });
 Route::middleware(['auth:sanctum'])->prefix('ProgramaParticipante')->group(function () {
      defaultRoutes(ProgramaParticipanteController::class);
-     Route::post('quantidades-planos-trabalhos-ativo', [ProgramaParticipanteController::class, 'quantidadesPlanosTrabalhosAtivo']);
+     Route::post('quantidade-planos-trabalho-ativos', [ProgramaParticipanteController::class, 'quantidadePlanosTrabalhoAtivos']);
      Route::post('habilitar', [ProgramaParticipanteController::class, 'habilitar']);
      Route::post('notificar', [ProgramaParticipanteController::class, 'notificar']);
 });

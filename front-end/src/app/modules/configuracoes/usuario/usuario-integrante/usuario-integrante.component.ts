@@ -12,6 +12,7 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { IntegranteService } from 'src/app/services/integrante.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
+import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
 @Component({
   selector: 'usuario-integrante',
@@ -24,6 +25,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: Usuario | undefined) { super.entity = value; } get entity(): Usuario | undefined { return super.entity; }
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
+  @Input() parent?: PageFormBase<Usuario, UsuarioDaoService>;
 
   public formPerfil: FormGroup;
   public items: IntegranteConsolidado[] = [];
@@ -89,7 +91,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if (["unidade_id", "atribuicoes"].includes(controlName) && !control.value?.length) { result = "Obrigatório"; }
+    if (["unidade_id", "perfil_id", "atribuicoes"].includes(controlName) && !control.value?.length) { result = "Obrigatório"; }
     if (controlName == "unidade_id" && this.grid?.adding && this.items.map(i => i.id).includes(control.value)) result = "O usuário já é integrante desta unidade. Edite-a, ao invés de incluí-la novamente!";
     return result;
   }
@@ -195,7 +197,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     if (!error) {
       let itensGrid = this.grid?.items as IntegranteConsolidado[] || [];
       let confirm = true;
-      let alteracaoGestor = this.integranteService.haAlteracaoGestor(novasAtribuicoes.map(x => x.key), Object.assign(row, { unidade_sigla: this.unidade?.selectedItem?.entity.sigla }), itensGrid, this.entity?.nome || "");
+      let alteracaoGestor = this.integranteService.haAlteracaoGestor(novasAtribuicoes.map(x => x.key), Object.assign(row, { unidade_sigla: this.unidade?.selectedItem?.entity.sigla }), itensGrid, this.entity?.nome || this.parent?.form?.controls.nome.value || "");
       if (alteracaoGestor[0] != 'nenhuma') {
         confirm = await this.dialog.confirm("CONFIRMA A ALTERAÇÃO DA CHEFIA ?", alteracaoGestor[2]);
         if (confirm) {
