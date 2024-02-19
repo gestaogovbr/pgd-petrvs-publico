@@ -28,6 +28,7 @@ export class CurriculumAtributossoftFormComponent extends PageFormBase<Questiona
   public questionarioPerguntasDao: QuestionarioPerguntaDaoService;
   public questionario?: Questionario;
   public respostas: QuestionarioRespostaPergunta[] = [];
+  public restante: number;
   //public formSoftSkills: FormGroup;
 
   constructor(public injector: Injector) {
@@ -35,10 +36,9 @@ export class CurriculumAtributossoftFormComponent extends PageFormBase<Questiona
     this.join = ['questionario_resposta_pergunta'];
     this.questionarioDao = injector.get<QuestionarioDaoService>(QuestionarioDaoService);
     this.questionarioPerguntasDao = injector.get<QuestionarioPerguntaDaoService>(QuestionarioPerguntaDaoService);
-
     this.bigicoAmareloIMG = "/assets/images/icon_big_amarelo.png";
     this.bigicoIMG = "/assets/images/icon_big.png";
-
+    this.restante = 20;
     this.form = this.fh.FormBuilder({
       comunica: { default: 0 },
       lideranca: { default: 0 },
@@ -56,22 +56,29 @@ export class CurriculumAtributossoftFormComponent extends PageFormBase<Questiona
     return result;
   }
 
-  public async loadData(entity: QuestionarioResposta, form: FormGroup) {}
+  public async loadData(entity: QuestionarioResposta, form: FormGroup) { }
 
   public async initializeData(form: FormGroup) {
-    const questionario = await this.questionarioDao?.query({ where: [['codigo', '==', 'SOFTSKILLS']], join: ['perguntas'] }).asPromise();
+    const questionario = await this.questionarioDao?.query({ where: [['codigo', '==', 'SOFTSKILL']], join: ['perguntas'] }).asPromise();
     if (questionario?.length) {
       questionario[0].perguntas = questionario[0].perguntas.sort((a, b) => a.sequencia! < b.sequencia! ? -1 : 1);
       this.questionario = questionario[0];
       const questionarioResposta = await this.dao?.query({ where: [['questionario_id', '==', this.questionario.id], ['usuario_id', '==', this.auth.usuario?.id]], join: ['questionario_resposta_pergunta'] }).asPromise();
-      this.entity = questionarioResposta?.length ? questionarioResposta[0] : undefined;
+      let questionarioRespostaOrdenado: QuestionarioRespostaPergunta[] = [];
       let respostas: any = [];
-      if (this.entity) {
-        this.questionario.perguntas.forEach((pergunta, index) => {
-          this.entity!.questionario_resposta_pergunta.forEach((resposta, index) => {
-            if (pergunta.id == resposta.questionario_pergunta_id) respostas.push(resposta.resposta);
-          });
+      let indice = 0;
+      this.questionario!.perguntas.forEach(pergunta => {
+        questionarioResposta![0].questionario_resposta_pergunta.forEach((resposta, i) => {
+          if (pergunta.id == resposta.questionario_pergunta_id) {
+            respostas.push(resposta.resposta);
+            indice = i;
+          }
         });
+        questionarioRespostaOrdenado.push(questionarioResposta![0].questionario_resposta_pergunta[indice]);
+      });
+      questionarioResposta![0].questionario_resposta_pergunta = questionarioRespostaOrdenado;
+      this.entity = questionarioResposta?.length ? questionarioResposta[0] : undefined;
+      if (this.entity) {
         this.form!.controls.comunica.setValue(respostas[0]);
         this.form!.controls.lideranca.setValue(respostas[1]);
         this.form!.controls.resolucao.setValue(respostas[2]);
@@ -80,6 +87,7 @@ export class CurriculumAtributossoftFormComponent extends PageFormBase<Questiona
         this.form!.controls.habilidade.setValue(respostas[5]);
         this.form!.controls.adaptabilidade.setValue(respostas[6]);
         this.form!.controls.etica.setValue(respostas[7]);
+        this.restante = 20 - respostas.reduce((soma: any, a: any) => soma + a, 0);
       }
     } else {
       this.dialog.alert("Teste Soft-Skills não localizado", "Teste não localizado");
@@ -104,8 +112,6 @@ export class CurriculumAtributossoftFormComponent extends PageFormBase<Questiona
       this.form!.controls.adaptabilidade.value,
       this.form!.controls.etica.value
     ];
-
-    
     /*let array : any=[];
     let respostas = this.entity?.questionario_resposta_pergunta;
     respostas?.forEach((x,i)=>{
@@ -115,22 +121,19 @@ export class CurriculumAtributossoftFormComponent extends PageFormBase<Questiona
       arrayQRP._status = "ADD";
       array.push(arrayQRP)
     })
-
     array?.forEach((x : any,i: number)=>{
       if ((x._status != "ADD") && (parseInt(x.resposta) != parseInt(valores[i]))){
         x.resposta = parseInt(valores[i]);
         x._status = "EDIT";
       }
     })*/
-
-    
     let respostas = this.entity?.questionario_resposta_pergunta || valores.map((x, i) => new QuestionarioRespostaPergunta({
       questionario_pergunta_id: this.questionario!.perguntas[i].id,
       resposta: parseInt(x),
-      _status : "ADD"
+      _status: "ADD"
     }));
     respostas.forEach((x, i) => {
-      if ((x._status != "ADD") && (parseInt(x.resposta) != parseInt(valores[i]))){
+      if ((x._status != "ADD") && (parseInt(x.resposta) != parseInt(valores[i]))) {
         x.resposta = parseInt(valores[i]);
         x._status = "EDIT";
       }
@@ -140,9 +143,7 @@ export class CurriculumAtributossoftFormComponent extends PageFormBase<Questiona
   }
 
   public valorSoftChange(control: any) {
-
     control.value == '' ? control.setValue(0) : '';
-
     const comunica = this.form?.controls.comunica.value;
     const lideranca = this.form?.controls.lideranca.value;
     const resolucao = this.form?.controls.resolucao.value;
@@ -151,15 +152,12 @@ export class CurriculumAtributossoftFormComponent extends PageFormBase<Questiona
     const habilidade = this.form?.controls.habilidade.value;
     const adaptabilidade = this.form?.controls.adaptabilidade.value;
     const etica = this.form?.controls.etica.value;
-
     const array = [comunica, lideranca, resolucao, criatividade, pensamento, habilidade, adaptabilidade, etica]
-
     let soma: number = 0;
-
     for (const val of array) {
       //console.log('SUM SEQUENCIA', sum)
       soma = soma + parseInt(val);
-
+      this.restante = 20 - soma;
       if (soma > 20) {
         this.dialog.alert("Valor excedido", "O valor máximo são 20 pontos.");
         control.setValue(control.value - (soma - 20));
@@ -167,7 +165,5 @@ export class CurriculumAtributossoftFormComponent extends PageFormBase<Questiona
       }
     }
   }
-
-
 }
 
