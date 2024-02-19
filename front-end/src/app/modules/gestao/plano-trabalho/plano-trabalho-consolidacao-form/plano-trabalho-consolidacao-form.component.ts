@@ -381,9 +381,9 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
     this.formEdit.controls.progresso.setValue(row.progresso);
     this.formEdit.controls.etiquetas.setValue(row.etiquetas);
     this.formEdit.controls.etiqueta.setValue(null);
-    this.etiquetas = this.util.merge(row.tipo_atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key);
+    this.etiquetas = this.util.merge(row.tipo_atividade?.etiquetas, row.plano_trabalho.unidade?.etiquetas, (a, b) => a.key == b.key);
     this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);
-    this.etiquetas = this.util.merge(this.etiquetas, await this.carregaEtiquetasUnidadesAscendentes(row.unidade), (a, b) => a.key == b.key);
+    this.etiquetas = this.util.merge(this.etiquetas, await this.carregaEtiquetasUnidadesAscendentes(row.plano_trabalho.unidade), (a, b) => a.key == b.key);
     this.checklist = this.util.clone(row.checklist);
   }
 

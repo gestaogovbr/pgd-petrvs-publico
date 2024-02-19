@@ -155,6 +155,7 @@ export class AuthService {
 
   public registerUser(user: any, token?: string) {
     if (user) {
+      let usuarioContextos = [];
       this.usuario = Object.assign(new Usuario(), user) as Usuario;
       this.capacidades = this.usuario?.perfil?.capacidades?.filter(x => x.deleted_at == null).map(x => x.tipo_capacidade?.codigo || "") || [];
       this.kind = this.kind;
@@ -163,18 +164,13 @@ export class AuthService {
       this.unidade = this.usuario?.areas_trabalho?.find(x => x.atribuicoes?.find(y => y.atribuicao == "LOTADO"))?.unidade;
       if (this.unidade) this.calendar.loadFeriadosCadastrados(this.unidade.id);
       if (token?.length) localStorage.setItem("petrvs_api_token", token);
-     
-        let usuarioContextos = [];        
-        if(this.hasPermissionTo("CTXT_GEST")) usuarioContextos.push("GESTAO");
-        if(this.hasPermissionTo("CTXT_EXEC")) usuarioContextos.push("EXECUCAO");
-        if(this.hasPermissionTo("CTXT_DEV")) usuarioContextos.push("DEV");
-        if(this.hasPermissionTo("CTXT_ADM")) usuarioContextos.push("ADMINISTRADOR");
-        if(this.hasPermissionTo("CTXT_RX")) usuarioContextos.push("RAIOX");
-        if(!usuarioContextos.includes(this.usuario?.config.menu_contexto))
-        this.gb.contexto = this.app?.menuContexto.find(c => c.key === this.usuario?.config.menu_contexto);
-
-        this.gb.setContexto(usuarioContextos[0]);
-      
+      if (this.hasPermissionTo("CTXT_GEST")) usuarioContextos.push("GESTAO");
+      if (this.hasPermissionTo("CTXT_EXEC")) usuarioContextos.push("EXECUCAO");
+      if (this.hasPermissionTo("CTXT_DEV")) usuarioContextos.push("DEV");
+      if (this.hasPermissionTo("CTXT_ADM")) usuarioContextos.push("ADMINISTRADOR");
+      if (this.hasPermissionTo("CTXT_RX")) usuarioContextos.push("RAIOX");
+      if (!usuarioContextos.includes(this.usuario?.config.menu_contexto)) this.gb.contexto = this.app?.menuContexto.find(c => c.key === this.usuario?.config.menu_contexto);
+      this.gb.setContexto(usuarioContextos[0]);
       this.notificacao.updateNaoLidas();
     } else {
       this.usuario = undefined;
@@ -255,7 +251,7 @@ export class AuthService {
     }, redirectTo);
   }
 
-  public authLoginUnico(code: string, state: string,redirectTo?: FullRoute) {
+  public authLoginUnico(code: string, state: string, redirectTo?: FullRoute) {
     //this.googleApi.tokenId = tokenId;
     return this.logIn("LOGINUNICO", "login-unico", {
       entidade: this.gb.ENTIDADE,
@@ -381,9 +377,9 @@ export class AuthService {
   public get gestoresLotacao(): Usuario[] {
     let lotacao = this.lotacao;
     let result: Usuario[] = [];
-    if(lotacao?.gestor?.usuario) result.push(lotacao?.gestor?.usuario);
-   // if(lotacao?.gestor_substituto?.usuario) result.push(lotacao?.gestor_substituto?.usuario);
-    if(lotacao?.gestores_substitutos.length) (lotacao?.gestores_substitutos.map(x => x.usuario!)).forEach(x => result.push(x));
+    if (lotacao?.gestor?.usuario) result.push(lotacao?.gestor?.usuario);
+    // if(lotacao?.gestor_substituto?.usuario) result.push(lotacao?.gestor_substituto?.usuario);
+    if (lotacao?.gestores_substitutos.length) (lotacao?.gestores_substitutos.map(x => x.usuario!)).forEach(x => result.push(x));
     return result;
   }
 
@@ -432,14 +428,14 @@ export class AuthService {
     let $ids_gerencias_substitutas = this.usuario?.gerencias_substitutas?.map(x => x.unidade_id) || [];
     let $ids_gerencias_delegadas = this.usuario?.gerencias_delegadas?.map(x => x.unidade_id) || [];
     let $ids_gerencias = [...$ids_gerencias_delegadas, ...$ids_gerencias_substitutas];
-    if(this.usuario?.gerencia_titular?.unidade?.id) $ids_gerencias.push(this.usuario?.gerencia_titular!.unidade_id);
+    if (this.usuario?.gerencia_titular?.unidade?.id) $ids_gerencias.push(this.usuario?.gerencia_titular!.unidade_id);
     $ids_gerencias.forEach(x => { if (!!unidade.path && unidade.path.split('/').slice(1).includes(x)) result = true; });
     return false;
   }
 
 
-  public loginPanel(user: string,password: string) {
-    return this.server.post("api/panel-login", { user: user,password: password }).toPromise().then(response => {
+  public loginPanel(user: string, password: string) {
+    return this.server.post("api/panel-login", { user: user, password: password }).toPromise().then(response => {
       return response;
     });
   }

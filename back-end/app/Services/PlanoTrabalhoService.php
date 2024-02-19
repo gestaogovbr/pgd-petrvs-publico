@@ -170,8 +170,8 @@ class PlanoTrabalhoService extends ServiceBase
       A alteração não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA (RN_PTR_AA)
       */
       if (!$condicoes['planoValido']) throw new ServerException("ValidatePlanoTrabalho", "O plano de trabalho não é válido, ou seja, foi apagado, cancelado ou arquivado.\n[ver RN_PTR_M]");
-      if (!($condicoes['planoIncluido'] || $condicoes['planoAguardandoAssinatura']) || !$validoTabela1) throw new ServerException("ValidateUsuario", "Para alterar um plano de trabalho no status INCLUIDO ou AGUARDANDO_ASSINATURA, o usuário logado precisa atender os critérios da ação Alterar da [PTR:TABELA_1].\n[ver RN_PTR_M]");
-      if ($condicoes['planoAtivo'] && !($validoTabela1 && $usuario->hasPermissionTo('MOD_PTR_EDT_ATV'))) throw new ServerException("ValidateUsuario", "Para alterar um plano de trabalho no status ATIVO, o usuário logado precisa atender os critérios da ação Alterar da TABELA_1 e possuir a capacidade específica (MOD_PTR_EDT_ATV).\n[ver RN_PTR_M]");
+      if (($condicoes['planoIncluido'] || $condicoes['planoAguardandoAssinatura']) && !$validoTabela1) throw new ServerException("ValidateUsuario", "Para alterar um plano de trabalho no status INCLUIDO ou AGUARDANDO_ASSINATURA, o usuário logado precisa atender os critérios da ação Alterar da [PTR:TABELA_1].\n[ver RN_PTR_M]");
+      if ($condicoes['planoAtivo'] && (!$validoTabela1 || !$usuario->hasPermissionTo('MOD_PTR_EDT_ATV'))) throw new ServerException("ValidateUsuario", "Para alterar um plano de trabalho no status ATIVO, o usuário logado precisa atender os critérios da ação Alterar da TABELA_1 e possuir a capacidade específica (MOD_PTR_EDT_ATV).\n[ver RN_PTR_M]");
       $plano = PlanoTrabalho::find($data["id"]);
       /*  
       (RN_PTR_AD) Após criado um plano de trabalho, a sua unidade e programa não podem mais ser alterados. 
@@ -184,8 +184,8 @@ class PlanoTrabalhoService extends ServiceBase
           O plano de trabalho somente poderá ser alterado: se a nova data de início não for superior a algum período já CONCLUIDO ou AVALIADO, ou até o limite da primeira atividade já lançados; 
           e se a nova data de final não for inferior a algum período já CONCLUIDO ou AVALIADO, ou até o limite da última atividade já lançados;
       */
-      $maxInicio = $this->dataFinalMinimaConsolidacao($plano);
-      $minFim = $this->dataFinalMinimaConsolidacao($plano);
+      $maxInicio = $this->dataInicialMaximaConsolidacao($plano, $data["data_fim"]);
+      $minFim = $this->dataFinalMinimaConsolidacao($plano, $data["data_inicio"]);
       $dataInicioVigencia = date("Y-m-d", strtotime($data["data_inicio"])); /* Transforma de datetime para date */
       $dataFimVigencia = date("Y-m-d", strtotime($data["data_fim"])); /* Transforma de datetime para date */
       if (strtotime($dataInicioVigencia) > strtotime($maxInicio)) {
@@ -200,10 +200,12 @@ class PlanoTrabalhoService extends ServiceBase
   public function repactuar($planoId, $forcarGeracaoTcr = false) {
     $plano = PlanoTrabalho::find($planoId);
     if($plano->programa->termo_obrigatorio) {
+      $exigeAssinaturas = $plano->programa->plano_trabalho_assinatura_participante || $plano->programa->plano_trabalho_assinatura_gestor_unidade || $plano->programa->plano_trabalho_assinatura_gestor_lotacao || $plano->programa->plano_trabalho_assinatura_gestor_entidade;
       $haAssinaturas = DocumentoAssinatura::where("documento_id", $plano->documento_id)->count() > 0;
       $template = $plano->programa->templateTcr->conteudo ?? "";
       $dataset = $this->templateDatasetService->getDataset("PLANO_TRABALHO", true);
       $datasource = $this->templateService->getDatasource("PLANO_TRABALHO", $plano);
+      if($exigeAssinaturas) $this->statusService->atualizaStatus($plano, 'AGUARDANDO_ASSINATURA', 'Plano de Trabalho repactuado');
       if(!empty($plano->documento_id) && !$haAssinaturas) {
         $documento = Documento::find($plano->documento_id);
         $documento->conteudo = $this->templateService->renderTemplate($template, $datasource);
@@ -212,7 +214,6 @@ class PlanoTrabalhoService extends ServiceBase
         $documento->datasource = $datasource;
         $documento->save();
       } else if (empty($plano->documento_id) || $forcarGeracaoTcr || $haAssinaturas || ($plano->status == "ATIVO" && $this->haAssinaturasExigidas($plano->toArray()))) {
-        $this->statusService->atualizaStatus($plano, 'AGUARDANDO_ASSINATURA', 'Plano de Trabalho repactuado');
         $documento = new Documento([
           "tipo" => "HTML",
           "especie" => "TCR",
@@ -302,22 +303,22 @@ class PlanoTrabalhoService extends ServiceBase
   }
 
   /* Será a data_inicio, ou a data_fim do último período CONCLUIDO ou AVALIADO. O que for maior. */
-  public function dataFinalMinimaConsolidacao($plano)
+  public function dataFinalMinimaConsolidacao($plano, $novoInicio)
   {
-    $result = strtotime($plano->data_inicio);
+    $result = $this->utilService->asTimestamp($novoInicio);
     foreach($plano->consolidacoes as $consolidacao) {
-      $data = strtotime($consolidacao->status != "INCLUIDO" ? $consolidacao->data_fim : $result);
+      $data = $this->utilService->asTimestamp($consolidacao->status != "INCLUIDO" ? $consolidacao->data_fim : $result);
       $result = max($result, $data);
     }
     return date('Y-m-d', $result);
   }
 
   /* Será a data_fim, ou a data_inicio do primeiro período CONCLUIDO ou AVALIADO. O que for menor. */
-  public function dataInicialMaximaConsolidacao($plano)
+  public function dataInicialMaximaConsolidacao($plano, $novoFim)
   {
-    $result = strtotime($plano->data_fim);
+    $result = $this->utilService->asTimestamp($novoFim);
     foreach($plano->consolidacoes as $consolidacao) {
-      $data = strtotime($consolidacao->status != "INCLUIDO" ? $consolidacao->data_inicio : $result);
+      $data = $this->utilService->asTimestamp($consolidacao->status != "INCLUIDO" ? $consolidacao->data_inicio : $result);
       $result = min($result, $data);
     }
     return date('Y-m-d', $result);
@@ -366,17 +367,12 @@ class PlanoTrabalhoService extends ServiceBase
   public function atualizaConsolidacoes($plano)
   {
     $existentes = $plano->consolidacoes->all();
-    //$ocorrencias = array_reduce($existentes, fn ($carry, $item) => array_merge($carry, $item->ocorrencias->all()), []);
     $merged = [];
     $dataInicioVigencia = date("Y-m-d", strtotime($plano->data_inicio)); /* Transforma de datetime para date */
     $dataFimVigencia = date("Y-m-d", strtotime($plano->data_fim)); /* Transforma de datetime para date */
     $dataInicio = $dataInicioVigencia;
     while (strtotime($dataInicio) <= strtotime($dataFimVigencia)) {
       $dataFim = date("Y-m-d", min(strtotime($this->proxDataConsolidacao($dataInicio, $plano->programa)), strtotime($dataFimVigencia)));
-      //$intersecaoOcorrencias = array_filter($ocorrencias, fn ($o) => strtotime($dataInicio) <= strtotime($o->data_fim) && strtotime($dataFim) >= strtotime($o->data_inicio));
-      //$maxDataFimOcorrencia = count($intersecaoOcorrencias) ? max(array_map(fn ($item) => strtotime($item->data_fim), $intersecaoOcorrencias)) : strtotime($dataFim);
-      /* (RN_CSLD_3) (REVOGADO) Caso exista uma ocorrência que faça interseção no período e tenha data_fim maior que a calculada, a data_fim do período irá crescer */
-      //$dataFim = $maxDataFimOcorrencia > strtotime($dataFim) ? date("Y-m-d", $maxDataFimOcorrencia) : $dataFim;
       $igual = array_filter($existentes, fn ($c) => $c->data_inicio == $dataInicio && $c->data_fim == $dataFim)[0] ?? null;
       $intersecao = array_filter($existentes, fn ($c) => $c->status != "INCLUIDO" && strtotime($dataInicio) <= strtotime($c->data_fim) && strtotime($dataFim) >= strtotime($c->data_inicio))[0] ?? null;
       if (!empty($igual)) { /* (RN_CSLD_4) Caso exista períodos iguais, o período existente será mantido (para este perído nada será feito, manterá a mesma ID) */
@@ -384,7 +380,7 @@ class PlanoTrabalhoService extends ServiceBase
         $existentes = array_filter($existentes, fn ($e) => $e->id !== $igual->id);
         $dataInicio = date("Y-m-d", strtotime($igual->data_fim . ' + 1 days'));
       } else if (!empty($intersecao)) { /* Se houver intersecção do período gerado com um existente que esteja com status CONCLUIDO ou AVALIADO */
-        $existentes = array_filter($existentes, fn ($e) => $e->id !== $igual->id);
+        $existentes = array_filter($existentes, fn ($e) => $e->id !== $intersecao->id);
         if ($intersecao->data_inicio == $dataInicio) { /* (RN_CSLD_5) Se as datas de início forem iguais o periodo existente será mantido */
           $dataInicio = date("Y-m-d", strtotime($intersecao->data_fim . ' + 1 days'));
         } else { /* (RN_CSLD_6) Se as datas de início forem diferente, então será criado um novo perído entre o novo início e o início do período CONCLUIDO/AVALIADO, e o período CONCLUIDO/AVALIADO será mantido */
@@ -410,18 +406,6 @@ class PlanoTrabalhoService extends ServiceBase
         $dataInicio = date("Y-m-d", strtotime($dataFim . ' + 1 days'));
       }
     }
-    /* (RN_CSLD_7) (REVOGADO) Ocorrências e Atividades devem ser transferiadas para os novos perídos 
-    foreach ($existentes as $anterior) {
-      /* Realoca ocorrencias 
-      foreach ($anterior->ocorrencias as $ocorrencia) {
-        $consolidacao = array_filter($merged, fn ($item) => strtotime($item->data_inicio) <= strtotime($ocorrencia->data_inicio) && strtotime($ocorrencia->data_inicio) <= strtotime($item->data_fim))[0] ?? null;
-        if (empty($consolidacao)) throw new ServerException("ValidatePlanoTrabalho", "Erro ao realocar ocorrência para novo período: " . $ocorrencia->data_inicio);
-        $ocorrencia->plano_trabalho_consolidacao_id = $consolidacao->id;
-        $ocorrencia->save();
-      }
-      /* Remove o registro da consolidação completamente vazio 
-      $anterior->delete();
-    }*/
     foreach ($existentes as $anterior) {
       /* Remove o registro da consolidação completamente vazio */
       $anterior->delete();

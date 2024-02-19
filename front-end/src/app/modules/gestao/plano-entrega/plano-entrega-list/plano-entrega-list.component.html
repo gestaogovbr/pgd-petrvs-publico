@@ -16,7 +16,7 @@
         </div>
         <ng-template #naoEModal>
             <div class="row">
-                <input-switch [size]="1" label="Meus" controlName="meus_planos" [control]="filter!.controls.meus_planos" labelInfo="Planos de entrega da unidade da qual faço parte da gestão"></input-switch>
+                <input-switch [size]="1" label="Meus" controlName="meus_planos" [control]="filter!.controls.meus_planos" labelInfo="Planos de entrega das unidade da qual sou integrante (Áreas de trabalho)"></input-switch>
                 <input-text [size]="3" label="Nome" controlName="nome" [control]="filter!.controls.nome" [placeholder]="'Nome do '+lex.translate('plano de entrega')" [attr.maxlength]=250></input-text>
                 <input-search #unidade [size]="4" [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao"></input-search>
                 <input-select [size]="3" label="Status" controlName="status" [control]="filter!.controls.status" [items]="lookup.PLANO_ENTREGA_STATUS" [filter]="avaliacao ? ['CONCLUIDO', 'AVALIADO'] : undefined" itemTodos="- Todos -" [valueTodos]="null"></input-select>

@@ -100,7 +100,6 @@ class Unidade extends ModelBase
     public function gestoresDelegados() { return $this->hasMany(UnidadeIntegrante::class)->has('gestorDelegado'); }
     public function lotados() { return $this->hasMany(UnidadeIntegrante::class)->has('lotado'); }
     public function colaboradores() { return $this->hasMany(UnidadeIntegrante::class)->has('colaborador'); } // aqueles que possuem TCR
-    public function homologadoresPlanoEntrega() { return $this->hasMany(UnidadeIntegrante::class)->has('homologadorPlanoEntrega'); }
     public function avaliadoresPlanoEntrega() { return $this->hasMany(UnidadeIntegrante::class)->has('avaliadorPlanoEntrega'); }
     public function avaliadoresPlanoTrabalho() { return $this->hasMany(UnidadeIntegrante::class)->has('avaliadorPlanoTrabalho'); }
     // Mutattors e Casts
