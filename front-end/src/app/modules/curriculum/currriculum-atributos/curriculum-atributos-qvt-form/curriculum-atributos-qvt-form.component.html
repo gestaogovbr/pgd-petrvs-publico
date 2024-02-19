@@ -10,7 +10,8 @@
       Desta forma, por não podermos identificar , solicitamos que seja gravado apenas uma vez.
     </p>
     <div class="mt-3"></div>
-    <curriculum-pergunta-card *ngFor="let idx of indice0a9" [indice]="idx + 1" [pergunta]="perguntas[idx]" [control]="perguntas[idx]._metadata.control"></curriculum-pergunta-card>
+    <!--<curriculum-pergunta-card *ngFor="let idx of indice0a9" [indice]="idx + 1" [pergunta]="perguntas[idx]" [control]="perguntas[idx]._metadata.control"></curriculum-pergunta-card>-->
+    <curriculum-pergunta-card *ngFor="let pergunta of perguntas; index as idx" [indice]="idx + 1" [pergunta]="perguntas[idx]" [control]="perguntas[idx]._metadata.control"></curriculum-pergunta-card>
     <!--div class="card mb-3 mt-3 cardConcordancia" id="cardConcordancia">
       <div class="card-header">
         <div class="row">
