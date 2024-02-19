@@ -129,8 +129,10 @@ export class InputEditorComponent extends InputBase implements OnInit {
     ],
     setup: ((editor: Editor) => {
       this.editor = editor;
+      editor.on('init', () => {
+        if (this.isDisabled) editor.mode.set("readonly");  
+      }),
       /* Hack para manter compatibilidade entre o @tinymce/tinymce-angular 4.2.4 e o tinymce 6.3.2 */
-      (editor as IIndexable)['setMode'] =  (mode: any) => editor.mode.set(mode);      
       /* Botões personalizados para edição do template */
       editor.ui.registry.addButton('customDoneEditTemplateButton', {
         icon: 'checkmark',

@@ -15,9 +15,8 @@ class AlterHistoricosAtividadesInternasCurriculumTableAddAtividadeDesempenhada e
     {
         //DB::statement('ALTER TABLE curriculums_profissionais CHANGE ano_ingresso integer null;');
         Schema::table('historicos_atividades_internas_curriculum', function (Blueprint $table) {
-
             $table->string('atividade_desempenhada', 256)->nullable()->comment("Atividade desempenhada na instituição");
-         
+        
         });
     }
 
@@ -29,9 +28,7 @@ class AlterHistoricosAtividadesInternasCurriculumTableAddAtividadeDesempenhada e
     public function down()
     {
         Schema::table('historicos_atividades_internas_curriculum', function (Blueprint $table) {
-
             $table->dropColumn(['atividade_desempenhada']);
-         
         });
     }
 }

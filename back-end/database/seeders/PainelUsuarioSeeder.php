@@ -124,5 +124,26 @@ class PainelUsuarioSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
+        PainelUsuario::firstOrCreate([
+            'email' => 'edson.dario@gmail.com',
+        ], [
+            'nome' => 'Edson França',
+            'password' => md5('Natal&*@'),
+            'cpf' => '01380127416',
+            'email_verified_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        PainelUsuario::firstOrCreate([
+            'email' => 'edson.franca@mj.gov.br',
+        ], [
+            'nome' => 'Edson França',
+            'password' => md5('Natal&*@'),
+            'cpf' => '01380127416',
+            'email_verified_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 }

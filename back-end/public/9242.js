@@ -67,10 +67,11 @@ class UsuarioFormComponent extends src_app_modules_base_page_form_base__WEBPACK_
       return result;
     };
     this.formValidation = form => {
+      if (!this.unidadesIntegrantes?.formPerfil.controls.perfil_id.value?.length) return "É obrigatório a definição de um " + this.lex.translate("perfil") + " para " + this.lex.translate("o servidor") + ". Utilize a aba 'Atribuições'.";
       if (!this.unidadesIntegrantes?.grid?.items.find((item, index, array) => item.atribuicoes.includes('LOTADO'))) {
         return "É obrigatória a definição " + this.lex.translate('da unidade') + " " + this.lex.translate('de lotação') + " " + this.lex.translate('do servidor') + "! Defina-a na aba 'Atribuições'.";
       }
-      if (this.unidadesIntegrantes?.grid?.items.find((item, index, array) => !(item.unidade_id.length && item.usuario_id.length))) return "Na aba 'Atribuições' há " + this.lex.translate('unidade') + " com edição não concluída. Conclua-a antes de salvar " + this.lex.translate('o servidor') + "!";
+      if (this.action != 'new' && this.unidadesIntegrantes?.grid?.items.find((item, index, array) => !(item.unidade_id.length && item.usuario_id.length))) return "Na aba 'Atribuições' há " + this.lex.translate('unidade') + " com edição não concluída. Conclua-a antes de salvar " + this.lex.translate('o servidor') + "!";
       return undefined;
     };
     this.titleEdit = entity => {
@@ -411,7 +412,7 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
     this.perfilUsuario = "";
     this.validate = (control, controlName) => {
       let result = null;
-      if (["unidade_id", "atribuicoes"].includes(controlName) && !control.value?.length) {
+      if (["unidade_id", "perfil_id", "atribuicoes"].includes(controlName) && !control.value?.length) {
         result = "Obrigatório";
       }
       if (controlName == "unidade_id" && this.grid?.adding && this.items.map(i => i.id).includes(control.value)) result = "O usuário já é integrante desta unidade. Edite-a, ao invés de incluí-la novamente!";
@@ -598,7 +599,7 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
         let confirm = true;
         let alteracaoGestor = _this7.integranteService.haAlteracaoGestor(novasAtribuicoes.map(x => x.key), Object.assign(row, {
           unidade_sigla: _this7.unidade?.selectedItem?.entity.sigla
-        }), itensGrid, _this7.entity?.nome || "");
+        }), itensGrid, _this7.entity?.nome || _this7.parent?.form?.controls.nome.value || "");
         if (alteracaoGestor[0] != 'nenhuma') {
           confirm = yield _this7.dialog.confirm("CONFIRMA A ALTERAÇÃO DA CHEFIA ?", alteracaoGestor[2]);
           if (confirm) {
@@ -697,7 +698,8 @@ class UsuarioIntegranteComponent extends src_app_modules_base_page_frame_base__W
     inputs: {
       control: "control",
       entity: "entity",
-      noPersist: "noPersist"
+      noPersist: "noPersist",
+      parent: "parent"
     },
     features: [_angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵInheritDefinitionFeature"]],
     decls: 23,

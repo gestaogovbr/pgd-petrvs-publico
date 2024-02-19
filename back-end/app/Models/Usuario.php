@@ -37,6 +37,7 @@ use App\Traits\MergeRelations;
 use App\Traits\LogChanges;
 use App\Traits\HasPermissions;
 use App\Services\UsuarioService;
+use App\Services\UtilService;
 use Throwable;
 use App\Exceptions\ServerException;
 
@@ -84,8 +85,9 @@ class Usuario extends Authenticatable
     public function proxyFill($dataOrEntity, $unidade, $action) {
         $this->fill($dataOrEntity);
         if($action == 'INSERT'){
+            $lotacao_id = array_filter($dataOrEntity["integrantes"], fn($i) => in_array("LOTADO", $i["atribuicoes"]))[0]["unidade_id"];
             $this->save();
-            $vinculoLotacao = $this->unidadesIntegrantes()->save(new UnidadeIntegrante(['unidade_id' => $dataOrEntity['lotacao_id']]));
+            $vinculoLotacao = $this->unidadesIntegrantes()->save(new UnidadeIntegrante(['unidade_id' => $lotacao_id]));
             $lotacao = $vinculoLotacao->atribuicoes()->save(new UnidadeIntegranteAtribuicao(['atribuicao' => 'LOTADO']));
             if(!$vinculoLotacao || !$lotacao) throw new ServerException("ValidateLotacao", "Erro com a definição da lotação. Usuário não cadastrado!");
         }
@@ -145,6 +147,8 @@ class Usuario extends Authenticatable
     public function planosEntregaCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }
     public function planosTrabalhoCriados() { return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id'); }
     public function unidadesIntegrantes() { return $this->hasMany(UnidadeIntegrante::class); }
+    public function unidadeIntegranteAtribuicoes($unidadeId) { return $this->hasManyThrough(UnidadeIntegranteAtribuicao::class, UnidadeIntegrante::class)->where('unidade_id', $unidadeId)->get(); }
+    public function unidadesIntegranteAtribuicoes() { return $this->hasManyThrough(UnidadeIntegranteAtribuicao::class, UnidadeIntegrante::class); }
     public function statusHistorico() { return $this->hasMany(StatusJustificativa::class, "usuario_id"); }
     public function documentos() { return $this->hasMany(Documento::class); }
     // belongsTo
@@ -197,9 +201,12 @@ class Usuario extends Authenticatable
     public function getUnidadesAtribuicoesAttribute()
     {
         $result = [];
-        foreach($this->unidadesIntegrantes as $vinculo){
-            $atribuicoes = $vinculo->atribuicoes->toArray();
-            if(count($atribuicoes) > 0) $result[$vinculo->unidade_id] = array_map(fn($a) => $a["atribuicao"], $atribuicoes);
+        $unidadesIntegrantes = $this->unidadesIntegrantes;
+        if(!empty($unidadesIntegrantes)){
+            foreach($unidadesIntegrantes as $vinculo){
+                $atribuicoes = $vinculo->atribuicoes->toArray();
+                if(count($atribuicoes) > 0) $result[$vinculo->unidade_id] = array_map(fn($a) => $a["atribuicao"], $atribuicoes);
+            }
         }
         return $result;
     }

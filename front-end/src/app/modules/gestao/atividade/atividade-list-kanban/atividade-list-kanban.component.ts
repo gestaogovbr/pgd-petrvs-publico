@@ -15,7 +15,7 @@ import { BadgeButton } from 'src/app/components/badge/badge.component';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 
 export type StatusDockerConfig = {
-  naoIniciado: boolean, 
+  naoIniciado: boolean,
   pausado: boolean,
   iniciado: boolean,
   concluido: boolean
@@ -27,12 +27,12 @@ export type StatusDockerConfig = {
   styleUrls: ['./atividade-list-kanban.component.scss']
 })
 export class AtividadeListKanbanComponent extends AtividadeListBase {
-  @ViewChild("filterRef", {static: false}) filterRef?: FilterComponent;
-  @ViewChild("kanbanEtiquetas", {static: false}) kanbanEtiquetas?: KanbanComponent;
-  @ViewChild("dockerNaoIniciado", {static: false}) dockerNaoIniciado?: DockerComponent;
-  @ViewChild("dockerPausado", {static: false}) dockerPausado?: DockerComponent;
-  @ViewChild("dockerIniciado", {static: false}) dockerIniciado?: DockerComponent;
-  @ViewChild("dockerConcluido", {static: false}) dockerConcluido?: DockerComponent;
+  @ViewChild("filterRef", { static: false }) filterRef?: FilterComponent;
+  @ViewChild("kanbanEtiquetas", { static: false }) kanbanEtiquetas?: KanbanComponent;
+  @ViewChild("dockerNaoIniciado", { static: false }) dockerNaoIniciado?: DockerComponent;
+  @ViewChild("dockerPausado", { static: false }) dockerPausado?: DockerComponent;
+  @ViewChild("dockerIniciado", { static: false }) dockerIniciado?: DockerComponent;
+  @ViewChild("dockerConcluido", { static: false }) dockerConcluido?: DockerComponent;
   @ViewChild('planoEntrega', { static: false }) public planoEntrega?: InputSelectComponent;
   @ViewChild('planoEntregaEntrega', { static: false }) public planoEntregaEntrega?: InputSelectComponent;
   @Input() snapshot?: ActivatedRouteSnapshot;
@@ -46,7 +46,7 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
   public AVALIADO: number = 4;
   public DOCKERS: string[] = ["NAOINICIADO", "PAUSADO", "INICIADO", "CONCLUIDO"];
   public cards: (CardItem[])[] = [[], [], [], []];
-  public cardsConfig: StatusDockerConfig = {naoIniciado: false, pausado: false, iniciado: false, concluido: false};
+  public cardsConfig: StatusDockerConfig = { naoIniciado: false, pausado: false, iniciado: false, concluido: false };
   public labels: KanbanDocker[] = [];
   public cardsVersion: number = 0;
   public dragDrop: any = {};
@@ -99,21 +99,21 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
     /* Inicializações */
     this.code = "MOD_DMD";
     this.filter = this.fh.FormBuilder({
-      atribuidas_para_mim: {default: false},
-      usuario_id: {default: ""},
-      somente_unidade_atual: {default: false},
-      unidades_subordinadas: {default: false},
-      unidade_id: {default: ""},
-      numero_processo: {default: ""},
-      status: {default: ""},
-      usarEtiquetas: {default: !!this.usuarioConfig?.kanban_usar_etiquetas},
-      resumido: {default: !!this.usuarioConfig?.kanban_resumido},
-      etiquetas: {default: []},
-      plano_entrega_id: { default: null},
-      plano_entrega_entrega_id: { default: null},
+      atribuidas_para_mim: { default: false },
+      usuario_id: { default: "" },
+      somente_unidade_atual: { default: false },
+      unidades_subordinadas: { default: false },
+      unidade_id: { default: "" },
+      numero_processo: { default: "" },
+      status: { default: "" },
+      usarEtiquetas: { default: !!this.usuarioConfig?.kanban_usar_etiquetas },
+      resumido: { default: !!this.usuarioConfig?.kanban_resumido },
+      etiquetas: { default: [] },
+      plano_entrega_id: { default: null },
+      plano_entrega_entrega_id: { default: null },
     });
     this.formEdit = this.fh.FormBuilder({
-      etiqueta: {default: null}
+      etiqueta: { default: null }
     });
     this.cardsConfig = Object.assign(this.cardsConfig, this.usuarioConfig?.kanban_status_dockers);
     this.groupBy = [];
@@ -126,9 +126,9 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
       active_tab: "TABELA",
       kanban_resumido: false,
       kanban_usar_etiquetas: false,
-      kanban_status_dockers: {naoIniciado: false, pausado: false, iniciado: false, concluido: false},
+      kanban_status_dockers: { naoIniciado: false, pausado: false, iniciado: false, concluido: false },
       kanban_etiquetas_dockers: []
-    });   
+    });
   }
 
   ngAfterViewInit() {
@@ -144,13 +144,13 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
 
   public isOutras(x: KanbanDocker): boolean {
     return x.title == this.TITLE_OUTRAS && !x.labels.length;
-  } 
+  }
 
   public loadLabel() {
     const dockers: any[] = [...(this.usuarioConfig?.kanban_etiquetas_dockers || [])];
-    if(!dockers.find(this.isOutras.bind(this))) dockers.splice(0, 0, {title: this.TITLE_OUTRAS, labels: [], collapse: false});
+    if (!dockers.find(this.isOutras.bind(this))) dockers.splice(0, 0, { title: this.TITLE_OUTRAS, labels: [], collapse: false });
     this.labels = dockers.reduce((a, v) => {
-      if(!a.find((x: any) => (x.title?.length && x.title == v.title) || (x.labels?.length && v.labels?.length && x.labels[0].key == v.labels[0].key))) {
+      if (!a.find((x: any) => (x.title?.length && x.title == v.title) || (x.labels?.length && v.labels?.length && x.labels[0].key == v.labels[0].key))) {
         a.push({
           labels: this.isOutras(v) ? [] : v.labels,
           title: v.title,
@@ -161,7 +161,7 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
         });
       }
       return a;
-    }, []); 
+    }, []);
     /*this.labels = dockers.map(x => {
       return {
         labels: this.isOutras(x) ? [] : x.labels,
@@ -176,11 +176,11 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
 
   public get isEtiquetas(): boolean {
     return !!this.filter?.controls?.usarEtiquetas?.value;
-  } 
+  }
 
   public onUsarEtiquetasChange(event: Event) {
-    this.saveUsuarioConfig({kanban_usar_etiquetas: this.filter!.controls.usarEtiquetas.value});
-    if(this.query) this.onQueryLoad(this.query!.rows);
+    this.saveUsuarioConfig({ kanban_usar_etiquetas: this.filter!.controls.usarEtiquetas.value });
+    if (this.query) this.onQueryLoad(this.query!.rows);
   }
 
   public incluirLista(docker: DockerComponent) {
@@ -191,19 +191,19 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
       editing: true,
       collapse: false
     });
-    
+
     this.kanbanEtiquetas?.refreshDoubleScrollbar();
     this.cdRef.detectChanges();
   }
 
   public onResumidoChange(event: Event) {
-    this.saveUsuarioConfig({kanban_resumido: this.filter!.controls.resumido.value});
+    this.saveUsuarioConfig({ kanban_resumido: this.filter!.controls.resumido.value });
     this.cdRef.detectChanges();
   }
 
   public loadEtiquetas() {
     //this.etiquetas = this.util.merge(row.tipo_atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key); 
-    this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key); 
+    this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);
   }
 
   public getLabelStyle(label: KanbanDocker) {
@@ -213,7 +213,7 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
   }
 
   public onDockerCollapse(docker: DockerComponent, collapse: boolean) {
-    if(this.isEtiquetas) {
+    if (this.isEtiquetas) {
       this.labels[docker.key].collapse = collapse;
       this.saveEtiquetasUsuarioConfig();
     } else {
@@ -223,7 +223,7 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
         iniciado: !!this.dockerIniciado?.collapse,
         concluido: !!this.dockerConcluido?.collapse
       };
-      this.saveUsuarioConfig({kanban_status_dockers: this.cardsConfig});
+      this.saveUsuarioConfig({ kanban_status_dockers: this.cardsConfig });
     }
     this.kanbanEtiquetas?.refreshDoubleScrollbar();
   }
@@ -231,7 +231,7 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
   public async editEtiquetas(docker: DockerComponent) {
     const label = this.labels[docker.key!];
     const allUsed = this.labels.reduce((a: string[], v: KanbanDocker, i: number) => {
-      if(v.labels.length && i != docker.key) a.push(v.labels[0].key);
+      if (v.labels.length && i != docker.key) a.push(v.labels[0].key);
       return a;
     }, []);
     this.etiquetasEdit = this.etiquetas.filter(x => !allUsed.includes(x.key));
@@ -240,7 +240,7 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
 
   public saveEtiquetasUsuarioConfig() {
     const dockers = this.labels.reduce((a: any[], v: any) => {
-      if(!a.find((x: any) => (x.title?.length && x.title == v.title) || (x.labels?.length && v.labels?.length && x.labels[0].key == v.labels[0].key))) {
+      if (!a.find((x: any) => (x.title?.length && x.title == v.title) || (x.labels?.length && v.labels?.length && x.labels[0].key == v.labels[0].key))) {
         a.push({
           title: v.title,
           labels: v.labels,
@@ -256,16 +256,16 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
         collapse: x.collapse
       }
     });*/
-    this.saveUsuarioConfig({kanban_etiquetas_dockers: dockers});
+    this.saveUsuarioConfig({ kanban_etiquetas_dockers: dockers });
   }
 
   public async saveEtiquetas(docker: DockerComponent) {
     const key = this.formEdit.controls.etiqueta.value;
-    if(key?.length) {
+    if (key?.length) {
       const label = this.labels[docker.key!];
       const etiqueta = this.etiquetasEdit.find(x => x.key == key);
-      if(etiqueta) label.labels = [etiqueta];
-      if(this.query) this.onQueryLoad(this.query!.rows);
+      if (etiqueta) label.labels = [etiqueta];
+      if (this.query) this.onQueryLoad(this.query!.rows);
       this.saveEtiquetasUsuarioConfig();
       return true;
     }
@@ -274,7 +274,7 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
 
   public async cancelEtiquetas(docker: DockerComponent) {
     const label = this.labels[docker.key!];
-    if(!label.labels?.length) {
+    if (!label.labels?.length) {
       this.labels.splice(docker.key!, 1);
       this.kanbanEtiquetas?.refreshDoubleScrollbar();
     }
@@ -283,7 +283,7 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
   public async deleteEtiquetas(docker: DockerComponent) {
     this.labels.splice(docker.key!, 1);
     this.kanbanEtiquetas?.refreshDoubleScrollbar();
-    if(this.query) this.onQueryLoad(this.query!.rows);
+    if (this.query) this.onQueryLoad(this.query!.rows);
     this.saveEtiquetasUsuarioConfig();
   }
 
@@ -292,13 +292,13 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
   }
 
   public modalRefreshId(atividade: Atividade): RouteMetadata {
-    return { 
-      modal: true, 
+    return {
+      modal: true,
       modalClose: (modalResult?: string) => {
         const destination = this.dragDrop.destination;
         const source = this.dragDrop.source;
-        if(modalResult) {
-          if(destination && source) {
+        if (modalResult) {
+          if (destination && source) {
             destination.list.splice(destination.index, 0, destination.card);
             source.list.splice(source.index, 1);
           }
@@ -310,7 +310,7 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
   }
 
   public mergeEtiqueta(etiqueta: LookupItem) {
-    if(!this.etiquetas.find(x => x.key == etiqueta.key)) {
+    if (!this.etiquetas.find(x => x.key == etiqueta.key)) {
       this.etiquetas.push(etiqueta);
     }
   }
@@ -325,19 +325,19 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
   public onQueryLoad(rows?: any[]) {
     super.onGridLoad(rows);
     this.cardsVersion++;
-    if(!this.filter?.controls?.usarEtiquetas?.value) {
+    if (!this.filter?.controls?.usarEtiquetas?.value) {
       rows?.forEach(row => {
         const atividade: Atividade = row as Atividade;
         let status = this.lookup.ATIVIDADE_STATUS.find(x => x.key == atividade.status)?.key;
-        switch(status || "INCLUIDO") {
+        switch (status || "INCLUIDO") {
           case "PAUSADO": this.putCard(this.cards[this.PAUSADO], atividade); break;
           case "INICIADO": this.putCard(this.cards[this.INICIADO], atividade); break;
           case "CONCLUIDO": this.putCard(this.cards[this.CONCLUIDO], atividade); break;
           default: this.putCard(this.cards[this.NAOINICIADO], atividade);
         }
       });
-      for(let cards of this.cards) {
-        for(let i = 0; i < cards.length; cards[i].version != this.cardsVersion ? cards.splice(i, 1) : i++);
+      for (let cards of this.cards) {
+        for (let i = 0; i < cards.length; cards[i].version != this.cardsVersion ? cards.splice(i, 1) : i++);
       }
     } else {
       const outrasIndex = this.labels.findIndex(this.isOutras.bind(this));
@@ -345,16 +345,16 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
         let atividade: Atividade = row as Atividade;
         let docker: KanbanDocker | undefined = undefined;
         atividade.etiquetas = atividade.etiquetas || [];
-        for(let i = 0; i < atividade.etiquetas.length; i++) {
-          for(let j = 1; j < this.labels.length && !docker; j++) {
-            if(this.labels[j].labels[0].key == atividade.etiquetas[i].key) docker = this.labels[j];
+        for (let i = 0; i < atividade.etiquetas.length; i++) {
+          for (let j = 1; j < this.labels.length && !docker; j++) {
+            if (this.labels[j].labels[0].key == atividade.etiquetas[i].key) docker = this.labels[j];
           }
-          if(!this.etiquetas.some(x => x.key == atividade.etiquetas[i].key)) this.etiquetas.push(atividade.etiquetas[i]);
+          if (!this.etiquetas.some(x => x.key == atividade.etiquetas[i].key)) this.etiquetas.push(atividade.etiquetas[i]);
         }
         this.putCard(docker?.cards || this.labels[outrasIndex]?.cards || [], atividade);
       });
-      for(let cards of this.labels.map(x => x.cards || [])) {
-        for(let i = 0; i < cards.length; cards[i].version != this.cardsVersion ? cards.splice(i, 1) : i++);
+      for (let cards of this.labels.map(x => x.cards || [])) {
+        for (let i = 0; i < cards.length; cards[i].version != this.cardsVersion ? cards.splice(i, 1) : i++);
       }
       /*this.labels[0].labels = [];
       this.etiquetas.forEach(x => {
@@ -368,14 +368,14 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
     const index = list.findIndex(x => x.id == atividade.id);
     const card = {
       id: atividade.id,
-      title: atividade.tipo_atividade?.nome || "(" + this.lex.translate('Atividade') + " não atribuída)",
+      title: atividade.tipo_atividade?.nome || "(" + this.lex.translate('Atividade') + " sem tipo de registro de execução atribuído)",
       subTitle: atividade.descricao || "",
       data: atividade,
       version: this.cardsVersion,
       menu: undefined,
       dynamicMenu: this.dynamicCardMenu.bind(this)
     };
-    if(index >= 0) {
+    if (index >= 0) {
       list[index] = Object.assign(list[index], card);
     } else {
       list.push(card);
@@ -389,15 +389,15 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
       hint: "Opções",
       dynamicItems: this.cardDynamicOptions.bind(this)
     });
-    if(!card.menu || card.menu.map(x => x.hint).join() != menu.map(x => x.hint).join()) card.menu = menu;
+    if (!card.menu || card.menu.map(x => x.hint).join() != menu.map(x => x.hint).join()) card.menu = menu;
     return card.menu;
   }
 
   public cardDynamicOptions(card: CardItem): ToolbarButton[] | undefined {
     const olders = card.menu?.find(x => x.hint == "Opções");
-    if(olders) {
+    if (olders) {
       const options = this.atividadeService.dynamicOptions.bind(this)(card.data, this.optionsMetadata);
-      if(!olders.items || olders?.items.map(x => x.label).join() != options.map(x => x.label).join()) olders.items = options;
+      if (!olders.items || olders?.items.map(x => x.label).join() != options.map(x => x.label).join()) olders.items = options;
     }
     return olders?.items;
   }
@@ -405,7 +405,7 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
   public canDrop(status: string) {
     let self = this;
     return (drag: CardItem) => {
-      if(self.isEtiquetas) {
+      if (self.isEtiquetas) {
         return true;
       } else {
         const buttons = self.atividadeService.dynamicOptions.bind(self)(drag.data, self.optionsMetadata);
@@ -418,33 +418,33 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
     const sourceLabel = this.labels.find(x => x.cards == dragDrop.source.list)?.labels[0];
     const destinationLabel = this.labels.find(x => x.cards == dragDrop.destination.list)?.labels[0];
     const atividade = dragDrop.destination.atividade as Atividade;
-    if(sourceLabel && destinationLabel && sourceLabel.key == destinationLabel.key) return;
-    if(sourceLabel) atividade.etiquetas.splice(atividade.etiquetas.findIndex(x => x.key == sourceLabel.key), 1);
-    if(destinationLabel) atividade.etiquetas.unshift(destinationLabel);
+    if (sourceLabel && destinationLabel && sourceLabel.key == destinationLabel.key) return;
+    if (sourceLabel) atividade.etiquetas.splice(atividade.etiquetas.findIndex(x => x.key == sourceLabel.key), 1);
+    if (destinationLabel) atividade.etiquetas.unshift(destinationLabel);
     this.loading = true;
-    this.dao!.update(atividade.id, {etiquetas: atividade.etiquetas}).then(atividade => this.modalRefreshId(atividade).modalClose!.bind(this)(atividade.id)).finally(() => this.loading = false);
+    this.dao!.update(atividade.id, { etiquetas: atividade.etiquetas }).then(atividade => this.modalRefreshId(atividade).modalClose!.bind(this)(atividade.id)).finally(() => this.loading = false);
   }
 
   public onDragged(item: any, list: any[], effect: DropEffect) {
-    if(["copy", "move"].includes(effect)) {
+    if (["copy", "move"].includes(effect)) {
       const index = list.indexOf(item);
-      this.dragDrop.source = {list, index};
-      if(this.isEtiquetas) this.updateEtiquetasAtividade(this.dragDrop);
+      this.dragDrop.source = { list, index };
+      if (this.isEtiquetas) this.updateEtiquetasAtividade(this.dragDrop);
     }
   }
 
   public onDrop(event: DndDropEvent, list?: any[]) {
-    if(list && ["copy", "move"].includes(event.dropEffect)) {
+    if (list && ["copy", "move"].includes(event.dropEffect)) {
       const atividade = event.data.data;
       const card = event.data;
       let index = typeof event.index === "undefined" ? list.length : event.index;
-      this.dragDrop = {destination: {list, index, card, atividade}};
-      if(!this.isEtiquetas) {
+      this.dragDrop = { destination: { list, index, card, atividade } };
+      if (!this.isEtiquetas) {
         const buttons = this.atividadeService.dynamicOptions.bind(this)(atividade, this.optionsMetadata);
         const docker = this.cards.indexOf(list);
-        if(docker >= 0) {
+        if (docker >= 0) {
           const action = buttons.find(x => x.id == this.DOCKERS[docker]);
-          if(action?.onClick) action?.onClick(atividade);
+          if (action?.onClick) action?.onClick(atividade);
         }
       }
     }
@@ -469,23 +469,22 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = this.fixedFilter || [];
     let form: any = filter.value;
- 
-    if(form.usuario_id?.length) {
+    if (form.usuario_id?.length) {
       result.push(["usuario_id", "==", form.usuario_id]);
-    } 
-    if(form.unidade_id?.length) {
+    }
+    if (form.unidade_id?.length) {
       result.push(["unidade_id", "==", form.unidade_id]);
     }
-    if(form.unidades_subordinadas) {
+    if (form.unidades_subordinadas) {
       result.push(["unidades_subordinadas", "==", true]);
     }
-    if(form.etiquetas?.length) {
+    if (form.etiquetas?.length) {
       result.push(["etiquetas", "in", form.etiquetas.map((x: LookupItem) => x.value)]);
     }
-    if(form.numero_processo?.length) {
+    if (form.numero_processo?.length) {
       result.push(["numero_processo", "==", form.numero_processo]);
     }
-    if(form.status?.length && !result.find(x => x[0] == "status")) {
+    if (form.status?.length && !result.find(x => x[0] == "status")) {
       result.push(["status", "==", form.status]);
     }
     if (form.plano_entrega_id?.length) {
@@ -495,7 +494,6 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
       result.push(["plano_entrega_entrega_id", "==", form.plano_entrega_entrega_id]);
     }
     result.push(["data_arquivamento", "==", null]); /* Não trazer as arquivadas */
-
     return result;
   }
 
@@ -508,21 +506,21 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
     this.filter!.controls.numero_processo.setValue("");
     this.filter!.controls.plano_entrega_id.setValue(null);
     this.filter!.controls.plano_entrega_entrega_id.setValue(null);
-    if(!this.fixedFilter?.length || !this.fixedFilter.find(x => x[0] == "status")) this.filter!.controls.status.setValue(null);
+    if (!this.fixedFilter?.length || !this.fixedFilter.find(x => x[0] == "status")) this.filter!.controls.status.setValue(null);
     this.filter!.controls.etiquetas.setValue([]);
     super.filterClear(filter);
   }
 
   public onSwimlaneDrop(event: DndDropEvent, fromIndex: number) {
     const element = this.labels[fromIndex];
-    const toIndex = fromIndex < event.index! ? event.index!-1 : event.index!;
+    const toIndex = fromIndex < event.index! ? event.index! - 1 : event.index!;
     this.labels.splice(fromIndex, 1);
     this.labels.splice(toIndex, 0, element);
     this.saveEtiquetasUsuarioConfig();
   }
 
-  public onEntregaClick(atividade: Atividade){
-    this.go.navigate({route: ['gestao', 'atividade', atividade.id, 'hierarquia']}, {metadata: {atividade: atividade}})
+  public onEntregaClick(atividade: Atividade) {
+    this.go.navigate({ route: ['gestao', 'atividade', atividade.id, 'hierarquia'] }, { metadata: { atividade: atividade } })
   }
 
   public async onUnidadeChange(event: Event) {

@@ -1445,6 +1445,7 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
     this.joinAtividade = ['demandante', 'usuario', 'tipo_atividade', 'comentarios.usuario:id,nome,apelido', 'reacoes.usuario:id,nome,apelido'];
     this.itemsEntregas = [];
     this.etiquetas = [];
+    this.etiquetasAscendentes = [];
     this.itemsOcorrencias = [];
     this.itemsComparecimentos = [];
     this.itemsAfastamentos = [];
@@ -1767,12 +1768,16 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
   onColumnProgressoEtiquetasChecklistEdit(row) {
     var _this7 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      if (!_this7.etiquetasAscendentes.filter(e => e.data == row.plano_trabalho.unidade.id).length) {
+        let ascendentes = yield _this7.carregaEtiquetasUnidadesAscendentes(row.plano_trabalho.unidade);
+        _this7.etiquetasAscendentes.push(...ascendentes);
+      }
       _this7.formEdit.controls.progresso.setValue(row.progresso);
       _this7.formEdit.controls.etiquetas.setValue(row.etiquetas);
       _this7.formEdit.controls.etiqueta.setValue(null);
-      _this7.etiquetas = _this7.util.merge(row.tipo_atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key);
+      _this7.etiquetas = _this7.util.merge(row.tipo_atividade?.etiquetas, row.plano_trabalho.unidade?.etiquetas, (a, b) => a.key == b.key);
       _this7.etiquetas = _this7.util.merge(_this7.etiquetas, _this7.auth.usuario.config?.etiquetas, (a, b) => a.key == b.key);
-      _this7.etiquetas = _this7.util.merge(_this7.etiquetas, yield _this7.carregaEtiquetasUnidadesAscendentes(row.unidade), (a, b) => a.key == b.key);
+      _this7.etiquetas = _this7.util.merge(_this7.etiquetas, _this7.etiquetasAscendentes.filter(x => x.data == row.plano_trabalho.unidade.id), (a, b) => a.key == b.key);
       _this7.checklist = _this7.util.clone(row.checklist);
     })();
   }
@@ -1787,6 +1792,7 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
       unidades.forEach(un => {
         etiquetasUnidades = _this8.util.merge(etiquetasUnidades, un.etiquetas, (a, b) => a.key == b.key);
       });
+      etiquetasUnidades.forEach(e => e.data = unidadeAtual.id);
       return etiquetasUnidades;
     })();
   }
@@ -3737,17 +3743,16 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
   saveData(form) {
     var _this4 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      //let plano = this.loadEntity();
-      /* Atualiza o documento */
-      _this4.atualizarTcr();
-      /* Confirma dados do documento */
-      _this4.documentos?.saveData();
-      _this4.entity.documentos = _this4.entity.documentos.filter(documento => {
-        return ["ADD", "EDIT", "DELETE"].includes(documento._status || "");
-      });
-      /* Salva separadamente as informações do plano */
       _this4.submitting = true;
       try {
+        /* Atualiza o documento */
+        _this4.atualizarTcr();
+        /* Confirma dados do documento */
+        _this4.documentos?.saveData();
+        _this4.entity.documentos = _this4.entity.documentos.filter(documento => {
+          return ["ADD", "EDIT", "DELETE"].includes(documento._status || "");
+        });
+        /* Salva separadamente as informações do plano */
         let requests = [_this4.dao.save(_this4.entity, _this4.join)];
         if (_this4.form.controls.editar_texto_complementar_unidade.value) requests.push(_this4.unidadeDao.update(_this4.entity.unidade_id, {
           texto_complementar_plano: _this4.form.controls.unidade_texto_complementar.value
