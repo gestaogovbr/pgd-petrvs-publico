@@ -72,18 +72,18 @@ export class CurriculumAtributossoftFormComponent extends PageFormBase<Questiona
             if (pergunta.id == resposta.questionario_pergunta_id) respostas.push(resposta.resposta);
           });
         });
-        this.form!.controls.comunica.setValue(respostas[0] || 0);
-        this.form!.controls.lideranca.setValue(respostas[1] || 0 );
-        this.form!.controls.resolucao.setValue(respostas[2] || 0);
-        this.form!.controls.criatividade.setValue(respostas[3] || 0);
-        this.form!.controls.pensamento.setValue(respostas[4] || 0);
-        this.form!.controls.habilidade.setValue(respostas[5] || 0);
-        this.form!.controls.adaptabilidade.setValue(respostas[6] || 0);
-        this.form!.controls.etica.setValue(respostas[7] || 0);
+        this.form!.controls.comunica.setValue(respostas[0]);
+        this.form!.controls.lideranca.setValue(respostas[1]);
+        this.form!.controls.resolucao.setValue(respostas[2]);
+        this.form!.controls.criatividade.setValue(respostas[3]);
+        this.form!.controls.pensamento.setValue(respostas[4]);
+        this.form!.controls.habilidade.setValue(respostas[5]);
+        this.form!.controls.adaptabilidade.setValue(respostas[6]);
+        this.form!.controls.etica.setValue(respostas[7]);
       }
-    } else {
-      this.dialog.alert("Teste Soft-Skills deste usuário não localizado", "Teste não localizado");
-    }
+    }// else {
+      //this.dialog.alert("Teste Soft-Skills deste usuário não localizado", "Teste não localizado");
+    //}
     await this.loadData(this.entity!, form);
   }
 
@@ -105,7 +105,6 @@ export class CurriculumAtributossoftFormComponent extends PageFormBase<Questiona
       this.form!.controls.etica.value
     ];
 
-   
     let respostas = this.entity?.questionario_resposta_pergunta || valores.map((x, i) => new QuestionarioRespostaPergunta({
       questionario_pergunta_id: this.questionario!.perguntas[i].id,
       resposta: parseInt(x),
@@ -117,8 +116,9 @@ export class CurriculumAtributossoftFormComponent extends PageFormBase<Questiona
         x._status = "EDIT";
       }
     });
-   
+    questionarioResposta.questionario_resposta_pergunta = respostas;
     return questionarioResposta;
+
   }
 
   public valorSoftChange(control: any) {

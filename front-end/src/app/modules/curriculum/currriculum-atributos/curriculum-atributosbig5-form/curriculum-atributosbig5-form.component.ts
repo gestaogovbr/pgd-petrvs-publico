@@ -108,9 +108,9 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
         this.resposta(respostas);
        
       }
-    } else {
-      this.dialog.alert("Teste Soft-Skills não localizado", "Teste não localizado");
-    }
+    }// else {
+      //this.dialog.alert("Teste B5 deste usuário não localizado", "Teste não localizado");
+    //}
     await this.loadData(this.entity!, form);
   }
 

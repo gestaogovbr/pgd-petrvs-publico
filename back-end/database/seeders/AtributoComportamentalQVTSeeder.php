@@ -21,7 +21,7 @@ class AtributoComportamentalQVTSeeder extends Seeder
         $questionario->fill([
             'nome'=> 'Qualidade de Vida no Trabalho',
             'codigo'=> 'QVT',
-            'codigo' => 'codigo','tipo'=> 'INTERNO',
+            'tipo'=> 'INTERNO',
             'versao'=> 1
         ]);
         $questionario->save();
@@ -167,21 +167,21 @@ class AtributoComportamentalQVTSeeder extends Seeder
         ];
 
         $perguntas = [
-            ['sequencia' => $sequencia,'pergunta' => 'Você concorda em participar desta pesquisa, de forma anônima, cujos dados são coletados sem identificação dos respondentes, e serão analisados para subsidiar a formulação de ações de melhoria da Qualidade de Vida no Trabalho na Instituição, e estudos da SEGES/MGI sobre o tema?','codigo' => 'concorda','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasSimNao];
-            ['sequencia' => $sequencia,'pergunta' => 'Qual a sua idade?','codigo' => 'idade','tipo' => 'NUMBER','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasNumber];
-            ['sequencia' => $sequencia,'pergunta' => 'Informe o seu sexo.','codigo' => 'sexo','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasSexo];
-            ['sequencia' => $sequencia,'pergunta' => 'O sexo assinalado por você na questãoconcordaSexo anterior guarda uma identificação adequada com a forma como você se vê, ou deseja ser visto, ou vista, pelos demais, nas suas relações afetivas e compromissos sociais? (Obs.: esta não é uma questão de resposta obrigatória)','codigo' => 'concordaSexo','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasSimNao];
-            ['sequencia' => $sequencia,'pergunta' => 'Informe sua cor, ou raça, de forma livre, como você assim entender.','codigo' => 'raca','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasCorRaca];
-            ['sequencia' => $sequencia,'pergunta' => 'Qual é seu estado civil?','codigo' => 'estadoCivil','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasEstadoCivil];
-            ['sequencia' => $sequencia,'pergunta' => 'Qual é o seu grau completo de escolaridade?','codigo' => 'escolaridade','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasEscolaridade];
-            ['sequencia' => $sequencia,'pergunta' => 'Em que Unidade da Federação você está em exercício?','codigo' => 'ufExercicio','tipo' => 'SELECT','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasUF];
-            ['sequencia' => $sequencia,'pergunta' => 'Com relação a situação funcional, escolha a alternativa cabível?','codigo' => 'situacaoFuncional','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasSituacaoFuncional];
-            ['sequencia' => $sequencia,'pergunta' => 'Você atua nesta instituição a quantos anos?','codigo' => 'anosInstituicao','tipo' => 'NUMBER','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasNumber];
-            ['sequencia' => $sequencia,'pergunta' => 'Qual a sua lotação?','codigo' => 'unidade_id','tipo' => 'SELECT','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasID];
-            ['sequencia' => $sequencia,'pergunta' => 'Há pessoa(s) que necessita(m) de alguma forma de atenção especial que estão sob seus cuidados (exemplo: idosos sob seus cuidados, pessoas com deficiência, pessoas com doenças crônicas, pessoas com alguma necessidade especial, etc.)?','codigo' => 'necessitaAtencao','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasSimNao];
-            ['sequencia' => $sequencia,'pergunta' => 'Você possui crianças  crianças e/ou adolescentes sob seus cuidados?','codigo' => 'cuidadoCrianca','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasSimNao];
-            ['sequencia' => $sequencia,'pergunta' => 'Informe o número de crianças e/ou adolescentes que estão sob seus cuidados.','codigo' => 'numeroCrianca','tipo' => 'NUMBER','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasNumber];
-            ['sequencia' => $sequencia,'pergunta' => 'Você possui alguma condição inata ou adquirida que se manifesta através de algum tipo de deficiência? *O termo Pessoa com Deficiência foi definido pela Convenção das Nações Unidas sobre o Direito das Pessoas com Deficiência, sendo aprovado em 13 de dezembro de 2006 pela Assembleia Geral da ONU. Foi ratificado no Brasil, com equivalência de emenda constitucional, pelo Decreto Legislativo nº 186/2008 e promulgado pelo Decreto nº 6.949/2009.','codigo' => 'deficiencia','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasSimNao];
+            ['sequencia' => $sequencia,'pergunta' => 'Você concorda em participar desta pesquisa, de forma anônima, cujos dados são coletados sem identificação dos respondentes, e serão analisados para subsidiar a formulação de ações de melhoria da Qualidade de Vida no Trabalho na Instituição, e estudos da SEGES/MGI sobre o tema?','codigo' => 'concorda','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasSimNao],
+            ['sequencia' => $sequencia,'pergunta' => 'Qual a sua idade?','codigo' => 'idade','tipo' => 'NUMBER','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasNumber],
+            ['sequencia' => $sequencia,'pergunta' => 'Informe o seu sexo.','codigo' => 'sexo','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasSexo],
+            ['sequencia' => $sequencia,'pergunta' => 'O sexo assinalado por você na questãoconcordaSexo anterior guarda uma identificação adequada com a forma como você se vê, ou deseja ser visto, ou vista, pelos demais, nas suas relações afetivas e compromissos sociais? (Obs.: esta não é uma questão de resposta obrigatória)','codigo' => 'concordaSexo','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasSimNao],
+            ['sequencia' => $sequencia,'pergunta' => 'Informe sua cor, ou raça, de forma livre, como você assim entender.','codigo' => 'raca','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasCorRaca],
+            ['sequencia' => $sequencia,'pergunta' => 'Qual é seu estado civil?','codigo' => 'estadoCivil','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasEstadoCivil],
+            ['sequencia' => $sequencia,'pergunta' => 'Qual é o seu grau completo de escolaridade?','codigo' => 'escolaridade','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasEscolaridade],
+            ['sequencia' => $sequencia,'pergunta' => 'Em que Unidade da Federação você está em exercício?','codigo' => 'ufExercicio','tipo' => 'SELECT','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasUF],
+            ['sequencia' => $sequencia,'pergunta' => 'Com relação a situação funcional, escolha a alternativa cabível?','codigo' => 'situacaoFuncional','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasSituacaoFuncional],
+            ['sequencia' => $sequencia,'pergunta' => 'Você atua nesta instituição a quantos anos?','codigo' => 'anosInstituicao','tipo' => 'NUMBER','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasNumber],
+            ['sequencia' => $sequencia,'pergunta' => 'Qual a sua lotação?','codigo' => 'unidade_id','tipo' => 'SELECT','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasID],
+            ['sequencia' => $sequencia,'pergunta' => 'Há pessoa(s) que necessita(m) de alguma forma de atenção especial que estão sob seus cuidados (exemplo: idosos sob seus cuidados, pessoas com deficiência, pessoas com doenças crônicas, pessoas com alguma necessidade especial, etc.)?','codigo' => 'necessitaAtencao','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasSimNao],
+            ['sequencia' => $sequencia,'pergunta' => 'Você possui crianças  crianças e/ou adolescentes sob seus cuidados?','codigo' => 'cuidadoCrianca','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasSimNao],
+            ['sequencia' => $sequencia,'pergunta' => 'Informe o número de crianças e/ou adolescentes que estão sob seus cuidados.','codigo' => 'numeroCrianca','tipo' => 'NUMBER','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasNumber],
+            ['sequencia' => $sequencia,'pergunta' => 'Você possui alguma condição inata ou adquirida que se manifesta através de algum tipo de deficiência? *O termo Pessoa com Deficiência foi definido pela Convenção das Nações Unidas sobre o Direito das Pessoas com Deficiência, sendo aprovado em 13 de dezembro de 2006 pela Assembleia Geral da ONU. Foi ratificado no Brasil, com equivalência de emenda constitucional, pelo Decreto Legislativo nº 186/2008 e promulgado pelo Decreto nº 6.949/2009.','codigo' => 'deficiencia','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasSimNao],
             ['sequencia' => $sequencia,'pergunta' => 'Estou satisfeito(a) com a minha remuneração.','codigo' => 'satisfeitoRemuneracao','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasRichard], 
             ['sequencia' => $sequencia,'pergunta' => 'Estou satisfeito(a) com os benefícios que a instituição me oferece. (Por exemplo: plano de saúde, auxílios diversos, acesso a clubes, associações, escolas, creches, entre outros).','codigo' => 'satisfeitoBeneficio','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasRichard], 
             ['sequencia' => $sequencia,'pergunta' => 'Comparando a minha remuneração, com a remuneração média de trabalhadores que possuem atribuições e/ou responsabilidades semelhantes às minhas, eu considero minha remuneração adequada.','codigo' => 'comparaRemuneracao','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasRichard], 
@@ -241,12 +241,12 @@ class AtributoComportamentalQVTSeeder extends Seeder
             ['sequencia' => $sequencia,'pergunta' => 'O teletrabalho me permitiu melhorar a qualidade dos trabalhos que eu executo','codigo' => 'qualidadeTrabalhoPGD','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasRichard], 
             ['sequencia' => $sequencia,'pergunta' => 'Estar em PGD permitiu a você melhorar a sua produtividade e a qualidade das suas entregas?','codigo' => 'entregaPGD','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasSimNao], 
             ['sequencia' => $sequencia,'pergunta' => 'Você ocupa cargo de Chefia?','codigo' => 'chefia','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasCargoChefia],
-            ['sequencia' => $sequencia,'pergunta' => 'Os colaboradores em PGD, sob a sua supervisão, apresentam uma melhora na produtividade e na qualidade das entregas que eles realizam? ','codigo' => 'colaboradoresPGD','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasSimNao];
+            ['sequencia' => $sequencia,'pergunta' => 'Os colaboradores em PGD, sob a sua supervisão, apresentam uma melhora na produtividade e na qualidade das entregas que eles realizam? ','codigo' => 'colaboradoresPGD','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasSimNao],
         
         ];
 
         foreach($perguntas as $pergunta){
-
+            $perguntaNovo = new QuestionarioPergunta();
             $perguntaNovo->fill([
                 'sequencia'=> $sequencia,
                 'pergunta'=> $pergunta['pergunta'],
@@ -254,7 +254,7 @@ class AtributoComportamentalQVTSeeder extends Seeder
                 'tipo'=> $pergunta['tipo'],
                 'criado_versao'=> $pergunta['criado_versao'],
                 'deletado_versao'=> $pergunta['deletado_versao'],
-                'respostas' => 
+                'respostas' => $pergunta['respostas'],
                 'questionario_id'=> $uuid, 
             ]);
             $perguntaNovo->save();
@@ -264,7 +264,7 @@ class AtributoComportamentalQVTSeeder extends Seeder
 
 
     
-
+    }
    
 
 }
