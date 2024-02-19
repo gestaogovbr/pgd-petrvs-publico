@@ -26,6 +26,7 @@ export class NotificacoesComponent extends PageListBase<Notificacao, Notificacao
     }
   ];
   public notificacaoService: NotificacaoService;
+  
 
   constructor(public injector: Injector) {
     super(injector, Notificacao, NotificacaoDaoService);
@@ -65,6 +66,7 @@ export class NotificacoesComponent extends PageListBase<Notificacao, Notificacao
     }, []);
     this.dao!.marcarComoLido(destinatariosIds).then(qtd => {
       this.grid!.reloadFilter();
+      if (this.auth.usuario) this.auth.usuario.notificacoes_destinatario = [];
       this.notificacaoService.updateNaoLidas();
     });
   }

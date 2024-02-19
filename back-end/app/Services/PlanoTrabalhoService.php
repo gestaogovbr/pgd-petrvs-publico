@@ -123,14 +123,14 @@ class PlanoTrabalhoService extends ServiceBase
     PT do Delegado..........: CF,CS,DL?
     PT do Lotado/Colaborador: CF,CS,DL,LC? */
     $validoTabela1 = false;
-    if ($condicoes["atribuicoesGestorUsuario"]["gestor"]) { /* Plano para o gestor da unidade */
+    if ($condicoes['usuarioEhParticipantePlano']) { /* Plano do próprio usuário logado */
+      $validoTabela1 = $condicoes['usuarioEhParticipanteHabilitado'];
+    } else if ($condicoes["atribuicoesGestorUsuario"]["gestor"]) { /* Plano para o gestor da unidade */
       $validoTabela1 = $condicoes["gestorUnidadeSuperior"];
     } else if ($condicoes["atribuicoesGestorUsuario"]["gestorSubstituto"]) { /* Plano para o gestor substituto da unidade */
       $validoTabela1 = $condicoes["gestorUnidadeSuperior"] || $condicoes["atribuicoesGestorUsuarioLogado"]["gestor"];
     } else if ($condicoes["atribuicoesGestorUsuario"]["gestorDelegado"]) { /* Plano para o gestor delegado da unidade */
       $validoTabela1 = $condicoes["atribuicoesGestorUsuarioLogado"]["gestor"] || $condicoes["atribuicoesGestorUsuarioLogado"]["gestorSubstituto"];
-    } else if ($condicoes['usuarioEhParticipantePlano']) { /* Plano do próprio usuário logado */
-      $validoTabela1 = $condicoes['usuarioEhParticipanteHabilitado'];
     } else {
       $validoTabela1 = $condicoes["gestorUnidadeExecutora"];
     }
@@ -419,7 +419,6 @@ class PlanoTrabalhoService extends ServiceBase
   {
     $plano = PlanoTrabalho::find($planoId);
     $consolidacoes = $plano?->consolidacoes?->all() ?? [];
-    $consolidacoes[] = new PlanoTrabalhoConsolidacao(["data_inicio" => $plano?->data_fim]);
     for ($i = 1; $i < count($consolidacoes); $i++) {
       if (strtotime($consolidacoes[$i - 1]->data_fim) != strtotime($consolidacoes[$i]->data_inicio . " -1 days")) {
         $consolidacoes[$i - 1]->data_fim = date("Y-m-d", strtotime($consolidacoes[$i]->data_inicio . " -1 days"));
