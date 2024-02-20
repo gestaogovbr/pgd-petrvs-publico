@@ -248,7 +248,7 @@ class LoginController extends Controller
                 ]);
             }
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.');
+        return LogError::newError('As credenciais fornecidas são inválidas.', null, $tokenData);
     }
 
     /**
@@ -280,7 +280,7 @@ class LoginController extends Controller
                 ]);
             }
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.');
+        return LogError::newError('As credenciais fornecidas são inválidas.', null, $tokenData);
     }
 
     /**
@@ -319,7 +319,7 @@ class LoginController extends Controller
                 ]);
             }
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.');
+        return LogError::newError('As credenciais fornecidas são inválidas.', null, $tokenData);
     }
 
     /**
@@ -360,7 +360,7 @@ class LoginController extends Controller
                 ]);
             }
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.');
+        return LogError::newError('As credenciais fornecidas são inválidas.', null, $profile);
     }
 
     /**
@@ -446,7 +446,7 @@ class LoginController extends Controller
                 ]);
             }
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.');
+        return LogError::newError('As credenciais fornecidas são inválidas.', null, $tokenData);
     }
 
     /**
@@ -480,7 +480,7 @@ class LoginController extends Controller
                 ]);
             }
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.');
+        return LogError::newError('As credenciais fornecidas são inválidas.', null, $tokenData);
     }
 
     /**
@@ -521,7 +521,7 @@ class LoginController extends Controller
                 ]);
             }
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.');
+        return LogError::newError('As credenciais fornecidas são inválidas.', null, $tokenData);
     }
 
     /**
@@ -568,7 +568,7 @@ class LoginController extends Controller
                 return LogError::newError('USER_NOT_FOUND');
             }
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.' . $tokenData['error']);
+        return LogError::newError('As credenciais fornecidas são inválidas.' . $tokenData['error'], null, $tokenData);
     }
 
     /**
@@ -610,7 +610,7 @@ class LoginController extends Controller
                 ]);
             }
         }
-        return LogError::newError('As credenciais fornecidas são inválidas.');
+        return LogError::newError('As credenciais fornecidas são inválidas.', null, $profile);
     }
 
     /**
@@ -645,7 +645,9 @@ class LoginController extends Controller
     public function azureProvider($config = null)
     {
         if ($config) {
-            // O método setConfig existe mesmo VSCode dizendo que não.
+            /**
+             * @disregard P1009 Undefined type
+             */
             // @php-ignore
             return Socialite::driver('azure')->setConfig($config);
         }
@@ -721,6 +723,9 @@ class LoginController extends Controller
     {
         if ($config) {
             // O método setConfig existe mesmo VSCode dizendo que não.
+            /**
+             * @disregard P1009 Undefined type
+             */
             // @php-ignore
             return Socialite::driver('govbr')->setConfig($config);
         }

@@ -5356,11 +5356,11 @@ class PlanoEntregaListComponent extends src_app_modules_base_page_list_base__WEB
       case this.BOTAO_CANCELAR_PLANO:
         /*
           (RN_PENT_P) Para CANCELAR UM PLANO DE ENTREGAS:
-          - o usuário logado precisa possuir a capacidade "MOD_PENT_CNC", o plano precisa estar em um dos seguintes status: INCLUIDO, HOMOLOGANDO, ATIVO ou CONCLUIDO; e
+          - o usuário logado precisa possuir a capacidade "MOD_PENT_CNC", o plano precisa estar em um dos seguintes status: INCLUIDO, HOMOLOGANDO e ATIVO;
             - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
-            - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado;
-        */
-        return this.auth.hasPermissionTo("MOD_PENT_CNC") && ['INCLUIDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO'].includes(this.planoEntregaService.situacaoPlano(planoEntrega)) && (this.unidadeService.isGestorUnidade(planoEntrega.unidade?.id) || this.auth.isLotacaoUsuario(planoEntrega.unidade));
+            - o usuário logado precisa ser gestor da Unidade-pai do plano (Unidade A);
+          */
+        return this.auth.hasPermissionTo("MOD_PENT_CNC") && ['INCLUIDO', 'HOMOLOGANDO', 'ATIVO'].includes(this.planoEntregaService.situacaoPlano(planoEntrega)) && (this.unidadeService.isGestorUnidade(planoEntrega.unidade?.id) || this.unidadeService.isGestorUnidade(planoEntrega.unidade?.unidade_pai_id));
       case this.BOTAO_CONCLUIR:
         /*
           (RN_PENT_U) Para CONCLUIR um plano de entregas:
