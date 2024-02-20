@@ -1,7 +1,6 @@
-<grid multiselect [dao]="dao" [form]="form!" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy"
-    [join]="join" editable [add]="addParticipante.bind(this)" [load]="loadParticipante.bind(this)"
-    [save]="saveParticipante.bind(this)" [selectable]="selectable" [multiselectAllFields]="['usuario_id']"
-    (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_PART_INCL')" [hasEdit]="false" [hasDelete]="false" [multiselectMenu]="multiselectMenu">
+<grid multiselect [dao]="dao" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy"
+    [join]="join" editable [selectable]="selectable" 
+    (select)="onSelect($event)" [hasAdd]="false" [hasEdit]="false" [hasDelete]="false" [multiselectMenu]="multiselectMenu">
     <toolbar *ngIf="!selectable">
         <input-switch [size]="3" labelPosition="left" [label]="lex.translate('Habilitados')" controlName="habilitados" [labelInfo]="'Se ON, retorna apenas ' + lex.translate('os usuários') + ' habilitados ' + lex.translate('no programa') + '. Se OFF, retorna apenas os desabilitados.'"
             [control]="filter!.controls.habilitados" (change)="grid!.reloadFilter()"></input-switch>
@@ -21,40 +20,30 @@
     </filter>
     <div *ngIf="grid?.filterRef?.collapsed" class="mt-2 mb-4"><span><strong>{{ 'Programa: ' + programa?.nome || '' }}</strong></span></div>
     <columns>
-        <column icon="bi-person" class="text-center" [template]="columnFoto" [editTemplate]="editFoto">
+        <column icon="bi-person" class="text-center" [template]="columnFoto" >
             <ng-template let-row="row" #columnFoto>
-                <profile-picture [url]="row.usuario?.url_foto" [size]="40" [hint]="row.usuario?.nome"></profile-picture>
-            </ng-template>
-            <ng-template let-row="row" #editFoto>
-                <profile-picture [url]="usuario?.selectedEntity?.url_foto" [size]="40"></profile-picture>
+                <profile-picture [url]="row.url_foto" [size]="40" [hint]="row.nome"></profile-picture>
             </ng-template>
         </column>
-        <column [title]="lex.translate('Usuário')" [template]="columnUsuario" [editTemplate]="editUsuario">
+        <column [title]="lex.translate('Usuário')" [template]="columnUsuario" >
             <ng-template let-row="row" #columnUsuario>
-                <strong>{{row.usuario?.nome }}</strong><br>
-                <small>{{row.usuario?.apelido }}</small>
-            </ng-template>
-            <ng-template let-row="row" #editUsuario>
-                <input-search #usuario [size]="12" label icon [control]="form!.controls.usuario_id" [dao]="usuarioDao"
-                    required></input-search>
+                <strong>{{row.nome }}</strong><br>
+                <small>{{row.apelido }}</small>
             </ng-template>
         </column>
-        <column [title]="lex.translate('Habilitado')" [align]="'center'" [template]="columnHabilitado" [editTemplate]="editHabilitado">
+        <column [title]="lex.translate('Habilitado')" [align]="'center'" [template]="columnHabilitado" >
             <ng-template let-row="row" #columnHabilitado>
-                <badge [icon]="row.habilitado ? 'bi bi-person-check' : 'bi-person-fill-slash'" [label]="row.habilitado ? 'Habilitado' : 'Desabilitado'" [color]="row.habilitado ? 'success' : 'danger'"></badge>
-            </ng-template>
-            <ng-template let-row="row" #editHabilitado>
-                <input-switch #habilitado disabled controlName="habilitado" [control]="form!.controls.habilitado"></input-switch>                    
+                <badge [icon]="isHabilitado(row) ? 'bi bi-person-check' : 'bi-person-fill-slash'" [label]="isHabilitado(row) ? lex.translate('Habilitado') : lex.translate('Desabilitado')" [color]="isHabilitado(row) ? 'success' : 'danger'"></badge>
             </ng-template>
         </column>
         <column [title]="lex.translate('Lotação')" [template]="columnLotacao">
             <ng-template let-row="row" #columnLotacao>
-                <span>{{row.usuario?.lotacao.unidade.sigla }}</span>
+                <span>{{row.lotacao.unidade.sigla }}</span>
             </ng-template>
         </column>
         <column [title]="lex.translate('Plano de Trabalho') + ' ativo?'" [align]="'center'" [template]="columnPlanoTrabalho">
             <ng-template let-row="row" #columnPlanoTrabalho>
-                <span>{{ row.usuario.planos_trabalho.length ? 'sim' : 'não' }}</span>
+                <span>{{ hasPlanoTrabalhoAtivo(row) ? 'sim' : 'não' }}</span>
             </ng-template>
         </column>
         <column type="options" [dynamicButtons]="dynamicButtons.bind(this)"></column>

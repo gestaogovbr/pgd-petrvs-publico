@@ -225,12 +225,12 @@ export class AppComponent {
       permition: "MENU_GESTAO_ACESSO",
       id: "navbarDropdownGestaoPlanejamento",
       menu: [
-        this.menuSchema.CADEIAS_VALORES,
-        this.menuSchema.HABILITACOES_PROGRAMA,
         this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
+        this.menuSchema.CADEIAS_VALORES,
+        this.menuSchema.PROGRAMAS_GESTAO,
+        this.menuSchema.HABILITACOES_PROGRAMA,
         this.menuSchema.PLANOS_ENTREGAS,
-        this.menuSchema.PLANOS_TRABALHOS,
-        this.menuSchema.PROGRAMAS_GESTAO
+        this.menuSchema.PLANOS_TRABALHOS
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Execução"),

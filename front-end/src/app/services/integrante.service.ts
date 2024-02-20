@@ -50,8 +50,6 @@ export class IntegranteService {
    * @param nomeOuSigla       Nome do usuario, ou Sigla da unidade, a que estão vinculados os itens do grid
    */
   public haAlteracaoGestor(novasAtribuicoes: IntegranteAtribuicao[], row: IntegranteConsolidado, itensGrid: IntegranteConsolidado[], nomeOuSigla: string): [string, number, string, boolean] {
-    // TODO: alterar no back-und o método SAVEINTEGRANTE para se comportar corretamente independentemente da ordem de execução LOTADO/GESTOR ou GESTOR/LOTADO
-    // TODO: no front-end, ao editar um integrante, bloquear o input-search de unidade
     let msg = "";
     let perda = this.util.array_diff(row.atribuicoes, novasAtribuicoes).includes('GESTOR');
     let ganho = this.util.array_diff(novasAtribuicoes, row.atribuicoes).includes('GESTOR');
@@ -66,7 +64,7 @@ export class IntegranteService {
     let itemAntigaGerencia = itensGrid.find(i => i.atribuicoes.includes('GESTOR'));
     let indiceItemLotacao = itensGrid.findIndex((item, index, obj) => item.atribuicoes.includes('LOTADO'));
     msg = itemAntigaGerencia?.id.length ? msg + " e deixará de ser " + meio + itemAntigaGerencia.unidade_sigla + ". " : msg + ". ";
-    if (!ehLotadoNaNovaGerencia) msg += "Por consequência, sua lotação será alterada de " + itensGrid[indiceItemLotacao].unidade_sigla?.toUpperCase() + " para " + row.unidade_sigla?.toUpperCase() + ".";
+    if (!ehLotadoNaNovaGerencia && indiceItemLotacao >= 0) msg += "Por consequência, sua lotação será alterada de " + itensGrid[indiceItemLotacao].unidade_sigla?.toUpperCase() + " para " + row.unidade_sigla?.toUpperCase() + ".";
     return itemAntigaGerencia?.id.length ? ['troca', itensGrid.findIndex(x => x.id == itemAntigaGerencia?.id), msg, true] : ['ganho', -1, msg, !ehLotadoNaNovaGerencia];
   }
 
@@ -96,7 +94,7 @@ export class IntegranteService {
     let itemAntigoGestor = itensGrid.find(i => i.atribuicoes.includes('GESTOR'));
     msg = (itemAntigoGestor?.id.length ? msg + " em substituição a " + itemAntigoGestor.usuario_nome?.toLocaleUpperCase : msg) + ". ";
     let indiceItemLotacao = itensGrid.findIndex((item, index, obj) => item.atribuicoes.includes('LOTADO'));
-    if (!ehLotadoNestaUnidade) msg += "Como é lotado em outra unidade, a lotação de " + row.usuario_nome?.toUpperCase() + " será alterada para " + this.lex.translate("a Unidade") + " - " + nomeOuSigla.toUpperCase() + ".";
+    if (!ehLotadoNestaUnidade && indiceItemLotacao >= 0) msg += "Como é lotado em outra unidade, a lotação de " + row.usuario_nome?.toUpperCase() + " será alterada para " + this.lex.translate("a Unidade") + " - " + nomeOuSigla.toUpperCase() + ".";
     return itemAntigoGestor?.id.length ? ['troca', itensGrid.findIndex(x => x.id == itemAntigoGestor?.id), msg, true] : ['ganho', -1, msg, !ehLotadoNestaUnidade];
   }
 
@@ -110,8 +108,8 @@ export class IntegranteService {
    */
   public haAlteracaoLotacao(form: FormGroup, row: IntegranteConsolidado, itensGrid: IntegranteConsolidado[], nomeOuSigla: string): [boolean, number, string, string] {
     let novasAtribuicoes: IntegranteAtribuicao[] = (form!.controls.atribuicoes.value as LookupItem[]).map(x => x.key)
-    if (!novasAtribuicoes.includes('LOTADO')) return [false, -1, "", ""];
     let indiceItemLotacao = itensGrid.findIndex((item, index, obj) => item.atribuicoes.includes('LOTADO'));
+    if (!novasAtribuicoes.includes('LOTADO') || indiceItemLotacao == -1) return [false, -1, "", ""];
     let msgFormUsuario = this.lex.translate("A lotação") + " de " + nomeOuSigla.toUpperCase() + " passará de " + itensGrid[indiceItemLotacao].unidade_sigla?.toUpperCase() + " para " + row.unidade_sigla?.toUpperCase() + ".";
     let msgConfirmacao = "Não é possível alterar a lotação de " + nomeOuSigla.toUpperCase() + " porque é Chefe da sua atual unidade de lotação - " + itensGrid[indiceItemLotacao].unidade_sigla?.toUpperCase() + ".";
     return (form.controls.unidade_id.value != itensGrid[indiceItemLotacao].unidade_id) ? [true, indiceItemLotacao, msgFormUsuario, msgConfirmacao] : [false, -1, "", ""];

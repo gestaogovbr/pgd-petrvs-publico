@@ -26,7 +26,7 @@ class EntidadePRFSeeder extends Seeder
     {
         $entidade = array(
           array(
-            "id" => "52d78c7d-e0c1-422b-b094-2ca5958d5abc",
+            "id" => "52d78c7d-e0c1-422b-b094-2ca5958d5ac1",
             "created_at" => $this->timenow,
             "updated_at" => $this->timenow,
             "deleted_at" => NULL,

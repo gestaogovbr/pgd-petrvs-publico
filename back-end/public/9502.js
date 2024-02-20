@@ -515,7 +515,8 @@ function UnidadeIntegranteComponent_ng_template_15_Template(rf, ctx) {
   }
   if (rf & 2) {
     const row_r21 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("label", (row_r21.perfil == null ? null : row_r21.perfil.nome) || "");
+    const ctx_r11 = _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("label", ctx_r11.getPerfil(row_r21.id) || "");
   }
 }
 function UnidadeIntegranteComponent_ng_template_17_Template(rf, ctx) {
@@ -550,6 +551,7 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
     super(injector);
     this.injector = injector;
     this.items = [];
+    this.perfis = []; //
     this.tiposAtribuicao = [];
     this.validate = (control, controlName) => {
       let result = null;
@@ -605,19 +607,16 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
       if (entity.id) {
         let integrantes = [];
         let usuarioIds = [];
-        let perfis = [];
         _this2.loading = true;
         try {
           yield _this2.integranteDao.carregarIntegrantes(entity.id, "").then(resposta => integrantes = resposta.integrantes.filter(x => x.atribuicoes?.length > 0));
           integrantes.forEach(integrante => usuarioIds.push(integrante.id));
-          perfis = yield _this2.usuarioDao.query({
+          _this2.perfis = yield _this2.usuarioDao.query({
             where: ["id", "in", usuarioIds]
           }).asPromise();
         } finally {
           _this2.loading = false;
           _this2.items = [];
-          console.log(integrantes, "TEGRANTES");
-          console.log(perfis, "SUSU");
           integrantes.forEach(i => _this2.items?.push(_this2.integranteService.completarIntegrante(i, entity.id, i.id, i.atribuicoes)));
           _this2.items = _this2.integranteService.ordenarIntegrantes(_this2.items);
           _this2.cdRef.detectChanges();
@@ -625,6 +624,10 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
         }
       }
     })();
+  }
+  getPerfil(id) {
+    let perfil = this.perfis.find(p => p.id == id);
+    return perfil?.perfil?.nome;
   }
   addItemHandle() {
     let result = undefined;
@@ -760,7 +763,11 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
         try {
           if (!_this6.isNoPersist) {
             // se persistente
-            yield _this6.integranteDao.salvarIntegrantes([_this6.integranteService.completarIntegrante(row, _this6.entity.id, form.controls.usuario_id.value, novasAtribuicoes.map(x => x.key))]).then(resposta => {
+            yield _this6.integranteDao.salvarIntegrantes([Object.assign({
+              _metadata: {
+                perfil_id: form.controls.perfil_id.value
+              }
+            }, _this6.integranteService.completarIntegrante(row, _this6.entity.id, form.controls.usuario_id.value, novasAtribuicoes.map(x => x.key)))]).then(resposta => {
               let msg;
               if (msg = resposta?.find(v => v._metadata.msg?.length)?._metadata.msg) {
                 if (_this6.grid) _this6.grid.error = msg;

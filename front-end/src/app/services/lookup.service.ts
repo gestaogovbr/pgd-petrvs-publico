@@ -648,7 +648,7 @@ export class LookupService implements IIndexable {
   public PLANO_TRABALHO_STATUS: LookupItem[] = [
     { key: "INCLUIDO", value: "Incluído", icon: "bi bi-pencil-square", color: "secondary", data: { justificar: ["AGUARDANDO_ASSINATURA"] } },
     { key: "AGUARDANDO_ASSINATURA", value: "Aguardando assinatura", icon: "bi bi-clock", color: "warning", data: { justificar: [] } },
-    { key: "ATIVO", value: "Em execução", icon: "bi bi-caret-right", color: "success", data: { justificar: [] } },
+    { key: "ATIVO", value: "Aprovado", icon: "bi bi-check2-circle", color: "success", data: { justificar: [] } },
     { key: "CONCLUIDO", value: "Executado", icon: "bi bi-clipboard2-check", color: "primary", data: { justificar: [] } },
     { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info", data: { justificar: [] } },  // Um plano de trabalho é considerado avaliado quando todas as suas consolidações o forem
     { key: "SUSPENSO", value: "Suspenso", icon: "bi bi-sign-stop", color: "dark", data: { justificar: [] } },
