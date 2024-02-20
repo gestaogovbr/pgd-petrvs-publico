@@ -149,6 +149,10 @@ export class EntityService {
         ];
     }
 
+    public getDao(collection: string | undefined): DaoBaseService<Base> | undefined {
+        return this.list.find(x => x.collection == collection)?.dao;
+    }
+
     public getLabel(collection: string): string {
         let entity = this.list.find(x => x.collection == collection);
         return entity ? this.lex.translate(entity.label) : '';

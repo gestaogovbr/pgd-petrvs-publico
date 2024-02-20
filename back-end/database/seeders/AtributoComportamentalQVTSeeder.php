@@ -35,9 +35,11 @@ class AtributoComportamentalQVTSeeder extends Seeder
             ["key" => "NAO", "value" => "Não"]
         ];
 
-        $respostasNumber = [null];
+        $respostasNumber = null;
 
-        $respostasID = [null];
+        $respostasLotacao = [
+            "entity" => "Unidade"
+        ];
 
         $respostasSexo = [
             ["key" => "MASCULINO", "value" => "Masculino"], 
@@ -163,7 +165,8 @@ class AtributoComportamentalQVTSeeder extends Seeder
         $respostasCargoChefia = [
             ["key" => 1, "value" => "Sim, e não gerencio colaboradores em PGD."], 
             ["key" => 2, "value" => "Sim, e gerencio colaboradores em PGD."], 
-            ["key" => 3, "value" => "Teletrabalho em regime de execução parcial."], 
+            ["key" => 3, "value" => "Teletrabalho em regime de execução parcial."],
+            ["key" => 4, "value" => "Não ocupo cargo de chefia."],  
         ];
 
         $perguntas = [
@@ -177,7 +180,7 @@ class AtributoComportamentalQVTSeeder extends Seeder
             ['sequencia' => $sequencia,'pergunta' => 'Em que Unidade da Federação você está em exercício?','codigo' => 'ufExercicio','tipo' => 'SELECT','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasUF],
             ['sequencia' => $sequencia,'pergunta' => 'Com relação a situação funcional, escolha a alternativa cabível?','codigo' => 'situacaoFuncional','tipo' => 'RADIO','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasSituacaoFuncional],
             ['sequencia' => $sequencia,'pergunta' => 'Você atua nesta instituição a quantos anos?','codigo' => 'anosInstituicao','tipo' => 'NUMBER','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasNumber],
-            ['sequencia' => $sequencia,'pergunta' => 'Qual a sua lotação?','codigo' => 'unidade_id','tipo' => 'SELECT','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasID],
+            ['sequencia' => $sequencia,'pergunta' => 'Qual a sua lotação?','codigo' => 'unidade_id','tipo' => 'SEARCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasLotacao],
             ['sequencia' => $sequencia,'pergunta' => 'Há pessoa(s) que necessita(m) de alguma forma de atenção especial que estão sob seus cuidados (exemplo: idosos sob seus cuidados, pessoas com deficiência, pessoas com doenças crônicas, pessoas com alguma necessidade especial, etc.)?','codigo' => 'necessitaAtencao','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasSimNao],
             ['sequencia' => $sequencia,'pergunta' => 'Você possui crianças  crianças e/ou adolescentes sob seus cuidados?','codigo' => 'cuidadoCrianca','tipo' => 'SWITCH','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasSimNao],
             ['sequencia' => $sequencia,'pergunta' => 'Informe o número de crianças e/ou adolescentes que estão sob seus cuidados.','codigo' => 'numeroCrianca','tipo' => 'NUMBER','criado_versao' => 1,'deletado_versao' => 0,'questionario_id' => $uuid, 'respostas' => $respostasNumber],

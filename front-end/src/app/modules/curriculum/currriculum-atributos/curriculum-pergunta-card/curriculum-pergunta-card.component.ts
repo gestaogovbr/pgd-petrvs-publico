@@ -1,7 +1,8 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { QuestionarioPergunta, QuestionarioPerguntaResposta } from 'src/app/models/questionario-pergunta.model';
-import { LookupItem } from 'src/app/services/lookup.service';
+import { QuestionarioPergunta, QuestionarioPerguntaResposta, QuestionarioPerguntaRespostaDateTime, QuestionarioPerguntaRespostaSearch } from 'src/app/models/questionario-pergunta.model';
+import { EntityService } from 'src/app/services/entity.service';
+import { LookupItem, LookupService } from 'src/app/services/lookup.service';
 
 @Component({
   selector: 'curriculum-pergunta-card',
@@ -16,7 +17,9 @@ export class CurriculumPerguntaCardComponent implements OnInit {
   @Input() titulo?: string;
   @Input() size?: number = undefined;
   
-  constructor() { }
+  public JSON = JSON;
+
+  constructor(public lookup: LookupService, public entityService: EntityService) { }
 
   ngOnInit() {
   }
@@ -25,8 +28,16 @@ export class CurriculumPerguntaCardComponent implements OnInit {
     this.change.emit(event);
   }
 
+  public getDao(pergunta: QuestionarioPergunta | undefined) {
+    return this.entityService.getDao((pergunta?.respostas as QuestionarioPerguntaRespostaSearch).entity);
+  }
+
   public asLookupItem(items: QuestionarioPerguntaResposta | undefined): LookupItem[] {
     return (items as LookupItem[]) || [];
+  }
+
+  public checkDateTimeTipo(pergunta: QuestionarioPergunta | undefined, tipo: string) {
+    return (pergunta?.respostas as QuestionarioPerguntaRespostaDateTime)?.tipo == tipo;
   }
 
 }

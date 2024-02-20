@@ -1,7 +1,7 @@
 <input-container [labelPosition]="labelPosition" [labelClass]="labelClass" [controlName]="controlName" [required]="required" [control]="control" [loading]="loading" [disabled]="disabled" [label]="label" [labelInfo]="labelInfo" [icon]="icon" [bold]="bold" [isRadio]="true">
     <div *ngIf="!isCircle, else inputCircle" class="btn-group full-container-button-group" role="group">
         <ng-container *ngFor="let item of items">
-            <input *ngIf="viewInit" type="radio" class="btn-check" [id]="generatedId(controlName) + '_' + item.key" [attr.name]="controlName" autocomplete="off" [attr.value]="item.key.toString()" (change)="onRadioChange($event)" [attr.checked]="isChecked(item)" [disabled]="disabled">
+            <input *ngIf="viewInit" type="radio" class="btn-check" [id]="generatedId(controlName) + '_' + item.key" [attr.name]="generatedId(controlName)" autocomplete="off" [attr.value]="item.key.toString()" (change)="onRadioChange($event)" [attr.checked]="isChecked(item)" [disabled]="disabled">
             <label class="btn petrvs btn-outline-primary" [attr.for]="generatedId(controlName) + '_' + item.key" [class.label-input-invalid]="isInvalid()" [class.disabled]="isDisabled" [attr.data-bs-toggle]="item.hint ? 'tooltip' : undefined" [attr.data-bs-placement]="item.hint ? 'top' : undefined" [title]="item.hint">
                 <i *ngIf="item.icon?.length" [class]="item.icon"></i>
                 {{item.value}}
@@ -11,7 +11,7 @@
     <ng-template #inputCircle>
         <ng-container *ngFor="let item of items">
             <div class="form-check" [class.form-check-inline]="isInline">
-                <input class="form-check-input" type="radio" [attr.name]="controlName" [id]="generatedId(controlName) + '_' + item.key" [attr.value]="item.key.toString()" [attr.checked]="isChecked(item)" (change)="onRadioChange($event)" [disabled]="disabled">
+                <input class="form-check-input" type="radio" [attr.name]="generatedId(controlName)" [id]="generatedId(controlName) + '_' + item.key" [attr.value]="item.key.toString()" [attr.checked]="isChecked(item)" (change)="onRadioChange($event)" [disabled]="disabled">
                 <label class="form-check-label" [attr.for]="generatedId(controlName) + '_' + item.key">{{item.value}}</label>
             </div>
         </ng-container>

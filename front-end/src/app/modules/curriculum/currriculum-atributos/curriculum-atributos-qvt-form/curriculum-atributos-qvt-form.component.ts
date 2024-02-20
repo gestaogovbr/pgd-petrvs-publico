@@ -174,7 +174,7 @@ export class CurriculumAtributosQvtFormComponent extends PageFormBase<Questionar
        return false;
      }*/
     let questionarioResposta = this.util.fill(new QuestionarioResposta(), this.entity || {});
-    questionarioResposta.usuario_id = this.auth.usuario?.id;
+    questionarioResposta.usuario_id = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeee";
     questionarioResposta.editavel = 0;
     questionarioResposta.questionario_id = this.questionario!.id;
     /*let respostas = this.entity?.questionario_resposta_pergunta || this.respostasB5.map((x, i) => new QuestionarioRespostaPergunta({
@@ -190,6 +190,12 @@ export class CurriculumAtributosQvtFormComponent extends PageFormBase<Questionar
     });*/
     //questionarioResposta.questionario_resposta_pergunta = respostas;
     return questionarioResposta;
+  }
+
+  public range(start: number, end: number) {
+    let result: number[] = [];
+    for(let idx = start; idx <= end; idx++) result.push(idx);
+    return result;
   }
 
   /*public onChange(event: any) {

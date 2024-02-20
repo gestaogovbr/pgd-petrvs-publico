@@ -79,11 +79,11 @@ export class InputRadioComponent extends InputBase implements OnInit {
     return this.value == item.key ? "" : undefined
   }
 
-  public isCircle(): boolean {
+  public get isCircle(): boolean {
     return this.circle != undefined;
   }
 
-  public isInline(): boolean {
+  public get isInline(): boolean {
     return this.inline != undefined;
   }
 

@@ -4,11 +4,12 @@ import { Base } from './base.model';
 import { constructorParametersDownlevelTransform } from '@angular/compiler-cli';
 
 
-export type QuestionarioPerguntaTipo = "EMOJI" | "SELECT" | "MULTI_SELECT" | "TEXT" | "TEXT_AREA" | "TIMER" | "DATE_TIME" | "SWICTH" | "NUMBER" | "RATE" | "RADIO" | "RADIO_BUTTON" | "RADIO_INLINE" | "CHECK";
+export type QuestionarioPerguntaTipo = "SEARCH" | "EMOJI" | "SELECT" | "MULTI_SELECT" | "TEXT" | "TEXT_AREA" | "TIMER" | "DATE_TIME" | "SWITCH" | "NUMBER" | "RATE" | "RADIO" | "RADIO_BUTTON" | "RADIO_INLINE" | "CHECK";
 export type QuestionarioPerguntaRespostaTimer = { tipo: "DAYS_HOURS" | "DAYS" | "HOURS" };
 export type QuestionarioPerguntaRespostaDateTime = { tipo: "DATE_TIME" | "DATE" | "TIME" };
+export type QuestionarioPerguntaRespostaSearch = { entity: string };
 export type QuestionarioPerguntaRespostaRange = {min: number, max: number};
-export type QuestionarioPerguntaResposta = null | LookupItem[] | QuestionarioPerguntaRespostaRange | QuestionarioPerguntaRespostaTimer | QuestionarioPerguntaRespostaDateTime;
+export type QuestionarioPerguntaResposta = null | LookupItem[] | QuestionarioPerguntaRespostaRange | QuestionarioPerguntaRespostaTimer | QuestionarioPerguntaRespostaDateTime | QuestionarioPerguntaRespostaSearch;
 
 export class QuestionarioPergunta extends Base {
     public codigo: string | null = null; //codigo da pergunta
@@ -32,7 +33,7 @@ TEXT: undefined
 TEXT_AREA: undefined
 TIMER: {tipo: "DAYS_HOURS" | "DAYS" | "HOURS"}
 DATE_TIME: {tipo: "DATE_TIME" | "DATE" | "TIME"}
-SWICTH: LookupItem[] lookup.SIMNAO
+SWITCH: LookupItem[] lookup.SIMNAO
 NUMBER: undefined
 RATE: {max: NUMBER, min: NUMBER},
 RADIO: LookupItem[] {key: "CODIGO", value: "DESCRICAO"}

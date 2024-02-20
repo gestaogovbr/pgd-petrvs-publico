@@ -63,6 +63,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   @ViewChild('escolhaInteresseProgramaGestao', { static: false }) public escolhaInteresseProgramaGestao?: InputRadioComponent;
   @ViewChild('funcao', { static: false }) public funcao?: InputSelectComponent;
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
+  @ViewChild('unidadeChefia', { static: false }) public unidadeChefia?: InputSearchComponent;
   @ViewChild('lotacaoAtual', { static: false }) public lotacaoAtual?: InputSearchComponent;
   @ViewChild('gruposEspecializados', { static: false }) public gruposEspecializados?: InputSelectComponent;
   @ViewChild('centroTreinamento', { static: false }) public centroTreinamento?: InputSelectComponent;
@@ -193,6 +194,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   
     this.formHistoricoFuncaoGrid = this.fh.FormBuilder({
       funcao_id: { default: "" },
+      unidade_id: { default: "" },
     }, this.cdRef, this.validate);
     
     this.formHistoricoLotacaoGrid = this.fh.FormBuilder({

@@ -794,7 +794,7 @@ export class LookupService implements IIndexable {
     { key: 'RADIO', value: 'Única Escolha' },
     { key: 'NUMBER', value: 'Numérica' }
   ];
- // "EMOJI" | "SELECT" | "MULTI_SELECT" | "TEXT" | "TEXT_AREA" | "TIMER" | "DATE_TIME" | "SWICTH" | "NUMBER" | "RATE" | "RADIO" | "CHECK";
+ // "EMOJI" | "SELECT" | "MULTI_SELECT" | "TEXT" | "TEXT_AREA" | "TIMER" | "DATE_TIME" | "SWITCH" | "NUMBER" | "RATE" | "RADIO" | "CHECK";
 
   public THEMES: LookupItem[] = [
     { key: 'light', value: "Branco (light)" },

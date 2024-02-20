@@ -11,7 +11,35 @@
     </p>
     <div class="mt-3"></div>
     <!--<curriculum-pergunta-card *ngFor="let idx of indice0a9" [indice]="idx + 1" [pergunta]="perguntas[idx]" [control]="perguntas[idx]._metadata.control"></curriculum-pergunta-card>-->
-    <curriculum-pergunta-card *ngFor="let pergunta of perguntas; index as idx" [indice]="idx + 1" [pergunta]="perguntas[idx]" [control]="perguntas[idx]._metadata.control"></curriculum-pergunta-card>
+    <curriculum-pergunta-card *ngFor="let idx of range(0, 14)" [indice]="idx + 1" [pergunta]="perguntas[idx]" [control]="perguntas[idx]._metadata.control"></curriculum-pergunta-card>
+    <separator></separator>
+         <h5 class="mb-3 fw-bold">Qualidade de Vida no Trabalho, segundo Richard Walton (1973)</h5>
+    <separator class="mb-3 mt-3"></separator>
+  
+   
+    <curriculum-pergunta-card *ngFor="let idx of range(15, 39)" [indice]="idx + 1" [pergunta]="perguntas[idx]" [control]="perguntas[idx]._metadata.control"></curriculum-pergunta-card>
+    <separator></separator>
+    <separator></separator>
+    
+    <curriculum-pergunta-card *ngFor="let idx of range(40, 45)" [indice]="idx + 1" [pergunta]="perguntas[idx]" [control]="perguntas[idx]._metadata.control"></curriculum-pergunta-card>
+    <separator></separator>
+
+    <h5 class="mb-3 fw-bold">Dass-21</h5><br>
+
+    <p class="text-justify mb-3">
+      Essa pesquisa é anônima, portanto, as informações coletadas servirão apenas para medir como esses estados emocionais estão presentes na amostra em estudo. Essa seção não se presta a realizar qualquer tipo de diagnóstico clínico dos indivíduos pesquisados.<br><br>
+      (1) Lovibond, S.H. & Lovibond, P.F. (1995). Manual for the Depression Anxiety & Stress Scales. (2nd Ed.)Sydney: Psychology Foundation.<br><br>
+      (2) Henry, J. D., & Crawford, J. R. (2005). The short-form version of the Depression Anxiety Stress Scales (DASS-21): Construct validity and normative data in a large non-clinical sample. British Journal of Clinical Psychology, 44(2), 227-239.<br><br>
+    </p>
+    <separator class="mb-3 mt-3"></separator>
+
+    <curriculum-pergunta-card *ngFor="let idx of range(46, 66)" [indice]="idx + 1" [pergunta]="perguntas[idx]" [control]="perguntas[idx]._metadata.control"></curriculum-pergunta-card>
+    <separator></separator>
+       <h5 class="mb-3 fw-bold">PGD</h5><br>
+       <p>Assinale uma das opções abaixo, em relação ao Programa de Gestão e Desempenho - PGD.</p>
+    <separator class="mb-3 mt-3"></separator>
+    
+    <curriculum-pergunta-card *ngFor="let idx of range(67, 74)" [indice]="idx + 1" [pergunta]="perguntas[idx]" [control]="perguntas[idx]._metadata.control"></curriculum-pergunta-card>
     <!--div class="card mb-3 mt-3 cardConcordancia" id="cardConcordancia">
       <div class="card-header">
         <div class="row">
