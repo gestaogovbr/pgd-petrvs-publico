@@ -61,7 +61,10 @@ class LoginController extends Controller
                 "gerenciasSubstitutas.atribuicoes",
                 "gerenciasSubstitutas.unidade",
                 "gerenciasDelegadas.atribuicoes",
-                "gerenciasDelegadas.unidade"
+                "gerenciasDelegadas.unidade",
+                "notificacoesDestinatario" => function ($query) {
+                    $query->where('data_leitura', null);
+                }
             ])->first();
             $request->session()->put("unidade_id", $usuario->lotacao?->id);
         }

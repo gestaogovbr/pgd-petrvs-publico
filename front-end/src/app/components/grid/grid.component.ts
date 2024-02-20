@@ -582,6 +582,7 @@ export class GridComponent extends ComponentBase implements OnInit {
         this.multiselected = {};
         this.items.forEach(x => this.multiselected[x.id] = x);
       } else if(this.query){
+        console.log(this.multiselectAllFields);
         const result = await this.query.getAllIds(this.multiselectAllFields);
         this.multiselectExtra = result.extra;
         for(let row of result.rows) this.multiselected[row.id] = row;

@@ -72,8 +72,11 @@
             <ng-template let-header="header" #titleVigencia>
               Vigência de<br><order by="data_inicio" [header]="header">Início</order>a<order by="data_fim" [header]="header">Fim</order>
             </ng-template>
-            <ng-template let-row="row" #columnInicioVigencia>
-                <span> {{dao!.getDateFormatted(row.data_inicio)}} <br> {{ " até "+dao!.getDateFormatted(row.data_fim)}}</span>
+            <ng-template let-row="row" #columnInicioVigencia>                
+                <small> {{dao!.getDateFormatted(row.data_inicio)}}  {{ " até "+dao!.getDateFormatted(row.data_fim)}}</small>
+                <div class="d-block">
+                    <badge color="#5362fb" icon="bi bi-calendar-check-fill" label="Vigente" hint="Vigente" *ngIf="planoTrabalhoService.estaVigente(row)"></badge>
+                </div>
             </ng-template>
         </column>
         <column [title]="'Termo\nAssinaturas'" [template]="documento">
