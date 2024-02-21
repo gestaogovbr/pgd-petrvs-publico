@@ -64,21 +64,21 @@ export class CurriculumAtributossoftFormComponent extends PageFormBase<Questiona
       questionario[0].perguntas = questionario[0].perguntas.sort((a, b) => a.sequencia! < b.sequencia! ? -1 : 1);
       this.questionario = questionario[0];
       const questionarioResposta = await this.dao?.query({ where: [['questionario_id', '==', this.questionario.id], ['usuario_id', '==', this.auth.usuario?.id]], join: ['questionario_resposta_pergunta'] }).asPromise();
-      let questionarioRespostaOrdenado: QuestionarioRespostaPergunta[] = [];
-      let respostas: any = [];
-      let indice = 0;
-      this.questionario!.perguntas.forEach(pergunta => {
-        questionarioResposta![0].questionario_resposta_pergunta.forEach((resposta, i) => {
-          if (pergunta.id == resposta.questionario_pergunta_id) {
-            respostas.push(resposta.resposta);
-            indice = i;
-          }
+      if (questionarioResposta?.length) {
+        let questionarioRespostaOrdenado: QuestionarioRespostaPergunta[] = [];
+        let respostas: any = [];
+        let indice = 0;
+        this.questionario!.perguntas.forEach(pergunta => {
+          questionarioResposta![0].questionario_resposta_pergunta.forEach((resposta, i) => {
+            if (pergunta.id == resposta.questionario_pergunta_id) {
+              respostas.push(resposta.resposta);
+              indice = i;
+            }
+          });
+          questionarioRespostaOrdenado.push(questionarioResposta![0].questionario_resposta_pergunta[indice]);
         });
-        questionarioRespostaOrdenado.push(questionarioResposta![0].questionario_resposta_pergunta[indice]);
-      });
-      questionarioResposta![0].questionario_resposta_pergunta = questionarioRespostaOrdenado;
-      this.entity = questionarioResposta?.length ? questionarioResposta[0] : undefined;
-      if (this.entity) {
+        questionarioResposta![0].questionario_resposta_pergunta = questionarioRespostaOrdenado;
+        this.entity = questionarioResposta[0];
         this.form!.controls.comunica.setValue(respostas[0]);
         this.form!.controls.lideranca.setValue(respostas[1]);
         this.form!.controls.resolucao.setValue(respostas[2]);
@@ -88,6 +88,8 @@ export class CurriculumAtributossoftFormComponent extends PageFormBase<Questiona
         this.form!.controls.adaptabilidade.setValue(respostas[6]);
         this.form!.controls.etica.setValue(respostas[7]);
         this.restante = 20 - respostas.reduce((soma: any, a: any) => soma + a, 0);
+      } else {
+        this.entity = undefined;
       }
     }// else {
       //this.dialog.alert("Teste Soft-Skills deste usuário não localizado", "Teste não localizado");
