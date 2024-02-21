@@ -73,6 +73,7 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { JsonViewerComponent } from './json-viewer/json-viewer.component';
 import { InputChooseComponent } from './input/input-choose/input-choose.component';
 import { ReactionComponent } from './reaction/reaction.component';
+import { InputCheckComponent } from './input/input-check/input-check.component';
 
 const maskConfigFunction: () => Partial<IConfig> = () => {
   return {
@@ -144,7 +145,8 @@ const maskConfigFunction: () => Partial<IConfig> = () => {
     DoubleScrollbarComponent,
     ButtonDashboardComponent,
     JsonViewerComponent,
-    ReactionComponent
+    ReactionComponent,
+    InputCheckComponent
   ],
   imports: [
     CommonModule,
@@ -218,7 +220,8 @@ const maskConfigFunction: () => Partial<IConfig> = () => {
     ButtonDashboardComponent,
     DoubleScrollbarComponent,
     JsonViewerComponent,
-    ReactionComponent
+    ReactionComponent,
+    InputCheckComponent
   ],
   providers: [
     { 

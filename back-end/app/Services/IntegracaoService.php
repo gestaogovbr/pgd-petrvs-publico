@@ -923,7 +923,7 @@ class IntegracaoService extends ServiceBase
               'perfil_id' => $perfilParticipanteId,
               'exercicio' => $this->UtilService->valueOrDefault($v_isr['exercicio']),
               'uf' => $this->UtilService->valueOrDefault($v_isr['uf'], null),
-              'data_modificacao' => $this->UtilService->valueOrDefault($v_isr['data_modificacao']),
+              'data_modificacao' => $this->UtilService->asDateTime($v_isr['data_modificacao']),
             ]);
             $registro->save();
 
