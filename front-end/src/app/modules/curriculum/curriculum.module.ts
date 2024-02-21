@@ -15,6 +15,7 @@ import { CurriculumAtributosdiscFormComponent } from './currriculum-atributos/cu
 import { CurriculumAtributosDassFormComponent } from './currriculum-atributos/curriculum-atributos-dass-form/curriculum-atributos-dass-form.component';
 import { CurriculumAtributosQvtFormComponent } from './currriculum-atributos/curriculum-atributos-qvt-form/curriculum-atributos-qvt-form.component';
 import { CurriculumPesquisaListComponent } from './curriculum-pesquisa-list/curriculum-pesquisa-list.component';
+import { CurriculumPerguntaCardComponent } from './currriculum-atributos/curriculum-pergunta-card/curriculum-pergunta-card.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { CurriculumPesquisaListComponent } from './curriculum-pesquisa-list/curr
     CurriculumAtributosdiscFormComponent,
     CurriculumAtributosDassFormComponent,
     CurriculumAtributosQvtFormComponent,
-    CurriculumPesquisaListComponent
+    CurriculumPesquisaListComponent,
+    CurriculumPerguntaCardComponent
   ],
   imports: [
     CommonModule,

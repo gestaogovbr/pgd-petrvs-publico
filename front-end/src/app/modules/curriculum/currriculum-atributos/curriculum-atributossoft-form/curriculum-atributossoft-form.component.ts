@@ -91,9 +91,9 @@ export class CurriculumAtributossoftFormComponent extends PageFormBase<Questiona
       } else {
         this.entity = undefined;
       }
-    } else {
-      this.dialog.alert("Teste Soft-Skills não localizado", "Teste não localizado");
-    }
+    }// else {
+      //this.dialog.alert("Teste Soft-Skills deste usuário não localizado", "Teste não localizado");
+    //}
     await this.loadData(this.entity!, form);
   }
 
@@ -142,6 +142,7 @@ export class CurriculumAtributossoftFormComponent extends PageFormBase<Questiona
     });
     questionarioResposta.questionario_resposta_pergunta = respostas;
     return questionarioResposta;
+
   }
 
   public valorSoftChange(control: any) {
@@ -169,3 +170,28 @@ export class CurriculumAtributossoftFormComponent extends PageFormBase<Questiona
   }
 }
 
+ /*
+    let respostas = this.entity?.questionario_resposta_pergunta;
+   
+    if(respostas?.length){
+      respostas!.forEach((x, i) => {
+        if ((x._status != "ADD") && (parseInt(x.resposta) != parseInt(valores[i]))){
+          x.resposta = parseInt(valores[i]);
+          x._status = "EDIT";
+        }
+      });
+      questionarioResposta.questionario_resposta_pergunta = respostas;
+
+    }else{
+    
+       this.questionario!.perguntas.forEach((z,j)=>{
+          this.respostas.push( new QuestionarioRespostaPergunta({
+                  questionario_pergunta_id: z.id,
+                  resposta: z.respostas,//valores[i],
+                  _status : "ADD"
+                }));
+          })
+     questionarioResposta.questionario_resposta_pergunta = this.respostas;
+    }*/
+    
+   
