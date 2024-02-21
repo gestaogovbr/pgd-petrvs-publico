@@ -49,8 +49,7 @@ trait MergeRelations
         }, ARRAY_FILTER_USE_KEY);
     }
 
-    public function
-    fillableRelations()
+    public function fillableRelations()
     {
         $fillable = [];
         if(isset($this->fillable_relations)) $fillable = array_merge($fillable, $this->fillable_relations);
@@ -67,10 +66,16 @@ trait MergeRelations
         $relationsAttributes = [];
 
         foreach ($this->fillableRelations() as $relationName) {
-            $val = Arr::pull($attributes, $relationName);
+            foreach ($attributes as $key => $value) {
+                if(Str::camel($key) == Str::camel($relationName)) {
+                    $relationsAttributes[Str::camel($relationName)] = $value;
+                    unset($attributes[$key]);
+                }
+            }
+            /*$val = Arr::pull($attributes, $relationName);
             if ($val !== null) {
                 $relationsAttributes[$relationName] = $val;
-            }
+            }*/
         }
 
         return [$relationsAttributes, $attributes];
