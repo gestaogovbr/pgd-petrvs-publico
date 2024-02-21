@@ -245,7 +245,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     return result;
   }
 
-  public formValidation = (form?: FormGroup) =>{
+  public formValidation = (form?: FormGroup) => {
     let result = null;
     return result;
   }
@@ -283,13 +283,13 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
 
   public async saveData(form: IIndexable): Promise<CurriculumProfissional> {
     const curriculuns = await this.curriculumDao?.query({ where: [['usuario_id', '==', this.auth.usuario?.id]] }).asPromise();
-   
+
     return new Promise<CurriculumProfissional>((resolve, reject) => {
       // this.entity!.usuario_id=this.auth.usuario!.id;
       let curriculumProfissional = this.util.fill(new CurriculumProfissional(), this.entity!);
       //curriculum.usuario_id=this.auth.usuario?.id;
       curriculumProfissional = this.util.fillForm(curriculumProfissional, this.form!.value);
-      
+
       curriculumProfissional.curriculum_id = curriculuns[0].id;
       this.curriculumProfissionalID != "" ? (curriculumProfissional.id = this.curriculumProfissionalID) : '';
       curriculumProfissional.viagem_nacional = (this.form?.controls.viagem_nacional.value ? 1 : 0);
@@ -445,6 +445,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       row.area_tematica = this.areaTematica!.selectedEntity;
       row.area_tematica_id = values.area_tematica_id;
       row.capacidadeTecnica = this.capacidadeTecnica!.selectedItem?.data;
+      row.capacidade_tecnica_id = values.capacidade_tecnica_id;
       row.atividade_desempenhada = values.atividade_desempenhada;
       row._status = row._status == "ADD" ? "ADD" : "EDIT";
       return row;
@@ -452,8 +453,12 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     return undefined;
   }
 
+  public getRow(row: any) {
+    console.log(row, "ROWSSS")
+  }
+
   public async loadHistoricoAtividadeInterna(form: FormGroup, row: HistoricoAtividadeInternaCurriculum) {
-   
+
     this.formHistoricoAtividadeInternaGrid!.controls.area_tematica_id.setValue(row.area_tematica_id);
     this.formHistoricoAtividadeInternaGrid!.controls.capacidade_tecnica_id.setValue(row.capacidade_tecnica_id);
     this.formHistoricoAtividadeInternaGrid!.controls.atividade_desempenhada.setValue(row.atividade_desempenhada);
@@ -565,7 +570,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     if (form?.valid) {
       let values = form.value;
       row.curso = this.historicoCursoInterno?.selectedItem?.data;
-      console.log('CursoInterno',row.curso)
+      console.log('CursoInterno', row.curso)
       row.curso_id = values.curso_id;
       row.pretensao = values.pretensao;
       row._status = row._status == "ADD" ? "ADD" : "EDIT";
