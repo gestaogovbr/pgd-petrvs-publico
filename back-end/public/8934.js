@@ -50,6 +50,7 @@ __webpack_require__.r(__webpack_exports__);
 class QuestionarioPergunta extends _base_model__WEBPACK_IMPORTED_MODULE_0__.Base {
   constructor(data) {
     super();
+    this.codigo = null; //codigo da pergunta
     this.sequencia = 0; //sequencia da pergunta
     this.pergunta = ""; //pergunta
     this.tipo = "SELECT"; // tipo da resposta para esta pergunta
@@ -69,7 +70,7 @@ TEXT: undefined
 TEXT_AREA: undefined
 TIMER: {tipo: "DAYS_HOURS" | "DAYS" | "HOURS"}
 DATE_TIME: {tipo: "DATE_TIME" | "DATE" | "TIME"}
-SWICTH: LookupItem[] lookup.SIMNAO
+SWITCH: LookupItem[] lookup.SIMNAO
 NUMBER: undefined
 RATE: {max: NUMBER, min: NUMBER},
 RADIO: LookupItem[] {key: "CODIGO", value: "DESCRICAO"}
