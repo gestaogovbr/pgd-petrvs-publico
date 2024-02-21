@@ -74,14 +74,14 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   @ViewChild('areaAtividadeExternaDocencia', { static: false }) public areaAtividadeExternaDocencia?: InputSearchComponent;
   @ViewChild('areaCursoInterno', { static: false }) public areaCursoInterno?: InputSearchComponent;
   @ViewChild('areaCursoExterno', { static: false }) public areaCursoExterno?: InputSearchComponent;
-  @ViewChild('cursoDocenciaInterna', { static: false }) public cursoDocenciaInterna?: InputSearchComponent;
-  @ViewChild('historicoCursoInterno', { static: false }) public historicoCursoInterno?: InputSelectComponent;
+  @ViewChild('cursoDocenciaInterna', { static: false }) public cursoDocenciaInterna?: InputSelectComponent;
+  @ViewChild('cursoInterno', { static: false }) public cursoInterno?: InputSelectComponent;
   @ViewChild('areaHistoricoCursoExterno', { static: false }) public areaHistoricoCursoExterno?: InputSearchComponent;
   @ViewChild('areaAtividadeInterna', { static: false }) public areaAtividadeInterna?: InputSearchComponent;
   @ViewChild('selectDocenciaInterna', { static: false }) public selectDocenciaInterna?: InputSelectComponent;
   @ViewChild('selectCursosInternos', { static: false }) public selectCursosInternos?: InputSelectComponent;
-  @ViewChild('areaTematica', { static: false }) public areaTematica?: InputSearchComponent;
-  @ViewChild('capacidadeTecnica', { static: false }) public capacidadeTecnica?: InputSelectComponent;
+  @ViewChild('area_tematica', { static: false }) public area_tematica?: InputSearchComponent;
+  @ViewChild('capacidade_tecnica', { static: false }) public capacidade_tecnica?: InputSelectComponent;
 
   public testeLookup: LookupItem[] = [{ 'key': 'key 1', 'value': 'value 1' }];
   public opcoesEscolha: LookupItem[] = [{ 'key': 1, 'value': 'Feito' }, { 'key': 0, 'value': 'Pretendo Fazer' }];
@@ -442,9 +442,13 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     form?.markAllAsTouched();
     if (form?.valid) {
       let values = form.value;
-      row.area_tematica = this.areaTematica!.selectedEntity;
+      row.area_tematica = this.area_tematica?.selectedEntity;
       row.area_tematica_id = values.area_tematica_id;
+<<<<<<< 97ff3273a8849271af249aac7ae24a8e75577123
+      row.capacidade_tecnica = this.capacidade_tecnica!.selectedItem?.data;
+=======
       row.capacidadeTecnica = this.capacidadeTecnica!.selectedItem?.data;
+>>>>>>> 0984e24e47842da96efb1ab348ad0699562d323a
       row.capacidade_tecnica_id = values.capacidade_tecnica_id;
       row.atividade_desempenhada = values.atividade_desempenhada;
       row._status = row._status == "ADD" ? "ADD" : "EDIT";
@@ -458,7 +462,13 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   }
 
   public async loadHistoricoAtividadeInterna(form: FormGroup, row: HistoricoAtividadeInternaCurriculum) {
+<<<<<<< 97ff3273a8849271af249aac7ae24a8e75577123
+   
+    //this.areaTematica?.setValue(row.capacidade_tecnica?.area_tematica_id)
+    console.log('Row',row)
+=======
 
+>>>>>>> 0984e24e47842da96efb1ab348ad0699562d323a
     this.formHistoricoAtividadeInternaGrid!.controls.area_tematica_id.setValue(row.area_tematica_id);
     this.formHistoricoAtividadeInternaGrid!.controls.capacidade_tecnica_id.setValue(row.capacidade_tecnica_id);
     this.formHistoricoAtividadeInternaGrid!.controls.atividade_desempenhada.setValue(row.atividade_desempenhada);
@@ -515,8 +525,8 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     form?.markAllAsTouched();
     if (form?.valid) {
       let values = form.value;
-      row.curso = this.cursoDocenciaInterna!.selectedEntity;
-      console.log('curso', row.curso)
+      row.curso = this.cursoDocenciaInterna?.selectedItem?.data;
+      console.log(row.curso)
       row.curso_id = values.curso_id;
       row.pretensao = values.pretensao;
       row._status = row._status == "ADD" ? "ADD" : "EDIT";
@@ -527,7 +537,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
 
   public async loadHistoricoDocenciaInterna(form: FormGroup, row: HistoricoDocenciaInternaCurriculum) {
     //this.area?.loadSearch(row.curso?.area_conhecimento || row.curso?.area_id);
-    /*this.area?.setValue(row.curso?.area_id)*/
+    //this.area?.setValue(row.curso?.area_id)*/
     this.formHistoricoDocenciaInternaGrid!.controls.curso_id.setValue(row.curso_id);
   }
 
@@ -569,8 +579,13 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     form?.markAllAsTouched();
     if (form?.valid) {
       let values = form.value;
+<<<<<<< 97ff3273a8849271af249aac7ae24a8e75577123
+      row.curso = this.cursoInterno?.selectedItem?.data;
+      console.log('CursoInterno',row.curso)
+=======
       row.curso = this.historicoCursoInterno?.selectedItem?.data;
       console.log('CursoInterno', row.curso)
+>>>>>>> 0984e24e47842da96efb1ab348ad0699562d323a
       row.curso_id = values.curso_id;
       row.pretensao = values.pretensao;
       row._status = row._status == "ADD" ? "ADD" : "EDIT";
