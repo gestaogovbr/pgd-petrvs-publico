@@ -1,0 +1,12 @@
+<!--grid [dao]="dao" [add]="add" [form]="formEdit" [hasEdit]="false" [hasDelete]="false" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [loadList]="onGridLoad.bind(this)" [selectable]="selectable" (select)="onSelect($event)" [groupTemplate]="groupAtividades">
+  <ng-template #groupAtividades let-grid='grid' let-separator='separator' let-group='group'>
+  </ng-template>
+  <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)">
+    <div class="row">
+      Filtros
+    </div>
+  </filter>
+  <columns>
+
+  </columns>
+</grid-->
