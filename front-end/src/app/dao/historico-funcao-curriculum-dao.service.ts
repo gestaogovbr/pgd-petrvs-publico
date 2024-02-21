@@ -11,6 +11,6 @@ export class HistoricoFuncaoCurriculumDaoService extends DaoBaseService<Historic
  
   constructor(protected injector: Injector) { 
     super("HistoricoFuncao", injector);
-    this.inputSearchConfig.searchFields = ["curriculum_profissional_id", "funcao_id"];
+    this.inputSearchConfig.searchFields = ["curriculum_profissional_id", "funcao_id","unidade_id"];
   } 
 }

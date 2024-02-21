@@ -3,7 +3,7 @@
         <tab key="FUNCIONAIS" class="fw-bold" label="Funcionais">
             <div class="row my-4">
                 <input-select [size]="4" label="Ingresso na Instituição" icon="bi bi-calendar-check-fill" controlName="ano_ingresso" [control]="form!.controls.ano_ingresso" [items]="anos" required></input-select>
-                <input-select #centroTreinamento [size]="4" label="Centro de Treinamento" icon="bi bi-building-fill" controlName="centro_treinamento_id" [control]="form!.controls.centro_treinamento_id" fullEntity liveSearch [dao]="centroTreinamentoDao"  [addRoute]="{route: ['raiox','cadastros','centrotreinamento','new']}" required></input-select>
+                <input-select #centroTreinamento [size]="4" label="Centro de Treinamento" icon="bi bi-building-fill" controlName="centro_treinamento_id" [control]="form!.controls.centro_treinamento_id" fullEntity liveSearch [dao]="centroTreinamentoDao" [addRoute]="{route: ['raiox','cadastros','centrotreinamento','new']}" required></input-select>
                 <input-search #cargos [size]="4" label="Cargo" controlName="cargo_id" [control]="form!.controls.cargo_id" [dao]="cargoDao" required></input-search>
             </div>
             <!--<div class="row">
@@ -20,20 +20,18 @@
                         <columns>
                             <column title="Histórico de Funções" titleHint="Funções ocupadas como titular ou substituto." [template]="columnFuncao" [editTemplate]="editFuncao">
                                 <ng-template let-row="row" #columnFuncao>
-                                    {{row.funcao.nome}}
-
+                                    {{row.funcao?.nome || "Desconhecido"}}
                                 </ng-template>
                                 <ng-template let-row="row" #editFuncao>
                                     <input-select #funcao [size]="4" label icon controlName="funcao_id" fullEntity liveSearch [dao]="funcaoDao" [addRoute]="{route: ['raiox','cadastros','funcao','new']}"></input-select>
                                 </ng-template>
                             </column>
-                            <column title="Unidade" titleHint="Unidad" [template]="columnUnidadeChefe" [editTemplate]="editColumnUnidadeChefe">
+                            <column title="Unidade" titleHint="Unidade" [template]="columnUnidadeChefe" [editTemplate]="editColumnUnidadeChefe">
                                 <ng-template let-row="row" #columnUnidadeChefe>
-                                   
-
+                                    {{row.unidade?.nome || "Desconhecido"}}
                                 </ng-template>
                                 <ng-template let-row="row" #editColumnUnidadeChefe>
-                                    <input-search #unidadeChefia [size]="4" label icon controlName="unidade_id" [dao]="unidadeDao" [join]="['historico_lotacao']" fullEntity liveSearch></input-search>
+                                    <input-search #unidadeChefia [size]="4" label icon controlName="unidade_id" [dao]="unidadeDao" fullEntity liveSearch></input-search>
                                 </ng-template>
                             </column>
                             <column type="options"></column>
@@ -41,18 +39,16 @@
                     </grid>
                 </div>
                 <div class="col-md-6">
-                    <input-select #gruposEspecializados [size]="12" label="Você faz parte de algum grupo especializado?" icon="bi bi-check-circle" controlName="grupo_especializado_id" [control]="form!.controls.grupo_especializado_id" fullEntity liveSearch  [dao]="grupoDao" [addRoute]="{route: ['raiox','cadastros','grupoespecializado','new']}" required></input-select>
+                    <input-select #gruposEspecializados [size]="12" label="Você faz parte de algum grupo especializado?" icon="bi bi-check-circle" controlName="grupo_especializado_id" [control]="form!.controls.grupo_especializado_id" fullEntity liveSearch [dao]="grupoDao" [addRoute]="{route: ['raiox','cadastros','grupoespecializado','new']}" required></input-select>
                 </div>
             </div>
             <div class="row mt-3">
                 <div class="col-md-6">
-                    <!--<separator class="mb-3 mt-3" title="Histórico de Lotação" [bold]="true"></separator>-->
                     <grid [control]="form!.controls.historico_lotacao" [minHeight]="150" [form]="formHistoricoLotacaoGrid!" [hasDelete]="true" [add]="addHistoricoLotacao.bind(this)" [load]="loadHistoricoLotacao.bind(this)" [remove]="removeHistoricoLotacao.bind(this)" [save]="saveHistoricoLotacao.bind(this)" editable>
                         <columns>
                             <column title="Histórico de Lotações" titleHint="Escolha a lotação." [template]="columnLotacao" [editTemplate]="editLotacao">
                                 <ng-template let-row="row" #columnLotacao>
-                                    {{row.unidade.nome}}
-
+                                    {{row.unidade?.nome || "Desconhecido"}}
                                 </ng-template>
                                 <ng-template let-row="row" #editLotacao>
                                     <input-search #unidade [size]="12" controlName="unidade_id" [dao]="unidadeDao" [join]="['historico_lotacao']" fullEntity liveSearch></input-search>
@@ -64,13 +60,10 @@
                 </div>
                 <div class="col-md-6">
                     <input-search #lotacaoAtual [size]="6" label="Lotação atual" controlName="lotacao_atual" [control]="form!.controls.lotacao_atual" [dao]="unidadeDao"></input-search>
-
                 </div>
-
                 <!--<input-multiselect [size]="6"  label="Selecione todas as unidades em que já foi lotado" [control]="form!.controls.historicoLotacao" controlName="historicoLotacao" [addItemHandle]="addItemLotacao.bind(this)" noBox [bold]="true">
                     <input-search #selecionaLotacao [size]="12" controlName="lotacao_id" [control]="form!.controls.lotacao_id" [dao]="unidadeDao" liveSearch></input-search>
                 </input-multiselect>-->
-
             </div>
         </tab>
         <tab key="HARD_SKILLS" class="fw-bold" label="Hard Skills">
@@ -89,7 +82,7 @@
                     <columns>
                         <column title="Histórico de Atividades Externas" titleHint="Escolha a atividade." [template]="columnAtividadeExterna" [editTemplate]="editAtividadeExterna">
                             <ng-template let-row="row" #columnAtividadeExterna>
-                                {{row.area_atividade_externa.nome}}
+                                {{row.area_atividade_externa?.nome || "Desconhecido"}}
                             </ng-template>
                             <ng-template let-row="row" #editAtividadeExterna>
                                 <!--<input-search #unidade [size]="12" controlName="unidade_id" [dao]="unidadeDao" [join]="['historico_AtividadeExterna']" fullEntity liveSearch></input-search>-->
@@ -118,16 +111,15 @@
                     <columns>
                         <column title="Área temática" titleHint="Escolha a área." [template]="columnAtividadeInterna" [editTemplate]="editAtividadeInterna">
                             <ng-template let-row="row" #columnAtividadeInterna>
-                                {{row.capacidade_tecnica.area_tematica.nome}}
-
+                                {{row.area_tematica?.nome || "Desconhecido" }}
                             </ng-template>
                             <ng-template let-row="row" #editAtividadeInterna>
-                                <input-search #areaTematica [size]="4" label="Escolha a área temática" controlName="area_tematica_id" [dao]="areaTematicaDao" [join]="['capacidade_tecnica']" [addRoute]="{route: ['raiox','cadastros','areatematica','new']}" fullEntity (change)="onAreaAtividadeInternaChange()"></input-search>
+                                <input-search #areaTematica [size]="4" label="Escolha a área temática" controlName="area_tematica_id" [dao]="areaTematicaDao" [addRoute]="{route: ['raiox','cadastros','areatematica','new']}" (change)="onAreaAtividadeInternaChange()"></input-search>
                             </ng-template>
                         </column>
                         <column title="Capacidade" titleHint="Escolha a capacidade." [template]="columnCapacidade" [editTemplate]="editCapacidade">
                             <ng-template let-row="row" #columnCapacidade>
-                                {{row.capacidade_tecnica.nome}}
+                                {{row.capacidadeTecnica?.nome || "Desconhecido"}}
                             </ng-template>
                             <ng-template let-row="row" #editCapacidade>
                                 <input-select #capacidadeTecnica [size]="4" label="Capacidade" icon="fas fa-graduation-cap" controlName="capacidade_tecnica_id" fullEntity liveSearch [dao]="capacidadeTecnicaDao" [where]="areaTematicaWhere" [addRoute]="{route: ['raiox','cadastros','capacidadetecnica','new']}"></input-select>
@@ -136,7 +128,6 @@
                         <column title="Atividade desempenhada" titleHint="Informe a atividade." [template]="columnAtividadeDesempenhada" [editTemplate]="editAtividadeDesempenhada">
                             <ng-template let-row="row" #columnAtividadeDesempenhada>
                                 {{row.atividade_desempenhada}}
-
                             </ng-template>
                             <ng-template let-row="row" #editAtividadeDesempenhada>
                                 <input-text [size]="4" label="Informe a atividade desempenhada" icon controlName="atividade_desempenhada"></input-text>
@@ -172,8 +163,7 @@
                     <columns>
                         <column title="Área Externa" titleHint="Escolha a área." [template]="columnDocenciaExterna" [editTemplate]="editDocenciaExterna">
                             <ng-template let-row="row" #columnDocenciaExterna>
-                                {{row.area_atividade_externa.nome}}
-
+                                {{row.area_atividade_externa?.nome || "Desconhecido"}}
                             </ng-template>
                             <ng-template let-row="row" #editDocenciaExterna>
                                 <input-search #areaAtividadeExternaDocencia [size]="4" label="Escolha a área externa" controlName="area_atividade_externa_id" [dao]="areaAtividadeExternaDao" [addRoute]="{route: ['raiox','cadastros','areaatividadeexterna','new']}" fullEntity></input-search>
@@ -195,16 +185,14 @@
             <div class="row mt-3">
                 <separator class="my-3" title="Você é docente ou instrutor da Instituição?" [bold]="true"></separator>
                 <input-switch [size]="2" #radioDocenciaInterna [label]="radioDocenciaInterna.value ? 'Sim' : 'Não'" icon="fas fa-chalkboard" controlName="radioDocenciaInterna" [control]="form!.controls.radioDocenciaInterna"></input-switch>
-
                 <grid *ngIf="form!.controls.radioDocenciaInterna.value" [control]="form!.controls.historico_docencia_interna" [minHeight]="150" [form]="formHistoricoDocenciaInternaGrid!" [hasDelete]="true" [add]="addHistoricoDocenciaInterna.bind(this)" [load]="loadHistoricoDocenciaInterna.bind(this)" [remove]="removeHistoricoDocenciaInterna.bind(this)" [save]="saveHistoricoDocenciaInterna.bind(this)" editable>
                     <columns>
                         <column title="Curso" titleHint="Escolha a área." [template]="columnDocenciaInterna" [editTemplate]="editDocenciaInterna">
                             <ng-template let-row="row" #columnDocenciaInterna>
-                                {{row.curso.nome}}
-
+                                {{row.curso?.nome || "Desconhecido"}}
                             </ng-template>
                             <ng-template let-row="row" #editDocenciaInterna>
-                                <input-select #cursoDocenciaInterna [size]="3" label="Curso" icon controlName="curso_id" fullEntity liveSearch [control]="form!.controls.curso_id" [dao]="cursoDao" [where]="[['titulo', '==', 'INSTITUCIONAL']]" orderBy="[['nome', 'asc']]" [addRoute]="{route: ['raiox','cadastros','curso','new']}"></input-select>
+                                <input-select #cursoDocenciaInterna [size]="3" label="Curso" icon controlName="curso_id" liveSearch [control]="form!.controls.curso_id" [dao]="cursoDao" [where]="[['titulo', '==', 'INSTITUCIONAL']]" orderBy="[['nome', 'asc']]" [addRoute]="{route: ['raiox','cadastros','curso','new']}"></input-select>
                             </ng-template>
                         </column>
                         <column type="options"></column>
@@ -226,12 +214,11 @@
 
             <div class="row mt-3">
                 <separator class="my-3" title="Quais os principais cursos que você já fez e pretende fazer na Instituição?" [bold]="true"></separator>
-
                 <grid [control]="form!.controls.historico_curso_interno" [minHeight]="150" [form]="formHistoricoCursoInternoGrid!" [hasDelete]="true" [add]="addHistoricoCursoInterno.bind(this)" [load]="loadHistoricoCursoInterno.bind(this)" [remove]="removeHistoricoCursoInterno.bind(this)" [save]="saveHistoricoCursoInterno.bind(this)" editable>
                     <columns>
                         <column title="Pretende Cursar?" titleHint="Pretende cursar ou já esta concluido." [template]="columnPretende" [editTemplate]="editPretende">
                             <ng-template let-row="row" #columnPretende>
-                                {{row.pretensao == 0 ? 'Finalizado' : 'Pretendo Fazer' }}
+                                {{row.pretensao == 0 ? 'Finalizado' : 'Pretendo Fazer'}}
                             </ng-template>
                             <ng-template let-row="row" #editPretende>
                                 <input-switch [size]="2" [label]="formHistoricoCursoInternoGrid!.controls.pretensao.value ? 'Sim' : 'Concluído'" icon="fas fa-user-graduate" controlName="pretensao" [control]="form!.controls.pretensao"></input-switch>
@@ -239,7 +226,7 @@
                         </column>
                         <column title="Curso Institucional" titleHint="Escolha o curso." [template]="columnCurso" [editTemplate]="editCurso">
                             <ng-template let-row="row" #columnCurso>
-                                {{row.curso.nome}}
+                                {{row.curso?.nome || "Desconhecido"}}
                             </ng-template>
                             <ng-template let-row="row" #editCurso>
                                 <input-select #historicoCursoInterno [size]="3" label="Curso" icon controlName="curso_id" fullEntity liveSearch [dao]="cursoDao" [where]="[['titulo', '==', 'INSTITUCIONAL']]" orderBy="[['nome', 'asc']]" [addRoute]="{route: ['raiox','cadastros','curso','new']}"></input-select>
@@ -268,7 +255,7 @@
                     <columns>
                         <column title="Pretende Cursar?" titleHint="Pretende cursar ou já esta concluido." [template]="columnPretende" [editTemplate]="editPretende">
                             <ng-template let-row="row" #columnPretende>
-                                {{row.pretensao == 0 ? 'Finalizado' : 'Pretendo Fazer' }}
+                                {{row.pretensao == 0 ? 'Finalizado' : 'Pretendo Fazer'}}
                             </ng-template>
                             <ng-template let-row="row" #editPretende>
                                 <input-switch [size]="2" [label]="formHistoricoCursoExternoGrid!.controls.pretensao.value ? 'Sim' : 'Concluído'" icon="fas fa-user-graduate" controlName="pretensao" [control]="formHistoricoCursoExternoGrid!.controls.pretensao"></input-switch>
@@ -276,7 +263,7 @@
                         </column>
                         <column title="Área Externa" titleHint="Escolha a área externa." [template]="columnArea" [editTemplate]="editArea">
                             <ng-template let-row="row" #columnArea>
-                                {{row.area_atividade_externa.nome}}
+                                {{row.area_atividade_externa?.nome || "Desconhecido"}}
                             </ng-template>
                             <ng-template let-row="row" #editArea>
                                 <input-search #areaHistoricoCursoExterno [size]="4" label="Área/Instituição/Coorporação" controlName="area_atividade_externa_id" [dao]="areaAtividadeExternaDao" [addRoute]="{route: ['raiox','cadastros','areaatividadeexterna','new']}" fullEntity></input-search>
@@ -299,7 +286,6 @@
         </tab>
         <tab key="DISPONIBILIDADE" class="fw-bold mb-3" label="Disponibilidade">
             <div class="row">
-
                 <separator class="mb-3 mt-3" title="Viagens" [bold]="true"></separator>
                 <div class="col-lg-6">
                     <label><i class="bi bi-flag-fill"></i> Já fez viagem nacional a trabalho?</label>
@@ -311,14 +297,10 @@
                     <input-switch #radioViajemInternacional [size]="2" [label]="radioViajemInternacional.value ? 'Sim' : 'Não'" labelPosition="right" controlName=" viagem_internacional" [control]="form!.controls. viagem_internacional">
                     </input-switch>
                 </div>
-
             </div>
             <div class="row">
-                <separator class="my-3" title="Você tem interesse na participação do Banco Nacional de Talentos (BNT IN PRF Nº 58 de 27 de agosto de 2021) SEI 35010079?" [bold]="true">
-                </separator>
-                <input-switch #radioInteresseBNT [size]="1" [label]="radioInteresseBNT.value ? 'Sim' : 'Não'" icon="bi bi-universal-access" controlName="interesse_bnt" [control]="form!.controls.interesse_bnt">
-                </input-switch>
-
+                <separator class="my-3" title="Você tem interesse na participação do Banco Nacional de Talentos (BNT IN PRF Nº 58 de 27 de agosto de 2021) SEI 35010079?" [bold]="true"></separator>
+                <input-switch #radioInteresseBNT [size]="1" [label]="radioInteresseBNT.value ? 'Sim' : 'Não'" icon="bi bi-universal-access" controlName="interesse_bnt" [control]="form!.controls.interesse_bnt"></input-switch>
             </div>
             <div class="row">
                 <separator class="my-3" title="Você está inserido no programa de gestão da Instituição?" [bold]="true">
