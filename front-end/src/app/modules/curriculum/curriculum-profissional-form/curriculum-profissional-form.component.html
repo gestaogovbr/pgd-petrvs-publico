@@ -111,7 +111,7 @@
                     <columns>
                         <column title="Área temática" titleHint="Escolha a área." [template]="columnAtividadeInterna" [editTemplate]="editAtividadeInterna">
                             <ng-template let-row="row" #columnAtividadeInterna>
-                                {{row.capacidade_tecnica?.area_tematica?.nome || row.area_tematica?.nome || "Desconhecido" }}
+                                {{row.capacidade_tecnica?.area_tematica?.nome || "Desconhecido" }}
                             </ng-template>
                             <ng-template let-row="row" #editAtividadeInterna>
                                 <input-search #area_tematica [size]="4" label="Escolha a área temática" controlName="area_tematica_id" [dao]="areaTematicaDao" fullEntity [addRoute]="{route: ['raiox','cadastros','areatematica','new']}" (change)="onAreaAtividadeInternaChange()"></input-search>
