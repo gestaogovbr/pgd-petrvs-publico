@@ -177,7 +177,7 @@ class UnidadeService extends ServiceBase
         if($this->hasBuffer("lotados", $unidadeId)) {
             return $this->getBuffer("lotados", $unidadeId);
         } else {
-            return $this->setBuffer("lotados", $unidadeId, Unidade::find($unidadeId)?->lotados->map(fn($integrante) => $integrante->usuario)->all() ?? []);
+            return $this->setBuffer("lotados", $unidadeId, Unidade::with("lotados")->find($unidadeId)?->lotados->map(fn($integrante) => $integrante->usuario)->all() ?? []);
         }
     }
 
