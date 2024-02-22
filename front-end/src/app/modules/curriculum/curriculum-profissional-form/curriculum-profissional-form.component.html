@@ -111,18 +111,18 @@
                     <columns>
                         <column title="Área temática" titleHint="Escolha a área." [template]="columnAtividadeInterna" [editTemplate]="editAtividadeInterna">
                             <ng-template let-row="row" #columnAtividadeInterna>
-                                {{row.capacidade_tecnica.area_tematica.nome || "Desconhecido" }}
+                                {{row.capacidade_tecnica?.area_tematica?.nome || "Desconhecido" }}
                             </ng-template>
                             <ng-template let-row="row" #editAtividadeInterna>
-                                <input-search #areaTematica [size]="4" label="Escolha a área temática" controlName="area_tematica_id" [dao]="areaTematicaDao" [addRoute]="{route: ['raiox','cadastros','areatematica','new']}" (change)="onAreaAtividadeInternaChange()"></input-search>
+                                <input-search #area_tematica [size]="4" label="Escolha a área temática" controlName="area_tematica_id" [dao]="areaTematicaDao" fullEntity [addRoute]="{route: ['raiox','cadastros','areatematica','new']}" (change)="onAreaAtividadeInternaChange()"></input-search>
                             </ng-template>
                         </column>
                         <column title="Capacidade" titleHint="Escolha a capacidade." [template]="columnCapacidade" [editTemplate]="editCapacidade">
                             <ng-template let-row="row" #columnCapacidade>
-                                {{row.capacidade_tecnica.nome || "Desconhecido"}}
+                                {{row.capacidade_tecnica?.nome || "Desconhecido"}}
                             </ng-template>
                             <ng-template let-row="row" #editCapacidade>
-                                <input-select #capacidadeTecnica [size]="4" label="Capacidade" icon="fas fa-graduation-cap" controlName="capacidade_tecnica_id" fullEntity liveSearch [dao]="capacidadeTecnicaDao" [where]="areaTematicaWhere" [addRoute]="{route: ['raiox','cadastros','capacidadetecnica','new']}"></input-select>
+                                <input-select #capacidade_tecnica [size]="4" label="Capacidade" icon="fas fa-graduation-cap" controlName="capacidade_tecnica_id" fullEntity liveSearch [dao]="capacidadeTecnicaDao" [where]="areaTematicaWhere" [addRoute]="{route: ['raiox','cadastros','capacidadetecnica','new']}"></input-select>
                             </ng-template>
                         </column>
                         <column title="Atividade desempenhada" titleHint="Informe a atividade." [template]="columnAtividadeDesempenhada" [editTemplate]="editAtividadeDesempenhada">
@@ -189,10 +189,11 @@
                     <columns>
                         <column title="Curso" titleHint="Escolha a área." [template]="columnDocenciaInterna" [editTemplate]="editDocenciaInterna">
                             <ng-template let-row="row" #columnDocenciaInterna>
+                                {{getRow(row)}}
                                 {{row.curso?.nome || "Desconhecido"}}
                             </ng-template>
                             <ng-template let-row="row" #editDocenciaInterna>
-                                <input-select #cursoDocenciaInterna [size]="3" label="Curso" icon controlName="curso_id" liveSearch [control]="form!.controls.curso_id" [dao]="cursoDao" [where]="[['titulo', '==', 'INSTITUCIONAL']]" orderBy="[['nome', 'asc']]" [addRoute]="{route: ['raiox','cadastros','curso','new']}"></input-select>
+                                <input-select #cursoDocenciaInterna [size]="3" label="Curso" icon controlName="curso_id" fullEntity [control]="form!.controls.curso_id" [dao]="cursoDao" [where]="[['titulo', '==', 'INSTITUCIONAL']]" orderBy="[['nome', 'asc']]" [addRoute]="{route: ['raiox','cadastros','curso','new']}"></input-select>
                             </ng-template>
                         </column>
                         <column type="options"></column>
@@ -229,7 +230,7 @@
                                 {{row.curso?.nome || "Desconhecido"}}
                             </ng-template>
                             <ng-template let-row="row" #editCurso>
-                                <input-select #historicoCursoInterno [size]="3" label="Curso" icon controlName="curso_id" fullEntity liveSearch [dao]="cursoDao" [where]="[['titulo', '==', 'INSTITUCIONAL']]" orderBy="[['nome', 'asc']]" [addRoute]="{route: ['raiox','cadastros','curso','new']}"></input-select>
+                                <input-select #cursoInterno [size]="3" label="Curso" icon controlName="curso_id"  [dao]="cursoDao" [where]="[['titulo', '==', 'INSTITUCIONAL']]" orderBy="[['nome', 'asc']]" [addRoute]="{route: ['raiox','cadastros','curso','new']}"></input-select>
                             </ng-template>
                         </column>
                         <column type="options"></column>

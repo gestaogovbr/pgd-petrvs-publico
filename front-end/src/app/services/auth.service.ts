@@ -298,27 +298,35 @@ export class AuthService {
     }
   }
 
-  public logOut() {
-    this.logging = true;
-    this.server.get((this.gb.isEmbedded ? "api/" : "web/") + "logout").toPromise().then(response => {
+  public async logOut() {
+    try {
+      this.logging = true;
+
+      await this.server.get((this.gb.isEmbedded ? "api/" : "web/") + "logout").toPromise();
+
       const clearLogin = () => {
         localStorage.removeItem("petrvs_api_token");
         this.registerUser(undefined);
         if (this.leave) this.leave();
         if (this.gb.refresh) this.gb.refresh();
-      }
+      };
+
       /* Garante logout do Google */
-      if (this.gb.hasGoogleLogin && this.gb.loginGoogleClientId?.length) {
-        this.googleApi.initialize().then(googleAuth => {
-          if (this.kind == "GOOGLE") {
-            this.googleApi.signOut().then(clearLogin);
-          }
-        });
+      if (this.gb.hasGoogleLogin && this.gb.loginGoogleClientId?.length && this.kind == "GOOGLE") {
+        await this.googleApi.initialize();
+        await this.googleApi.signOut();
+        clearLogin();
       } else {
         clearLogin();
       }
-    }).finally(() => this.logging = false);
+      this.logging = false;
+    } catch (error) {
+      console.error("Ocorreu um erro durante o logout:", error);
+    } finally {
+      this.logging = false;
+    }
   }
+  
 
   public selecionaUnidade(id: string, cdRef?: ChangeDetectorRef) {
     if (this.unidades?.find(x => x.id == id)) {

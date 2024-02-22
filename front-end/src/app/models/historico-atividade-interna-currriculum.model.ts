@@ -6,8 +6,8 @@ import { CurriculumProfissional } from './currriculum-profissional.model';
 export class HistoricoAtividadeInternaCurriculum extends Base {
 
     public profissional?: CurriculumProfissional;
-    public capacidade?: CapacidadeTecnica;
-    public areaTematica?: AreaTematica;
+    public capacidade_tecnica?: CapacidadeTecnica;
+    public area_tematica?: AreaTematica;
 
     public curriculum_profissional_id : string = "";
     public capacidade_tecnica_id : string = "";
