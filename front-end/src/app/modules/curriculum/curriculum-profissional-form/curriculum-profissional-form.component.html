@@ -189,7 +189,6 @@
                     <columns>
                         <column title="Curso" titleHint="Escolha a área." [template]="columnDocenciaInterna" [editTemplate]="editDocenciaInterna">
                             <ng-template let-row="row" #columnDocenciaInterna>
-                                {{getRow(row)}}
                                 {{row.curso?.nome || "Desconhecido"}}
                             </ng-template>
                             <ng-template let-row="row" #editDocenciaInterna>

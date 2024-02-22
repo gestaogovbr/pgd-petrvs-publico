@@ -395,7 +395,7 @@ export class PlanoTrabalhoConsolidacaoFormComponent extends PageFrameBase {
   public async carregaEtiquetasUnidadesAscendentes(unidadeAtual: Unidade) {
     let etiquetasUnidades: LookupItem[] = [];
     let path = unidadeAtual.path.split("/");
-    let unidades = await this.unidadeDao.query({ where: ["id", "in", path] }).asPromise();
+    let unidades = await this.unidadeDao.query({ where: [["id", "in", path]] }).asPromise();
     unidades.forEach(un => {
       etiquetasUnidades = this.util.merge(etiquetasUnidades, un.etiquetas, (a, b) => a.key == b.key);
     });
