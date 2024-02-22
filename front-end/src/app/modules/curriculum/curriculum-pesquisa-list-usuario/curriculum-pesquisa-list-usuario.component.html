@@ -1,46 +1,31 @@
 <grid [items]="items" [title]="isModal ? '' : title">
   <columns>
-      <column title="Dados Pessoais" [template]="columnDadosPessoais">
-          <ng-template let-row="row" #columnDadosPessoais>
-            
-                {{row.curriculum}}
-                {{row}}
-               
-                <!--<strong>Telefone : </strong>{{row.curriculum.telefone}}
-                <strong>Estado Civil : </strong>{{row.curriculum.estado_civil}}-->
-                <!--<strong>Filhos : </strong>{{row.quantidade_filhos > 0 ? lookup.getValue(lookup.SIMNAO, 1) : lookup.getValue(lookup.SIMNAO, 2)}}<strong> Quantidade: </strong>{{row.curriculum.quantidade_filhos}}-->
+    <column title="Dados" [template]="columnDados">
+      <ng-template let-row="row" #columnDados>
 
-              <!--<strong>Telefone : </strong>{{row.curriculum.telefone}}-->
-            
-          </ng-template>
-      </column>
-      <!--<column title="Graduação e Pós-Graduação - Especialização, Mestrado, Doutorado e Pós Doutorado" [template]="columnGraduação">
-          <ng-template let-row="row" #columnGraduação>
-              <strong>{{row.pergunta}}</strong>
-          </ng-template>
-      </column>
-      <column title="Tipo" [template]="columnTipo">
-          <ng-template let-row="row" #columnTipo>
-              {{lookup.getValue(lookup.QUESTIONARIO_PERGUNTA_TIPO, row.tipo)}}
-          </ng-template>
-      </column>
-      <column title="Opções - Valores" [template]="columnOpcoes">
-          <ng-template let-row="row" #columnOpcoes>
-              <ng-container *ngIf="['EMOJI', 'SELECT', 'MULTI_SELECT', 'RADIO', 'CHECK'].includes(row.tipo)">
-                  <div class="one-per-line">
-                      <badge *ngFor="let resposta of row.respostas; index as i" [label]="resposta.key" [textValue]="resposta.data.valorResposta ? resposta.data.valorResposta : (i + 1).toString()" [icon]="resposta.icon" class="ml"></badge>
-                  </div>
-              </ng-container>
-              <ng-container *ngIf="row.tipo == 'NUMBER'">
-                  <badge *ngIf="row.respostas.min == 0" label="Mínimo" textValue="0"></badge>
-                  <badge *ngIf="row.respostas.min > 0" label="Mínimo" [textValue]="row.respostas.min"></badge>
-                  <badge label="Máximo" [textValue]="row.respostas.max" class="ml"></badge>
-              </ng-container>
-              <ng-container *ngIf="row.tipo == 'TIMER'">
-              </ng-container>
-              <ng-container *ngIf="row.tipo == 'DATE_TIME'">
-              </ng-container>
-          </ng-template>
-      </column>-->
+        <span><strong>Telefone : </strong>{{row.curriculum?.telefone || "Sem valor"}}</span>
+
+        <span class="ml-3"><strong>Estado Civil : </strong>{{row.curriculum.estado_civil}}</span>
+
+        <span class="ml-3"><strong>Filhos : </strong>{{row.curriculum.quantidade_filhos > 0 ? lookup.getValue(lookup.SIMNAO, 1) : lookup.getValue(lookup.SIMNAO, 2)}}<strong> Quantidade: </strong>{{row.curriculum.quantidade_filhos}}</span>
+
+        <separator title="Fala outros idiomas" [bold]="true" class="my-3"></separator>
+
+        <ng-container>
+          <span *ngFor="let idioma of row.curriculum.idiomas">
+            <strong>Idioma: </strong>{{lookup.getValue(lookup.IDIOMAS, idioma.idioma)}}<strong>Fala: </strong> {{lookup.getValue(lookup.NIVEL_IDIOMA, idioma.idiomaFala)}}<strong>Escrita: </strong> {{lookup.getValue(lookup.NIVEL_IDIOMA, idioma.idiomaEscrita)}}<strong>Entendimento: </strong>{{lookup.getValue(lookup.NIVEL_IDIOMA, idioma.idiomaEntendimento)}}
+          </span>
+        </ng-container>
+
+        <separator title="Graduações" [bold]="true" class="my-3"></separator>
+
+        <ng-container>
+
+          <span *ngFor="let graduacao of row.curriculum.graduacoes">
+            <strong>Pretende: </strong> {{graduacao.pretensao == 0 ? 'Finalizado' : 'Pretendo Fazer' }}<strong>Area: </strong> {{graduacao.curso.area_conhecimento.nome}}<strong>Titulo: </strong> {{lookup.getValue(lookup.TITULOS_CURSOS, graduacao.curso.titulo)}}<strong>Curso: </strong>{{graduacao.curso.nome}}
+          </span>
+        </ng-container>
+      </ng-template>
+    </column>
   </columns>
 </grid>
