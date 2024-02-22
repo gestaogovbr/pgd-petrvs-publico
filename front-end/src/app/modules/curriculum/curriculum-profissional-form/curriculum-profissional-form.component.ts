@@ -453,10 +453,6 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     return undefined;
   }
 
-  public getRow(row: any) {
-    console.log(row, "ROWSSS")
-  }
-
   public async loadHistoricoAtividadeInterna(form: FormGroup, row: HistoricoAtividadeInternaCurriculum) {
     this.formHistoricoAtividadeInternaGrid!.controls.area_tematica_id.setValue(row.area_tematica_id);
     this.formHistoricoAtividadeInternaGrid!.controls.capacidade_tecnica_id.setValue(row.capacidade_tecnica_id);
