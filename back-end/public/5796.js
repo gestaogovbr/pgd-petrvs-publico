@@ -1794,7 +1794,7 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
       let etiquetasUnidades = [];
       let path = unidadeAtual.path.split("/");
       let unidades = yield _this8.unidadeDao.query({
-        where: ["id", "in", path]
+        where: [["id", "in", path]]
       }).asPromise();
       unidades.forEach(un => {
         etiquetasUnidades = _this8.util.merge(etiquetasUnidades, un.etiquetas, (a, b) => a.key == b.key);

@@ -111,11 +111,7 @@
                     <columns>
                         <column title="Área temática" titleHint="Escolha a área." [template]="columnAtividadeInterna" [editTemplate]="editAtividadeInterna">
                             <ng-template let-row="row" #columnAtividadeInterna>
-<<<<<<< 97ff3273a8849271af249aac7ae24a8e75577123
                                 {{row.capacidade_tecnica?.area_tematica?.nome || "Desconhecido" }}
-=======
-                                {{row.capacidade_tecnica.area_tematica.nome || "Desconhecido" }}
->>>>>>> 0984e24e47842da96efb1ab348ad0699562d323a
                             </ng-template>
                             <ng-template let-row="row" #editAtividadeInterna>
                                 <input-search #area_tematica [size]="4" label="Escolha a área temática" controlName="area_tematica_id" [dao]="areaTematicaDao" fullEntity [addRoute]="{route: ['raiox','cadastros','areatematica','new']}" (change)="onAreaAtividadeInternaChange()"></input-search>
@@ -123,11 +119,7 @@
                         </column>
                         <column title="Capacidade" titleHint="Escolha a capacidade." [template]="columnCapacidade" [editTemplate]="editCapacidade">
                             <ng-template let-row="row" #columnCapacidade>
-<<<<<<< 97ff3273a8849271af249aac7ae24a8e75577123
                                 {{row.capacidade_tecnica?.nome || "Desconhecido"}}
-=======
-                                {{row.capacidade_tecnica.nome || "Desconhecido"}}
->>>>>>> 0984e24e47842da96efb1ab348ad0699562d323a
                             </ng-template>
                             <ng-template let-row="row" #editCapacidade>
                                 <input-select #capacidade_tecnica [size]="4" label="Capacidade" icon="fas fa-graduation-cap" controlName="capacidade_tecnica_id" fullEntity liveSearch [dao]="capacidadeTecnicaDao" [where]="areaTematicaWhere" [addRoute]="{route: ['raiox','cadastros','capacidadetecnica','new']}"></input-select>
@@ -197,7 +189,6 @@
                     <columns>
                         <column title="Curso" titleHint="Escolha a área." [template]="columnDocenciaInterna" [editTemplate]="editDocenciaInterna">
                             <ng-template let-row="row" #columnDocenciaInterna>
-                                {{getRow(row)}}
                                 {{row.curso?.nome || "Desconhecido"}}
                             </ng-template>
                             <ng-template let-row="row" #editDocenciaInterna>

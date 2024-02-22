@@ -444,11 +444,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
       let values = form.value;
       row.area_tematica = this.area_tematica?.selectedEntity;
       row.area_tematica_id = values.area_tematica_id;
-<<<<<<< 97ff3273a8849271af249aac7ae24a8e75577123
       row.capacidade_tecnica = this.capacidade_tecnica!.selectedItem?.data;
-=======
-      row.capacidadeTecnica = this.capacidadeTecnica!.selectedItem?.data;
->>>>>>> 0984e24e47842da96efb1ab348ad0699562d323a
       row.capacidade_tecnica_id = values.capacidade_tecnica_id;
       row.atividade_desempenhada = values.atividade_desempenhada;
       row._status = row._status == "ADD" ? "ADD" : "EDIT";
@@ -457,18 +453,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     return undefined;
   }
 
-  public getRow(row: any) {
-    console.log(row, "ROWSSS")
-  }
-
   public async loadHistoricoAtividadeInterna(form: FormGroup, row: HistoricoAtividadeInternaCurriculum) {
-<<<<<<< 97ff3273a8849271af249aac7ae24a8e75577123
-   
-    //this.areaTematica?.setValue(row.capacidade_tecnica?.area_tematica_id)
-    console.log('Row',row)
-=======
-
->>>>>>> 0984e24e47842da96efb1ab348ad0699562d323a
     this.formHistoricoAtividadeInternaGrid!.controls.area_tematica_id.setValue(row.area_tematica_id);
     this.formHistoricoAtividadeInternaGrid!.controls.capacidade_tecnica_id.setValue(row.capacidade_tecnica_id);
     this.formHistoricoAtividadeInternaGrid!.controls.atividade_desempenhada.setValue(row.atividade_desempenhada);
@@ -579,13 +564,8 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
     form?.markAllAsTouched();
     if (form?.valid) {
       let values = form.value;
-<<<<<<< 97ff3273a8849271af249aac7ae24a8e75577123
       row.curso = this.cursoInterno?.selectedItem?.data;
       console.log('CursoInterno',row.curso)
-=======
-      row.curso = this.historicoCursoInterno?.selectedItem?.data;
-      console.log('CursoInterno', row.curso)
->>>>>>> 0984e24e47842da96efb1ab348ad0699562d323a
       row.curso_id = values.curso_id;
       row.pretensao = values.pretensao;
       row._status = row._status == "ADD" ? "ADD" : "EDIT";
