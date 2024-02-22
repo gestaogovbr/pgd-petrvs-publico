@@ -1281,7 +1281,7 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("hidden", ctx.form.controls.filhos.value ? undefined : "true")("size", 1)("control", ctx.form.controls.quantidade_filhos)("minValue", 0);
       _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵattribute"]("min", 0);
       _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](5);
-      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 2)("control", ctx.form.controls.radioFalaIdioma);
+      _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("size", 3)("control", ctx.form.controls.radioFalaIdioma);
       _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](1);
       _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵproperty"]("ngIf", ctx.form.controls.radioFalaIdioma.value);
       _angular_core__WEBPACK_IMPORTED_MODULE_21__["ɵɵadvance"](4);
@@ -1319,51 +1319,235 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   CurriculumPesquisaListComponent: () => (/* binding */ CurriculumPesquisaListComponent)
 /* harmony export */ });
-/* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/components/grid/grid.component */ 73150);
+/* harmony import */ var src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../components/grid/grid.component */ 73150);
 /* harmony import */ var _base_page_list_base__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../base/page-list-base */ 78509);
 /* harmony import */ var src_app_dao_curriculum_profissional_dao_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/dao/curriculum-profissional-dao.service */ 60978);
 /* harmony import */ var src_app_models_currriculum_profissional_model__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/models/currriculum-profissional.model */ 46722);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var src_app_dao_cidade_dao_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/dao/cidade-dao.service */ 20497);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../components/grid/columns/columns.component */ 57224);
+/* harmony import */ var _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../components/grid/column/column.component */ 83351);
+/* harmony import */ var _components_grid_filter_filter_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../components/grid/filter/filter.component */ 57765);
+/* harmony import */ var _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../components/toolbar/toolbar.component */ 45512);
+/* harmony import */ var _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../components/input/input-select/input-select.component */ 64603);
+/* harmony import */ var _components_grid_order_order_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../components/grid/order/order.component */ 61915);
+/* harmony import */ var _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../components/badge/badge.component */ 95489);
 var _class;
 
 
 
 
 
+
+
+
+
+
+
+
+
+
+const _c0 = ["estados"];
+const _c1 = ["municipio"];
+function CurriculumPesquisaListComponent_ng_template_12_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](0, "span", 19);
+  }
+}
+function CurriculumPesquisaListComponent_ng_template_14_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtext"](0, " Oi ");
+  }
+}
+function CurriculumPesquisaListComponent_ng_template_17_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "strong");
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtext"](1, "Nome");
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtext"](2, "/");
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](3, "order", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtext"](4, "Ingresso");
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](5, "br");
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](6, "small");
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtext"](7, "E-mail");
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
+  }
+  if (rf & 2) {
+    const header_r19 = ctx.header;
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("header", header_r19);
+  }
+}
+function CurriculumPesquisaListComponent_ng_template_19_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "span", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](2, "badge", 22);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtext"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](4, "span", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtext"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
+  }
+  if (rf & 2) {
+    const row_r20 = ctx.row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtextInterpolate1"](" ", row_r20.curriculum.usuario.nome, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtextInterpolate"](row_r20.ano_ingresso);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtextInterpolate"](row_r20.curriculum.usuario.email);
+  }
+}
+function CurriculumPesquisaListComponent_ng_template_22_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "strong");
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtext"](1, "Cidade/Estado");
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
+  }
+}
+function CurriculumPesquisaListComponent_ng_template_24_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "span", 24);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtext"](2);
+  }
+  if (rf & 2) {
+    const row_r22 = ctx.row;
+    const ctx_r14 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtextInterpolate2"]("", row_r22.curriculum.cidade.nome, "/", row_r22.curriculum.cidade.uf, "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtextInterpolate1"](" ", ctx_r14.getRow(row_r22), " ");
+  }
+}
+function CurriculumPesquisaListComponent_ng_template_27_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "span", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
+  }
+  if (rf & 2) {
+    const row_r23 = ctx.row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtextInterpolate"](row_r23.curriculum.apresentacao);
+  }
+}
+const _c2 = function (a2) {
+  return ["uf", "==", a2];
+};
 class CurriculumPesquisaListComponent extends _base_page_list_base__WEBPACK_IMPORTED_MODULE_1__.PageListBase {
   constructor(injector) {
     super(injector, src_app_models_currriculum_profissional_model__WEBPACK_IMPORTED_MODULE_3__.CurriculumProfissional, src_app_dao_curriculum_profissional_dao_service__WEBPACK_IMPORTED_MODULE_2__.CurriculumProfissionalDaoService);
     this.injector = injector;
+    this.filterWhere = filter => {
+      let result = this.fixedFilter || [];
+      let form = filter.value;
+      return result;
+    };
+    this.cidadeDao = injector.get(src_app_dao_cidade_dao_service__WEBPACK_IMPORTED_MODULE_4__.CidadeDaoService);
+    this.title = "Caça Talentos - Raio X";
     this.filter = this.fh.FormBuilder({
-      nome: {
+      estado: {
+        default: ""
+      },
+      cidade: {
         default: ""
       }
     });
+    this.join = ['historico_atividade_interna.capacidade_tecnica.area_tematica', 'historico_atividade_externa.area_atividade_externa', 'historico_curso_interno.curso', 'historico_curso_externo.area_atividade_externa', 'historico_docencia_interna.curso', 'historico_docencia_externa.area_atividade_externa', 'historico_funcao.funcao', 'historico_funcao.unidade', 'historico_lotacao.unidade', 'curriculum', 'curriculum.usuario', 'curriculum.cidade'];
   }
   ngAfterViewInit() {
     super.ngAfterViewInit();
   }
+  filterClear(filter) {}
+  onGridLoad(rows) {
+    this.cdRef.detectChanges();
+  }
+  getRow(row) {
+    console.log(row, "TOWSS");
+  }
 }
 _class = CurriculumPesquisaListComponent;
 _class.ɵfac = function CurriculumPesquisaListComponent_Factory(t) {
-  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_4__.Injector));
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_12__.Injector));
 };
-_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineComponent"]({
+_class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdefineComponent"]({
   type: _class,
   selectors: [["app-curriculum-pesquisa-list"]],
   viewQuery: function CurriculumPesquisaListComponent_Query(rf, ctx) {
     if (rf & 1) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵviewQuery"](src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__.GridComponent, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵviewQuery"](src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__.GridComponent, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵviewQuery"](_c0, 5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵviewQuery"](_c1, 5);
     }
     if (rf & 2) {
       let _t;
-      _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵloadQuery"]()) && (ctx.grid = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵloadQuery"]()) && (ctx.grid = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵloadQuery"]()) && (ctx.estado = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵloadQuery"]()) && (ctx.municipio = _t.first);
     }
   },
-  features: [_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵInheritDefinitionFeature"]],
-  decls: 0,
-  vars: 0,
-  template: function CurriculumPesquisaListComponent_Template(rf, ctx) {},
+  features: [_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵInheritDefinitionFeature"]],
+  decls: 29,
+  vars: 32,
+  consts: [[3, "dao", "hasEdit", "hasDelete", "join", "loadList", "selectable", "select"], [3, "form", "where", "submit", "clear", "collapsed"], [1, "row"], ["label", "Idioma", "icon", "fas fa-language", "controlName", "idioma", 3, "size", "control", "items"], ["idioma", ""], ["label", "Estado", "icon", "fas fa-flag", "controlName", "estado", 3, "size", "control", "items"], ["estado", ""], ["label", "Cidade", "icon", "far fa-flag", "controlName", "cidade_id", 3, "size", "control", "dao", "where"], ["cidade", ""], ["type", "expand", "icon", "bi bi-person-bounding-box", 3, "align", "hint", "template", "expandTemplate"], ["columnDetalhamento", ""], ["columnExpandedDetalhamento", ""], [3, "titleTemplate", "template"], ["titleNome", ""], ["columnNome", ""], ["titleEstado", ""], ["columnEstado", ""], ["title", "Apresenta\u00E7\u00E3o Pessoal", 3, "template"], ["columnApresentacao", ""], [1, "badge", "rounded-pill", "bg-light", "text-dark"], ["by", "", 3, "header"], [1, "text-nowrap", "d-block"], ["color", "gray"], [1, "micro-text", "fw-ligh"], [1, "d-block"]],
+  template: function CurriculumPesquisaListComponent_Template(rf, ctx) {
+    if (rf & 1) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](0, "grid", 0);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵlistener"]("select", function CurriculumPesquisaListComponent_Template_grid_select_0_listener($event) {
+        return ctx.onSelect($event);
+      });
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](1, "toolbar");
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](2, "filter", 1)(3, "div", 2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelement"](4, "input-select", 3, 4)(6, "input-select", 5, 6)(8, "input-select", 7, 8);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]()();
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](10, "columns")(11, "column", 9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](12, CurriculumPesquisaListComponent_ng_template_12_Template, 1, 0, "ng-template", null, 10, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](14, CurriculumPesquisaListComponent_ng_template_14_Template, 1, 0, "ng-template", null, 11, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](16, "column", 12);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](17, CurriculumPesquisaListComponent_ng_template_17_Template, 8, 1, "ng-template", null, 13, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](19, CurriculumPesquisaListComponent_ng_template_19_Template, 6, 3, "ng-template", null, 14, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](21, "column", 12);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](22, CurriculumPesquisaListComponent_ng_template_22_Template, 2, 0, "ng-template", null, 15, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](24, CurriculumPesquisaListComponent_ng_template_24_Template, 3, 3, "ng-template", null, 16, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]();
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementStart"](26, "column", 17);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplate"](27, CurriculumPesquisaListComponent_ng_template_27_Template, 2, 1, "ng-template", null, 18, _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵtemplateRefExtractor"]);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵelementEnd"]()()();
+    }
+    if (rf & 2) {
+      const _r3 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵreference"](13);
+      const _r5 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵreference"](15);
+      const _r7 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵreference"](18);
+      const _r9 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵreference"](20);
+      const _r11 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵreference"](23);
+      const _r13 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵreference"](25);
+      const _r15 = _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵreference"](28);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("dao", ctx.dao)("hasEdit", false)("hasDelete", false)("join", ctx.join)("loadList", ctx.onGridLoad.bind(ctx))("selectable", ctx.selectable);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("form", ctx.filter)("where", ctx.filterWhere)("submit", ctx.filterSubmit.bind(ctx))("clear", ctx.filterClear.bind(ctx))("collapsed", false);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 4)("control", ctx.filter.controls.idioma)("items", ctx.lookup.IDIOMAS);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 4)("control", ctx.filter.controls.estado)("items", ctx.lookup.UF);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](2);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("size", 4)("control", ctx.filter.controls.cidade_id)("dao", ctx.cidadeDao)("where", _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵpureFunction1"](30, _c2, ctx.filter.controls.estado.value));
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](3);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("align", "center")("hint", "Detalhamento")("template", _r3)("expandTemplate", _r5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("titleTemplate", _r7)("template", _r9);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("titleTemplate", _r11)("template", _r13);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵadvance"](5);
+      _angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵproperty"]("template", _r15);
+    }
+  },
+  dependencies: [src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_0__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_5__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_6__.ColumnComponent, _components_grid_filter_filter_component__WEBPACK_IMPORTED_MODULE_7__.FilterComponent, _components_toolbar_toolbar_component__WEBPACK_IMPORTED_MODULE_8__.ToolbarComponent, _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_9__.InputSelectComponent, _components_grid_order_order_component__WEBPACK_IMPORTED_MODULE_10__.OrderComponent, _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_11__.BadgeComponent],
   styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
 });
 
@@ -1490,13 +1674,13 @@ const _c21 = ["areaAtividadeExternaDocencia"];
 const _c22 = ["areaCursoInterno"];
 const _c23 = ["areaCursoExterno"];
 const _c24 = ["cursoDocenciaInterna"];
-const _c25 = ["historicoCursoInterno"];
+const _c25 = ["cursoInterno"];
 const _c26 = ["areaHistoricoCursoExterno"];
 const _c27 = ["areaAtividadeInterna"];
 const _c28 = ["selectDocenciaInterna"];
 const _c29 = ["selectCursosInternos"];
-const _c30 = ["areaTematica"];
-const _c31 = ["capacidadeTecnica"];
+const _c30 = ["area_tematica"];
+const _c31 = ["capacidade_tecnica"];
 function CurriculumProfissionalFormComponent_ng_template_14_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵtext"](0);
@@ -1610,7 +1794,7 @@ function CurriculumProfissionalFormComponent_grid_50_ng_template_3_Template(rf, 
   }
   if (rf & 2) {
     const row_r81 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵtextInterpolate1"](" ", row_r81.capacidade_tecnica.area_tematica.nome || "Desconhecido", " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵtextInterpolate1"](" ", (row_r81.capacidade_tecnica == null ? null : row_r81.capacidade_tecnica.area_tematica == null ? null : row_r81.capacidade_tecnica.area_tematica.nome) || "Desconhecido", " ");
   }
 }
 const _c37 = function () {
@@ -1638,7 +1822,7 @@ function CurriculumProfissionalFormComponent_grid_50_ng_template_8_Template(rf, 
   }
   if (rf & 2) {
     const row_r86 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵtextInterpolate1"](" ", row_r86.capacidade_tecnica.nome || "Desconhecido", " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵtextInterpolate1"](" ", (row_r86.capacidade_tecnica == null ? null : row_r86.capacidade_tecnica.nome) || "Desconhecido", " ");
   }
 }
 const _c38 = function () {
@@ -1746,8 +1930,7 @@ function CurriculumProfissionalFormComponent_grid_65_ng_template_3_Template(rf, 
   }
   if (rf & 2) {
     const row_r102 = ctx.row;
-    const ctx_r99 = _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵnextContext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵtextInterpolate2"](" ", ctx_r99.getRow(row_r102), " ", (row_r102.curso == null ? null : row_r102.curso.nome) || "Desconhecido", " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵtextInterpolate1"](" ", (row_r102.curso == null ? null : row_r102.curso.nome) || "Desconhecido", " ");
   }
 }
 const _c39 = function () {
@@ -1771,7 +1954,7 @@ function CurriculumProfissionalFormComponent_grid_65_ng_template_5_Template(rf, 
 function CurriculumProfissionalFormComponent_grid_65_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵelementStart"](0, "grid", 11)(1, "columns")(2, "column", 117);
-    _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵtemplate"](3, CurriculumProfissionalFormComponent_grid_65_ng_template_3_Template, 1, 2, "ng-template", null, 118, _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵtemplateRefExtractor"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵtemplate"](3, CurriculumProfissionalFormComponent_grid_65_ng_template_3_Template, 1, 1, "ng-template", null, 118, _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵtemplateRefExtractor"]);
     _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵtemplate"](5, CurriculumProfissionalFormComponent_grid_65_ng_template_5_Template, 2, 11, "ng-template", null, 119, _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵtemplateRefExtractor"]);
     _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵelement"](7, "column", 18);
@@ -2384,18 +2567,15 @@ class CurriculumProfissionalFormComponent extends src_app_modules_base_page_form
     form?.markAllAsTouched();
     if (form?.valid) {
       let values = form.value;
-      row.area_tematica = this.areaTematica.selectedEntity;
+      row.area_tematica = this.area_tematica?.selectedEntity;
       row.area_tematica_id = values.area_tematica_id;
-      row.capacidadeTecnica = this.capacidadeTecnica.selectedItem?.data;
+      row.capacidade_tecnica = this.capacidade_tecnica.selectedItem?.data;
       row.capacidade_tecnica_id = values.capacidade_tecnica_id;
       row.atividade_desempenhada = values.atividade_desempenhada;
       row._status = row._status == "ADD" ? "ADD" : "EDIT";
       return row;
     }
     return undefined;
-  }
-  getRow(row) {
-    console.log(row, "ROWSSS");
   }
   loadHistoricoAtividadeInterna(form, row) {
     var _this11 = this;
@@ -2461,8 +2641,8 @@ class CurriculumProfissionalFormComponent extends src_app_modules_base_page_form
     form?.markAllAsTouched();
     if (form?.valid) {
       let values = form.value;
-      row.curso = this.cursoDocenciaInterna.selectedEntity;
-      console.log('curso', row.curso);
+      row.curso = this.cursoDocenciaInterna?.selectedItem?.data;
+      console.log(row.curso);
       row.curso_id = values.curso_id;
       row.pretensao = values.pretensao;
       row._status = row._status == "ADD" ? "ADD" : "EDIT";
@@ -2474,7 +2654,7 @@ class CurriculumProfissionalFormComponent extends src_app_modules_base_page_form
     var _this15 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       //this.area?.loadSearch(row.curso?.area_conhecimento || row.curso?.area_id);
-      /*this.area?.setValue(row.curso?.area_id)*/
+      //this.area?.setValue(row.curso?.area_id)*/
       _this15.formHistoricoDocenciaInternaGrid.controls.curso_id.setValue(row.curso_id);
     })();
   }
@@ -2519,7 +2699,7 @@ class CurriculumProfissionalFormComponent extends src_app_modules_base_page_form
     form?.markAllAsTouched();
     if (form?.valid) {
       let values = form.value;
-      row.curso = this.historicoCursoInterno?.selectedItem?.data;
+      row.curso = this.cursoInterno?.selectedItem?.data;
       console.log('CursoInterno', row.curso);
       row.curso_id = values.curso_id;
       row.pretensao = values.pretensao;
@@ -2662,19 +2842,19 @@ _class.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵdef
       _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵloadQuery"]()) && (ctx.areaCursoInterno = _t.first);
       _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵloadQuery"]()) && (ctx.areaCursoExterno = _t.first);
       _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵloadQuery"]()) && (ctx.cursoDocenciaInterna = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵloadQuery"]()) && (ctx.historicoCursoInterno = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵloadQuery"]()) && (ctx.cursoInterno = _t.first);
       _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵloadQuery"]()) && (ctx.areaHistoricoCursoExterno = _t.first);
       _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵloadQuery"]()) && (ctx.areaAtividadeInterna = _t.first);
       _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵloadQuery"]()) && (ctx.selectDocenciaInterna = _t.first);
       _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵloadQuery"]()) && (ctx.selectCursosInternos = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵloadQuery"]()) && (ctx.areaTematica = _t.first);
-      _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵloadQuery"]()) && (ctx.capacidadeTecnica = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵloadQuery"]()) && (ctx.area_tematica = _t.first);
+      _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵloadQuery"]()) && (ctx.capacidade_tecnica = _t.first);
     }
   },
   features: [_angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵInheritDefinitionFeature"]],
   decls: 137,
   vars: 130,
-  consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "left", ""], ["key", "FUNCIONAIS", "label", "Funcionais", 1, "fw-bold"], [1, "row", "my-4"], ["label", "Ingresso na Institui\u00E7\u00E3o", "icon", "bi bi-calendar-check-fill", "controlName", "ano_ingresso", "required", "", 3, "size", "control", "items"], ["label", "Centro de Treinamento", "icon", "bi bi-building-fill", "controlName", "centro_treinamento_id", "fullEntity", "", "liveSearch", "", "required", "", 3, "size", "control", "dao", "addRoute"], ["centroTreinamento", ""], ["label", "Cargo", "controlName", "cargo_id", "required", "", 3, "size", "control", "dao"], ["cargos", ""], [1, "row", "mt-3"], [1, "col-md-8"], ["editable", "", 3, "control", "minHeight", "form", "hasDelete", "add", "load", "remove", "save"], ["title", "Hist\u00F3rico de Fun\u00E7\u00F5es", "titleHint", "Fun\u00E7\u00F5es ocupadas como titular ou substituto.", 3, "template", "editTemplate"], ["columnFuncao", ""], ["editFuncao", ""], ["title", "Unidade", "titleHint", "Unidade", 3, "template", "editTemplate"], ["columnUnidadeChefe", ""], ["editColumnUnidadeChefe", ""], ["type", "options"], [1, "col-md-6"], ["label", "Voc\u00EA faz parte de algum grupo especializado?", "icon", "bi bi-check-circle", "controlName", "grupo_especializado_id", "fullEntity", "", "liveSearch", "", "required", "", 3, "size", "control", "dao", "addRoute"], ["gruposEspecializados", ""], ["title", "Hist\u00F3rico de Lota\u00E7\u00F5es", "titleHint", "Escolha a lota\u00E7\u00E3o.", 3, "template", "editTemplate"], ["columnLotacao", ""], ["editLotacao", ""], ["label", "Lota\u00E7\u00E3o atual", "controlName", "lotacao_atual", 3, "size", "control", "dao"], ["lotacaoAtual", ""], ["key", "HARD_SKILLS", "label", "Hard Skills", 1, "fw-bold"], ["title", "Desempenhou atividades externamente e que podem contribuir para a institui\u00E7\u00E3o?", 1, "mb-3", "mt-3", 3, "bold"], ["icon", "fas fa-chalkboard", "controlName", "radioAtividadeExterna", 3, "size", "label", "control"], ["radioAtividadeExterna", ""], ["editable", "", 3, "control", "minHeight", "form", "hasDelete", "add", "load", "remove", "save", 4, "ngIf"], ["title", "Desempenhou atividades internamente que podem contribuir ou contribuiram para a institui\u00E7\u00E3o?", 1, "mb-3", "mt-3", 3, "bold"], ["icon", "fas fa-chalkboard", "controlName", "radioAtividadeInterna", 3, "size", "label", "control"], ["radioAtividadeInterna", ""], [1, "row", "mb-2", "mt-3"], ["title", "Informe as suas habilidades", 1, "mb-3", 3, "bold"], ["controlName", "especifique_habilidades", "noBox", "", 3, "size", "control", "addItemHandle", "bold"], ["label", "Especifique", "icon", "bi bi-list-stars", "controlName", "inputEspecifiqueHabilidade", 3, "size", "control"], ["key", "DOCENCIA", "label", "Doc\u00EAncia", 1, "fw-bold", "mb-3"], ["title", "Voc\u00EA j\u00E1 realizou algum trabalho de doc\u00EAncia fora da Institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["icon", "fas fa-chalkboard", "controlName", "radioDocenciaExterna", 3, "size", "label", "control"], ["radioDocenciaExterna", ""], ["title", "Voc\u00EA \u00E9 docente ou instrutor da Institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["icon", "fas fa-chalkboard", "controlName", "radioDocenciaInterna", 3, "size", "label", "control"], ["radioDocenciaInterna", ""], ["key", "CURSOS", "label", "Cursos", 1, "fw-bold", "mb-3"], ["title", "Quais os principais cursos que voc\u00EA j\u00E1 fez e pretende fazer na Institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["title", "Pretende Cursar?", "titleHint", "Pretende cursar ou j\u00E1 esta concluido.", 3, "template", "editTemplate"], ["columnPretende", ""], ["editPretende", ""], ["title", "Curso Institucional", "titleHint", "Escolha o curso.", 3, "template", "editTemplate"], ["columnCurso", ""], ["editCurso", ""], ["title", "Quais os principais cursos que voc\u00EA j\u00E1 fez e pretende fazer fora da Institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["title", "\u00C1rea Externa", "titleHint", "Escolha a \u00E1rea externa.", 3, "template", "editTemplate"], ["columnArea", ""], ["editArea", ""], ["title", "Nome do Curso", "titleHint", "Informe o nome do curso.", 3, "template", "editTemplate"], ["columnNome", ""], ["editNome", ""], ["key", "DISPONIBILIDADE", "label", "Disponibilidade", 1, "fw-bold", "mb-3"], [1, "row"], ["title", "Viagens", 1, "mb-3", "mt-3", 3, "bold"], [1, "col-lg-6"], [1, "bi", "bi-flag-fill"], ["labelPosition", "right", "controlName", "viagem_nacional", 3, "size", "label", "control"], ["radioViajemNacional", ""], [1, "bi", "bi-globe-americas"], ["labelPosition", "right", "controlName", " viagem_internacional", 3, "size", "label", "control"], ["radioViajemInternacional", ""], ["title", "Voc\u00EA tem interesse na participa\u00E7\u00E3o do Banco Nacional de Talentos (BNT IN PRF N\u00BA 58 de 27 de agosto de 2021) SEI 35010079?", 1, "my-3", 3, "bold"], ["icon", "bi bi-universal-access", "controlName", "interesse_bnt", 3, "size", "label", "control"], ["radioInteresseBNT", ""], ["title", "Voc\u00EA est\u00E1 inserido no programa de gest\u00E3o da Institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["icon", "bi bi-calendar2-check", "controlName", "radioProgramaGestao", 3, "size", "label", "control", "change"], ["radioProgramaGestao", ""], ["label", "Op\u00E7\u00F5es", "controlName", "pgd_inserido", 3, "size", "items", "control", 4, "ngIf"], ["title", "Voc\u00EA tem interesse em participar do programa de gest\u00E3o da Institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["icon", "bi bi-bookmark-check", "controlName", "radioInteresseProgramaGestao", 3, "size", "label", "control", "change"], ["radioInteresseProgramaGestao", ""], ["label", "Op\u00E7\u00F5es", "controlName", "pgd_interesse", 3, "size", "items", "control", 4, "ngIf"], ["label", "Telefone de contato do Chefe Imediato", "icon", "fas fa-phone", "controlName", "telefone", 3, "size", "control", "maskFormat", 4, "ngIf"], ["title", "Voc\u00EA tem interesse em remo\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["icon", "bi bi-house-door-fill", "controlName", "remocao", 3, "size", "label", "control"], ["radioInteresseRemocao", ""], [1, "mb-5"], ["label", "", "icon", "", "controlName", "funcao_id", "fullEntity", "", "liveSearch", "", 3, "size", "dao", "addRoute"], ["funcao", ""], ["label", "", "icon", "", "controlName", "unidade_id", "fullEntity", "", "liveSearch", "", 3, "size", "dao"], ["unidadeChefia", ""], ["controlName", "unidade_id", "fullEntity", "", "liveSearch", "", 3, "size", "dao", "join"], ["unidade", ""], ["title", "Hist\u00F3rico de Atividades Externas", "titleHint", "Escolha a atividade.", 3, "template", "editTemplate"], ["columnAtividadeExterna", ""], ["editAtividadeExterna", ""], ["label", "", "controlName", "area_atividade_externa_id", "fullEntity", "", 3, "size", "dao", "join", "addRoute"], ["areaAtividadeExterna", ""], ["title", "\u00C1rea tem\u00E1tica", "titleHint", "Escolha a \u00E1rea.", 3, "template", "editTemplate"], ["columnAtividadeInterna", ""], ["editAtividadeInterna", ""], ["title", "Capacidade", "titleHint", "Escolha a capacidade.", 3, "template", "editTemplate"], ["columnCapacidade", ""], ["editCapacidade", ""], ["title", "Atividade desempenhada", "titleHint", "Informe a atividade.", 3, "template", "editTemplate"], ["columnAtividadeDesempenhada", ""], ["editAtividadeDesempenhada", ""], ["label", "Escolha a \u00E1rea tem\u00E1tica", "controlName", "area_tematica_id", 3, "size", "dao", "addRoute", "change"], ["areaTematica", ""], ["label", "Capacidade", "icon", "fas fa-graduation-cap", "controlName", "capacidade_tecnica_id", "fullEntity", "", "liveSearch", "", 3, "size", "dao", "where", "addRoute"], ["capacidadeTecnica", ""], ["label", "Informe a atividade desempenhada", "icon", "", "controlName", "atividade_desempenhada", 3, "size"], ["title", "\u00C1rea Externa", "titleHint", "Escolha a \u00E1rea.", 3, "template", "editTemplate"], ["columnDocenciaExterna", ""], ["editDocenciaExterna", ""], ["label", "Escolha a \u00E1rea externa", "controlName", "area_atividade_externa_id", "fullEntity", "", 3, "size", "dao", "addRoute"], ["areaAtividadeExternaDocencia", ""], ["title", "Curso", "titleHint", "Escolha a \u00E1rea.", 3, "template", "editTemplate"], ["columnDocenciaInterna", ""], ["editDocenciaInterna", ""], ["label", "Curso", "icon", "", "controlName", "curso_id", "liveSearch", "", "orderBy", "[['nome', 'asc']]", 3, "size", "control", "dao", "where", "addRoute"], ["cursoDocenciaInterna", ""], ["icon", "fas fa-user-graduate", "controlName", "pretensao", 3, "size", "label", "control"], ["label", "Curso", "icon", "", "controlName", "curso_id", "fullEntity", "", "liveSearch", "", "orderBy", "[['nome', 'asc']]", 3, "size", "dao", "where", "addRoute"], ["historicoCursoInterno", ""], ["label", "\u00C1rea/Institui\u00E7\u00E3o/Coorpora\u00E7\u00E3o", "controlName", "area_atividade_externa_id", "fullEntity", "", 3, "size", "dao", "addRoute"], ["areaHistoricoCursoExterno", ""], ["label", "Nome do Curso", "icon", "", "controlName", "nome", "liveSearch", "", 3, "size", "control"], ["label", "Op\u00E7\u00F5es", "controlName", "pgd_inserido", 3, "size", "items", "control"], ["escolhaRadioProgramaGestao", ""], ["label", "Op\u00E7\u00F5es", "controlName", "pgd_interesse", 3, "size", "items", "control"], ["escolhaInteresseProgramaGestao", ""], ["label", "Telefone de contato do Chefe Imediato", "icon", "fas fa-phone", "controlName", "telefone", 3, "size", "control", "maskFormat"]],
+  consts: [[3, "form", "disabled", "title", "submit", "cancel"], ["display", "", "left", ""], ["key", "FUNCIONAIS", "label", "Funcionais", 1, "fw-bold"], [1, "row", "my-4"], ["label", "Ingresso na Institui\u00E7\u00E3o", "icon", "bi bi-calendar-check-fill", "controlName", "ano_ingresso", "required", "", 3, "size", "control", "items"], ["label", "Centro de Treinamento", "icon", "bi bi-building-fill", "controlName", "centro_treinamento_id", "fullEntity", "", "liveSearch", "", "required", "", 3, "size", "control", "dao", "addRoute"], ["centroTreinamento", ""], ["label", "Cargo", "controlName", "cargo_id", "required", "", 3, "size", "control", "dao"], ["cargos", ""], [1, "row", "mt-3"], [1, "col-md-8"], ["editable", "", 3, "control", "minHeight", "form", "hasDelete", "add", "load", "remove", "save"], ["title", "Hist\u00F3rico de Fun\u00E7\u00F5es", "titleHint", "Fun\u00E7\u00F5es ocupadas como titular ou substituto.", 3, "template", "editTemplate"], ["columnFuncao", ""], ["editFuncao", ""], ["title", "Unidade", "titleHint", "Unidade", 3, "template", "editTemplate"], ["columnUnidadeChefe", ""], ["editColumnUnidadeChefe", ""], ["type", "options"], [1, "col-md-6"], ["label", "Voc\u00EA faz parte de algum grupo especializado?", "icon", "bi bi-check-circle", "controlName", "grupo_especializado_id", "fullEntity", "", "liveSearch", "", "required", "", 3, "size", "control", "dao", "addRoute"], ["gruposEspecializados", ""], ["title", "Hist\u00F3rico de Lota\u00E7\u00F5es", "titleHint", "Escolha a lota\u00E7\u00E3o.", 3, "template", "editTemplate"], ["columnLotacao", ""], ["editLotacao", ""], ["label", "Lota\u00E7\u00E3o atual", "controlName", "lotacao_atual", 3, "size", "control", "dao"], ["lotacaoAtual", ""], ["key", "HARD_SKILLS", "label", "Hard Skills", 1, "fw-bold"], ["title", "Desempenhou atividades externamente e que podem contribuir para a institui\u00E7\u00E3o?", 1, "mb-3", "mt-3", 3, "bold"], ["icon", "fas fa-chalkboard", "controlName", "radioAtividadeExterna", 3, "size", "label", "control"], ["radioAtividadeExterna", ""], ["editable", "", 3, "control", "minHeight", "form", "hasDelete", "add", "load", "remove", "save", 4, "ngIf"], ["title", "Desempenhou atividades internamente que podem contribuir ou contribuiram para a institui\u00E7\u00E3o?", 1, "mb-3", "mt-3", 3, "bold"], ["icon", "fas fa-chalkboard", "controlName", "radioAtividadeInterna", 3, "size", "label", "control"], ["radioAtividadeInterna", ""], [1, "row", "mb-2", "mt-3"], ["title", "Informe as suas habilidades", 1, "mb-3", 3, "bold"], ["controlName", "especifique_habilidades", "noBox", "", 3, "size", "control", "addItemHandle", "bold"], ["label", "Especifique", "icon", "bi bi-list-stars", "controlName", "inputEspecifiqueHabilidade", 3, "size", "control"], ["key", "DOCENCIA", "label", "Doc\u00EAncia", 1, "fw-bold", "mb-3"], ["title", "Voc\u00EA j\u00E1 realizou algum trabalho de doc\u00EAncia fora da Institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["icon", "fas fa-chalkboard", "controlName", "radioDocenciaExterna", 3, "size", "label", "control"], ["radioDocenciaExterna", ""], ["title", "Voc\u00EA \u00E9 docente ou instrutor da Institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["icon", "fas fa-chalkboard", "controlName", "radioDocenciaInterna", 3, "size", "label", "control"], ["radioDocenciaInterna", ""], ["key", "CURSOS", "label", "Cursos", 1, "fw-bold", "mb-3"], ["title", "Quais os principais cursos que voc\u00EA j\u00E1 fez e pretende fazer na Institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["title", "Pretende Cursar?", "titleHint", "Pretende cursar ou j\u00E1 esta concluido.", 3, "template", "editTemplate"], ["columnPretende", ""], ["editPretende", ""], ["title", "Curso Institucional", "titleHint", "Escolha o curso.", 3, "template", "editTemplate"], ["columnCurso", ""], ["editCurso", ""], ["title", "Quais os principais cursos que voc\u00EA j\u00E1 fez e pretende fazer fora da Institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["title", "\u00C1rea Externa", "titleHint", "Escolha a \u00E1rea externa.", 3, "template", "editTemplate"], ["columnArea", ""], ["editArea", ""], ["title", "Nome do Curso", "titleHint", "Informe o nome do curso.", 3, "template", "editTemplate"], ["columnNome", ""], ["editNome", ""], ["key", "DISPONIBILIDADE", "label", "Disponibilidade", 1, "fw-bold", "mb-3"], [1, "row"], ["title", "Viagens", 1, "mb-3", "mt-3", 3, "bold"], [1, "col-lg-6"], [1, "bi", "bi-flag-fill"], ["labelPosition", "right", "controlName", "viagem_nacional", 3, "size", "label", "control"], ["radioViajemNacional", ""], [1, "bi", "bi-globe-americas"], ["labelPosition", "right", "controlName", " viagem_internacional", 3, "size", "label", "control"], ["radioViajemInternacional", ""], ["title", "Voc\u00EA tem interesse na participa\u00E7\u00E3o do Banco Nacional de Talentos (BNT IN PRF N\u00BA 58 de 27 de agosto de 2021) SEI 35010079?", 1, "my-3", 3, "bold"], ["icon", "bi bi-universal-access", "controlName", "interesse_bnt", 3, "size", "label", "control"], ["radioInteresseBNT", ""], ["title", "Voc\u00EA est\u00E1 inserido no programa de gest\u00E3o da Institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["icon", "bi bi-calendar2-check", "controlName", "radioProgramaGestao", 3, "size", "label", "control", "change"], ["radioProgramaGestao", ""], ["label", "Op\u00E7\u00F5es", "controlName", "pgd_inserido", 3, "size", "items", "control", 4, "ngIf"], ["title", "Voc\u00EA tem interesse em participar do programa de gest\u00E3o da Institui\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["icon", "bi bi-bookmark-check", "controlName", "radioInteresseProgramaGestao", 3, "size", "label", "control", "change"], ["radioInteresseProgramaGestao", ""], ["label", "Op\u00E7\u00F5es", "controlName", "pgd_interesse", 3, "size", "items", "control", 4, "ngIf"], ["label", "Telefone de contato do Chefe Imediato", "icon", "fas fa-phone", "controlName", "telefone", 3, "size", "control", "maskFormat", 4, "ngIf"], ["title", "Voc\u00EA tem interesse em remo\u00E7\u00E3o?", 1, "my-3", 3, "bold"], ["icon", "bi bi-house-door-fill", "controlName", "remocao", 3, "size", "label", "control"], ["radioInteresseRemocao", ""], [1, "mb-5"], ["label", "", "icon", "", "controlName", "funcao_id", "fullEntity", "", "liveSearch", "", 3, "size", "dao", "addRoute"], ["funcao", ""], ["label", "", "icon", "", "controlName", "unidade_id", "fullEntity", "", "liveSearch", "", 3, "size", "dao"], ["unidadeChefia", ""], ["controlName", "unidade_id", "fullEntity", "", "liveSearch", "", 3, "size", "dao", "join"], ["unidade", ""], ["title", "Hist\u00F3rico de Atividades Externas", "titleHint", "Escolha a atividade.", 3, "template", "editTemplate"], ["columnAtividadeExterna", ""], ["editAtividadeExterna", ""], ["label", "", "controlName", "area_atividade_externa_id", "fullEntity", "", 3, "size", "dao", "join", "addRoute"], ["areaAtividadeExterna", ""], ["title", "\u00C1rea tem\u00E1tica", "titleHint", "Escolha a \u00E1rea.", 3, "template", "editTemplate"], ["columnAtividadeInterna", ""], ["editAtividadeInterna", ""], ["title", "Capacidade", "titleHint", "Escolha a capacidade.", 3, "template", "editTemplate"], ["columnCapacidade", ""], ["editCapacidade", ""], ["title", "Atividade desempenhada", "titleHint", "Informe a atividade.", 3, "template", "editTemplate"], ["columnAtividadeDesempenhada", ""], ["editAtividadeDesempenhada", ""], ["label", "Escolha a \u00E1rea tem\u00E1tica", "controlName", "area_tematica_id", "fullEntity", "", 3, "size", "dao", "addRoute", "change"], ["area_tematica", ""], ["label", "Capacidade", "icon", "fas fa-graduation-cap", "controlName", "capacidade_tecnica_id", "fullEntity", "", "liveSearch", "", 3, "size", "dao", "where", "addRoute"], ["capacidade_tecnica", ""], ["label", "Informe a atividade desempenhada", "icon", "", "controlName", "atividade_desempenhada", 3, "size"], ["title", "\u00C1rea Externa", "titleHint", "Escolha a \u00E1rea.", 3, "template", "editTemplate"], ["columnDocenciaExterna", ""], ["editDocenciaExterna", ""], ["label", "Escolha a \u00E1rea externa", "controlName", "area_atividade_externa_id", "fullEntity", "", 3, "size", "dao", "addRoute"], ["areaAtividadeExternaDocencia", ""], ["title", "Curso", "titleHint", "Escolha a \u00E1rea.", 3, "template", "editTemplate"], ["columnDocenciaInterna", ""], ["editDocenciaInterna", ""], ["label", "Curso", "icon", "", "controlName", "curso_id", "fullEntity", "", "orderBy", "[['nome', 'asc']]", 3, "size", "control", "dao", "where", "addRoute"], ["cursoDocenciaInterna", ""], ["icon", "fas fa-user-graduate", "controlName", "pretensao", 3, "size", "label", "control"], ["label", "Curso", "icon", "", "controlName", "curso_id", "orderBy", "[['nome', 'asc']]", 3, "size", "dao", "where", "addRoute"], ["cursoInterno", ""], ["label", "\u00C1rea/Institui\u00E7\u00E3o/Coorpora\u00E7\u00E3o", "controlName", "area_atividade_externa_id", "fullEntity", "", 3, "size", "dao", "addRoute"], ["areaHistoricoCursoExterno", ""], ["label", "Nome do Curso", "icon", "", "controlName", "nome", "liveSearch", "", 3, "size", "control"], ["label", "Op\u00E7\u00F5es", "controlName", "pgd_inserido", 3, "size", "items", "control"], ["escolhaRadioProgramaGestao", ""], ["label", "Op\u00E7\u00F5es", "controlName", "pgd_interesse", 3, "size", "items", "control"], ["escolhaInteresseProgramaGestao", ""], ["label", "Telefone de contato do Chefe Imediato", "icon", "fas fa-phone", "controlName", "telefone", 3, "size", "control", "maskFormat"]],
   template: function CurriculumProfissionalFormComponent_Template(rf, ctx) {
     if (rf & 1) {
       _angular_core__WEBPACK_IMPORTED_MODULE_40__["ɵɵelementStart"](0, "editable-form", 0);

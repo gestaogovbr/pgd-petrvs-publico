@@ -1973,7 +1973,7 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
       let etiquetasUnidades = [];
       let path = unidadeAtual.path.split("/");
       let unidades = yield _this12.unidadeDao.query({
-        where: ["id", "in", path]
+        where: [["id", "in", path]]
       }).asPromise();
       unidades.forEach(un => {
         etiquetasUnidades = _this12.util.merge(etiquetasUnidades, un.etiquetas, (a, b) => a.key == b.key);
@@ -3745,7 +3745,7 @@ class PlanoEntregaListEntregaComponent extends src_app_modules_base_page_frame_b
       let etiquetasUnidades = [];
       let path = unidadeAtual.path.split("/");
       let unidades = yield _this13.unidadeDao.query({
-        where: ["id", "in", path]
+        where: [["id", "in", path]]
       }).asPromise();
       unidades.forEach(un => {
         etiquetasUnidades = _this13.util.merge(etiquetasUnidades, un.etiquetas, (a, b) => a.key == b.key);

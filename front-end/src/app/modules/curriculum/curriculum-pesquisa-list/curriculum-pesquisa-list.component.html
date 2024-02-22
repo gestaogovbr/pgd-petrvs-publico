@@ -1,12 +1,47 @@
-<!--grid [dao]="dao" [add]="add" [form]="formEdit" [hasEdit]="false" [hasDelete]="false" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [loadList]="onGridLoad.bind(this)" [selectable]="selectable" (select)="onSelect($event)" [groupTemplate]="groupAtividades">
-  <ng-template #groupAtividades let-grid='grid' let-separator='separator' let-group='group'>
-  </ng-template>
-  <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapseChange]="filterCollapseChange.bind(this)">
+<grid [dao]="dao" [hasEdit]="false" [hasDelete]="false" [join]="join" [loadList]="onGridLoad.bind(this)" [selectable]="selectable" (select)="onSelect($event)">
+  <toolbar></toolbar>
+  <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [clear]="filterClear.bind(this)" [collapsed]="false">
     <div class="row">
-      Filtros
+      <input-select [size]="4" #idioma label="Idioma" icon="fas fa-language" controlName="idioma" [control]="filter!.controls.idioma" [items]="lookup.IDIOMAS"></input-select>
+      <input-select [size]="4" #estado label="Estado" icon="fas fa-flag" controlName="estado" [control]="filter!.controls.estado" [items]="lookup.UF"></input-select>
+      <input-select [size]="4" #cidade label="Cidade" icon="far fa-flag" controlName="cidade_id" [control]="filter!.controls.cidade_id" [dao]="cidadeDao" [where]="['uf', '==', filter!.controls.estado.value]"></input-select>
     </div>
   </filter>
   <columns>
-
+    <column type="expand" icon="bi bi-person-bounding-box" [align]="'center'" [hint]="'Detalhamento'" [template]="columnDetalhamento" [expandTemplate]="columnExpandedDetalhamento">
+      <ng-template let-row="row" #columnDetalhamento>
+        <span class="badge rounded-pill bg-light text-dark"></span>
+      </ng-template>
+      <ng-template let-row="row" #columnExpandedDetalhamento>
+        Oi
+      </ng-template>
+    </column>
+    <column [titleTemplate]="titleNome" [template]="columnNome">
+      <ng-template let-header="header" #titleNome>
+        <strong>Nome</strong>/<order by="" [header]="header">Ingresso</order><br>
+        <small>E-mail</small>
+      </ng-template>
+      <ng-template let-row="row" #columnNome>
+        <span class="text-nowrap d-block">
+          {{row.curriculum.usuario.nome}}
+          <badge color="gray">{{row.ano_ingresso}}</badge>
+        </span>
+        <span class="micro-text fw-ligh">{{row.curriculum.usuario.email}}</span>
+      </ng-template>
+    </column>
+    <column [titleTemplate]="titleEstado" [template]="columnEstado">
+      <ng-template let-header="header" #titleEstado>
+        <strong>Cidade/Estado</strong>
+      </ng-template>
+      <ng-template let-row="row" #columnEstado>
+        <span class="d-block">{{row.curriculum.cidade.nome}}/{{row.curriculum.cidade.uf}}</span>
+        {{getRow(row)}}
+      </ng-template>
+    </column>
+    <column title="Apresentação Pessoal" [template]="columnApresentacao">
+      <ng-template let-row="row" #columnApresentacao>
+        <span class="micro-text fw-ligh">{{row.curriculum.apresentacao}}</span>
+      </ng-template>
+    </column>
   </columns>
-</grid-->
+</grid>
