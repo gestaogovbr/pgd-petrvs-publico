@@ -45,7 +45,7 @@ export abstract class PageBase implements OnInit, ModalPage {
   public set submitting(value: boolean) {
     if(!value) {
       this.dialog.closeSppinerOverlay();
-    } else if(!this._submitting) {
+    } else if(!this._submitting || !this.dialog.sppinerShowing) {
       this.dialog.showSppinerOverlay(this.mensagemSalvando);
     }
     this._submitting = value;
