@@ -260,21 +260,27 @@ export class AtividadeListGridComponent extends AtividadeListBase {
   };
 
   public async onColumnEtiquetasEdit(row: any) {
-    if (!this.etiquetasAscendentes.filter(e => e.data == row.unidade.id).length) {
-      let ascendentes = await this.carregaEtiquetasUnidadesAscendentes(row.unidade);
+    if (!this.etiquetasAscendentes.filter(e => e.data == row.unidade_id).length) {
+      this.loading = true;
+      let ascendentes: LookupItem[] = [];
+      try {
+        ascendentes = await this.carregaEtiquetasUnidadesAscendentes(row.unidade);
+      } finally {
+        this.loading = false;
+      }
       this.etiquetasAscendentes.push(...ascendentes);
     }
     this.formEdit.controls.etiquetas.setValue(row.etiquetas);
     this.formEdit.controls.etiqueta.setValue(null);
     this.etiquetas = this.util.merge(row.tipo_atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key);
     this.etiquetas = this.util.merge(this.etiquetas, this.auth.usuario!.config?.etiquetas, (a, b) => a.key == b.key);
-    this.etiquetas = this.util.merge(this.etiquetas, this.etiquetasAscendentes.filter(x => x.data == row.unidade.id), (a, b) => a.key == b.key);
+    this.etiquetas = this.util.merge(this.etiquetas, this.etiquetasAscendentes.filter(x => x.data == row.unidade_id), (a, b) => a.key == b.key);
   }
 
   public async carregaEtiquetasUnidadesAscendentes(unidadeAtual: Unidade) {
     let etiquetasUnidades: LookupItem[] = [];
-    let path = unidadeAtual.path.split("/");
-    let unidades = await this.unidadeDao.query({ where: ["id", "in", path] }).asPromise();
+    let path = unidadeAtual.path.split("/").filter(x => x?.length);
+    let unidades = await this.unidadeDao.query({ where: [["id", "in", path]] }).asPromise();
     unidades.forEach(un => {
       etiquetasUnidades = this.util.merge(etiquetasUnidades, un.etiquetas, (a, b) => a.key == b.key);
     });
