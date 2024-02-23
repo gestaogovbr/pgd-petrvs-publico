@@ -227,12 +227,47 @@
 <footer class="footer mt-auto" *ngIf="auth.usuario && !gb.isEmbedded">
   <div class="d-flex justify-content-between">
     <div>
-      <p><small class="text-primary">Versão: {{gb.VERSAO_SYS}}  <!--badge [color]="'gray'" [label]="gb.ENV"></badge--></small></p>
+      <div class="d-flex justify-content-between align-items-center">
+        <p class="m-0"><small class="text-primary">Versão: {{gb.VERSAO_SYS}} <!--badge [color]="'gray'" [label]="gb.ENV"></badge--></small></p>
+        <button type="button" class="btn btn-link ms-3" data-bs-toggle="modal" data-bs-target="#modalTeam">
+          <i class="bi bi-people"></i>
+        </button>
+      </div>
     </div>
+
+
+
     <div class="logos">
       <img [src]="gb.getResourcePath('assets/images/logo_pgd_' + (gb.theme != 'light' ? 'light' : 'normal') + '.png')">
       <img [src]="gb.getResourcePath('assets/images/logo_gov_' + (gb.theme != 'light' ? 'light' : 'normal') + '.png')">
     </div>
   </div>
 </footer>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalTeam" tabindex="-1" aria-labelledby="modalTeam" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Equipe</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ng-scrollbar style="height: 500px;">
+
+          <!-- Repliacar essa div para cada pessoa-->
+          <div class="d-flex membro mb-3">
+            <img src="../assets/images/profile.jpg" class="rounded-circle" style="height: 65px;">
+            <div class="ms-3">
+              <b>Nome completo</b><br>
+              <small>Unidade</small><br>
+              <i>Cargo</i>
+            </div>
+          </div>
+
+        </ng-scrollbar>
+      </div>
+    </div>
+  </div>
 </div>

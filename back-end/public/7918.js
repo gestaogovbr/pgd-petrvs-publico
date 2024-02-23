@@ -98,7 +98,7 @@ class IntegranteService {
     let ehLotadoNestaUnidade = row.atribuicoes.includes("LOTADO");
     msg = row.usuario_nome?.toUpperCase() + " passará a ser " + meio + nomeOuSigla.toUpperCase();
     let itemAntigoGestor = itensGrid.find(i => i.atribuicoes.includes('GESTOR'));
-    msg = (itemAntigoGestor?.id.length ? msg + " em substituição a " + itemAntigoGestor.usuario_nome?.toLocaleUpperCase : msg) + ". ";
+    msg = (itemAntigoGestor?.id.length ? msg + " em substituição a " + itemAntigoGestor.usuario_nome?.toUpperCase() : msg) + ". ";
     let indiceItemLotacao = itensGrid.findIndex((item, index, obj) => item.atribuicoes.includes('LOTADO'));
     if (!ehLotadoNestaUnidade && indiceItemLotacao >= 0) msg += "Como é lotado em outra unidade, a lotação de " + row.usuario_nome?.toUpperCase() + " será alterada para " + this.lex.translate("a Unidade") + " - " + nomeOuSigla.toUpperCase() + ".";
     return itemAntigoGestor?.id.length ? ['troca', itensGrid.findIndex(x => x.id == itemAntigoGestor?.id), msg, true] : ['ganho', -1, msg, !ehLotadoNestaUnidade];

@@ -1,0 +1,31 @@
+<grid [items]="items" [title]="isModal ? '' : title">
+  <columns>
+    <column title="Dados" [template]="columnDados">
+      <ng-template let-row="row" #columnDados>
+
+        <span><strong>Telefone : </strong>{{row.curriculum?.telefone || "Sem valor"}}</span>
+
+        <span class="ml-3"><strong>Estado Civil : </strong>{{row.curriculum.estado_civil}}</span>
+
+        <span class="ml-3"><strong>Filhos : </strong>{{row.curriculum.quantidade_filhos > 0 ? lookup.getValue(lookup.SIMNAO, 1) : lookup.getValue(lookup.SIMNAO, 2)}}<strong> Quantidade: </strong>{{row.curriculum.quantidade_filhos}}</span>
+
+        <separator title="Fala outros idiomas" [bold]="true" class="my-3"></separator>
+
+        <ng-container>
+          <span *ngFor="let idioma of row.curriculum.idiomas">
+            <strong>Idioma: </strong>{{lookup.getValue(lookup.IDIOMAS, idioma.idioma)}}<strong>Fala: </strong> {{lookup.getValue(lookup.NIVEL_IDIOMA, idioma.idiomaFala)}}<strong>Escrita: </strong> {{lookup.getValue(lookup.NIVEL_IDIOMA, idioma.idiomaEscrita)}}<strong>Entendimento: </strong>{{lookup.getValue(lookup.NIVEL_IDIOMA, idioma.idiomaEntendimento)}}
+          </span>
+        </ng-container>
+
+        <separator title="Graduações" [bold]="true" class="my-3"></separator>
+
+        <ng-container>
+
+          <span *ngFor="let graduacao of row.curriculum.graduacoes">
+            <strong>Pretende: </strong> {{graduacao.pretensao == 0 ? 'Finalizado' : 'Pretendo Fazer' }}<strong>Area: </strong> {{graduacao.curso.area_conhecimento.nome}}<strong>Titulo: </strong> {{lookup.getValue(lookup.TITULOS_CURSOS, graduacao.curso.titulo)}}<strong>Curso: </strong>{{graduacao.curso.nome}}
+          </span>
+        </ng-container>
+      </ng-template>
+    </column>
+  </columns>
+</grid>
