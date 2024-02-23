@@ -86,7 +86,7 @@
         <span class="badge rounded-pill bg-light text-dark"></span>
       </ng-template>
       <ng-template let-row="row" #columnExpandedDetalhamento>
-        Oi
+        <curriculum-pesquisa-list-usuario [entity]="row"></curriculum-pesquisa-list-usuario>
       </ng-template>
     </column>
     <column [titleTemplate]="titleNome" [template]="columnNome">

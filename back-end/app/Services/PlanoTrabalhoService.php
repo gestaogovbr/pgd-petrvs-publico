@@ -97,7 +97,7 @@ class PlanoTrabalhoService extends ServiceBase
       $unidadesComChefia = array_filter(array_merge([$this->loggedUser()->gerenciaTitular?->unidade_id], $this->loggedUser()->gerenciasSubstitutas?->map(fn($x) => $x->unidade_id)->toArray()));
       $usuariosLotados = [];
       foreach ($unidadesComChefia as $unidadeId) {
-        array_merge($usuariosLotados, $this->unidadeService->lotados($unidadeId)->map(fn($x) => $x->id));
+        $usuariosLotados = array_merge($usuariosLotados, array_map(fn($x) => $x->id, $this->unidadeService->lotados($unidadeId)));
       }
       $where = ["or", ["usuario_id", "in", $usuariosLotados], $where];
     }
