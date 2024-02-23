@@ -21,12 +21,14 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
   @Input() set noPersist(value: string | undefined) { super.noPersist = value; } get noPersist(): string | undefined { return super.noPersist; }
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: CurriculumProfissional | undefined) { super.entity = value; } get entity(): CurriculumProfissional | undefined { return super.entity; }
- 
+
   public get items(): CurriculumProfissional[] {
-    console.log(this.gridControl.value)
     return [this.gridControl.value];
   }
 
+  public getRow(row: any) {
+    console.log(row);
+  }
 }
 /* @Input() set curriculumId(value: string | undefined) {
     if(this._curriculumId != value) {
