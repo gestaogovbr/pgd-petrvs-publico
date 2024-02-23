@@ -203,7 +203,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   public onUsuarioSelect(selected: SelectItem) {
     this.form!.controls.usuario_texto_complementar.setValue((selected.entity as Usuario)?.texto_complementar_plano || "");
     if(!this.form?.controls.unidade_id.value) {
-      selected.entity.unidades.every(async (unidade: any) => {
+      selected.entity.unidades?.every(async (unidade: any) => {
         if (selected.entity.lotacao.unidade_id == unidade.id) {
           if(!this.form?.controls.programa_id.value) {
             let niveis = unidade.path.split("/").reverse();
@@ -332,6 +332,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       this.atualizarTcr();
       /* Confirma dados do documento */
       this.documentos?.saveData();
+      this.submitting = true;
       this.entity!.documentos = this.entity!.documentos.filter((documento: Documento) => {
         return ["ADD", "EDIT", "DELETE"].includes(documento._status || "");
       });

@@ -62,14 +62,14 @@ export class InputEditorComponent extends InputBase implements OnInit {
   get datasource(): any {
     return this._datasource;
   }
-  @Input() set value(value: string) {
+  @Input() set value(newValue: string) {
     if(this.isEditingTemplate) {
-      this._editingTemplate = value;
-    } else if (this._value != value) {
-      this._value = value;
-      this.valueChange.emit(value);
-      if (this.control && this.control.value != value) {
-        this.control.setValue(value);
+      this._editingTemplate = newValue;
+    } else if (this._value != newValue) {
+      this._value = newValue;
+      this.valueChange.emit(this._value);
+      if (this.control && this.control.value != this._value) {
+        this.control.setValue(this._value);
       }
       this.detectChanges();
     }
@@ -368,11 +368,11 @@ export class InputEditorComponent extends InputBase implements OnInit {
     return this.disabled != undefined || (this.template != undefined && !this.isEditingTemplate);
   }
 
-  public updateEditor() {
-    if(this.template != undefined && this.datasource != undefined) {
-      this.value = this.templateService.renderTemplate(this.template, this.datasource);
-      this.cdRef.detectChanges();
-    }
+  public updateEditor(text?: string) {
+    this.value = this.template != undefined && this.datasource != undefined ? 
+      this.templateService.renderTemplate(this.template, this.datasource) : 
+      text || "";
+    this.cdRef.detectChanges();
   }
 
   ngOnInit(): void {
@@ -384,10 +384,7 @@ export class InputEditorComponent extends InputBase implements OnInit {
     super.ngAfterViewInit();
     if (this.control) {
       this.control.valueChanges.subscribe(newValue => {
-        if (this.value != newValue) {
-          this.value = newValue;
-          this.updateEditor();
-        }
+        if (this.value != newValue) this.updateEditor(newValue);
       });
       this.value = this.control.value;
     }

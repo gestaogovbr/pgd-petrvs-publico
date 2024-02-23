@@ -217,4 +217,8 @@ export class DialogService {
       this.cdRef?.detectChanges();
     }
   }
+
+  public get sppinerShowing(): boolean {
+    return !!this.spinnerRef?.instance.show;
+  }
 }
