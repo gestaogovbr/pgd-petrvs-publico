@@ -81,13 +81,14 @@
     </separator>
   </filter>
   <columns>
-    <column type="expand" icon="bi bi-person-bounding-box" [align]="'center'" [hint]="'Detalhamento'" [template]="columnDetalhamento" [expandTemplate]="columnExpandedDetalhamento">
+    <!--<column type="expand" icon="bi bi-person-bounding-box" [align]="'center'" [hint]="'Detalhamento'" [template]="columnDetalhamento" [expandTemplate]="columnExpandedDetalhamento">-->
+    <column icon="bi bi-person-bounding-box" [align]="'center'" [hint]="'Detalhamento'" [template]="columnDetalhamento">
       <ng-template let-row="row" #columnDetalhamento>
         <span class="badge rounded-pill bg-light text-dark"></span>
       </ng-template>
-      <ng-template let-row="row" #columnExpandedDetalhamento>
-        <curriculum-pesquisa-list-usuario [entity]="row"></curriculum-pesquisa-list-usuario>
-      </ng-template>
+      <!--<ng-template let-row="row" #columnExpandedDetalhamento>
+       <curriculum-pesquisa-list-usuario [entity]="row"></curriculum-pesquisa-list-usuario>
+      </ng-template>-->
     </column>
     <column [titleTemplate]="titleNome" [template]="columnNome">
       <ng-template let-header="header" #titleNome>
@@ -115,5 +116,12 @@
         <span class="micro-text fw-ligh">{{row.curriculum.apresentacao}}</span>
       </ng-template>
     </column>
+    <column title="Detalhes" [template]="columnDetalhes">
+      <ng-template let-row="row" #columnDetalhes>
+        <button class="btn btn-sm btn-outline-info me-2" (click)="showCurriculumDetalhes2(row)"><i class="bi bi-eye"></i></button>
+      </ng-template>
+    </column>
+    
+    <column type="options" [onEdit]="edit.bind(this)" [dynamicButtons]="dynamicButtons.bind(this)"></column>
   </columns>
 </grid>

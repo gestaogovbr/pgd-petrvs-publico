@@ -11,6 +11,7 @@ import { GrupoEspecializadoDaoService } from 'src/app/dao/grupo-especializado-da
 import { FuncaoDaoService } from 'src/app/dao/funcao-dao.service';
 import { CapacidadeTecnicaDaoService } from 'src/app/dao/capacidade-tecnica-dao.service';
 import { AreaTematicaDaoService } from 'src/app/dao/area-tematica-dao.service';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 
 @Component({
   selector: 'app-curriculum-pesquisa-list',
@@ -141,5 +142,27 @@ export class CurriculumPesquisaListComponent extends PageListBase<CurriculumProf
     this.cursoWhere = [['area_id', '==', this.filter!.controls.area_conhecimento_id.value], ['titulo', '==', titulo?.key]];
     this.cdRef.detectChanges();
   }
+
+  public dynamicButtons(row: any): ToolbarButton[] {
+    const btns = [];
+    btns.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhesCurriculum.bind(this) });   
+    return btns;
+  }
+
+  public async showDetalhesCurriculum(curriculum: CurriculumProfissional){
+    this.go.navigate({route: ['raiox', 'detalhe-pesquisa']},{
+      modal: true,  
+      metadata: {
+        //entity: this.entity!,
+        curriculum: curriculum
+      },
+    });
+  }
+
+  public async showCurriculumDetalhes2(row: any){
+    console.log(row)
+    this.go.navigate({route: ['raiox','detalhe-pesquisa']}, { modal: true, metadata:{ curriculum : row}});
+  }
+
 }
 

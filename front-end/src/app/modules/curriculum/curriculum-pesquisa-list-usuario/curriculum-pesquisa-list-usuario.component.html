@@ -1,6 +1,6 @@
 <grid [items]="items" [title]="isModal ? '' : title">
   <columns>
-    <column title="Currículo" [template]="columnDados">
+    <column title="Currículum" [template]="columnDados">
       <ng-template let-row="row" #columnDados>
         <div class="row">
           <div class="col-2 text-center">
@@ -13,7 +13,6 @@
             <div style="text-align: left;">
               <separator title="Apresentação pessoal"></separator>
               {{row.curriculum.apresentacao}}
-              {{getRow(row)}}
             </div>
           </div>
           <div class="col-10 my-2">
@@ -29,7 +28,7 @@
                 </div>
                 <div class="col-3">
                   <strong>Estado civil</strong><br>
-                  {{row.curriculum.estado_civil || "Sem estado civil"}}
+                  {{row.curriculum?.estado_civil || "Sem estado civil"}}
                 </div>
                 <div class="col-3">
                   <strong>Filhos</strong><br>
@@ -152,19 +151,20 @@
             </separator>
             <separator title="Hard skills">
               <div class="row my-2">
-                <div class="col-3">
+                <div class="col-5">
                   <strong>Capacitações internas</strong><br>
-                  <div *ngIf="row.historico_atividade_interna.length; else semCapacInterna">
+                  <div *ngIf="row.historico_atividade_interna.length; else semCapacInterna" class="one-per-line">
                     <span *ngFor="let atividade of row.historico_atividade_interna">{{atividade.capacidade_tecnica.nome}}</span>
+                    
                   </div>
                   <ng-template #semCapacInterna>
                     Sem capacitações internas
                   </ng-template>
                 </div>
-                <div class="col-3">
+                <div class="col-4">
                   <strong>Capacitações externas</strong><br>
                   <div *ngIf="row.historico_atividade_externa.length; else semCapacExterna">
-                    <span *ngFor="let atividade of row.historico_atividade_externa">{{atividade.capacidade_tecnica.nome}}</span>
+                    <span *ngFor="let atividade of row.historico_atividade_externa">{{atividade.area_atividade_externa?.nome}}</span>
                   </div>
                   <ng-template #semCapacExterna>
                     Sem capacitações externas
