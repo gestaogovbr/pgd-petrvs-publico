@@ -22,13 +22,23 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: CurriculumProfissional | undefined) { super.entity = value; } get entity(): CurriculumProfissional | undefined { return super.entity; }
 
+  public curriculum? : any;
+
   public get items(): CurriculumProfissional[] {
-    return [this.gridControl.value];
+    return [this.curriculum]
+    //return [this.gridControl.value];
   }
 
   public getRow(row: any) {
-    console.log(row);
+    console.log('get row',row);
   }
+
+  public ngOnInit() {
+    super.ngOnInit();
+    this.curriculum = this.metadata?.curriculum;
+    console.log('THIS CURRICULUM', this.curriculum)
+  }
+
 }
 /* @Input() set curriculumId(value: string | undefined) {
     if(this._curriculumId != value) {
