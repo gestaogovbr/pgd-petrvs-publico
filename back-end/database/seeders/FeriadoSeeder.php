@@ -159,27 +159,24 @@ class FeriadoSeeder extends Seeder
                 "entidade_id" => NULL,
                 "cidade_id" => NULL,
             ),
+            array(
+                "id" => "3bda258a-2b1e-4a5d-8cf7-178ab1883172",
+                "created_at" => $this->timenow,
+                "updated_at" => $this->timenow,
+                "deleted_at" => NULL,
+                "nome" => "Natal2",
+                "dia" => 25,
+                "mes" => 12,
+                "ano" => NULL,
+                "tipoDia" => "MES",
+                "recorrente" => 0,
+                "abrangencia" => "NACIONAL",
+                "codigo_ibge" => NULL,
+                "uf" => NULL,
+                "entidade_id" => NULL,
+                "cidade_id" => NULL,
+            ),
         );
-        Feriado::insert($feriados);
+        Feriado::upsert($feriados, "id");
     }
 }
-        /*
-        // carrega o arquivo FERIADOS.CSV para a tabela FERIADOS no banco de dados
-        $csvFilePath = base_path('database/seeders/arquivos_csv/feriados.csv');
-        $csv = array_map('str_getcsv', file($csvFilePath));
-        array_shift($csv); // exclui a primeira linha do arquivo (os cabeçalhos)
-        foreach($csv as $linha)
-        {
-            $registro = str_getcsv($linha[0], ';');
-            $feriado = new Feriado();
-            $feriado->fill([
-                'nome' => mb_convert_encoding($registro[0], "UTF-8", "ISO-8859-1"),
-                'dia' => $registro[1],
-                'mes' => $registro[2],
-                'tipoDia' => $registro[3],
-                'recorrente' => $registro[4],
-                'abrangencia' => $registro[5]
-            ]);
-            $feriado->save();
-        }
-        */

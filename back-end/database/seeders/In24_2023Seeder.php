@@ -46,6 +46,7 @@ class In24_2023Seeder extends Seeder
     }
 
     public function run(){
+
         $tipos_atividades = array(
             [
                 "id" => "22629851-db92-4e4e-999b-98e2368d84c6",
@@ -1703,6 +1704,7 @@ class In24_2023Seeder extends Seeder
                 "planejamento_superior_id" => NULL,
             ),
         );
+
         $planejamentos_objetivos = array(
             array(
                 "id" => "00db60be-856f-462a-9d0d-27f6b21edce6",
@@ -1916,18 +1918,18 @@ class In24_2023Seeder extends Seeder
             ),
         );
 
-        TipoModalidade::insert($tipos_modalidades);
-        TipoAtividade::insert($tipos_atividades);
-        TipoJustificativa::insert($tipos_justificativas);
-        TipoAvaliacao::insert($tipos_avaliacoes);
-        TipoAvaliacaoNota::insert($tipos_avaliacoes_notas);
-        TipoAvaliacaoJustificativa::insert($tipos_avaliacoes_justificativas);
-        TipoDocumento::insert($tipos_documentos);
-        Template::insert($templates);
-        Programa::insert($programas);
-        EixoTematico::insert($eixos_tematicos);
-        Entrega::insert($modelos_afericao_entregas);
-        Planejamento::insert($planejamentos);
-        PlanejamentoObjetivo::insert($planejamentos_objetivos);
+        TipoModalidade::updateOrCreate($tipos_modalidades, "id");
+        TipoAtividade::updateOrCreate($tipos_atividades, "id");
+        TipoJustificativa::updateOrCreate($tipos_justificativas, "id");
+        TipoAvaliacao::updateOrCreate($tipos_avaliacoes, "id");
+        TipoAvaliacaoNota::updateOrCreate($tipos_avaliacoes_notas, "id");
+        TipoAvaliacaoJustificativa::updateOrCreate($tipos_avaliacoes_justificativas, "id");
+        TipoDocumento::updateOrCreate($tipos_documentos, "id");
+        Template::updateOrCreate($templates, "id");
+        Programa::updateOrCreate($programas, "id");
+        EixoTematico::updateOrCreate($eixos_tematicos, "id");
+        Entrega::updateOrCreate($modelos_afericao_entregas, "id");
+        Planejamento::updateOrCreate($planejamentos, "id");
+        PlanejamentoObjetivo::updateOrCreate($planejamentos_objetivos, "id");
     }
 }
