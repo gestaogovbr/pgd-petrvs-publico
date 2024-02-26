@@ -22,7 +22,7 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: CurriculumProfissional | undefined) { super.entity = value; } get entity(): CurriculumProfissional | undefined { return super.entity; }
 
-  public curriculum? : any;
+  public curriculum?: any;
 
   public get items(): CurriculumProfissional[] {
     return [this.curriculum]
@@ -30,13 +30,18 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
   }
 
   public getRow(row: any) {
-    console.log('get row',row);
+    console.log('get row', row);
+  }
+
+  constructor(public injector: Injector) {
+    super(injector);
+    this.modalWidth = 1350;
   }
 
   public ngOnInit() {
     super.ngOnInit();
     this.curriculum = this.metadata?.curriculum;
-    console.log('THIS CURRICULUM', this.curriculum)
+    //this.modalWidth = 1500;
   }
 
 }
