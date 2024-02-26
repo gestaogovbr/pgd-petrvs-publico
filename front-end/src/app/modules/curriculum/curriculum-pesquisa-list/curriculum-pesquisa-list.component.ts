@@ -164,5 +164,7 @@ export class CurriculumPesquisaListComponent extends PageListBase<CurriculumProf
     this.go.navigate({route: ['raiox','detalhe-pesquisa']}, { modal: true, metadata:{ curriculum : row}});
   }
 
+ 
+
 }
 
