@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use App\Models\Usuario;
+use App\Models\CurriculumGraduacao;
+use App\Models\CurriculumProfissional;
+use App\Models\Cidade;
 use App\Models\ModelBase;
 use App\Casts\AsJson;
 
@@ -32,7 +35,6 @@ class Curriculum extends ModelBase
 
     //Has Many
     public function graduacoes() { return $this->hasMany(CurriculumGraduacao::class); }
-    public function respostaQuestionario() { return $this->hasMany(RespostaQuestionario::class); }
     //Has One
     public function profissional() { return $this->hasOne(CurriculumProfissional::class); }
     // Belongs
