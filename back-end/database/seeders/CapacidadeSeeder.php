@@ -887,6 +887,9 @@ class CapacidadeSeeder extends Seeder
                 "codigo" => "MOD_USER_EDT",
             ),
             array(
+                "codigo" => "MOD_USER_INCL",
+            ),
+            array(
                 "codigo" => "MOD_USER_TUDO",
             ),
         );

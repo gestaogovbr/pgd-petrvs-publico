@@ -3637,7 +3637,7 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
     var _this = this;
     this.form.controls.usuario_texto_complementar.setValue(selected.entity?.texto_complementar_plano || "");
     if (!this.form?.controls.unidade_id.value) {
-      selected.entity.unidades.every( /*#__PURE__*/function () {
+      selected.entity.unidades?.every( /*#__PURE__*/function () {
         var _ref2 = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (unidade) {
           if (selected.entity.lotacao.unidade_id == unidade.id) {
             if (!_this.form?.controls.programa_id.value) {
@@ -3765,6 +3765,7 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
         _this4.atualizarTcr();
         /* Confirma dados do documento */
         _this4.documentos?.saveData();
+        _this4.submitting = true;
         _this4.entity.documentos = _this4.entity.documentos.filter(documento => {
           return ["ADD", "EDIT", "DELETE"].includes(documento._status || "");
         });
