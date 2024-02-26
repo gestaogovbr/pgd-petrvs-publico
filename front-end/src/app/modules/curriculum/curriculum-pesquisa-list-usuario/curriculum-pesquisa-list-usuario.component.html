@@ -1,7 +1,7 @@
 <div id="contentToConvert">
   <grid [items]="items" [title]="isModal ? '' : title">
     <columns>
-      <column title="Currículum" [template]="columnDados">
+      <column title="" [template]="columnDados">
         <ng-template let-row="row" #columnDados>
           <div class="row">
             <div class="col-2 text-center">
@@ -152,7 +152,7 @@
               </separator>
               <separator title="Hard skills">
                 <div class="row my-2">
-                  <div class="col-5">
+                  <div class="col-3">
                     <strong>Capacitações internas</strong><br>
                     <div *ngIf="row.historico_atividade_interna.length; else semCapacInterna" class="one-per-line">
                       <span *ngFor="let atividade of row.historico_atividade_interna">{{atividade.capacidade_tecnica.nome}}</span>
@@ -162,7 +162,7 @@
                       Sem capacitações internas
                     </ng-template>
                   </div>
-                  <div class="col-4">
+                  <div class="col-3">
                     <strong>Capacitações externas</strong><br>
                     <div *ngIf="row.historico_atividade_externa.length; else semCapacExterna">
                       <span *ngFor="let atividade of row.historico_atividade_externa">{{atividade.area_atividade_externa?.nome}}</span>
