@@ -35,6 +35,12 @@ class TipoCapacidadeService extends ServiceBase {
                 ["DEV_MENU_LOGS_ACESSO", "Permite acessar o menu logs"],
                 /* Capacidades do DASHBOARD */
                 ["DASH_PRG", "Permite mostrar informações do Programa de Gestão"],
+                /* Capacidades do Módulo RAIOX */
+                ["MENU_RX_CURRICULUM_ACESSO", "Permite acessar o menu Curriculum"],
+                ["MENU_RX_OPORTUNIDADES_ACESSO", "Permite acessar o menu Oportunidades"],
+                ["MENU_RX_PESQUISAS_ACESSO", "Permite acessar o menu Pesquisas"],
+                ["MENU_RX_QUEST_DINAMICOS_ACESSO", "Permite acessar o menu Questionários Dinâmicos"],
+                ["MENU_RX_CADASTROS_ACESSO", "Permite acessar o menu Cadastros"],
             ]
         ], [
             "codigo" => "MOD_AFT",
@@ -422,18 +428,16 @@ class TipoCapacidadeService extends ServiceBase {
             "descricao"=> "Módulo Raio-X",
             "capacidades"=> [
                 /* Capacidades do módulo RAIO X*/
-                ["MOD_RX_EDT_DPE", "Permite editar dados pessoais de outro usuário"],
-                ["MOD_RX_EDT_DPR", "Permite editar dados profissionais de outro usuário"],
-                ["MOD_RX_EDT_ATR", "Permite editar atributos comportamentais de outro usuário"],
+                ["", "Permite "],
+
+
                 ["MOD_RX_VIS_DPE", "Permite visualizar menu pessoais"],
                 ["MOD_RX_VIS_DPR", "Permite visualizar menu dados profissionais"],
                 ["MOD_RX_VIS_ATR", "Permite visualizar menu atributos comportamentais"],
                 ["MOD_RX_VIS_OPO", "Permite visualizar menu oportunidades"],
-                ["MOD_RX_EDT_USR", "Permite editar tudo para o usuário atual menos atributos comportamentais"],
                 ["MOD_RX_EDT_SUP", "Permite editar tudo para o usuário atual"],
                 ["MOD_RX_EDT_OPO", "Permite editar oportunidades"],
                 ["MOD_RX_VIS_OPO", "Permite visualizar oportunidades"],
-                ["MOD_RX_RES_ATR", "Permite resetar dados comportamentais"]
             ]
         ], [
             "codigo"=> "MOD_AUDIT",

@@ -275,7 +275,7 @@ export class AuthService {
         this.apiToken = response.token;
         this.registerEntity(response.entidade);
         this.registerUser(response.usuario, this.apiToken);
-        this.app?.setMenuVars(); // CONSULTAR O GENISSON
+        this.app?.setMenuVars();
         if (response.horario_servidor?.length) {
           this.gb.horarioDelta.servidor = UtilService.iso8601ToDate(response.horario_servidor);
           this.gb.horarioDelta.local = new Date();
