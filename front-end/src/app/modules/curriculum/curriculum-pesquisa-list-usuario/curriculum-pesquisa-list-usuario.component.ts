@@ -28,7 +28,6 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
 
   public get items(): CurriculumProfissional[] {
     return [this.curriculum]
-    //return [this.gridControl.value];
   }
 
   public getRow(row: any) {
@@ -43,7 +42,6 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
   public ngOnInit() {
     super.ngOnInit();
     this.curriculum = this.metadata?.curriculum;
-    //this.modalWidth = 1500;
   }
 
   public convetToPDF()
