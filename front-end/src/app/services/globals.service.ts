@@ -57,7 +57,7 @@ export class GlobalsService {
   public setContexto(context: string, goToContextoHome: boolean = true) {
     if(this.contexto?.key != context) {
       let novoContexto = this.app!.menuContexto.find(x => x.key == context);
-      if(!novoContexto?.permition || this.auth.capacidades.includes(novoContexto.permition)) this.contexto = novoContexto;
+      if(!this.auth.usuario || !novoContexto?.permition || this.auth.capacidades.includes(novoContexto.permition)) this.contexto = novoContexto;
       if(this.contexto && goToContextoHome) this.goHome();
       this.app!.cdRef.detectChanges();
     }

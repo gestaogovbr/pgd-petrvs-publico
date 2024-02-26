@@ -80,14 +80,13 @@ class PlanoEntregaService extends ServiceBase
           // não se aplica à Unidade Instituidora, ou seja, alterações realizadas em planos de entregas de unidades instituidoras não precisam ser notificadas à sua Unidade-pai;
           $unidadePai = $planoEntrega->unidade->unidadePai;
           if (!empty($unidadePai->id) && !$planoEntrega->unidade->instituidora) {
-            $destinatarios = array_map(fn($x) => $x->usuario, $unidadePai->gestoresSubstitutos ?? []);
+            $destinatarios = array_map(fn($x) => $x->usuario, $unidadePai->gestoresSubstitutos?->all() ?? []);
             if(!empty($unidadePai->gestor)) $destinatarios[] = $unidadePai->gestor->usuario;
-            array_merge($destinatarios, array_map(fn($x) => $x->usuario, $unidadePai->gestoresDelegados ?? []));
+            array_merge($destinatarios, array_map(fn($x) => $x->usuario, $unidadePai->gestoresDelegados?->all() ?? []));
             $usuarioHomologou = StatusJustificativa::where('codigo', 'ATIVO')
               ->where('plano_entrega_id', $planoEntrega->id)
-              ->where('justificativa', 'like', '%homologado nesta data%')
-              ->orderByDesc('created_at')->first()->usuario;
-            if (!empty($usuarioHomologou->id) && !in_array($usuarioHomologou, $destinatarios)) array_push($destinatarios, $usuarioHomologou);
+              ->orderByDesc('created_at')->first()?->usuario;
+            if (!empty($usuarioHomologou?->id) && count(array_filter($destinatarios, fn($x) => $x->id == $usuarioHomologou->id)) <= 0) array_push($destinatarios, $usuarioHomologou);
             $this->notificacoesService->send("PENT_ALTERACAO", [
               "destinatarios" => $destinatarios,
               "plano_entrega" => $planoEntrega,

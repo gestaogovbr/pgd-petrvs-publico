@@ -19,6 +19,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _models_usuario_model__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../models/usuario.model */ 26898);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ 51197);
 
+var _class;
 
 
 
@@ -97,7 +98,7 @@ class IntegranteService {
     let ehLotadoNestaUnidade = row.atribuicoes.includes("LOTADO");
     msg = row.usuario_nome?.toUpperCase() + " passará a ser " + meio + nomeOuSigla.toUpperCase();
     let itemAntigoGestor = itensGrid.find(i => i.atribuicoes.includes('GESTOR'));
-    msg = (itemAntigoGestor?.id.length ? msg + " em substituição a " + itemAntigoGestor.usuario_nome?.toLocaleUpperCase : msg) + ". ";
+    msg = (itemAntigoGestor?.id.length ? msg + " em substituição a " + itemAntigoGestor.usuario_nome?.toUpperCase() : msg) + ". ";
     let indiceItemLotacao = itensGrid.findIndex((item, index, obj) => item.atribuicoes.includes('LOTADO'));
     if (!ehLotadoNestaUnidade && indiceItemLotacao >= 0) msg += "Como é lotado em outra unidade, a lotação de " + row.usuario_nome?.toUpperCase() + " será alterada para " + this.lex.translate("a Unidade") + " - " + nomeOuSigla.toUpperCase() + ".";
     return itemAntigoGestor?.id.length ? ['troca', itensGrid.findIndex(x => x.id == itemAntigoGestor?.id), msg, true] : ['ganho', -1, msg, !ehLotadoNestaUnidade];
@@ -201,15 +202,16 @@ class IntegranteService {
     dados.itens[index] = this.completarIntegrante(base, entityUsuario ? dados.id : entity.id, entityUsuario ? entity.id : dados.id, atribuicoes);
     return dados.itens;
   }
-  static #_ = this.ɵfac = function IntegranteService_Factory(t) {
-    return new (t || IntegranteService)(_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_6__.Injector));
-  };
-  static #_2 = this.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineInjectable"]({
-    token: IntegranteService,
-    factory: IntegranteService.ɵfac,
-    providedIn: 'root'
-  });
 }
+_class = IntegranteService;
+_class.ɵfac = function IntegranteService_Factory(t) {
+  return new (t || _class)(_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵinject"](_angular_core__WEBPACK_IMPORTED_MODULE_6__.Injector));
+};
+_class.ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineInjectable"]({
+  token: _class,
+  factory: _class.ɵfac,
+  providedIn: 'root'
+});
 
 /***/ })
 

@@ -53,10 +53,13 @@ export class QuestionarioListPerguntaComponent extends PageFrameBase {
     //this.orderBy = [['sequencia','asc']];
   } 
 
-  public loadPerguntas() {
-    this.dao!.query({where: [["questionario_id", "==", this.questionarioId]], orderBy: [["sequencia", "asc"]]}).asPromise().then(rows => {
+  public async loadPerguntas() {
+    this.loading=true;
+    await this.dao!.query({where: [["questionario_id", "==", this.questionarioId]], orderBy: [["sequencia", "asc"]]}).asPromise().then(rows => {
       this.items = (rows as QuestionarioPergunta[]) || [];
     });
+    this.loading=false;
+
   }  
 
 }

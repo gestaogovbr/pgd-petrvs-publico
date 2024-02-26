@@ -72,7 +72,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
       try {
         await this.integranteDao!.carregarIntegrantes(entity.id, "").then(resposta => integrantes = resposta.integrantes.filter(x => x.atribuicoes?.length > 0));
         integrantes.forEach(integrante => usuarioIds.push(integrante.id))
-        this.perfis = await this.usuarioDao.query({ where: ["id", "in", usuarioIds] }).asPromise();
+        this.perfis = await this.usuarioDao.query({ where: [["id", "in", usuarioIds]] }).asPromise();
       } finally {
         this.loading = false;
         this.items = [];
@@ -137,7 +137,9 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
    * @param row 
    */
   public async carregarIntegrante(form: FormGroup, row: any) {
+    let usuario = this.perfis.find(p => p.id == row.id);
     form.controls.usuario_id.setValue(this.grid?.adding ? row.usuario_id : row.id);
+    form.controls.perfil_id.setValue(usuario?.perfil_id);
     form.controls.atribuicoes.setValue(this.integranteService.converterAtribuicoes(row.atribuicoes));
     form.controls.atribuicao.setValue("");
   }
@@ -244,7 +246,7 @@ export class UnidadeIntegranteComponent extends PageFrameBase {
         this.loading = false;
       }
     } else {
-      await this.dialog.alert("IMPOSSÍVEL INCLUIR/ALTERAR O SERVIDOR !", error);
+      await this.dialog.alert("Impossível incluir/alterar o servidor!", error);
     }
     return undefined;
   }

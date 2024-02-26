@@ -232,18 +232,18 @@ class PlanoEntregaController extends ControllerBase
             case 'CANCELAR_PLANO':
                 /*
                 (RN_PENT_P) CANCELAR O PLANO DE ENTREGAS
-                    - o usuário logado precisa possuir a capacidade "MOD_PENT_CNC", o plano precisa estar em um dos seguintes status: INCLUIDO, HOMOLOGANDO, ATIVO ou CONCLUIDO; e
+                - o usuário logado precisa possuir a capacidade "MOD_PENT_CNC", o plano precisa estar em um dos seguintes status: INCLUIDO, HOMOLOGANDO e ATIVO;
                     - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
-                    - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado;
+                    - o usuário logado precisa ser gestor da Unidade-pai do plano (Unidade A);
                 */
                 $data = $request->validate(['id' => ['required']]);
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
-                $condition1 = in_array($condicoes['planoStatus'], ['INCLUIDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO']);
+                $condition1 = in_array($condicoes['planoStatus'], ['INCLUIDO', 'HOMOLOGANDO', 'ATIVO']);
                 $condition2 = $condicoes['gestorUnidadePlano'];
-                $condition3 = $condicoes['unidadePlanoEhLotacao'];
+                $condition3 = $condicoes['gestorUnidadePaiUnidadePlano'];
                 if (!$usuario->hasPermissionTo("MOD_PENT_CNC")) throw new ServerException("ValidateUsuario", "O usuário logado não tem permissão para cancelar planos de entregas (MOD_PENT_CNC).\n[ver RN_PENT_P]");
-                if (!$condition1) throw new ServerException("ValidatePlanoEntrega", "O plano de entregas não pode ser cancelado porque não se encontra em nenhum dos seguintes status: INCLUIDO, AGUARDANDO HOMOLOGAÇÃO, ATIVO ou CONCLUIDO.\n[ver RN_PENT_P]");
-                if (!($condition2 || $condition3)) throw new ServerException("ValidateUsuario", "O plano de entregas não pode ser cancelado porque o usuário logado não é lotado nem é um dos gestores da sua unidade executora.\n[ver RN_PENT_P]");
+                if (!$condition1) throw new ServerException("ValidatePlanoEntrega", "O plano de entregas não pode ser cancelado porque não se encontra em nenhum dos seguintes status: INCLUIDO, AGUARDANDO HOMOLOGAÇÃO, ou ATIVO.\n[ver RN_PENT_P]");
+                if (!($condition2 || $condition3)) throw new ServerException("ValidateUsuario", "O plano de entregas não pode ser cancelado porque o usuário logado não é um dos gestores da unidade executora ne, gestos da unidade superior a ela.\n[ver RN_PENT_P]");
                 break;
             case 'CANCELAR_AVALIACAO':
                 /*                 
