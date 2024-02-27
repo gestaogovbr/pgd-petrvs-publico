@@ -197,7 +197,7 @@ export class AppComponent {
       CURRICULUM_CADASTRO_ATRIBUTOS_DASS: { name: this.lex.translate("DASS"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
       CURRICULUM_CADASTRO_ATRIBUTOS_SRQ20: { name: this.lex.translate("SRQ-20"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
       CURRICULUM_VISUALIZA_OPORTUNIDADES: { name: this.lex.translate("Pesquisa Oportunidades"), permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pessoal'], icon: "bi bi-lightbulb-fill" },
-      CURRICULUM_CADASTRO_OPORTUNIDADES: { name: this.lex.translate("Oportunidades"), permition: 'MOD_RX_EDT_OPO', route: ['raiox', 'pessoal'], icon: "bi bi-lightbulb-fill" },
+      CURRICULUM_CADASTRO_OPORTUNIDADES: { name: this.lex.translate("Oportunidades"), permition: 'MOD_RX_EDT_OPO', route: ['raiox', ''], icon: "bi bi-lightbulb-fill" },
       CURRICULUM_CADASTRO_CURSOS: { name: this.lex.translate("Cursos"), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'cadastros', 'curso'], icon: "bi bi-mortarboard-fill" },
       CURRICULUM_CADASTRO_TIPOS_CURSOS: { name: this.lex.translate("Tipos de Cursos"), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'cadastros', 'tipocurso'], icon: "bi bi-box-seam" },
       CURRICULUM_CADASTRO_CENTROS_TREINAMENTO: { name: this.lex.translate("Centros de Treinamentos"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros', 'centrotreinamento'], icon: "bi bi-building-fill" },
@@ -410,8 +410,8 @@ export class AppComponent {
       id: "navbarDropdownRXQD",
       menu: [
         this.menuSchema.CURRICULUM_CADASTRO_QUESTIONARIOS_PERGUNTAS,
-        this.menuSchema.CURRICULUM_CADASTRO_QUESTIONARIOS_RESPOSTAS,
-        this.menuSchema.CURRICULUM_CADASTRO_QUESTIONARIOS_TESTE
+        //this.menuSchema.CURRICULUM_CADASTRO_QUESTIONARIOS_RESPOSTAS,
+        //this.menuSchema.CURRICULUM_CADASTRO_QUESTIONARIOS_TESTE
       ]
     }, {
       name: this.lex.translate("Cadastros"),
