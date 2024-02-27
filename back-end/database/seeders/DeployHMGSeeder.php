@@ -16,7 +16,7 @@ class DeployHMGSeeder extends Seeder
     {
         $this->call([
             //CidadeSeeder::class,
-            //FeriadoSeeder::class,
+            FeriadoSeeder::class,
            // PerfilSeeder::class,
             TipoCapacidadeSeeder::class,
 //            PainelUsuarioSeeder::class,
