@@ -20,7 +20,7 @@ class NomenclaturaSeeder extends Seeder
             "afastamento" => ['single' => "afastamento", 'plural' => "afastamentos", 'female' => false],
             "atividade" => ['single' => "tipo de atividade", 'plural' => "tipos de atividade", 'female' => false],
             "avaliação" => ['single' => "avaliação", 'plural' => "avaliações", 'female' => true],
-            "cadeia de valor" => ['single' => "cadeia de valor", 'plural' => "cadeias de valor", 'female' => true], 
+            "cadeia de valor" => ['single' => "cadeia de valor", 'plural' => "cadeias de valor", 'female' => true],
             "capacidade" => ['single' => "capacidade", 'plural' => "capacidades", 'female' => true],
             "cidade" => ['single' => "cidade", 'plural' => "cidades", 'female' => true],
             "data de distribuição" => ['single' => "data de distribuição", 'plural' => "datas de distribuição", 'female' => true],
@@ -58,17 +58,23 @@ class NomenclaturaSeeder extends Seeder
             "unidade" => ['single' => "unidade executora", 'plural' => "unidades executoras", 'female' => true],
             "usuario" => ['single' => "participante", 'plural' => "participantes", 'female' => false],
         ];
-        $nomenclaturas = array_map(fn($index, $value) => [
-            "id" => $index,
-            "nome" => $index,
-            "plural" => $value["plural"],
-            "feminino" => $value["female"],
-            "singular" => $value["single"]
-        ], array_keys($nomenclaturas), array_values($nomenclaturas));
+
         $entidade = Entidade::where('sigla', env("PETRVS_ENTIDADE"))->first() ?? new Entidade();
-        $entidade->fill([
-            'nomenclatura' => $nomenclaturas,
-        ]);
+
+        foreach ($nomenclaturas as $id => $nomenclatura) {
+            if (!in_array($id, array_column($entidade->nomenclatura ?? [], 'id'))) {
+                $entidade->nomenclatura = array_merge($entidade->nomenclatura ?? [], [
+                    [
+                        "id" => $id,
+                        "nome" => $id,
+                        "plural" => $nomenclatura["plural"],
+                        "feminino" => $nomenclatura["female"],
+                        "singular" => $nomenclatura["single"]
+                    ]
+                ]);
+            }
+        }
+
         $entidade->save();
     }
 }

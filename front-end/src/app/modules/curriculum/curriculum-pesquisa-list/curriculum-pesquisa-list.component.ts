@@ -146,23 +146,21 @@ export class CurriculumPesquisaListComponent extends PageListBase<CurriculumProf
 
   public dynamicButtons(row: any): ToolbarButton[] {
     const btns = [];
-    btns.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhesCurriculum.bind(this) });   
+    btns.push({ label: "Detalhes", icon: "bi bi-eye", color: 'btn-outline-success', onClick: this.showDetalhesCurriculum.bind(this) });
     return btns;
   }
 
-  public async showDetalhesCurriculum(curriculum: CurriculumProfissional){
-    this.go.navigate({route: ['raiox', 'detalhe-pesquisa']},{
-      modal: true,  
+  public showDetalhesCurriculum(curriculum: CurriculumProfissional) {
+    this.go.navigate({ route: ['raiox', 'detalhe-pesquisa'] }, {
       metadata: {
-        //entity: this.entity!,
         curriculum: curriculum
-      },
+      }
     });
   }
 
-  public async showCurriculumDetalhes2(row: any){
+  public async showCurriculumDetalhes2(row: any) {
     console.log(row)
-    this.go.navigate({route: ['raiox','detalhe-pesquisa']}, { modal: true, metadata:{ curriculum : row}});
+    this.go.navigate({ route: ['raiox', 'detalhe-pesquisa'] }, { modal: true, metadata: { curriculum: row } });
   }
 
  
