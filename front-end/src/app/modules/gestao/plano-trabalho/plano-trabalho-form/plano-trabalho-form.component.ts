@@ -132,6 +132,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     const segment = (this.url ? this.url[this.url.length - 1]?.path : "") || "";
     this.action = ["termos"].includes(segment) ? segment : this.action;
     this.buscaGestoresUnidadeExecutora(this.entity?.unidade ?? null);
+    console.log(this.usuario, this.usuarioDao);
   }
 
   public atualizarTcr() {
@@ -187,6 +188,12 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.unidadeDao.getById(unidade.id, ['gestor:id,usuario_id','gestores_substitutos:id,usuario_id','gestores_delegados:id,usuario_id']).then( unidade => {
       this.buscaGestoresUnidadeExecutora(unidade);
     });
+  }
+
+  public podeEditarTextoComplementar(unidade_id : string) : string|undefined {
+    return (unidade_id == this.auth.unidadeGestor()?.id) ? 
+    undefined:
+    'true' ; 
   }
 
   public onProgramaSelect(selected: SelectItem) {
