@@ -2595,14 +2595,6 @@ class In24_2023SeederHomologacao extends Seeder
                 "tipo_capacidade_id" => $this->utilService->uuid("MOD_PENT_LIB_HOMOL"),
             ),
             array(
-                "id" => "2aa35444-71ce-4c26-ba6d-1d5434417df9",
-                "created_at" => $this->timenow,
-                "updated_at" => $this->timenow,
-                "deleted_at" => NULL,
-                "perfil_id" => $this->utilService->uuid("Chefe de Unidade Executora"),
-                "tipo_capacidade_id" => $this->utilService->uuid("MENU_REL_ACESSO"),
-            ),
-            array(
                 "id" => "2c6c0946-f1cc-4902-b500-16c22834220c",
                 "created_at" => $this->timenow,
                 "updated_at" => $this->timenow,
@@ -2673,14 +2665,6 @@ class In24_2023SeederHomologacao extends Seeder
                 "deleted_at" => NULL,
                 "perfil_id" => $this->utilService->uuid("Chefe de Unidade Executora"),
                 "tipo_capacidade_id" => $this->utilService->uuid("MOD_USER"),
-            ),
-            array(
-                "id" => "4528c67c-94a5-483c-b5d3-b01d00c88ac8",
-                "created_at" => $this->timenow,
-                "updated_at" => $this->timenow,
-                "deleted_at" => NULL,
-                "perfil_id" => $this->utilService->uuid("Chefe de Unidade Executora"),
-                "tipo_capacidade_id" => $this->utilService->uuid("MOD_ACESSO"),
             ),
             array(
                 "id" => "48ad6334-df3b-40c2-a808-81c180ea3e1a",

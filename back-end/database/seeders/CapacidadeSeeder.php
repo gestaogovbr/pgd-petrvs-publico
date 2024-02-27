@@ -36,9 +36,6 @@ class CapacidadeSeeder extends Seeder
                 "codigo" => "CTXT_EXEC",
             ),
             array(
-                "codigo" => "MOD_ACESSO",
-            ),
-            array(
                 "codigo" => "MOD_AFT",
             ),
             array(
@@ -152,12 +149,6 @@ class CapacidadeSeeder extends Seeder
             ),
             array(
                 "codigo" => "MENU_GESTAO_ACESSO",
-            ),
-            array(
-                "codigo" => "MENU_REL_ACESSO",
-            ),
-            array(
-                "codigo" => "MOD_ACESSO",
             ),
             array(
                 "codigo" => "MOD_AFT",
@@ -416,9 +407,6 @@ class CapacidadeSeeder extends Seeder
                 "codigo" => "CTXT_GEST",
             ),
             array(
-                "codigo" => "DASH_PRG",
-            ),
-            array(
                 "codigo" => "MENU_CAD_ACESSO",
             ),
             array(
@@ -426,12 +414,6 @@ class CapacidadeSeeder extends Seeder
             ),
             array(
                 "codigo" => "MENU_GESTAO_ACESSO",
-            ),
-            array(
-                "codigo" => "MENU_REL_ACESSO",
-            ),
-            array(
-                "codigo" => "MOD_ACESSO",
             ),
             array(
                 "codigo" => "MOD_AFT",
@@ -483,6 +465,9 @@ class CapacidadeSeeder extends Seeder
             ),
             array(
                 "codigo" => "MOD_ATV_USU_EXT",
+            ),
+            array(
+                "codigo" => "MOD_ATV_DASH",
             ),
             array(
                 "codigo" => "MOD_CADV",

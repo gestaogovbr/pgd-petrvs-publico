@@ -15,6 +15,8 @@ import { NotificacaoService } from './modules/uteis/notificacoes/notificacao.ser
 import { DOCUMENT } from '@angular/common';
 import { SafeUrl } from '@angular/platform-browser';
 import { UnidadeService } from './services/unidade.service';
+import { MenuSuporteComponent } from './modules/suporte/menu-suporte/menu-suporte.component';
+import { Planejamento } from './models/planejamento.model';
 
 export type Contexto = "EXECUCAO" | "GESTAO" | "ADMINISTRADOR" | "DEV" | "PONTO" | "PROJETO" | "RAIOX";
 export type Schema = {
@@ -150,7 +152,7 @@ export class AppComponent {
       TIPOS_MODALIDADES: { name: this.lex.translate("Tipos de Modalidade"), permition: 'MOD_TIPO_MDL', route: ['cadastros', 'tipo-modalidade'], icon: this.entity.getIcon('TipoModalidade') },
       TIPOS_MOTIVOS_AFASTAMENTOS: { name: this.lex.translate("Tipos de Motivo de Afastamento"), permition: 'MOD_TIPO_MTV_AFT', route: ['cadastros', 'tipo-motivo-afastamento'], icon: this.entity.getIcon('TipoMotivoAfastamento') },
       TIPOS_PROCESSOS: { name: this.lex.translate("Tipos de Processo"), permition: 'MOD_TIPO_PROC', route: ['cadastros', 'tipo-processo'], icon: this.entity.getIcon('TipoProcesso') },
-      /*Gestão*/
+      /* Gestão */
       AFASTAMENTOS: { name: this.lex.translate("Afastamentos"), permition: 'MOD_AFT', route: ['gestao', 'afastamento'], icon: this.entity.getIcon('Afastamento') },
       OCORRENCIAS: { name: this.lex.translate("Ocorrencias"), permition: 'MOD_OCOR', route: ['gestao', 'ocorrencia'], icon: this.entity.getIcon('Ocorrencia') },
       CADEIAS_VALORES: { name: this.lex.translate("Cadeias de Valores"), permition: 'MOD_CADV', route: ['gestao', 'cadeia-valor'], icon: this.entity.getIcon('CadeiaValor') },
@@ -171,50 +173,50 @@ export class AppComponent {
       /* Avaliações */
       AVALIACAO_CONSOLIDACAO_PLANO_TRABALHO: { name: this.lex.translate("Consolidações"), permition: 'MOD_PTR_CSLD_AVAL', route: ['avaliacao', 'plano-trabalho', 'consolidacao', 'avaliacao'], icon: this.entity.getIcon('PlanoTrabalho') },
       AVALIACAO_PLANOS_ENTREGAS: { name: this.lex.translate("Planos de Entregas"), permition: 'MOD_PENT_AVAL', route: ['avaliacao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega'), params: { avaliacao: true } },
-      /* CONFIGURAÇÕES */
+      /* Configurações */
       PREFERENCIAS: { name: "Preferências", permition: '', route: ['configuracoes', 'preferencia'], metadata: { root: true, modal: true }, icon: this.entity.getIcon('Preferencia') },
       ENTIDADES: { name: this.lex.translate("Entidades"), permition: 'MOD_CFG_ENTD', route: ['configuracoes', 'entidade'], icon: this.entity.getIcon('Entidade') },
       UNIDADES: { name: this.lex.translate("Unidades"), permition: 'MOD_CFG_UND', route: ['configuracoes', 'unidade'], icon: this.entity.getIcon('Unidade') },
       USUARIOS: { name: this.lex.translate("Usuários"), permition: 'MOD_CFG_USER', route: ['configuracoes', 'usuario'], icon: this.entity.getIcon('Usuario') },
       PERFIS: { name: this.lex.translate("Perfis"), permition: 'MOD_CFG_PERFS', route: ['configuracoes', 'perfil'], icon: this.entity.getIcon('Perfil') },
       SOBRE: { name: this.lex.translate("Sobre"), permition: '', route: ['configuracoes', 'sobre'], icon: "" },
-      /* LOGS */
+      /* Logs */
       ROTINAS_INTEGRACAO: { name: "Rotina de Integração", permition: '', route: ['rotinas', 'integracao'], icon: this.entity.getIcon('Integracao') },
       LOGS_ALTERACOES: { name: "Log das Alterações", permition: '', route: ['logs', 'change'], icon: this.entity.getIcon('Change') },
       LOGS_ERROS: { name: "Log dos Erros", permition: '', route: ['logs', 'error'], icon: this.entity.getIcon('Error') },
       LOGS_TRAFEGOS: { name: "Log do Tráfego", permition: '', route: ['logs', 'traffic'], icon: this.entity.getIcon('Traffic') },
       LOGS_TESTES_EXPEDIENTES: { name: "Teste Expediente", permition: '', route: ['teste'], icon: this.entity.getIcon('Teste') },
       TESTE_CALCULA_DATATEMPO: { name: "Teste calculaDataTempo", permition: '', route: ['teste', 'calcula-tempo'], icon: this.entity.getIcon('Teste') },
-      /* RAIO X - Cadastros*/
-      //CURRICULUM_HOME: { name: "Home RX", permition: '', route: ['raiox', 'home'], icon: "bi bi-toggle-off" },
-      CURRICULUM_CADASTRO_CURSOS: { name: this.lex.translate("Cursos"), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'cadastros', 'curso'], icon: "bi bi-mortarboard-fill" },
-      CURRICULUM_CADASTRO_TIPOS_CURSOS: { name: this.lex.translate("Tipos de Cursos"), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'cadastros', 'tipocurso'], icon: "bi bi-box-seam" },
-      CURRICULUM_CADASTRO_CENTROS_TREINAMENTO: { name: this.lex.translate("Centros de Treinamentos"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros', 'centrotreinamento'], icon: "bi bi-building-fill" },
-      CURRICULUM_CADASTRO_FUNCAO: { name: this.lex.translate("Funções"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros', 'funcao'], icon: "bi bi-check-circle-fill" },
-      CURRICULUM_CADASTRO_CARGOS: { name: this.lex.translate("Cargos"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros', 'cargo'], icon: "bi bi-person-badge" },
-      CURRICULUM_CADASTRO_GRUPOS_ESPECIALIZADOS: { name: this.lex.translate("de Grupos Especializados"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'cadastros', 'grupoespecializado'], icon: "bi bi-check-circle" },
-      CURRICULUM_CADASTRO_MATERIAS: { name: this.lex.translate("Matérias"), permition: 'MOD_RX_EDT_OPO', route: ['raiox', 'cadastros', 'materia'], icon: "bi bi-list-check" },
-      CURRICULUM_CADASTRO_AREAS_ATIVIDADES_EXTERNAS: { name: this.lex.translate("Área da Atividade Externa"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros', 'areaatividadeexterna'], icon: "bi bi-arrows-fullscreen" },
-      CURRICULUM_CADASTRO_AREAS_CONHECIMENTO: { name: this.lex.translate("Áreas de Conhecimento"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros', 'areaconhecimento'], icon: "bi bi-mortarboard" },
-      CURRICULUM_CADASTRO_AREAS_TEMATICAS: { name: this.lex.translate("Áreas Temáticas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros', 'areatematica'], icon: "bi bi-box-arrow-in-down" },
-      CURRICULUM_CADASTRO_CAPACIDADES_TECNICAS: { name: this.lex.translate("Capacidades Técnicas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros', 'capacidadetecnica'], icon: "bi bi-arrows-angle-contract" },
-      CURRICULUM_CADASTRO_QUESTIONARIOS_PERGUNTAS: { name: this.lex.translate("Questionários"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros', 'questionario'], icon: "bi bi-patch-question" },
-      //CURRICULUM_LISTA_QUESTIONARIOS_PERGUNTAS: { name: this.lex.translate("Questionários"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros','questionario'], icon: "bi bi-patch-question" },
-      CURRICULUM_CADASTRO_QUESTIONARIOS_RESPOSTAS: { name: this.lex.translate("Respostas"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros', 'questionario', 'reposta'], icon: "bi bi-list-task" },
-      CURRICULUM_CADASTRO_QUESTIONARIOS_TESTE: { name: this.lex.translate("Teste"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'cadastros', 'questionario', 'teste'], icon: "bi bi-list-task" },
-      /* RAIO X - */
-      CURRICULUM_CADASTRO_PESSOAL: { name: this.lex.translate("Dados Pessoais"), permition: 'MOD_RX_VIS_DPE', route: ['raiox', 'pessoal'], icon: "bi bi-file-person" },
-      CURRICULUM_CADASTRO_PROFISSIONAL: { name: this.lex.translate("Dados Profissionais"), permition: 'MOD_RX_VIS_DPR', route: ['raiox', 'profissional'], icon: "fa fa-briefcase" },
-      CURRICULUM_CADASTRO_ATRIBUTOS: { name: this.lex.translate("Atributos Comportamentais"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'atributos'], icon: "fa fa-brain" },
-      CURRICULUM_CADASTRO_ATRIBUTOS_SOFTSKILLS: { name: this.lex.translate("Soft Skills"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'teste'], icon: "fa fa-brain" },
-      CURRICULUM_CADASTRO_ATRIBUTOS_B5: { name: this.lex.translate("Big Five - B5"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
-      CURRICULUM_CADASTRO_ATRIBUTOS_DASS: { name: this.lex.translate("DASS"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
-      CURRICULUM_CADASTRO_ATRIBUTOS_SRQ20: { name: this.lex.translate("SRQ-20"), permition: 'MOD_RX_VIS_ATR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
-      CURRICULUM_VISUALIZA_OPORTUNIDADES: { name: this.lex.translate("Pesquisa Oportunidades"), permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pessoal'], icon: "bi bi-lightbulb-fill" },
-      CURRICULUM_CADASTRO_OPORTUNIDADES: { name: this.lex.translate("Oportunidades"), permition: 'MOD_RX_EDT_OPO', route: ['raiox', 'pessoal'], icon: "bi bi-lightbulb-fill" },
-      CURRICULUM_VISUALIZA_PESQUISA_USR: { name: "Usuario", permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-search" },
-      CURRICULUM_VISUALIZA_PESQUISA_ADM: { name: "Administrador", permition: 'MOD_RX_VIS_OPO', route: ['raiox', 'pesqadm'], icon: "bi bi-binoculars" },
-      /*PROJETOS*/
+      /* RaioX - Curriculum */
+      CURRICULUM_CADASTRO_PESSOAL: { name: this.lex.translate("Dados Pessoais"), permition: 'MOD_RX_CURR', route: ['raiox', 'pessoal'], icon: "bi bi-file-person" },
+      CURRICULUM_CADASTRO_PROFISSIONAL: { name: this.lex.translate("Dados Profissionais"), permition: 'MOD_RX_CURR', route: ['raiox', 'profissional'], icon: "fa fa-briefcase" },
+      CURRICULUM_CADASTRO_ATRIBUTOS: { name: this.lex.translate("Atributos Comportamentais"), permition: 'MOD_RX_CURR', route: ['raiox', 'atributos'], icon: "fa fa-brain" },
+      CURRICULUM_CADASTRO_ATRIBUTOS_SOFTSKILLS: { name: this.lex.translate("Soft Skills"), permition: 'MOD_RX_CURR', route: ['raiox', 'teste'], icon: "fa fa-brain" },
+      CURRICULUM_CADASTRO_ATRIBUTOS_B5: { name: this.lex.translate("Big Five - B5"), permition: 'MOD_RX_CURR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
+      CURRICULUM_CADASTRO_ATRIBUTOS_DASS: { name: this.lex.translate("DASS"), permition: 'MOD_RX_CURR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
+      CURRICULUM_CADASTRO_ATRIBUTOS_SRQ20: { name: this.lex.translate("SRQ-20"), permition: 'MOD_RX_CURR', route: ['raiox', 'big5'], icon: "fa fa-brain" },
+      CURRICULUM_CADASTRO_ATRIBUTOS_QVT: { name: this.lex.translate("QVT"), permition: 'MOD_RX_CURR', route: ['raiox', 'qvt'], icon: "" },      
+      /* RaioX - Oportunidades */
+      CURRICULUM_OPORTUNIDADES: { name: this.lex.translate("Oportunidades"), permition: 'MOD_RX_OPO', route: ['raiox', 'pessoal'], icon: "bi bi-lightbulb-fill" },
+      /* RaioX - Outros */
+      CURRICULUM_CADASTRO_AREAS_ATIVIDADES_EXTERNAS: { name: this.lex.translate("Áreas de Atividade Externa"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'areaatividadeexterna'], icon: "bi bi-arrows-fullscreen" },
+      CURRICULUM_CADASTRO_AREAS_CONHECIMENTO: { name: this.lex.translate("Áreas de Conhecimento"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'areaconhecimento'], icon: "bi bi-mortarboard" },
+      CURRICULUM_CADASTRO_AREAS_TEMATICAS: { name: this.lex.translate("Áreas Temáticas"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'areatematica'], icon: "bi bi-box-arrow-in-down" },
+      CURRICULUM_CADASTRO_CAPACIDADES_TECNICAS: { name: this.lex.translate("Capacidades Técnicas"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'capacidadetecnica'], icon: "bi bi-arrows-angle-contract" },
+      CURRICULUM_CADASTRO_CARGOS: { name: this.lex.translate("Cargos"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'cargo'], icon: "bi bi-person-badge" },
+      CURRICULUM_CADASTRO_CENTROS_TREINAMENTO: { name: this.lex.translate("Centros de Treinamento"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'centrotreinamento'], icon: "bi bi-building-fill" },
+      CURRICULUM_CADASTRO_CURSOS: { name: this.lex.translate("Cursos"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'curso'], icon: "bi bi-mortarboard-fill" },
+      CURRICULUM_CADASTRO_FUNCAO: { name: this.lex.translate("Funções"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'funcao'], icon: "bi bi-check-circle-fill" },
+      CURRICULUM_CADASTRO_GRUPOS_ESPECIALIZADOS: { name: this.lex.translate("Grupos Especializados"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'grupoespecializado'], icon: "bi bi-check-circle" },
+      CURRICULUM_CADASTRO_MATERIAS: { name: this.lex.translate("Matérias"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'materia'], icon: "bi bi-list-check" },
+      CURRICULUM_CADASTRO_QUESTIONARIOS_PERGUNTAS: { name: this.lex.translate("Questionários"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'questionario'], icon: "bi bi-patch-question" },
+      CURRICULUM_CADASTRO_QUESTIONARIOS_RESPOSTAS: { name: this.lex.translate("Respostas"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'questionario', 'reposta'], icon: "bi bi-list-task" },
+      CURRICULUM_CADASTRO_QUESTIONARIOS_TESTE: { name: this.lex.translate("Testes"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'questionario', 'teste'], icon: "bi bi-list-task" },
+      CURRICULUM_CADASTRO_TIPOS_CURSOS: { name: this.lex.translate("Tipos de Curso"), permition: 'MOD_RX_OUT', route: ['raiox', 'cadastros', 'tipocurso'], icon: "bi bi-box-seam" },
+      CURRICULUM_PESQUISA_ADM: { name: this.lex.translate("Administrador"), permition: 'MOD_RX_OUT', route: ['raiox', 'pesqadm'], icon: "bi bi-binoculars" },      
+      CURRICULUM_PESQUISA_USR: { name: this.lex.translate("Usuário"), permition: 'MOD_RX_OUT', route: ['raiox', 'pesqadm'], icon: "bi bi-search" },
+
+      /* Projetos */
       PAINEL: { name: "Painel", permition: '', route: ['panel'], icon: "" },
       AUDITORIA: { name: "Auditoria", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
     };
@@ -320,7 +322,7 @@ export class AppComponent {
 
     this.menuDev = [{
       name: this.lex.translate("Manutenção"),
-      permition: "DEV_MENU_LOGS_ACESSO",
+      permition: "MENU_DEV_ACESSO",
       id: "navbarDropdownDevManutencao",
       menu: [
         this.menuSchema.ROTINAS_INTEGRACAO,
@@ -328,7 +330,7 @@ export class AppComponent {
       ]
     }, {
       name: this.lex.translate("Logs e Auditorias"),
-      permition: "DEV_MENU_LOGS_ACESSO",
+      permition: "MENU_DEV_ACESSO",
       id: "navbarDropdownDevLogs",
       menu: [
         this.menuSchema.LOGS_ALTERACOES,
@@ -337,7 +339,7 @@ export class AppComponent {
       ]
     }, {
       name: this.lex.translate("Testes"),
-      permition: "DEV_MENU_LOGS_ACESSO",
+      permition: "MENU_DEV_ACESSO",
       id: "navbarDropdownDevTestes",
       menu: [
         this.menuSchema.LOGS_TESTES_EXPEDIENTES,
@@ -375,33 +377,21 @@ export class AppComponent {
         this.menuSchema.CURRICULUM_CADASTRO_PESSOAL,
         this.menuSchema.CURRICULUM_CADASTRO_PROFISSIONAL,
         this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS
-        //this.menuSchema.RXCADASTRO_OPORTUNIDADES
       ].sort(this.orderMenu)
-    },/*{
-      name: this.lex.translate("Atributos Comportamentais"),
-      permition: "",
-      id: "navbarDropdownRXCadastros",
-      menu: [
-        this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS_SOFTSKILLS,
-        this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS_B5,
-        this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS_DASS,
-        this.menuSchema.CURRICULUM_CADASTRO_ATRIBUTOS_SRQ20,
-
-      ].sort(this.orderMenu)
-    },*/{
+    },{
       name: this.lex.translate("Oportunidades"),
       permition: "MENU_RX_OPORTUNIDADES_ACESSO",
       id: "navbarDropdownRXOportunidades",
       menu: [
-        this.menuSchema.CURRICULUM_CADASTRO_OPORTUNIDADES
+        this.menuSchema.CURRICULUM_OPORTUNIDADES
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Pesquisas"),
       permition: "MENU_RX_PESQUISAS_ACESSO",
       id: "navbarDropdownRXPesquisas",
       menu: [
-        this.menuSchema.CURRICULUM_VISUALIZA_PESQUISA1,
-        this.menuSchema.CURRICULUM_VISUALIZA_PESQUISA2
+        this.menuSchema.CURRICULUM_PESQUISA_ADM,
+        this.menuSchema.CURRICULUM_PESQUISA_USR
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Questionários Dinâmicos"),
@@ -409,8 +399,8 @@ export class AppComponent {
       id: "navbarDropdownRXQD",
       menu: [
         this.menuSchema.CURRICULUM_CADASTRO_QUESTIONARIOS_PERGUNTAS,
-        this.menuSchema.CURRICULUM_CADASTRO_QUESTIONARIOS_RESPOSTAS,
-        this.menuSchema.CURRICULUM_CADASTRO_QUESTIONARIOS_TESTE
+        //this.menuSchema.CURRICULUM_CADASTRO_QUESTIONARIOS_RESPOSTAS,
+        //this.menuSchema.CURRICULUM_CADASTRO_QUESTIONARIOS_TESTE
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Cadastros"),
@@ -429,8 +419,9 @@ export class AppComponent {
         this.menuSchema.CURRICULUM_CADASTRO_AREAS_ATIVIDADES_EXTERNAS,
         this.menuSchema.CURRICULUM_CADASTRO_AREAS_TEMATICAS,
         this.menuSchema.CURRICULUM_CADASTRO_CAPACIDADES_TECNICAS,
+        this.menuSchema.CURRICULUM_CADASTRO_GRUPOS_ESPECIALIZADOS,
         "-",
-        this.menuSchema.CURRICULUM_CADASTRO_OPORTUNIDADES
+        this.menuSchema.CURRICULUM_OPORTUNIDADES,        
       ].sort(this.orderMenu)
     }];
 
@@ -558,3 +549,73 @@ export class AppComponent {
   }
 }
 
+
+
+
+/*
+Navegação         Menus                               Capacidade
+--------------------------------------------------------------------------------------
+navGestao         Planejamento                        MENU_GESTAO_ACESSO
+                  Execução                            MENU_GESTAO_ACESSO
+                  Avaliação                           MENU_GESTAO_ACESSO
+                  Gerenciamento                       MENU_CONFIG_ACESSO
+                  Cadastros                           MENU_CAD_ACESSO
+
+navAdministrador  Cadastros                           MENU_CAD_ACESSO
+                  Gerenciamento                       MENU_CONFIG_ACESSO
+
+navDev            Manutenção                          MENU_DEV_ACESSO
+                  Logs e Auditorias                   MENU_DEV_ACESSO
+                  Testes                              MENU_DEV_ACESSO
+
+navPonto                                                                    
+navProjeto        Cadastros                           MENU_CAD_ACESSO
+                  Gerencial                           MENU_CAD_ACESSO
+
+navRaioX          Curriculum                          MENU_RX_CURRICULUM_ACESSO
+                      Dados Pessoais                      MOD_RX_CURR
+                      Dados Profissionais                 MOD_RX_CURR
+                      Atributos Comportamentais           MOD_RX_CURR
+                          QVT                                 MOD_RX_CURR
+                          Big5                                MOD_RX_CURR
+                          SoftSkills                          MOD_RX_CURR
+                          DASS                                MOD_RX_CURR
+                          SRQ20                               MOD_RX_CURR
+                  Oportunidades                       MENU_RX_OPORTUNIDADES_ACESSO
+                      Oportunidades                       MOD_RX_OPO
+                  Pesquisas                           MENU_RX_PESQUISAS_ACESSO
+                      Pesquisa Usuário                    MOD_RX_OUT
+                      Pesquisa Adm                        MOD_RX_OUT
+                  Questionários Dinâmicos             MENU_RX_QUEST_DINAMICOS_ACESSO
+                      Questionário                        MOD_RX_OUT
+                  Cadastros                           MENU_RX_CADASTROS_ACESSO
+                      Áreas de Atividades Externas        MOD_RX_OUT
+                      Áreas de Conhecimento               MOD_RX_OUT
+                      Áreas Temáticas                     MOD_RX_OUT
+                      Capacidades Técnicas                MOD_RX_OUT
+                      Cargos                              MOD_RX_OUT
+                      Centros de Treinamento              MOD_RX_OUT
+                      Cursos                              MOD_RX_OUT
+                      Funções                             MOD_RX_OUT
+                      Grupos Especializados               MOD_RX_OUT
+                      Matérias                            MOD_RX_OUT
+                      Oportunidades                       MOD_RX_OPO
+                      Questionários Perguntas             MOD_RX_OUT
+                      Questionários Respostas             MOD_RX_OUT
+                      Questionários Testes                MOD_RX_OUT  
+                      Tipos de Curso                      MOD_RX_OUT  
+
+PerfiS
+------
+Usuário
+        MENU_RX_CURRICULUM_ACESSO, MENU_RX_OPORTUNIDADES_ACESSO
+        MOD_RX_CURR, MOD_RX_CURR_INCL, MOD_RX_CURR_EDT, MOD_RX_CURR_EXCL, MOD_RX_OPO
+Gerente
+
+Administrador
+        MENU_RX_CURRICULUM_ACESSO, MENU_RX_OPORTUNIDADES_ACESSO,
+        MENU_RX_PESQUISAS_ACESSO, MENU_RX_QUEST_DINAMICOS_ACESSO, MENU_RX_CADASTROS_ACESSO
+        MOD_RX_CURR, MOD_RX_CURR_INCL, MOD_RX_CURR_EDT, MOD_RX_CURR_EXCL 
+        MOD_RX_OPO, MOD_RX_OPO_INCL, MOD_RX_OPO_EDT, MOD_RX_OPO_EXCL
+        MOD_RX_OUT, MOD_RX_OUT_INCL, MOD_RX_OUT_EDT, MOD_RX_OUT_EXCL
+*/

@@ -2880,9 +2880,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const routes = [
-//{ path: '', component: RaioxhomeComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Home Raio-X" } },
-{
+const routes = [{
   path: '',
   component: _home_home_component__WEBPACK_IMPORTED_MODULE_5__.HomeComponent,
   canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_0__.AuthGuard],
@@ -2893,9 +2891,7 @@ const routes = [
   data: {
     title: "Home Raio-X"
   }
-},
-//{ path: 'home', component: RaioxhomeComponent, canActivate: [AuthGuard], data: { title: "Home Raio-X" } },
-{
+}, {
   path: 'home',
   component: _home_home_component__WEBPACK_IMPORTED_MODULE_5__.HomeComponent,
   canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_0__.AuthGuard],
