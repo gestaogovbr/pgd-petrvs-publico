@@ -2,6 +2,7 @@
     <div class="row">
         <div class="row">
             <input-textarea icon="bi bi-textarea-t" label="Nome" [size]="12" [rows]="2" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]=250 required></input-textarea>
+            <!--input-switch [size]="2" labelPosition="top" [control]="form!.controls.integra_okr" label="Integra o OKR?" labelInfo="Somente esses objetivos serão listados no OKR."></input-switch//-->
         </div>
         <div class="row">
             <input-search [size]="6" #eixoTematico [disabled]="form?.controls?.objetivo_pai_id?.value ? 'true' : undefined" controlName="eixo_tematico_id" [dao]="eixoTematicoDao" required ></input-search>
