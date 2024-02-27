@@ -14,6 +14,7 @@ use App\Models\AtividadeTarefa;
 use App\Models\Avaliacao;
 use App\Models\Change;
 use App\Models\Comentario;
+use App\Models\Curriculum;
 use App\Models\Documento;
 use App\Models\DocumentoAssinatura;
 use App\Models\Entidade;
@@ -31,6 +32,7 @@ use App\Models\Projeto;
 use App\Models\ProjetoHistorico;
 use App\Models\ProjetoRecurso;
 use App\Models\ProjetoTarefa;
+use App\Models\QuestionarioResposta;
 use App\Models\NotificacaoConfig;
 use App\Models\StatusJustificativa;
 use App\Traits\MergeRelations;
@@ -123,6 +125,7 @@ class Usuario extends Authenticatable
     // hasOne
     public function gerenciaEntidade() { return $this->hasOne(Entidade::class, 'gestor_id'); }
     public function gerenciaSubstitutaEntidade() { return $this->hasOne(Entidade::class, 'gestor_substituto_id'); }
+    public function curriculum() { return $this->hasOne(Curriculum::class); }
     // hasMany
     public function afastamentos() { return $this->hasMany(Afastamento::class); }
     public function anexos() { return $this->hasMany(Anexo::class); }
@@ -151,6 +154,7 @@ class Usuario extends Authenticatable
     public function unidadesIntegranteAtribuicoes() { return $this->hasManyThrough(UnidadeIntegranteAtribuicao::class, UnidadeIntegrante::class); }
     public function statusHistorico() { return $this->hasMany(StatusJustificativa::class, "usuario_id"); }
     public function documentos() { return $this->hasMany(Documento::class); }
+    public function questionariosRespostas() { return $this->hasMany(QuestionarioResposta::class, "usuario_id"); }
     // belongsTo
     public function perfil() { return $this->belongsTo(Perfil::class); }     //nullable
     // belongsToMany

@@ -8,6 +8,8 @@ import { QuestionarioPerguntaDaoService } from 'src/app/dao/questionario-pergunt
 import { CurriculumProfissional } from 'src/app/models/currriculum-profissional.model';
 import { Curriculum } from 'src/app/models/currriculum.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
+import jspdf from 'jspdf';
+import html2canvas from 'html2canvas';
 
 @Component({
   selector: 'curriculum-pesquisa-list-usuario',
@@ -22,13 +24,52 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: CurriculumProfissional | undefined) { super.entity = value; } get entity(): CurriculumProfissional | undefined { return super.entity; }
 
+  public curriculum?: any;
+
   public get items(): CurriculumProfissional[] {
-    return [this.gridControl.value];
+    return [this.curriculum]
   }
 
   public getRow(row: any) {
-    console.log(row);
+    console.log('get row', row);
   }
+
+  constructor(public injector: Injector) {
+    super(injector);
+    this.modalWidth = 1350;
+  }
+
+  public ngOnInit() {
+    super.ngOnInit();
+    this.curriculum = this.metadata?.curriculum;
+  }
+
+  public convetToPDF()
+  {
+      const data = document.getElementById('contentToConvert');
+      html2canvas(data!).then(canvas => {
+      // Few necessary setting options
+      const imgWidth = 208;
+      const pageHeight = 295;
+      const imgHeight = canvas.height * imgWidth / canvas.width;
+      const heightLeft = imgHeight;
+
+      const contentDataURL = canvas.toDataURL('image/png')
+      const pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF
+      const position = 0;
+      /*pdf.setProperties({
+        title:'Dados do usuario',
+        subject:'Curriculum - Petrvs',
+        author:'Petrvs', 
+      })*/
+      pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight)
+      const blob = pdf.output('blob');
+      window.open(URL.createObjectURL(blob));
+      //pdf.output('dataurlnewwindow')
+      pdf.save('curriciculum_'+ this.auth.usuario?.nome +'_.pdf'); // Generated PDF
+      });
+  }
+
 }
 /* @Input() set curriculumId(value: string | undefined) {
     if(this._curriculumId != value) {
