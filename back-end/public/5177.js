@@ -1746,6 +1746,7 @@ class PlanoEntregaFormEntregaComponent extends src_app_modules_base_page_form_ba
       yield _this.cadeiaValor?.loadSearch(_this.cadeiaValorId);
       let unidade = _this.unidadeId?.length ? yield _this.unidadeDao.getById(_this.unidadeId) : null;
       _this.idsUnidadesAscendentes = unidade?.path?.split('/').slice(1) || [];
+      if (unidade) _this.idsUnidadesAscendentes.push(unidade.id);
       form.patchValue(_this.util.fillForm(formValue, entityWithout));
       form.controls.meta.setValue(_this.planoEntregaService.getValor(entity.meta));
       form.controls.realizado.setValue(_this.planoEntregaService.getValor(entity.realizado));
