@@ -132,7 +132,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     const segment = (this.url ? this.url[this.url.length - 1]?.path : "") || "";
     this.action = ["termos"].includes(segment) ? segment : this.action;
     this.buscaGestoresUnidadeExecutora(this.entity?.unidade ?? null);
-    console.log(this.usuario, this.usuarioDao);
   }
 
   public atualizarTcr() {
