@@ -189,6 +189,12 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     });
   }
 
+  public podeEditarTextoComplementar(unidade_id : string) : string|undefined {
+    return (unidade_id == this.auth.unidadeGestor()?.id) ? 
+    undefined:
+    'true' ; 
+  }
+
   public onProgramaSelect(selected: SelectItem) {
     let programa = selected.entity as Programa;
     this.entity!.programa_id = programa.id;
