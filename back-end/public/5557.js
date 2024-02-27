@@ -1016,24 +1016,30 @@ class AtividadeListGridComponent extends _atividade_list_base__WEBPACK_IMPORTED_
   onColumnEtiquetasEdit(row) {
     var _this3 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      if (!_this3.etiquetasAscendentes.filter(e => e.data == row.unidade.id).length) {
-        let ascendentes = yield _this3.carregaEtiquetasUnidadesAscendentes(row.unidade);
+      if (!_this3.etiquetasAscendentes.filter(e => e.data == row.unidade_id).length) {
+        _this3.loading = true;
+        let ascendentes = [];
+        try {
+          ascendentes = yield _this3.carregaEtiquetasUnidadesAscendentes(row.unidade);
+        } finally {
+          _this3.loading = false;
+        }
         _this3.etiquetasAscendentes.push(...ascendentes);
       }
       _this3.formEdit.controls.etiquetas.setValue(row.etiquetas);
       _this3.formEdit.controls.etiqueta.setValue(null);
       _this3.etiquetas = _this3.util.merge(row.tipo_atividade?.etiquetas, row.unidade?.etiquetas, (a, b) => a.key == b.key);
       _this3.etiquetas = _this3.util.merge(_this3.etiquetas, _this3.auth.usuario.config?.etiquetas, (a, b) => a.key == b.key);
-      _this3.etiquetas = _this3.util.merge(_this3.etiquetas, _this3.etiquetasAscendentes.filter(x => x.data == row.unidade.id), (a, b) => a.key == b.key);
+      _this3.etiquetas = _this3.util.merge(_this3.etiquetas, _this3.etiquetasAscendentes.filter(x => x.data == row.unidade_id), (a, b) => a.key == b.key);
     })();
   }
   carregaEtiquetasUnidadesAscendentes(unidadeAtual) {
     var _this4 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let etiquetasUnidades = [];
-      let path = unidadeAtual.path.split("/");
+      let path = unidadeAtual.path.split("/").filter(x => x?.length);
       let unidades = yield _this4.unidadeDao.query({
-        where: ["id", "in", path]
+        where: [["id", "in", path]]
       }).asPromise();
       unidades.forEach(un => {
         etiquetasUnidades = _this4.util.merge(etiquetasUnidades, un.etiquetas, (a, b) => a.key == b.key);

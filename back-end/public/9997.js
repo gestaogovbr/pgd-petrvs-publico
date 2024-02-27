@@ -702,14 +702,14 @@ class PlanoTrabalhoListComponent extends src_app_modules_base_page_list_base__WE
               - Após alterado, e no caso se exija assinaturas no TCR, o Plano de Trabalho precisa ser repactuado (novo TCR), e o plano retorna ao status 'AGUARDANDO_ASSINATURA';
               - A alteração não pode apresentar período conflitante com outro plano já existente para a mesma Unidade Executora e mesmo participante, ou o usuário logado possuir a capacidade MOD_PTR_INTSC_DATA (RN_PTR_AA)
             */
-            if (planoTrabalho._metadata?.atribuicoesParticipante.gestor) {
+            if (usuarioEhParticipante) {
+              validoTabela1 = planoTrabalho._metadata?.usuarioEhParticipanteHabilitado;
+            } else if (planoTrabalho._metadata?.atribuicoesParticipante.gestor) {
               validoTabela1 = gestorUnidadeSuperior;
             } else if (planoTrabalho._metadata?.atribuicoesParticipante.gestorSubstituto) {
               validoTabela1 = gestorUnidadeSuperior || planoTrabalho._metadata?.atribuicoesLogado.gestor;
             } else if (planoTrabalho._metadata?.atribuicoesParticipante.gestorDelegado) {
               validoTabela1 = gestorLogado;
-            } else if (usuarioEhParticipante) {
-              validoTabela1 = planoTrabalho._metadata?.usuarioEhParticipanteHabilitado;
             } else {
               validoTabela1 = gestorLogado || planoTrabalho._metadata?.atribuicoesLogado.gestorDelegado;
             }

@@ -205,6 +205,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
     await this.cadeiaValor?.loadSearch(this.cadeiaValorId);
     let unidade = this.unidadeId?.length ? (await this.unidadeDao.getById(this.unidadeId!) as Unidade) : null;
     this.idsUnidadesAscendentes = unidade?.path?.split('/').slice(1) || [];
+    if(unidade) this.idsUnidadesAscendentes.push(unidade.id);
     form.patchValue(this.util.fillForm(formValue, entityWithout));
     form.controls.meta.setValue(this.planoEntregaService.getValor(entity.meta));
     form.controls.realizado.setValue(this.planoEntregaService.getValor(entity.realizado));
@@ -393,7 +394,7 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
   public async carregaEtiquetasUnidadesAscendentes(unidadeAtual: Unidade) {
     let etiquetasUnidades: LookupItem[] = [];
     let path = unidadeAtual.path.split("/");
-    let unidades = await this.unidadeDao.query({ where: ["id", "in", path] }).asPromise();
+    let unidades = await this.unidadeDao.query({ where: [["id", "in", path]] }).asPromise();
     unidades.forEach(un => {
       etiquetasUnidades = this.util.merge(etiquetasUnidades, un.etiquetas, (a, b) => a.key == b.key);
     });

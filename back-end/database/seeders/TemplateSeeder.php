@@ -1,6 +1,7 @@
 <?php
 
 namespace Database\Seeders;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
 use App\Models\Entidade;
@@ -35,18 +36,15 @@ class TemplateSeeder extends Seeder
       ]
     ];
 
-    foreach($templates as $t) {
-      $template = new Template();
-      $template->fill([
-          'codigo'=> $t['codigo'],
-          'numero'=> DB::select("CALL sequence_template_numero()")[0]->number,
-          'especie'=> $t['especie'],
-          'titulo'=> $t['titulo'],
-          'conteudo'=> $t['conteudo'],
-          'dataset'=> $t['dataset'],
-          'entidade_id'=> $entidade_id
+    foreach ($templates as $t) {
+      Template::firstOrCreate(['codigo' => $t['codigo']], [
+        'numero' => DB::select("CALL sequence_template_numero()")[0]->number,
+        'especie' => $t['especie'],
+        'titulo' => $t['titulo'],
+        'conteudo' => $t['conteudo'],
+        'dataset' => $t['dataset'],
+        'entidade_id' => $entidade_id
       ]);
-      $template->save();
     }
 
   }

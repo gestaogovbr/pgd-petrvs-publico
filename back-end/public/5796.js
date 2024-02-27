@@ -660,8 +660,10 @@ class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends src_app_modules_base_p
     /* Inicializações */
     this.join = ["avaliacao", "plano_trabalho:id" // "planoTrabalho.unidade:id,sigla,nome", "planoTrabalho.unidade.gestor:id,unidade_id,usuario_id", "planoTrabalho.unidade.gestorSubstituto:id,unidade_id,usuario_id", "planoTrabalho.tipoModalidade:id,nome", "planoTrabalho.usuario:id,nome,apelido,url_foto"
     ];
+
     this.extraJoin = ["avaliacao.tipoAvaliacao.notas", "planoTrabalho.unidade:id,sigla,nome", "planoTrabalho.unidade.gestor:id,unidade_id,usuario_id", "planoTrabalho.unidade.gestoresSubstitutos:id,unidade_id,usuario_id", "planoTrabalho.tipoModalidade:id,nome", "planoTrabalho.usuario:id,nome,apelido,foto_perfil,url_foto" //id,nome,apelido,url_foto,foto_perfil
     ];
+
     this.groupBy = [{
       field: "plano_trabalho.unidade.sigla",
       label: this.lex.translate("Unidade")
@@ -1787,7 +1789,7 @@ class PlanoTrabalhoConsolidacaoFormComponent extends src_app_modules_base_page_f
       let etiquetasUnidades = [];
       let path = unidadeAtual.path.split("/");
       let unidades = yield _this8.unidadeDao.query({
-        where: ["id", "in", path]
+        where: [["id", "in", path]]
       }).asPromise();
       unidades.forEach(un => {
         etiquetasUnidades = _this8.util.merge(etiquetasUnidades, un.etiquetas, (a, b) => a.key == b.key);
@@ -2561,6 +2563,9 @@ class PlanoTrabalhoConsolidacaoListComponent extends src_app_modules_base_page_f
   isDisabled(row) {
     return row && row.status != "INCLUIDO" || this.entity?.status != "ATIVO";
   }
+  podeInserir() {
+    return this.auth.hasPermissionTo("MOD_PTR_CSLD_INCL");
+  }
   dynamicButtons(row) {
     let result = [];
     let consolidacao = row;
@@ -2692,7 +2697,7 @@ class PlanoTrabalhoConsolidacaoListComponent extends src_app_modules_base_page_f
         const _r7 = _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵreference"](16);
         const _r9 = _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵreference"](19);
         const _r11 = _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵreference"](22);
-        _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("items", ctx.items)("form", ctx.form)("hasDelete", true)("minHeight", 0)("add", ctx.addConsolidacao.bind(ctx))("hasAdd", !ctx.isDisabled())("hasEdit", false)("hasDelete", false);
+        _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("items", ctx.items)("form", ctx.form)("hasDelete", true)("minHeight", 0)("add", ctx.addConsolidacao.bind(ctx))("hasAdd", ctx.podeInserir())("hasEdit", false)("hasDelete", false);
         _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](3);
         _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵtextInterpolate1"]("", ctx.lex.translate("Consolida\u00E7\u00F5es"), " ");
         _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](3);
@@ -3151,6 +3156,7 @@ class PlanoTrabalhoFormTermoComponent extends src_app_modules_base_page_form_bas
       }*/
     });
   }
+
   get formaContagemCargaHoraria() {
     const forma = this.form?.controls.forma_contagem_carga_horaria?.value || "DIA";
     return forma == "DIA" ? "day" : forma == "SEMANA" ? "week" : "mouth";
@@ -3427,11 +3433,11 @@ function PlanoTrabalhoFormComponent_tab_22_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_29__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_29__["ɵɵproperty"]("title", "Texto complementar da " + ctx_r8.lex.translate("unidade"));
     _angular_core__WEBPACK_IMPORTED_MODULE_29__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_29__["ɵɵproperty"]("size", 12)("label", "Editar texto complementar " + ctx_r8.lex.translate("na unidade"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_29__["ɵɵproperty"]("disabled", ctx_r8.podeEditarTextoComplementar(ctx_r8.form.controls.unidade_id.value))("size", 12)("label", "Editar texto complementar " + ctx_r8.lex.translate("na unidade"));
     _angular_core__WEBPACK_IMPORTED_MODULE_29__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_29__["ɵɵproperty"]("disabled", ctx_r8.form.controls.editar_texto_complementar_unidade.value ? undefined : "true")("dataset", ctx_r8.planoDataset);
     _angular_core__WEBPACK_IMPORTED_MODULE_29__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_29__["ɵɵproperty"]("size", 12)("label", "Editar texto complementar " + ctx_r8.lex.translate("do usu\u00E1rio"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_29__["ɵɵproperty"]("disabled", ctx_r8.podeEditarTextoComplementar(ctx_r8.form.controls.unidade_id.value))("size", 12)("label", "Editar texto complementar " + ctx_r8.lex.translate("do usu\u00E1rio"));
     _angular_core__WEBPACK_IMPORTED_MODULE_29__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_29__["ɵɵproperty"]("disabled", ctx_r8.form.controls.editar_texto_complementar_usuario.value ? undefined : "true")("dataset", ctx_r8.planoDataset);
   }
@@ -3607,6 +3613,9 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
       this.buscaGestoresUnidadeExecutora(unidade);
     });
   }
+  podeEditarTextoComplementar(unidade_id) {
+    return unidade_id == this.auth.unidadeGestor()?.id ? undefined : 'true';
+  }
   onProgramaSelect(selected) {
     let programa = selected.entity;
     this.entity.programa_id = programa.id;
@@ -3621,7 +3630,7 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
     var _this = this;
     this.form.controls.usuario_texto_complementar.setValue(selected.entity?.texto_complementar_plano || "");
     if (!this.form?.controls.unidade_id.value) {
-      selected.entity.unidades.every( /*#__PURE__*/function () {
+      selected.entity.unidades?.every( /*#__PURE__*/function () {
         var _ref2 = (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (unidade) {
           if (selected.entity.lotacao.unidade_id == unidade.id) {
             if (!_this.form?.controls.programa_id.value) {
@@ -3749,6 +3758,7 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
         _this4.atualizarTcr();
         /* Confirma dados do documento */
         _this4.documentos?.saveData();
+        _this4.submitting = true;
         _this4.entity.documentos = _this4.entity.documentos.filter(documento => {
           return ["ADD", "EDIT", "DELETE"].includes(documento._status || "");
         });
@@ -3870,7 +3880,7 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
     features: [_angular_core__WEBPACK_IMPORTED_MODULE_29__["ɵɵInheritDefinitionFeature"]],
     decls: 24,
     vars: 35,
-    consts: [["initialFocus", "plano_entrega_id", 3, "form", "disabled", "noButtons", "submit", "cancel"], ["display", "", "right", "", 3, "hidden", "title", "select"], ["tabs", ""], ["key", "DADOS", "label", "Dados"], [1, "row"], [1, "col-md-12"], ["required", "", "controlName", "usuario_id", 3, "size", "disabled", "dao", "join", "select"], ["usuario", ""], ["required", "", "controlName", "unidade_id", 3, "size", "disabled", "dao", "select"], ["unidade", ""], ["icon", "bi bi-file-bar-graph", "required", "", "controlName", "programa_id", 3, "size", "label", "disabled", "join", "dao", "select"], ["programa", ""], ["label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio", "required", "", 3, "size", "control", "labelInfo", "change"], ["label", "Final", "icon", "bi bi-calendar-date", "controlName", "data_fim", "required", "", 3, "size", "control", "labelInfo", "change"], ["controlName", "tipo_modalidade_id", "required", "", 3, "size", "dao"], ["tipoModalidade", ""], [4, "ngIf"], [3, "title"], ["type", "warning", 3, "message", 4, "ngIf"], ["key", "MENSAGENS", 3, "label", 4, "ngIf"], ["key", "TERMO", 3, "label", 4, "ngIf"], ["label", "Carga Hor\u00E1ria", "icon", "bi bi-hourglass-split", "controlName", "carga_horaria", "labelInfo", "Carga hor\u00E1ria do usu\u00E1rio (M\u00E1x.: di\u00E1ria 24 horas; semana 24*5=240 horas; mensal 24*20=480 horas)", "required", "", 3, "size", "unit", "control", "unitChange", "change"], ["onlyHours", "", "disabled", "", "label", "Horas Totais", "icon", "bi bi-clock", "controlName", "tempo_total", "labelInfo", "Horas \u00FAteis de trabalho no per\u00EDodo de vig\u00EAncia considerando a carga hor\u00E1ria, feriados e fins de semana", 3, "size", "control"], ["onlyHours", "", "disabled", "", "label", "Horas Parciais", "icon", "bi bi-clock", "controlName", "tempo_proporcional", "labelInfo", "Total de horas menos os afastamentos.", 3, "size", "control"], ["title", "C\u00E1lculos das horas totais", "collapse", "", 4, "ngIf"], ["title", "C\u00E1lculos das horas parciais", "collapse", "", 4, "ngIf"], ["title", "C\u00E1lculos das horas totais", "collapse", ""], [3, "efemerides", "partial"], ["title", "C\u00E1lculos das horas parciais", "collapse", ""], [3, "efemerides"], ["type", "warning", 3, "message"], ["noPersist", "", 3, "disabled", "entity"], ["key", "MENSAGENS", 3, "label"], ["controlName", "editar_texto_complementar_unidade", "scale", "small", "labelPosition", "right", 3, "size", "label"], ["controlName", "unidade_texto_complementar", 3, "disabled", "dataset"], ["title", "Texto complementar do usuario"], ["controlName", "editar_texto_complementar_usuario", "scale", "small", "labelPosition", "right", 3, "size", "label"], ["controlName", "usuario_texto_complementar", 3, "disabled", "dataset"], ["key", "TERMO", 3, "label"], ["clss", "row"], ["noPersist", "", "especie", "TCR", 3, "entity", "disabled", "cdRef", "needSign", "extraTags", "editingId", "datasource", "template"], ["documentos", ""]],
+    consts: [["initialFocus", "plano_entrega_id", 3, "form", "disabled", "noButtons", "submit", "cancel"], ["display", "", "right", "", 3, "hidden", "title", "select"], ["tabs", ""], ["key", "DADOS", "label", "Dados"], [1, "row"], [1, "col-md-12"], ["required", "", "controlName", "usuario_id", 3, "size", "disabled", "dao", "join", "select"], ["usuario", ""], ["required", "", "controlName", "unidade_id", 3, "size", "disabled", "dao", "select"], ["unidade", ""], ["icon", "bi bi-file-bar-graph", "required", "", "controlName", "programa_id", 3, "size", "label", "disabled", "join", "dao", "select"], ["programa", ""], ["label", "In\u00EDcio", "icon", "bi bi-calendar-date", "controlName", "data_inicio", "required", "", 3, "size", "control", "labelInfo", "change"], ["label", "Final", "icon", "bi bi-calendar-date", "controlName", "data_fim", "required", "", 3, "size", "control", "labelInfo", "change"], ["controlName", "tipo_modalidade_id", "required", "", 3, "size", "dao"], ["tipoModalidade", ""], [4, "ngIf"], [3, "title"], ["type", "warning", 3, "message", 4, "ngIf"], ["key", "MENSAGENS", 3, "label", 4, "ngIf"], ["key", "TERMO", 3, "label", 4, "ngIf"], ["label", "Carga Hor\u00E1ria", "icon", "bi bi-hourglass-split", "controlName", "carga_horaria", "labelInfo", "Carga hor\u00E1ria do usu\u00E1rio (M\u00E1x.: di\u00E1ria 24 horas; semana 24*5=240 horas; mensal 24*20=480 horas)", "required", "", 3, "size", "unit", "control", "unitChange", "change"], ["onlyHours", "", "disabled", "", "label", "Horas Totais", "icon", "bi bi-clock", "controlName", "tempo_total", "labelInfo", "Horas \u00FAteis de trabalho no per\u00EDodo de vig\u00EAncia considerando a carga hor\u00E1ria, feriados e fins de semana", 3, "size", "control"], ["onlyHours", "", "disabled", "", "label", "Horas Parciais", "icon", "bi bi-clock", "controlName", "tempo_proporcional", "labelInfo", "Total de horas menos os afastamentos.", 3, "size", "control"], ["title", "C\u00E1lculos das horas totais", "collapse", "", 4, "ngIf"], ["title", "C\u00E1lculos das horas parciais", "collapse", "", 4, "ngIf"], ["title", "C\u00E1lculos das horas totais", "collapse", ""], [3, "efemerides", "partial"], ["title", "C\u00E1lculos das horas parciais", "collapse", ""], [3, "efemerides"], ["type", "warning", 3, "message"], ["noPersist", "", 3, "disabled", "entity"], ["key", "MENSAGENS", 3, "label"], ["controlName", "editar_texto_complementar_unidade", "scale", "small", "labelPosition", "right", 3, "disabled", "size", "label"], ["controlName", "unidade_texto_complementar", 3, "disabled", "dataset"], ["title", "Texto complementar do usuario"], ["controlName", "editar_texto_complementar_usuario", "scale", "small", "labelPosition", "right", 3, "disabled", "size", "label"], ["controlName", "usuario_texto_complementar", 3, "disabled", "dataset"], ["key", "TERMO", 3, "label"], ["clss", "row"], ["noPersist", "", "especie", "TCR", 3, "entity", "disabled", "cdRef", "needSign", "extraTags", "editingId", "datasource", "template"], ["documentos", ""]],
     template: function PlanoTrabalhoFormComponent_Template(rf, ctx) {
       if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_29__["ɵɵelementStart"](0, "editable-form", 0);
@@ -3912,7 +3922,7 @@ class PlanoTrabalhoFormComponent extends src_app_modules_base_page_form_base__WE
         _angular_core__WEBPACK_IMPORTED_MODULE_29__["ɵɵtemplate"](20, PlanoTrabalhoFormComponent_top_alert_20_Template, 1, 1, "top-alert", 18);
         _angular_core__WEBPACK_IMPORTED_MODULE_29__["ɵɵtemplate"](21, PlanoTrabalhoFormComponent_div_21_Template, 2, 2, "div", 16);
         _angular_core__WEBPACK_IMPORTED_MODULE_29__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_29__["ɵɵtemplate"](22, PlanoTrabalhoFormComponent_tab_22_Template, 7, 10, "tab", 19);
+        _angular_core__WEBPACK_IMPORTED_MODULE_29__["ɵɵtemplate"](22, PlanoTrabalhoFormComponent_tab_22_Template, 7, 12, "tab", 19);
         _angular_core__WEBPACK_IMPORTED_MODULE_29__["ɵɵtemplate"](23, PlanoTrabalhoFormComponent_tab_23_Template, 4, 9, "tab", 20);
         _angular_core__WEBPACK_IMPORTED_MODULE_29__["ɵɵelementEnd"]()();
       }
@@ -4623,6 +4633,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
         if (['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'].includes(this.form?.controls.origem.value) && !control.value) result = "Obrigatório!";
         if (!!this.entity?.entregas?.filter(e => !!e.plano_entrega_entrega_id && e.id != this.grid?.editing?.id).find(x => x.plano_entrega_entrega_id == control.value)) result = "Esta entrega está em duplicidade!"; /* (*2) */
       }
+
       return result;
     };
     this.dao = injector.get(src_app_dao_plano_trabalho_entrega_dao_service__WEBPACK_IMPORTED_MODULE_6__.PlanoTrabalhoEntregaDaoService);
@@ -4883,6 +4894,7 @@ class PlanoTrabalhoListEntregaComponent extends src_app_modules_base_page_frame_
       }*/
     })();
   }
+
   onPlanoEntregaChange(event) {
     let planoEntrega = this.planoEntrega?.selectedEntity;
     this.carregarEntregas(planoEntrega);

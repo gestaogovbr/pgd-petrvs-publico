@@ -163,6 +163,11 @@ export class PlanoTrabalhoConsolidacaoListComponent extends PageFrameBase {
     return (row && row.status != "INCLUIDO") || this.entity?.status != "ATIVO";
   }
 
+  podeInserir(){
+    return this.auth.hasPermissionTo("MOD_PTR_CSLD_INCL")
+  }
+  
+
   public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let consolidacao: PlanoTrabalhoConsolidacao = row as PlanoTrabalhoConsolidacao;

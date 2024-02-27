@@ -522,7 +522,7 @@ function UnidadeIntegranteComponent_ng_template_17_Template(rf, ctx) {
   }
   if (rf & 2) {
     const ctx_r13 = _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("size", 12)("disabled", !ctx_r13.auth.hasPermissionTo("MOD_CFG_USER_PERFIL") ? "true" : undefined)("label", ctx_r13.lex.translate("Perfil"))("dao", ctx_r13.perfilDao);
+    _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("size", 12)("label", ctx_r13.lex.translate("Perfil"))("dao", ctx_r13.perfilDao);
   }
 }
 class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__WEBPACK_IMPORTED_MODULE_5__.PageFrameBase {
@@ -609,7 +609,7 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
           yield _this2.integranteDao.carregarIntegrantes(entity.id, "").then(resposta => integrantes = resposta.integrantes.filter(x => x.atribuicoes?.length > 0));
           integrantes.forEach(integrante => usuarioIds.push(integrante.id));
           _this2.perfis = yield _this2.usuarioDao.query({
-            where: ["id", "in", usuarioIds]
+            where: [["id", "in", usuarioIds]]
           }).asPromise();
         } finally {
           _this2.loading = false;
@@ -659,7 +659,9 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
   carregarIntegrante(form, row) {
     var _this3 = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      let usuario = _this3.perfis.find(p => p.id == row.id);
       form.controls.usuario_id.setValue(_this3.grid?.adding ? row.usuario_id : row.id);
+      form.controls.perfil_id.setValue(usuario?.perfil_id);
       form.controls.atribuicoes.setValue(_this3.integranteService.converterAtribuicoes(row.atribuicoes));
       form.controls.atribuicao.setValue("");
     })();
@@ -797,7 +799,7 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
           _this6.loading = false;
         }
       } else {
-        yield _this6.dialog.alert("IMPOSSÍVEL INCLUIR/ALTERAR O SERVIDOR !", error);
+        yield _this6.dialog.alert("Impossível incluir/alterar o servidor!", error);
       }
       return undefined;
     })();
@@ -827,7 +829,7 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
     features: [_angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵInheritDefinitionFeature"]],
     decls: 20,
     vars: 21,
-    consts: [["editable", "", 3, "items", "minHeight", "form", "hasDelete", "add", "load", "remove", "save"], ["grid", ""], [4, "ngIf"], [3, "title", "template", "editTemplate", "maxWidth"], ["columnUsuario", ""], ["editUsuario", ""], ["columnAtribuicoes", ""], ["editAtribuicoes", ""], ["columnPerfil", ""], ["editPerfil", ""], ["type", "options"], [1, "d-flex"], [1, "ms-3"], [3, "url", "size", "hint"], [1, "flex-fill", "ms-3"], ["label", "", "icon", "", "controlName", "usuario_id", 3, "disabled", "size", "dao"], ["usuario", ""], [4, "ngFor", "ngForOf"], [3, "color", "icon", "label"], ["controlName", "atribuicoes", 3, "size", "addItemHandle", "deleteItemHandle"], ["label", "", "icon", "fas fa-sign-out-alt", "controlName", "atribuicao", 3, "size", "items"], ["color", "gray", 3, "label"], ["controlName", "perfil_id", "required", "", 3, "size", "disabled", "label", "dao"]],
+    consts: [["editable", "", 3, "items", "minHeight", "form", "hasDelete", "add", "load", "remove", "save"], ["grid", ""], [4, "ngIf"], [3, "title", "template", "editTemplate", "maxWidth"], ["columnUsuario", ""], ["editUsuario", ""], ["columnAtribuicoes", ""], ["editAtribuicoes", ""], ["columnPerfil", ""], ["editPerfil", ""], ["type", "options"], [1, "d-flex"], [1, "ms-3"], [3, "url", "size", "hint"], [1, "flex-fill", "ms-3"], ["label", "", "icon", "", "controlName", "usuario_id", 3, "disabled", "size", "dao"], ["usuario", ""], [4, "ngFor", "ngForOf"], [3, "color", "icon", "label"], ["controlName", "atribuicoes", 3, "size", "addItemHandle", "deleteItemHandle"], ["label", "", "icon", "fas fa-sign-out-alt", "controlName", "atribuicao", 3, "size", "items"], ["color", "gray", 3, "label"], ["controlName", "perfil_id", "required", "", 3, "size", "label", "dao"]],
     template: function UnidadeIntegranteComponent_Template(rf, ctx) {
       if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵelementStart"](0, "grid", 0, 1);
@@ -842,7 +844,7 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
         _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵelementStart"](14, "column", 3);
         _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵtemplate"](15, UnidadeIntegranteComponent_ng_template_15_Template, 2, 1, "ng-template", null, 8, _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵtemplateRefExtractor"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵtemplate"](17, UnidadeIntegranteComponent_ng_template_17_Template, 1, 4, "ng-template", null, 9, _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵtemplateRefExtractor"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵtemplate"](17, UnidadeIntegranteComponent_ng_template_17_Template, 1, 3, "ng-template", null, 9, _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵtemplateRefExtractor"]);
         _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵelement"](19, "column", 10);
         _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵelementEnd"]()();
@@ -862,7 +864,7 @@ class UnidadeIntegranteComponent extends src_app_modules_base_page_frame_base__W
         _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](5);
         _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("title", ctx.lex.translate("Atribui\u00E7\u00F5es"))("template", _r6)("editTemplate", _r8)("maxWidth", 200);
         _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵadvance"](5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("title", ctx.lex.translate("Perfil"))("template", _r10)("editTemplate", _r12)("maxWidth", 300);
+        _angular_core__WEBPACK_IMPORTED_MODULE_15__["ɵɵproperty"]("title", ctx.lex.translate("Perfil"))("template", _r10)("editTemplate", ctx.auth.hasPermissionTo("MOD_CFG_USER_PERFIL") ? _r12 : _r10)("maxWidth", 300);
       }
     },
     dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_16__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_16__.NgIf, src_app_components_grid_grid_component__WEBPACK_IMPORTED_MODULE_1__.GridComponent, _components_grid_columns_columns_component__WEBPACK_IMPORTED_MODULE_8__.ColumnsComponent, _components_grid_column_column_component__WEBPACK_IMPORTED_MODULE_9__.ColumnComponent, _components_input_input_search_input_search_component__WEBPACK_IMPORTED_MODULE_10__.InputSearchComponent, _components_input_input_select_input_select_component__WEBPACK_IMPORTED_MODULE_11__.InputSelectComponent, _components_input_input_multiselect_input_multiselect_component__WEBPACK_IMPORTED_MODULE_12__.InputMultiselectComponent, _components_badge_badge_component__WEBPACK_IMPORTED_MODULE_13__.BadgeComponent, _components_profile_picture_profile_picture_component__WEBPACK_IMPORTED_MODULE_14__.ProfilePictureComponent],
