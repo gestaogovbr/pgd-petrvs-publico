@@ -27,7 +27,8 @@ const routes: Routes = [
   { path: 'disc', component: CurriculumAtributosdiscFormComponent, canActivate: [AuthGuard], data: { title: "" } },
   { path: 'dass', component: CurriculumAtributosDassFormComponent, canActivate: [AuthGuard], data: { title: "" } },
   { path: 'dass', component: CurriculumAtributosQvtFormComponent, canActivate: [AuthGuard], data: { title: "" } },
-  { path: 'pesquisa', component: CurriculumPesquisaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Pesquisa" } },
+  //{ path: 'pesquisa', component: CurriculumPesquisaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Pesquisa" } },
+  { path: 'pesqadm', component: CurriculumPesquisaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Pesquisa" } },
   { path: 'detalhe-pesquisa', component: CurriculumPesquisaListUsuarioComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Currículo", modal: true}},
   { path: 'cadastros',loadChildren: () => import('../cadastros/curriculum/curriculum-cadastros.module').then(m => m.CurriculumCadastrosModule), canActivate: [AuthGuard] },
 ];

@@ -2,10 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
-use Database\Seeders\BulkSeeeder;
-
 use App\Models\Capacidade;
 use App\Models\Perfil;
 use App\Models\TipoCapacidade;
@@ -34,7 +31,6 @@ class CapacidadeSeeder extends Seeder
 
         $this->seedCapacidades("Participante", [
             "CTXT_EXEC",
-            "MOD_ACESSO",
             "MOD_AFT",
             "MOD_AFT_EDT",
             "MOD_AFT_INCL",
@@ -76,8 +72,6 @@ class CapacidadeSeeder extends Seeder
         $this->seedCapacidades("Chefia de Unidade Executora", [
             "CTXT_GEST",
             "MENU_GESTAO_ACESSO",
-            "MENU_REL_ACESSO",
-            "MOD_ACESSO",
             "MOD_AFT",
             "MOD_AFT_EDT",
             "MOD_AFT_EXCL",
@@ -135,12 +129,12 @@ class CapacidadeSeeder extends Seeder
             "MOD_PTR_ENTR_INCL",
             "MOD_PTR_INCL",
             "MOD_PTR_USERS_INCL",
-            "MOD_RX",
-            "MOD_RX_EDT_OPO",
-            "MOD_RX_VIS_ATR",
-            "MOD_RX_VIS_DPE",
-            "MOD_RX_VIS_DPR",
-            "MOD_RX_VIS_OPO",
+            "MOD_RX_CURR",
+            "MOD_RX_CURR_EDT",
+            "MOD_RX_CURR_INCL",
+            "MOD_RX_CURR_EXCL",
+            "MOD_RX_OPO",
+            "MOD_RX_OUT",
             "MOD_TIPO_ATV",
             "MOD_TIPO_ATV_EDT_UND",
             "MOD_TIPO_ATV_INCL",
@@ -164,12 +158,9 @@ class CapacidadeSeeder extends Seeder
         $this->seedCapacidades("Administrador Negocial", [
             "CTXT_EXEC",
             "CTXT_GEST",
-            "DASH_PRG",
             "MENU_CAD_ACESSO",
             "MENU_CONFIG_ACESSO",
             "MENU_GESTAO_ACESSO",
-            "MENU_REL_ACESSO",
-            "MOD_ACESSO",
             "MOD_AFT",
             "MOD_AFT_EDT",
             "MOD_AFT_EXCL",
@@ -187,6 +178,7 @@ class CapacidadeSeeder extends Seeder
             "MOD_ATV_TRF_EXCL",
             "MOD_ATV_TRF_INCL",
             "MOD_ATV_USU_EXT",
+            "MOD_ATV_DASH",
             "MOD_CADV",
             "MOD_CADV_EDT",
             "MOD_CADV_EXCL",

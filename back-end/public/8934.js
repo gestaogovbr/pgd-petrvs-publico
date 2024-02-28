@@ -316,7 +316,6 @@ class QuestionarioListPerguntaComponent extends src_app_modules_base_page_frame_
     this.cdRef = injector.get(_angular_core__WEBPACK_IMPORTED_MODULE_9__.ChangeDetectorRef);
     //this.orderBy = [['sequencia','asc']];
   }
-
   loadPerguntas() {
     var _this = this;
     return (0,_usr_src_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {

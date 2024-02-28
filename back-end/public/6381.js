@@ -4414,7 +4414,6 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
     //this.loading = true;
     //this.dao!.update(demanda.id, {etiquetas: demanda.etiquetas}).then(demanda => this.modalRefreshId(demanda).modalClose!.bind(this)(demanda.id)).finally(() => this.loading = false);
   }
-
   onSwimlaneDrop(event, fromIndex) {
     const element = this.labels[fromIndex];
     const toIndex = fromIndex < event.index ? event.index - 1 : event.index;
@@ -4610,7 +4609,6 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
     projeto.envolvidos = [envolvido];
     projeto.alocacoes = [];
     await this.loadData(projeto, this.form!);*/
-
   saveData(form) {
     return new Promise((resolve, reject) => {
       const projeto = this.util.fill(new src_app_models_projeto_model__WEBPACK_IMPORTED_MODULE_8__.Projeto(), this.entity);
@@ -4629,7 +4627,6 @@ class ProjetoPlanejamentoComponent extends src_app_modules_base_page_form_base__
         });
       }
     });
-
     return result;
   }
   toGantt(projeto) {
@@ -6618,7 +6615,6 @@ class FullCalendarComponent {
     this.handleCustomRendering = customRenderingStore.handle.bind(customRenderingStore);
     this.templateMap = this; // alias to this
   }
-
   ngAfterViewInit() {
     const {
       deepChangeDetection
@@ -6997,7 +6993,6 @@ const MINIMAL_RAW_EN_LOCALE = {
     dow: 0,
     doy: 4 // 4 days need to be within the year to be considered the first week
   },
-
   direction: 'ltr',
   buttonText: {
     prev: 'prev',
@@ -7311,7 +7306,6 @@ function buildViewDef(viewType, hash, defaultConfigs, overrideConfigs) {
   if (!theComponent) {
     return null; // don't throw a warning, might be settings for a single-unit view
   }
-
   return {
     type: viewType,
     component: theComponent,
@@ -7345,7 +7339,6 @@ function parseViewConfig(input) {
     rawOptions // includes type and component too :(
   };
 }
-
 function createViewHookComponent(options) {
   return viewProps => (0,preact__WEBPACK_IMPORTED_MODULE_1__.createElement)(_internal_common_js__WEBPACK_IMPORTED_MODULE_0__.V.Consumer, null, context => (0,preact__WEBPACK_IMPORTED_MODULE_1__.createElement)(_internal_common_js__WEBPACK_IMPORTED_MODULE_0__.C, {
     elTag: "div",
@@ -7769,7 +7762,6 @@ theme, viewSpecs, calendarApi) {
           customButtonProps.click.call(ev.target, ev, ev.target); // TODO: use Calendar this context?
         }
       };
-
       (buttonIcon = theme.getCustomButtonIconClass(customButtonProps)) || (buttonIcon = theme.getIconClass(buttonName, isRtl)) || (buttonText = customButtonProps.text);
       buttonHint = customButtonProps.hint || customButtonProps.text;
     } else if (viewSpec = viewSpecs[buttonName]) {
@@ -7839,7 +7831,6 @@ class ViewImpl {
     return this.getCurrentData().options[name]; // are the view-specific options
   }
 }
-
 let eventSourceDef$2 = {
   ignoreRange: true,
   parseMeta(refined) {
@@ -7988,7 +7979,6 @@ let recurring = {
         typeData: recurringData // doesn't need endTime anymore but oh well
       };
     }
-
     return null;
   },
   expand(typeData, framingRange, dateEnv) {
@@ -8130,7 +8120,6 @@ class TaskRunner {
       this.drained(completedTasks);
     } // keep going, in case new tasks were added in the drained handler
   }
-
   runTask(task) {
     if (this.runTaskOption) {
       this.runTaskOption(task);
@@ -8175,7 +8164,6 @@ function buildTitleFormat(dateProfile) {
       month: 'long'
     }; // like "September 2014"
   }
-
   let days = (0,_internal_common_js__WEBPACK_IMPORTED_MODULE_0__.y)(dateProfile.currentRange.start, dateProfile.currentRange.end);
   if (days !== null && days > 1) {
     // multi-day range. shorter, like "Sep 9 - 10 2014"
@@ -8225,7 +8213,6 @@ class CalendarDataManager {
     this.dispatch = action => {
       this.actionRunner.request(action); // protects against recursive calls to _handleAction
     };
-
     this.props = props;
     this.actionRunner.pause();
     let dynamicOptionOverrides = {};
@@ -8280,7 +8267,6 @@ class CalendarDataManager {
     if (computeIsLoading(initialState, calendarContext)) {
       this.emitter.trigger('loading', true); // NOT DRY
     }
-
     this.state = initialState;
     this.updateData();
     this.actionRunner.resume();
@@ -8374,7 +8360,6 @@ class CalendarDataManager {
     for (let reducer of optionsData.pluginHooks.reducers) {
       Object.assign(newState, reducer(state, action, contextAndState)); // give the OLD state, for old value
     }
-
     let wasLoading = computeIsLoading(state, calendarContext);
     let isLoading = computeIsLoading(newState, calendarContext);
     // TODO: use propSetHandlers in plugin system
@@ -8782,7 +8767,6 @@ class ViewHarness extends _internal_common_js__WEBPACK_IMPORTED_MODULE_0__.B {
     let classNames = ['fc-view-harness', aspectRatio || props.liquid || props.height ? 'fc-view-harness-active' // harness controls the height
     : 'fc-view-harness-passive' // let the view do the height
     ];
-
     let height = '';
     let paddingBottom = '';
     if (aspectRatio) {
@@ -8992,7 +8976,6 @@ class CalendarContent extends _internal_common_js__WEBPACK_IMPORTED_MODULE_0__.a
     } else {
       viewAspectRatio = Math.max(options.aspectRatio, 0.5); // prevent from getting too tall
     }
-
     let viewContext = this.buildViewContext(props.viewSpec, props.viewApi, props.options, props.dateProfileGenerator, props.dateEnv, props.theme, props.pluginHooks, props.dispatch, props.getCurrentData, props.emitter, props.calendarApi, this.registerInteractiveComponent, this.unregisterInteractiveComponent);
     let viewLabelId = toolbarConfig.header && toolbarConfig.header.hasTitle ? this.state.viewLabelId : '';
     return (0,preact__WEBPACK_IMPORTED_MODULE_1__.createElement)(_internal_common_js__WEBPACK_IMPORTED_MODULE_0__.V.Provider, {
@@ -9631,7 +9614,6 @@ class DelayedRunner {
         this.isDirty = false;
         this.drained(); // might set isDirty to true again
       }
-
       this.isRunning = false;
     }
   }
@@ -9665,7 +9647,6 @@ function elementClosest(el, selector) {
     // really bad fallback for IE
     // from https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
   }
-
   if (!document.documentElement.contains(el)) {
     return null;
   }
@@ -9814,7 +9795,6 @@ function createAriaKeyboardAttrs(handler) {
     }
   };
 }
-
 let guidNumber = 0;
 function guid() {
   guidNumber += 1;
@@ -9944,7 +9924,6 @@ function computeSmallestCellWidth(cellEl) {
   if (!allWidthEl) {
     throw new Error('needs fc-scrollgrid-shrink-frame className'); // TODO: use const
   }
-
   if (!contentWidthEl) {
     throw new Error('needs fc-scrollgrid-shrink-cushion className');
   }
@@ -9988,7 +9967,6 @@ function parseString(s) {
       )
     };
   }
-
   return null;
 }
 function parseObject(obj) {
@@ -10004,7 +9982,6 @@ function parseObject(obj) {
     // seconds
     obj.milliseconds || obj.millisecond || obj.ms || 0) // ms
   };
-
   let weeks = obj.weeks || obj.week;
   if (weeks) {
     duration.days += weeks * 7;
@@ -10316,7 +10293,6 @@ function buildIsoString(marker, timeZoneOffset, stripZeroTime = false) {
     }
     // otherwise, its UTC-0 and we want to keep the Z
   }
-
   return s;
 }
 // formats the date, but with no time part
@@ -10499,7 +10475,6 @@ class NativeFormatter {
     standardDateProps.year === 'numeric' || standardDateProps.year === '2-digit') && (standardDateProps.month === 'numeric' || standardDateProps.month === '2-digit') && (standardDateProps.day === 'numeric' || standardDateProps.day === '2-digit')) {
       biggestUnitForPartial = 1; // make it look like the dates are only different in terms of time
     }
-
     let full0 = this.format(start, context);
     let full1 = this.format(end, context);
     if (full0 === full1) {
@@ -10534,7 +10509,6 @@ class NativeFormatter {
     }
   }
 }
-
 function buildFormattingFunc(standardDateProps, extendedSettings, context) {
   let standardDatePropCnt = Object.keys(standardDateProps).length;
   if (standardDatePropCnt === 1 && standardDateProps.timeZoneName === 'short') {
@@ -11644,7 +11618,6 @@ class DateEnv {
     if (this.timeZone === 'local') {
       return -arrayToLocalDate(dateToUtcArray(m)).getTimezoneOffset(); // convert "inverse" offset to "normal" offset
     }
-
     if (this.timeZone === 'UTC') {
       return 0;
     }
@@ -11661,7 +11634,6 @@ class DateEnv {
     if (this.timeZone === 'UTC') {
       return new Date(m.valueOf()); // make sure it's a copy
     }
-
     if (!this.namedTimeZoneImpl) {
       return new Date(m.valueOf() - (forcedTzo || 0));
     }
@@ -11972,7 +11944,6 @@ class ContentInjector extends BaseComponent {
   componentWillUnmount() {
     this.triggerCustomRendering(false); // TODO: different API for removal?
   }
-
   triggerCustomRendering(isActive) {
     var _a;
     const {
@@ -12199,7 +12170,6 @@ function invertRanges(ranges, constraintRange) {
 function compareRanges(range0, range1) {
   return range0.start.valueOf() - range1.start.valueOf(); // earlier ranges go first
 }
-
 function intersectRanges(range0, range1) {
   let {
     start,
@@ -12306,7 +12276,6 @@ function diffDates(date0, date1, dateEnv, largeUnit) {
   }
   return diffDayAndTime(date0, date1); // returns a duration
 }
-
 function reduceCurrentDate(currentDate, action) {
   switch (action.type) {
     case 'CHANGE_DATE':
@@ -12323,7 +12292,6 @@ function getInitialDate(options, dateEnv) {
   }
   return getNow(options.now, dateEnv); // getNow already returns unzoned
 }
-
 function getNow(nowInput, dateEnv) {
   if (typeof nowInput === 'function') {
     nowInput = nowInput();
@@ -12638,7 +12606,6 @@ class DateProfileGenerator {
     if (this.props.weekends === false) {
       hiddenDays.push(0, 6); // 0=sunday, 6=saturday
     }
-
     for (i = 0; i < 7; i += 1) {
       if (!(isHiddenDayHash[i] = hiddenDays.indexOf(i) !== -1)) {
         dayCnt += 1;
@@ -12647,7 +12614,6 @@ class DateProfileGenerator {
     if (!dayCnt) {
       throw new Error('invalid hiddenDays'); // all days were hidden? bad.
     }
-
     this.isHiddenDayHash = isHiddenDayHash;
   }
   // Remove days from the beginning and end of the range that are computed as hidden.
@@ -12980,7 +12946,6 @@ function filterEventStoreDefs(eventStore, filterFunc) {
   let defs = filterHash(eventStore.defs, filterFunc);
   let instances = filterHash(eventStore.instances, instance => defs[instance.defId] // still exists?
   );
-
   return {
     defs,
     instances
@@ -13016,12 +12981,10 @@ function normalizeConstraint(input, context) {
   if (Array.isArray(input)) {
     return parseEvents(input, null, context, true); // allowOpenRange=true
   }
-
   if (typeof input === 'object' && input) {
     // non-null object
     return parseEvents([input], null, context, true); // allowOpenRange=true
   }
-
   if (input != null) {
     return String(input);
   }
@@ -13202,7 +13165,6 @@ function reduceEventStore(eventStore, action, eventSources, dateProfile, context
     case 'REMOVE_ALL_EVENT_SOURCES':
       return filterEventStoreDefs(eventStore, eventDef => !eventDef.sourceId // only keep events with no source id
       );
-
     case 'REMOVE_ALL_EVENTS':
       return createEmptyEventStore();
     default:
@@ -13256,7 +13218,6 @@ function transformEachRawEvent(rawEvents, func) {
       } // if a different falsy value, do nothing
     }
   }
-
   return refinedEvents;
 }
 function addEvent(eventStore, subset, expandRange, context) {
@@ -13274,7 +13235,6 @@ function rezoneEventStoreDates(eventStore, oldDateEnv, newDateEnv) {
     if (def.allDay) {
       return instance; // isn't dependent on timezone
     }
-
     return Object.assign(Object.assign({}, instance), {
       range: {
         start: newDateEnv.createMarker(oldDateEnv.toDate(instance.range.start, instance.forcedStartTzo)),
@@ -13371,7 +13331,6 @@ function removeFromHash(hash, type, handler) {
     delete hash[type]; // remove all handler funcs for this type
   }
 }
-
 const DEF_DEFAULTS = {
   startTime: '09:00',
   endTime: '17:00',
@@ -13463,7 +13422,6 @@ function applyMutationToEventDef(eventDef, eventConfig, mutation, context) {
   if (standardProps.hasEnd == null && eventConfig.durationEditable && (mutation.startDelta || mutation.endDelta)) {
     standardProps.hasEnd = true; // TODO: is this mutation okay?
   }
-
   let copy = Object.assign(Object.assign(Object.assign({}, eventDef), standardProps), {
     ui: Object.assign(Object.assign({}, eventDef.ui), standardProps.ui)
   });
@@ -13556,7 +13514,6 @@ class EventSourceImpl {
     return this.internalEventSource.meta.format; // TODO: bad. not guaranteed
   }
 }
-
 class EventImpl {
   // instance will be null if expressing a recurring event that has no current instances,
   // OR if trying to validate an incoming external event that has no dates assigned
@@ -13650,7 +13607,6 @@ class EventImpl {
         return; // TODO: warning if parsed bad
       }
     }
-
     if (this._instance) {
       if (end) {
         let endDelta = diffDates(this._instance.range.end, end, dateEnv, options.granularity);
@@ -13678,7 +13634,6 @@ class EventImpl {
     if (!start) {
       return; // TODO: warning if parsed bad
     }
-
     if (endInput != null) {
       end = dateEnv.createMarker(endInput);
       if (!end) {
@@ -13822,7 +13777,6 @@ class EventImpl {
       });
     }
   }
-
   remove() {
     let context = this._context;
     let asStore = eventApiToStore(this);
@@ -14216,7 +14170,6 @@ startOverride, endOverride) {
       forcedTzo: startOverride ? null : eventInstance.forcedStartTzo // nooooo, same
     });
   }
-
   return '';
 }
 function getSegMeta(seg, todayRange, nowDate) {
@@ -14268,7 +14221,6 @@ function buildEventRangeKey(eventRange) {
   return eventRange.instance ? eventRange.instance.instanceId : `${eventRange.def.defId}:${eventRange.range.start.toISOString()}`;
   // inverse-background events don't have specific instances. TODO: better solution
 }
-
 function getSegAnchorAttrs(seg, context) {
   let {
     def,
@@ -14845,7 +14797,6 @@ class CalendarImpl {
             instance
           }) // TODO: better util for two args?
         });
-
         this.triggerEventAdd(eventInput);
       }
       return eventInput;
@@ -15051,7 +15002,6 @@ class Splitter {
     this.splitEventResize = memoize(this._splitInteraction);
     this.eventUiBuilders = {}; // TODO: typescript protection
   }
-
   splitProps(props) {
     let keyInfos = this.getKeyInfo(props);
     let defKeys = this.getKeysForEventDefs(props.eventStore);
@@ -15620,7 +15570,6 @@ class DateComponent extends BaseComponent {
     !elementClosest(el, '.fc-popover'); // hack
   }
 }
-
 class NamedTimeZoneImpl {
   constructor(timeZoneName) {
     this.timeZoneName = timeZoneName;
@@ -15641,7 +15590,6 @@ class SegHierarchy {
     this.entriesByLevel = []; // parallel with levelCoords
     this.stackCnts = {}; // TODO: use better technique!?
   }
-
   addSegs(inputs) {
     let hiddenEntries = [];
     for (let input of inputs) {
@@ -15953,7 +15901,6 @@ function computeFallbackHeaderFormat(datesRepDistinctDays, dayCnt) {
       weekday: 'short'
     }); // "Sat"
   }
-
   if (dayCnt > 1) {
     return createFormatter({
       weekday: 'short',
@@ -15962,12 +15909,10 @@ function computeFallbackHeaderFormat(datesRepDistinctDays, dayCnt) {
       omitCommas: true
     }); // "Sat 11/12"
   }
-
   return createFormatter({
     weekday: 'long'
   }); // "Saturday"
 }
-
 const CLASS_NAME = 'fc-col-header-cell'; // do the cushion too? no
 function renderInner$1(renderProps) {
   return renderProps.text;
@@ -16344,7 +16289,6 @@ class Slicer {
     this.sliceEventResize = memoize(this._sliceInteraction);
     this.forceDayIfListItem = false; // hack
   }
-
   sliceProps(props, dateProfile, nextDayThreshold, context, ...extraArgs) {
     let {
       eventUiBases
@@ -16360,7 +16304,6 @@ class Slicer {
       eventSelection: props.eventSelection
     }; // TODO: give interactionSegs?
   }
-
   sliceNowDate(
   // does not memoize
   date, dateProfile, nextDayThreshold, context, ...extraArgs) {
@@ -16485,7 +16428,6 @@ function isInteractionValid(interaction, dateProfile, context) {
     eventDrag: interaction
   }, context); // HACK: the eventDrag props is used for ALL interactions
 }
-
 function isDateSelectionValid(dateSelection, dateProfile, context) {
   if (!rangeContainsRange(dateProfile.validRange, dateSelection.range)) {
     return false;
@@ -16585,7 +16527,6 @@ function isInteractionPropsValid(state, context, dateSpanMeta, filterConfig) {
         // was an external event
         eventApi = new EventImpl(context, subjectDef); // no instance, because had no dates
       }
-
       if (!subjectAllow(buildDateSpanApiWithContext(subjectDateSpan, context), eventApi)) {
         return false;
       }
@@ -16779,7 +16720,6 @@ class Scroller extends BaseComponent {
     }
     return this.el.offsetHeight - this.el.clientHeight; // only works because we guarantee no borders. TODO: add to CSS with important?
   }
-
   getYScrollbarWidth() {
     if (VISIBLE_HIDDEN_RE.test(this.props.overflowY)) {
       return 0;
@@ -16856,11 +16796,9 @@ function computeShrinkWidth(chunkEls) {
   }
   return Math.ceil(largestWidth); // <table> elements work best with integers. round up to ensure contents fits
 }
-
 function getSectionHasLiquidHeight(props, sectionConfig) {
   return props.liquid && sectionConfig.liquid; // does the section do liquid-height? (need to have whole scrollgrid liquid-height as well)
 }
-
 function getAllowYScrolling(props, sectionConfig) {
   return sectionConfig.maxHeight != null ||
   // if its possible for the height to max out, we might need scrollbars
@@ -16930,7 +16868,6 @@ function getScrollGridClassNames(liquid, context) {
 function getSectionClassNames(sectionConfig, wholeTableVGrow) {
   let classNames = ['fc-scrollgrid-section', `fc-scrollgrid-section-${sectionConfig.type}`, sectionConfig.className // used?
   ];
-
   if (wholeTableVGrow && sectionConfig.liquid && sectionConfig.maxHeight == null) {
     classNames.push('fc-scrollgrid-section-liquid');
   }
@@ -17603,7 +17540,6 @@ class MorePopover extends DateComponent {
         layer: 1 // important when comparing with hits from other components
       };
     }
-
     return null;
   }
 }
@@ -18060,7 +17996,6 @@ function hasListItemDisplay(seg) {
   seg.isEnd // "
   ;
 }
-
 class TableBlockEvent extends _fullcalendar_core_internal_js__WEBPACK_IMPORTED_MODULE_0__.B {
   render() {
     let {
@@ -18459,7 +18394,6 @@ function placeRects(allRects, segs, cells) {
           absoluteTop: rect.levelCoord,
           marginTop: currentMarginTop // claim the margin
         });
-
         currentMarginTop = 0;
       }
     }
@@ -18580,7 +18514,6 @@ class TableRow extends _fullcalendar_core_internal_js__WEBPACK_IMPORTED_MODULE_0
       }
     };
   }
-
   render() {
     let {
       props,
@@ -18978,7 +18911,6 @@ class TableRows extends _fullcalendar_core_internal_js__WEBPACK_IMPORTED_MODULE_
   getCellEl(row, col) {
     return this.rowRefs.currentMap[row].getCellEls()[col]; // TODO: not optimal
   }
-
   getCellRange(row, col) {
     let start = this.props.cells[row][col].date;
     let end = (0,_fullcalendar_core_internal_js__WEBPACK_IMPORTED_MODULE_0__.t)(start, 1);
@@ -19016,7 +18948,6 @@ class Table extends _fullcalendar_core_internal_js__WEBPACK_IMPORTED_MODULE_0__.
     }
     let classNames = ['fc-daygrid-body', limitViaBalanced ? 'fc-daygrid-body-balanced' : 'fc-daygrid-body-unbalanced', expandRows ? '' : 'fc-daygrid-body-natural' // will height of one row depend on the others?
     ];
-
     return (0,_fullcalendar_core_preact_js__WEBPACK_IMPORTED_MODULE_1__.createElement)("div", {
       ref: this.elRef,
       className: classNames.join(' '),
@@ -19080,7 +19011,6 @@ class Table extends _fullcalendar_core_internal_js__WEBPACK_IMPORTED_MODULE_0__.
         const scrollTop = subjectEl.getBoundingClientRect().top - originEl.getBoundingClientRect().top;
         scrollEl.scrollTop = scrollTop ? scrollTop + 1 : 0; // overcome border
       }
-
       this.needsScrollReset = false;
     }
   }
@@ -19091,12 +19021,10 @@ function getScrollSubjectEl(containerEl, dateProfile) {
     el = containerEl.querySelector(`[data-date="${(0,_fullcalendar_core_internal_js__WEBPACK_IMPORTED_MODULE_0__.bx)(dateProfile.currentDate)}-01"]`);
     // even if view is month-based, first-of-month might be hidden...
   }
-
   if (!el) {
     el = containerEl.querySelector(`[data-date="${(0,_fullcalendar_core_internal_js__WEBPACK_IMPORTED_MODULE_0__.bv)(dateProfile.currentDate)}"]`);
     // could still be hidden if an interior-view hidden day
   }
-
   return el;
 }
 class DayTableSlicer extends _fullcalendar_core_internal_js__WEBPACK_IMPORTED_MODULE_0__.bW {
@@ -19146,7 +19074,6 @@ class DayTableView extends TableView {
     this.tableRef = (0,_fullcalendar_core_preact_js__WEBPACK_IMPORTED_MODULE_1__.createRef)();
     // can't override any lifecycle methods from parent
   }
-
   render() {
     let {
       options,
@@ -19431,7 +19358,6 @@ class PointerDragging {
       window.addEventListener('scroll', this.handleScroll, true); // useCapture=true
     }
   }
-
   recordCoords(ev) {
     if (this.shouldWatchScroll) {
       this.prevPageX = ev.pageX;
@@ -19801,7 +19727,6 @@ class AutoScroller {
       }
     };
   }
-
   start(pageX, pageY, scrollStartEl) {
     if (this.isEnabled) {
       this.scrollCaches = this.buildCaches(scrollStartEl);
@@ -19932,11 +19857,9 @@ class AutoScroller {
       if (el === window) {
         return new WindowScrollGeomCache(false); // false = don't listen to user-generated scrolls
       }
-
       return new ElementScrollGeomCache(el, false); // false = don't listen to user-generated scrolls
     });
   }
-
   queryScrollEls(scrollStartEl) {
     let els = [];
     for (let query of this.scrollQuery) {
@@ -20035,7 +19958,6 @@ class FeaturefulElementDragging extends _fullcalendar_core_internal_js__WEBPACK_
           this.autoScroller.stop();
           this.tryStopDrag(ev); // which will stop the mirror
         }
-
         if (this.delayTimeoutId) {
           clearTimeout(this.delayTimeoutId);
           this.delayTimeoutId = null;
@@ -20208,7 +20130,6 @@ class HitDragging {
       this.emitter.trigger('dragstart', ev);
       this.handleMove(ev, true); // force = fire even if initially null
     };
-
     this.handleDragMove = ev => {
       this.emitter.trigger('dragmove', ev);
       this.handleMove(ev);
@@ -20435,7 +20356,6 @@ class DateSelecting extends _fullcalendar_core_internal_js__WEBPACK_IMPORTED_MOD
     this.handleDragStart = ev => {
       this.component.context.calendarApi.unselect(ev); // unselect previous selections
     };
-
     this.handleHitUpdate = (hit, isFinal) => {
       let {
         context
@@ -20473,7 +20393,6 @@ class DateSelecting extends _fullcalendar_core_internal_js__WEBPACK_IMPORTED_MOD
         this.dragSelection = dragSelection; // only clear if moved away from all hits while dragging
       }
     };
-
     this.handlePointerUp = pev => {
       if (this.dragSelection) {
         // selection is already rendered, so just need to report selection
@@ -20670,7 +20589,6 @@ class EventDragging extends _fullcalendar_core_internal_js__WEBPACK_IMPORTED_MOD
         this.cleanup(); // because handleDragEnd won't fire
       }
     };
-
     this.handleDragEnd = ev => {
       if (this.isDragging) {
         let initialContext = this.component.context;
@@ -20713,7 +20631,6 @@ class EventDragging extends _fullcalendar_core_internal_js__WEBPACK_IMPORTED_MOD
                 });
               }
             };
-
             let transformed = {};
             for (let transformer of initialContext.getCurrentData().pluginHooks.eventDropTransformers) {
               Object.assign(transformed, transformer(validMutation, initialContext));
@@ -21031,7 +20948,6 @@ class EventResizing extends _fullcalendar_core_internal_js__WEBPACK_IMPORTED_MOD
             });
           }
         };
-
         context.emitter.trigger('eventResize', Object.assign(Object.assign({}, eventChangeArg), {
           el: this.draggingSegEl,
           startDelta: this.validMutation.startDelta || (0,_fullcalendar_core_internal_js__WEBPACK_IMPORTED_MODULE_0__.d)(0),
@@ -21049,7 +20965,6 @@ class EventResizing extends _fullcalendar_core_internal_js__WEBPACK_IMPORTED_MOD
       this.validMutation = null;
       // okay to keep eventInstance around. useful to set it in handlePointerDown
     };
-
     let {
       component
     } = settings;
@@ -21105,7 +21020,6 @@ class UnselectAuto {
       this.matchesCancel = !!(0,_fullcalendar_core_internal_js__WEBPACK_IMPORTED_MODULE_0__.$)(downEl, unselectCancel);
       this.matchesEvent = !!(0,_fullcalendar_core_internal_js__WEBPACK_IMPORTED_MODULE_0__.$)(downEl, EventDragging.SELECTOR); // interaction started on an event?
     };
-
     this.onDocumentPointerUp = pev => {
       let {
         context
@@ -21393,12 +21307,10 @@ class ExternalDraggable {
     if (settings.appendTo != null) {
       dragging.mirror.parentNode = settings.appendTo; // TODO: write tests
     }
-
     dragging.emitter.on('pointerdown', this.handlePointerDown);
     dragging.emitter.on('dragstart', this.handleDragStart);
     new ExternalElementDragging(dragging, settings.eventData); // eslint-disable-line no-new
   }
-
   destroy() {
     this.dragging.destroy();
   }
@@ -21492,7 +21404,6 @@ class ThirdPartyDraggable {
     }
     new ExternalElementDragging(dragging, settings.eventData); // eslint-disable-line no-new
   }
-
   destroy() {
     this.dragging.destroy();
   }
