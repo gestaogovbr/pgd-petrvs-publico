@@ -122,9 +122,9 @@
           },
           "configurations": {
             "production": {
-              "optimization": false,
+              "optimization": true,
               "outputHashing": "none",
-              "sourceMap": true,
+              "sourceMap": false,
               "extractLicenses": true,
               "buildOptimizer": false,
               "budgets": [

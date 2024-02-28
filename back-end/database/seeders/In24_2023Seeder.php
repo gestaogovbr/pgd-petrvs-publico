@@ -48,6 +48,7 @@ class In24_2023Seeder extends Seeder
 
   public function run()
   {
+
     $tipos_atividades = array(
       [
         "id" => "22629851-db92-4e4e-999b-98e2368d84c6",
@@ -1707,6 +1708,7 @@ class In24_2023Seeder extends Seeder
         "planejamento_superior_id" => NULL,
       ),
     );
+
     $planejamentos_objetivos = array(
       array(
         "id" => "00db60be-856f-462a-9d0d-27f6b21edce6",
@@ -1920,57 +1922,18 @@ class In24_2023Seeder extends Seeder
       ),
     );
 
-
-    foreach ($tipos_modalidades as $tipo_modalidade) {
-      TipoModalidade::firstOrCreate(['id' => $tipo_modalidade['id']], $tipo_modalidade);
-    }
-
-    foreach ($tipos_atividades as $tipo_atividade) {
-      TipoAtividade::firstOrCreate(['id' => $tipo_atividade['id']], $tipo_atividade);
-    }
-
-    foreach ($tipos_justificativas as $tipo_justificativa) {
-      TipoJustificativa::firstOrCreate(['id' => $tipo_justificativa['id']], $tipo_justificativa);
-    }
-
-    foreach ($tipos_avaliacoes as $tipo_avaliacao) {
-      TipoAvaliacao::firstOrCreate(['id' => $tipo_avaliacao['id']], $tipo_avaliacao);
-    }
-
-    foreach ($tipos_avaliacoes_notas as $tipo_avaliacao_nota) {
-      TipoAvaliacaoNota::firstOrCreate(['id' => $tipo_avaliacao_nota['id']], $tipo_avaliacao_nota);
-    }
-
-    foreach ($tipos_avaliacoes_justificativas as $tipo_avaliacao_justificativa) {
-      TipoAvaliacaoJustificativa::firstOrCreate(['id' => $tipo_avaliacao_justificativa['id']], $tipo_avaliacao_justificativa);
-    }
-
-    foreach ($tipos_documentos as $tipo_documento) {
-      TipoDocumento::firstOrCreate(['id' => $tipo_documento['id']], $tipo_documento);
-    }
-
-    foreach ($templates as $template) {
-      Template::firstOrCreate(['id' => $template['id']], $template);
-    }
-
-    foreach ($programas as $programa) {
-      Programa::firstOrCreate(['id' => $programa['id']], $programa);
-    }
-
-    foreach ($eixos_tematicos as $eixo_tematico) {
-      EixoTematico::firstOrCreate(['id' => $eixo_tematico['id']], $eixo_tematico);
-    }
-
-    foreach ($modelos_afericao_entregas as $modelo_afericao_entrega) {
-      Entrega::firstOrCreate(['id' => $modelo_afericao_entrega['id']], $modelo_afericao_entrega);
-    }
-
-    foreach ($planejamentos as $planejamento) {
-      Planejamento::firstOrCreate(['id' => $planejamento['id']], $planejamento);
-    }
-
-    foreach ($planejamentos_objetivos as $planejamento_objetivo) {
-      PlanejamentoObjetivo::firstOrCreate(['id' => $planejamento_objetivo['id']], $planejamento_objetivo);
-    }
+    TipoModalidade::upsert($tipos_modalidades, "id");
+    TipoAtividade::upsert($tipos_atividades, "id");
+    TipoJustificativa::upsert($tipos_justificativas, "id");
+    TipoAvaliacao::upsert($tipos_avaliacoes, "id");
+    TipoAvaliacaoNota::upsert($tipos_avaliacoes_notas, "id");
+    TipoAvaliacaoJustificativa::upsert($tipos_avaliacoes_justificativas, "id");
+    TipoDocumento::upsert($tipos_documentos, "id");
+    Template::upsert($templates, "id");
+    Programa::upsert($programas, "id");
+    EixoTematico::upsert($eixos_tematicos, "id");
+    Entrega::upsert($modelos_afericao_entregas, "id");
+    Planejamento::upsert($planejamentos, "id");
+    PlanejamentoObjetivo::upsert($planejamentos_objetivos, "id");
   }
 }
