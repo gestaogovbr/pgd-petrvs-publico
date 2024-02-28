@@ -14,6 +14,7 @@ class CidadeSeeder extends Seeder
      *
      * @return void
      */
+
     public function run()
     {
         $utilService = new UtilService();
@@ -36,10 +37,7 @@ class CidadeSeeder extends Seeder
                 $data[$key]['created_at'] = $timenow;
                 $data[$key]['updated_at'] = $timenow;
             }
-            foreach ($data as $cidade) {
-                Cidade::firstOrCreate(['id' => $cidade['id']], $cidade);
-            }
+            Cidade::upsert($data, "id");
         }
     }
 }
-
