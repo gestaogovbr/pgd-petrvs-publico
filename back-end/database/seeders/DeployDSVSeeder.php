@@ -18,6 +18,7 @@ class DeployDSVSeeder extends Seeder
       CidadeSeeder::class,
       FeriadoSeeder::class,
       TipoCapacidadeSeeder::class,
+      CapacidadeSeeder::class,
       PainelUsuarioSeeder::class,
       In24_2023Seeder::class,
       TemplateSeeder::class,

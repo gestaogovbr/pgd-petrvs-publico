@@ -938,7 +938,6 @@ class CapacidadeSeeder extends Seeder
         "perfil_id" => $this->utilService->uuid("Chefia de Unidade Executora"),
         "tipo_capacidade_id" => $this->utilService->uuid($c['codigo']),
       ];
-
       $queryCapacidade = Capacidade::onlyTrashed()->find($capacidade['id']);
       $queryTipoCapacidade = TipoCapacidade::find($capacidade['tipo_capacidade_id']);
 
