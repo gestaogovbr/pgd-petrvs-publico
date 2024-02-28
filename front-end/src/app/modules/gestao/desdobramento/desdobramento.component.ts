@@ -57,10 +57,6 @@ export class DesdobramentoComponent extends PageBase implements OnInit {
     super.ngOnInit();
     this.typeObject = this.urlParams?.get('type') || ""
     this.idObject = this.urlParams?.get('id') || ""
-
-    console.log(this.idObject);
-    console.log(this.typeObject);
-
     switch (this.typeObject) {
       case 'programa':
         this.carregaPrograma()

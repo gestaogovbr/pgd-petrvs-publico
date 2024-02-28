@@ -56,8 +56,6 @@ export class InputContainerComponent extends InputBase implements OnInit {
 
   public ngAfterViewInit(): void {
     super.ngAfterViewInit();
-    setTimeout(() => {
-      $('[data-bs-toggle="tooltip"]').tooltip();
-    }, 1000);
+   
   }
 }
