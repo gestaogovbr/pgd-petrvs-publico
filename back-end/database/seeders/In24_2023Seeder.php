@@ -1918,18 +1918,18 @@ class In24_2023Seeder extends Seeder
             ),
         );
 
-        TipoModalidade::updateOrCreate($tipos_modalidades, "id");
-        TipoAtividade::updateOrCreate($tipos_atividades, "id");
-        TipoJustificativa::updateOrCreate($tipos_justificativas, "id");
-        TipoAvaliacao::updateOrCreate($tipos_avaliacoes, "id");
-        TipoAvaliacaoNota::updateOrCreate($tipos_avaliacoes_notas, "id");
-        TipoAvaliacaoJustificativa::updateOrCreate($tipos_avaliacoes_justificativas, "id");
-        TipoDocumento::updateOrCreate($tipos_documentos, "id");
-        Template::updateOrCreate($templates, "id");
-        Programa::updateOrCreate($programas, "id");
-        EixoTematico::updateOrCreate($eixos_tematicos, "id");
-        Entrega::updateOrCreate($modelos_afericao_entregas, "id");
-        Planejamento::updateOrCreate($planejamentos, "id");
-        PlanejamentoObjetivo::updateOrCreate($planejamentos_objetivos, "id");
+        TipoModalidade::upsert($tipos_modalidades, "id");
+        TipoAtividade::upsert($tipos_atividades, "id");
+        TipoJustificativa::upsert($tipos_justificativas, "id");
+        TipoAvaliacao::upsert($tipos_avaliacoes, "id");
+        TipoAvaliacaoNota::upsert($tipos_avaliacoes_notas, "id");
+        TipoAvaliacaoJustificativa::upsert($tipos_avaliacoes_justificativas, "id");
+        TipoDocumento::upsert($tipos_documentos, "id");
+        Template::upsert($templates, "id");
+        Programa::upsert($programas, "id");
+        EixoTematico::upsert($eixos_tematicos, "id");
+        Entrega::upsert($modelos_afericao_entregas, "id");
+        Planejamento::upsert($planejamentos, "id");
+        PlanejamentoObjetivo::upsert($planejamentos_objetivos, "id");
     }
 }
