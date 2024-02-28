@@ -160,11 +160,24 @@ class FeriadoSeeder extends Seeder
         "entidade_id" => NULL,
         "cidade_id" => NULL,
       ),
+      array(
+        "id" => "3bda258a-2b1e-4a5d-8cf7-178ab1883172",
+        "created_at" => $this->timenow,
+        "updated_at" => $this->timenow,
+        "deleted_at" => NULL,
+        "nome" => "Natal2",
+        "dia" => 25,
+        "mes" => 12,
+        "ano" => NULL,
+        "tipoDia" => "MES",
+        "recorrente" => 0,
+        "abrangencia" => "NACIONAL",
+        "codigo_ibge" => NULL,
+        "uf" => NULL,
+        "entidade_id" => NULL,
+        "cidade_id" => NULL,
+      ),
     );
-
-    foreach ($feriados as $feriado) {
-      Feriado::firstOrCreate(['id' => $feriado['id']], $feriado);
-    }
-
+    Feriado::upsert($feriados, "id");
   }
 }

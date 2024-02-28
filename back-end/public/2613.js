@@ -6983,7 +6983,6 @@ class Property {
   getDpi() {
     return 96.0; // TODO: compute?
   }
-
   getRem() {
     return this.document.rootEmSize;
   }
@@ -7816,13 +7815,11 @@ class Rotate {
     var rad = angle.getRadians();
     point.applyTransform([1, 0, 0, 1, cx || 0.0, cy || 0.0 // this.p.y
     ]);
-
     point.applyTransform([Math.cos(rad), Math.sin(rad), -Math.sin(rad), Math.cos(rad), 0, 0]);
     point.applyTransform([1, 0, 0, 1, -cx || 0.0, -cy || 0.0 // -this.p.y
     ]);
   }
 }
-
 class Scale {
   constructor(_, scale, transformOrigin) {
     this.type = 'scale';
@@ -8071,7 +8068,6 @@ class Element {
       }
     });
   }
-
   getAttribute(name) {
     var createIfNotExists = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
     var attr = this.attributes[name];
@@ -9436,7 +9432,6 @@ class TextElement extends RenderedElement {
       ctx.strokeText(renderText, x, y);
     } // }
   }
-
   applyAnchoring() {
     if (this.textChunkStart >= this.leafTexts.length) {
       return;
@@ -10307,7 +10302,6 @@ class AnimateElement extends Element {
     if (initialUnits === '%') {
       newValue *= 100.0; // numValue() returns 0-1 whereas properties are 0-100
     }
-
     return "".concat(newValue).concat(initialUnits);
   }
   update(delta) {
@@ -10704,7 +10698,6 @@ class TextPathElement extends TextElement {
       // ctx.stroke();
       // ctx.closePath();
     });
-
     if (textDecoration === 'underline') {
       ctx.lineWidth = fontSize / 20;
       ctx.strokeStyle = fill;
@@ -11399,7 +11392,6 @@ class StyleElement extends Element {
     .map(_ => _.textContent).join('').replace(/(\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/)|(^[\s]*\/\/.*)/gm, '') // remove comments
     .replace(/@import.*;/g, '') // remove imports
     );
-
     var cssDefs = css.split('}');
     cssDefs.forEach(_ => {
       var def = _.trim();

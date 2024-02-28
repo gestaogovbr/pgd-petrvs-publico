@@ -207,10 +207,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   MenuSuporteComponent: () => (/* binding */ MenuSuporteComponent)
 /* harmony export */ });
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 51197);
 /* harmony import */ var src_app_services_globals_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/app/services/globals.service */ 91547);
-/* harmony import */ var _components_button_dashboard_button_dashboard_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../components/button-dashboard/button-dashboard.component */ 959);
-
 
 
 const _c0 = function () {
@@ -226,9 +224,9 @@ class MenuSuporteComponent {
     this.gb = gb;
   }
   static #_ = this.ɵfac = function MenuSuporteComponent_Factory(t) {
-    return new (t || MenuSuporteComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](src_app_services_globals_service__WEBPACK_IMPORTED_MODULE_0__.GlobalsService));
+    return new (t || MenuSuporteComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](src_app_services_globals_service__WEBPACK_IMPORTED_MODULE_0__.GlobalsService));
   };
-  static #_2 = this.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineComponent"]({
+  static #_2 = this.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({
     type: MenuSuporteComponent,
     selectors: [["app-menu-suporte"]],
     decls: 3,
@@ -236,16 +234,15 @@ class MenuSuporteComponent {
     consts: [[1, "row", "mt-3"], [1, "col-6", "col-sm-3", "mb-3"], ["title", "Documenta\u00E7\u00E3o", "textColor", "#1369f0", "borderColor", "#1369f0", 3, "imgIcon", "route"]],
     template: function MenuSuporteComponent_Template(rf, ctx) {
       if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementStart"](0, "div", 0)(1, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelement"](2, "app-button-dashboard", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 0)(1, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](2, "app-button-dashboard", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
       }
       if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵproperty"]("imgIcon", ctx.gb.getResourcePath("assets/icons/home/documentacao.svg"))("route", _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵpureFunction1"](3, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵpureFunction0"](2, _c0)));
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("imgIcon", ctx.gb.getResourcePath("assets/icons/home/documentacao.svg"))("route", _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpureFunction1"](3, _c1, _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpureFunction0"](2, _c0)));
       }
     },
-    dependencies: [_components_button_dashboard_button_dashboard_component__WEBPACK_IMPORTED_MODULE_1__.ButtonDashboardComponent],
     styles: ["/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsInNvdXJjZVJvb3QiOiIifQ== */"]
   });
 }
@@ -262,15 +259,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SuporteModule: () => (/* binding */ SuporteModule)
 /* harmony export */ });
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/common */ 89650);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common */ 89650);
 /* harmony import */ var _documentacao_documentacao_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./documentacao/documentacao.component */ 51433);
-/* harmony import */ var ngx_markdown__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ngx-markdown */ 14721);
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/router */ 82454);
-/* harmony import */ var primeng_panelmenu__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! primeng/panelmenu */ 65617);
+/* harmony import */ var ngx_markdown__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ngx-markdown */ 14721);
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/router */ 82454);
+/* harmony import */ var primeng_panelmenu__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! primeng/panelmenu */ 65617);
 /* harmony import */ var _home_suporte_home_suporte_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./home-suporte/home-suporte.component */ 24162);
 /* harmony import */ var src_app_components_components_module__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/components/components.module */ 10822);
 /* harmony import */ var _menu_suporte_menu_suporte_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./menu-suporte/menu-suporte.component */ 77114);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/core */ 51197);
+/* harmony import */ var _components_button_dashboard_button_dashboard_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../components/button-dashboard/button-dashboard.component */ 959);
+
 
 
 
@@ -297,19 +296,22 @@ class SuporteModule {
   static #_ = this.ɵfac = function SuporteModule_Factory(t) {
     return new (t || SuporteModule)();
   };
-  static #_2 = this.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineNgModule"]({
+  static #_2 = this.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineNgModule"]({
     type: SuporteModule
   });
-  static #_3 = this.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineInjector"]({
-    imports: [_angular_router__WEBPACK_IMPORTED_MODULE_5__.RouterModule.forRoot(routes), _angular_common__WEBPACK_IMPORTED_MODULE_6__.CommonModule, primeng_panelmenu__WEBPACK_IMPORTED_MODULE_7__.PanelMenuModule, src_app_components_components_module__WEBPACK_IMPORTED_MODULE_2__.ComponentsModule, ngx_markdown__WEBPACK_IMPORTED_MODULE_8__.MarkdownModule.forRoot()]
+  static #_3 = this.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineInjector"]({
+    imports: [_angular_router__WEBPACK_IMPORTED_MODULE_6__.RouterModule.forRoot(routes), _angular_common__WEBPACK_IMPORTED_MODULE_7__.CommonModule, primeng_panelmenu__WEBPACK_IMPORTED_MODULE_8__.PanelMenuModule, src_app_components_components_module__WEBPACK_IMPORTED_MODULE_2__.ComponentsModule, ngx_markdown__WEBPACK_IMPORTED_MODULE_9__.MarkdownModule.forRoot()]
   });
 }
 (function () {
-  (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵsetNgModuleScope"](SuporteModule, {
+  (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵsetNgModuleScope"](SuporteModule, {
     declarations: [_documentacao_documentacao_component__WEBPACK_IMPORTED_MODULE_0__.DocumentacaoComponent, _home_suporte_home_suporte_component__WEBPACK_IMPORTED_MODULE_1__.HomeSuporteComponent, _menu_suporte_menu_suporte_component__WEBPACK_IMPORTED_MODULE_3__.MenuSuporteComponent],
-    imports: [_angular_router__WEBPACK_IMPORTED_MODULE_5__.RouterModule, _angular_common__WEBPACK_IMPORTED_MODULE_6__.CommonModule, primeng_panelmenu__WEBPACK_IMPORTED_MODULE_7__.PanelMenuModule, src_app_components_components_module__WEBPACK_IMPORTED_MODULE_2__.ComponentsModule, ngx_markdown__WEBPACK_IMPORTED_MODULE_8__.MarkdownModule]
+    imports: [_angular_router__WEBPACK_IMPORTED_MODULE_6__.RouterModule, _angular_common__WEBPACK_IMPORTED_MODULE_7__.CommonModule, primeng_panelmenu__WEBPACK_IMPORTED_MODULE_8__.PanelMenuModule, src_app_components_components_module__WEBPACK_IMPORTED_MODULE_2__.ComponentsModule, ngx_markdown__WEBPACK_IMPORTED_MODULE_9__.MarkdownModule]
   });
 })();
+_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵsetComponentScope"](_menu_suporte_menu_suporte_component__WEBPACK_IMPORTED_MODULE_3__.MenuSuporteComponent, function () {
+  return [_components_button_dashboard_button_dashboard_component__WEBPACK_IMPORTED_MODULE_4__.ButtonDashboardComponent];
+}, []);
 
 /***/ }),
 
