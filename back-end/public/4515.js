@@ -25124,8 +25124,10 @@ const routes = [{
   data: {
     title: ""
   }
-}, {
-  path: 'pesquisa',
+},
+//{ path: 'pesquisa', component: CurriculumPesquisaListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Pesquisa" } },
+{
+  path: 'pesqadm',
   component: _curriculum_pesquisa_list_curriculum_pesquisa_list_component__WEBPACK_IMPORTED_MODULE_11__.CurriculumPesquisaListComponent,
   canActivate: [src_app_guards_auth_guard__WEBPACK_IMPORTED_MODULE_0__.AuthGuard],
   resolve: {
