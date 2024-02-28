@@ -123,8 +123,6 @@ export class UtilService {
   }
 
   public validateLookupItem(lista: LookupItem[], key: any): boolean | undefined {
-    // return !lista.find(x => x.key == key) && key != 'd41d8cd98f00b204e9800998ecf8427e'; //MD5 gerado quando o VALUE é vazio ("");
-    // GENISSON: Não entendi o código abaixo, e substitui pelo código acima
     let retorno = true;
     if (key.indexOf(lista) < 0) {
       lista.forEach(t => {
@@ -134,7 +132,6 @@ export class UtilService {
         else true;
       })
     } else if (key == 'd41d8cd98f00b204e9800998ecf8427e') retorno = false; //MD5 gerado quando o VALUE é vazio ("");
-    //console.log(retorno);
     return retorno;
   }
 

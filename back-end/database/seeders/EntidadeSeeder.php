@@ -52,7 +52,6 @@ class EntidadeSeeder extends Seeder
             "gestor_substituto_id" => NULL,
           ),
         );
-
-        Entidade::insert($entidade);
+        Entidade::upsert($entidade, "id");
     }
 }

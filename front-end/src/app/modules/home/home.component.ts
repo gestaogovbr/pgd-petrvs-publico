@@ -8,11 +8,8 @@ import { NavigateService } from 'src/app/services/navigate.service';
 import { ListenerAllPagesService } from 'src/app/listeners/listener-all-pages.service';
 import { GlobalsService } from 'src/app/services/globals.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
-import { Chart, ChartData, ChartOptions } from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { UtilService } from 'src/app/services/util.service';
-import { FormControl, FormGroup } from '@angular/forms';
-import { LookupItem } from 'src/app/services/lookup.service';
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',

@@ -2484,7 +2484,7 @@ class PlanejamentoOkrComponent extends src_app_modules_base_page_frame_base__WEB
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](20, "K.R");
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](21, "h6");
-        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](22, "Resultados chaves");
+        _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](22, "Resultados-chave");
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementEnd"]()();
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵelementStart"](23, "div", 6)(24, "h6");
         _angular_core__WEBPACK_IMPORTED_MODULE_11__["ɵɵtext"](25);
