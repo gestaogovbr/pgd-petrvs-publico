@@ -174,7 +174,7 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
     }
   }
 
-  public onRadioChange(event : any){console.log(event.srcElement.value)
+  public onRadioChange(event : any){//console.log(event.srcElement.value)
     this.valorEscolhido = event.srcElement.value;
     this.proximo(event)
 
@@ -210,7 +210,7 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
         this.respostasB5.splice(this.controle,1)
         this.arrayLabel = this.respostasB5.toString();
       }
-      console.log(this.respostasB5,' - ',this.total, ' - ', this.controle);
+      //console.log(this.respostasB5,' - ',this.total, ' - ', this.controle);
     }else{
       btnVoltar?.setAttribute('disabled','');
     }
@@ -244,7 +244,7 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
 
         }
         
-        console.log(this.respostasB5,' - ',this.total, ' - ', this.controle);
+        //console.log(this.respostasB5,' - ',this.total, ' - ', this.controle);
       }
 
       if(this.controle >= 50){
@@ -297,7 +297,7 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
         this.estabilidade = nM - estabilidade;
         this.abertura = oM - abertura;
 
-        console.log('e ',this.extroversao,' - a ',this.agradabilidade, ' - c ',this.conscienciosidade, ' - n ',this.estabilidade ,' - o ', this.abertura )
+        //console.log('e ',this.extroversao,' - a ',this.agradabilidade, ' - c ',this.conscienciosidade, ' - n ',this.estabilidade ,' - o ', this.abertura )
         this.chartb5([this.extroversao,this.agradabilidade,this.conscienciosidade,this.estabilidade, this.abertura])
 
   }
@@ -349,7 +349,7 @@ export class CurriculumAtributosbig5FormComponent extends PageFormBase<Questiona
     const sliders = document.querySelectorAll(".slider-ui");
 
       sliders.forEach((slider,index) => {
-        console.log(index)
+        //console.log(index)
         this.min = '0';
         this.max = '40';
         const trackId = slider.querySelector(".value")!.id;

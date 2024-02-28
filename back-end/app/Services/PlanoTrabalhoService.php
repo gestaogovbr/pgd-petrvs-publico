@@ -138,7 +138,6 @@ class PlanoTrabalhoService extends ServiceBase
     $conflito = PlanoTrabalho::
       where("usuario_id", $data["usuario_id"])->
       where("unidade_id", $data["unidade_id"])->
-      where("status", "ATIVO")->
       where("data_inicio", "<=", $data["data_fim"])->
       where("data_fim", ">=", $data["data_inicio"])->
       where("id", "!=", UtilService::valueOrNull($data, "id"))->
