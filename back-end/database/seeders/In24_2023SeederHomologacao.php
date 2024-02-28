@@ -2122,7 +2122,7 @@ class In24_2023SeederHomologacao extends Seeder
         "updated_at" => $this->timenow,
         "deleted_at" => NULL,
         "perfil_id" => $this->utilService->uuid("Chefe de Unidade Executora"),
-        "tipo_capacidade_id" => $this->utilService->uuid("MOD_RX_VIS_ATR"),
+        "tipo_capacidade_id" => $this->utilService->uuid("MOD_RX_CURR"),
       ),
       array(
         "id" => "6c3a2b71-bbae-429d-8bfa-8bb0b6a30dc3",
@@ -2298,7 +2298,7 @@ class In24_2023SeederHomologacao extends Seeder
         "updated_at" => $this->timenow,
         "deleted_at" => NULL,
         "perfil_id" => $this->utilService->uuid("Chefe de Unidade Executora"),
-        "tipo_capacidade_id" => $this->utilService->uuid("MOD_RX_EDT_OPO"),
+        "tipo_capacidade_id" => $this->utilService->uuid("MOD_RX_OPO"),
       ),
       array(
         "id" => "9ee02610-d94a-4287-b4fe-c19504382bf6",
@@ -2330,7 +2330,7 @@ class In24_2023SeederHomologacao extends Seeder
         "updated_at" => $this->timenow,
         "deleted_at" => NULL,
         "perfil_id" => $this->utilService->uuid("Chefe de Unidade Executora"),
-        "tipo_capacidade_id" => $this->utilService->uuid("MOD_RX_VIS_DPR"),
+        "tipo_capacidade_id" => $this->utilService->uuid("MOD_RX_OUT"),
       ),
       array(
         "id" => "adf1faba-17fc-49a4-a3ab-2fdd8be2a3d1",
@@ -2370,7 +2370,7 @@ class In24_2023SeederHomologacao extends Seeder
         "updated_at" => $this->timenow,
         "deleted_at" => NULL,
         "perfil_id" => $this->utilService->uuid("Chefe de Unidade Executora"),
-        "tipo_capacidade_id" => $this->utilService->uuid("MOD_RX_VIS_OPO"),
+        "tipo_capacidade_id" => $this->utilService->uuid("MOD_RX_CURR_EDT"),
       ),
       array(
         "id" => "c8553a4f-049e-4456-8b43-9af8509058ec",
@@ -2570,7 +2570,7 @@ class In24_2023SeederHomologacao extends Seeder
         "updated_at" => $this->timenow,
         "deleted_at" => NULL,
         "perfil_id" => $this->utilService->uuid("Chefe de Unidade Executora"),
-        "tipo_capacidade_id" => $this->utilService->uuid("MOD_RX_VIS_DPE"),
+        "tipo_capacidade_id" => $this->utilService->uuid("MOD_RX_CURR_INCL"),
       ),
       array(
         "id" => "1f36bd29-dbd6-4740-a8a0-756bc996dc05",
@@ -2603,14 +2603,6 @@ class In24_2023SeederHomologacao extends Seeder
         "deleted_at" => NULL,
         "perfil_id" => $this->utilService->uuid("Chefe de Unidade Executora"),
         "tipo_capacidade_id" => $this->utilService->uuid("MOD_PENT_LIB_HOMOL"),
-      ),
-      array(
-        "id" => "2aa35444-71ce-4c26-ba6d-1d5434417df9",
-        "created_at" => $this->timenow,
-        "updated_at" => $this->timenow,
-        "deleted_at" => NULL,
-        "perfil_id" => $this->utilService->uuid("Chefe de Unidade Executora"),
-        "tipo_capacidade_id" => $this->utilService->uuid("MENU_REL_ACESSO"),
       ),
       array(
         "id" => "2c6c0946-f1cc-4902-b500-16c22834220c",
@@ -2683,14 +2675,6 @@ class In24_2023SeederHomologacao extends Seeder
         "deleted_at" => NULL,
         "perfil_id" => $this->utilService->uuid("Chefe de Unidade Executora"),
         "tipo_capacidade_id" => $this->utilService->uuid("MOD_USER"),
-      ),
-      array(
-        "id" => "4528c67c-94a5-483c-b5d3-b01d00c88ac8",
-        "created_at" => $this->timenow,
-        "updated_at" => $this->timenow,
-        "deleted_at" => NULL,
-        "perfil_id" => $this->utilService->uuid("Chefe de Unidade Executora"),
-        "tipo_capacidade_id" => $this->utilService->uuid("MOD_ACESSO"),
       ),
       array(
         "id" => "48ad6334-df3b-40c2-a808-81c180ea3e1a",

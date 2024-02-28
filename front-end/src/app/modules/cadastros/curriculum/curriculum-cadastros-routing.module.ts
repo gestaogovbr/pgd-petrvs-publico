@@ -1,9 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule,  Routes } from '@angular/router';
 import { AuthGuard } from 'src/app/guards/auth.guard';
-import { MateriaListComponent } from './materia/materia-list/materia-list.component';
-import { MateriaFormComponent } from './materia/materia-form/materia-form.component';
-import { ConfigResolver } from 'src/app/resolvies/config.resolver';
 
 const routes: Routes = [
   

@@ -1483,7 +1483,6 @@ class AtividadeFormComponent extends src_app_modules_base_page_form_base__WEBPAC
         let checkAtividade = this.tipoAtividade?.selectedEntity.checklist;
         if (checkAtividade && this.form.controls.checklist.value.length == checkAtividade.length) this.loadChecklist(); // this.loadChecklist();
       }
-
       const etiquetasKeys = this.etiquetas.map(x => x.key);
       const checklistKeys = this.checklist.map(x => x.id); //const checklistKeys = this.checklist.map(x => x.key);
       const etiqueta = (this.form.controls.etiquetas.value || []).find(x => !etiquetasKeys.includes(x.key));
@@ -2807,7 +2806,6 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
       }
     });*/
   }
-
   get isEtiquetas() {
     return !!this.filter?.controls?.usarEtiquetas?.value;
   }
@@ -3005,7 +3003,6 @@ class AtividadeListKanbanComponent extends _atividade_list_base__WEBPACK_IMPORTE
         if(!this.labels.find(y => y.labels.find(z => z.key == x.key))) this.labels[0].labels.push(x)
       });*/
     }
-
     this.cdRef.detectChanges();
   }
   putCard(list, atividade) {
