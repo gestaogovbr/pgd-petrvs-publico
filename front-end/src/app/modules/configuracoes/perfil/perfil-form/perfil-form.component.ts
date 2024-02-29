@@ -10,6 +10,7 @@ import { Capacidade } from 'src/app/models/capacidade.model';
 import { Perfil } from 'src/app/models/perfil.model';
 import { TipoCapacidade } from 'src/app/models/tipo-capacidade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
+import { PerfilService } from '../perfil.service';
 
 @Component({
   selector: 'app-perfil-form',
@@ -22,10 +23,12 @@ export class PerfilFormComponent extends PageFormBase<Perfil, PerfilDaoService> 
 
   public tiposCapacidades: TipoCapacidade[] = [];
   public tipoCapacidadeDao: TipoCapacidadeDaoService;
+  public perfilService: PerfilService;
 
   constructor(public injector: Injector) {
     super(injector, Perfil, PerfilDaoService);
     this.tipoCapacidadeDao = injector.get<TipoCapacidadeDaoService>(TipoCapacidadeDaoService);
+    this.perfilService = injector.get<PerfilService>(PerfilService);
     this.form = this.fh.FormBuilder({
       nome: {default: ""},
       capacidades: {default: []},
@@ -55,12 +58,17 @@ export class PerfilFormComponent extends PageFormBase<Perfil, PerfilDaoService> 
       orderBy: [["codigo", "asc"]],
       join: ["filhos"]
     });
-    this.tiposCapacidades = await this.tipoCapacidadeDao.query(queryOptions).asPromise();
+    await this.tipoCapacidadeDao.query(queryOptions).asPromise().then(tipo => {
+      tipo.forEach(t => {
+        this.perfilService.ordenarTiposCapacidade(t.filhos);
+        this.tiposCapacidades.push(t);
+      });
+    });
     formValue = this.util.fillForm(formValue, entity);
     for(let tipoCapacidade of this.tiposCapacidades) {
       const capacidade = entity.capacidades?.find(x => (x.tipo_capacidade?.codigo == tipoCapacidade.codigo));
       tipoCapacidade._metadata = Object.assign(tipoCapacidade._metadata || {}, {habilitado: !!capacidade});
-      if (capacidade) console.log(capacidade.tipo_capacidade?.codigo)
+      //if (capacidade) console.log(capacidade.tipo_capacidade?.codigo)
       for (let tipoCapacidadeFilha of tipoCapacidade.filhos) {
         const capacidadeFilha = entity.capacidades?.find(x => (x.tipo_capacidade?.codigo == tipoCapacidadeFilha.codigo));
         tipoCapacidadeFilha._metadata = Object.assign(tipoCapacidadeFilha._metadata || {}, {habilitado: !!capacidadeFilha});

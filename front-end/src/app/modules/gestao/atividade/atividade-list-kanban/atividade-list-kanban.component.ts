@@ -37,6 +37,7 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
   @ViewChild('planoEntregaEntrega', { static: false }) public planoEntregaEntrega?: InputSelectComponent;
   @Input() snapshot?: ActivatedRouteSnapshot;
   @Input() fixedFilter?: any[];
+  @Input() minhas: boolean = false;
 
   public TITLE_OUTRAS = "Outras";
   public NAOINICIADO: number = 0;
@@ -59,7 +60,7 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
   public toolbarButtons: ToolbarButton[] = [
     {
       icon: "bi bi-search",
-      label: "Filtrar",
+      label: "Filtros",
       onClick: () => this.filterRef?.toggle()
     },
     {
@@ -99,7 +100,7 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
     /* Inicializações */
     this.code = "MOD_DMD";
     this.filter = this.fh.FormBuilder({
-      atribuidas_para_mim: { default: false },
+      atribuidas_para_mim: { default: this.minhas },
       usuario_id: { default: "" },
       somente_unidade_atual: { default: false },
       unidades_subordinadas: { default: false },
@@ -133,6 +134,12 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
 
   ngAfterViewInit() {
     super.ngAfterViewInit();
+    if (this.minhas) {
+      this.filter?.controls.atribuidas_para_mim.setValue(true);
+      this.filter?.controls.usuario_id.setValue(this.auth.usuario?.id);
+    } else {
+      this.filter?.controls.unidade_id.setValue(this.auth.unidade?.id);
+    } 
     this.query!.onLoadingChange = (loading) => {
       this.loading = loading;
       this.cdRef.detectChanges();
@@ -469,6 +476,17 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = this.fixedFilter || [];
     let form: any = filter.value;
+
+    if (form.somente_unidade_atual && form.unidade_id != this.auth.unidade?.id) {
+      filter.controls.unidade_id.setValue(this.auth.unidade?.id);
+      form.unidade_id = this.auth.unidade?.id;
+    }
+    /* Verifica se Minhas está selecionado e o usuário está diferente do logado (vazio) */
+    if (form.atribuidas_para_mim && form.usuario_id != this.auth.usuario?.id) {
+      filter.controls.usuario_id.setValue(this.auth.usuario?.id);
+      form.usuario_id = this.auth.usuario!.id;
+    }
+
     if (form.usuario_id?.length) {
       result.push(["usuario_id", "==", form.usuario_id]);
     }

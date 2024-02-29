@@ -17,7 +17,7 @@ export class GridColumn {
   public field: string = "";
   public dao?: DaoBaseService<Base>;
   public orderBy: string = "";
-  public editable: boolean = false;
+  public editable: boolean | ((row: any) => boolean) = false;
   public template?: TemplateRef<unknown>;
   public titleTemplate?: TemplateRef<unknown>;
   public editTemplate?: TemplateRef<unknown>;
@@ -64,8 +64,10 @@ export class GridColumn {
     return !!types.find(x => (":" + this.type).endsWith(":" + x));
   }
 
-  public get isColumnEditable(): boolean {
-    return this.editable && !!this.save;
+  public isColumnEditable(row: any): boolean {
+    return !!this.save && 
+      ((!!row && typeof this.editable != "boolean" && !!this.editable && (this.editable as (row: any) => boolean)(row)) || 
+      (typeof this.editable == "boolean" && this.editable));
   }
 
   public get isAlways(): boolean {
