@@ -60,7 +60,7 @@ export class AtividadeListKanbanComponent extends AtividadeListBase {
   public toolbarButtons: ToolbarButton[] = [
     {
       icon: "bi bi-search",
-      label: "Filtrar",
+      label: "Filtros",
       onClick: () => this.filterRef?.toggle()
     },
     {

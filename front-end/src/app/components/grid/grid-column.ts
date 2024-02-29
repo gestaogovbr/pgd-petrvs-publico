@@ -17,7 +17,7 @@ export class GridColumn {
   public field: string = "";
   public dao?: DaoBaseService<Base>;
   public orderBy: string = "";
-  public editable: boolean | ((row: any) => boolean) = true;
+  public editable: boolean | ((row: any) => boolean) = false;
   public template?: TemplateRef<unknown>;
   public titleTemplate?: TemplateRef<unknown>;
   public editTemplate?: TemplateRef<unknown>;

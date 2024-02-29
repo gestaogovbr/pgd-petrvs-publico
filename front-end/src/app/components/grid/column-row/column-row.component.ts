@@ -39,7 +39,7 @@ export class ColumnRowComponent implements OnInit {
   }
 
   public isRowEditing(row: any): boolean {
-    return (this.row["id"] == (this.grid?.editing || {"id": undefined})["id"]) && this.column.isColumnEditable(row);
+    return (this.row["id"] == (this.grid?.editing || {"id": undefined})["id"]) && !this.column.isColumnEditable(row);
   }
 
   public get isEditing(): boolean {
