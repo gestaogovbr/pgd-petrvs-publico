@@ -1,15 +1,15 @@
 import { ChangeDetectorRef, Component, Injector, Input, ViewChild } from '@angular/core';
-import { AbstractControl, FormGroup } from '@angular/forms';
+import { AbstractControl, FormGroup, SelectMultipleControlValueAccessor } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { CurriculumDaoService } from 'src/app/dao/curriculum-dao.service';
-import { CurriculumProfissionalDaoService } from 'src/app/dao/curriculum-profissional-dao.service';
-import { QuestionarioPerguntaDaoService } from 'src/app/dao/questionario-pergunta-dao.service';
 import { CurriculumProfissional } from 'src/app/models/currriculum-profissional.model';
 import { Curriculum } from 'src/app/models/currriculum.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import jspdf from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import html2canvas from 'html2canvas';
+import { HttpClient } from '@angular/common/http'; 
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
 
 @Component({
   selector: 'curriculum-pesquisa-list-usuario',
@@ -25,6 +25,7 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
   @Input() set entity(value: CurriculumProfissional | undefined) { super.entity = value; } get entity(): CurriculumProfissional | undefined { return super.entity; }
 
   public curriculum?: any;
+  public imagem64 : string ='';
 
   public get items(): CurriculumProfissional[] {
     return [this.curriculum]
@@ -34,14 +35,28 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
     console.log('get row', row);
   }
 
-  constructor(public injector: Injector) {
+  images: any[]=[]
+  imgBase64 : any = '';
+
+  constructor(public injector: Injector, private http:HttpClient) {
     super(injector);
     this.modalWidth = 1350;
+
+       
   }
 
   public ngOnInit() {
     super.ngOnInit();
     this.curriculum = this.metadata?.curriculum;
+    //this.imagemURL = this.auth.usuario?.url_foto || '';
+    this.imageToBase64()
+    
+  }
+
+  public dynamicButtons(row: any): ToolbarButton[] {
+    const btns = [];
+    btns.push({ label: "Detalhes", icon: "bi bi-filetype-pdf", color: 'btn-outline-warning', onClick: this.convetToPDF3.bind(this) });
+    return btns;
   }
 
   public convetToPDF()
@@ -55,55 +70,104 @@ export class CurriculumPesquisaListUsuarioComponent extends PageFrameBase {
       const heightLeft = imgHeight;
 
       const contentDataURL = canvas.toDataURL('image/png')
-      const pdf = new jspdf('p', 'mm', 'a4'); // A4 size page of PDF
+      const pdf = new jspdf('l', 'mm', 'a4'); // A4 size page of PDF
       const position = 0;
       /*pdf.setProperties({
         title:'Dados do usuario',
         subject:'Curriculum - Petrvs',
         author:'Petrvs', 
       })*/
-      pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight)
+      //pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight)
+      pdf.addImage(contentDataURL, 'PNG', 0, 0, 295, 208)
       const blob = pdf.output('blob');
       window.open(URL.createObjectURL(blob));
       //pdf.output('dataurlnewwindow')
       pdf.save('curriciculum_'+ this.auth.usuario?.nome +'_.pdf'); // Generated PDF
       });
   }
+ 
+
+  public async convetToPDF3(img:any)
+  {
+      //console.log(row)
+      const pages = document.getElementById('contentToConvert');
+      const doc = new jspdf()//('p', 'mm','a4',true);
+      //const image = this.imageToBase64();
+      const image= this.imgBase64;
+      console.log('IMAGE',image)
+      autoTable(doc,{ 
+        html: '#my-table',
+        bodyStyles: {minCellHeight: 15},
+        didDrawCell: (data) => {
+          if (data.section === 'body' && data.column.index === 2) {
+              doc.addImage(image, 'PNG', data.cell.x + 2, data.cell.y + 2, 10, 10)
+          }
+        },
+    
+      })
+      doc.output("dataurlnewwindow")
+      //doc.save('table.pdf')
+     
+     
+      //doc.output("dataurlnewwindow");
+      /*doc.html(pages!, {
+        callback: (doc: jspdf) => {
+            doc.save('pdf-export');
+        }
+      });*/
+  }
+
+
+  
+
+  public imageToBase64() {
+    //const img = row.curriculum.usuario.url_foto
+    
+    this.http.get(this.auth.usuario?.url_foto!, { responseType: 'blob' })
+      .subscribe((res) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64data = reader.result;
+          this.images.push(base64data);
+          this.imgBase64 = base64data;
+        };
+
+         reader.readAsDataURL(res);
+
+      });
+  }
+
+  public async imageToCanvas() {
+    let data = document.getElementById('imgProfile');
+    let canvasIMG;
+    html2canvas(data!).then(canvas => {
+    // Few necessary setting options
+    let imgWidth = 208;
+    let pageHeight = 295;
+    let imgHeight = canvas.height * imgWidth / canvas.width;
+    let heightLeft = imgHeight;
+     
+    const contentDataURL = canvas.toDataURL('image/png')
+    canvasIMG = contentDataURL;
+    })
+    return canvasIMG;
+  }
 
 }
-/* @Input() set curriculumId(value: string | undefined) {
-    if(this._curriculumId != value) {
-      this._curriculumId = value;
-      this.loadCurriculum();
-    }
-  }
-  //public curriculum : Curriculum[] =[];
-  get curriculumId(): string | undefined {
-    return this._curriculumId;
-  }
 
-  private _curriculumId?: string;
 
-  public set items(value: CurriculumProfissional[]) {
-    console.log('VALUE',value)
-    if(this.items != value) {
-      this.gridControl.value.items = value;
-      if(this.viewInit) this.cdRef.detectChanges();
-    }    
-  }
-  
-  constructor(public injector: Injector){
-    super(injector);
-    this.dao = injector.get<CurriculumProfissionalDaoService>(CurriculumProfissionalDaoService);
-    this.cdRef = injector.get<ChangeDetectorRef>(ChangeDetectorRef);
-    this.join = ['historico_atividade_interna.capacidade_tecnica.area_tematica', 'historico_atividade_externa.area_atividade_externa', 'historico_curso_interno.curso', 'historico_curso_externo.area_atividade_externa', 'historico_docencia_interna.curso',
-      'historico_docencia_externa.area_atividade_externa', 'historico_funcao.funcao', 'historico_funcao.unidade', 'historico_lotacao.unidade', 'curriculum'];
-    
-  } 
-
-  public loadCurriculum() {
-    this.dao!.query({where: ["id", "==", this.curriculumId], join : this.join}).asPromise().then(row => {
-     this.items= (row as CurriculumProfissional[]) || [];
-     console.log('ROW PESQUISA', this.items)
-    });
-  }  */
+/* public imageToBase64() {
+    //const img = row.curriculum.usuario.url_foto
+    let imagemBase64;
+    this.http.get(this.auth.usuario?.url_foto!,{responseType:"blob"}).subscribe(
+      (res:Blob)=>{
+        console.log('res',res)
+        let reader = new FileReader();
+        reader.readAsDataURL(res)
+        let ref = this;
+        reader.onloadend = function(){
+          ref.imgBase64 = reader.result?.toString();
+     
+        };        
+      });
+    };*/
