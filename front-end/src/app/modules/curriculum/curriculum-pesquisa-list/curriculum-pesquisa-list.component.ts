@@ -55,6 +55,7 @@ export class CurriculumPesquisaListComponent extends PageListBase<CurriculumProf
       area_tematica_id: { default: "" },
       capacidade_tecnica_id: { default: "" },
     });
+    this.orderBy = [['curriculum.usuario.nome','asc']];
     this.join = ['historico_atividade_interna.capacidade_tecnica.area_tematica', 'historico_atividade_externa.area_atividade_externa', 'historico_curso_interno.curso',
       'historico_curso_externo.area_atividade_externa', 'historico_docencia_interna.curso', 'historico_docencia_externa.area_atividade_externa', 'historico_funcao.funcao',
       'historico_funcao.unidade', 'historico_lotacao.unidade', 'curriculum', 'curriculum.usuario', 'curriculum.cidade', 'curriculum.graduacoes',
@@ -158,10 +159,10 @@ export class CurriculumPesquisaListComponent extends PageListBase<CurriculumProf
     });
   }
 
-  public async showCurriculumDetalhes2(row: any) {
+ /* public async showCurriculumDetalhes2(row: any) {
     console.log(row)
     this.go.navigate({ route: ['raiox', 'detalhe-pesquisa'] }, { modal: true, metadata: { curriculum: row } });
-  }
+  }*/
 
  
 

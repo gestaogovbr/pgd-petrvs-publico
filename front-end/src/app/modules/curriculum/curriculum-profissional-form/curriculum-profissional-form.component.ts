@@ -222,7 +222,7 @@ export class CurriculumProfissionalFormComponent extends PageFormBase<Curriculum
   }
 
   async ngOnInit(): Promise<void> {
-    //this.curriculuns = await this.curriculumDao?.query({ where: ['usuario_id', '==', this.auth.usuario?.id]}).asPromise();
+    
     this.curriculumDao?.query({ where: [['usuario_id', '==', this.auth.usuario?.id]] }).getAllIds().then((x) => {
       if (x.rows?.length) {
         this.curriculumID = x.rows[0].id;
